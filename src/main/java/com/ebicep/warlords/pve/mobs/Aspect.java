@@ -3,7 +3,6 @@ package com.ebicep.warlords.pve.mobs;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.player.ingame.CalculateSpeed;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -11,6 +10,9 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.motionsystem.MotionModifier;
+import com.ebicep.warlords.player.ingame.motionsystem.MotionModifierBuilder;
+import com.ebicep.warlords.player.ingame.motionsystem.MotionSystem;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
@@ -80,7 +82,7 @@ public enum Aspect {
                     if (Aspect.isNegated(warlordsEntity)) {
                         return;
                     }
-                    warlordsEntity.getSpeed().addSpeedModifier(warlordsEntity, "Chilling", -20, 40);
+                    warlordsEntity.addSpeedModifier(warlordsEntity, "Chilling", -20, 40);
                 }
             });
         }
@@ -160,7 +162,7 @@ public enum Aspect {
                             Aspect.class,
                             null,
                             warlordsEntity,
-                            CooldownTypes.DEBUFF,
+                            CooldownTypes.LOW_LEVEL_DEBUFF,
                             cooldownManager -> {
                             },
                             40,
@@ -256,9 +258,9 @@ public enum Aspect {
     SWIFT("Swift", TextColor.color(121, 121, 255)) {
         @Override
         public void apply(WarlordsEntity warlordsEntity) {
-            CalculateSpeed.Modifier modifier = new CalculateSpeed.Modifier(warlordsEntity, "Swift", 20, 400000, Collections.emptyList(), false);
-            CalculateSpeed calculateSpeed = warlordsEntity.getSpeed();
-            calculateSpeed.addSpeedModifier(modifier);
+            MotionModifier modifier = new MotionModifierBuilder().setFrom(warlordsEntity).setName("Swift").setModifier(20).setDuration(400000).build();
+            MotionSystem calculateSpeed = warlordsEntity.getSpeed();
+            calculateSpeed.addModifier(modifier);
             warlordsEntity.getCooldownManager().addCooldown(new PermanentCooldown<>(
                     "Aspect - Armoured",
                     null,
@@ -272,10 +274,8 @@ public enum Aspect {
                     (cooldown, ticksElapsed) -> {
                         if (Aspect.isNegated(warlordsEntity)) {
                             modifier.setModifier(0);
-                            calculateSpeed.setChanged(true);
                         } else if (modifier.getModifier() != 20) {
                             modifier.setModifier(20);
-                            calculateSpeed.setChanged(true);
                         }
                     }
             ));

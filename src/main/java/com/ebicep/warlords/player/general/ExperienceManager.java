@@ -330,6 +330,14 @@ public class ExperienceManager {
         return level < 10 ? "0" + level : String.valueOf(level);
     }
 
+    public static Component getLevelStringBracket(int level) {
+        return Component.textOfChildren(
+                Component.text(" [", NamedTextColor.DARK_GRAY),
+                Component.text("Lv" + getLevelString(level), NamedTextColor.GRAY),
+                Component.text("] ", NamedTextColor.DARK_GRAY)
+        );
+    }
+
     public static List<Component> getProgressString(long currentExperience, int nextLevel) {
         TextComponent progress = Component.text("Progress to Level " + nextLevel + ": ", NamedTextColor.GRAY);
         return getProgressString(currentExperience, nextLevel, progress);
@@ -371,11 +379,12 @@ public class ExperienceManager {
 
     public static TextColor getPrestigeColor(int prestigeLevel) {
         return CACHED_PRESTIGE_COLORS.computeIfAbsent(prestigeLevel, integer -> {
-            float hue = (float) prestigeLevel / 100.0f;
-            float saturation = 1f;
-            float brightness = 1f;
-            return TextColor.color(Color.HSBtoRGB(hue, saturation, brightness));
-        });
+                    float hue = (float) prestigeLevel / 100.0f;
+                    float saturation = 1f;
+                    float brightness = 1f;
+                    return TextColor.color(Color.HSBtoRGB(hue, saturation, brightness));
+                }
+        );
     }
 
     public static TextComponent getPrestigeLevelString(UUID uuid, Specializations spec) {
@@ -514,10 +523,6 @@ public class ExperienceManager {
             return getHoverSummary(universalExpGainSummary);
         }
 
-        public Component getSpecSummary(Specializations specializations) {
-            return getHoverSummary(specExpGainSummary.getOrDefault(specializations, new LinkedHashMap<>()));
-        }
-
         public Component getHoverSummary(LinkedHashMap<String, Long> expGain) {
             int counter = 0;
             TextComponent.Builder expSummary = Component.empty().toBuilder();
@@ -536,10 +541,15 @@ public class ExperienceManager {
             return expSummary.build();
         }
 
+        public Component getSpecSummary(Specializations specializations) {
+            return getHoverSummary(specExpGainSummary.getOrDefault(specializations, new LinkedHashMap<>()));
+        }
+
     }
 
 
     static class AwardSummary {
+
         List<Component> messages = new ArrayList<>();
         long totalExperienceGain = 0L;
 
@@ -564,5 +574,7 @@ public class ExperienceManager {
         public void addTotalExperienceGain(long amount) {
             totalExperienceGain += amount;
         }
+
     }
+
 }

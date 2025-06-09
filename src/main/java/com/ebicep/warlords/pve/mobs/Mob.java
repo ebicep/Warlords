@@ -860,6 +860,8 @@ public enum Mob {
             null,
             null
     )),
+    // PVP
+    TRICKSTER_DUMMY(EntityType.PLAYER, Decoy.class, Decoy::new, Decoy::new, null),
 
     ;
 

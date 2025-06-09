@@ -4,22 +4,26 @@ import com.ebicep.warlords.abilities.Intervene;
 import com.ebicep.warlords.abilities.OrderOfEviscerate;
 import com.ebicep.warlords.abilities.Repentance;
 import com.ebicep.warlords.abilities.SoulShackle;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Shield;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.general.settings.ChatSettings;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownUtils;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.LinkedCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.type.CustomInstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.DamageInstance;
+import com.ebicep.warlords.player.ingame.instances.type.HealingInstance;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
@@ -38,20 +42,24 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class InstanceManager {
 
-    public static Optional<WarlordsDamageHealingFinalEvent> addDamageHealingInstance(WarlordsEntity warlordsEntity, WarlordsDamageHealingEvent event) {
-        if (warlordsEntity.isDead()) {
+    public static Optional<WarlordsDamageHealingFinalEvent> addDamageHealingInstance(WarlordsDamageHealingEvent event) {
+        if (event.getWarlordsEntity().isDead()) {
             return Optional.empty();
         }
         InstanceDebugHoverable debugHoverable = new InstanceDebugHoverable();
+        List<TextComponent> debugMessages = event.getDebugMessages();
+        if (!debugMessages.isEmpty()) {
+            debugHoverable.appendTitle("Debug", NamedTextColor.AQUA);
+            for (TextComponent debugMessage : debugMessages) {
+                debugHoverable.append(InstanceDebugHoverable.LevelBuilder.create(1).value(debugMessage));
+            }
+        }
         debugHoverable.appendTitle("Pre Event", NamedTextColor.AQUA);
         debugHoverable.appendEvent(event);
         Bukkit.getPluginManager().callEvent(event);
@@ -60,8 +68,8 @@ public class InstanceManager {
         }
         Optional<WarlordsDamageHealingFinalEvent> eventOptional;
         switch (event.getInstanceType()) {
-            case HEALING -> eventOptional = addHealingInstance(warlordsEntity, debugHoverable, event);
-            case DAMAGE -> eventOptional = addDamageInstance(warlordsEntity, debugHoverable, event);
+            case HEALING -> eventOptional = addHealingInstance(debugHoverable, event);
+            case DAMAGE -> eventOptional = addDamageInstance(debugHoverable, event);
             default -> eventOptional = Optional.empty();
         }
         eventOptional.ifPresent(warlordsDamageHealingFinalEvent -> Bukkit.getPluginManager().callEvent(warlordsDamageHealingFinalEvent));
@@ -69,27 +77,33 @@ public class InstanceManager {
     }
 
     private static Optional<WarlordsDamageHealingFinalEvent> addDamageInstance(
-            WarlordsEntity warlordsEntity,
             InstanceDebugHoverable debugMessage,
             WarlordsDamageHealingEvent event
     ) {
-        for (AbstractCooldown<?> abstractCooldown : warlordsEntity.getCooldownManager().getCooldownsDistinct()) {
-            abstractCooldown.damageDoBeforeVariableSetFromSelf(event);
-        }
+//        for (AbstractCooldown<?> abstractCooldown : warlordsEntity.getCooldownManager().getCooldownsDistinct()) {
+//            abstractCooldown.damageDoBeforeVariableSetFromSelf(event);
+//        }
         for (AbstractCooldown<?> abstractCooldown : event.getSource().getCooldownManager().getCooldownsDistinct()) {
             abstractCooldown.damageDoBeforeVariableSetFromAttacker(event);
+            List<DamageInstance> extraDamageInstances = abstractCooldown.getExtraDamageInstances();
+            if (extraDamageInstances != null) {
+                extraDamageInstances.forEach(e -> e.damageDoBeforeVariableSetFromAttacker(event));
+            }
         }
 
-        WarlordsEntity attacker = event.getSource();
-        String ability = event.getCause();
+        WarlordsEntity warlordsEntity = event.getWarlordsEntity();
+        WarlordsEntity source = event.getSource();
+        AbstractAbility ability = event.getAbility();
+        String cause = event.getCause();
         float min = event.getMin();
         float max = event.getMax();
         float critChance = event.getCritChance();
         float critMultiplier = event.getCritMultiplier();
-        boolean isMeleeHit = ability.isEmpty();
-        boolean isFallDamage = ability.equals("Fall");
+        boolean isMeleeHit = cause.isEmpty();
+        boolean isFallDamage = cause.equals("Fall");
         EnumSet<InstanceFlags> flags = event.getFlags();
         List<CustomInstanceFlags> customFlags = event.getCustomFlags();
+        List<TextComponent> debugMessages = event.getDebugMessages();
         boolean trueDamage = flags.contains(InstanceFlags.TRUE_DAMAGE);
         boolean pierceDamage = flags.contains(InstanceFlags.PIERCE);
         boolean ignoreDamageReduction = pierceDamage || flags.contains(InstanceFlags.IGNORE_DAMAGE_REDUCTION_ONLY);
@@ -97,7 +111,7 @@ public class InstanceManager {
 
         AtomicReference<WarlordsDamageHealingFinalEvent> finalEvent = new AtomicReference<>(null);
         // Spawn Protection / Undying Army / Game State
-        if ((warlordsEntity.isDead() && !warlordsEntity.getCooldownManager().checkUndyingArmy(false)) || !warlordsEntity.isActive()) {
+        if (warlordsEntity.isDead() || !warlordsEntity.isActive()) {
             return Optional.empty();
         }
 
@@ -107,14 +121,14 @@ public class InstanceManager {
         float initialHealth = warlordsEntity.getCurrentHealth();
 
         List<AbstractCooldown<?>> selfCooldownsDistinct = warlordsEntity.getCooldownManager().getCooldownsDistinct();
-        List<AbstractCooldown<?>> attackersCooldownsDistinct = attacker.getCooldownManager().getCooldownsDistinct();
+        List<AbstractCooldown<?>> attackersCooldownsDistinct = source.getCooldownManager().getCooldownsDistinct();
 
         debugMessage.appendTitle("Before Reduction", NamedTextColor.AQUA);
         debugMessage.append(InstanceDebugHoverable.LevelBuilder
                 .create(1)
                 .prefix(ComponentBuilder.create("Target Cooldowns", NamedTextColor.DARK_GREEN)));
         for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
-            abstractCooldown.doBeforeReductionFromSelf(event);
+//            abstractCooldown.doBeforeReductionFromSelf(event);
             debugMessage.append(InstanceDebugHoverable.LevelBuilder
                     .create(2)
                     .prefix(abstractCooldown));
@@ -124,6 +138,10 @@ public class InstanceManager {
                 .prefix(ComponentBuilder.create("Source Cooldowns", NamedTextColor.DARK_GREEN)));
         for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
             abstractCooldown.doBeforeReductionFromAttacker(event);
+            List<DamageInstance> extraDamageInstances = abstractCooldown.getExtraDamageInstances();
+            if (extraDamageInstances != null) {
+                extraDamageInstances.forEach(e -> e.doBeforeReductionFromAttacker(event));
+            }
             debugMessage.append(InstanceDebugHoverable.LevelBuilder
                     .create(2)
                     .prefix(abstractCooldown));
@@ -137,6 +155,8 @@ public class InstanceManager {
             float previousCC = critChance;
             float previousCM = critMultiplier;
             for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
+                // TODO CLEAN THIS GARBGE
+                List<DamageInstance> extraDamageInstances = abstractCooldown.getExtraDamageInstances();
                 critChance = abstractCooldown.addCritChanceFromAttacker(event, critChance);
                 critMultiplier = abstractCooldown.addCritMultiplierFromAttacker(event, critMultiplier);
                 if (previousCC != critChance) {
@@ -155,8 +175,31 @@ public class InstanceManager {
                 }
                 previousCC = critChance;
                 previousCM = critMultiplier;
+                if (extraDamageInstances != null) {
+                    for (DamageInstance damageInstance : extraDamageInstances) {
+                        critChance = damageInstance.addCritChanceFromAttacker(event, critChance);
+                        critMultiplier = damageInstance.addCritMultiplierFromAttacker(event, critMultiplier);
+                        if (previousCC != critChance) {
+                            debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                                    .create(2)
+                                    .prefix(ComponentBuilder.create("Crit Chance: ", NamedTextColor.GREEN))
+                                    .value(previousCC, critChance, abstractCooldown)
+                            );
+                        }
+                        if (previousCM != critMultiplier) {
+                            debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                                    .create(2)
+                                    .prefix(ComponentBuilder.create("Crit Multiplier: ", NamedTextColor.GREEN))
+                                    .value(previousCM, critMultiplier, abstractCooldown)
+                            );
+                        }
+                        previousCC = critChance;
+                        previousCM = critMultiplier;
+                    }
+                }
             }
             for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
+                List<DamageInstance> extraDamageInstances = abstractCooldown.getExtraDamageInstances();
                 critChance = abstractCooldown.setCritChanceFromAttacker(event, critChance);
                 critMultiplier = abstractCooldown.setCritMultiplierFromAttacker(event, critMultiplier);
                 if (previousCC != critChance) {
@@ -175,18 +218,48 @@ public class InstanceManager {
                 }
                 previousCC = critChance;
                 previousCM = critMultiplier;
+                if (extraDamageInstances != null) {
+                    for (DamageInstance e : extraDamageInstances) {
+                        critChance = e.setCritChanceFromAttacker(event, critChance);
+                        critMultiplier = e.setCritMultiplierFromAttacker(event, critMultiplier);
+                        if (previousCC != critChance) {
+                            debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                                    .create(2)
+                                    .prefix(ComponentBuilder.create("Crit Chance: ", NamedTextColor.GREEN))
+                                    .value(previousCC, critChance, abstractCooldown)
+                            );
+                        }
+                        if (previousCM != critMultiplier) {
+                            debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                                    .create(2)
+                                    .prefix(ComponentBuilder.create("Crit Multiplier: ", NamedTextColor.GREEN))
+                                    .value(previousCM, critMultiplier, abstractCooldown)
+                            );
+                        }
+                        previousCC = critChance;
+                        previousCM = critMultiplier;
+                    }
+                }
             }
         }
         //crit
         float damageValue = (int) ((Math.random() * (max - min)) + min);
         double crit = ThreadLocalRandom.current().nextDouble(100);
-        boolean isCrit = false;
-        if (critChance > 0 && crit <= critChance && attacker.isCanCrit()) {
+        boolean isCrit;
+        if (critChance > 0 && crit <= critChance && source.isCanCrit()) {
             isCrit = true;
             damageValue *= critMultiplier / 100f;
+        } else {
+            isCrit = false;
         }
         for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
             abstractCooldown.onPostCritCalculationFromAttacker(event, damageValue, isCrit, critChance, critMultiplier);
+            List<DamageInstance> extraDamageInstances = abstractCooldown.getExtraDamageInstances();
+            if (extraDamageInstances != null) {
+                for (DamageInstance damageInstance : extraDamageInstances) {
+                    damageInstance.onPostCritCalculationFromAttacker(event, damageValue, isCrit, critChance, critMultiplier);
+                }
+            }
         }
         debugMessage.appendTitle("Calculated Damage", NamedTextColor.AQUA);
         debugMessage.append(InstanceDebugHoverable.LevelBuilder
@@ -215,47 +288,56 @@ public class InstanceManager {
             );
         }
 
-        if (attacker == warlordsEntity && (isFallDamage || isMeleeHit)) {
+        if (source == warlordsEntity && (isFallDamage || isMeleeHit)) {
             if (isMeleeHit) {
                 // True damage
                 sendTookDamageMessage(warlordsEntity, debugMessage, min, "melee damage");
                 warlordsEntity.resetRegenTimer();
-                if (warlordsEntity.getCurrentHealth() - min <= 0 && !warlordsEntity.getCooldownManager().checkUndyingArmy(false)) {
-                    warlordsEntity.getEntity().showTitle(Title.title(
-                            Component.text("YOU DIED!", NamedTextColor.RED),
-                            Component.text("You took ", NamedTextColor.GRAY)
-                                     .append(Component.text(Math.round(min), NamedTextColor.RED))
-                                     .append(Component.text(" melee damage and died.")),
-                            Title.Times.times(Ticks.duration(0), Ticks.duration(40), Ticks.duration(0))
-                    ));
-                    warlordsEntity.die(attacker);
+                if (warlordsEntity.getCurrentHealth() - min <= 0) {
+                    warlordsEntity.die(
+                            source,
+                            WarlordsDeathEvent.DeathInfoBuilder
+                                    .create()
+                                    .setTitle(Title.title(
+                                            Component.text("YOU DIED!", NamedTextColor.RED),
+                                            Component.text("You took ", NamedTextColor.GRAY)
+                                                     .append(Component.text(Math.round(min), NamedTextColor.RED))
+                                                     .append(Component.text(" melee damage and died.")),
+                                            Title.Times.times(Ticks.duration(0), Ticks.duration(40), Ticks.duration(0))
+                                    ))
+                    );
                 } else {
                     warlordsEntity.setCurrentHealth(warlordsEntity.getCurrentHealth() - min);
-                    warlordsEntity.playHurtAnimation(attacker);
+                    warlordsEntity.playHurtAnimation(source);
                 }
             } else {
                 // Fall Damage
                 sendTookDamageMessage(warlordsEntity, debugMessage, damageValue, "fall damage");
                 warlordsEntity.resetRegenTimer();
-                if (warlordsEntity.getCurrentHealth() - damageValue <= 0 && !warlordsEntity.getCooldownManager().checkUndyingArmy(false)) {
-                    warlordsEntity.getEntity().showTitle(Title.title(
-                            Component.text("YOU DIED!", NamedTextColor.RED),
-                            Component.text("You took ", NamedTextColor.GRAY)
-                                     .append(Component.text(Math.round(min), NamedTextColor.RED))
-                                     .append(Component.text(" fall damage and died.")),
-                            Title.Times.times(Ticks.duration(0), Ticks.duration(40), Ticks.duration(0))
-                    ));
-                    warlordsEntity.die(attacker);
+                if (warlordsEntity.getCurrentHealth() - damageValue <= 0) {
+                    warlordsEntity.die(
+                            source,
+                            WarlordsDeathEvent.DeathInfoBuilder
+                                    .create()
+                                    .setTitle(Title.title(
+                                            Component.text("YOU DIED!", NamedTextColor.RED),
+                                            Component.text("You took ", NamedTextColor.GRAY)
+                                                     .append(Component.text(Math.round(min), NamedTextColor.RED))
+                                                     .append(Component.text(" fall damage and died.")),
+                                            Title.Times.times(Ticks.duration(0), Ticks.duration(40), Ticks.duration(0))
+                                    ))
+                    );
                 } else {
                     warlordsEntity.setCurrentHealth(warlordsEntity.getCurrentHealth() - damageValue);
-                    warlordsEntity.playHurtAnimation(attacker);
+                    warlordsEntity.playHurtAnimation(source);
                 }
 
-                for (OrderOfEviscerate.OrderOfEviscerateData orderOfEviscerate : new CooldownFilter<>(attacker, RegularCooldown.class)
+                // TODO refactor
+                for (OrderOfEviscerate.OrderOfEviscerateData orderOfEviscerate : new CooldownFilter<>(source, RegularCooldown.class)
                         .filterCooldownClassAndMapToObjectsOfClass(OrderOfEviscerate.OrderOfEviscerateData.class)
                         .toList()
                 ) {
-                    orderOfEviscerate.addAndCheckDamageThreshold(damageValue, attacker);
+                    orderOfEviscerate.addAndCheckDamageThreshold(damageValue, source);
                 }
             }
 
@@ -303,6 +385,27 @@ public class InstanceManager {
                     );
                 }
                 previousDamageValue = damageValue;
+                List<DamageInstance> extraDamageInstances = abstractCooldown.getExtraDamageInstances();
+                if (extraDamageInstances != null) {
+                    for (DamageInstance damageInstance : extraDamageInstances) {
+                        newDamageValue = damageInstance.modifyDamageBeforeInterveneFromSelf(event, newDamageValue);
+                    }
+                }
+                if (newDamageValue < damageValue && ignoreDamageReduction) { // pierce ignores victim dmg reduction
+                    continue;
+                }
+                damageValue = newDamageValue;
+                if (previousDamageValue != damageValue) {
+                    if (previousDamageValue > damageValue) {
+                        abstractCooldown.getFrom().addAbsorbed(previousDamageValue - damageValue);
+                    }
+                    debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                            .create(2)
+                            .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.GREEN))
+                            .value(previousDamageValue, damageValue, abstractCooldown)
+                    );
+                }
+                previousDamageValue = damageValue;
             }
 
             debugMessage.append(InstanceDebugHoverable.LevelBuilder
@@ -326,6 +429,26 @@ public class InstanceManager {
                     );
                 }
                 previousDamageValue = damageValue;
+                List<DamageInstance> extraDamageInstances = abstractCooldown.getExtraDamageInstances();
+                if (extraDamageInstances != null) {
+                    for (DamageInstance damageInstance : extraDamageInstances) {
+                        newDamageValue = damageInstance.modifyDamageBeforeInterveneFromAttacker(event, newDamageValue);
+                    }
+                }
+                if (newDamageValue > damageValue && noDamageBoost) { // no damage boost ignores attacker dmg increase
+                    continue;
+                }
+                damageValue = newDamageValue;
+                if (previousDamageValue != damageValue) {
+                    if (previousDamageValue > damageValue) {
+                        abstractCooldown.getFrom().addAbsorbed(previousDamageValue - damageValue);
+                    }
+                    debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                            .create(2)
+                            .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.GREEN))
+                            .value(previousDamageValue, damageValue, abstractCooldown)
+                    );
+                }
             }
             //debugMessage.append(Component.newline()).append(Component.text("In Hammer", NamedTextColor.RED));
         }
@@ -338,9 +461,9 @@ public class InstanceManager {
                 .findFirst();
         boolean intervened = !trueDamage && !pierceDamage &&
                 optionalInterveneCooldown.isPresent() && optionalInterveneCooldown.get().getTicksLeft() > 0 &&
-                warlordsEntity.isEnemy(attacker);
-        if (intervened && optionalInterveneCooldown.get().getFrom() == attacker) {
-            ChatUtils.MessageType.GAME.sendErrorMessage("Intervene Overflow? " + warlordsEntity.getName() + " intervened from " + attacker.getName() + " - " + event);
+                warlordsEntity.isEnemy(source);
+        if (intervened && optionalInterveneCooldown.get().getFrom() == source) {
+            ChatUtils.MessageType.GAME.sendErrorMessage("Intervene Overflow? " + warlordsEntity.getName() + " intervened from " + source.getName() + " - " + event);
             intervened = false;
         }
         if (intervened) {
@@ -369,18 +492,18 @@ public class InstanceManager {
                 intervenedBy.addInstance(InstanceBuilder
                         .damage()
                         .cause("Intervene")
-                        .source(attacker)
+                        .source(source)
                         .value(damageValue)
                         .showAsCrit(isCrit)
-                        .flags(InstanceFlags.TRUE_DAMAGE, InstanceFlags.IGNORE_CRIT_MODIFIERS)
+                        .flags(InstanceFlags.TRUE_DAMAGE)
                 );
                 warlordsEntity.addInstance(InstanceBuilder
                         .damage()
-                        .cause(ability)
-                        .source(attacker)
+                        .cause(cause)
+                        .source(source)
                         .value(overVeneDamage)
                         .showAsCrit(isCrit)
-                        .flags(InstanceFlags.TRUE_DAMAGE, InstanceFlags.IGNORE_CRIT_MODIFIERS)
+                        .flags(InstanceFlags.TRUE_DAMAGE)
                 ).ifPresent(finalEvent::set);
             } else {
                 damageValue *= data.getIntervene().getDamageReduction() / 100f;
@@ -394,17 +517,17 @@ public class InstanceManager {
                 intervenedBy.addInstance(InstanceBuilder
                         .damage()
                         .cause("Intervene")
-                        .source(attacker)
+                        .source(source)
                         .value(damageValue)
                         .showAsCrit(isCrit)
-                        .flags(InstanceFlags.IGNORE_CRIT_MODIFIERS)
                 );
                 finalEvent.set(new WarlordsDamageHealingFinalEvent(
                         event,
                         flags,
                         warlordsEntity,
-                        attacker,
+                        source,
                         ability,
+                        cause,
                         initialHealth,
                         damageHealValueBeforeAllReduction,
                         damageHealValueBeforeInterveneReduction,
@@ -421,14 +544,10 @@ public class InstanceManager {
             Location loc = warlordsEntity.getLocation();
             //EFFECTS + SOUNDS
             Utils.playGlobalSound(loc, "warrior.intervene.block", 2, 1);
-            attacker.playHitSound();
-            warlordsEntity.playHurtAnimation(attacker);
-            intervenedBy.playHurtAnimation(attacker);
+            source.playHitSound();
+            warlordsEntity.playHurtAnimation(source);
+            intervenedBy.playHurtAnimation(source);
             EffectUtils.playParticleLinkAnimation(warlordsEntity.getLocation(), intervenedBy.getLocation(), 255, 0, 0, 2);
-            // Remove horses.
-            if (!flags.contains(InstanceFlags.NO_DISMOUNT)) {
-                warlordsEntity.removeHorse();
-            }
 
             debugMessage.append(InstanceDebugHoverable.LevelBuilder
                     .create(1)
@@ -436,6 +555,12 @@ public class InstanceManager {
             );
             for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
                 abstractCooldown.onInterveneFromAttacker(event, damageValue);
+                List<DamageInstance> extraDamageInstances = abstractCooldown.getExtraDamageInstances();
+                if (extraDamageInstances != null) {
+                    for (DamageInstance damageInstance : extraDamageInstances) {
+                        damageInstance.onInterveneFromAttacker(event, damageValue);
+                    }
+                }
                 debugMessage.append(InstanceDebugHoverable.LevelBuilder
                         .create(2)
                         .prefix(abstractCooldown)
@@ -451,12 +576,33 @@ public class InstanceManager {
                         .create(1)
                         .prefix(ComponentBuilder.create("Target Cooldowns", NamedTextColor.DARK_GREEN))
                 );
-                for (AbstractCooldown<?> abstractCooldown : CooldownManager.getPrioritizedCooldowns(selfCooldownsDistinct,
+                for (AbstractCooldown<?> abstractCooldown : CooldownUtils.getPrioritizedCooldowns(selfCooldownsDistinct,
                         "modifyDamageAfterInterveneFromSelf",
                         WarlordsDamageHealingEvent.class,
                         float.class
                 )) {
                     float newDamageValue = abstractCooldown.modifyDamageAfterInterveneFromSelf(event, damageValue);
+                    if (newDamageValue < damageValue && ignoreDamageReduction) { // pierce ignores victim dmg reduction
+                        continue;
+                    }
+                    damageValue = newDamageValue;
+                    if (previousDamageValue != damageValue) {
+                        if (previousDamageValue > damageValue) {
+                            abstractCooldown.getFrom().addAbsorbed(previousDamageValue - damageValue);
+                        }
+                        debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                                .create(2)
+                                .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.GREEN))
+                                .value(previousDamageValue, damageValue, abstractCooldown)
+                        );
+                    }
+                    previousDamageValue = damageValue;
+                    List<DamageInstance> extraDamageInstances = abstractCooldown.getExtraDamageInstances();
+                    if (extraDamageInstances != null) {
+                        for (DamageInstance damageInstance : extraDamageInstances) {
+                            newDamageValue = damageInstance.modifyDamageAfterInterveneFromSelf(event, newDamageValue);
+                        }
+                    }
                     if (newDamageValue < damageValue && ignoreDamageReduction) { // pierce ignores victim dmg reduction
                         continue;
                     }
@@ -480,6 +626,12 @@ public class InstanceManager {
                 );
                 for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
                     float newDamageValue = abstractCooldown.modifyDamageAfterInterveneFromAttacker(event, damageValue);
+                    List<DamageInstance> extraDamageInstances = abstractCooldown.getExtraDamageInstances();
+                    if (extraDamageInstances != null) {
+                        for (DamageInstance damageInstance : extraDamageInstances) {
+                            newDamageValue = damageInstance.modifyDamageAfterInterveneFromAttacker(event, newDamageValue);
+                        }
+                    }
                     if (newDamageValue > damageValue && noDamageBoost) { // no damage boost ignores attacker dmg increase
                         continue;
                     }
@@ -507,15 +659,16 @@ public class InstanceManager {
             if (!trueDamage &&
                     !pierceDamage &&
                     shieldCooldown.isPresent() &&
-                    warlordsEntity.isEnemy(attacker)
+                    warlordsEntity.isEnemy(source)
             ) {
                 RegularCooldown cooldown = shieldCooldown.get();
                 Shield shield = (Shield) cooldown.getCooldownObject();
                 debugMessage.appendTitle("Shield (" + shield.getName() + ")", NamedTextColor.AQUA);
+                float preShieldHealth = shield.getShieldHealth();
                 debugMessage.append(InstanceDebugHoverable.LevelBuilder
                         .create(1)
                         .prefix(ComponentBuilder.create("Pre Health: ", NamedTextColor.GREEN))
-                        .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(shield.getShieldHealth()), NamedTextColor.GOLD))
+                        .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(preShieldHealth), NamedTextColor.GOLD))
                 );
                 //adding dmg to shield
                 shield.addShieldHealth(-damageValue);
@@ -531,76 +684,51 @@ public class InstanceManager {
                     cooldown.setTicksLeft(0);
                 }
                 if (shield.isBroken()) {
+                    cooldown.getFrom().addAbsorbed(preShieldHealth);
                     float newDamage = -shield.getShieldHealth();
-                    addDamageInstance(warlordsEntity, new InstanceDebugHoverable(), new WarlordsDamageHealingEvent(
-                            warlordsEntity,
-                            attacker,
-                            ability,
-                            newDamage,
-                            newDamage,
-                            isCrit ? 100 : 0,
-                            100,
-                            true,
-                            EnumSet.of(InstanceFlags.TRUE_DAMAGE, InstanceFlags.IGNORE_CRIT_MODIFIERS),
-                            customFlags
-                    ));
-
-                    cooldown.getFrom().addAbsorbed(-(shield.getShieldHealth()));
-
-                    return Optional.empty();
+                    List<CustomInstanceFlags> newCustomFlags = new ArrayList<>(customFlags);
+                    customFlags.stream()
+                               .filter(CustomInstanceFlags.InstanceShieldsInstanceFlag.class::isInstance)
+                               .map(CustomInstanceFlags.InstanceShieldsInstanceFlag.class::cast)
+                               .findAny()
+                               .ifPresentOrElse(
+                                       customInstanceFlags -> customInstanceFlags.shields().add(shield),
+                                       () -> newCustomFlags.add(new CustomInstanceFlags.InstanceShieldsInstanceFlag(new ArrayList<>(List.of(shield))))
+                               );
+                    return addDamageInstance(new InstanceDebugHoverable(), new WarlordsDamageHealingEvent(
+                                    warlordsEntity,
+                            source,
+                            cause,
+                                    newDamage,
+                                    newDamage,
+                                    isCrit ? 100 : 0,
+                                    100,
+                                    true,
+                                    EnumSet.of(InstanceFlags.TRUE_DAMAGE, InstanceFlags.IGNORE_CRIT_MODIFIERS),
+                            newCustomFlags,
+                            debugMessages
+                            )
+                    );
                 } else {
-                    double totalShieldHealth = new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
-                            .filterCooldownClassAndMapToObjectsOfClass(Shield.class)
-                            .mapToDouble(Shield::getShieldHealth)
-                            .sum();
-                    warlordsEntity.giveAbsorption((float) (totalShieldHealth / warlordsEntity.getMaxHealth() * 40));
+                    cooldown.getFrom().addAbsorbed(Math.abs(damageValue));
+
+                    Shield.updateAbsorption(warlordsEntity);
 
                     if (isMeleeHit) {
                         ownMessage.append(WarlordsEntity.RECEIVE_ARROW_RED
-                                .append(Component.text(" You absorbed " + attacker.getName() + "'s melee hit.", NamedTextColor.GRAY
+                                .append(Component.text(" You absorbed " + source.getName() + "'s melee hit.", NamedTextColor.GRAY
                                 )));
                         attackerMessage.append(WarlordsEntity.GIVE_ARROW_GREEN
                                 .append(Component.text(" Your melee hit was absorbed by " + warlordsEntity.getName() + ".", NamedTextColor.GRAY
                                 )));
                     } else {
                         ownMessage.append(WarlordsEntity.RECEIVE_ARROW_RED
-                                .append(Component.text(" You absorbed " + attacker.getName() + "'s " + ability + " hit.", NamedTextColor.GRAY
+                                .append(Component.text(" You absorbed " + source.getName() + "'s " + cause + " hit.", NamedTextColor.GRAY
                                 )));
                         attackerMessage.append(WarlordsEntity.GIVE_ARROW_GREEN
-                                .append(Component.text(" Your " + ability + " was absorbed by " + warlordsEntity.getName() + ".", NamedTextColor.GRAY
+                                .append(Component.text(" Your " + cause + " was absorbed by " + warlordsEntity.getName() + ".", NamedTextColor.GRAY
                                 )));
                     }
-
-                    cooldown.getFrom().addAbsorbed(Math.abs(damageHealValueBeforeAllReduction));
-                }
-
-                debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                        .create(1)
-                        .prefix(ComponentBuilder.create("On Shield", NamedTextColor.DARK_GREEN))
-                );
-                debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                        .create(2)
-                        .prefix(ComponentBuilder.create("Target Cooldowns", NamedTextColor.DARK_GREEN))
-                );
-
-                for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
-                    abstractCooldown.onShieldFromSelf(event, damageValue, isCrit);
-                    debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                            .create(3)
-                            .prefix(abstractCooldown)
-                    );
-                }
-
-                debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                        .create(2)
-                        .prefix(ComponentBuilder.create("Attackers Cooldowns", NamedTextColor.DARK_GREEN))
-                );
-                for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
-                    abstractCooldown.onShieldFromAttacker(event, damageValue, isCrit);
-                    debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                            .create(3)
-                            .prefix(abstractCooldown)
-                    );
                 }
 
                 if (shield.getShieldHealth() >= 0) {
@@ -625,42 +753,74 @@ public class InstanceManager {
                             }
                         }
                     }
-                    databasePlayer = DatabaseManager.getPlayer(attacker.getUuid(), attacker instanceof WarlordsPlayer && attacker.getEntity() instanceof Player);
+                    databasePlayer = DatabaseManager.getPlayer(source.getUuid(), source instanceof WarlordsPlayer && source.getEntity() instanceof Player);
                     switch (databasePlayer.getChatHealingMode()) {
                         case ALL -> {
-                            if (attacker.isShowDebugMessage()) {
-                                attacker.sendMessage(attackerMessage.build().hoverEvent(HoverEvent.showText(debugMessage.getDebugMessage())));
+                            if (source.isShowDebugMessage()) {
+                                source.sendMessage(attackerMessage.build().hoverEvent(HoverEvent.showText(debugMessage.getDebugMessage())));
                             } else {
-                                attacker.sendMessage(attackerMessage.build());
+                                source.sendMessage(attackerMessage.build());
                             }
                         }
                         case CRITS_ONLY -> {
                             if (isCrit) {
-                                if (attacker.isShowDebugMessage()) {
-                                    attacker.sendMessage(attackerMessage.build().hoverEvent(HoverEvent.showText(debugMessage.getDebugMessage())));
+                                if (source.isShowDebugMessage()) {
+                                    source.sendMessage(attackerMessage.build().hoverEvent(HoverEvent.showText(debugMessage.getDebugMessage())));
                                 } else {
-                                    attacker.sendMessage(attackerMessage.build());
+                                    source.sendMessage(attackerMessage.build());
                                 }
                             }
                         }
                     }
                 }
 
-                warlordsEntity.playHurtAnimation(attacker);
+                debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                        .create(1)
+                        .prefix(ComponentBuilder.create("On Shield", NamedTextColor.DARK_GREEN))
+                );
+                debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                        .create(2)
+                        .prefix(ComponentBuilder.create("Target Cooldowns", NamedTextColor.DARK_GREEN))
+                );
+
+                for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
+                    abstractCooldown.onShieldFromSelf(event, damageValue, isCrit);
+                    List<DamageInstance> extraDamageInstances = abstractCooldown.getExtraDamageInstances();
+                    if (extraDamageInstances != null) {
+                        for (DamageInstance damageInstance : extraDamageInstances) {
+                            damageInstance.onShieldFromSelf(event, damageValue, isCrit);
+                        }
+                    }
+                    debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                            .create(3)
+                            .prefix(abstractCooldown)
+                    );
+                }
+
+                debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                        .create(2)
+                        .prefix(ComponentBuilder.create("Attackers Cooldowns", NamedTextColor.DARK_GREEN))
+                );
+                for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
+//                    abstractCooldown.onShieldFromAttacker(event, damageValue, isCrit);
+                    debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                            .create(3)
+                            .prefix(abstractCooldown)
+                    );
+                }
+
+                warlordsEntity.playHurtAnimation(source);
 
                 if (!flags.contains(InstanceFlags.NO_HIT_SOUND)) {
-                    warlordsEntity.playHitSound(attacker);
-                }
-                if (!flags.contains(InstanceFlags.NO_DISMOUNT)) {
-                    warlordsEntity.removeHorse();
+                    warlordsEntity.playHitSound(source);
                 }
 
                 finalEvent.set(new WarlordsDamageHealingFinalEvent(
                         event,
                         flags,
                         warlordsEntity,
-                        attacker,
-                        ability,
+                        source,
+                        ability, cause,
                         initialHealth,
                         damageHealValueBeforeAllReduction,
                         damageHealValueBeforeInterveneReduction,
@@ -670,10 +830,11 @@ public class InstanceManager {
                         critMultiplier,
                         isCrit,
                         true,
-                        WarlordsDamageHealingFinalEvent.FinalEventFlag.SHIELDED
+                        WarlordsDamageHealingFinalEvent.FinalEventFlag.SHIELDED,
+                        new ArrayList<>(List.of(new CustomInstanceFlags.InstanceShieldsInstanceFlag(List.of(shield))))
                 ));
                 warlordsEntity.getSecondStats().addDamageHealingEventAsSelf(finalEvent.get());
-                attacker.getSecondStats().addDamageHealingEventAsAttacker(finalEvent.get());
+                source.getSecondStats().addDamageHealingEventAsAttacker(finalEvent.get());
             } else {
                 debugMessage.appendTitle("Modify Damage After All", NamedTextColor.AQUA);
                 debugMessage.append(InstanceDebugHoverable.LevelBuilder
@@ -693,33 +854,59 @@ public class InstanceManager {
                         );
                     }
                     previousDamageValue = damageValue;
+                    List<DamageInstance> extraDamageInstances = abstractCooldown.getExtraDamageInstances();
+                    if (extraDamageInstances != null) {
+                        for (DamageInstance damageInstance : extraDamageInstances) {
+                            damageValue = damageInstance.modifyDamageAfterAllFromSelf(event, damageValue, isCrit);
+                        }
+                    }
+                    if (previousDamageValue != damageValue) {
+                        if (previousDamageValue > damageValue) {
+                            abstractCooldown.getFrom().addAbsorbed(previousDamageValue - damageValue);
+                        }
+                        debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                                .create(2)
+                                .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.GREEN))
+                                .value(previousDamageValue, damageValue, abstractCooldown)
+                        );
+                    }
+                    previousDamageValue = damageValue;
                 }
 
                 boolean debt = warlordsEntity.getCooldownManager().hasCooldownFromName("Spirits' Respite");
                 //if (isEnemy(attacker)) {
-                warlordsEntity.getHitBy().put(attacker, 10);
+                warlordsEntity.getHitBy().put(source, 10);
                 warlordsEntity.cancelHealingPowerUp();
-                if (!flags.contains(InstanceFlags.NO_DISMOUNT)) {
-                    warlordsEntity.removeHorse();
-                }
 
                 float finalDamageValue = damageValue;
                 warlordsEntity.doOnStaticAbility(SoulShackle.class, soulShackle -> soulShackle.addToShacklePool(finalDamageValue));
                 warlordsEntity.doOnStaticAbility(Repentance.class, repentance -> repentance.addToPool(finalDamageValue));
 
                 if (!flags.contains(InstanceFlags.NO_MESSAGE)) {
-                    sendDamageMessage(warlordsEntity, debugMessage, attacker, warlordsEntity, ability, damageValue, isCrit, isMeleeHit, flags);
+                    sendDamageMessage(warlordsEntity, debugMessage, source, warlordsEntity, cause, damageValue, isCrit, isMeleeHit, flags);
                 }
                 //debugMessage.append("\n").append(ChatColor.AQUA).append("On Damage");
                 //appendDebugMessage(debugMessage, 1, ChatColor.DARK_GREEN, "Target Cooldowns");
                 for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
                     abstractCooldown.onDamageFromSelf(event, damageValue, isCrit);
+                    List<DamageInstance> extraDamageInstances = abstractCooldown.getExtraDamageInstances();
+                    if (extraDamageInstances != null) {
+                        for (DamageInstance damageInstance : extraDamageInstances) {
+                            damageInstance.onDamageFromSelf(event, damageValue, isCrit);
+                        }
+                    }
                     //appendDebugMessage(debugMessage, 2, abstractCooldown);
                 }
 
                 //appendDebugMessage(debugMessage, 1, ChatColor.DARK_GREEN, "Attackers Cooldowns");
                 for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
                     abstractCooldown.onDamageFromAttacker(event, damageValue, isCrit);
+                    List<DamageInstance> extraDamageInstances = abstractCooldown.getExtraDamageInstances();
+                    if (extraDamageInstances != null) {
+                        for (DamageInstance damageInstance : extraDamageInstances) {
+                            damageInstance.onDamageFromAttacker(event, damageValue, isCrit);
+                        }
+                    }
                     //appendDebugMessage(debugMessage, 2, abstractCooldown);
                 }
                 //}
@@ -728,24 +915,20 @@ public class InstanceManager {
                 warlordsEntity.updateHealth();
 
                 float cappedDamage = Math.min(damageValue, warlordsEntity.getCurrentHealth() - (flags.contains(InstanceFlags.CANT_KILL) ? 1 : 0));
-                attacker.addDamage(cappedDamage, FlagHolder.isPlayerHolderFlag(warlordsEntity));
+                source.addDamage(cappedDamage, FlagHolder.isPlayerHolderFlag(warlordsEntity));
                 warlordsEntity.addDamageTaken(cappedDamage);
-                warlordsEntity.playHurtAnimation(attacker);
-                if (attacker.isNoEnergyConsumption()) {
-                    attacker.getRecordDamage().add(cappedDamage);
-                }
-
-                // debt and healing
-                if (!debt && warlordsEntity.isTakeDamage()) {
-                    warlordsEntity.setCurrentHealth(Math.min(warlordsEntity.getCurrentHealth() - damageValue, warlordsEntity.getMaxHealth()));
+                warlordsEntity.playHurtAnimation(source);
+                if (source.isNoEnergyConsumption()) {
+                    source.getRecordDamage().add(cappedDamage);
                 }
 
                 finalEvent.set(new WarlordsDamageHealingFinalEvent(
                         event,
                         flags,
                         warlordsEntity,
-                        attacker,
+                        source,
                         ability,
+                        cause,
                         initialHealth,
                         damageHealValueBeforeAllReduction,
                         damageHealValueBeforeInterveneReduction,
@@ -758,64 +941,87 @@ public class InstanceManager {
                         WarlordsDamageHealingFinalEvent.FinalEventFlag.REGULAR
                 ));
                 warlordsEntity.getSecondStats().addDamageHealingEventAsSelf(finalEvent.get());
-                attacker.getSecondStats().addDamageHealingEventAsAttacker(finalEvent.get());
+                source.getSecondStats().addDamageHealingEventAsAttacker(finalEvent.get());
                 // The player died.
-                if (warlordsEntity.getCurrentHealth() <= 0 && !warlordsEntity.getCooldownManager().checkUndyingArmy(false)) {
-                    if (attacker.getEntity() instanceof Player player) {
-                        player.playSound(attacker.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 500f, 1);
-                        player.playSound(attacker.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 500f, 0.5f);
-                    }
+                float newHealth = warlordsEntity.getCurrentHealth();
+                if (!debt && warlordsEntity.isTakeDamage()) {
+                    newHealth = Math.min(warlordsEntity.getCurrentHealth() - damageValue, warlordsEntity.getMaxHealth());
+                }
+                if (newHealth <= 0) {
+                    warlordsEntity.die(
+                            source,
+                            WarlordsDeathEvent.DeathInfoBuilder
+                                    .create()
+                                    .setTitle(Title.title(
+                                            Component.text("YOU DIED!", NamedTextColor.RED),
+                                            Component.text(source.getName() + " killed you.", NamedTextColor.GRAY),
+                                            Title.Times.times(Ticks.duration(0), Ticks.duration(40), Ticks.duration(0))
+                                    ))
+                                    .setOnDeathRunnable(() -> {
+                                        if (source.getEntity() instanceof Player player) {
+                                            player.playSound(source.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 500f, 1);
+                                            player.playSound(source.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 500f, 0.5f);
+                                        }
 
-                    attacker.addKill();
+                                        source.addKill();
 
-                    warlordsEntity.getGame().forEachOnlinePlayer((p, t) -> {
-                        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(p.getUniqueId(), true);
-                        ChatSettings.ChatKills killsMode = databasePlayer.getChatKillsMode();
-                        if (killsMode != ChatSettings.ChatKills.ALL && killsMode != ChatSettings.ChatKills.NO_ASSISTS) {
-                            return;
-                        }
-                        if (p == warlordsEntity.getEntity()) {
-                            warlordsEntity.sendMessage(Component.text("You were killed by ", NamedTextColor.GRAY)
-                                                                .append(attacker.getColoredName()));
-                        } else if (p == attacker.getEntity()) {
-                            attacker.sendMessage(Component.text("You killed ", NamedTextColor.GRAY)
-                                                          .append(warlordsEntity.getColoredName()));
-                        } else {
-                            p.sendMessage(warlordsEntity.getColoredName()
-                                                        .append(Component.text(" was killed by ", NamedTextColor.GRAY))
-                                                        .append(attacker.getColoredName()));
-                        }
-                    });
+                                        warlordsEntity.getGame().forEachOnlinePlayer((p, t) -> {
+                                            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(p.getUniqueId(), true);
+                                            ChatSettings.ChatKills killsMode = databasePlayer.getChatKillsMode();
+                                            if (killsMode != ChatSettings.ChatKills.ALL && killsMode != ChatSettings.ChatKills.NO_ASSISTS) {
+                                                return;
+                                            }
+                                            if (p == warlordsEntity.getEntity()) {
+                                                warlordsEntity.sendMessage(Component.text("You were killed by ", NamedTextColor.GRAY)
+                                                                                    .append(source.getColoredName()));
+                                            } else if (p == source.getEntity()) {
+                                                source.sendMessage(Component.text("You killed ", NamedTextColor.GRAY)
+                                                                            .append(warlordsEntity.getColoredName()));
+                                            } else {
+                                                p.sendMessage(warlordsEntity.getColoredName()
+                                                                            .append(Component.text(" was killed by ", NamedTextColor.GRAY))
+                                                                            .append(source.getColoredName()));
+                                            }
+                                        });
 
-                    for (WarlordsEntity enemy : PlayerFilter.playingGame(warlordsEntity.getGame())
-                                                            .enemiesOf(warlordsEntity)
-                                                            .stream()
-                                                            .toList()
-                    ) {
-                        for (AbstractCooldown<?> abstractCooldown : enemy.getCooldownManager().getCooldownsDistinct()) {
-                            abstractCooldown.onDeathFromEnemies(event, damageValue, isCrit, enemy == attacker);
-                        }
-                    }
-                    warlordsEntity.getEntity().showTitle(Title.title(
-                            Component.text("YOU DIED!", NamedTextColor.RED),
-                            Component.text(attacker.getName() + " killed you.", NamedTextColor.GRAY),
-                            Title.Times.times(Ticks.duration(0), Ticks.duration(40), Ticks.duration(0))
-                    ));
-                    warlordsEntity.die(attacker);
+                                        for (WarlordsEntity enemy : PlayerFilter.playingGame(warlordsEntity.getGame())
+                                                                                .enemiesOf(warlordsEntity)
+                                                                                .stream()
+                                                                                .toList()
+                                        ) {
+                                            for (AbstractCooldown<?> abstractCooldown : enemy.getCooldownManager().getCooldownsDistinct()) {
+                                                abstractCooldown.onDeathFromEnemies(event, finalDamageValue, isCrit, enemy == source);
+                                                List<DamageInstance> extraDamageInstances = abstractCooldown.getExtraDamageInstances();
+                                                if (extraDamageInstances != null) {
+                                                    for (DamageInstance damageInstance : extraDamageInstances) {
+                                                        damageInstance.onDeathFromEnemies(event, finalDamageValue, isCrit, enemy == source);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    })
+                    );
                 } else {
-                    if (!flags.contains(InstanceFlags.NO_HIT_SOUND) && warlordsEntity != attacker && damageValue != 0) {
-                        warlordsEntity.playHitSound(attacker);
+                    warlordsEntity.setCurrentHealth(newHealth);
+                    if (!flags.contains(InstanceFlags.NO_HIT_SOUND) && warlordsEntity != source && damageValue != 0) {
+                        warlordsEntity.playHitSound(source);
                     }
                 }
             }
         }
 
-        for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
-            abstractCooldown.onEndFromSelf(event, damageValue, isCrit);
-        }
+//        for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
+//            abstractCooldown.onEndFromSelf(event, damageValue, isCrit);
+//        }
 
         for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
             abstractCooldown.onEndFromAttacker(event, damageValue, isCrit);
+            List<DamageInstance> extraDamageInstances = abstractCooldown.getExtraDamageInstances();
+            if (extraDamageInstances != null) {
+                for (DamageInstance damageInstance : extraDamageInstances) {
+                    damageInstance.onEndFromAttacker(event, damageValue, isCrit);
+                }
+            }
         }
 
         return Optional.ofNullable(finalEvent.get());
@@ -839,23 +1045,36 @@ public class InstanceManager {
     }
 
     private static Optional<WarlordsDamageHealingFinalEvent> addHealingInstance(
-            WarlordsEntity warlordsEntity,
             InstanceDebugHoverable debugMessage,
             WarlordsDamageHealingEvent event
     ) {
-        WarlordsEntity attacker = event.getSource();
+        WarlordsEntity warlordsEntity = event.getWarlordsEntity();
+        WarlordsEntity source = event.getSource();
 
         List<AbstractCooldown<?>> selfCooldownsDistinct = warlordsEntity.getCooldownManager().getCooldownsDistinct();
-        List<AbstractCooldown<?>> attackersCooldownsDistinct = attacker.getCooldownManager().getCooldownsDistinct();
+        List<AbstractCooldown<?>> attackersCooldownsDistinct = source.getCooldownManager().getCooldownsDistinct();
 
         for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
             abstractCooldown.healingDoBeforeVariableSetFromSelf(event);
+            List<HealingInstance> extraHealingInstances = abstractCooldown.getExtraHealingInstances();
+            if (extraHealingInstances != null) {
+                for (HealingInstance healingInstance : extraHealingInstances) {
+                    healingInstance.healingDoBeforeVariableSetFromSelf(event);
+                }
+            }
         }
         for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
             abstractCooldown.healingDoBeforeVariableSetFromAttacker(event);
+            List<HealingInstance> extraHealingInstances = abstractCooldown.getExtraHealingInstances();
+            if (extraHealingInstances != null) {
+                for (HealingInstance healingInstance : extraHealingInstances) {
+                    healingInstance.healingDoBeforeVariableSetFromAttacker(event);
+                }
+            }
         }
 
-        String ability = event.getCause();
+        AbstractAbility ability = event.getAbility();
+        String cause = event.getCause();
         float min = event.getMin();
         float max = event.getMax();
         float critChance = event.getCritChance();
@@ -863,10 +1082,11 @@ public class InstanceManager {
         EnumSet<InstanceFlags> flags = event.getFlags();
         boolean isLastStandFromShield = flags.contains(InstanceFlags.LAST_STAND_FROM_SHIELD);
         boolean pierce = flags.contains(InstanceFlags.PIERCE);
+        boolean trueHealing = flags.contains(InstanceFlags.TRUE_HEALING);
 
         WarlordsDamageHealingFinalEvent finalEvent;
         // Spawn Protection / Undying Army / Game State
-        if ((warlordsEntity.isDead() && !warlordsEntity.getCooldownManager().checkUndyingArmy(false)) || !warlordsEntity.isActive()) {
+        if (warlordsEntity.isDead() || !warlordsEntity.isActive()) {
             return Optional.empty();
         }
 
@@ -879,7 +1099,7 @@ public class InstanceManager {
         double crit = ThreadLocalRandom.current().nextDouble(100);
         boolean isCrit = false;
 
-        if (crit <= critChance && attacker.isCanCrit()) {
+        if (crit <= critChance && source.isCanCrit()) {
             isCrit = true;
             healValue *= critMultiplier / 100f;
         }
@@ -904,38 +1124,72 @@ public class InstanceManager {
                 .create(1)
                 .prefix(ComponentBuilder.create("Target Cooldowns", NamedTextColor.DARK_GREEN))
         );
-        for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
-            float newHealValue = abstractCooldown.modifyHealingFromSelf(event, healValue);
-            if (newHealValue < healValue && pierce) { // pierce ignores victim healing reduction
-                continue;
+        if (!trueHealing) {
+            for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
+                float newHealValue = abstractCooldown.modifyHealingFromSelf(event, healValue);
+                if (newHealValue < healValue && pierce) { // pierce ignores victim healing reduction
+                    continue;
+                }
+                healValue = newHealValue;
+                if (previousHealValue != healValue) {
+                    debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                            .create(2)
+                            .prefix(ComponentBuilder.create("Heal Value: ", NamedTextColor.GREEN))
+                            .value(previousHealValue, healValue, abstractCooldown)
+                    );
+                }
+                previousHealValue = healValue;
+                List<HealingInstance> extraHealingInstances = abstractCooldown.getExtraHealingInstances();
+                if (extraHealingInstances != null) {
+                    for (HealingInstance healingInstance : extraHealingInstances) {
+                        newHealValue = healingInstance.modifyHealingFromSelf(event, newHealValue);
+                    }
+                }
+                if (newHealValue < healValue && pierce) { // pierce ignores victim healing reduction
+                    continue;
+                }
+                healValue = newHealValue;
+                if (previousHealValue != healValue) {
+                    debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                            .create(2)
+                            .prefix(ComponentBuilder.create("Heal Value: ", NamedTextColor.GREEN))
+                            .value(previousHealValue, healValue, abstractCooldown)
+                    );
+                }
+                previousHealValue = healValue;
             }
-            healValue = newHealValue;
-            if (previousHealValue != healValue) {
-                debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                        .create(2)
-                        .prefix(ComponentBuilder.create("Heal Value: ", NamedTextColor.GREEN))
-                        .value(previousHealValue, healValue, abstractCooldown)
-                );
+            debugMessage.appendTitle("Attackers Cooldowns", NamedTextColor.AQUA);
+            for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
+                healValue = abstractCooldown.modifyHealingFromAttacker(event, healValue);
+                if (previousHealValue != healValue) {
+                    debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                            .create(2)
+                            .prefix(ComponentBuilder.create("Heal Value: ", NamedTextColor.GREEN))
+                            .value(previousHealValue, healValue, abstractCooldown)
+                    );
+                }
+                previousHealValue = healValue;
+                List<HealingInstance> extraHealingInstances = abstractCooldown.getExtraHealingInstances();
+                if (extraHealingInstances != null) {
+                    for (HealingInstance healingInstance : extraHealingInstances) {
+                        healValue = healingInstance.modifyHealingFromAttacker(event, healValue);
+                    }
+                }
+                if (previousHealValue != healValue) {
+                    debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                            .create(2)
+                            .prefix(ComponentBuilder.create("Heal Value: ", NamedTextColor.GREEN))
+                            .value(previousHealValue, healValue, abstractCooldown)
+                    );
+                }
+                previousHealValue = healValue;
             }
-            previousHealValue = healValue;
         }
 
-        debugMessage.appendTitle("Attackers Cooldowns", NamedTextColor.AQUA);
-        for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
-            healValue = abstractCooldown.modifyHealingFromAttacker(event, healValue);
-            if (previousHealValue != healValue) {
-                debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                        .create(2)
-                        .prefix(ComponentBuilder.create("Heal Value: ", NamedTextColor.GREEN))
-                        .value(previousHealValue, healValue, abstractCooldown)
-                );
-            }
-            previousHealValue = healValue;
-        }
-        if (warlordsEntity == attacker || warlordsEntity.isTeammate(attacker)) {
+        if (warlordsEntity == source || warlordsEntity.isTeammate(source)) {
             float maxHealth = warlordsEntity.getHealth().getCalculatedValue();
-            boolean overhealSelf = warlordsEntity == attacker && flags.contains(InstanceFlags.CAN_OVERHEAL_SELF);
-            boolean overhealOthers = warlordsEntity != attacker && warlordsEntity.isTeammate(attacker) && flags.contains(InstanceFlags.CAN_OVERHEAL_OTHERS);
+            boolean overhealSelf = warlordsEntity == source && flags.contains(InstanceFlags.CAN_OVERHEAL_SELF);
+            boolean overhealOthers = warlordsEntity != source && warlordsEntity.isTeammate(source) && flags.contains(InstanceFlags.CAN_OVERHEAL_OTHERS);
             if (overhealSelf || overhealOthers) {
                 maxHealth *= 1.1f;
             }
@@ -948,10 +1202,10 @@ public class InstanceManager {
             }
 
             boolean isOverheal = maxHealth > warlordsEntity.getMaxHealth() && healValue + warlordsEntity.getCurrentHealth() > warlordsEntity.getMaxBaseHealth();
-            if (warlordsEntity == attacker) {
-                sendHealingMessage(warlordsEntity, debugMessage, healValue, ability, isCrit, isLastStandFromShield, isOverheal);
+            if (warlordsEntity == source) {
+                sendHealingMessage(warlordsEntity, debugMessage, healValue, cause, isCrit, isLastStandFromShield, isOverheal);
             } else {
-                sendHealingMessage(warlordsEntity, debugMessage, attacker, warlordsEntity, healValue, ability, isCrit, isLastStandFromShield, isOverheal);
+                sendHealingMessage(warlordsEntity, debugMessage, source, warlordsEntity, healValue, cause, isCrit, isLastStandFromShield, isOverheal);
             }
 
             for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
@@ -962,11 +1216,11 @@ public class InstanceManager {
             }
 
             float cappedHealValue = Math.min(healValue, maxHealth - warlordsEntity.getCurrentHealth());
-            attacker.addHealing(cappedHealValue, FlagHolder.isPlayerHolderFlag(warlordsEntity));
+            source.addHealing(cappedHealValue, FlagHolder.isPlayerHolderFlag(warlordsEntity));
             warlordsEntity.setCurrentHealth(warlordsEntity.getCurrentHealth() + healValue);
 
             if (!flags.contains(InstanceFlags.NO_HIT_SOUND)) {
-                warlordsEntity.playHitSound(attacker);
+                warlordsEntity.playHitSound(source);
             }
         }
 
@@ -974,8 +1228,9 @@ public class InstanceManager {
                 event,
                 flags,
                 warlordsEntity,
-                attacker,
+                source,
                 ability,
+                cause,
                 initialHealth,
                 healValueBeforeReduction,
                 healValueBeforeReduction,
@@ -988,7 +1243,7 @@ public class InstanceManager {
                 WarlordsDamageHealingFinalEvent.FinalEventFlag.REGULAR
         );
         warlordsEntity.getSecondStats().addDamageHealingEventAsSelf(finalEvent);
-        attacker.getSecondStats().addDamageHealingEventAsAttacker(finalEvent);
+        source.getSecondStats().addDamageHealingEventAsAttacker(finalEvent);
 
         return Optional.of(finalEvent);
     }
@@ -1227,4 +1482,5 @@ public class InstanceManager {
             }
         }
     }
+
 }

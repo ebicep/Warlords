@@ -2,14 +2,15 @@ package com.ebicep.warlords.player.ingame;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.UndyingArmy;
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.HealingPowerup;
 import com.ebicep.warlords.abilities.internal.Overheal;
 import com.ebicep.warlords.achievements.Achievement;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
-import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.commands.debugcommands.misc.AdminCommand;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.player.ingame.*;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsAddCurrencyEvent;
@@ -21,10 +22,11 @@ import com.ebicep.warlords.game.flags.PlayerFlagLocation;
 import com.ebicep.warlords.game.option.marker.CompassTargetMarker;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
+import com.ebicep.warlords.game.option.pvp.HorseOption;
 import com.ebicep.warlords.permissions.Permissions;
+import com.ebicep.warlords.player.general.AbstractPlayerClass;
 import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.MinuteStats;
-import com.ebicep.warlords.player.general.SkillBoosts;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.settings.ChatSettings;
 import com.ebicep.warlords.player.general.settings.actionbar.ActionBarSettings;
@@ -32,15 +34,18 @@ import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceManager;
+import com.ebicep.warlords.player.ingame.motionsystem.MotionModifier;
+import com.ebicep.warlords.player.ingame.motionsystem.MotionModifierBuilder;
+import com.ebicep.warlords.player.ingame.motionsystem.MotionSystem;
+import com.ebicep.warlords.player.ingame.motionsystem.speed.BaseToWalkingSpeedValueModifier;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.bukkit.TeleportUtils;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.StringUtils;
-import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiableFilter;
-import io.papermc.paper.entity.TeleportFlag;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -65,7 +70,6 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.potion.PotionEffect;
@@ -96,11 +100,11 @@ public abstract class WarlordsEntity {
     protected final List<Component> debugMessageLog = new ArrayList<>();
     protected DatabasePlayer cachedDatabasePlayer;
     protected boolean spawnGrave = true;
-    protected CalculateSpeed speed;
+    protected MotionSystem speed;
+    protected MotionSystem knockback;
     protected String name;
     protected UUID uuid;
     protected AbstractPlayerClass spec;
-    protected float walkSpeed = 1;
     protected Entity entity;
     protected Specializations specClass;
     @Nullable
@@ -108,6 +112,9 @@ public abstract class WarlordsEntity {
     protected CooldownManager cooldownManager = new CooldownManager(this);
     protected float currentHealth;
     protected FloatModifiable health;
+    protected FloatModifiable energy;
+    protected FloatModifiable energyPerSec;
+    protected FloatModifiable energyPerHit;
     protected FloatModifiableFilter maxBaseHealthFilter = new FloatModifiableFilter.BaseFilter();
     private final List<Float> recordDamage = new ArrayList<>();
     private final PlayerStatisticsMinute minuteStats = new PlayerStatisticsMinute();
@@ -118,6 +125,8 @@ public abstract class WarlordsEntity {
     private final LinkedHashMap<WarlordsEntity, Integer> hitBy = new LinkedHashMap<>();
     private final LinkedHashMap<WarlordsEntity, Integer> healedBy = new LinkedHashMap<>();
     private final List<Location> locations = new ArrayList<>();
+    private final Map<WarlordsEntityFlag, Boolean> flags = new EnumMap<>(WarlordsEntityFlag.class);
+    private float currentEnergy = 0;
     private Location deathLocation;
     private Vector currentVector;
     private Team team;
@@ -125,9 +134,6 @@ public abstract class WarlordsEntity {
     private float regenTickTimerModifier = 1;
     private int respawnTickTimer = -1;
     private boolean dead = false;
-    private float energy = 0;
-    private float horseCooldown = 0;
-    private float currentHealthModifier = 1;
     private int flagDropCooldown = 0;
     private int flagPickCooldown = 0;
     private int hitCooldown = 20;
@@ -136,7 +142,7 @@ public abstract class WarlordsEntity {
     private int blocksTravelledCM = 0;
     private boolean noEnergyConsumption;
     private boolean disableCooldowns;
-    private double energyModifier = 1;
+    private float energyModifier = 1;
     private boolean takeDamage = true;
     private boolean canCrit = true;
     @Nullable
@@ -153,11 +159,13 @@ public abstract class WarlordsEntity {
         this.uuid = player.getUniqueId();
         this.entity = player;
         this.specClass = specialization;
-        this.spec = specialization.create.get();
+        this.spec = specialization.create();
         this.currentHealth = this.spec.getMaxHealth();
-        this.health = new FloatModifiable(this.currentHealth) {{
-            addFilter(maxBaseHealthFilter);
-        }};
+        this.health = new FloatModifiable(this.currentHealth);
+        this.health.addFilter(maxBaseHealthFilter);
+        this.energy = new FloatModifiable(this.spec.getMaxEnergy());
+        this.energyPerSec = new FloatModifiable(this.spec.getEnergyPerSec());
+        this.energyPerHit = new FloatModifiable(this.spec.getEnergyPerHit());
         this.spec.updateCustomStats(this);
     }
 
@@ -182,8 +190,9 @@ public abstract class WarlordsEntity {
             @Nonnull Team team,
             @Nonnull Specializations specClass
     ) {
-        this(uuid, name, entity, game, team, specClass.create.get());
+        this(uuid, name, entity, game, team, specClass.create());
         this.specClass = specClass;
+        this.specClass.init(this);
     }
 
     public WarlordsEntity(
@@ -200,24 +209,22 @@ public abstract class WarlordsEntity {
         this.team = team;
         this.spec = playerClass;
         this.currentHealth = this.spec.getMaxHealth();
-        this.health = new FloatModifiable(this.currentHealth) {{
-            addFilter(maxBaseHealthFilter);
-        }};
+        this.health = new FloatModifiable(this.currentHealth);
+        this.health.addFilter(maxBaseHealthFilter);
+        this.energy = new FloatModifiable(this.spec.getMaxEnergy());
+        this.energyPerSec = new FloatModifiable(this.spec.getEnergyPerSec());
+        this.energyPerHit = new FloatModifiable(this.spec.getEnergyPerHit());
         this.spec.updateCustomStats(this);
+        this.resetSpeed();
         this.isInPve = com.ebicep.warlords.game.GameMode.isPvE(game.getGameMode());
-        this.speed = isInPve() ?
-                     new CalculateSpeed(this, this::setWalkSpeed, 13, true) :
-                     new CalculateSpeed(this, this::setWalkSpeed, 13);
+        this.knockback = new MotionSystem();
         this.entity = entity;
         this.deathLocation = this.entity.getLocation();
     }
 
-    public boolean isInPve() {
-        return isInPve;
-    }
-
-    public List<Location> getLocations() {
-        return locations;
+    protected void resetSpeed() {
+        this.speed = new MotionSystem();
+        this.speed.addChangeListener(this::setWalkSpeed);
     }
 
     @Override
@@ -229,8 +236,25 @@ public abstract class WarlordsEntity {
                 '}';
     }
 
+    protected void setWalkSpeed(float walkSpeed) {
+        Player player = Bukkit.getPlayer(uuid);
+        if (player != null) {
+            player.setWalkSpeed(MathUtils.clamp(walkSpeed, -1f, 1f));
+        } else if (entity instanceof LivingEntity livingEntity) {
+            livingEntity.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(walkSpeed);
+        }
+    }
+
+    public boolean isInPve() {
+        return isInPve;
+    }
+
+    public List<Location> getLocations() {
+        return locations;
+    }
+
     public Optional<WarlordsDamageHealingFinalEvent> addInstance(InstanceBuilder instanceBuilder) {
-        return InstanceManager.addDamageHealingInstance(this, instanceBuilder.target(this).build());
+        return InstanceManager.addDamageHealingInstance(instanceBuilder.target(this).build());
     }
 
     /**
@@ -276,10 +300,24 @@ public abstract class WarlordsEntity {
         return cooldownManager;
     }
 
-    public void die(@Nullable WarlordsEntity attacker) {
+    public void die(@Nullable WarlordsEntity attacker, WarlordsDeathEvent.DeathInfoBuilder deathInfoBuilder) {
+        WarlordsDeathEvent.DeathInfo deathInfo = deathInfoBuilder.createDeathInfo();
+        WarlordsDeathEvent deathEvent = new WarlordsDeathEvent(this, attacker, deathInfo);
+        Bukkit.getPluginManager().callEvent(deathEvent);
+        if (deathEvent.isForceCancel() || (deathEvent.isCancelled() && !deathInfo.forced())) { // TODO check forced
+            return;
+        }
+
         dead = true;
 
-        removeHorse();
+        Title title = deathInfo.title();
+        if (title != null) {
+            entity.showTitle(title);
+        }
+        Runnable runnable = deathInfo.onDeathRunnable();
+        if (runnable != null) {
+            runnable.run();
+        }
 
         getLocation(this.deathLocation);
 
@@ -306,10 +344,11 @@ public abstract class WarlordsEntity {
             }
             //removing boner
             player.getInventory().remove(UndyingArmy.BONE);
+        } else {
+            entity.remove();
         }
         //removing yellow hearts
         giveAbsorption(0);
-        Bukkit.getPluginManager().callEvent(new WarlordsDeathEvent(this, attacker));
 
         //giving out assists
         hitBy.forEach((assisted, value) -> {
@@ -334,12 +373,6 @@ public abstract class WarlordsEntity {
         hitBy.clear();
         regenTickTimer = 0;
         heal();
-    }
-
-    public void removeHorse() {
-        if (entity.getVehicle() != null) {
-            entity.getVehicle().remove();
-        }
     }
 
     @Nonnull
@@ -531,9 +564,17 @@ public abstract class WarlordsEntity {
     }
 
     public <T> List<T> getAbilitiesMatching(Class<T> clazz) {
-        return spec.getAbilities().stream()
+        return spec.getAbilities()
+                   .stream()
                    .filter(clazz::isInstance)
                    .map(clazz::cast)
+                   .collect(Collectors.toList());
+    }
+
+    public <T> List<AbstractAbility> getAbilitiesImplementing(Class<T> clazz) {
+        return spec.getAbilities()
+                   .stream()
+                   .filter(clazz::isInstance)
                    .collect(Collectors.toList());
     }
 
@@ -587,9 +628,9 @@ public abstract class WarlordsEntity {
      * @param item
      */
     public void updateCustomItem(Player player, int slot, AbstractAbility ability, @Nullable ItemStack item) {
-        if (ability.getCurrentCooldown() > 0) {
+        if (!ability.anyCharges()) {
             ItemBuilder cooldown = new ItemBuilder(Material.GRAY_DYE, ability.getCurrentCooldownItem());
-            if (!ability.getSecondaryAbilities().isEmpty()) {
+            if (ability.hasActiveSecondaryAbilities()) {
                 cooldown.enchant(Enchantment.RESPIRATION, 1);
             }
             player.getInventory().setItem(slot, cooldown.get());
@@ -624,28 +665,12 @@ public abstract class WarlordsEntity {
 
     }
 
-    public void setSpec(Specializations spec, SkillBoosts skillBoost) {
-        this.spec = spec.create.get();
-        this.spec.updateCustomStats(this);
-        this.health.setBaseValue(this.spec.getMaxHealth());
-        this.currentHealth = getMaxHealth();
-        heal();
-        this.energy = this.spec.getMaxEnergy();
-        if (this instanceof WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.queueUpdateTabName();
-        }
+    public boolean setStunTicks(int stunTicks) {
+        return false;
     }
 
-    public float getMaxHealth() {
-        return health.getCalculatedValue();
-    }
+    public void unstun() {
 
-    public float getCurrentHealth() {
-        return currentHealth;
-    }
-
-    public void setCurrentHealth(float currentHealth) {
-        this.currentHealth = currentHealth;
     }
 
     public FloatModifiable getHealth() {
@@ -658,7 +683,7 @@ public abstract class WarlordsEntity {
     }
 
     public void resetRegenTimer() {
-        regenTickTimer = (int) (200 * regenTickTimerModifier);
+        regenTickTimer = Math.max(regenTickTimer, (int) (200 * regenTickTimerModifier));
     }
 
     public void setRegenTickTimerModifier(float regenTickTimerModifier) {
@@ -669,29 +694,20 @@ public abstract class WarlordsEntity {
         return respawnTickTimer;
     }
 
-    public void setRespawnTimerSeconds(int respawnTickTimer) {
-        //convert respawntimer to ticks
-        this.respawnTickTimer = respawnTickTimer == -1 ? -1 : respawnTickTimer * 20;
-    }
-
-    public float getEnergy() {
-        return energy;
-    }
-
-    public void setEnergy(float energy) {
-        this.energy = energy;
-    }
-
     public float addEnergy(WarlordsEntity giver, @Nullable String ability, float amount) {
         float energyGiven = 0;
-        if (energy + amount > getMaxEnergy()) {
-            energyGiven = getMaxEnergy() - energy;
-            this.energy = getMaxEnergy();
-        } else if (energy + amount > 0) {
+        if (currentEnergy + amount > getMaxEnergy()) {
+            energyGiven = getMaxEnergy() - currentEnergy;
+            if (flag(WarlordsEntityFlag.GAIN_ENERGY)) {
+                this.currentEnergy = getMaxEnergy();
+            }
+        } else if (currentEnergy + amount > 0) {
             energyGiven = amount;
-            this.energy += amount;
+            if (flag(WarlordsEntityFlag.GAIN_ENERGY)) {
+                this.currentEnergy += amount;
+            }
         } else {
-            this.energy = 1;
+            this.currentEnergy = 1;
         }
         if ((int) energyGiven != 0 && ability != null) {
             DatabasePlayer receiverSettings = this.getDatabasePlayer();
@@ -726,7 +742,15 @@ public abstract class WarlordsEntity {
     }
 
     public float getMaxEnergy() {
-        return spec.getMaxEnergy();
+        return this.energy.getCalculatedValue();
+    }
+
+    public boolean flag(WarlordsEntityFlag flag) {
+        return flags.getOrDefault(flag, flag.getDefaultValue());
+    }
+
+    public void setFlag(WarlordsEntityFlag flag, boolean value) {
+        flags.put(flag, value);
     }
 
     public float subtractEnergy(String from, FloatModifiable amount, boolean fromAttacker) {
@@ -737,10 +761,10 @@ public abstract class WarlordsEntity {
         float amountSubtracted = 0;
         if (!noEnergyConsumption) {
             amount *= energyModifier;
-            if (energy - amount > getMaxEnergy()) {
-                amountSubtracted = getMaxEnergy() - energy;
-            } else if (energy - amount < 0) {
-                amountSubtracted = energy;
+            if (currentEnergy - amount > getMaxEnergy()) {
+                amountSubtracted = getMaxEnergy() - currentEnergy;
+            } else if (currentEnergy - amount < 0) {
+                amountSubtracted = currentEnergy;
             } else {
                 amountSubtracted = amount;
             }
@@ -752,7 +776,9 @@ public abstract class WarlordsEntity {
                 amountSubtracted = 0;
             }
         }
-        energy -= amountSubtracted;
+        if (flag(WarlordsEntityFlag.GAIN_ENERGY)) {
+            currentEnergy -= amountSubtracted;
+        }
         if (!fromAttacker) {
             Bukkit.getPluginManager().callEvent(new WarlordsEnergyUseEvent.Post(this, from, amountSubtracted));
         }
@@ -807,22 +833,6 @@ public abstract class WarlordsEntity {
         return this.entity.getVehicle() != null;
     }
 
-    public float getHorseCooldown() {
-        return horseCooldown;
-    }
-
-    public void setHorseCooldown(float horseCooldown) {
-        this.horseCooldown = horseCooldown;
-    }
-
-    public int getHitCooldown() {
-        return hitCooldown;
-    }
-
-    public void setHitCooldown(int hitCooldown) {
-        this.hitCooldown = hitCooldown;
-    }
-
     public void addKill() {
         this.minuteStats.addKill();
         addToSpecMinuteStats(PlayerStatisticsMinute::addKill);
@@ -875,6 +885,7 @@ public abstract class WarlordsEntity {
      *
      * @param minuteStatsType The type of minute stats to get the hoverable text for
      * @param hoverable       if the text should be hoverable
+     *
      * @return List of hoverable minute stats that make up minuteStatsType.name
      */
     public Component getAllMinuteHoverableStats(MinuteStats minuteStatsType, boolean hoverable) {
@@ -891,7 +902,8 @@ public abstract class WarlordsEntity {
             if (size > MINUTE_STATS_SPLITS) {
                 int timesToSplit = size / MINUTE_STATS_SPLITS + 1;
                 String[] splitString = StringUtils.splitStringNTimes(minuteStatsTypeName + ": " + NumberFormat.addCommaAndRound(
-                        minuteStatsType.getValue.apply(minuteStats.total())), timesToSplit);
+                        minuteStatsType.getValue.apply(minuteStats.total())), timesToSplit
+                );
                 int stringLength = 0;
                 for (int i = 0; i < splitString.length; i++) {
                     for (int j = 0; j < MINUTE_STATS_SPLITS; j++) {
@@ -964,22 +976,33 @@ public abstract class WarlordsEntity {
         return this.game;
     }
 
-    public Runnable addSpeedModifier(WarlordsEntity from, String name, float modifier, int duration, String... toDisable) {
-        return addSpeedModifier(new CalculateSpeed.Modifier(from, name, modifier, duration, Arrays.asList(toDisable), false));
+    public void addKnockbackModifier(WarlordsEntity from, String name, float modifier, int duration) {
+        addKnockbackModifier(new MotionModifierBuilder().setFrom(from).setName(name).setModifier(modifier).setDuration(duration).build());
     }
 
-    public Runnable addSpeedModifier(CalculateSpeed.Modifier modifier) {
+    public void addKnockbackModifier(MotionModifier modifier) {
+        this.knockback.addModifier(modifier);
+    }
+
+    public void addKnockbackModifier(WarlordsEntity from, String name, float modifier, AbstractCooldown<?> linkedCooldown) {
+        addKnockbackModifier(new MotionModifierBuilder().setFrom(from).setName(name).setModifier(modifier).linkToCooldown(this, linkedCooldown).build());
+    }
+
+    public void addSpeedModifier(WarlordsEntity from, String name, float modifier, int duration) {
+        addSpeedModifier(new MotionModifierBuilder().setFrom(from).setName(name).setModifier(modifier).setDuration(duration).build());
+    }
+
+    public void addSpeedModifier(MotionModifier modifier) {
         WarlordsAddSpeedModifierEvent speedModifierEvent = new WarlordsAddSpeedModifierEvent(this, modifier);
         Bukkit.getPluginManager().callEvent(speedModifierEvent);
         if (speedModifierEvent.isCancelled()) {
-            return () -> {
-            };
+            return;
         }
-        return this.speed.addSpeedModifier(modifier);
+        this.speed.addModifier(modifier);
     }
 
-    public Runnable addSpeedModifier(WarlordsEntity from, String name, float modifier, int duration, boolean afterLimit, String... toDisable) {
-        return addSpeedModifier(new CalculateSpeed.Modifier(from, name, modifier, duration, Arrays.asList(toDisable), afterLimit));
+    public void addSpeedModifier(WarlordsEntity from, String name, float modifier, AbstractCooldown<?> linkedCooldown) {
+        addSpeedModifier(new MotionModifierBuilder().setFrom(from).setName(name).setModifier(modifier).linkToCooldown(this, linkedCooldown).build());
     }
 
     public Location getDeathLocation() {
@@ -1076,13 +1099,11 @@ public abstract class WarlordsEntity {
     }
 
     public void teleportLocationOnly(Location location) {
-        if (this.entity instanceof Player) {
-            entity.teleport(location,
-                    PlayerTeleportEvent.TeleportCause.PLUGIN,
-                    TeleportFlag.Relative.VELOCITY_X,
-                    TeleportFlag.Relative.VELOCITY_Y,
-                    TeleportFlag.Relative.VELOCITY_Z
-            );
+        if (this.entity instanceof Player player) {
+            for (HorseOption horseOption : game.getOption(HorseOption.class)) {
+                horseOption.getHorseForPlayer(this).kill();
+            }
+            TeleportUtils.smoothTeleport(player, location);
         } else {
             Location location1 = this.getLocation();
             location1.setX(location.getX());
@@ -1116,9 +1137,8 @@ public abstract class WarlordsEntity {
     public void setVelocity(String from, Vector v, boolean kbAfterHorse, boolean ignoreModifications) {
         if ((kbAfterHorse || this.entity.getVehicle() == null)) {
             if (!ignoreModifications) {
-                for (AbstractCooldown<?> abstractCooldown : cooldownManager.getCooldownsDistinct()) {
-                    abstractCooldown.multiplyKB(v);
-                }
+                float knockbackModifier = knockback.getLastValue();
+                v.multiply(knockbackModifier);
             }
             if (Double.isNaN(v.getX())) {
                 v.setX(0);
@@ -1171,11 +1191,11 @@ public abstract class WarlordsEntity {
         this.noEnergyConsumption = noEnergyConsumption;
     }
 
-    public double getEnergyModifier() {
+    public float getEnergyModifier() {
         return energyModifier;
     }
 
-    public void setEnergyModifier(double energyModifier) {
+    public void setEnergyModifier(float energyModifier) {
         this.energyModifier = energyModifier;
     }
 
@@ -1203,30 +1223,8 @@ public abstract class WarlordsEntity {
         return blocksTravelledCM / 100;
     }
 
-    public float getWalkSpeed() {
-        return walkSpeed;
-    }
-
-    protected void setWalkSpeed(float walkspeed) {
-        this.walkSpeed = walkspeed;
-        Player player = Bukkit.getPlayer(uuid);
-        if (player != null) {
-            player.setWalkSpeed(MathUtils.clamp(this.walkSpeed, -1f, 1f));
-        } else if (entity instanceof LivingEntity livingEntity) {
-            livingEntity.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(this.walkSpeed);
-        }
-    }
-
     public List<Float> getRecordDamage() {
         return recordDamage;
-    }
-
-    public float getCurrentHealthModifier() {
-        return currentHealthModifier;
-    }
-
-    public void setCurrentHealthModifier(float currentHealthModifier) {
-        this.currentHealthModifier = currentHealthModifier;
     }
 
     @Nullable
@@ -1278,8 +1276,12 @@ public abstract class WarlordsEntity {
             }
         }
         this.health.tick();
+        this.energy.tick();
+        this.energyPerSec.tick();
+        this.energyPerHit.tick();
         updateHealth();
-        getSpeed().updateSpeed();
+        getSpeed().tick();
+        getKnockback().tick();
         getCooldownManager().reduceCooldowns();
 
         setWasSneaking(isSneaking());
@@ -1296,21 +1298,10 @@ public abstract class WarlordsEntity {
             setCurrentHealth(getMaxHealth());
         }
 
-        // Checks whether the displayed health can be above or under 40 health total. (20 hearts.)
-        float newHealth = getCurrentHealth() / getMaxHealth() * 40;
-        if (newHealth < 0) {
-            newHealth = 0;
-        } else if (newHealth > 40) {
-            newHealth = 40;
-        }
-        if (UndyingArmy.checkUndyingArmy(this, newHealth)) {
-            newHealth = 40;
-        }
-
         // Energy
-        if (getEnergy() < getMaxEnergy()) {
+        if (getCurrentEnergy() < getMaxEnergy()) {
             // Standard energy value per second.
-            float energyGainPerTick = getSpec().getEnergyPerSec() / 20;
+            float energyGainPerTick = getEnergyPerSec().getCalculatedValue() / 20;
 
             for (AbstractCooldown<?> abstractCooldown : getCooldownManager().getCooldownsDistinct()) {
                 energyGainPerTick = abstractCooldown.addEnergyGainPerTick(energyGainPerTick);
@@ -1320,31 +1311,13 @@ public abstract class WarlordsEntity {
             }
 
             // Setting energy gain to the value after all ability instance multipliers have been applied.
-            float newEnergy = getEnergy() + energyGainPerTick;
+            float newEnergy = getCurrentEnergy() + energyGainPerTick;
             if (newEnergy > getMaxEnergy()) {
                 newEnergy = getMaxEnergy();
             }
-            setEnergy(newEnergy);
-        }
-
-        // setting health/energy to player
-        if (this instanceof WarlordsPlayer && getEntity() instanceof Player player) {
-            //precaution
-            if (newHealth != 0) {
-                player.setHealth(newHealth);
+            if (flag(WarlordsEntityFlag.GAIN_ENERGY)) {
+                setCurrentEnergy(newEnergy);
             }
-            // Respawn fix for when a player is stuck or leaves the game.
-            if (getCurrentHealth() <= 0 && player.getGameMode() == GameMode.SPECTATOR) {
-                heal();
-            }
-            // Checks whether the player has under 0 energy to avoid infinite energy bugs.
-            if (getEnergy() < 0) {
-                setEnergy(1);
-            }
-            player.setLevel((int) getEnergy());
-            player.setExp(getEnergy() / getMaxEnergy());
-            // Saves the amount of blocks travelled per player.
-            setBlocksTravelledCM(Utils.getPlayerMovementStatistics(player));
         }
 
         // Melee Cooldown
@@ -1373,6 +1346,157 @@ public abstract class WarlordsEntity {
                 }
             }
         }
+    }
+
+    @Nonnull
+    public Entity getEntity() {
+        return this.entity;
+    }
+
+    @Nullable
+    public CompassTargetMarker getCompassTarget() {
+        return this.compassTarget;
+    }
+
+    public abstract void updateHealth();
+
+    public MotionSystem getSpeed() {
+        return speed;
+    }
+
+    public MotionSystem getKnockback() {
+        return knockback;
+    }
+
+    public boolean isSneaking() {
+        return this.entity instanceof Player && this.entity.isSneaking();
+    }
+
+    public float getCurrentHealth() {
+        return currentHealth;
+    }
+
+    public void setCurrentHealth(float currentHealth) {
+        this.currentHealth = currentHealth;
+    }
+
+    public float getMaxHealth() {
+        return health.getCalculatedValue();
+    }
+
+    public float getCurrentEnergy() {
+        return currentEnergy;
+    }
+
+    public void setCurrentEnergy(float currentEnergy) {
+        this.currentEnergy = currentEnergy;
+    }
+
+    public AbstractPlayerClass getSpec() {
+        return spec;
+    }
+
+    public int getHitCooldown() {
+        return hitCooldown;
+    }
+
+    public void setHitCooldown(int hitCooldown) {
+        this.hitCooldown = hitCooldown;
+    }
+
+    public void respawn() {
+        List<Location> candidates = new ArrayList<>();
+        double priority = Double.NEGATIVE_INFINITY;
+        for (SpawnLocationMarker marker : getGame().getMarkers(SpawnLocationMarker.class)) {
+            if (candidates.isEmpty()) {
+                candidates.add(marker.getLocation());
+                priority = marker.getPriority(this);
+            } else {
+                double newPriority = marker.getPriority(this);
+                if (newPriority >= priority) {
+                    if (newPriority > priority) {
+                        candidates.clear();
+                        priority = newPriority;
+                    }
+                    candidates.add(marker.getLocation());
+                }
+            }
+        }
+        Location respawnPoint =
+                !candidates.isEmpty() ? candidates.get((int) (Math.random() * candidates.size())) :
+                deathLocation != null ? deathLocation :
+                getLocation();
+        respawnPoint = respawnPoint.clone();
+        WarlordsRespawnEvent event = new WarlordsRespawnEvent(this, respawnPoint);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            return;
+        }
+
+        onRespawn(respawnPoint);
+    }
+
+    public void onRespawn(Location respawnPoint) {
+        if (entity instanceof Player player) {
+            entity.clearTitle();
+            player.setFlying(false);
+            player.setGameMode(GameMode.ADVENTURE);
+        }
+        setRespawnTimerSeconds(-1);
+        setCurrentEnergy(getMaxEnergy() / 2);
+        dead = false;
+        teleport(respawnPoint);
+
+        heal();
+        updateEntity();
+    }
+
+    public void setRespawnTimerSeconds(int respawnTickTimer) {
+        //convert respawntimer to ticks
+        this.respawnTickTimer = respawnTickTimer == -1 ? -1 : respawnTickTimer * 20;
+    }
+
+    public void teleport(Location location) {
+        this.entity.teleport(location);
+    }
+
+    public abstract void updateEntity();
+
+    public void setSpec(Specializations spec) {
+        this.spec = spec.create();
+        this.spec.updateCustomStats(this);
+        this.health.setBaseValue(this.spec.getMaxHealth());
+        this.health.clearModifiers();
+        this.energy.setBaseValue(this.spec.getMaxEnergy());
+        this.energy.clearModifiers();
+        this.energyPerSec.setBaseValue(this.spec.getEnergyPerSec());
+        this.energyPerSec.clearModifiers();
+        this.energyPerHit.setBaseValue(this.spec.getEnergyPerHit());
+        this.energyPerHit.clearModifiers();
+        this.currentHealth = getMaxHealth();
+        this.currentEnergy = this.spec.getMaxEnergy();
+        this.cooldownManager.clearAllCooldowns();
+        this.resetSpeed();
+    }
+
+    public void setSpeed(MotionSystem speed) {
+        this.speed = speed;
+    }
+
+    public void setEntity(Entity entity) {
+        this.entity = entity;
+    }
+
+    public FloatModifiable getEnergy() {
+        return energy;
+    }
+
+    public FloatModifiable getEnergyPerSec() {
+        return energyPerSec;
+    }
+
+    public FloatModifiable getEnergyPerHit() {
+        return energyPerHit;
     }
 
     public void displayCompassActionBar(@Nonnull Player player) {
@@ -1452,26 +1576,23 @@ public abstract class WarlordsEntity {
                 }
             }
         }
+        if (showDebugMessage) {
+            if (addedAny) {
+                actionBarMessage.append(Component.text("  "));
+            }
+            actionBarMessage.append(Component.text(
+                    "SPEED: " + NumberFormat.formatOptionalHundredths(getSpeed().getLastValue() / BaseToWalkingSpeedValueModifier.BASE_PLAYER_WALK_SPEED),
+                    NamedTextColor.WHITE,
+                    TextDecoration.BOLD
+            ));
+            actionBarMessage.append(Component.text("  "));
+            actionBarMessage.append(Component.text(
+                    "KB: " + NumberFormat.formatOptionalHundredths(getKnockback().getLastValue()),
+                    AbilityDescriptionBuilder.COLOR_BROWN,
+                    TextDecoration.BOLD
+            ));
+        }
         return actionBarMessage.build();
-    }
-
-    @Nullable
-    public CompassTargetMarker getCompassTarget() {
-        return this.compassTarget;
-    }
-
-    public abstract void updateHealth();
-
-    public CalculateSpeed getSpeed() {
-        return speed;
-    }
-
-    public void setSpeed(CalculateSpeed speed) {
-        this.speed = speed;
-    }
-
-    public AbstractPlayerClass getSpec() {
-        return spec;
     }
 
     public void updateItems() {
@@ -1481,63 +1602,6 @@ public abstract class WarlordsEntity {
     public void updateItem(AbstractAbility ability) {
         ability.queueUpdateItem();
     }
-
-    public boolean isSneaking() {
-        return this.entity instanceof Player && this.entity.isSneaking();
-    }
-
-    public void respawn() {
-        List<Location> candidates = new ArrayList<>();
-        double priority = Double.NEGATIVE_INFINITY;
-        for (SpawnLocationMarker marker : getGame().getMarkers(SpawnLocationMarker.class)) {
-            if (candidates.isEmpty()) {
-                candidates.add(marker.getLocation());
-                priority = marker.getPriority(this);
-            } else {
-                double newPriority = marker.getPriority(this);
-                if (newPriority >= priority) {
-                    if (newPriority > priority) {
-                        candidates.clear();
-                        priority = newPriority;
-                    }
-                    candidates.add(marker.getLocation());
-                }
-            }
-        }
-        Location respawnPoint =
-                !candidates.isEmpty() ? candidates.get((int) (Math.random() * candidates.size())) :
-                deathLocation != null ? deathLocation :
-                getLocation();
-        respawnPoint = respawnPoint.clone();
-        WarlordsRespawnEvent event = new WarlordsRespawnEvent(this, respawnPoint);
-        Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled()) {
-            return;
-        }
-
-        onRespawn(respawnPoint);
-    }
-
-    public void onRespawn(Location respawnPoint) {
-        if (entity instanceof Player player) {
-            entity.clearTitle();
-            player.setFlying(false);
-            player.setGameMode(GameMode.ADVENTURE);
-        }
-        setRespawnTimerSeconds(-1);
-        setEnergy(getMaxEnergy() / 2);
-        dead = false;
-        teleport(respawnPoint);
-
-        heal();
-        updateEntity();
-    }
-
-    public void teleport(Location location) {
-        this.entity.teleport(location);
-    }
-
-    public abstract void updateEntity();
 
     public void runEverySecond() {
         this.spec.runEverySecond(this);
@@ -1609,15 +1673,6 @@ public abstract class WarlordsEntity {
         });
         getSecondStats().getEntries().clear();
         getCooldownManager().clearAllCooldowns();
-    }
-
-    @Nonnull
-    public Entity getEntity() {
-        return this.entity;
-    }
-
-    public void setEntity(Entity entity) {
-        this.entity = entity;
     }
 
     public PlayerStatisticsSecond getSecondStats() {
@@ -1709,7 +1764,7 @@ public abstract class WarlordsEntity {
     public abstract void setDamageResistance(float damageResistance);
 
     public int getBaseHitCooldownValue() {
-        return 20;
+        return ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "baseMeleeCooldown", int.class);
     }
 
     public abstract ItemStack getHead();

@@ -4,7 +4,6 @@ import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.player.ingame.CalculateSpeed;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -12,6 +11,8 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.motionsystem.MotionModifier;
+import com.ebicep.warlords.player.ingame.motionsystem.MotionModifierBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.thunderlord.WindfuryBranch;
@@ -36,6 +37,7 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
     private float procChance = 35;
     private int maxHits = 2;
     private float weaponDamage = 135;
+    private int guaranteedHits = 1;
 
     public WindfuryWeapon() {
         super(AbstractAbilityBuilder.create("windfuryWeapon").pvp());
@@ -48,34 +50,19 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
         this.procChance = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("procChance"), float.class);
         this.maxHits = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxHits"), int.class);
         this.weaponDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("weaponDamage"), float.class);
-    }
-
-    @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Imbue your weapon with the power of the wind, causing each of your melee attacks to have a ")
-                                               .percent(procChance, NamedTextColor.BLUE)
-                                               .text(" chance to hit ")
-                                               .text(maxHits, NamedTextColor.BLUE)
-                                               .text(" additional times for ")
-                                               .percent(weaponDamage, NamedTextColor.RED)
-                                               .text(" weapon damage. Lasts ")
-                                               .durationTicks(tickDuration)
-                                               .text(".")
-                                               .emptyLine()
-                                               .text("The first hit is guaranteed to activate Windfury.")
-                                               .build();
+        this.guaranteedHits = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("guaranteedHits"), int.class);
     }
 
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "shaman.windfuryweapon.activation", 2, 1);
         wp.getCooldownManager().removeCooldown(WindfuryWeapon.class, false);
-        CalculateSpeed.Modifier shreddingFurySpeed = new CalculateSpeed.Modifier(wp, "Shredding Fury", 0, Integer.MAX_VALUE, Collections.emptyList(), false);
+        MotionModifier shreddingFurySpeed = new MotionModifierBuilder().setFrom(wp).setName("Shredding Fury").setModifier(0).setDuration(Integer.MAX_VALUE).build();
         wp.addSpeedModifier(shreddingFurySpeed);
         AtomicInteger procs = new AtomicInteger(0);
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "FURY", WindfuryWeapon.class, null, wp, CooldownTypes.ABILITY, cooldownManager -> {
         }, cooldownManager -> {
-            shreddingFurySpeed.setDuration(0);
+            shreddingFurySpeed.setTicksLeft(0);
         }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
             if (ticksElapsed % 4 == 0) {
                 wp.getWorld().spawnParticle(Particle.CRIT, wp.getLocation().add(0, 1.2, 0), 3, 0.2, 0, 0.2, 0.1, null, true);
@@ -83,7 +70,7 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
         })
         ) {
 
-            private boolean firstProc = true;
+            private int guaranteedHitsLeft = guaranteedHits;
 
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
@@ -101,8 +88,8 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
                 WarlordsEntity victim = event.getWarlordsEntity();
                 WarlordsEntity attacker = event.getSource();
                 double windfuryActivate = ThreadLocalRandom.current().nextDouble(100);
-                if (firstProc) {
-                    firstProc = false;
+                if (guaranteedHitsLeft > 0) {
+                    guaranteedHitsLeft--;
                     windfuryActivate = 0;
                 }
                 if (!(windfuryActivate < procChance)) {
@@ -112,11 +99,13 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
                 stats.timesProcd++;
                 new GameRunnable(victim.getGame()) {
 
-                    final float minDamage = wp instanceof WarlordsPlayer warlordsPlayer && warlordsPlayer.getWeapon() != null ? warlordsPlayer.getWeapon()
-                                                                                                                                              .getMeleeDamageMin() : 132;
+                    final float minDamage = wp instanceof WarlordsPlayer warlordsPlayer && warlordsPlayer.getWeapon() != null ?
+                                            warlordsPlayer.getWeapon().getMeleeDamageMin() :
+                                            132;
 
-                    final float maxDamage = wp instanceof WarlordsPlayer warlordsPlayer && warlordsPlayer.getWeapon() != null ? warlordsPlayer.getWeapon()
-                                                                                                                                              .getMeleeDamageMax() : 179;
+                    final float maxDamage = wp instanceof WarlordsPlayer warlordsPlayer && warlordsPlayer.getWeapon() != null ?
+                                            warlordsPlayer.getWeapon().getMeleeDamageMax() :
+                                            179;
 
                     int counter = 0;
 
@@ -146,11 +135,36 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
                 }.runTaskTimer(3, 3);
                 if (pveMasterUpgrade2 && procs.get() <= 10) {
                     shreddingFurySpeed.setModifier(shreddingFurySpeed.getModifier() + 2.5f);
-                    wp.getSpeed().setChanged(true);
                 }
             }
         });
         return true;
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Imbue your weapon with the power of the wind, causing each of your melee attacks to have a ")
+                                               .percent(procChance, NamedTextColor.BLUE)
+                                               .text(" chance to hit ")
+                                               .text(maxHits, NamedTextColor.BLUE)
+                                               .text(" additional times for ")
+                                               .percent(weaponDamage, NamedTextColor.RED)
+                                               .text(" weapon damage. Lasts ")
+                                               .durationTicks(tickDuration)
+                                               .text(".")
+                                               .emptyLine()
+                                               .text("The first ")
+                                               .text(guaranteedHits, NamedTextColor.BLUE)
+                                               .text(" hits is guaranteed to activate Windfury.")
+                                               .build();
+    }
+
+    public int getGuaranteedHits() {
+        return guaranteedHits;
+    }
+
+    public void setGuaranteedHits(int guaranteedHits) {
+        this.guaranteedHits = guaranteedHits;
     }
 
     @Override

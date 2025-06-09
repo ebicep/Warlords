@@ -109,7 +109,7 @@ public class Narmer extends AbstractMob implements BossMob {
             case EXTREME -> 8;
             default -> 10;
         };
-        this.playerClass.addAbility(new SpawnMobAbility(AbstractAbilityBuilder.create("narmerSpawnZombieLancer")
+        addAbility(new SpawnMobAbility(AbstractAbilityBuilder.create("narmerSpawnZombieLancer")
                                                                               .pve()
                                                                               .cooldown(Math.max(6, startingCooldown - playerCount + 1))
                                                                               .startNoCooldown()
@@ -130,7 +130,7 @@ public class Narmer extends AbstractMob implements BossMob {
         });
 
         SpawnNarmerAcolyteAbility spawnNarmerAcolyteAbility = new SpawnNarmerAcolyteAbility(this);
-        this.playerClass.addAbility(spawnNarmerAcolyteAbility);
+        addAbility(spawnNarmerAcolyteAbility);
 
         float multiplier = difficulty == DifficultyIndex.EXTREME ? 3 : difficulty == DifficultyIndex.HARD ? 2 : 1;
 
@@ -168,7 +168,7 @@ public class Narmer extends AbstractMob implements BossMob {
                 }
             }
 
-            @EventHandler
+            @EventHandler(ignoreCancelled = true)
             private void onAllyDeath(WarlordsDeathEvent event) {
                 WarlordsEntity dead = event.getWarlordsEntity();
                 Location location = warlordsNPC.getLocation();

@@ -18,6 +18,7 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.ArmorStand;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
@@ -30,6 +31,7 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
 
     private final AbstractHolyRadianceStats stats = new AbstractHolyRadianceStats();
     private FloatModifiable radius;
+    private FloatModifiable speed;
 
     public AbstractHolyRadiance(AbstractAbilityBuilder builder) {
         super(builder);
@@ -39,6 +41,7 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
     public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.radius = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), float.class));
+        this.speed = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("speed"), float.class));
     }
 
     @Override
@@ -67,7 +70,7 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
                     wp.getLocation(),
                     radianceTarget,
                     wp,
-                    1.1,
+                    speed.getCalculatedValue(),
                     radianceHealing
             ).runTaskTimer(1, 1);
         }
@@ -102,6 +105,12 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
         );
 
         return true;
+    }
+
+    @Override
+    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
+        speed.tick();
+        super.runEveryTick(warlordsEntity);
     }
 
     public abstract Value.RangedValueCritable getRadianceHealing();
@@ -151,6 +160,10 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
             return new AbstractHolyRadianceStats();
         }
 
+    }
+
+    public FloatModifiable getSpeed() {
+        return speed;
     }
 
     public class FlyingArmorStand extends GameRunnable {

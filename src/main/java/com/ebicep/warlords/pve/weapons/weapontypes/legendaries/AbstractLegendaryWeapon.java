@@ -2,7 +2,6 @@ package com.ebicep.warlords.pve.weapons.weapontypes.legendaries;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Value;
-import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.*;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -106,17 +105,6 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         return ascendant;
     }
 
-    public List<Component> getCostLore() {
-        return PvEUtils.getCostLore(getCost(), "Title Cost", true);
-    }
-
-    public LinkedHashMap<Currencies, Long> getCost() {
-        return new LinkedHashMap<>() {{
-            put(Currencies.COIN, 50000L);
-            put(Currencies.SYNTHETIC_SHARD, 1000L);
-        }};
-    }
-
     @Override
     public void upgrade() {
         this.upgradeLevel++;
@@ -154,7 +142,8 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
                          .append(GREEN_ARROW)
                          .append(Component.text(format(getHealthBonus() * (getHealthBonus() > 0 ?
                                                                            getUpgradeMultiplier() :
-                                                                           getUpgradeMultiplierNegative())), NamedTextColor.GREEN)),
+                                                                           getUpgradeMultiplierNegative())), NamedTextColor.GREEN
+                         )),
                 Component.text("Speed: ", NamedTextColor.GRAY)
                          .append(Component.text(format(getSpeedBonus()) + "%", NamedTextColor.GREEN))
                          .append(GREEN_ARROW)
@@ -166,7 +155,8 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
                                      .append(GREEN_ARROW)
                                      .append(Component.text(format(getEnergyPerSecondBonus() * (getEnergyPerSecondBonus() > 0 ?
                                                                                                 getUpgradeMultiplier() :
-                                                                                                getUpgradeMultiplierNegative())), NamedTextColor.GREEN)));
+                                                                                                getUpgradeMultiplierNegative())), NamedTextColor.GREEN
+                                     )));
         }
         if (getEnergyPerHitBonus() != 0) {
             upgradeLore.add(Component.text("Energy per Hit: ", NamedTextColor.GRAY)
@@ -174,7 +164,8 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
                                      .append(GREEN_ARROW)
                                      .append(Component.text(format(getEnergyPerHitBonus() * (getEnergyPerHitBonus() > 0 ?
                                                                                              getUpgradeMultiplier() :
-                                                                                             getUpgradeMultiplierNegative())), NamedTextColor.GREEN)));
+                                                                                             getUpgradeMultiplierNegative())), NamedTextColor.GREEN
+                                     )));
         }
 
         upgradeLore.addAll(Arrays.asList(
@@ -188,7 +179,8 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
                                      .append(GREEN_ARROW)
                                      .append(Component.text(format(getSkillCritChanceBonus() * (getSkillCritChanceBonus() > 0 ?
                                                                                                 getUpgradeMultiplier() :
-                                                                                                getUpgradeMultiplierNegative())), NamedTextColor.GREEN)));
+                                                                                                getUpgradeMultiplierNegative())), NamedTextColor.GREEN
+                                     )));
         }
         if (getSkillCritMultiplierBonus() != 0) {
             upgradeLore.add(Component.text("Skill Crit Multiplier: ", NamedTextColor.GRAY)
@@ -196,7 +188,8 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
                                      .append(GREEN_ARROW)
                                      .append(Component.text(format(getSkillCritMultiplierBonus() * (getSkillCritMultiplierBonus() > 0 ?
                                                                                                     getUpgradeMultiplier() :
-                                                                                                    getUpgradeMultiplierNegative())), NamedTextColor.GREEN)));
+                                                                                                    getUpgradeMultiplierNegative())), NamedTextColor.GREEN
+                                     )));
         }
 
         return upgradeLore;
@@ -250,6 +243,11 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         return cost;
     }
 
+    @Override
+    public void generateStats() {
+
+    }
+
     public float getSpeedBonus() {
         float speedBonus = getSpeedBonusValue();
         speedBonus *= Math.pow(speedBonus > 0 ? getUpgradeMultiplier() : getUpgradeMultiplierNegative(), upgradeLevel);
@@ -257,109 +255,6 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
             speedBonus *= getStarPieceBonusMultiplicativeValue();
         }
         return speedBonus;
-    }
-
-    public float getEnergyPerSecondBonus() {
-        float energyPerSecondBonus = getEnergyPerSecondBonusValue();
-        if (energyPerSecondBonus > 0) {
-            energyPerSecondBonus *= Math.pow(getUpgradeMultiplier(), upgradeLevel);
-        }
-        if (getStarPieceStat() == WeaponStats.ENERGY_PER_SECOND_BONUS) {
-            energyPerSecondBonus *= getStarPieceBonusMultiplicativeValue();
-        }
-        return energyPerSecondBonus;
-    }
-
-    public float getEnergyPerHitBonus() {
-        float energyPerHitBonus = getEnergyPerHitBonusValue();
-        if (energyPerHitBonus > 0) {
-            energyPerHitBonus *= Math.pow(getUpgradeMultiplier(), upgradeLevel);
-        }
-        if (getStarPieceStat() == WeaponStats.ENERGY_PER_HIT_BONUS) {
-            energyPerHitBonus *= getStarPieceBonusMultiplicativeValue();
-        }
-        return energyPerHitBonus;
-    }
-
-    public float getSkillCritChanceBonus() {
-        float skillCritChanceBonus = getSkillCritChanceBonusValue();
-        skillCritChanceBonus *= Math.pow(skillCritChanceBonus > 0 ? getUpgradeMultiplier() : getUpgradeMultiplierNegative(), upgradeLevel);
-        if (getStarPieceStat() == WeaponStats.SKILL_CRIT_CHANCE_BONUS) {
-            skillCritChanceBonus *= getStarPieceBonusMultiplicativeValue();
-        }
-        return skillCritChanceBonus;
-    }
-
-    public float getSkillCritMultiplierBonus() {
-        float skillCritMultiplierBonus = getSkillCritMultiplierBonusValue();
-        skillCritMultiplierBonus *= Math.pow(skillCritMultiplierBonus > 0 ? getUpgradeMultiplier() : getUpgradeMultiplierNegative(), upgradeLevel);
-        if (getStarPieceStat() == WeaponStats.SKILL_CRIT_MULTIPLIER_BONUS) {
-            skillCritMultiplierBonus *= getStarPieceBonusMultiplicativeValue();
-        }
-        return skillCritMultiplierBonus;
-    }
-
-    @Override
-    public void generateStats() {
-
-    }
-
-    @Override
-    public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
-        super.applyToWarlordsPlayer(player, pveOption);
-        this.warlordsPlayer = player;
-        this.pveOption = pveOption;
-
-        if (this instanceof Listener listener) {
-            player.getGame().registerEvents(listener);
-        }
-
-        player.getSpeed().addBaseModifier(getSpeedBonus());
-
-        for (AbstractUpgradeBranch<?> upgradeBranch : player.getAbilityTree().getUpgradeBranches()) {
-            if (upgradeBranch.getAbility().getClass().equals(selectedSkillBoost.ability)) {
-                upgradeBranch.setFreeUpgrades(isAscendant() ? 2 : 1);
-                break;
-            }
-        }
-
-        AbstractPlayerClass playerClass = player.getSpec();
-        playerClass.setEnergyPerHit(playerClass.getEnergyPerHit() + getEnergyPerHitBonus());
-        playerClass.setEnergyPerSec(playerClass.getEnergyPerSec() + getEnergyPerSecondBonus());
-        for (AbstractAbility ability : playerClass.getAbilities()) {
-            if (ability.getClass().equals(selectedSkillBoost.ability)) {
-                Value.applyDamageHealing(ability, value -> {
-                    if (value instanceof Value.RangedValueCritable rangedValueCritable) {
-                        rangedValueCritable.critChance().addAdditiveModifier("Legendary Weapon", getSkillCritChanceBonus());
-                        rangedValueCritable.critMultiplier().addAdditiveModifier("Legendary Weapon", getSkillCritMultiplierBonus());
-                    }
-                });
-                break;
-            }
-        }
-
-        resetAbility();
-        AbstractAbility ability = getAbility();
-        if (ability != null) {
-            ability.init(ability.getBuilder());
-            ability.updateDescription(null);
-            new GameRunnable(player.getGame()) {
-
-                @Override
-                public void run() {
-                    ability.runEveryTick(player);
-                }
-            }.runTaskTimer(20, 0);
-        }
-        if (this instanceof PassiveCounter && ((PassiveCounter) this).constantlyUpdate()) {
-            new GameRunnable(player.getGame()) {
-
-                @Override
-                public void run() {
-                    updateItemCounter(player);
-                }
-            }.runTaskTimer(20, 10);
-        }
     }
 
     @Override
@@ -533,58 +428,6 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         return LegendaryTitles.NONE;
     }
 
-    protected void updateItemCounter(WarlordsPlayer player) {
-        int cooldown = ((PassiveCounter) AbstractLegendaryWeapon.this).getCounter();
-        int amount = cooldown > 0 ? cooldown : 1;
-        if (player.getEntity() instanceof Player) {
-            ItemStack item = ((Player) player.getEntity()).getInventory().getItem(0);
-            if (item != null && item.getAmount() != amount) {
-                item.setAmount(amount);
-            }
-        }
-    }
-
-    public void upgradeTitleLevel() {
-        this.titles.computeIfAbsent(getTitle(), t -> new LegendaryWeaponTitleInfo()).upgrade();
-    }
-
-    public void activateAbility(WarlordsPlayer wp, Player player, boolean hotkeyMode) {
-        if (getAbility() == null) {
-            return;
-        }
-        if (!wp.isActive()) {
-            return;
-        }
-
-        if (wp.isDead()) {
-            return;
-        }
-        if (!wp.getGame().isFrozen()) {
-            wp.getSpec().onRightClickAbility(getAbility(), wp, player, upgradeLevel);
-        }
-        if (hotkeyMode) {
-            player.getInventory().setHeldItemSlot(0);
-        }
-    }
-
-    public AbstractAbility getAbility() {
-        return null;
-    }
-
-    public void resetAbility() {
-
-    }
-
-    public void updateAbilityItem(WarlordsPlayer warlordsPlayer, Player player) {
-        if (getAbility() != null) {
-            warlordsPlayer.updateCustomItem(player, 8, getAbility(), ABILITY_ITEM);
-        }
-    }
-
-    public Component getStarPieceBonusString(WeaponStats weaponStats) {
-        return getStarPieceStat() == weaponStats ? getStarPieceBonusString() : Component.empty();
-    }
-
     @Override
     public List<WeaponStats> getRandomStatBonus() {
         List<WeaponStats> randomStatBonus = new ArrayList<>();
@@ -649,6 +492,169 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
     @Override
     public int getStarPieceBonusValue() {
         return this.titles.computeIfAbsent(getTitle(), t -> new LegendaryWeaponTitleInfo()).getStarPiece().starPieceBonusValue;
+    }
+
+    public float getEnergyPerSecondBonus() {
+        float energyPerSecondBonus = getEnergyPerSecondBonusValue();
+        if (energyPerSecondBonus > 0) {
+            energyPerSecondBonus *= Math.pow(getUpgradeMultiplier(), upgradeLevel);
+        }
+        if (getStarPieceStat() == WeaponStats.ENERGY_PER_SECOND_BONUS) {
+            energyPerSecondBonus *= getStarPieceBonusMultiplicativeValue();
+        }
+        return energyPerSecondBonus;
+    }
+
+    public float getEnergyPerHitBonus() {
+        float energyPerHitBonus = getEnergyPerHitBonusValue();
+        if (energyPerHitBonus > 0) {
+            energyPerHitBonus *= Math.pow(getUpgradeMultiplier(), upgradeLevel);
+        }
+        if (getStarPieceStat() == WeaponStats.ENERGY_PER_HIT_BONUS) {
+            energyPerHitBonus *= getStarPieceBonusMultiplicativeValue();
+        }
+        return energyPerHitBonus;
+    }
+
+    public float getSkillCritChanceBonus() {
+        float skillCritChanceBonus = getSkillCritChanceBonusValue();
+        skillCritChanceBonus *= Math.pow(skillCritChanceBonus > 0 ? getUpgradeMultiplier() : getUpgradeMultiplierNegative(), upgradeLevel);
+        if (getStarPieceStat() == WeaponStats.SKILL_CRIT_CHANCE_BONUS) {
+            skillCritChanceBonus *= getStarPieceBonusMultiplicativeValue();
+        }
+        return skillCritChanceBonus;
+    }
+
+    public float getSkillCritMultiplierBonus() {
+        float skillCritMultiplierBonus = getSkillCritMultiplierBonusValue();
+        skillCritMultiplierBonus *= Math.pow(skillCritMultiplierBonus > 0 ? getUpgradeMultiplier() : getUpgradeMultiplierNegative(), upgradeLevel);
+        if (getStarPieceStat() == WeaponStats.SKILL_CRIT_MULTIPLIER_BONUS) {
+            skillCritMultiplierBonus *= getStarPieceBonusMultiplicativeValue();
+        }
+        return skillCritMultiplierBonus;
+    }
+
+    @Override
+    public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
+        super.applyToWarlordsPlayer(player, pveOption);
+        this.warlordsPlayer = player;
+        this.pveOption = pveOption;
+
+        if (this instanceof Listener listener) {
+            player.getGame().registerEvents(listener);
+        }
+
+        player.getSpeed().addBaseModifier(getSpeedBonus());
+
+        for (AbstractUpgradeBranch<?> upgradeBranch : player.getAbilityTree().getUpgradeBranches()) {
+            if (upgradeBranch.getAbility().getClass().equals(selectedSkillBoost.ability)) {
+                upgradeBranch.setFreeUpgrades(isAscendant() ? 2 : 1);
+                break;
+            }
+        }
+
+        AbstractPlayerClass playerClass = player.getSpec();
+        warlordsPlayer.getEnergyPerHit().addAdditiveModifier("Legendary Weapon", getEnergyPerHitBonus());
+        warlordsPlayer.getEnergyPerSec().addAdditiveModifier("Legendary Weapon", getEnergyPerSecondBonus());
+
+        for (AbstractAbility ability : playerClass.getAbilities()) {
+            if (ability.getClass().equals(selectedSkillBoost.ability)) {
+                Value.applyDamageHealing(ability, value -> {
+                            if (value instanceof Value.RangedValueCritable rangedValueCritable) {
+                                rangedValueCritable.critChance().addAdditiveModifier("Legendary Weapon", getSkillCritChanceBonus());
+                                rangedValueCritable.critMultiplier().addAdditiveModifier("Legendary Weapon", getSkillCritMultiplierBonus());
+                            }
+                        }
+                );
+                break;
+            }
+        }
+
+        resetAbility();
+        AbstractAbility ability = getAbility();
+        if (ability != null) {
+            ability.init(ability.getBuilder());
+            ability.updateDescription(null);
+            new GameRunnable(player.getGame()) {
+
+                @Override
+                public void run() {
+                    ability.runEveryTick(player);
+                }
+            }.runTaskTimer(20, 0);
+        }
+        if (this instanceof PassiveCounter && ((PassiveCounter) this).constantlyUpdate()) {
+            new GameRunnable(player.getGame()) {
+
+                @Override
+                public void run() {
+                    updateItemCounter(player);
+                }
+            }.runTaskTimer(20, 10);
+        }
+    }
+
+    public void resetAbility() {
+
+    }
+
+    public AbstractAbility getAbility() {
+        return null;
+    }
+
+    protected void updateItemCounter(WarlordsPlayer player) {
+        int cooldown = ((PassiveCounter) AbstractLegendaryWeapon.this).getCounter();
+        int amount = cooldown > 0 ? cooldown : 1;
+        if (player.getEntity() instanceof Player) {
+            ItemStack item = ((Player) player.getEntity()).getInventory().getItem(0);
+            if (item != null && item.getAmount() != amount) {
+                item.setAmount(amount);
+            }
+        }
+    }
+
+    public List<Component> getCostLore() {
+        return PvEUtils.getCostLore(getCost(), "Title Cost", true);
+    }
+
+    public LinkedHashMap<Currencies, Long> getCost() {
+        return new LinkedHashMap<>() {{
+            put(Currencies.COIN, 50000L);
+            put(Currencies.SYNTHETIC_SHARD, 1000L);
+        }};
+    }
+
+    public void upgradeTitleLevel() {
+        this.titles.computeIfAbsent(getTitle(), t -> new LegendaryWeaponTitleInfo()).upgrade();
+    }
+
+    public void activateAbility(WarlordsPlayer wp, Player player, boolean hotkeyMode) {
+        if (getAbility() == null) {
+            return;
+        }
+        if (!wp.isActive()) {
+            return;
+        }
+
+        if (wp.isDead()) {
+            return;
+        }
+        if (!wp.getGame().isFrozen()) {
+            wp.getSpec().onRightClickAbility(getAbility(), wp, player, upgradeLevel);
+        }
+        if (hotkeyMode) {
+            player.getInventory().setHeldItemSlot(0);
+        }
+    }
+
+    public void updateAbilityItem(WarlordsPlayer warlordsPlayer, Player player) {
+        if (getAbility() != null) {
+            warlordsPlayer.updateCustomItem(player, 8, getAbility(), ABILITY_ITEM);
+        }
+    }
+
+    public Component getStarPieceBonusString(WeaponStats weaponStats) {
+        return getStarPieceStat() == weaponStats ? getStarPieceBonusString() : Component.empty();
     }
 
     protected abstract float getMeleeDamageMaxValue();
@@ -756,4 +762,5 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         }
         return cost;
     }
+
 }

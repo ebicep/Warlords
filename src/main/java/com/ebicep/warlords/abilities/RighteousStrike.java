@@ -3,7 +3,9 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
@@ -25,7 +27,7 @@ public class RighteousStrike extends AbstractStrike<RighteousStrike, RighteousSt
     private final DamageValues damageValues = new DamageValues();
     private int abilityReductionInTicks = 16;
     private int additionalReductionInTicks = 4;
-    private float vindicateCooldownReduction = 0.5f;
+    private float prismGuardCooldownReduction = 0.5f;
 
     public RighteousStrike() {
         super(AbstractAbilityBuilder.create("righteousStrike").pvp());
@@ -40,7 +42,7 @@ public class RighteousStrike extends AbstractStrike<RighteousStrike, RighteousSt
         super.init(builder);
         this.abilityReductionInTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("abilityReductionInTicks"), int.class);
         this.additionalReductionInTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("additionalReductionInTicks"), int.class);
-        this.vindicateCooldownReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("vindicateCooldownReduction"), float.class);
+        this.prismGuardCooldownReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("prismGuardCooldownReduction"), float.class);
     }
 
     @Override
@@ -54,14 +56,36 @@ public class RighteousStrike extends AbstractStrike<RighteousStrike, RighteousSt
     protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull WarlordsEntity nearPlayer) {
         targetsStruck++;
         nearPlayer.addInstance(InstanceBuilder.damage().ability(this).source(wp).value(damageValues.strikeDamage));
-        if (nearPlayer.getCooldownManager().hasCooldown(SoulShackle.class)) {
+        boolean silenced = nearPlayer.getCooldownManager().hasCooldown(SoulShackle.class);
+        new CooldownFilter<>(nearPlayer, RegularCooldown.class)
+                .filter(regularCooldown -> regularCooldown.getCooldownType() == CooldownTypes.ABILITY)
+                .forEach(regularCooldown -> {
+                    String cooldownName = regularCooldown.getName();
+                    if (cooldownName.equals("Ice Barrier") || cooldownName.equals("Ice Block") || cooldownName.equals("Lustrous Crown")) {
+                        regularCooldown.subtractTime(8);
+                    } else if (cooldownName.equals("Last Stand")) {
+                        regularCooldown.subtractTime(8);
+                        Object data = regularCooldown.getCooldownObject();
+                        nearPlayer.getGame()
+                                  .warlordsPlayers()
+                                  .filter(warlordsPlayer -> warlordsPlayer.isTeammateAlive(nearPlayer) && warlordsPlayer != nearPlayer)
+                                  .forEach(warlordsPlayer -> {
+                                      new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
+                                              .filterCooldownObject(data)
+                                              .findAny()
+                                              .ifPresent(cd -> {
+                                                  cd.subtractTime(8);
+                                              });
+                                  });
+                    } else {
+                        regularCooldown.subtractTime(abilityReductionInTicks + (silenced ? additionalReductionInTicks : 0));
+                    }
+                });
+        if (silenced) {
             stats.silencedTargetStruck++;
-            nearPlayer.getCooldownManager().subtractTicksOnRegularCooldowns(abilityReductionInTicks + additionalReductionInTicks, CooldownTypes.ABILITY);
-            for (Vindicate vindicate : wp.getAbilitiesMatching(Vindicate.class)) {
-                vindicate.subtractCurrentCooldown(vindicateCooldownReduction);
+            for (PrismGuard prismGuard : wp.getAbilitiesMatching(PrismGuard.class)) {
+                prismGuard.subtractCurrentCooldown(prismGuardCooldownReduction);
             }
-        } else {
-            nearPlayer.getCooldownManager().subtractTicksOnRegularCooldowns(abilityReductionInTicks, CooldownTypes.ABILITY);
         }
         if (pveMasterUpgrade || pveMasterUpgrade2) {
             if (pveMasterUpgrade) {
@@ -100,8 +124,8 @@ public class RighteousStrike extends AbstractStrike<RighteousStrike, RighteousSt
                                                .durationTicks(abilityReductionInTicks)
                                                .text(".")
                                                .emptyLine()
-                                               .text("If your struck target is silenced, reduce the cooldown of your Vindicate by ")
-                                               .durationSeconds(vindicateCooldownReduction)
+                                               .text("If your struck target is silenced, reduce the cooldown of your Prism Guard by ")
+                                               .durationSeconds(prismGuardCooldownReduction)
                                                .text(" and reduce their active ability timers by ")
                                                .durationTicks((abilityReductionInTicks + additionalReductionInTicks))
                                                .text(" instead.")

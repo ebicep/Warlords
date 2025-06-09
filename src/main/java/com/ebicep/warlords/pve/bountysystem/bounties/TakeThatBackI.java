@@ -48,13 +48,13 @@ public class TakeThatBackI extends AbstractBounty implements TracksDuringGame, W
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onFinalDamageHeal(WarlordsDamageHealingFinalEvent event) {
-        if (!Objects.equals(event.getAttacker().getUuid(), uuid)) {
+        if (!Objects.equals(event.getSource().getUuid(), uuid)) {
             return;
         }
         if (!event.isDead()) {
             return;
         }
-        if (event.getInstanceFlags().contains(InstanceFlags.TRUE_DAMAGE) || event.getInstanceFlags().contains(InstanceFlags.REFLECTIVE_DAMAGE) || event.getAbility()
+        if (event.getInstanceFlags().contains(InstanceFlags.TRUE_DAMAGE) || event.getInstanceFlags().contains(InstanceFlags.REFLECTIVE_DAMAGE) || event.getCause()
                                                                                                                                                        .equals("Thorns")) {
             newKills++;
         }

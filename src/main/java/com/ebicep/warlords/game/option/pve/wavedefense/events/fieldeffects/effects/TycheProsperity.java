@@ -15,7 +15,6 @@ import com.ebicep.warlords.util.chat.ChatUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.util.Vector;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -88,17 +87,17 @@ public class TycheProsperity implements FieldEffect {
     }
 
     private void mageBonus(WarlordsEntity warlordsEntity) {
-        warlordsEntity.getSpec().setEnergyPerSec(warlordsEntity.getSpec().getEnergyPerSec() + 5);
-        warlordsEntity.getAbilitiesMatching(AbstractPiercingProjectile.class).forEach(proj -> proj.setProjectileSpeed(proj.getProjectileSpeed() * 1.1f));
+        warlordsEntity.getEnergyPerSec().addAdditiveModifier(getName(), 5);
+        warlordsEntity.getAbilitiesMatching(AbstractPiercingProjectile.class).forEach(proj -> proj.getProjectileSpeed().addMultiplicativeModifierAdd(getName(), .1f));
     }
 
     private void paladinBonus(WarlordsEntity warlordsEntity) {
-        warlordsEntity.getSpec().setEnergyPerHit(warlordsEntity.getSpec().getEnergyPerHit() + 5);
+        warlordsEntity.getEnergyPerHit().addAdditiveModifier(getName(), 5);
         warlordsEntity.getSpeed().addBaseModifier(5);
     }
 
     private void warriorBonus(WarlordsEntity warlordsEntity) {
-        warlordsEntity.getCooldownManager().addCooldown(new PermanentCooldown<>(
+        PermanentCooldown<FieldEffectOption> warriorCooldown = new PermanentCooldown<>(
                 getName(),
                 null,
                 FieldEffectOption.class,
@@ -113,12 +112,9 @@ public class TycheProsperity implements FieldEffect {
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 return currentDamageValue * 1.05f;
             }
-
-            @Override
-            public void multiplyKB(Vector currentVector) {
-                currentVector.multiply(.95);
-            }
-        });
+        };
+        warlordsEntity.getCooldownManager().addCooldown(warriorCooldown);
+        warlordsEntity.addKnockbackModifier(warlordsEntity, getName(), -5, warriorCooldown);
     }
 
     private void shamanBonus(WarlordsEntity warlordsEntity) {

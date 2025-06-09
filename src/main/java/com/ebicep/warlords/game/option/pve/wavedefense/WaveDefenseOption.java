@@ -122,7 +122,7 @@ public class WaveDefenseOption implements PveOption {
 
             @EventHandler
             public void onFinalDamageHeal(WarlordsDamageHealingFinalEvent event) {
-                WarlordsEntity attacker = event.getAttacker();
+                WarlordsEntity attacker = event.getSource();
                 if (!(attacker instanceof WarlordsPlayer)) {
                     return;
                 }
@@ -131,7 +131,7 @@ public class WaveDefenseOption implements PveOption {
                                   .merge(waveCounter, (long) event.getValue(), Long::sum);
             }
 
-            @EventHandler
+            @EventHandler(ignoreCancelled = true)
             public void onDeath(WarlordsDeathEvent event) {
                 WarlordsEntity we = event.getWarlordsEntity();
                 WarlordsEntity killer = event.getKiller();

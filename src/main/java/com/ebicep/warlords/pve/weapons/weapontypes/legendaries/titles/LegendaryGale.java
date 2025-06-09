@@ -14,7 +14,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
 import org.springframework.data.annotation.Transient;
 
 import javax.annotation.Nonnull;
@@ -142,6 +141,34 @@ public class LegendaryGale extends AbstractLegendaryWeapon {
         }
 
         @Override
+        protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
+            wp.addSpeedModifier(wp, name, 50, 10 * 20);
+            List<FloatModifiable.FloatModifier> modifiers = wp
+                    .getAbilities()
+                    .stream()
+                    .map(a -> a.getEnergyCost().addAdditiveModifier("Gale", -abilityEnergyDecrease))
+                    .toList();
+            RegularCooldown<LegendaryGale> galeCooldown = new RegularCooldown<>(
+                    name,
+                    "GALE",
+                    LegendaryGale.class,
+                    new LegendaryGale(),
+                    wp,
+                    CooldownTypes.WEAPON,
+                    cooldownManager -> {
+                    },
+                    cooldownManager -> {
+                        modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
+                        wp.getSpeed().removeModifier(name);
+                    },
+                    duration * 20
+            );
+            wp.addKnockbackModifier(wp, "Gale", -knockbackResistance, galeCooldown);
+            wp.getCooldownManager().addCooldown(galeCooldown);
+            return true;
+        }
+
+        @Override
         public void updateDescription(Player player) {
             description = Component.text("Increase movement speed by ")
                                    .append(Component.text("50%", NamedTextColor.YELLOW))
@@ -154,36 +181,6 @@ public class LegendaryGale extends AbstractLegendaryWeapon {
                                    .append(Component.text(" seconds."));
         }
 
-        @Override
-        protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
-            Runnable cancelSpeed = wp.addSpeedModifier(wp, name, 50, 10 * 20, "BASE");
-            List<FloatModifiable.FloatModifier> modifiers = wp
-                    .getAbilities()
-                    .stream()
-                    .map(a -> a.getEnergyCost().addAdditiveModifier("Gale", -abilityEnergyDecrease))
-                    .toList();
-            wp.getCooldownManager().addCooldown(new RegularCooldown<>(
-                    name,
-                    "GALE",
-                    LegendaryGale.class,
-                    new LegendaryGale(),
-                    wp,
-                    CooldownTypes.WEAPON,
-                    cooldownManager -> {
-                    },
-                    cooldownManager -> {
-                        modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
-                        cancelSpeed.run();
-                    },
-                    duration * 20
-            ) {
-                @Override
-                public void multiplyKB(Vector currentVector) {
-                    currentVector.multiply(1 - knockbackResistance / 100);
-                }
-            });
-
-            return true;
-        }
     }
+
 }

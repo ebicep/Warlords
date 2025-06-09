@@ -3,14 +3,11 @@ package com.ebicep.warlords.pve.mobs.zombie;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
-import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.AdvancedMob;
 import org.bukkit.Location;
-import org.bukkit.util.Vector;
 
 public class WanderWalker extends AbstractMob implements AdvancedMob {
 
@@ -75,26 +72,7 @@ public class WanderWalker extends AbstractMob implements AdvancedMob {
             );
             removeTarget();
             self.getSpeed().addBaseModifier(speedIncrease);
-            warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
-                    "Void Recovery",
-                    null,
-                    null,
-                    null,
-                    warlordsNPC,
-                    CooldownTypes.ABILITY,
-                    cooldownManager -> {
-                    },
-                    false,
-                    (cooldown, ticksElapsed) -> {
-                    }
-            ) {
-                final float calculatedKBRes = 1 - knockbackResistance / 100f;
-
-                @Override
-                public void multiplyKB(Vector currentVector) {
-                    currentVector.multiply(calculatedKBRes);
-                }
-            });
+            warlordsNPC.addKnockbackModifier(warlordsNPC, "KB RES", -knockbackResistance, -1);
         }
     }
 

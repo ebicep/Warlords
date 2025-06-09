@@ -8,12 +8,9 @@ import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.Tower
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.TowerUpgradeInstance;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.Upgradeable;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.WarlordsNPC;
-import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.WarlordsTower;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
-import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -104,17 +101,7 @@ public class ThunderlordTower extends AbstractTower implements Upgradeable.Path2
                     .flags(InstanceFlags.TD_PHYSICAL)
             );
             if (pveMasterUpgrade) {
-                if (target instanceof WarlordsPlayer warlordsPlayer) {
-                    warlordsPlayer.stun();
-                    new GameRunnable(warlordsPlayer.getGame()) {
-                        @Override
-                        public void run() {
-                            warlordsPlayer.unstun();
-                        }
-                    }.runTaskLater(STUN_TICKS);
-                } else if (target instanceof WarlordsNPC warlordsNPC) {
-                    warlordsNPC.setStunTicks(STUN_TICKS);
-                }
+                target.setStunTicks(STUN_TICKS);
             }
         }
 

@@ -138,7 +138,7 @@ public class Fireball extends AbstractProjectile<Fireball, Fireball.FireballStat
         WarlordsApplyBurnEffectEvent applyBurnEffectEvent = new WarlordsApplyBurnEffectEvent(hit, shooter, 20);
         Bukkit.getPluginManager().callEvent(applyBurnEffectEvent);
         hit.getCooldownManager().removeCooldownByName("Burn");
-        hit.getCooldownManager().addCooldown(new RegularCooldown<>("Burn", "BRN", Fireball.class, new Fireball(), shooter, CooldownTypes.DEBUFF, cooldownManager -> {
+        hit.getCooldownManager().addCooldown(new RegularCooldown<>("Burn", "BRN", Fireball.class, new Fireball(), shooter, CooldownTypes.LOW_LEVEL_DEBUFF, cooldownManager -> {
         }, 5 * 20, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
             if (ticksLeft % applyBurnEffectEvent.getTickPeriod() == 0) {
                 float healthDamage = hit.getMaxHealth() * 0.005f;
@@ -159,7 +159,7 @@ public class Fireball extends AbstractProjectile<Fireball, Fireball.FireballStat
         if (hit.getCooldownManager().hasCooldownFromName("Ignite")) {
             return;
         }
-        hit.getCooldownManager().addCooldown(new RegularCooldown<>("Ignite", "IGN", Fireball.class, new Fireball(), shooter, CooldownTypes.DEBUFF, cooldownManager -> {
+        hit.getCooldownManager().addCooldown(new RegularCooldown<>("Ignite", "IGN", Fireball.class, new Fireball(), shooter, CooldownTypes.LOW_LEVEL_DEBUFF, cooldownManager -> {
             PlayerFilter.entitiesAround(hit, 3, 3, 3).aliveTeammatesOf(hit).forEach(warlordsEntity -> {
                 warlordsEntity.addInstance(InstanceBuilder.damage().cause("Ignite").source(shooter).value(damageValues.igniteDamage).flags(InstanceFlags.TRUE_DAMAGE));
             });

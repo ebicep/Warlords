@@ -10,7 +10,7 @@ import org.bukkit.event.EventHandler;
 
 public class DuelsTeleportOption extends TeleportOnEventOption {
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onDeathEvent(WarlordsDeathEvent e) {
         for (WarlordsEntity wp : PlayerFilter
                 .playingGame(game)
@@ -21,11 +21,13 @@ public class DuelsTeleportOption extends TeleportOnEventOption {
             wp.getCooldownManager().removeBuffCooldowns();
             wp.getCooldownManager().removeDebuffCooldowns();
 
-            wp.setEnergy(wp.getSpec().getMaxEnergy());
+            wp.setCurrentEnergy(wp.getEnergy().getCalculatedValue());
             for (AbstractAbility ability : wp.getSpec().getAbilities()) {
                 ability.setCurrentCooldown(0);
             }
-            wp.setHorseCooldown(0);
+            for (HorseOption horseOption : wp.getGame().getOption(HorseOption.class)) {
+                horseOption.getHorseForPlayer(wp).setCurrentCooldown(0);
+            }
             wp.updateInventory(true);
         }
         preventPlayerMovement = true;
@@ -35,4 +37,5 @@ public class DuelsTeleportOption extends TeleportOnEventOption {
     public void onRespawnEvent(WarlordsRespawnEvent e) {
         preventPlayerMovement = false;
     }
+
 }

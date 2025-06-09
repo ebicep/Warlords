@@ -46,7 +46,7 @@ public class HuntBasicI extends AbstractBounty implements TracksDuringGame, Week
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onFinalDamageHeal(WarlordsDamageHealingFinalEvent event) {
-        if (!Objects.equals(event.getAttacker().getUuid(), uuid)) {
+        if (!Objects.equals(event.getSource().getUuid(), uuid)) {
             return;
         }
         if (!event.isDead()) {

@@ -25,7 +25,7 @@ import java.util.List;
 
 public class RayOfLight extends AbstractBeam<RayOfLight, RayOfLight.RayOfLightStats> implements Heals<RayOfLight.HealingValues> {
 
-    public static final ItemStack BEAM_ITEM = new ItemStack(Material.MANGROVE_FENCE);
+    public static final ItemStack BEAM_ITEM = new ItemStack(Material.WITHER_ROSE);
     private final RayOfLightStats stats = new RayOfLightStats();
     private final HealingValues healingValues = new HealingValues();
 
@@ -107,7 +107,7 @@ public class RayOfLight extends AbstractBeam<RayOfLight, RayOfLight.RayOfLightSt
 
     private void beamPlayer(@Nonnull WarlordsEntity hit, WarlordsEntity wp) {
         hit.getCooldownManager().removeDebuffCooldowns();
-        hit.getSpeed().removeSlownessModifiers();
+        hit.getSpeed().removeNegativeModifiers();
         int hexStacks = (int) new CooldownFilter<>(hit, RegularCooldown.class).filterCooldownClass(MercifulHex.class).stream().count();
         boolean hasDivineBlessing = wp.getCooldownManager().hasCooldown(DivineBlessing.DivineBlessingData.class);
         if (!hasDivineBlessing) {

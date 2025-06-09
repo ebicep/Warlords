@@ -5,12 +5,10 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
-import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
 import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.omega.GlassKnuckles;
-import org.bukkit.util.Vector;
 
 import java.util.Set;
 
@@ -46,22 +44,7 @@ public class PendragonGauntlets extends SpecialDeltaGauntlet implements AppliesT
                 if (event.getCause().isEmpty()) {
                     hits++;
                     if (hits == 5) {
-                        warlordsPlayer.getCooldownManager().addCooldown(new RegularCooldown<>(
-                                getName() + " KB",
-                                "KB RES",
-                                PendragonGauntlets.class,
-                                null,
-                                warlordsPlayer,
-                                CooldownTypes.ITEM,
-                                cooldownManager -> {
-                                },
-                                2 * 20
-                        ) {
-                            @Override
-                            public void multiplyKB(Vector currentVector) {
-                                currentVector.multiply(0.35);
-                            }
-                        });
+                        warlordsPlayer.addKnockbackModifier(warlordsPlayer, getName() + " KB", -50, 40);
                         hits = 0;
                     }
                 }

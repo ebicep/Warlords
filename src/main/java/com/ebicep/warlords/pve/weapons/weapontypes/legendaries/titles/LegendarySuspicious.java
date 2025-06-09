@@ -85,10 +85,10 @@ public class LegendarySuspicious extends AbstractLegendaryWeapon {
 
             @EventHandler
             public void onEvent(WarlordsDamageHealingFinalEvent event) {
-                if (!event.getAttacker().equals(player)) {
+                if (!event.getSource().equals(player)) {
                     return;
                 }
-                if (event.isDamageInstance() && event.isCrit() && event.getAbility().isEmpty()) {
+                if (event.isDamageInstance() && event.isCrit() && event.getCause().isEmpty()) {
                     player.addEnergy(player, "Suspicious Weapon", ENERGY_GAIN + ENERGY_GAIN_PER_UPGRADE * getTitleLevel());
                     if (player.getEntity() instanceof Player p) {
                         if (sound != null) {

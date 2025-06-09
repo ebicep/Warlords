@@ -21,7 +21,6 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
@@ -36,8 +35,8 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
     private int tickDuration = 100;
     private float maxDamagePrevented = 3600;
     private int damageReduction = 50;
-    private int radius = 10;
-    private int breakRadius = 15;
+    private float radius = 10;
+    private float breakRadius = 15;
     private int maxTargets = 1;
 
     public Intervene() {
@@ -50,8 +49,8 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
         this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
         this.maxDamagePrevented = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxDamagePrevented"), float.class);
         this.damageReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageReduction"), int.class);
-        this.radius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), int.class);
-        this.breakRadius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("breakRadius"), int.class);
+        this.radius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), float.class);
+        this.breakRadius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("breakRadius"), float.class);
         this.maxTargets = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxTargets"), int.class);
     }
 
@@ -93,7 +92,7 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
         List<InterveneData> venes = new ArrayList<>();
         for (WarlordsEntity veneTarget : PlayerFilter.entitiesAround(wp, radius, radius, radius)
                                                      .aliveTeammatesOfExcludingSelf(wp)
-                                                     .requireLineOfSightIntervene(wp)
+                                                     .requireLineOfSightIntervene(wp, true)
                                                      .lookingAtFirst(wp)
                                                      .limit(maxTargets)) {
             stats.playersIntervened++;
@@ -128,25 +127,18 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
             veneTarget.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" " + wp.getName() + " is shielding you with their ", NamedTextColor.GRAY))
                                                                   .append(Component.text("Intervene", NamedTextColor.YELLOW))
                                                                   .append(Component.text("!", NamedTextColor.GRAY)));
-            Runnable wpInterference;
-            Runnable veneTargetInterference;
+
             if (pveMasterUpgrade2) {
-                //TODO test toDisable logic
-                wpInterference = wp.addSpeedModifier(wp, "Interference - " + veneTarget.getName(), 25, tickDuration, "VENE");
-                veneTargetInterference = veneTarget.addSpeedModifier(wp, "Interference - " + veneTarget.getName(), 25, tickDuration, "VENE");
-            } else {
-                wpInterference = null;
-                veneTargetInterference = null;
+                wp.addSpeedModifier(wp, "Interference - " + veneTarget.getName(), 25, tickDuration);
+                veneTarget.addSpeedModifier(wp, "Interference - " + veneTarget.getName(), 25, tickDuration);
             }
             LinkedCooldown<InterveneData> interveneCooldown = new LinkedCooldown<>(name, "VENE", InterveneData.class, data, wp, CooldownTypes.ABILITY, cooldownManager -> {
             }, cooldownManager -> {
                 if (!Objects.equals(cooldownManager.getWarlordsEntity(), wp)) {
                     return;
                 }
-                if (wpInterference != null && veneTargetInterference != null) {
-                    wpInterference.run();
-                    veneTargetInterference.run();
-                }
+                wp.getSpeed().removeModifier("Interference - " + veneTarget.getName());
+                veneTarget.getSpeed().removeModifier("Interference - " + veneTarget.getName());
                 wp.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED.append(Component.text(" " + wp.getName() + "'s ", NamedTextColor.GRAY))
                                                                .append(Component.text("Intervene", NamedTextColor.YELLOW))
                                                                .append(Component.text(" has expired!", NamedTextColor.GRAY)));
@@ -175,13 +167,6 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
                 }
 
                 @Override
-                public void multiplyKB(Vector currentVector) {
-                    if (pveMasterUpgrade2) {
-                        currentVector.zero();
-                    }
-                }
-
-                @Override
                 public PlayerNameData addPrefixFromOther() {
                     return new PlayerNameData(Component.text((int) (data.getMaxDamagePrevented() - data.getDamagePrevented()), NamedTextColor.GOLD), we -> we.isTeammate(wp));
                 }
@@ -197,6 +182,10 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
                     );
                 }
             };
+            if (pveMasterUpgrade) {
+                wp.addKnockbackModifier(wp, name, -100, interveneCooldown);
+                veneTarget.addKnockbackModifier(wp, name, -100, interveneCooldown);
+            }
             wp.getCooldownManager().addCooldown(interveneCooldown);
             veneTarget.getCooldownManager().addCooldown(interveneCooldown);
             Bukkit.getPluginManager().callEvent(new WarlordsAbilityTargetEvent.WarlordsBlueAbilityTargetEvent(wp, name, veneTarget));
@@ -243,19 +232,19 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
         this.maxDamagePrevented = maxDamagePrevented;
     }
 
-    public int getBreakRadius() {
+    public float getBreakRadius() {
         return breakRadius;
     }
 
-    public void setBreakRadius(int breakRadius) {
+    public void setBreakRadius(float breakRadius) {
         this.breakRadius = breakRadius;
     }
 
-    public int getRadius() {
+    public float getRadius() {
         return radius;
     }
 
-    public void setRadius(int radius) {
+    public void setRadius(float radius) {
         this.radius = radius;
     }
 

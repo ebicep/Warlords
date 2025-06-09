@@ -14,19 +14,6 @@ import java.util.function.Consumer;
 
 public class Shield implements Listener {
 
-    private String name;
-    private float maxShieldHealth;
-    private float shieldHealth;
-
-    public Shield() {
-    }
-
-    public Shield(String name, float maxShieldHealth) {
-        this.name = name;
-        this.maxShieldHealth = maxShieldHealth;
-        this.shieldHealth = maxShieldHealth;
-    }
-
     @EventHandler(priority = EventPriority.HIGHEST)
     private void onAddCooldown(WarlordsAddCooldownEvent event) {
         WarlordsEntity warlordsEntity = event.getWarlordsEntity();
@@ -40,12 +27,7 @@ public class Shield implements Listener {
             if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterCooldownClass(Shield.class).stream().count() == 1) {
                 warlordsEntity.giveAbsorption(0);
             } else {
-                double totalShieldHealth = new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
-                        .filter(RegularCooldown::hasTicksLeft)
-                        .filterCooldownClassAndMapToObjectsOfClass(Shield.class)
-                        .mapToDouble(Shield::getShieldHealth)
-                        .sum();
-                warlordsEntity.giveAbsorption((float) (totalShieldHealth / warlordsEntity.getMaxHealth() * 40));
+                updateAbsorption(warlordsEntity);
             }
         });
         double totalShieldHealth = new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
@@ -55,6 +37,29 @@ public class Shield implements Listener {
         totalShieldHealth += shield.getShieldHealth();
         warlordsEntity.giveAbsorption((float) (totalShieldHealth / warlordsEntity.getMaxHealth() * 40));
     }
+
+    private String name;
+    private float maxShieldHealth;
+    private float shieldHealth;
+
+    public Shield() {
+    }
+
+    public Shield(String name, float maxShieldHealth) {
+        this.name = name;
+        this.maxShieldHealth = maxShieldHealth;
+        this.shieldHealth = maxShieldHealth;
+    }
+
+    public static void updateAbsorption(WarlordsEntity warlordsEntity) {
+        double totalShieldHealth = new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
+                .filter(RegularCooldown::hasTicksLeft)
+                .filterCooldownClassAndMapToObjectsOfClass(Shield.class)
+                .mapToDouble(Shield::getShieldHealth)
+                .sum();
+        warlordsEntity.giveAbsorption((float) (totalShieldHealth / warlordsEntity.getMaxHealth() * 40));
+    }
+
 
     public float getShieldHealth() {
         return shieldHealth;

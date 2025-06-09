@@ -1,17 +1,15 @@
 package com.ebicep.warlords.pve.mobs.skeleton;
 
 import com.ebicep.warlords.abilities.Fireball;
-import com.ebicep.warlords.abilities.WoundingStrikeBerserker;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
+import com.ebicep.warlords.abilities.internal.WoundingCooldown;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
-import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
@@ -19,15 +17,14 @@ import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.ChampionMob;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
-import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
 
+
 public class SkeletalSorcerer extends AbstractMob implements ChampionMob {
+
     public SkeletalSorcerer(Location spawnLocation) {
         super(
                 spawnLocation,
@@ -74,68 +71,34 @@ public class SkeletalSorcerer extends AbstractMob implements ChampionMob {
         super.onSpawn(option);
         EffectUtils.strikeLightning(warlordsNPC.getLocation(), true);
 
-        warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
-                "Damage Check",
-                null,
-                DamageCheck.class,
-                DamageCheck.DAMAGE_CHECK,
-                warlordsNPC,
-                CooldownTypes.ABILITY,
-                cooldownManager -> {
-                },
-                true
-        ) {
-            @Override
-            public void multiplyKB(Vector currentVector) {
-                // immune to KB
-                currentVector.multiply(0.05);
-            }
-        });
+        warlordsNPC.addKnockbackModifier(warlordsNPC, "KB RES", -100, -1);
     }
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-        warlordsNPC.getSpeed().removeSlownessModifiers();
+        warlordsNPC.getSpeed().removeNegativeModifiers();
     }
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-        receiver.getCooldownManager().removePreviousWounding();
-        receiver.getCooldownManager().removeCooldownByName(name);
-        receiver.getCooldownManager().addCooldown(new RegularCooldown<>(
+        WoundingCooldown.addWoundingCooldown(
+                receiver,
                 name,
-                "WND",
-                WoundingStrikeBerserker.class,
-                new WoundingStrikeBerserker(),
                 attacker,
-                CooldownTypes.DEBUFF,
-                cooldownManager -> {
-                },
-                cooldownManager -> {
-                    if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterNameActionBar("WND").stream().count() == 1) {
-                        receiver.sendMessage(Component.text("You are no longer ", NamedTextColor.GRAY)
-                                                      .append(Component.text("wounded", NamedTextColor.RED))
-                                                      .append(Component.text("."))
-                        );
-                    }
-                },
-                5 * 20
-        ) {
-            @Override
-            public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-                return currentHealValue * .5f;
-            }
-        });
+                50,
+                100
+        );
     }
 
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         super.onDeath(killer, deathLocation, option);
         EffectUtils.playFirework(deathLocation, FireworkEffect.builder()
-                                                           .withColor(Color.ORANGE)
-                                                           .with(FireworkEffect.Type.BURST)
-                                                           .withTrail()
-                                                           .build());
+                                                              .withColor(Color.ORANGE)
+                                                              .with(FireworkEffect.Type.BURST)
+                                                              .withTrail()
+                                                              .build()
+        );
         Utils.playGlobalSound(deathLocation, Sound.ENTITY_SKELETON_DEATH, 2, 0.4f);
     }
 
@@ -161,7 +124,7 @@ public class SkeletalSorcerer extends AbstractMob implements ChampionMob {
                         BlightedScorch.class,
                         new BlightedScorch(),
                         wp,
-                        CooldownTypes.DEBUFF,
+                        CooldownTypes.LOW_LEVEL_DEBUFF,
                         cooldownManager -> {
                         },
                         4 * 20,
@@ -181,5 +144,7 @@ public class SkeletalSorcerer extends AbstractMob implements ChampionMob {
             }
             return true;
         }
+
     }
+
 }

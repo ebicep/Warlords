@@ -160,6 +160,9 @@ public class Utils {
     }
 
     public static List<Block> getTargetBlockInBetween(Location location, int maxDistance) {
+        if (maxDistance <= 0) {
+            return Collections.emptyList();
+        }
         if (maxDistance > 120) {
             maxDistance = 120;
         }
@@ -339,7 +342,7 @@ public class Utils {
     }
 
     public static void addFallingBlock(Location location) {
-        addFallingBlock(location, new Vector(0, .14, 0));
+        addFallingBlock(location, new Vector(0, .03, 0));
     }
 
     public static void addFallingBlock(Location location, Vector vector) {
@@ -350,9 +353,9 @@ public class Utils {
             }
         }
         new SelfRemovingFallingBlock(
-                location.add(0, .6, 0),
+                location.add(0, .4, 0),
                 type.createBlockData(),
-                .4,
+                2,
                 block -> block.setVelocity(vector)
         );
     }

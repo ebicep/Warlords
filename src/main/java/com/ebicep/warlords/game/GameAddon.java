@@ -94,7 +94,7 @@ public enum GameAddon {
     ) {
         @Override
         public void warlordsEntityCreated(@Nonnull Game game, @Nonnull WarlordsEntity player) {
-            player.setEnergyModifier(player.getEnergyModifier() * 0.25);
+            player.setEnergyModifier(player.getEnergyModifier() * 0.25f);
             player.getAbilities().forEach(ability -> ability.getCooldown().addMultiplicativeModifierMult("Cooldown Mode", 0.25f));
         }
     },

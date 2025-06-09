@@ -1,7 +1,9 @@
 package com.ebicep.warlords.player.ingame;
 
+import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.Weapons;
+import org.bukkit.inventory.ItemStack;
 
 public class CosmeticSettings {
 
@@ -37,6 +39,10 @@ public class CosmeticSettings {
 
     public void setArmorSet(ArmorManager.ArmorSets armorSet) {
         this.armorSet = armorSet;
+    }
+
+    public ItemStack[] getArmor(Team team) {
+        return ArmorManager.getArmor(helmet, armorSet, team);
     }
 
 }

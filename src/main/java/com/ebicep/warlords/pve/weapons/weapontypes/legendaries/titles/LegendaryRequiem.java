@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 import com.ebicep.warlords.abilities.UndyingArmy;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsMobConvertEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.pve.PveOption;
@@ -130,7 +131,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
                         toConvert.forEach(convertedEnemy -> {
                             AbstractMob mob = convertedEnemy.getMob();
                             if (pveOption.getMobs().contains(mob)) {
-                                mob.getWarlordsNPC().die(mob.getWarlordsNPC());
+                                mob.getWarlordsNPC().die(mob.getWarlordsNPC(), WarlordsDeathEvent.DeathInfoBuilder.create().setForced(true));
                             }
                         });
                         toConvert.clear();
@@ -161,7 +162,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
                         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
                         allSpawnedMobs.forEach(mob -> {
                             if (pveOption.getMobs().contains(mob)) {
-                                mob.getWarlordsNPC().die(mob.getWarlordsNPC());
+                                mob.getWarlordsNPC().die(mob.getWarlordsNPC(), WarlordsDeathEvent.DeathInfoBuilder.create().setForced(true));
                             }
                         });
                         allSpawnedMobs.clear();
@@ -198,7 +199,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
                     public void run() {
                         spawnedMobs.forEach(mob -> {
                             if (pveOption.getMobs().contains(mob)) {
-                                mob.getWarlordsNPC().die(mob.getWarlordsNPC());
+                                mob.getWarlordsNPC().die(mob.getWarlordsNPC(), WarlordsDeathEvent.DeathInfoBuilder.create().setForced(true));
                             }
                         });
                         spawnedMobs.clear();

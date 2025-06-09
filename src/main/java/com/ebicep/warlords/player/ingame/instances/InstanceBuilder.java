@@ -6,6 +6,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.instances.type.CustomInstanceFlags;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import net.kyori.adventure.text.TextComponent;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -27,6 +28,8 @@ public class InstanceBuilder {
         return new InstanceBuilder(InstanceType.DAMAGE).cause("");
     }
 
+    private List<TextComponent> debugMessages = Collections.emptyList();
+
     public static InstanceBuilder fall() {
         return new InstanceBuilder(InstanceType.DAMAGE).cause("Fall");
     }
@@ -34,7 +37,6 @@ public class InstanceBuilder {
     public static InstanceBuilder healing() {
         return new InstanceBuilder(InstanceType.HEALING);
     }
-
     private final InstanceType instanceType;
     private WarlordsEntity target;
     private WarlordsEntity source;
@@ -47,6 +49,11 @@ public class InstanceBuilder {
     private float critMultiplier = 100;
     private EnumSet<InstanceFlags> flags = EnumSet.noneOf(InstanceFlags.class);
     private List<CustomInstanceFlags> customFlags = Collections.emptyList();
+
+    public InstanceBuilder cause(String cause) {
+        this.cause = cause;
+        return this;
+    }
     @Nullable
     private UUID uuid = null;
 
@@ -85,11 +92,6 @@ public class InstanceBuilder {
     public InstanceBuilder ability(AbstractAbility ability) {
         this.ability = ability;
         this.cause = ability.getName();
-        return this;
-    }
-
-    public InstanceBuilder cause(String cause) {
-        this.cause = cause;
         return this;
     }
 
@@ -154,6 +156,7 @@ public class InstanceBuilder {
     }
 
     public InstanceBuilder showAsCrit(boolean showAsCrit) {
+        this.flags.add(InstanceFlags.IGNORE_CRIT_MODIFIERS);
         if (showAsCrit) {
             this.critChance = 100;
         }
@@ -199,6 +202,11 @@ public class InstanceBuilder {
         return this;
     }
 
+    public InstanceBuilder debugMessages(TextComponent... debugMessages) {
+        this.debugMessages = List.of(debugMessages);
+        return this;
+    }
+
     public InstanceBuilder uuid(UUID uuid) {
         this.uuid = uuid;
         return this;
@@ -221,6 +229,7 @@ public class InstanceBuilder {
                 critMultiplier,
                 flags,
                 customFlags,
+                debugMessages,
                 uuid
         );
     }

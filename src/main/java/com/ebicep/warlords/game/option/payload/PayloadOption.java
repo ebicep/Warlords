@@ -58,7 +58,7 @@ public class PayloadOption implements PveOption {
 
         game.registerEvents(new Listener() {
 
-            @EventHandler
+            @EventHandler(ignoreCancelled = true)
             public void onDeath(WarlordsDeathEvent event) {
                 WarlordsEntity we = event.getWarlordsEntity();
                 WarlordsEntity killer = event.getKiller();

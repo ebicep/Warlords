@@ -28,12 +28,11 @@ import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, Duration, Heals<RemedicChains.HealingValues>, AbilityStats<RemedicChains, RemedicChains.RemedicChainsStats> {
+public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, Duration, Heals<RemedicChains.HealingValues>, Damages<RemedicChains.DamageValues>, AbilityStats<RemedicChains, RemedicChains.RemedicChainsStats> {
 
     private final RemedicChainsStats stats = new RemedicChainsStats();
     private final HealingValues healingValues = new HealingValues();
-    private float healingMultiplier = 12.5f; // %
-    private float allyDamageIncrease = 12; // %
+    private final DamageValues damageValues = new DamageValues();
     private int tickDuration = 160;
     private int alliesAffected = 3;
     private int linkBreakRadius = 15;
@@ -46,8 +45,6 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
     @Override
     public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
-        this.healingMultiplier = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("healingMultiplier"), float.class);
-        this.allyDamageIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("allyDamageIncrease"), float.class);
         this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
         this.alliesAffected = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("alliesAffected"), int.class);
         this.linkBreakRadius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("linkBreakRadius"), int.class);
@@ -55,31 +52,10 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
     }
 
     @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Bind yourself to up to ")
-                                               .text(alliesAffected, NamedTextColor.BLUE)
-                                               .text(" allies near you, increasing the damage they deal to leeched targets by ")
-                                               .percent(allyDamageIncrease, NamedTextColor.RED)
-                                               .text(" while the link is active. Lasts ")
-                                               .durationTicks(tickDuration)
-                                               .text(".")
-                                               .emptyLine()
-                                               .text("When the link expires you and the allies are healed for ")
-                                               .heal(healingValues.chainHealing)
-                                               .text(" health. Breaking the link early will only heal the allies for ")
-                                               .percent(healingMultiplier, NamedTextColor.GREEN)
-                                               .text(" of the original amount for each second they have been linked.")
-                                               .emptyLine()
-                                               .text("The link will break if you are more than ")
-                                               .blocks(linkBreakRadius)
-                                               .text(" apart.")
-                                               .build();
-    }
-
-    @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Set<WarlordsEntity> teammatesNear = PlayerFilter.entitiesAround(wp, castRange, castRange, castRange)
                                                         .aliveTeammatesOfExcludingSelf(wp)
+                                                        .excludingDummy()
                                                         .closestFirst(wp)
                                                         .limit(alliesAffected)
                                                         .stream()
@@ -91,6 +67,7 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
         stats.targetsLinked += teammatesNear.size();
         Utils.playGlobalSound(wp.getLocation(), "rogue.remedicchains.activation", 2, 0.2f);
         Map<WarlordsEntity, FloatModifiable.FloatModifier> healthBoosts = new HashMap<>();
+        wp.setRegenTickTimer(1);
         teammatesNear.forEach(warlordsEntity -> {
             wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" Your Remedic Chains is now protecting ", NamedTextColor.GRAY))
                                                           .append(Component.text(warlordsEntity.getName(), NamedTextColor.YELLOW))
@@ -102,6 +79,7 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
                                                                          .append(Component.text(" for ", NamedTextColor.GRAY))
                                                                          .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
                                                                          .append(Component.text(" seconds!", NamedTextColor.GRAY)));
+            warlordsEntity.setRegenTickTimer(1);
             float healthIncrease = warlordsEntity.getMaxHealth() * .25f;
             if (pveMasterUpgrade) {
                 healthBoosts.put(warlordsEntity, warlordsEntity.getHealth().addAdditiveModifier("Remedic Chains", healthIncrease));
@@ -120,16 +98,6 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
                 wp,
                 CooldownTypes.ABILITY,
                 (cooldownManager, linkedCooldown) -> {
-                    if (!Objects.equals(cooldownManager.getWarlordsEntity(), wp)) {
-                        return;
-                    }
-                    if (wp.isDead()) {
-                        return;
-                    }
-                    wp.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(healingValues.chainHealing));
-                    for (WarlordsEntity linkedEntity : linkedCooldown.getLinkedEntities()) {
-                        linkedEntity.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(healingValues.chainHealing));
-                    }
                 },
                 (cooldownManager, linkedCooldown) -> {
                     if (!Objects.equals(cooldownManager.getWarlordsEntity(), wp)) {
@@ -141,10 +109,22 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
                 },
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    Set<WarlordsEntity> linkedEntities = cooldown.getLinkedEntities();
+                    if (ticksElapsed % 20 == 0) {
+                        Set<WarlordsEntity> linkedEntitiesWithWP = new HashSet<>(linkedEntities);
+                        linkedEntitiesWithWP.add(wp);
+                        linkedEntitiesWithWP.forEach(linked -> {
+                            linked.addInstance(InstanceBuilder
+                                    .healing()
+                                    .ability(this)
+                                    .source(wp)
+                                    .value(healingValues.chainHealing)
+                            );
+                        });
+                    }
                     if (ticksElapsed % 8 != 0) {
                         return;
                     }
-                    Set<WarlordsEntity> linkedEntities = cooldown.getLinkedEntities();
                     Set<WarlordsEntity> toRemove = new HashSet<>();
                     for (WarlordsEntity linked : linkedEntities) {
                         boolean outOfRange = wp.getLocation().distanceSquared(linked.getLocation()) > linkBreakRadius * linkBreakRadius;
@@ -152,14 +132,7 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
                             linked.getCooldownManager().removeCooldownNoForce(cooldown);
                             Utils.playGlobalSound(linked.getLocation(), "rogue.remedicchains.impact", 0.1f, 1.4f);
                             linked.getWorld().spawnParticle(Particle.HAPPY_VILLAGER, linked.getLocation().add(0, 1, 0), 10, 0.5, 0.5, 0.5, 1, null, true);
-                            // Ally is out of range, break link
                             stats.numberOfBrokenLinks++;
-                            float totalHealingMultiplier = ((healingMultiplier / 100f) * (ticksElapsed / 20f));
-                            linked.addInstance(InstanceBuilder.healing()
-                                                              .ability(this)
-                                                              .source(wp)
-                                                              .min(healingValues.chainHealing.getMinValue() * totalHealingMultiplier)
-                                                              .max(healingValues.chainHealing.getMaxValue() * totalHealingMultiplier));
                         }
                         EffectUtils.playParticleLinkAnimation(wp.getLocation(), linked.getLocation(), 250, 200, 250, 1);
                         if (outOfRange || linked.isDead()) {
@@ -173,19 +146,16 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
                         }
                     }
                     linkedEntities.removeAll(toRemove);
+                    if (linkedEntities.isEmpty()) {
+                        cooldown.setTicksLeft(1);
+                    }
                 }),
                 teammatesNear
         ) {
 
-            private final ImpalingStrike impalingStrike = new ImpalingStrike();
-
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                WarlordsEntity warlordsEntity = event.getWarlordsEntity();
-                if (warlordsEntity.getCooldownManager().hasCooldownFromName("Leech Debuff")) {
-                    return currentDamageValue * (1 + allyDamageIncrease / 100f);
-                }
-                return currentDamageValue;
+                return currentDamageValue + damageValues.getBonusDamage().getValue();
             }
 
             @Override
@@ -197,13 +167,9 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
                     return;
                 }
                 switch (Specializations.getClass(event.getSource().getSpecClass())) {
-                    case WARRIOR, PALADIN, ROGUE -> ImpalingStrike.giveLeechCooldown(event.getSource(),
-                            event.getWarlordsEntity(),
-                            impalingStrike.getLeechDuration(),
-                            impalingStrike.getLeechSelfAmount() / 100f,
-                            impalingStrike.getLeechAllyAmount() / 100f,
-                            warlordsDamageHealingFinalEvent -> {
-                            }
+                    case WARRIOR, PALADIN, ROGUE -> Leech.giveLeechCooldown(Leech.LeechInstance
+                            .create(wp, event.getWarlordsEntity())
+                            .withImpalingStrike()
                     );
                     default -> {
                     }
@@ -230,8 +196,32 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
     }
 
     @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Bind yourself to up to ")
+                                               .text(alliesAffected, NamedTextColor.BLUE)
+                                               .text(" allies near you, increasing the damage they deal by ")
+                                               .damage(damageValues.bonusDamage)
+                                               .text(" and healing all bound for ")
+                                               .heal(healingValues.chainHealing)
+                                               .text(" health per second while the link is active. Lasts ")
+                                               .durationTicks(tickDuration)
+                                               .text(".")
+                                               .emptyLine()
+                                               .text("The link instantly activates natural regeneration and will break if you are more than ")
+                                               .blocks(linkBreakRadius)
+                                               .text(" apart.")
+                                               .initialRange(castRange)
+                                               .build();
+    }
+
+    @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new RemedicChainsBranch(abilityTree, this);
+    }
+
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
     }
 
     @Override
@@ -262,17 +252,9 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
         this.linkBreakRadius = linkBreakRadius;
     }
 
-    public float getAllyDamageIncrease() {
-        return allyDamageIncrease;
-    }
-
-    public void setAllyDamageIncrease(float allyDamageIncrease) {
-        this.allyDamageIncrease = allyDamageIncrease;
-    }
-
     public static class HealingValues implements Value.ValueHolder {
 
-        private Value.RangedValueCritable chainHealing = new Value.RangedValueCritable(728, 815, 20, 200);
+        private Value.RangedValue chainHealing = new Value.RangedValue(120, 140);
 
         private List<Value> values = List.of(chainHealing);
 
@@ -283,12 +265,35 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.chainHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameHealing("chainHealing"), Value.RangedValueCritable.class);
+            this.chainHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameHealing("chainHealing"), Value.RangedValue.class);
             this.values = List.of(chainHealing);
         }
 
-        public Value.RangedValueCritable getChainHealing() {
+        public Value.RangedValue getChainHealing() {
             return chainHealing;
+        }
+
+    }
+
+    public static class DamageValues implements Value.ValueHolder {
+
+        private Value.SetValue bonusDamage = new Value.SetValue(20);
+
+        private List<Value> values = List.of(bonusDamage);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+        @Override
+        public void init(AbstractAbilityBuilder builder) {
+            this.bonusDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("bonusDamage"), Value.SetValue.class);
+            this.values = List.of(bonusDamage);
+        }
+
+        public Value.SetValue getBonusDamage() {
+            return bonusDamage;
         }
 
     }

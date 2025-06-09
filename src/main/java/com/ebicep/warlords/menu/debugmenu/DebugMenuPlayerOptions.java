@@ -1,19 +1,24 @@
 package com.ebicep.warlords.menu.debugmenu;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.flags.GroundFlagLocation;
 import com.ebicep.warlords.game.flags.PlayerFlagLocation;
 import com.ebicep.warlords.game.flags.SpawnFlagLocation;
+import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.*;
+import com.ebicep.warlords.game.option.pvp.ApplySkillBoostOption;
+import com.ebicep.warlords.game.option.pvp.ApplySpecBoostsOption;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.menu.MenuItemPairList;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.SkillBoosts;
 import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -36,10 +41,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionType;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.EnumSet;
-import java.util.List;
+import java.util.*;
 
 import static com.ebicep.warlords.menu.Menu.*;
 import static com.ebicep.warlords.util.chat.ChatChannels.sendDebugMessage;
@@ -308,12 +310,13 @@ public class DebugMenuPlayerOptions {
         }
 
         menu.setItem(3, 4, MENU_BACK, (m, e) -> {
-            if (player.getUniqueId() == target.getUuid()) {
-                DebugMenu.openDebugMenu(player);
-            } else {
-                DebugMenuTeamOptions.openTeamSelectorMenu(player, target.getGame());
-            }
-        });
+                    if (player.getUniqueId() == target.getUuid()) {
+                        DebugMenu.openDebugMenu(player);
+                    } else {
+                        DebugMenuTeamOptions.openTeamSelectorMenu(player, target.getGame());
+                    }
+                }
+        );
         menu.setItem(4, 4, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
@@ -352,8 +355,8 @@ public class DebugMenuPlayerOptions {
         }.runTaskLater(Warlords.getInstance(), 1);
     }
 
-    public static void setSpec(Player player, WarlordsEntity target, Specializations selectedSpec, SkillBoosts skillBoost) {
-        target.setSpec(selectedSpec, skillBoost);
+    public static void setSpec(Player player, WarlordsEntity target, Specializations selectedSpec) {
+        target.setSpec(selectedSpec);
         sendDebugMessage(player, Component.text("Changed ", NamedTextColor.GREEN)
                                           .append(target.getColoredName())
                                           .append(Component.text("'s spec to " + selectedSpec.name))
@@ -470,7 +473,7 @@ public class DebugMenuPlayerOptions {
                                                                amountNumber * 20
                                                        );
                                                        if (cooldown == StatusEffectCooldowns.SPEED) {
-                                                           target.addSpeedModifier(target, "Speed Powerup", 40, amountNumber * 20, "BASE");
+                                                           target.addSpeedModifier(target, "Speed Powerup", 40, amountNumber * 20);
                                                        }
                                                        sendDebugMessage(player, Component.text("Gave ", NamedTextColor.GREEN)
                                                                                          .append(coloredName)
@@ -503,13 +506,14 @@ public class DebugMenuPlayerOptions {
             int y = 0;
             for (DebugLocationMarker marker : game.getMarkers(DebugLocationMarker.class)) {
                 menu.setItem(x, y, marker.getAsItem(), (m, e) -> {
-                    target.teleport(marker.getLocation());
-                    sendDebugMessage(player, Component.text("Teleported ", NamedTextColor.GREEN)
-                                                      .append(target.getColoredName())
-                                                      .append(Component.text(" to "))
-                                                      .append(marker.getName())
-                    );
-                });
+                            target.teleport(marker.getLocation());
+                            sendDebugMessage(player, Component.text("Teleported ", NamedTextColor.GREEN)
+                                                              .append(target.getColoredName())
+                                                              .append(Component.text(" to "))
+                                                              .append(marker.getName())
+                            );
+                        }
+                );
 
                 x++;
 
@@ -549,7 +553,8 @@ public class DebugMenuPlayerOptions {
                                                 null
                                 );
                                 sendDebugMessage(player, Component.text("Picked up the flag for ", NamedTextColor.GREEN)
-                                                                  .append(targetColoredName));
+                                                                  .append(targetColoredName)
+                                );
                             }
                         }
                 );
@@ -560,7 +565,8 @@ public class DebugMenuPlayerOptions {
                             if (target.getCarriedFlag() == holder.getInfo()) {
                                 holder.getInfo().setFlag(new SpawnFlagLocation(holder.getInfo().getSpawnLocation(), null));
                                 sendDebugMessage(player, Component.text("Returned the flag for ", NamedTextColor.GREEN)
-                                                                  .append(targetColoredName));
+                                                                  .append(targetColoredName)
+                                );
                             } else {
                                 sendDebugMessage(player, Component.text("That player does not have the flag", NamedTextColor.RED));
                             }
@@ -573,7 +579,8 @@ public class DebugMenuPlayerOptions {
                             if (target.getCarriedFlag() == holder.getInfo()) {
                                 FlagHolder.dropFlagForPlayer(target, false);
                                 sendDebugMessage(player, Component.text("Dropped the flag for ", NamedTextColor.GREEN)
-                                                                  .append(targetColoredName));
+                                                                  .append(targetColoredName)
+                                );
 
                             } else {
                                 sendDebugMessage(player, Component.text("That player does not have the flag", NamedTextColor.RED));
@@ -651,7 +658,18 @@ public class DebugMenuPlayerOptions {
                     }
                     menu.setItem(4 + j, i,
                             spec.get(),
-                            (m, e) -> openSkillBoostMenu(player, target, aClasses.get(finalJ))
+                            (m, e) -> {
+                                if (target.getGame().getOptions().stream().anyMatch(ApplySkillBoostOption.class::isInstance)) {
+                                    openSkillBoostMenu(player, target, aClasses.get(finalJ));
+                                } else {
+                                    for (Option option : target.getGame().getOptions()) {
+                                        if (option instanceof ApplySpecBoostsOption applySpecBoostsOption) {
+                                            openSpecBoostMenu(player, target, applySpecBoostsOption, aClasses.get(finalJ));
+                                            return;
+                                        }
+                                    }
+                                }
+                            }
                     );
                 }
             }
@@ -676,12 +694,46 @@ public class DebugMenuPlayerOptions {
                                         Component.text("Click to select!", NamedTextColor.YELLOW)
                                 ).get(),
                         (m, e) -> {
-                            setSpec(player, target, selectedSpec, skillBoost);
+                            setSpec(player, target, selectedSpec);
                             openSpecMenu(player, target);
                         }
                 );
 
             }
+            menu.setItem(3, 3, MENU_BACK, (m, e) -> openSpecMenu(player, target));
+            menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
+            menu.openForPlayer(player);
+        }
+
+        public static void openSpecBoostMenu(Player player, WarlordsEntity target, ApplySpecBoostsOption option, Specializations selectedSpec) {
+            Menu menu = new Menu("Spec Boosts " + target.getName(), 9 * 4);
+            List<SpecBoostManager.SpecBoost<?>> specBoosts = SpecBoostManager.getSpecBoosts(selectedSpec);
+            if (specBoosts.isEmpty()) {
+                setSpec(player, target, selectedSpec);
+                return;
+            }
+
+            DatabaseManager.getPlayer(target.getUuid(), databasePlayer -> {
+                        Map<Specializations, Integer> selectedBoosts = databasePlayer.getSpecBoosts();
+                        for (int i = 0; i < specBoosts.size(); i++) {
+                            SpecBoostManager.SpecBoost<?> specBoost = specBoosts.get(i);
+
+                            int finalI = i;
+                            menu.setItem(i + 2, 1,
+                                    new ItemBuilder(selectedSpec.specType.itemStack)
+                                            .name(specBoost.getName())
+                                            .lore(specBoost.getDescriptionLore())
+                                            .get(),
+                                    (m, e) -> {
+                                        selectedBoosts.put(selectedSpec, finalI);
+                                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                        setSpec(player, target, selectedSpec);
+                                    }
+                            );
+                        }
+                    }
+            );
+
             menu.setItem(3, 3, MENU_BACK, (m, e) -> openSpecMenu(player, target));
             menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
             menu.openForPlayer(player);
@@ -811,24 +863,27 @@ public class DebugMenuPlayerOptions {
                 }
 
                 menu.setItem(3, 3, MENU_BACK, (m, e) -> {
-                    openCooldownManagerMenu(player, target);
-                    new BukkitRunnable() {
-                        @Override
-                        public void run() {
-                            if (PlainTextComponentSerializer.plainText()
-                                                            .serialize(player.getOpenInventory().title())
-                                                            .equals("CD Manager: " + target.getName())) {
-                                openCooldownManagerMenu(player, target);
-                            } else {
-                                this.cancel();
-                            }
+                            openCooldownManagerMenu(player, target);
+                            new BukkitRunnable() {
+                                @Override
+                                public void run() {
+                                    if (PlainTextComponentSerializer.plainText()
+                                                                    .serialize(player.getOpenInventory().title())
+                                                                    .equals("CD Manager: " + target.getName())) {
+                                        openCooldownManagerMenu(player, target);
+                                    } else {
+                                        this.cancel();
+                                    }
+                                }
+                            }.runTaskTimer(Warlords.getInstance(), 20, 20);
                         }
-                    }.runTaskTimer(Warlords.getInstance(), 20, 20);
-                });
+                );
                 menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
                 menu.openForPlayer(player);
             }
+
         }
+
     }
 
 }

@@ -1,8 +1,8 @@
 package com.ebicep.warlords.menu.generalmenu;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
@@ -12,6 +12,7 @@ import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.*;
 import com.ebicep.warlords.player.general.settings.ParticleQuality;
+import com.ebicep.warlords.player.general.specboosts.SpecBoostMenu;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
@@ -53,9 +54,7 @@ public class WarlordsShopMenu {
             int level = (int) ExperienceManager.calculateLevelFromExp(experience);
             ItemBuilder itemBuilder = new ItemBuilder(group.item)
                     .name(Component.text(group.name, NamedTextColor.GOLD)
-                                   .append(Component.text(" [", NamedTextColor.DARK_GRAY))
-                                   .append(Component.text("Lv" + ExperienceManager.getLevelString(level), NamedTextColor.GRAY))
-                                   .append(Component.text("]", NamedTextColor.DARK_GRAY)));
+                                   .append(ExperienceManager.getLevelStringBracket(level)));
             itemBuilder.addLore(WordWrap.wrap(Component.text(group.description, NamedTextColor.GRAY), 150));
             itemBuilder.addLore(Component.empty());
             itemBuilder.addLore(Component.text("Specializations:", NamedTextColor.GOLD));
@@ -78,7 +77,9 @@ public class WarlordsShopMenu {
         }
         menu.setItem(1, 3, WarlordsNewHotbarMenu.PvPMenu.MENU_SKINS, (m, e) -> openWeaponMenu(player, 1));
         menu.setItem(3, 3, WarlordsNewHotbarMenu.PvPMenu.MENU_ARMOR_SETS, (m, e) -> openArmorMenu(player, 1));
-        menu.setItem(5, 3, WarlordsNewHotbarMenu.PvPMenu.MENU_BOOSTS, (m, e) -> openSkillBoostMenu(player, selectedSpec));
+//        menu.setItem(5, 3, WarlordsNewHotbarMenu.PvPMenu.MENU_BOOSTS, (m, e) -> openSkillBoostMenu(player, selectedSpec));
+        menu.setItem(5, 3, WarlordsNewHotbarMenu.PvPMenu.MENU_SPEC_BOOSTS, (m, e) -> SpecBoostMenu.open(player));
+
         menu.setItem(7, 3, WarlordsNewHotbarMenu.SettingsMenu.MENU_SETTINGS, (m, e) -> openSettingsMenu(player));
         menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.setItem(4, 2, WarlordsNewHotbarMenu.PvPMenu.MENU_ABILITY_DESCRIPTION, (m, e) -> openLobbyAbilityMenu(player));
@@ -93,12 +94,7 @@ public class WarlordsShopMenu {
             Specializations spec = values.get(i);
             ItemBuilder itemBuilder = new ItemBuilder(spec.specType.itemStack)
                     .name(Component.text("Specialization: " + spec.name, NamedTextColor.GREEN)
-                                   .append(Component.text(" [", NamedTextColor.DARK_GRAY))
-                                   .append(Component.text("Lv" + ExperienceManager.getLevelString(
-                                           ExperienceManager.getLevelForSpec(player.getUniqueId(),
-                                                   spec
-                                           )), NamedTextColor.GRAY))
-                                   .append(Component.text("] ", NamedTextColor.DARK_GRAY))
+                                   .append(ExperienceManager.getLevelStringBracket(ExperienceManager.getLevelForSpec(player.getUniqueId(), spec)))
                                    .append(ExperienceManager.getPrestigeLevelString(player.getUniqueId(), spec)));
             itemBuilder.addLore(WordWrap.wrap(spec.getDescription(), 150));
             itemBuilder.addLore(Component.empty());
@@ -124,7 +120,7 @@ public class WarlordsShopMenu {
                         playerSettings.setSelectedSpec(spec);
                         ArmorManager.resetArmor(player);
 
-                        AbstractPlayerClass apc = spec.create.get();
+                        AbstractPlayerClass apc = spec.create();
                         ItemStack weaponSkin = playerSettings.getWeaponSkins()
                                                              .getOrDefault(spec, Weapons.STEEL_SWORD)
                                                              .getItem();
@@ -182,8 +178,8 @@ public class WarlordsShopMenu {
 
         //showing change of ability
         PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
-        AbstractPlayerClass apc = selectedSpec.create.get();
-        AbstractPlayerClass apc2 = selectedSpec.create.get();
+        AbstractPlayerClass apc = selectedSpec.create();
+        AbstractPlayerClass apc2 = selectedSpec.create();
         List<AbstractAbility> abilities = apc.getAbilities();
         List<AbstractAbility> abilities2 = apc2.getAbilities();
         for (int i = 0; i < abilities.size(); i++) {
@@ -260,7 +256,7 @@ public class WarlordsShopMenu {
                                                         .append(Component.text(weapon.getName() + "!", NamedTextColor.AQUA)));
                             playerSettings.getWeaponSkins().put(selectedSpec, weapon);
                             openWeaponMenu(player, pageNumber);
-                            AbstractPlayerClass apc = selectedSpec.create.get();
+                            AbstractPlayerClass apc = selectedSpec.create();
                             player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins()
                                                                                                                    .getOrDefault(selectedSpec,
                                                                                                                            Weapons.FELFLAME_BLADE
@@ -546,7 +542,7 @@ public class WarlordsShopMenu {
         Menu menu = new Menu("Class Information", 9);
         PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
         Specializations selectedSpec = playerSettings.getSelectedSpec();
-        AbstractPlayerClass apc = selectedSpec.create.get();
+        AbstractPlayerClass apc = selectedSpec.create();
 
         ItemBuilder icon = new ItemBuilder(selectedSpec.specType.itemStack);
         icon.name(Component.text(selectedSpec.name, NamedTextColor.GREEN));
@@ -568,9 +564,16 @@ public class WarlordsShopMenu {
         boolean noDamageResistance = apc.getDamageResistance() == 0;
         icon.addLore(Component.text("Damage Reduction: ", NamedTextColor.GRAY)
                               .append(Component.text(noDamageResistance ? "None" : NumberFormat.formatOptionalTenths(apc.getDamageResistance()) + "%",
-                                      noDamageResistance ? NamedTextColor.RED : NamedTextColor.YELLOW
+                                      noDamageResistance ? NamedTextColor.RED : AbilityDescriptionBuilder.COLOR_BROWN
                               ))
         );
+        boolean noSpeed = apc.getSpeed() == 0;
+        icon.addLore(Component.text("Speed: ", NamedTextColor.GRAY)
+                              .append(Component.text(noSpeed ? "None" : NumberFormat.formatOptionalTenths(apc.getSpeed()) + "%",
+                                      noSpeed ? NamedTextColor.RED : NamedTextColor.WHITE
+                              ))
+        );
+
 
         // not including skill boost - these display base stats
         List<AbstractAbility> abilities = apc.getAbilities();

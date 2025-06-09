@@ -64,7 +64,7 @@ public class TheRift extends GameMap {
         options.add(new FlagCapturePointOption(loc.addXYZ(99.5, 45.5, 17.5, 90, 0), Team.RED));
         options.add(new FlagSpawnPointOption(loc.addXYZ(99.5, 45.5, 17.5, 90, 0), Team.RED));
 
-        options.add(new AbstractScoreOnEventOption.FlagCapture(250));
+        options.add(new AbstractScoreOnEventOption.FlagCapture());
 
         options.add(new GateOption(loc, -79, 45, -29, -79, 49, -24));
         options.add(new GateOption(loc, -91, 45, -6, -86, 49, -6));
@@ -73,13 +73,13 @@ public class TheRift extends GameMap {
 
         options.add(new WinByPointsOption());
         options.add(new MercyWinOption());
+        WinAfterTimeoutOption timeoutOption = new WinAfterTimeoutOption();
+        options.add(timeoutOption);
         if (addons.contains(GameAddon.DOUBLE_TIME)) {
-            options.add(new WinAfterTimeoutOption(1800));
-        } else {
-            options.add(new WinAfterTimeoutOption());
+            timeoutOption.setTimeRemaining(timeoutOption.getTimeRemaining() * 2);
         }
         options.add(new GameOvertimeOption());
-        options.add(new AbstractScoreOnEventOption.OnKill(5));
+        options.add(new AbstractScoreOnEventOption.OnKill());
         options.add(new RespawnWaveOption());
         options.add(new RespawnProtectionOption());
         options.add(new GraveOption());

@@ -22,7 +22,7 @@ public class SRCalculator {
         PLAYERS_SR.clear();
         numberOfActualPlayers = 20;
         ChatUtils.MessageType.WARLORDS.sendMessage("Recalculating player SR PUBS");
-        Collection<DatabasePlayer> players = DatabaseManager.CACHED_PLAYERS.getOrDefault(PlayersCollections.SEASON_9,
+        Collection<DatabasePlayer> players = DatabaseManager.CACHED_PLAYERS.getOrDefault(PlayersCollections.SEASON_10,
                 new ConcurrentHashMap<>()
         ).values();
         numberOfActualPlayers = (int) players
@@ -72,7 +72,7 @@ public class SRCalculator {
         if (TOTAL_VALUES.containsKey(function)) {
             return TOTAL_VALUES.get(function);
         }
-        double total = DatabaseManager.CACHED_PLAYERS.getOrDefault(PlayersCollections.SEASON_9, new ConcurrentHashMap<>()).values()
+        double total = DatabaseManager.CACHED_PLAYERS.getOrDefault(PlayersCollections.SEASON_10, new ConcurrentHashMap<>()).values()
                                                      .stream()
                                                      .mapToDouble(function::apply)
                                                      .sum();

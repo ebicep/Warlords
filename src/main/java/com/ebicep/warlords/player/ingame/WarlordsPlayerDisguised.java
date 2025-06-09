@@ -1,6 +1,7 @@
 package com.ebicep.warlords.player.ingame;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.weapons.weapontypes.CommonWeapon;
@@ -97,12 +98,13 @@ public class WarlordsPlayerDisguised extends WarlordsPlayer {
     }
 
     @Override
-    public void die(@Nullable WarlordsEntity attacker) {
-        super.die(attacker);
+    public void die(@Nullable WarlordsEntity attacker, WarlordsDeathEvent.DeathInfoBuilder deathInfoBuilder) {
+        super.die(attacker, deathInfoBuilder);
         Warlords.removePlayer2(uuid);
         game.getPlayers().put(uuid, null);
         if (entity instanceof Player player) {
             DisguiseAPI.undisguiseToAll(player);
         }
     }
+
 }

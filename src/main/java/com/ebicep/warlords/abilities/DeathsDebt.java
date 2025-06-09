@@ -26,7 +26,6 @@ import org.bukkit.Particle;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.Vector;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.ArrayList;
@@ -37,6 +36,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<DeathsDebt, DeathsDebt.DeathsDebtStats> {
 
+    public static final ItemStack BLUE_TOTEM = new ItemStack(Material.COPPER_BLOCK);
+    public static final ItemStack PURPLE_TOTEM = new ItemStack(Material.CHISELED_COPPER);
     private final DeathsDebtStats stats = new DeathsDebtStats();
     private int tickDuration = 120;
     private int respiteRadius = 10;
@@ -57,7 +58,7 @@ public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<
 
     @Override
     protected ItemStack getTotemItemStack() {
-        return new ItemStack(Material.JUNGLE_FENCE_GATE);
+        return BLUE_TOTEM;
     }
 
     @Override
@@ -77,138 +78,144 @@ public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<
             }
         }
         DeathsDebtData data = new DeathsDebtData(this, wp, totemStand);
-        wp.getCooldownManager().addCooldown(new RegularCooldown<>("Spirits' Respite", "RESP", DeathsDebtData.class, data, wp, CooldownTypes.ABILITY, cooldownManagerRespite -> {
-            Optional<RegularCooldown> cd = new CooldownFilter<>(cooldownManagerRespite, RegularCooldown.class).filterCooldownObject(data).findAny();
-            if (wp.isDead() || wp.getWorld() != totemStand.getWorld() || (cd.isPresent() && cd.get().hasTicksLeft())) {
-                return;
-            }
-            data.inDebt = true;
-            if (!data.playerInRadius) {
-                wp.sendMessage(Component.text("You walked outside your ", NamedTextColor.GRAY)
-                                        .append(Component.text("Death's Debt ", NamedTextColor.LIGHT_PURPLE))
-                                        .append(Component.text("radius.", NamedTextColor.GRAY)));
-            } else {
-                wp.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED.append(Component.text(" Spirit's Respite ", NamedTextColor.DARK_GREEN))
-                                                               .append(Component.text("delayed "))
-                                                               .append(Component.text(Math.round(data.delayedDamage), NamedTextColor.RED))
-                                                               .append(Component.text(" damage. Your debt must now be paid.")));
-            }
-            stats.totalDelayed += data.delayedDamage;
-            //beginning debt
-            wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "DEBT", DeathsDebtData.class, data, wp, CooldownTypes.ABILITY, cooldownManagerDebt -> {
-                if (wp.isDead()) {
-                    return;
-                }
-                wp.getWorld().spigot().strikeLightningEffect(totemStand.getLocation(), false);
-                // Final enemy damage tick
-                AtomicInteger over5000DamageInstances = new AtomicInteger();
-                List<WarlordsEntity> enemies = PlayerFilter.entitiesAround(totemStand, debtRadius, debtRadius - 1, debtRadius).aliveEnemiesOf(wp).toList();
-                for (WarlordsEntity totemTarget : enemies) {
-                    stats.targetsDamaged++;
-                    totemTarget.addInstance(InstanceBuilder.damage().ability(this).source(wp).value(data.delayedDamage * damagePercent / 100f)).ifPresent(finalEvent -> {
-                        if (finalEvent.getValue() > 5000) {
-                            over5000DamageInstances.getAndIncrement();
+        RegularCooldown<DeathsDebtData> spiritsRespiteCooldown = new RegularCooldown<>("Spirits' Respite",
+                "RESP",
+                DeathsDebtData.class,
+                data,
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManagerRespite -> {
+                    Optional<RegularCooldown> cd = new CooldownFilter<>(cooldownManagerRespite, RegularCooldown.class).filterCooldownObject(data).findAny();
+                    if (wp.isDead() || wp.getWorld() != totemStand.getWorld() || (cd.isPresent() && cd.get().hasTicksLeft())) {
+                        return;
+                    }
+                    data.inDebt = true;
+                    if (!data.playerInRadius) {
+                        wp.sendMessage(Component.text("You walked outside your ", NamedTextColor.GRAY)
+                                                .append(Component.text("Death's Debt ", NamedTextColor.LIGHT_PURPLE))
+                                                .append(Component.text("radius.", NamedTextColor.GRAY)));
+                    } else {
+                        wp.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED.append(Component.text(" Spirit's Respite ", NamedTextColor.DARK_GREEN))
+                                                                       .append(Component.text("delayed "))
+                                                                       .append(Component.text(Math.round(data.delayedDamage), NamedTextColor.RED))
+                                                                       .append(Component.text(" damage. Your debt must now be paid.")));
+                    }
+                    stats.totalDelayed += data.delayedDamage;
+                    //beginning debt
+                    wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "DEBT", DeathsDebtData.class, data, wp, CooldownTypes.ABILITY, cooldownManagerDebt -> {
+                        if (wp.isDead()) {
+                            return;
                         }
-                        stats.totalDebtDamage += finalEvent.getValue();
-                    });
-                }
-                if (pveMasterUpgrade2) {
-                    List<Soulbinding> soulbindings = wp.getAbilitiesMatching(Soulbinding.class);
-                    if (soulbindings.isEmpty()) {
-                        Soulbinding soulbinding = new Soulbinding();
-                        soulbinding.init(soulbinding.getBuilder());
-                        soulbindings.add(soulbinding);
-                    }
-                    List<Soulbinding.SoulbindingData> soulbindingData = soulbindings.stream().map(soulbinding -> soulbinding.activeSoulbinding(wp)).toList();
-                    float damageReduction = 1;
-                    for (int i = 0; i < enemies.size() && i < 6; i++) {
-                        WarlordsEntity enemy = enemies.get(i);
-                        soulbindingData.forEach(soulbinding -> soulbinding.bindPlayer(wp, enemy));
-                        damageReduction -= .025f;
-                    }
-                    float finalDamageReduction = damageReduction;
-                    wp.getCooldownManager().addCooldown(new RegularCooldown<>("Death Parade", "PARADE", DeathsDebt.class, null, wp, CooldownTypes.BUFF, cooldownManager -> {
-                    }, 5 * 20
-                    ) {
+                        wp.getWorld().spigot().strikeLightningEffect(totemStand.getLocation(), false);
+                        // Final enemy damage tick
+                        AtomicInteger over5000DamageInstances = new AtomicInteger();
+                        List<WarlordsEntity> enemies = PlayerFilter.entitiesAround(totemStand, debtRadius, debtRadius - 1, debtRadius).aliveEnemiesOf(wp).toList();
+                        for (WarlordsEntity totemTarget : enemies) {
+                            stats.targetsDamaged++;
+                            totemTarget.addInstance(InstanceBuilder.damage().ability(this).source(wp).value(data.delayedDamage * damagePercent / 100f)).ifPresent(finalEvent -> {
+                                if (finalEvent.getValue() > 5000) {
+                                    over5000DamageInstances.getAndIncrement();
+                                }
+                                stats.totalDebtDamage += finalEvent.getValue();
+                            });
+                        }
+                        if (pveMasterUpgrade2) {
+                            List<Soulbinding> soulbindings = wp.getAbilitiesMatching(Soulbinding.class);
+                            if (soulbindings.isEmpty()) {
+                                Soulbinding soulbinding = new Soulbinding();
+                                soulbinding.init(soulbinding.getBuilder());
+                                soulbindings.add(soulbinding);
+                            }
+                            List<Soulbinding.SoulbindingData> soulbindingData = soulbindings.stream().map(soulbinding -> soulbinding.activeSoulbinding(wp)).toList();
+                            float damageReduction = 1;
+                            for (int i = 0; i < enemies.size() && i < 6; i++) {
+                                WarlordsEntity enemy = enemies.get(i);
+                                soulbindingData.forEach(soulbinding -> soulbinding.bindPlayer(wp, enemy));
+                                damageReduction -= .025f;
+                            }
+                            float finalDamageReduction = damageReduction;
+                            wp.getCooldownManager().addCooldown(new RegularCooldown<>("Death Parade", "PARADE", DeathsDebt.class, null, wp, CooldownTypes.BUFF, cooldownManager -> {
+                            }, 5 * 20
+                            ) {
 
-                        @Override
-                        public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                            return currentDamageValue * finalDamageReduction;
+                                @Override
+                                public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                                    return currentDamageValue * finalDamageReduction;
+                                }
+                            });
                         }
-                    });
-                }
-                if (over5000DamageInstances.get() >= 5) {
-                    ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.RETRIBUTION_OF_THE_DEAD);
-                }
-            }, cooldownManager -> {
-                totemStand.remove();
-            }, debtTickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                if (ticksElapsed % 5 == 0) {
-                    circleEffect.playEffects();
-                }
-                //6 self damage ticks
-                if (ticksElapsed % 20 == 0) {
-                    data.onDebtTick();
-                }
-            })
-            ));
-            circleEffect.replaceEffects(e -> e instanceof DoubleLineEffect, new DoubleLineEffect(Particle.WITCH));
-            circleEffect.setRadius(debtRadius);
-            //blue to purple totem
-            totemStand.getEquipment().setHelmet(new ItemStack(Material.DARK_OAK_FENCE_GATE));
-        }, cooldownManager -> {
-            Optional<RegularCooldown> cd = new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterCooldownObject(data).findAny();
-            if (wp.isDead() || wp.getWorld() != totemStand.getWorld() || (cd.isPresent() && cd.get().hasTicksLeft())) {
-                totemStand.remove();
-            }
-        }, duration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-            if (wp.getWorld() != totemStand.getWorld()) {
-                cooldown.setTicksLeft(0);
-                return;
-            }
-            if (ticksElapsed % 5 == 0) {
-                circleEffect.playEffects();
-            }
-            boolean isPlayerInRadius = wp.getLocation().distanceSquared(totemStand.getLocation()) < respiteRadius * respiteRadius;
-            if (!isPlayerInRadius && !data.inDebt) {
-                data.inDebt = true;
-                data.playerInRadius = false;
-                cooldown.setTicksLeft(0);
-                return;
-            }
-            if (ticksElapsed % 20 == 0) {
-                Utils.playGlobalSound(totemStand.getLocation(), "shaman.earthlivingweapon.impact", 2, 1.5F);
-                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" Spirit's Respite", NamedTextColor.DARK_GREEN)
-                                                                               .append(Component.text(" delayed ", NamedTextColor.GRAY))
-                                                                               .append(Component.text(Math.round(data.delayedDamage), NamedTextColor.RED))
-                                                                               .append(Component.text(" damage. ", NamedTextColor.GRAY))
-                                                                               .append(Component.text(Math.round(ticksLeft / 20f), NamedTextColor.GOLD))
-                                                                               .append(Component.text(" seconds left.", NamedTextColor.GRAY))));
-                if (wp.isInPve()) {
-                    for (WarlordsEntity we : PlayerFilter.entitiesAround(totemStand.getLocation(), respiteRadius, respiteRadius, respiteRadius)
-                                                         .aliveEnemiesOf(wp)
-                                                         .closestFirst(wp)) {
-                        if (we instanceof WarlordsNPC) {
-                            ((WarlordsNPC) we).getMob().setTarget(wp);
+                        if (over5000DamageInstances.get() >= 5) {
+                            ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.RETRIBUTION_OF_THE_DEAD);
+                        }
+                    }, cooldownManager -> {
+                        totemStand.remove();
+                    }, debtTickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                        if (ticksElapsed % 5 == 0) {
+                            circleEffect.playEffects();
+                        }
+                        //6 self damage ticks
+                        if (ticksElapsed % 20 == 0) {
+                            data.onDebtTick();
+                        }
+                    })
+                    ));
+                    circleEffect.replaceEffects(e -> e instanceof DoubleLineEffect, new DoubleLineEffect(Particle.WITCH));
+                    circleEffect.setRadius(debtRadius);
+                    //blue to purple totem
+                    totemStand.getEquipment().setHelmet(PURPLE_TOTEM);
+                },
+                cooldownManager -> {
+                    Optional<RegularCooldown> cd = new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterCooldownObject(data).findAny();
+                    if (wp.isDead() || wp.getWorld() != totemStand.getWorld() || (cd.isPresent() && cd.get().hasTicksLeft())) {
+                        totemStand.remove();
+                    }
+                },
+                duration,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (wp.getWorld() != totemStand.getWorld()) {
+                        cooldown.setTicksLeft(0);
+                        return;
+                    }
+                    if (ticksElapsed % 5 == 0) {
+                        circleEffect.playEffects();
+                    }
+                    boolean isPlayerInRadius = wp.getLocation().distanceSquared(totemStand.getLocation()) < respiteRadius * respiteRadius;
+                    if (!isPlayerInRadius && !data.inDebt) {
+                        data.inDebt = true;
+                        data.playerInRadius = false;
+                        cooldown.setTicksLeft(0);
+                        return;
+                    }
+                    if (ticksElapsed % 20 == 0) {
+                        Utils.playGlobalSound(totemStand.getLocation(), "shaman.earthlivingweapon.impact", 2, 1.5F);
+                        wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" Spirit's Respite", NamedTextColor.DARK_GREEN)
+                                                                                       .append(Component.text(" delayed ", NamedTextColor.GRAY))
+                                                                                       .append(Component.text(Math.round(data.delayedDamage), NamedTextColor.RED))
+                                                                                       .append(Component.text(" damage. ", NamedTextColor.GRAY))
+                                                                                       .append(Component.text(Math.round(ticksLeft / 20f), NamedTextColor.GOLD))
+                                                                                       .append(Component.text(" seconds left.", NamedTextColor.GRAY))));
+                        if (wp.isInPve()) {
+                            for (WarlordsEntity we : PlayerFilter.entitiesAround(totemStand.getLocation(), respiteRadius, respiteRadius, respiteRadius)
+                                                                 .aliveEnemiesOf(wp)
+                                                                 .closestFirst(wp)) {
+                                if (we instanceof WarlordsNPC) {
+                                    ((WarlordsNPC) we).getMob().setTarget(wp);
+                                }
+                            }
                         }
                     }
-                }
-            }
-        })
+                })
         ) {
 
             @Override
             public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                 data.delayedDamage += currentDamageValue;
             }
-
-            @Override
-            public void multiplyKB(Vector currentVector) {
-                if (pveMasterUpgrade) {
-                    currentVector.multiply(0.2);
-                }
-            }
-        });
+        };
+        wp.getCooldownManager().addCooldown(spiritsRespiteCooldown);
+        if (pveMasterUpgrade) {
+            wp.addKnockbackModifier(wp, "Spirits Respite", -80, spiritsRespiteCooldown);
+        }
     }
 
     @Override

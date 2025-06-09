@@ -28,7 +28,7 @@ import java.util.*;
 
 public class SpiritLink extends AbstractChain<SpiritLink, SpiritLink.SpiritLinkStats> implements RedAbilityIcon, Damages<SpiritLink.DamageValues> {
 
-    public static final ItemStack CHAIN_ITEM = new ItemStack(Material.SPRUCE_FENCE_GATE);
+    public static final ItemStack CHAIN_ITEM = new ItemStack(Material.BRAIN_CORAL);
     private final SpiritLinkStats stats = new SpiritLinkStats();
     private final DamageValues damageValues = new DamageValues();
     private float speedBuff = 40;
@@ -36,6 +36,7 @@ public class SpiritLink extends AbstractChain<SpiritLink, SpiritLink.SpiritLinkS
     private float damageReduction = 15;
     private float damageReductionDuration = 4.5f;
     private float damageDecreasePerBounce = 20;
+    private int maxStacks = 10;
 
     public SpiritLink() {
         super(AbstractAbilityBuilder.create("spiritLink").pvp());
@@ -49,6 +50,7 @@ public class SpiritLink extends AbstractChain<SpiritLink, SpiritLink.SpiritLinkS
         this.damageReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageReduction"), float.class);
         this.damageReductionDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageReductionDuration"), float.class);
         this.damageDecreasePerBounce = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageDecreasePerBounce"), float.class);
+        this.maxStacks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxStacks"), int.class);
     }
 
     @Override
@@ -78,10 +80,18 @@ public class SpiritLink extends AbstractChain<SpiritLink, SpiritLink.SpiritLinkS
         return hitCounter;
     }
 
+    public float getDamageReduction() {
+        return damageReduction;
+    }
+
+    public void setDamageReduction(float damageReduction) {
+        this.damageReduction = damageReduction;
+    }
+
     @Override
     protected void onHit(WarlordsEntity we, int hitCounter) {
         we.playSound(we.getLocation(), "mage.firebreath.activation", 1, 1);
-        we.getCooldownManager().limitCooldowns(RegularCooldown.class, SpiritLink.class, inPve ? 4 : 1);
+        we.getCooldownManager().limitCooldowns(RegularCooldown.class, SpiritLink.class, inPve ? 4 : maxStacks);
         // speed buff
         // 30 is ticks
         we.addSpeedModifier(we, "Spirit Link", speedBuff, (int) (speedDuration * 20));

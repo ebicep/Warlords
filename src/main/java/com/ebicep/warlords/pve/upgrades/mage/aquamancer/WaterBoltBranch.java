@@ -29,7 +29,7 @@ public class WaterBoltBranch extends AbstractUpgradeBranch<WaterBolt> {
                 "+100% Projectile speed\n\nWater Bolt increases the damage dealt of all allies it hits by 10% for 10 seconds.",
                 50000,
                 () -> {
-                    ability.setProjectileSpeed(ability.getProjectileSpeed() * 2);
+                    ability.getProjectileSpeed().addMultiplicativeModifierAdd("Master Upgrade Branch", 1);
                 }
         );
         masterUpgrade2 = new Upgrade(
@@ -37,12 +37,12 @@ public class WaterBoltBranch extends AbstractUpgradeBranch<WaterBolt> {
                 "Water Bolt - Master Upgrade",
                 """
                         Projectile speed +100%.
-                                                
+                        
                         Water Bolt direct-hits on enemies and allies are guaranteed crits.
                         """,
                 50000,
                 () -> {
-                    ability.setProjectileSpeed(ability.getProjectileSpeed() * 2);
+                    ability.getProjectileSpeed().addMultiplicativeModifierAdd("Master Upgrade Branch", 1);
                 }
         );
     }

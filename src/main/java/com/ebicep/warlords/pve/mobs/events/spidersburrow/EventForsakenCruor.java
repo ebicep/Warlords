@@ -1,24 +1,20 @@
 package com.ebicep.warlords.pve.mobs.events.spidersburrow;
 
-import com.ebicep.warlords.abilities.WoundingStrikeBerserker;
 import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
+import com.ebicep.warlords.abilities.internal.WoundingCooldown;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
-import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.flags.Spider;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 
 import javax.annotation.Nonnull;
+
 
 public class EventForsakenCruor extends AbstractMob implements BossMinionMob, Spider {
 
@@ -86,40 +82,20 @@ public class EventForsakenCruor extends AbstractMob implements BossMinionMob, Sp
 
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
-
-
             PlayerFilterGeneric.playingGameWarlordsPlayers(pveOption.getGame())
                                .enemiesOf(wp)
                                .forEach(receiver -> {
-                                   receiver.getCooldownManager().removePreviousWounding();
-                                   receiver.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                   WoundingCooldown.addWoundingCooldown(
+                                           receiver,
                                            name,
-                                           "WND",
-                                           WoundingStrikeBerserker.class,
-                                           null,
                                            wp,
-                                           CooldownTypes.DEBUFF,
-                                           cooldownManager -> {
-                                           },
-                                           cooldownManager -> {
-                                               if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterNameActionBar("WND")
-                                                                                                               .stream()
-                                                                                                               .count() == 1) {
-                                                   receiver.sendMessage(Component.text("You are no longer ", NamedTextColor.GRAY)
-                                                                                 .append(Component.text("wounded"))
-                                                                                 .append(Component.text(".")));
-                                               }
-                                           },
-                                           3 * 20
-                                   ) {
-                                       @Override
-                                       public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-                                           return currentHealValue * .5f;
-                                       }
-                                   });
+                                           50,
+                                           60
+                                   );
                                });
             return true;
         }
 
     }
+
 }

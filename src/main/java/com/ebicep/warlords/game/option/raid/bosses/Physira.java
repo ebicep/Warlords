@@ -185,7 +185,7 @@ public class Physira extends AbstractMob implements BossMob {
             }.runTaskTimer(60, 0);
 
             listener = new Listener() {
-                @EventHandler
+                @EventHandler(ignoreCancelled = true)
                 private void onAllyDeath(WarlordsDeathEvent event) {
                     WarlordsEntity we = event.getWarlordsEntity();
                     pylons.remove(we);

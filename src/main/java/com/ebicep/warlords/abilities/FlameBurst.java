@@ -118,25 +118,32 @@ public class FlameBurst extends AbstractPiercingProjectile<FlameBurst, FlameBurs
         }
         if (pveMasterUpgrade) {
             int damageIncrease = (int) Math.pow(currentLocation.distanceSquared(startingLocation), 0.685);
-            nearEntity.addInstance(InstanceBuilder.damage()
-                                                  .ability(this)
-                                                  .source(shooter)
-                                                  .min(damageValues.flameBurstDamage.getMinValue() + damageIncrease)
-                                                  .max(damageValues.flameBurstDamage.getMaxValue() + damageIncrease)
-                                                  .critChance(damageValues.flameBurstDamage.getCritChanceValue() + damageIncrease)
-                                                  .critMultiplier(damageValues.flameBurstDamage.getCritMultiplierValue() + damageIncrease));
+            nearEntity.addInstance(InstanceBuilder
+                    .damage()
+                    .ability(this)
+                    .source(shooter)
+                    .min(damageValues.flameBurstDamage.getMinValue() + damageIncrease)
+                    .max(damageValues.flameBurstDamage.getMaxValue() + damageIncrease)
+                    .critChance(damageValues.flameBurstDamage.getCritChanceValue() + damageIncrease)
+                    .critMultiplier(damageValues.flameBurstDamage.getCritMultiplierValue() + damageIncrease)
+                    .uuid(projectile.getUuid())
+            );
         } else {
             float damageBoost = 1;
+            float blocksTravelled = (float) projectile.getBlocksTravelled();
             if (pveMasterUpgrade2) {
                 damageBoost += Math.min(.75f, (projectile.getHit().size() - 1) * .05f);
             }
-            nearEntity.addInstance(InstanceBuilder.damage()
-                                                  .ability(this)
-                                                  .source(shooter)
-                                                  .min(damageValues.flameBurstDamage.getMinValue() * damageBoost)
-                                                  .max(damageValues.flameBurstDamage.getMaxValue() * damageBoost)
-                                                  .critChance(damageValues.flameBurstDamage.getCritChanceValue())
-                                                  .critMultiplier(damageValues.flameBurstDamage.getCritMultiplierValue()));
+            nearEntity.addInstance(InstanceBuilder
+                    .damage()
+                    .ability(this)
+                    .source(shooter)
+                    .min(damageValues.flameBurstDamage.getMinValue() * damageBoost)
+                    .max(damageValues.flameBurstDamage.getMaxValue() * damageBoost)
+                    .critChance(damageValues.flameBurstDamage.getCritChanceValue() + Math.min(100, blocksTravelled))
+                    .critMultiplier(damageValues.flameBurstDamage.getCritMultiplierValue())
+                    .uuid(projectile.getUuid())
+            );
         }
     }
 

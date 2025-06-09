@@ -150,7 +150,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
         if (splitNumber != INITIAL_SPLIT_NUMBER) {
             return;
         }
-        playerClass.addAbility(new MoltenFissure(previousBlocks));
+        addAbility(new MoltenFissure(previousBlocks));
         Game game = option.getGame();
         new GameRunnable(game) {
 
@@ -234,7 +234,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
             WarlordsNPC wNPC = (WarlordsNPC) Warlords.getPlayer(passenger);
             if (wNPC != null) {
                 wNPC.getNpc().getOrAddTrait(MountTrait.class).unmount();
-                wNPC.addSpeedModifier(wNPC, "Unmounted", 35, Integer.MAX_VALUE, "BASE");
+                wNPC.addSpeedModifier(wNPC, "Unmounted", 35, Integer.MAX_VALUE);
             }
             top = passenger;
         }

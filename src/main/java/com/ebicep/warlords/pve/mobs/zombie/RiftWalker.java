@@ -67,7 +67,7 @@ public class RiftWalker extends AbstractMob implements EliteMob {
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-        warlordsNPC.getSpeed().removeSlownessModifiers();
+        warlordsNPC.getSpeed().removeNegativeModifiers();
         if (ticksElapsed % 40 == 0) {
             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_CREEPER_PRIMED, 2, 0.2f);
         }

@@ -120,7 +120,7 @@ public abstract class TowerDefenseMob extends AbstractMob {
 
         for (AbstractAbility ability : warlordsNPC.getAbilities()) {
             if (ability.getCurrentCooldown() < ability.getCooldownValue()) {
-                warlordsNPC.setEnergy(warlordsNPC.getEnergy() + ability.getEnergyCostValue());
+                warlordsNPC.setCurrentEnergy(warlordsNPC.getCurrentEnergy() + ability.getEnergyCostValue());
             }
         }
 

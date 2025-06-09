@@ -86,7 +86,7 @@ public class EventZeus extends AbstractMob implements BossMob, God, Unsilencable
             @Override
             protected Listener getListener() {
                 return new Listener() {
-                    @EventHandler(priority = EventPriority.HIGHEST)
+                    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
                     public void onDeath(WarlordsDeathEvent event) {
                         WarlordsEntity dead = event.getWarlordsEntity();
                         if (!(dead instanceof WarlordsNPC npc) || dead == warlordsNPC) {
@@ -126,7 +126,7 @@ public class EventZeus extends AbstractMob implements BossMob, God, Unsilencable
     public void onFinalAttack(WarlordsDamageHealingFinalEvent event) {
         if (event.isDead()) {
             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.BLOCK_RESPAWN_ANCHOR_CHARGE, 10, .5f);
-            warlordsNPC.addSpeedModifier(warlordsNPC, "Purified", 50, 100, "BASE");
+            warlordsNPC.addSpeedModifier(warlordsNPC, "Purified", 50, 100);
         }
     }
 

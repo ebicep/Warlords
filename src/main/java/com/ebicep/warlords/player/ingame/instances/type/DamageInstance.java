@@ -1,14 +1,22 @@
 package com.ebicep.warlords.player.ingame.instances.type;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public interface DamageInstance extends Instance {
 
-    /**
-     * Calls before variables are declared - based on self cooldowns
-     */
-    default void damageDoBeforeVariableSetFromSelf(WarlordsDamageHealingEvent event) {
+    @Nullable
+    default List<DamageInstance> getExtraDamageInstances() {
+        return null;
     }
+
+//    /**
+//     * Calls before variables are declared - based on self cooldowns
+//     */
+//    default void damageDoBeforeVariableSetFromSelf(WarlordsDamageHealingEvent event) {
+//    }
 
     /**
      * Calls before variables are declared - based on attackers cooldowns
@@ -16,12 +24,12 @@ public interface DamageInstance extends Instance {
     default void damageDoBeforeVariableSetFromAttacker(WarlordsDamageHealingEvent event) {
     }
 
-    /**
-     * Calls before any reduction - based on self cooldowns
-     */
-    default void doBeforeReductionFromSelf(WarlordsDamageHealingEvent event) {
-
-    }
+//    /**
+//     * Calls before any reduction - based on self cooldowns
+//     */
+//    default void doBeforeReductionFromSelf(WarlordsDamageHealingEvent event) {
+//
+//    }
 
     /**
      * Calls before any reduction - based on attackers cooldowns
@@ -95,11 +103,11 @@ public interface DamageInstance extends Instance {
     default void onShieldFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
     }
 
-    /**
-     * Called after when the player takes shield damage - based on attackers cooldowns
-     */
-    default void onShieldFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-    }
+//    /**
+//     * Called after when the player takes shield damage - based on attackers cooldowns
+//     */
+//    default void onShieldFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+//    }
 
     /**
      * Called just before the player takes damage - based on self cooldowns
@@ -127,15 +135,16 @@ public interface DamageInstance extends Instance {
 
     }
 
-    /**
-     * Called at the end of damage instance - based on self cooldowns
-     */
-    default void onEndFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-    }
+//    /**
+//     * Called at the end of damage instance - based on self cooldowns
+//     */
+//    default void onEndFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+//    }
 
     /**
      * Called at the end of damage instance - based on attackers cooldowns
      */
     default void onEndFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
     }
+
 }

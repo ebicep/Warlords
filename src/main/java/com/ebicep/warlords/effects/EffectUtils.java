@@ -190,6 +190,19 @@ public class EffectUtils {
         }
     }
 
+    public static void playCylinderAnimation(Location loc, double cylinderRadius, Particle effect, int cylinderDots, int cylinderHeight, int particleCount) {
+        Location particleLoc = loc.clone();
+        for (int i = 0; i < cylinderHeight; i++) {
+            for (double j = 0; j < cylinderDots; j++) {
+                double angle = j / cylinderDots * Math.PI * 2;
+                particleLoc.setX(loc.getX() + Math.sin(angle) * cylinderRadius);
+                particleLoc.setY(loc.getY() + i);
+                particleLoc.setZ(loc.getZ() + cos(angle) * cylinderRadius);
+                displayParticle(effect, particleLoc, particleCount);
+            }
+        }
+    }
+
     /**
      * @param loc            what location should the cylinder be around.
      * @param cylinderRadius is how big the helix should be.
@@ -205,9 +218,28 @@ public class EffectUtils {
                 particleLoc.setX(loc.getX() + Math.sin(angle) * cylinderRadius);
                 particleLoc.setY(loc.getY() + i / 5D);
                 particleLoc.setZ(loc.getZ() + cos(angle) * cylinderRadius);
-                displayParticle(effect, loc, particleCount);
+                displayParticle(effect, particleLoc, particleCount);
             }
         }
+    }
+
+    public static void playCircularEffectAround(
+            Particle particle,
+            Location location,
+            double circleRadius,
+            int amountOfParticles
+    ) {
+        playCircularEffectAround(null, particle, location, circleRadius, amountOfParticles);
+    }
+
+    public static void playCircularEffectAround(
+            @Nullable Player player,
+            Particle particle,
+            Location location,
+            double circleRadius,
+            int amountOfParticles
+    ) {
+        playCircularEffectAround(player, particle, location, circleRadius, amountOfParticles, 0, 0, 0, 0);
     }
 
     /**
@@ -249,23 +281,21 @@ public class EffectUtils {
         }
     }
 
-    public static void playCircularEffectAround(
-            Particle particle,
-            Location location,
-            double circleRadius,
-            int amountOfParticles
-    ) {
-        playCircularEffectAround(null, particle, location, circleRadius, amountOfParticles);
-    }
-
-    public static void playCircularEffectAround(
+    public static void displayParticle(
             @Nullable Player player,
             Particle particle,
-            Location location,
-            double circleRadius,
-            int amountOfParticles
+            Location loc,
+            int count,
+            double offsetX,
+            double offsetY,
+            double offsetZ,
+            double speed
     ) {
-        playCircularEffectAround(player, particle, location, circleRadius, amountOfParticles, 0, 0, 0, 0);
+        if (player == null) {
+            loc.getWorld().spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed, null, true);
+        } else {
+            player.spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed);
+        }
     }
 
     /**
@@ -322,10 +352,11 @@ public class EffectUtils {
         int maxDistance = (int) Math.round(to.distance(from));
         for (int i = 0; i < maxDistance; i++) {
             ArmorStand chain = Utils.spawnArmorStand(from, armorStand -> {
-                armorStand.setHeadPose(new EulerAngle(from.getDirection().getY() * -1, 0, 0));
-                armorStand.setMarker(true);
-                armorStand.getEquipment().setHelmet(item);
-            });
+                        armorStand.setHeadPose(new EulerAngle(from.getDirection().getY() * -1, 0, 0));
+                        armorStand.setMarker(true);
+                        armorStand.getEquipment().setHelmet(item);
+                    }
+            );
             from.add(from.getDirection().multiply(1.1));
             chains.add(chain);
             if (to.distanceSquared(from) < .3) {
@@ -692,23 +723,6 @@ public class EffectUtils {
             double speed
     ) {
         displayParticle(null, particle, loc, count, offsetX, offsetY, offsetZ, speed);
-    }
-
-    public static void displayParticle(
-            @Nullable Player player,
-            Particle particle,
-            Location loc,
-            int count,
-            double offsetX,
-            double offsetY,
-            double offsetZ,
-            double speed
-    ) {
-        if (player == null) {
-            loc.getWorld().spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed, null, true);
-        } else {
-            player.spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed);
-        }
     }
 
     /**

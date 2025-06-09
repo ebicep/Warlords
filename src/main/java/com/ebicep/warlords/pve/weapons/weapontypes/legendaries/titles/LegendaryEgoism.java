@@ -3,8 +3,8 @@ package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownUtils;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.Currencies;
@@ -63,7 +63,7 @@ public class LegendaryEgoism extends AbstractLegendaryWeapon implements PassiveC
                 if (!event.getWarlordsEntity().equals(player)) {
                     return;
                 }
-                if (event.getAbstractCooldown().getCooldownType() != CooldownTypes.DEBUFF) {
+                if (event.getAbstractCooldown().getCooldownType() != CooldownTypes.LOW_LEVEL_DEBUFF) {
                     return;
                 }
                 if (Instant.now().isBefore(lastActivated.get())) {
@@ -86,7 +86,7 @@ public class LegendaryEgoism extends AbstractLegendaryWeapon implements PassiveC
                 ) {
                     @Override
                     protected Listener getListener() {
-                        return CooldownManager.getDefaultDebuffImmunityListener(player);
+                        return CooldownUtils.getFullDebuffImmunityListener(player);
                     }
                 });
                 float healthRestore = player.getMaxHealth() * (HEALTH_RESTORE + HEALTH_RESTORE_INCREASE_PER_UPGRADE * getTitleLevel()) / 100;

@@ -1,11 +1,7 @@
 package com.ebicep.warlords.game.state;
 
-import co.aikar.commands.CommandIssuer;
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.commands.debugcommands.misc.RecordGamesCommand;
-import com.ebicep.warlords.commands.debugcommands.misc.WarlordsPlusCommand;
 import com.ebicep.warlords.commands.miscellaneouscommands.StreamChaptersCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
@@ -24,19 +20,15 @@ import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.instances.type.PlayerNameInstance;
 import com.ebicep.warlords.sr.SRCalculator;
 import com.ebicep.warlords.util.bukkit.RemoveEntities;
-import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.JavaUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.entity.CraftEntity;
@@ -75,14 +67,14 @@ public class PlayingState implements State, TimerDebugAble {
     @SuppressWarnings("null")
     public void begin() {
         ChatUtils.MessageType.GAME_DEBUG.sendMessage("Game " + game.getGameId() + " has started");
-        Warlords.getGameManager().getGames().stream()
-                .filter(gameHolder -> gameHolder.getGame() != null && gameHolder.getGame().equals(game))
-                .findAny()
-                .ifPresent(gameHolder -> {
-                    ChatChannels.sendDebugMessage((CommandIssuer) null,
-                            Component.text("Started Game: " + game.getGameMode() + " - " + gameHolder.getName(), NamedTextColor.LIGHT_PURPLE)
-                    );
-                });
+//        Warlords.getGameManager().getGames().stream()
+//                .filter(gameHolder -> gameHolder.getGame() != null && gameHolder.getGame().equals(game))
+//                .findAny()
+//                .ifPresent(gameHolder -> {
+//                    ChatChannels.sendDebugMessage((CommandIssuer) null,
+//                            Component.text("Started Game: " + game.getGameMode() + " - " + gameHolder.getName(), NamedTextColor.LIGHT_PURPLE)
+//                    );
+//                });
         this.game.setAcceptsSpectators(true);
         this.game.setAcceptsPlayers(false);
         this.resetTimer();
@@ -146,25 +138,19 @@ public class PlayingState implements State, TimerDebugAble {
 
             @Override
             public void run() {
-                game.forEachOnlinePlayer((player, team) -> {
-                    updateBasedOnGameState(CustomScoreboard.getPlayerScoreboard(player), (WarlordsPlayer) Warlords.getPlayer(player));
+                game.warlordsPlayers().forEach(warlordsPlayer -> {
+                    updateBasedOnGameState(CustomScoreboard.getPlayerScoreboard(warlordsPlayer.getUuid()), warlordsPlayer);
                 });
                 this.getGame().forEachOnlineWarlordsPlayer(warlordsPlayer -> {
                     if (!warlordsPlayer.isUpdateTabName()) {
                         return;
                     }
                     UUID uuid = warlordsPlayer.getUuid();
-                    String levelString = ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(uuid, warlordsPlayer.getSpecClass()));
-                    TextComponent.Builder playerTabName = Component.text()
-                                                                   .append(Component.text("[", NamedTextColor.DARK_GRAY))
-                                                                   .append(Component.text(warlordsPlayer.getSpec().getClassNameShort(),
-                                                                           warlordsPlayer.getSpecClass().specType.getTextColor()
-                                                                   ))
-                                                                   .append(Component.text("] ", NamedTextColor.DARK_GRAY))
-                                                                   .append(Component.text(warlordsPlayer.getName(), warlordsPlayer.getTeam().getTeamColor()))
-                                                                   .append(Component.text(" [", NamedTextColor.DARK_GRAY))
-                                                                   .append(Component.text("Lv" + levelString, NamedTextColor.GRAY))
-                                                                   .append(Component.text("] ", NamedTextColor.DARK_GRAY));
+                    TextComponent.Builder playerTabName = Component
+                            .text()
+                            .append(warlordsPlayer.getSpec().getClassNameShortWithBrackets(warlordsPlayer.getSpecClass().specType.getTextColor()))
+                            .append(Component.text(warlordsPlayer.getName(), warlordsPlayer.getTeam().getTeamColor()))
+                            .append(ExperienceManager.getLevelStringBracket(ExperienceManager.getLevelForSpec(uuid, warlordsPlayer.getSpecClass())));
                     if (warlordsPlayer.getCarriedFlag() != null) {
                         playerTabName.append(Component.text("⚑", NamedTextColor.WHITE));
                     }
@@ -205,9 +191,10 @@ public class PlayingState implements State, TimerDebugAble {
             }
         }.runTaskTimer(0, GameRunnable.SECOND);
         game.registerGameMarker(TimerSkipAbleMarker.class, (delay) -> {
-            counter += delay / GameRunnable.SECOND;
-            timer += delay;
-        });
+                    counter += delay / GameRunnable.SECOND;
+                    timer += delay;
+                }
+        );
 
         this.game.forEachOfflineWarlordsPlayer(wp -> {
             if (StreamChaptersCommand.GAME_TIMES.containsKey(wp.getUuid())) {
@@ -224,35 +211,6 @@ public class PlayingState implements State, TimerDebugAble {
 
     @Override
     public State run() {
-        if (WarlordsPlusCommand.enabled) {
-            game.warlordsPlayers().forEach(wp -> {
-                ByteArrayDataOutput byteArrayDataOutput = ByteStreams.newDataOutput();
-                if (wp != null) {
-                    byteArrayDataOutput.writeUTF(wp.getName());
-                    byteArrayDataOutput.writeInt((int) wp.getEnergy());
-                    byteArrayDataOutput.writeInt((int) wp.getMaxEnergy());
-                    AbstractPlayerClass spec = wp.getSpec();
-                    List<AbstractAbility> abilities = spec.getAbilities();
-                    for (int i = 1; i < abilities.size() && i < 5; i++) {
-                        AbstractAbility ability = abilities.get(i);
-                        byteArrayDataOutput.writeInt(ability.getCurrentCooldown() == 0 ? 0 : (int) Math.round(ability.getCurrentCooldown() + .5));
-                    }
-                    if (com.ebicep.warlords.game.GameMode.isPvE(game.getGameMode())) {
-                        game.onlinePlayers().forEach(playerTeamEntry -> {
-                            playerTeamEntry.getKey().sendPluginMessage(Warlords.getInstance(), "warlords:warlords", byteArrayDataOutput.toByteArray());
-                        });
-                    } else {
-                        game.spectators().forEach(uuid -> {
-                            Player player = Bukkit.getPlayer(uuid);
-                            if (player != null && WarlordsPlusCommand.UUIDS.contains(player.getUniqueId())) {
-                                player.sendPluginMessage(Warlords.getInstance(), "warlords:warlords", byteArrayDataOutput.toByteArray());
-                            }
-                        });
-                    }
-                }
-            });
-        }
-
         return null;
     }
 
@@ -366,7 +324,7 @@ public class PlayingState implements State, TimerDebugAble {
         Objective finalHealth = health;
         this.getGame().forEachOfflinePlayer((player, team) -> {
             WarlordsEntity warlordsEntity = Warlords.getPlayer(player);
-            if (warlordsEntity != null) {
+            if (warlordsEntity instanceof WarlordsPlayer) {
                 finalHealth.getScore(warlordsEntity.getName()).setScore(Math.round(warlordsEntity.getCurrentHealth()));
             }
         });
@@ -387,7 +345,6 @@ public class PlayingState implements State, TimerDebugAble {
             Entity entity = otherPlayer.getEntity();
             UUID uuid = otherPlayer.getUuid();
             List<AbstractCooldown<?>> otherPlayerCooldowns = otherPlayer.getCooldownManager().getCooldowns();
-            String levelString = ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(uuid, otherPlayer.getSpecClass()));
             Team playerTeam = scoreboard.getEntityTeam(entity);
             if (playerTeam == null) {
                 playerTeam = scoreboard.registerNewTeam(((CraftEntity) entity).getHandle().getScoreboardName());
@@ -413,10 +370,9 @@ public class PlayingState implements State, TimerDebugAble {
                 });
             }
             if (otherPlayer instanceof WarlordsPlayer) {
-                TextComponent.Builder basePrefix = Component.text()
-                                                            .append(Component.text("[", NamedTextColor.DARK_GRAY))
-                                                            .append(Component.text(otherPlayer.getSpec().getClassNameShort(), otherPlayer.getSpecClass().specType.getTextColor()))
-                                                            .append(Component.text("] ", NamedTextColor.DARK_GRAY));
+                TextComponent.Builder basePrefix = Component
+                        .text()
+                        .append(otherPlayer.getSpec().getClassNameShortWithBrackets(otherPlayer.getSpecClass().specType.getTextColor()));
                 prefix.append(basePrefix);
             }
             playerTeam.prefix(prefix.build());
@@ -425,10 +381,9 @@ public class PlayingState implements State, TimerDebugAble {
             //suffix
             TextComponent.Builder suffix = Component.text();
             if (otherPlayer instanceof WarlordsPlayer) {
-                TextComponent.Builder baseSuffix = Component.text()
-                                                            .append(Component.text(" [", NamedTextColor.DARK_GRAY))
-                                                            .append(Component.text("Lv" + levelString, NamedTextColor.GRAY))
-                                                            .append(Component.text("]", NamedTextColor.DARK_GRAY));
+                TextComponent.Builder baseSuffix = Component
+                        .text()
+                        .append(ExperienceManager.getLevelStringBracket(ExperienceManager.getLevelForSpec(uuid, otherPlayer.getSpecClass())));
                 if (otherPlayer.getCarriedFlag() != null) {
                     baseSuffix.append(Component.text(" ⚑", NamedTextColor.WHITE));
                 }

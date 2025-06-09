@@ -69,12 +69,14 @@ public class AvengersStrike extends AbstractStrike<AvengersStrike, AvengersStrik
             }
         }
         healthDamage = DamageCheck.clamp(healthDamage);
-        nearPlayer.addInstance(InstanceBuilder.damage()
-                                              .ability(this)
-                                              .source(wp)
-                                              .min((damageValues.strikeDamage.getMinValue() * multiplier) + (pveMasterUpgrade ? healthDamage : 0))
-                                              .max((damageValues.strikeDamage.getMaxValue() * multiplier) + (pveMasterUpgrade ? healthDamage : 0))
-                                              .crit(damageValues.strikeDamage)).ifPresent(finalEvent -> {
+        nearPlayer.addInstance(InstanceBuilder
+                .damage()
+                .ability(this)
+                .source(wp)
+                .min((damageValues.strikeDamage.getMinValue() * multiplier) + (pveMasterUpgrade ? healthDamage : 0))
+                .max((damageValues.strikeDamage.getMaxValue() * multiplier) + (pveMasterUpgrade ? healthDamage : 0))
+                .crit(damageValues.strikeDamage)
+        ).ifPresent(finalEvent -> {
             if (pveMasterUpgrade) {
                 for (WarlordsEntity we : PlayerFilter.entitiesAround(nearPlayer, 4, 4, 4).aliveEnemiesOf(wp).closestFirst(nearPlayer).excluding(nearPlayer).limit(2)) {
                     float damage = finalEvent.getValue() * 0.75f;
@@ -173,6 +175,14 @@ public class AvengersStrike extends AbstractStrike<AvengersStrike, AvengersStrik
         @Override
         public AvengersStrikeStats create() {
             return new AvengersStrikeStats();
+        }
+
+        public float getEnergyStole() {
+            return energyStole;
+        }
+
+        public void setEnergyStole(float energyStole) {
+            this.energyStole = energyStole;
         }
 
     }

@@ -2,14 +2,14 @@ package com.ebicep.warlords.pve.upgrades.paladin.avenger;
 
 import com.ebicep.warlords.abilities.AvengersStrike;
 import com.ebicep.warlords.abilities.internal.Value;
-import com.ebicep.warlords.player.ingame.CalculateSpeed;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.motionsystem.MotionModifier;
+import com.ebicep.warlords.player.ingame.motionsystem.MotionModifierBuilder;
+import com.ebicep.warlords.player.ingame.motionsystem.MotionSystem;
 import com.ebicep.warlords.pve.upgrades.*;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
-
-import java.util.Collections;
 
 public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
 
@@ -80,15 +80,12 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
                 () -> {
                     ability.getHitBoxRadius().addAdditiveModifier("Master Upgrade Branch", 1);
                     ability.getDamageValues().getStrikeDamage().critChance().addAdditiveModifier("Master Upgrade Branch", 15);
-                    CalculateSpeed calculateSpeed = warlordsPlayer.getSpeed();
-                    CalculateSpeed.Modifier modifier = new CalculateSpeed.Modifier(
-                            warlordsPlayer,
-                            "Avenging Strike",
-                            0,
-                            Integer.MAX_VALUE,
-                            Collections.emptyList(),
-                            false
-                    );
+                    MotionSystem calculateSpeed = warlordsPlayer.getSpeed();
+                    MotionModifier modifier = new MotionModifierBuilder().setFrom(warlordsPlayer)
+                                                                         .setName("Avenging Strike")
+                                                                         .setModifier(0)
+                                                                         .setDuration(Integer.MAX_VALUE)
+                                                                         .build();
                     warlordsPlayer.addSpeedModifier(modifier);
                     warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
                             "Avenging Strike",
@@ -109,10 +106,8 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
                                     float oldModifier = modifier.getModifier();
                                     if (enemiesNearBy >= 7 && oldModifier != 20) {
                                         modifier.setModifier(20);
-                                        calculateSpeed.setChanged(true);
                                     } else if (oldModifier != 0) {
                                         modifier.setModifier(0);
-                                        calculateSpeed.setChanged(true);
                                     }
                                 }
                             }

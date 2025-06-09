@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities.internal;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
+import com.ebicep.warlords.events.player.ingame.WarlordsProjectileFireEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -12,6 +13,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.*;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Banner;
@@ -33,9 +35,8 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
         HitBox,
         AbilityStats<T, R> {
 
-    protected double projectileSpeed;
-    protected double maxDistance;
-    protected int maxTicks;
+    protected FloatModifiable projectileSpeed;
+    protected FloatModifiable maxDistance;
     protected boolean hitTeammates;
     protected FloatModifiable hitboxInflation = new FloatModifiable(0.85f);
     protected float forwardTeleportAmount = 0;
@@ -51,9 +52,8 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
     @Override
     public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
-        this.projectileSpeed = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("projectileSpeed"), double.class);
-        this.maxDistance = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxDistance"), double.class);
-        this.maxTicks = (int) (maxDistance / projectileSpeed) + 1;
+        this.projectileSpeed = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("projectileSpeed"), float.class));
+        this.maxDistance = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxDistance"), float.class));
         this.hitTeammates = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hitTeammates"), boolean.class);
     }
 
@@ -61,6 +61,14 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
     protected boolean onActivateInternal(@Nonnull WarlordsEntity shooter) {
         fire(shooter, shooter.getEyeLocation());
         return true;
+    }
+
+    @Override
+    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
+        projectileSpeed.tick();
+        maxDistance.tick();
+        hitboxInflation.tick();
+        super.runEveryTick(warlordsEntity);
     }
 
     public void fire(@Nonnull WarlordsEntity shooter, Location startingLocation) {
@@ -79,6 +87,8 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
             onSpawn(projectile);
             projectile.runTaskTimer(Warlords.getInstance(), 0, 1);
         }
+        WarlordsProjectileFireEvent fireEvent = new WarlordsProjectileFireEvent(shooter, this, internalProjectiles);
+        Bukkit.getPluginManager().callEvent(fireEvent);
     }
 
     /**
@@ -124,12 +134,6 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
     protected abstract float getSoundPitch();
 
     @Override
-    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
-        hitboxInflation.tick();
-        super.runEveryTick(warlordsEntity);
-    }
-
-    @Override
     public FloatModifiable getHitBoxRadius() {
         return hitboxInflation;
     }
@@ -166,6 +170,19 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
     }
 
     /**
+     * Calculated the initial projectile location
+     *
+     * @param shooter
+     * @param startingLocation
+     *
+     * @return
+     */
+    protected Location modifyProjectileStartingLocation(WarlordsEntity shooter, Location startingLocation) {
+        //return new LocationBuilder(startingLocation).backward(.5f);
+        return startingLocation.clone().add(startingLocation.getDirection().multiply(0.2));
+    }
+
+    /**
      * see {@link net.minecraft.world.entity.projectile.ProjectileUtil}
      * see {@link net.minecraft.world.phys.AABB}
      *
@@ -178,6 +195,17 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
      */
     @Nullable
     protected HitResult checkCollisionAndMove(InternalProjectile projectile, Location currentLocation, Vector speed, WarlordsEntity shooter) {
+        double distanceRemaining = maxDistance.getCalculatedValue() - projectile.getBlocksTravelled();
+        double distanceToMove = speed.length();
+
+        Vector actualSpeed = speed.clone();
+        if (distanceToMove > distanceRemaining) {
+            if (distanceRemaining <= 0) {
+                return null;
+            }
+            actualSpeed.multiply(distanceRemaining / distanceToMove);
+            distanceToMove = distanceRemaining;
+        }
         Vec3 currentPosition;
         if (projectile.getTicksLived() == 0) {
             // for initially shooting entities directly in front of player
@@ -186,7 +214,7 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
         } else {
             currentPosition = new Vec3(currentLocation.getX(), currentLocation.getY(), currentLocation.getZ());
         }
-        currentLocation.add(speed);
+        currentLocation.add(actualSpeed);
         Vec3 nextPosition = new Vec3(currentLocation.getX(), currentLocation.getY(), currentLocation.getZ());
 
         @Nullable
@@ -194,7 +222,7 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
         double hitDistance = Double.MAX_VALUE;
         for (Entity entity : currentLocation.getWorld().getEntities()) {
             WarlordsEntity wp = getFromEntity(entity);
-            if (wp == null || (!hitTeammates && !shooter.isEnemyAlive(wp)) || !wp.isAlive() || wp == shooter) {
+            if (nonCollisionCheck(projectile, currentLocation, actualSpeed, shooter, wp)) {
                 continue;
             }
             // This logic does not properly deal with an EnderDragon entity, as it has a complex hitbox
@@ -234,9 +262,9 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
         try {
             BlockIterator itr = new BlockIterator(currentLocation.getWorld(),
                     new Vector(currentPosition.x, currentPosition.y, currentPosition.z),
-                    speed,
+                    actualSpeed.normalize(),
                     0,
-                    (int) (projectileSpeed + 1)
+                    Math.max(1, (int) Math.ceil(distanceToMove))
             );
             while (itr.hasNext()) {
                 Block block = itr.next();
@@ -295,6 +323,10 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
         return hit;
     }
 
+    protected boolean nonCollisionCheck(InternalProjectile projectile, Location currentLocation, Vector speed, WarlordsEntity shooter, WarlordsEntity wp) {
+        return wp == null || (!hitTeammates && !shooter.isEnemyAlive(wp)) || !wp.isAlive() || wp == shooter;
+    }
+
     @Nullable
     protected WarlordsEntity getFromEntity(Entity e) {
         List<Entity> passengers = e.getPassengers();
@@ -334,31 +366,6 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
             @Nonnull Location impactLocation
     );
 
-    /**
-     * Calculated the initial projectile location
-     *
-     * @param shooter
-     * @param startingLocation
-     *
-     * @return
-     */
-    protected Location modifyProjectileStartingLocation(WarlordsEntity shooter, Location startingLocation) {
-        //return new LocationBuilder(startingLocation).backward(.5f);
-        return startingLocation.clone().add(startingLocation.getDirection().multiply(0.2));
-    }
-
-    /**
-     * Calculated the initial projectile speed
-     *
-     * @param shooter
-     * @param startingLocation
-     *
-     * @return
-     */
-    protected Vector getProjectileStartingSpeed(WarlordsEntity shooter, Location startingLocation) {
-        return startingLocation.getDirection().multiply(projectileSpeed);
-    }
-
     public void setShotsFiredAtATime(int shotsFiredAtATime) {
         this.shotsFiredAtATime = shotsFiredAtATime;
     }
@@ -377,22 +384,24 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
         return new ArrayList<>(internalProjectileGroup.get(internalProjectile));
     }
 
-    public double getProjectileSpeed() {
+    /**
+     * Calculated the initial projectile speed
+     *
+     * @param shooter
+     * @param startingLocation
+     *
+     * @return
+     */
+    protected Vector getProjectileStartingSpeed(WarlordsEntity shooter, Location startingLocation) {
+        return startingLocation.getDirection().multiply(projectileSpeed.getCalculatedValue());
+    }
+
+    public FloatModifiable getProjectileSpeed() {
         return projectileSpeed;
     }
 
-    public void setProjectileSpeed(double projectileSpeed) {
-        this.projectileSpeed = projectileSpeed;
-        this.maxTicks = (int) (maxDistance / projectileSpeed) + 1;
-    }
-
-    public double getMaxDistance() {
+    public FloatModifiable getMaxDistance() {
         return maxDistance;
-    }
-
-    public void setMaxDistance(double maxDistance) {
-        this.maxDistance = maxDistance;
-        this.maxTicks = (int) (maxDistance / projectileSpeed) + 1;
     }
 
     public interface InternalProjectileTask {
@@ -483,6 +492,7 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
         private final Location currentLocation;
         private final Vector speed;
         private final WarlordsEntity shooter;
+        private final UUID uuid = UUID.randomUUID();
         private int ticksLived = 0;
         private double blocksTravelled = 0;
 
@@ -536,6 +546,8 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
             }
             updateSpeed(this);
             currentLocation.setDirection(speed);
+
+            Location oldLocation = currentLocation.clone();
             HitResult hitResult = checkCollisionAndMove(this, currentLocation, speed, shooter);
             if (hitResult != null) {
                 int hitBySplash = onHit(this, hitResult instanceof EntityHitResult entityHitResult ?
@@ -550,12 +562,15 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
                     getAbilityStats().targetsHitBySplash += hitBySplash;
                 }
                 cancel();
-            } else if (ticksLived >= maxTicks) {
-                cancel();
             } else {
                 playEffect(this);
                 ticksLived++;
-                blocksTravelled += speed.length();
+                double distanceMoved = oldLocation.distance(currentLocation);
+                blocksTravelled += distanceMoved;
+                if (Math.abs(blocksTravelled - maxDistance.getCalculatedValue()) < 0.1) {
+                    cancel();
+                    return;
+                }
                 //cancel after 15 seconds
                 if (ticksLived > 15 * 20) {
                     cancel();
@@ -614,6 +629,10 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
 
         public double getBlocksTravelled() {
             return blocksTravelled;
+        }
+
+        public UUID getUuid() {
+            return uuid;
         }
 
     }

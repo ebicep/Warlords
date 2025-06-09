@@ -17,11 +17,11 @@ import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.type.Slab;
 import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
@@ -29,12 +29,21 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon, Damages<ShadowStep.DamageValues>, AbilityStats<ShadowStep, ShadowStep.ShadowStepStats> {
+public class ShadowStep extends AbstractAbility implements
+        PurpleAbilityIcon,
+        Damages<ShadowStep.DamageValues>,
+        Heals<ShadowStep.HealingValues>,
+        AbilityStats<ShadowStep,
+                ShadowStep.ShadowStepStats> {
 
     private final ShadowStepStats stats = new ShadowStepStats();
     private final DamageValues damageValues = new DamageValues();
+    private final HealingValues healingValues = new HealingValues();
     private int fallDamageNegation = 10;
+    private int leapHealThreshold;
+    private int guaranteedCrit;
 
     public ShadowStep() {
         super(AbstractAbilityBuilder.create("shadowStep").pvp());
@@ -44,16 +53,8 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon, Da
     public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.fallDamageNegation = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("fallDamageNegation"), int.class);
-    }
-
-    @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Leap forward, dealing ")
-                                               .damage(damageValues.shadowStepDamage)
-                                               .text(" damage to all enemies close on cast or when landing on the ground. You take reduced fall damage while leaping.")
-                                               .emptyLine()
-                                               .text("Shadow Step has reduced range when holding a flag.")
-                                               .build();
+        this.leapHealThreshold = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("leapHealThreshold"), int.class);
+        this.guaranteedCrit = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("guaranteedCrit"), int.class);
     }
 
     @Override
@@ -63,8 +64,8 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon, Da
         Utils.playGlobalSound(playerLoc, Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 2, 2);
         wp.setFlagPickCooldown(2);
         EffectUtils.playFirework(wp.getLocation().add(0, pveMasterUpgrade2 ? 1 : 0, 0), FireworkEffect.builder().withColor(Color.BLACK).with(FireworkEffect.Type.BALL).build());
-        if (wp.onHorse()) {
-            wp.removeHorse();
+        if (wp.getCurrentHealth() < leapHealThreshold) {
+            wp.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(healingValues.leapHeal));
         }
         if (pveMasterUpgrade2) {
             doShadowDash(wp);
@@ -79,6 +80,24 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon, Da
             doShadowStep(wp, playerLoc);
         }
         return true;
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Leap forward, dealing ")
+                                               .damage(damageValues.shadowStepDamage)
+                                               .text(" damage to all enemies close on cast or when landing on the ground. You take reduced fall damage while leaping.")
+                                               .emptyLine()
+                                               .text("If you are below ")
+                                               .text(leapHealThreshold, NamedTextColor.GREEN)
+                                               .text(" health, you will heal for ")
+                                               .heal(healingValues.leapHeal)
+                                               .text(" health on cast. Guarantees at least ")
+                                               .text(guaranteedCrit, NamedTextColor.RED)
+                                               .text(" critical hit.")
+                                               .emptyLine()
+                                               .text("Shadow Step has reduced range when holding a flag.")
+                                               .build();
     }
 
     @Override
@@ -97,13 +116,17 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon, Da
             }
         });
         Set<WarlordsEntity> hit = new HashSet<>();
+        AtomicInteger guaranteedCrit = new AtomicInteger(this.guaranteedCrit);
         LocationBuilder locationBuilder = new LocationBuilder(wp.getEyeLocation());
         for (Block ignored : Utils.getTargetBlockInBetween(wp.getEyeLocation(), 8)) {
-            if (!Utils.getTargetBlock(locationBuilder, 1).getType().isAir() || !locationBuilder.getBlock().getType().isAir() || !locationBuilder.clone()
-                                                                                                                                                .addY(1)
-                                                                                                                                                .getBlock()
-                                                                                                                                                .getType()
-                                                                                                                                                .isAir()) {
+            if (!Utils.getTargetBlock(locationBuilder, 1).getType().isAir() ||
+                    !locationBuilder.getBlock().getType().isAir() ||
+                    !locationBuilder.clone()
+                                    .addY(1)
+                                    .getBlock()
+                                    .getType()
+                                    .isAir()
+            ) {
                 locationBuilder.centerXZBlock();
                 boolean isSlab = locationBuilder.clone().addY(-1).getBlock().getBlockData() instanceof Slab;
                 locationBuilder.addY(isSlab ? -0.5 : 0);
@@ -111,7 +134,13 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon, Da
             }
             PlayerFilter.entitiesAround(locationBuilder.clone().addY(-1), 2, 2, 2).aliveEnemiesOf(wp).excluding(hit).forEach(warlordsEntity -> {
                 hit.add(warlordsEntity);
-                warlordsEntity.addInstance(InstanceBuilder.damage().cause("Shadow Dash").source(wp).value(damageValues.shadowStepDamage));
+                warlordsEntity.addInstance(InstanceBuilder
+                        .damage()
+                        .cause("Shadow Dash")
+                        .source(wp)
+                        .value(damageValues.shadowStepDamage)
+                        .critChance(guaranteedCrit.getAndDecrement() > 0 ? 100 : damageValues.shadowStepDamage.getCritChanceValue())
+                );
             });
             locationBuilder = locationBuilder.forward(1);
             EffectUtils.displayParticle(Particle.SMOKE, locationBuilder.clone().addY(-.5), 10, .1, .1, .1, 0);
@@ -131,15 +160,20 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon, Da
 
     private void doShadowStep(@Nonnull WarlordsEntity wp, Location playerLoc) {
         List<WarlordsEntity> playersHit = new ArrayList<>();
+        AtomicInteger guaranteedCrit = new AtomicInteger(this.guaranteedCrit);
         for (WarlordsEntity assaultTarget : PlayerFilter.entitiesAround(wp, 5, 5, 5).aliveEnemiesOf(wp)) {
             stats.totalTargetsHit++;
-            assaultTarget.addInstance(InstanceBuilder.damage().ability(this).source(wp).value(damageValues.shadowStepDamage));
+            assaultTarget.addInstance(InstanceBuilder
+                    .damage()
+                    .ability(this)
+                    .source(wp)
+                    .value(damageValues.shadowStepDamage)
+                    .critChance(guaranteedCrit.getAndDecrement() > 0 ? 100 : damageValues.shadowStepDamage.getCritChanceValue())
+            );
             Utils.playGlobalSound(playerLoc, "warrior.revenant.orbsoflife", 2, 1.9f);
             playersHit.add(assaultTarget);
         }
         new GameRunnable(wp.getGame()) {
-
-            double y = playerLoc.getY();
 
             int counter = 0;
 
@@ -152,11 +186,16 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon, Da
                 }
                 wp.getLocation(playerLoc);
                 boolean hitGround = wp.getEntity().isOnGround() || wp.onHorse();
-                y = playerLoc.getY();
                 if (hitGround) {
                     for (WarlordsEntity landingTarget : PlayerFilter.entitiesAround(wp, 5, 5, 5).aliveEnemiesOf(wp).excluding(playersHit)) {
                         stats.totalTargetsHit++;
-                        landingTarget.addInstance(InstanceBuilder.damage().ability(ShadowStep.this).source(wp).value(damageValues.shadowStepDamage));
+                        landingTarget.addInstance(InstanceBuilder
+                                .damage()
+                                .ability(ShadowStep.this)
+                                .source(wp)
+                                .value(damageValues.shadowStepDamage)
+                                .critChance(guaranteedCrit.getAndDecrement() > 0 ? 100 : damageValues.shadowStepDamage.getCritChanceValue())
+                        );
                         Utils.playGlobalSound(playerLoc, "warrior.revenant.orbsoflife", 2, 1.9f);
                     }
                     if (pveMasterUpgrade) {
@@ -171,20 +210,16 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon, Da
 
     private void pveMasterOnLand(WarlordsEntity we) {
         we.addSpeedModifier(we, name, 80, 5 * 20);
-        we.getCooldownManager().removeCooldown(ShadowStep.class, false);
-        we.getCooldownManager().addCooldown(new RegularCooldown<>("STEP KB", "STEP KB", ShadowStep.class, new ShadowStep(), we, CooldownTypes.ABILITY, cooldownManager -> {
-        }, 5 * 20
-        ) {
-
-            @Override
-            public void multiplyKB(Vector currentVector) {
-                currentVector.multiply(0.2);
-            }
-        });
+        we.addKnockbackModifier(we, name, -80, 5 * 20);
         for (IncendiaryCurse incendiaryCurse : we.getAbilitiesMatching(IncendiaryCurse.class)) {
             incendiaryCurse.onImpact(we, we.getLocation());
             break;
         }
+    }
+
+    @Override
+    public HealingValues getHealValues() {
+        return healingValues;
     }
 
     @Override
@@ -199,6 +234,10 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon, Da
 
     public void setFallDamageNegation(int fallDamageNegation) {
         this.fallDamageNegation = fallDamageNegation;
+    }
+
+    public void setLeapHealThreshold(int leapHealThreshold) {
+        this.leapHealThreshold = leapHealThreshold;
     }
 
     public static class DamageValues implements Value.ValueHolder {
@@ -223,6 +262,32 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon, Da
 
         public Value.RangedValueCritable getShadowStepDamage() {
             return shadowStepDamage;
+        }
+
+    }
+
+    public static class HealingValues implements Value.ValueHolder {
+
+        private Value.SetValue leapHeal = new Value.SetValue(600);
+
+        private List<Value> values = List.of(leapHeal);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+        @Override
+        public void init(AbstractAbilityBuilder builder) {
+            this.leapHeal = ConfigManager.getAbilityConfigValue(builder.getNamespaces(),
+                    builder.getAppendedFieldNameHealing("leapHeal"),
+                    Value.SetValue.class
+            );
+            this.values = List.of(leapHeal);
+        }
+
+        public Value.SetValue getLeapHeal() {
+            return leapHeal;
         }
 
     }

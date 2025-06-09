@@ -23,7 +23,6 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
@@ -38,7 +37,7 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
     private FloatModifiable damageAbsorption = new FloatModifiable(30);
     private int tickDuration = 100;
     private int shieldTickDuration = 100;
-    private double poisonRadius = 8;
+    private float poisonRadius = 8;
     private int speedIncrease = 40;
     private int speedIncreaseDuration = 100;
     private int stacksGranted = 2;
@@ -63,30 +62,31 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
 
     @Override
     public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Cover yourself in a protective layer that absorbs ")
-                                               .percent(damageAbsorption, AbilityDescriptionBuilder.COLOR_BROWN)
-                                               .text(" of all incoming damage for ")
-                                               .durationTicks(tickDuration)
-                                               .text(".")
-                                               .emptyLine()
-                                               .text("Reactivate the ability to increase your speed by")
-                                               .percent(speedIncrease, NamedTextColor.WHITE)
-                                               .text(" for ")
-                                               .durationTicks(speedIncreaseDuration)
-                                               .text(" and inflict ")
-                                               .text(stacksGranted, NamedTextColor.BLUE)
-                                               .text(" stacks of ")
-                                               .text("PHEX", NamedTextColor.DARK_RED)
-                                               .text(" on ")
-                                               .text(infectedPlayers, NamedTextColor.BLUE)
-                                               .text(" enemies within ")
-                                               .blocks(poisonRadius)
-                                               .text(".")
-                                               .emptyLine()
-                                               .text("Not reactivating the ability will grant yourself a shield equal to all the damage you have absorbed during " + name + ". Lasts ")
-                                               .durationTicks(shieldTickDuration)
-                                               .text(".")
-                                               .build();
+        description = AbilityDescriptionBuilder
+                .create("Cover yourself in a protective layer that absorbs ")
+                .percent(damageAbsorption, AbilityDescriptionBuilder.COLOR_BROWN)
+                .text(" of all incoming damage for ")
+                .durationTicks(tickDuration)
+                .text(".")
+                .emptyLine()
+                .text("Reactivate the ability to increase your speed by")
+                .percent(speedIncrease, NamedTextColor.WHITE)
+                .text(" for ")
+                .durationTicks(speedIncreaseDuration)
+                .text(" and inflict ")
+                .text(stacksGranted, NamedTextColor.BLUE)
+                .text(" stacks of ")
+                .text("PHEX", NamedTextColor.DARK_RED)
+                .text(" on ")
+                .text(infectedPlayers, NamedTextColor.BLUE)
+                .text(" enemies within ")
+                .blocks(poisonRadius)
+                .text(".")
+                .emptyLine()
+                .text("Not reactivating the ability will grant yourself a shield equal to all the damage you have absorbed during " + name + ". Lasts ")
+                .durationTicks(shieldTickDuration)
+                .text(".")
+                .build();
     }
 
     @Override
@@ -98,7 +98,7 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
         RegularCooldown<ContagiousFacade> protectiveLayerCooldown = new RegularCooldown<>(name,
                 "FACADE",
                 ContagiousFacade.class,
-                new ContagiousFacade(),
+                null,
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
@@ -154,18 +154,14 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                 totalAbsorbed.addAndGet(absorbedAmount);
                 return afterValue;
             }
-
-            @Override
-            public void multiplyKB(Vector currentVector) {
-                if (pveMasterUpgrade2) {
-                    currentVector.zero();
-                }
-            }
         };
+        if (pveMasterUpgrade2) {
+            wp.addKnockbackModifier(wp, name, -100, protectiveLayerCooldown);
+        }
         wp.getCooldownManager().addCooldown(protectiveLayerCooldown);
         addSecondaryAbility(5, () -> {
                     wp.getCooldownManager().removeCooldownNoForce(protectiveLayerCooldown);
-                    wp.addSpeedModifier(wp, name, speedIncrease, speedIncreaseDuration, "BASE");
+            wp.addSpeedModifier(wp, name, speedIncrease, speedIncreaseDuration);
                     Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_EVOKER_PREPARE_ATTACK, 2, 2);
                     new CircleEffect(wp.getGame(),
                             wp.getTeam(),

@@ -32,6 +32,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class FreezingBreath extends AbstractProjectile<FreezingBreath, FreezingBreath.FreezingBreathStats> implements RedAbilityIcon, Damages<FreezingBreath.DamageValues> {
@@ -67,13 +68,28 @@ public class FreezingBreath extends AbstractProjectile<FreezingBreath, FreezingB
         }
         Utils.playGlobalSound(wp.getLocation(), "mage.freezingbreath.activation", 2, 1);
         Location playerLoc = new LocationBuilder(wp.getLocation()).pitch(0).add(0, 1.7, 0);
-        EffectUtils.playSpiralAnimation(wp, playerLoc, 4, maxAnimationTime, (center, animationTimer) -> {
-                    EffectUtils.displayParticle(Particle.CLOUD, center.translateVector(wp.getWorld(), animationTimer / 2D, 0, 0), 5, 0, 0, 0, 0.6f);
-                }, Particle.FIREWORK
+        EffectUtils.playSpiralAnimation(
+                wp,
+                playerLoc,
+                4,
+                maxAnimationTime,
+                (center, animationTimer) -> {
+                    EffectUtils.displayParticle(
+                            Particle.CLOUD,
+                            center.translateVector(wp.getWorld(), animationTimer / 2D, 0, 0),
+                            5,
+                            ThreadLocalRandom.current().nextDouble(.5),
+                            ThreadLocalRandom.current().nextDouble(.5),
+                            ThreadLocalRandom.current().nextDouble(.5),
+                            0.4f
+                    );
+                },
+                Particle.FIREWORK
         );
         Location playerEyeLoc = new LocationBuilder(wp.getLocation()).pitch(0).backward(1);
         Vector viewDirection = playerLoc.getDirection();
         int counter = 0;
+        UUID uuid = UUID.randomUUID();
         for (WarlordsEntity breathTarget : PlayerFilter.entitiesAroundRectangle(wp, hitbox - 2.5, hitbox, hitbox - 2.5).aliveEnemiesOf(wp)) {
             Vector direction = breathTarget.getLocation().subtract(playerEyeLoc).toVector().normalize();
             if (!(viewDirection.dot(direction) > .68)) {
@@ -81,7 +97,7 @@ public class FreezingBreath extends AbstractProjectile<FreezingBreath, FreezingB
             }
             stats.addPlayersHit();
             counter++;
-            breathTarget.addInstance(InstanceBuilder.damage().ability(this).source(wp).value(damageValues.freezingBreathDamage));
+            breathTarget.addInstance(InstanceBuilder.damage().ability(this).source(wp).value(damageValues.freezingBreathDamage).uuid(uuid));
             breathTarget.addSpeedModifier(wp, "Freezing Breath", -slowness, slowDuration * 20);
         }
         if (pveMasterUpgrade) {
@@ -186,7 +202,13 @@ public class FreezingBreath extends AbstractProjectile<FreezingBreath, FreezingB
                                                   .max(damageValues.freezingBreathDamage.getMaxValue() * damageIncrease)
                                                   .crit(damageValues.freezingBreathDamage));
             nearEntity.getCooldownManager()
-                      .addCooldown(new RegularCooldown<>("Chilled", "CHILLED", FreezingBreath.class, new FreezingBreath(), shooter, CooldownTypes.DEBUFF, cooldownManager -> {
+                      .addCooldown(new RegularCooldown<>("Chilled",
+                              "CHILLED",
+                              FreezingBreath.class,
+                              new FreezingBreath(),
+                              shooter,
+                              CooldownTypes.LOW_LEVEL_DEBUFF,
+                              cooldownManager -> {
                       }, 4 * 20
                       ) {
 

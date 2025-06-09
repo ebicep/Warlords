@@ -93,7 +93,7 @@ public class OnslaughtOption implements PveOption {
 
         game.registerEvents(new Listener() {
 
-            @EventHandler
+            @EventHandler(ignoreCancelled = true)
             public void onEvent(WarlordsDeathEvent event) {
                 WarlordsEntity we = event.getWarlordsEntity();
                 WarlordsEntity killer = event.getKiller();

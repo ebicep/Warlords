@@ -30,6 +30,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.motionsystem.speed.BaseToWalkingSpeedValueModifier;
 import com.ebicep.warlords.pve.mobs.flags.Unsilencable;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
@@ -174,6 +175,16 @@ public class WarlordsEvents implements Listener {
         if (attribute != null) {
             attribute.setBaseValue(Integer.MAX_VALUE); // give absorption capability
         }
+        attribute = player.getAttribute(Attribute.SCALE);
+        if (attribute != null) {
+            attribute.setBaseValue(1.05);
+        }
+        attribute = player.getAttribute(Attribute.JUMP_STRENGTH);
+        if (attribute != null) {
+            attribute.setBaseValue(0.42);
+        }
+        player.setWalkSpeed(BaseToWalkingSpeedValueModifier.BASE_PLAYER_WALK_SPEED);
+        player.setFlySpeed(0.15f);
         UUID uuid = player.getUniqueId();
         Location rejoinPoint = Warlords.getRejoinPoint(uuid);
         boolean isSpawnWorld = Objects.requireNonNull(StatsLeaderboardManager.MAIN_LOBBY).equals(rejoinPoint.getWorld());
@@ -334,7 +345,7 @@ public class WarlordsEvents implements Listener {
         }
 
         wpAttacker.setHitCooldown(wpAttacker.getBaseHitCooldownValue());
-        float energyPerHit = wpAttacker.getSpec().getEnergyPerHit();
+        float energyPerHit = wpAttacker.getEnergyPerHit().getCalculatedValue();
         for (AbstractCooldown<?> abstractCooldown : wpAttacker.getCooldownManager().getCooldownsDistinct()) {
             energyPerHit = abstractCooldown.addEnergyPerHit(wpAttacker, energyPerHit);
         }
@@ -408,7 +419,6 @@ public class WarlordsEvents implements Listener {
                         if (!itemHeld.equals(UndyingArmy.BONE)) {
                             break;
                         }
-                        player.getInventory().remove(UndyingArmy.BONE);
                         wp.addInstance(InstanceBuilder
                                 .melee()
                                 .source(wp)

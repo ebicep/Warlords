@@ -39,14 +39,23 @@ public class CripplingStrike extends AbstractStrike<CripplingStrike, CripplingSt
             float crippleAmount
     ) {
         CripplingStrikeData cripplingStrikeData = new CripplingStrikeData(consecutiveStrikeCounter);
-        target.getCooldownManager().addCooldown(new RegularCooldown<>(name, "CRIP", CripplingStrikeData.class, cripplingStrikeData, from, CooldownTypes.DEBUFF, cooldownManager -> {
-        }, cooldownManager -> {
-            if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterNameActionBar("CRIP").stream().count() == 1) {
-                target.sendMessage(Component.text("You are no longer ", NamedTextColor.GRAY)
-                                            .append(Component.text("crippled", NamedTextColor.RED))
-                                            .append(Component.text(".", NamedTextColor.GRAY)));
-            }
-        }, tickDuration
+        target.getCooldownManager().addCooldown(new RegularCooldown<>(
+                name,
+                "CRIP",
+                CripplingStrikeData.class,
+                cripplingStrikeData,
+                from,
+                CooldownTypes.LOW_LEVEL_DEBUFF,
+                cooldownManager -> {
+                },
+                cooldownManager -> {
+                    if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterNameActionBar("CRIP").stream().count() == 1) {
+                        target.sendMessage(Component.text("You are no longer ", NamedTextColor.GRAY)
+                                                    .append(Component.text("crippled", NamedTextColor.RED))
+                                                    .append(Component.text(".", NamedTextColor.GRAY)));
+                    }
+                },
+                tickDuration
         ) {
 
             @Override

@@ -13,10 +13,12 @@ public enum InstanceFlags {
     REFLECTIVE_DAMAGE,
     CANT_KILL,
     NO_LUST_HEALING,
+    APOTH_SELF_HEAL,
 
     IGNORE_SELF_RES,
     NO_DISMOUNT,
 
+    TRUE_HEALING, // does exact value healing regardless of modifications
     // Damage types - all effected by flag multiplier
     TRUE_DAMAGE, // does exact value damage regardless of shield/vene/reductions/dmg increase
     PIERCE, // ignores shield/vene, and victim dmg reductions
@@ -30,5 +32,9 @@ public enum InstanceFlags {
     // tower defense
     TD_PHYSICAL,
     TD_MAGIC,
+
+    // spec boost
+    HAMMER_OF_JUDGEMENT_CONS,
+    AURA_OF_RESTORATION_SOOTHING_ELIXIR,
 
 }

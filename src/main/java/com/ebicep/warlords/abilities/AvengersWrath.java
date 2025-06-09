@@ -34,7 +34,7 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
     private int tickDuration = 240;
     private float energyPerSecond = 20;
     private int maxTargets = 2;
-    private int hitRadius = 5;
+    private float hitRadius = 5;
 
     public AvengersWrath() {
         super(AbstractAbilityBuilder.create("avengersWrath").pvp());
@@ -56,7 +56,7 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
                                                .text(" additional enemies that are within ")
                                                .blocks(hitRadius)
                                                .text(" of your target. Your energy per second is increased by ")
-                                               .energy(energyPerSecond)
+                                               .energy(energyPerSecond, "")
                                                .text(" for the duration of the effect. Lasts ")
                                                .durationTicks(tickDuration)
                                                .text(".")
@@ -160,11 +160,11 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
         this.maxTargets = maxTargets;
     }
 
-    public int getHitRadius() {
+    public float getHitRadius() {
         return hitRadius;
     }
 
-    public void setHitRadius(int hitRadius) {
+    public void setHitRadius(float hitRadius) {
         this.hitRadius = hitRadius;
     }
 

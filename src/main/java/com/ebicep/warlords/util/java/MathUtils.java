@@ -34,4 +34,24 @@ public class MathUtils {
     public static float lerp(float min, float max, float ratio) {
         return min + ratio * (max - min);
     }
+
+    /**
+     * Calculates the max distance to check based on player's pitch to stay within a vertical cylinder.
+     *
+     * @param pitchDegrees Pitch angle in degrees (0 = horizontal, +90 = straight up, -90 = straight down)
+     * @param maxHoriz     Maximum horizontal distance (cylinder radius)
+     * @param maxVert      Maximum vertical distance (cylinder height/2)
+     *
+     * @return The maximum spherical distance to use for raycasting
+     */
+    public static double calculateMaxDistance(double pitchDegrees, double maxHoriz, double maxVert) {
+        double pitchRadians = Math.toRadians(pitchDegrees);
+        double sin = Math.sin(pitchRadians);
+        double cos = Math.cos(pitchRadians);
+
+        double dVert = (sin == 0.0) ? Double.POSITIVE_INFINITY : maxVert / Math.abs(sin);
+        double dHoriz = (cos == 0.0) ? 0.0 : maxHoriz / Math.abs(cos);
+
+        return Math.min(dVert, dHoriz);
+    }
 }

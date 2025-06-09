@@ -142,7 +142,7 @@ public class RegularCooldown<T> extends AbstractCooldown<T> {
 
         return Component.textOfChildren(
                 Component.text(nameAbbreviation,
-                        cooldownType == CooldownTypes.DEBUFF ? NamedTextColor.RED : customActionBarColor() != null ? customActionBarColor() : NamedTextColor.GREEN
+                        customActionBarColor() != null ? customActionBarColor() : cooldownType.getTextColor()
                 ),
                 Component.text(":", NamedTextColor.GRAY),
                 Component.text(ticksLeft / 20 + 1, NamedTextColor.GOLD)
@@ -154,6 +154,10 @@ public class RegularCooldown<T> extends AbstractCooldown<T> {
         consumers.forEach(integerConsumer -> integerConsumer.accept(this, ticksLeft, ticksElapsed));
         ticksElapsed++;
         subtractTime(1);
+    }
+
+    public int getTicksElapsed() {
+        return ticksElapsed;
     }
 
     @Override
@@ -200,4 +204,5 @@ public class RegularCooldown<T> extends AbstractCooldown<T> {
     public void setEnhanced(boolean enhanced) {
         this.enhanced = enhanced;
     }
+
 }

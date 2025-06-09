@@ -4,10 +4,9 @@ import com.ebicep.warlords.abilities.BloodLust;
 import com.ebicep.warlords.abilities.WoundingStrikeBerserker;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.pve.upgrades.*;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 public class WoundingStrikeBranchBerserker extends AbstractUpgradeBranch<WoundingStrikeBerserker> {
-
-    int wounding = ability.getWounding();
 
     @Override
     public void runOnce() {
@@ -35,10 +34,11 @@ public class WoundingStrikeBranchBerserker extends AbstractUpgradeBranch<Woundin
                     }
 
                     @Override
-                    public void run(float value) {
-                        ability.setWounding(wounding + (int) value);
+                    public void modifyFloatModifiable(FloatModifiable.FloatModifier modifier, float value) {
+                        modifier.setModifier(value);
                     }
-                }, 2f)
+                            }, ability.getWounding().addAdditiveModifier("Upgrade Branch", 0), 2f
+                )
                 .addTo(treeB);
 
         masterUpgrade = new Upgrade(

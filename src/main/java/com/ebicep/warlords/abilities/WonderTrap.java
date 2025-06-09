@@ -153,7 +153,7 @@ public class WonderTrap extends AbstractAbility implements AbilityStats<WonderTr
                     //final Location loc = trapStand.getLocation();
                     //final Vector v = loc.toVector().subtract(loc.toVector()).normalize().multiply(-1.1).setY(0.15);
                     //trapTarget.setVelocity(v);
-                    trapTarget.getCooldownManager().addRegularCooldown("KB Increase", "KB", WonderTrap.class, null, trapOwner, CooldownTypes.DEBUFF, cooldownManager -> {
+                    trapTarget.getCooldownManager().addRegularCooldown("KB Increase", "KB", WonderTrap.class, null, trapOwner, CooldownTypes.LOW_LEVEL_DEBUFF, cooldownManager -> {
                             }, 30 * 20
                     );
                 });

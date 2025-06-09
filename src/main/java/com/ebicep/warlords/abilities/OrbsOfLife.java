@@ -51,6 +51,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
     private int healingIncreaseTickDelay = 30;
     private int healingIncreaseTickTime = 130;
     private int healingIncrease = 40;
+    private float healRadius = 4;
 
     public OrbsOfLife() {
         super(AbstractAbilityBuilder.create("orbsOfLife").pvp());
@@ -66,34 +67,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
         this.healingIncreaseTickDelay = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("healingIncreaseTickDelay"), int.class);
         this.healingIncreaseTickTime = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("healingIncreaseTickTime"), int.class);
         this.healingIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("healingIncrease"), int.class);
-    }
-
-    @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Spawn ")
-                                               .text(initialOrbs, NamedTextColor.BLUE)
-                                               .text(" orbs on cast.")
-                                               .emptyLine()
-                                               .text("Striking and hitting enemies with abilities causes them to drop an orb of life that lasts ")
-                                               .durationSeconds(8)
-                                               .text(", restoring ")
-                                               .heal(healingValues.orbHealing)
-                                               .text(" health to the ally that picks it up. Other nearby allies recover ")
-                                               .heal(healingValues.orbHealing)
-                                               .text(" health. After ")
-                                               .durationTicks(healingIncreaseTickDelay)
-                                               .text(" the healing will increase by ")
-                                               .percent(healingIncrease, NamedTextColor.GREEN)
-                                               .text(" over ")
-                                               .durationTicks(healingIncreaseTickTime)
-                                               .text(". Lasts ")
-                                               .durationTicks(tickDuration)
-                                               .text("seconds.")
-                                               .emptyLine()
-                                               .text("Recast to make the orbs levitate towards you or the nearest ally within ")
-                                               .blocks(floatingOrbRadius)
-                                               .text(".")
-                                               .build();
+        this.healRadius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("healRadius"), float.class);
     }
 
     @Override
@@ -114,12 +88,13 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
                 OrbOfLife orb = itr.next();
                 Location orbPosition = orb.getArmorStand().getLocation();
                 WarlordsEntity teammateToHeal = orb.getPlayerToMoveTowards() != null && orbPosition.distanceSquared(orb.getPlayerToMoveTowards()
-                                                                                                                       .getLocation()) < ORB_HITBOX_SQUARED ? orb.getPlayerToMoveTowards() : PlayerFilter.entitiesAround(
-                        orbPosition,
-                        ORB_HITBOX,
-                        ORB_HITBOX,
-                        ORB_HITBOX
-                ).aliveTeammatesOf(wp).closestFirst(orbPosition).findFirst().orElse(null);
+                                                                                                                       .getLocation()) < ORB_HITBOX_SQUARED ?
+                                                orb.getPlayerToMoveTowards() :
+                                                PlayerFilter.entitiesAround(orbPosition, ORB_HITBOX, ORB_HITBOX, ORB_HITBOX)
+                                                            .aliveTeammatesOf(wp)
+                                                            .closestFirst(orbPosition)
+                                                            .findFirst()
+                                                            .orElse(null);
                 int ticksLived = orb.getArmorStand().getTicksLived();
                 if (teammateToHeal != null) {
                     orb.remove();
@@ -135,7 +110,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
                     }
                     healPlayer(teammateToHeal, wp, orbHeal);
                     Utils.playGlobalSound(teammateToHeal.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.2f, 1);
-                    for (WarlordsEntity nearPlayer : PlayerFilter.entitiesAround(teammateToHeal, 6, 6, 6)
+                    for (WarlordsEntity nearPlayer : PlayerFilter.entitiesAround(teammateToHeal, healRadius, healRadius, healRadius)
                                                                  .aliveTeammatesOfExcludingSelf(teammateToHeal)
                                                                  .leastAliveFirst()
                                                                  .limit(MAX_ALLIES)) {
@@ -234,6 +209,39 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
         return true;
     }
 
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Spawn ")
+                                               .text(initialOrbs, NamedTextColor.BLUE)
+                                               .text(" orbs on cast.")
+                                               .emptyLine()
+                                               .text("Striking and hitting enemies with abilities causes them to drop an orb of life that lasts ")
+                                               .durationSeconds(8)
+                                               .text(", restoring ")
+                                               .heal(healingValues.orbHealing)
+                                               .text(" health to the ally that picks it up. Other nearby allies recover ")
+                                               .heal(healingValues.orbHealing)
+                                               .text(" health. After ")
+                                               .durationTicks(healingIncreaseTickDelay)
+                                               .text(" the healing will increase by ")
+                                               .percent(healingIncrease, NamedTextColor.GREEN)
+                                               .text(" over ")
+                                               .durationTicks(healingIncreaseTickTime)
+                                               .text(". Lasts ")
+                                               .durationTicks(tickDuration)
+                                               .text("seconds.")
+                                               .emptyLine()
+                                               .text("Recast to make the orbs levitate towards you or the nearest ally within ")
+                                               .blocks(floatingOrbRadius)
+                                               .text(".")
+                                               .build();
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new OrbsOfLifeBranch(abilityTree, this);
+    }
+
     private void healPlayer(WarlordsEntity teammateToHeal, @Nonnull WarlordsEntity wp, float orbHeal) {
         teammateToHeal.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(orbHeal).flag(InstanceFlags.CAN_OVERHEAL_OTHERS, pveMasterUpgrade2));
         if (pveMasterUpgrade2) {
@@ -291,11 +299,6 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
             }
         }
         return false;
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new OrbsOfLifeBranch(abilityTree, this);
     }
 
     @Override

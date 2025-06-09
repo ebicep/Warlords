@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.win;
 
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
@@ -45,6 +46,15 @@ public class WinAfterTimeoutOption implements Option {
         return OptionalInt.empty();
     }
 
+    public static OptionalInt getTimeInitial(@Nonnull Game game) {
+        for (Option option : game.getOptions()) {
+            if (option instanceof WinAfterTimeoutOption drawAfterTimeoutOption) {
+                return OptionalInt.of(drawAfterTimeoutOption.getTimeInitial());
+            }
+        }
+        return OptionalInt.empty();
+    }
+
     /**
      * Gets the time remaining in second
      *
@@ -52,6 +62,10 @@ public class WinAfterTimeoutOption implements Option {
      */
     public int getTimeRemaining() {
         return timeRemaining;
+    }
+
+    public int getTimeInitial() {
+        return timeInitial;
     }
 
     /**
@@ -73,7 +87,7 @@ public class WinAfterTimeoutOption implements Option {
     private Team winner;
 
     public WinAfterTimeoutOption() {
-        this(DEFAULT_TIME_REMAINING, DEFAULT_WINNER);
+        this(ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "ctf.gameTimeSeconds", int.class, DEFAULT_TIME_REMAINING), DEFAULT_WINNER);
     }
 
     public WinAfterTimeoutOption(int timeRemaining, Team winner) {

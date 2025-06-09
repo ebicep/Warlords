@@ -9,9 +9,6 @@ import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
 
 public class DrainingMiasmaBranch extends AbstractUpgradeBranch<DrainingMiasma> {
 
-    float selfLeech = ability.getLeechSelfAmount();
-    float allyLeech = ability.getLeechAllyAmount();
-
     public DrainingMiasmaBranch(AbilityTree abilityTree, DrainingMiasma ability) {
         super(abilityTree, ability);
 
@@ -34,7 +31,7 @@ public class DrainingMiasmaBranch extends AbstractUpgradeBranch<DrainingMiasma> 
                 50000,
                 () -> {
                     ability.setTickDuration(ability.getTickDuration() * 4);
-                    ability.setLeechDuration(ability.getLeechDuration() * 4);
+                    ability.setLeechTickDuration(ability.getLeechTickDuration() * 4);
                     ability.setRadius(ability.getRadius() * 4);
 
                     ability.setMaxHealthDamage((int) (ability.getMaxHealthDamage() * 0.25f));
@@ -52,7 +49,7 @@ public class DrainingMiasmaBranch extends AbstractUpgradeBranch<DrainingMiasma> 
                 50000,
                 () -> {
                     ability.setTickDuration(ability.getTickDuration() * 4);
-                    ability.setLeechDuration(ability.getLeechDuration() * 4);
+                    ability.setLeechTickDuration(ability.getLeechTickDuration() * 4);
                     ability.setRadius(ability.getRadius() * 4);
 
                     ability.setMaxHealthDamage((int) (ability.getMaxHealthDamage() * 0.5f));

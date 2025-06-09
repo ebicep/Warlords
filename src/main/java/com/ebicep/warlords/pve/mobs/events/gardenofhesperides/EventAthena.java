@@ -159,9 +159,7 @@ public class EventAthena extends AbstractMob implements BossMob, LesserGod {
                 armorStand.setHeadPose(new EulerAngle(Math.toRadians(180), 0, 0));
             });
             Utils.playGlobalSound(wp.getLocation(), "rogue.healingremedy.impact", 500, 1.2f);
-            if (wp instanceof WarlordsNPC warlordsNPC) {
-                warlordsNPC.setStunTicks(animationTicks);
-            }
+            wp.setStunTicks(animationTicks);
             new GameRunnable(wp.getGame()) {
                 int ticksElapsed = 0;
 

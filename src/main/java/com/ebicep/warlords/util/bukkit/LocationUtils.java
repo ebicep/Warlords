@@ -164,7 +164,7 @@ public class LocationUtils {
         Location eye = new LocationBuilder(player1.getEyeLocation())
                 .backward(1)
                 .addY(.7);
-        return lookingAt(player2, eye, 0.7);
+        return lookingAt(player2, eye, 0.2);
     }
 
     public static boolean isLineOfSightVindicator(WarlordsEntity player1, WarlordsEntity player2) {
@@ -277,8 +277,11 @@ public class LocationUtils {
     }
 
     public static boolean isMountableZone(Location location) {
-        if (location.getWorld().getBlockAt(new LocationBuilder(location.clone()).y(2)).getType() == Material.NETHERRACK) {
-            return location.getWorld().getBlockAt(new LocationBuilder(location.clone()).y(4)).getType() == Material.SOUL_SAND && !insideTunnel(location);
+        World world = location.getWorld();
+        int blockX = location.getBlockX();
+        int blockZ = location.getBlockZ();
+        if (world.getBlockAt(blockX, 2, blockZ).getType() == Material.NETHERRACK) {
+            return world.getBlockAt(blockX, 4, blockZ).getType() == Material.SOUL_SAND && !insideTunnel(location);
         }
         return true;
     }

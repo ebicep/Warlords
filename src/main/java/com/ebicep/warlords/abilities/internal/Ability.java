@@ -24,11 +24,14 @@ public class Ability<T extends AbstractAbility> {
     public static final Ability<AvengersWrath> AVENGERS_WRATH = new Ability<>(AvengersWrath.class, AvengersWrath::new);
     public static final Ability<BeaconOfLight> BEACON_OF_LIGHT = new Ability<>(BeaconOfLight.class, BeaconOfLight::new);
     public static final Ability<Berserk> BERSERK = new Ability<>(Berserk.class, Berserk::new);
+    public static final Ability<Blink> BLINK = new Ability<>(Blink.class, Blink::new);
     public static final Ability<BloodLust> BLOOD_LUST = new Ability<>(BloodLust.class, BloodLust::new);
     public static final Ability<Boulder> BOULDER = new Ability<>(Boulder.class, Boulder::new);
+    public static final Ability<BullRush> BULL_RUSH = new Ability<>(BullRush.class, BullRush::new);
     public static final Ability<CapacitorTotem> CAPACITOR_TOTEM = new Ability<>(CapacitorTotem.class, CapacitorTotem::new);
     public static final Ability<ChainHeal> CHAIN_HEAL = new Ability<>(ChainHeal.class, ChainHeal::new);
     public static final Ability<ChainLightning> CHAIN_LIGHTNING = new Ability<>(ChainLightning.class, ChainLightning::new);
+    public static final Ability<Clairvoyance> CLAIRVOYANCE = new Ability<>(Clairvoyance.class, Clairvoyance::new);
     public static final Ability<ConsecrateAvenger> CONSECRATE_AVENGER = new Ability<>(ConsecrateAvenger.class, ConsecrateAvenger::new);
     public static final Ability<ConsecrateCrusader> CONSECRATE_CRUSADER = new Ability<>(ConsecrateCrusader.class, ConsecrateCrusader::new);
     public static final Ability<ConsecrateProtector> CONSECRATE_PROTECTOR = new Ability<>(ConsecrateProtector.class, ConsecrateProtector::new);
@@ -47,6 +50,7 @@ public class Ability<T extends AbstractAbility> {
     public static final Ability<FallenSouls> FALLEN_SOULS = new Ability<>(FallenSouls.class, FallenSouls::new);
     public static final Ability<Fireball> FIREBALL = new Ability<>(Fireball.class, Fireball::new);
     public static final Ability<FlameBurst> FLAME_BURST = new Ability<>(FlameBurst.class, FlameBurst::new);
+    public static final Ability<FlameBreath> FLAME_BREATH = new Ability<>(FlameBreath.class, FlameBreath::new);
     public static final Ability<FortifyingHex> FORTIFYING_HEX = new Ability<>(FortifyingHex.class, FortifyingHex::new);
     public static final Ability<FreezingBreath> FREEZING_BREATH = new Ability<>(FreezingBreath.class, FreezingBreath::new);
     public static final Ability<FrostBolt> FROST_BOLT = new Ability<>(FrostBolt.class, FrostBolt::new);
@@ -55,6 +59,8 @@ public class Ability<T extends AbstractAbility> {
     public static final Ability<GroundSlamRevenant> GROUND_SLAM_REVENANT = new Ability<>(GroundSlamRevenant.class, GroundSlamRevenant::new);
     public static final Ability<GuardianBeam> GUARDIAN_BEAM = new Ability<>(GuardianBeam.class, GuardianBeam::new);
     public static final Ability<HammerOfLight> HAMMER_OF_LIGHT = new Ability<>(HammerOfLight.class, HammerOfLight::new);
+    public static final Ability<Haze> HAZE = new Ability<>(Haze.class, Haze::new);
+    public static final Ability<HealingLink> HEALING_LINK = new Ability<>(HealingLink.class, HealingLink::new);
     public static final Ability<HealingRain> HEALING_RAIN = new Ability<>(HealingRain.class, HealingRain::new);
     public static final Ability<HealingTotem> HEALING_TOTEM = new Ability<>(HealingTotem.class, HealingTotem::new);
     public static final Ability<HeartToHeart> HEART_TO_HEART = new Ability<>(HeartToHeart.class, HeartToHeart::new);
@@ -79,6 +85,7 @@ public class Ability<T extends AbstractAbility> {
     public static final Ability<NotAShield> NOT_A_SHIELD = new Ability<>(NotAShield.class, NotAShield::new);
     public static final Ability<OrbsOfLife> ORBS_OF_LIFE = new Ability<>(OrbsOfLife.class, OrbsOfLife::new);
     public static final Ability<OrderOfEviscerate> ORDER_OF_EVISCERATE = new Ability<>(OrderOfEviscerate.class, OrderOfEviscerate::new);
+    public static final Ability<Parry> PARRY = new Ability<>(Parry.class, Parry::new);
     public static final Ability<PoisonousHex> POISONOUS_HEX = new Ability<>(PoisonousHex.class, PoisonousHex::new);
     public static final Ability<PrismGuard> PRISM_GUARD = new Ability<>(PrismGuard.class, PrismGuard::new);
     public static final Ability<ProtectorsStrike> PROTECTORS_STRIKE = new Ability<>(ProtectorsStrike.class, ProtectorsStrike::new);
@@ -92,19 +99,22 @@ public class Ability<T extends AbstractAbility> {
     public static final Ability<SeismicWaveBerserker> SEISMIC_WAVE_BERSERKER = new Ability<>(SeismicWaveBerserker.class, SeismicWaveBerserker::new);
     public static final Ability<SeismicWaveDefender> SEISMIC_WAVE_DEFENDER = new Ability<>(SeismicWaveDefender.class, SeismicWaveDefender::new);
     public static final Ability<ShadowStep> SHADOW_STEP = new Ability<>(ShadowStep.class, ShadowStep::new);
+    public static final Ability<Solitary> SOLITARY = new Ability<>(Solitary.class, Solitary::new);
     public static final Ability<SoothingElixir> SOOTHING_ELIXIR = new Ability<>(SoothingElixir.class, SoothingElixir::new);
     public static final Ability<Soulbinding> SOULBINDING = new Ability<>(Soulbinding.class, Soulbinding::new);
     public static final Ability<SoulfireBeam> SOULFIRE_BEAM = new Ability<>(SoulfireBeam.class, SoulfireBeam::new);
     public static final Ability<SoulShackle> SOUL_SHACKLE = new Ability<>(SoulShackle.class, SoulShackle::new);
     public static final Ability<SoulSwitch> SOUL_SWITCH = new Ability<>(SoulSwitch.class, SoulSwitch::new);
     public static final Ability<SpiritLink> SPIRIT_LINK = new Ability<>(SpiritLink.class, SpiritLink::new);
+    public static final Ability<SuperBrew> SUPER_BREW = new Ability<>(SuperBrew.class, SuperBrew::new);
     public static final Ability<TimeWarpAquamancer> TIME_WARP_AQUAMANCER = new Ability<>(TimeWarpAquamancer.class, TimeWarpAquamancer::new);
     public static final Ability<TimeWarpCryomancer> TIME_WARP_CRYOMANCER = new Ability<>(TimeWarpCryomancer.class, TimeWarpCryomancer::new);
     public static final Ability<TimeWarpPyromancer> TIME_WARP_PYROMANCER = new Ability<>(TimeWarpPyromancer.class, TimeWarpPyromancer::new);
     public static final Ability<UndyingArmy> UNDYING_ARMY = new Ability<>(UndyingArmy.class, UndyingArmy::new);
     public static final Ability<Vindicate> VINDICATE = new Ability<>(Vindicate.class, Vindicate::new);
-    public static final Ability<VitalityLiquor> VITALITY_LIQUOR = new Ability<>(VitalityLiquor.class, VitalityLiquor::new);
     public static final Ability<VitalityConcoction> VITALITY_CONCOCTION = new Ability<>(VitalityConcoction.class, VitalityConcoction::new);
+    public static final Ability<VitalityLiquor> VITALITY_LIQUOR = new Ability<>(VitalityLiquor.class, VitalityLiquor::new);
+    public static final Ability<VolatileBrew> VOLATILE_BREW = new Ability<>(VolatileBrew.class, VolatileBrew::new);
     public static final Ability<WaterBolt> WATER_BOLT = new Ability<>(WaterBolt.class, WaterBolt::new);
     public static final Ability<WaterBreath> WATER_BREATH = new Ability<>(WaterBreath.class, WaterBreath::new);
     public static final Ability<WindfuryWeapon> WINDFURY_WEAPON = new Ability<>(WindfuryWeapon.class, WindfuryWeapon::new);
@@ -119,11 +129,14 @@ public class Ability<T extends AbstractAbility> {
             AVENGERS_WRATH,
             BEACON_OF_LIGHT,
             BERSERK,
+            BLINK,
             BLOOD_LUST,
             BOULDER,
+            BULL_RUSH,
             CAPACITOR_TOTEM,
             CHAIN_HEAL,
             CHAIN_LIGHTNING,
+            CLAIRVOYANCE,
             CONSECRATE_AVENGER,
             CONSECRATE_CRUSADER,
             CONSECRATE_PROTECTOR,
@@ -142,6 +155,7 @@ public class Ability<T extends AbstractAbility> {
             FALLEN_SOULS,
             FIREBALL,
             FLAME_BURST,
+            FLAME_BREATH,
             FORTIFYING_HEX,
             FREEZING_BREATH,
             FROST_BOLT,
@@ -150,6 +164,8 @@ public class Ability<T extends AbstractAbility> {
             GROUND_SLAM_REVENANT,
             GUARDIAN_BEAM,
             HAMMER_OF_LIGHT,
+            HAZE,
+            HEALING_LINK,
             HEALING_RAIN,
             HEALING_TOTEM,
             HEART_TO_HEART,
@@ -174,6 +190,7 @@ public class Ability<T extends AbstractAbility> {
             NOT_A_SHIELD,
             ORBS_OF_LIFE,
             ORDER_OF_EVISCERATE,
+            PARRY,
             POISONOUS_HEX,
             PRISM_GUARD,
             PROTECTORS_STRIKE,
@@ -187,19 +204,22 @@ public class Ability<T extends AbstractAbility> {
             SEISMIC_WAVE_BERSERKER,
             SEISMIC_WAVE_DEFENDER,
             SHADOW_STEP,
+            SOLITARY,
             SOOTHING_ELIXIR,
             SOULBINDING,
             SOULFIRE_BEAM,
             SOUL_SHACKLE,
             SOUL_SWITCH,
             SPIRIT_LINK,
+            SUPER_BREW,
             TIME_WARP_AQUAMANCER,
             TIME_WARP_CRYOMANCER,
             TIME_WARP_PYROMANCER,
             UNDYING_ARMY,
             VINDICATE,
-            VITALITY_LIQUOR,
             VITALITY_CONCOCTION,
+            VITALITY_LIQUOR,
+            VOLATILE_BREW,
             WATER_BOLT,
             WATER_BREATH,
             WINDFURY_WEAPON,
@@ -220,7 +240,7 @@ public class Ability<T extends AbstractAbility> {
         }
         for (Specializations spec : Specializations.VALUES) {
             Ability<?>[] abilities = new Ability[5];
-            List<AbstractAbility> abstractAbilities = spec.create.get().getAbilities();
+            List<AbstractAbility> abstractAbilities = spec.create().getAbilities();
             for (int i = 0; i < abstractAbilities.size(); i++) {
                 AbstractAbility ability = abstractAbilities.get(i);
                 Ability<?> abilityRegistry = getAbility(ability.getClass());

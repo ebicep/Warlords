@@ -82,12 +82,19 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
         Utils.playGlobalSound(wp.getLocation(), "mage.waterbreath.activation", 2, 1);
         wp.getWorld().spawnParticle(Particle.HEART, wp.getLocation().add(0, 0.7, 0), 2, 0.6, 0.6, 0.6, 1, null, true);
         Location playerLoc = new LocationBuilder(wp.getLocation()).pitch(0).add(0, 1.7, 0);
-        EffectUtils.playSpiralAnimation(wp, playerLoc, maxAnimationEffects, maxAnimationTime, (center, animationTimer) -> {
-                }, Particle.DRIPPING_WATER, Particle.ENCHANT, Particle.HAPPY_VILLAGER
+        EffectUtils.playSpiralAnimation(
+                wp,
+                playerLoc,
+                maxAnimationEffects,
+                maxAnimationTime,
+                (center, animationTimer) -> {
+                },
+                Particle.DRIPPING_WATER,
+                Particle.ENCHANT,
+                Particle.HAPPY_VILLAGER
         );
         int previousDebuffsRemoved = stats.debuffsRemoved;
         stats.debuffsRemoved += wp.getCooldownManager().removeDebuffCooldowns();
-        wp.getSpeed().removeSlownessModifiers();
         wp.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(healingValues.breathHealing));
         Location playerEyeLoc = new LocationBuilder(wp.getLocation()).pitch(0).backward(1);
         Vector viewDirection = playerLoc.getDirection();
@@ -100,7 +107,6 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
             if (wp.isTeammate(breathTarget)) {
                 stats.targetsHealed++;
                 stats.debuffsRemoved += breathTargetCooldownManager.removeDebuffCooldowns();
-                breathTarget.getSpeed().removeSlownessModifiers();
                 breathTarget.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(healingValues.breathHealing).flags(InstanceFlags.CAN_OVERHEAL_OTHERS));
                 Overheal.giveOverHeal(wp, breathTarget);
                 if (pveMasterUpgrade || pveMasterUpgrade2) {

@@ -5,14 +5,16 @@ import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsPlayerSwapEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.ingame.CalculateSpeed;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.motionsystem.MotionModifier;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.flags.DynamicFlags;
 import com.ebicep.warlords.pve.mobs.flags.Unswappable;
@@ -27,6 +29,7 @@ import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -44,79 +47,77 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
     private final SoulSwitchStats stats = new SoulSwitchStats();
     private final HealingValues healingValues = new HealingValues();
     private FloatModifiable radius = new FloatModifiable(13);
+    private FloatModifiable radiusFlag = new FloatModifiable(3.5f);
+    private float verticalLimit;
+    private float verticalLimitFlag;
     private int blindnessTicks = 30;
-    private int decoyMaxTicksLived = 60;
+    private int damageReduction;
+    private int damageReductionTickDuration;
     // pve
     private int invisTicks = 30;
+    private int decoyMaxTicksLived = 60;
 
-    public SoulSwitch() {
-        super(AbstractAbilityBuilder.create("soulSwitch").pvp());
-    }
-
-    @Override
-    public void init(AbstractAbilityBuilder builder) {
-        super.init(builder);
-        this.radius = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), float.class));
-        this.blindnessTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("blindnessTicks"), int.class);
-        this.decoyMaxTicksLived = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("decoyMaxTicksLived"), int.class);
-        this.invisTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("invisTicks"), int.class);
-    }
-
-    @Override
-    public void updateDescription(Player player) {
-        if (inPve) {
-            description = AbilityDescriptionBuilder.create("Switch locations with an enemy, stunning them for ")
-                                                   .durationTicks(blindnessTicks)
-                                                   .text(". Upon swapping, self heal for ")
-                                                   .heal(healingValues.switchHealing)
-                                                   .text(" health, go invisible for ")
-                                                   .durationTicks(invisTicks)
-                                                   .text(", and transform the swapped enemy into your own Animus. " + "The Animus will inherit the max HP of the mob swapped and your current movement speed when swapped, no longer has its original stats/abilities, and will use Judgment Strike every 2 seconds based on the current your own Judgment Strike. " + "Enemies cannot target the Animus, and only 1 Animus can exist at a time. " + "For every enemy the Animus defeats, reduce the cooldown of Soul Switch by 1 second.")
-                                                   .maxRange(radius)
-                                                   .build();
-        } else {
-            description = AbilityDescriptionBuilder.create("Switch locations with an enemy, blinding them for ")
-                                                   .durationTicks(blindnessTicks)
-                                                   .text(".")
-                                                   .maxRange(radius)
-                                                   .text(" Soul Switch has low vertical range.")
-                                                   .build();
-        }
-    }
+    private boolean canSwitchToCarrier = false;
 
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
-        if (wp.getCarriedFlag() != null) {
-            wp.sendMessage(Component.text(" You cannot Soul Switch while holding the flag!", NamedTextColor.RED));
-            return false;
-        }
-        float rad = radius.getCalculatedValue();
-        for (WarlordsEntity swapTarget : PlayerFilter.entitiesAround(wp.getLocation(), rad, rad / 2f, rad).aliveEnemiesOf(wp).requireLineOfSight(wp).lookingAtFirst(wp)) {
-            if (swapTarget.getCarriedFlag() != null) {
+        float maxHorizontal = wp.hasFlag() ? radiusFlag.getCalculatedValue() : radius.getCalculatedValue();
+        float maxVertical = wp.hasFlag() ? verticalLimitFlag : verticalLimit;
+        for (WarlordsEntity swapTarget : PlayerFilter
+                .entitiesAround(wp.getLocation(), maxHorizontal, maxVertical, maxHorizontal)
+                .aliveEnemiesOf(wp)
+                .requireLineOfSight(wp)
+                .lookingAtFirst(wp)
+        ) {
+            if (!canSwitchToCarrier && swapTarget.getCarriedFlag() != null) {
                 wp.sendMessage(Component.text(" You cannot Soul Switch with a player holding the flag!", NamedTextColor.RED));
                 continue;
             }
             if (swapTarget instanceof WarlordsNPC warlordsNPC) {
                 AbstractMob mob = warlordsNPC.getMob();
                 if (mob instanceof Unswappable || mob.getDynamicFlags().contains(DynamicFlags.UNSWAPPABLE) || mob instanceof BossMob || mob instanceof BossMinionMob) {
-                    wp.sendMessage(Component.text(" You cannot Soul Switch with that mob!", NamedTextColor.RED));
+                    wp.sendMessage(Component.text("You cannot Soul Switch with that mob!", NamedTextColor.RED));
                     continue;
                 }
             }
-            Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 2, 1.5f);
             Location swapLocation = swapTarget.getLocation();
             Location ownLocation = wp.getLocation();
+            Location start = new Location(wp.getWorld(), ownLocation.getX(), ownLocation.getY(), ownLocation.getZ(), swapLocation.getYaw(), swapLocation.getPitch());
+            Location end = new Location(swapLocation.getWorld(), swapLocation.getX(), swapLocation.getY(), swapLocation.getZ(), ownLocation.getYaw(), ownLocation.getPitch());
+            WarlordsPlayerSwapEvent playerSwapEvent = new WarlordsPlayerSwapEvent(wp, swapTarget, start, end);
+            Bukkit.getPluginManager().callEvent(playerSwapEvent);
+            if (playerSwapEvent.isCancelled()) {
+                return true;
+            }
+            Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 2, 1.5f);
             EffectUtils.playCylinderAnimation(swapLocation, 1.05, Particle.CLOUD, 1);
             EffectUtils.playCylinderAnimation(ownLocation, 1.05, Particle.CLOUD, 1);
             swapTarget.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, blindnessTicks, 0, true, false));
-            swapTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED.append(Component.text(" You've been Soul Swapped by ", NamedTextColor.GRAY))
-                                                                   .append(Component.text(wp.getName(), NamedTextColor.YELLOW))
-                                                                   .append(Component.text("!", NamedTextColor.GRAY)));
-            swapTarget.teleport(new Location(wp.getWorld(), ownLocation.getX(), ownLocation.getY(), ownLocation.getZ(), swapLocation.getYaw(), swapLocation.getPitch()));
-            wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" You swapped with ", NamedTextColor.GRAY))
-                                                          .append(Component.text(swapTarget.getName(), NamedTextColor.YELLOW))
-                                                          .append(Component.text("!", NamedTextColor.GRAY)));
-            wp.teleport(new Location(swapLocation.getWorld(), swapLocation.getX(), swapLocation.getY(), swapLocation.getZ(), ownLocation.getYaw(), ownLocation.getPitch()));
+            swapTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED
+                    .append(Component.text(" You've been Soul Swapped by ", NamedTextColor.GRAY))
+                    .append(Component.text(wp.getName(), NamedTextColor.YELLOW))
+                    .append(Component.text("!", NamedTextColor.GRAY)));
+            swapTarget.teleport(start);
+            wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                    .append(Component.text(" You swapped with ", NamedTextColor.GRAY))
+                    .append(Component.text(swapTarget.getName(), NamedTextColor.YELLOW))
+                    .append(Component.text("!", NamedTextColor.GRAY)));
+            wp.teleport(end);
+            wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                    "Soul Switch Res",
+                    "SWITCH",
+                    SoulSwitch.class,
+                    null,
+                    wp,
+                    CooldownTypes.BUFF,
+                    cooldownManager -> {},
+                    damageReductionTickDuration
+            ) {
+                @Override
+                public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                    return currentDamageValue * convertToDivisionDecimal(damageReduction);
+                }
+            });
             if (swapTarget instanceof WarlordsNPC npc) {
                 PveOption pveOption = wp.getGame().getOption(PveOption.class).stream().findFirst().orElse(null);
                 if (pveOption != null) {
@@ -127,7 +128,7 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                     pveOption.spawnNewMob(animus, wp.getTeam());
                     addSecondaryAbility(2, () -> {
                                 if (wp.isAlive()) {
-                                    animus.getWarlordsNPC().die(animus.getWarlordsNPC());
+                                    animus.getWarlordsNPC().die(animus.getWarlordsNPC(), WarlordsDeathEvent.DeathInfoBuilder.create().setForced(true));
                                     for (WarlordsEntity enemy : PlayerFilter.entitiesAround(animus.getWarlordsNPC().getLocation(), 4, 4, 4).aliveEnemiesOf(wp)) {
                                         enemy.addInstance(InstanceBuilder.damage().cause("Animus").source(wp).min(400).max(600));
                                     }
@@ -147,7 +148,7 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                                                          .getModifiers()
                                                          .stream()
                                                          .filter(modifier -> modifier.getModifier() > 0)
-                                                         .mapToDouble(CalculateSpeed.Modifier::getModifier)
+                                                         .mapToDouble(MotionModifier::getModifier)
                                                          .sum();
                                     float damageBoost = Math.min(1.1f, (float) (1 + (speed * 0.5f) / 100));
                                     return currentDamageValue * damageBoost;
@@ -206,14 +207,82 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                 });
                 PlayerFilter.entitiesAround(swapLocation, 3, 3, 3)
                             .aliveTeammatesOf(wp)
-                            .forEach(warlordsEntity -> warlordsEntity.addSpeedModifier(wp, "Shadow Burst", 25, 3 * 20, "BASE"));
+                            .forEach(warlordsEntity -> warlordsEntity.addSpeedModifier(wp, "Shadow Burst", 25, 3 * 20));
                 PlayerFilter.entitiesAround(ownLocation, 3, 3, 3)
                             .aliveTeammatesOf(wp)
-                            .forEach(warlordsEntity -> warlordsEntity.addSpeedModifier(wp, "Shadow Burst", 25, 3 * 20, "BASE"));
+                            .forEach(warlordsEntity -> warlordsEntity.addSpeedModifier(wp, "Shadow Burst", 25, 3 * 20));
             }
             return true;
         }
         return false;
+    }
+
+    public SoulSwitch() {
+        super(AbstractAbilityBuilder.create("soulSwitch").pvp());
+    }
+
+    @Override
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.radius = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), float.class));
+        this.radiusFlag = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radiusFlag"), float.class));
+        this.verticalLimit = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("verticalLimit"), float.class);
+        this.verticalLimitFlag = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("verticalLimitFlag"), float.class);
+        this.blindnessTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("blindnessTicks"), int.class);
+        this.decoyMaxTicksLived = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("decoyMaxTicksLived"), int.class);
+        this.invisTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("invisTicks"), int.class);
+        this.damageReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageReduction"), int.class);
+        this.damageReductionTickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageReductionTickDuration"), int.class);
+    }
+
+    public void setCanSwitchToCarrier(boolean canSwitchToCarrier) {
+        this.canSwitchToCarrier = canSwitchToCarrier;
+    }
+
+    public int getDamageReduction() {
+        return damageReduction;
+    }
+
+    public void setDamageReduction(int damageReduction) {
+        this.damageReduction = damageReduction;
+    }
+
+    public float getVerticalLimit() {
+        return verticalLimit;
+    }
+
+    public void setVerticalLimit(float verticalLimit) {
+        this.verticalLimit = verticalLimit;
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        if (inPve) {
+            description = AbilityDescriptionBuilder.create("Switch locations with an enemy, stunning them for ")
+                                                   .durationTicks(blindnessTicks)
+                                                   .text(". Upon swapping, gain ")
+                                                   .percent(damageReduction, NamedTextColor.RED)
+                                                   .text(" damage reduction for ")
+                                                   .durationTicks(damageReductionTickDuration)
+                                                   .text(" and self heal for ")
+                                                   .heal(healingValues.switchHealing)
+                                                   .text(" health, go invisible for ")
+                                                   .durationTicks(invisTicks)
+                                                   .text(", and transform the swapped enemy into your own Animus. The Animus will inherit the max HP of the mob swapped and your current movement speed when swapped, no longer has its original stats/abilities, and will use Judgment Strike every 2 seconds based on the current your own Judgment Strike. " + "Enemies cannot target the Animus, and only 1 Animus can exist at a time. " + "For every enemy the Animus defeats, reduce the cooldown of Soul Switch by 1 second.")
+                                                   .maxRange(radius)
+                                                   .build();
+        } else {
+            description = AbilityDescriptionBuilder.create("Switch locations with an enemy, blinding them for ")
+                                                   .durationTicks(blindnessTicks)
+                                                   .text(". Upon swapping, gain ")
+                                                   .percent(damageReduction, NamedTextColor.RED)
+                                                   .text(" damage reduction for ")
+                                                   .durationTicks(damageReductionTickDuration)
+                                                   .text(".")
+                                                   .maxRange(radius)
+                                                   .text(" Soul Switch has low vertical range.")
+                                                   .build();
+        }
     }
 
     @Override

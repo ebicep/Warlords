@@ -24,8 +24,8 @@ public class TeleportUtils {
                 new PositionMoveRotation(
                         new Vec3(x, y, z),
                         Vec3.ZERO,
-                        serverPlayer.getYRot(),
-                        serverPlayer.getXRot()
+                        0,
+                        0
                 ),
                 Relative.ROTATION
         );

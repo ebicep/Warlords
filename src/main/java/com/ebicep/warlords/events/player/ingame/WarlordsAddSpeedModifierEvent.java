@@ -1,7 +1,7 @@
 package com.ebicep.warlords.events.player.ingame;
 
-import com.ebicep.warlords.player.ingame.CalculateSpeed;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.motionsystem.MotionModifier;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
@@ -15,16 +15,16 @@ public class WarlordsAddSpeedModifierEvent extends AbstractWarlordsEntityEvent i
         return handlers;
     }
 
-    private final CalculateSpeed.Modifier modifier;
+    private final MotionModifier modifier;
     private boolean enhanced = false;
     private boolean cancelled = false;
 
-    public WarlordsAddSpeedModifierEvent(@Nonnull WarlordsEntity player, CalculateSpeed.Modifier modifier) {
+    public WarlordsAddSpeedModifierEvent(@Nonnull WarlordsEntity player, MotionModifier modifier) {
         super(player);
         this.modifier = modifier;
     }
 
-    public CalculateSpeed.Modifier getModifier() {
+    public MotionModifier getMotionModifier() {
         return modifier;
     }
 

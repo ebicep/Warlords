@@ -15,11 +15,11 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.assassin.OrderOfEviscerateBranch;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
+import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -35,14 +35,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityIcon, Duration, AbilityStats<OrderOfEviscerate, OrderOfEviscerate.OrderOfEviscerateStats> {
+public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityIcon, Duration, AbilityStats<OrderOfEviscerate, OrderOfEviscerate.OrderOfEviscerateStats>, OrderOfEviscerateLike {
 
     private final OrderOfEviscerateStats stats = new OrderOfEviscerateStats();
     private int tickDuration = 160;
     private float maxDamageThreshold = 600;
     private float vulnerableDamageBonus = 20;
-    private float backstabDamageBonus = 10;
     private int speedBuff = 40;
+
+    private float orderKillCooldownReduction;
+    private float orderAssistCooldownReduction;
 
     public OrderOfEviscerate() {
         super(AbstractAbilityBuilder.create("orderOfEviscerate").pvp());
@@ -54,75 +56,50 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
         this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
         this.maxDamageThreshold = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxDamageThreshold"), float.class);
         this.vulnerableDamageBonus = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("vulnerableDamageBonus"), float.class);
-        this.backstabDamageBonus = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("backstabDamageBonus"), float.class);
         this.speedBuff = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("speedBuff"), int.class);
+        this.orderKillCooldownReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("orderKillCooldownReduction"), float.class);
+        this.orderAssistCooldownReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("orderAssistCooldownReduction"), float.class);
     }
 
-    @Override
-    public void updateDescription(Player player) {
-        TextComponent.Builder builder = AbilityDescriptionBuilder.create("Cloak yourself for ")
-                                                                 .durationTicks(tickDuration)
-                                                                 .text(", granting you ")
-                                                                 .percent(speedBuff, NamedTextColor.WHITE)
-                                                                 .text(" extra movement speed and making you ")
-                                                                 .text("INVIS", NamedTextColor.DARK_GREEN)
-                                                                 .text(" to the enemy for the duration. However, taking up to ")
-                                                                 .text(maxDamageThreshold, NamedTextColor.RED)
-                                                                 .text(" fall damage or any type of ability damage will end your invisibility.")
-                                                                 .emptyLine()
-                                                                 .text("All your attacks against an enemy will mark them vulnerable. Vulnerable enemies take ")
-                                                                 .percent(vulnerableDamageBonus, NamedTextColor.RED)
-                                                                 .text(" more damage. Additionally, enemies hit from behind take an additional ")
-                                                                 .percent(backstabDamageBonus, NamedTextColor.RED)
-                                                                 .text(" more damage.")
-                                                                 .emptyLine()
-                                                                 .text("Successfully killing your mark will ")
-                                                                 .build()
-                                                                 .toBuilder();
-        if (inPve) {
-            // 2 for shadow
-            int killReduction = pveMasterUpgrade ? 12 : 8;
-            // 0 for shadow
-            int assistReduction = pveMasterUpgrade ? 6 : 4;
-            description = builder.append(AbilityDescriptionBuilder.create("reduce", NamedTextColor.YELLOW)
-                                                                  .text(" your Shadow Step cooldown by ")
-                                                                  .text(2, NamedTextColor.GOLD)
-                                                                  .text(" seconds and Order of Eviscerate by ")
-                                                                  .text(killReduction, NamedTextColor.GOLD)
-                                                                  .text(" seconds. Assisting in killing your mark will ")
-                                                                  .text("reduce", NamedTextColor.YELLOW)
-                                                                  .text(" your Order of Eviscerate cooldown by ")
-                                                                  .text(assistReduction, NamedTextColor.GOLD)
-                                                                  .text(" seconds.")
-                                                                  .build()).build();
-        } else {
-            description = builder.append(AbilityDescriptionBuilder.create("reset", NamedTextColor.YELLOW)
-                                                                  .text(" both your Shadow Step and Order of Eviscerate's cooldown and refund the energy cost. Assisting in killing your mark will only refund half the cooldown.")
-                                                                  .build()).build();
-        }
+    public int getSpeedBuff() {
+        return speedBuff;
+    }
+
+    public void setSpeedBuff(int speedBuff) {
+        this.speedBuff = speedBuff;
     }
 
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_GHAST_SHOOT, 1.5f, 0.7f);
-        Runnable cancelSpeed = wp.addSpeedModifier(wp, "Order of Eviscerate", speedBuff, tickDuration, "BASE");
+        wp.addSpeedModifier(wp, name, speedBuff, tickDuration);
         wp.getCooldownManager().removeCooldown(OrderOfEviscerateData.class, false);
         OrderOfEviscerateData data = new OrderOfEviscerateData(maxDamageThreshold);
-        wp.getCooldownManager().addCooldown(new RegularCooldown<>("Order of Eviscerate", "ORDER", OrderOfEviscerateData.class, data, wp, CooldownTypes.ABILITY, cooldownManager -> {
-        }, cooldownManager -> {
-            cancelSpeed.run();
-            removeCloak(wp, true);
-            if (inPve) {
-                if (data.damageDoneWithOrder >= 15000 && data.mobsKilledWithOrder >= 6) {
-                    ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.SERIAL_KILLER);
-                }
-            }
-        }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-            if (ticksElapsed % 2 == 0) {
-                Utils.playGlobalSound(wp.getLocation(), Sound.AMBIENT_CAVE, 0.25f, 2);
-            }
-            EffectUtils.displayParticle(Particle.SMOKE, wp.getLocation(), 4, 0.2, 0.2, 0.2, 0.05);
-        })
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                "Order of Eviscerate",
+                "ORDER",
+                OrderOfEviscerateData.class,
+                data,
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                },
+                cooldownManager -> {
+                    wp.getSpeed().removeModifier(name);
+                    removeCloak(wp, true);
+                    if (inPve) {
+                        if (data.damageDoneWithOrder >= 15000 && data.mobsKilledWithOrder >= 6) {
+                            ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.SERIAL_KILLER);
+                        }
+                    }
+                },
+                tickDuration,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed % 2 == 0) {
+                        Utils.playGlobalSound(wp.getLocation(), Sound.AMBIENT_CAVE, 0.25f, 2);
+                    }
+                    EffectUtils.displayParticle(Particle.SMOKE, wp.getLocation(), 4, 0.2, 0.2, 0.2, 0.05);
+                })
         ) {
 
             @Override
@@ -143,7 +120,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 if (Objects.equals(data.getMarkedPlayer(), event.getWarlordsEntity()) && !LocationUtils.isLineOfSightAssassin(event.getWarlordsEntity(), event.getSource())) {
                     stats.numberOfBackstabs++;
-                    return currentDamageValue * (inPve ? 2 : 1 + (vulnerableDamageBonus + backstabDamageBonus) / 100f);
+                    return currentDamageValue;
                 } else {
                     return currentDamageValue * (1 + vulnerableDamageBonus / 100f);
                 }
@@ -180,11 +157,12 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                         public void run() {
                             if (inPve) {
                                 int reduction = pveMasterUpgrade ? 12 : 8;
-                                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" You killed your mark,", NamedTextColor.GRAY))
-                                                                              .append(Component.text(" your ultimate cooldown has been reduced by " + reduction + " seconds",
-                                                                                      NamedTextColor.YELLOW
-                                                                              ))
-                                                                              .append(Component.text("!", NamedTextColor.GRAY)));
+                                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                                        .append(Component.text(" You killed your mark,", NamedTextColor.GRAY))
+                                        .append(Component.text(" your ultimate cooldown has been reduced by " + reduction + " seconds",
+                                                NamedTextColor.YELLOW
+                                        ))
+                                        .append(Component.text("!", NamedTextColor.GRAY)));
                                 for (ShadowStep shadowStep : wp.getAbilitiesMatching(ShadowStep.class)) {
                                     shadowStep.subtractCurrentCooldown(2);
                                 }
@@ -212,14 +190,20 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                                       });
                                 }
                             } else {
-                                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" You killed your mark,", NamedTextColor.GRAY))
-                                                                              .append(Component.text(" your cooldowns have been reset", NamedTextColor.YELLOW))
-                                                                              .append(Component.text("!", NamedTextColor.GRAY)));
-                                for (ShadowStep shadowStep : wp.getAbilitiesMatching(ShadowStep.class)) {
-                                    shadowStep.setCurrentCooldown(0);
-                                }
+                                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                                        .append(Component.text(" You killed your mark, ", NamedTextColor.GRAY))
+                                        .append(Component.text(OrderOfEviscerate.this.name, NamedTextColor.YELLOW))
+                                        .append(Component.text("'s cooldown was reduced by ", NamedTextColor.GRAY))
+                                        .append(Component.text(NumberFormat.formatOptionalHundredths(orderKillCooldownReduction), NamedTextColor.GOLD))
+                                        .append(Component.text(" seconds and ", NamedTextColor.GRAY))
+                                        .append(Component.text("Soul Switch", NamedTextColor.YELLOW))
+                                        .append(Component.text("'s cooldown was reset.", NamedTextColor.GRAY))
+                                );
                                 for (OrderOfEviscerate orderOfEviscerate : wp.getAbilitiesMatching(OrderOfEviscerate.class)) {
-                                    orderOfEviscerate.setCurrentCooldown(0);
+                                    orderOfEviscerate.subtractCurrentCooldown(orderKillCooldownReduction);
+                                }
+                                for (SoulSwitch soulSwitch : wp.getAbilitiesMatching(SoulSwitch.class)) {
+                                    soulSwitch.setCurrentCooldown(0);
                                 }
                                 wp.addEnergy(wp, name, energyCost.getBaseValue());
                             }
@@ -234,23 +218,30 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                         public void run() {
                             if (inPve) {
                                 int reduction = pveMasterUpgrade ? 6 : 4;
-                                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" You assisted in killing your mark,", NamedTextColor.GRAY))
-                                                                              .append(Component.text(" your ultimate cooldown has been reduced by " + reduction + " seconds",
-                                                                                      NamedTextColor.YELLOW
-                                                                              ))
-                                                                              .append(Component.text("!", NamedTextColor.GRAY)));
+                                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                                        .append(Component.text(" You assisted in killing your mark,", NamedTextColor.GRAY))
+                                        .append(Component.text(" your ultimate cooldown has been reduced by " + reduction + " seconds",
+                                                NamedTextColor.YELLOW
+                                        ))
+                                        .append(Component.text("!", NamedTextColor.GRAY)));
                                 for (OrderOfEviscerate orderOfEviscerate : wp.getAbilitiesMatching(OrderOfEviscerate.class)) {
                                     orderOfEviscerate.subtractCurrentCooldown(reduction);
                                 }
                             } else {
-                                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" You assisted in killing your mark,", NamedTextColor.GRAY))
-                                                                              .append(Component.text(" your cooldowns have been reduced by half", NamedTextColor.YELLOW))
-                                                                              .append(Component.text("!", NamedTextColor.GRAY)));
-                                for (ShadowStep shadowStep : wp.getAbilitiesMatching(ShadowStep.class)) {
-                                    shadowStep.subtractCurrentCooldown(shadowStep.getCurrentCooldown() / 2);
-                                }
+                                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                                        .append(Component.text(" You assisted in killing your mark, ", NamedTextColor.GRAY))
+                                        .append(Component.text(OrderOfEviscerate.this.name, NamedTextColor.YELLOW))
+                                        .append(Component.text("'s cooldown was reduced by ", NamedTextColor.GRAY))
+                                        .append(Component.text(NumberFormat.formatOptionalHundredths(orderAssistCooldownReduction), NamedTextColor.GOLD))
+                                        .append(Component.text(" seconds and ", NamedTextColor.GRAY))
+                                        .append(Component.text("Soul Switch", NamedTextColor.YELLOW))
+                                        .append(Component.text("'s cooldown was reset.", NamedTextColor.GRAY))
+                                );
                                 for (OrderOfEviscerate orderOfEviscerate : wp.getAbilitiesMatching(OrderOfEviscerate.class)) {
-                                    orderOfEviscerate.subtractCurrentCooldown(orderOfEviscerate.getCooldownValue() / 2);
+                                    orderOfEviscerate.subtractCurrentCooldown(orderAssistCooldownReduction);
+                                }
+                                for (SoulSwitch soulSwitch : wp.getAbilitiesMatching(SoulSwitch.class)) {
+                                    soulSwitch.setCurrentCooldown(0);
                                 }
                                 wp.addEnergy(wp, name, energyCost.getBaseValue() / 2f);
                             }
@@ -267,6 +258,55 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
         return true;
     }
 
+    @Override
+    public void updateDescription(Player player) {
+        AbilityDescriptionBuilder builder = AbilityDescriptionBuilder
+                .create("Cloak yourself for ")
+                .durationTicks(tickDuration)
+                .text(", granting you ")
+                .percent(speedBuff, NamedTextColor.WHITE)
+                .text(" extra movement speed and making you ")
+                .text("INVIS", NamedTextColor.DARK_GREEN)
+                .text(" to the enemy for the duration. However, taking up to ")
+                .text(maxDamageThreshold, NamedTextColor.RED)
+                .text(" fall damage or any type of ability damage will end your invisibility.")
+                .emptyLine()
+                .text("All your attacks against an enemy will mark them vulnerable. Vulnerable enemies take ")
+                .percent(vulnerableDamageBonus, NamedTextColor.RED)
+                .text(" more damage.")
+                .emptyLine()
+                .text("Successfully killing your mark will ");
+        if (inPve) {
+            // 2 for shadow
+            int killReduction = pveMasterUpgrade ? 12 : 8;
+            // 0 for shadow
+            int assistReduction = pveMasterUpgrade ? 6 : 4;
+            builder.text("reduce", NamedTextColor.YELLOW)
+                   .text(" your Shadow Step cooldown by ")
+                   .text(2, NamedTextColor.GOLD)
+                   .text(" seconds and Order of Eviscerate by ")
+                   .text(killReduction, NamedTextColor.GOLD)
+                   .text(" seconds. Assisting in killing your mark will ")
+                   .text("reduce", NamedTextColor.YELLOW)
+                   .text(" your Order of Eviscerate cooldown by ")
+                   .text(assistReduction, NamedTextColor.GOLD)
+                   .text(" seconds.");
+        } else {
+            builder.text(" reduce your Order of Eviscerate's cooldown by ")
+                   .durationSeconds(orderKillCooldownReduction)
+                   .text(". Assists only reduce ")
+                   .durationSeconds(orderAssistCooldownReduction)
+                   .emptyLine()
+                   .text("If your mark does, the cooldown of Soul Switch is reset.");
+        }
+        description = builder.build();
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new OrderOfEviscerateBranch(abilityTree, this);
+    }
+
     public static void removeCloak(WarlordsEntity warlordsPlayer, boolean forceRemove) {
         if (warlordsPlayer.getCooldownManager().hasCooldownFromName("Cloaked") || forceRemove) {
             warlordsPlayer.getCooldownManager().removeCooldownByName("Cloaked");
@@ -275,7 +315,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
         }
     }
 
-    public static RegularCooldown<OrderOfEviscerateData> giveCloak(@Nonnull WarlordsEntity wp, int tickDuration) {
+    public static void giveCloak(@Nonnull WarlordsEntity wp, int tickDuration) {
         wp.getCooldownManager().removeCooldownByName("Cloaked");
         RegularCooldown<OrderOfEviscerateData> orderOfEviscerateCooldown = new RegularCooldown<>("Cloaked",
                 "INVIS",
@@ -316,12 +356,6 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                 })
         );
         wp.getCooldownManager().addCooldown(orderOfEviscerateCooldown);
-        return orderOfEviscerateCooldown;
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new OrderOfEviscerateBranch(abilityTree, this);
     }
 
     @Override

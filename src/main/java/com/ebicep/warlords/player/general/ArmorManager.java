@@ -18,11 +18,13 @@ import java.util.List;
 public class ArmorManager {
 
     public static final List<Component> HELMET_DESCRIPTION = WordWrap.wrap(Component.text("A cosmetic item for your head. Each class has a different piece of headgear.",
-            NamedTextColor.GRAY
-    ), 160);
+                    NamedTextColor.GRAY
+            ), 160
+    );
     public static final List<Component> ARMOR_DESCRIPTION = WordWrap.wrap(Component.text("Cosmetic armor to complement your hat. The armor pieces are the same for each class.",
-            NamedTextColor.GRAY
-    ), 160);
+                    NamedTextColor.GRAY
+            ), 160
+    );
 
     public static void resetArmor(Player player) {
         PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player);
@@ -31,51 +33,57 @@ public class ArmorManager {
     }
 
     public static void resetArmor(Player player, Helmets helmet, ArmorSets armorSet, Team team) {
+        player.getInventory().setArmorContents(getArmor(helmet, armorSet, team));
+    }
+
+    public static ItemStack[] getArmor(Helmets helmet, ArmorSets armorSet, Team team) {
         boolean onBlueTeam = team == Team.BLUE;
         ItemStack[] armor = new ItemStack[4];
 
-        armor[2] = new ItemBuilder(onBlueTeam ? armorSet.itemBlue : armorSet.itemRed)
-                .name(Component.text(armorSet.name, onBlueTeam ? NamedTextColor.BLUE : NamedTextColor.RED))
+        NamedTextColor color = onBlueTeam ? NamedTextColor.BLUE : NamedTextColor.RED;
+        armor[2] = new ItemBuilder(armorSet.getItem(team))
+                .name(Component.text(armorSet.name, color))
                 .lore(ARMOR_DESCRIPTION)
                 .get();
-        armor[3] = new ItemBuilder(onBlueTeam ? helmet.itemBlue : helmet.itemRed)
-                .name(Component.text(helmet.name, onBlueTeam ? NamedTextColor.BLUE : NamedTextColor.RED))
+        armor[3] = new ItemBuilder(helmet.getItem(team))
+                .name(Component.text(helmet.name, color))
                 .lore(HELMET_DESCRIPTION)
                 .get();
 
         if (armorSet.name.contains("Simple")) {
             armor[2] = new ItemBuilder(ArmorSets.applyColor(ArmorSets.SIMPLE_CHESTPLATE.itemBlue, onBlueTeam))
-                    .name(Component.text(ArmorSets.SIMPLE_CHESTPLATE.name, onBlueTeam ? NamedTextColor.BLUE : NamedTextColor.RED))
+                    .name(Component.text(ArmorSets.SIMPLE_CHESTPLATE.name, color))
                     .lore(ARMOR_DESCRIPTION)
                     .get();
             armor[1] = new ItemBuilder(ArmorSets.applyColor(ArmorSets.SIMPLE_LEGGINGS.itemBlue, onBlueTeam))
-                    .name(Component.text(ArmorSets.SIMPLE_LEGGINGS.name, onBlueTeam ? NamedTextColor.BLUE : NamedTextColor.RED))
+                    .name(Component.text(ArmorSets.SIMPLE_LEGGINGS.name, color))
                     .lore(ARMOR_DESCRIPTION)
                     .get();
             armor[0] = new ItemBuilder(ArmorSets.applyColor(ArmorSets.SIMPLE_BOOTS.itemBlue, onBlueTeam))
-                    .name(Component.text(ArmorSets.SIMPLE_BOOTS.name, onBlueTeam ? NamedTextColor.BLUE : NamedTextColor.RED))
+                    .name(Component.text(ArmorSets.SIMPLE_BOOTS.name, color))
                     .lore(ARMOR_DESCRIPTION)
                     .get();
         } else if (armorSet.name.contains("Greater")) {
-            armor[1] = new ItemBuilder(onBlueTeam ? ArmorSets.GREATER_LEGGINGS.itemBlue : ArmorSets.GREATER_LEGGINGS.itemRed)
-                    .name(Component.text(ArmorSets.GREATER_LEGGINGS.name, onBlueTeam ? NamedTextColor.BLUE : NamedTextColor.RED))
+            armor[1] = new ItemBuilder(ArmorSets.GREATER_LEGGINGS.getItem(team))
+                    .name(Component.text(ArmorSets.GREATER_LEGGINGS.name, color))
                     .lore(ARMOR_DESCRIPTION)
                     .get();
-            armor[0] = new ItemBuilder(onBlueTeam ? ArmorSets.GREATER_BOOTS.itemBlue : ArmorSets.GREATER_BOOTS.itemRed)
-                    .name(Component.text(ArmorSets.GREATER_BOOTS.name, onBlueTeam ? NamedTextColor.BLUE : NamedTextColor.RED))
+            armor[0] = new ItemBuilder(ArmorSets.GREATER_BOOTS.getItem(team))
+                    .name(Component.text(ArmorSets.GREATER_BOOTS.name, color))
                     .lore(ARMOR_DESCRIPTION)
                     .get();
         } else if (armorSet.name.contains("Masterwork")) {
-            armor[1] = new ItemBuilder(onBlueTeam ? ArmorSets.MASTERWORK_LEGGINGS.itemBlue : ArmorSets.MASTERWORK_LEGGINGS.itemRed)
-                    .name(Component.text(ArmorSets.MASTERWORK_LEGGINGS.name, onBlueTeam ? NamedTextColor.BLUE : NamedTextColor.RED))
+            armor[1] = new ItemBuilder(ArmorSets.MASTERWORK_LEGGINGS.getItem(team))
+                    .name(Component.text(ArmorSets.MASTERWORK_LEGGINGS.name, color))
                     .lore(ARMOR_DESCRIPTION)
                     .get();
-            armor[0] = new ItemBuilder(onBlueTeam ? ArmorSets.MASTERWORK_BOOTS.itemBlue : ArmorSets.MASTERWORK_BOOTS.itemRed)
-                    .name(Component.text(ArmorSets.MASTERWORK_BOOTS.name, onBlueTeam ? NamedTextColor.BLUE : NamedTextColor.RED))
+            armor[0] = new ItemBuilder(ArmorSets.MASTERWORK_BOOTS.getItem(team))
+                    .name(Component.text(ArmorSets.MASTERWORK_BOOTS.name, color))
                     .lore(ARMOR_DESCRIPTION)
                     .get();
         }
-        player.getInventory().setArmorContents(armor);
+
+        return armor;
     }
 
     public static void resetArmor(Player player, WarlordsPlayer warlordsPlayer) {
@@ -88,20 +96,20 @@ public class ArmorManager {
         SIMPLE_MAGE_HELMET(
                 "Simple Mage Helmet",
                 Classes.MAGE,
-                new ItemStack(Material.LIGHT_BLUE_CARPET),
+                new ItemStack(Material.GREEN_CANDLE),
                 new ItemStack(Material.LIME_CARPET)
         ),
         GREATER_MAGE_HELMET(
                 "Greater Mage Helmet",
                 Classes.MAGE,
-                new ItemStack(Material.MAGENTA_CARPET),
-                new ItemStack(Material.ORANGE_CARPET)
+                new ItemStack(Material.LIME_CANDLE),
+                new ItemStack(Material.BLACK_CANDLE)
         ),
         MASTERWORK_MAGE_HELMET(
                 "Masterwork Mage Helmet",
                 Classes.MAGE,
-                new ItemStack(Material.PINK_CARPET),
-                new ItemStack(Material.PURPLE_CARPET)
+                new ItemStack(Material.PINK_CANDLE),
+                new ItemStack(Material.GRAY_CANDLE)
         ),
         LEGENDARY_MAGE_HELMET(
                 "Legendary Mage Helmet",
@@ -113,45 +121,45 @@ public class ArmorManager {
         SIMPLE_WARRIOR_HELMET(
                 "Simple Warrior Helmet",
                 Classes.WARRIOR,
-                new ItemStack(Material.BLACK_CARPET),
-                new ItemStack(Material.BLUE_CARPET)
+                new ItemStack(Material.YELLOW_CANDLE),
+                new ItemStack(Material.CANDLE)
         ),
         GREATER_WARRIOR_HELMET(
                 "Greater Warrior Helmet",
                 Classes.WARRIOR,
-                new ItemStack(Material.BROWN_CARPET),
-                new ItemStack(Material.CYAN_CARPET)
+                new ItemStack(Material.LIGHT_BLUE_CANDLE),
+                new ItemStack(Material.BLUE_CANDLE)
         ),
         MASTERWORK_WARRIOR_HELMET(
                 "Masterwork Warrior Helmet",
                 Classes.WARRIOR,
-                new ItemStack(Material.GRAY_CARPET),
-                new ItemStack(Material.GREEN_CARPET)
+                new ItemStack(Material.BROWN_CANDLE),
+                new ItemStack(Material.ORANGE_CARPET)
         ),
         LEGENDARY_WARRIOR_HELMET(
                 "Legendary Warrior Helmet",
                 Classes.WARRIOR,
-                new ItemStack(Material.STONE_PRESSURE_PLATE),
-                new ItemStack(Material.OAK_PRESSURE_PLATE)
+                new ItemStack(Material.MAGENTA_CANDLE),
+                new ItemStack(Material.LIGHT_GRAY_CANDLE)
         ),
 
         SIMPLE_PALADIN_HELMET(
                 "Simple Paladin Helmet",
                 Classes.PALADIN,
-                new ItemStack(Material.RED_CARPET),
-                new ItemStack(Material.LIGHT_GRAY_CARPET)
+                new ItemStack(Material.BEETROOT),
+                new ItemStack(Material.BEETROOT_SOUP)
         ),
         GREATER_PALADIN_HELMET(
                 "Greater Paladin Helmet",
                 Classes.PALADIN,
-                new ItemStack(Material.WHITE_CARPET),
-                new ItemStack(Material.YELLOW_CARPET)
+                new ItemStack(Material.NAUTILUS_SHELL),
+                new ItemStack(Material.RESIN_CLUMP)
         ),
         MASTERWORK_PALADIN_HELMET(
                 "Masterwork Paladin Helmet",
                 Classes.PALADIN,
-                new ItemStack(Material.ACACIA_SLAB),
-                new ItemStack(Material.ACACIA_STAIRS)
+                new ItemStack(Material.RED_CANDLE),
+                new ItemStack(Material.PURPLE_CANDLE)
         ),
         LEGENDARY_PALADIN_HELMET(
                 "Legendary Paladin Helmet",
@@ -188,51 +196,51 @@ public class ArmorManager {
         SIMPLE_ROGUE_HELMET(
                 "Simple Rogue Helmet",
                 Classes.ROGUE,
-                new ItemStack(Material.OAK_LOG),
-                new ItemStack(Material.OAK_PLANKS)
+                new ItemStack(Material.OXIDIZED_COPPER_DOOR),
+                new ItemStack(Material.MANGROVE_DOOR)
         ),
         GREATER_ROGUE_HELMET(
                 "Greater Rogue Helmet",
                 Classes.ROGUE,
-                new ItemStack(Material.SPRUCE_LOG),
-                new ItemStack(Material.SPRUCE_PLANKS)
+                new ItemStack(Material.ACACIA_DOOR),
+                new ItemStack(Material.BIRCH_DOOR)
         ),
         MASTERWORK_ROGUE_HELMET(
                 "Masterwork Rogue Helmet",
                 Classes.ROGUE,
-                new ItemStack(Material.BIRCH_LOG),
-                new ItemStack(Material.BIRCH_PLANKS)
+                new ItemStack(Material.JUNGLE_DOOR),
+                new ItemStack(Material.PALE_OAK_DOOR)
         ),
         LEGENDARY_ROGUE_HELMET(
                 "Legendary Rogue Helmet",
                 Classes.ROGUE,
-                new ItemStack(Material.JUNGLE_LOG),
-                new ItemStack(Material.JUNGLE_PLANKS)
+                new ItemStack(Material.SPRUCE_DOOR),
+                new ItemStack(Material.IRON_DOOR)
         ),
 
         SIMPLE_ARCANIST_HELMET(
                 "Simple Arcanist Helmet",
                 Classes.ARCANIST,
-                new ItemStack(Material.STRIPPED_MANGROVE_LOG),
-                new ItemStack(Material.GILDED_BLACKSTONE)
+                new ItemStack(Material.COPPER_DOOR),
+                new ItemStack(Material.OAK_DOOR)
         ),
         GREATER_ARCANIST_HELMET(
                 "Greater Arcanist Helmet",
                 Classes.ARCANIST,
-                new ItemStack(Material.STRIPPED_CHERRY_LOG),
-                new ItemStack(Material.BLACKSTONE_STAIRS)
+                new ItemStack(Material.WEATHERED_COPPER_DOOR),
+                new ItemStack(Material.DARK_OAK_DOOR)
         ),
         MASTERWORK_ARCANIST_HELMET(
                 "Masterwork Arcanist Helmet",
                 Classes.ARCANIST,
-                new ItemStack(Material.CHERRY_PLANKS),
-                new ItemStack(Material.BLACKSTONE_SLAB)
+                new ItemStack(Material.EXPOSED_COPPER_DOOR),
+                new ItemStack(Material.BAMBOO_DOOR)
         ),
         LEGENDARY_ARCANIST_HELMET(
                 "Legendary Arcanist Helmet",
                 Classes.ARCANIST,
-                new ItemStack(Material.CHERRY_STAIRS),
-                new ItemStack(Material.BLACKSTONE_WALL)
+                new ItemStack(Material.CHERRY_DOOR),
+                new ItemStack(Material.CYAN_CANDLE)
         ),
 
         ;
@@ -248,6 +256,10 @@ public class ArmorManager {
             this.classes = classes;
             this.itemRed = itemRed;
             this.itemBlue = itemBlue;
+        }
+
+        public ItemStack getItem(Team team) {
+            return team == Team.BLUE ? itemBlue : itemRed;
         }
 
     }
@@ -267,15 +279,6 @@ public class ArmorManager {
         ;
 
         public static final ArmorSets[] VALUES = values();
-        public final String name;
-        public final ItemStack itemRed;
-        public final ItemStack itemBlue;
-
-        ArmorSets(String name, ItemStack itemRed, ItemStack itemBlue) {
-            this.name = name;
-            this.itemRed = itemRed;
-            this.itemBlue = itemBlue;
-        }
 
         public static ItemStack applyColor(ItemStack itemStack, boolean blueColor) {
             LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) itemStack.getItemMeta();
@@ -286,6 +289,20 @@ public class ArmorManager {
             }
             itemStack.setItemMeta(leatherArmorMeta);
             return itemStack;
+        }
+
+        public final String name;
+        public final ItemStack itemRed;
+        public final ItemStack itemBlue;
+
+        ArmorSets(String name, ItemStack itemRed, ItemStack itemBlue) {
+            this.name = name;
+            this.itemRed = itemRed;
+            this.itemBlue = itemBlue;
+        }
+
+        public ItemStack getItem(Team team) {
+            return team == Team.BLUE ? itemBlue : itemRed;
         }
 
     }

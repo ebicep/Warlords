@@ -1,7 +1,8 @@
 package com.ebicep.warlords.game;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.classes.AbstractPlayerClass;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.database.repositories.games.GamesCollections;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
@@ -26,10 +27,7 @@ import com.ebicep.warlords.game.option.pvp.*;
 import com.ebicep.warlords.game.option.pvp.ctf.FlagOption;
 import com.ebicep.warlords.game.option.pvp.interception.InterceptionOption;
 import com.ebicep.warlords.game.option.pvp.interception.InterceptionRespawnOption;
-import com.ebicep.warlords.game.option.respawn.DieOnLogoutOption;
-import com.ebicep.warlords.game.option.respawn.NoRespawnIfOfflineOption;
-import com.ebicep.warlords.game.option.respawn.RespawnProtectionOption;
-import com.ebicep.warlords.game.option.respawn.RespawnWaveOption;
+import com.ebicep.warlords.game.option.respawn.*;
 import com.ebicep.warlords.game.option.towerdefense.WinByLastStandingCastleOption;
 import com.ebicep.warlords.game.option.win.WinAfterTimeoutOption;
 import com.ebicep.warlords.game.option.win.WinByAllDeathOption;
@@ -37,10 +35,7 @@ import com.ebicep.warlords.game.option.win.WinByPointsOption;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.menu.generalmenu.WarlordsNewHotbarMenu;
-import com.ebicep.warlords.player.general.PlayerSettings;
-import com.ebicep.warlords.player.general.SpecType;
-import com.ebicep.warlords.player.general.Specializations;
-import com.ebicep.warlords.player.general.Weapons;
+import com.ebicep.warlords.player.general.*;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 import com.ebicep.warlords.util.bukkit.WordWrap;
@@ -75,7 +70,7 @@ public enum GameMode {
             List<Option> options = super.initMap(map, loc, addons);
 
             options.add(new WeaponOption());
-            options.add(new ApplySkillBoostOption());
+            options.add(new ApplySpecBoostsOption());
             options.add(new PlayerCooldownDisplayOption());
 
             return options;
@@ -115,10 +110,23 @@ public enum GameMode {
             options.add(new FlagOption());
             options.add(new NoRespawnIfOfflineOption());
             options.add(new WeaponOption());
-            options.add(new ApplySkillBoostOption());
+            options.add(new ApplySpecBoostsOption());
             options.add(new HorseOption());
             options.add(new FlagGlowOption());
             options.add(new PlayerCooldownDisplayOption());
+            options.add(new RespawnSpawnDamageOption(
+                    ConfigManager.getGameConfigValue(
+                            ConfigManager.DEFAULT_NAMESPACES,
+                            "ctf.spawnDamageTickDuration",
+                            Integer.class
+                    ),
+                    AbstractAbility.convertToMultiplicationDecimal(
+                            ConfigManager.getGameConfigValue(
+                                    ConfigManager.DEFAULT_NAMESPACES,
+                                    "ctf.spawnDamageBoost",
+                                    Float.class
+                            ))
+            ));
 
             return options;
         }
@@ -158,7 +166,7 @@ public enum GameMode {
 
             options.add(new NoRespawnIfOfflineOption());
             options.add(new WeaponOption());
-            options.add(new ApplySkillBoostOption());
+            options.add(new ApplySpecBoostsOption());
             options.add(new HorseOption());
 
             options.add(new AbstractScoreOnEventOption.OnInterceptionCapture(25));
@@ -223,7 +231,7 @@ public enum GameMode {
             ));
             options.add(new NoRespawnIfOfflineOption());
             options.add(new WeaponOption());
-            options.add(new ApplySkillBoostOption());
+            options.add(new ApplySpecBoostsOption());
             options.add(new HorseOption());
             options.add(new PlayerCooldownDisplayOption());
 
@@ -256,7 +264,7 @@ public enum GameMode {
             ));
 
             options.add(new WeaponOption());
-            options.add(new ApplySkillBoostOption());
+            options.add(new ApplySpecBoostsOption());
             options.add(new HorseOption());
             options.add(new PlayerCooldownDisplayOption());
 
@@ -291,7 +299,7 @@ public enum GameMode {
             ));
             options.add(new NoRespawnIfOfflineOption());
             options.add(new WeaponOption());
-            options.add(new ApplySkillBoostOption());
+            options.add(new ApplySpecBoostsOption());
             options.add(new HorseOption());
             options.add(new PlayerCooldownDisplayOption());
 
@@ -512,9 +520,10 @@ public enum GameMode {
             ));
             options.add(new FlagOption());
             options.add(new WeaponOption());
-            options.add(new ApplySkillBoostOption());
+//            options.add(new ApplySpecBoostsOption());
             options.add(new HorseOption());
             options.add(new PlayerCooldownDisplayOption());
+            options.add(new ApplySpecBoostsOption());
 
             return options;
         }
@@ -600,7 +609,7 @@ public enum GameMode {
             options.add(new GameFreezeOption());
             options.add(new NoRespawnIfOfflineOption());
             options.add(new WeaponOption());
-            options.add(new ApplySkillBoostOption());
+            options.add(new ApplySpecBoostsOption());
             options.add(new HorseOption());
             options.add(new PlayerCooldownDisplayOption());
 
@@ -640,7 +649,7 @@ public enum GameMode {
             options.add(new GameFreezeOption());
             options.add(new NoRespawnIfOfflineOption());
             options.add(new WeaponOption());
-            options.add(new ApplySkillBoostOption());
+            options.add(new ApplySpecBoostsOption());
             options.add(new HorseOption());
 
             options.add(new RespawnWaveOption()); // timers handled by siegeoption
@@ -767,18 +776,20 @@ public enum GameMode {
         options.add(new PreGameItemOption(1, (g, p) -> {
             PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(p.getUniqueId());
             Specializations selectedSpec = playerSettings.getSelectedSpec();
-            AbstractPlayerClass apc = selectedSpec.create.get();
+            AbstractPlayerClass apc = selectedSpec.create();
 
             ItemStack weaponSkin = playerSettings.getWeaponSkins().getOrDefault(selectedSpec, Weapons.STEEL_SWORD).getItem();
             return new ItemBuilder(apc.getWeapon().getItem(weaponSkin))
                     .name(Component.text("Weapon Skin Preview", NamedTextColor.GREEN))
                     .noLore()
                     .get();
-        }));
+        }
+        ));
         options.add(new PreGameItemOption(4, new ItemBuilder(Material.NETHER_STAR)
                 .name(Component.text("Pre-game Menu ", NamedTextColor.AQUA))
                 .lore(WordWrap.wrap(Component.text("Allows you to change your class, select a weapon, and edit your settings.", NamedTextColor.GRAY), 150))
-                .get(), (g, p) -> openMainMenu(p)));
+                .get(), (g, p) -> openMainMenu(p)
+        ));
         options.add(new PreGameItemOption(5, new ItemBuilder(Material.NOTE_BLOCK)
                 .name(Component.text("Player Spec Information", NamedTextColor.AQUA))
                 .lore(Component.text("Displays the amount of people on each specialization.", NamedTextColor.GRAY))
@@ -834,7 +845,8 @@ public enum GameMode {
                                                                .map(PlayerSettings::getPlayerSettings)
                                                                .map(PlayerSettings::getSelectedSpec)
                                                                .filter(c -> c.specType == value)
-                                                               .count(), NamedTextColor.GOLD)));
+                                                               .count(), NamedTextColor.GOLD
+                              )));
             lore.add(Component.empty());
             Arrays.stream(Specializations.VALUES)
                   .filter(classes -> classes.specType == value)

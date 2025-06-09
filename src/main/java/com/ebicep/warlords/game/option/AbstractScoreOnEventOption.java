@@ -1,7 +1,9 @@
 package com.ebicep.warlords.game.option;
 
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.events.game.WarlordsFlagUpdatedEvent;
 import com.ebicep.warlords.events.game.WarlordsIntersectionCaptureEvent;
+import com.ebicep.warlords.events.game.WarlordsScoreOnEventEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
@@ -23,12 +25,18 @@ import java.util.*;
 import java.util.function.BiFunction;
 
 public abstract class AbstractScoreOnEventOption<T> implements Option {
+
     protected int scoreIncrease;
     private BiFunction<T, Pair<Team, Integer>, Pair<Team, Integer>> scoreModifier = (a, b) -> b;
     private Game game;
 
     public AbstractScoreOnEventOption(int scoreIncrease) {
         this.scoreIncrease = scoreIncrease;
+    }
+
+    @Override
+    public void register(@Nonnull Game game) {
+        this.game = game;
     }
 
     public int getScoreIncrease() {
@@ -47,21 +55,21 @@ public abstract class AbstractScoreOnEventOption<T> implements Option {
         this.scoreModifier = scoreModifier;
     }
 
-    @Override
-    public void register(@Nonnull Game game) {
-        this.game = game;
-    }
-    
     protected void giveScore(T event, Team team, int score) {
+        WarlordsScoreOnEventEvent<T> scoreOnEventEvent = new WarlordsScoreOnEventEvent<>(game, event, team, score);
+        if (scoreOnEventEvent.isCancelled()) {
+            return;
+        }
         Pair<Team, Integer> res = scoreModifier.apply(event, new Pair<>(team, score));
         game.addPoints(res.getA(), res.getB());
     }
 
     public static class FlagCapture extends AbstractScoreOnEventOption<WarlordsFlagUpdatedEvent> {
+
         public static int DEFAULT_SCORE = 250;
 
         public FlagCapture() {
-            this(DEFAULT_SCORE);
+            this(ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "ctf.pointsFlagCap", int.class, DEFAULT_SCORE));
         }
 
         public FlagCapture(int scoreIncrease) {
@@ -83,10 +91,11 @@ public abstract class AbstractScoreOnEventOption<T> implements Option {
                 }
             });
         }
-        
+
     }
 
     public static class FlagReturn extends AbstractScoreOnEventOption<WarlordsFlagUpdatedEvent> {
+
         public static int DEFAULT_SCORE = 100;
 
         public FlagReturn() {
@@ -112,9 +121,11 @@ public abstract class AbstractScoreOnEventOption<T> implements Option {
                 }
             });
         }
+
     }
 
     public static class FlagHolding extends AbstractScoreOnEventOption<WarlordsFlagUpdatedEvent> {
+
         public static int DEFAULT_SCORE = 1;
 
         public FlagHolding() {
@@ -138,13 +149,15 @@ public abstract class AbstractScoreOnEventOption<T> implements Option {
                 }
             });
         }
+
     }
 
     public static class OnKill extends AbstractScoreOnEventOption<WarlordsDeathEvent> {
+
         public static int DEFAULT_SCORE = 5;
 
         public OnKill() {
-            this(DEFAULT_SCORE);
+            this(ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "ctf.pointsKill", int.class, DEFAULT_SCORE));
         }
 
         public OnKill(int scoreIncrease) {
@@ -155,7 +168,7 @@ public abstract class AbstractScoreOnEventOption<T> implements Option {
         public void register(@Nonnull Game game) {
             super.register(game);
             game.registerEvents(new Listener() {
-                @EventHandler
+                @EventHandler(ignoreCancelled = true)
                 public void onEvent(WarlordsDeathEvent event) {
                     Collection<Team> teams = TeamMarker.getTeams(event.getGame());
                     List<Team> toReward = new ArrayList<>(teams.size() - 1);
@@ -178,6 +191,7 @@ public abstract class AbstractScoreOnEventOption<T> implements Option {
     }
 
     public static class OnInterceptionCapture extends AbstractScoreOnEventOption<WarlordsIntersectionCaptureEvent> {
+
         public static int DEFAULT_SCORE = 5;
 
         public OnInterceptionCapture() {
@@ -204,6 +218,7 @@ public abstract class AbstractScoreOnEventOption<T> implements Option {
     }
 
     public static class OnInterceptionTimer extends AbstractScoreOnEventOption<InterceptionPointOption> {
+
         public static int DEFAULT_SCORE = 1;
         private Map<Team, Integer> cachedTeamScoreIncrease = new HashMap<>();
 
@@ -219,16 +234,17 @@ public abstract class AbstractScoreOnEventOption<T> implements Option {
         public void register(@Nonnull Game game) {
             super.register(game);
             game.registerGameMarker(PointPredicterMarker.class, team -> {
-                double predictedScoreIncrease = 0;
-                for (Option option : game.getOptions()) {
-                    if (option instanceof InterceptionPointOption intersectionPointOption) {
-                        if (intersectionPointOption.getTeamOwning() == team) {
-                            predictedScoreIncrease += scoreIncrease * 60;
+                        double predictedScoreIncrease = 0;
+                        for (Option option : game.getOptions()) {
+                            if (option instanceof InterceptionPointOption intersectionPointOption) {
+                                if (intersectionPointOption.getTeamOwning() == team) {
+                                    predictedScoreIncrease += scoreIncrease * 60;
+                                }
+                            }
                         }
+                        return predictedScoreIncrease;
                     }
-                }
-                return predictedScoreIncrease;
-            });
+            );
         }
 
         @Override
@@ -258,5 +274,7 @@ public abstract class AbstractScoreOnEventOption<T> implements Option {
         public Map<Team, Integer> getCachedTeamScoreIncrease() {
             return cachedTeamScoreIncrease;
         }
+
     }
+
 }

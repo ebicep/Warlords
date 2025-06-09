@@ -1,9 +1,9 @@
 package com.ebicep.warlords.pve.mobs.events.baneofimpurities;
 
+import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
-import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
@@ -25,7 +25,6 @@ import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.util.Vector;
 
 public abstract class AbstractEventCore extends AbstractMob implements BossMob, Unswappable {
 
@@ -84,23 +83,7 @@ public abstract class AbstractEventCore extends AbstractMob implements BossMob, 
 
         warlordsNPC.setStunTicks(Integer.MAX_VALUE);
         warlordsNPC.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 0, false, false));
-        warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
-                "NO KB",
-                null,
-                null,
-                null,
-                warlordsNPC,
-                CooldownTypes.ABILITY,
-                cooldownManager -> {
-                },
-                false
-        ) {
-            @Override
-            public void multiplyKB(Vector currentVector) {
-                // immune to KB
-                currentVector.multiply(0);
-            }
-        });
+        warlordsNPC.addKnockbackModifier(warlordsNPC, "KB RES", -100, -1);
     }
 
     @Override
@@ -122,14 +105,14 @@ public abstract class AbstractEventCore extends AbstractMob implements BossMob, 
                     }
                     if (secondsElapsed % 15 == 0) {
                         we.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 100, 0));
-                        we.addSpeedModifier(warlordsNPC, "CHAOS", -20, 100, "BASE");
+                        we.addSpeedModifier(warlordsNPC, "CHAOS", -20, 100);
                         we.getCooldownManager().addCooldown(new RegularCooldown<>(
                                 "Chaos",
                                 "CHAOS",
                                 AbstractEventCore.class,
                                 null,
                                 warlordsNPC,
-                                CooldownTypes.DEBUFF,
+                                CooldownTypes.LOW_LEVEL_DEBUFF,
                                 cooldownManager -> {
                                 },
                                 100
@@ -138,7 +121,7 @@ public abstract class AbstractEventCore extends AbstractMob implements BossMob, 
                 }
             } else if (secondsElapsed == killTime) {
                 playDeathAnimation(() -> {
-                    warlordsNPC.die(warlordsNPC);
+                    warlordsNPC.die(warlordsNPC, WarlordsDeathEvent.DeathInfoBuilder.create().setForced(true));
                     for (WarlordsEntity we : PlayerFilter
                             .playingGame(getWarlordsNPC().getGame())
                             .aliveEnemiesOf(warlordsNPC)

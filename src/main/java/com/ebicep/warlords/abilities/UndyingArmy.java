@@ -6,6 +6,7 @@ import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
+import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsUndyingArmyPopEvent;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -28,14 +29,15 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
+import java.util.function.BiConsumer;
 
 public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, Duration, Damages<UndyingArmy.DamageValues>, AbilityStats<UndyingArmy, UndyingArmy.UndyingArmyStats> {
 
@@ -46,93 +48,6 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
                     Component.text("the decay.")
             )
             .get();
-
-    public static boolean checkUndyingArmy(WarlordsEntity warlordsEntity, float newHealth) {
-        // Checks whether the player has any remaining active Undying Army instances active.
-        if (!warlordsEntity.getCooldownManager().checkUndyingArmy(false) || newHealth > 0) {
-            return false;
-        }
-        for (RegularCooldown<?> undyingArmyCooldown : new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
-                .filterCooldownClass(UndyingArmy.UndyingArmyData.class)
-                .stream()
-                .toList()) {
-            UndyingArmy.UndyingArmyData data = (UndyingArmy.UndyingArmyData) undyingArmyCooldown.getCooldownObject();
-            if (data.isArmyDead(warlordsEntity)) {
-                continue;
-            }
-            UndyingArmy undyingArmy = data.getUndyingArmy();
-            data.pop(warlordsEntity);
-            // Drops the flag when popped.
-            FlagHolder.dropFlagForPlayer(warlordsEntity, false);
-            // Sending the message + check if getFrom is self
-            int armyDamage = Math.round(warlordsEntity.getMaxHealth() * (undyingArmy.getMaxHealthDamage() / 100f));
-            if (undyingArmyCooldown.getFrom() == warlordsEntity) {
-                warlordsEntity.sendMessage(Component.text("» ", NamedTextColor.GREEN)
-                                                    .append(Component.text("Your Undying Army revived you with temporary health. Fight until your death! Your health will decay by ",
-                                                            NamedTextColor.LIGHT_PURPLE
-                                                    ))
-                                                    .append(Component.text(armyDamage, NamedTextColor.RED))
-                                                    .append(Component.text(" every second.", NamedTextColor.GRAY)));
-            } else {
-                warlordsEntity.sendMessage(Component.text("» ", NamedTextColor.GREEN)
-                                                    .append(Component.text(undyingArmyCooldown.getFrom()
-                                                                                              .getName() + "'s Undying Army revived you with temporary health. Fight until your death! Your health will decay by ",
-                                                            NamedTextColor.LIGHT_PURPLE
-                                                    ))
-                                                    .append(Component.text(armyDamage, NamedTextColor.RED))
-                                                    .append(Component.text(" every second.", NamedTextColor.LIGHT_PURPLE)));
-            }
-            EffectUtils.playFirework(warlordsEntity.getLocation(), FireworkEffect.builder().withColor(Color.LIME).with(FireworkEffect.Type.BALL).build());
-            warlordsEntity.heal();
-            if (warlordsEntity.getEntity() instanceof Player player) {
-                player.getWorld().spigot().strikeLightningEffect(warlordsEntity.getLocation(), false);
-                player.getInventory().setItem(5, BONE);
-            }
-            //gives 50% of max energy if player is less than half
-            if (warlordsEntity.getEnergy() < warlordsEntity.getMaxEnergy() / 2) {
-                warlordsEntity.setEnergy(warlordsEntity.getMaxEnergy() / 2);
-            }
-            if (undyingArmy.isPveMasterUpgrade()) {
-                warlordsEntity.addSpeedModifier(warlordsEntity, "ARMY", 40, 16 * 20, "BASE");
-            }
-            undyingArmyCooldown.setNameAbbreviation("POPPED");
-            undyingArmyCooldown.setTicksLeft(16 * 20);
-            undyingArmyCooldown.setOnRemove(cooldownManager -> {
-                if (warlordsEntity.getEntity() instanceof Player) {
-                    if (cooldownManager.checkUndyingArmy(true)) {
-                        ((Player) warlordsEntity.getEntity()).getInventory().remove(BONE);
-                    }
-                }
-            });
-            undyingArmyCooldown.addTriConsumer((cooldown, ticksLeft, ticksElapsed) -> {
-                if (ticksElapsed % 20 == 0) {
-                    warlordsEntity.addInstance(InstanceBuilder.melee().source(warlordsEntity).value(warlordsEntity.getMaxHealth() * (undyingArmy.getMaxHealthDamage() / 100f)));
-                    if (undyingArmy.isPveMasterUpgrade() && ticksElapsed % 40 == 0) {
-                        PlayerFilter.entitiesAround(warlordsEntity, 6, 6, 6).aliveEnemiesOf(warlordsEntity).forEach(enemy -> {
-                            float healthDamage = enemy.getMaxHealth() * .02f;
-                            healthDamage = DamageCheck.clamp(healthDamage);
-                            enemy.addInstance(InstanceBuilder.damage()
-                                                             .ability(undyingArmy)
-                                                             .source(warlordsEntity)
-                                                             .min(undyingArmy.damageValues.relentlessArmy.getMinValue() + healthDamage)
-                                                             .max(undyingArmy.damageValues.relentlessArmy.getMaxValue() + healthDamage));
-                        });
-                    }
-                }
-            });
-            Bukkit.getPluginManager().callEvent(new WarlordsUndyingArmyPopEvent(warlordsEntity, data));
-            return true;
-        }
-        return false;
-    }
-
-    public int getMaxHealthDamage() {
-        return maxHealthDamage;
-    }
-
-    public void setMaxHealthDamage(int maxHealthDamage) {
-        this.maxHealthDamage = maxHealthDamage;
-    }
     private final DamageValues damageValues = new DamageValues();
     private final UndyingArmyStats stats = new UndyingArmyStats();
     private int radius = 12;
@@ -161,30 +76,6 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
         this.flatHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("flatHealing"), float.class);
         this.missingHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("missingHealing"), float.class);
         this.healPeriod = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("healPeriod"), int.class);
-    }
-
-    @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("You may chain up to ")
-                                               .text(maxArmyAllies, NamedTextColor.BLUE)
-                                               .text(" allies within ")
-                                               .blocks(radius)
-                                               .text(" to heal them for ")
-                                               .text(format(flatHealing), NamedTextColor.GREEN)
-                                               .text(" + ")
-                                               .percent(missingHealing, NamedTextColor.GREEN)
-                                               .text(" missing health every second. Lasts ")
-                                               .durationTicks(tickDuration)
-                                               .text(".")
-                                               .emptyLine()
-                                               .text("Chained allies that take fatal damage will be revived with ")
-                                               .percent(100, NamedTextColor.GREEN)
-                                               .text(" of their max health and ")
-                                               .percent(50, NamedTextColor.YELLOW)
-                                               .text(" of their max energy. Revived allies take ")
-                                               .percent(maxHealthDamage, NamedTextColor.RED)
-                                               .text(" of their max health as damage every second.")
-                                               .build();
     }
 
     @Override
@@ -218,14 +109,17 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
                 radius,
                 new CircumferenceEffect(Particle.HAPPY_VILLAGER, Particle.DUST).particlesPerCircumference(2)
         ).playEffects();
-        UndyingArmyData data = new UndyingArmyData(this);
+        UndyingArmyData data = getArmyData(wp);
         List<FloatModifiable.FloatModifier> modifiers = new ArrayList<>();
         if (pveMasterUpgrade) {
             wp.doOnStaticAbility(RecklessCharge.class, ability -> modifiers.add(ability.getCooldown().addMultiplicativeModifierAdd("Relentless Army", -.5f)));
             wp.doOnStaticAbility(GroundSlamRevenant.class, ability -> modifiers.add(ability.getCooldown().addMultiplicativeModifierAdd("Relentless Army", -.5f)));
         }
         int numberOfPlayersWithArmy = 0;
-        for (WarlordsEntity teammate : PlayerFilter.entitiesAround(wp, radius, radius, radius).aliveTeammatesOf(wp).closestWarlordPlayersFirst(wp.getLocation())) {
+        for (WarlordsEntity teammate : PlayerFilter.entitiesAround(wp, radius, radius, radius)
+                                                   .aliveTeammatesOf(wp)
+                                                   .excludingDummy()
+                                                   .closestWarlordPlayersFirst(wp.getLocation())) {
             data.getPlayersPopped().put(teammate, false);
             boolean isCaster = teammate != wp;
             if (isCaster) {
@@ -239,12 +133,22 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
                                                                        .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
                                                                        .append(Component.text(" seconds.", NamedTextColor.GRAY)));
             }
-            teammate.getCooldownManager().addRegularCooldown(name, "ARMY", UndyingArmyData.class, data, wp, CooldownTypes.ABILITY, cooldownManager -> {
-                    }, cooldownManager -> {
+            teammate.getCooldownManager().addCooldown(new RegularCooldown<>(
+                    name,
+                    "ARMY",
+                    UndyingArmyData.class,
+                    data,
+                    wp,
+                    CooldownTypes.ABILITY,
+                    cooldownManager -> {
+                    },
+                    cooldownManager -> {
                         if (isCaster) {
                             modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
                         }
-                    }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    },
+                    tickDuration,
+                    Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                         if (ticksElapsed % healPeriod != 0) {
                             return;
                         }
@@ -269,7 +173,42 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
                             }
                         }
                     })
-            );
+            ) {
+
+                @Override
+                protected Listener getListener() {
+                    RegularCooldown<UndyingArmyData> undyingArmyCooldown = this;
+                    return new Listener() {
+                        @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+                        public void onDeathEvent(WarlordsDeathEvent event) {
+                            WarlordsEntity warlordsEntity = event.getWarlordsEntity();
+                            if (warlordsEntity != teammate) {
+                                return;
+                            }
+                            if (data.isArmyDead(warlordsEntity)) {
+                                return;
+                            }
+                            event.setCancelled(true);
+                            warlordsEntity.heal();
+                            data.pop(warlordsEntity);
+                            // Sending the message + check if getFrom is self
+                            EffectUtils.playFirework(warlordsEntity.getLocation(), FireworkEffect.builder().withColor(Color.LIME).with(FireworkEffect.Type.BALL).build());
+                            if (warlordsEntity.getEntity() instanceof Player player) {
+                                player.getWorld().spigot().strikeLightningEffect(warlordsEntity.getLocation(), false);
+                            }
+                            //gives 50% of max energy if player is less than half
+                            if (warlordsEntity.getCurrentEnergy() < warlordsEntity.getMaxEnergy() / 2) {
+                                warlordsEntity.setCurrentEnergy(warlordsEntity.getMaxEnergy() / 2);
+                            }
+                            if (isPveMasterUpgrade()) {
+                                warlordsEntity.addSpeedModifier(warlordsEntity, "ARMY", 40, 16 * 20);
+                            }
+                            data.getOnPop().accept(undyingArmyCooldown, warlordsEntity);
+                            Bukkit.getPluginManager().callEvent(new WarlordsUndyingArmyPopEvent(warlordsEntity, data));
+                        }
+                    };
+                }
+            });
             numberOfPlayersWithArmy++;
             if (numberOfPlayersWithArmy >= maxArmyAllies) {
                 break;
@@ -313,6 +252,118 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
             }
         }
         return true;
+    }
+
+    @Nonnull
+    private UndyingArmyData getArmyData(WarlordsEntity wp) {
+        UndyingArmyData data = new UndyingArmyData();
+        data.setOnPop((undyingArmyCooldown, warlordsEntity) -> {
+            // Drops the flag when popped.
+            FlagHolder.dropFlagForPlayer(warlordsEntity, false);
+            if (warlordsEntity.getEntity() instanceof Player player) {
+                player.getWorld().spigot().strikeLightningEffect(warlordsEntity.getLocation(), false);
+                player.getInventory().setItem(5, BONE);
+            }
+            int armyDamage = Math.round(warlordsEntity.getMaxHealth() * (getMaxHealthDamage() / 100f));
+            if (wp == warlordsEntity) {
+                warlordsEntity.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                        .append(Component.text(" Your Undying Army revived you with temporary health. Fight until your death! Your health will decay by ",
+                                NamedTextColor.LIGHT_PURPLE
+                        ))
+                        .append(Component.text(armyDamage, NamedTextColor.RED))
+                        .append(Component.text(" every second.", NamedTextColor.LIGHT_PURPLE)));
+            } else {
+                warlordsEntity.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                        .append(Component.text(" " + wp.getName() + "'s Undying Army revived you with temporary health. Fight until your death! Your health will decay by ",
+                                NamedTextColor.LIGHT_PURPLE
+                        ))
+                        .append(Component.text(armyDamage, NamedTextColor.RED))
+                        .append(Component.text(" every second.", NamedTextColor.LIGHT_PURPLE)));
+            }
+            undyingArmyCooldown.setNameAbbreviation("POPPED");
+            undyingArmyCooldown.setTicksLeft(16 * 20);
+            undyingArmyCooldown.setOnRemove(cooldownManager -> {
+                if (warlordsEntity.getEntity() instanceof Player player && !checkUndyingArmy(warlordsEntity, true, data)) {
+                    player.getInventory().remove(BONE);
+                }
+            });
+            undyingArmyCooldown.addTriConsumer((cooldown, ticksLeft, ticksElapsed) -> {
+                if (ticksElapsed % 20 == 0) {
+                    warlordsEntity.addInstance(InstanceBuilder.melee()
+                                                              .source(warlordsEntity)
+                                                              .value(warlordsEntity.getMaxHealth() * (getMaxHealthDamage() / 100f)));
+                    if (isPveMasterUpgrade() && ticksElapsed % 40 == 0) {
+                        PlayerFilter.entitiesAround(warlordsEntity, 6, 6, 6).aliveEnemiesOf(warlordsEntity).forEach(enemy -> {
+                            float healthDamage = enemy.getMaxHealth() * .02f;
+                            healthDamage = DamageCheck.clamp(healthDamage);
+                            enemy.addInstance(InstanceBuilder.damage()
+                                                             .ability(UndyingArmy.this)
+                                                             .source(warlordsEntity)
+                                                             .min(damageValues.relentlessArmy.getMinValue() + healthDamage)
+                                                             .max(damageValues.relentlessArmy.getMaxValue() + healthDamage));
+                        });
+                    }
+                }
+            });
+        });
+        return data;
+    }
+
+    public int getMaxHealthDamage() {
+        return maxHealthDamage;
+    }
+
+    public static boolean checkUndyingArmy(WarlordsEntity warlordsEntity, boolean popped, UndyingArmyData exclude) {
+        for (UndyingArmyData data : new CooldownFilter<>(warlordsEntity.getCooldownManager(), RegularCooldown.class)
+                .filterCooldownClassAndMapToObjectsOfClass(UndyingArmyData.class)
+                .toList()
+        ) {
+            if (Objects.equals(data, exclude)) {
+                continue;
+            }
+            if (popped) {
+                //returns true if any undying is popped
+                if (data.isArmyDead(warlordsEntity)) {
+                    return true;
+                }
+            } else {
+                //return true if theres any unpopped armies
+                if (!data.isArmyDead(warlordsEntity)) {
+                    return true;
+                }
+            }
+        }
+        //if popped returns false - all undying armies are not popped (there is no popped armies)
+        //if !popped return false - all undying armies are popped (there is no unpopped armies)
+        return false;
+    }
+
+    public void setMaxHealthDamage(int maxHealthDamage) {
+        this.maxHealthDamage = maxHealthDamage;
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("You may chain up to ")
+                                               .text(maxArmyAllies, NamedTextColor.BLUE)
+                                               .text(" allies within ")
+                                               .blocks(radius)
+                                               .text(" to heal them for ")
+                                               .text(format(flatHealing), NamedTextColor.GREEN)
+                                               .text(" + ")
+                                               .percent(missingHealing, NamedTextColor.GREEN)
+                                               .text(" missing health every second. Lasts ")
+                                               .durationTicks(tickDuration)
+                                               .text(".")
+                                               .emptyLine()
+                                               .text("Chained allies that take fatal damage will be revived with ")
+                                               .percent(100, NamedTextColor.GREEN)
+                                               .text(" of their max health and ")
+                                               .percent(50, NamedTextColor.YELLOW)
+                                               .text(" of their max energy. Revived allies take ")
+                                               .percent(maxHealthDamage, NamedTextColor.RED)
+                                               .text(" of their max health as damage every second.")
+                                               .build();
     }
 
     @Override
@@ -378,17 +429,8 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
 
     public static class UndyingArmyData {
 
-        private final UndyingArmy undyingArmy;
-
         private final HashMap<WarlordsEntity, Boolean> playersPopped = new HashMap<>();
-
-        public UndyingArmyData(UndyingArmy undyingArmy) {
-            this.undyingArmy = undyingArmy;
-        }
-
-        public UndyingArmy getUndyingArmy() {
-            return undyingArmy;
-        }
+        private BiConsumer<RegularCooldown<UndyingArmyData>, WarlordsEntity> onPop;
 
         public HashMap<WarlordsEntity, Boolean> getPlayersPopped() {
             return playersPopped;
@@ -400,6 +442,14 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
 
         public void pop(WarlordsEntity warlordsPlayer) {
             playersPopped.put(warlordsPlayer, true);
+        }
+
+        public BiConsumer<RegularCooldown<UndyingArmyData>, WarlordsEntity> getOnPop() {
+            return onPop;
+        }
+
+        public void setOnPop(BiConsumer<RegularCooldown<UndyingArmyData>, WarlordsEntity> onPop) {
+            this.onPop = onPop;
         }
 
     }

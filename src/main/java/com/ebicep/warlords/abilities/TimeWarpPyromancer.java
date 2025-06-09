@@ -43,15 +43,18 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "mage.timewarp.activation", 3, 1);
-        Location warpLocation = wp.getLocation();
         List<Location> warpTrail = new ArrayList<>();
         int startingBlocksTravelled = wp.getBlocksTravelled();
         // pveMasterUpgrade2
         List<WarlordsEntity> linkedPlayers = new ArrayList<>();
-        RegularCooldown<TimeWarpPyromancer> timeWarpCooldown = new RegularCooldown<>(name,
+        TimeWarpPyromancerData data = new TimeWarpPyromancerData(
+                wp.getLocation(),
+                () -> wp.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(wp.getMaxHealth() * (warpHealPercentage / 100f)))
+        );
+        RegularCooldown<TimeWarpPyromancerData> timeWarpCooldown = new RegularCooldown<>(name,
                 "TIME",
-                TimeWarpPyromancer.class,
-                new TimeWarpPyromancer(),
+                TimeWarpPyromancerData.class,
+                data,
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
@@ -60,9 +63,8 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
                     }
                     getAbilityStats().addTimesSuccessful();
                     Utils.playGlobalSound(wp.getLocation(), "mage.timewarp.teleport", 1, 1);
-                    wp.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(wp.getMaxHealth() * (warpHealPercentage / 100f)));
-                    wp.getEntity().teleport(warpLocation);
-                    warpTrail.clear();
+                    data.getWarpHeal().run();
+                    wp.getEntity().teleport(data.warpLocation);
                     if (pveMasterUpgrade2) {
                         float cooldownReduction = 0;
                         for (WarlordsEntity enemy : PlayerFilter.entitiesAround(wp, 8, 8, 8).aliveEnemiesOf(wp).toList()) {
@@ -83,6 +85,9 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
                         subtractCurrentCooldown(cooldownReduction);
                     }
                 },
+                cooldownManager -> {
+                    warpTrail.clear();
+                },
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 4 == 0) {
@@ -90,12 +95,12 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
                             location.getWorld().spawnParticle(Particle.WITCH, location, 1, 0.01, 0, 0.01, 0.001, null, true);
                         }
                         warpTrail.add(wp.getLocation());
-                        warpLocation.getWorld().spawnParticle(Particle.WITCH, warpLocation, 4, 0.1, 0, 0.1, 0.001, null, true);
+                        data.warpLocation.getWorld().spawnParticle(Particle.WITCH, data.warpLocation, 4, 0.1, 0, 0.1, 0.001, null, true);
                         int points = 6;
                         double radius = 0.5d;
                         for (int e = 0; e < points; e++) {
                             double angle = 2 * Math.PI * e / points;
-                            Location point = warpLocation.clone().add(radius * Math.sin(angle), 0.0d, radius * Math.cos(angle));
+                            Location point = data.warpLocation.clone().add(radius * Math.sin(angle), 0.0d, radius * Math.cos(angle));
                             point.getWorld().spawnParticle(Particle.CLOUD, point, 1, 0.1, 0, 0.1, 0.001, null, true);
                         }
                         if (pveMasterUpgrade2) {
@@ -148,13 +153,37 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
     }
 
     @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new TimeWarpBranchPyromancer(abilityTree, this);
+    }
+
+    @Override
     public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
     }
 
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new TimeWarpBranchPyromancer(abilityTree, this);
+    public static class TimeWarpPyromancerData {
+
+        private final Location warpLocation;
+        private Runnable warpHeal;
+
+        public TimeWarpPyromancerData(Location warpLocation, Runnable warpHeal) {
+            this.warpLocation = warpLocation;
+            this.warpHeal = warpHeal;
+        }
+
+        public Location getWarpLocation() {
+            return warpLocation;
+        }
+
+        public Runnable getWarpHeal() {
+            return warpHeal;
+        }
+
+        public void setWarpHeal(Runnable warpHeal) {
+            this.warpHeal = warpHeal;
+        }
+
     }
 
 }

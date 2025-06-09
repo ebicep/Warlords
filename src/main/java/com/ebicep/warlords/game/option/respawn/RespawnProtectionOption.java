@@ -5,6 +5,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsRespawnEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.game.option.pvp.HorseOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -26,6 +27,7 @@ public class RespawnProtectionOption implements Option, Listener {
     private static final int DEFAULT_PROTECTION_TIME = 4;
     private static final int DEFAULT_RADIUS = 4;
     private final Map<WarlordsEntity, Pair<Location, Integer>> spawnProtection = new HashMap<>();
+    private Game game;
     private int protectionTime;
     private int radius;
     private int radiusSquared;
@@ -65,6 +67,7 @@ public class RespawnProtectionOption implements Option, Listener {
 
     @Override
     public void register(@Nonnull Game game) {
+        this.game = game;
         game.registerEvents(this);
     }
 
@@ -79,10 +82,10 @@ public class RespawnProtectionOption implements Option, Listener {
                 while (itr.hasNext()) {
                     Map.Entry<WarlordsEntity, Pair<Location, Integer>> next = itr.next();
                     int newVal = next.getValue().getB() - 1;
-                    if (newVal <= 0 || (next.getKey().getLocation().getWorld() == next.getValue().getA().getWorld() && next.getKey()
-                                                                                                                           .getLocation(location)
-                                                                                                                           .distanceSquared(next.getValue()
-                                                                                                                                                .getA()) > radiusSquared)) {
+                    if (newVal <= 0 ||
+                            (next.getKey().getLocation().getWorld() == next.getValue().getA().getWorld() &&
+                                    next.getKey().getLocation(location).distanceSquared(next.getValue().getA()) > radiusSquared)
+                    ) {
                         itr.remove();
                     } else {
                         next.getValue().setB(newVal);
@@ -105,7 +108,9 @@ public class RespawnProtectionOption implements Option, Listener {
             return;
         }
         if (removeHorse && event.getSource().getTeam() != event.getWarlordsEntity().getTeam()) {
-            event.getWarlordsEntity().removeHorse();
+            for (HorseOption horseOption : game.getOption(HorseOption.class)) {
+                horseOption.getHorseForPlayer(event.getWarlordsEntity()).kill();
+            }
         }
         event.setCancelled(true);
     }

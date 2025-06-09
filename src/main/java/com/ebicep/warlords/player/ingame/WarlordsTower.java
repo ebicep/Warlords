@@ -1,9 +1,9 @@
 package com.ebicep.warlords.player.ingame;
 
-import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.towerdefense.towers.AbstractTower;
+import com.ebicep.warlords.player.general.AbstractPlayerClass;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;

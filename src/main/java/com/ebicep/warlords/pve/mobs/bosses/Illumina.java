@@ -32,7 +32,6 @@ import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.util.Ticks;
 import org.bukkit.*;
-import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -131,7 +130,7 @@ public class Illumina extends AbstractMob implements BossMob {
         }.runTaskLater(10);
 
         warlordsNPC.getCooldownManager().removeCooldown(DamageCheck.class, false);
-        warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
+        PermanentCooldown<DamageCheck> permanentCooldown = new PermanentCooldown<>(
                 "Damage Check",
                 null,
                 DamageCheck.class,
@@ -147,19 +146,15 @@ public class Illumina extends AbstractMob implements BossMob {
                 damageToDeal.set((int) (damageToDeal.get() - currentDamageValue));
                 return currentDamageValue;
             }
-
-            @Override
-            public void multiplyKB(Vector currentVector) {
-                // immune to KB
-                currentVector.multiply(0.05);
-            }
-        });
+        };
+        warlordsNPC.addKnockbackModifier(warlordsNPC, "KB RES", -100, permanentCooldown);
+        warlordsNPC.getCooldownManager().addCooldown(permanentCooldown);
     }
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
         // immune to slowness
-        warlordsNPC.getSpeed().removeSlownessModifiers();
+        warlordsNPC.getSpeed().removeNegativeModifiers();
 
         long playerCount = option.getGame().warlordsPlayers().count();
         Location loc = warlordsNPC.getLocation();

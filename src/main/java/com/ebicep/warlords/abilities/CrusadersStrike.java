@@ -5,9 +5,11 @@ import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.type.CustomInstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.paladin.crusader.CrusadersStrikeBranch;
@@ -36,6 +38,7 @@ public class CrusadersStrike extends AbstractStrike<CrusadersStrike, CrusadersSt
     private int energyMaxAllies = 2;
     private int allySpeedBoost = 40;
     private int allySpeedBoostDurationInTicks = 20;
+    private boolean blockedByArcaneShield = true;
 
     public CrusadersStrike() {
         super(AbstractAbilityBuilder.create("crusadersStrike").pvp());
@@ -49,6 +52,77 @@ public class CrusadersStrike extends AbstractStrike<CrusadersStrike, CrusadersSt
         this.energyMaxAllies = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("energyMaxAllies"), int.class);
         this.allySpeedBoost = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("allySpeedBoost"), int.class);
         this.allySpeedBoostDurationInTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("allySpeedBoostDurationInTicks"), int.class);
+        this.blockedByArcaneShield = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("blockedByArcaneShield"), boolean.class);
+    }
+
+    @Override
+    protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull WarlordsEntity nearPlayer) {
+        boolean crit = false;
+        Optional<WarlordsDamageHealingFinalEvent> finalEvent = nearPlayer.addInstance(InstanceBuilder
+                .damage().ability(this)
+                .source(wp)
+                .value(damageValues.strikeDamage)
+        );
+        if (finalEvent.isPresent()) {
+            crit = finalEvent.get().isCrit();
+        }
+        if (pveMasterUpgrade) {
+            additionalHit(
+                    2,
+                    wp,
+                    nearPlayer,
+                    warlordsEntity -> {
+                        warlordsEntity.addInstance(InstanceBuilder
+                                .damage()
+                                .ability(this)
+                                .source(wp)
+                                .value(damageValues.strikeDamage)
+                        );
+                    }
+            );
+        } else if (pveMasterUpgrade2) {
+            PlayerFilter.entitiesAround(wp, energyRadius, energyRadius, energyRadius).aliveTeammatesOfExcludingSelf(wp).limit(2).forEach(teammate -> {
+                teammate.addSpeedModifier(wp, "Crusading Strike", 10, 40);
+            });
+        }
+        if (finalEvent.isPresent()) {
+            WarlordsDamageHealingFinalEvent event = finalEvent.get();
+            List<CustomInstanceFlags> customFlags = event.getCustomFlags();
+            if (blockedByArcaneShield && customFlags.stream().anyMatch(f ->
+                    f instanceof CustomInstanceFlags.InstanceShieldsInstanceFlag(List<Shield> shields) &&
+                            shields.stream().anyMatch(shield -> shield.getName().equals("Arcane Shield")))
+            ) {
+                return true;
+            }
+            float previousEnergyGiven = stats.totalEnergyGiven;
+            // Give energy to nearby allies and check if they have mark active
+            for (WarlordsEntity energyTarget : PlayerFilter
+                    .entitiesAround(wp, energyRadius, energyRadius, energyRadius)
+                    .aliveTeammatesOfExcludingSelf(wp)
+                    .sorted(Comparator
+                            .comparing((WarlordsEntity p) ->
+                                    new CooldownFilter<>(p, AbstractCooldown.class)
+                                            .filterCooldownClass(HolyRadianceCrusader.class)
+                                            .filterCooldownFrom(wp)
+                                            .stream()
+                                            .findAny()
+                                            .isPresent() ? -1 : 1
+                            )
+                            .thenComparing(LocationUtils.sortClosestBy(WarlordsEntity::getLocation, wp.getLocation())))
+                    .limit(energyMaxAllies)
+            ) {
+                if (energyTarget.getCooldownManager().hasCooldown(HolyRadianceCrusader.class)) {
+                    // 20 ticks
+                    energyTarget.addSpeedModifier(wp, "CRUSADER MARK", allySpeedBoost, allySpeedBoostDurationInTicks);
+                }
+                stats.totalEnergyGiven += energyTarget.addEnergy(wp, name, energyGiven + (pveMasterUpgrade2 && crit ? 5 : 0));
+            }
+            new CooldownFilter<>(wp, RegularCooldown.class)
+                    .filterCooldownFrom(wp)
+                    .filterCooldownClassAndMapToObjectsOfClass(InspiringPresence.InspiringPresenceData.class)
+                    .forEach(inspiringPresence -> inspiringPresence.addEnergyGivenFromStrikeAndPresence(stats.totalEnergyGiven - previousEnergyGiven));
+        }
+        return true;
     }
 
     @Override
@@ -65,40 +139,8 @@ public class CrusadersStrike extends AbstractStrike<CrusadersStrike, CrusadersSt
         );
     }
 
-    @Override
-    protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull WarlordsEntity nearPlayer) {
-        boolean crit = false;
-        Optional<WarlordsDamageHealingFinalEvent> finalEvent = nearPlayer.addInstance(InstanceBuilder.damage().ability(this).source(wp).value(damageValues.strikeDamage));
-        if (finalEvent.isPresent()) {
-            crit = finalEvent.get().isCrit();
-        }
-        if (pveMasterUpgrade) {
-            additionalHit(2, wp, nearPlayer, warlordsEntity -> {
-                        warlordsEntity.addInstance(InstanceBuilder.damage().ability(this).source(wp).value(damageValues.strikeDamage));
-                    }
-            );
-        } else if (pveMasterUpgrade2) {
-            PlayerFilter.entitiesAround(wp, energyRadius, energyRadius, energyRadius).aliveTeammatesOfExcludingSelf(wp).limit(2).forEach(teammate -> {
-                teammate.addSpeedModifier(wp, "Crusading Strike", 10, 40, "BASE");
-            });
-        }
-        float previousEnergyGiven = stats.totalEnergyGiven;
-        // Give energy to nearby allies and check if they have mark active
-        for (WarlordsEntity energyTarget : PlayerFilter.entitiesAround(wp, energyRadius, energyRadius, energyRadius)
-                                                       .aliveTeammatesOfExcludingSelf(wp)
-                                                       .sorted(Comparator.comparing((WarlordsEntity p) -> p.getCooldownManager().hasCooldown(HolyRadianceCrusader.class) ? 0 : 1)
-                                                                         .thenComparing(LocationUtils.sortClosestBy(WarlordsEntity::getLocation, wp.getLocation())))
-                                                       .limit(energyMaxAllies)) {
-            if (energyTarget.getCooldownManager().hasCooldown(HolyRadianceCrusader.class)) {
-                // 20 ticks
-                energyTarget.addSpeedModifier(wp, "CRUSADER MARK", allySpeedBoost, allySpeedBoostDurationInTicks, "BASE");
-            }
-            stats.totalEnergyGiven += energyTarget.addEnergy(wp, name, energyGiven + (pveMasterUpgrade2 && crit ? 5 : 0));
-        }
-        new CooldownFilter<>(wp, RegularCooldown.class).filterCooldownFrom(wp)
-                                                       .filterCooldownClassAndMapToObjectsOfClass(InspiringPresence.InspiringPresenceData.class)
-                                                       .forEach(inspiringPresence -> inspiringPresence.addEnergyGivenFromStrikeAndPresence(stats.totalEnergyGiven - previousEnergyGiven));
-        return true;
+    public void setBlockedByArcaneShield(boolean blockedByArcaneShield) {
+        this.blockedByArcaneShield = blockedByArcaneShield;
     }
 
     @Override
@@ -136,6 +178,10 @@ public class CrusadersStrike extends AbstractStrike<CrusadersStrike, CrusadersSt
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new CrusadersStrikeBranch(abilityTree, this);
+    }
+
+    public void setEnergyMaxAllies(int energyMaxAllies) {
+        this.energyMaxAllies = energyMaxAllies;
     }
 
     public int getEnergyGiven() {

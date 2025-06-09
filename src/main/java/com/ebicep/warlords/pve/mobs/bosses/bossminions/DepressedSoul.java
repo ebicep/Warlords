@@ -61,7 +61,7 @@ public class DepressedSoul extends AbstractMob implements BossMinionMob {
         EffectUtils.playParticleLinkAnimation(self.getLocation(), attacker.getLocation(), 35, 25, 122, 1);
         Utils.playGlobalSound(self.getLocation(), Sound.BLOCK_SNOW_BREAK, 0.35f, 2);
         if (!event.getCause().isEmpty()) {
-            attacker.addSpeedModifier(self, name, reduceSpeed, reduceSpeedTickDuration, "BASE");
+            attacker.addSpeedModifier(self, name, reduceSpeed, reduceSpeedTickDuration);
         }
     }
 }

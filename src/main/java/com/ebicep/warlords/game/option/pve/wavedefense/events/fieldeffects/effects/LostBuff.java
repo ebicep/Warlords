@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.pve.wavedefense.events.fieldeffects.effects;
 
+import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.fieldeffects.FieldEffect;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
@@ -32,9 +33,8 @@ public class LostBuff implements FieldEffect {
                         }
                         float damage = warlordsEntity.getMaxHealth() * .01f;
                         warlordsEntity.resetRegenTimer();
-                        if (warlordsEntity.getCurrentHealth() - damage <= 0 && !warlordsEntity.getCooldownManager().checkUndyingArmy(false)) {
-
-                            warlordsEntity.die(warlordsEntity);
+                        if (warlordsEntity.getCurrentHealth() - damage <= 0) {
+                            warlordsEntity.die(warlordsEntity, WarlordsDeathEvent.DeathInfoBuilder.create());
                         } else {
                             warlordsEntity.setCurrentHealth(warlordsEntity.getCurrentHealth() - damage);
                             //warlordsEntity.playHurtAnimation(warlordsEntity);

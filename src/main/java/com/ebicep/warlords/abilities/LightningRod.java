@@ -6,7 +6,6 @@ import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
@@ -35,6 +34,8 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
     private final HealingValues healingValues = new HealingValues();
     private int knockbackRadius = 5;
     private int energyRestore = 160;
+    private float horizontalTotemProcRange;
+    private float verticalTotemProcRange;
 
     public LightningRod() {
         this(AbstractAbilityBuilder.create("lightningRod").pvp());
@@ -49,6 +50,8 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
         super.init(builder);
         this.knockbackRadius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("knockbackRadius"), int.class);
         this.energyRestore = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("energyRestore"), int.class);
+        this.horizontalTotemProcRange = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("horizontalTotemProcRange"), float.class);
+        this.verticalTotemProcRange = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("verticalTotemProcRange"), float.class);
     }
 
     @Override
@@ -85,7 +88,12 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
             giveCallOfThunderEffect(wp, hit);
         }
         // pulsedamage
-        List<CapacitorTotem.CapacitorTotemData> totems = AbstractTotem.getTotemsDownAndClose(wp, wp.getEntity(), CapacitorTotem.CapacitorTotemData.class);
+        List<CapacitorTotem.CapacitorTotemData> totems = AbstractTotem.getTotemsDownAndClose(
+                wp,
+                CapacitorTotem.CapacitorTotemData.class,
+                horizontalTotemProcRange,
+                verticalTotemProcRange
+        );
         totems.forEach(data -> {
             ArmorStand totem = data.getArmorStand();
             Utils.playGlobalSound(totem.getLocation(), "shaman.capacitortotem.pulse", 2, 1);
@@ -98,6 +106,22 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
         return true;
     }
 
+    public float getHorizontalTotemProcRange() {
+        return horizontalTotemProcRange;
+    }
+
+    public void setHorizontalTotemProcRange(float horizontalTotemProcRange) {
+        this.horizontalTotemProcRange = horizontalTotemProcRange;
+    }
+
+    public float getVerticalTotemProcRange() {
+        return verticalTotemProcRange;
+    }
+
+    public void setVerticalTotemProcRange(float verticalTotemProcRange) {
+        this.verticalTotemProcRange = verticalTotemProcRange;
+    }
+
     private List<WarlordsEntity> kbHealEnergy(@Nonnull WarlordsEntity wp) {
         wp.addEnergy(wp, name, energyRestore);
         Utils.playGlobalSound(wp.getLocation(), "shaman.lightningrod.activation", 2, 1);
@@ -107,9 +131,7 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
         List<WarlordsEntity> hit = PlayerFilter.entitiesAround(wp, knockbackRadius, knockbackRadius, knockbackRadius).aliveEnemiesOf(wp).toList();
         for (WarlordsEntity enemy : hit) {
             if (pveMasterUpgrade2) {
-                if (enemy instanceof WarlordsNPC warlordsNPC) {
-                    warlordsNPC.setStunTicks(60);
-                }
+                enemy.setStunTicks(60);
             } else {
                 final Location loc = enemy.getLocation();
                 final Vector v = wp.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.5).setY(0.35);
@@ -120,7 +142,7 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
     }
 
     private void damageIncreaseOnUse(WarlordsEntity we) {
-        we.addSpeedModifier(we, "Rod Speed", 20, 12 * 20, "BASE");
+        we.addSpeedModifier(we, "Rod Speed", 20, 12 * 20);
         we.getCooldownManager().removeCooldown(LightningRod.class, false);
         we.getCooldownManager().addCooldown(new RegularCooldown<>(name, "ROD DMG", LightningRod.class, new LightningRod(), we, CooldownTypes.ABILITY, cooldownManager -> {
         }, 12 * 20

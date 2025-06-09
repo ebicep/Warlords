@@ -6,11 +6,13 @@ import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.pve.mobs.tiers.PlayerMob;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.luminary.MercifulHexBranch;
@@ -30,6 +32,7 @@ import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Transformation;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 import org.joml.AxisAngle4f;
 import org.joml.Vector3f;
@@ -41,6 +44,7 @@ import java.util.List;
 
 public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, MercifulHex.MercifulHexStats> implements WeaponAbilityIcon, Duration, Damages<MercifulHex.DamageValues> {
 
+    public static final ItemStack ITEM_STACK = new ItemStack(Material.LILY_OF_THE_VALLEY);
     private final MercifulHexStats stats = new MercifulHexStats();
     private final DamageValues damageValues = new DamageValues();
     private final HealingValues healingValues = new HealingValues();
@@ -55,6 +59,17 @@ public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, Mercifu
         super(AbstractAbilityBuilder.create("mercifulHex").pvp());
         //TODO maybe inflate y separately
         this.hitboxInflation.setBaseValue(hitboxInflation.getBaseValue() + .75f);
+    }
+
+    @Override
+    protected boolean nonCollisionCheck(
+            AbstractPiercingProjectile<MercifulHex, MercifulHexStats>.InternalProjectile projectile,
+            Location currentLocation,
+            Vector speed,
+            WarlordsEntity shooter,
+            WarlordsEntity wp
+    ) {
+        return super.nonCollisionCheck(projectile, currentLocation, speed, shooter, wp) || (wp instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof PlayerMob);
     }
 
     @Nonnull
@@ -229,7 +244,7 @@ public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, Mercifu
         Location startingLocation = projectile.getStartingLocation();
         LocationBuilder location = new LocationBuilder(startingLocation).pitch(0);
         ItemDisplay display = startingLocation.getWorld().spawn(location, ItemDisplay.class, itemDisplay -> {
-                    itemDisplay.setItemStack(new ItemStack(Material.WARPED_FENCE));
+            itemDisplay.setItemStack(ITEM_STACK);
                     itemDisplay.setTeleportDuration(1);
                     itemDisplay.setBrightness(new Display.Brightness(15, 15));
                     itemDisplay.setTransformation(new Transformation(new Vector3f(),

@@ -77,7 +77,7 @@ public class EventForsakenFrost extends AbstractMob implements BossMinionMob, Sp
 
             PlayerFilterGeneric.playingGameWarlordsPlayers(pveOption.getGame())
                                .enemiesOf(wp)
-                               .forEach(warlordsPlayer -> warlordsPlayer.addSpeedModifier(warlordsPlayer, name, -20, 20, "BASE"));
+                               .forEach(warlordsPlayer -> warlordsPlayer.addSpeedModifier(warlordsPlayer, name, -20, 20));
             return true;
         }
 

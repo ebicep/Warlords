@@ -30,7 +30,6 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
     private int tickDuration = 360;
     private int speedBuff = 30;
     private float damageIncrease = 30;
-    private float damageTakenIncrease = 10;
 
     public Berserk() {
         super(AbstractAbilityBuilder.create("berserk").pvp());
@@ -42,7 +41,6 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
         this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
         this.speedBuff = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("speedBuff"), int.class);
         this.damageIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageIncrease"), float.class);
-        this.damageTakenIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageTakenIncrease"), float.class);
     }
 
     @Override
@@ -51,9 +49,7 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
                                                .percent(damageIncrease, NamedTextColor.RED)
                                                .text(" and movement speed by ")
                                                .percent(speedBuff, NamedTextColor.WHITE)
-                                               .text(". While active, you also take ")
-                                               .percent(damageTakenIncrease, NamedTextColor.RED)
-                                               .text(" more damage. Lasts ")
+                                               .text(". Lasts ")
                                                .durationTicks(tickDuration)
                                                .text(".")
                                                .build();
@@ -62,7 +58,7 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "warrior.berserk.activation", 2, 1);
-        Runnable cancelSpeed = wp.addSpeedModifier(wp, name, speedBuff, tickDuration, "BASE");
+        wp.addSpeedModifier(wp, name, speedBuff, tickDuration);
         wp.getCooldownManager().removeCooldown(Berserk.class, false);
         List<FloatModifiable.FloatModifier> modifiers;
         if (pveMasterUpgrade2) {
@@ -76,7 +72,7 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
         }
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "BERS", Berserk.class, null, wp, CooldownTypes.ABILITY, cooldownManager -> {
         }, cooldownManager -> {
-            cancelSpeed.run();
+            wp.getSpeed().removeModifier(name);
             modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
         }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
             if (ticksElapsed % 3 == 0) {
@@ -115,12 +111,6 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
                     return currentCritMultiplier + critBoost;
                 }
                 return currentCritMultiplier;
-            }
-
-            @Override
-            public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                stats.hitsTakenAmplified++;
-                return currentDamageValue * convertToMultiplicationDecimal(damageTakenIncrease);
             }
 
             @Override
@@ -166,14 +156,6 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
 
     public void setDamageIncrease(float damageIncrease) {
         this.damageIncrease = damageIncrease;
-    }
-
-    public float getDamageTakenIncrease() {
-        return damageTakenIncrease;
-    }
-
-    public void setDamageTakenIncrease(float damageTakenIncrease) {
-        this.damageTakenIncrease = damageTakenIncrease;
     }
 
     public int getSpeedBuff() {

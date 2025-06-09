@@ -4,10 +4,12 @@ import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.CustomInstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.paladin.protector.ProtectorStrikeBranch;
@@ -28,8 +30,8 @@ public class ProtectorsStrike extends AbstractStrike<ProtectorsStrike, Protector
 
     private final ProtectorsStrikeStats stats = new ProtectorsStrikeStats();
     private final DamageValues damageValues = new DamageValues();
-    private int allyHealing = 90;
-    private int selfHealing = 60;
+    private float allyHealing = 90;
+    private float selfHealing = 60;
     private int maxAllies = 2;
     private double strikeRadius = 10;
 
@@ -44,8 +46,8 @@ public class ProtectorsStrike extends AbstractStrike<ProtectorsStrike, Protector
     @Override
     public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
-        this.allyHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("allyHealing"), int.class);
-        this.selfHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("selfHealing"), int.class);
+        this.allyHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("allyHealing"), float.class);
+        this.selfHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("selfHealing"), float.class);
         this.maxAllies = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxAllies"), int.class);
         this.strikeRadius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("strikeRadius"), float.class);
     }
@@ -77,47 +79,76 @@ public class ProtectorsStrike extends AbstractStrike<ProtectorsStrike, Protector
             boolean isCrit = warlordsDamageHealingFinalEvent.isCrit();
             float allyHealingMultiplier = allyHealing / 100f;
             float selfHealingMultiplier = selfHealing / 100f;
+            List<WarlordsEntity> healedPlayers;
+            if (pveMasterUpgrade) {
+                healedPlayers = PlayerFilter
+                        .entitiesAround(wp, strikeRadius, strikeRadius, strikeRadius)
+                        .aliveTeammatesOfExcludingSelf(wp)
+                        .limit(maxAllies)
+                        .leastAliveFirst()
+                        .toList();
+            } else {
+                healedPlayers = PlayerFilter
+                        .entitiesAround(wp, strikeRadius, strikeRadius, strikeRadius)
+                        .aliveTeammatesOfExcludingSelf(wp)
+                        .sorted(Comparator.comparing((WarlordsEntity p) ->
+                                                  new CooldownFilter<>(p, AbstractCooldown.class)
+                                                          .filterCooldownClass(HolyRadianceProtector.class)
+                                                          .filterCooldownFrom(wp)
+                                                          .stream()
+                                                          .findAny()
+                                                          .isPresent() ? -1 : 1
+                                          )
+                                          .thenComparing(LocationUtils.sortClosestBy(WarlordsEntity::getLocation, wp.getLocation())))
+                        .limit(maxAllies)
+                        .toList();
+            }
             // Self Heal
             wp.addInstance(InstanceBuilder.healing()
                                           .ability(this)
                                           .source(wp)
                                           .value(currentDamageValue * selfHealingMultiplier)
                                           .showAsCrit(isCrit)
-                                          .flags(InstanceFlags.IGNORE_CRIT_MODIFIERS)).ifPresent(event -> {
+                                          .customFlags(new CustomInstanceFlags.PlayersEffectedInstanceFlag(healedPlayers))
+            ).ifPresent(event -> {
                 new CooldownFilter<>(wp, RegularCooldown.class).filterCooldownFrom(wp)
                                                                .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.HammerOfLightData.class)
                                                                .forEach(hammerOfLight -> hammerOfLight.addAmountHealed(event.getValue()));
             });
             // Ally Heal
             if (pveMasterUpgrade) {
-                for (WarlordsEntity ally : PlayerFilter.entitiesAround(wp, strikeRadius, strikeRadius, strikeRadius)
-                                                       .aliveTeammatesOfExcludingSelf(wp)
-                                                       .limit(maxAllies)
-                                                       .leastAliveFirst()) {
+                for (WarlordsEntity ally : healedPlayers) {
                     boolean isLeastAlive = ally.getCurrentHealth() < ally.getMaxHealth();
                     float healing = currentDamageValue * (allyHealingMultiplier + (isLeastAlive ? .5f : 0));
-                    ally.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(healing).showAsCrit(isCrit).flags(InstanceFlags.IGNORE_CRIT_MODIFIERS))
-                        .ifPresent(event -> {
-                            new CooldownFilter<>(wp, RegularCooldown.class).filterCooldownFrom(wp)
-                                                                           .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.HammerOfLightData.class)
-                                                                           .forEach(hammerOfLight -> hammerOfLight.addAmountHealed(event.getValue()));
-                        });
+                    ally.addInstance(InstanceBuilder
+                            .healing()
+                            .ability(this)
+                            .source(wp)
+                            .value(healing)
+                            .showAsCrit(isCrit)
+                            .flags(InstanceFlags.IGNORE_CRIT_MODIFIERS)
+                            .customFlags(new CustomInstanceFlags.PlayersEffectedInstanceFlag(healedPlayers))
+                    ).ifPresent(event -> {
+                        new CooldownFilter<>(wp, RegularCooldown.class)
+                                .filterCooldownFrom(wp)
+                                .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.HammerOfLightData.class)
+                                .forEach(hammerOfLight -> hammerOfLight.addAmountHealed(event.getValue()));
+                    });
                 }
             } else {
-                for (WarlordsEntity ally : PlayerFilter.entitiesAround(wp, strikeRadius, strikeRadius, strikeRadius)
-                                                       .aliveTeammatesOfExcludingSelf(wp)
-                                                       .sorted(Comparator.comparing((WarlordsEntity p) -> p.getCooldownManager().hasCooldown(HolyRadianceProtector.class) ? 0 : 1)
-                                                                         .thenComparing(LocationUtils.sortClosestBy(WarlordsEntity::getLocation, wp.getLocation())))
-                                                       .limit(maxAllies)) {
-                    ally.addInstance(InstanceBuilder.healing()
-                                                    .ability(this)
-                                                    .source(wp)
-                                                    .value(currentDamageValue * allyHealingMultiplier)
-                                                    .showAsCrit(isCrit)
-                                                    .flags(InstanceFlags.IGNORE_CRIT_MODIFIERS)).ifPresent(event -> {
-                        new CooldownFilter<>(wp, RegularCooldown.class).filterCooldownFrom(wp)
-                                                                       .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.HammerOfLightData.class)
-                                                                       .forEach(hammerOfLight -> hammerOfLight.addAmountHealed(event.getValue()));
+                for (WarlordsEntity ally : healedPlayers) {
+                    ally.addInstance(InstanceBuilder
+                            .healing()
+                            .ability(this)
+                            .source(wp)
+                            .value(currentDamageValue * allyHealingMultiplier)
+                            .showAsCrit(isCrit)
+                            .customFlags(new CustomInstanceFlags.PlayersEffectedInstanceFlag(healedPlayers))
+                    ).ifPresent(event -> {
+                        new CooldownFilter<>(wp, RegularCooldown.class)
+                                .filterCooldownFrom(wp)
+                                .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.HammerOfLightData.class)
+                                .forEach(hammerOfLight -> hammerOfLight.addAmountHealed(event.getValue()));
                     });
                 }
             }
@@ -154,12 +185,16 @@ public class ProtectorsStrike extends AbstractStrike<ProtectorsStrike, Protector
         return new ProtectorStrikeBranch(abilityTree, this);
     }
 
-    public int getAllyHealing() {
+    public float getAllyHealing() {
         return allyHealing;
     }
 
-    public void setAllyHealing(int convertPercent) {
+    public void setAllyHealing(float convertPercent) {
         this.allyHealing = convertPercent;
+    }
+
+    public void setSelfHealing(float selfHealing) {
+        this.selfHealing = selfHealing;
     }
 
     public int getMaxAllies() {

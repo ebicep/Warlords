@@ -93,7 +93,7 @@ public class Torment extends AbstractMob implements BossMob {
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-        warlordsNPC.getSpeed().removeSlownessModifiers();
+        warlordsNPC.getSpeed().removeNegativeModifiers();
         if (ticksElapsed % 600 == 0) {
             new GameRunnable(warlordsNPC.getGame()) {
                 int counter = 0;

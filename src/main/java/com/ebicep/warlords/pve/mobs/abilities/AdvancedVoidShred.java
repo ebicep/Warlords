@@ -40,7 +40,7 @@ public class AdvancedVoidShred extends AbstractAbility {
                     .source(wp)
                     .value(damageValues.voidShredDamage)
             );
-            enemy.addSpeedModifier(wp, "Void Slowness", slowness, 10, "BASE");
+            enemy.addSpeedModifier(wp, "Void Slowness", slowness, 10);
         }
         return true;
     }

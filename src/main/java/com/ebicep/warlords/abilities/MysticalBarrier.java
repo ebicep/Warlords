@@ -105,7 +105,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
         } else {
             List<WarlordsEntity> targets = PlayerFilter.entitiesAround(wp, radius, radius, radius)
                                                        .aliveTeammatesOfExcludingSelf(wp)
-                                                       .requireLineOfSightIntervene(wp)
+                                                       .requireLineOfSightIntervene(wp, true)
                                                        .lookingAtFirst(wp)
                                                        .limit(1)
                                                        .toList();
@@ -168,7 +168,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                     return;
                 }
                 String cause = event.getCause();
-                if (cause.equals("Hammer of Light") || cause.equals("Sanctuary")) {
+                if (cause.equals("Hammer of Light") || cause.equals("Sanctuary")) { // TODO
                     return;
                 }
                 event.getSource().getSpec().increaseAllCooldownTimersBy(runeTimerIncrease);

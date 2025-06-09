@@ -208,7 +208,7 @@ public class ApothecaryTower extends AbstractTower implements Upgradeable.Path2 
                                             PoisonAttack.class,
                                             null,
                                             wp,
-                                            CooldownTypes.DEBUFF,
+                                            CooldownTypes.LOW_LEVEL_DEBUFF,
                                             cooldownManager -> {},
                                             POSION_TICKS,
                                             Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
@@ -224,7 +224,7 @@ public class ApothecaryTower extends AbstractTower implements Upgradeable.Path2 
                                             })
                                     ))
                             );
-                    warlordsNPC.addSpeedModifier(warlordsTower, "Apothecary Tower Poison", -10, SLOW_TICKS, "BASE");
+                    warlordsNPC.addSpeedModifier(warlordsTower, "Apothecary Tower Poison", -10, SLOW_TICKS);
                 });
             }
             return true;

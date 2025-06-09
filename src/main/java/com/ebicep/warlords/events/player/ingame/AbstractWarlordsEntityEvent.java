@@ -11,7 +11,7 @@ import javax.annotation.Nonnull;
 public abstract class AbstractWarlordsEntityEvent extends AbstractWarlordsGameEvent {
 
     @Nonnull
-    protected final WarlordsEntity player;
+    protected WarlordsEntity player;
 
     public AbstractWarlordsEntityEvent(@Nonnull WarlordsEntity player) {
         super(player.getGame());
@@ -21,6 +21,10 @@ public abstract class AbstractWarlordsEntityEvent extends AbstractWarlordsGameEv
     @Nonnull
     public WarlordsEntity getWarlordsEntity() {
         return player;
+    }
+
+    public void setPlayer(@Nonnull WarlordsEntity player) {
+        this.player = player;
     }
 
 }

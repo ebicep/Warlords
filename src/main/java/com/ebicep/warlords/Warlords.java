@@ -20,7 +20,6 @@ import com.ebicep.warlords.events.GeneralEvents;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.game.*;
 import com.ebicep.warlords.game.option.LobbyGameOption;
-import com.ebicep.warlords.game.option.pvp.HorseOption;
 import com.ebicep.warlords.guilds.GuildListener;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.menu.MenuEventListener;
@@ -32,7 +31,7 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksOutsideGame;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
-import com.ebicep.warlords.pve.mobs.Mob;
+import com.ebicep.warlords.pve.mobs.tiers.PlayerMob;
 import com.ebicep.warlords.pve.rewards.types.PatreonReward;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.packets.PacketUtils;
@@ -355,7 +354,7 @@ public class Warlords extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PatreonReward(), this);
         getServer().getPluginManager().registerEvents(new MemoryManager(), this);
         getServer().getPluginManager().registerEvents(new Shield(), this);
-        getServer().getPluginManager().registerEvents(new HorseOption(), this);
+//        getServer().getPluginManager().registerEvents(new HorseOption(), this);
         getServer().getPluginManager().registerEvents(TracksOutsideGame.getListener(), this);
         getServer().getPluginManager().registerEvents(new DatabaseGameEvent(), this);
 
@@ -507,7 +506,7 @@ public class Warlords extends JavaPlugin {
                     }
                     // Loops every 50 ticks - 2.5 seconds.
                     if (loopTickCounter % 50 == 0) {
-                        if (we instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob().getMobRegistry() == Mob.TEST_DUMMY) {
+                        if (we instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof PlayerMob) {
                             continue;
                         }
                         Entity player = we.getEntity();

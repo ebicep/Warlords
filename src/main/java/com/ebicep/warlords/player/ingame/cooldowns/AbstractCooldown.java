@@ -7,14 +7,14 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public abstract class AbstractCooldown<T> implements DamageInstance, HealingInstance, EnergyInstance, KnockbackInstance, PlayerNameInstance, SpecDamageReductionInstance, DebugInstance {
+public abstract class AbstractCooldown<T> implements DamageInstance, HealingInstance, EnergyInstance, PlayerNameInstance, SpecDamageReductionInstance, DebugInstance {
 
-    public static final TextColor PSEUDO_DEBUFF_COLOR = TextColor.color(255, 50, 50);
     public static List<AbstractCooldown<?>> COOLDOWNS_WITH_LISTENERS = new ArrayList<>();
     protected String name;
     protected String nameAbbreviation;
@@ -26,6 +26,8 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
     protected Consumer<CooldownManager> onRemoveForce;
     protected boolean removeOnDeath;
     private final Listener activeListener;
+    private List<DamageInstance> extraDamageInstances = null;
+    private List<HealingInstance> extraHealingInstances = null;
 
     public AbstractCooldown(
             String name,
@@ -117,6 +119,16 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
         this(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove, onRemoveForce, true);
     }
 
+    @Override
+    public @Nullable List<DamageInstance> getExtraDamageInstances() {
+        return extraDamageInstances;
+    }
+
+    @Override
+    public @Nullable List<HealingInstance> getExtraHealingInstances() {
+        return extraHealingInstances;
+    }
+
     public abstract Component getNameAbbreviation();
 
     public void setNameAbbreviation(String nameAbbreviation) {
@@ -183,7 +195,19 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
         this.onRemoveForce = onRemoveForce;
     }
 
+    public void setCooldownType(CooldownTypes cooldownType) {
+        this.cooldownType = cooldownType;
+    }
+
+    public void addExtraDamageInstance(DamageInstance extraDamageInstance) {
+        if (extraDamageInstances == null) {
+            extraDamageInstances = new ArrayList<>();
+        }
+        extraDamageInstances.add(extraDamageInstance);
+    }
+
     public Listener getActiveListener() {
         return activeListener;
     }
+
 }

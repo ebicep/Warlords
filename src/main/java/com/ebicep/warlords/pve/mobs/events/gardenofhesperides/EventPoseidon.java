@@ -35,6 +35,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public class EventPoseidon extends AbstractMob implements BossMob, God, Unsilencable {
 
@@ -89,8 +90,8 @@ public class EventPoseidon extends AbstractMob implements BossMob, God, Unsilenc
                     }
 
                     @Override
-                    protected void onSpikeTarget(WarlordsEntity caster, WarlordsEntity spikeTarget) {
-                        super.onSpikeTarget(caster, spikeTarget);
+                    protected void onSpikeTarget(WarlordsEntity caster, WarlordsEntity spikeTarget, UUID uuid) {
+                        super.onSpikeTarget(caster, spikeTarget, uuid);
                         Optional<CripplingStrike.CripplingStrikeData> optionalCripplingStrike = new CooldownFilter<>(spikeTarget, RegularCooldown.class)
                                 .filterCooldownClassAndMapToObjectsOfClass(CripplingStrike.CripplingStrikeData.class)
                                 .findAny();
@@ -156,7 +157,7 @@ public class EventPoseidon extends AbstractMob implements BossMob, God, Unsilenc
             @Override
             protected Listener getListener() {
                 return new Listener() {
-                    @EventHandler(priority = EventPriority.HIGHEST)
+                    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
                     public void onDeath(WarlordsDeathEvent event) {
                         WarlordsEntity dead = event.getWarlordsEntity();
                         if (!(dead instanceof WarlordsNPC npc) || dead == warlordsNPC) {
@@ -191,7 +192,7 @@ public class EventPoseidon extends AbstractMob implements BossMob, God, Unsilenc
     public void onFinalAttack(WarlordsDamageHealingFinalEvent event) {
         if (event.isDead()) {
             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.BLOCK_RESPAWN_ANCHOR_CHARGE, 10, .5f);
-            warlordsNPC.addSpeedModifier(warlordsNPC, "Purified", 50, 100, "BASE");
+            warlordsNPC.addSpeedModifier(warlordsNPC, "Purified", 50, 100);
         }
     }
 

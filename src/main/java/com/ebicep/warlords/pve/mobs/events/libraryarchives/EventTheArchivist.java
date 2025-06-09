@@ -94,7 +94,7 @@ public class EventTheArchivist extends AbstractMob implements BossMob, Unsilenca
                 }
             }
 
-            @EventHandler
+            @EventHandler(ignoreCancelled = true)
             public void onMobDeath(WarlordsDeathEvent event) {
                 if (event.getWarlordsEntity() instanceof WarlordsNPC wNPC && wNPC.getMob() instanceof EventGrimoire) {
                     grimoireDeathCounter++;

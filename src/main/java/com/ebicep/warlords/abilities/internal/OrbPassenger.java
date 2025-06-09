@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities.internal;
 
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.bukkit.packets.PacketUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -34,7 +35,8 @@ public class OrbPassenger extends ExperienceOrb {
                 org.bukkit.entity.ExperienceOrb.SpawnReason.CUSTOM,
                 null
         );
-        ArmorStand orbStand = Utils.spawnArmorStand(location.clone().add(0, 1.5, 0), armorStand -> {
+        ArmorStand orbStand = Utils.spawnArmorStand(LocationUtils.getGroundLocation(location).clone().add(0, .5, 0), armorStand -> {
+            armorStand.setMarker(true);
                     armorStand.setGravity(true);
                     armorStand.addPassenger(spawn(location).getBukkitEntity());
                     if (standConsumer != null) {

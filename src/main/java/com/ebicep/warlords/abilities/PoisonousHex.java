@@ -6,7 +6,6 @@ import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -40,6 +39,7 @@ import java.util.List;
 
 public class PoisonousHex extends AbstractPiercingProjectile<PoisonousHex, PoisonousHex.PoisonousHexStats> implements WeaponAbilityIcon, Duration, Damages<PoisonousHex.DamageValues> {
 
+    public static final ItemStack ITEM_STACK = new ItemStack(Material.CYAN_STAINED_GLASS_PANE);
     private final PoisonousHexStats stats = new PoisonousHexStats();
     private final DamageValues damageValues = new DamageValues();
     private int maxFullDistance = 40;
@@ -78,7 +78,7 @@ public class PoisonousHex extends AbstractPiercingProjectile<PoisonousHex, Poiso
         Location startingLocation = projectile.getStartingLocation();
         LocationBuilder location = new LocationBuilder(startingLocation).pitch(0).yaw(startingLocation.getYaw() - 180);
         ItemDisplay display = startingLocation.getWorld().spawn(location, ItemDisplay.class, itemDisplay -> {
-                    itemDisplay.setItemStack(new ItemStack(Material.GREEN_STAINED_GLASS));
+            itemDisplay.setItemStack(ITEM_STACK);
                     itemDisplay.setTeleportDuration(1);
                     itemDisplay.setBrightness(new Display.Brightness(15, 15));
                     itemDisplay.setTransformation(new Transformation(new Vector3f(),
@@ -207,26 +207,35 @@ public class PoisonousHex extends AbstractPiercingProjectile<PoisonousHex, Poiso
         int dotTickFrequency = fromHex.getTicksBetweenDot();
         DamageValues values = fromHex.damageValues;
         to.getCooldownManager().limitCooldowns(RegularCooldown.class, PoisonousHex.class, 3);
-        to.getCooldownManager().addCooldown(new RegularCooldown<>("Poisonous Hex", "PHEX", PoisonousHex.class, new PoisonousHex(), from, CooldownTypes.ABILITY, cooldownManager -> {
-            to.addInstance(InstanceBuilder.damage().ability(fromHex).source(from).value(values.hexDOTDamage).flags(InstanceFlags.NO_DISMOUNT, InstanceFlags.DOT));
-        }, tickDuration * 2, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-            if (ticksElapsed % dotTickFrequency == 0 && ticksElapsed != 0) {
-                to.addInstance(InstanceBuilder.damage().ability(fromHex).source(from).value(values.hexDOTDamage).flags(InstanceFlags.NO_DISMOUNT, InstanceFlags.DOT));
-            }
-        })
+        to.getCooldownManager().addCooldown(new RegularCooldown<>(
+                "Poisonous Hex",
+                "PHEX",
+                PoisonousHex.class,
+                null,
+                from,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                    to.addInstance(InstanceBuilder.damage().ability(fromHex).source(from).value(values.hexDOTDamage).flags(InstanceFlags.NO_DISMOUNT, InstanceFlags.DOT));
+                },
+                tickDuration * 2,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed % dotTickFrequency == 0 && ticksElapsed != 0) {
+                        to.addInstance(InstanceBuilder.damage().ability(fromHex).source(from).value(values.hexDOTDamage).flags(InstanceFlags.NO_DISMOUNT, InstanceFlags.DOT));
+                    }
+                })
         ) {
 
             @Override
             public PlayerNameData addSuffixFromOther() {
                 boolean flag = new CooldownFilter<>(to, RegularCooldown.class).filterCooldownClass(PoisonousHex.class).stream().count() == fromHex.maxStacks;
-                return new PlayerNameData(Component.text("PHEX", AbstractCooldown.PSEUDO_DEBUFF_COLOR).decoration(TextDecoration.BOLD, flag),
+                return new PlayerNameData(Component.text("PHEX", CooldownTypes.HIGH_LEVEL_DEBUFF_COLOR).decoration(TextDecoration.BOLD, flag),
                         we -> we.isTeammate(from) && we.getSpecClass() == Specializations.CONJURER
                 );
             }
 
             @Override
             public TextColor customActionBarColor() {
-                return AbstractCooldown.PSEUDO_DEBUFF_COLOR;
+                return CooldownTypes.HIGH_LEVEL_DEBUFF_COLOR;
             }
         });
     }

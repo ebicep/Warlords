@@ -2,42 +2,30 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
-import com.ebicep.warlords.player.general.SpecType;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
-import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.apothecary.ImpalingStrikeBranch;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
 
 public class ImpalingStrike extends AbstractStrike<ImpalingStrike, ImpalingStrike.ImpalingStrikeStats> implements Damages<ImpalingStrike.DamageValues> {
 
     private final ImpalingStrikeStats stats = new ImpalingStrikeStats();
     private final DamageValues damageValues = new DamageValues();
-    private int leechDuration = 5;
-    private float leechAllyAmount = 25;
-    private float leechSelfAmount = 15;
+    private int leechTickDuration = 120;
+    private float leechAmount = 8;
 
     public ImpalingStrike() {
         super(AbstractAbilityBuilder.create("impalingStrike").pvp());
     }
-
     public ImpalingStrike(AbstractAbilityBuilder builder) {
         super(builder);
     }
@@ -45,9 +33,8 @@ public class ImpalingStrike extends AbstractStrike<ImpalingStrike, ImpalingStrik
     @Override
     public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
-        this.leechDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("leechDuration"), int.class);
-        this.leechAllyAmount = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("leechAllyAmount"), float.class);
-        this.leechSelfAmount = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("leechSelfAmount"), float.class);
+        this.leechTickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("leechTickDuration"), int.class);
+        this.leechAmount = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("leechAmount"), float.class);
     }
 
     @Override
@@ -60,82 +47,32 @@ public class ImpalingStrike extends AbstractStrike<ImpalingStrike, ImpalingStrik
     @Override
     protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull WarlordsEntity nearPlayer) {
         int multiplier = pveMasterUpgrade && nearPlayer.getCooldownManager().hasCooldownFromName("Leech Debuff") ? 3 : 1;
-        nearPlayer.addInstance(InstanceBuilder.damage()
-                                              .ability(this)
-                                              .source(wp)
-                                              .min(damageValues.strikeDamage.getMinValue() * multiplier)
-                                              .max(damageValues.strikeDamage.getMaxValue() * multiplier)
-                                              .crit(damageValues.strikeDamage)).ifPresent(finalEvent -> {
-            giveLeechCooldown(wp, nearPlayer, leechDuration, leechSelfAmount / 100f, leechAllyAmount / 100f, warlordsDamageHealingFinalEvent -> {
-                    }
-            );
-        });
+        Leech.giveLeechCooldown(Leech.LeechInstance.create(wp, nearPlayer).withImpalingStrike(this));
+        nearPlayer.addInstance(InstanceBuilder
+                .damage()
+                .ability(this)
+                .source(wp)
+                .min(damageValues.strikeDamage.getMinValue() * multiplier)
+                .max(damageValues.strikeDamage.getMaxValue() * multiplier)
+                .crit(damageValues.strikeDamage)
+        );
         if (pveMasterUpgrade || pveMasterUpgrade2) {
-            additionalHit(pveMasterUpgrade ? 2 : 5, wp, nearPlayer, warlordsEntity -> {
-                warlordsEntity.addInstance(InstanceBuilder.damage().ability(this).source(wp).value(damageValues.strikeDamage)).ifPresent(finalEvent -> {
-                    giveLeechCooldown(wp, nearPlayer, leechDuration, leechSelfAmount / 100f, leechAllyAmount / 100f, warlordsDamageHealingFinalEvent -> {
-                                    }
-                            );
-                        });
+            additionalHit(
+                    pveMasterUpgrade ? 2 : 5,
+                    wp,
+                    nearPlayer,
+                    warlordsEntity -> {
+                        Leech.giveLeechCooldown(Leech.LeechInstance.create(wp, warlordsEntity).withImpalingStrike(this));
+                        warlordsEntity.addInstance(InstanceBuilder
+                                .damage()
+                                .ability(this)
+                                .source(wp)
+                                .value(damageValues.strikeDamage)
+                        );
                     }
             );
         }
         return true;
-    }
-
-    public static void giveLeechCooldown(
-            WarlordsEntity wp,
-            WarlordsEntity target,
-            int secondDuration,
-            float selfHealMultiplier,
-            float allyHealMultiplier,
-            Consumer<WarlordsDamageHealingFinalEvent> finalEvent
-    ) {
-        boolean inPve = wp.isInPve();
-        ImpalingStrikeData data = new ImpalingStrikeData();
-        AtomicReference<Float> totalHealingDone = new AtomicReference<>((float) 0);
-        target.getCooldownManager().removeCooldown(ImpalingStrikeData.class, false);
-        target.getCooldownManager().addCooldown(new RegularCooldown<>("Leech Debuff", "LCH", ImpalingStrikeData.class, data, wp, CooldownTypes.ABILITY, cooldownManager -> {
-        }, secondDuration * 20
-        ) {
-
-            @Override
-            public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (inPve && totalHealingDone.get() >= 1000) {
-                    setTicksLeft(0);
-                    return;
-                }
-                float healingMultiplier;
-                if (event.getSource() == wp) {
-                    healingMultiplier = selfHealMultiplier;
-                } else {
-                    healingMultiplier = allyHealMultiplier;
-                }
-                float healValue = currentDamageValue * healingMultiplier;
-                if (inPve) {
-                    healValue = Math.min(500, healValue);
-                }
-                event.getSource().addInstance(InstanceBuilder.healing().cause("Leech").source(wp).value(healValue)).ifPresent(warlordsDamageHealingFinalEvent -> {
-                    finalEvent.accept(warlordsDamageHealingFinalEvent);
-                    totalHealingDone.updateAndGet(v -> v + warlordsDamageHealingFinalEvent.getValue());
-                    if (event.getWarlordsEntity().hasFlag()) {
-                        data.addHealingDoneFromEnemyCarrier(warlordsDamageHealingFinalEvent.getValue());
-                    }
-                });
-            }
-
-            @Override
-            public TextColor customActionBarColor() {
-                return AbstractCooldown.PSEUDO_DEBUFF_COLOR;
-            }
-
-            @Override
-            public PlayerNameData addSuffixFromOther() {
-                return new PlayerNameData(Component.text("LCH", AbstractCooldown.PSEUDO_DEBUFF_COLOR),
-                        we -> we.isEnemy(target) || (we.isTeammate(target) && we.getSpecClass().specType == SpecType.HEALER)
-                );
-            }
-        });
     }
 
     @Override
@@ -155,14 +92,12 @@ public class ImpalingStrike extends AbstractStrike<ImpalingStrike, ImpalingStrik
                                                .text("damage and inflicting them with ")
                                                .text("LEECH", NamedTextColor.DARK_GREEN)
                                                .text(" for ")
-                                               .durationSeconds(leechDuration)
-                                               .text(". Whenever an ally deals damage to an enemy with")
+                                               .durationTicks(leechTickDuration)
+                                               .text(". Whenever you or an ally deals damage to an enemy with")
                                                .text("LEECH", NamedTextColor.DARK_GREEN)
                                                .text(", they heal for ")
-                                               .percent(leechAllyAmount, NamedTextColor.GREEN)
-                                               .text(" of the damage dealt. You heal for ")
-                                               .percent(leechSelfAmount, NamedTextColor.GREEN)
-                                               .text(" of the damage instead.")
+                                               .percent(leechAmount, NamedTextColor.GREEN)
+                                               .text(" of true damage dealt.")
                                                .build();
     }
 
@@ -171,28 +106,20 @@ public class ImpalingStrike extends AbstractStrike<ImpalingStrike, ImpalingStrik
         return new ImpalingStrikeBranch(abilityTree, this);
     }
 
-    public int getLeechDuration() {
-        return leechDuration;
+    public int getLeechTickDuration() {
+        return leechTickDuration;
     }
 
-    public void setLeechDuration(int leechDuration) {
-        this.leechDuration = leechDuration;
+    public void setLeechTickDuration(int leechTickDuration) {
+        this.leechTickDuration = leechTickDuration;
     }
 
-    public float getLeechSelfAmount() {
-        return leechSelfAmount;
+    public float getLeechAmount() {
+        return leechAmount;
     }
 
-    public void setLeechSelfAmount(float leechSelfAmount) {
-        this.leechSelfAmount = leechSelfAmount;
-    }
-
-    public float getLeechAllyAmount() {
-        return leechAllyAmount;
-    }
-
-    public void setLeechAllyAmount(float leechAllyAmount) {
-        this.leechAllyAmount = leechAllyAmount;
+    public void setLeechAmount(float leechAmount) {
+        this.leechAmount = leechAmount;
     }
 
     public static class DamageValues implements Value.ValueHolder {
@@ -214,20 +141,6 @@ public class ImpalingStrike extends AbstractStrike<ImpalingStrike, ImpalingStrik
 
         public Value.RangedValueCritable getStrikeDamage() {
             return strikeDamage;
-        }
-
-    }
-
-    public static class ImpalingStrikeData {
-
-        private float healingDoneFromEnemyCarrier = 0;
-
-        public void addHealingDoneFromEnemyCarrier(float amount) {
-            this.healingDoneFromEnemyCarrier += amount;
-        }
-
-        public float getHealingDoneFromEnemyCarrier() {
-            return healingDoneFromEnemyCarrier;
         }
 
     }

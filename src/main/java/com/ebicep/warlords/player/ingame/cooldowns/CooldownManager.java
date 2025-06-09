@@ -2,10 +2,9 @@ package com.ebicep.warlords.player.ingame.cooldowns;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.Soulbinding;
-import com.ebicep.warlords.abilities.UndyingArmy;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.WoundingCooldown;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
-import com.ebicep.warlords.events.player.ingame.WarlordsAddPotionEffectEvent;
-import com.ebicep.warlords.events.player.ingame.WarlordsAddSpeedModifierEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.state.PlayingState;
 import com.ebicep.warlords.player.general.CustomScoreboard;
@@ -14,85 +13,16 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
-import com.ebicep.warlords.util.java.Priority;
 import com.ebicep.warlords.util.java.TriConsumer;
 import org.bukkit.Bukkit;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
-import org.bukkit.util.Vector;
 
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 public class CooldownManager {
-
-    public static List<AbstractCooldown<?>> getPrioritizedCooldowns(List<AbstractCooldown<?>> cooldowns, String method, Class<?>... parameterTypes) {
-        return cooldowns
-                .stream()
-                .sorted((o1, o2) -> {
-                    try {
-                        Priority o1Priority = o1.getClass()
-                                                .getMethod(method, parameterTypes)
-                                                .getAnnotation(Priority.class);
-                        Priority o2Priority = o2.getClass()
-                                                .getMethod(method, parameterTypes)
-                                                .getAnnotation(Priority.class);
-                        return Integer.compare(
-                                o1Priority == null ? 0 : o1Priority.value(),
-                                o2Priority == null ? 0 : o2Priority.value()
-                        );
-                    } catch (Exception e) {
-                        ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
-                        return 0;
-                    }
-                })
-                .collect(Collectors.toList());
-    }
-
-    public static Listener getDefaultDebuffImmunityListener(WarlordsEntity immune) {
-        return new Listener() {
-
-            @EventHandler
-            public void onAddCooldown(WarlordsAddCooldownEvent event) {
-                if (event.getWarlordsEntity() != immune) {
-                    return;
-                }
-                if (event.getAbstractCooldown().getCooldownType() != CooldownTypes.DEBUFF) {
-                    return;
-                }
-                event.setCancelled(true);
-            }
-
-            @EventHandler
-            public void onAddSpeed(WarlordsAddSpeedModifierEvent event) {
-                if (event.getWarlordsEntity() != immune) {
-                    return;
-                }
-                if (event.getModifier().getModifier() < 0) {
-                    event.setCancelled(true);
-                }
-            }
-
-            @EventHandler
-            public void onAddPotionEffect(WarlordsAddPotionEffectEvent event) {
-                if (event.getWarlordsEntity() != immune) {
-                    return;
-                }
-                PotionEffect potionEffect = event.getPotionEffect();
-                if (PotionEffectType.BLINDNESS.equals(potionEffect.getType()) ||
-                        PotionEffectType.NAUSEA.equals(potionEffect.getType())
-                ) {
-                    event.setCancelled(true);
-                }
-            }
-
-        };
-    }
 
     private final WarlordsEntity warlordsEntity;
     private final List<AbstractCooldown<?>> abstractCooldowns = new ArrayList<>();
@@ -106,7 +36,34 @@ public class CooldownManager {
     public int removeDebuffCooldowns() {
         List<AbstractCooldown<?>> toRemove = abstractCooldowns
                 .stream()
-                .filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.DEBUFF)
+                .filter(cooldown -> {
+                    boolean isLowLevelDebuff = cooldown.getCooldownType() == CooldownTypes.LOW_LEVEL_DEBUFF;
+                    boolean clearedHighLevelDebuff = false;
+                    if (cooldown.getCooldownType() == CooldownTypes.HIGH_LEVEL_DEBUFF && cooldown instanceof RegularCooldown<?> regularCooldown) {
+                        regularCooldown.subtractTime(40);
+                        clearedHighLevelDebuff = !regularCooldown.hasTicksLeft();
+                    }
+                    return isLowLevelDebuff || clearedHighLevelDebuff;
+                })
+                .toList();
+        toRemove.forEach(cooldown -> cooldown.getOnRemoveForce().accept(this));
+        abstractCooldowns.removeAll(toRemove);
+        toRemove.forEach(this::updatePlayerNames);
+        return toRemove.size();
+    }
+
+    public int removeDebuffCooldownsVind() {
+        List<AbstractCooldown<?>> toRemove = abstractCooldowns
+                .stream()
+                .filter(cooldown -> {
+                    boolean isLowLevelDebuff = cooldown.getCooldownType() == CooldownTypes.LOW_LEVEL_DEBUFF && !(cooldown.cooldownObject instanceof WoundingCooldown.WoundingData);
+                    boolean clearedHighLevelDebuff = false;
+                    if ((cooldown.getCooldownType() == CooldownTypes.HIGH_LEVEL_DEBUFF || cooldown.cooldownObject instanceof WoundingCooldown.WoundingData) && cooldown instanceof RegularCooldown<?> regularCooldown) {
+                        regularCooldown.subtractTime(cooldown.cooldownObject instanceof WoundingCooldown.WoundingData ? 30 : 40);
+                        clearedHighLevelDebuff = !regularCooldown.hasTicksLeft();
+                    }
+                    return isLowLevelDebuff || clearedHighLevelDebuff;
+                })
                 .toList();
         toRemove.forEach(cooldown -> cooldown.getOnRemoveForce().accept(this));
         abstractCooldowns.removeAll(toRemove);
@@ -238,11 +195,11 @@ public class CooldownManager {
     public List<AbstractCooldown<?>> getDebuffCooldowns(boolean distinct) {
         if (distinct) {
             return getCooldownsSingular().stream()
-                                         .filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.DEBUFF)
+                                         .filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.LOW_LEVEL_DEBUFF)
                                          .toList();
         } else {
             return abstractCooldowns.stream()
-                                    .filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.DEBUFF)
+                                    .filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.LOW_LEVEL_DEBUFF)
                                     .toList();
         }
     }
@@ -290,7 +247,7 @@ public class CooldownManager {
 
     public List<AbstractCooldown<?>> getNonDebuffCooldowns() {
         return abstractCooldowns.stream()
-                                .filter(cooldown -> cooldown.getCooldownType() != CooldownTypes.DEBUFF)
+                                .filter(cooldown -> cooldown.getCooldownType() != CooldownTypes.LOW_LEVEL_DEBUFF)
                                 .toList();
     }
 
@@ -538,7 +495,7 @@ public class CooldownManager {
     }
 
     public void removePreviousWounding() {
-        removeCooldownByName("Wounding Strike", true);
+        removeCooldown(WoundingCooldown.WoundingData.class, true);
     }
 
     public void removeCooldown(Class<?> cooldownClass, boolean noForce) {
@@ -574,31 +531,13 @@ public class CooldownManager {
                 soulbindings.add(data);
             }
         }
-        new CooldownFilter<>(this, RegularCooldown.class)
-                .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.SoulbindingData.class)
-                .forEachOrdered(data -> {
-
-                });
         int counter = soulbindings.size();
-        incrementCooldown(
-                new RegularCooldown<Void>("KB Resistance",
-                        "KB",
-                        null,
-                        null,
-                        this.warlordsEntity,
-                        CooldownTypes.BUFF,
-                        cooldownManager -> {
-                        },
-                        counter * 20
-                ) {
-                    @Override
-                    public void multiplyKB(Vector currentVector) {
-                        currentVector.multiply(0.75);
-                    }
-                },
-                (int) (counter * 1.2 * 20),
-                (int) (3.6 * 20)
-        );
+        for (AbstractAbility ability : this.warlordsEntity.getAbilities()) {
+            if (ability instanceof Soulbinding soulbinding) {
+                this.warlordsEntity.addKnockbackModifier(this.warlordsEntity, "Spirit Link", -soulbinding.getKbRes(), (int) (counter * 1.2 * 20));
+                break;
+            }
+        }
         return soulbindings;
     }
 
@@ -618,35 +557,6 @@ public class CooldownManager {
         } else {
             addCooldown(regularCooldown);
         }
-    }
-
-    public boolean checkUndyingArmy(boolean popped) {
-        return checkUndyingArmy(popped, null);
-    }
-
-    public boolean checkUndyingArmy(boolean popped, UndyingArmy exclude) {
-        for (UndyingArmy.UndyingArmyData data : new CooldownFilter<>(this, RegularCooldown.class)
-                .filterCooldownClassAndMapToObjectsOfClass(UndyingArmy.UndyingArmyData.class)
-                .toList()
-        ) {
-            if (Objects.equals(data.getUndyingArmy(), exclude)) {
-                continue;
-            }
-            if (popped) {
-                //returns true if any undying is popped
-                if (data.isArmyDead(warlordsEntity)) {
-                    return true;
-                }
-            } else {
-                //return true if theres any unpopped armies
-                if (!data.isArmyDead(warlordsEntity)) {
-                    return true;
-                }
-            }
-        }
-        //if popped returns false - all undying armies are not popped (there is no popped armies)
-        //if !popped return false - all undying armies are popped (there is no unpopped armies)
-        return false;
     }
 
 }

@@ -1,7 +1,11 @@
 package com.ebicep.warlords.player.ingame.instances.type;
 
+import com.ebicep.warlords.abilities.internal.Shield;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 public interface CustomInstanceFlags {
@@ -16,6 +20,18 @@ public interface CustomInstanceFlags {
             TD_MAGIC_RES_REDUCTION,
             TD_DEFENDER_ARMOR,
         }
+    }
+
+    record PlayersEffectedInstanceFlag(List<WarlordsEntity> players) implements CustomInstanceFlags {
+
+    }
+
+    record FinalEventInstanceFlag(WarlordsDamageHealingFinalEvent finalEvent) implements CustomInstanceFlags {
+
+    }
+
+    record InstanceShieldsInstanceFlag(List<Shield> shields) implements CustomInstanceFlags {
+
     }
 
 }

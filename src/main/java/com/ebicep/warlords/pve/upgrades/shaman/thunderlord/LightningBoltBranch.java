@@ -2,12 +2,12 @@ package com.ebicep.warlords.pve.upgrades.shaman.thunderlord;
 
 import com.ebicep.warlords.abilities.LightningBolt;
 import com.ebicep.warlords.pve.upgrades.*;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import javax.annotation.Nonnull;
 
 public class LightningBoltBranch extends AbstractUpgradeBranch<LightningBolt> {
 
-    double projectileSpeed = ability.getProjectileSpeed();
 
     public LightningBoltBranch(AbilityTree abilityTree, LightningBolt ability) {
         super(abilityTree, ability);
@@ -23,11 +23,11 @@ public class LightningBoltBranch extends AbstractUpgradeBranch<LightningBolt> {
                     }
 
                     @Override
-                    public void run(float value) {
-                        float v = 1 + value / 100;
-                        ability.setProjectileSpeed(projectileSpeed * v);
+                    public void modifyFloatModifiable(FloatModifiable.FloatModifier modifier, float value) {
+                        modifier.setModifier(value / 100);
                     }
-                }, 20f)
+                            }, ability.getProjectileSpeed().addMultiplicativeModifierAdd("Upgrade Branch", 0), 20f
+                )
                 .addTo(treeA);
 
         UpgradeTreeBuilder

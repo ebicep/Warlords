@@ -22,7 +22,6 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -52,73 +51,76 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
     }
 
     @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Surround yourself with a layer of cold air, reducing damage taken by ")
-                                               .percent(damageReductionPercent, AbilityDescriptionBuilder.COLOR_BROWN)
-                                               .text(", while active, taking melee damage reduces the attacker's movement speed by ")
-                                               .percent(slownessOnMeleeHit, NamedTextColor.WHITE)
-                                               .text(" for ")
-                                               .durationSeconds(slowDuration)
-                                               .text(" " + (inPve ? " and take aggro of nearby mobs" : "") + ". Lasts ")
-                                               .durationTicks(tickDuration)
-                                               .text(".")
-                                               .build();
-    }
-
-    @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "mage.icebarrier.activation", 2, 1);
-        wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "ICE", IceBarrier.class, null, wp, CooldownTypes.ABILITY, cooldownManager -> {
-        }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-            if (ticksElapsed % 5 != 0) {
-                return;
-            }
-            if (pveMasterUpgrade2) {
-                LocationBuilder locationBuilder = new LocationBuilder(wp.getLocation()).addY(-1).pitch(0).forward(3.5);
-                List<Location> verticalRectangle = LocationUtils.getVerticalRectangle(locationBuilder, 4, 5);
-                for (Location location : verticalRectangle) {
-                    EffectUtils.displayParticle(Particle.BLOCK, location, 10, .1, .1, .1, 0, Material.BLUE_ICE.createBlockData());
-                    PlayerFilter.entitiesAround(location, 1, 1, 1)
-                                .aliveEnemiesOf(wp)
-                                .filter(enemy -> !enemy.getCooldownManager().hasCooldownFromName("Ice Wall"))
-                                .forEach(enemy -> {
-                                    enemy.addSpeedModifier(wp, "Ice Wall", -50, ticksLeft);
-                                    enemy.getCooldownManager()
-                                         .addCooldown(new RegularCooldown<>("Ice Wall", "WALL", IceBarrier.class, new IceBarrier(), wp, CooldownTypes.ABILITY, cooldownManager -> {
-                                         }, ticksLeft
-                                         ) {
+        IceBarrierData data = new IceBarrierData(this);
+        RegularCooldown<IceBarrierData> iceBarrierCooldown = new RegularCooldown<>(
+                name,
+                "ICE",
+                IceBarrierData.class,
+                data,
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                },
+                tickDuration,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed % 5 != 0) {
+                        return;
+                    }
+                    if (pveMasterUpgrade2) {
+                        LocationBuilder locationBuilder = new LocationBuilder(wp.getLocation()).addY(-1).pitch(0).forward(3.5);
+                        List<Location> verticalRectangle = LocationUtils.getVerticalRectangle(locationBuilder, 4, 5);
+                        for (Location location : verticalRectangle) {
+                            EffectUtils.displayParticle(Particle.BLOCK, location, 10, .1, .1, .1, 0, Material.BLUE_ICE.createBlockData());
+                            PlayerFilter.entitiesAround(location, 1, 1, 1)
+                                        .aliveEnemiesOf(wp)
+                                        .filter(enemy -> !enemy.getCooldownManager().hasCooldownFromName("Ice Wall"))
+                                        .forEach(enemy -> {
+                                            enemy.addSpeedModifier(wp, "Ice Wall", -50, ticksLeft);
+                                            enemy.getCooldownManager()
+                                                 .addCooldown(new RegularCooldown<>("Ice Wall",
+                                                         "WALL",
+                                                         IceBarrier.class,
+                                                         new IceBarrier(),
+                                                         wp,
+                                                         CooldownTypes.ABILITY,
+                                                         cooldownManager -> {
+                                                         },
+                                                         ticksLeft
+                                                 ) {
 
-                                             @Override
-                                             public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                                 return currentDamageValue * 1.35f;
-                                             }
-                                         });
-                                });
-                }
-            } else {
-                Location particleLoc = wp.getLocation().add(0, 1.5, 0);
-                particleLoc.getWorld().spawnParticle(Particle.CLOUD, particleLoc, 1, 0.2, 0.2, 0.2, 0.001, null, true);
-                particleLoc.getWorld().spawnParticle(Particle.FIREWORK, particleLoc, 1, 0.3, 0.2, 0.3, 0.0001, null, true);
-                if (pveMasterUpgrade) {
-                    Utils.playGlobalSound(particleLoc, Sound.BLOCK_GLASS_BREAK, 1, 1.35f);
-                    EffectUtils.playHelixAnimation(particleLoc.add(0, -1.25, 0), 6, Particle.FIREWORK, 1, 8);
-                    for (WarlordsEntity we : PlayerFilter.entitiesAround(wp, 6, 6, 6).aliveEnemiesOf(wp).closestFirst(wp)) {
-                        we.setDamageResistance(we.getSpec().getDamageResistance() - 1);
-                        if (we instanceof WarlordsNPC npc) {
-                            npc.setDamageResistance(npc.getSpec().getDamageResistance() - 1);
+                                                     @Override
+                                                     public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                                                         return currentDamageValue * 1.35f;
+                                                     }
+                                                 });
+                                        });
                         }
-                        we.addSpeedModifier(wp, "Ice Barrier Slowness", -75, 20);
+                    } else {
+                        Location particleLoc = wp.getLocation().add(0, 1.5, 0);
+                        particleLoc.getWorld().spawnParticle(Particle.CLOUD, particleLoc, 1, 0.2, 0.2, 0.2, 0.001, null, true);
+                        particleLoc.getWorld().spawnParticle(Particle.FIREWORK, particleLoc, 1, 0.3, 0.2, 0.3, 0.0001, null, true);
+                        if (pveMasterUpgrade) {
+                            Utils.playGlobalSound(particleLoc, Sound.BLOCK_GLASS_BREAK, 1, 1.35f);
+                            EffectUtils.playHelixAnimation(particleLoc.add(0, -1.25, 0), 6, Particle.FIREWORK, 1, 8);
+                            for (WarlordsEntity we : PlayerFilter.entitiesAround(wp, 6, 6, 6).aliveEnemiesOf(wp).closestFirst(wp)) {
+                                we.setDamageResistance(we.getSpec().getDamageResistance() - 1);
+                                if (we instanceof WarlordsNPC npc) {
+                                    npc.setDamageResistance(npc.getSpec().getDamageResistance() - 1);
+                                }
+                                we.addSpeedModifier(wp, "Ice Barrier Slowness", -75, 20);
+                            }
+                        }
                     }
-                }
-            }
-            if (wp.isInPve()) {
-                for (WarlordsEntity we : PlayerFilter.entitiesAround(wp, 15, 15, 15).aliveEnemiesOf(wp).closestFirst(wp)) {
-                    if (we instanceof WarlordsNPC warlordsNPC) {
-                        warlordsNPC.getMob().setTarget(wp);
+                    if (wp.isInPve()) {
+                        for (WarlordsEntity we : PlayerFilter.entitiesAround(wp, 15, 15, 15).aliveEnemiesOf(wp).closestFirst(wp)) {
+                            if (we instanceof WarlordsNPC warlordsNPC) {
+                                warlordsNPC.getMob().setTarget(wp);
+                            }
+                        }
                     }
-                }
-            }
-        })
+                })
         ) {
 
             @Override
@@ -137,14 +139,26 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
                 return currentDamageValue * getDamageReduction();
             }
 
-            @Override
-            public void multiplyKB(Vector currentVector) {
-                if (pveMasterUpgrade) {
-                    currentVector.multiply(0.7);
-                }
-            }
-        });
+        };
+        wp.getCooldownManager().addCooldown(iceBarrierCooldown);
+        if (pveMasterUpgrade) {
+            wp.addKnockbackModifier(wp, name, -30, iceBarrierCooldown);
+        }
         return true;
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Surround yourself with a layer of cold air, reducing damage taken by ")
+                                               .percent(damageReductionPercent, AbilityDescriptionBuilder.COLOR_BROWN)
+                                               .text(", while active, taking melee damage reduces the attacker's movement speed by ")
+                                               .percent(slownessOnMeleeHit, NamedTextColor.WHITE)
+                                               .text(" for ")
+                                               .durationSeconds(slowDuration)
+                                               .text(" " + (inPve ? " and take aggro of nearby mobs" : "") + ". Lasts ")
+                                               .durationTicks(tickDuration)
+                                               .text(".")
+                                               .build();
     }
 
     @Override
@@ -185,6 +199,20 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
 
     public void setSlownessOnMeleeHit(int slownessOnMeleeHit) {
         this.slownessOnMeleeHit = slownessOnMeleeHit;
+    }
+
+    public static class IceBarrierData {
+
+        private IceBarrier iceBarrier;
+
+        public IceBarrierData(IceBarrier iceBarrier) {
+            this.iceBarrier = iceBarrier;
+        }
+
+        public IceBarrier getIceBarrier() {
+            return iceBarrier;
+        }
+
     }
 
     public static class IceBarrierStats extends AbstractAbilityStats<IceBarrier, IceBarrierStats> {

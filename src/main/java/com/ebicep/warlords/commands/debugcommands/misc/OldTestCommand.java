@@ -115,21 +115,62 @@ public class OldTestCommand implements CommandExecutor {
         }
         int level = 20;
         if (commandSender instanceof Player player) {
-
+            player.setLevel(500);
+//            WarlordsEntity warlordsEntity = Warlords.getPlayer(player);
+//            for (int i = 0; i < 5; i++) {
+//                int finalI = i;
+//                warlordsEntity.getCooldownManager().addCooldown(new PermanentCooldown<>(
+//                        "TEST " + i,
+//                        "" + i,
+//                        OldTestCommand.class,
+//                        null,
+//                        warlordsEntity,
+//                        CooldownTypes.INTERNAL,
+//                        cooldownManager -> {
+//                        },
+//                        false
+//                ) {
+//                    @Override
+//                    protected Listener getListener() {
+//                        return new Listener() {
+//                            @EventHandler(priority = EventPriority.LOWEST)
+//                            public void onDeath(WarlordsDeathEvent event) {
+//                                System.out.println("DEATH EVENT - " + finalI);
+//                            }
+//
+//                            @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+//                            public void onDeath2(WarlordsDeathEvent event) {
+//                                System.out.println("DEATH EVENT 2 - " + finalI);
+//                            }
+//                        };
+//                    }
+//                });
+//            }
+//            SpecBoostMenu.open(player);
 //            Value.RangedValueCritable strikeDamage = ConfigManager.ABILITIES_CONFIG.getValue("strikeDamage", Value.RangedValueCritable.class, this);
 //            System.out.println(strikeDamage);
 //            Document document = new Document();
-//            for (Ability<?> value : Ability.ABILITY_MAP.values()) {
-//                AbstractAbility ability = value.create.get();
-//                System.out.println(ability.getClass().getSimpleName());
-//                System.out.println(ability.getCooldownValue());
-//                System.out.println(ability.getEnergyCostValue());
-//                document.append(ability.getClass().getSimpleName(), new Document()
-//                        .append("cooldown", ability.getCooldownValue())
-//                        .append("energyCost", ability.getEnergyCostValue())
+//            for (Specializations value : Specializations.VALUES) {
+//                AbstractPlayerClass playerClass = value.getCreate().get();
+//                document.append(playerClass.getName().toLowerCase(), new Document()
+//                        .append("name", playerClass.getName())
+//                        .append("maxHealth", playerClass.getMaxHealth())
+//                        .append("maxEnergy", playerClass.getMaxEnergy())
+//                        .append("energyPerSec", playerClass.getEnergyPerSec())
+//                        .append("energyPerHit", playerClass.getEnergyPerHit())
+//                        .append("damageResistance", playerClass.getDamageResistance())
+//                        .append("speed", playerClass.getSpeed())
+//                        .append("abilities", playerClass
+//                                .getAbilities()
+//                                .stream()
+//                                .map(abstractAbility -> Ability.getAbility(abstractAbility.getClass()))
+//                                .map(Ability::getDatabaseName)
+//                                .toList()
+//                        )
 //                );
-////                break;
 //            }
+//            System.out.println(document.toJson());
+
 
 //            for (Mob value : Mob.VALUES) {
 ////                if (value != Mob.ARACHNO_VENERATUS) {
@@ -164,7 +205,6 @@ public class OldTestCommand implements CommandExecutor {
 //                }
 //            }
 
-//            System.out.println(document.toJson());
 //            TextComponent component = ComponentBuilder.create()
 //                                                      .text("HELLO")
 //                                                      .text(ChatColor.GOLD + "WORLD")

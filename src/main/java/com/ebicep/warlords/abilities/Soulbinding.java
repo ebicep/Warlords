@@ -37,6 +37,8 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
     private int bindDuration = 60;
     private int radius = 8;
     private int maxAlliesHit = 2;
+    private int maxStacks = 1;
+    private int kbRes = 10;
 
     public Soulbinding() {
         super(AbstractAbilityBuilder.create("soulbindingWeapon").pvp());
@@ -51,6 +53,13 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
         this.bindDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("bindDuration"), int.class);
         this.radius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), int.class);
         this.maxAlliesHit = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxAlliesHit"), int.class);
+        this.maxStacks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxStacks"), int.class);
+    }
+
+    @Override
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
+        activeSoulbinding(wp);
+        return true;
     }
 
     @Override
@@ -77,8 +86,8 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
                                                .durationTicks(tickDuration)
                                                .text(".")
                                                .emptyLine()
-                                               .text("Successful soulbind procs will grant you ")
-                                               .percent(25, AbilityDescriptionBuilder.COLOR_BROWN)
+                                               .text("Successful soulbind procs with Spirit Link will grant you ")
+                                               .percent(kbRes, AbilityDescriptionBuilder.COLOR_BROWN)
                                                .text(" knockback resistance for ")
                                                .durationSeconds(1.2f)
                                                .text(" (Max ")
@@ -88,36 +97,48 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
     }
 
     @Override
-    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
-        activeSoulbinding(wp);
-        return true;
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new SoulbindingWeaponBranch(abilityTree, this);
     }
 
     public SoulbindingData activeSoulbinding(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "paladin.consecrate.activation", 2, 2);
-        if (wp.isInPve()) {
-            wp.getCooldownManager().limitCooldowns(PersistentCooldown.class, Soulbinding.SoulbindingData.class, 2);
-        }
+        wp.getCooldownManager().limitCooldowns(PersistentCooldown.class, Soulbinding.SoulbindingData.class, wp.isInPve() ? 2 : maxStacks);
         SoulbindingData data = new SoulbindingData(this);
-        wp.getCooldownManager().addCooldown(new PersistentCooldown<>(name, "SOUL", SoulbindingData.class, data, wp, CooldownTypes.ABILITY, cooldownManager -> {
-        }, cooldownManager -> {
-            if (new CooldownFilter<>(cooldownManager, PersistentCooldown.class).filterCooldownClass(Soulbinding.SoulbindingData.class).stream().count() == 1) {
-                if (wp.getEntity() instanceof Player) {
-                    ItemStack item = ((Player) wp.getEntity()).getInventory().getItem(0);
-                    if (item != null) {
-                        item.removeEnchantment(Enchantment.RESPIRATION);
+        wp.getCooldownManager().addCooldown(new PersistentCooldown<>(
+                name,
+                "SOUL",
+                SoulbindingData.class,
+                data,
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                },
+                cooldownManager -> {
+                    if (new CooldownFilter<>(cooldownManager, PersistentCooldown.class).filterCooldownClass(Soulbinding.SoulbindingData.class).stream().count() == 1) {
+                        if (wp.getEntity() instanceof Player) {
+                            ItemStack item = ((Player) wp.getEntity()).getInventory().getItem(0);
+                            if (item != null) {
+                                item.removeEnchantment(Enchantment.RESPIRATION);
+                            }
+                        }
                     }
-                }
-            }
-        }, tickDuration, soulbinding -> soulbinding.getSoulBindedPlayers().isEmpty(), Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-            if (ticksElapsed % 4 == 0) {
-                Location location = wp.getLocation();
-                location.add(0, 1.2, 0);
-                location.getWorld().spawnParticle(Particle.WITCH, location, 2, 0.2, 0, 0.2, 0.1, null, true);
-            }
-            data.getSoulBindedPlayers().forEach(SoulBoundPlayer::decrementTimeLeft);
-            data.getSoulBindedPlayers().removeIf(soulBoundPlayer -> soulBoundPlayer.getTimeLeft() == 0 || (soulBoundPlayer.isHitWithSoul() && soulBoundPlayer.isHitWithLink()));
-        })
+                },
+                tickDuration,
+                soulbinding -> soulbinding.getSoulBindedPlayers().isEmpty(),
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed == 1) {
+                        this.energyCost.addOverridingModifier("Soulbinding Reactivation", 0, tickDuration);
+                    }
+                    if (ticksElapsed % 4 == 0) {
+                        Location location = wp.getLocation();
+                        location.add(0, 1.2, 0);
+                        location.getWorld().spawnParticle(Particle.WITCH, location, 2, 0.2, 0, 0.2, 0.1, null, true);
+                    }
+                    data.getSoulBindedPlayers().forEach(SoulBoundPlayer::decrementTimeLeft);
+                    data.getSoulBindedPlayers()
+                        .removeIf(soulBoundPlayer -> soulBoundPlayer.getTimeLeft() == 0 || (soulBoundPlayer.isHitWithSoul() && soulBoundPlayer.isHitWithLink()));
+                })
         ) {
 
             @Override
@@ -125,6 +146,9 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
                 WarlordsEntity wpAttacker = event.getSource();
                 WarlordsEntity wpVictim = event.getWarlordsEntity();
                 if (!event.getCause().isEmpty() || wpAttacker == wpVictim) {
+                    return;
+                }
+                if (!hasTicksLeft()) {
                     return;
                 }
                 data.bindPlayer(wpAttacker, wpVictim);
@@ -149,11 +173,6 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
     }
 
     @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new SoulbindingWeaponBranch(abilityTree, this);
-    }
-
-    @Override
     public int getTickDuration() {
         return tickDuration;
     }
@@ -171,6 +190,10 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
     @Override
     public SoulbindingStats getAbilityStats() {
         return stats;
+    }
+
+    public int getKbRes() {
+        return kbRes;
     }
 
     public void addPlayersBinded() {

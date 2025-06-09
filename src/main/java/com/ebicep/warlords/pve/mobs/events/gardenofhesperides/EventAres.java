@@ -1,12 +1,10 @@
 package com.ebicep.warlords.pve.mobs.events.gardenofhesperides;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
+import com.ebicep.warlords.abilities.internal.WoundingCooldown;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
-import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
@@ -94,32 +92,13 @@ public class EventAres extends AbstractMob implements BossMob, LesserGod {
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
         event.getFlags().add(InstanceFlags.PIERCE);
-        receiver.getCooldownManager().removeCooldownByName("Ares Wounding");
-        receiver.getCooldownManager().addCooldown(new RegularCooldown<>(
+        WoundingCooldown.addWoundingCooldown(
+                receiver,
                 "Ares Wounding",
-                "WND",
-                EventAres.class,
-                null,
                 attacker,
-                CooldownTypes.DEBUFF,
-                cooldownManager -> {
-                },
-                cooldownManager -> {
-                    if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterNameActionBar("WND").stream().count() == 1) {
-                        receiver.sendMessage(
-                                Component.text("You are no longer ", NamedTextColor.GRAY)
-                                         .append(Component.text("wounded", NamedTextColor.RED))
-                                         .append(Component.text(".", NamedTextColor.GRAY))
-                        );
-                    }
-                },
+                50,
                 60
-        ) {
-            @Override
-            public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-                return currentHealValue * .5f;
-            }
-        });
+        );
     }
 
     @Override

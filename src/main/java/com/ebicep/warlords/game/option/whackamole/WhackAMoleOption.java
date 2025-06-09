@@ -87,7 +87,7 @@ public class WhackAMoleOption implements PveOption, Listener {
         }.runTaskTimer(0, 0);
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onMoleDeath(WarlordsDeathEvent event) {
         WarlordsEntity dead = event.getWarlordsEntity();
         if (!(dead instanceof WarlordsNPC warlordsNPC)) {

@@ -163,7 +163,7 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerDeath(WarlordsDeathEvent event) {
         CooldownData dead = playerSettings.get(event.getWarlordsEntity());
         if (dead == null) {
@@ -236,7 +236,7 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
                     cooldownEntity.addTo(warlordsEntity, entityDataByID);
                     cooldownEntities.set(cooldownIndex, cooldownEntity);
                 }
-                boolean onCooldown = ab.getCurrentCooldown() > 0;
+                boolean onCooldown = !ab.anyCharges();
                 ItemDisplay itemDisplay = cooldownEntity.itemDisplay;
                 if (itemDisplay.getItemStack() == null || itemDisplay.getItemStack().getType() != ab.getAbilityIcon().getType()) {
                     itemDisplay.setItemStack(onCooldown ? GRAY_DYE : ab.getAbilityIcon());
@@ -315,6 +315,14 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
             Location location = warlordsEntity.getLocation();
             int halfSize = cooldownEntities.size() / 2;
             double y = warlordsEntity.getLocation().getY() + 3;
+            Entity vehicle = warlordsEntity.getEntity().getVehicle();
+            if (vehicle != null) {
+                if (vehicle instanceof Horse) {
+                    y += vehicle.getHeight() / 2;
+                } else {
+                    y += vehicle.getHeight();
+                }
+            }
             double x = -((halfSize * .375) + ((halfSize - 1) * SPACE_BETWEEN_COOLDOWN)) + .5;
             for (CooldownEntities cooldownEntity : cooldownEntities) {
                 cooldownEntity.translateX((float) x);

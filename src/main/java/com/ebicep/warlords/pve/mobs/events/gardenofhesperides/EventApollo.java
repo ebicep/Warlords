@@ -1,8 +1,8 @@
 package com.ebicep.warlords.pve.mobs.events.gardenofhesperides;
 
-import com.ebicep.warlords.abilities.ImpalingStrike;
 import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.Damages;
+import com.ebicep.warlords.abilities.internal.Leech;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.option.pve.PveOption;
@@ -69,6 +69,16 @@ public class EventApollo extends AbstractMob implements BossMob, LesserGod {
     }
 
     @Override
+    public Component getDescription() {
+        return Component.text("God of Everything..?", TextColor.color(255, 188, 54));
+    }
+
+    @Override
+    public TextColor getColor() {
+        return NamedTextColor.GOLD;
+    }
+
+    @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
         new GameRunnable(option.getGame()) {
@@ -86,24 +96,23 @@ public class EventApollo extends AbstractMob implements BossMob, LesserGod {
 
     private static class PoisonArrow extends AbstractPveAbility implements Damages<PoisonArrow.DamageValues> {
 
+
+        private final DamageValues damageValues = new DamageValues();
+
         public PoisonArrow() {
             super(AbstractAbilityBuilder.create("apolloPoisonArrow").pve().startFullCooldown());
         }
 
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
-
             PlayerFilter.playingGame(wp.getGame())
                         .aliveEnemiesOf(wp)
                         .first(warlordsEntity -> {
                             EffectUtils.playParticleLinkAnimation(warlordsEntity.getLocation(), wp.getLocation(), Particle.HAPPY_VILLAGER);
-                            ImpalingStrike.giveLeechCooldown(
-                                    wp,
-                                    warlordsEntity,
-                                    3,
-                                    .20f,
-                                    .35f,
-                                    event -> {}
+                            Leech.giveLeechCooldown(Leech.LeechInstance
+                                    .create(wp, warlordsEntity)
+                                    .withLeechTickDuration(60)
+                                    .withLeechAmount(20)
                             );
                             warlordsEntity.addInstance(InstanceBuilder
                                     .damage()
@@ -114,8 +123,6 @@ public class EventApollo extends AbstractMob implements BossMob, LesserGod {
                         });
             return true;
         }
-
-        private final DamageValues damageValues = new DamageValues();
 
         @Override
         public DamageValues getDamageValues() {
@@ -133,16 +140,7 @@ public class EventApollo extends AbstractMob implements BossMob, LesserGod {
             }
 
         }
-    }
 
-    @Override
-    public Component getDescription() {
-        return Component.text("God of Everything..?", TextColor.color(255, 188, 54));
-    }
-
-    @Override
-    public TextColor getColor() {
-        return NamedTextColor.GOLD;
     }
 
 }

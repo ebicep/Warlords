@@ -5,12 +5,14 @@ import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.CustomInstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.berserker.BloodlustBranch;
@@ -19,6 +21,8 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Color;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
@@ -72,27 +76,88 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "warrior.bloodlust.activation", 2, 1);
         BloodLustData data = new BloodLustData();
-        wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "LUST", BloodLustData.class, data, wp, CooldownTypes.ABILITY, cooldownManager -> {
-        }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-            if (ticksElapsed % 3 == 0) {
-                EffectUtils.displayParticle(Particle.DUST,
-                        wp.getLocation().add((Math.random() - 0.5) * 1, 1.2, (Math.random() - 0.5) * 1),
-                        1,
-                        0,
-                        0,
-                        0,
-                        0,
-                        new Particle.DustOptions(Color.fromRGB(255, 0, 0), 1)
-                );
-            }
-        })
+        wp.getCooldownManager().removeCooldown(BloodLustData.class, false);
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                name,
+                "LUST",
+                BloodLustData.class,
+                data,
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                },
+                tickDuration,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed % 3 == 0) {
+                        EffectUtils.displayParticle(Particle.DUST,
+                                wp.getLocation().add((Math.random() - 0.5) * 1, 1.2, (Math.random() - 0.5) * 1),
+                                1,
+                                0,
+                                0,
+                                0,
+                                0,
+                                new Particle.DustOptions(Color.fromRGB(255, 0, 0), 1)
+                        );
+                    }
+                })
         ) {
 
             private final Set<UUID> abilitiesHit = new HashSet<>();
 
             @Override
-            public boolean distinct() {
-                return true;
+            protected Listener getListener() {
+                return new Listener() {
+                    @EventHandler
+                    public void onDamageHealFinalEvent(WarlordsDamageHealingFinalEvent event) {
+                        if (event.getSource() != wp) {
+                            return;
+                        }
+                        if (!event.isDamageInstance()) {
+                            return;
+                        }
+                        WarlordsDamageHealingEvent damageHealingEvent = event.getWarlordsDamageHealingEvent();
+                        float value = event.getValue();
+                        if (event.getFinalEventFlag() != WarlordsDamageHealingFinalEvent.FinalEventFlag.REGULAR) {
+                            value = 0;
+                        }
+                        EnumSet<InstanceFlags> flags = damageHealingEvent.getFlags();
+                        if (pveMasterUpgrade2 && event.getCause().equals("Wounding Strike") && !flags.contains(InstanceFlags.RECURSIVE)) {
+                            event.getWarlordsEntity().addInstance(InstanceBuilder
+                                    .damage()
+                                    .cause(event.getCause())
+                                    .source(wp)
+                                    .value(value * 0.2f)
+                                    .showAsCrit(event.isCrit())
+                                    .flags(InstanceFlags.RECURSIVE, InstanceFlags.NO_LUST_HEALING)
+                                    .customFlags(new CustomInstanceFlags.FinalEventInstanceFlag(event))
+                            );
+                        }
+                        if (flags.contains(InstanceFlags.NO_LUST_HEALING)) {
+                            return;
+                        }
+                        WarlordsEntity attacker = event.getSource();
+                        float healAmount = value * convertToPercent(damageConvertPercent);
+                        UUID uuid = damageHealingEvent.getUUID();
+                        if (attacker.isInPve() && uuid != null) {
+                            if (abilitiesHit.contains(uuid)) {
+                                healAmount *= convertToPercent(healReductionPercent);
+                            } else {
+                                abilitiesHit.add(uuid);
+                            }
+                        }
+                        attacker.addInstance(InstanceBuilder
+                                .healing()
+                                .ability(BloodLust.this)
+                                .source(attacker)
+                                .value(healAmount)
+                                .flags(InstanceFlags.NO_HIT_SOUND)
+                                .customFlags(new CustomInstanceFlags.FinalEventInstanceFlag(event))
+                        ).ifPresent(finalEvent -> {
+                            stats.amountHealed += finalEvent.getValue();
+                            data.amountHealed += finalEvent.getValue();
+                        });
+                    }
+                };
             }
 
             @Override
@@ -100,7 +165,7 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
                 float damageMultiplier = 1;
                 CooldownManager cooldownManager = event.getWarlordsEntity().getCooldownManager();
                 if (pveMasterUpgrade) {
-                    if (cooldownManager.hasCooldownFromName("Wounding Strike")) {
+                    if (cooldownManager.hasCooldown(WoundingCooldown.WoundingData.class)) {
                         damageMultiplier += 0.3f;
                     }
                 } else if (pveMasterUpgrade2) {
@@ -111,35 +176,6 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
                 return currentDamageValue * damageMultiplier;
             }
 
-            @Override
-            public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (pveMasterUpgrade2 && event.getCause().equals("Wounding Strike") && !event.getFlags().contains(InstanceFlags.RECURSIVE)) {
-                    event.getWarlordsEntity()
-                         .addInstance(InstanceBuilder.damage()
-                                                     .cause(event.getCause())
-                                                     .source(wp)
-                                                     .value(currentDamageValue * 0.2f)
-                                                     .showAsCrit(isCrit)
-                                                     .flags(InstanceFlags.RECURSIVE, InstanceFlags.NO_LUST_HEALING));
-                }
-                if (event.getFlags().contains(InstanceFlags.NO_LUST_HEALING)) {
-                    return;
-                }
-                WarlordsEntity attacker = event.getSource();
-                float healAmount = currentDamageValue * convertToPercent(damageConvertPercent);
-                if (attacker.isInPve() && event.getUUID() != null) {
-                    if (abilitiesHit.contains(event.getUUID())) {
-                        healAmount *= convertToPercent(healReductionPercent);
-                    } else {
-                        abilitiesHit.add(event.getUUID());
-                    }
-                }
-                attacker.addInstance(InstanceBuilder.healing().ability(BloodLust.this).source(attacker).value(healAmount).flags(InstanceFlags.NO_HIT_SOUND))
-                        .ifPresent(finalEvent -> {
-                            stats.amountHealed += finalEvent.getValue();
-                            data.amountHealed += finalEvent.getValue();
-                        });
-            }
         });
         return true;
     }

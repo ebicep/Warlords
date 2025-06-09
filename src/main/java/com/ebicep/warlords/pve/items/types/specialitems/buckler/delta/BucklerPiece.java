@@ -65,7 +65,7 @@ public class BucklerPiece extends SpecialDeltaBuckler implements CraftsInto {
                                         .source(warlordsPlayer)
                                         .value(damageAmount)
                                         .showAsCrit(isCrit)
-                                        .flags(InstanceFlags.RECURSIVE, InstanceFlags.IGNORE_CRIT_MODIFIERS)
+                                        .flags(InstanceFlags.RECURSIVE)
                                 );
                             });
             }

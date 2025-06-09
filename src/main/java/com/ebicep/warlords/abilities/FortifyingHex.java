@@ -238,7 +238,7 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
                 regularCooldown.setTicksLeft(tickDuration);
             } else {
                 hit.getCooldownManager()
-                   .addCooldown(new RegularCooldown<>("Weakening Hex", "WHEX", WeakeningHex.class, new WeakeningHex(), wp, CooldownTypes.DEBUFF, cooldownManager -> {
+                   .addCooldown(new RegularCooldown<>("Weakening Hex", "WHEX", WeakeningHex.class, new WeakeningHex(), wp, CooldownTypes.LOW_LEVEL_DEBUFF, cooldownManager -> {
                    }, 6 * 20
                    ) {
 

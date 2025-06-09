@@ -395,7 +395,7 @@ public class TowerDefenseOption implements PveOption, Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onDeath(WarlordsDeathEvent event) {
         WarlordsEntity we = event.getWarlordsEntity();
         WarlordsEntity killer = event.getKiller();

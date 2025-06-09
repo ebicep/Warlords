@@ -7,10 +7,10 @@ import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.ingame.CalculateSpeed;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.motionsystem.speed.BaseToWalkingSpeedValueModifier;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
@@ -128,9 +128,13 @@ public class EventCronus extends AbstractMob implements BossMob, LesserGod {
                             damage.min().setBaseValue(1150);
                             damage.max().setBaseValue(1300);
                         });
-                        CalculateSpeed calculateSpeed = warlordsNPC.getSpeed();
-                        calculateSpeed.setBaseSpeedToWalkingSpeed(0.25f);
-                        calculateSpeed.setChanged(true);
+                        warlordsNPC.getSpeed().modifyBase(motionModifier ->
+                                motionModifier.getAddons()
+                                              .stream()
+                                              .filter(BaseToWalkingSpeedValueModifier.class::isInstance)
+                                              .map(BaseToWalkingSpeedValueModifier.class::cast)
+                                              .forEach(baseToWalkingSpeedValueModifier -> baseToWalkingSpeedValueModifier.setBaseWalkSpeed(0.25f))
+                        );
                         rejuvenateOver = true;
                         this.cancel();
                     }
@@ -145,6 +149,7 @@ public class EventCronus extends AbstractMob implements BossMob, LesserGod {
 
     private static class HeavenlyDamage extends AbstractPveAbility implements Damages<HeavenlyDamage.DamageValues> {
 
+        private final DamageValues damageValues = new DamageValues();
         private float radius = 20;
 
         public HeavenlyDamage() {
@@ -176,8 +181,6 @@ public class EventCronus extends AbstractMob implements BossMob, LesserGod {
             return true;
         }
 
-        private final DamageValues damageValues = new DamageValues();
-
         @Override
         public DamageValues getDamageValues() {
             return damageValues;
@@ -188,15 +191,17 @@ public class EventCronus extends AbstractMob implements BossMob, LesserGod {
             private final Value.RangedValue heavenlyDamage = new Value.RangedValue(950, 1100);
             private final List<Value> values = List.of(heavenlyDamage);
 
-            public Value.RangedValue getHeavenlyDamage() {
-                return heavenlyDamage;
-            }
-
             @Override
             public List<Value> getValues() {
                 return values;
             }
 
+            public Value.RangedValue getHeavenlyDamage() {
+                return heavenlyDamage;
+            }
+
         }
+
     }
+
 }

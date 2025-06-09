@@ -9,10 +9,11 @@ import com.ebicep.warlords.effects.circle.AreaEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownUtils;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.apothecary.SoothingElixirBranch;
@@ -21,6 +22,7 @@ import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -35,13 +37,15 @@ import java.util.List;
 
 public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, Duration, HitBox, Damages<SoothingElixir.DamageValues>, Heals<SoothingElixir.HealingValues>, AbilityStats<SoothingElixir, SoothingElixir.SoothingElixirStats> {
 
-    private static final double SPEED = 0.220;
-    private static final double GRAVITY = -0.008;
+    public static final ItemStack ITEM_STACK = new ItemStack(Material.CORNFLOWER);
+    private double speed = 0.220;
+    private double gravity = -0.008;
     private final SoothingElixirStats stats = new SoothingElixirStats();
     private final DamageValues damageValues = new DamageValues();
     private final HealingValues healingValues = new HealingValues();
     private FloatModifiable puddleRadius = new FloatModifiable(5);
     private int puddleTickDuration = 80;
+    private int leechStacksApplied;
 
     public SoothingElixir() {
         super(AbstractAbilityBuilder.create("soothingElixir").pvp());
@@ -52,32 +56,42 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
         super.init(builder);
         this.puddleRadius = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("puddleRadius"), float.class));
         this.puddleTickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("puddleTickDuration"), int.class);
+        this.leechStacksApplied = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("leechStacksApplied"), int.class);
     }
 
-    @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Throw a short range elixir bottle. The bottle will shatter upon impact, healing nearby allies for ")
-                                               .heal(healingValues.elixirHealing)
-                                               .text(" health and damaging nearby enemies for ")
-                                               .damage(damageValues.elixirDamage)
-                                               .text(" damage. The projectile will form a small puddle that heals allies for ")
-                                               .heal(healingValues.elixirDOTHealing)
-                                               .text(" health every ")
-                                               .durationSeconds(1)
-                                               .text(". Lasts ")
-                                               .durationTicks(puddleTickDuration)
-                                               .text(".")
-                                               .build();
+
+    public double getGravity() {
+        return gravity;
+    }
+
+    public void setGravity(double gravity) {
+        this.gravity = gravity;
+    }
+
+    public double getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(double speed) {
+        this.speed = speed;
     }
 
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Location location = wp.getLocation();
-        Vector speed = wp.getLocation().getDirection().multiply(SPEED);
-        Utils.spawnThrowableProjectile(wp.getGame(), Utils.spawnArmorStand(location, armorStand -> {
-                            armorStand.getEquipment().setHelmet(new ItemStack(Material.PINK_STAINED_GLASS));
+        Vector speed = wp.getLocation().getDirection().multiply(this.speed);
+        Utils.spawnThrowableProjectile(
+                wp.getGame(),
+                Utils.spawnArmorStand(
+                        location,
+                        armorStand -> {
+                            armorStand.getEquipment().setHelmet(ITEM_STACK);
                         }
-                ), speed, GRAVITY, SPEED, (newLoc, integer) -> {
+                ),
+                speed,
+                gravity,
+                this.speed,
+                (newLoc, integer) -> {
                     Matrix4d center = new Matrix4d(newLoc);
                     for (float i = 0; i < 6; i++) {
                         double angle = Math.toRadians(i * 90) + integer * 0.3;
@@ -94,7 +108,9 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
                                       true
                               );
                     }
-                }, newLoc -> PlayerFilter.entitiesAroundRectangle(newLoc, 1, 2, 1).aliveTeammatesOfExcludingSelf(wp).findFirstOrNull(), (newLoc, directHit) -> {
+                },
+                newLoc -> PlayerFilter.entitiesAroundRectangle(newLoc, 1, 2, 1).aliveTeammatesOfExcludingSelf(wp).findFirstOrNull(),
+                (newLoc, directHit) -> {
                     Utils.playGlobalSound(newLoc, "rogue.healingremedy.impact", 1.5f, 0.1f);
                     Utils.playGlobalSound(newLoc, Sound.BLOCK_GLASS_BREAK, 1.5f, 0.7f);
                     Utils.playGlobalSound(newLoc, "mage.waterbolt.impact", 1.5f, 0.3f);
@@ -129,7 +145,7 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
 
                                           @Override
                                           protected Listener getListener() {
-                                              return CooldownManager.getDefaultDebuffImmunityListener(nearEntity);
+                                              return CooldownUtils.getFullDebuffImmunityListener(nearEntity);
                                           }
                                       });
                         }
@@ -142,7 +158,13 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
                         public void run() {
                             PlayerFilter.entitiesAround(newLoc, radius, radius, radius)
                                         .aliveTeammatesOf(wp)
-                                        .forEach(ally -> ally.addInstance(InstanceBuilder.healing().ability(SoothingElixir.this).source(wp).value(healingValues.elixirDOTHealing)));
+                                        .forEach(ally -> ally.addInstance(InstanceBuilder
+                                                .healing()
+                                                .ability(SoothingElixir.this)
+                                                .source(wp)
+                                                .value(healingValues.elixirDOTHealing)
+                                                .flags(InstanceFlags.DOT)
+                                        ));
                             timeLeft--;
                             if (timeLeft <= 0) {
                                 this.cancel();
@@ -153,12 +175,12 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
                     List<WarlordsEntity> enemiesHit = PlayerFilter.entitiesAround(newLoc, radius, radius, radius).aliveEnemiesOf(wp).toList();
                     for (WarlordsEntity nearEntity : enemiesHit) {
                         Utils.playGlobalSound(nearEntity.getLocation(), Sound.BLOCK_GLASS_BREAK, 1, 0.5f);
+                        Leech.giveLeechCooldown(Leech.LeechInstance
+                                .create(wp, nearEntity)
+                                .withImpalingStrike()
+                                .withInitialStacks(pveMasterUpgrade ? 3 : leechStacksApplied)
+                        );
                         nearEntity.addInstance(InstanceBuilder.damage().ability(this).source(wp).value(damageValues.elixirDamage));
-                        if (pveMasterUpgrade) {
-                            ImpalingStrike.giveLeechCooldown(wp, nearEntity, 5, 0.25f, 0.15f, warlordsDamageHealingFinalEvent -> {
-                                    }
-                            );
-                        }
                     }
                     if (pveMasterUpgrade2) {
                         float healthBoost = (float) (wp.getMaxHealth() * Math.max(.25, (teammatesHit.size() + enemiesHit.size()) * .015f));
@@ -169,6 +191,36 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
         );
         Utils.playGlobalSound(wp.getLocation(), "mage.frostbolt.activation", 2, 0.7f);
         return true;
+    }
+
+    public int getPuddleTickDuration() {
+        return puddleTickDuration;
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Throw a short range elixir bottle. The bottle will shatter upon impact, healing nearby allies for ")
+                                               .heal(healingValues.elixirHealing)
+                                               .text(" health and damaging nearby enemies for ")
+                                               .damage(damageValues.elixirDamage)
+                                               .text(" damage and inflicting them with ")
+                                               .text("LEECH", NamedTextColor.DARK_GREEN)
+                                               .text(". The projectile will form a small puddle that heals allies for ")
+                                               .heal(healingValues.elixirDOTHealing)
+                                               .text(" health every ")
+                                               .durationSeconds(1)
+                                               .text(". Lasts ")
+                                               .durationTicks(puddleTickDuration)
+                                               .text(".")
+                                               .build();
+    }
+
+    public int getLeechStacksApplied() {
+        return leechStacksApplied;
+    }
+
+    public void setLeechStacksApplied(int leechStacksApplied) {
+        this.leechStacksApplied = leechStacksApplied;
     }
 
     @Override
@@ -223,6 +275,10 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
             this.values = List.of(elixirDamage);
         }
 
+        public Value.RangedValueCritable getElixirDamage() {
+            return elixirDamage;
+        }
+
     }
 
     public static class HealingValues implements Value.ValueHolder {
@@ -246,11 +302,15 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
                     builder.getAppendedFieldNameHealing("elixirDOTHealing"),
                     Value.RangedValueCritable.class
             );
-            this.values = List.of(elixirHealing, elixirHealing);
+            this.values = List.of(elixirHealing, elixirDOTHealing);
         }
 
         public Value.RangedValueCritable getElixirHealing() {
             return elixirHealing;
+        }
+
+        public Value.RangedValueCritable getElixirDOTHealing() {
+            return elixirDOTHealing;
         }
 
     }

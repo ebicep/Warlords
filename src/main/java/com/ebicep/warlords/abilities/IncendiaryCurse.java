@@ -5,6 +5,7 @@ import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsThrowableProjectileImpactEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -16,6 +17,7 @@ import com.ebicep.warlords.pve.upgrades.rogue.assassin.IncendiaryCurseBranch;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -37,6 +39,8 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
     private FloatModifiable hitbox = new FloatModifiable(5);
 
     private int blindDurationInTicks = 30;
+    private int damageIncrease;
+    private int damageIncreaseHealthThreshold;
 
     public IncendiaryCurse() {
         this(AbstractAbilityBuilder.create("incendiaryCurse").pvp());
@@ -51,30 +55,52 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
         super.init(builder);
         this.hitbox = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hitbox"), float.class));
         this.blindDurationInTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("blindDurationInTicks"), int.class);
+        this.damageIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageIncrease"), int.class);
+        this.damageIncreaseHealthThreshold = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageIncreaseHealthThreshold"), int.class);
+    }
+
+    @Override
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
+        Utils.playGlobalSound(wp.getLocation(), "mage.frostbolt.activation", 2, 0.7f);
+        Utils.spawnThrowableProjectile(
+                wp.getGame(),
+                Utils.spawnArmorStand(wp.getLocation(),
+                        armorStand -> {
+                            armorStand.getEquipment().setHelmet(new ItemStack(Material.FIRE_CHARGE));
+                        }
+                ),
+                calculateSpeed(wp),
+                GRAVITY,
+                SPEED,
+                (newLoc, integer) -> {
+                },
+                newLoc -> PlayerFilter.entitiesAroundRectangle(newLoc, 1, 2, 1).aliveEnemiesOf(wp).findFirstOrNull(),
+                (newLoc, directHit) -> {
+                    WarlordsThrowableProjectileImpactEvent projectileImpactEvent = new WarlordsThrowableProjectileImpactEvent(wp, this, newLoc, directHit);
+                    Bukkit.getPluginManager().callEvent(projectileImpactEvent);
+                    onImpact(wp, newLoc);
+                }
+        );
+        return true;
     }
 
     @Override
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder.create("Ignite the targeted area with a cross flame, dealing")
                                                .damage(damageValues.curseDamage)
-                                               .text("damage. Enemies hit are " + (inPve ? "stunned" : "blinded") + " for ")
+                                               .text("damage. Deals ")
+                                               .percent(damageIncrease, NamedTextColor.RED)
+                                               .text(" more damage to enemies above ")
+                                               .percent(damageIncreaseHealthThreshold, NamedTextColor.RED)
+                                               .text("health. Enemies hit are " + (inPve ? "stunned" : "blinded") + " for ")
                                                .durationTicks(blindDurationInTicks)
                                                .text(".")
                                                .build();
     }
 
     @Override
-    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
-        Utils.playGlobalSound(wp.getLocation(), "mage.frostbolt.activation", 2, 0.7f);
-        Utils.spawnThrowableProjectile(wp.getGame(), Utils.spawnArmorStand(wp.getLocation(), armorStand -> {
-                            armorStand.getEquipment().setHelmet(new ItemStack(Material.FIRE_CHARGE));
-                        }
-                ), calculateSpeed(wp), GRAVITY, SPEED, (newLoc, integer) -> {
-                }, newLoc -> PlayerFilter.entitiesAroundRectangle(newLoc, 1, 2, 1).aliveEnemiesOf(wp).findFirstOrNull(), (newLoc, directHit) -> {
-                    onImpact(wp, newLoc);
-                }
-        );
-        return true;
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new IncendiaryCurseBranch(abilityTree, this);
     }
 
     protected Vector calculateSpeed(WarlordsEntity we) {
@@ -89,7 +115,19 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
         List<WarlordsEntity> enemies = PlayerFilter.entitiesAround(newLoc, hitboxValue, hitboxValue, hitboxValue).aliveEnemiesOf(wp).toList();
         for (WarlordsEntity nearEntity : enemies) {
             stats.playersHit++;
-            nearEntity.addInstance(InstanceBuilder.damage().ability(this).source(wp).value(damageValues.curseDamage));
+            float damageMultiplier = convertToMultiplicationDecimal(
+                    (nearEntity.getCurrentHealth() / nearEntity.getMaxBaseHealth()) > damageIncreaseHealthThreshold / 100f
+                    ? damageIncrease
+                    : 0
+            );
+            nearEntity.addInstance(InstanceBuilder
+                    .damage()
+                    .ability(this)
+                    .source(wp)
+                    .min(damageValues.curseDamage.getMinValue() * damageMultiplier)
+                    .max(damageValues.curseDamage.getMaxValue() * damageMultiplier)
+                    .crit(damageValues.curseDamage)
+            );
             if (inPve && nearEntity instanceof WarlordsNPC warlordsNPC) {
                 warlordsNPC.setStunTicks(blindDurationInTicks);
             } else {
@@ -100,7 +138,7 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
                 EffectUtils.playFirework(newLoc, FireworkEffect.builder().withColor(Color.RED).withColor(Color.BLACK).with(FireworkEffect.Type.BALL_LARGE).build(), 1);
                 nearEntity.getCooldownManager().removeCooldown(IncendiaryCurse.class, false);
                 nearEntity.getCooldownManager()
-                          .addCooldown(new RegularCooldown<>(name, "INCEN", IncendiaryCurse.class, new IncendiaryCurse(), wp, CooldownTypes.DEBUFF, cooldownManager -> {
+                          .addCooldown(new RegularCooldown<>(name, "INCEN", IncendiaryCurse.class, new IncendiaryCurse(), wp, CooldownTypes.LOW_LEVEL_DEBUFF, cooldownManager -> {
                           }, 5 * 20
                           ) {
 
@@ -116,11 +154,6 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
         if (pveMasterUpgrade2) {
             wp.addEnergy(wp, "Unforseen Curse", Math.min(200, enemies.size() * 10));
         }
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new IncendiaryCurseBranch(abilityTree, this);
     }
 
     @Override

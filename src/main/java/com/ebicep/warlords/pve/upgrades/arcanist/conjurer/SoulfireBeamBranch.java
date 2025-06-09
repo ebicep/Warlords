@@ -52,7 +52,7 @@ public class SoulfireBeamBranch extends AbstractUpgradeBranch<SoulfireBeam> {
                 50000,
                 () -> {
                     ability.getHitBoxRadius().addAdditiveModifier("Master Upgrade Branch", 3);
-                    ability.setMaxDistance(ability.getMaxDistance() + 15);
+                    ability.getMaxDistance().addAdditiveModifier("Master Upgrade Branch", 15);
                     ability.setShotsFiredAtATime(3);
                     ability.getDamageValues().getDamageMultipliers().replaceAll(aFloat -> aFloat * 2);
                 }

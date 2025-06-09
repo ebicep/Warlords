@@ -31,7 +31,7 @@ public class SeismicWaveDefender extends AbstractSeismicWave implements CanReduc
         if (pveMasterUpgrade) {
             multiplier = (1.5f / 15f) * Math.min(i + 1, 15) + 1;
         } else if (pveMasterUpgrade2) {
-            multiplier = waveTarget.getCooldownManager().hasCooldownFromName("Wounding Strike") ? 1.3f : 1;
+            multiplier = waveTarget.getCooldownManager().hasCooldown(WoundingCooldown.WoundingData.class) ? 1.3f : 1;
         }
         waveTarget.addInstance(InstanceBuilder.damage()
                                               .ability(this)

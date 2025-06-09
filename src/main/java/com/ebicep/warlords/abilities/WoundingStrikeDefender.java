@@ -4,13 +4,10 @@ import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
-import com.ebicep.warlords.player.general.SpecType;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.LinkedCooldown;
-import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.flags.BossLike;
@@ -19,10 +16,11 @@ import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.defender.WoundingStrikeBranchDefender;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.kyori.adventure.text.Component;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -35,8 +33,8 @@ public class WoundingStrikeDefender extends AbstractStrike<WoundingStrikeDefende
 
     private final WoundingStrikeDefenderStats stats = new WoundingStrikeDefenderStats();
     private final DamageValues damageValues = new DamageValues();
-    private int wounding = 25;
-    private int woundingDurationInTicks = 60;
+    private FloatModifiable wounding = new FloatModifiable(25);
+    private int woundingTickDuration = 60;
 
     public WoundingStrikeDefender() {
         super(AbstractAbilityBuilder.create("woundingStrikeDefender").pvp());
@@ -45,8 +43,22 @@ public class WoundingStrikeDefender extends AbstractStrike<WoundingStrikeDefende
     @Override
     public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
-        this.wounding = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("wounding"), int.class);
-        this.woundingDurationInTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("woundingDurationInTicks"), int.class);
+        this.wounding = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("wounding"), float.class));
+        this.woundingTickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("woundingDurationInTicks"), int.class);
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Strike the targeted enemy player, causing")
+                                               .damage(damageValues.strikeDamage)
+                                               .text(" damage and ")
+                                               .text("wounding", NamedTextColor.RED)
+                                               .text(" them for ")
+                                               .durationTicks(woundingTickDuration)
+                                               .text(", making them receive ")
+                                               .percent(wounding, NamedTextColor.RED)
+                                               .text(" less healing.")
+                                               .build();
     }
 
     @Override
@@ -78,6 +90,12 @@ public class WoundingStrikeDefender extends AbstractStrike<WoundingStrikeDefende
         return true;
     }
 
+    @Override
+    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
+        wounding.tick();
+        super.runEveryTick(warlordsEntity);
+    }
+
     private void onFinalEvent(@Nonnull WarlordsEntity wp, @Nonnull WarlordsEntity nearPlayer, WarlordsDamageHealingFinalEvent event) {
         if (event.isDead()) {
             return;
@@ -85,37 +103,23 @@ public class WoundingStrikeDefender extends AbstractStrike<WoundingStrikeDefende
         if (event.isCrit() && pveMasterUpgrade) {
             damageReductionOnCrit(wp, nearPlayer);
         }
-        if (!(nearPlayer.getCooldownManager().hasCooldownFromName("Wounding Strike"))) {
-            nearPlayer.sendMessage(Component.text("You are ", NamedTextColor.GRAY)
-                                            .append(Component.text("wounded", NamedTextColor.RED))
-                                            .append(Component.text(".", NamedTextColor.GRAY)));
-        }
-        if (!nearPlayer.getCooldownManager().hasCooldown(WoundingStrikeBerserker.class)) {
-            nearPlayer.getCooldownManager().removeCooldownByName("Wounding Strike", true);
-            nearPlayer.getCooldownManager()
-                      .addCooldown(new RegularCooldown<>(name, "WND", WoundingStrikeDefender.class, new WoundingStrikeDefender(), wp, CooldownTypes.DEBUFF, cooldownManager -> {
-                      }, cooldownManager -> {
-                          if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterNameActionBar("WND").stream().count() == 1) {
-                              nearPlayer.sendMessage(Component.text("You are no longer ", NamedTextColor.GRAY)
-                                                              .append(Component.text("wounded", NamedTextColor.RED))
-                                                              .append(Component.text(".", NamedTextColor.GRAY)));
-                          }
-                      }, woundingDurationInTicks
-                      ) {
+        WoundingCooldown.addWoundingCooldown(
+                nearPlayer,
+                name,
+                wp,
+                wounding.getCalculatedValue(),
+                woundingTickDuration
+        );
+    }
 
-                          @Override
-                          public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-                              return currentHealValue * (100 - wounding) / 100f;
-                          }
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
 
-                          @Override
-                          public PlayerNameData addSuffixFromOther() {
-                              return new PlayerNameData(Component.text("WND", NamedTextColor.RED),
-                                      we -> we == wp || (we.isTeammate(nearPlayer) && we.getSpecClass().specType == SpecType.HEALER)
-                              );
-                          }
-                      });
-        }
+    @Override
+    public WoundingStrikeDefenderStats getAbilityStats() {
+        return stats;
     }
 
     private void damageReductionOnCrit(WarlordsEntity we, WarlordsEntity nearPlayer) {
@@ -123,7 +127,7 @@ public class WoundingStrikeDefender extends AbstractStrike<WoundingStrikeDefende
         LinkedCooldown<?> linkedCooldown = new LinkedCooldown<>(name + " Resistance",
                 "STRIKE RES",
                 WoundingStrikeDefender.class,
-                new WoundingStrikeDefender(),
+                null,
                 we,
                 CooldownTypes.BUFF,
                 cooldownManager -> {
@@ -149,40 +153,12 @@ public class WoundingStrikeDefender extends AbstractStrike<WoundingStrikeDefende
     }
 
     @Override
-    public DamageValues getDamageValues() {
-        return damageValues;
-    }
-
-    @Override
-    public WoundingStrikeDefenderStats getAbilityStats() {
-        return stats;
-    }
-
-    @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Strike the targeted enemy player, causing")
-                                               .damage(damageValues.strikeDamage)
-                                               .text(" damage and ")
-                                               .text("wounding", NamedTextColor.RED)
-                                               .text(" them for ")
-                                               .durationTicks(woundingDurationInTicks)
-                                               .text(", making them receive ")
-                                               .percent(wounding, NamedTextColor.RED)
-                                               .text(" less healing.")
-                                               .build();
-    }
-
-    @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new WoundingStrikeBranchDefender(abilityTree, this);
     }
 
-    public int getWounding() {
+    public FloatModifiable getWounding() {
         return wounding;
-    }
-
-    public void setWounding(int wounding) {
-        this.wounding = wounding;
     }
 
     public static class DamageValues implements Value.ValueHolder {

@@ -4,13 +4,13 @@ import com.ebicep.warlords.events.player.ingame.WarlordsAbilityTargetEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddSpeedModifierEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.ingame.CalculateSpeed;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.motionsystem.MotionModifier;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.util.java.Pair;
@@ -78,7 +78,7 @@ public class LegendaryEnhanced extends AbstractLegendaryWeapon {
             @EventHandler
             public void onSpeedModify(WarlordsAddSpeedModifierEvent event) {
                 WarlordsEntity eventPlayer = event.getWarlordsEntity();
-                CalculateSpeed.Modifier modifier = event.getModifier();
+                MotionModifier modifier = event.getMotionModifier();
                 if (!(eventPlayer instanceof WarlordsNPC)) {
                     return;
                 }
@@ -95,7 +95,7 @@ public class LegendaryEnhanced extends AbstractLegendaryWeapon {
                     return;
                 }
                 event.setEnhanced(true);
-                modifier.setDuration(modifier.getDuration() + TICKS_TO_ADD + TICKS_TO_ADD_PER_UPGRADE * getTitleLevel());
+                modifier.setTicksLeft(modifier.getTicksLeft() + TICKS_TO_ADD + TICKS_TO_ADD_PER_UPGRADE * getTitleLevel());
             }
 
             @EventHandler

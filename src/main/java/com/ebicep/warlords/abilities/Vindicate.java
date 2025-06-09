@@ -8,8 +8,8 @@ import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownUtils;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
@@ -23,12 +23,10 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
-import org.bukkit.util.Vector;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -55,24 +53,6 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
     }
 
     @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("All allies within ")
-                                               .blocks(radius)
-                                               .text(" gain the status ")
-                                               .text("VIND", NamedTextColor.DARK_GREEN)
-                                               .text(" for ")
-                                               .durationTicks(vindTickDuration)
-                                               .text(", granting an immunity to de-buffs and ")
-                                               .percent(knockbackResistance, AbilityDescriptionBuilder.COLOR_BROWN)
-                                               .text(" knockback resistance. You gain")
-                                               .percent(vindicateDamageReduction, AbilityDescriptionBuilder.COLOR_BROWN)
-                                               .text(" damage reduction for ")
-                                               .durationTicks(damageReductionTickDuration)
-                                               .text(".")
-                                               .build();
-    }
-
-    @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "rogue.vindicate.activation", 2, 0.7f);
         Utils.playGlobalSound(wp.getLocation(), "shaman.capacitortotem.pulse", 2, 0.7f);
@@ -80,22 +60,32 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
         EffectUtils.playHelixAnimation(wp.getLocation(), radius, 230, 130, 5);
         for (WarlordsEntity vindicateTarget : PlayerFilter.entitiesAround(wp, radius, radius, radius).aliveTeammatesOf(wp)) {
             if (vindicateTarget != wp) {
-                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" Your Vindicate is now protecting ", NamedTextColor.GRAY))
-                                                              .append(Component.text(vindicateTarget.getName(), NamedTextColor.YELLOW))
-                                                              .append(Component.text("!", NamedTextColor.GRAY)));
-                vindicateTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN.append(Component.text(" " + wp.getName() + "'s ", NamedTextColor.GRAY))
-                                                                              .append(Component.text("Vindicate", NamedTextColor.YELLOW))
-                                                                              .append(Component.text(" is now protecting you from de-buffs for ", NamedTextColor.GRAY))
-                                                                              .append(Component.text(format(vindTickDuration / 20f), NamedTextColor.GOLD))
-                                                                              .append(Component.text(" seconds!", NamedTextColor.GRAY)));
+                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                        .append(Component.text(" Your Vindicate is now protecting ", NamedTextColor.GRAY))
+                        .append(Component.text(vindicateTarget.getName(), NamedTextColor.YELLOW))
+                        .append(Component.text("!", NamedTextColor.GRAY))
+                );
+                vindicateTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
+                        .append(Component.text(" " + wp.getName() + "'s ", NamedTextColor.GRAY))
+                        .append(Component.text("Vindicate", NamedTextColor.YELLOW))
+                        .append(Component.text(" is now protecting you from de-buffs for ", NamedTextColor.GRAY))
+                        .append(Component.text(format(vindTickDuration / 20f), NamedTextColor.GOLD))
+                        .append(Component.text(" seconds!", NamedTextColor.GRAY))
+                );
             }
-            // Vindicate Immunity
-            vindicateTarget.getSpeed().removeSlownessModifiers();
-            stats.debuffsRemovedOnCast += vindicateTarget.getCooldownManager().removeDebuffCooldowns();
+            stats.debuffsRemovedOnCast += vindicateTarget.getCooldownManager().removeDebuffCooldownsVind();
             giveVindicateCooldown(wp, vindicateTarget, Vindicate.class, null, vindTickDuration);
         }
-        wp.getCooldownManager().addCooldown(new RegularCooldown<>("Vindicate Resistance", "VIND RESIST", Vindicate.class, null, wp, CooldownTypes.BUFF, cooldownManager -> {
-        }, damageReductionTickDuration
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                "Vindicate Resistance",
+                "VIND RESIST",
+                Vindicate.class,
+                null,
+                wp,
+                CooldownTypes.BUFF,
+                cooldownManager -> {
+                },
+                damageReductionTickDuration
         ) {
 
             @Override
@@ -104,11 +94,13 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
                 WarlordsEntity attacker = event.getSource();
                 if (pveMasterUpgrade && !Objects.equals(attacker, hit)) {
                     Utils.addKnockback(name, wp.getLocation(), attacker, -1, 0.15);
-                    attacker.addInstance(InstanceBuilder.damage()
-                                                        .cause(name)
-                                                        .source(hit)
-                                                        .value(currentDamageValue * .75f)
-                                                        .flags(InstanceFlags.IGNORE_SELF_RES, InstanceFlags.RECURSIVE, InstanceFlags.REFLECTIVE_DAMAGE));
+                    attacker.addInstance(InstanceBuilder
+                            .damage()
+                            .cause(name)
+                            .source(hit)
+                            .value(currentDamageValue * .75f)
+                            .flags(InstanceFlags.IGNORE_SELF_RES, InstanceFlags.RECURSIVE, InstanceFlags.REFLECTIVE_DAMAGE)
+                    );
                     return currentDamageValue * .1f;
                 } else {
                     return currentDamageValue * getCalculatedVindicateDamageReduction();
@@ -123,23 +115,48 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
         return true;
     }
 
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder
+                .create("All allies within ")
+                .blocks(radius)
+                .text(" gain the status ")
+                .text("VIND", NamedTextColor.DARK_GREEN)
+                .text(" for ")
+                .durationTicks(vindTickDuration)
+                .text(", granting an immunity to de-buffs and ")
+                .percent(knockbackResistance, AbilityDescriptionBuilder.COLOR_BROWN)
+                .text(" knockback resistance. You gain")
+                .percent(vindicateDamageReduction, AbilityDescriptionBuilder.COLOR_BROWN)
+                .text(" damage reduction for ")
+                .durationTicks(damageReductionTickDuration)
+                .text(".")
+                .build();
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new VindicateBranch(abilityTree, this);
+    }
+
     public static <T> void giveVindicateCooldown(WarlordsEntity from, WarlordsEntity target, Class<T> cooldownClass, T cooldownObject, int tickDuration) {
         // remove other instances of vindicate buff to override
         target.getCooldownManager().removeCooldownByName("Vindicate");
         boolean vindPveMaster2 = cooldownClass.equals(Vindicate.class) && from.getAbilitiesMatching(Vindicate.class).stream().anyMatch(t -> t.pveMasterUpgrade2);
-        target.getCooldownManager().addCooldown(new RegularCooldown<>("Vindicate", "VIND", cooldownClass, cooldownObject, from, CooldownTypes.BUFF, cooldownManager -> {
-        }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-        })
+        RegularCooldown<T> vindiateCooldown = new RegularCooldown<>(
+                "Vindicate", "VIND",
+                cooldownClass,
+                cooldownObject,
+                from,
+                CooldownTypes.BUFF,
+                cooldownManager -> {
+                },
+                tickDuration
         ) {
 
             @Override
             protected Listener getListener() {
-                return CooldownManager.getDefaultDebuffImmunityListener(target);
-            }
-
-            @Override
-            public void multiplyKB(Vector currentVector) {
-                currentVector.multiply(knockbackResistance / 100f);
+                return CooldownUtils.getPartialDebuffImmunityListener(target);
             }
 
             @Override
@@ -149,7 +166,9 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
                 }
                 return currentDamageValue;
             }
-        });
+        };
+        target.addKnockbackModifier(from, "Vindicate", -knockbackResistance, vindiateCooldown);
+        target.getCooldownManager().addCooldown(vindiateCooldown);
         if (vindPveMaster2) {
             EffectUtils.playParticleLinkAnimation(from.getLocation(), target.getLocation(), Particle.FALLING_HONEY, 1, 1, -1);
         }
@@ -157,11 +176,6 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
 
     public float getCalculatedVindicateDamageReduction() {
         return (100 - vindicateDamageReduction) / 100f;
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new VindicateBranch(abilityTree, this);
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.ebicep.warlords.pve.items.types.specialitems.gauntlets.omega;
 
-import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
@@ -35,7 +34,7 @@ public class HandsOfTheHolyCorpse extends SpecialOmegaGauntlet implements Applie
 
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {
-        AbstractPlayerClass playerClass = warlordsPlayer.getSpec();
-        playerClass.setEnergyPerHit(playerClass.getEnergyPerHit() + 12);
+        warlordsPlayer.getEnergyPerHit().addAdditiveModifier(getName(), 12);
     }
+
 }

@@ -32,7 +32,6 @@ public class SoulfireBeam extends AbstractBeam<SoulfireBeam, SoulfireBeam.Soulfi
 
     public SoulfireBeam() {
         super(AbstractAbilityBuilder.create("soulfireBeam").pvp());
-        this.maxTicks = 0;
     }
 
     @Override

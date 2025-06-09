@@ -36,6 +36,7 @@ import java.util.Objects;
 
 public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Damages<SoulShackle.DamageValues>, AbilityStats<SoulShackle, SoulShackle.SoulShackleStats> {
 
+    public static final ItemStack ITEM_STACK = new ItemStack(Material.FIRE_CORAL);
     private final SoulShackleStats stats = new SoulShackleStats();
     private final DamageValues damageValues = new DamageValues();
     private int shackleRange = 15;
@@ -122,9 +123,9 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
     }
 
     private void activateAbility(@Nonnull WarlordsEntity wp, WarlordsEntity shackleTarget) {
-        EffectUtils.playChainAnimation(wp, shackleTarget, new ItemStack(Material.PUMPKIN), 15);
+        EffectUtils.playChainAnimation(wp, shackleTarget, ITEM_STACK, 15);
         EffectUtils.playFirework(shackleTarget.getLocation(), FireworkEffect.builder().withColor(Color.YELLOW).with(FireworkEffect.Type.BALL).build(), 1);
-        wp.addSpeedModifier(wp, "Shackle Speed", speedBuff, (int) speedDuration * 20, "BASE");
+        wp.addSpeedModifier(wp, "Shackle Speed", speedBuff, (int) speedDuration * 20);
         //        int silenceDuration = minSilenceDurationInTicks + (int) (shacklePool / 1000) * 20;
         //        if (silenceDuration > maxSilenceDurationInTicks) {
         //            silenceDuration = maxSilenceDurationInTicks;
@@ -134,7 +135,7 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
         shacklePlayer(wp, shackleTarget, silenceDuration);
         if (pveMasterUpgrade2) {
             shackleTarget.getCooldownManager()
-                         .addCooldown(new RegularCooldown<>("Oppressive Chains", "OPP", SoulShackle.class, null, wp, CooldownTypes.DEBUFF, cooldownManager -> {
+                         .addCooldown(new RegularCooldown<>("Oppressive Chains", "OPP", SoulShackle.class, null, wp, CooldownTypes.LOW_LEVEL_DEBUFF, cooldownManager -> {
                          }, 3 * 20
                          ) {
 
@@ -148,51 +149,59 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
 
     public static void shacklePlayer(WarlordsEntity wp, WarlordsEntity shackleTarget, int tickDuration) {
         shackleTarget.getCooldownManager().removeCooldown(SoulShackle.class, false);
-        shackleTarget.getCooldownManager()
-                     .addCooldown(new RegularCooldown<>("Shackle Silence", "SILENCE", SoulShackle.class, null, wp, CooldownTypes.DEBUFF, cooldownManager -> {
-                     }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                         if (ticksElapsed == 0) {
-                             shackleTarget.getEntity()
-                                          .showTitle(Title.title(Component.empty(),
-                                                  Component.text("SILENCED", NamedTextColor.RED),
-                                                  Title.Times.times(Ticks.duration(0), Ticks.duration(tickDuration), Ticks.duration(0))
-                                          ));
-                         }
-                         if (ticksElapsed % 10 == 0) {
-                             Utils.playGlobalSound(shackleTarget.getLocation(), Sound.BLOCK_SAND_BREAK, 2, 2);
-                             Location playerLoc = shackleTarget.getLocation();
-                             Location particleLoc = playerLoc.clone();
-                             for (int i = 0; i < 10; i++) {
-                                 for (int j = 0; j < 10; j++) {
-                                     double angle = j / 10D * Math.PI * 2;
-                                     double width = 1.075;
-                                     particleLoc.setX(playerLoc.getX() + Math.sin(angle) * width);
-                                     particleLoc.setY(playerLoc.getY() + i / 5D);
-                                     particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
-                                     particleLoc.getWorld().spawnParticle(Particle.DUST, particleLoc, 1, 0, 0, 0, 0, new Particle.DustOptions(Color.fromRGB(25, 25, 25), 1), true);
-                                 }
-                             }
-                         }
-                     })
-                     ) {
+        shackleTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
+                "Shackle Silence",
+                "SILENCE",
+                SoulShackle.class,
+                null,
+                wp,
+                CooldownTypes.LOW_LEVEL_DEBUFF,
+                cooldownManager -> {
+                },
+                tickDuration,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed == 0) {
+                        shackleTarget.getEntity()
+                                     .showTitle(Title.title(Component.empty(),
+                                             Component.text("SILENCED", NamedTextColor.RED),
+                                             Title.Times.times(Ticks.duration(0), Ticks.duration(tickDuration), Ticks.duration(0))
+                                     ));
+                    }
+                    if (ticksElapsed % 10 == 0) {
+                        Utils.playGlobalSound(shackleTarget.getLocation(), Sound.BLOCK_SAND_BREAK, 2, 2);
+                        Location playerLoc = shackleTarget.getLocation();
+                        Location particleLoc = playerLoc.clone();
+                        for (int i = 0; i < 10; i++) {
+                            for (int j = 0; j < 10; j++) {
+                                double angle = j / 10D * Math.PI * 2;
+                                double width = 1.075;
+                                particleLoc.setX(playerLoc.getX() + Math.sin(angle) * width);
+                                particleLoc.setY(playerLoc.getY() + i / 5D);
+                                particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
+                                particleLoc.getWorld().spawnParticle(Particle.DUST, particleLoc, 1, 0, 0, 0, 0, new Particle.DustOptions(Color.fromRGB(25, 25, 25), 1), true);
+                            }
+                        }
+                    }
+                })
+        ) {
 
-                         @Override
-                         protected Listener getListener() {
-                             return new Listener() {
+            @Override
+            protected Listener getListener() {
+                return new Listener() {
 
-                                 @EventHandler
-                                 public void onAbilityActivate(WarlordsAbilityActivateEvent.Pre event) {
-                                     if (!Objects.equals(event.getWarlordsEntity(), shackleTarget) || event.getSlot() != 0) {
-                                         return;
-                                     }
-                                     event.setCancelled(true);
-                                     Player player = event.getPlayer();
-                                     player.sendMessage(Component.text("You have been silenced!", NamedTextColor.RED));
-                                     player.playSound(player.getLocation(), "notreadyalert", 1, 1);
-                                 }
-                             };
-                         }
-                     });
+                    @EventHandler
+                    public void onAbilityActivate(WarlordsAbilityActivateEvent.Pre event) {
+                        if (!Objects.equals(event.getWarlordsEntity(), shackleTarget) || event.getSlot() != 0) {
+                            return;
+                        }
+                        event.setCancelled(true);
+                        Player player = event.getPlayer();
+                        player.sendMessage(Component.text("You have been silenced!", NamedTextColor.RED));
+                        player.playSound(player.getLocation(), "notreadyalert", 1, 1);
+                    }
+                };
+            }
+        });
     }
 
     @Override
@@ -206,6 +215,10 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
             float newPool = shacklePool - 200;
             shacklePool = Math.max(newPool, 0);
         }
+    }
+
+    public void setShackleRange(int shackleRange) {
+        this.shackleRange = shackleRange;
     }
 
     @Override

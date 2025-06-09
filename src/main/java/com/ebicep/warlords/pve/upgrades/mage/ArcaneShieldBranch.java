@@ -5,7 +5,7 @@ import com.ebicep.warlords.pve.upgrades.*;
 
 public class ArcaneShieldBranch extends AbstractUpgradeBranch<ArcaneShield> {
 
-    int shieldPercentage = ability.getShieldPercentage();
+    float shieldPercentage = ability.getShieldPercentage();
 
     public ArcaneShieldBranch(AbilityTree abilityTree, ArcaneShield ability) {
         super(abilityTree, ability);
@@ -20,7 +20,7 @@ public class ArcaneShieldBranch extends AbstractUpgradeBranch<ArcaneShield> {
 
                     @Override
                     public void run(float value) {
-                        ability.setShieldPercentage(shieldPercentage + (int) value);
+                        ability.setShieldPercentage(shieldPercentage + value);
                         ability.updateCustomStats(abilityTree.getWarlordsPlayer());
                     }
                 }, 5f)

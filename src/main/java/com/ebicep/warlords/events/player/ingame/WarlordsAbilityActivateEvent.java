@@ -83,4 +83,25 @@ public abstract class WarlordsAbilityActivateEvent extends AbstractWarlordsEntit
         }
 
     }
+
+    public static class PostApply extends WarlordsAbilityActivateEvent {
+
+        private static final HandlerList handlers = new HandlerList();
+
+        public static HandlerList getHandlerList() {
+            return handlers;
+        }
+
+        public PostApply(@Nonnull WarlordsEntity warlordsEntity, Player player, AbstractAbility ability, int slot) {
+            super(warlordsEntity, player, ability, slot);
+        }
+
+        @Nonnull
+        @Override
+        public HandlerList getHandlers() {
+            return handlers;
+        }
+
+    }
+
 }

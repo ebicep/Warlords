@@ -103,6 +103,16 @@ public class ItemBuilder {
         return this;
     }
 
+    public ItemBuilder glow(boolean glow) {
+        meta().setEnchantmentGlintOverride(glow);
+        return this;
+    }
+
+    public ItemBuilder glow() {
+        meta().setEnchantmentGlintOverride(true);
+        return this;
+    }
+
     public ItemBuilder removeFlags(ItemFlag... ifs) {
         meta().removeItemFlags(ifs);
         return this;

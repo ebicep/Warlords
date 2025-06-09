@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.bosses.bossminions;
 
 import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.MobHologram;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -112,7 +113,7 @@ public class NarmersDeathCharge extends AbstractMob implements BossMinionMob, No
         });
         Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 500, 1);
         EffectUtils.displayParticle(Particle.POOF, warlordsNPC.getLocation(), 1, 0, 0, 0, 0.5);
-        warlordsNPC.die(warlordsNPC);
+        warlordsNPC.die(warlordsNPC, WarlordsDeathEvent.DeathInfoBuilder.create().setForced(true));
     }
 
 }

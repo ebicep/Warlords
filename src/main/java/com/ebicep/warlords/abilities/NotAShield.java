@@ -104,7 +104,7 @@ public class NotAShield extends AbstractPiercingProjectile<NotAShield, NotAShiel
         Location currentLocation = projectile.getCurrentLocation();
         Vector speed = projectile.getSpeed();
         double distance = startingLocation.distanceSquared(currentLocation);
-        if (distance > (maxDistance * maxDistance) / 4) {
+        if (distance > (maxDistance.getCalculatedValue() * maxDistance.getCalculatedValue()) / 4) {
             speed.multiply(-1);
         }
     }
@@ -171,7 +171,7 @@ public class NotAShield extends AbstractPiercingProjectile<NotAShield, NotAShiel
                                                .maxRange(maxDistance)
                                                .emptyLine()
                                                .text("After traveling ")
-                                               .blocks(maxDistance / 2)
+                                               .blocks(maxDistance.getCalculatedValue() / 2f)
                                                .text(", the shield returns to the location you threw it at, hitting all possible targets again. If ")
                                                .text(maxAlliesHit, NamedTextColor.BLUE)
                                                .text(" allies are hit with this shield, the shield shatters, ending its trajectory.")

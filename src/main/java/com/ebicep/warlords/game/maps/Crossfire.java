@@ -72,10 +72,10 @@ public class Crossfire extends GameMap {
 
         options.add(new WinByPointsOption());
         options.add(new MercyWinOption());
+        WinAfterTimeoutOption timeoutOption = new WinAfterTimeoutOption();
+        options.add(timeoutOption);
         if (addons.contains(GameAddon.DOUBLE_TIME)) {
-            options.add(new WinAfterTimeoutOption(1800));
-        } else {
-            options.add(new WinAfterTimeoutOption());
+            timeoutOption.setTimeRemaining(timeoutOption.getTimeRemaining() * 2);
         }
         options.add(new GameOvertimeOption());
         options.add(new AbstractScoreOnEventOption.FlagCapture());

@@ -89,7 +89,7 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
                 enemy.addSpeedModifier(wp, "Vitality Slowness", -30, 20 * 3);
             }
             new CooldownFilter<>(enemy, RegularCooldown.class)
-                    .filterCooldownClass(ImpalingStrike.ImpalingStrikeData.class)
+                    .filterCooldownClass(Leech.LeechData.class)
                     .filterCooldownFrom(wp)
                     .findAny()
                     .ifPresent(regularCooldown -> {

@@ -65,10 +65,10 @@ public class ThatWasCloseI extends AbstractBounty implements TracksDuringGame, E
         if (!Objects.equals(event.getWarlordsEntity().getUuid(), uuid)) {
             return;
         }
-        if (!(event.getAttacker() instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof EventNecronomiconGrimoire)) {
+        if (!(event.getSource() instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof EventNecronomiconGrimoire)) {
             return;
         }
-        if (!event.getAbility().equals("Smite")) {
+        if (!event.getCause().equals("Smite")) {
             return;
         }
         if (event.isDead()) {
