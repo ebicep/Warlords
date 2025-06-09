@@ -186,7 +186,7 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
                 if (timer >= 8) {
                     wp.setVelocity(name, playerLoc.getDirection().multiply(0.4).setY(0.2), true);
                     wp.addInstance(InstanceBuilder.healing().ability(HeartToHeart.this).source(wp).value(healingValues.heartToHeartHealing));
-                    if (inPve) {
+                    if (inPve || heartTarget.isTeammate(wp)) {
                         heartTarget.addInstance(InstanceBuilder.create(heartTarget.isTeammate(wp) ? InstanceBuilder.InstanceType.HEALING : InstanceBuilder.InstanceType.DAMAGE)
                                                                .ability(HeartToHeart.this)
                                                                .source(wp)
