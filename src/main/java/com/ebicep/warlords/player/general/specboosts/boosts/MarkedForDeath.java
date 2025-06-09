@@ -88,7 +88,7 @@ public class MarkedForDeath implements SpecBoostManager.SpecBoost<MarkedForDeath
             if (!(cooldown instanceof RegularCooldown<?> regularCooldown)) {
                 return;
             }
-            if (!(cooldown.getName().equals("Avenger's Mark") || !cooldown.getFrom().equals(warlordsEntity))) {
+            if (!cooldown.getName().equals("Avenger's Mark") || !cooldown.getFrom().equals(warlordsEntity)) {
                 return;
             }
             regularCooldown.setTicksLeft(avengerMarkDebuffTickDuration);
