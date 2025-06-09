@@ -7,8 +7,10 @@ import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.WrappedDataValue;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.OrderOfEviscerateLike;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
@@ -107,53 +109,82 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
                     forcePacketUpdate = false;
                 }
                 if (ticksElapsed % 40 == 0) {
-                    Map<Team, List<WarlordsEntity>> warlordsEntityByTeam = new HashMap<>();
-                    playerSettings.forEach((warlordsEntity, cooldownData) -> warlordsEntityByTeam.computeIfAbsent(warlordsEntity.getTeam(), k -> new ArrayList<>())
-                                                                                                 .add(warlordsEntity));
-                    playerSettings.forEach((warlordsEntity, cooldownData) -> {
-                        if (!(warlordsEntity.getEntity() instanceof Player player)) {
-                            return;
-                        }
-                        DatabasePlayer databasePlayer = warlordsEntity.getDatabasePlayer();
-                        CooldownDisplaySettings.CooldownDisplayMode cooldownDisplayMode = databasePlayer.getCooldownDisplaySettings().getCooldownDisplayMode();
-                        warlordsEntityByTeam.forEach((team, warlordsEntities) -> {
-                            boolean sameTeam = team == warlordsEntity.getTeam();
-                            boolean shouldSee = cooldownDisplayMode == CooldownDisplaySettings.CooldownDisplayMode.ON &&
-                                    (sameTeam && cooldownData.seeTeammates || !sameTeam && cooldownData.seeEnemies);
-                            warlordsEntities.forEach(we -> {
-                                CooldownData otherData = playerSettings.get(we);
-                                if (otherData == null) {
-                                    return;
-                                }
-                                boolean samePlayer = warlordsEntity == we;
-                                otherData.cooldowns.cooldownEntities.forEach(cooldownEntities -> {
-                                    if (enabled && !samePlayer && shouldSee && !player.canSee(cooldownEntities.itemDisplay)) {
-                                        player.showEntity(Warlords.getInstance(), cooldownEntities.itemDisplay);
-                                    } else if (!enabled || samePlayer || !shouldSee && player.canSee(cooldownEntities.itemDisplay)) {
-                                        player.hideEntity(Warlords.getInstance(), cooldownEntities.itemDisplay);
-                                    }
-                                    if (enabled && !samePlayer && shouldSee && !player.canSee(cooldownEntities.textDisplay)) {
-                                        player.showEntity(Warlords.getInstance(), cooldownEntities.textDisplay);
-                                    } else if (!enabled || samePlayer || !shouldSee && player.canSee(cooldownEntities.textDisplay)) {
-                                        player.hideEntity(Warlords.getInstance(), cooldownEntities.textDisplay);
-                                    }
-                                });
-                            });
-                        });
-                    });
+                    refreshVisibility(); // TODO test sending every tick
                 }
                 ticksElapsed++;
             }
         }.runTaskTimer(0, 0);
     }
 
+    private void refreshVisibility() {
+        Map<Team, List<WarlordsEntity>> warlordsEntityByTeam = new HashMap<>();
+        playerSettings.forEach((warlordsEntity, cooldownData) ->
+                warlordsEntityByTeam.computeIfAbsent(warlordsEntity.getTeam(), k -> new ArrayList<>()).add(warlordsEntity));
+        playerSettings.forEach((warlordsEntity, cooldownData) -> {
+            if (!(warlordsEntity.getEntity() instanceof Player player)) {
+                return;
+            }
+            DatabasePlayer databasePlayer = warlordsEntity.getDatabasePlayer();
+            CooldownDisplaySettings.CooldownDisplayMode cooldownDisplayMode = databasePlayer.getCooldownDisplaySettings().getCooldownDisplayMode();
+            warlordsEntityByTeam.forEach((team, warlordsEntities) -> {
+                boolean sameTeam = team == warlordsEntity.getTeam();
+                boolean shouldSee = cooldownDisplayMode == CooldownDisplaySettings.CooldownDisplayMode.ON &&
+                        (sameTeam && cooldownData.seeTeammates || !sameTeam && cooldownData.seeEnemies);
+                warlordsEntities.forEach(we -> {
+                    CooldownData otherData = playerSettings.get(we);
+                    if (otherData == null) {
+                        return;
+                    }
+                    boolean samePlayer = warlordsEntity == we;
+                    otherData.cooldowns.cooldownEntities.forEach(cooldownEntities -> {
+                        if (enabled && !samePlayer && shouldSee && !player.canSee(cooldownEntities.itemDisplay)) {
+                            player.showEntity(Warlords.getInstance(), cooldownEntities.itemDisplay);
+                        } else if (!enabled || samePlayer || !shouldSee && player.canSee(cooldownEntities.itemDisplay)) {
+                            player.hideEntity(Warlords.getInstance(), cooldownEntities.itemDisplay);
+                        }
+                        if (enabled && !samePlayer && shouldSee && !player.canSee(cooldownEntities.textDisplay)) {
+                            player.showEntity(Warlords.getInstance(), cooldownEntities.textDisplay);
+                        } else if (!enabled || samePlayer || !shouldSee && player.canSee(cooldownEntities.textDisplay)) {
+                            player.hideEntity(Warlords.getInstance(), cooldownEntities.textDisplay);
+                        }
+                    });
+                });
+            });
+        });
+    }
+
+    @Override
+    public void onPlayerQuit(Player player) {
+        WarlordsEntity warlordsEntity = Warlords.getPlayer(player);
+        if (warlordsEntity == null) {
+            return;
+        }
+        CooldownData cooldownData = playerSettings.remove(warlordsEntity);
+        if (cooldownData != null) {
+            cooldownData.cooldowns.cooldownEntities.forEach(cooldownEntities -> cooldownEntities.remove(entityDataByID));
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onWarlordsAbilityActivateEvent(WarlordsAbilityActivateEvent event) {
+        if (event.getAbility() instanceof OrderOfEviscerateLike) {
+            refreshVisibility();
+        }
+    }
+
     @Override
     public void onGameCleanup(@Nonnull Game game) {
         ChatUtils.MessageType.GAME.sendMessage("Cleaning up cooldown display entities");
         PacketUtils.PROTOCOL_MANAGER.removePacketListener(packetListener);
-        playerSettings.forEach((warlordsEntity, cooldownData) -> cooldownData.cooldowns.cooldownEntities.forEach(Cooldowns.CooldownEntities::remove));
+        removeEntities();
         playerSettings.clear();
         entityDataByID.clear();
+    }
+
+    public void removeEntities() {
+        playerSettings.forEach((warlordsEntity, cooldownData) -> {
+            cooldownData.cooldowns.cooldownEntities.forEach(cooldownEntities -> cooldownEntities.remove(entityDataByID));
+        });
     }
 
     @Override
@@ -169,7 +200,7 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
         if (dead == null) {
             return;
         }
-        dead.cooldowns.cooldownEntities.forEach(Cooldowns.CooldownEntities::remove);
+        dead.cooldowns.cooldownEntities.forEach(cooldownEntities -> cooldownEntities.remove(entityDataByID));
     }
 
     public Map<WarlordsEntity, CooldownData> getPlayerSettings() {
@@ -230,8 +261,7 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
                     cooldownEntities.add(cooldownEntity);
                 }
                 if (cooldownEntity.ability != ab || !cooldownEntity.itemDisplay.isValid() || !cooldownEntity.textDisplay.isValid()) {
-                    cooldownEntity.remove();
-                    cooldownEntity.removeFrom(entityDataByID);
+                    cooldownEntity.remove(entityDataByID);
                     cooldownEntity = createCooldownEntities(warlordsEntity.getLocation(), ab);
                     cooldownEntity.addTo(warlordsEntity, entityDataByID);
                     cooldownEntities.set(cooldownIndex, cooldownEntity);
@@ -263,7 +293,7 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
             // remove any extra cooldown entities
             for (int i = cooldownEntities.size() - 1; i >= warlordsEntity.getAbilities().size() - 1; i--) {
                 CooldownEntities cooldownEntity = cooldownEntities.remove(i);
-                cooldownEntity.remove();
+                cooldownEntity.remove(entityDataByID);
 //                cooldownEntity.removeFrom(entityDataByID);
             }
         }
@@ -356,17 +386,14 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
                 textDisplay.teleport(location.clone().add(0, .25f, 0));
             }
 
-            public void remove() {
-                itemDisplay.remove();
-                textDisplay.remove();
-            }
-
             public void addTo(WarlordsEntity displayFor, Map<Integer, EntityData> entityDataByID) {
                 entityDataByID.put(itemDisplay.getEntityId(), new EntityData(itemDisplay, displayFor));
                 entityDataByID.put(textDisplay.getEntityId(), new EntityData(textDisplay, displayFor));
             }
 
-            public void removeFrom(Map<Integer, EntityData> entityDataByID) {
+            public void remove(Map<Integer, EntityData> entityDataByID) {
+                itemDisplay.remove();
+                textDisplay.remove();
                 entityDataByID.remove(itemDisplay.getEntityId());
                 entityDataByID.remove(textDisplay.getEntityId());
             }

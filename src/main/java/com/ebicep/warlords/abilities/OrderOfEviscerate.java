@@ -74,6 +74,9 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_GHAST_SHOOT, 1.5f, 0.7f);
         wp.addSpeedModifier(wp, name, speedBuff, tickDuration);
         wp.getCooldownManager().removeCooldown(OrderOfEviscerateData.class, false);
+        if (!FlagHolder.isPlayerHolderFlag(wp)) {
+            giveCloak(wp, tickDuration);
+        }
         OrderOfEviscerateData data = new OrderOfEviscerateData(maxDamageThreshold);
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 "Order of Eviscerate",
@@ -252,9 +255,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                 wp.playSound(wp.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 1, 2);
             }
         });
-        if (!FlagHolder.isPlayerHolderFlag(wp)) {
-            giveCloak(wp, tickDuration);
-        }
+
         return true;
     }
 

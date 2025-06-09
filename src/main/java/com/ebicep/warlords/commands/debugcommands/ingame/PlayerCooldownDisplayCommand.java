@@ -5,6 +5,8 @@ import co.aikar.commands.CommandHelp;
 import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.HelpEntry;
 import co.aikar.commands.annotation.*;
+import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.game.GameManager;
 import com.ebicep.warlords.game.option.PlayerCooldownDisplayOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import net.kyori.adventure.text.Component;
@@ -23,6 +25,15 @@ public class PlayerCooldownDisplayCommand extends BaseCommand {
     public void respawn(CommandIssuer issuer) {
         PlayerCooldownDisplayOption.enabled = !PlayerCooldownDisplayOption.enabled;
         boolean enabled = PlayerCooldownDisplayOption.enabled;
+        if (!enabled) {
+            for (GameManager.GameHolder game : Warlords.getGameManager().getGames()) {
+                if (game.getGame() != null) {
+                    for (PlayerCooldownDisplayOption playerCooldownDisplayOption : game.getGame().getOption(PlayerCooldownDisplayOption.class)) {
+                        playerCooldownDisplayOption.removeEntities();
+                    }
+                }
+            }
+        }
         sendDebugMessage(issuer, Component.text("Cooldown Display: " + (enabled ? "Enabled" : "Disabled"), enabled ? NamedTextColor.GREEN : NamedTextColor.RED));
     }
 

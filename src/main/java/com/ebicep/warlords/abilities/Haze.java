@@ -55,6 +55,10 @@ public class Haze extends AbstractAbility implements OrangeAbilityIcon, Damages<
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_ILLUSIONER_MIRROR_MOVE, 2, 0.7f);
 
+        if (!FlagHolder.isPlayerHolderFlag(wp)) {
+            OrderOfEviscerate.giveCloak(wp, tickDuration);
+        }
+
         HazeData data = new HazeData(!FlagHolder.isPlayerHolderFlag(wp));
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
@@ -140,9 +144,6 @@ public class Haze extends AbstractAbility implements OrangeAbilityIcon, Damages<
             }
         });
 
-        if (!FlagHolder.isPlayerHolderFlag(wp)) {
-            OrderOfEviscerate.giveCloak(wp, tickDuration);
-        }
         return true;
     }
 
