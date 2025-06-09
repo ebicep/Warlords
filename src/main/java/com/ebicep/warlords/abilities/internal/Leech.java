@@ -117,7 +117,7 @@ public class Leech {
 
                 @Override
                 public PlayerNameData addSuffixFromOther() {
-                    return new PlayerNameData(Component.text("LCH(" + data.stacks + ")", CooldownTypes.HIGH_LEVEL_DEBUFF_COLOR),
+                    return new PlayerNameData(Component.text("LCH(" + data.getStacksCount() + ")", CooldownTypes.HIGH_LEVEL_DEBUFF_COLOR),
                             we -> we.isEnemy(target) || (we.isTeammate(target) && we.getSpecClass().specType == SpecType.HEALER)
                     );
                 }
