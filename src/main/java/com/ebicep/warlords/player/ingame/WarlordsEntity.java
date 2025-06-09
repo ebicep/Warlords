@@ -153,13 +153,13 @@ public abstract class WarlordsEntity {
     private float bonusAggroWeight = 0;
 
 
-    public WarlordsEntity(Player player, Specializations specialization) {
+    public WarlordsEntity(Player player, Specializations specialization, List<String> namespaces) {
         this();
         this.name = player.getName();
         this.uuid = player.getUniqueId();
         this.entity = player;
         this.specClass = specialization;
-        this.spec = specialization.create();
+        this.spec = specialization.create(namespaces);
         this.currentHealth = this.spec.getMaxHealth();
         this.health = new FloatModifiable(this.currentHealth);
         this.health.addFilter(maxBaseHealthFilter);
@@ -190,7 +190,7 @@ public abstract class WarlordsEntity {
             @Nonnull Team team,
             @Nonnull Specializations specClass
     ) {
-        this(uuid, name, entity, game, team, specClass.create());
+        this(uuid, name, entity, game, team, specClass.create(game.getNamespace()));
         this.specClass = specClass;
         this.specClass.init(this);
     }
@@ -1463,7 +1463,7 @@ public abstract class WarlordsEntity {
     public abstract void updateEntity();
 
     public void setSpec(Specializations spec) {
-        this.spec = spec.create();
+        this.spec = spec.create(game.getNamespace());
         this.spec.updateCustomStats(this);
         this.health.setBaseValue(this.spec.getMaxHealth());
         this.health.clearModifiers();

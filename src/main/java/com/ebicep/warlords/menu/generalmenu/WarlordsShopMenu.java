@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
@@ -120,7 +121,7 @@ public class WarlordsShopMenu {
                         playerSettings.setSelectedSpec(spec);
                         ArmorManager.resetArmor(player);
 
-                        AbstractPlayerClass apc = spec.create();
+                        AbstractPlayerClass apc = spec.create(ConfigManager.DEFAULT_NAMESPACES);
                         ItemStack weaponSkin = playerSettings.getWeaponSkins()
                                                              .getOrDefault(spec, Weapons.STEEL_SWORD)
                                                              .getItem();
@@ -178,8 +179,8 @@ public class WarlordsShopMenu {
 
         //showing change of ability
         PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
-        AbstractPlayerClass apc = selectedSpec.create();
-        AbstractPlayerClass apc2 = selectedSpec.create();
+        AbstractPlayerClass apc = selectedSpec.create(ConfigManager.DEFAULT_NAMESPACES);
+        AbstractPlayerClass apc2 = selectedSpec.create(ConfigManager.DEFAULT_NAMESPACES);
         List<AbstractAbility> abilities = apc.getAbilities();
         List<AbstractAbility> abilities2 = apc2.getAbilities();
         for (int i = 0; i < abilities.size(); i++) {
@@ -194,7 +195,7 @@ public class WarlordsShopMenu {
             } else {
                 icon = ability.getAbilityIcon();
             }
-            ability2.boostSkill(selectedBoost, new WarlordsPlayer(player, selectedSpec));
+            ability2.boostSkill(selectedBoost, new WarlordsPlayer(player, selectedSpec, ConfigManager.DEFAULT_NAMESPACES));
             ability.updateDescription(player);
             ability2.updateDescription(player);
             menu.setItem(3,
@@ -256,7 +257,7 @@ public class WarlordsShopMenu {
                                                         .append(Component.text(weapon.getName() + "!", NamedTextColor.AQUA)));
                             playerSettings.getWeaponSkins().put(selectedSpec, weapon);
                             openWeaponMenu(player, pageNumber);
-                            AbstractPlayerClass apc = selectedSpec.create();
+                            AbstractPlayerClass apc = selectedSpec.create(ConfigManager.DEFAULT_NAMESPACES);
                             player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins()
                                                                                                                    .getOrDefault(selectedSpec,
                                                                                                                            Weapons.FELFLAME_BLADE
@@ -542,7 +543,7 @@ public class WarlordsShopMenu {
         Menu menu = new Menu("Class Information", 9);
         PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
         Specializations selectedSpec = playerSettings.getSelectedSpec();
-        AbstractPlayerClass apc = selectedSpec.create();
+        AbstractPlayerClass apc = selectedSpec.create(ConfigManager.DEFAULT_NAMESPACES);
 
         ItemBuilder icon = new ItemBuilder(selectedSpec.specType.itemStack);
         icon.name(Component.text(selectedSpec.name, NamedTextColor.GREEN));

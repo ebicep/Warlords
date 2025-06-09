@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities.internal;
 
 import com.ebicep.warlords.abilities.*;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import org.bukkit.Bukkit;
@@ -240,7 +241,7 @@ public class Ability<T extends AbstractAbility> {
         }
         for (Specializations spec : Specializations.VALUES) {
             Ability<?>[] abilities = new Ability[5];
-            List<AbstractAbility> abstractAbilities = spec.create().getAbilities();
+            List<AbstractAbility> abstractAbilities = spec.create(ConfigManager.DEFAULT_NAMESPACES).getAbilities();
             for (int i = 0; i < abstractAbilities.size(); i++) {
                 AbstractAbility ability = abstractAbilities.get(i);
                 Ability<?> abilityRegistry = getAbility(ability.getClass());

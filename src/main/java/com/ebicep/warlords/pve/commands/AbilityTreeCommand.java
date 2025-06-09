@@ -6,6 +6,7 @@ import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.Subcommand;
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -29,7 +30,7 @@ public class AbilityTreeCommand extends BaseCommand {
         WarlordsEntity inGameWarlordsPlayer = Warlords.getPlayer(player);
         WarlordsPlayer warlordsPlayer = inGameWarlordsPlayer instanceof WarlordsPlayer ?
                                         (WarlordsPlayer) inGameWarlordsPlayer :
-                                        new WarlordsPlayer(player, PlayerSettings.getPlayerSettings(player).getSelectedSpec());
+                                        new WarlordsPlayer(player, PlayerSettings.getPlayerSettings(player).getSelectedSpec(), ConfigManager.DEFAULT_NAMESPACES);
         warlordsPlayer.getAbilityTree().openAbilityTree();
     }
 

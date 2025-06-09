@@ -63,7 +63,8 @@ public enum GameMode {
             null,
             null,
             Integer.MAX_VALUE,
-            true
+            true,
+            ConfigManager.DEFAULT_NAMESPACES
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -83,7 +84,8 @@ public enum GameMode {
             DatabaseGameCTF::new,
             GamesCollections.CTF,
             16,
-            false
+            false,
+            ConfigManager.DEFAULT_NAMESPACES
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -138,7 +140,8 @@ public enum GameMode {
             DatabaseGameInterception::new,
             GamesCollections.INTERCEPTION,
             16,
-            true
+            true,
+            ConfigManager.DEFAULT_NAMESPACES
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -208,7 +211,8 @@ public enum GameMode {
             DatabaseGameTDM::new,
             GamesCollections.TDM,
             16,
-            true
+            true,
+            ConfigManager.DEFAULT_NAMESPACES
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -245,7 +249,8 @@ public enum GameMode {
             DatabaseGameDuel::new,
             GamesCollections.DUEL,
             2,
-            true
+            true,
+            ConfigManager.DEFAULT_NAMESPACES
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -278,7 +283,8 @@ public enum GameMode {
             null,
             null,
             Integer.MAX_VALUE,
-            true
+            true,
+            ConfigManager.PVE_NAMESPACES
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -313,7 +319,8 @@ public enum GameMode {
             DatabaseGamePvEWaveDefense::new,
             GamesCollections.PVE,
             1,
-            true
+            true,
+            ConfigManager.PVE_NAMESPACES
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -351,7 +358,8 @@ public enum GameMode {
             DatabaseGamePvEOnslaught::new,
             GamesCollections.PVE,
             1,
-            true
+            true,
+            ConfigManager.PVE_NAMESPACES
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -396,7 +404,8 @@ public enum GameMode {
             null,
             GamesCollections.PVE,
             1,
-            true
+            true,
+            ConfigManager.PVE_NAMESPACES
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -434,7 +443,8 @@ public enum GameMode {
             null,
             GamesCollections.PVE,
             1,
-            true
+            true,
+            ConfigManager.PVE_NAMESPACES
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -471,7 +481,8 @@ public enum GameMode {
             null,
             null,
             4,
-            true
+            true,
+            ConfigManager.PVE_NAMESPACES
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -508,7 +519,8 @@ public enum GameMode {
             null,
             null,
             16,
-            false
+            false,
+            ConfigManager.DEFAULT_NAMESPACES
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -535,7 +547,8 @@ public enum GameMode {
             null,
             null,
             Integer.MAX_VALUE,
-            false
+            false,
+            ConfigManager.DEFAULT_NAMESPACES
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -559,7 +572,8 @@ public enum GameMode {
             },
             GamesCollections.EVENT_PVE,
             1,
-            true
+            true,
+            ConfigManager.PVE_NAMESPACES
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -586,7 +600,8 @@ public enum GameMode {
             null,
             null,
             1,
-            true
+            true,
+            ConfigManager.DEFAULT_NAMESPACES
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -623,7 +638,8 @@ public enum GameMode {
             DatabaseGameSiege::new,
             GamesCollections.SIEGE,
             6,
-            false
+            false,
+            ConfigManager.DEFAULT_NAMESPACES
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -672,7 +688,8 @@ public enum GameMode {
             null,
             null,
             100,
-            true
+            true,
+            ConfigManager.TD_NAMESPACES
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -716,7 +733,8 @@ public enum GameMode {
             null,
             null,
             1,
-            true
+            true,
+            ConfigManager.DEFAULT_NAMESPACES
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -748,6 +766,7 @@ public enum GameMode {
     public final GamesCollections gamesCollections;
     public final int minPlayersToAddToDatabase;
     private final boolean isHiddenInMenu;
+    public final List<String> namespaces;
 
     GameMode(
             String name,
@@ -755,7 +774,8 @@ public enum GameMode {
             TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGameBase> createDatabaseGame,
             GamesCollections gamesCollections,
             int minPlayersToAddToDatabase,
-            boolean isHiddenInMenu
+            boolean isHiddenInMenu,
+            List<String> namespaces
     ) {
         this.name = name;
         this.abbreviation = abbreviation;
@@ -764,6 +784,7 @@ public enum GameMode {
         this.gamesCollections = gamesCollections;
         this.minPlayersToAddToDatabase = minPlayersToAddToDatabase;
         this.isHiddenInMenu = isHiddenInMenu;
+        this.namespaces = namespaces;
     }
 
     public float getDropModifier() {
@@ -776,7 +797,7 @@ public enum GameMode {
         options.add(new PreGameItemOption(1, (g, p) -> {
             PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(p.getUniqueId());
             Specializations selectedSpec = playerSettings.getSelectedSpec();
-            AbstractPlayerClass apc = selectedSpec.create();
+            AbstractPlayerClass apc = selectedSpec.create(namespaces);
 
             ItemStack weaponSkin = playerSettings.getWeaponSkins().getOrDefault(selectedSpec, Weapons.STEEL_SWORD).getItem();
             return new ItemBuilder(apc.getWeapon().getItem(weaponSkin))

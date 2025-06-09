@@ -7,6 +7,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabaseSpecialization;
 import com.ebicep.warlords.game.Team;
@@ -87,7 +88,7 @@ public class WarlordsNewHotbarMenu {
         Menu menu = new Menu("Class Information", 9);
         PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
         Specializations selectedSpec = playerSettings.getSelectedSpec();
-        WarlordsPlayer warlordsPlayer = new WarlordsPlayer(player, selectedSpec);
+        WarlordsPlayer warlordsPlayer = new WarlordsPlayer(player, selectedSpec, pve ? ConfigManager.PVE_NAMESPACES : ConfigManager.DEFAULT_NAMESPACES);
         AbstractPlayerClass apc = warlordsPlayer.getSpec();
 
         ItemBuilder icon = new ItemBuilder(selectedSpec.specType.itemStack)
@@ -323,7 +324,7 @@ public class WarlordsNewHotbarMenu {
                                     ArmorManager.resetArmor(player);
                                 }
 
-                                AbstractPlayerClass apc = spec.create();
+                                AbstractPlayerClass apc = spec.create(ConfigManager.DEFAULT_NAMESPACES);
                                 ItemStack weaponSkin = playerSettings
                                         .getWeaponSkins()
                                         .getOrDefault(spec, Weapons.STEEL_SWORD)
@@ -681,7 +682,7 @@ public class WarlordsNewHotbarMenu {
                                                             .append(Component.text("'s weapon skin to: §b" + weapon.getName() + "!")));
                                 playerSettings.getWeaponSkins().put(selectedSpec, weapon);
                                 openWeaponMenu(player, pageNumber);
-                                AbstractPlayerClass apc = selectedSpec.create();
+                                AbstractPlayerClass apc = selectedSpec.create(ConfigManager.DEFAULT_NAMESPACES);
                                 ItemStack weaponSkin = playerSettings.getWeaponSkins().getOrDefault(selectedSpec, Weapons.STEEL_SWORD).getItem();
                                 player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(weaponSkin))
                                         .name(Component.text("Weapon Skin Preview", NamedTextColor.GREEN))
@@ -838,7 +839,7 @@ public class WarlordsNewHotbarMenu {
             menu.openForPlayer(player);
         }
 
-        public static void openSkillBoostMenu(Player player, Specializations selectedSpec) {
+        public static void openSkillBoostMenu(Player player, Specializations selectedSpec, List<String> namespaces) {
             SkillBoosts selectedBoost = PlayerSettings.getPlayerSettings(player.getUniqueId()).getSkillBoostForClass();
             Menu menu = new Menu("Skill Boost", 9 * 6);
             List<SkillBoosts> values = selectedSpec.skillBoosts;
@@ -866,7 +867,7 @@ public class WarlordsNewHotbarMenu {
                         (m, e) -> {
                             player.sendMessage(Component.text("You have changed your weapon boost to: ", NamedTextColor.GREEN).append(Component.text(skillBoost.name + "!")));
                             PlayerSettings.getPlayerSettings(player.getUniqueId()).setSkillBoostForSelectedSpec(skillBoost);
-                            openSkillBoostMenu(player, selectedSpec);
+                            openSkillBoostMenu(player, selectedSpec, namespaces);
 
                             DatabaseManager.updatePlayer(player.getUniqueId(),
                                     databasePlayer -> databasePlayer.getSpec(selectedSpec).setSkillBoost(skillBoost)
@@ -877,8 +878,8 @@ public class WarlordsNewHotbarMenu {
 
             //showing change of ability
             PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
-            AbstractPlayerClass apc = selectedSpec.create();
-            AbstractPlayerClass apc2 = selectedSpec.create();
+            AbstractPlayerClass apc = selectedSpec.create(ConfigManager.DEFAULT_NAMESPACES);
+            AbstractPlayerClass apc2 = selectedSpec.create(ConfigManager.DEFAULT_NAMESPACES);
             List<AbstractAbility> abilities = apc.getAbilities();
             List<AbstractAbility> abilities2 = apc2.getAbilities();
             for (int i = 0; i < abilities.size(); i++) {
@@ -895,7 +896,7 @@ public class WarlordsNewHotbarMenu {
                 } else {
                     icon = ability.getAbilityIcon();
                 }
-                ability2.boostSkill(selectedBoost, new WarlordsPlayer(player, selectedSpec));
+                ability2.boostSkill(selectedBoost, new WarlordsPlayer(player, selectedSpec, ConfigManager.DEFAULT_NAMESPACES));
                 ability.updateDescription(player);
                 ability2.updateDescription(player);
                 menu.setItem(3,

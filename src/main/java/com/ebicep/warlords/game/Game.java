@@ -91,7 +91,7 @@ public final class Game implements Runnable, AutoCloseable {
     private boolean acceptsSpectators;
     private Set<WarlordsPlayer> cachedPlayers = new HashSet<>();
     private Map<LocationUtils.LocationBlockHolder, Material> previousBlocks = new HashMap<>(); // for when world blocks are changed and needs to be revertd later
-
+    private List<String> namespace;
     private int loopTickCounter = 0;
 
     public Game(EnumSet<GameAddon> gameAddons, GameMap map, GameMode gameMode, LocationFactory locations) {
@@ -103,6 +103,7 @@ public final class Game implements Runnable, AutoCloseable {
         this.addons = gameAddons;
         this.map = map;
         this.gameMode = gameMode;
+        this.namespace = gameMode.namespaces;
         this.options = new ArrayList<>(options);
         options.forEach(option -> this.cachedOptions.computeIfAbsent(option.getClass(), k -> new ArrayList<>()).add(option));
         this.minPlayers = map.getMinPlayers();
@@ -911,6 +912,14 @@ public final class Game implements Runnable, AutoCloseable {
 
     public void addTickCounter() {
         this.loopTickCounter++;
+    }
+
+    public List<String> getNamespace() {
+        return namespace;
+    }
+
+    public void setNamespace(List<String> namespace) {
+        this.namespace = namespace;
     }
 
 }

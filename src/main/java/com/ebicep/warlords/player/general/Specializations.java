@@ -130,7 +130,8 @@ public enum Specializations {
     ) {
         @Override
         public void init(WarlordsEntity warlordsEntity) {
-            float leechHeal = AbstractAbility.convertToPercent(ConfigManager.getSpecsConfigValue(ConfigManager.DEFAULT_NAMESPACES,
+            float leechHeal = AbstractAbility.convertToPercent(ConfigManager.getSpecsConfigValue(
+                    warlordsEntity.getGame().getNamespace(),
                     this.name().toLowerCase() + ".leechHealPercent",
                     float.class
             ));
@@ -345,21 +346,22 @@ public enum Specializations {
         return description;
     }
 
-    public AbstractPlayerClass create() {
+    public AbstractPlayerClass create(List<String> namespaces) {
         String specName = name().toLowerCase();
         return new AbstractPlayerClass(
-                ConfigManager.getSpecsConfigValue(ConfigManager.DEFAULT_NAMESPACES, specName + ".className", String.class),
-                ConfigManager.getSpecsConfigValue(ConfigManager.DEFAULT_NAMESPACES, specName + ".name", String.class),
-                ConfigManager.getSpecsConfigValue(ConfigManager.DEFAULT_NAMESPACES, specName + ".maxHealth", int.class),
-                ConfigManager.getSpecsConfigValue(ConfigManager.DEFAULT_NAMESPACES, specName + ".maxEnergy", int.class),
-                ConfigManager.getSpecsConfigValue(ConfigManager.DEFAULT_NAMESPACES, specName + ".energyPerSec", int.class),
-                ConfigManager.getSpecsConfigValue(ConfigManager.DEFAULT_NAMESPACES, specName + ".energyPerHit", int.class),
-                ConfigManager.getSpecsConfigValue(ConfigManager.DEFAULT_NAMESPACES, specName + ".damageResistance", float.class),
-                ConfigManager.getSpecsConfigValue(ConfigManager.DEFAULT_NAMESPACES, specName + ".speed", int.class),
-                ConfigManager.getSpecsConfigListValue(ConfigManager.DEFAULT_NAMESPACES, specName + ".abilities", String.class)
+                ConfigManager.getSpecsConfigValue(namespaces, specName + ".className", String.class),
+                ConfigManager.getSpecsConfigValue(namespaces, specName + ".name", String.class),
+                ConfigManager.getSpecsConfigValue(namespaces, specName + ".maxHealth", int.class),
+                ConfigManager.getSpecsConfigValue(namespaces, specName + ".maxEnergy", int.class),
+                ConfigManager.getSpecsConfigValue(namespaces, specName + ".energyPerSec", int.class),
+                ConfigManager.getSpecsConfigValue(namespaces, specName + ".energyPerHit", int.class),
+                ConfigManager.getSpecsConfigValue(namespaces, specName + ".damageResistance", float.class),
+                ConfigManager.getSpecsConfigValue(namespaces, specName + ".speed", int.class),
+                ConfigManager.getSpecsConfigListValue(namespaces, specName + ".abilities", String.class)
                              .stream()
                              .map(s -> {
                                  AbstractAbility ability = Ability.ABILITY_DATABASE_MAP.getOrDefault(s, Ability.FIREBALL).create.get();
+                                 ability.getBuilder().setNamespaces(namespaces);
                                  return ability;
                              })
                              .toList()

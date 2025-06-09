@@ -12,7 +12,7 @@ public class AbstractAbilityBuilder {
         return new AbstractAbilityBuilder(fieldName);
     }
 
-    private final List<String> namespaces = new ArrayList<>(ConfigManager.DEFAULT_NAMESPACES);
+    private List<String> namespaces = new ArrayList<>(ConfigManager.DEFAULT_NAMESPACES);
     private String fieldName;
     private String name;
     private Float cooldown;
@@ -106,6 +106,10 @@ public class AbstractAbilityBuilder {
 
     public List<String> getNamespaces() {
         return namespaces;
+    }
+
+    public void setNamespaces(List<String> namespaces) {
+        this.namespaces = namespaces;
     }
 
     public Float getCooldown() {

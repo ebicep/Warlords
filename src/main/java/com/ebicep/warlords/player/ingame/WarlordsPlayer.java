@@ -104,8 +104,8 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
         super();
     }
 
-    public WarlordsPlayer(Player player, Specializations specialization) {
-        super(player, specialization);
+    public WarlordsPlayer(Player player, Specializations specialization, List<String> namespaces) {
+        super(player, specialization, namespaces);
         PlayerSettings settings = PlayerSettings.getPlayerSettings(player.getUniqueId());
         this.cosmeticSettings = new CosmeticSettings(
                 settings.getWeaponSkinForSelectedSpec(),
