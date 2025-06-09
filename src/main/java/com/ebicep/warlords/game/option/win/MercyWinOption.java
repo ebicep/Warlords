@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.win;
 
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
@@ -26,7 +27,7 @@ public class MercyWinOption implements Option {
     private int timer;
 
     public MercyWinOption() {
-        this(DEFAULT_LIMIT, DEFAULT_TIMER);
+        this(ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "ctf.pointsToMercy", int.class, DEFAULT_LIMIT), DEFAULT_TIMER);
     }
 
     public MercyWinOption(int mercyLimit) {
