@@ -2,7 +2,6 @@ package com.ebicep.warlords.database.repositories.games.pojos.ctf;
 
 import com.ebicep.holograms.Hologram;
 import com.ebicep.holograms.HologramDataText;
-import com.ebicep.holograms.HologramManager;
 import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
@@ -249,7 +248,7 @@ public class DatabaseGameCTF extends DatabaseGameBase<DatabaseGamePlayerCTF> {
                 TOP_DHP_PER_MINUTE_LOCATION,
                 p -> topDHPPerMinuteData
         ).build();
-        HologramManager.addHologram(topDHPPerMinute);
+        holograms.add(topDHPPerMinute);
 
         HologramDataText topDamageOnCarrierData = new HologramDataText.Builder<>(topDamageOnCarrierComponent.build())
                 .setBillboard(Display.Billboard.FIXED)
@@ -258,7 +257,7 @@ public class DatabaseGameCTF extends DatabaseGameBase<DatabaseGamePlayerCTF> {
                 TOP_DAMAGE_ON_CARRIER_LOCATION,
                 p -> topDamageOnCarrierData
         ).build();
-        HologramManager.addHologram(topDamageOnCarrier);
+        holograms.add(topDamageOnCarrier);
 
         HologramDataText topHealingOnCarrierData = new HologramDataText.Builder<>(topHealingOnCarrierComponent.build())
                 .setBillboard(Display.Billboard.FIXED)
@@ -267,7 +266,7 @@ public class DatabaseGameCTF extends DatabaseGameBase<DatabaseGamePlayerCTF> {
                 TOP_HEALING_ON_CARRIER_LOCATION,
                 p -> topHealingOnCarrierData
         ).build();
-        HologramManager.addHologram(topHealingOnCarrier);
+        holograms.add(topHealingOnCarrier);
     }
 
     @Override
