@@ -302,7 +302,7 @@ public class BotListener extends ListenerAdapter implements Listener {
     }
 
     public static Component getSpecComponent(String spec) {
-        Specializations specFromName = Specializations.getSpecFromName(spec);
+        Specializations specFromName = Specializations.getSpecFromName(spec.trim());
         return Component.text(spec, specFromName.specType.getTextColor());
     }
 
