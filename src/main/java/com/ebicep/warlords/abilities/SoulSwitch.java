@@ -69,7 +69,7 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                 .requireLineOfSight(wp)
                 .lookingAtFirst(wp)
         ) {
-            if (canSwitchToCarrier && swapTarget.getCarriedFlag() != null) {
+            if (!canSwitchToCarrier && swapTarget.getCarriedFlag() != null) {
                 wp.sendMessage(Component.text(" You cannot Soul Switch with a player holding the flag!", NamedTextColor.RED));
                 continue;
             }
