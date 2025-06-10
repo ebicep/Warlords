@@ -354,7 +354,7 @@ public abstract class AbstractMob implements Mob {
                     abilityStats.getAbilityStats().addTimesUsed();
                 }
                 if (!warlordsNPC.isDisableCooldowns()) {
-                    ability.setCurrentCooldown(ability.getCooldownValue());
+                    ability.useAbility();
                 }
             }
         });
