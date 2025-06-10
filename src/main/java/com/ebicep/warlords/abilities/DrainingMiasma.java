@@ -196,7 +196,7 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
                                                .text("Each enemy hit will be afflicted with ")
                                                .text("LEECH", NamedTextColor.DARK_GREEN)
                                                .text(" for ")
-                                               .durationSeconds(leechTickDuration)
+                                               .durationTicks(leechTickDuration)
                                                .text(".")
                                                .build();
     }
