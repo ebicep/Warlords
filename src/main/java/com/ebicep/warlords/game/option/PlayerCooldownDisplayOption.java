@@ -166,7 +166,7 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
     }
 
     @EventHandler(ignoreCancelled = true)
-    public void onWarlordsAbilityActivateEvent(WarlordsAbilityActivateEvent event) {
+    public void onWarlordsAbilityActivateEvent(WarlordsAbilityActivateEvent.Post event) {
         if (event.getAbility() instanceof OrderOfEviscerateLike) {
             refreshVisibility();
         }
