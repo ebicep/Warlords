@@ -38,31 +38,29 @@ public class WinByAllDeathOption implements Option {
 
             @EventHandler(ignoreCancelled = true)
             public void onDeath(WarlordsDeathEvent event) {
-                if (!(event.getWarlordsEntity() instanceof WarlordsPlayer)) {
+                if (!(event.getWarlordsEntity() instanceof WarlordsPlayer wp)) {
                     return;
                 }
                 if (onlyCheckTeam != null) {
                     for (Team team : onlyCheckTeam) {
-                        if (PlayerFilterGeneric.playingGameWarlordsPlayers(game)
-                                               .matchingTeam(team)
-                                               .stream()
-                                               .allMatch(WarlordsEntity::isDead)
-                        ) {
+                        List<WarlordsPlayer> teamPlayers = PlayerFilterGeneric
+                                .playingGameWarlordsPlayers(game)
+                                .excluding(wp)
+                                .matchingTeam(team)
+                                .toList();
+                        if (teamPlayers.isEmpty() || teamPlayers.stream().allMatch(WarlordsEntity::isDead)) {
                             teams.remove(team);
                         }
                     }
                 } else {
                     teams.removeIf(team -> {
-                        List<WarlordsPlayer> warlordsPlayers = PlayerFilterGeneric.playingGameWarlordsPlayers(game)
-                                                                                  .matchingTeam(team)
-                                                                                  .toList();
-                        if (warlordsPlayers.isEmpty()) {
-                            return false;
-                        }
-                        for (WarlordsPlayer warlordsPlayer : warlordsPlayers) {
-                            if (warlordsPlayer.isAlive()) {
-                                return false;
-                            }
+                        List<WarlordsPlayer> warlordsPlayers = PlayerFilterGeneric
+                                .playingGameWarlordsPlayers(game)
+                                .excluding(wp)
+                                .matchingTeam(team)
+                                .toList();
+                        if (warlordsPlayers.isEmpty() || warlordsPlayers.stream().allMatch(WarlordsEntity::isDead)) {
+                            return true;
                         }
                         deadTeams.add(team);
                         return true;
@@ -79,4 +77,5 @@ public class WinByAllDeathOption implements Option {
     public EnumSet<Team> getDeadTeams() {
         return deadTeams;
     }
+
 }
