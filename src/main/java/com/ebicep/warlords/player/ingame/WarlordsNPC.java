@@ -180,6 +180,7 @@ public class WarlordsNPC extends WarlordsEntity {
 
     @Override
     public void unstun() {
+        mob.toggleStun(false);
         //tick later to prevent collision issues
         new GameRunnable(game) {
             @Override
