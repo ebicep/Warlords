@@ -211,6 +211,9 @@ public abstract class AbstractAbility implements AbilityIcon {
     }
 
     public void addCurrentCooldown(float cooldown) {
+        if (currentCharges == maxCharges) {
+            currentCharges--;
+        }
 //        if (currentCooldown != 0) {
         currentCooldown += cooldown;
         queueUpdateItem();
