@@ -921,27 +921,6 @@ public class InstanceManager {
                 if (source.isNoEnergyConsumption()) {
                     source.getRecordDamage().add(cappedDamage);
                 }
-
-                finalEvent.set(new WarlordsDamageHealingFinalEvent(
-                        event,
-                        flags,
-                        warlordsEntity,
-                        source,
-                        ability,
-                        cause,
-                        initialHealth,
-                        damageHealValueBeforeAllReduction,
-                        damageHealValueBeforeInterveneReduction,
-                        damageHealValueBeforeShieldReduction,
-                        damageValue,
-                        critChance,
-                        critMultiplier,
-                        isCrit,
-                        true,
-                        WarlordsDamageHealingFinalEvent.FinalEventFlag.REGULAR
-                ));
-                warlordsEntity.getSecondStats().addDamageHealingEventAsSelf(finalEvent.get());
-                source.getSecondStats().addDamageHealingEventAsAttacker(finalEvent.get());
                 // The player died.
                 float newHealth = warlordsEntity.getCurrentHealth();
                 if (!debt && warlordsEntity.isTakeDamage()) {
@@ -1007,6 +986,26 @@ public class InstanceManager {
                         warlordsEntity.playHitSound(source);
                     }
                 }
+                finalEvent.set(new WarlordsDamageHealingFinalEvent(
+                        event,
+                        flags,
+                        warlordsEntity,
+                        source,
+                        ability,
+                        cause,
+                        initialHealth,
+                        damageHealValueBeforeAllReduction,
+                        damageHealValueBeforeInterveneReduction,
+                        damageHealValueBeforeShieldReduction,
+                        damageValue,
+                        critChance,
+                        critMultiplier,
+                        isCrit,
+                        true,
+                        WarlordsDamageHealingFinalEvent.FinalEventFlag.REGULAR
+                ));
+                warlordsEntity.getSecondStats().addDamageHealingEventAsSelf(finalEvent.get());
+                source.getSecondStats().addDamageHealingEventAsAttacker(finalEvent.get());
             }
         }
 
