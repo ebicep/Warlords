@@ -66,7 +66,7 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
     }
 
     public void addKBRes(float kbRes) {
-        this.kbMultiplier -= kbRes / 2; //dividing more than 100 because reducing kb reduces too much
+        this.kbMultiplier += kbRes / 2; //dividing more than 100 because reducing kb reduces too much
     }
 
     public void addThorns(float thorns, int maxThornsDamage) {
