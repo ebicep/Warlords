@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.pvp;
 
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
@@ -33,7 +34,10 @@ public class GameOvertimeOption implements Option, Listener {
     private int overTimeTime;
 
     public GameOvertimeOption() {
-        this(OVERTIME_POINT, OVERTIME_SECONDS);
+        this(
+                ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "ctf.overtimePoints", int.class, OVERTIME_POINT),
+                ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "ctf.overtimeSeconds", int.class, OVERTIME_SECONDS)
+        );
     }
 
     public GameOvertimeOption(int overTimePoints, int overTimeSeconds) {
