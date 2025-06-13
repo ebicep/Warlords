@@ -1270,11 +1270,6 @@ public abstract class WarlordsEntity {
         // Gives the player their respawn timer as display.
         this.decrementRespawnTimer();
 
-        if (getEntity() instanceof Player player) {
-            if (getCompassTarget() != null) {
-                player.setCompassTarget(getCompassTarget().getLocation());
-            }
-        }
         this.health.tick();
         this.energy.tick();
         this.energyPerSec.tick();

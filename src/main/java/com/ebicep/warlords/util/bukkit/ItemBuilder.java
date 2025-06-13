@@ -1,6 +1,7 @@
 package com.ebicep.warlords.util.bukkit;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -18,6 +19,7 @@ import org.bukkit.potion.PotionType;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class ItemBuilder {
@@ -80,13 +82,33 @@ public class ItemBuilder {
         this(material);
         PotionMeta potionMeta = (PotionMeta) meta();
         potionMeta.setBasePotionType(potionType);
-        item.setItemMeta(potionMeta);
+        setMeta(potionMeta);
         hideAllFlags();
     }
 
     public ItemBuilder(@Nonnull Material type) {
         item = new ItemStack(type);
         hideAllFlags();
+    }
+
+    protected void setMeta(@Nullable ItemMeta meta) {
+        this.meta = meta;
+    }
+
+    public <T extends ItemMeta> ItemBuilder meta(Class<T> metaClass, Consumer<T> metaConsumer) {
+        ItemMeta itemMeta = meta();
+        try {
+            if (metaClass.isInstance(itemMeta)) {
+                T metaData = metaClass.cast(itemMeta);
+                metaConsumer.accept(metaData);
+                setMeta(metaData);
+            } else {
+                throw new IllegalArgumentException("ItemMeta is not of type " + metaClass.getSimpleName() + ", it is " + itemMeta.getClass().getSimpleName());
+            }
+        } catch (Exception e) {
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
+        }
+        return this;
     }
 
     public ItemBuilder name(Component component) {

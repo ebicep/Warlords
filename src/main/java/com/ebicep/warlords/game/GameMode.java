@@ -25,7 +25,6 @@ import com.ebicep.warlords.game.option.pve.tutorial.TutorialOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.WinByMaxWaveClearOption;
 import com.ebicep.warlords.game.option.pvp.*;
 import com.ebicep.warlords.game.option.pvp.ctf.FlagOption;
-import com.ebicep.warlords.game.option.pvp.interception.InterceptionOption;
 import com.ebicep.warlords.game.option.pvp.interception.InterceptionRespawnOption;
 import com.ebicep.warlords.game.option.respawn.*;
 import com.ebicep.warlords.game.option.towerdefense.WinByLastStandingCastleOption;
@@ -109,6 +108,7 @@ public enum GameMode {
                     Component.text("GO!", NamedTextColor.GREEN),
                     Component.text("Steal and capture the enemy flag!", NamedTextColor.YELLOW)
             ));
+            options.add(CompassOption.flagOption());
             options.add(new FlagOption());
             options.add(new NoRespawnIfOfflineOption());
             options.add(new WeaponOption());
@@ -165,7 +165,7 @@ public enum GameMode {
                     Component.text("Capture the marked points!", NamedTextColor.YELLOW)
             ));
 
-            options.add(new InterceptionOption());
+            options.add(CompassOption.pointInformationOption());
 
             options.add(new NoRespawnIfOfflineOption());
             options.add(new WeaponOption());
@@ -530,6 +530,7 @@ public enum GameMode {
                     3,
                     Component.text("GO!", NamedTextColor.GREEN)
             ));
+            options.add(CompassOption.flagOption());
             options.add(new FlagOption());
             options.add(new WeaponOption());
 //            options.add(new ApplySpecBoostsOption());

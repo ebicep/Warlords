@@ -16,7 +16,6 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -27,7 +26,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -35,7 +33,6 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
@@ -51,10 +48,6 @@ import static java.util.Collections.singletonList;
 public class FlagSpawnPointOption implements Option {
 
     public static final boolean DEFAULT_REGISTER_COMPASS_MARKER = true;
-    public static final ItemStack COMPASS = new ItemBuilder(Material.COMPASS)
-            .name(Component.text("Flag Finder", NamedTextColor.GREEN))
-            .unbreakable()
-            .get();
     public static final int FLAG_MULTIPLIER_PERIOD = 40; // ticks
 
     @Nonnull
@@ -314,11 +307,6 @@ public class FlagSpawnPointOption implements Option {
     @Override
     public void onGameCleanup(@Nonnull Game game) {
         this.renderer.reset();
-    }
-
-    @Override
-    public void updateInventory(@Nonnull WarlordsPlayer warlordsPlayer, Player player) {
-        player.getInventory().setItem(8, COMPASS);
     }
 
     private boolean flagIsInCaptureZone(PlayerFlagLocation playerFlagLocation) {

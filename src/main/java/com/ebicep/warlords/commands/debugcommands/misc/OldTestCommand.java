@@ -1,8 +1,11 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.game.option.marker.CompassTargetMarker;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.mongodb.client.MongoCollection;
@@ -15,6 +18,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.meta.CompassMeta;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
@@ -115,7 +119,22 @@ public class OldTestCommand implements CommandExecutor {
         }
         int level = 20;
         if (commandSender instanceof Player player) {
-            player.setLevel(500);
+            WarlordsEntity warlordsEntity = Warlords.getPlayer(player);
+            if (warlordsEntity != null) {
+                CompassTargetMarker compassTarget = warlordsEntity.getCompassTarget();
+                if (compassTarget != null) {
+                    player.getInventory().forEach(itemStack -> {
+                        if (itemStack == null) {
+                            return;
+                        }
+                        if (itemStack.getItemMeta() instanceof CompassMeta compassMeta) {
+                            compassMeta.setLodestone(compassTarget.getLocation());
+                            itemStack.setItemMeta(compassMeta);
+                        }
+                    });
+                }
+            }
+            System.out.println(player.getCompassTarget());
 //            WarlordsEntity warlordsEntity = Warlords.getPlayer(player);
 //            for (int i = 0; i < 5; i++) {
 //                int finalI = i;
