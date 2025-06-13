@@ -303,7 +303,7 @@ public abstract class AbstractAbility implements AbilityIcon {
 
     public void subtractCurrentCooldownForce(float cooldown) {
         if (currentCooldown != 0) {
-            if (currentCooldown - cooldown < 0) {
+            if (currentCooldown - cooldown <= 0) {
                 currentCooldown = 0;
                 addCharge();
                 queueUpdateItem();
