@@ -28,6 +28,7 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
     private final Listener activeListener;
     private List<DamageInstance> extraDamageInstances = null;
     private List<HealingInstance> extraHealingInstances = null;
+    private List<CooldownFlag> flags = new ArrayList<>();
 
     public AbstractCooldown(
             String name,
@@ -208,6 +209,10 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
 
     public Listener getActiveListener() {
         return activeListener;
+    }
+
+    public List<CooldownFlag> getFlags() {
+        return flags;
     }
 
 }

@@ -52,6 +52,16 @@ public class CooldownManager {
         return toRemove.size();
     }
 
+    public void updatePlayerNames(AbstractCooldown<?> abstractCooldown) {
+        if (abstractCooldown.changesPlayerName()) {
+            queueUpdatePlayerNames();
+        }
+    }
+
+    public void queueUpdatePlayerNames() {
+        updatePlayerNames = true;
+    }
+
     public int removeDebuffCooldownsVind() {
         List<AbstractCooldown<?>> toRemove = abstractCooldowns
                 .stream()
@@ -69,16 +79,6 @@ public class CooldownManager {
         abstractCooldowns.removeAll(toRemove);
         toRemove.forEach(this::updatePlayerNames);
         return toRemove.size();
-    }
-
-    public void updatePlayerNames(AbstractCooldown<?> abstractCooldown) {
-        if (abstractCooldown.changesPlayerName()) {
-            queueUpdatePlayerNames();
-        }
-    }
-
-    public void queueUpdatePlayerNames() {
-        updatePlayerNames = true;
     }
 
     public WarlordsEntity getWarlordsEntity() {
@@ -150,7 +150,13 @@ public class CooldownManager {
     }
 
     public void subtractTicksOnRegularCooldowns(int ticks, CooldownTypes... cooldownTypes) {
-        addTicksToRegularCooldowns(-ticks, cooldownTypes);
+        List<CooldownTypes> types = Arrays.asList(cooldownTypes);
+        abstractCooldowns.stream()
+                         .filter(abstractCooldown -> types.contains(abstractCooldown.getCooldownType()))
+                         .filter(regularCooldown -> !regularCooldown.getFlags().contains(CooldownFlag.CANNOT_BE_REDUCED))
+                         .filter(RegularCooldown.class::isInstance)
+                         .map(RegularCooldown.class::cast)
+                         .forEachOrdered(regularCooldown -> regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() - ticks));
     }
 
     public void addTicksToRegularCooldowns(int ticks, CooldownTypes... cooldownTypes) {
