@@ -29,6 +29,7 @@ public enum Permissions {
     BUILDER("BUILDER", NamedTextColor.DARK_GREEN, "group.builder"),
     GAME_STARTER("GS", NamedTextColor.YELLOW, "group.gamestarter"),
     PATREON("P", NamedTextColor.GREEN, "group.patreon"),
+    STREAMER("", NamedTextColor.AQUA, "group.streamer"),
     DEFAULT("", NamedTextColor.AQUA, "group.default"),
 
     ;
@@ -109,6 +110,10 @@ public enum Permissions {
 
     public static boolean isContentCreator(Player player) {
         return player.hasPermission(CONTENT_CREATOR.permission);
+    }
+
+    public static boolean isStreamer(Player player) {
+        return player.hasPermission(STREAMER.permission);
     }
 
     public static boolean isGameStarter(Player player) {

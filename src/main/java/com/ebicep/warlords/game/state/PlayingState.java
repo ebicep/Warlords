@@ -5,12 +5,14 @@ import com.ebicep.warlords.commands.debugcommands.misc.RecordGamesCommand;
 import com.ebicep.warlords.commands.miscellaneouscommands.StreamChaptersCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.*;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
+import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.player.general.ExperienceManager;
 import com.ebicep.warlords.player.general.PlayerSettings;
@@ -197,6 +199,11 @@ public class PlayingState implements State, TimerDebugAble {
         );
 
         this.game.forEachOfflineWarlordsPlayer(wp -> {
+            DatabasePlayer databasePlayer = wp.getDatabasePlayer();
+            if (databasePlayer.hasPermission(Permissions.STREAMER.permission)) {
+                databasePlayer.getGameLogs().add(new StreamChaptersCommand.GameTime(Instant.now(), game.getMap(), wp.getSpecClass(), game.playersCount()));
+                DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+            }
             if (StreamChaptersCommand.GAME_TIMES.containsKey(wp.getUuid())) {
                 StreamChaptersCommand.GAME_TIMES.get(wp.getUuid())
                                                 .add(new StreamChaptersCommand.GameTime(Instant.now(), game.getMap(), wp.getSpecClass(), game.playersCount()));

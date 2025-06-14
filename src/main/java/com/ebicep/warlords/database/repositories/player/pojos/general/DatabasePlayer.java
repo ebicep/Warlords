@@ -3,6 +3,7 @@ package com.ebicep.warlords.database.repositories.player.pojos.general;
 import com.ebicep.warlords.achievements.Achievement;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.achievements.types.TieredAchievements;
+import com.ebicep.warlords.commands.miscellaneouscommands.StreamChaptersCommand;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
@@ -115,6 +116,9 @@ public class DatabasePlayer implements MultiStatsGeneral, TracksMultiAbilityStat
     private List<String> permissions = new ArrayList<>();
     @Field("patches_applied")
     private List<Patches> patchesApplied = new ArrayList<>();
+
+    @Field("game_logs")
+    private List<StreamChaptersCommand.GameTime> gameLogs = new ArrayList<>();
 
     public DatabasePlayer() {
     }
@@ -512,6 +516,10 @@ public class DatabasePlayer implements MultiStatsGeneral, TracksMultiAbilityStat
         return Stream.of(pubStats, compStats, tournamentStats, pveStats)
                      .flatMap(s -> s.getAllAbilityStats().stream())
                      .collect(Collectors.toList());
+    }
+
+    public List<StreamChaptersCommand.GameTime> getGameLogs() {
+        return gameLogs;
     }
 
     public enum Patches {
