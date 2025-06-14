@@ -67,7 +67,7 @@ public class ChillyAura implements SpecBoostManager.SpecBoost<ChillyAura> {
             if (!(cooldown instanceof RegularCooldown<?> regularCooldown)) {
                 return;
             }
-            if (!(cooldown.getCooldownClass().equals(IceBarrier.IceBarrierData.class) || !cooldown.getFrom().equals(warlordsEntity))) {
+            if (!cooldown.getCooldownClass().equals(IceBarrier.IceBarrierData.class) || !cooldown.getFrom().equals(warlordsEntity)) {
                 return;
             }
             regularCooldown.addTriConsumer((cd, ticksLeft, ticksElapsed) -> {
