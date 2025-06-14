@@ -28,4 +28,12 @@ public class SpecBoostConfig implements ConfigManager.Config {
         return ConfigUtils.getValue(specBoostConfig, namespaces, key, fieldType, defaultValue);
     }
 
+    public <T> T getValue(List<String> namespaces, String key, Class<T> fieldType, boolean optionalField) {
+        return ConfigUtils.getValue(specBoostConfig, namespaces, key, fieldType, optionalField);
+    }
+
+    public <T> T getValue(List<String> namespaces, String key, Class<T> fieldType, T defaultValue, boolean optionalField) {
+        return ConfigUtils.getValue(specBoostConfig, namespaces, key, fieldType, defaultValue, optionalField);
+    }
+
 }

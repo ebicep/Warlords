@@ -130,11 +130,11 @@ public class SpecBoostManager {
         void init();
 
         default boolean isDisabled() {
-            return getValue("disabled", boolean.class);
+            return getValue("disabled", boolean.class, true);
         }
 
-        default TextComponent getDifficulty() {
-            return Component.text("☆".repeat(getValue("difficulty", int.class)), NamedTextColor.YELLOW);
+        default <T> T getValue(String fieldName, Class<T> clazz, boolean optionalField) {
+            return ConfigManager.getSpecBoostConfigValue(NAMESPACES, getConfigFieldName() + "." + fieldName, clazz, optionalField);
         }
 
         default TextComponent getName() {
@@ -145,12 +145,12 @@ public class SpecBoostManager {
             return getValue("name", String.class);
         }
 
-        default <T> T getValue(String fieldName, Class<T> clazz) {
-            return getValue(NAMESPACES, fieldName, clazz);
+        default TextComponent getDifficulty() {
+            return Component.text("☆".repeat(getValue("difficulty", int.class, true)), NamedTextColor.YELLOW);
         }
 
-        default <T> T getValue(List<String> namespaces, String fieldName, Class<T> clazz) {
-            return ConfigManager.getSpecBoostConfigValue(namespaces, getConfigFieldName() + "." + fieldName, clazz);
+        default <T> T getValue(String fieldName, Class<T> clazz) {
+            return ConfigManager.getSpecBoostConfigValue(NAMESPACES, getConfigFieldName() + "." + fieldName, clazz);
         }
 
         String getConfigFieldName();

@@ -14,6 +14,10 @@ public class ConfigUtils {
     }
 
     public static <T> T getValue(Document document, List<String> namespaces, String key, Class<T> fieldType, T defaultValue) {
+        return getValue(document, namespaces, key, fieldType, defaultValue, false);
+    }
+
+    public static <T> T getValue(Document document, List<String> namespaces, String key, Class<T> fieldType, T defaultValue, boolean optionalField) {
         if (document == null) {
             ChatUtils.MessageType.CONFIG.sendErrorMessage("Config document not set");
             return defaultValue;
@@ -28,7 +32,9 @@ public class ConfigUtils {
         if (result == null || result.value() == null) {
             String debug = " (" + String.join(",", namespaces) + ") (" + key + ")" + " (" + fieldType.getName() + ")";
             if (result != null) {
-                ChatUtils.MessageType.CONFIG.sendErrorMessage(result.valueResult() + debug);
+                if (result.valueResult() != ValueResult.INVALID_FIELD || !optionalField) {
+                    ChatUtils.MessageType.CONFIG.sendErrorMessage(result.valueResult() + debug);
+                }
             } else {
                 ChatUtils.MessageType.CONFIG.sendErrorMessage("No Result" + debug);
             }
@@ -74,6 +80,10 @@ public class ConfigUtils {
         }
 
         return null;
+    }
+
+    public static <T> T getValue(Document document, List<String> namespaces, String key, Class<T> fieldType, boolean optionalField) {
+        return getValue(document, namespaces, key, fieldType, defaultValue(fieldType), optionalField);
     }
 
     /**
