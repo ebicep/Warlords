@@ -37,6 +37,9 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
     private int alliesAffected = 3;
     private int linkBreakRadius = 15;
     private int castRange = 10;
+    private float healMultiplierOne;
+    private float healMultiplierTwo;
+    private float healMultiplierThree;
 
     public RemedicChains() {
         super(AbstractAbilityBuilder.create("remedicChains").pvp());
@@ -49,6 +52,9 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
         this.alliesAffected = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("alliesAffected"), int.class);
         this.linkBreakRadius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("linkBreakRadius"), int.class);
         this.castRange = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("castRange"), int.class);
+        this.healMultiplierOne = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("healMultiplierOne"), float.class);
+        this.healMultiplierTwo = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("healMultiplierTwo"), float.class);
+        this.healMultiplierThree = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("healMultiplierThree"), float.class);
     }
 
     @Override
@@ -112,13 +118,20 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
                     Set<WarlordsEntity> linkedEntities = cooldown.getLinkedEntities();
                     if (ticksElapsed % 20 == 0) {
                         Set<WarlordsEntity> linkedEntitiesWithWP = new HashSet<>(linkedEntities);
+                        float multiplier = switch (linkedEntitiesWithWP.size()) {
+                            case 1 -> healMultiplierOne;
+                            case 2 -> healMultiplierTwo;
+                            case 3 -> healMultiplierThree;
+                            default -> 1f;
+                        };
                         linkedEntitiesWithWP.add(wp);
                         linkedEntitiesWithWP.forEach(linked -> {
                             linked.addInstance(InstanceBuilder
                                     .healing()
                                     .ability(this)
                                     .source(wp)
-                                    .value(healingValues.chainHealing)
+                                    .min(healingValues.chainHealing.getMinValue() * multiplier)
+                                    .max(healingValues.chainHealing.getMaxValue() * multiplier)
                             );
                         });
                     }
