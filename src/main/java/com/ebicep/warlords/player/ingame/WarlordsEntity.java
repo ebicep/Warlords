@@ -1152,7 +1152,9 @@ public abstract class WarlordsEntity {
             WarlordsAddVelocityEvent warlordsAddVelocityEvent = new WarlordsAddVelocityEvent(this, from, v);
             Bukkit.getPluginManager().callEvent(warlordsAddVelocityEvent);
             if (!warlordsAddVelocityEvent.isCancelled()) {
-                this.entity.setVelocity(v);
+                if (!v.isZero()) {
+                    this.entity.setVelocity(v);
+                }
             }
         }
     }
