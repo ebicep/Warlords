@@ -71,7 +71,6 @@ public enum GameMode {
 
             options.add(new WeaponOption());
             options.add(new ApplySpecBoostsOption());
-            options.add(new PlayerCooldownDisplayOption());
 
             return options;
         }
