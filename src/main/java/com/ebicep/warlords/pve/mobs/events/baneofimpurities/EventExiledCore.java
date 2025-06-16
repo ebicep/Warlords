@@ -1,8 +1,11 @@
 package com.ebicep.warlords.pve.mobs.events.baneofimpurities;
 
 import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.util.java.RandomCollection;
+import net.citizensnpcs.api.ai.GoalController;
+import net.citizensnpcs.trait.ArmorStandTrait;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 
@@ -77,4 +80,17 @@ public class EventExiledCore extends AbstractEventCore {
     public Mob getMobRegistry() {
         return Mob.EVENT_EXILED_CORE;
     }
+
+
+    @Override
+    public void onSpawn(PveOption option) {
+        super.onSpawn(option);
+        GoalController goalController = npc.getDefaultGoalController();
+        goalController.clear();
+        ArmorStandTrait armorStandTrait = warlordsNPC.getNpc().getOrAddTrait(ArmorStandTrait.class);
+        armorStandTrait.setVisible(false);
+        armorStandTrait.setGravity(false);
+        warlordsNPC.teleport(warlordsNPC.getLocation().add(0, -1, 0));
+    }
+
 }

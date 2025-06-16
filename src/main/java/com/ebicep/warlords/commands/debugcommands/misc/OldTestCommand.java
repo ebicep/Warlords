@@ -1,12 +1,10 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
-import com.ebicep.warlords.game.option.marker.CompassTargetMarker;
-import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.items.ItemTier;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
@@ -18,12 +16,13 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.meta.CompassMeta;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class OldTestCommand implements CommandExecutor {
 
@@ -119,22 +118,35 @@ public class OldTestCommand implements CommandExecutor {
         }
         int level = 20;
         if (commandSender instanceof Player player) {
-            WarlordsEntity warlordsEntity = Warlords.getPlayer(player);
-            if (warlordsEntity != null) {
-                CompassTargetMarker compassTarget = warlordsEntity.getCompassTarget();
-                if (compassTarget != null) {
-                    player.getInventory().forEach(itemStack -> {
-                        if (itemStack == null) {
-                            return;
-                        }
-                        if (itemStack.getItemMeta() instanceof CompassMeta compassMeta) {
-                            compassMeta.setLodestone(compassTarget.getLocation());
-                            itemStack.setItemMeta(compassMeta);
-                        }
-                    });
-                }
+            List<Mob> mobs = Arrays.stream(Mob.VALUES).collect(Collectors.toList());
+            for (Mob mob : Mob.BASIC) {
+                mobs.remove(mob);
             }
-            System.out.println(player.getCompassTarget());
+            for (Mob mob : Mob.ADVANCED) {
+                mobs.remove(mob);
+            }
+            for (Mob mob : Mob.ELITE) {
+                mobs.remove(mob);
+            }
+            for (Mob mob : Mob.INTERMEDIATE) {
+                mobs.remove(mob);
+            }
+            for (Mob mob : Mob.CHAMPION) {
+                mobs.remove(mob);
+            }
+            for (Mob mob : Mob.BOSS_MINIONS) {
+                mobs.remove(mob);
+            }
+            for (Mob mob : Mob.BOSSES) {
+                mobs.remove(mob);
+            }
+            for (Mob mob : Mob.EVENT_BOSSES) {
+                mobs.remove(mob);
+            }
+            for (Mob mob : Mob.EVENT_BOSS_MINIONS) {
+                mobs.remove(mob);
+            }
+            System.out.println(mobs);
 //            WarlordsEntity warlordsEntity = Warlords.getPlayer(player);
 //            for (int i = 0; i < 5; i++) {
 //                int finalI = i;
