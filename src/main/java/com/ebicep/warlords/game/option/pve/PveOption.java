@@ -30,7 +30,6 @@ import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
-import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.citizensnpcs.trait.RotationTrait;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -339,7 +338,7 @@ public interface PveOption extends Option {
 
     default List<Component> healthScoreboard(Game game) {
         List<Component> list = new ArrayList<>();
-        for (WarlordsEntity we : PlayerFilter.playingGame(game).filter(e -> e instanceof WarlordsPlayer)) {
+        for (WarlordsEntity we : game.warlordsPlayers().toList()) {
             float healthRatio = we.getCurrentHealth() / we.getMaxHealth();
             NamedTextColor healthColor;
             if (healthRatio >= .5) {

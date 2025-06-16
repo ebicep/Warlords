@@ -62,6 +62,9 @@ public class InstanceManager {
         }
         debugHoverable.appendTitle("Pre Event", NamedTextColor.AQUA);
         debugHoverable.appendEvent(event);
+        if (event.getWarlordsEntity().getCurrentHealth() <= 0) {
+            return Optional.empty();
+        }
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             return Optional.empty();
@@ -926,6 +929,7 @@ public class InstanceManager {
                 if (!debt && warlordsEntity.isTakeDamage()) {
                     newHealth = Math.min(warlordsEntity.getCurrentHealth() - damageValue, warlordsEntity.getMaxHealth());
                 }
+                warlordsEntity.setCurrentHealth(newHealth);
                 if (newHealth <= 0) {
                     warlordsEntity.die(
                             source,
@@ -981,7 +985,6 @@ public class InstanceManager {
                                     })
                     );
                 } else {
-                    warlordsEntity.setCurrentHealth(newHealth);
                     if (!flags.contains(InstanceFlags.NO_HIT_SOUND) && warlordsEntity != source && damageValue != 0) {
                         warlordsEntity.playHitSound(source);
                     }
