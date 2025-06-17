@@ -4,6 +4,7 @@ import com.ebicep.warlords.achievements.Achievement;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.achievements.types.TieredAchievements;
 import com.ebicep.warlords.commands.miscellaneouscommands.StreamChaptersCommand;
+import com.ebicep.warlords.database.repositories.events.pojos.GameEventReward;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
@@ -641,6 +642,34 @@ public class DatabasePlayer implements MultiStatsGeneral, TracksMultiAbilityStat
                 unlocked.clear();
                 pveStats.getAlternativeMasteriesUnlockedAbilities().clear();
                 pveStats.addCurrency(Currencies.ASCENDANT_SHARD, masteriesUnlocked.get());
+                return true;
+            }
+        },
+        EVENT_BOLTARO_DOUBLE_REWARDS_1749204000 {
+            @Override
+            public boolean run(UUID uuid, DatabasePlayer databasePlayer) {
+                DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+                long target = 1749204000;
+                List<GameEventReward> gameEventRewards = pveStats.getGameEventRewards();
+                List<GameEventReward> rewards = gameEventRewards
+                        .stream()
+                        .filter(gameEventReward -> gameEventReward.getEvent() == target)
+                        .toList();
+                if (rewards.size() == 2) {
+                    GameEventReward reward1 = rewards.get(0);
+                    GameEventReward reward2 = rewards.get(1);
+                    if (reward1.claimed() && !reward2.claimed()) {
+                        gameEventRewards.remove(reward2);
+                    } else if (!reward1.claimed() && reward2.claimed()) {
+                        gameEventRewards.remove(reward1);
+                    } else if (!reward1.claimed() && !reward2.claimed()) {
+                        gameEventRewards.remove(reward2);
+                    } else if (reward1.claimed() && reward2.claimed()) {
+                        reward2.unGiveToPlayer(databasePlayer);
+                        gameEventRewards.remove(reward2);
+                    }
+                }
+
                 return true;
             }
         },

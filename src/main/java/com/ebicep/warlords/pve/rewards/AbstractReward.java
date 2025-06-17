@@ -36,6 +36,10 @@ public abstract class AbstractReward {
         setTimeClaimed();
     }
 
+    public void unGiveToPlayer(DatabasePlayer databasePlayer) {
+        rewards.forEach((spendable, amount) -> spendable.addToPlayer(databasePlayer, -amount));
+    }
+
     public List<Component> getLore() {
         return rewards.entrySet()
                       .stream()
@@ -79,6 +83,10 @@ public abstract class AbstractReward {
 
     public void setTimeClaimed() {
         this.timeClaimed = Instant.now();
+    }
+
+    public boolean claimed() {
+        return timeClaimed != null;
     }
 
     @Override

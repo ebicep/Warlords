@@ -134,8 +134,8 @@ public class DatabaseManager {
                     GuildManager.GUILDS.removeIf(guild -> guild.getDisbandDate() != null);
                     ChatUtils.MessageType.GUILD_SERVICE.sendMessage("Stored " + GuildManager.GUILDS.size() + " guilds in " + (System.nanoTime() - guildStart) / 1000000 + "ms");
                     DatabaseTiming.checkTimings();
+                    GuildManager.init();
                     GuildLeaderboardManager.recalculateAllLeaderboards();
-                    GuildManager.reloadPlayerCaches();
                 })
                 .delay(20, TimeUnit.SECONDS)
                 .sync(() -> {

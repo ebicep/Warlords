@@ -68,8 +68,25 @@ public class GuildManager {
         GUILDS_TO_UPDATE.forEach(guild -> DatabaseManager.guildService.update(guild));
     }
 
-    public static void reloadPlayerCaches() {
+    public static void init() {
         GUILDS.forEach(Guild::reloadPlayerCache);
+        GUILDS.forEach(guild -> {
+            for (Guild.Patches patch : Guild.Patches.VALUES) {
+                List<Guild.Patches> patchesApplied = guild.getPatchesApplied();
+                if (patchesApplied.contains(patch)) {
+                    continue;
+                }
+                ChatUtils.MessageType.WARLORDS.sendMessage("Applying " + patch + " patch to guild " + guild.getName());
+                boolean applied = patch.run(guild);
+                if (applied) {
+                    ChatUtils.MessageType.WARLORDS.sendMessage("Applied " + patch + " patch to guild " + guild.getName());
+                    patchesApplied.add(patch);
+                } else {
+                    ChatUtils.MessageType.WARLORDS.sendErrorMessage("Failed to apply " + patch + " patch to guild " + guild.getName());
+                }
+            }
+            queueUpdateGuild(guild);
+        });
     }
 
     public static boolean existingGuildWithName(String name) {
@@ -162,6 +179,7 @@ public class GuildManager {
             GuildInvite that = (GuildInvite) o;
             return uuid.equals(that.uuid) && guild.equals(that.guild);
         }
+
     }
 
 }

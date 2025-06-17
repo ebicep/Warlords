@@ -5,6 +5,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.database.repositories.timings.pojos.Timing;
 import com.ebicep.warlords.guilds.logs.AbstractGuildLog;
+import com.ebicep.warlords.guilds.logs.types.general.GuildLogGameEventReward;
 import com.ebicep.warlords.guilds.logs.types.oneplayer.GuildLogJoin;
 import com.ebicep.warlords.guilds.logs.types.oneplayer.GuildLogLeave;
 import com.ebicep.warlords.guilds.logs.types.oneplayer.GuildLogMuteGuild;
@@ -112,6 +113,8 @@ public class Guild {
     @Field("audit_log")
     private List<AbstractGuildLog> auditLog = new ArrayList<>();
     private List<String> motd = new ArrayList<>();
+    @Field("patches_applied")
+    private List<Patches> patchesApplied = new ArrayList<>();
 
     public Guild() {
     }
@@ -136,6 +139,13 @@ public class Guild {
         role.addPlayer(player.getUniqueId());
         this.players.add(guildPlayer);
         this.guildPlayerUUIDCache.put(player.getUniqueId(), guildPlayer);
+    }
+
+    @Override
+    public String toString() {
+        return "Guild{" +
+                "name='" + name + '\'' +
+                '}';
     }
 
     public void reloadPlayerCache() {
@@ -553,6 +563,10 @@ public class Guild {
         );
     }
 
+    public List<AbstractGuildLog> getAuditLog() {
+        return auditLog;
+    }
+
     public List<String> getMotd() {
         return motd;
     }
@@ -584,10 +598,41 @@ public class Guild {
         return eventStats.getOrDefault(event, new HashMap<>()).getOrDefault(eventStartEpochSecond, 0L);
     }
 
-    @Override
-    public String toString() {
-        return "Guild{" +
-                "name='" + name + '\'' +
-                '}';
+    public List<Patches> getPatchesApplied() {
+        return patchesApplied;
     }
+
+    public enum Patches {
+
+        EVENT_BOLTARO_DOUBLE_REWARDS_1749204000 {
+            @Override
+            public boolean run(Guild guild) {
+                long target = 1749204000;
+                List<GuildLogGameEventReward> rewards = guild
+                        .getAuditLog()
+                        .stream()
+                        .filter(GuildLogGameEventReward.class::isInstance)
+                        .map(GuildLogGameEventReward.class::cast)
+                        .filter(rewardLog -> rewardLog.getEventDate() == target)
+                        .toList();
+                if (rewards.size() == 2) {
+                    GuildLogGameEventReward reward = rewards.get(1);
+                    guild.getAuditLog().remove(reward);
+                    LinkedHashMap<String, Long> guildRewards = reward.getEvent().getGuildRewards(reward.getPlacement());
+                    guild.addCurrentCoins(-guildRewards.getOrDefault("Coins", 0L));
+                    guild.addExperience(-guildRewards.getOrDefault("Experience", 0L));
+                }
+                return true;
+            }
+        },
+
+        ;
+
+        public static final Patches[] VALUES = values();
+
+        public boolean run(Guild guild) {
+            return false;
+        }
+    }
+
 }

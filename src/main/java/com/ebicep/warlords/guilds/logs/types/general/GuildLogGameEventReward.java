@@ -45,7 +45,18 @@ public class GuildLogGameEventReward extends AbstractGuildLog {
                        ))
                        .collect(Component.toComponent(Component.text(", ")))
         );
+    }
 
+    public long getEventDate() {
+        return eventDate;
+    }
+
+    public GameEvents getEvent() {
+        return event;
+    }
+
+    public int getPlacement() {
+        return placement;
     }
 
 }
