@@ -1,5 +1,6 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
+import com.ebicep.warlords.abilities.ArcaneShield;
 import com.ebicep.warlords.abilities.TimeWarpCryomancer;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
@@ -14,11 +15,17 @@ import java.util.List;
 
 public class SteadfastWarp implements SpecBoostManager.SpecBoost<SteadfastWarp> {
 
+    private int healthIncrease;
+    private int absorptionDecreasePercent;
+    private int warpHealDecreasePercent;
     private int recastDelayTicks;
     private int kbResistanceLossOnRecastTicks;
 
     @Override
     public void init() {
+        this.healthIncrease = getValue("healthIncrease", int.class);
+        this.absorptionDecreasePercent = getValue("absorptionDecreasePercent", int.class);
+        this.warpHealDecreasePercent = getValue("warpHealDecreasePercent", int.class);
         this.recastDelayTicks = getValue("recastDelayTicks", int.class);
         this.kbResistanceLossOnRecastTicks = getValue("kbResistanceLossOnRecastTicks", int.class);
     }
@@ -30,7 +37,7 @@ public class SteadfastWarp implements SpecBoostManager.SpecBoost<SteadfastWarp> 
 
     @Override
     public List<Object> getVariables() {
-        return List.of(recastDelayTicks, kbResistanceLossOnRecastTicks);
+        return List.of(healthIncrease, absorptionDecreasePercent, warpHealDecreasePercent, recastDelayTicks, kbResistanceLossOnRecastTicks);
     }
 
     @Override
@@ -50,6 +57,13 @@ public class SteadfastWarp implements SpecBoostManager.SpecBoost<SteadfastWarp> 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
+            warlordsPlayer.getHealth().addAdditiveModifier("Spec Boost (Base)", healthIncrease);
+            warlordsPlayer.getAbilitiesMatching(ArcaneShield.class).forEach(arcaneShield -> {
+                arcaneShield.setShieldPercentage(arcaneShield.getShieldPercentage() - absorptionDecreasePercent);
+            });
+            warlordsPlayer.getAbilitiesMatching(TimeWarpCryomancer.class).forEach(timeWarpCryomancer -> {
+                timeWarpCryomancer.setWarpHealPercentage(timeWarpCryomancer.getWarpHealPercentage() - warpHealDecreasePercent);
+            });
         }
 
         @EventHandler(ignoreCancelled = true)
