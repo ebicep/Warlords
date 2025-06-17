@@ -36,6 +36,8 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
     private int energyRestore = 160;
     private float horizontalTotemProcRange;
     private float verticalTotemProcRange;
+    private float magnitude;
+    private float y;
 
     public LightningRod() {
         this(AbstractAbilityBuilder.create("lightningRod").pvp());
@@ -52,6 +54,8 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
         this.energyRestore = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("energyRestore"), int.class);
         this.horizontalTotemProcRange = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("horizontalTotemProcRange"), float.class);
         this.verticalTotemProcRange = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("verticalTotemProcRange"), float.class);
+        this.magnitude = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("magnitude"), float.class);
+        this.y = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("y"), float.class);
     }
 
     @Override
@@ -134,7 +138,7 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
                 enemy.setStunTicks(60);
             } else {
                 final Location loc = enemy.getLocation();
-                final Vector v = wp.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.5).setY(0.35);
+                final Vector v = wp.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-magnitude).setY(y);
                 enemy.setVelocity(name, v, false);
             }
         }
@@ -153,6 +157,14 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
                 return currentDamageValue * 1.2f;
             }
         });
+    }
+
+    public void setMagnitude(float magnitude) {
+        this.magnitude = magnitude;
+    }
+
+    public void setY(float y) {
+        this.y = y;
     }
 
     private void giveCallOfThunderEffect(WarlordsEntity from, List<WarlordsEntity> hit) {

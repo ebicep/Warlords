@@ -12,19 +12,25 @@ import java.util.List;
 
 public class GalvanizedSpark implements SpecBoostManager.SpecBoost<GalvanizedSpark> {
 
+    private int lightningRodMaxAbilityCharges;
     private float lightningRodCooldownSeconds;
     private float lightningRodHealingPercent;
     private int lightningRodEnergyRestore;
     private float lightningRodSpeedIncreasePercent;
     private int lightningRodSpeedDurationTicks;
+    private float lightningRodMagnitude;
+    private float lightningRodY;
 
     @Override
     public void init() {
+        this.lightningRodMaxAbilityCharges = getValue("lightningRodMaxAbilityCharges", int.class);
         this.lightningRodCooldownSeconds = getValue("lightningRodCooldownSeconds", float.class);
         this.lightningRodHealingPercent = getValue("lightningRodHealingPercent", float.class);
         this.lightningRodEnergyRestore = getValue("lightningRodEnergyRestore", int.class);
         this.lightningRodSpeedIncreasePercent = getValue("lightningRodSpeedIncreasePercent", float.class);
         this.lightningRodSpeedDurationTicks = getValue("lightningRodSpeedDurationTicks", int.class);
+        this.lightningRodMagnitude = getValue("lightningRodMagnitude", float.class);
+        this.lightningRodY = getValue("lightningRodY", float.class);
     }
 
     @Override
@@ -34,7 +40,14 @@ public class GalvanizedSpark implements SpecBoostManager.SpecBoost<GalvanizedSpa
 
     @Override
     public List<Object> getVariables() {
-        return List.of(lightningRodCooldownSeconds, lightningRodHealingPercent, lightningRodEnergyRestore, lightningRodSpeedIncreasePercent, lightningRodSpeedDurationTicks);
+        return List.of(
+                lightningRodMaxAbilityCharges,
+                lightningRodCooldownSeconds,
+                lightningRodHealingPercent,
+                lightningRodEnergyRestore,
+                lightningRodSpeedIncreasePercent,
+                lightningRodSpeedDurationTicks
+        );
     }
 
     @Override
@@ -55,9 +68,13 @@ public class GalvanizedSpark implements SpecBoostManager.SpecBoost<GalvanizedSpa
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(LightningRod.class).forEach(lightningRod -> {
+                lightningRod.setMaxCharges(lightningRodMaxAbilityCharges);
+                lightningRod.setCurrentCharges(lightningRodMaxAbilityCharges);
                 lightningRod.getCooldown().addOverridingModifier("Spec Boost", lightningRodCooldownSeconds);
                 lightningRod.getHealValues().getHealthRestore().value().setBaseValue(lightningRodHealingPercent);
                 lightningRod.setEnergyRestore(lightningRodEnergyRestore);
+                lightningRod.setMagnitude(lightningRodMagnitude);
+                lightningRod.setY(lightningRodY);
             });
         }
 
