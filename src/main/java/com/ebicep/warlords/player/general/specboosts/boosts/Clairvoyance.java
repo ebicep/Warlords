@@ -11,11 +11,13 @@ import java.util.List;
 
 public class Clairvoyance implements SpecBoostManager.SpecBoost<Clairvoyance> {
 
+    private int maxEnergyIncrease;
     private int healingRainDurationTicks;
     private float healingRainHealIncreasePercent;
 
     @Override
     public void init() {
+        this.maxEnergyIncrease = getValue("maxEnergyIncrease", int.class);
         this.healingRainDurationTicks = getValue("healingRainDurationTicks", int.class);
         this.healingRainHealIncreasePercent = getValue("healingRainHealIncreasePercent", float.class);
     }
@@ -32,7 +34,7 @@ public class Clairvoyance implements SpecBoostManager.SpecBoost<Clairvoyance> {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(healingRainDurationTicks, healingRainHealIncreasePercent);
+        return List.of(maxEnergyIncrease, healingRainDurationTicks, healingRainHealIncreasePercent);
     }
 
     @Override
@@ -50,6 +52,7 @@ public class Clairvoyance implements SpecBoostManager.SpecBoost<Clairvoyance> {
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
+            warlordsPlayer.getEnergy().addAdditiveModifier("Spec Boost", maxEnergyIncrease);
             List<AbstractAbility> abilities = warlordsPlayer.getAbilities();
             for (int i = 0; i < abilities.size(); i++) {
                 AbstractAbility ability = abilities.get(i);
