@@ -879,6 +879,7 @@ public class InstanceManager {
                 warlordsEntity.getHitBy().put(source, 10);
                 warlordsEntity.cancelHealingPowerUp();
 
+                damageValue = Math.min(damageValue, warlordsEntity.getCurrentHealth() - (flags.contains(InstanceFlags.CANT_KILL) ? 1 : 0));
                 float finalDamageValue = damageValue;
                 warlordsEntity.doOnStaticAbility(SoulShackle.class, soulShackle -> soulShackle.addToShacklePool(finalDamageValue));
                 warlordsEntity.doOnStaticAbility(Repentance.class, repentance -> repentance.addToPool(finalDamageValue));
@@ -915,12 +916,11 @@ public class InstanceManager {
                 warlordsEntity.resetRegenTimer();
                 warlordsEntity.updateHealth();
 
-                float cappedDamage = Math.min(damageValue, warlordsEntity.getCurrentHealth() - (flags.contains(InstanceFlags.CANT_KILL) ? 1 : 0));
-                source.addDamage(cappedDamage, FlagHolder.isPlayerHolderFlag(warlordsEntity));
-                warlordsEntity.addDamageTaken(cappedDamage);
+                source.addDamage(damageValue, FlagHolder.isPlayerHolderFlag(warlordsEntity));
+                warlordsEntity.addDamageTaken(damageValue);
                 warlordsEntity.playHurtAnimation(source);
                 if (source.isNoEnergyConsumption()) {
-                    source.getRecordDamage().add(cappedDamage);
+                    source.getRecordDamage().add(damageValue);
                 }
                 // The player died.
                 float newHealth = warlordsEntity.getCurrentHealth();
