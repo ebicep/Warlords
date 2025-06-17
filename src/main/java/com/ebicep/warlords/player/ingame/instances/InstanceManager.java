@@ -836,8 +836,6 @@ public class InstanceManager {
                         WarlordsDamageHealingFinalEvent.FinalEventFlag.SHIELDED,
                         new ArrayList<>(List.of(new CustomInstanceFlags.InstanceShieldsInstanceFlag(List.of(shield))))
                 ));
-                warlordsEntity.getSecondStats().addDamageHealingEventAsSelf(finalEvent.get());
-                source.getSecondStats().addDamageHealingEventAsAttacker(finalEvent.get());
             } else {
                 debugMessage.appendTitle("Modify Damage After All", NamedTextColor.AQUA);
                 debugMessage.append(InstanceDebugHoverable.LevelBuilder
@@ -1007,9 +1005,9 @@ public class InstanceManager {
                         true,
                         WarlordsDamageHealingFinalEvent.FinalEventFlag.REGULAR
                 ));
-                warlordsEntity.getSecondStats().addDamageHealingEventAsSelf(finalEvent.get());
-                source.getSecondStats().addDamageHealingEventAsAttacker(finalEvent.get());
             }
+            warlordsEntity.getSecondStats().addDamageHealingEventAsSelf(finalEvent.get());
+            source.getSecondStats().addDamageHealingEventAsAttacker(finalEvent.get());
         }
 
 //        for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {

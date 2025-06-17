@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class Haze extends AbstractAbility implements OrangeAbilityIcon, Damages<Haze.DamageValues>, AbilityStats<Haze, Haze.VanishStats>, OrderOfEviscerateLike {
 
@@ -118,7 +119,7 @@ public class Haze extends AbstractAbility implements OrangeAbilityIcon, Damages<
 
             @Override
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (event.getAbility() instanceof ShadowStep || event.getAbility() instanceof Haze) {
+                if (event.getAbility() instanceof ShadowStep || event.getAbility() instanceof Haze || Objects.equals(event.getCause(), "Intervene")) {
                     return;
                 }
                 setTicksLeft(0);
