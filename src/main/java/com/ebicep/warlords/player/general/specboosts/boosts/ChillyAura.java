@@ -78,7 +78,7 @@ public class ChillyAura implements SpecBoostManager.SpecBoost<ChillyAura> {
                     PlayerFilter.entitiesAround(warlordsEntity, rangeBlocks, rangeBlocks, rangeBlocks)
                                 .aliveEnemiesOf(warlordsEntity)
                                 .forEach(we -> {
-                                    we.addSpeedModifier(warlordsEntity, getStringName(), -slowAmountPercent, 6);
+                                    we.addSpeedModifier(warlordsEntity, getStringName(), -slowAmountPercent, healthLossTickPeriod);
                                     we.addSpeedModifier(new MotionModifierBuilder()
                                             .setFrom(warlordsEntity)
                                             .setName(getStringName())
