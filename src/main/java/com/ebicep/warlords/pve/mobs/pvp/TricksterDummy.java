@@ -1,7 +1,9 @@
 package com.ebicep.warlords.pve.mobs.pvp;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
@@ -11,9 +13,11 @@ import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.PlayerMob;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 public class TricksterDummy extends AbstractMob implements PlayerMob {
@@ -47,6 +51,7 @@ public class TricksterDummy extends AbstractMob implements PlayerMob {
 
     public TricksterDummy(Location spawnLocation, int health, WarlordsEntity warlordsEntity) {
         this(spawnLocation, "Dummy", health, 0, 0, 0, 0);
+        this.warlordsEntity = warlordsEntity;
         this.equipment = new Utils.SimpleEntityEquipment(
                 warlordsEntity.getHelmet(),
                 warlordsEntity.getChestplate(),
@@ -84,7 +89,7 @@ public class TricksterDummy extends AbstractMob implements PlayerMob {
 
                     @EventHandler(ignoreCancelled = true)
                     public void onDamageHealEvent(WarlordsDamageHealingEvent event) {
-                        if (!event.getWarlordsEntity().equals(warlordsEntity)) {
+                        if (!event.getWarlordsEntity().equals(warlordsNPC)) {
                             return;
                         }
                         if (!event.isHealingInstance()) {
@@ -93,27 +98,50 @@ public class TricksterDummy extends AbstractMob implements PlayerMob {
                         event.setPlayer(warlordsEntity);
                     }
 
+                    @EventHandler
+                    public void onFinalDamageTaken(WarlordsDamageHealingFinalEvent event) {
+                        if (!event.getWarlordsEntity().equals(warlordsNPC)) {
+                            return;
+                        }
+                        if (event.isHealingInstance()) {
+                            return;
+                        }
+                        WarlordsEntity attacker = event.getSource();
+                        float energyPerHit = attacker.getEnergyPerHit().getCalculatedValue();
+                        for (AbstractCooldown<?> abstractCooldown : attacker.getCooldownManager().getCooldownsDistinct()) {
+                            energyPerHit = abstractCooldown.addEnergyPerHit(attacker, energyPerHit);
+                        }
+                        attacker.addEnergy(attacker, null, -energyPerHit);
+
+                        attacker.addInstance(InstanceBuilder
+                                .damage()
+                                .cause("Trickster Dummy")
+                                .source(warlordsEntity)
+                                .value(event.getValue())
+                                .showAsCrit(event.isCrit())
+                        );
+                    }
+
+                    @EventHandler(priority = EventPriority.LOWEST)
+                    public void onWarlordsDeathEvent(WarlordsDeathEvent event) {
+                        if (event.getWarlordsEntity().equals(warlordsNPC)) {
+                            event.setForceCancel(true);
+                            event.setCancelled(true);
+                            new GameRunnable(event.getGame()) {
+                                @Override
+                                public void run() {
+                                    warlordsNPC.cleanup();
+                                    warlordsNPC.getGame().getPlayers().remove(warlordsNPC.getUuid());
+                                    Warlords.removePlayer(warlordsNPC.getUuid());
+                                }
+                            }.runTaskLater(1);
+
+                        }
+                    }
+
                 };
             }
         });
-    }
-
-    @Override
-    public void onFinalDamageTaken(WarlordsDamageHealingFinalEvent event) {
-        WarlordsEntity attacker = event.getSource();
-        float energyPerHit = attacker.getEnergyPerHit().getCalculatedValue();
-        for (AbstractCooldown<?> abstractCooldown : attacker.getCooldownManager().getCooldownsDistinct()) {
-            energyPerHit = abstractCooldown.addEnergyPerHit(attacker, energyPerHit);
-        }
-        attacker.addEnergy(attacker, null, -energyPerHit);
-
-        attacker.addInstance(InstanceBuilder
-                .damage()
-                .cause("Trickster Dummy")
-                .source(warlordsEntity)
-                .value(event.getValue())
-                .showAsCrit(event.isCrit())
-        );
     }
 
 }

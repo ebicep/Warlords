@@ -101,7 +101,7 @@ public class HorseOption implements Option, Listener {
     @Override
     public void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
         if (player instanceof WarlordsPlayer) {
-            playerHorses.put(player, new WarlordsHorse());
+            getHorseForPlayer(player);
         }
     }
 

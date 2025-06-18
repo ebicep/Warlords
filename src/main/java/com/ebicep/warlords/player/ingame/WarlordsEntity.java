@@ -1152,7 +1152,9 @@ public abstract class WarlordsEntity {
             WarlordsAddVelocityEvent warlordsAddVelocityEvent = new WarlordsAddVelocityEvent(this, from, v);
             Bukkit.getPluginManager().callEvent(warlordsAddVelocityEvent);
             if (!warlordsAddVelocityEvent.isCancelled()) {
-                this.entity.setVelocity(v);
+                if (!v.isZero() || ignoreModifications) {
+                    this.entity.setVelocity(v);
+                }
             }
         }
     }
@@ -1270,11 +1272,6 @@ public abstract class WarlordsEntity {
         // Gives the player their respawn timer as display.
         this.decrementRespawnTimer();
 
-        if (getEntity() instanceof Player player) {
-            if (getCompassTarget() != null) {
-                player.setCompassTarget(getCompassTarget().getLocation());
-            }
-        }
         this.health.tick();
         this.energy.tick();
         this.energyPerSec.tick();

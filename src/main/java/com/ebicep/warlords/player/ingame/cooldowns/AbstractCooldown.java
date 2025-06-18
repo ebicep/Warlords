@@ -28,6 +28,8 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
     private final Listener activeListener;
     private List<DamageInstance> extraDamageInstances = null;
     private List<HealingInstance> extraHealingInstances = null;
+    private List<CooldownFlag> flags = new ArrayList<>();
+    private boolean markedForRemoval = false;
 
     public AbstractCooldown(
             String name,
@@ -208,6 +210,18 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
 
     public Listener getActiveListener() {
         return activeListener;
+    }
+
+    public List<CooldownFlag> getFlags() {
+        return flags;
+    }
+
+    public boolean isMarkedForRemoval() {
+        return markedForRemoval;
+    }
+
+    public void setMarkedForRemoval(boolean markedForRemoval) {
+        this.markedForRemoval = markedForRemoval;
     }
 
 }

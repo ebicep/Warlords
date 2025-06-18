@@ -62,6 +62,9 @@ public class InstanceManager {
         }
         debugHoverable.appendTitle("Pre Event", NamedTextColor.AQUA);
         debugHoverable.appendEvent(event);
+        if (event.getWarlordsEntity().getCurrentHealth() <= 0) {
+            return Optional.empty();
+        }
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             return Optional.empty();
@@ -833,8 +836,6 @@ public class InstanceManager {
                         WarlordsDamageHealingFinalEvent.FinalEventFlag.SHIELDED,
                         new ArrayList<>(List.of(new CustomInstanceFlags.InstanceShieldsInstanceFlag(List.of(shield))))
                 ));
-                warlordsEntity.getSecondStats().addDamageHealingEventAsSelf(finalEvent.get());
-                source.getSecondStats().addDamageHealingEventAsAttacker(finalEvent.get());
             } else {
                 debugMessage.appendTitle("Modify Damage After All", NamedTextColor.AQUA);
                 debugMessage.append(InstanceDebugHoverable.LevelBuilder
@@ -878,6 +879,7 @@ public class InstanceManager {
                 warlordsEntity.getHitBy().put(source, 10);
                 warlordsEntity.cancelHealingPowerUp();
 
+                damageValue = Math.min(damageValue, warlordsEntity.getCurrentHealth() - (flags.contains(InstanceFlags.CANT_KILL) ? 1 : 0));
                 float finalDamageValue = damageValue;
                 warlordsEntity.doOnStaticAbility(SoulShackle.class, soulShackle -> soulShackle.addToShacklePool(finalDamageValue));
                 warlordsEntity.doOnStaticAbility(Repentance.class, repentance -> repentance.addToPool(finalDamageValue));
@@ -914,18 +916,18 @@ public class InstanceManager {
                 warlordsEntity.resetRegenTimer();
                 warlordsEntity.updateHealth();
 
-                float cappedDamage = Math.min(damageValue, warlordsEntity.getCurrentHealth() - (flags.contains(InstanceFlags.CANT_KILL) ? 1 : 0));
-                source.addDamage(cappedDamage, FlagHolder.isPlayerHolderFlag(warlordsEntity));
-                warlordsEntity.addDamageTaken(cappedDamage);
+                source.addDamage(damageValue, FlagHolder.isPlayerHolderFlag(warlordsEntity));
+                warlordsEntity.addDamageTaken(damageValue);
                 warlordsEntity.playHurtAnimation(source);
                 if (source.isNoEnergyConsumption()) {
-                    source.getRecordDamage().add(cappedDamage);
+                    source.getRecordDamage().add(damageValue);
                 }
                 // The player died.
                 float newHealth = warlordsEntity.getCurrentHealth();
                 if (!debt && warlordsEntity.isTakeDamage()) {
                     newHealth = Math.min(warlordsEntity.getCurrentHealth() - damageValue, warlordsEntity.getMaxHealth());
                 }
+                warlordsEntity.setCurrentHealth(newHealth);
                 if (newHealth <= 0) {
                     warlordsEntity.die(
                             source,
@@ -981,7 +983,6 @@ public class InstanceManager {
                                     })
                     );
                 } else {
-                    warlordsEntity.setCurrentHealth(newHealth);
                     if (!flags.contains(InstanceFlags.NO_HIT_SOUND) && warlordsEntity != source && damageValue != 0) {
                         warlordsEntity.playHitSound(source);
                     }
@@ -1004,9 +1005,9 @@ public class InstanceManager {
                         true,
                         WarlordsDamageHealingFinalEvent.FinalEventFlag.REGULAR
                 ));
-                warlordsEntity.getSecondStats().addDamageHealingEventAsSelf(finalEvent.get());
-                source.getSecondStats().addDamageHealingEventAsAttacker(finalEvent.get());
             }
+            warlordsEntity.getSecondStats().addDamageHealingEventAsSelf(finalEvent.get());
+            source.getSecondStats().addDamageHealingEventAsAttacker(finalEvent.get());
         }
 
 //        for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {

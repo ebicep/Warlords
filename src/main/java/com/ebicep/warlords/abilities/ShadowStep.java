@@ -44,6 +44,10 @@ public class ShadowStep extends AbstractAbility implements
     private int fallDamageNegation = 10;
     private int leapHealThreshold;
     private int guaranteedCrit;
+    private float magnitude;
+    private float y;
+    private float magnitudeFlag;
+    private float yFlag;
 
     public ShadowStep() {
         super(AbstractAbilityBuilder.create("shadowStep").pvp());
@@ -55,6 +59,10 @@ public class ShadowStep extends AbstractAbility implements
         this.fallDamageNegation = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("fallDamageNegation"), int.class);
         this.leapHealThreshold = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("leapHealThreshold"), int.class);
         this.guaranteedCrit = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("guaranteedCrit"), int.class);
+        this.magnitude = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("magnitude"), float.class);
+        this.y = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("y"), float.class);
+        this.magnitudeFlag = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("magnitudeFlag"), float.class);
+        this.yFlag = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("yFlag"), float.class);
     }
 
     @Override
@@ -71,10 +79,10 @@ public class ShadowStep extends AbstractAbility implements
             doShadowDash(wp);
         } else {
             if (wp.getCarriedFlag() != null) {
-                wp.setVelocity(name, playerLoc.getDirection().multiply(1).setY(0.35), true);
+                wp.setVelocity(name, playerLoc.getDirection().multiply(magnitudeFlag).setY(yFlag), true);
                 wp.setFallDistance(-fallDamageNegation);
             } else {
-                wp.setVelocity(name, playerLoc.getDirection().multiply(1.5).setY(0.7), true);
+                wp.setVelocity(name, playerLoc.getDirection().multiply(magnitude).setY(y), true);
                 wp.setFallDistance(-fallDamageNegation);
             }
             doShadowStep(wp, playerLoc);

@@ -36,6 +36,7 @@ public class IceBlock implements SpecBoostManager.SpecBoost<IceBlock> {
     private int recastDurationDecreaseTicks;
     private float recastDamageReductionPercent;
     private float recastMovementSpeed;
+    private float recastMovementSpeedFlag;
     private int iceBlockRecastDelayTicks;
 
     @Override
@@ -44,6 +45,7 @@ public class IceBlock implements SpecBoostManager.SpecBoost<IceBlock> {
         this.recastDurationDecreaseTicks = getValue("recastDurationDecreaseTicks", int.class);
         this.recastDamageReductionPercent = getValue("recastDamageReductionPercent", float.class);
         this.recastMovementSpeed = getValue("recastMovementSpeed", float.class);
+        this.recastMovementSpeedFlag = getValue("recastMovementSpeedFlag", float.class);
         this.iceBlockRecastDelayTicks = getValue("iceBlockRecastDelayTicks", int.class);
     }
 
@@ -185,7 +187,7 @@ public class IceBlock implements SpecBoostManager.SpecBoost<IceBlock> {
                                 .setName(getStringName())
                                 .setModifier(0)
                                 .linkToCooldown(warlordsEntity, cd)
-                                .addAddons(new OverrideValueModifier(recastMovementSpeed))
+                                .addAddons(new OverrideValueModifier(warlordsEntity.hasFlag() ? recastMovementSpeedFlag : recastMovementSpeed))
                                 .build()
                         );
                     },

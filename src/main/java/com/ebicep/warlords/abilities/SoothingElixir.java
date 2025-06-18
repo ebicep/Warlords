@@ -109,7 +109,7 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
                               );
                     }
                 },
-                newLoc -> PlayerFilter.entitiesAroundRectangle(newLoc, 1, 2, 1).aliveTeammatesOfExcludingSelf(wp).findFirstOrNull(),
+                newLoc -> PlayerFilter.entitiesAroundRectangle(newLoc, .5, .5, .5).isAlive().excluding(wp).findFirstOrNull(),
                 (newLoc, directHit) -> {
                     Utils.playGlobalSound(newLoc, "rogue.healingremedy.impact", 1.5f, 0.1f);
                     Utils.playGlobalSound(newLoc, Sound.BLOCK_GLASS_BREAK, 1.5f, 0.7f);

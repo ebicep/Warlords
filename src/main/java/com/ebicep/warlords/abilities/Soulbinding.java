@@ -256,6 +256,10 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
         this.maxAlliesHit = maxAlliesHit;
     }
 
+    public void setKbRes(int kbRes) {
+        this.kbRes = kbRes;
+    }
+
     public static class SoulbindingData {
 
         private final Soulbinding soulbinding;

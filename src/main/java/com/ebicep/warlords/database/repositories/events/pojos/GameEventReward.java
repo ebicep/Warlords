@@ -23,4 +23,9 @@ public class GameEventReward extends AbstractReward {
     public TextColor getNameColor() {
         return NamedTextColor.RED;
     }
+
+    public long getEvent() {
+        return event;
+    }
+
 }

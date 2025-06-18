@@ -74,7 +74,7 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
                 SPEED,
                 (newLoc, integer) -> {
                 },
-                newLoc -> PlayerFilter.entitiesAroundRectangle(newLoc, 1, 2, 1).aliveEnemiesOf(wp).findFirstOrNull(),
+                newLoc -> PlayerFilter.entitiesAroundRectangle(newLoc, .5, .5, .5).aliveEnemiesOf(wp).findFirstOrNull(),
                 (newLoc, directHit) -> {
                     WarlordsThrowableProjectileImpactEvent projectileImpactEvent = new WarlordsThrowableProjectileImpactEvent(wp, this, newLoc, directHit);
                     Bukkit.getPluginManager().callEvent(projectileImpactEvent);
@@ -177,6 +177,22 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
 
     public void setBlindDurationInTicks(int blindDurationInTicks) {
         this.blindDurationInTicks = blindDurationInTicks;
+    }
+
+    public int getDamageIncreaseHealthThreshold() {
+        return damageIncreaseHealthThreshold;
+    }
+
+    public void setDamageIncreaseHealthThreshold(int damageIncreaseHealthThreshold) {
+        this.damageIncreaseHealthThreshold = damageIncreaseHealthThreshold;
+    }
+
+    public int getDamageIncrease() {
+        return damageIncrease;
+    }
+
+    public void setDamageIncrease(int damageIncrease) {
+        this.damageIncrease = damageIncrease;
     }
 
     public static class DamageValues implements Value.ValueHolder {

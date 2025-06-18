@@ -3,6 +3,7 @@ package com.ebicep.warlords.game.state;
 import com.ebicep.warlords.commands.debugcommands.misc.GetPlayerLastAbilityStatsCommand;
 import com.ebicep.warlords.commands.miscellaneouscommands.StreamChaptersCommand;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
@@ -18,6 +19,7 @@ import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildExperienceUtils;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.guilds.GuildPlayer;
+import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.ExperienceManager;
 import com.ebicep.warlords.player.general.MinuteStats;
 import com.ebicep.warlords.player.general.Specializations;
@@ -78,8 +80,9 @@ public class EndState implements State, TimerDebugAble {
         if (game.getGameMode() == com.ebicep.warlords.game.GameMode.TUTORIAL) {
             game.warlordsPlayers().forEach(warlordsPlayer -> {
                 DatabaseManager.updatePlayer(warlordsPlayer.getUuid(), databasePlayer -> {
-                    databasePlayer.getPveStats().setCompletedTutorial(true);
-                });
+                            databasePlayer.getPveStats().setCompletedTutorial(true);
+                        }
+                );
             });
             return;
         }
@@ -108,31 +111,37 @@ public class EndState implements State, TimerDebugAble {
             if (com.ebicep.warlords.game.GameMode.isPvE(game.getGameMode())) {
                 sendGlobalMessage(game, Component.text("Winner", NamedTextColor.YELLOW)
                                                  .append(Component.text(" - ", NamedTextColor.GRAY))
-                                                 .append(Component.text("PLAYERS", NamedTextColor.BLUE)), true);
+                                                 .append(Component.text("PLAYERS", NamedTextColor.BLUE)), true
+                );
             } else {
                 sendGlobalMessage(game, Component.text("Winner", NamedTextColor.YELLOW)
                                                  .append(Component.text(" - ", NamedTextColor.GRAY))
-                                                 .append(Component.text("BLU", NamedTextColor.BLUE)), true);
+                                                 .append(Component.text("BLU", NamedTextColor.BLUE)), true
+                );
             }
         } else if (teamRedWins) {
             if (com.ebicep.warlords.game.GameMode.isPvE(game.getGameMode())) {
                 sendGlobalMessage(game, Component.text("Winner", NamedTextColor.YELLOW)
                                                  .append(Component.text(" - ", NamedTextColor.GRAY))
-                                                 .append(Component.text("MONSTERS", NamedTextColor.RED)), true);
+                                                 .append(Component.text("MONSTERS", NamedTextColor.RED)), true
+                );
             } else {
                 sendGlobalMessage(game, Component.text("Winner", NamedTextColor.YELLOW)
                                                  .append(Component.text(" - ", NamedTextColor.GRAY))
-                                                 .append(Component.text("RED", NamedTextColor.RED)), true);
+                                                 .append(Component.text("RED", NamedTextColor.RED)), true
+                );
             }
         } else {
             if (options.stream().anyMatch(EventGameEndOption.class::isInstance)) {
                 sendGlobalMessage(game, Component.text("Winner", NamedTextColor.YELLOW)
                                                  .append(Component.text(" - ", NamedTextColor.GRAY))
-                                                 .append(Component.text("GAME END", NamedTextColor.LIGHT_PURPLE)), true);
+                                                 .append(Component.text("GAME END", NamedTextColor.LIGHT_PURPLE)), true
+                );
             } else {
                 sendGlobalMessage(game, Component.text("Winner", NamedTextColor.YELLOW)
                                                  .append(Component.text(" - ", NamedTextColor.GRAY))
-                                                 .append(Component.text("DRAW", NamedTextColor.LIGHT_PURPLE)), true);
+                                                 .append(Component.text("DRAW", NamedTextColor.LIGHT_PURPLE)), true
+                );
             }
         }
 
@@ -296,9 +305,19 @@ public class EndState implements State, TimerDebugAble {
 
         if (winEvent != null) {
             this.game.forEachOfflineWarlordsPlayer(wp -> {
+                DatabasePlayer databasePlayer = wp.getDatabasePlayer();
+                if (databasePlayer.hasPermission(Permissions.STREAMER.permission)) {
+                    List<StreamChaptersCommand.GameTime> gameTimes = databasePlayer.getGameLogs();
+                    if (!gameTimes.isEmpty()) {
+                        gameTimes.get(gameTimes.size() - 1).setEnd(Instant.now());
+                    }
+                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                }
                 if (StreamChaptersCommand.GAME_TIMES.containsKey(wp.getUuid())) {
                     List<StreamChaptersCommand.GameTime> gameTimes = StreamChaptersCommand.GAME_TIMES.get(wp.getUuid());
-                    gameTimes.get(gameTimes.size() - 1).setEnd(Instant.now());
+                    if (!gameTimes.isEmpty()) {
+                        gameTimes.get(gameTimes.size() - 1).setEnd(Instant.now());
+                    }
                 }
             });
         }
@@ -353,7 +372,8 @@ public class EndState implements State, TimerDebugAble {
                      .append(Component.text(StringUtils.formatTimeLeft(recordTimeElapsedOption.getTicksElapsed() / 20), NamedTextColor.GREEN));
             });
         sendGlobalEventMessage(game, Component.text("✚ GAME STATS ✚", NamedTextColor.BLUE, TextDecoration.BOLD)
-                                              .hoverEvent(HoverEvent.showText(hover.build())));
+                                              .hoverEvent(HoverEvent.showText(hover.build()))
+        );
     }
 
     private void showTopDamage(List<WarlordsPlayer> players) {
@@ -365,7 +385,8 @@ public class EndState implements State, TimerDebugAble {
                                           .append(Component.text(": ", NamedTextColor.GRAY))
                                           .append(Component.text(NumberFormat.addCommaAndRound(players.stream()
                                                                                                       .mapToLong(wp -> wp.getMinuteStats().total().getDamage())
-                                                                                                      .sum()), NamedTextColor.GOLD))
+                                                                                                      .sum()), NamedTextColor.GOLD
+                                          ))
                          ))
         );
         players = players.stream()
@@ -403,7 +424,8 @@ public class EndState implements State, TimerDebugAble {
                                           .append(Component.text(": ", NamedTextColor.GRAY))
                                           .append(Component.text(NumberFormat.addCommaAndRound(players.stream()
                                                                                                       .mapToLong(wp -> wp.getMinuteStats().total().getHealing())
-                                                                                                      .sum()), NamedTextColor.GOLD))
+                                                                                                      .sum()), NamedTextColor.GOLD
+                                          ))
                          ))
         );
         players = players.stream()
@@ -442,12 +464,14 @@ public class EndState implements State, TimerDebugAble {
                                  Component.text("Total Flag Captures (everyone): ", NamedTextColor.LIGHT_PURPLE)
                                           .append(Component.text(NumberFormat.addCommaAndRound(players.stream()
                                                                                                       .mapToInt(WarlordsEntity::getFlagsCaptured)
-                                                                                                      .sum()), NamedTextColor.GOLD))
+                                                                                                      .sum()), NamedTextColor.GOLD
+                                          ))
                                           .append(Component.newline())
                                           .append(Component.text("Total Flag Returns (everyone): ", NamedTextColor.LIGHT_PURPLE))
                                           .append(Component.text(NumberFormat.addCommaAndRound(players.stream()
                                                                                                       .mapToInt(WarlordsEntity::getFlagsReturned)
-                                                                                                      .sum()), NamedTextColor.GOLD))
+                                                                                                      .sum()), NamedTextColor.GOLD
+                                          ))
 
                          ))
         );
@@ -610,36 +634,37 @@ public class EndState implements State, TimerDebugAble {
                     weaponsFoundByType.get(weapon.getRarity()).add(weapon);
                 }
                 DatabaseManager.getPlayer(wp.getUuid(), databasePlayer -> {
-                    List<AbstractWeapon> weaponInventory = databasePlayer.getPveStats().getWeaponInventory();
-                    weaponsFoundByType.forEach((rarity, weapons) -> {
-                        int amountFound = weapons.size();
-                        if (amountFound > 0) {
-                            boolean autoSalvaged = weapons.stream().anyMatch(abstractWeapon -> !weaponInventory.contains(abstractWeapon));
-                            TextComponent.Builder weaponTypeSummary = Component.empty().toBuilder();
-                            for (int i = 0; i < weapons.size(); i++) {
-                                AbstractWeapon weapon = weapons.get(i);
-                                weaponTypeSummary.append(weapon.getName());
-                                if (weapon instanceof WeaponScore) {
-                                    weaponTypeSummary.append(Component.text(" (" + NumberFormat.formatOptionalHundredths(((WeaponScore) weapon).getWeaponScore()) + ")",
-                                            NamedTextColor.YELLOW
-                                    ));
+                            List<AbstractWeapon> weaponInventory = databasePlayer.getPveStats().getWeaponInventory();
+                            weaponsFoundByType.forEach((rarity, weapons) -> {
+                                int amountFound = weapons.size();
+                                if (amountFound > 0) {
+                                    boolean autoSalvaged = weapons.stream().anyMatch(abstractWeapon -> !weaponInventory.contains(abstractWeapon));
+                                    TextComponent.Builder weaponTypeSummary = Component.empty().toBuilder();
+                                    for (int i = 0; i < weapons.size(); i++) {
+                                        AbstractWeapon weapon = weapons.get(i);
+                                        weaponTypeSummary.append(weapon.getName());
+                                        if (weapon instanceof WeaponScore) {
+                                            weaponTypeSummary.append(Component.text(" (" + NumberFormat.formatOptionalHundredths(((WeaponScore) weapon).getWeaponScore()) + ")",
+                                                    NamedTextColor.YELLOW
+                                            ));
+                                        }
+                                        if (!weaponInventory.contains(weapon)) {
+                                            weaponTypeSummary.append(Component.text(" (Auto Salvaged)", NamedTextColor.WHITE));
+                                        }
+                                        if (i != weapons.size() - 1) {
+                                            weaponTypeSummary.append(Component.newline());
+                                        }
+                                    }
+                                    ChatUtils.sendCenteredMessage(player,
+                                            Component.text(amountFound + " ", rarity.textColor)
+                                                     .append(Component.text(rarity.name + " Weapon" + (amountFound == 1 ? "" : "s")))
+                                                     .append(Component.text(autoSalvaged ? "*" : "", NamedTextColor.WHITE))
+                                                     .hoverEvent(HoverEvent.showText(weaponTypeSummary.build()))
+                                    );
                                 }
-                                if (!weaponInventory.contains(weapon)) {
-                                    weaponTypeSummary.append(Component.text(" (Auto Salvaged)", NamedTextColor.WHITE));
-                                }
-                                if (i != weapons.size() - 1) {
-                                    weaponTypeSummary.append(Component.newline());
-                                }
-                            }
-                            ChatUtils.sendCenteredMessage(player,
-                                    Component.text(amountFound + " ", rarity.textColor)
-                                             .append(Component.text(rarity.name + " Weapon" + (amountFound == 1 ? "" : "s")))
-                                             .append(Component.text(autoSalvaged ? "*" : "", NamedTextColor.WHITE))
-                                             .hoverEvent(HoverEvent.showText(weaponTypeSummary.build()))
-                            );
+                            });
                         }
-                    });
-                });
+                );
             }
             long fragmentGain = playerPveRewards.getLegendFragmentGain();
             if (fragmentGain > 0) {

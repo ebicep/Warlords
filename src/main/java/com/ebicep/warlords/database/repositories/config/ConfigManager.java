@@ -48,6 +48,14 @@ public class ConfigManager {
         return SPEC_BOOST_CONFIG.getValue(namespaces, key, fieldType);
     }
 
+    public static <T> T getSpecBoostConfigValue(List<String> namespaces, String key, Class<T> fieldType, boolean optionalField) {
+        return SPEC_BOOST_CONFIG.getValue(namespaces, key, fieldType, optionalField);
+    }
+
+    public static <T> T getSpecBoostConfigValue(List<String> namespaces, String key, Class<T> fieldType, T defaultValue, boolean optionalField) {
+        return SPEC_BOOST_CONFIG.getValue(namespaces, key, fieldType, defaultValue, optionalField);
+    }
+
     public static <T> T getSpecsConfigValue(List<String> namespaces, String key, Class<T> fieldType) {
         return SPECIALIZATIONS_CONFIG.getValue(namespaces, key, fieldType);
     }

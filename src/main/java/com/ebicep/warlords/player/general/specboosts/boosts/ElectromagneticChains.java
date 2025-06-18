@@ -18,11 +18,13 @@ public class ElectromagneticChains implements SpecBoostManager.SpecBoost<Electro
 
     private float damageReductionPercent;
     private float chainLightningDamageReductionPercent;
+    private int maxStacks;
 
     @Override
     public void init() {
         this.damageReductionPercent = getValue("damageReductionPercent", float.class);
         this.chainLightningDamageReductionPercent = getValue("chainLightningDamageReductionPercent", float.class);
+        this.maxStacks = getValue("maxStacks", int.class);
     }
 
     @Override
@@ -32,7 +34,7 @@ public class ElectromagneticChains implements SpecBoostManager.SpecBoost<Electro
 
     @Override
     public List<Object> getVariables() {
-        return List.of(damageReductionPercent, chainLightningDamageReductionPercent);
+        return List.of(damageReductionPercent, chainLightningDamageReductionPercent, maxStacks);
     }
 
     @Override
@@ -73,7 +75,7 @@ public class ElectromagneticChains implements SpecBoostManager.SpecBoost<Electro
                 return;
             }
             WarlordsEntity target = event.getWarlordsEntity();
-            target.getCooldownManager().removeCooldown(Boost.class, false);
+            target.getCooldownManager().limitCooldowns(RegularCooldown.class, Boost.class, maxStacks);
             target.getCooldownManager().addCooldown(new RegularCooldown<>(
                     getStringName(),
                     "CHAIN",

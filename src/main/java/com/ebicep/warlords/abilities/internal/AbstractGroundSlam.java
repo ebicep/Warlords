@@ -110,7 +110,7 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
                         Utils.addFallingBlock(location);
                         // Damage
                         for (WarlordsEntity slamTarget : PlayerFilter
-                                .entitiesAroundRectangle(location.clone().add(0, -.75, 0), 0.75, 4.5, 0.75)
+                                .entitiesAroundRectangle(location.clone().add(0, -.75, 0), 0.6, 4.5, 0.6)
                                 .aliveEnemiesOf(wp)
                                 .excluding(currentPlayersHit)
                         ) {

@@ -32,6 +32,7 @@ public class SuperBrew extends AbstractAbility implements OrangeAbilityIcon, Hit
     private float energyPerSecondIncrease;
     private int maxEnergyIncrease;
     private int meleeDamageIncreasePercent;
+    private int meleeDamageTakenDecreasePercent;
     private int ultCooldownReductionPercent;
     private int trueDamageLeechIncreasePercent;
 
@@ -47,6 +48,10 @@ public class SuperBrew extends AbstractAbility implements OrangeAbilityIcon, Hit
         this.energyPerSecondIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("energyPerSecondIncrease"), float.class);
         this.maxEnergyIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxEnergyIncrease"), int.class);
         this.meleeDamageIncreasePercent = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("meleeDamageIncreasePercent"), int.class);
+        this.meleeDamageTakenDecreasePercent = ConfigManager.getAbilityConfigValue(builder.getNamespaces(),
+                builder.getAppendedFieldName("meleeDamageTakenDecreasePercent"),
+                int.class
+        );
         this.ultCooldownReductionPercent = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("ultCooldownReductionPercent"), int.class);
         this.trueDamageLeechIncreasePercent = ConfigManager.getAbilityConfigValue(builder.getNamespaces(),
                 builder.getAppendedFieldName("trueDamageLeechIncreasePercent"),
@@ -121,6 +126,11 @@ public class SuperBrew extends AbstractAbility implements OrangeAbilityIcon, Hit
                 }
                 return currentDamageValue;
             }
+
+            @Override
+            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                return currentDamageValue * convertToDivisionDecimal(meleeDamageTakenDecreasePercent);
+            }
         });
         if (wp != target) {
             wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
@@ -151,6 +161,8 @@ public class SuperBrew extends AbstractAbility implements OrangeAbilityIcon, Hit
                 .text(" max energy, ")
                 .percent(meleeDamageIncreasePercent, NamedTextColor.RED)
                 .text(" melee damage, ")
+                .percent(meleeDamageTakenDecreasePercent, NamedTextColor.RED)
+                .text(" melee damage resistance, ")
                 .percent(ultCooldownReductionPercent, NamedTextColor.GOLD)
                 .text(" ultimate cooldown reduction, permanent passive health regen, and Apothecary's gain ")
                 .percent(trueDamageLeechIncreasePercent, NamedTextColor.GREEN)
@@ -158,10 +170,6 @@ public class SuperBrew extends AbstractAbility implements OrangeAbilityIcon, Hit
                 .emptyLine()
                 .text("If no ally is targeted, receive the brew yourself.")
                 .build();
-    }
-
-    public int getTrueDamageLeechIncreasePercent() {
-        return trueDamageLeechIncreasePercent;
     }
 
     @Override
@@ -172,6 +180,20 @@ public class SuperBrew extends AbstractAbility implements OrangeAbilityIcon, Hit
     @Override
     public SuperBrewStats getAbilityStats() {
         return stats;
+    }
+
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
+    }
+
+    public int getTrueDamageLeechIncreasePercent() {
+        return trueDamageLeechIncreasePercent;
     }
 
     public static class SuperBrewData {
@@ -186,16 +208,6 @@ public class SuperBrew extends AbstractAbility implements OrangeAbilityIcon, Hit
             return superBrew;
         }
 
-    }
-
-    @Override
-    public int getTickDuration() {
-        return tickDuration;
-    }
-
-    @Override
-    public void setTickDuration(int tickDuration) {
-        this.tickDuration = tickDuration;
     }
 
     public static class SuperBrewStats extends AbstractAbilityStats<SuperBrew, SuperBrewStats> {

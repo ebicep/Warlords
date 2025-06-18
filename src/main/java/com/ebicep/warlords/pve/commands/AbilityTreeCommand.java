@@ -21,17 +21,17 @@ public class AbilityTreeCommand extends BaseCommand {
         open(player);
     }
 
+    public static void open(Player player) {
+        WarlordsEntity inGameWarlordsPlayer = Warlords.getPlayer(player);
+        WarlordsPlayer warlordsPlayer = inGameWarlordsPlayer instanceof WarlordsPlayer wp ?
+                                        wp :
+                                        new WarlordsPlayer(player, PlayerSettings.getPlayerSettings(player).getSelectedSpec(), ConfigManager.PVE_NAMESPACES);
+        warlordsPlayer.getAbilityTree().openAbilityTree();
+    }
+
     @Subcommand("reset")
     public void reset(WarlordsPlayer warlordsPlayer) {
         warlordsPlayer.resetAbilityTree();
-    }
-
-    public static void open(Player player) {
-        WarlordsEntity inGameWarlordsPlayer = Warlords.getPlayer(player);
-        WarlordsPlayer warlordsPlayer = inGameWarlordsPlayer instanceof WarlordsPlayer ?
-                                        (WarlordsPlayer) inGameWarlordsPlayer :
-                                        new WarlordsPlayer(player, PlayerSettings.getPlayerSettings(player).getSelectedSpec(), ConfigManager.DEFAULT_NAMESPACES);
-        warlordsPlayer.getAbilityTree().openAbilityTree();
     }
 
 

@@ -32,11 +32,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class LightningBolt extends AbstractPiercingProjectile<LightningBolt, LightningBolt.LightningBoltStats> implements WeaponAbilityIcon, Damages<LightningBolt.DamageValues> {
+public class LightningBolt extends AbstractPiercingProjectile<LightningBolt, LightningBolt.LightningBoltStats> implements Splash, WeaponAbilityIcon,
+        Damages<LightningBolt.DamageValues> {
 
     private final LightningBoltStats stats = new LightningBoltStats();
     private final DamageValues damageValues = new DamageValues();
-    private FloatModifiable hitbox = new FloatModifiable(3);
+    private FloatModifiable splash = new FloatModifiable(3);
     private float cooldownReduction = 2;
 
     public LightningBolt() {
@@ -50,13 +51,13 @@ public class LightningBolt extends AbstractPiercingProjectile<LightningBolt, Lig
     @Override
     public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
-        this.hitbox = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hitbox"), float.class));
+        this.splash = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("splash"), float.class));
         this.cooldownReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("cooldownReduction"), float.class);
     }
 
     @Override
     public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
-        this.hitbox.tick();
+        this.splash.tick();
         super.runEveryTick(warlordsEntity);
     }
 
@@ -125,28 +126,9 @@ public class LightningBolt extends AbstractPiercingProjectile<LightningBolt, Lig
         return explode(projectile, wp);
     }
 
-    public int explode(@Nonnull InternalProjectile projectile, WarlordsEntity wp) {
-        Location currentLocation = projectile.getCurrentLocation();
-        currentLocation.getWorld().spawnParticle(Particle.EXPLOSION, currentLocation, 1, 0, 0, 0, 0, null, true);
-        int playersHit = 0;
-        float hitbox = this.hitbox.getCalculatedValue();
-        for (WarlordsEntity enemy : PlayerFilter.entitiesAround(currentLocation, hitbox, hitbox, hitbox).aliveEnemiesOf(wp).excluding(projectile.getHit())) {
-            getProjectiles(projectile).forEach(p -> p.getHit().add(enemy));
-            playersHit++;
-            if (enemy.onHorse()) {
-                stats.addNumberOfDismounts();
-            }
-            Utils.playGlobalSound(enemy.getLocation(), "shaman.lightningbolt.impact", 2, 1);
-            //hitting player
-            hit(enemy, wp, projectile);
-            //reducing chain cooldown
-            if (!(wp.isInPve() && projectile.getHit().size() > 2)) {
-                for (ChainLightning chainLightning : wp.getAbilitiesMatching(ChainLightning.class)) {
-                    chainLightning.subtractCurrentCooldown(cooldownReduction);
-                }
-            }
-        }
-        return playersHit;
+    @Override
+    public FloatModifiable getSplashRadius() {
+        return splash;
     }
 
     private Optional<WarlordsDamageHealingFinalEvent> hit(@Nonnull WarlordsEntity hit, WarlordsEntity wp, InternalProjectile projectile) {
@@ -229,16 +211,36 @@ public class LightningBolt extends AbstractPiercingProjectile<LightningBolt, Lig
         return stats;
     }
 
-    public FloatModifiable getHitbox() {
-        return hitbox;
-    }
-
     public float getCooldownReduction() {
         return cooldownReduction;
     }
 
     public void setCooldownReduction(float cooldownReduction) {
         this.cooldownReduction = cooldownReduction;
+    }
+
+    public int explode(@Nonnull InternalProjectile projectile, WarlordsEntity wp) {
+        Location currentLocation = projectile.getCurrentLocation();
+        currentLocation.getWorld().spawnParticle(Particle.EXPLOSION, currentLocation, 1, 0, 0, 0, 0, null, true);
+        int playersHit = 0;
+        float hitbox = this.splash.getCalculatedValue();
+        for (WarlordsEntity enemy : PlayerFilter.entitiesAround(currentLocation, hitbox, hitbox, hitbox).aliveEnemiesOf(wp).excluding(projectile.getHit())) {
+            getProjectiles(projectile).forEach(p -> p.getHit().add(enemy));
+            playersHit++;
+            if (enemy.onHorse()) {
+                stats.addNumberOfDismounts();
+            }
+            Utils.playGlobalSound(enemy.getLocation(), "shaman.lightningbolt.impact", 2, 1);
+            //hitting player
+            hit(enemy, wp, projectile);
+            //reducing chain cooldown
+            if (!(wp.isInPve() && projectile.getHit().size() > 2)) {
+                for (ChainLightning chainLightning : wp.getAbilitiesMatching(ChainLightning.class)) {
+                    chainLightning.subtractCurrentCooldown(cooldownReduction);
+                }
+            }
+        }
+        return playersHit;
     }
 
     public static class DamageValues implements Value.ValueHolder {

@@ -16,6 +16,7 @@ import java.util.List;
 
 public class DimensionalWarp implements SpecBoostManager.SpecBoost<DimensionalWarp> {
 
+    private int maxEnergyGain;
     private float healthRestorePercent;
     private int ticks;
     private float speedIncrease;
@@ -23,6 +24,7 @@ public class DimensionalWarp implements SpecBoostManager.SpecBoost<DimensionalWa
 
     @Override
     public void init() {
+        this.maxEnergyGain = getValue("maxEnergyGain", int.class);
         this.healthRestorePercent = getValue("healthRestorePercent", float.class);
         this.ticks = getValue("ticks", int.class);
         this.speedIncrease = getValue("speedIncrease", float.class);
@@ -37,6 +39,7 @@ public class DimensionalWarp implements SpecBoostManager.SpecBoost<DimensionalWa
     @Override
     public List<Object> getVariables() {
         return List.of(
+                maxEnergyGain,
                 healthRestorePercent,
                 ticks,
                 speedIncrease,
@@ -61,6 +64,7 @@ public class DimensionalWarp implements SpecBoostManager.SpecBoost<DimensionalWa
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
+            warlordsPlayer.getEnergy().addAdditiveModifier("Spec Boost", maxEnergyGain);
             warlordsPlayer.getAbilitiesMatching(TimeWarpPyromancer.class).forEach(timeWarp -> {
                 timeWarp.setTickDuration(ticks);
             });

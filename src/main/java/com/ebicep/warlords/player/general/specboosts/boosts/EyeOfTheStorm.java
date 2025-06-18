@@ -81,7 +81,7 @@ public class EyeOfTheStorm implements SpecBoostManager.SpecBoost<EyeOfTheStorm> 
             warlordsPlayer.getAbilitiesMatching(LightningBolt.class).forEach(lightningBolt -> {
                 lightningBolt.getMaxDistance().addOverridingModifier("Spec Boost", maxTravelBlocks);
                 lightningBolt.getProjectileSpeed().addMultiplicativeModifierAdd("Spec Boost", (velocityIncreasePercentage + 100) / 100);
-                lightningBolt.getHitbox().addOverridingModifier("Spec Boost", splashRadiusBlocks);
+                lightningBolt.getSplashRadius().addOverridingModifier("Spec Boost", splashRadiusBlocks);
                 lightningBolt.setCooldownReduction(lightningBolt.getCooldownReduction() + chainCooldownReductionIncrease);
             });
             warlordsPlayer.getAbilitiesMatching(LightningRod.class).forEach(lightningRod -> {

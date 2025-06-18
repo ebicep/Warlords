@@ -127,8 +127,10 @@ public class DatabaseGameEvent implements Listener {
                                             ChatUtils.MessageType.GAME_EVENTS.sendMessage("Queued new event: " + nextEvent);
                                         })
                                         .execute();
-                            }
-                            if (eventChecker == null) {
+                                if (eventChecker != null) {
+                                    eventChecker.cancel();
+                                }
+                            } else if (eventChecker == null) {
                                 ChatUtils.MessageType.GAME_EVENTS.sendMessage("Starting event checker...");
                                 eventChecker = new BukkitRunnable() {
                                     @Override
