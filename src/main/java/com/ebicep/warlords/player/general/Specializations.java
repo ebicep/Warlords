@@ -1,31 +1,16 @@
 package com.ebicep.warlords.player.general;
 
-import com.ebicep.warlords.abilities.SuperBrew;
 import com.ebicep.warlords.abilities.internal.Ability;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.Leech;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
-import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
-import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
-import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
-import com.ebicep.warlords.util.bukkit.ComponentBuilder;
-import com.ebicep.warlords.util.java.NumberFormat;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static com.ebicep.warlords.player.general.SkillBoosts.*;
@@ -127,101 +112,7 @@ public enum Specializations {
             Component.text("A healing-oriented Rogue specialization that uses special brews and alchemical powers to weaken their foes and aid allies.", NamedTextColor.GRAY),
             SpecType.HEALER,
             IMPALING_STRIKE, SOOTHING_PUDDLE, VITALITY_CONCOCTION, REMEDIC_CHAINS, DRAINING_MIASMA
-    ) {
-        @Override
-        public void init(WarlordsEntity warlordsEntity) {
-            float leechHeal = AbstractAbility.convertToPercent(ConfigManager.getSpecsConfigValue(
-                    warlordsEntity.getGame().getNamespace(),
-                    this.name().toLowerCase() + ".leechHealPercent",
-                    float.class
-            ));
-            warlordsEntity.getCooldownManager().addCooldown(new PermanentCooldown<>(
-                    "Apothecary Leech",
-                    null,
-                    Specializations.class,
-                    null,
-                    warlordsEntity,
-                    CooldownTypes.SPEC,
-                    cooldownManager -> {},
-                    false
-            ) {
-                @Override
-                protected Listener getListener() {
-                    return new Listener() {
-                        @EventHandler
-                        public void onDamageHealFinalEvent(WarlordsDamageHealingFinalEvent finalEvent) {
-                            if (finalEvent.getSource() != warlordsEntity) {
-                                return;
-                            }
-                            if (!finalEvent.isDamageInstance()) {
-                                return;
-                            }
-                            Optional<Leech.LeechData> impalingStrikeData = new CooldownFilter<>(finalEvent.getWarlordsEntity(), RegularCooldown.class)
-                                    .filterCooldownClassAndMapToObjectsOfClass(Leech.LeechData.class)
-                                    .findAny();
-                            float impalingStrikeHeal = 0;
-                            float stacks = 0;
-                            float leechAmount = 0;
-                            if (impalingStrikeData.isPresent()) {
-                                Leech.LeechData data = impalingStrikeData.get();
-                                stacks = data.getStacksCount();
-                                leechAmount = data.getLeechAmount();
-                                impalingStrikeHeal = finalEvent.getValueBeforeAllReduction() * AbstractAbility.convertToPercent(stacks * leechAmount);
-                            }
-                            float passiveHeal = 0;
-                            if (finalEvent.getFinalEventFlag() == WarlordsDamageHealingFinalEvent.FinalEventFlag.REGULAR) {
-                                float passiveLeechHeal = leechHeal;
-                                Optional<SuperBrew.SuperBrewData> superBrewData = new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
-                                        .filterCooldownClassAndMapToObjectsOfClass(SuperBrew.SuperBrewData.class)
-                                        .findAny();
-                                if (superBrewData.isPresent()) {
-                                    passiveLeechHeal += superBrewData.get().getSuperBrew().getTrueDamageLeechIncreasePercent() / 100f;
-                                }
-                                passiveHeal = finalEvent.getValue() * passiveLeechHeal;
-                            }
-                            warlordsEntity.addInstance(InstanceBuilder
-                                    .healing()
-                                    .cause("Leech")
-                                    .source(warlordsEntity)
-                                    .value(impalingStrikeHeal + passiveHeal)
-                                    .flags(InstanceFlags.NO_HIT_SOUND, InstanceFlags.APOTH_SELF_HEAL)
-                                    .debugMessages(ComponentBuilder
-                                            .create("", NamedTextColor.GREEN)
-                                            .text("Passive Apoth Heal: ", NamedTextColor.GRAY)
-                                            .text(NumberFormat.formatOptionalHundredths(finalEvent.getValue()), NamedTextColor.GOLD)
-                                            .text(" > ", NamedTextColor.GRAY)
-                                            .text(NumberFormat.formatOptionalHundredths(passiveHeal), NamedTextColor.GOLD)
-                                            .text("  |  ", NamedTextColor.GRAY)
-                                            .text("Impaling Strike Heal: ", NamedTextColor.GRAY)
-                                            .text(NumberFormat.formatOptionalHundredths(finalEvent.getValueBeforeAllReduction()), NamedTextColor.GOLD)
-                                            .text(" > ", NamedTextColor.GRAY)
-                                            .text(NumberFormat.formatOptionalHundredths(impalingStrikeHeal), NamedTextColor.GOLD)
-                                            .text(" (", NamedTextColor.GRAY)
-                                            .text(stacks, NamedTextColor.DARK_GREEN)
-                                            .text("/", NamedTextColor.GRAY)
-                                            .text(leechAmount, NamedTextColor.DARK_GREEN)
-                                            .text(")", NamedTextColor.GRAY)
-                                            .build())
-                            );
-                        }
-
-                        @EventHandler
-                        public void onDamageHealEvent(WarlordsDamageHealingEvent event) {
-                            if (event.isDamageInstance()) {
-                                return;
-                            }
-                            if (event.getWarlordsEntity() != warlordsEntity) {
-                                return;
-                            }
-                            if (event.getCause().equals("Leech") && !event.getFlags().contains(InstanceFlags.APOTH_SELF_HEAL)) {
-                                event.setCancelled(true);
-                            }
-                        }
-                    };
-                }
-            });
-        }
-    },
+    ),
     CONJURER("Conjurer",
             List.of("con"),
             Component.text("A damage-oriented Arcanist specialization that uses venomous attacks and pure magical spells to eliminate their foes.", NamedTextColor.GRAY),
