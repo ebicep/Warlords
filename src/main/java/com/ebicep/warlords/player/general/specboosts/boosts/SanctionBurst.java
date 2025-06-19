@@ -21,8 +21,11 @@ import java.util.function.Consumer;
 
 public class SanctionBurst implements SpecBoostManager.SpecBoost<SanctionBurst> {
 
+    private float soulShackleDamageDecrease;
+
     @Override
     public void init() {
+        this.soulShackleDamageDecrease = getValue("soulShackleDamageDecrease", float.class);
     }
 
     @Override
@@ -32,7 +35,7 @@ public class SanctionBurst implements SpecBoostManager.SpecBoost<SanctionBurst> 
 
     @Override
     public List<Object> getVariables() {
-        return List.of();
+        return List.of(soulShackleDamageDecrease);
     }
 
     @Override
@@ -54,6 +57,11 @@ public class SanctionBurst implements SpecBoostManager.SpecBoost<SanctionBurst> 
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(HeartToHeart.class).forEach(heartToHeart -> {
                 heartToHeart.setTargetEnemies(true);
+            });
+            warlordsPlayer.getAbilitiesMatching(SoulShackle.class).forEach(soulShackle -> {
+                soulShackle.getDamageValues()
+                           .getShackleDamage()
+                           .forEachAllValues(floatModifier -> floatModifier.addAdditiveModifier("Spec Boost", -soulShackleDamageDecrease));
             });
         }
 
