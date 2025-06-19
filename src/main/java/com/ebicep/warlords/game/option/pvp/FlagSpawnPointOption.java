@@ -150,77 +150,88 @@ public class FlagSpawnPointOption implements Option {
 
                 wp.setFlagDropCooldown(2);
 
-                if (info.getFlag() instanceof GroundFlagLocation groundFlagLocation) {
-                    if (team == info.getTeam()) {
-                        // Return flag
-                        boolean manuallyDropped = groundFlagLocation.isManuallyDropped();
-                        info.setFlag(new SpawnFlagLocation(info.getSpawnLocation(),
-                                wp,
-                                manuallyDropped ? groundFlagLocation.getFlagMultiplier() : (int) (groundFlagLocation.getFlagMultiplier() * .33f)
-                        ));
-                        List<FlagHolder> flagHolders = game.getMarkers(FlagHolder.class);
-                        for (FlagHolder flagHolder : flagHolders) {
-                            if (flagHolder.getInfo() != info && flagHolder.getFlag() instanceof PlayerFlagLocation playerFlagLocation) {
-                                playerFlagLocation.setFlagMultiplier((int) (playerFlagLocation.getFlagMultiplier() * .5));
-                            }
-                        }
-                        if (flagHolders.stream().allMatch(flagHolder -> flagHolder.getFlag() instanceof SpawnFlagLocation)) {
-                            flagHolders.stream().map(FlagHolder::getFlag).map(SpawnFlagLocation.class::cast).forEach(spawnFlagLocation -> spawnFlagLocation.setFlagMultiplier(0));
-                        }
-                    } else {
-                        if (groundFlagLocation.getRepickTickCooldown() > 0) {
-                            wp.sendMessage(Component.text("You cannot repick the flag yet!", NamedTextColor.RED));
-                        } else {
-                            // Steal flag
-                            info.setFlag(new PlayerFlagLocation(wp,
-                                    groundFlagLocation.getTicksElapsed(),
-                                    groundFlagLocation.getFlagMultiplier() + groundFlagLocation.getBonusRepickMultiplier()
+                switch (info.getFlag()) {
+                    case GroundFlagLocation groundFlagLocation -> {
+                        if (team == info.getTeam()) {
+                            // Return flag
+                            boolean manuallyDropped = groundFlagLocation.isManuallyDropped();
+                            float newFlagMultiplier = ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "ctf.flagReturnSpawnFlagMultiplierDecrease", float.class);
+                            info.setFlag(new SpawnFlagLocation(
+                                    info.getSpawnLocation(),
+                                    wp,
+                                    manuallyDropped ? groundFlagLocation.getFlagMultiplier() : (int) (groundFlagLocation.getFlagMultiplier() * newFlagMultiplier)
                             ));
-                            if (wp.getEntity().getVehicle() != null) {
-                                wp.getEntity().getVehicle().remove();
+                            List<FlagHolder> flagHolders = game.getMarkers(FlagHolder.class);
+                            float carrierMultiplier = ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "ctf.flagReturnCarrierMultiplierDecrease", float.class);
+                            for (FlagHolder flagHolder : flagHolders) {
+                                if (flagHolder.getInfo() != info && flagHolder.getFlag() instanceof PlayerFlagLocation playerFlagLocation) {
+                                    playerFlagLocation.setFlagMultiplier((int) (playerFlagLocation.getFlagMultiplier() * carrierMultiplier));
+                                }
+                            }
+                            if (flagHolders.stream().allMatch(flagHolder -> flagHolder.getFlag() instanceof SpawnFlagLocation)) {
+                                flagHolders.stream()
+                                           .map(FlagHolder::getFlag)
+                                           .map(SpawnFlagLocation.class::cast)
+                                           .forEach(spawnFlagLocation -> spawnFlagLocation.setFlagMultiplier(0));
+                            }
+                        } else {
+                            if (groundFlagLocation.getRepickTickCooldown() > 0) {
+                                wp.sendMessage(Component.text("You cannot repick the flag yet!", NamedTextColor.RED));
+                            } else {
+                                // Steal flag
+                                info.setFlag(new PlayerFlagLocation(wp,
+                                        groundFlagLocation.getTicksElapsed(),
+                                        groundFlagLocation.getFlagMultiplier() + groundFlagLocation.getBonusRepickMultiplier()
+                                ));
+                                if (wp.getEntity().getVehicle() != null) {
+                                    wp.getEntity().getVehicle().remove();
+                                }
                             }
                         }
+                        return true;
                     }
-                    return true;
-                } else if (info.getFlag() instanceof SpawnFlagLocation spawnFlagLocation) {
-                    if (team == info.getTeam()) {
-                        // Nothing
-                        wp.sendMessage(Component.text("You cannot steal your own team's flag!", NamedTextColor.RED));
-                    } else {
-                        if (ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "ctf.flagDisableRepicks", Boolean.class, true)) {
-                            List<FlagHolder> flagHolders = game.getMarkers(FlagHolder.class);
-                            for (FlagHolder flagHolder : flagHolders) {
-                                if (flagHolder.getFlag() instanceof PlayerFlagLocation playerFlagLocation && playerFlagLocation.getPlayer().getTeam() == info.getTeam()) {
-                                    if (flagIsInCaptureZone(playerFlagLocation) && !flagCaptureIsNotBlocked(playerFlagLocation)) {
-                                        wp.sendMessage(Component.text("No repick for you!", NamedTextColor.RED));
-                                        return true;
+                    case SpawnFlagLocation spawnFlagLocation -> {
+                        if (team == info.getTeam()) {
+                            // Nothing
+                            wp.sendMessage(Component.text("You cannot steal your own team's flag!", NamedTextColor.RED));
+                        } else {
+                            if (ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "ctf.flagDisableRepicks", Boolean.class, true)) {
+                                List<FlagHolder> flagHolders = game.getMarkers(FlagHolder.class);
+                                for (FlagHolder flagHolder : flagHolders) {
+                                    if (flagHolder.getFlag() instanceof PlayerFlagLocation playerFlagLocation && playerFlagLocation.getPlayer().getTeam() == info.getTeam()) {
+                                        if (flagIsInCaptureZone(playerFlagLocation) && !flagCaptureIsNotBlocked(playerFlagLocation)) {
+                                            wp.sendMessage(Component.text("No repick for you!", NamedTextColor.RED));
+                                            return true;
+                                        }
                                     }
                                 }
                             }
+                            // Steal flag
+                            info.setFlag(new PlayerFlagLocation(wp, 0, spawnFlagLocation.getFlagMultiplier()));
+                            Integer flagRes = ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "ctf.flagPickResistance", int.class, 0);
+                            if (flagRes != null && flagRes == 0) {
+                                wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                        "Flag Damage Resistance",
+                                        "RES",
+                                        FlagSpawnPointOption.class,
+                                        null,
+                                        wp,
+                                        CooldownTypes.BUFF,
+                                        cooldownManager -> {
+                                        },
+                                        15 * 20
+                                ) {
+                                    @Override
+                                    public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                                        return currentDamageValue * AbstractAbility.convertToDivisionDecimal(flagRes);
+                                    }
+                                });
+                            }
                         }
-                        // Steal flag
-                        info.setFlag(new PlayerFlagLocation(wp, 0, spawnFlagLocation.getFlagMultiplier()));
-                        Integer flagRes = ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "ctf.flagPickResistance", int.class, 0);
-                        if (flagRes != null && flagRes == 0) {
-                            wp.getCooldownManager().addCooldown(new RegularCooldown<>(
-                                    "Flag Damage Resistance",
-                                    "RES",
-                                    FlagSpawnPointOption.class,
-                                    null,
-                                    wp,
-                                    CooldownTypes.BUFF,
-                                    cooldownManager -> {
-                                    },
-                                    15 * 20
-                            ) {
-                                @Override
-                                public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                    return currentDamageValue * AbstractAbility.convertToDivisionDecimal(flagRes);
-                                }
-                            });
-                        }
+                        return true;
                     }
-                    return true;
+                    case null, default -> {
+                    }
                 }
                 return false;
             }
