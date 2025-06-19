@@ -13,7 +13,6 @@ public class AlchemistsFury implements SpecBoostManager.SpecBoost<AlchemistsFury
     private float soothingElixirDamageIncreasePercent;
     private float soothingElixirProjectileSpeedMultiplier;
     private float soothingElixirRadiusIncrease;
-    private int soothingElixirExtraLeechStacks;
 
     @Override
     public void init() {
@@ -21,7 +20,6 @@ public class AlchemistsFury implements SpecBoostManager.SpecBoost<AlchemistsFury
         this.soothingElixirDamageIncreasePercent = getValue("soothingElixirDamageIncreasePercent", float.class);
         this.soothingElixirProjectileSpeedMultiplier = getValue("soothingElixirProjectileSpeedMultiplier", float.class);
         this.soothingElixirRadiusIncrease = getValue("soothingElixirRadiusIncrease", float.class);
-        this.soothingElixirExtraLeechStacks = getValue("soothingElixirExtraLeechStacks", int.class);
     }
 
     @Override
@@ -35,8 +33,7 @@ public class AlchemistsFury implements SpecBoostManager.SpecBoost<AlchemistsFury
                 soothingElixirCooldownReductionSeconds,
                 soothingElixirDamageIncreasePercent,
                 soothingElixirProjectileSpeedMultiplier,
-                soothingElixirRadiusIncrease,
-                soothingElixirExtraLeechStacks
+                soothingElixirRadiusIncrease
         );
     }
 
@@ -65,7 +62,6 @@ public class AlchemistsFury implements SpecBoostManager.SpecBoost<AlchemistsFury
                         floatModifiable.addOverridingModifier("Spec Boost", 0)
                 );
                 soothingElixir.getHitBoxRadius().addAdditiveModifier("Spec Boost", soothingElixirRadiusIncrease);
-                soothingElixir.setLeechStacksApplied(soothingElixir.getLeechStacksApplied() + soothingElixirExtraLeechStacks);
             });
             warlordsPlayer.getAbilitiesMatching(VolatileBrew.class).forEach(volatileBrew -> {
                 volatileBrew.setEarlyActivationEffectivenessReduction(0);
