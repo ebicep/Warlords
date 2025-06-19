@@ -215,7 +215,7 @@ public class RighteousRampage implements SpecBoostManager.SpecBoost<RighteousRam
                                     ) {
                                         landingTarget.addInstance(InstanceBuilder
                                                 .damage()
-                                                .cause(getStringName())
+                                                .cause("Vindictive Leap")
                                                 .source(warlordsEntity)
                                                 .value(vindicateLeapDamage)
                                         );
