@@ -209,7 +209,7 @@ public class FlagSpawnPointOption implements Option {
                             // Steal flag
                             info.setFlag(new PlayerFlagLocation(wp, 0, spawnFlagLocation.getFlagMultiplier()));
                             Integer flagRes = ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "ctf.flagPickResistance", int.class, 0);
-                            if (flagRes != null && flagRes == 0) {
+                            if (flagRes != null && flagRes != 0) {
                                 wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                                         "Flag Damage Resistance",
                                         "RES",
