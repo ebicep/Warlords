@@ -78,12 +78,11 @@ public class ChillyAura implements SpecBoostManager.SpecBoost<ChillyAura> {
                     PlayerFilter.entitiesAround(warlordsEntity, rangeBlocks, rangeBlocks, rangeBlocks)
                                 .aliveEnemiesOf(warlordsEntity)
                                 .forEach(we -> {
-                                    we.addSpeedModifier(warlordsEntity, getStringName(), -slowAmountPercent, healthLossTickPeriod);
                                     we.addSpeedModifier(new MotionModifierBuilder()
                                             .setFrom(warlordsEntity)
                                             .setName(getStringName())
                                             .setModifier(-slowAmountPercent)
-                                            .setDuration(6)
+                                            .setDuration(healthLossTickPeriod + 1)
                                             .addAddons(new ConditionalStackValueModifier(AbstractAbility.convertToDivisionDecimal(slowAmountPercent)))
                                             .build()
                                     );
