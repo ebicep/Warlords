@@ -26,7 +26,6 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, HitBox, AbilityStats<VolatileBrew, VolatileBrew.VolatileBrewStats>, Damages<VolatileBrew.DamageValues>, Heals<VolatileBrew.HealingValues> {
@@ -93,9 +92,6 @@ public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, 
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
-                    if (!Objects.equals(cooldownManager.getWarlordsEntity(), data.target)) {
-                        return;
-                    }
                     if (bothStatesActive || data.damageMode) {
                         float multiplier = data.activatedEarly ? convertToDivisionDecimal(earlyActivationEffectivenessReduction) : 1.0f;
                         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_SPIDER_HURT, 2, .25f);
