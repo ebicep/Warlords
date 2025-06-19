@@ -1,5 +1,6 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
+import com.ebicep.warlords.abilities.CapacitorTotem;
 import com.ebicep.warlords.abilities.ChainLightning;
 import com.ebicep.warlords.abilities.LightningRod;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
@@ -20,6 +21,7 @@ public class GalvanizedSpark implements SpecBoostManager.SpecBoost<GalvanizedSpa
     private int lightningRodSpeedDurationTicks;
     private float lightningRodMagnitude;
     private float lightningRodY;
+    private float capacitorTotemDamageDecrease;
 
     @Override
     public void init() {
@@ -31,6 +33,7 @@ public class GalvanizedSpark implements SpecBoostManager.SpecBoost<GalvanizedSpa
         this.lightningRodSpeedDurationTicks = getValue("lightningRodSpeedDurationTicks", int.class);
         this.lightningRodMagnitude = getValue("lightningRodMagnitude", float.class);
         this.lightningRodY = getValue("lightningRodY", float.class);
+        this.capacitorTotemDamageDecrease = getValue("capacitorTotemDamageDecrease", float.class);
     }
 
     @Override
@@ -46,7 +49,8 @@ public class GalvanizedSpark implements SpecBoostManager.SpecBoost<GalvanizedSpa
                 lightningRodHealingPercent,
                 lightningRodEnergyRestore,
                 lightningRodSpeedIncreasePercent,
-                lightningRodSpeedDurationTicks
+                lightningRodSpeedDurationTicks,
+                capacitorTotemDamageDecrease
         );
     }
 
@@ -75,6 +79,11 @@ public class GalvanizedSpark implements SpecBoostManager.SpecBoost<GalvanizedSpa
                 lightningRod.setEnergyRestore(lightningRodEnergyRestore);
                 lightningRod.setMagnitude(lightningRodMagnitude);
                 lightningRod.setY(lightningRodY);
+            });
+            warlordsPlayer.getAbilitiesMatching(CapacitorTotem.class).forEach(capacitorTotem -> {
+                capacitorTotem.getDamageValues()
+                              .getTotemDamage()
+                              .forEachValue(floatModifiable -> floatModifiable.addAdditiveModifier("Spec Boost", -capacitorTotemDamageDecrease));
             });
         }
 
