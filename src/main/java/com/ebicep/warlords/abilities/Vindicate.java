@@ -32,7 +32,41 @@ import java.util.Objects;
 
 public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Duration, AbilityStats<Vindicate, Vindicate.VindicateStats> {
 
-    private static final int knockbackResistance = 50;
+    public static <T> void giveVindicateCooldown(WarlordsEntity from, WarlordsEntity target, Class<T> cooldownClass, T cooldownObject, int tickDuration) {
+        // remove other instances of vindicate buff to override
+        target.getCooldownManager().removeCooldownByName("Vindicate");
+        boolean vindPveMaster2 = cooldownClass.equals(Vindicate.class) && from.getAbilitiesMatching(Vindicate.class).stream().anyMatch(t -> t.pveMasterUpgrade2);
+        RegularCooldown<T> vindiateCooldown = new RegularCooldown<>(
+                "Vindicate", "VIND",
+                cooldownClass,
+                cooldownObject,
+                from,
+                CooldownTypes.BUFF,
+                cooldownManager -> {
+                },
+                tickDuration
+        ) {
+
+            @Override
+            protected Listener getListener() {
+                return CooldownUtils.getPartialDebuffImmunityListener(target);
+            }
+
+            @Override
+            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                if (vindPveMaster2) {
+                    return currentDamageValue * .85f;
+                }
+                return currentDamageValue;
+            }
+        };
+        target.addKnockbackModifier(from, "Vindicate", -getKnockbackResistance(), vindiateCooldown);
+        target.getCooldownManager().addCooldown(vindiateCooldown);
+        if (vindPveMaster2) {
+            EffectUtils.playParticleLinkAnimation(from.getLocation(), target.getLocation(), Particle.FALLING_HONEY, 1, 1, -1);
+        }
+    }
+
     private final VindicateStats stats = new VindicateStats();
     private int radius = 8;
     private int vindTickDuration = 240;
@@ -125,7 +159,7 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
                 .text(" for ")
                 .durationTicks(vindTickDuration)
                 .text(", granting an immunity to de-buffs and ")
-                .percent(knockbackResistance, AbilityDescriptionBuilder.COLOR_BROWN)
+                .percent(getKnockbackResistance(), AbilityDescriptionBuilder.COLOR_BROWN)
                 .text(" knockback resistance. You gain")
                 .percent(vindicateDamageReduction, AbilityDescriptionBuilder.COLOR_BROWN)
                 .text(" damage reduction for ")
@@ -139,39 +173,8 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
         return new VindicateBranch(abilityTree, this);
     }
 
-    public static <T> void giveVindicateCooldown(WarlordsEntity from, WarlordsEntity target, Class<T> cooldownClass, T cooldownObject, int tickDuration) {
-        // remove other instances of vindicate buff to override
-        target.getCooldownManager().removeCooldownByName("Vindicate");
-        boolean vindPveMaster2 = cooldownClass.equals(Vindicate.class) && from.getAbilitiesMatching(Vindicate.class).stream().anyMatch(t -> t.pveMasterUpgrade2);
-        RegularCooldown<T> vindiateCooldown = new RegularCooldown<>(
-                "Vindicate", "VIND",
-                cooldownClass,
-                cooldownObject,
-                from,
-                CooldownTypes.BUFF,
-                cooldownManager -> {
-                },
-                tickDuration
-        ) {
-
-            @Override
-            protected Listener getListener() {
-                return CooldownUtils.getPartialDebuffImmunityListener(target);
-            }
-
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (vindPveMaster2) {
-                    return currentDamageValue * .85f;
-                }
-                return currentDamageValue;
-            }
-        };
-        target.addKnockbackModifier(from, "Vindicate", -knockbackResistance, vindiateCooldown);
-        target.getCooldownManager().addCooldown(vindiateCooldown);
-        if (vindPveMaster2) {
-            EffectUtils.playParticleLinkAnimation(from.getLocation(), target.getLocation(), Particle.FALLING_HONEY, 1, 1, -1);
-        }
+    private static int getKnockbackResistance() {
+        return ConfigManager.getAbilityConfigValue(ConfigManager.DEFAULT_NAMESPACES, "vindicate.knockbackResistance", int.class);
     }
 
     public float getCalculatedVindicateDamageReduction() {
