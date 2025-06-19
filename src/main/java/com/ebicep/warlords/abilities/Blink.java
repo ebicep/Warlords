@@ -8,6 +8,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.MathUtils;
@@ -25,9 +26,10 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Blink extends AbstractAbility implements BlueAbilityIcon, HitBox, AbilityStats<Blink, Blink.BlinkStats> {
+public class Blink extends AbstractAbility implements BlueAbilityIcon, Heals<Blink.HealingValues>, HitBox, AbilityStats<Blink, Blink.BlinkStats> {
 
     private final BlinkStats stats = new BlinkStats();
+    private final HealingValues healingValues = new HealingValues();
     private FloatModifiable radius = new FloatModifiable(13);
     private FloatModifiable radiusFlag = new FloatModifiable(3.5f);
     private float verticalLimit;
@@ -54,6 +56,7 @@ public class Blink extends AbstractAbility implements BlueAbilityIcon, HitBox, A
 
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
+        wp.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(healingValues.blinkHealing));
         wp.setRegenTickTimer(1);
         Location startLocation = wp.getEyeLocation();
         LocationBuilder locationBuilder = new LocationBuilder(startLocation);
@@ -103,7 +106,6 @@ public class Blink extends AbstractAbility implements BlueAbilityIcon, HitBox, A
 
     @Override
     public void updateDescription(Player player) {
-
         description = AbilityDescriptionBuilder
                 .create("Teleport ")
                 .blocks(radius)
@@ -111,7 +113,9 @@ public class Blink extends AbstractAbility implements BlueAbilityIcon, HitBox, A
                 .percent(damageReduction, AbilityDescriptionBuilder.COLOR_BROWN)
                 .text(" damage reduction for ")
                 .durationTicks(damageReductionTickDuration)
-                .text(". Instantly active your passive regeneration.")
+                .text(". Heal for ")
+                .heal(healingValues.blinkHealing)
+                .text(" health and instantly active your passive regeneration.")
                 .emptyLine()
                 .text(" Blink has low vertical range.")
                 .build();
@@ -128,6 +132,11 @@ public class Blink extends AbstractAbility implements BlueAbilityIcon, HitBox, A
         return stats;
     }
 
+    @Override
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
     public int getDamageReduction() {
         return damageReduction;
     }
@@ -142,6 +151,29 @@ public class Blink extends AbstractAbility implements BlueAbilityIcon, HitBox, A
 
     public void setVerticalLimit(float verticalLimit) {
         this.verticalLimit = verticalLimit;
+    }
+
+    public static class HealingValues implements Value.ValueHolder {
+
+        private Value.SetValue blinkHealing = new Value.SetValue(0);
+
+        private List<Value> values = List.of(blinkHealing);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+        @Override
+        public void init(AbstractAbilityBuilder builder) {
+            this.blinkHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameHealing("blinkHealing"), Value.SetValue.class);
+            this.values = List.of(blinkHealing);
+        }
+
+        public Value.SetValue getBlinkHealing() {
+            return blinkHealing;
+        }
+
     }
 
     public static class BlinkStats extends AbstractAbilityStats<Blink, BlinkStats> {
