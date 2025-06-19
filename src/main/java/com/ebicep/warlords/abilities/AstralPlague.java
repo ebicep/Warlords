@@ -53,24 +53,6 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
     }
 
     @Override
-    public void updateDescription(Player player) {
-        AbilityDescriptionBuilder builder = AbilityDescriptionBuilder.create("Grant yourself Astral Energy, increasing ")
-                                                                     .text("PHEX", NamedTextColor.DARK_RED)
-                                                                     .text(" duration by ")
-                                                                     .durationTicks(hexTickDurationIncrease)
-                                                                     .text(" and causing Soulfire Beam to not consume ")
-                                                                     .text("PHEX", NamedTextColor.DARK_RED)
-                                                                     .text(" stacks.")
-                                                                     .emptyLine()
-                                                                     .text("Your attacks pierces shields and defenses of enemies with max stacks of ")
-                                                                     .text("PHEX", NamedTextColor.DARK_RED);
-        if (inPve) {
-            builder.text(". For the duration of Astral Plague the damage from Poisonous Hex stacks are increased by 400%");
-        }
-        description = builder.text(". Lasts ").durationTicks(tickDuration).text(".").build();
-    }
-
-    @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "arcanist.astralplague.activation", 2, 1.1f);
         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_ZOMBIE_VILLAGER_CONVERTED, 2, 0.7f);
@@ -118,20 +100,19 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
                         if (!event.getSource().equals(wp)) {
                             return;
                         }
+                        if (!(event.getAbility() instanceof SoulfireBeam soulfireBeam)) {
+                            return;
+                        }
                         PoisonousHex fromHex = PoisonousHex.getFromHex(wp);
                         if (new CooldownFilter<>(victim, RegularCooldown.class).filterCooldownClass(PoisonousHex.class).stream().count() < fromHex.getMaxStacks()) {
                             return;
                         }
                         event.getFlags().add(InstanceFlags.PIERCE);
+                        event.setCritChance(100);
                         if (inPve) {
                             event.getFlags().add(InstanceFlags.IGNORE_SELF_RES);
                         }
-                        if (pveMasterUpgrade && Objects.equals(event.getCause(), "Soulfire Beam")) {
-                            event.setCritChance(100);
-                        }
-                        if (event.getCause().equals("Soulfire Beam")) {
-                            stats.tripleStackBeams++;
-                        }
+                        stats.tripleStackBeams++;
                     }
 
                     @EventHandler
@@ -143,14 +124,16 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
                             return;
                         }
                         WarlordsEntity target = event.getWarlordsEntity();
-                        List<AbstractCooldown<?>> cooldowns = event.getPlayerCooldowns()
-                                                                   .stream()
-                                                                   .map(WarlordsDamageHealingFinalEvent.CooldownRecord::getAbstractCooldown)
-                                                                   .collect(Collectors.toList());
-                        if (new CooldownFilter<>(cooldowns, RegularCooldown.class).filterCooldownClass(Intervene.class)
-                                                                                  .filter(regularCooldown -> !Objects.equals(regularCooldown.getFrom(), target))
-                                                                                  .findAny()
-                                                                                  .isPresent()) {
+                        List<AbstractCooldown<?>> cooldowns = event
+                                .getPlayerCooldowns()
+                                .stream()
+                                .map(WarlordsDamageHealingFinalEvent.CooldownRecord::getAbstractCooldown)
+                                .collect(Collectors.toList());
+                        if (new CooldownFilter<>(cooldowns, RegularCooldown.class)
+                                .filterCooldownClass(Intervene.class)
+                                .filter(regularCooldown -> !Objects.equals(regularCooldown.getFrom(), target))
+                                .findAny()
+                                .isPresent()) {
                             stats.intervenesPierced++;
                         }
                         if (new CooldownFilter<>(cooldowns, RegularCooldown.class).filterCooldownClass(Shield.class).filter(RegularCooldown::hasTicksLeft).findAny().isPresent()) {
@@ -163,7 +146,7 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
             @Override
             public float addCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
                 if (pveMasterUpgrade) {
-                    return currentCritMultiplier + 40;
+                    return currentCritMultiplier + 60;
                 }
                 return currentCritMultiplier;
             }
@@ -186,6 +169,25 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
             });
         });
         return true;
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        AbilityDescriptionBuilder builder = AbilityDescriptionBuilder
+                .create("Grant yourself Astral Energy, increasing ")
+                .text("PHEX", NamedTextColor.DARK_RED)
+                .text(" duration by ")
+                .durationTicks(hexTickDurationIncrease)
+                .text(" and causing Soulfire Beam to not consume ")
+                .text("PHEX", NamedTextColor.DARK_RED)
+                .text(" stacks.")
+                .emptyLine()
+                .text("Soulfire Beam always crits and pierces the shields and defenses of enemies with max stacks of ")
+                .text("PHEX", NamedTextColor.DARK_RED);
+        if (inPve) {
+            builder.text(". For the duration of Astral Plague the damage from Poisonous Hex stacks are increased by 400%");
+        }
+        description = builder.text(". Lasts ").durationTicks(tickDuration).text(".").build();
     }
 
     @Override
