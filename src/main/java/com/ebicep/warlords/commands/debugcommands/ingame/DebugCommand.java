@@ -268,7 +268,7 @@ public class DebugCommand extends BaseCommand {
     @CommandCompletion("@warlordsplayers")
     @Description("Clears cooldown of player")
     public void clearCooldowns(CommandIssuer issuer, @Optional WarlordsPlayer target) {
-        target.getCooldownManager().clearCooldowns();
+        target.getCooldownManager().expireCooldowns();
         sendDebugMessage(issuer, Component.empty()
                                           .append(target.getColoredName())
                                           .append(Component.text("'s cooldowns have been cleared!", NamedTextColor.GREEN)));

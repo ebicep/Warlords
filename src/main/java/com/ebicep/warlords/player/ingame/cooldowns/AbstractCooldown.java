@@ -68,11 +68,7 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
             boolean removeOnDeath
     ) {
         if (name == null) {
-            try {
-                throw new Exception("NULL cooldown name");
-            } catch (Exception e) {
-                ChatUtils.MessageType.GAME.sendErrorMessage(e);
-            }
+            ChatUtils.MessageType.GAME.sendErrorMessage(new Throwable("null cooldown name"));
         }
         this.name = name == null ? "UNKNOWN" : name;
         this.nameAbbreviation = nameAbbreviation;
@@ -131,6 +127,29 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
         return extraHealingInstances;
     }
 
+    public void expire(CooldownManager cooldownManager) {
+        setMarkedForRemoval(true);
+        getOnRemove().accept(cooldownManager);
+        getOnRemoveForce().accept(cooldownManager);
+        cooldownManager.updatePlayerNames(this);
+    }
+
+    public Consumer<CooldownManager> getOnRemove() {
+        return onRemove;
+    }
+
+    public void setOnRemove(Consumer<CooldownManager> onRemove) {
+        this.onRemove = onRemove;
+    }
+
+    public Consumer<CooldownManager> getOnRemoveForce() {
+        return onRemoveForce;
+    }
+
+    public void setOnRemoveForce(Consumer<CooldownManager> onRemoveForce) {
+        this.onRemoveForce = onRemoveForce;
+    }
+
     public abstract Component getNameAbbreviation();
 
     public void setNameAbbreviation(String nameAbbreviation) {
@@ -173,12 +192,8 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
         return cooldownType;
     }
 
-    public Consumer<CooldownManager> getOnRemove() {
-        return onRemove;
-    }
-
-    public void setOnRemove(Consumer<CooldownManager> onRemove) {
-        this.onRemove = onRemove;
+    public void setCooldownType(CooldownTypes cooldownType) {
+        this.cooldownType = cooldownType;
     }
 
     public boolean isRemoveOnDeath() {
@@ -187,18 +202,6 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
 
     public void setRemoveOnDeath(boolean removeOnDeath) {
         this.removeOnDeath = removeOnDeath;
-    }
-
-    public Consumer<CooldownManager> getOnRemoveForce() {
-        return onRemoveForce;
-    }
-
-    public void setOnRemoveForce(Consumer<CooldownManager> onRemoveForce) {
-        this.onRemoveForce = onRemoveForce;
-    }
-
-    public void setCooldownType(CooldownTypes cooldownType) {
-        this.cooldownType = cooldownType;
     }
 
     public void addExtraDamageInstance(DamageInstance extraDamageInstance) {

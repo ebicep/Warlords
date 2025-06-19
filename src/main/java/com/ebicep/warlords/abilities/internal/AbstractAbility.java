@@ -118,11 +118,7 @@ public abstract class AbstractAbility implements AbilityIcon {
 
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
         if (!initialized) {
-            try {
-                throw new Exception("Ability not initialized: " + this.getClass().getSimpleName() + " - " + builder);
-            } catch (Exception e) {
-                ChatUtils.MessageType.GAME.sendErrorMessage(e);
-            }
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage(new Throwable("Ability not initialized: " + this.getClass().getSimpleName() + " - " + builder));
             init(builder);
         }
         return onActivateInternal(wp);

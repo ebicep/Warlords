@@ -36,7 +36,7 @@ public class SiegeWaitState implements SiegeState, Listener, TimerSkipAbleMarker
             }
         });
         game.warlordsPlayers().forEach(warlordsPlayer -> {
-            warlordsPlayer.getCooldownManager().clearCooldowns();
+            warlordsPlayer.getCooldownManager().expireCooldowns();
             warlordsPlayer.onRespawn(Objects.requireNonNull(LobbyLocationMarker.getFirstLobbyLocation(game, warlordsPlayer.getTeam())).getLocation());
         });
     }

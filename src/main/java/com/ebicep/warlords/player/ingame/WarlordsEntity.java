@@ -323,7 +323,7 @@ public abstract class WarlordsEntity {
 
         showDeathAnimation();
 
-        cooldownManager.clearCooldowns();
+        cooldownManager.expireCooldowns();
 
         if (attacker != null) {
             if (attacker != this) {
