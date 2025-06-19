@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownFlag;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
@@ -59,24 +60,13 @@ public class RighteousStrike extends AbstractStrike<RighteousStrike, RighteousSt
         boolean silenced = nearPlayer.getCooldownManager().hasCooldown(SoulShackle.class);
         new CooldownFilter<>(nearPlayer, RegularCooldown.class)
                 .filter(regularCooldown -> regularCooldown.getCooldownType() == CooldownTypes.ABILITY)
+                .filter(regularCooldown -> !regularCooldown.getFlags().contains(CooldownFlag.CANNOT_BE_REDUCED))
                 .forEach(regularCooldown -> {
                     String cooldownName = regularCooldown.getName();
                     if (cooldownName.equals("Ice Barrier") || cooldownName.equals("Ice Block") || cooldownName.equals("Lustrous Crown")) {
                         regularCooldown.subtractTime(8);
                     } else if (cooldownName.equals("Last Stand")) {
                         regularCooldown.subtractTime(8);
-                        Object data = regularCooldown.getCooldownObject();
-                        nearPlayer.getGame()
-                                  .warlordsPlayers()
-                                  .filter(warlordsPlayer -> warlordsPlayer.isTeammateAlive(nearPlayer) && warlordsPlayer != nearPlayer)
-                                  .forEach(warlordsPlayer -> {
-                                      new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
-                                              .filterCooldownObject(data)
-                                              .findAny()
-                                              .ifPresent(cd -> {
-                                                  cd.subtractTime(8);
-                                              });
-                                  });
                     } else {
                         regularCooldown.subtractTime(abilityReductionInTicks + (silenced ? additionalReductionInTicks : 0));
                     }
