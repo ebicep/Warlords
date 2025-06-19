@@ -52,10 +52,6 @@ public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, 
         return stats;
     }
 
-    public void setBothStatesActive(boolean bothStatesActive) {
-        this.bothStatesActive = bothStatesActive;
-    }
-
     @Override
     public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
@@ -176,10 +172,20 @@ public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, 
                         if (data.target.equals(wp)) {
                             data.activatedEarly = true;
                             cooldown.setTicksLeft(1);
+                            wp.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
+                                    .append(Component.text(" You detonated your ", NamedTextColor.GRAY))
+                                    .append(Component.text(name, NamedTextColor.YELLOW))
+                                    .append(Component.text(" early!", NamedTextColor.GRAY))
+                            );
                             return;
                         }
                         cooldown.getLinkedEntities().remove(data.target);
                         data.target = wp;
+                        wp.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
+                                .append(Component.text(" You recalled your ", NamedTextColor.GRAY))
+                                .append(Component.text(name, NamedTextColor.YELLOW))
+                                .append(Component.text(" to yourself!", NamedTextColor.GRAY))
+                        );
                     }
                 };
             }
@@ -192,14 +198,21 @@ public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, 
         wp.getCooldownManager().addCooldown(brewCooldown);
         if (wp != data.target) {
             data.target.getCooldownManager().addCooldown(brewCooldown);
-            data.target.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN.append(Component.text(" You have been given a ", NamedTextColor.GRAY))
-                                                                      .append(Component.text(name, NamedTextColor.YELLOW))
-                                                                      .append(Component.text(" by " + wp.getName() + "!", NamedTextColor.GRAY))
+            data.target.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
+                    .append(Component.text(" You have been given a ", NamedTextColor.GRAY))
+                    .append(Component.text(name, NamedTextColor.YELLOW))
+                    .append(Component.text(" by " + wp.getName() + "!", NamedTextColor.GRAY))
+            );
+            wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                    .append(Component.text(" You gave a ", NamedTextColor.GRAY))
+                    .append(Component.text(name, NamedTextColor.YELLOW))
+                    .append(Component.text(" to " + data.target.getName() + "!", NamedTextColor.GRAY))
             );
         } else {
-            wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" You gave a ", NamedTextColor.GRAY))
-                                                          .append(Component.text(name, NamedTextColor.YELLOW))
-                                                          .append(Component.text(" to yourself!", NamedTextColor.GRAY)));
+            wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                    .append(Component.text(" You gave a ", NamedTextColor.GRAY))
+                    .append(Component.text(name, NamedTextColor.YELLOW))
+                    .append(Component.text(" to yourself!", NamedTextColor.GRAY)));
         }
         if (!bothStatesActive) {
             addSecondaryAbility(
@@ -273,6 +286,10 @@ public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, 
     @Override
     public FloatModifiable getHitBoxRadius() {
         return radius;
+    }
+
+    public void setBothStatesActive(boolean bothStatesActive) {
+        this.bothStatesActive = bothStatesActive;
     }
 
     public int getEarlyActivationEffectivenessReduction() {
