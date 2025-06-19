@@ -267,13 +267,11 @@ public class CooldownManager {
 
     public void removeAbilityCooldowns() {
         List<AbstractCooldown<?>> removed = new ArrayList<>();
-        abstractCooldowns.removeIf(cd -> {
+        abstractCooldowns.forEach(cd -> {
             if (cd != null && cd.getCooldownType() == CooldownTypes.ABILITY) {
                 cd.getOnRemoveForce().accept(this);
                 removed.add(cd);
-                return true;
             }
-            return false;
         });
         removed.forEach(this::updatePlayerNames);
     }
