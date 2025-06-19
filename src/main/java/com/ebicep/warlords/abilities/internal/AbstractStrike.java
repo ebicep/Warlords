@@ -30,7 +30,7 @@ public abstract class AbstractStrike<T extends AbstractStrike<T, R>, R extends A
         target.getCooldownManager().addCooldown(new RegularCooldown<>(
                 "Strike Priority",
                 null,
-                null,
+                AbstractStrike.class,
                 null,
                 from,
                 CooldownTypes.INTERNAL,
