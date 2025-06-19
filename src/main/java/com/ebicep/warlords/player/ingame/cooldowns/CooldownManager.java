@@ -466,7 +466,7 @@ public class CooldownManager {
     public void removeCooldown(Class<?> cooldownClass, boolean noForce) {
         removeCooldown(cd ->
                         cd.getCooldownClass() != null &&
-                                Objects.equals(cd.getCooldownClass(), cooldownClass) || cooldownClass.isAssignableFrom(cd.getCooldownClass()),
+                                (Objects.equals(cd.getCooldownClass(), cooldownClass) || cooldownClass.isAssignableFrom(cd.getCooldownClass())),
                 noForce
         );
     }
