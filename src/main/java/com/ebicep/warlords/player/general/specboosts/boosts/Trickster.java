@@ -4,7 +4,6 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.IncendiaryCurse;
 import com.ebicep.warlords.abilities.OrderOfEviscerate;
 import com.ebicep.warlords.abilities.ShadowStep;
-import com.ebicep.warlords.abilities.SoulSwitch;
 import com.ebicep.warlords.events.player.ingame.WarlordsPlayerSwapEvent;
 import com.ebicep.warlords.player.general.ExperienceManager;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
@@ -27,7 +26,6 @@ public class Trickster implements SpecBoostManager.SpecBoost<Trickster> {
     private int incendiaryCurseDamageThresholdDecrease;
     private int incendiaryCurseDamageIncrease;
     private int incendiaryCurseEnergyCostIncrease;
-    private float soulSwitchCooldownReductionSeconds;
     private int soulSwitchInvisTickDuration;
     private int soulSwitchDummyDurationTicks;
     private int soulSwitchDummyHealth;
@@ -39,7 +37,6 @@ public class Trickster implements SpecBoostManager.SpecBoost<Trickster> {
         this.incendiaryCurseDamageThresholdDecrease = getValue("incendiaryCurseDamageThresholdDecrease", int.class);
         this.incendiaryCurseDamageIncrease = getValue("incendiaryCurseDamageIncrease", int.class);
         this.incendiaryCurseEnergyCostIncrease = getValue("incendiaryCurseEnergyCostIncrease", int.class);
-        this.soulSwitchCooldownReductionSeconds = getValue("soulSwitchCooldownReductionSeconds", float.class);
         this.soulSwitchInvisTickDuration = getValue("soulSwitchInvisTickDuration", int.class);
         this.soulSwitchDummyDurationTicks = getValue("soulSwitchDummyDurationTicks", int.class);
         this.soulSwitchDummyHealth = getValue("soulSwitchDummyHealth", int.class);
@@ -58,7 +55,6 @@ public class Trickster implements SpecBoostManager.SpecBoost<Trickster> {
                 incendiaryCurseDamageThresholdDecrease,
                 incendiaryCurseDamageIncrease,
                 incendiaryCurseEnergyCostIncrease,
-                soulSwitchCooldownReductionSeconds,
                 soulSwitchInvisTickDuration,
                 soulSwitchDummyDurationTicks,
                 soulSwitchDummyHealth,
@@ -90,9 +86,6 @@ public class Trickster implements SpecBoostManager.SpecBoost<Trickster> {
                         floatModifiable.addAdditiveModifier("Spec Boost", incendiaryCurseDamageIncrease)
                 );
                 incendiaryCurse.getEnergyCost().addAdditiveModifier("Spec Boost", incendiaryCurseEnergyCostIncrease);
-            });
-            warlordsPlayer.getAbilitiesMatching(SoulSwitch.class).forEach(soulSwitch -> {
-                soulSwitch.getCooldown().addAdditiveModifier("Spec Boost", -soulSwitchCooldownReductionSeconds);
             });
             warlordsPlayer.getAbilitiesMatching(ShadowStep.class).forEach(shadowStep -> {
                 shadowStep.getCooldown().addAdditiveModifier("Spec Boost", -shadowLeapCooldownReductionSeconds);
