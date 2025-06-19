@@ -38,6 +38,7 @@ public class WaterBolt extends AbstractProjectile<WaterBolt, WaterBolt.WaterBolt
 
     public WaterBolt() {
         super(AbstractAbilityBuilder.create("waterBolt").pvp());
+        this.hitboxInflation.setBaseValue(hitboxInflation.getBaseValue() + .2f);
     }
 
     @Override

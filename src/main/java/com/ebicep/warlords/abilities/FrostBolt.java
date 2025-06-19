@@ -45,6 +45,7 @@ public class FrostBolt extends AbstractPiercingProjectile<FrostBolt, FrostBolt.F
 
     public FrostBolt() {
         super(AbstractAbilityBuilder.create("frostBolt").pvp());
+        this.hitboxInflation.setBaseValue(hitboxInflation.getBaseValue() + .2f);
     }
 
     @Override

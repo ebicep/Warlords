@@ -39,11 +39,12 @@ public class Fireball extends AbstractProjectile<Fireball, Fireball.FireballStat
     private FloatModifiable splashRadius = new FloatModifiable(4.125f);
 
     public Fireball() {
-        super(AbstractAbilityBuilder.create("fireball").pvp());
+        this(AbstractAbilityBuilder.create("fireball").pvp());
     }
 
     public Fireball(AbstractAbilityBuilder builder) {
         super(builder);
+        this.hitboxInflation.setBaseValue(hitboxInflation.getBaseValue() + .2f);
     }
 
     @Override
