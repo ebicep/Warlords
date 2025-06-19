@@ -38,6 +38,7 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
 
     private final PrismGuardStats stats = new PrismGuardStats();
     private final HealingValues healingValues = new HealingValues();
+    private int damageReductionActive = 3;
     private int damageReduction = 3;
     private int bubbleRadius = 4;
     private int tickDuration = 100;
@@ -56,6 +57,7 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
     @Override
     public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
+        this.damageReductionActive = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageReductionActive"), int.class);
         this.damageReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageReduction"), int.class);
         this.bubbleRadius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("bubbleRadius"), int.class);
         this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
@@ -143,66 +145,68 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                             });
                         }
                     }
-                }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-            if (ticksElapsed < 5) {
-                return;
-            }
-            if (ticksElapsed % 5 == 0) {
-                playSphereAnimation(wp.getLocation(), bubbleRadius, 120, 120, 220);
-                Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_CREEPER_DEATH, 2, 2);
-            }
-            if (ticksElapsed % 3 == 0) {
-                isInsideBubble.clear();
-                for (WarlordsEntity enemyInsideBubble : PlayerFilter.entitiesAround(wp, bubbleRadius, bubbleRadius, bubbleRadius).aliveEnemiesOf(wp)) {
-                    isInsideBubble.add(enemyInsideBubble);
-                }
-                for (WarlordsEntity bubblePlayer : PlayerFilter.entitiesAround(wp, bubbleRadius, bubbleRadius, bubbleRadius).aliveTeammatesOfExcludingSelf(wp)) {
-                    if (!playersHit.contains(bubblePlayer)) {
-                        Bukkit.getPluginManager().callEvent(new WarlordsAbilityTargetEvent.WarlordsBlueAbilityTargetEvent(wp, name, Set.of(bubblePlayer)));
+                },
+                tickDuration,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed < 5) {
+                        return;
                     }
-                    playersHit.add(bubblePlayer);
-                    bubblePlayer.getCooldownManager().removeCooldownByObject(data);
-                    bubblePlayer.getCooldownManager().addCooldown(new RegularCooldown<>(
-                            "Prism Guard Bubble",
-                            "GUARD",
-                            PrismGuardData.class,
-                            data,
-                            wp,
-                            CooldownTypes.ABILITY,
-                            cooldownManager -> {
-                            },
-                            4
-                    ) {
-
-                        @Override
-                        public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                            float afterReduction;
-                            if (Utils.isProjectile(event.getCause())) {
-                                if (isInsideBubble.contains(event.getSource())) {
-                                    afterReduction = currentDamageValue;
-                                } else {
-                                    stats.timesProjectilesReduced++;
-                                    afterReduction = currentDamageValue * (100 - projectileDamageReduction) / 100f;
-                                }
-                            } else {
-                                afterReduction = currentDamageValue;
+                    if (ticksElapsed % 5 == 0) {
+                        playSphereAnimation(wp.getLocation(), bubbleRadius, 120, 120, 220);
+                        Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_CREEPER_DEATH, 2, 2);
+                    }
+                    if (ticksElapsed % 3 == 0) {
+                        isInsideBubble.clear();
+                        for (WarlordsEntity enemyInsideBubble : PlayerFilter.entitiesAround(wp, bubbleRadius, bubbleRadius, bubbleRadius).aliveEnemiesOf(wp)) {
+                            isInsideBubble.add(enemyInsideBubble);
+                        }
+                        for (WarlordsEntity bubblePlayer : PlayerFilter.entitiesAround(wp, bubbleRadius, bubbleRadius, bubbleRadius).aliveTeammatesOfExcludingSelf(wp)) {
+                            if (!playersHit.contains(bubblePlayer)) {
+                                Bukkit.getPluginManager().callEvent(new WarlordsAbilityTargetEvent.WarlordsBlueAbilityTargetEvent(wp, name, Set.of(bubblePlayer)));
                             }
-                            data.totalDamageReduced += currentDamageValue - afterReduction;
-                            return afterReduction;
-                        }
-                    });
-                }
-            }
-            if (ticksElapsed % 10 == 0) {
-                if (pveMasterUpgrade) {
-                    for (WarlordsEntity we : PlayerFilter.entitiesAround(wp, 15, 15, 15).aliveEnemiesOf(wp).closestFirst(wp)) {
-                        if (we instanceof WarlordsNPC) {
-                            ((WarlordsNPC) we).getMob().setTarget(wp);
+                            playersHit.add(bubblePlayer);
+                            bubblePlayer.getCooldownManager().removeCooldownByObject(data);
+                            bubblePlayer.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                    "Prism Guard Bubble",
+                                    "GUARD",
+                                    PrismGuardData.class,
+                                    data,
+                                    wp,
+                                    CooldownTypes.ABILITY,
+                                    cooldownManager -> {
+                                    },
+                                    4
+                            ) {
+
+                                @Override
+                                public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                                    float afterReduction;
+                                    if (Utils.isProjectile(event.getCause())) {
+                                        if (isInsideBubble.contains(event.getSource())) {
+                                            afterReduction = currentDamageValue;
+                                        } else {
+                                            stats.timesProjectilesReduced++;
+                                            afterReduction = currentDamageValue * (100 - projectileDamageReduction) / 100f;
+                                        }
+                                    } else {
+                                        afterReduction = currentDamageValue;
+                                    }
+                                    data.totalDamageReduced += currentDamageValue - afterReduction;
+                                    return afterReduction;
+                                }
+                            });
                         }
                     }
-                }
-            }
-        })
+                    if (ticksElapsed % 10 == 0) {
+                        if (pveMasterUpgrade) {
+                            for (WarlordsEntity we : PlayerFilter.entitiesAround(wp, 15, 15, 15).aliveEnemiesOf(wp).closestFirst(wp)) {
+                                if (we instanceof WarlordsNPC) {
+                                    ((WarlordsNPC) we).getMob().setTarget(wp);
+                                }
+                            }
+                        }
+                    }
+                })
         ) {
 
             @Override
@@ -231,7 +235,7 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
 
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                int totalReduction = 0;
+                int totalReduction = damageReductionActive;
                 data.hitsTaken++;
                 if (Utils.isProjectile(event.getCause())) {
                     if (!isInsideBubble.contains(event.getSource())) {
@@ -256,26 +260,29 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
 
     @Override
     public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Create a bubble shield around you. All projectiles that pass through the barrier have their damage reduced by ")
-                                               .percent(projectileDamageReduction, AbilityDescriptionBuilder.COLOR_BROWN)
-                                               .text(".")
-                                               .emptyLine()
-                                               .text("After ")
-                                               .durationTicks(tickDuration)
-                                               .text(" the bubble will burst, healing you and all allies for ")
-                                               .heal(healingValues.bubbleBaseHealing)
-                                               .text(" + ")
-                                               .percent(healingValues.bubbleMissingHealthHealing.getValue(), NamedTextColor.GREEN)
-                                               .text(" missing health and grant ")
-                                               .percent(damageReduction, AbilityDescriptionBuilder.COLOR_BROWN)
-                                               .text(" damage reduction for ")
-                                               .durationTicks(tickDuration)
-                                               .text(" based on how many hits you took while Prism Guard was active; up to a maximum of ")
-                                               .text(maxHealing, NamedTextColor.GREEN)
-                                               .text(" health and ")
-                                               .percent(maxDamageReduction, AbilityDescriptionBuilder.COLOR_BROWN)
-                                               .text(" damage reduction.")
-                                               .build();
+        description = AbilityDescriptionBuilder
+                .create("Gain ")
+                .damageReduction(damageReductionActive)
+                .text("damage reduction and create a bubble shield around you. All projectiles that pass through the barrier have their damage reduced by ")
+                .percent(projectileDamageReduction, AbilityDescriptionBuilder.COLOR_BROWN)
+                .text(".")
+                .emptyLine()
+                .text("After ")
+                .durationTicks(tickDuration)
+                .text(" the bubble will burst, healing you and all allies for ")
+                .heal(healingValues.bubbleBaseHealing)
+                .text(" + ")
+                .percent(healingValues.bubbleMissingHealthHealing.getValue(), NamedTextColor.GREEN)
+                .text(" missing health and grant ")
+                .percent(damageReduction, AbilityDescriptionBuilder.COLOR_BROWN)
+                .text(" damage reduction for ")
+                .durationTicks(tickDuration)
+                .text(" based on how many hits you took while Prism Guard was active; up to a maximum of ")
+                .text(maxHealing, NamedTextColor.GREEN)
+                .text(" health and ")
+                .percent(maxDamageReduction, AbilityDescriptionBuilder.COLOR_BROWN)
+                .text(" damage reduction.")
+                .build();
     }
 
     @Override
