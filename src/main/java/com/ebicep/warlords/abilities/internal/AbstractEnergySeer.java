@@ -276,12 +276,21 @@ public abstract class AbstractEnergySeer<T extends AbstractEnergySeer.EnergySeer
 
     public static class HealingValues implements Value.ValueHolder {
 
-        protected final Value.SetValue seerHealingMultiplier = new Value.SetValue(5);
-        private final List<Value> values = List.of(seerHealingMultiplier);
+        private Value.SetValue seerHealingMultiplier = new Value.SetValue(5);
+        private List<Value> values = List.of(seerHealingMultiplier);
 
         @Override
         public List<Value> getValues() {
             return values;
+        }
+
+        @Override
+        public void init(AbstractAbilityBuilder builder) {
+            this.seerHealingMultiplier = ConfigManager.getAbilityConfigValue(builder.getNamespaces(),
+                    builder.getAppendedFieldNameHealing("seerHealingMultiplier"),
+                    Value.SetValue.class
+            );
+            this.values = List.of(seerHealingMultiplier);
         }
 
         public Value.SetValue getSeerHealingMultiplier() {
