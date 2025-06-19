@@ -1,6 +1,7 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
 import com.ebicep.warlords.abilities.FlameBurst;
+import com.ebicep.warlords.abilities.TimeWarpPyromancer;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -43,6 +44,9 @@ public class FlameBreath implements SpecBoostManager.SpecBoost<FlameBreath> {
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
+            warlordsPlayer.getAbilitiesMatching(TimeWarpPyromancer.class).forEach(timeWarpPyromancer -> {
+                timeWarpPyromancer.setTickDuration(1);
+            });
             List<AbstractAbility> abilities = warlordsPlayer.getAbilities();
             for (int i = 0; i < abilities.size(); i++) {
                 if (abilities.get(i) instanceof FlameBurst) {

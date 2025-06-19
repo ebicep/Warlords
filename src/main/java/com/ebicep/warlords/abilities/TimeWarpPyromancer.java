@@ -72,10 +72,12 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
                             if (enemy instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof BossLike) {
                                 healthDamage = DamageCheck.clamp(healthDamage);
                             }
-                            Optional<WarlordsDamageHealingFinalEvent> finalEventOptional = enemy.addInstance(InstanceBuilder.damage()
-                                                                                                                            .cause("Accursed Leap")
-                                                                                                                            .source(wp)
-                                                                                                                            .value(healthDamage));
+                            Optional<WarlordsDamageHealingFinalEvent> finalEventOptional = enemy.addInstance(InstanceBuilder
+                                    .damage()
+                                    .cause("Accursed Leap")
+                                    .source(wp)
+                                    .value(healthDamage)
+                            );
                             if (finalEventOptional.isPresent()) {
                                 if (finalEventOptional.get().isDead()) {
                                     cooldownReduction += .75f;
