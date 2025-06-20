@@ -220,6 +220,7 @@ public class SpecBoostManager {
             return component
                     .appendNewline()
                     .appendNewline()
+                    .append(Component.text(ability.getName(), NamedTextColor.AQUA))
                     .append(ability.getItemHeader().stream().collect(Component.toComponent(Component.newline())))
                     .appendNewline()
                     .appendNewline()
