@@ -21,7 +21,7 @@ public class Haze implements SpecBoostManager.SpecBoost<Haze> {
 
     @Override
     public TextComponent getDescription() {
-        return getDescriptionWithAbility(new com.ebicep.warlords.abilities.Haze());
+        return appendAbility(getTextDescription(), new com.ebicep.warlords.abilities.Haze());
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
 import com.ebicep.warlords.abilities.FlameBurst;
+import com.ebicep.warlords.abilities.TimeSurge;
 import com.ebicep.warlords.abilities.TimeWarpPyromancer;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
@@ -22,7 +23,10 @@ public class FlameBreath implements SpecBoostManager.SpecBoost<FlameBreath> {
 
     @Override
     public TextComponent getDescription() {
-        return getDescriptionWithAbility(new com.ebicep.warlords.abilities.FlameBreath());
+        return appendAbility(
+                appendAbility(getTextDescription(), new com.ebicep.warlords.abilities.FlameBreath()),
+                new TimeSurge()
+        );
     }
 
     @Override

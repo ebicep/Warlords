@@ -108,6 +108,7 @@ public class Ability<T extends AbstractAbility> {
     public static final Ability<SoulSwitch> SOUL_SWITCH = new Ability<>(SoulSwitch.class, SoulSwitch::new);
     public static final Ability<SpiritLink> SPIRIT_LINK = new Ability<>(SpiritLink.class, SpiritLink::new);
     public static final Ability<SuperBrew> SUPER_BREW = new Ability<>(SuperBrew.class, SuperBrew::new);
+    public static final Ability<TimeSurge> TIME_SURGE = new Ability<>(TimeSurge.class, TimeSurge::new);
     public static final Ability<TimeWarpAquamancer> TIME_WARP_AQUAMANCER = new Ability<>(TimeWarpAquamancer.class, TimeWarpAquamancer::new);
     public static final Ability<TimeWarpCryomancer> TIME_WARP_CRYOMANCER = new Ability<>(TimeWarpCryomancer.class, TimeWarpCryomancer::new);
     public static final Ability<TimeWarpPyromancer> TIME_WARP_PYROMANCER = new Ability<>(TimeWarpPyromancer.class, TimeWarpPyromancer::new);
@@ -213,6 +214,7 @@ public class Ability<T extends AbstractAbility> {
             SOUL_SWITCH,
             SPIRIT_LINK,
             SUPER_BREW,
+            TIME_SURGE,
             TIME_WARP_AQUAMANCER,
             TIME_WARP_CRYOMANCER,
             TIME_WARP_PYROMANCER,

@@ -29,7 +29,7 @@ public class Clairvoyance implements SpecBoostManager.SpecBoost<Clairvoyance> {
 
     @Override
     public TextComponent getDescription() {
-        return getDescriptionWithAbility(new com.ebicep.warlords.abilities.Clairvoyance());
+        return appendAbility(getTextDescription(), new com.ebicep.warlords.abilities.Clairvoyance());
     }
 
     @Override

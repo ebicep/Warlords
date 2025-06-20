@@ -70,7 +70,7 @@ public class RighteousRampage implements SpecBoostManager.SpecBoost<RighteousRam
 
     @Override
     public TextComponent getDescription() {
-        return getDescriptionWithAbility(new com.ebicep.warlords.abilities.BullRush());
+        return appendAbility(getTextDescription(), new com.ebicep.warlords.abilities.BullRush());
     }
 
     @Override
