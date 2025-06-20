@@ -217,7 +217,7 @@ public class PoisonousHex extends AbstractPiercingProjectile<PoisonousHex, Poiso
                 cooldownManager -> {
                     to.addInstance(InstanceBuilder.damage().ability(fromHex).source(from).value(values.hexDOTDamage).flags(InstanceFlags.NO_DISMOUNT, InstanceFlags.DOT));
                 },
-                tickDuration * 2,
+                tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % dotTickFrequency == 0 && ticksElapsed != 0) {
                         to.addInstance(InstanceBuilder.damage().ability(fromHex).source(from).value(values.hexDOTDamage).flags(InstanceFlags.NO_DISMOUNT, InstanceFlags.DOT));
@@ -286,7 +286,7 @@ public class PoisonousHex extends AbstractPiercingProjectile<PoisonousHex, Poiso
                                                .text(" damage every ")
                                                .durationTicks(ticksBetweenDot)
                                                .text(" for ")
-                                               .durationTicks(tickDuration * 2)
+                                               .durationTicks(tickDuration)
                                                .text(". Stacks up to ")
                                                .text(maxStacks, NamedTextColor.BLUE)
                                                .text(" times.")
