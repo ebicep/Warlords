@@ -75,6 +75,7 @@ public class AirStrike implements SpecBoostManager.SpecBoost<AirStrike> {
     public class Boost implements SpecBoostManager.Boost {
 
         private WarlordsEntity warlordsEntity;
+        private boolean inAir = false;
         private boolean rising = false;
 
         @Override
@@ -84,7 +85,14 @@ public class AirStrike implements SpecBoostManager.SpecBoost<AirStrike> {
 
         @EventHandler
         public void onHorseActivate(WarlordsPlayerHorseEvent event) {
-            if (event.getWarlordsEntity().equals(warlordsEntity) && rising) {
+            if (event.getWarlordsEntity().equals(warlordsEntity) && inAir) {
+                event.setCancelled(true);
+            }
+        }
+
+        @EventHandler
+        public void onWarlordsAbilityActivatePreEvent(WarlordsAbilityActivateEvent.Pre event) {
+            if (warlordsEntity.equals(event.getWarlordsEntity()) && rising) {
                 event.setCancelled(true);
             }
         }
@@ -95,6 +103,7 @@ public class AirStrike implements SpecBoostManager.SpecBoost<AirStrike> {
                 return;
             }
             if (event.getAbility() instanceof AstralPlague) {
+                inAir = true;
                 rising = true;
                 Location location = warlordsEntity.getLocation();
                 Location targetLoc = location.clone();
@@ -136,6 +145,7 @@ public class AirStrike implements SpecBoostManager.SpecBoost<AirStrike> {
                         warlordsEntity.teleportLocationOnly(newLocation);
                         if (ratio >= 1) {
                             this.cancel();
+                            rising = false;
 
                             List<FloatModifiable.FloatModifier> modifiers = new ArrayList<>();
                             warlordsEntity.getAbilitiesMatching(SoulfireBeam.class).forEach(soulfireBeam -> {
@@ -153,7 +163,7 @@ public class AirStrike implements SpecBoostManager.SpecBoost<AirStrike> {
                                     cooldownManager -> {
                                     },
                                     cooldownManager -> {
-                                        rising = false;
+                                        inAir = false;
                                         modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
                                         if (warlordsEntity.getEntity() instanceof Player player) {
                                             player.setAllowFlight(false);
@@ -162,8 +172,8 @@ public class AirStrike implements SpecBoostManager.SpecBoost<AirStrike> {
                                         }
                                         warlordsEntity.teleportLocationOnly(location);
                                         warlordsEntity.getAbilitiesMatching(SoulfireBeam.class).forEach(soulfireBeam -> {
-                                            soulfireBeam.setCurrentCooldown(soulfireBeam.getCooldownValue());
-                                            soulfireBeam.setCurrentCharges(0);
+                                            soulfireBeam.getCooldown().tick();
+                                            soulfireBeam.useAbility();
                                         });
                                     },
                                     airStrikeDurationTicks
