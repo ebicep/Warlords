@@ -57,6 +57,10 @@ public class FlameBreath implements SpecBoostManager.SpecBoost<FlameBreath> {
                     com.ebicep.warlords.abilities.FlameBreath flameBreath = new com.ebicep.warlords.abilities.FlameBreath();
                     flameBreath.init(flameBreath.getBuilder());
                     abilities.set(i, flameBreath);
+                } else if (abilities.get(i) instanceof TimeWarpPyromancer) {
+                    TimeSurge timeSurge = new TimeSurge();
+                    timeSurge.init(timeSurge.getBuilder());
+                    abilities.set(i, timeSurge);
                 }
             }
             warlordsPlayer.resetAbilityTree();
