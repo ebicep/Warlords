@@ -57,6 +57,7 @@ public class SpecBoostManager {
     public static final SpecBoost<Haze> HAZE = new Haze();
     public static final SpecBoost<HealingLink> HEALING_LINK = new HealingLink();
     public static final SpecBoost<HeroicIntervention> HEROIC_INTERVENTION = new HeroicIntervention();
+    public static final SpecBoost<HouseOfLife> HOUSE_OF_LIFE = new HouseOfLife();
     public static final SpecBoost<IceBlock> ICE_BLOCK = new IceBlock();
     public static final SpecBoost<LustrousCrown> LUSTROUS_CROWN = new LustrousCrown();
     public static final SpecBoost<MarkedForDeath> MARKED_FOR_DEATH = new MarkedForDeath();
@@ -114,7 +115,7 @@ public class SpecBoostManager {
         SPEC_BOOSTS.put(Specializations.ASSASSIN, List.of(TRICKSTER, BLINK, RIFT_AMBUSH, TORRENTIAL_SOUL, HAZE));
         SPEC_BOOSTS.put(Specializations.VINDICATOR, List.of(ABYSSAL_GRASP, VITAL_PULSE, SANCTION_BURST, RIGHTEOUS_RAMPAGE, SWIFT_JUSTICE));
         SPEC_BOOSTS.put(Specializations.APOTHECARY, List.of(AURA_OF_RESTORATION, ALCHEMISTS_FURY, SUSTAINED_ONSLAUGHT, DETONATION_CATALYST, SUPER_BREW));
-        SPEC_BOOSTS.put(Specializations.CONJURER, List.of(SHARP_FANGS));
+        SPEC_BOOSTS.put(Specializations.CONJURER, List.of(SHARP_FANGS, HOUSE_OF_LIFE));
     }
 
     public static List<SpecBoost<?>> getSpecBoosts(Specializations specializations) {
