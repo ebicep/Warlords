@@ -153,7 +153,7 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
 
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (event.getCause().equals("Poisonous Hex") && event.getFlags().contains(InstanceFlags.DOT)) {
+                if (inPve && event.getCause().equals("Poisonous Hex") && event.getFlags().contains(InstanceFlags.DOT)) {
                     return currentDamageValue * 5;
                 }
                 if (pveMasterUpgrade2 && event.getCause().equals("Soulfire Beam")) {
