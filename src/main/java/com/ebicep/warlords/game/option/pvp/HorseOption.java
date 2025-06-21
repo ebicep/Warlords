@@ -172,6 +172,9 @@ public class HorseOption implements Option, Listener {
         for (Option option : warlordsEntity.getGame().getOptions()) {
             if (option instanceof HorseOption horseOption) {
                 WarlordsHorse warlordsHorse = horseOption.getHorseForPlayer(warlordsEntity);
+                if (warlordsHorse.getCurrentCooldown() > 0) {
+                    return null;
+                }
                 WarlordsPlayerHorseEvent horseEvent = new WarlordsPlayerHorseEvent(warlordsEntity);
                 Bukkit.getPluginManager().callEvent(horseEvent);
                 if (horseEvent.isCancelled()) {
