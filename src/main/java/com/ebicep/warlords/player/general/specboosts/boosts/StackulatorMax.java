@@ -24,7 +24,7 @@ public class StackulatorMax implements SpecBoostManager.SpecBoost<StackulatorMax
 
     @Override
     public String getConfigFieldName() {
-        return "quickFinish";
+        return "stackulatorMax";
     }
 
     @Override

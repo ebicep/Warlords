@@ -36,6 +36,7 @@ public class SpecBoostManager {
     public static final SpecBoost<ChillyAura> CHILLY_AURA = new ChillyAura();
     public static final SpecBoost<Clairvoyance> CLAIRVOYANCE = new Clairvoyance();
     public static final SpecBoost<Conduit> CONDUIT = new Conduit();
+    public static final SpecBoost<Contagion> CONTAGION = new Contagion();
     public static final SpecBoost<CrusadersMight> CRUSADERS_MIGHT = new CrusadersMight();
     public static final SpecBoost<DetonationCatalyst> DETONATION_CATALYST = new DetonationCatalyst();
     public static final SpecBoost<DimensionalWarp> DIMENSIONAL_WARP = new DimensionalWarp();
@@ -116,7 +117,7 @@ public class SpecBoostManager {
         SPEC_BOOSTS.put(Specializations.ASSASSIN, List.of(TRICKSTER, BLINK, RIFT_AMBUSH, TORRENTIAL_SOUL, HAZE));
         SPEC_BOOSTS.put(Specializations.VINDICATOR, List.of(ABYSSAL_GRASP, VITAL_PULSE, SANCTION_BURST, RIGHTEOUS_RAMPAGE, SWIFT_JUSTICE));
         SPEC_BOOSTS.put(Specializations.APOTHECARY, List.of(AURA_OF_RESTORATION, ALCHEMISTS_FURY, SUSTAINED_ONSLAUGHT, DETONATION_CATALYST, SUPER_BREW));
-        SPEC_BOOSTS.put(Specializations.CONJURER, List.of(SHARP_FANGS, STACKULATOR_MAX, HOUSE_OF_LIFE));
+        SPEC_BOOSTS.put(Specializations.CONJURER, List.of(SHARP_FANGS, STACKULATOR_MAX, HOUSE_OF_LIFE, CONTAGION));
     }
 
     public static List<SpecBoost<?>> getSpecBoosts(Specializations specializations) {

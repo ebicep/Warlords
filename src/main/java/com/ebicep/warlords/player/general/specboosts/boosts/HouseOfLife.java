@@ -45,7 +45,7 @@ public class HouseOfLife implements SpecBoostManager.SpecBoost<HouseOfLife> {
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getHealth().addAdditiveModifier("Spec Boost (Base)", healthIncrease);
-            warlordsPlayer.getEnergy().addMultiplicativeModifierMult("Spec Boost", energyIncrease);
+            warlordsPlayer.getEnergy().addAdditiveModifier("Spec Boost", energyIncrease);
 
             warlordsPlayer.getAbilitiesMatching(EnergySeerConjurer.class).forEach(energySeer -> {
                 energySeer.getHealValues().getSeerHealingMultiplier().forEachValue(floatModifiable ->
