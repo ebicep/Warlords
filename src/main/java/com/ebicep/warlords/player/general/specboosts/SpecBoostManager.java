@@ -20,6 +20,7 @@ public class SpecBoostManager {
 
     public static final SpecBoost<AbyssalGrasp> ABYSSAL_GRASP = new AbyssalGrasp();
     public static final SpecBoost<AcceleratedSpike> ACCELERATED_SPIKE = new AcceleratedSpike();
+    public static final SpecBoost<AirStrike> AIR_STRIKE = new AirStrike();
     public static final SpecBoost<AlchemistsFury> ALCHEMISTS_FURY = new AlchemistsFury();
     public static final SpecBoost<ArcaneRecluse> ARCANE_RECLUSE = new ArcaneRecluse();
     public static final SpecBoost<ArcaneReflection> ARCANE_REFLECTION = new ArcaneReflection();
@@ -117,7 +118,7 @@ public class SpecBoostManager {
         SPEC_BOOSTS.put(Specializations.ASSASSIN, List.of(TRICKSTER, BLINK, RIFT_AMBUSH, TORRENTIAL_SOUL, HAZE));
         SPEC_BOOSTS.put(Specializations.VINDICATOR, List.of(ABYSSAL_GRASP, VITAL_PULSE, SANCTION_BURST, RIGHTEOUS_RAMPAGE, SWIFT_JUSTICE));
         SPEC_BOOSTS.put(Specializations.APOTHECARY, List.of(AURA_OF_RESTORATION, ALCHEMISTS_FURY, SUSTAINED_ONSLAUGHT, DETONATION_CATALYST, SUPER_BREW));
-        SPEC_BOOSTS.put(Specializations.CONJURER, List.of(SHARP_FANGS, STACKULATOR_MAX, HOUSE_OF_LIFE, CONTAGION));
+        SPEC_BOOSTS.put(Specializations.CONJURER, List.of(SHARP_FANGS, STACKULATOR_MAX, HOUSE_OF_LIFE, CONTAGION, AIR_STRIKE));
     }
 
     public static List<SpecBoost<?>> getSpecBoosts(Specializations specializations) {
