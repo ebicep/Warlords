@@ -227,6 +227,7 @@ public class SpecBoostManager {
                     .appendNewline()
                     .appendNewline()
                     .append(Component.text(ability.getName(), NamedTextColor.AQUA))
+                    .appendNewline()
                     .append(ability.getItemHeader().stream().collect(Component.toComponent(Component.newline())))
                     .appendNewline()
                     .appendNewline()
