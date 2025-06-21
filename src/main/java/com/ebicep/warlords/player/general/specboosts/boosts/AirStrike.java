@@ -5,6 +5,7 @@ import com.ebicep.warlords.abilities.SoulfireBeam;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsPlayerHorseEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -76,10 +77,18 @@ public class AirStrike implements SpecBoostManager.SpecBoost<AirStrike> {
     public class Boost implements SpecBoostManager.Boost {
 
         private WarlordsEntity warlordsEntity;
+        private boolean rising = false;
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
+        }
+
+        @EventHandler
+        public void onHorseActivate(WarlordsPlayerHorseEvent event) {
+            if (event.getWarlordsEntity().equals(warlordsEntity) && rising) {
+                event.setCancelled(true);
+            }
         }
 
         @EventHandler
@@ -88,6 +97,7 @@ public class AirStrike implements SpecBoostManager.SpecBoost<AirStrike> {
                 return;
             }
             if (event.getAbility() instanceof AstralPlague) {
+                rising = true;
                 Location location = warlordsEntity.getLocation();
                 Location targetLoc = location.clone().add(0, ascendHeight, 0);
                 for (int i = 0; i < ascendHeight + 1; i++) {
@@ -147,6 +157,7 @@ public class AirStrike implements SpecBoostManager.SpecBoost<AirStrike> {
                                     cooldownManager -> {
                                     },
                                     cooldownManager -> {
+                                        rising = false;
                                         modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
                                         if (warlordsEntity.getEntity() instanceof Player player) {
                                             player.setAllowFlight(false);
