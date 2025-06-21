@@ -68,7 +68,7 @@ public class AbyssalGrasp implements SpecBoostManager.SpecBoost<AbyssalGrasp> {
                 return;
             }
             WarlordsEntity target = event.getWarlordsEntity();
-            Location location = new LocationBuilder(warlordsEntity.getLocation()).faceTowards(target.getLocation()).forward(1.5);
+            Location location = new LocationBuilder(warlordsEntity.getLocation());
             new GameRunnable(warlordsEntity.getGame()) {
 
                 int ticksElapsed = 0;
