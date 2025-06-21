@@ -44,6 +44,10 @@ public class ConfigManager {
         return ABILITIES_CONFIG.getValue(namespaces, key, fieldType);
     }
 
+    public static <T> List<T> getAbilityConfigListValue(List<String> namespaces, String key, Class<T> fieldType) {
+        return ABILITIES_CONFIG.getListValue(namespaces, key, fieldType);
+    }
+
     public static <T> T getSpecBoostConfigValue(List<String> namespaces, String key, Class<T> fieldType) {
         return SPEC_BOOST_CONFIG.getValue(namespaces, key, fieldType);
     }

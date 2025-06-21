@@ -41,6 +41,37 @@ public class SoulfireBeam extends AbstractBeam<SoulfireBeam, SoulfireBeam.Soulfi
     }
 
     @Override
+    public ItemStack getBeamItem() {
+        return BEAM_ITEM;
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder
+                .create("Unleash a concentrated beam of demonic power, dealing ")
+                .damage(damageValues.beamDamage)
+                .text(" damage to all enemies hit. If the target is affected by Poisonous Hex the damage dealt is increased by ")
+                .percent((damageValues.damageMultipliers.get(1) - 1) * 100, NamedTextColor.RED)
+                .text("/")
+                .percent((damageValues.damageMultipliers.get(2) - 1) * 100, NamedTextColor.RED)
+                .text("/")
+                .percent((damageValues.damageMultipliers.get(3) - 1) * 100, NamedTextColor.RED)
+                .text(" relative to the number of stacks and all stacks are removed.")
+                .maxRange(maxDistance)
+                .build();
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new SoulfireBeamBranch(abilityTree, this);
+    }
+
+    @Override
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+    }
+
+    @Override
     protected void onSpawn(@Nonnull AbstractPiercingProjectile<SoulfireBeam, SoulfireBeamStats>.InternalProjectile projectile) {
         super.onSpawn(projectile);
         projectile.addTask(new InternalProjectileTask() {
@@ -98,47 +129,19 @@ public class SoulfireBeam extends AbstractBeam<SoulfireBeam, SoulfireBeam.Soulfi
             multiplier += 5;
             maxStacksHit.put(projectile, maxStacksHit.getOrDefault(projectile, 0) + 1);
         }
-        hit.addInstance(InstanceBuilder.damage()
-                                       .ability(this)
-                                       .source(wp)
-                                       .min(damageValues.beamDamage.getMinValue() * multiplier)
-                                       .max(damageValues.beamDamage.getMaxValue() * multiplier)
-                                       .crit(damageValues.beamDamage));
+        hit.addInstance(InstanceBuilder
+                .damage()
+                .ability(this)
+                .source(wp)
+                .min(damageValues.beamDamage.getMinValue() * multiplier)
+                .max(damageValues.beamDamage.getMaxValue() * multiplier)
+                .crit(damageValues.beamDamage)
+        );
     }
 
     @Override
     public SoulfireBeamStats getAbilityStats() {
         return stats;
-    }
-
-    @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Unleash a concentrated beam of demonic power, dealing ")
-                                               .damage(damageValues.beamDamage)
-                                               .text(" damage to all enemies hit. If the target is affected by Poisonous Hex the damage dealt is increased by ")
-                                               .percent((damageValues.damageMultipliers.get(1) - 1) * 100, NamedTextColor.RED)
-                                               .text("/")
-                                               .percent((damageValues.damageMultipliers.get(2) - 1) * 100, NamedTextColor.RED)
-                                               .text("/")
-                                               .percent((damageValues.damageMultipliers.get(3) - 1) * 100, NamedTextColor.RED)
-                                               .text(" relative to the number of stacks and all stacks are removed.")
-                                               .maxRange(maxDistance)
-                                               .build();
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new SoulfireBeamBranch(abilityTree, this);
-    }
-
-    @Override
-    public void init(AbstractAbilityBuilder builder) {
-        super.init(builder);
-    }
-
-    @Override
-    public ItemStack getBeamItem() {
-        return BEAM_ITEM;
     }
 
     @Override
@@ -148,8 +151,7 @@ public class SoulfireBeam extends AbstractBeam<SoulfireBeam, SoulfireBeam.Soulfi
 
     public static class DamageValues implements Value.ValueHolder {
 
-        private final List<Float> damageMultipliers = new ArrayList<>() {
-
+        private List<Float> damageMultipliers = new ArrayList<>() {
             {
                 add(1.0f);
                 add(1.25f);
@@ -169,6 +171,7 @@ public class SoulfireBeam extends AbstractBeam<SoulfireBeam, SoulfireBeam.Soulfi
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
+            this.damageMultipliers = ConfigManager.getAbilityConfigListValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("damageMultipliers"), float.class);
             this.beamDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("beamDamage"), Value.RangedValueCritable.class);
             this.values = List.of(beamDamage);
         }

@@ -27,4 +27,8 @@ public class AbilitiesConfig implements ConfigManager.Config {
         return ConfigUtils.getValue(abilitiesConfig, namespaces, key, fieldType, defaultValue);
     }
 
+    public <T> List<T> getListValue(List<String> namespaces, String key, Class<T> itemType) {
+        return ConfigUtils.getListValue(abilitiesConfig, namespaces, key, itemType);
+    }
+
 }

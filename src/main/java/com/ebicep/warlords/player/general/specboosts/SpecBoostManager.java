@@ -77,6 +77,7 @@ public class SpecBoostManager {
     public static final SpecBoost<Solitary> SOLITARY = new Solitary();
     public static final SpecBoost<SoulRend> SOUL_REND = new SoulRend();
     public static final SpecBoost<SovereignSolitude> SOVEREIGN_SOLITUDE = new SovereignSolitude();
+    public static final SpecBoost<StackulatorMax> STACKULATOR_MAX = new StackulatorMax();
     public static final SpecBoost<SteadfastWarp> STEADFAST_WARP = new SteadfastWarp();
     public static final SpecBoost<Striker> STRIKER = new Striker();
     public static final SpecBoost<SuperBrew> SUPER_BREW = new SuperBrew();
@@ -115,7 +116,7 @@ public class SpecBoostManager {
         SPEC_BOOSTS.put(Specializations.ASSASSIN, List.of(TRICKSTER, BLINK, RIFT_AMBUSH, TORRENTIAL_SOUL, HAZE));
         SPEC_BOOSTS.put(Specializations.VINDICATOR, List.of(ABYSSAL_GRASP, VITAL_PULSE, SANCTION_BURST, RIGHTEOUS_RAMPAGE, SWIFT_JUSTICE));
         SPEC_BOOSTS.put(Specializations.APOTHECARY, List.of(AURA_OF_RESTORATION, ALCHEMISTS_FURY, SUSTAINED_ONSLAUGHT, DETONATION_CATALYST, SUPER_BREW));
-        SPEC_BOOSTS.put(Specializations.CONJURER, List.of(SHARP_FANGS, HOUSE_OF_LIFE));
+        SPEC_BOOSTS.put(Specializations.CONJURER, List.of(SHARP_FANGS, STACKULATOR_MAX, HOUSE_OF_LIFE));
     }
 
     public static List<SpecBoost<?>> getSpecBoosts(Specializations specializations) {
