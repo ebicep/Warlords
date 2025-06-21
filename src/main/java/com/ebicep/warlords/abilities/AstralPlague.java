@@ -103,12 +103,12 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
                         if (!(event.getAbility() instanceof SoulfireBeam soulfireBeam)) {
                             return;
                         }
+                        event.setCritChance(100);
                         PoisonousHex fromHex = PoisonousHex.getFromHex(wp);
                         if (new CooldownFilter<>(victim, RegularCooldown.class).filterCooldownClass(PoisonousHex.class).stream().count() < fromHex.getMaxStacks()) {
                             return;
                         }
                         event.getFlags().add(InstanceFlags.PIERCE);
-                        event.setCritChance(100);
                         if (inPve) {
                             event.getFlags().add(InstanceFlags.IGNORE_SELF_RES);
                         }
@@ -180,9 +180,9 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
                 .durationTicks(hexTickDurationIncrease)
                 .text(" and causing Soulfire Beam to not consume ")
                 .text("PHEX", NamedTextColor.DARK_RED)
-                .text(" stacks.")
+                .text(" stacks and always crit.")
                 .emptyLine()
-                .text("Soulfire Beam always crits and pierces the shields and defenses of enemies with max stacks of ")
+                .text("Soulfire Beam pierces the shields and defenses of enemies with max stacks of ")
                 .text("PHEX", NamedTextColor.DARK_RED);
         if (inPve) {
             builder.text(". For the duration of Astral Plague the damage from Poisonous Hex stacks are increased by 400%");
