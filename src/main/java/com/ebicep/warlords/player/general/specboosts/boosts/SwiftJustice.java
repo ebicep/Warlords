@@ -8,9 +8,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownUtils;
+import com.ebicep.warlords.player.ingame.cooldowns.*;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -102,6 +100,11 @@ public class SwiftJustice implements SpecBoostManager.SpecBoost<SwiftJustice> {
                         if (event.getAbility() instanceof RighteousStrike && !strikeUsed) {
                             strikeUsed = true;
                             victim.getCooldownManager().subtractTicksOnRegularCooldowns(nextStrikeCooldownReductionTicks, CooldownTypes.ABILITY);
+                            new CooldownFilter<>(victim, RegularCooldown.class)
+                                    .filter(regularCooldown -> regularCooldown.getCooldownType() == CooldownTypes.ABILITY)
+                                    .filter(regularCooldown -> !regularCooldown.getFlags().contains(CooldownFlag.CANNOT_BE_REDUCED) &&
+                                            !regularCooldown.getFlags().contains(CooldownFlag.CANNOT_BE_REDUCED_VIND))
+                                    .forEach(regularCooldown -> regularCooldown.subtractTime(nextStrikeCooldownReductionTicks));
                             return currentDamageValue * AbstractAbility.convertToMultiplicationDecimal(nextStrikeDamageIncreasePercent);
                         }
                         return currentDamageValue;
