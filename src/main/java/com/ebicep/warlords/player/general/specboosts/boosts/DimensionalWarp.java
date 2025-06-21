@@ -4,14 +4,18 @@ import com.ebicep.warlords.abilities.TimeWarpPyromancer;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFlag;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.type.DamageInstance;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 
 import java.util.List;
 
@@ -87,21 +91,31 @@ public class DimensionalWarp implements SpecBoostManager.SpecBoost<DimensionalWa
                 public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
                     return currentDamageValue * AbstractAbility.convertToMultiplicationDecimal(damageIncrease);
                 }
-
-                @Override
-                public float modifyDamageAfterAllFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                    if (warlordsEntity.getCurrentHealth() - currentDamageValue < 0) {
-                        data.setWarpHeal(() -> warlordsEntity.addInstance(InstanceBuilder
-                                .healing()
-                                .cause(getStringName())
-                                .source(warlordsEntity)
-                                .value(warlordsEntity.getMaxBaseHealth() * (healthRestorePercent / 100f)))
-                        );
-                        warlordsEntity.getCooldownManager().removeCooldown(cooldown);
-                    }
-                    return currentDamageValue;
-                }
             });
+        }
+
+        @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+        public void onDeath(WarlordsDeathEvent event) {
+            if (event.getWarlordsEntity().equals(warlordsEntity)) {
+                new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
+                        .filterCooldownClass(TimeWarpPyromancer.TimeWarpPyromancerData.class)
+                        .forEach(cooldown -> {
+                            if (cooldown.getCooldownObject() instanceof TimeWarpPyromancer.TimeWarpPyromancerData data) {
+                                warlordsEntity.setCurrentHealth(0.1f);
+                                data.setWarpHeal(() -> {
+                                            warlordsEntity.addInstance(InstanceBuilder
+                                                    .healing()
+                                                    .cause(getStringName())
+                                                    .source(warlordsEntity)
+                                                    .value(warlordsEntity.getMaxBaseHealth() * (healthRestorePercent / 100f)));
+                                        }
+                                );
+                                cooldown.expire(warlordsEntity.getCooldownManager());
+                            }
+                            warlordsEntity.getCooldownManager().removeCooldown(cooldown);
+                            event.setCancelled(true);
+                        });
+            }
         }
 
     }
