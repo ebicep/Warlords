@@ -21,9 +21,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class AirStrike implements SpecBoostManager.SpecBoost<AirStrike> {
 
@@ -99,10 +97,10 @@ public class AirStrike implements SpecBoostManager.SpecBoost<AirStrike> {
             if (event.getAbility() instanceof AstralPlague) {
                 rising = true;
                 Location location = warlordsEntity.getLocation();
-                Location targetLoc = location.clone().add(0, ascendHeight, 0);
-                for (int i = 0; i < ascendHeight + 1; i++) {
-                    if (targetLoc.clone().add(0, 1, 0).getBlock().getType() != Material.AIR) {
-                        targetLoc.add(0, -1, 0);
+                Location targetLoc = location.clone();
+                for (int i = 0; i < ascendHeight; i++) {
+                    if (targetLoc.clone().add(0, 2, 0).getBlock().getType() == Material.AIR) {
+                        targetLoc.add(0, 1, 0);
                     }
                 }
                 int maxCasts = warlordsEntity.getAbilitiesMatching(SoulfireBeam.class)
@@ -140,11 +138,9 @@ public class AirStrike implements SpecBoostManager.SpecBoost<AirStrike> {
                             this.cancel();
 
                             List<FloatModifiable.FloatModifier> modifiers = new ArrayList<>();
-                            Map<SoulfireBeam, Float> previousCooldowns = new HashMap<>();
                             warlordsEntity.getAbilitiesMatching(SoulfireBeam.class).forEach(soulfireBeam -> {
                                 modifiers.add(soulfireBeam.getCooldown().addOverridingModifier(getStringName(), 0, airStrikeDurationTicks));
                                 modifiers.add(soulfireBeam.getMaxDistance().addOverridingModifier(getStringName(), soulfireBeamMaxRange, airStrikeDurationTicks));
-                                previousCooldowns.put(soulfireBeam, soulfireBeam.getCurrentCooldown());
                                 soulfireBeam.setCurrentCooldown(0);
                             });
                             RegularCooldown<Boost> cooldown = new RegularCooldown<>(
@@ -162,11 +158,12 @@ public class AirStrike implements SpecBoostManager.SpecBoost<AirStrike> {
                                         if (warlordsEntity.getEntity() instanceof Player player) {
                                             player.setAllowFlight(false);
                                             player.setFlying(false);
+                                            player.setFlySpeed(0.15f);
                                         }
                                         warlordsEntity.teleportLocationOnly(location);
-                                        previousCooldowns.forEach((soulfireBeam, aFloat) -> {
+                                        warlordsEntity.getAbilitiesMatching(SoulfireBeam.class).forEach(soulfireBeam -> {
+                                            soulfireBeam.setCurrentCooldown(soulfireBeam.getCooldownValue());
                                             soulfireBeam.setCurrentCharges(0);
-                                            soulfireBeam.setCurrentCooldown(aFloat);
                                         });
                                     },
                                     airStrikeDurationTicks
