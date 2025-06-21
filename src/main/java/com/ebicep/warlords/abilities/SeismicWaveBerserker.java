@@ -75,13 +75,17 @@ public class SeismicWaveBerserker extends AbstractSeismicWave implements Damages
         if (pveMasterUpgrade) {
             multiplier = (1.5f / 15f) * Math.min(i + 1, 15) + 1;
         }
-        waveTarget.addInstance(InstanceBuilder.damage()
-                                              .ability(this)
-                                              .source(wp)
-                                              .min(damageValues.waveDamage.getMinValue() * multiplier)
-                                              .max(damageValues.waveDamage.getMaxValue() * multiplier)
-                                              .crit(damageValues.waveDamage)
-                                              .uuid(abilityUUID));
+        waveTarget.addInstance(InstanceBuilder
+                .damage()
+                .ability(this)
+                .source(wp)
+                .min(damageValues.waveDamage.getMinValue() * multiplier)
+                .max(damageValues.waveDamage.getMaxValue() * multiplier)
+                .crit(damageValues.waveDamage)
+                .uuid(abilityUUID)
+        ).ifPresent(finalEvent -> {
+            onHitFinalEvent(wp, waveTarget);
+        });
     }
 
     @Override

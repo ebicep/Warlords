@@ -52,14 +52,6 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon, Damages<
     }
 
     @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Launch a giant boulder that shatters and deals")
-                                               .damage(damageValues.boulderDamage)
-                                               .text("damage to all enemies near the impact point and knocks them back slightly.")
-                                               .build();
-    }
-
-    @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "shaman.boulder.activation", 2, 1);
         Location location = wp.getLocation();
@@ -88,14 +80,20 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon, Damages<
                         if (p.getCooldownManager().hasCooldownExtends(AbstractTimeWarp.class) && FlagHolder.playerNearFlag(p)) {
                             stats.warpsKnockbacked++;
                         }
-                        Vector v;
-                        if (p == directHit) {
-                            v = initialCastLocation.toVector().subtract(p.getLocation().toVector()).normalize().multiply(-velocity).setY(0.2);
-                        } else {
-                            v = p.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(velocity).setY(0.2);
-                        }
-                        p.setVelocity(name, v, false, false);
-                        p.addInstance(InstanceBuilder.damage().ability(this).source(wp).value(damageValues.boulderDamage));
+                        p.addInstance(InstanceBuilder
+                                .damage()
+                                .ability(this)
+                                .source(wp)
+                                .value(damageValues.boulderDamage)
+                        ).ifPresent(finalEvent -> {
+                            Vector v;
+                            if (p == directHit) {
+                                v = initialCastLocation.toVector().subtract(p.getLocation().toVector()).normalize().multiply(-velocity).setY(0.2);
+                            } else {
+                                v = p.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(velocity).setY(0.2);
+                            }
+                            p.setVelocity(name, v, false, false);
+                        });
                     }
                     newLoc.setPitch(-12);
                     Location impactLocation = newLoc.clone().subtract(speed);
@@ -121,6 +119,19 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon, Damages<
         return true;
     }
 
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Launch a giant boulder that shatters and deals")
+                                               .damage(damageValues.boulderDamage)
+                                               .text("damage to all enemies near the impact point and knocks them back slightly.")
+                                               .build();
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new BoulderBranch(abilityTree, this);
+    }
+
     protected Vector calculateSpeed(WarlordsEntity we) {
         Vector speed;
         if (pveMasterUpgrade) {
@@ -129,11 +140,6 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon, Damages<
             speed = we.getLocation().getDirection().multiply(boulderSpeed);
         }
         return speed;
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new BoulderBranch(abilityTree, this);
     }
 
     @Override

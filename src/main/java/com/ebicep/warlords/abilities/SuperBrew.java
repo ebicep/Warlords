@@ -35,6 +35,7 @@ public class SuperBrew extends AbstractAbility implements OrangeAbilityIcon, Hit
     private int meleeDamageTakenDecreasePercent;
     private int ultCooldownReductionPercent;
     private int trueDamageLeechIncreasePercent;
+    private RegularCooldown<SuperBrewData> superBrewCooldown;
 
     public SuperBrew() {
         super(AbstractAbilityBuilder.create("superBrew").pvp());
@@ -62,6 +63,10 @@ public class SuperBrew extends AbstractAbility implements OrangeAbilityIcon, Hit
 
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
+        if (superBrewCooldown != null) {
+            superBrewCooldown.setMarkedForRemoval(true);
+        }
+
         Utils.playGlobalSound(wp.getLocation(), Sound.ITEM_ARMOR_EQUIP_ELYTRA, 2, 0.75f);
         Utils.playGlobalSound(wp.getLocation(), "arcanist.mysticalbarrier.activation", 2, 2);
 
@@ -86,7 +91,7 @@ public class SuperBrew extends AbstractAbility implements OrangeAbilityIcon, Hit
         }
         SuperBrewData data = new SuperBrewData(this);
         target.getCooldownManager().removeCooldown(SuperBrewData.class, false);
-        target.getCooldownManager().addCooldown(new RegularCooldown<>(
+        superBrewCooldown = new RegularCooldown<>(
                 name,
                 "SUPER",
                 SuperBrewData.class,
@@ -131,7 +136,8 @@ public class SuperBrew extends AbstractAbility implements OrangeAbilityIcon, Hit
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 return currentDamageValue * convertToDivisionDecimal(meleeDamageTakenDecreasePercent);
             }
-        });
+        };
+        target.getCooldownManager().addCooldown(superBrewCooldown);
         if (wp != target) {
             wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
                     .append(Component.text(" You gave a ", NamedTextColor.GRAY))

@@ -60,7 +60,9 @@ public class RighteousStrike extends AbstractStrike<RighteousStrike, RighteousSt
         boolean silenced = nearPlayer.getCooldownManager().hasCooldown(SoulShackle.class);
         new CooldownFilter<>(nearPlayer, RegularCooldown.class)
                 .filter(regularCooldown -> regularCooldown.getCooldownType() == CooldownTypes.ABILITY)
-                .filter(regularCooldown -> !regularCooldown.getFlags().contains(CooldownFlag.CANNOT_BE_REDUCED))
+                .filter(regularCooldown -> !regularCooldown.getFlags().contains(CooldownFlag.CANNOT_BE_REDUCED) &&
+                        !regularCooldown.getFlags().contains(CooldownFlag.CANNOT_BE_REDUCED_VIND)
+                )
                 .forEach(regularCooldown -> {
                     String cooldownName = regularCooldown.getName();
                     if (cooldownName.equals("Ice Barrier") || cooldownName.equals("Ice Block") || cooldownName.equals("Lustrous Crown")) {

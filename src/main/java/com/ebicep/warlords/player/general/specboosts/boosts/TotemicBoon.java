@@ -1,10 +1,13 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
 import com.ebicep.warlords.abilities.HealingTotem;
+import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownFlag;
 import com.ebicep.warlords.player.ingame.instances.type.CustomInstanceFlags;
 import org.bukkit.event.EventHandler;
 
@@ -79,6 +82,18 @@ public class TotemicBoon implements SpecBoostManager.SpecBoost<TotemicBoon> {
                     return;
                 }
             }
+        }
+
+        @EventHandler(ignoreCancelled = true)
+        public void onCooldownAddEvent(WarlordsAddCooldownEvent event) {
+            if (!warlordsEntity.equals(event.getWarlordsEntity())) {
+                return;
+            }
+            AbstractCooldown<?> cooldown = event.getAbstractCooldown();
+            if (!(cooldown.getCooldownObject() instanceof HealingTotem.HealingTotemData data) || !cooldown.getFrom().equals(warlordsEntity)) {
+                return;
+            }
+            cooldown.getFlags().add(CooldownFlag.CANNOT_BE_REDUCED_VIND);
         }
 
     }

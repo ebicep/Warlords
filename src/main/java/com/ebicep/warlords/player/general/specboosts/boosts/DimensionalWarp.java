@@ -8,6 +8,7 @@ import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownFlag;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.type.DamageInstance;
 import org.bukkit.event.EventHandler;
@@ -79,6 +80,7 @@ public class DimensionalWarp implements SpecBoostManager.SpecBoost<DimensionalWa
             if (!(cooldown.getCooldownObject() instanceof TimeWarpPyromancer.TimeWarpPyromancerData data) || !cooldown.getFrom().equals(warlordsEntity)) {
                 return;
             }
+            cooldown.getFlags().add(CooldownFlag.CANNOT_BE_REDUCED_VIND);
             warlordsEntity.addSpeedModifier(warlordsEntity, getStringName(), speedIncrease, ticks);
             cooldown.addExtraDamageInstance(new DamageInstance() {
                 @Override

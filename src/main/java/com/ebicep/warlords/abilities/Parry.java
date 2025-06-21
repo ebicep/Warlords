@@ -87,12 +87,17 @@ public class Parry extends AbstractAbility implements AbilityStats<Parry, Parry.
                         if (event.getFlags().contains(InstanceFlags.DOT)) {
                             return;
                         }
+                        WarlordsEntity source = event.getSource();
+                        wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" You ", NamedTextColor.GRAY))
+                                                                      .append(Component.text("Parried", NamedTextColor.YELLOW))
+                                                                      .append(Component.text(" " + source.getName() + "'s " + event.getCause() + "!", NamedTextColor.GRAY)));
+                        source.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" Your " + event.getCause() + " was ", NamedTextColor.GRAY))
+                                                                          .append(Component.text("Parried", NamedTextColor.YELLOW))
+                                                                          .append(Component.text(" by " + wp.getName() + "!", NamedTextColor.GRAY)));
+
                         blocked = true;
                         stats.timesBlocked++;
-                        event.setMin(0);
-                        event.setMax(0);
-                        event.setCritChance(0);
-                        event.setCritMultiplier(100);
+                        event.setCancelled(true);
                         setTicksLeft(0);
                         new CooldownFilter<>(wp, RegularCooldown.class)
                                 .filterCooldownClass(ParryDamageReduction.class)
@@ -172,16 +177,6 @@ public class Parry extends AbstractAbility implements AbilityStats<Parry, Parry.
         return true;
     }
 
-    public static class ParryDamageReduction {
-
-        private final List<Integer> instances = new ArrayList<>();
-
-        public ParryDamageReduction(int instanceDuration) {
-            this.instances.add(instanceDuration);
-        }
-
-    }
-
     @Override
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder
@@ -202,12 +197,27 @@ public class Parry extends AbstractAbility implements AbilityStats<Parry, Parry.
         return stats;
     }
 
+    public static class ParryDamageReduction {
+
+        private final List<Integer> instances = new ArrayList<>();
+
+        public ParryDamageReduction(int instanceDuration) {
+            this.instances.add(instanceDuration);
+        }
+
+    }
+
     public static class ParryStats extends AbstractAbilityStats<Parry, ParryStats> {
 
         @Field("times_blocks")
         private int timesBlocked = 0;
         @Field("times_knockbacked")
         private int timesKnockbacked = 0;
+
+        @Override
+        public Class<ParryStats> getClazz() {
+            return ParryStats.class;
+        }
 
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
@@ -223,11 +233,6 @@ public class Parry extends AbstractAbility implements AbilityStats<Parry, Parry.
             stats.timesBlocked = this.timesBlocked + other.timesBlocked * multiplier;
             stats.timesKnockbacked = this.timesKnockbacked + other.timesKnockbacked * multiplier;
             return stats;
-        }
-
-        @Override
-        public Class<ParryStats> getClazz() {
-            return ParryStats.class;
         }
 
         @Override
