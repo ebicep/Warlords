@@ -24,7 +24,7 @@ public class Blink implements SpecBoostManager.SpecBoost<Blink> {
 
     @Override
     public TextComponent getDescription() {
-        return getDescriptionWithAbility(new com.ebicep.warlords.abilities.Blink());
+        return appendAbility(getTextDescription(), new com.ebicep.warlords.abilities.Blink());
     }
 
     @Override

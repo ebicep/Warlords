@@ -217,12 +217,13 @@ public class SpecBoostManager {
 
         List<Object> getVariables();
 
-        default TextComponent getDescriptionWithAbility(AbstractAbility ability) {
+        default TextComponent appendAbility(TextComponent component, AbstractAbility ability) {
             ability.init(ability.getBuilder());
             ability.updateDescription(null);
-            return getTextDescription()
+            return component
                     .appendNewline()
                     .appendNewline()
+                    .append(Component.text(ability.getName(), NamedTextColor.AQUA))
                     .append(ability.getItemHeader().stream().collect(Component.toComponent(Component.newline())))
                     .appendNewline()
                     .appendNewline()

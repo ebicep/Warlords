@@ -21,7 +21,7 @@ public class HealingLink implements SpecBoostManager.SpecBoost<HealingLink> {
 
     @Override
     public TextComponent getDescription() {
-        return getDescriptionWithAbility(new com.ebicep.warlords.abilities.HealingLink());
+        return appendAbility(getTextDescription(), new com.ebicep.warlords.abilities.HealingLink());
     }
 
     @Override

@@ -37,7 +37,7 @@ public class Solitary implements SpecBoostManager.SpecBoost<Solitary> {
 
     @Override
     public TextComponent getDescription() {
-        return getDescriptionWithAbility(new com.ebicep.warlords.abilities.Solitary());
+        return appendAbility(getTextDescription(), new com.ebicep.warlords.abilities.Solitary());
     }
 
     @Override

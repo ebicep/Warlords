@@ -21,7 +21,7 @@ public class SuperBrew implements SpecBoostManager.SpecBoost<SuperBrew> {
 
     @Override
     public TextComponent getDescription() {
-        return getDescriptionWithAbility(new com.ebicep.warlords.abilities.SuperBrew());
+        return appendAbility(getTextDescription(), new com.ebicep.warlords.abilities.SuperBrew());
     }
 
     @Override

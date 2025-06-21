@@ -115,7 +115,9 @@ public class SwiftJustice implements SpecBoostManager.SpecBoost<SwiftJustice> {
                         () -> {
                             warlordsEntity.getSpeed().removeNegativeModifiers();
                             warlordsEntity.getCooldownManager().addCooldown(cd);
-                            warlordsEntity.addSpeedModifier(warlordsEntity, getStringName(), recastSpeedIncreasePercent, cd);
+                            if (!warlordsEntity.hasFlag()) {
+                                warlordsEntity.addSpeedModifier(warlordsEntity, getStringName(), recastSpeedIncreasePercent, cd);
+                            }
                             warlordsEntity.addKnockbackModifier(warlordsEntity, getStringName(), -100, cd);
                         },
                         false,

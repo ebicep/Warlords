@@ -24,7 +24,7 @@ public class Parry implements SpecBoostManager.SpecBoost<Parry> {
 
     @Override
     public TextComponent getDescription() {
-        return getDescriptionWithAbility(new com.ebicep.warlords.abilities.Parry());
+        return appendAbility(getTextDescription(), new com.ebicep.warlords.abilities.Parry());
     }
 
     @Override
