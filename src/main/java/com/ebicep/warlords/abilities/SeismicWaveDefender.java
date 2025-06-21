@@ -42,7 +42,7 @@ public class SeismicWaveDefender extends AbstractSeismicWave implements CanReduc
                 .crit(damageValues.waveDamage)
                 .uuid(abilityUUID)
         ).ifPresent(event -> {
-            knockback(wp, waveTarget);
+            onHitFinalEvent(wp, waveTarget);
             if (event.isDead() && pveMasterUpgrade2) {
                 wp.getAbilitiesMatching(LastStand.class).forEach(lastStand -> lastStand.subtractCurrentCooldown(1f));
             }

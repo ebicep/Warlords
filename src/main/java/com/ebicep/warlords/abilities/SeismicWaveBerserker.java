@@ -84,7 +84,7 @@ public class SeismicWaveBerserker extends AbstractSeismicWave implements Damages
                 .crit(damageValues.waveDamage)
                 .uuid(abilityUUID)
         ).ifPresent(finalEvent -> {
-            knockback(wp, waveTarget);
+            onHitFinalEvent(wp, waveTarget);
         });
     }
 

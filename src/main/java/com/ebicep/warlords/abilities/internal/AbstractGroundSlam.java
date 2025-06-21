@@ -40,16 +40,6 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
     }
 
     @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder
-                .create("Slam the ground, creating a shockwave around you that deals ")
-                .damage(getSlamDamage())
-                .text(" damage and knocks enemies back slightly.")
-                .build();
-
-    }
-
-    @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "warrior.groundslam.activation", 2, 1);
 
@@ -90,6 +80,24 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
         return true;
     }
 
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder
+                .create("Slam the ground, creating a shockwave around you that deals ")
+                .damage(getSlamDamage())
+                .text(" damage and knocks enemies back slightly.")
+                .build();
+
+    }
+
+    @Override
+    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
+        slamSize.tick();
+        super.runEveryTick(warlordsEntity);
+    }
+
+    public abstract Value.RangedValueCritable getSlamDamage();
+
     protected void activateAbility(@Nonnull WarlordsEntity wp, float damageMultiplier, UUID abilityUUID, boolean second) {
         List<List<Location>> fallingBlockLocations = new ArrayList<>();
         Set<WarlordsEntity> currentPlayersHit = new HashSet<>();
@@ -114,15 +122,6 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
                                 .aliveEnemiesOf(wp)
                                 .excluding(currentPlayersHit)
                         ) {
-                            stats.playersHit++;
-                            if (slamTarget.hasFlag()) {
-                                stats.carrierHit++;
-                            }
-
-                            if (slamTarget.getCooldownManager().hasCooldownExtends(AbstractTimeWarp.class) && FlagHolder.playerNearFlag(slamTarget)) {
-                                stats.warpsKnockbacked++;
-                            }
-
                             currentPlayersHit.add(slamTarget);
                             Value.RangedValueCritable slamDamage = getSlamDamage();
                             slamTarget.addInstance(InstanceBuilder
@@ -135,6 +134,15 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
                                     .flag(InstanceFlags.TRUE_DAMAGE, trueDamage)
                                     .uuid(abilityUUID)
                             ).ifPresent(finalEvent -> {
+                                stats.playersHit++;
+                                if (slamTarget.hasFlag()) {
+                                    stats.carrierHit++;
+                                }
+
+                                if (slamTarget.getCooldownManager().hasCooldownExtends(AbstractTimeWarp.class) && FlagHolder.playerNearFlag(slamTarget)) {
+                                    stats.warpsKnockbacked++;
+                                }
+
                                 Location loc = slamTarget.getLocation();
                                 Vector v = wp.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-velocity).setY(0.25);
                                 slamTarget.setVelocity(name, v, false, false);
@@ -160,14 +168,6 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
     protected void onSecondSlamHit(WarlordsEntity wp, Set<WarlordsEntity> playersHit) {
 
     }
-
-    @Override
-    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
-        slamSize.tick();
-        super.runEveryTick(warlordsEntity);
-    }
-
-    public abstract Value.RangedValueCritable getSlamDamage();
 
     @Override
     public FloatModifiable getHitBoxRadius() {

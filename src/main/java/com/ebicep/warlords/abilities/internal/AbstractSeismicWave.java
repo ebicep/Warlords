@@ -38,15 +38,6 @@ public abstract class AbstractSeismicWave extends AbstractAbility implements Red
     }
 
     @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder
-                .create("Send a wave of incredible force forward that deals ")
-                .damage(getWaveDamage())
-                .text(" damage to all enemies hit and knocks them back slightly.")
-                .build();
-    }
-
-    @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "warrior.seismicwave.activation", 2, 1);
 
@@ -73,6 +64,17 @@ public abstract class AbstractSeismicWave extends AbstractAbility implements Red
         return true;
     }
 
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder
+                .create("Send a wave of incredible force forward that deals ")
+                .damage(getWaveDamage())
+                .text(" damage to all enemies hit and knocks them back slightly.")
+                .build();
+    }
+
+    public abstract Value.RangedValueCritable getWaveDamage();
+
     private List<List<Location>> getWaveLocations(Location location) {
         List<List<Location>> fallingBlockLocations = new ArrayList<>();
         for (int i = 0; i < waveLength; i++) {
@@ -92,26 +94,12 @@ public abstract class AbstractSeismicWave extends AbstractAbility implements Red
                         .excluding(playersHit)
                         .closestFirst(wp)
                 ) {
-                    stats.playersHit++;
-                    if (waveTarget.hasFlag()) {
-                        stats.carrierHit++;
-                    }
-                    if (waveTarget.getCooldownManager().hasCooldownExtends(AbstractTimeWarp.class) && FlagHolder.playerNearFlag(waveTarget)) {
-                        stats.warpsKnockbacked++;
-                    }
-
                     playersHit.add(waveTarget);
-                    knockback(wp, waveTarget);
 
                     onHit(wp, abilityUUID, i, waveTarget);
                 }
             }
         }
-    }
-
-    protected void knockback(@Nonnull WarlordsEntity wp, WarlordsEntity waveTarget) {
-        final Vector v = wp.getLocation().toVector().subtract(waveTarget.getLocation().toVector()).normalize().multiply(-velocity).setY(0.25);
-        waveTarget.setVelocity(name, v, false, false);
     }
 
     private List<Location> getWaveSideLocations(Location center, int distance) {
@@ -130,11 +118,22 @@ public abstract class AbstractSeismicWave extends AbstractAbility implements Red
     protected void onHit(@Nonnull WarlordsEntity wp, UUID abilityUUID, int i, WarlordsEntity waveTarget) {
     }
 
-    public abstract Value.RangedValueCritable getWaveDamage();
-
     @Override
     public AbstractSeismicWaveStats getAbilityStats() {
         return stats;
+    }
+
+    protected void onHitFinalEvent(@Nonnull WarlordsEntity wp, WarlordsEntity waveTarget) {
+        stats.playersHit++;
+        if (waveTarget.hasFlag()) {
+            stats.carrierHit++;
+        }
+        if (waveTarget.getCooldownManager().hasCooldownExtends(AbstractTimeWarp.class) && FlagHolder.playerNearFlag(waveTarget)) {
+            stats.warpsKnockbacked++;
+        }
+
+        final Vector v = wp.getLocation().toVector().subtract(waveTarget.getLocation().toVector()).normalize().multiply(-velocity).setY(0.25);
+        waveTarget.setVelocity(name, v, false, false);
     }
 
     public float getVelocity() {
