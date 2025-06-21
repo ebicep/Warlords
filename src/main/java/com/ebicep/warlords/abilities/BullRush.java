@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownFlag;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownUtils;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -100,6 +101,7 @@ public class BullRush extends AbstractAbility implements PurpleAbilityIcon, HitB
                 );
             }
         };
+        cd.getFlags().add(CooldownFlag.CANNOT_BE_REDUCED_VIND);
         wp.getCooldownManager().addCooldown(cd);
         wp.addSpeedModifier(wp, name, speedBoost, cd);
         wp.addKnockbackModifier(wp, name, -100, cd);
