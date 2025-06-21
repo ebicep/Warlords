@@ -124,9 +124,6 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
                             }
 
                             currentPlayersHit.add(slamTarget);
-                            final Location loc = slamTarget.getLocation();
-                            final Vector v = wp.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-velocity).setY(0.25);
-                            slamTarget.setVelocity(name, v, false, false);
                             Value.RangedValueCritable slamDamage = getSlamDamage();
                             slamTarget.addInstance(InstanceBuilder
                                     .damage()
@@ -137,7 +134,11 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
                                     .crit(slamDamage)
                                     .flag(InstanceFlags.TRUE_DAMAGE, trueDamage)
                                     .uuid(abilityUUID)
-                            );
+                            ).ifPresent(finalEvent -> {
+                                Location loc = slamTarget.getLocation();
+                                Vector v = wp.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-velocity).setY(0.25);
+                                slamTarget.setVelocity(name, v, false, false);
+                            });
                         }
                     }
 

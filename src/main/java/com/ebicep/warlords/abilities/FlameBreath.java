@@ -79,10 +79,11 @@ public class FlameBreath extends AbstractAbility implements RedAbilityIcon, Dama
                     .cause("Flame Breath")
                     .source(wp)
                     .value(damageValues.flameBreathDamage)
-            );
-            final Location loc = breathTarget.getLocation();
-            final Vector v = wp.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-velocity).setY(0.2);
-            breathTarget.setVelocity(name, v, false);
+            ).ifPresent(finalEvent -> {
+                Location loc = breathTarget.getLocation();
+                Vector v = wp.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-velocity).setY(0.2);
+                breathTarget.setVelocity(name, v, false);
+            });
         }
         return true;
     }

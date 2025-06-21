@@ -101,13 +101,17 @@ public abstract class AbstractSeismicWave extends AbstractAbility implements Red
                     }
 
                     playersHit.add(waveTarget);
-                    final Vector v = wp.getLocation().toVector().subtract(waveTarget.getLocation().toVector()).normalize().multiply(-velocity).setY(0.25);
-                    waveTarget.setVelocity(name, v, false, false);
+                    knockback(wp, waveTarget);
 
                     onHit(wp, abilityUUID, i, waveTarget);
                 }
             }
         }
+    }
+
+    protected void knockback(@Nonnull WarlordsEntity wp, WarlordsEntity waveTarget) {
+        final Vector v = wp.getLocation().toVector().subtract(waveTarget.getLocation().toVector()).normalize().multiply(-velocity).setY(0.25);
+        waveTarget.setVelocity(name, v, false, false);
     }
 
     private List<Location> getWaveSideLocations(Location center, int distance) {

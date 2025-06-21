@@ -82,12 +82,12 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
 
     @Override
     public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create(
-                                                       "Send forth an underground earth spike that locks onto a targeted enemy player. When the spike reaches its target it emerges from the ground, dealing ")
-                                               .damage(damageValues.spikeDamage)
-                                               .text(" damage to any nearby enemies and launches them up into the air.")
-                                               .initialRange(radius)
-                                               .build();
+        description = AbilityDescriptionBuilder
+                .create("Send forth an underground earth spike that locks onto a targeted enemy player. When the spike reaches its target it emerges from the ground, dealing ")
+                .damage(damageValues.spikeDamage)
+                .text(" damage to any nearby enemies and launches them up into the air.")
+                .initialRange(radius)
+                .build();
     }
 
     @Override
@@ -167,7 +167,18 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
         if (spikeTarget.hasFlag()) {
             stats.carrierSpiked++;
         }
-        spikeTarget.addInstance(InstanceBuilder.damage().ability(this).source(caster).value(damageValues.spikeDamage).uuid(uuid)).ifPresent(finalEvent -> {
+        spikeTarget.addInstance(InstanceBuilder
+                .damage().ability(this)
+                .source(caster)
+                .value(damageValues.spikeDamage)
+                .uuid(uuid)
+        ).ifPresent(finalEvent -> {
+            if (LocationUtils.getDistance(spikeTarget.getEntity(),
+                    .1
+            ) < 1.82 && (PLAYER_SPIKE_COOLDOWN.get(spikeTarget.getUuid()) == null || PLAYER_SPIKE_COOLDOWN.get(spikeTarget.getUuid()) + 750 < System.currentTimeMillis())) {
+                PLAYER_SPIKE_COOLDOWN.put(spikeTarget.getUuid(), System.currentTimeMillis());
+                spikeTarget.setVelocity(name, new Vector(0, verticalVelocity, 0), false);
+            }
             if (!pveMasterUpgrade2) {
                 return;
             }
@@ -175,22 +186,17 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
                 return;
             }
             float healing = finalEvent.getValue() * .35f;
-            caster.addInstance(InstanceBuilder.healing()
-                                              .cause("Earthen Verdancy")
-                                              .source(caster)
-                                              .value(healing)
-                                              .showAsCrit(finalEvent.isCrit())
+            caster.addInstance(InstanceBuilder
+                    .healing()
+                    .cause("Earthen Verdancy")
+                    .source(caster)
+                    .value(healing)
+                    .showAsCrit(finalEvent.isCrit())
             );
             if (finalEvent.isCrit()) {
                 caster.addEnergy(caster, "Earthen Verdancy", 10);
             }
         });
-        if (LocationUtils.getDistance(spikeTarget.getEntity(),
-                .1
-        ) < 1.82 && (PLAYER_SPIKE_COOLDOWN.get(spikeTarget.getUuid()) == null || PLAYER_SPIKE_COOLDOWN.get(spikeTarget.getUuid()) + 750 < System.currentTimeMillis())) {
-            PLAYER_SPIKE_COOLDOWN.put(spikeTarget.getUuid(), System.currentTimeMillis());
-            spikeTarget.setVelocity(name, new Vector(0, verticalVelocity, 0), false);
-        }
         if (pveMasterUpgrade2) {
             spikeTarget.getCooldownManager().removeCooldownByName("Earthen Verdancy");
             CripplingStrike.cripple(caster, spikeTarget, "Earthen Verdancy", 5 * 20);

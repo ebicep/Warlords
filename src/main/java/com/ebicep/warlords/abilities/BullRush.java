@@ -79,16 +79,17 @@ public class BullRush extends AbstractAbility implements PurpleAbilityIcon, HitB
                                     .excluding(hit)
                                     .forEach(warlordsEntity -> {
                                         hit.add(warlordsEntity);
-                                        if (!warlordsEntity.hasFlag()) {
-                                            Vector v = wp.getCurrentVector().normalize().multiply(magnitude).setY(knockbackY);
-                                            warlordsEntity.setVelocity(name, v, false);
-                                        }
                                         warlordsEntity.addInstance(InstanceBuilder
                                                 .damage()
                                                 .ability(this)
                                                 .source(wp)
                                                 .value(damageValues.bullRushDamage)
-                                        );
+                                        ).ifPresent(finalEvent -> {
+                                            if (!warlordsEntity.hasFlag()) {
+                                                Vector v = wp.getCurrentVector().normalize().multiply(magnitude).setY(knockbackY);
+                                                warlordsEntity.setVelocity(name, v, false);
+                                            }
+                                        });
                                     });
                     }
                 })

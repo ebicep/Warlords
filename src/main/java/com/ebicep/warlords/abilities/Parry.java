@@ -89,10 +89,7 @@ public class Parry extends AbstractAbility implements AbilityStats<Parry, Parry.
                         }
                         blocked = true;
                         stats.timesBlocked++;
-                        event.setMin(0);
-                        event.setMax(0);
-                        event.setCritChance(0);
-                        event.setCritMultiplier(100);
+                        event.setCancelled(true);
                         setTicksLeft(0);
                         new CooldownFilter<>(wp, RegularCooldown.class)
                                 .filterCooldownClass(ParryDamageReduction.class)
