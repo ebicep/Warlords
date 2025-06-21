@@ -94,6 +94,11 @@ public abstract class AbstractSeismicWave extends AbstractAbility implements Red
                         .excluding(playersHit)
                         .closestFirst(wp)
                 ) {
+                    stats.playersHit++;
+                    if (waveTarget.hasFlag()) {
+                        stats.carrierHit++;
+                    }
+
                     playersHit.add(waveTarget);
 
                     onHit(wp, abilityUUID, i, waveTarget);
@@ -124,10 +129,6 @@ public abstract class AbstractSeismicWave extends AbstractAbility implements Red
     }
 
     protected void onHitFinalEvent(@Nonnull WarlordsEntity wp, WarlordsEntity waveTarget) {
-        stats.playersHit++;
-        if (waveTarget.hasFlag()) {
-            stats.carrierHit++;
-        }
         if (waveTarget.getCooldownManager().hasCooldownExtends(AbstractTimeWarp.class) && FlagHolder.playerNearFlag(waveTarget)) {
             stats.warpsKnockbacked++;
         }

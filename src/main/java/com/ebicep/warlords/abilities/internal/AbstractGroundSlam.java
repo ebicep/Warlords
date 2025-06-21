@@ -122,6 +122,10 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
                                 .aliveEnemiesOf(wp)
                                 .excluding(currentPlayersHit)
                         ) {
+                            stats.playersHit++;
+                            if (slamTarget.hasFlag()) {
+                                stats.carrierHit++;
+                            }
                             currentPlayersHit.add(slamTarget);
                             Value.RangedValueCritable slamDamage = getSlamDamage();
                             slamTarget.addInstance(InstanceBuilder
@@ -134,11 +138,6 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
                                     .flag(InstanceFlags.TRUE_DAMAGE, trueDamage)
                                     .uuid(abilityUUID)
                             ).ifPresent(finalEvent -> {
-                                stats.playersHit++;
-                                if (slamTarget.hasFlag()) {
-                                    stats.carrierHit++;
-                                }
-
                                 if (slamTarget.getCooldownManager().hasCooldownExtends(AbstractTimeWarp.class) && FlagHolder.playerNearFlag(slamTarget)) {
                                     stats.warpsKnockbacked++;
                                 }
