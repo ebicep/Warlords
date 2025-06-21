@@ -43,6 +43,9 @@ public class SharpFangs implements SpecBoostManager.SpecBoost<SharpFangs> {
                 poisonousHex.getDamageValues().getHexDamage().forEachValue(floatModifiable ->
                         floatModifiable.addMultiplicativeModifierAdd("Spec Boost", poisonousHexDamageIncreasePercent / 100)
                 );
+                poisonousHex.getDamageValues().getHexDOTDamage().forEachValue(floatModifiable ->
+                        floatModifiable.addMultiplicativeModifierAdd("Spec Boost", poisonousHexDamageIncreasePercent / 100)
+                );
             });
         }
 
