@@ -158,11 +158,11 @@ public class HorseOption implements Option, Listener {
             player.sendMessage(Component.text("You can't mount while holding the flag!", NamedTextColor.RED));
             return;
         }
-        WarlordsHorse warlordsHorse = activateHorseForPlayer(wp);
+        WarlordsHorse warlordsHorse = activateHorseForPlayer(wp, true);
     }
 
     @Nullable
-    public static WarlordsHorse activateHorseForPlayer(WarlordsEntity warlordsEntity) {
+    public static WarlordsHorse activateHorseForPlayer(WarlordsEntity warlordsEntity, boolean checkCooldown) {
         if (!(warlordsEntity instanceof WarlordsPlayer)) {
             return null;
         }
@@ -172,7 +172,7 @@ public class HorseOption implements Option, Listener {
         for (Option option : warlordsEntity.getGame().getOptions()) {
             if (option instanceof HorseOption horseOption) {
                 WarlordsHorse warlordsHorse = horseOption.getHorseForPlayer(warlordsEntity);
-                if (warlordsHorse.getCurrentCooldown() > 0) {
+                if (checkCooldown && warlordsHorse.getCurrentCooldown() > 0) {
                     return null;
                 }
                 WarlordsPlayerHorseEvent horseEvent = new WarlordsPlayerHorseEvent(warlordsEntity);

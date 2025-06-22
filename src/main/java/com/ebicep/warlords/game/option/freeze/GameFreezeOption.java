@@ -160,7 +160,7 @@ public class GameFreezeOption implements Option, Listener {
     private void unfreezePlayer(Player p) {
         WarlordsEntity wp = Warlords.getPlayer(p);
         if (wp != null && playersWithHorsePreFreeze.contains(p.getUniqueId())) {
-            HorseOption.activateHorseForPlayer(wp);
+            HorseOption.activateHorseForPlayer(wp, false);
         }
         p.clearTitle();
         p.removePotionEffect(PotionEffectType.BLINDNESS);

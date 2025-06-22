@@ -109,7 +109,7 @@ public class InterchangeModeOption implements Option {
         secondPlayerEntity.teleport(playerLocations.get(firstPlayerUuid));
         firstPlayer.setEntity(secondPlayerEntity);
         if (playerOnHorse.get(firstPlayerUuid)) {
-            HorseOption.activateHorseForPlayer(firstPlayer);
+            HorseOption.activateHorseForPlayer(firstPlayer, false);
         }
         if (firstPlayer.getEntity() instanceof Player) {
             firstPlayer.getEntity().showTitle(Title.title(
@@ -147,7 +147,7 @@ public class InterchangeModeOption implements Option {
         secondPlayer.teleport(playerLocations.get(firstPlayerUuid));
         firstPlayer.setEntity(secondPlayer.getEntity());
         if (playerOnHorse.get(firstPlayerUuid)) {
-            HorseOption.activateHorseForPlayer(firstPlayer);
+            HorseOption.activateHorseForPlayer(firstPlayer, false);
         }
         if (firstPlayer.getEntity() instanceof Player) {
             firstPlayer.getEntity().showTitle(Title.title(
