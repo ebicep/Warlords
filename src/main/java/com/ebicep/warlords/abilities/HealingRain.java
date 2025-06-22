@@ -60,26 +60,6 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
     }
 
     @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Cast a Healing Rain upon an ally or yourself that will restore ")
-                                               .heal(healingValues.rainHealing)
-                                               .text(" health every ")
-                                               .durationSeconds(0.5f)
-                                               .text(" to allies. Lasts ")
-                                               .durationTicks(tickDuration)
-                                               .text(".")
-                                               .emptyLine()
-                                               .text("Recast to retarget the Healing Rain.")
-                                               .emptyLine()
-                                               .text("Healing Rain can overheal allies for up to ")
-                                               .percent(10, NamedTextColor.GREEN)
-                                               .text(" of their max health as bonus health for ")
-                                               .durationSeconds(Overheal.OVERHEAL_DURATION)
-                                               .text(".")
-                                               .build();
-    }
-
-    @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         float radius = this.radius.getCalculatedValue();
         List<WarlordsEntity> targets = PlayerFilter
@@ -114,10 +94,15 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
                                      .append(Component.text(" upon yourself."))
                     ));
         } else {
-            data.target.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+            wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
                     .append(Component.text(" You casted your ", NamedTextColor.GRAY)
                                      .append(Component.text("Healing Rain", NamedTextColor.GREEN))
                                      .append(Component.text(" upon " + data.target.getName() + "."))
+                    ));
+            data.target.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                    .append(Component.text(" " + wp.getName() + " casted ", NamedTextColor.GRAY)
+                                     .append(Component.text("Healing Rain", NamedTextColor.GREEN))
+                                     .append(Component.text(" upon you."))
                     ));
         }
         RegularCooldown<HealingRainData> healingRainCooldown = new RegularCooldown<>(
@@ -239,15 +224,20 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
                         wp.playSound(wpLocation, "mage.timewarp.teleport", 2, 1.35f);
                         if (wp == data.target) {
                             wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
-                                    .append(Component.text(" You recasted your ", NamedTextColor.GRAY)
+                                    .append(Component.text(" You casted your ", NamedTextColor.GRAY)
                                                      .append(Component.text("Healing Rain", NamedTextColor.GREEN))
                                                      .append(Component.text(" upon yourself."))
                                     ));
                         } else {
                             wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
-                                    .append(Component.text(" You recasted your ", NamedTextColor.GRAY)
+                                    .append(Component.text(" You casted your ", NamedTextColor.GRAY)
                                                      .append(Component.text("Healing Rain", NamedTextColor.GREEN))
                                                      .append(Component.text(" upon " + data.target.getName() + "."))
+                                    ));
+                            data.target.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                                    .append(Component.text(" " + wp.getName() + " casted ", NamedTextColor.GRAY)
+                                                     .append(Component.text("Healing Rain", NamedTextColor.GREEN))
+                                                     .append(Component.text(" upon you."))
                                     ));
                         }
                     }
@@ -256,6 +246,31 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
                 secondaryAbility -> !wp.getCooldownManager().hasCooldown(healingRainCooldown)
         );
         return true;
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Cast a Healing Rain upon an ally or yourself that will restore ")
+                                               .heal(healingValues.rainHealing)
+                                               .text(" health every ")
+                                               .durationSeconds(0.5f)
+                                               .text(" to allies. Lasts ")
+                                               .durationTicks(tickDuration)
+                                               .text(".")
+                                               .emptyLine()
+                                               .text("Recast to retarget the Healing Rain.")
+                                               .emptyLine()
+                                               .text("Healing Rain can overheal allies for up to ")
+                                               .percent(10, NamedTextColor.GREEN)
+                                               .text(" of their max health as bonus health for ")
+                                               .durationSeconds(Overheal.OVERHEAL_DURATION)
+                                               .text(".")
+                                               .build();
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new HealingRainBranch(abilityTree, this);
     }
 
     private void strikeInRain(WarlordsEntity giver, WarlordsEntity hit) {
@@ -283,21 +298,6 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
         if (teammateInRain != wp) {
             Overheal.giveOverHeal(wp, teammateInRain);
         }
-    }
-
-    public static class HealingRainData {
-
-        private WarlordsEntity target;
-
-        public HealingRainData(WarlordsEntity target) {
-            this.target = target;
-        }
-
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new HealingRainBranch(abilityTree, this);
     }
 
     @Override
@@ -328,6 +328,16 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
     @Override
     public HealingRainStats getAbilityStats() {
         return stats;
+    }
+
+    public static class HealingRainData {
+
+        private WarlordsEntity target;
+
+        public HealingRainData(WarlordsEntity target) {
+            this.target = target;
+        }
+
     }
 
     public static class DamageValues implements Value.ValueHolder {
