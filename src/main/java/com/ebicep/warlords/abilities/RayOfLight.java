@@ -28,6 +28,7 @@ public class RayOfLight extends AbstractBeam<RayOfLight, RayOfLight.RayOfLightSt
     public static final ItemStack BEAM_ITEM = new ItemStack(Material.WITHER_ROSE);
     private final RayOfLightStats stats = new RayOfLightStats();
     private final HealingValues healingValues = new HealingValues();
+    private boolean removeDebuffs = true;
 
     public RayOfLight() {
         super(AbstractAbilityBuilder.create("rayOfLight").pvp());
@@ -38,6 +39,43 @@ public class RayOfLight extends AbstractBeam<RayOfLight, RayOfLight.RayOfLightSt
         beamPlayer(shooter, shooter);
         Utils.playGlobalSound(shooter.getLocation(), "arcanist.rayoflightalt.activation", 2, 0.9f);
         return super.onActivateInternal(shooter);
+    }
+
+    @Override
+    public ItemStack getBeamItem() {
+        return BEAM_ITEM;
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Unleash a concentrated beam of holy light, healing ")
+                                               .heal(healingValues.rayHealing)
+                                               .text(" health to all allies hit and cleansing all ")
+                                               .text("de-buffs", NamedTextColor.DARK_RED)
+                                               .text(". If the target is affected by Merciful Hex the healing given is increased by ")
+                                               .percent(25, NamedTextColor.GREEN)
+                                               .text("/")
+                                               .percent(50, NamedTextColor.GREEN)
+                                               .text("/")
+                                               .percent(100, NamedTextColor.GREEN)
+                                               .text(" relative to the number of stacks and all stacks are removed.")
+                                               .maxRange(maxDistance)
+                                               .build();
+    }
+
+    @Override
+    public RayOfLightStats getAbilityStats() {
+        return stats;
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new RayOfLightBranch(abilityTree, this);
+    }
+
+    @Override
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
     }
 
     @Nullable
@@ -73,41 +111,7 @@ public class RayOfLight extends AbstractBeam<RayOfLight, RayOfLight.RayOfLightSt
         }
     }
 
-    @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Unleash a concentrated beam of holy light, healing ")
-                                               .heal(healingValues.rayHealing)
-                                               .text(" health to all allies hit and cleansing all ")
-                                               .text("de-buffs", NamedTextColor.DARK_RED)
-                                               .text(". If the target is affected by Merciful Hex the healing given is increased by ")
-                                               .percent(25, NamedTextColor.GREEN)
-                                               .text("/")
-                                               .percent(50, NamedTextColor.GREEN)
-                                               .text("/")
-                                               .percent(100, NamedTextColor.GREEN)
-                                               .text(" relative to the number of stacks and all stacks are removed.")
-                                               .maxRange(maxDistance)
-                                               .build();
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new RayOfLightBranch(abilityTree, this);
-    }
-
-    @Override
-    public void init(AbstractAbilityBuilder builder) {
-        super.init(builder);
-    }
-
-    @Override
-    public ItemStack getBeamItem() {
-        return BEAM_ITEM;
-    }
-
     private void beamPlayer(@Nonnull WarlordsEntity hit, WarlordsEntity wp) {
-        hit.getCooldownManager().removeDebuffCooldowns();
-        hit.getSpeed().removeNegativeModifiers();
         int hexStacks = (int) new CooldownFilter<>(hit, RegularCooldown.class).filterCooldownClass(MercifulHex.class).stream().count();
         boolean hasDivineBlessing = wp.getCooldownManager().hasCooldown(DivineBlessing.DivineBlessingData.class);
         if (!hasDivineBlessing) {
@@ -118,6 +122,9 @@ public class RayOfLight extends AbstractBeam<RayOfLight, RayOfLight.RayOfLightSt
             );
         }
         boolean maxStacks = hexStacks >= 3;
+        if (maxStacks && removeDebuffs) {
+            hit.getCooldownManager().removeDebuffCooldowns();
+        }
         float multiplier = switch (hexStacks) {
             case 0 -> 1f;
             case 1 -> 1.25f;
@@ -143,11 +150,6 @@ public class RayOfLight extends AbstractBeam<RayOfLight, RayOfLight.RayOfLightSt
                                        .min(healingValues.rayHealing.getMinValue() * multiplier)
                                        .max(healingValues.rayHealing.getMaxValue() * multiplier)
                                        .crit(healingValues.rayHealing));
-    }
-
-    @Override
-    public RayOfLightStats getAbilityStats() {
-        return stats;
     }
 
     @Override
