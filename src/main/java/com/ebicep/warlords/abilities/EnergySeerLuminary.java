@@ -18,6 +18,8 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
+import javax.annotation.Nonnull;
+
 public class EnergySeerLuminary extends AbstractEnergySeer<AbstractEnergySeer.EnergySeerData> implements PurpleAbilityIcon, Heals<EnergySeerLuminary.HealingValues> {
 
     private int healingIncrease = 20;
@@ -32,6 +34,14 @@ public class EnergySeerLuminary extends AbstractEnergySeer<AbstractEnergySeer.En
         super.init(builder);
         this.healingIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("healingIncrease"), int.class);
         this.hexPierceIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hexPierceIncrease"), int.class);
+    }
+
+    @Override
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
+        wp.getAbilitiesMatching(MercifulHex.class).forEach(mercifulHex -> {
+            mercifulHex.setMaxAlliesHit(mercifulHex.getMaxAlliesHit() + hexPierceIncrease);
+        });
+        return super.onActivateInternal(wp);
     }
 
     @Override
@@ -59,6 +69,11 @@ public class EnergySeerLuminary extends AbstractEnergySeer<AbstractEnergySeer.En
     }
 
     @Override
+    public TextComponent getBonus() {
+        return Component.text("Increase your healing by ").append(Component.text(healingIncrease + "%", NamedTextColor.GREEN));
+    }
+
+    @Override
     public EnergySeerData getDataObject() {
         return new EnergySeerData();
     }
@@ -80,8 +95,10 @@ public class EnergySeerLuminary extends AbstractEnergySeer<AbstractEnergySeer.En
     }
 
     @Override
-    public TextComponent getBonus() {
-        return Component.text("Increase your healing by ").append(Component.text(healingIncrease + "%", NamedTextColor.GREEN));
+    protected void onEndForce(WarlordsEntity wp, EnergySeerData data) {
+        wp.getAbilitiesMatching(MercifulHex.class).forEach(mercifulHex -> {
+            mercifulHex.setMaxAlliesHit(mercifulHex.getMaxAlliesHit() - hexPierceIncrease);
+        });
     }
 
     @Override

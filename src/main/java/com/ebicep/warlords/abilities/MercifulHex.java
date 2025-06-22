@@ -277,6 +277,10 @@ public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, Mercifu
         return true;
     }
 
+    public int getMaxAlliesHit() {
+        return maxAlliesHit;
+    }
+
     public void setMaxAlliesHit(int maxAlliesHit) {
         this.maxAlliesHit = maxAlliesHit;
     }

@@ -33,13 +33,13 @@ import java.util.Objects;
 
 public abstract class AbstractEnergySeer<T extends AbstractEnergySeer.EnergySeerData> extends AbstractAbility implements PurpleAbilityIcon, Duration, Heals<AbstractEnergySeer.HealingValues>, AbilityStats<AbstractEnergySeer, AbstractEnergySeer.AbstractEnergySeerStats> {
 
-    private final HealingValues healingValues = new HealingValues();
-    private final AbstractEnergySeerStats stats = new AbstractEnergySeerStats();
     protected int tickDuration = 100;
     protected int postEffectTickDuration = 100;
     protected int energyRestore = 130;
     protected int epsDecrease = 10;
     protected int speedBuff = 30;
+    private final HealingValues healingValues = new HealingValues();
+    private final AbstractEnergySeerStats stats = new AbstractEnergySeerStats();
 
     public AbstractEnergySeer(AbstractAbilityBuilder builder) {
         super(builder);
@@ -74,6 +74,9 @@ public abstract class AbstractEnergySeer<T extends AbstractEnergySeer.EnergySeer
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
                     onEnd(wp, data);
+                },
+                cooldownManager -> {
+                    onEndForce(wp, data);
                 },
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
@@ -219,6 +222,10 @@ public abstract class AbstractEnergySeer<T extends AbstractEnergySeer.EnergySeer
                 return energyGainPerTick - epsDecrease / 20f;
             }
         });
+    }
+
+    protected void onEndForce(WarlordsEntity wp, T data) {
+
     }
 
     protected void onEnergyUsed(WarlordsEntity wp, WarlordsEnergyUseEvent.Post event, T cooldownObjet) {
