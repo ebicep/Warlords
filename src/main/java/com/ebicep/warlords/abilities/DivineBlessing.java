@@ -22,7 +22,6 @@ import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Particle;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -38,7 +37,6 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
     private final HealingValues healingValues = new HealingValues();
     private int hexTickDurationIncrease = 40;
     private int hexHealingBonus = 30;
-    private int lethalDamageHealing = 15;
     private int postHealthTickDelay = 40;
     private int tickDuration = 240;
 
@@ -51,35 +49,8 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
         super.init(builder);
         this.hexTickDurationIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hexTickDurationIncrease"), int.class);
         this.hexHealingBonus = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hexHealingBonus"), int.class);
-        this.lethalDamageHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("lethalDamageHealing"), int.class);
         this.postHealthTickDelay = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("postHealthTickDelay"), int.class);
         this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
-    }
-
-    @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Imbue yourself with Holy Energy, increasing ")
-                                               .text("MHEX", NamedTextColor.DARK_GREEN)
-                                               .text(" duration by ")
-                                               .durationTicks(hexTickDurationIncrease)
-                                               .text(" and causing Ray of Light to not consume ")
-                                               .text("MHEX", NamedTextColor.DARK_GREEN)
-                                               .text(" stacks.")
-                                               .emptyLine()
-                                               .text("Allies with max stacks of ")
-                                               .text("MHEX", NamedTextColor.DARK_GREEN)
-                                               .text(" receive ")
-                                               .percent(hexHealingBonus, NamedTextColor.GREEN)
-                                               .text(" more healing from all sources and heal for ")
-                                               .percent(lethalDamageHealing, NamedTextColor.GREEN)
-                                               .text(" of their maximum health when taking lethal damage for the first time. After ")
-                                               .durationTicks(postHealthTickDelay)
-                                               .text("seconds all allies restore ")
-                                               .heal(healingValues.divineBlessingPostHeal)
-                                               .text(" health. Lasts ")
-                                               .durationTicks(tickDuration)
-                                               .text(".")
-                                               .build();
     }
 
     @Override
@@ -123,10 +94,11 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
             if (ticksElapsed % 20 == 0 && ticksLeft != 0) {
                 PlayerFilter.playingGame(game)
                             .teammatesOfExcludingSelf(wp)
-                            .filter(teammate -> new CooldownFilter<>(teammate, RegularCooldown.class).filterCooldownFrom(wp)
-                                                                                                     .filterCooldownClass(MercifulHex.class)
-                                                                                                     .stream()
-                                                                                                     .count() >= maxStacks)
+                            .filter(teammate -> new CooldownFilter<>(teammate, RegularCooldown.class)
+                                    .filterCooldownFrom(wp)
+                                    .filterCooldownClass(MercifulHex.class)
+                                    .stream()
+                                    .count() >= maxStacks)
                             .forEach(teammate -> {
                                 teammate.getCooldownManager().removeCooldownByObject(data);
                                 teammate.getCooldownManager()
@@ -141,17 +113,6 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                                                 return newValue;
                                             }
 
-                                            @Override
-                                            public float modifyDamageAfterAllFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                                                if (teammate.getCurrentHealth() - currentDamageValue < 0 && !healedLethal.contains(teammate)) {
-                                                    healedLethal.add(teammate);
-                                                    float healAmount = teammate.getMaxHealth() * convertToPercent(lethalDamageHealing);
-                                                    teammate.addInstance(InstanceBuilder.healing().ability(DivineBlessing.this).source(wp).value(healAmount));
-                                                    teammate.playSound(teammate.getLocation(), Sound.ENTITY_ALLAY_ITEM_TAKEN, 2, 0.5f);
-                                                    stats.lethalDamgeHealed++;
-                                                }
-                                                return currentDamageValue;
-                                            }
                                         });
                             });
             }
@@ -190,19 +151,6 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                 return new CooldownFilter<>(wp, RegularCooldown.class).filterCooldownFrom(wp).filterCooldownClass(MercifulHex.class).stream().count() >= maxStacks;
             }
 
-            @Override
-            public float modifyDamageAfterAllFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (hasMaxStacks()) {
-                    if (wp.getCurrentHealth() - currentDamageValue < 0 && !healedLethal.contains(wp)) {
-                        healedLethal.add(wp);
-                        float healAmount = wp.getMaxHealth() * convertToPercent(lethalDamageHealing);
-                        wp.addInstance(InstanceBuilder.healing().ability(DivineBlessing.this).source(wp).value(healAmount));
-                        wp.playSound(wp.getLocation(), Sound.ENTITY_ALLAY_ITEM_TAKEN, 2, 0.5f);
-                        stats.lethalDamgeHealed++;
-                    }
-                }
-                return currentDamageValue;
-            }
         });
         PlayerFilter.playingGame(game).teammatesOf(wp).forEach(enemy -> {
             new CooldownFilter<>(enemy, RegularCooldown.class).filterCooldownClass(MercifulHex.class).filterCooldownFrom(wp).forEach(cd -> {
@@ -228,17 +176,42 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
         return true;
     }
 
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder
+                .create("Imbue yourself with Holy Energy, increasing ")
+                .text("MHEX", NamedTextColor.DARK_GREEN)
+                .text(" duration by ")
+                .durationTicks(hexTickDurationIncrease)
+                .text(" and causing Ray of Light to not consume ")
+                .text("MHEX", NamedTextColor.DARK_GREEN)
+                .text(" stacks.")
+                .emptyLine()
+                .text("Allies with max stacks of ")
+                .text("MHEX", NamedTextColor.DARK_GREEN)
+                .text(" receive ")
+                .percent(hexHealingBonus, NamedTextColor.GREEN)
+                .text(" more healing from all sources. After ")
+                .durationTicks(postHealthTickDelay)
+                .text("seconds all allies restore ")
+                .heal(healingValues.divineBlessingPostHeal)
+                .text(" health. Lasts ")
+                .durationTicks(tickDuration)
+                .text(".")
+                .build();
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new DivineBlessingBranch(abilityTree, this);
+    }
+
     private void healAllies(@Nonnull WarlordsEntity wp) {
         PlayerFilter.playingGame(wp.getGame()).teammatesOf(wp).forEach(teammate -> {
             teammate.playSound(teammate.getLocation(), "shaman.earthlivingweapon.impact", 1, 0.55f);
             teammate.playSound(teammate.getLocation(), "arcanist.divineblessing.impact", 0.2f, 1.75f);
             teammate.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(healingValues.divineBlessingPostHeal));
         });
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new DivineBlessingBranch(abilityTree, this);
     }
 
     @Override
@@ -261,12 +234,12 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
         return stats;
     }
 
-    public int getLethalDamageHealing() {
-        return lethalDamageHealing;
+    public int getHexHealingBonus() {
+        return hexHealingBonus;
     }
 
-    public void setLethalDamageHealing(int lethalDamageHealing) {
-        this.lethalDamageHealing = lethalDamageHealing;
+    public void setHexHealingBonus(int hexHealingBonus) {
+        this.hexHealingBonus = hexHealingBonus;
     }
 
     public static class HealingValues implements Value.ValueHolder {

@@ -25,11 +25,11 @@ public class DivineBlessingBranch extends AbstractUpgradeBranch<DivineBlessing> 
                 "Graceful Ascent",
                 "Divine Blessing - Master Upgrade",
                 """
-                        Lethal damage healing increased to 30%. All allies restore another 800 health after Divine Blessing ends.
+                        Healing from all sources bonus increased by 10%. All allies restore another 800 health after Divine Blessing ends.
                         """,
                 50000,
                 () -> {
-                    ability.setLethalDamageHealing(ability.getLethalDamageHealing() + 30);
+                    ability.setHexHealingBonus(ability.getHexHealingBonus() + 10);
                 }
         );
         masterUpgrade2 = new Upgrade(
