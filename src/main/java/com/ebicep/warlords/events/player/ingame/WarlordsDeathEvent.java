@@ -44,6 +44,7 @@ public class WarlordsDeathEvent extends AbstractWarlordsEntityEvent implements C
 
     @Override
     public void setCancelled(boolean cancel) {
+//        ChatUtils.MessageType.WARLORDS.sendErrorMessage(new Throwable("cancelDeath"));
         this.cancelled = cancel;
     }
 
@@ -52,6 +53,7 @@ public class WarlordsDeathEvent extends AbstractWarlordsEntityEvent implements C
     }
 
     public void setForceCancel(boolean forceCancel) {
+//        ChatUtils.MessageType.WARLORDS.sendErrorMessage(new Throwable("forceCancelDeath"));
         this.forceCancel = forceCancel;
     }
 
