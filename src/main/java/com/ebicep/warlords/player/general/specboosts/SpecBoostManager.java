@@ -93,6 +93,7 @@ public class SpecBoostManager {
     public static final SpecBoost<Trickster> TRICKSTER = new Trickster();
     public static final SpecBoost<TyphoonBolt> TYPHOON_BOLT = new TyphoonBolt();
     public static final SpecBoost<UndyingSteed> UNDYING_STEED = new UndyingSteed();
+    public static final SpecBoost<UnmercifulHex> UNMERCIFUL_HEX = new UnmercifulHex();
     public static final SpecBoost<UnstoppableSurge> UNSTOPPABLE_SURGE = new UnstoppableSurge();
     public static final SpecBoost<VibrantOrbs> VIBRANT_ORBS = new VibrantOrbs();
     public static final SpecBoost<VigorousInfusion> VIGOROUS_INFUSION = new VigorousInfusion();
@@ -120,6 +121,7 @@ public class SpecBoostManager {
         SPEC_BOOSTS.put(Specializations.VINDICATOR, List.of(ABYSSAL_GRASP, VITAL_PULSE, SANCTION_BURST, RIGHTEOUS_RAMPAGE, SWIFT_JUSTICE));
         SPEC_BOOSTS.put(Specializations.APOTHECARY, List.of(AURA_OF_RESTORATION, ALCHEMISTS_FURY, SUSTAINED_ONSLAUGHT, DETONATION_CATALYST, SUPER_BREW));
         SPEC_BOOSTS.put(Specializations.CONJURER, List.of(SHARP_FANGS, STACKULATOR_MAX, HOUSE_OF_LIFE, CONTAGION, AIR_STRIKE));
+        SPEC_BOOSTS.put(Specializations.LUMINARY, List.of(RADIANT_LIGHT, UNMERCIFUL_HEX));
     }
 
     public static List<SpecBoost<?>> getSpecBoosts(Specializations specializations) {

@@ -111,6 +111,10 @@ public class RayOfLight extends AbstractBeam<RayOfLight, RayOfLight.RayOfLightSt
         }
     }
 
+    public void setRemoveDebuffs(boolean removeDebuffs) {
+        this.removeDebuffs = removeDebuffs;
+    }
+
     private void beamPlayer(@Nonnull WarlordsEntity hit, WarlordsEntity wp) {
         int hexStacks = (int) new CooldownFilter<>(hit, RegularCooldown.class).filterCooldownClass(MercifulHex.class).stream().count();
         boolean hasDivineBlessing = wp.getCooldownManager().hasCooldown(DivineBlessing.DivineBlessingData.class);

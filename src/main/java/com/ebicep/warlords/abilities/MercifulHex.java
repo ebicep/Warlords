@@ -50,6 +50,7 @@ public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, Mercifu
     private final HealingValues healingValues = new HealingValues();
     private int hexStacksPerHit = 1;
     private int maxAlliesHit = 2;
+    private int maxEnemiesHit = 1;
     private int ticksBetweenDot = 40;
     private int maxStacks = 3;
     private int tickDuration = 60;
@@ -99,6 +100,7 @@ public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, Mercifu
         super.init(builder);
         this.hexStacksPerHit = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hexStacksPerHit"), int.class);
         this.maxAlliesHit = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxAlliesHit"), int.class);
+        this.maxEnemiesHit = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxEnemiesHit"), int.class);
         this.ticksBetweenDot = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("ticksBetweenDot"), int.class);
         this.maxStacks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxStacks"), int.class);
         this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
@@ -258,7 +260,7 @@ public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, Mercifu
             }
         } else {
             int enemiesHit = (int) hits.stream().filter(we -> we.isEnemy(wp)).count();
-            if (enemiesHit != 1) {
+            if (enemiesHit > maxEnemiesHit) {
                 return false;
             }
             hit.addInstance(InstanceBuilder
@@ -275,6 +277,13 @@ public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, Mercifu
         return true;
     }
 
+    public void setMaxAlliesHit(int maxAlliesHit) {
+        this.maxAlliesHit = maxAlliesHit;
+    }
+
+    public void setMaxEnemiesHit(int maxEnemiesHit) {
+        this.maxEnemiesHit = maxEnemiesHit;
+    }
 
     @Override
     protected void onSpawn(@Nonnull InternalProjectile projectile) {
