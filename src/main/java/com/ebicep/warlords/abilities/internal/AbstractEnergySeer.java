@@ -35,11 +35,11 @@ public abstract class AbstractEnergySeer<T extends AbstractEnergySeer.EnergySeer
 
     private final HealingValues healingValues = new HealingValues();
     private final AbstractEnergySeerStats stats = new AbstractEnergySeerStats();
-    private int tickDuration = 100;
-    private int postEffectTickDuration = 100;
-    private int energyRestore = 130;
-    private int epsDecrease = 10;
-    private int speedBuff = 30;
+    protected int tickDuration = 100;
+    protected int postEffectTickDuration = 100;
+    protected int energyRestore = 130;
+    protected int epsDecrease = 10;
+    protected int speedBuff = 30;
 
     public AbstractEnergySeer(AbstractAbilityBuilder builder) {
         super(builder);
@@ -53,44 +53,6 @@ public abstract class AbstractEnergySeer<T extends AbstractEnergySeer.EnergySeer
         this.energyRestore = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("energyRestore"), int.class);
         this.epsDecrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("epsDecrease"), int.class);
         this.speedBuff = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("speedBuff"), int.class);
-    }
-
-    @Override
-    public void updateDescription(Player player) {
-        if (inPve) {
-            description = AbilityDescriptionBuilder
-                    .create(getBonus())
-                    .text(", gain ")
-                    .energy(energyRestore)
-                    .text(" and heal for ")
-                    .heal(healingValues.seerHealingMultiplier, aFloat -> aFloat * 100)
-                    .text(" of the energy expended for the next ")
-                    .durationTicks(tickDuration)
-                    .text(". When Energy Seer ends, lose ")
-                    .energy(epsDecrease)
-                    .text(" per second and gain")
-                    .percent(speedBuff, NamedTextColor.WHITE)
-                    .text(" speed for ")
-                    .durationTicks(postEffectTickDuration)
-                    .text(".")
-                    .build();
-        } else {
-            description = AbilityDescriptionBuilder
-                    .create("Gain ")
-                    .energy(energyRestore)
-                    .text(" and heal for ")
-                    .heal(healingValues.seerHealingMultiplier, aFloat -> aFloat * 100)
-                    .text(" of the energy expended for the next ")
-                    .durationTicks(tickDuration)
-                    .text(". When Energy Seer ends, lose ")
-                    .energy(epsDecrease)
-                    .text(" per second and gain")
-                    .percent(speedBuff, NamedTextColor.YELLOW)
-                    .text(" speed for ")
-                    .durationTicks(postEffectTickDuration)
-                    .text(".")
-                    .build();
-        }
     }
 
     @Override
@@ -193,6 +155,32 @@ public abstract class AbstractEnergySeer<T extends AbstractEnergySeer.EnergySeer
         return true;
     }
 
+    @Override
+    public void updateDescription(Player player) {
+        AbilityDescriptionBuilder builder = AbilityDescriptionBuilder.create("");
+        if (inPve) {
+            builder.append(getBonus()).text(", gain ");
+        } else {
+            builder.text("Gain ");
+        }
+        description = builder
+                .energy(energyRestore)
+                .text(" and heal for ")
+                .heal(healingValues.seerHealingMultiplier, aFloat -> aFloat * 100)
+                .text(" of the energy expended for the next ")
+                .durationTicks(tickDuration)
+                .text(". When Energy Seer ends, lose ")
+                .energy(epsDecrease)
+                .text(" per second and gain")
+                .percent(speedBuff, NamedTextColor.YELLOW)
+                .text(" speed for ")
+                .durationTicks(postEffectTickDuration)
+                .text(".")
+                .build();
+    }
+
+    public abstract TextComponent getBonus();
+
     public abstract T getDataObject();
 
     public abstract Class<T> getDataClass();
@@ -235,8 +223,6 @@ public abstract class AbstractEnergySeer<T extends AbstractEnergySeer.EnergySeer
 
     protected void onEnergyUsed(WarlordsEntity wp, WarlordsEnergyUseEvent.Post event, T cooldownObjet) {
     }
-
-    public abstract TextComponent getBonus();
 
     @Override
     public int getTickDuration() {

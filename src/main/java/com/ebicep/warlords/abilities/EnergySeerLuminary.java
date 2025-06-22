@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractEnergySeer;
 import com.ebicep.warlords.abilities.internal.Heals;
@@ -15,10 +16,12 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Particle;
+import org.bukkit.entity.Player;
 
 public class EnergySeerLuminary extends AbstractEnergySeer<AbstractEnergySeer.EnergySeerData> implements PurpleAbilityIcon, Heals<EnergySeerLuminary.HealingValues> {
 
     private int healingIncrease = 20;
+    private int hexPierceIncrease;
 
     public EnergySeerLuminary() {
         super(AbstractAbilityBuilder.create("energySeerLuminary").pvp());
@@ -28,6 +31,31 @@ public class EnergySeerLuminary extends AbstractEnergySeer<AbstractEnergySeer.En
     public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.healingIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("healingIncrease"), int.class);
+        this.hexPierceIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hexPierceIncrease"), int.class);
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        AbilityDescriptionBuilder builder = AbilityDescriptionBuilder.create("");
+        if (inPve) {
+            builder.append(getBonus()).text(", gain ");
+        } else {
+            builder.text("Gain ");
+        }
+        description = builder
+                .energy(energyRestore)
+                .text(" and add ")
+                .text(hexPierceIncrease, NamedTextColor.BLUE)
+                .text(" pierce to Merciful Hex. For ")
+                .durationTicks(tickDuration)
+                .text(". When Energy Seer ends, lose ")
+                .energy(epsDecrease)
+                .text(" per second and gain")
+                .percent(speedBuff, NamedTextColor.YELLOW)
+                .text(" speed for ")
+                .durationTicks(postEffectTickDuration)
+                .text(".")
+                .build();
     }
 
     @Override
