@@ -1,8 +1,6 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
 import com.ebicep.warlords.abilities.ContagiousFacade;
-import com.ebicep.warlords.abilities.PoisonousHex;
-import com.ebicep.warlords.abilities.SoulfireBeam;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 
@@ -12,13 +10,11 @@ public class Contagion implements SpecBoostManager.SpecBoost<Contagion> {
 
     private int ephIncrease;
     private float facadeResistanceIncreasePercent;
-    private float rangedAbilityRangeReductionBlocks;
 
     @Override
     public void init() {
         this.ephIncrease = getValue("ephIncrease", int.class);
         this.facadeResistanceIncreasePercent = getValue("facadeResistanceIncreasePercent", float.class);
-        this.rangedAbilityRangeReductionBlocks = getValue("rangedAbilityRangeReductionBlocks", float.class);
     }
 
     @Override
@@ -28,7 +24,7 @@ public class Contagion implements SpecBoostManager.SpecBoost<Contagion> {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(ephIncrease, facadeResistanceIncreasePercent, rangedAbilityRangeReductionBlocks);
+        return List.of(ephIncrease, facadeResistanceIncreasePercent);
     }
 
     @Override
@@ -49,12 +45,6 @@ public class Contagion implements SpecBoostManager.SpecBoost<Contagion> {
             warlordsPlayer.getAbilitiesMatching(ContagiousFacade.class).forEach(contagiousFacade -> {
                 contagiousFacade.getDamageAbsorption().addAdditiveModifier("Spec Boost", facadeResistanceIncreasePercent);
                 contagiousFacade.setReactivateAbility(false);
-            });
-            warlordsPlayer.getAbilitiesMatching(PoisonousHex.class).forEach(poisonousHex -> {
-                poisonousHex.getMaxDistance().addAdditiveModifier("Spec Boost", -rangedAbilityRangeReductionBlocks);
-            });
-            warlordsPlayer.getAbilitiesMatching(SoulfireBeam.class).forEach(soulfireBeam -> {
-                soulfireBeam.getMaxDistance().addAdditiveModifier("Spec Boost", -rangedAbilityRangeReductionBlocks);
             });
         }
 
