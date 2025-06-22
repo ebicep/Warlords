@@ -203,7 +203,7 @@ public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, Mercifu
                 .text(hexStacksPerHit, NamedTextColor.BLUE)
                 .text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of ")
                 .text("MHEX", NamedTextColor.DARK_GREEN)
-                .text("; the first ally hit after receieve ")
+                .text("; the first ally hit after receives ")
                 .text(hexStacksPerHit, NamedTextColor.BLUE)
                 .text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of ")
                 .text("MHEX", NamedTextColor.DARK_GREEN)

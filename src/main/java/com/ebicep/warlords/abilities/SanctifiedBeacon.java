@@ -233,6 +233,14 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
         this.damageReductionPve = damageReductionPve;
     }
 
+    public int getStacksGranted() {
+        return stacksGranted;
+    }
+
+    public void setStacksGranted(int stacksGranted) {
+        this.stacksGranted = stacksGranted;
+    }
+
     public static class SanctifiedBeaconData extends AbstractBeaconAbility.BeaconData {
 
         private final ArmorStand crystal;
