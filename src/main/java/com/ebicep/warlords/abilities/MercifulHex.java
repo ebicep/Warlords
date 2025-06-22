@@ -12,6 +12,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.pve.mobs.player.TestDummy;
 import com.ebicep.warlords.pve.mobs.tiers.PlayerMob;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
@@ -189,7 +190,8 @@ public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, Mercifu
             WarlordsEntity shooter,
             WarlordsEntity wp
     ) {
-        return super.nonCollisionCheck(projectile, currentLocation, speed, shooter, wp) || (wp instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof PlayerMob);
+        return super.nonCollisionCheck(projectile, currentLocation, speed, shooter, wp) ||
+                (wp instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof PlayerMob && !(warlordsNPC.getMob() instanceof TestDummy));
     }
 
     @Override
