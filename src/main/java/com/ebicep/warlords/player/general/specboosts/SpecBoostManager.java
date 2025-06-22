@@ -48,6 +48,7 @@ public class SpecBoostManager {
     public static final SpecBoost<EcoDrive> ECO_DRIVE = new EcoDrive();
     public static final SpecBoost<EfficientStrikes> EFFICIENT_STRIKES = new EfficientStrikes();
     public static final SpecBoost<ElectromagneticChains> ELECTROMAGNETIC_CHAINS = new ElectromagneticChains();
+    public static final SpecBoost<EnergyOversurge> ENERGY_OVERSURGE = new EnergyOversurge();
     public static final SpecBoost<EyeOfTheStorm> EYE_OF_THE_STORM = new EyeOfTheStorm();
     public static final SpecBoost<FarmerBrown> FARMER_BROWN = new FarmerBrown();
     public static final SpecBoost<FerventForce> FERVENT_FORCE = new FerventForce();
@@ -122,7 +123,7 @@ public class SpecBoostManager {
         SPEC_BOOSTS.put(Specializations.VINDICATOR, List.of(ABYSSAL_GRASP, VITAL_PULSE, SANCTION_BURST, RIGHTEOUS_RAMPAGE, SWIFT_JUSTICE));
         SPEC_BOOSTS.put(Specializations.APOTHECARY, List.of(AURA_OF_RESTORATION, ALCHEMISTS_FURY, SUSTAINED_ONSLAUGHT, DETONATION_CATALYST, SUPER_BREW));
         SPEC_BOOSTS.put(Specializations.CONJURER, List.of(SHARP_FANGS, STACKULATOR_MAX, HOUSE_OF_LIFE, CONTAGION, AIR_STRIKE));
-        SPEC_BOOSTS.put(Specializations.LUMINARY, List.of(RADIANT_LIGHT, UNMERCIFUL_HEX, CONSECRATED_BEACON));
+        SPEC_BOOSTS.put(Specializations.LUMINARY, List.of(RADIANT_LIGHT, UNMERCIFUL_HEX, ENERGY_OVERSURGE, CONSECRATED_BEACON));
     }
 
     public static List<SpecBoost<?>> getSpecBoosts(Specializations specializations) {
