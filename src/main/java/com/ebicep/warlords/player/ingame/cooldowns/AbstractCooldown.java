@@ -211,6 +211,13 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
         extraDamageInstances.add(extraDamageInstance);
     }
 
+    public void addExtraHealingInstance(HealingInstance extraHealingInstance) {
+        if (extraHealingInstances == null) {
+            extraHealingInstances = new ArrayList<>();
+        }
+        extraHealingInstances.add(extraHealingInstance);
+    }
+
     public Listener getActiveListener() {
         return activeListener;
     }

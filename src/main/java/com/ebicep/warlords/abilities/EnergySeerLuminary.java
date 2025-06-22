@@ -40,6 +40,7 @@ public class EnergySeerLuminary extends AbstractEnergySeer<AbstractEnergySeer.En
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         wp.getAbilitiesMatching(MercifulHex.class).forEach(mercifulHex -> {
             mercifulHex.setMaxAlliesHit(mercifulHex.getMaxAlliesHit() + hexPierceIncrease);
+            mercifulHex.queueUpdateItem();
         });
         return super.onActivateInternal(wp);
     }
@@ -98,6 +99,7 @@ public class EnergySeerLuminary extends AbstractEnergySeer<AbstractEnergySeer.En
     protected void onEndForce(WarlordsEntity wp, EnergySeerData data) {
         wp.getAbilitiesMatching(MercifulHex.class).forEach(mercifulHex -> {
             mercifulHex.setMaxAlliesHit(mercifulHex.getMaxAlliesHit() - hexPierceIncrease);
+            mercifulHex.queueUpdateItem();
         });
     }
 

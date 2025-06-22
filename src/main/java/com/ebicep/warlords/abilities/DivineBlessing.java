@@ -29,7 +29,10 @@ import org.bukkit.event.Listener;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon, Duration, Heals<DivineBlessing.HealingValues>, AbilityStats<DivineBlessing, DivineBlessing.DivineBlessingStats> {
 
@@ -72,51 +75,63 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                 }
             }
         }.runTaskTimer(0, 1);
-        DivineBlessingData data = new DivineBlessingData();
+        DivineBlessingData data = new DivineBlessingData(this);
         int maxStacks = MercifulHex.getFromHex(wp).getMaxStacks();
-        Set<WarlordsEntity> healedLethal = new HashSet<>();
         List<FloatModifiable.FloatModifier> modifiers;
         if (pveMasterUpgrade2) {
             modifiers = wp.getAbilitiesMatching(RayOfLight.class).stream().map(ability -> ability.getCooldown().addMultiplicativeModifierMult(name + " Master", 0.55f)).toList();
         } else {
             modifiers = Collections.emptyList();
         }
-        wp.getCooldownManager().addCooldown(new RegularCooldown<DivineBlessingData>(name, "BLESS", DivineBlessingData.class, data, wp, CooldownTypes.ABILITY, cooldownManager -> {
-        }, cooldownManager -> {
-            if (pveMasterUpgrade) {
-                healAllies(wp);
-            }
-            modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
-        }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-            if (ticksElapsed % 10 == 0) {
-                EffectUtils.displayParticle(Particle.CRIMSON_SPORE, wp.getLocation(), 10, 0.1, 0.1, 0.1, 0.5);
-            }
-            if (ticksElapsed % 20 == 0 && ticksLeft != 0) {
-                PlayerFilter.playingGame(game)
-                            .teammatesOfExcludingSelf(wp)
-                            .filter(teammate -> new CooldownFilter<>(teammate, RegularCooldown.class)
-                                    .filterCooldownFrom(wp)
-                                    .filterCooldownClass(MercifulHex.class)
-                                    .stream()
-                                    .count() >= maxStacks)
-                            .forEach(teammate -> {
-                                teammate.getCooldownManager().removeCooldownByObject(data);
-                                teammate.getCooldownManager()
-                                        .addCooldown(new RegularCooldown<>(name, null, DivineBlessingData.class, data, wp, CooldownTypes.ABILITY, cooldownManager -> {
-                                        }, 21
-                                        ) {
+        wp.getCooldownManager().addCooldown(new RegularCooldown<DivineBlessingData>(
+                name,
+                "BLESS",
+                DivineBlessingData.class,
+                data,
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                },
+                cooldownManager -> {
+                    if (pveMasterUpgrade) {
+                        healAllies(wp);
+                    }
+                    modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
+                },
+                tickDuration,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed == postHealthTickDelay) {
+                        healAllies(wp);
+                    }
+                    if (ticksElapsed % 10 == 0) {
+                        EffectUtils.displayParticle(Particle.CRIMSON_SPORE, wp.getLocation(), 10, 0.1, 0.1, 0.1, 0.5);
+                    }
+                    if (ticksElapsed % 20 == 0 && ticksLeft != 0) {
+                        PlayerFilter.playingGame(game)
+                                    .teammatesOfExcludingSelf(wp)
+                                    .filter(teammate -> new CooldownFilter<>(teammate, RegularCooldown.class)
+                                            .filterCooldownFrom(wp)
+                                            .filterCooldownClass(MercifulHex.class)
+                                            .stream()
+                                            .count() >= maxStacks)
+                                    .forEach(teammate -> {
+                                        teammate.getCooldownManager().removeCooldownByObject(data);
+                                        teammate.getCooldownManager()
+                                                .addCooldown(new RegularCooldown<>(name, null, DivineBlessingData.class, data, wp, CooldownTypes.ABILITY, cooldownManager -> {
+                                                }, 21
+                                                ) {
 
-                                            @Override
-                                            public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-                                                float newValue = currentHealValue * convertToMultiplicationDecimal(hexHealingBonus);
-                                                stats.healingIncreased += newValue - currentHealValue;
-                                                return newValue;
-                                            }
+                                                    @Override
+                                                    public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
+                                                        float newValue = currentHealValue * convertToMultiplicationDecimal(hexHealingBonus);
+                                                        stats.healingIncreased += newValue - currentHealValue;
+                                                        return newValue;
+                                                    }
 
-                                        });
-                            });
-            }
-        })
+                                                });
+                                    });
+                    }
+                })
         ) {
 
             @Override
@@ -158,13 +173,6 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                 stats.hexesProlonged++;
             });
         });
-        new GameRunnable(game) {
-
-            @Override
-            public void run() {
-                healAllies(wp);
-            }
-        }.runTaskLater(postHealthTickDelay);
         if (pveMasterUpgrade2) {
             PlayerFilter.entitiesAround(wp, 10, 10, 10).aliveTeammatesOf(wp).forEach(warlordsEntity -> {
                 new CooldownFilter<>(warlordsEntity, RegularCooldown.class).filterCooldownClass(MercifulHex.class).forEach(regularCooldown -> {
@@ -264,7 +272,22 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
 
     }
 
+    public int getPostHealthTickDelay() {
+        return postHealthTickDelay;
+    }
+
     public static class DivineBlessingData {
+
+        private DivineBlessing divineBlessing;
+
+        public DivineBlessingData(DivineBlessing divineBlessing) {
+            this.divineBlessing = divineBlessing;
+        }
+
+        public DivineBlessing getDivineBlessing() {
+            return divineBlessing;
+        }
+
     }
 
     public static class DivineBlessingStats extends AbstractAbilityStats<DivineBlessing, DivineBlessingStats> {
