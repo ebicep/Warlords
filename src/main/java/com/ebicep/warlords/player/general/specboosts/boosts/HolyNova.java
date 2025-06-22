@@ -39,10 +39,10 @@ public class HolyNova implements SpecBoostManager.SpecBoost<HolyNova> {
     @Override
     public List<Object> getVariables() {
         return List.of(
+                divineBlessingFarRangeBlocks,
                 divineBlessingHealingIncreasePercentFar,
                 divineBlessingDamageToEnemies,
-                divineBlessingCooldownIncreasePercent,
-                divineBlessingFarRangeBlocks
+                divineBlessingCooldownIncreasePercent
         );
     }
 
