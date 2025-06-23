@@ -78,14 +78,15 @@ public class HolyRadianceCrusader extends AbstractHolyRadiance implements Heals<
                     wp,
                     CooldownTypes.BUFF,
                     cooldownManager -> {
-                    }, cooldownManager -> {
-                if (pveMasterUpgrade2) {
-                    modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
-                }
-            },
+                    },
+                    cooldownManager -> {
+                        if (pveMasterUpgrade2) {
+                            modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
+                        }
+                    },
                     markDuration * 20,
                     Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                        if (ticksElapsed % 10 == 0) {
+                        if (ticksElapsed % 12 == 0) {
                             Location playerLoc = markTarget.getLocation();
                             Location particleLoc = playerLoc.clone();
                             for (int i = 0; i < 4; i++) {
@@ -121,21 +122,22 @@ public class HolyRadianceCrusader extends AbstractHolyRadiance implements Heals<
 
     @Override
     public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Radiate with holy energy, healing yourself and all nearby allies for ")
-                                               .heal(healingValues.radianceHealing)
-                                               .text(" health.")
-                                               .emptyLine()
-                                               .text("You may look at an ally to grant them with ")
-                                               .text("MARK", NamedTextColor.DARK_GREEN)
-                                               .text(" for ")
-                                               .durationSeconds(markDuration)
-                                               .text(", granting them ")
-                                               .energy(energyPerSecond)
-                                               .text(" per second and ")
-                                               .percent(markSpeed, NamedTextColor.WHITE)
-                                               .text(" extra speed.")
-                                               .maxRange(markRadius)
-                                               .build();
+        description = AbilityDescriptionBuilder
+                .create("Radiate with holy energy, healing yourself and all nearby allies for ")
+                .heal(healingValues.radianceHealing)
+                .text(" health.")
+                .emptyLine()
+                .text("You may look at an ally to grant them with ")
+                .text("MARK", NamedTextColor.DARK_GREEN)
+                .text(" for ")
+                .durationSeconds(markDuration)
+                .text(", granting them ")
+                .energy(energyPerSecond)
+                .text(" per second and ")
+                .percent(markSpeed, NamedTextColor.WHITE)
+                .text(" extra speed.")
+                .maxRange(markRadius)
+                .build();
     }
 
     @Override

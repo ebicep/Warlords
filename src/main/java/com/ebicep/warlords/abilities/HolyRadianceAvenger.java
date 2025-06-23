@@ -72,39 +72,65 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance implements Heals<H
         return false;
     }
 
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder
+                .create("Radiate with holy energy, healing yourself and all nearby allies for ")
+                .heal(healingValues.radianceHealing)
+                .text(" health.")
+                .emptyLine()
+                .text("You may look at an enemy to inflict them with ")
+                .text("MARK", NamedTextColor.DARK_RED)
+                .text(" for ")
+                .durationSeconds(markDuration)
+                .text(", causing them to lose ")
+                .energy(energyDrainPerSecond)
+                .text(" per second.")
+                .maxRange(markRadius)
+                .build();
+    }
+
     private void aoeMark(WarlordsEntity giver, WarlordsEntity target) {
         RadianceData radianceData = new RadianceData();
         target.getCooldownManager().removeCooldownByName("Strike Priority");
         AbstractStrike.giveStrikePriority(giver, target, markDuration * 20);
         target.getCooldownManager().removeCooldown(RadianceData.class, false);
-        target.getCooldownManager()
-              .addCooldown(new RegularCooldown<>("Avenger's Mark", "AVE MARK", RadianceData.class, radianceData, giver, CooldownTypes.LOW_LEVEL_DEBUFF, cooldownManager -> {
-              }, markDuration * 20, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                  if (ticksElapsed % 10 == 0) {
-                      EffectUtils.playCylinderAnimation(target.getLocation(), 1, 250, 25, 25);
-                  }
-              })
-              ) {
+        target.getCooldownManager().addCooldown(new RegularCooldown<>(
+                "Avenger's Mark",
+                "AVE MARK",
+                RadianceData.class,
+                radianceData,
+                giver,
+                CooldownTypes.LOW_LEVEL_DEBUFF,
+                cooldownManager -> {
+                },
+                markDuration * 20,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed % 12 == 0) {
+                        EffectUtils.playCylinderAnimation(target.getLocation(), 1, 250, 25, 25);
+                    }
+                })
+        ) {
 
-                  @Override
-                  public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                      if (pveMasterUpgrade && event.getCause().equals("Avenger's Strike")) {
-                          return currentDamageValue * 1.4f;
-                      }
-                      if (pveMasterUpgrade2) {
-                          return currentDamageValue * 1.2f;
-                      }
-                      return currentDamageValue;
-                  }
+            @Override
+            public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                if (pveMasterUpgrade && event.getCause().equals("Avenger's Strike")) {
+                    return currentDamageValue * 1.4f;
+                }
+                if (pveMasterUpgrade2) {
+                    return currentDamageValue * 1.2f;
+                }
+                return currentDamageValue;
+            }
 
-                  @Override
-                  public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                      if (pveMasterUpgrade) {
-                          return currentDamageValue * .9f;
-                      }
-                      return currentDamageValue;
-                  }
-              });
+            @Override
+            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                if (pveMasterUpgrade) {
+                    return currentDamageValue * .9f;
+                }
+                return currentDamageValue;
+            }
+        });
     }
 
     private void mark(WarlordsEntity wp, WarlordsEntity markTarget) {
@@ -127,7 +153,7 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance implements Heals<H
                 },
                 markDuration * 20,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    if (ticksElapsed % 10 == 0) {
+                    if (ticksElapsed % 12 == 0) {
                         EffectUtils.playCylinderAnimation(markTarget.getLocation(), 1, 250, 25, 25);
                     }
                 })
@@ -138,23 +164,6 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance implements Heals<H
                 return energyGainPerTick - energyDrainPerSecond / 20f;
             }
         });
-    }
-
-    @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Radiate with holy energy, healing yourself and all nearby allies for ")
-                                               .heal(healingValues.radianceHealing)
-                                               .text(" health.")
-                                               .emptyLine()
-                                               .text("You may look at an enemy to inflict them with ")
-                                               .text("MARK", NamedTextColor.DARK_RED)
-                                               .text(" for ")
-                                               .durationSeconds(markDuration)
-                                               .text(", causing them to lose ")
-                                               .energy(energyDrainPerSecond)
-                                               .text(" per second.")
-                                               .maxRange(markRadius)
-                                               .build();
     }
 
     @Override

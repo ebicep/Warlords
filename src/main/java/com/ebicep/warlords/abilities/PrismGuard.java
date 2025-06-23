@@ -151,7 +151,7 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                     if (ticksElapsed < 5) {
                         return;
                     }
-                    if (ticksElapsed % 5 == 0) {
+                    if (ticksElapsed % 8 == 0) {
                         playSphereAnimation(wp.getLocation(), bubbleRadius, 120, 120, 220);
                         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_CREEPER_DEATH, 2, 2);
                     }

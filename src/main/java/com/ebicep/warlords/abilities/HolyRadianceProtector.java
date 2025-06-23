@@ -81,56 +81,65 @@ public class HolyRadianceProtector extends AbstractHolyRadiance implements Heals
         return false;
     }
 
-    private void emitMarkRadiance(WarlordsEntity giver, WarlordsEntity target) {
-        target.getCooldownManager()
-              .addCooldown(new RegularCooldown<>(name, "PROT MARK", HolyRadianceProtector.class, new HolyRadianceProtector(), giver, CooldownTypes.BUFF, cooldownManager -> {
-              }, markDuration * 20, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                  if (ticksElapsed % 10 == 0) {
-                      Location playerLoc = target.getLocation();
-                      Location particleLoc = playerLoc.clone();
-                      for (int i = 0; i < 4; i++) {
-                          for (int j = 0; j < 10; j++) {
-                              double angle = j / 9D * Math.PI * 2;
-                              double width = 1;
-                              particleLoc.setX(playerLoc.getX() + Math.sin(angle) * width);
-                              particleLoc.setY(playerLoc.getY() + i / 6D);
-                              particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
-                              EffectUtils.displayParticle(Particle.DUST, particleLoc, 1, new Particle.DustOptions(Color.fromRGB(0, 255, 70), 1));
-                          }
-                      }
-                  }
-                  if (pveMasterUpgrade2) {
-                      if (ticksElapsed % 20 == 0 && ticksElapsed != 0) {
-                          PlayerFilter.entitiesAround(target, 10, 10, 10).aliveTeammatesOf(giver).forEach(warlordsEntity -> {
-                              warlordsEntity.addInstance(InstanceBuilder.healing().ability(this).source(giver).value(healingValues.unrivalledRadianceHealing));
-                          });
-                      }
-                  }
-              })
-              ) {
-
-                  @Override
-                  public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-                      return currentHealValue * convertToMultiplicationDecimal(markBonusHealing);
-                  }
-              });
-    }
-
     @Override
     public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Radiate with holy energy, healing yourself and all nearby allies for ")
-                                               .heal(healingValues.radianceHealing)
-                                               .text(" health.")
-                                               .emptyLine()
-                                               .text("You may look at an ally to grant them with ")
-                                               .text("MARK", NamedTextColor.DARK_GREEN)
-                                               .text(" for ")
-                                               .durationSeconds(markDuration)
-                                               .text(". Marked allies receive ")
-                                               .percent(markBonusHealing, NamedTextColor.GREEN)
-                                               .text(" more healing from all sources.")
-                                               .maxRange(markRadius)
-                                               .build();
+        description = AbilityDescriptionBuilder
+                .create("Radiate with holy energy, healing yourself and all nearby allies for ")
+                .heal(healingValues.radianceHealing)
+                .text(" health.")
+                .emptyLine()
+                .text("You may look at an ally to grant them with ")
+                .text("MARK", NamedTextColor.DARK_GREEN)
+                .text(" for ")
+                .durationSeconds(markDuration)
+                .text(". Marked allies receive ")
+                .percent(markBonusHealing, NamedTextColor.GREEN)
+                .text(" more healing from all sources.")
+                .maxRange(markRadius)
+                .build();
+    }
+
+    private void emitMarkRadiance(WarlordsEntity giver, WarlordsEntity target) {
+        target.getCooldownManager().addCooldown(new RegularCooldown<>(
+                name,
+                "PROT MARK",
+                HolyRadianceProtector.class,
+                new HolyRadianceProtector(),
+                giver,
+                CooldownTypes.BUFF,
+                cooldownManager -> {
+                },
+                markDuration * 20,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed % 12 == 0) {
+                        Location playerLoc = target.getLocation();
+                        Location particleLoc = playerLoc.clone();
+                        for (int i = 0; i < 4; i++) {
+                            for (int j = 0; j < 10; j++) {
+                                double angle = j / 9D * Math.PI * 2;
+                                double width = 1;
+                                particleLoc.setX(playerLoc.getX() + Math.sin(angle) * width);
+                                particleLoc.setY(playerLoc.getY() + i / 6D);
+                                particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
+                                EffectUtils.displayParticle(Particle.DUST, particleLoc, 1, new Particle.DustOptions(Color.fromRGB(0, 255, 70), 1));
+                            }
+                        }
+                    }
+                    if (pveMasterUpgrade2) {
+                        if (ticksElapsed % 20 == 0 && ticksElapsed != 0) {
+                            PlayerFilter.entitiesAround(target, 10, 10, 10).aliveTeammatesOf(giver).forEach(warlordsEntity -> {
+                                warlordsEntity.addInstance(InstanceBuilder.healing().ability(this).source(giver).value(healingValues.unrivalledRadianceHealing));
+                            });
+                        }
+                    }
+                })
+        ) {
+
+            @Override
+            public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
+                return currentHealValue * convertToMultiplicationDecimal(markBonusHealing);
+            }
+        });
     }
 
     @Override

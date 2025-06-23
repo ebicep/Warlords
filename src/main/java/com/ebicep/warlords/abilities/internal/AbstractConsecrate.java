@@ -73,7 +73,7 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
                 false,
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    if ((inPve && ticksElapsed % 4 == 0) || (!inPve && ticksElapsed % 2 == 0)) {
+                    if ((inPve && ticksElapsed % 6 == 0) || (!inPve && ticksElapsed % 4 == 0)) {
                         circleEffect.playEffects();
                     }
                     if (ticksElapsed % 20 == 0) {

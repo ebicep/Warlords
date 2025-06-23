@@ -104,13 +104,15 @@ public class RiftAmbush implements SpecBoostManager.SpecBoost<RiftAmbush> {
                         if (ticksElapsed % 2 == 0) {
                             Location playerLocation = swappedPlayer.getLocation();
                             EffectUtils.playChainAnimation(playerLocation.clone().add(0, .5, 0), chainLocation, HeartToHeart.ITEM_STACK, 2);
-                            EffectUtils.playCylinderAnimation(swappedPlayerLocation, tetherRadius, Particle.INFESTED, 30, 3, 1);
                             if (playerLocation.distanceSquared(swappedPlayerLocation) >= radius) {
                                 LocationBuilder newLocation = new LocationBuilder(playerLocation)
                                         .faceTowards(swappedPlayerLocation)
                                         .forward(1);
                                 swappedPlayer.teleportLocationOnly(newLocation);
                             }
+                        }
+                        if (ticksElapsed % 7 == 0) {
+                            EffectUtils.playCylinderAnimation(swappedPlayerLocation, tetherRadius, Particle.INFESTED, 30, 3, 1);
                         }
                     })
             ));
