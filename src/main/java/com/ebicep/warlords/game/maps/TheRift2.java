@@ -29,7 +29,7 @@ public class TheRift2 extends GameMap {
 
     public TheRift2() {
         super(
-                "The Rift",
+                "The Rift 2",
                 32,
                 12,
                 60 * SECOND,
