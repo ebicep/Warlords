@@ -30,6 +30,12 @@ public class MasterworksFairTrait extends WarlordsTrait {
     }
 
     @Override
+    public void onAttach() {
+        updateHologram();
+    }
+
+
+    @Override
     public void run() {
         if (PAUSED.get()) {
             return;
@@ -69,7 +75,7 @@ public class MasterworksFairTrait extends WarlordsTrait {
                 resetFair(currentFair);
             }
         }
-        if (tickCounter % 100 == 0) {
+        if (tickCounter % 1200 == 0) {
             updateHologram();
         }
     }
@@ -91,19 +97,19 @@ public class MasterworksFairTrait extends WarlordsTrait {
 
     public void updateHologram() {
         HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
-        hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK");
+//        hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK");
         int fairNumber = currentFair == null ? 0 : currentFair.getFairNumber();
-        hologramTrait.setLine(1, ChatColor.GREEN + "The Masterworks Fair" + (fairNumber != 0 ? " #" + fairNumber : ""));
+        hologramTrait.setLine(0, ChatColor.GREEN + "The Masterworks Fair" + (fairNumber != 0 ? " #" + fairNumber : ""));
         if (currentFair == null) {
             if (startTime != null) {
-                hologramTrait.setLine(2, ChatColor.GOLD + "Starts in " + DateUtil.getTimeTill(startTime, true, true, true, true));
+                hologramTrait.setLine(1, ChatColor.GOLD + "Starts in " + DateUtil.getTimeTill(startTime, true, true, true, true));
             } else {
-                hologramTrait.setLine(2, ChatColor.RED + "Currently closed!");
+                hologramTrait.setLine(1, ChatColor.RED + "Currently closed!");
             }
             return;
         }
         Instant endDate = currentFair.getStartDate().plus(7, ChronoUnit.DAYS);
-        hologramTrait.setLine(2,
+        hologramTrait.setLine(1,
                 ChatColor.GOLD.toString() + ChatColor.BOLD + DateUtil.getTimeTill(endDate,
                         true,
                         true,
@@ -112,9 +118,9 @@ public class MasterworksFairTrait extends WarlordsTrait {
                 ) + ChatColor.BOLD + " left"
         );
         if (fairNumber != 0 && fairNumber % 5 == 0) {
-            hologramTrait.setLine(3, ChatColor.RED + "2x REWARDS!");
+            hologramTrait.setLine(2, ChatColor.RED + "2x REWARDS!");
         } else {
-            hologramTrait.setLine(3, "");
+            hologramTrait.setLine(2, "");
         }
     }
 

@@ -44,7 +44,7 @@ public class PvEStartTrait extends WarlordsTrait {
             hologramTrait.setLine(1, ChatColor.GRAY.toString() + playerCountInLobby + " in Lobby");
             if (init) {
                 hologramTrait.setLine(2, ChatColor.GOLD + ChatColor.BOLD.toString() + "Wave Defense");
-                hologramTrait.setLine(3, ChatColor.YELLOW + ChatColor.BOLD.toString() + "CLICK TO PLAY");
+//                hologramTrait.setLine(3, ChatColor.YELLOW + ChatColor.BOLD.toString() + "CLICK TO PLAY");
             }
         }
     }

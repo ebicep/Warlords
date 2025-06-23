@@ -43,7 +43,7 @@ public class SiegeTrait extends WarlordsTrait {
             hologramTrait.setLine(1, ChatColor.GRAY.toString() + playerCountInLobby + " in Lobby");
             if (init) {
                 hologramTrait.setLine(2, ChatColor.AQUA + ChatColor.BOLD.toString() + "Siege");
-                hologramTrait.setLine(3, ChatColor.YELLOW + ChatColor.BOLD.toString() + "CLICK TO PLAY");
+//                hologramTrait.setLine(3, ChatColor.YELLOW + ChatColor.BOLD.toString() + "CLICK TO PLAY");
             }
         }
     }

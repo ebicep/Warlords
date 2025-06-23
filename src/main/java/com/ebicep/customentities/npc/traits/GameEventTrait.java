@@ -15,7 +15,6 @@ import org.bukkit.entity.Player;
 
 public class GameEventTrait extends WarlordsTrait {
 
-
     private int ticks = 0;
     private long lastPlayerCount = 0;
     private long lastPlayerCountInLobby = 0;
@@ -31,7 +30,7 @@ public class GameEventTrait extends WarlordsTrait {
 
     @Override
     public void run() {
-        if (ticks++ % 20 != 0) {
+        if (ticks++ % 1200 != 0) {
             return;
         }
         updateHologram(false);
@@ -39,6 +38,9 @@ public class GameEventTrait extends WarlordsTrait {
 
     private void updateHologram(boolean init) {
         DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
+        if (!init && !currentGameEvent.isActive()) {
+            return;
+        }
         long playerCount = Warlords.getGameManager().getPlayerCount(GameMode.EVENT_WAVE_DEFENSE);
         long playerCountInLobby = Warlords.getGameManager().getPlayerCountInLobby(GameMode.EVENT_WAVE_DEFENSE);
         HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
@@ -49,7 +51,7 @@ public class GameEventTrait extends WarlordsTrait {
             hologramTrait.setLine(1, ChatColor.GRAY.toString() + playerCountInLobby + " in Lobby");
             if (init) {
                 hologramTrait.setLine(2, ChatColor.RED + currentGameEvent.getEvent().name);
-                hologramTrait.setLine(3, ChatColor.YELLOW + ChatColor.BOLD.toString() + "CLICK TO PLAY");
+//                hologramTrait.setLine(3, ChatColor.YELLOW + ChatColor.BOLD.toString() + "CLICK TO PLAY");
             }
         }
         String timeTill = DateUtil.getTimeTill(currentGameEvent.getEndDate(),
@@ -59,7 +61,7 @@ public class GameEventTrait extends WarlordsTrait {
                 true
         );
         if (timeTill.equals("0 seconds")) {
-            hologramTrait.setLine(4, ChatColor.GOLD.toString() + ChatColor.BOLD + "Ended!");
+            hologramTrait.setLine(3, ChatColor.GOLD.toString() + ChatColor.BOLD + "Ended!");
             if (!currentGameEvent.isGaveRewards()) {
                 if (Warlords.getGameManager().getPlayerCountInLobby(GameMode.EVENT_WAVE_DEFENSE) > 0) {
                     Warlords.getGameManager().getGames().stream()
@@ -81,7 +83,7 @@ public class GameEventTrait extends WarlordsTrait {
                         .execute();
             }
         } else {
-            hologramTrait.setLine(4, ChatColor.GOLD.toString() + ChatColor.BOLD + "Ends in " + timeTill);
+            hologramTrait.setLine(3, ChatColor.GOLD.toString() + ChatColor.BOLD + "Ends in " + timeTill);
         }
     }
 

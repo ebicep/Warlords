@@ -36,12 +36,12 @@ public class NPCManager {
                 .sync(() -> {
                     createCTFNPC();
                     createSiegeNPC();
-                    createTeamDeathmatchNPC();
-                    createInterceptionNPC();
+//                    createTeamDeathmatchNPC();
+//                    createInterceptionNPC();
                     createWaveDefenseNPC();
                     createOnslaughtNPC();
-                    createTreasureHuntNPC();
-                    createBossRushNPC();
+//                    createTreasureHuntNPC();
+//                    createBossRushNPC();
                 })
                 .execute();
 
@@ -191,8 +191,8 @@ public class NPCManager {
         NPC npc = NPC_REGISTRY.createNPC(EntityType.VILLAGER, "weapon-manager");
         npc.addTrait(WeaponMangerTrait.class);
         HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
-        hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK");
-        hologramTrait.setLine(1, ChatColor.GREEN + "The Weaponsmith");
+//        hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK");
+        hologramTrait.setLine(0, ChatColor.GREEN + "The Weaponsmith");
         LookClose lookClose = npc.getOrAddTrait(LookClose.class);
         lookClose.setPerPlayer(true);
         lookClose.toggle();
@@ -227,8 +227,8 @@ public class NPCManager {
         );
         npc.addTrait(BountyMenuTrait.class);
         HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
-        hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK");
-        hologramTrait.setLine(1, ChatColor.AQUA + "Bounty Hunter");
+//        hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK");
+        hologramTrait.setLine(0, ChatColor.AQUA + "Bounty Hunter");
         LookClose lookClose = npc.getOrAddTrait(LookClose.class);
         lookClose.setPerPlayer(true);
         lookClose.toggle();
@@ -260,8 +260,8 @@ public class NPCManager {
         lookClose.setPerPlayer(true);
         lookClose.toggle();
         HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
-        hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK");
-        hologramTrait.setLine(1, ChatColor.GREEN + "Ethical Enya");
+//        hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK");
+        hologramTrait.setLine(0, ChatColor.GREEN + "Ethical Enya");
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
 
@@ -291,8 +291,8 @@ public class NPCManager {
         npc.getOrAddTrait(LookClose.class)
            .toggle();
         HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
-        hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK");
-        hologramTrait.setLine(1, ChatColor.GREEN + "Mysterious Michael");
+//        hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK");
+        hologramTrait.setLine(0, ChatColor.GREEN + "Mysterious Michael");
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
 
@@ -306,8 +306,8 @@ public class NPCManager {
         npc.getOrAddTrait(VillagerProfession.class).setProfession(Villager.Profession.LIBRARIAN);
         npc.addTrait(QuestMenuTrait.class);
         HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
-        hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK");
-        hologramTrait.setLine(1, ChatColor.AQUA + "Quest Lord");
+//        hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK");
+        hologramTrait.setLine(0, ChatColor.AQUA + "Quest Lord");
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
         npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), -2574.5, 50, 758.5, -90, 0));
@@ -329,8 +329,8 @@ public class NPCManager {
         NPC npc = NPC_REGISTRY.createNPC(EntityType.RABBIT, "supply-drop");
         npc.addTrait(SupplyDropTrait.class);
         HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
-        hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK");
-        hologramTrait.setLine(1, ChatColor.GREEN + "Supply Drop Susan");
+//        hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK");
+        hologramTrait.setLine(0, ChatColor.GREEN + "Supply Drop Susan");
         //hologramTrait.setLine(2, ChatColor.GOLD.toString() + ChatColor.MAGIC + "   " + ChatColor.GOLD + " ROLL FOR GREAT REWARDS " + ChatColor.MAGIC + "   ");
 
         LookClose lookClose = npc.getOrAddTrait(LookClose.class);

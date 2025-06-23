@@ -191,8 +191,8 @@ public class IllusionVendorTrait extends WarlordsTrait {
     @Override
     public void onAttach() {
         HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
-        hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK");
-        hologramTrait.setLine(1, ChatColor.GREEN + "Illusion Vendor");
+//        hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK");
+        hologramTrait.setLine(0, ChatColor.GREEN + "Illusion Vendor");
     }
 
     @Override
@@ -208,7 +208,7 @@ public class IllusionVendorTrait extends WarlordsTrait {
                 false
         );
         if (!timeTill.equals("0 seconds")) {
-            hologramTrait.setLine(2, ChatColor.GOLD.toString() + ChatColor.BOLD + "Next Shipment in " + timeTill);
+            hologramTrait.setLine(1, ChatColor.GOLD.toString() + ChatColor.BOLD + "Next Shipment in " + timeTill);
         }
     }
 
