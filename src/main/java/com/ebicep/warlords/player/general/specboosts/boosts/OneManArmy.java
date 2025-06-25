@@ -14,10 +14,12 @@ import java.util.function.BiConsumer;
 
 public class OneManArmy implements SpecBoostManager.SpecBoost<OneManArmy> {
 
+    private int undyingArmyTickDurationIncrease;
     private int undyingArmyCooldownIncreaseTicks;
 
     @Override
     public void init() {
+        this.undyingArmyTickDurationIncrease = getValue("undyingArmyTickDurationIncrease", int.class);
         this.undyingArmyCooldownIncreaseTicks = getValue("undyingArmyCooldownIncreaseTicks", int.class);
     }
 
@@ -28,7 +30,7 @@ public class OneManArmy implements SpecBoostManager.SpecBoost<OneManArmy> {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(undyingArmyCooldownIncreaseTicks);
+        return List.of(undyingArmyTickDurationIncrease, undyingArmyCooldownIncreaseTicks);
     }
 
     @Override
@@ -49,6 +51,7 @@ public class OneManArmy implements SpecBoostManager.SpecBoost<OneManArmy> {
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(UndyingArmy.class).forEach(undyingArmy -> {
+                undyingArmy.setTickDuration(undyingArmy.getTickDuration() + undyingArmyTickDurationIncrease);
                 undyingArmy.getCooldown().addAdditiveModifier("Spec Boost", undyingArmyCooldownIncreaseTicks / 20f);
             });
         }
@@ -73,6 +76,7 @@ public class OneManArmy implements SpecBoostManager.SpecBoost<OneManArmy> {
                     cd.setTicksLeft(1);
                 }
             });
+            regularCooldown.getConsumers().clear();
         }
 
     }
