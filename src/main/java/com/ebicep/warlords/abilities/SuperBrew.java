@@ -175,6 +175,8 @@ public class SuperBrew extends AbstractAbility implements OrangeAbilityIcon, Hit
                 .text(" more true damage leech heal.")
                 .emptyLine()
                 .text("If no ally is targeted, receive the brew yourself.")
+                .emptyLine()
+                .text("A player can only have one super brew active and only one super brew can be active at a time from you. ")
                 .build();
     }
 
