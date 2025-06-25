@@ -8,11 +8,13 @@ import java.util.List;
 
 public class VitalPulse implements SpecBoostManager.SpecBoost<VitalPulse> {
 
+    private int healthIncrease;
     private float heartToHeartCooldownReductionSeconds;
     private int heartToHeartHealingIncrease;
 
     @Override
     public void init() {
+        this.healthIncrease = getValue("healthIncrease", int.class);
         this.heartToHeartCooldownReductionSeconds = getValue("heartToHeartCooldownReductionSeconds", float.class);
         this.heartToHeartHealingIncrease = getValue("heartToHeartHealingIncrease", int.class);
     }
@@ -24,7 +26,7 @@ public class VitalPulse implements SpecBoostManager.SpecBoost<VitalPulse> {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(heartToHeartCooldownReductionSeconds, heartToHeartHealingIncrease);
+        return List.of(healthIncrease, heartToHeartCooldownReductionSeconds, heartToHeartHealingIncrease);
     }
 
     @Override
@@ -41,6 +43,7 @@ public class VitalPulse implements SpecBoostManager.SpecBoost<VitalPulse> {
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
+            warlordsPlayer.getHealth().addAdditiveModifier("Spec Boost (Base)", healthIncrease);
             warlordsPlayer.getAbilitiesMatching(HeartToHeart.class).forEach(heartToHeart -> {
                 heartToHeart.getCooldown().addAdditiveModifier("Spec Boost", -heartToHeartCooldownReductionSeconds);
                 heartToHeart.getHealValues().getHeartToHeartHealing().forEachValue(floatModifiable ->
