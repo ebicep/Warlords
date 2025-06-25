@@ -123,9 +123,7 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
                                         stats.hexesProlonged++;
                                     }
                                     if (pveMasterUpgrade2 && !event.getWarlordsEntity().equals(wp) && cdObject instanceof GuardianBeam.GuardianBeamShield guardianBeamShield) {
-                                        float oldShieldPercent = guardianBeamShield.getShieldPercent() / 100f;
-                                        float newShieldPercent = oldShieldPercent + .15f;
-                                        float newShieldHealth = guardianBeamShield.getMaxShieldHealth() / oldShieldPercent * newShieldPercent;
+                                        float newShieldHealth = guardianBeamShield.getShieldValue() + 300;
                                         guardianBeamShield.setMaxShieldHealth(newShieldHealth);
                                         guardianBeamShield.setShieldHealth(newShieldHealth);
                                     }

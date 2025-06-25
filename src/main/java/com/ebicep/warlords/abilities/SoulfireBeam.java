@@ -151,14 +151,7 @@ public class SoulfireBeam extends AbstractBeam<SoulfireBeam, SoulfireBeam.Soulfi
 
     public static class DamageValues implements Value.ValueHolder {
 
-        private List<Float> damageMultipliers = new ArrayList<>() {
-            {
-                add(1.0f);
-                add(1.25f);
-                add(1.5f);
-                add(2.0f);
-            }
-        };
+        private List<Float> damageMultipliers = new ArrayList<>(List.of(1.0f, 1.25f, 1.5f, 2.0f));
 
         private Value.RangedValueCritable beamDamage = new Value.RangedValueCritable(376, 508, 20, 175);
 
