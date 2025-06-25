@@ -38,7 +38,6 @@ import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,6 +46,7 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
     private final FortifyingHexStats stats = new FortifyingHexStats();
     private final DamageValues damageValues = new DamageValues();
     private FloatModifiable damageReduction = new FloatModifiable(4);
+    private float damageReductionFlagMultiplier;
     private int maxEnemiesHit = 1;
     private int maxAlliesHit = 2;
     private int maxFullDistance = 40;
@@ -78,6 +78,10 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
     public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.damageReduction = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageReduction"), float.class));
+        this.damageReductionFlagMultiplier = ConfigManager.getAbilityConfigValue(builder.getNamespaces(),
+                builder.getAppendedFieldName("damageReductionFlagMultiplier"),
+                float.class
+        );
         this.maxEnemiesHit = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxEnemiesHit"), int.class);
         this.maxAlliesHit = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxAlliesHit"), int.class);
         this.maxFullDistance = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxFullDistance"), int.class);
@@ -258,16 +262,22 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
         int maxStacks = fromHex.getMaxStacks();
         int duration = fromHex.getTickDuration();
         to.getCooldownManager().limitCooldowns(RegularCooldown.class, FortifyingHexData.class, maxStacks);
-        FortifyingHexData data = new FortifyingHexData(fromHex.getDamageReduction().getCalculatedValue());
-        to.getCooldownManager().addCooldown(new RegularCooldown<>(hexName, "FHEX", FortifyingHexData.class, data, from, CooldownTypes.BUFF, cooldownManager -> {
-        }, duration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-            //                    data.getDamageReduction().tick();
-        })
+        FortifyingHexData data = new FortifyingHexData(fromHex.getDamageReduction().getCalculatedValue(), fromHex.getDamageReductionFlagMultiplier());
+        to.getCooldownManager().addCooldown(new RegularCooldown<>(
+                hexName,
+                "FHEX",
+                FortifyingHexData.class,
+                data,
+                from,
+                CooldownTypes.BUFF,
+                cooldownManager -> {
+                },
+                duration
         ) {
 
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * (1 - data.damageReduction / 100f);
+                return currentDamageValue * convertToDivisionDecimal(data.damageReduction * (event.getWarlordsEntity().hasFlag() ? data.damageReductionFlagMultiplier : 1));
             }
 
             @Override
@@ -292,6 +302,10 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
                                                           .append(Component.text("Fortifying Hex", NamedTextColor.YELLOW))
                                                           .append(Component.text("!", NamedTextColor.GRAY)));
         }
+    }
+
+    public float getDamageReductionFlagMultiplier() {
+        return damageReductionFlagMultiplier;
     }
 
     @Override
@@ -325,33 +339,34 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
 
     @Override
     public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Fling a wave of protective energy forward, hitting ")
-                                               .text(maxEnemiesHit, NamedTextColor.BLUE)
-                                               .text((maxEnemiesHit == 1 ? " enemy" : " enemies") + " and ")
-                                               .text(maxAlliesHit, NamedTextColor.BLUE)
-                                               .text((maxAlliesHit == 1 ? " ally" : " allies") + ". The enemy takes ")
-                                               .damage(damageValues.hexDamage)
-                                               .text(" damage. The ally receives ")
-                                               .text(hexStacksPerHit, NamedTextColor.BLUE)
-                                               .text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of ")
-                                               .text("FHEX", NamedTextColor.DARK_GREEN)
-                                               .text(". If Fortifying Hex hits a target, you receive ")
-                                               .text(hexStacksPerHit, NamedTextColor.BLUE)
-                                               .text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of ")
-                                               .text("FHEX", NamedTextColor.DARK_GREEN)
-                                               .text(".")
-                                               .emptyLine()
-                                               .text("Each stack of ")
-                                               .text("FHEX", NamedTextColor.DARK_GREEN)
-                                               .text(" lasts ")
-                                               .durationTicks(tickDuration)
-                                               .text(" and grants")
-                                               .percent(damageReduction, AbilityDescriptionBuilder.COLOR_BROWN)
-                                               .text(" damage reduction. Stacks up to")
-                                               .text(maxStacks, NamedTextColor.BLUE)
-                                               .text(" times.")
-                                               .maxRange(maxFullDistance)
-                                               .build();
+        description = AbilityDescriptionBuilder
+                .create("Fling a wave of protective energy forward, hitting ")
+                .text(maxEnemiesHit, NamedTextColor.BLUE)
+                .text((maxEnemiesHit == 1 ? " enemy" : " enemies") + " and ")
+                .text(maxAlliesHit, NamedTextColor.BLUE)
+                .text((maxAlliesHit == 1 ? " ally" : " allies") + ". The enemy takes ")
+                .damage(damageValues.hexDamage)
+                .text(" damage. The ally receives ")
+                .text(hexStacksPerHit, NamedTextColor.BLUE)
+                .text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of ")
+                .text("FHEX", NamedTextColor.DARK_GREEN)
+                .text(". If Fortifying Hex hits a target, you receive ")
+                .text(hexStacksPerHit, NamedTextColor.BLUE)
+                .text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of ")
+                .text("FHEX", NamedTextColor.DARK_GREEN)
+                .text(".")
+                .emptyLine()
+                .text("Each stack of ")
+                .text("FHEX", NamedTextColor.DARK_GREEN)
+                .text(" lasts ")
+                .durationTicks(tickDuration)
+                .text(" and grants")
+                .percent(damageReduction, AbilityDescriptionBuilder.COLOR_BROWN)
+                .text(" damage reduction. Stacks up to")
+                .text(maxStacks, NamedTextColor.BLUE)
+                .text(" times.")
+                .maxRange(maxFullDistance)
+                .build();
     }
 
     @Override
@@ -420,9 +435,11 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
     public static class FortifyingHexData {
 
         private final float damageReduction;
+        private final float damageReductionFlagMultiplier;
 
-        public FortifyingHexData(float damageReduction) {
+        public FortifyingHexData(float damageReduction, float damageReductionFlagMultiplier) {
             this.damageReduction = damageReduction;
+            this.damageReductionFlagMultiplier = damageReductionFlagMultiplier;
         }
 
     }
