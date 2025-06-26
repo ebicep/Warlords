@@ -15,16 +15,12 @@ import java.util.UUID;
 
 public class AugmentedChains implements SpecBoostManager.SpecBoost<AugmentedChains> {
 
-    private int energyCostReduction;
-    private float earthenSpikeDamageReductionPercent;
-    private int chainHealCooldownReductionTicks;
+    private int chainHealCooldownReductionSeconds;
     private float chainHealHealingIncreasePercent;
 
     @Override
     public void init() {
-        this.energyCostReduction = getValue("energyCostReduction", int.class);
-        this.earthenSpikeDamageReductionPercent = getValue("earthenSpikeDamageReductionPercent", float.class);
-        this.chainHealCooldownReductionTicks = getValue("chainHealCooldownReductionSeconds", int.class);
+        this.chainHealCooldownReductionSeconds = getValue("chainHealCooldownReductionSeconds", int.class);
         this.chainHealHealingIncreasePercent = getValue("chainHealHealingIncreasePercent", float.class);
     }
 
@@ -35,7 +31,7 @@ public class AugmentedChains implements SpecBoostManager.SpecBoost<AugmentedChai
 
     @Override
     public List<Object> getVariables() {
-        return List.of(energyCostReduction, earthenSpikeDamageReductionPercent, chainHealCooldownReductionTicks, chainHealHealingIncreasePercent);
+        return List.of(chainHealCooldownReductionSeconds, chainHealHealingIncreasePercent);
     }
 
     @Override
@@ -56,12 +52,6 @@ public class AugmentedChains implements SpecBoostManager.SpecBoost<AugmentedChai
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
-            warlordsPlayer.getAbilitiesMatching(EarthenSpike.class).forEach(earthenSpike -> {
-                earthenSpike.getEnergyCost().addAdditiveModifier("Spec Boost", -energyCostReduction);
-                earthenSpike.getDamageValues().getSpikeDamage().forEachValue(floatModifiable ->
-                        floatModifiable.addMultiplicativeModifierAdd("Spec Boost", -earthenSpikeDamageReductionPercent / 100)
-                );
-            });
             warlordsPlayer.getAbilitiesMatching(ChainHeal.class).forEach(chainHeal -> {
                 chainHeal.getHealValues().getChainHealing().forEachValue(floatModifiable ->
                         floatModifiable.addMultiplicativeModifierAdd("Spec Boost", chainHealHealingIncreasePercent / 100)
@@ -83,7 +73,7 @@ public class AugmentedChains implements SpecBoostManager.SpecBoost<AugmentedChai
             }
             spikesHit.add(uuid);
             warlordsEntity.getAbilitiesMatching(ChainHeal.class).forEach(chainHeal -> {
-                chainHeal.subtractCurrentCooldown(chainHealCooldownReductionTicks / 20f);
+                chainHeal.subtractCurrentCooldown(chainHealCooldownReductionSeconds);
             });
         }
 
