@@ -131,8 +131,8 @@ public abstract class AbstractEnergySeer<T extends AbstractEnergySeer.EnergySeer
                         if (!Objects.equals(cooldown.getFrom(), wp)) {
                             return;
                         }
-                        if (cooldown.getCooldownObject() instanceof FortifyingHex fortifyingHex) {
-                            fortifyingHex.getDamageReduction().addAdditiveModifier(name, energySeerSentinel.getDamageResistance(), getTicksLeft());
+                        if (cooldown.getCooldownObject() instanceof FortifyingHex.FortifyingHexData fortifyingHex) {
+                            fortifyingHex.setDamageReduction(fortifyingHex.getDamageReduction() + energySeerSentinel.getDamageResistance());
                         }
                     }
                 };

@@ -6,6 +6,7 @@ import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
@@ -18,9 +19,11 @@ import com.ebicep.warlords.util.java.Priority;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -28,10 +31,7 @@ import org.bukkit.event.Listener;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Duration, AbilityStats<Sanctuary, Sanctuary.SanctuaryStats> {
 
@@ -39,6 +39,7 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
     private int hexTickDurationIncrease = 40;
     private int additionalDamageReduction = 4;
     private int tickDuration = 240;
+    private int lethalDamageHealing = 15;
 
     public Sanctuary() {
         super(AbstractAbilityBuilder.create("sanctuary").pvp());
@@ -50,27 +51,7 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
         this.hexTickDurationIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hexTickDurationIncrease"), int.class);
         this.additionalDamageReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("additionalDamageReduction"), int.class);
         this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
-    }
-
-    @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder
-                .create("Summon your full protective power, increasing ")
-                .text("FHEX", NamedTextColor.DARK_GREEN)
-                .text(" duration by ")
-                .durationTicks(hexTickDurationIncrease)
-                .text(" and causing Guardian Beam to not consume ")
-                .text("FHEX", NamedTextColor.DARK_GREEN)
-                .text(" stacks.")
-                .emptyLine()
-                .text("All allies with max stacks of ")
-                .text("FHEX", NamedTextColor.DARK_GREEN)
-                .text(" gain an additional ")
-                .percent(additionalDamageReduction, AbilityDescriptionBuilder.COLOR_BROWN)
-                .text(" damage reduction per stack. Lasts ")
-                .durationTicks(tickDuration)
-                .text(".")
-                .build();
+        this.lethalDamageHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("lethalDamageHealing"), int.class);
     }
 
     @Override
@@ -122,6 +103,8 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
                     }
                     return new Listener() {
 
+                        private final Set<WarlordsEntity> resurrected = new HashSet<>();
+
                         @EventHandler(priority = EventPriority.LOWEST)
                         private void onAddCooldown(WarlordsAddCooldownEvent event) {
                             AbstractCooldown<?> cooldown = event.getAbstractCooldown();
@@ -129,14 +112,52 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
                                 return;
                             }
                             Object cdObject = cooldown.getCooldownObject();
-                            if (cdObject instanceof FortifyingHex) {
+                            if (cdObject instanceof FortifyingHex.FortifyingHexData) {
                                 regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + hexTickDurationIncrease);
                                 stats.hexesProlonged++;
                             }
-                            if (pveMasterUpgrade2 && !event.getWarlordsEntity().equals(wp) && cdObject instanceof GuardianBeam.GuardianBeamShield guardianBeamShield) {
+                            if (pveMasterUpgrade2 && event.getWarlordsEntity().equals(teammate) && cdObject instanceof GuardianBeam.GuardianBeamShield guardianBeamShield) {
                                 float newShieldHealth = guardianBeamShield.getShieldValue() + 300;
                                 guardianBeamShield.setMaxShieldHealth(newShieldHealth);
                                 guardianBeamShield.setShieldHealth(newShieldHealth);
+                            }
+                        }
+
+                        @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+                        public void onDeath(WarlordsDeathEvent event) {
+                            WarlordsEntity warlordsEntity = event.getWarlordsEntity();
+                            if (!warlordsEntity.isTeammateAlive(wp) || resurrected.contains(warlordsEntity)) {
+                                return;
+                            }
+                            int hexStacks = (int) new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
+                                    .filterCooldownFrom(wp)
+                                    .filterCooldownClass(FortifyingHex.FortifyingHexData.class)
+                                    .stream()
+                                    .count();
+                            if (hexStacks < FortifyingHex.getFromHex(wp).getMaxStacks()) {
+                                return;
+                            }
+                            resurrected.add(warlordsEntity);
+                            event.setCancelled(true);
+                            warlordsEntity.setCurrentHealth(warlordsEntity.getMaxBaseHealth() * convertToPercent(lethalDamageHealing));
+                            Utils.playGlobalSound(warlordsEntity.getLocation(), Sound.ITEM_TOTEM_USE, 2, 0.75f);
+                            if (warlordsEntity.equals(wp)) {
+                                wp.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
+                                        .append(Component.text(" Your ", NamedTextColor.GRAY))
+                                        .append(Component.text(name, NamedTextColor.YELLOW))
+                                        .append(Component.text(" resurrected you!", NamedTextColor.GRAY))
+                                );
+                            } else {
+                                warlordsEntity.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
+                                        .append(Component.text(" You were resurrected by " + wp.getName() + "'s ", NamedTextColor.GRAY))
+                                        .append(Component.text(name, NamedTextColor.YELLOW))
+                                        .append(Component.text("!", NamedTextColor.GRAY))
+                                );
+                                wp.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
+                                        .append(Component.text(" Your ", NamedTextColor.GRAY))
+                                        .append(Component.text(name, NamedTextColor.YELLOW))
+                                        .append(Component.text(" resurrected " + warlordsEntity.getName() + "!", NamedTextColor.GRAY))
+                                );
                             }
                         }
                     };
@@ -158,6 +179,29 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
             });
         });
         return true;
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder
+                .create("Summon your full protective power, increasing ")
+                .text("FHEX", NamedTextColor.DARK_GREEN)
+                .text(" duration by ")
+                .durationTicks(hexTickDurationIncrease)
+                .text(" and causing Guardian Beam to not consume ")
+                .text("FHEX", NamedTextColor.DARK_GREEN)
+                .text(" stacks.")
+                .emptyLine()
+                .text("All allies with max stacks of ")
+                .text("FHEX", NamedTextColor.DARK_GREEN)
+                .text(" gain an additional ")
+                .percent(additionalDamageReduction, AbilityDescriptionBuilder.COLOR_BROWN)
+                .text(" damage reduction per stack and are resurrected at ")
+                .percent(lethalDamageHealing, NamedTextColor.GREEN)
+                .text(" of their maximum health when taking lethal damage for the first time. Lasts ")
+                .durationTicks(tickDuration)
+                .text(".")
+                .build();
     }
 
     @Override

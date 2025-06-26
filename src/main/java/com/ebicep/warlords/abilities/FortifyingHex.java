@@ -59,203 +59,6 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
         this.hitboxInflation.setBaseValue(hitboxInflation.getBaseValue() + .4f);
     }
 
-    @Nonnull
-    public static FortifyingHex getFromHex(WarlordsEntity from) {
-        return from.getSpec()
-                   .getAbilities()
-                   .stream()
-                   .filter(FortifyingHex.class::isInstance)
-                   .map(FortifyingHex.class::cast)
-                   .findFirst()
-                   .orElseGet(() -> {
-                       FortifyingHex fortifyingHex = new FortifyingHex();
-                       fortifyingHex.init(fortifyingHex.getBuilder());
-                       return fortifyingHex;
-                   });
-    }
-
-    @Override
-    public void init(AbstractAbilityBuilder builder) {
-        super.init(builder);
-        this.damageReduction = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageReduction"), float.class));
-        this.damageReductionFlagMultiplier = ConfigManager.getAbilityConfigValue(builder.getNamespaces(),
-                builder.getAppendedFieldName("damageReductionFlagMultiplier"),
-                float.class
-        );
-        this.maxEnemiesHit = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxEnemiesHit"), int.class);
-        this.maxAlliesHit = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxAlliesHit"), int.class);
-        this.maxFullDistance = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxFullDistance"), int.class);
-        this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
-        this.hexStacksPerHit = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hexStacksPerHit"), int.class);
-        this.maxStacks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxStacks"), int.class);
-    }
-
-    @Override
-    protected void onSpawn(@Nonnull InternalProjectile projectile) {
-        super.onSpawn(projectile);
-        Location startingLocation = projectile.getStartingLocation();
-        LocationBuilder location = new LocationBuilder(startingLocation).pitch(0);
-        ItemDisplay display = startingLocation.getWorld().spawn(location, ItemDisplay.class, itemDisplay -> {
-                    itemDisplay.setItemStack(new ItemStack(Material.WARPED_DOOR));
-                    itemDisplay.setTeleportDuration(1);
-                    itemDisplay.setBrightness(new Display.Brightness(15, 15));
-            itemDisplay.setTransformation(new Transformation(new Vector3f(),
-                            new AxisAngle4f((float) Math.toRadians(startingLocation.getPitch()), 1, 0, 0),
-                            new Vector3f(1f),
-                            new AxisAngle4f()
-                    ));
-                }
-        );
-        projectile.addTask(new InternalProjectileTask() {
-
-            @Override
-            public void run(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile) {
-                Location currentLocation = projectile.getCurrentLocation();
-                LocationBuilder location = new LocationBuilder(currentLocation).pitch(0);
-                display.teleport(location);
-                if (projectile.getTicksLived() % 3 == 0) {
-                    EffectUtils.displayParticle(Particle.END_ROD, new LocationBuilder(projectile.getCurrentLocation()).addY(.875).left(.8f), 1);
-                    EffectUtils.displayParticle(Particle.END_ROD, new LocationBuilder(projectile.getCurrentLocation()).addY(.875).right(.8f), 1);
-                }
-            }
-
-            @Override
-            public void onDestroy(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile) {
-                display.remove();
-                Utils.playGlobalSound(projectile.getCurrentLocation(), "shaman.chainheal.activation", 2, 2);
-                EffectUtils.displayParticle(Particle.EXPLOSION, projectile.getCurrentLocation(), 1, 0, 0, 0, 0.7);
-            }
-        });
-    }
-
-    @Nullable
-    @Override
-    protected String getActivationSound() {
-        return "arcanist.fortifyinghex.activation";
-    }
-
-    @Override
-    protected float getSoundVolume() {
-        return 2;
-    }
-
-    @Override
-    protected float getSoundPitch() {
-        return 1.4f;
-    }
-
-    @Override
-    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
-        super.runEveryTick(warlordsEntity);
-        damageReduction.tick();
-    }
-
-    @Override
-    protected void playEffect(@Nonnull Location currentLocation, int ticksLived) {
-    }
-
-    @Override
-    protected int onHit(@Nonnull InternalProjectile projectile, @Nullable WarlordsEntity hit) {
-        if (hit != null) {
-            return 0;
-        }
-        int playersHit = 0;
-        for (WarlordsEntity enemy : PlayerFilter.entitiesAround(projectile.getCurrentLocation(), 2, 2, 2).excluding(projectile.getHit())) {
-            if (hitProjectile(projectile, enemy)) {
-                playersHit++;
-            }
-        }
-        return playersHit;
-    }
-
-    @Override
-    protected boolean shouldEndProjectileOnHit(@Nonnull InternalProjectile projectile, WarlordsEntity wp) {
-        return false;
-    }
-
-    @Override
-    protected boolean shouldEndProjectileOnHit(@Nonnull InternalProjectile projectile, Block block) {
-        return true;
-    }
-
-    @Override
-    protected void onNonCancellingHit(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit, @Nonnull Location impactLocation) {
-        hitProjectile(projectile, hit);
-    }
-
-    @Override
-    protected Location modifyProjectileStartingLocation(WarlordsEntity shooter, Location startingLocation) {
-        return new LocationBuilder(startingLocation.clone()).addY(-.63).backward(0f);
-    }
-
-    private boolean hitProjectile(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit) {
-        if (projectile.getHit().contains(hit) || projectile.getShooter().equals(hit)) {
-            return false;
-        }
-        WarlordsEntity wp = projectile.getShooter();
-        Location currentLocation = projectile.getCurrentLocation();
-        Location startingLocation = projectile.getStartingLocation();
-        getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
-        List<WarlordsEntity> hits = projectile.getHit();
-        if (hit.isTeammate(wp)) {
-            int teammatesHit = (int) hits.stream().filter(we -> we.isTeammate(wp)).count();
-            if (teammatesHit > maxAlliesHit) {
-                return false;
-            }
-            giveFortifyingHex(wp, hit);
-            stats.addPlayersHit();
-        } else {
-            int enemiesHit = (int) hits.stream().filter(we -> !we.isTeammate(wp)).count();
-            if (enemiesHit > maxEnemiesHit) {
-                return false;
-            }
-            double distanceSquared = startingLocation.distanceSquared(currentLocation);
-            float toReduceBy = maxFullDistance * maxFullDistance > distanceSquared ? 1 : (float) (1 - (Math.sqrt(distanceSquared) - maxFullDistance) / 75);
-            if (toReduceBy < .2) {
-                toReduceBy = .2f;
-            }
-            hitEnemy(hit, wp, toReduceBy);
-            if (pveMasterUpgrade2) {
-                for (WarlordsEntity warlordsEntity : PlayerFilter.entitiesAround(hit, 3, 3, 3).aliveTeammatesOfExcludingSelf(hit).toList()) {
-                    hitEnemy(warlordsEntity, wp, toReduceBy);
-                    stats.addPlayersHit();
-                }
-                EffectUtils.displayParticle(Particle.EXPLOSION, hit.getLocation().add(0, 1, 0), 1, .1, .1, .1, 0);
-            }
-        }
-        return true;
-    }
-
-    private void hitEnemy(@Nonnull WarlordsEntity hit, WarlordsEntity wp, float toReduceBy) {
-        hit.addInstance(InstanceBuilder.damage()
-                                       .ability(this)
-                                       .source(wp)
-                                       .min(damageValues.hexDamage.getMinValue() * toReduceBy)
-                                       .max(damageValues.hexDamage.getMaxValue() * toReduceBy)
-                                       .crit(damageValues.hexDamage));
-        if (pveMasterUpgrade2) {
-            Optional<RegularCooldown> weakeningHexCooldown = new CooldownFilter<>(hit, RegularCooldown.class).filterCooldownClass(WeakeningHex.class).findFirst();
-            if (weakeningHexCooldown.isPresent()) {
-                RegularCooldown regularCooldown = weakeningHexCooldown.get();
-                WeakeningHex weakeningHex = (WeakeningHex) regularCooldown.getCooldownObject();
-                weakeningHex.setStacks(weakeningHex.getStacks() + 1);
-                regularCooldown.setTicksLeft(tickDuration);
-            } else {
-                hit.getCooldownManager()
-                   .addCooldown(new RegularCooldown<>("Weakening Hex", "WHEX", WeakeningHex.class, new WeakeningHex(), wp, CooldownTypes.LOW_LEVEL_DEBUFF, cooldownManager -> {
-                   }, 6 * 20
-                   ) {
-
-                       @Override
-                       public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                           return currentDamageValue * (1 + 0.05f * cooldownObject.getStacks());
-                       }
-                   });
-            }
-        }
-        stats.addPlayersHit();
-    }
-
     public static void giveFortifyingHex(WarlordsEntity from, WarlordsEntity to) {
         FortifyingHex fromHex = getFromHex(from);
         String hexName = fromHex.getName();
@@ -295,41 +98,15 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
         });
         from.playSound(from.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
         if (from != to) {
-            from.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" Your ", NamedTextColor.GRAY))
-                                                            .append(Component.text("Fortifying Hex", NamedTextColor.YELLOW))
-                                                            .append(Component.text(" is now protecting " + to.getName() + "!", NamedTextColor.GRAY)));
-            to.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" " + from.getName() + " is now protecting you with their ", NamedTextColor.GRAY))
-                                                          .append(Component.text("Fortifying Hex", NamedTextColor.YELLOW))
-                                                          .append(Component.text("!", NamedTextColor.GRAY)));
+            from.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                    .append(Component.text(" Your ", NamedTextColor.GRAY))
+                    .append(Component.text("Fortifying Hex", NamedTextColor.YELLOW))
+                    .append(Component.text(" is now protecting " + to.getName() + "!", NamedTextColor.GRAY)));
+            to.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                    .append(Component.text(" " + from.getName() + " is now protecting you with their ", NamedTextColor.GRAY))
+                    .append(Component.text("Fortifying Hex", NamedTextColor.YELLOW))
+                    .append(Component.text("!", NamedTextColor.GRAY)));
         }
-    }
-
-    public float getDamageReductionFlagMultiplier() {
-        return damageReductionFlagMultiplier;
-    }
-
-    @Override
-    protected boolean onActivateInternal(@Nonnull WarlordsEntity shooter) {
-        giveFortifyingHex(shooter, shooter);
-        return super.onActivateInternal(shooter);
-    }
-
-    public int getMaxStacks() {
-        return maxStacks;
-    }
-
-    @Override
-    public int getTickDuration() {
-        return tickDuration;
-    }
-
-    public FloatModifiable getDamageReduction() {
-        return damageReduction;
-    }
-
-    @Override
-    public void setTickDuration(int tickDuration) {
-        this.tickDuration = tickDuration;
     }
 
     @Override
@@ -395,6 +172,43 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
         this.maxAlliesHit = maxAlliesHit;
     }
 
+    private void hitEnemy(@Nonnull WarlordsEntity hit, WarlordsEntity wp, float toReduceBy) {
+        hit.addInstance(InstanceBuilder.damage()
+                                       .ability(this)
+                                       .source(wp)
+                                       .min(damageValues.hexDamage.getMinValue() * toReduceBy)
+                                       .max(damageValues.hexDamage.getMaxValue() * toReduceBy)
+                                       .crit(damageValues.hexDamage));
+        if (pveMasterUpgrade2) {
+            Optional<RegularCooldown> weakeningHexCooldown = new CooldownFilter<>(hit, RegularCooldown.class).filterCooldownClass(WeakeningHex.class).findFirst();
+            if (weakeningHexCooldown.isPresent()) {
+                RegularCooldown regularCooldown = weakeningHexCooldown.get();
+                WeakeningHex weakeningHex = (WeakeningHex) regularCooldown.getCooldownObject();
+                weakeningHex.setStacks(weakeningHex.getStacks() + 1);
+                regularCooldown.setTicksLeft(tickDuration);
+            } else {
+                hit.getCooldownManager().addCooldown(new RegularCooldown<>(
+                        "Weakening Hex",
+                        "WHEX",
+                        WeakeningHex.class,
+                        new WeakeningHex(),
+                        wp,
+                        CooldownTypes.LOW_LEVEL_DEBUFF,
+                        cooldownManager -> {
+                        },
+                        6 * 20
+                ) {
+
+                    @Override
+                    public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                        return currentDamageValue * (1 + 0.05f * cooldownObject.getStacks());
+                    }
+                });
+            }
+        }
+        stats.addPlayersHit();
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private Value.RangedValueCritable hexDamage = new Value.RangedValueCritable(271, 365, 20, 175);
@@ -432,14 +246,200 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
 
     }
 
+    @Nonnull
+    public static FortifyingHex getFromHex(WarlordsEntity from) {
+        return from.getSpec()
+                   .getAbilities()
+                   .stream()
+                   .filter(FortifyingHex.class::isInstance)
+                   .map(FortifyingHex.class::cast)
+                   .findFirst()
+                   .orElseGet(() -> {
+                       FortifyingHex fortifyingHex = new FortifyingHex();
+                       fortifyingHex.init(fortifyingHex.getBuilder());
+                       return fortifyingHex;
+                   });
+    }
+
+
+    @Override
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.damageReduction = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageReduction"), float.class));
+        this.damageReductionFlagMultiplier = ConfigManager.getAbilityConfigValue(builder.getNamespaces(),
+                builder.getAppendedFieldName("damageReductionFlagMultiplier"),
+                float.class
+        );
+        this.maxEnemiesHit = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxEnemiesHit"), int.class);
+        this.maxAlliesHit = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxAlliesHit"), int.class);
+        this.maxFullDistance = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxFullDistance"), int.class);
+        this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
+        this.hexStacksPerHit = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hexStacksPerHit"), int.class);
+        this.maxStacks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxStacks"), int.class);
+    }
+
+
+    @Override
+    protected void onSpawn(@Nonnull InternalProjectile projectile) {
+        super.onSpawn(projectile);
+        Location startingLocation = projectile.getStartingLocation();
+        LocationBuilder location = new LocationBuilder(startingLocation).pitch(0);
+        ItemDisplay display = startingLocation.getWorld().spawn(location, ItemDisplay.class, itemDisplay -> {
+                    itemDisplay.setItemStack(new ItemStack(Material.WARPED_DOOR));
+                    itemDisplay.setTeleportDuration(1);
+                    itemDisplay.setBrightness(new Display.Brightness(15, 15));
+            itemDisplay.setTransformation(new Transformation(new Vector3f(),
+                            new AxisAngle4f((float) Math.toRadians(startingLocation.getPitch()), 1, 0, 0),
+                            new Vector3f(1f),
+                            new AxisAngle4f()
+                    ));
+                }
+        );
+        projectile.addTask(new InternalProjectileTask() {
+
+            @Override
+            public void run(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile) {
+                Location currentLocation = projectile.getCurrentLocation();
+                LocationBuilder location = new LocationBuilder(currentLocation).pitch(0);
+                display.teleport(location);
+                if (projectile.getTicksLived() % 3 == 0) {
+                    EffectUtils.displayParticle(Particle.END_ROD, new LocationBuilder(projectile.getCurrentLocation()).addY(.875).left(.8f), 1);
+                    EffectUtils.displayParticle(Particle.END_ROD, new LocationBuilder(projectile.getCurrentLocation()).addY(.875).right(.8f), 1);
+                }
+            }
+
+            @Override
+            public void onDestroy(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile) {
+                display.remove();
+                Utils.playGlobalSound(projectile.getCurrentLocation(), "shaman.chainheal.activation", 2, 2);
+                EffectUtils.displayParticle(Particle.EXPLOSION, projectile.getCurrentLocation(), 1, 0, 0, 0, 0.7);
+            }
+        });
+    }
+
+
+    @Nullable
+    @Override
+    protected String getActivationSound() {
+        return "arcanist.fortifyinghex.activation";
+    }
+
+
+    @Override
+    protected float getSoundVolume() {
+        return 2;
+    }
+
+
+    @Override
+    protected float getSoundPitch() {
+        return 1.4f;
+    }
+
+
+    @Override
+    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
+        super.runEveryTick(warlordsEntity);
+        damageReduction.tick();
+    }
+
+
+    @Override
+    protected void playEffect(@Nonnull Location currentLocation, int ticksLived) {
+    }
+
+
+    @Override
+    protected int onHit(@Nonnull InternalProjectile projectile, @Nullable WarlordsEntity hit) {
+        if (hit != null) {
+            return 0;
+        }
+        int playersHit = 0;
+        for (WarlordsEntity enemy : PlayerFilter.entitiesAround(projectile.getCurrentLocation(), 2, 2, 2).excluding(projectile.getHit())) {
+            if (hitProjectile(projectile, enemy)) {
+                playersHit++;
+            }
+        }
+        return playersHit;
+    }
+
+
+    @Override
+    protected boolean shouldEndProjectileOnHit(@Nonnull InternalProjectile projectile, WarlordsEntity wp) {
+        return false;
+    }
+
+
+    @Override
+    protected boolean shouldEndProjectileOnHit(@Nonnull InternalProjectile projectile, Block block) {
+        return true;
+    }
+
+
+    @Override
+    protected void onNonCancellingHit(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit, @Nonnull Location impactLocation) {
+        hitProjectile(projectile, hit);
+    }
+
+    @Override
+    protected Location modifyProjectileStartingLocation(WarlordsEntity shooter, Location startingLocation) {
+        return new LocationBuilder(startingLocation.clone()).addY(-.63).backward(0f);
+    }
+
+    private boolean hitProjectile(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit) {
+        if (projectile.getHit().contains(hit) || projectile.getShooter().equals(hit)) {
+            return false;
+        }
+        WarlordsEntity wp = projectile.getShooter();
+        Location currentLocation = projectile.getCurrentLocation();
+        Location startingLocation = projectile.getStartingLocation();
+        getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
+        List<WarlordsEntity> hits = projectile.getHit();
+        if (hit.isTeammate(wp)) {
+            int teammatesHit = (int) hits.stream().filter(we -> we.isTeammate(wp)).count();
+            if (teammatesHit > maxAlliesHit) {
+                return false;
+            }
+            giveFortifyingHex(wp, hit);
+            stats.addPlayersHit();
+        } else {
+            int enemiesHit = (int) hits.stream().filter(we -> !we.isTeammate(wp)).count();
+            if (enemiesHit > maxEnemiesHit) {
+                return false;
+            }
+            double distanceSquared = startingLocation.distanceSquared(currentLocation);
+            float toReduceBy = maxFullDistance * maxFullDistance > distanceSquared ? 1 : (float) (1 - (Math.sqrt(distanceSquared) - maxFullDistance) / 75);
+            if (toReduceBy < .2) {
+                toReduceBy = .2f;
+            }
+            hitEnemy(hit, wp, toReduceBy);
+            if (pveMasterUpgrade2) {
+                for (WarlordsEntity warlordsEntity : PlayerFilter.entitiesAround(hit, 3, 3, 3).aliveTeammatesOfExcludingSelf(hit).toList()) {
+                    hitEnemy(warlordsEntity, wp, toReduceBy);
+                    stats.addPlayersHit();
+                }
+                EffectUtils.displayParticle(Particle.EXPLOSION, hit.getLocation().add(0, 1, 0), 1, .1, .1, .1, 0);
+            }
+        }
+        return true;
+    }
+
     public static class FortifyingHexData {
 
-        private final float damageReduction;
         private final float damageReductionFlagMultiplier;
+        private float damageReduction;
 
         public FortifyingHexData(float damageReduction, float damageReductionFlagMultiplier) {
             this.damageReduction = damageReduction;
             this.damageReductionFlagMultiplier = damageReductionFlagMultiplier;
+        }
+
+        public float getDamageReduction() {
+            return damageReduction;
+        }
+
+        public void setDamageReduction(float damageReduction) {
+            this.damageReduction = damageReduction;
         }
 
     }
@@ -469,6 +469,34 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
             return new FortifyingHexStats();
         }
 
+    }
+
+    public float getDamageReductionFlagMultiplier() {
+        return damageReductionFlagMultiplier;
+    }
+
+    @Override
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity shooter) {
+        giveFortifyingHex(shooter, shooter);
+        return super.onActivateInternal(shooter);
+    }
+
+    public int getMaxStacks() {
+        return maxStacks;
+    }
+
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
+    }
+
+    public FloatModifiable getDamageReduction() {
+        return damageReduction;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
     }
 
 }

@@ -14,6 +14,8 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownFlag;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.type.DamageInstance;
+import com.ebicep.warlords.util.warlords.Utils;
+import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 
@@ -112,6 +114,7 @@ public class DimensionalWarp implements SpecBoostManager.SpecBoost<DimensionalWa
                                 );
                                 cooldown.expire(warlordsEntity.getCooldownManager());
                             }
+                            Utils.playGlobalSound(warlordsEntity.getLocation(), Sound.ITEM_TOTEM_USE, 2, 2f);
                             warlordsEntity.getCooldownManager().removeCooldown(cooldown);
                             event.setCancelled(true);
                         });
