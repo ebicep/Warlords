@@ -55,7 +55,6 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
     private int maxArmyAllies = 6;
     private int maxHealthDamage = 10;
     private float flatHealing = 50;
-    private float missingHealing = 3.5f; // %
     private int healPeriod = 20;
 
     public UndyingArmy() {
@@ -74,7 +73,6 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
         this.maxArmyAllies = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxArmyAllies"), int.class);
         this.maxHealthDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxHealthDamage"), int.class);
         this.flatHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("flatHealing"), float.class);
-        this.missingHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("missingHealing"), float.class);
         this.healPeriod = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("healPeriod"), int.class);
     }
 
@@ -155,7 +153,7 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
                         if (cooldown.getCooldownObject().isArmyDead(teammate)) {
                             return;
                         }
-                        float healAmount = flatHealing + (teammate.getMaxHealth() - teammate.getCurrentHealth()) * (missingHealing / 100f);
+                        float healAmount = flatHealing;
                         teammate.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(healAmount));
                         teammate.playSound(teammate.getLocation(), "paladin.holyradiance.activation", 0.1f, 0.7f);
                         // Particles
@@ -350,9 +348,7 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
                                                .blocks(radius)
                                                .text(" to heal them for ")
                                                .text(format(flatHealing), NamedTextColor.GREEN)
-                                               .text(" + ")
-                                               .percent(missingHealing, NamedTextColor.GREEN)
-                                               .text(" missing health every second. Lasts ")
+                                               .text(" health every second. Lasts ")
                                                .durationTicks(tickDuration)
                                                .text(".")
                                                .emptyLine()
@@ -409,14 +405,6 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
 
     public void setFlatHealing(float flatHealing) {
         this.flatHealing = flatHealing;
-    }
-
-    public float getMissingHealing() {
-        return missingHealing;
-    }
-
-    public void setMissingHealing(float missingHealing) {
-        this.missingHealing = missingHealing;
     }
 
     public int getHealPeriod() {

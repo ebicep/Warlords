@@ -59,13 +59,14 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
 
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
-        Set<WarlordsEntity> teammatesNear = PlayerFilter.entitiesAround(wp, castRange, castRange, castRange)
-                                                        .aliveTeammatesOfExcludingSelf(wp)
-                                                        .excludingDummy()
-                                                        .closestFirst(wp)
-                                                        .limit(alliesAffected)
-                                                        .stream()
-                                                        .collect(Collectors.toSet());
+        Set<WarlordsEntity> teammatesNear = PlayerFilter
+                .entitiesAround(wp, castRange, castRange, castRange)
+                .aliveTeammatesOfExcludingSelf(wp)
+                .excludingDummy()
+                .closestFirst(wp)
+                .limit(alliesAffected)
+                .stream()
+                .collect(Collectors.toSet());
         if (teammatesNear.isEmpty()) {
             wp.sendMessage(Component.text("There are no allies nearby to link!", NamedTextColor.RED));
             return false;
@@ -75,16 +76,18 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
         Map<WarlordsEntity, FloatModifiable.FloatModifier> healthBoosts = new HashMap<>();
         wp.setRegenTickTimer(1);
         teammatesNear.forEach(warlordsEntity -> {
-            wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" Your Remedic Chains is now protecting ", NamedTextColor.GRAY))
-                                                          .append(Component.text(warlordsEntity.getName(), NamedTextColor.YELLOW))
-                                                          .append(Component.text("!", NamedTextColor.GRAY)));
-            warlordsEntity.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN.append(Component.text(" " + wp.getName() + "'s", NamedTextColor.GRAY))
-                                                                         .append(Component.text(" Remedic Chains", NamedTextColor.YELLOW))
-                                                                         .append(Component.text(" is now increasing your ", NamedTextColor.GRAY))
-                                                                         .append(Component.text("damage", NamedTextColor.RED))
-                                                                         .append(Component.text(" for ", NamedTextColor.GRAY))
-                                                                         .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                                                                         .append(Component.text(" seconds!", NamedTextColor.GRAY)));
+            wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                    .append(Component.text(" Your Remedic Chains is now protecting ", NamedTextColor.GRAY))
+                    .append(Component.text(warlordsEntity.getName(), NamedTextColor.YELLOW))
+                    .append(Component.text("!", NamedTextColor.GRAY)));
+            warlordsEntity.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN.
+                    append(Component.text(" " + wp.getName() + "'s", NamedTextColor.GRAY))
+                    .append(Component.text(" Remedic Chains", NamedTextColor.YELLOW))
+                    .append(Component.text(" is now increasing your ", NamedTextColor.GRAY))
+                    .append(Component.text("damage", NamedTextColor.RED))
+                    .append(Component.text(" for ", NamedTextColor.GRAY))
+                    .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                    .append(Component.text(" seconds!", NamedTextColor.GRAY)));
             warlordsEntity.setRegenTickTimer(1);
             float healthIncrease = warlordsEntity.getMaxHealth() * .25f;
             if (pveMasterUpgrade) {
@@ -210,21 +213,22 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
 
     @Override
     public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Bind yourself to up to ")
-                                               .text(alliesAffected, NamedTextColor.BLUE)
-                                               .text(" allies near you, increasing the damage they deal by ")
-                                               .damage(damageValues.bonusDamage)
-                                               .text(" and healing all bound for ")
-                                               .heal(healingValues.chainHealing)
-                                               .text(" health per second while the link is active. Lasts ")
-                                               .durationTicks(tickDuration)
-                                               .text(".")
-                                               .emptyLine()
-                                               .text("The link instantly activates natural regeneration and will break if you are more than ")
-                                               .blocks(linkBreakRadius)
-                                               .text(" apart.")
-                                               .initialRange(castRange)
-                                               .build();
+        description = AbilityDescriptionBuilder
+                .create("Bind yourself to up to ")
+                .text(alliesAffected, NamedTextColor.BLUE)
+                .text(" allies near you, increasing the damage they deal by ")
+                .damage(damageValues.bonusDamage)
+                .text(" and healing all bound for ")
+                .heal(healingValues.chainHealing)
+                .text(" health per second while the link is active. Lasts ")
+                .durationTicks(tickDuration)
+                .text(".")
+                .emptyLine()
+                .text("The link instantly activates natural regeneration and will break if you are more than ")
+                .blocks(linkBreakRadius)
+                .text(" apart.")
+                .initialRange(castRange)
+                .build();
     }
 
     @Override

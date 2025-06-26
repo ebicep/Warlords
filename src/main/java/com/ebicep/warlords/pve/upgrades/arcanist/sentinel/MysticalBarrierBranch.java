@@ -8,12 +8,6 @@ import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
 
 public class MysticalBarrierBranch extends AbstractUpgradeBranch<MysticalBarrier> {
 
-
-    @Override
-    public void runOnce() {
-        ability.setRuneTimerIncrease(0.5f);
-    }
-
     public MysticalBarrierBranch(AbilityTree abilityTree, MysticalBarrier ability) {
         super(abilityTree, ability);
 
@@ -32,7 +26,7 @@ public class MysticalBarrierBranch extends AbstractUpgradeBranch<MysticalBarrier
                 "Mystical Barrier - Master Upgrade",
                 """
                         +20% Additional Cooldown Reduction
-                                                
+                        
                         Increase max shield health by 2000 and increase amount of shield granted for each damage instance by 120.
                         """,
                 50000,

@@ -12,7 +12,6 @@ public class AcceleratedSpike implements SpecBoostManager.SpecBoost<AcceleratedS
     private float travelSpeedIncreasePercent;
     private float castRangeIncrease;
     private float hitRadius;
-    private int energyCostReduction;
     private float damageIncreasePercent;
     private int maxEnergyIncrease;
 
@@ -21,7 +20,6 @@ public class AcceleratedSpike implements SpecBoostManager.SpecBoost<AcceleratedS
         this.travelSpeedIncreasePercent = getValue("travelSpeedIncreasePercent", float.class);
         this.castRangeIncrease = getValue("castRangeIncrease", float.class);
         this.hitRadius = getValue("hitRadiusIncrease", float.class);
-        this.energyCostReduction = getValue("energyCostReduction", int.class);
         this.damageIncreasePercent = getValue("damageIncreasePercent", float.class);
         this.maxEnergyIncrease = getValue("maxEnergyIncrease", int.class);
     }
@@ -33,7 +31,7 @@ public class AcceleratedSpike implements SpecBoostManager.SpecBoost<AcceleratedS
 
     @Override
     public List<Object> getVariables() {
-        return List.of(travelSpeedIncreasePercent, castRangeIncrease, hitRadius, energyCostReduction, damageIncreasePercent, maxEnergyIncrease);
+        return List.of(travelSpeedIncreasePercent, castRangeIncrease, hitRadius, damageIncreasePercent, maxEnergyIncrease);
     }
 
     @Override
@@ -55,7 +53,6 @@ public class AcceleratedSpike implements SpecBoostManager.SpecBoost<AcceleratedS
                 earthenSpike.setSpeed(earthenSpike.getSpeed() * AbstractAbility.convertToMultiplicationDecimal(travelSpeedIncreasePercent));
                 earthenSpike.getHitBoxRadius().addAdditiveModifier("Spec Boost", castRangeIncrease);
                 earthenSpike.setSpikeHitbox(hitRadius);
-                earthenSpike.getEnergyCost().addAdditiveModifier("Spec Boost", -energyCostReduction);
                 earthenSpike.getDamageValues().getSpikeDamage().forEachValue(floatModifiable ->
                         floatModifiable.addMultiplicativeModifierAdd("Spec Boost", damageIncreasePercent / 100)
                 );

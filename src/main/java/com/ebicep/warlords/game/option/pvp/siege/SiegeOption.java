@@ -1,6 +1,5 @@
 package com.ebicep.warlords.game.option.pvp.siege;
 
-import com.ebicep.warlords.abilities.FortifyingHex;
 import com.ebicep.warlords.abilities.GuardianBeam;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -139,10 +138,8 @@ public class SiegeOption implements Option {
             }
         });
         for (AbstractAbility ability : player.getAbilities()) {
-            if (ability instanceof FortifyingHex fortifyingHex) {
-                fortifyingHex.getDamageReduction().setBaseValue(3.33f);
-            } else if (ability instanceof GuardianBeam guardianBeam) {
-                guardianBeam.getShieldPercents().replaceAll(integer -> (int) (integer * .9f));
+            if (ability instanceof GuardianBeam guardianBeam) {
+                guardianBeam.getShieldValues().replaceAll(integer -> (int) (integer * .9f));
             }
         }
     }

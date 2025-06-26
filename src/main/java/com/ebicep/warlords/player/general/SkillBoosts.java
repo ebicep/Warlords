@@ -1383,9 +1383,7 @@ public enum SkillBoosts {
     ),
     MYSTICAL_BARRIER("Mystical Barrier",
             List.of(
-                    Component.text("Increase the rune timer increase inflicted by Mystical Barrier by "),
-                    Component.text("0.5", NamedTextColor.RED),
-                    Component.text(" seconds and increase the base and maximum shield health by "),
+                    Component.text("Increase the base and maximum shield health by "),
                     Component.text("400", NamedTextColor.RED),
                     Component.text(" and "),
                     Component.text("800", NamedTextColor.RED),
@@ -1394,7 +1392,6 @@ public enum SkillBoosts {
             MysticalBarrier.class,
             abstractAbility -> {
                 if (abstractAbility instanceof MysticalBarrier mysticalBarrier) {
-                    mysticalBarrier.setRuneTimerIncrease(mysticalBarrier.getRuneTimerIncrease() + 0.5f);
                     mysticalBarrier.setShieldBase(mysticalBarrier.getShieldBase() + 400);
                     mysticalBarrier.setShieldMaxHealth(mysticalBarrier.getShieldMaxHealth() + 800);
                 }

@@ -4,8 +4,10 @@ import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
@@ -19,18 +21,21 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon, Duration, AbilityStats<MysticalBarrier, MysticalBarrier.MysticalBarrierStats> {
 
     private final MysticalBarrierStats stats = new MysticalBarrierStats();
-    private float runeTimerIncrease = 0.5f;
     private int tickDuration = 100;
     private float meleeDamageReduction = 80;
     private int radius = 12;
@@ -39,6 +44,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
     private int shieldMaxHealth = 1200;
     private int reactivateTickDuration = 100;
     private int stacksGranted = 2;
+    private float guardianBeamShieldMultiplier;
 
     public MysticalBarrier() {
         super(AbstractAbilityBuilder.create("mysticalBarrier").pvp());
@@ -51,7 +57,6 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
     @Override
     public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
-        this.runeTimerIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("runeTimerIncrease"), float.class);
         this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
         this.meleeDamageReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("meleeDamageReduction"), float.class);
         this.radius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), int.class);
@@ -60,34 +65,36 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
         this.shieldMaxHealth = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("shieldMaxHealth"), int.class);
         this.reactivateTickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("reactivateTickDuration"), int.class);
         this.stacksGranted = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("stacksGranted"), int.class);
+        this.guardianBeamShieldMultiplier = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("guardianBeamShieldMultiplier"), float.class);
     }
 
     @Override
     public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Grant the target ally ")
-                                               .text(stacksGranted, NamedTextColor.BLUE)
-                                               .text(" stacks of ")
-                                               .text("FHEX", NamedTextColor.DARK_GREEN)
-                                               .text(" and the protection of magical spirits that reduce all melee damage taken by")
-                                               .percent(meleeDamageReduction, AbilityDescriptionBuilder.COLOR_BROWN)
-                                               .text("and increase the attacker’s cooldowns by ")
-                                               .text(formatHundredths(runeTimerIncrease), NamedTextColor.GOLD)
-                                               .text(" for every instance of damage they deal to the target.")
-                                               .emptyLine()
-                                               .text("After ")
-                                               .durationTicks(tickDuration)
-                                               .text(" the spirits transform into a shield equal to")
-                                               .text(shieldBase, AbilityDescriptionBuilder.COLOR_BROWN)
-                                               .text(" + ")
-                                               .text(shieldIncrease, AbilityDescriptionBuilder.COLOR_BROWN)
-                                               .text(" for each instance of damage taken, up to a maximum of ")
-                                               .text(shieldMaxHealth, AbilityDescriptionBuilder.COLOR_BROWN)
-                                               .text(" health, that lasts ")
-                                               .durationTicks(reactivateTickDuration)
-                                               .text(".")
-                                               .emptyLine()
-                                               .text("If no ally is targeted, receive all the effects yourself.")
-                                               .build();
+        description = AbilityDescriptionBuilder
+                .create("Grant the target ally ")
+                .text(stacksGranted, NamedTextColor.BLUE)
+                .text(" stacks of ")
+                .text("FHEX", NamedTextColor.DARK_GREEN)
+                .text(" and the protection of magical spirits that reduce all melee damage taken by")
+                .percent(meleeDamageReduction, AbilityDescriptionBuilder.COLOR_BROWN)
+                .text(".")
+                .emptyLine()
+                .text("After ")
+                .durationTicks(tickDuration)
+                .text(" the spirits transform into a shield equal to")
+                .text(shieldBase, AbilityDescriptionBuilder.COLOR_BROWN)
+                .text(" + ")
+                .text(shieldIncrease, AbilityDescriptionBuilder.COLOR_BROWN)
+                .text(" for each instance of damage taken, up to a maximum of ")
+                .text(shieldMaxHealth, AbilityDescriptionBuilder.COLOR_BROWN)
+                .text(" health, that lasts ")
+                .durationTicks(reactivateTickDuration)
+                .text(". Players under Mystical Barrier receive ")
+                .text(guardianBeamShieldMultiplier + "x", AbilityDescriptionBuilder.COLOR_BROWN)
+                .text(" more shields from Guardian Beam.")
+                .emptyLine()
+                .text("If no ally is targeted, receive all the effects yourself.")
+                .build();
     }
 
     @Override
@@ -103,12 +110,13 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                 giveBarrier(wp, targets.get(0));
             }
         } else {
-            List<WarlordsEntity> targets = PlayerFilter.entitiesAround(wp, radius, radius, radius)
-                                                       .aliveTeammatesOfExcludingSelf(wp)
-                                                       .requireLineOfSightIntervene(wp, true)
-                                                       .lookingAtFirst(wp)
-                                                       .limit(1)
-                                                       .toList();
+            List<WarlordsEntity> targets = PlayerFilter
+                    .entitiesAround(wp, radius, radius, radius)
+                    .aliveTeammatesOfExcludingSelf(wp)
+                    .requireLineOfSightIntervene(wp, true)
+                    .lookingAtFirst(wp)
+                    .limit(1)
+                    .toList();
             WarlordsEntity target = targets.isEmpty() ? wp : targets.get(0);
             giveBarrier(wp, target);
         }
@@ -124,33 +132,44 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
         }
         AtomicInteger damageInstances = new AtomicInteger();
         boolean isSelf = wp.equals(target);
-        wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" Your ", NamedTextColor.GRAY))
-                                                      .append(Component.text(name, NamedTextColor.YELLOW))
-                                                      .append(Component.text(" is now protecting " + (isSelf ? "yourself" : target.getName()) + "!", NamedTextColor.GRAY)));
+        wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                .append(Component.text(" Your ", NamedTextColor.GRAY))
+                .append(Component.text(name, NamedTextColor.YELLOW))
+                .append(Component.text(" is now protecting " + (isSelf ? "yourself" : target.getName()) + "!", NamedTextColor.GRAY)));
         if (!isSelf) {
             EffectUtils.playParticleLinkAnimation(wp.getLocation(), target.getLocation(), 0, 180, 180, 2);
-            target.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN.append(Component.text(" " + wp.getName() + "'s ", NamedTextColor.GRAY))
-                                                                 .append(Component.text("Mystical Barrier", NamedTextColor.YELLOW))
-                                                                 .append(Component.text(" is now protecting you for ", NamedTextColor.GRAY))
-                                                                 .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                                                                 .append(Component.text(" seconds!", NamedTextColor.GRAY)));
+            target.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
+                    .append(Component.text(" " + wp.getName() + "'s ", NamedTextColor.GRAY))
+                    .append(Component.text("Mystical Barrier", NamedTextColor.YELLOW))
+                    .append(Component.text(" is now protecting you for ", NamedTextColor.GRAY))
+                    .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                    .append(Component.text(" seconds!", NamedTextColor.GRAY)));
         }
         for (int i = 0; i < stacksGranted; i++) {
             FortifyingHex.giveFortifyingHex(wp, target);
         }
-        target.getCooldownManager().addCooldown(new RegularCooldown<>(name, "MYSTIC", MysticalBarrier.class, new MysticalBarrier(), wp, CooldownTypes.ABILITY, cooldownManager -> {
-            if (!target.isAlive()) {
-                return;
-            }
-            Utils.playGlobalSound(target.getLocation(), "arcanist.mysticalbarrier.giveshield", 2, 1.75f);
-            int shieldHealth = Math.min(shieldMaxHealth, shieldBase + shieldIncrease * damageInstances.get());
-            giveShield(wp, target, shieldHealth);
-        }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-            if (ticksElapsed % 2 != 0) {
-                return;
-            }
-            EffectUtils.playCircularEffectAround(target.getGame(), target.getLocation(), Particle.TOTEM_OF_UNDYING, 3, 1, 0.15, 2.2, 8, 1, 4, ticksElapsed);
-        })
+        target.getCooldownManager().addCooldown(new RegularCooldown<>(
+                name,
+                "MYSTIC",
+                MysticalBarrier.class,
+                null,
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                    if (!target.isAlive()) {
+                        return;
+                    }
+                    Utils.playGlobalSound(target.getLocation(), "arcanist.mysticalbarrier.giveshield", 2, 1.75f);
+                    int shieldHealth = Math.min(shieldMaxHealth, shieldBase + shieldIncrease * damageInstances.get());
+                    giveShield(wp, target, shieldHealth);
+                },
+                tickDuration,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed % 2 != 0) {
+                        return;
+                    }
+                    EffectUtils.playCircularEffectAround(target.getGame(), target.getLocation(), Particle.TOTEM_OF_UNDYING, 3, 1, 0.15, 2.2, 8, 1, 4, ticksElapsed);
+                })
         ) {
 
             @Override
@@ -171,23 +190,52 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                 if (cause.equals("Hammer of Light") || cause.equals("Sanctuary")) { // TODO
                     return;
                 }
-                event.getSource().getSpec().increaseAllCooldownTimersBy(runeTimerIncrease);
                 damageInstances.getAndIncrement();
                 stats.timesCooldownsIncreased++;
+            }
+
+            @Override
+            protected Listener getListener() {
+                return new Listener() {
+
+                    @EventHandler(priority = EventPriority.LOWEST)
+                    private void onAddCooldown(WarlordsAddCooldownEvent event) {
+                        AbstractCooldown<?> cooldown = event.getAbstractCooldown();
+                        if (!Objects.equals(cooldown.getFrom(), wp) || !(cooldown instanceof RegularCooldown<?> regularCooldown)) {
+                            return;
+                        }
+                        Object cdObject = cooldown.getCooldownObject();
+                        if (event.getWarlordsEntity().equals(target) && cdObject instanceof GuardianBeam.GuardianBeamShield guardianBeamShield) {
+                            float newShieldHealth = guardianBeamShield.getShieldValue() * guardianBeamShieldMultiplier;
+                            guardianBeamShield.setMaxShieldHealth(newShieldHealth);
+                            guardianBeamShield.setShieldHealth(newShieldHealth);
+                        }
+                    }
+                };
             }
         });
     }
 
     private void giveShield(WarlordsEntity from, @Nonnull WarlordsEntity to, int shieldHealth) {
         Shield shield = new Shield(name, shieldHealth);
-        to.getCooldownManager().addCooldown(new RegularCooldown<>(name + " Shield", "SHIELD", Shield.class, shield, from, CooldownTypes.ABILITY, cooldownManager -> {
-        }, cooldownManager -> {
-        }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-            if (ticksElapsed % 2 != 0) {
-                return;
-            }
-            EffectUtils.displayParticle(Particle.FIREWORK, to.getLocation().add(0, 1.5, 0), 2, 0.3, 0.2, 0.3, 0);
-        })
+        to.getCooldownManager().addCooldown(new RegularCooldown<>(
+                name + " Shield",
+                "SHIELD",
+                Shield.class,
+                shield,
+                from,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                },
+                cooldownManager -> {
+                },
+                tickDuration,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed % 2 != 0) {
+                        return;
+                    }
+                    EffectUtils.displayParticle(Particle.FIREWORK, to.getLocation().add(0, 1.5, 0), 2, 0.3, 0.2, 0.3, 0);
+                })
         ) {
 
             @Override
@@ -220,14 +268,6 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
     @Override
     public MysticalBarrierStats getAbilityStats() {
         return stats;
-    }
-
-    public float getRuneTimerIncrease() {
-        return runeTimerIncrease;
-    }
-
-    public void setRuneTimerIncrease(float runeTimerIncrease) {
-        this.runeTimerIncrease = runeTimerIncrease;
     }
 
     public int getShieldBase() {

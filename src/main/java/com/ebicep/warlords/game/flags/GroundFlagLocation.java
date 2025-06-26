@@ -72,7 +72,7 @@ public class GroundFlagLocation extends AbstractLocationBasedFlagLocation implem
         this.ticksElapsed++;
         this.despawnTicks--;
         this.repickTickCooldown--;
-        if (ticksElapsed >= PlayerFlagLocation.INCREASE_DELAY && ticksElapsed % FlagSpawnPointOption.FLAG_MULTIPLIER_PERIOD == 0) {
+        if (ticksElapsed >= PlayerFlagLocation.getIncreaseDelay() && ticksElapsed % FlagSpawnPointOption.FLAG_MULTIPLIER_PERIOD == 0) {
             this.flagMultiplier++;
         }
         if (this.despawnTicks <= 0) {

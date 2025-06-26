@@ -197,6 +197,10 @@ public class RegularCooldown<T> extends AbstractCooldown<T> {
         this.consumers.remove(triConsumer);
     }
 
+    public List<TriConsumer<RegularCooldown<T>, Integer, Integer>> getConsumers() {
+        return consumers;
+    }
+
     public boolean isEnhanced() {
         return enhanced;
     }

@@ -30,9 +30,9 @@ import java.util.List;
 public class GuardianBeam extends AbstractBeam<GuardianBeam, GuardianBeam.GuardianBeamStats> implements Duration, Damages<GuardianBeam.DamageValues> {
 
     public static final ItemStack BEAM_ITEM = new ItemStack(Material.WARPED_SLAB);
-    private final List<Integer> shieldPercents = new ArrayList<>(List.of(5, 10, 20));
     private final GuardianBeamStats stats = new GuardianBeamStats();
     private final DamageValues damageValues = new DamageValues();
+    private List<Integer> shieldValues = new ArrayList<>(List.of(5, 10, 20));
     private float carrierBonusMultiplier = 2.4f;
     private float runeTimerIncrease = 1.5f;
     private int tickDuration = 120;
@@ -92,27 +92,32 @@ public class GuardianBeam extends AbstractBeam<GuardianBeam, GuardianBeam.Guardi
 
     @Override
     public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Unleash a concentrated beam of mystical power, piercing all enemies and allies. Enemies hit take ")
-                                               .damage(damageValues.beamDamage)
-                                               .text(" damage and have their cooldowns increased by ")
-                                               .durationSeconds(runeTimerIncrease)
-                                               .text(". Any hit ally with stacks of ")
-                                               .text("FHEX", NamedTextColor.DARK_GREEN)
-                                               .text(" is granted a shield with ")
-                                               .percent(shieldPercents.get(0), AbilityDescriptionBuilder.COLOR_BROWN)
-                                               .text("/")
-                                               .percent(shieldPercents.get(1), AbilityDescriptionBuilder.COLOR_BROWN)
-                                               .text("/")
-                                               .percent(shieldPercents.get(2), AbilityDescriptionBuilder.COLOR_BROWN)
-                                               .text(" of the ally’s maximum health relative to the number of stacks and all stacks are removed. Shield health on flag carriers is increased by ")
-                                               .text(format(carrierBonusMultiplier) + "x", AbilityDescriptionBuilder.COLOR_BROWN)
-                                               .text(". Lasts ")
-                                               .durationTicks(tickDuration)
-                                               .text(".")
-                                               .emptyLine()
-                                               .text("If Guardian Beam hits a target, you also receive a shield based on the same percentages.")
-                                               .maxRange(maxDistance)
-                                               .build();
+        AbilityDescriptionBuilder builder = AbilityDescriptionBuilder
+                .create("Unleash a concentrated beam of mystical power, piercing all enemies and allies");
+        if (inPve) {
+            builder.text(". Enemies hit take ")
+                   .damage(damageValues.beamDamage)
+                   .text(" damage and have their cooldowns increased by ")
+                   .durationSeconds(runeTimerIncrease);
+        }
+        description = builder
+                .text(". Any hit ally with stacks of ")
+                .text("FHEX", NamedTextColor.DARK_GREEN)
+                .text(" is granted a shield with ")
+                .percent(shieldValues.get(0), AbilityDescriptionBuilder.COLOR_BROWN)
+                .text("/")
+                .percent(shieldValues.get(1), AbilityDescriptionBuilder.COLOR_BROWN)
+                .text("/")
+                .percent(shieldValues.get(2), AbilityDescriptionBuilder.COLOR_BROWN)
+                .text(" of the ally’s maximum health relative to the number of stacks and all stacks are removed. Shield health on flag carriers is increased by ")
+                .text(format(carrierBonusMultiplier) + "x", AbilityDescriptionBuilder.COLOR_BROWN)
+                .text(". Lasts ")
+                .durationTicks(tickDuration)
+                .text(".")
+                .emptyLine()
+                .text("If Guardian Beam hits a target, you also receive a shield based on the same percentages.")
+                .maxRange(maxDistance)
+                .build();
     }
 
     @Override
@@ -123,6 +128,7 @@ public class GuardianBeam extends AbstractBeam<GuardianBeam, GuardianBeam.Guardi
     @Override
     public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
+        this.shieldValues = ConfigManager.getAbilityConfigListValue(builder.getNamespaces(), builder.getAppendedFieldName("shieldValues"), int.class);
         this.carrierBonusMultiplier = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("carrierBonusMultiplier"), float.class);
         this.runeTimerIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("runeTimerIncrease"), float.class);
         this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
@@ -147,32 +153,45 @@ public class GuardianBeam extends AbstractBeam<GuardianBeam, GuardianBeam.Guardi
             );
         }
         if (from == to) {
-            from.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" Your ", NamedTextColor.GRAY))
-                                                            .append(Component.text(name, NamedTextColor.YELLOW))
-                                                            .append(Component.text(" is now shielding you!", NamedTextColor.GRAY)));
+            from.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                    .append(Component.text(" Your ", NamedTextColor.GRAY))
+                    .append(Component.text(name, NamedTextColor.YELLOW))
+                    .append(Component.text(" is now shielding you!", NamedTextColor.GRAY)));
         } else {
-            from.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" Your ", NamedTextColor.GRAY))
-                                                            .append(Component.text(name, NamedTextColor.YELLOW))
-                                                            .append(Component.text(" is now shielding " + to.getName() + "!", NamedTextColor.GRAY)));
-            to.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN.append(Component.text(" " + from.getName() + " is shielding you with their ", NamedTextColor.GRAY))
-                                                             .append(Component.text("Guardian Beam", NamedTextColor.YELLOW))
-                                                             .append(Component.text("!", NamedTextColor.GRAY)));
+            from.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                    .append(Component.text(" Your ", NamedTextColor.GRAY))
+                    .append(Component.text(name, NamedTextColor.YELLOW))
+                    .append(Component.text(" is now shielding " + to.getName() + "!", NamedTextColor.GRAY)));
+            to.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
+                    .append(Component.text(" " + from.getName() + " is shielding you with their ", NamedTextColor.GRAY))
+                    .append(Component.text("Guardian Beam", NamedTextColor.YELLOW))
+                    .append(Component.text("!", NamedTextColor.GRAY)));
         }
         Utils.playGlobalSound(to.getLocation(), "arcanist.guardianbeam.giveshield", 1, 1.7f);
         getAbilityStats().getStacksRemoved().merge(selfHexStacks, 1, Integer::sum);
-        float percent = shieldPercents.get(Math.min(selfHexStacks, 3) - 1) * (to.hasFlag() ? carrierBonusMultiplier : 1);
-        GuardianBeamShield shield = new GuardianBeamShield(to.getMaxHealth() * convertToPercent(percent), percent);
-        to.getCooldownManager().addCooldown(new RegularCooldown<>(name + " Shield", "SHIELD", Shield.class, shield, from, CooldownTypes.ABILITY, cooldownManager -> {
-        }, cooldownManager -> {
-        }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-            if (ticksElapsed % 4 == 0) {
-                Location location = to.getLocation();
-                location.add(0, 1.5, 0);
-                EffectUtils.displayParticle(Particle.CHERRY_LEAVES, location, 2, 0.15F, 0.3F, 0.15F, 0.01);
-                EffectUtils.displayParticle(Particle.FIREWORK, location, 1, 0.3F, 0.3F, 0.3F, 0.0001);
-                EffectUtils.displayParticle(Particle.CRIMSON_SPORE, location, 1, 0.3F, 0.3F, 0.3F, 0);
-            }
-        })
+        float value = shieldValues.get(Math.min(selfHexStacks, 3) - 1) * (to.hasFlag() ? carrierBonusMultiplier : 1);
+        GuardianBeamShield shield = new GuardianBeamShield(value);
+        to.getCooldownManager().addCooldown(new RegularCooldown<>(
+                name + " Shield",
+                "SHIELD",
+                Shield.class,
+                shield,
+                from,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                },
+                cooldownManager -> {
+                },
+                tickDuration,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed % 4 == 0) {
+                        Location location = to.getLocation();
+                        location.add(0, 1.5, 0);
+                        EffectUtils.displayParticle(Particle.CHERRY_LEAVES, location, 2, 0.15F, 0.3F, 0.15F, 0.01);
+                        EffectUtils.displayParticle(Particle.FIREWORK, location, 1, 0.3F, 0.3F, 0.3F, 0.0001);
+                        EffectUtils.displayParticle(Particle.CRIMSON_SPORE, location, 1, 0.3F, 0.3F, 0.3F, 0);
+                    }
+                })
         ) {
 
             @Override
@@ -207,8 +226,8 @@ public class GuardianBeam extends AbstractBeam<GuardianBeam, GuardianBeam.Guardi
         return damageValues;
     }
 
-    public List<Integer> getShieldPercents() {
-        return shieldPercents;
+    public List<Integer> getShieldValues() {
+        return shieldValues;
     }
 
     public float getRuneTimerIncrease() {
@@ -221,15 +240,15 @@ public class GuardianBeam extends AbstractBeam<GuardianBeam, GuardianBeam.Guardi
 
     public static class GuardianBeamShield extends Shield {
 
-        private final float shieldPercent;
+        private final float shieldValue;
 
-        public GuardianBeamShield(float maxShieldHealth, float shieldPercent) {
+        public GuardianBeamShield(float maxShieldHealth) {
             super("Guardian Beam", maxShieldHealth);
-            this.shieldPercent = shieldPercent;
+            this.shieldValue = maxShieldHealth;
         }
 
-        public float getShieldPercent() {
-            return shieldPercent;
+        public float getShieldValue() {
+            return shieldValue;
         }
 
     }

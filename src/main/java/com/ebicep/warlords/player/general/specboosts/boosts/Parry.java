@@ -1,6 +1,7 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
 import com.ebicep.warlords.abilities.ConsecrateCrusader;
+import com.ebicep.warlords.abilities.CrusadersStrike;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -11,10 +12,12 @@ import java.util.List;
 public class Parry implements SpecBoostManager.SpecBoost<Parry> {
 
     private int healthIncrease;
+    private int crusaderStrikeEnergyIncrease;
 
     @Override
     public void init() {
         this.healthIncrease = getValue("healthIncrease", int.class);
+        this.crusaderStrikeEnergyIncrease = getValue("crusaderStrikeEnergyIncrease", int.class);
     }
 
     @Override
@@ -29,7 +32,7 @@ public class Parry implements SpecBoostManager.SpecBoost<Parry> {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(healthIncrease);
+        return List.of(healthIncrease, crusaderStrikeEnergyIncrease);
     }
 
     @Override
@@ -47,6 +50,9 @@ public class Parry implements SpecBoostManager.SpecBoost<Parry> {
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getHealth().addAdditiveModifier("Spec Boost (Base)", healthIncrease);
+            warlordsPlayer.getAbilitiesMatching(CrusadersStrike.class).forEach(crusadersStrike -> {
+                crusadersStrike.setEnergyGiven(crusadersStrike.getEnergyGiven() + crusaderStrikeEnergyIncrease);
+            });
             List<AbstractAbility> abilities = warlordsPlayer.getAbilities();
             for (int i = 0; i < abilities.size(); i++) {
                 AbstractAbility ability = abilities.get(i);

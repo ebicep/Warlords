@@ -32,7 +32,7 @@ public class SanctuaryBranch extends AbstractUpgradeBranch<Sanctuary> {
                 "Oasis",
                 "Sanctuary - Master Upgrade",
                 """
-                        All allies with max stacks of Fortifying Hex gain an additional 15% damage reduction. Reflection damage ignores enemy defenses and resistances.
+                        All allies with max stacks of Fortifying Hex gain an additional 15% damage reduction..
                         """,
                 50000,
                 () -> {
@@ -43,7 +43,7 @@ public class SanctuaryBranch extends AbstractUpgradeBranch<Sanctuary> {
                 "Asylum",
                 "Sanctuary - Master Upgrade",
                 """
-                        For the duration of Sanctuary, reduce the cooldown of Guardian Beam by 45% while Sanctuary is active and increase the shield provided to allies by 15%.
+                        For the duration of Sanctuary, reduce the cooldown of Guardian Beam by 45% while Sanctuary is active and increase the shield provided to allies by 300.
                         """,
                 50000,
                 () -> {

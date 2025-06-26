@@ -22,13 +22,11 @@ import java.util.function.Consumer;
 
 public class FortifiedAegis implements SpecBoostManager.SpecBoost<FortifiedAegis> {
 
-    private int healthIncrease;
     private float arcaneShieldCooldownReductionSeconds;
     private float knockbackRangeBlocks;
 
     @Override
     public void init() {
-        this.healthIncrease = getValue("healthIncrease", int.class);
         this.arcaneShieldCooldownReductionSeconds = getValue("arcaneShieldCooldownReductionSeconds", float.class);
         this.knockbackRangeBlocks = getValue("knockbackRangeBlocks", float.class);
     }
@@ -40,7 +38,7 @@ public class FortifiedAegis implements SpecBoostManager.SpecBoost<FortifiedAegis
 
     @Override
     public List<Object> getVariables() {
-        return List.of(healthIncrease, arcaneShieldCooldownReductionSeconds, knockbackRangeBlocks);
+        return List.of(arcaneShieldCooldownReductionSeconds, knockbackRangeBlocks);
     }
 
     @Override
@@ -60,7 +58,6 @@ public class FortifiedAegis implements SpecBoostManager.SpecBoost<FortifiedAegis
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
-            warlordsPlayer.getHealth().addAdditiveModifier("Spec Boost (Base)", healthIncrease);
             warlordsPlayer.getAbilitiesMatching(ArcaneShield.class).forEach(arcaneShield -> {
                 arcaneShield.getCooldown().addAdditiveModifier("Spec Boost", -arcaneShieldCooldownReductionSeconds);
             });

@@ -22,7 +22,9 @@ import java.util.List;
 
 public class PlayerFlagLocation implements FlagLocation {
 
-    public static final int INCREASE_DELAY = 20 * 30;
+    public static int getIncreaseDelay() {
+        return ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "ctf.flagPercentageIncreaseTickDelay", int.class);
+    }
 
     public static PlayerFlagLocation of(@Nonnull FlagLocation flag, WarlordsEntity player) {
         return flag instanceof GroundFlagLocation groundFlagLocation ?
@@ -53,7 +55,7 @@ public class PlayerFlagLocation implements FlagLocation {
     @Override
     public FlagLocation update(Game game, @Nonnull FlagInfo info) {
         this.ticksElapsed++;
-        if (ticksElapsed >= INCREASE_DELAY && ticksElapsed % FlagSpawnPointOption.FLAG_MULTIPLIER_PERIOD == 0 && flagMultiplier < getMaxMultiplier()) {
+        if (ticksElapsed >= getIncreaseDelay() && ticksElapsed % FlagSpawnPointOption.FLAG_MULTIPLIER_PERIOD == 0 && flagMultiplier < getMaxMultiplier()) {
             flagMultiplier += 1;
         }
         return null;
