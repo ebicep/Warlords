@@ -64,7 +64,7 @@ public class SuperBrew extends AbstractAbility implements OrangeAbilityIcon, Hit
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         if (superBrewCooldown != null) {
-            superBrewCooldown.setMarkedForRemoval(true);
+            superBrewCooldown.setTicksLeft(0);
         }
 
         Utils.playGlobalSound(wp.getLocation(), Sound.ITEM_ARMOR_EQUIP_ELYTRA, 2, 0.75f);

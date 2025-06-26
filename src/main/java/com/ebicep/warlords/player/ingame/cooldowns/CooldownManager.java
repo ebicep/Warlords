@@ -19,6 +19,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -26,6 +27,7 @@ public class CooldownManager {
 
     private final WarlordsEntity warlordsEntity;
     private final List<AbstractCooldown<?>> abstractCooldowns = new ArrayList<>();
+    private final Set<AbstractCooldown<?>> cooldownsToRemove = ConcurrentHashMap.newKeySet();
     private int totalCooldowns = 0;
     private boolean updatePlayerNames = false;
 
@@ -54,18 +56,22 @@ public class CooldownManager {
         removeCooldown(abstractCooldown, false);
     }
 
-    private void removeCooldown(AbstractCooldown<?> abstractCooldown, boolean noForce) {
-        if (noForce) {
-            // always remove listener
-            Listener activeListener = abstractCooldown.getActiveListener();
-            if (activeListener != null) {
-                HandlerList.unregisterAll(activeListener);
+    public void reduceCooldowns() {
+        List<AbstractCooldown<?>> cooldowns = new ArrayList<>(abstractCooldowns);
+        for (AbstractCooldown<?> cooldown : cooldowns) {
+            if (cooldownsToRemove.contains(cooldown) || !abstractCooldowns.contains(cooldown)) {
+                continue;
             }
-        } else {
-            abstractCooldown.getOnRemoveForce().accept(this);
+            cooldown.onTick(warlordsEntity);
+            if (cooldown.removeCheck()) {
+                cooldown.expire(this);
+            }
         }
-        abstractCooldown.setMarkedForRemoval(true);
-        updatePlayerNames(abstractCooldown);
+        Set<AbstractCooldown<?>> snapshot = Set.copyOf(cooldownsToRemove);
+        synchronized (abstractCooldowns) {
+            abstractCooldowns.removeIf(snapshot::contains);
+        }
+        cooldownsToRemove.removeAll(snapshot);
     }
 
     public void updatePlayerNames(AbstractCooldown<?> abstractCooldown) {
@@ -123,18 +129,22 @@ public class CooldownManager {
         }
     }
 
-    public void reduceCooldowns() {
-        List<AbstractCooldown<?>> cooldowns = new ArrayList<>(abstractCooldowns);
-        for (AbstractCooldown<?> cooldown : cooldowns) {
-            if (cooldown.isMarkedForRemoval() || !abstractCooldowns.contains(cooldown)) {
-                continue;
-            }
-            cooldown.onTick(warlordsEntity);
-            if (cooldown.removeCheck()) {
-                cooldown.expire(this);
-            }
-        }
-        abstractCooldowns.removeIf(AbstractCooldown::isMarkedForRemoval);
+    public boolean markedForRemoval(AbstractCooldown<?> abstractCooldown) {
+        return cooldownsToRemove.contains(abstractCooldown);
+    }
+
+    public void markForRemoval(AbstractCooldown<?> abstractCooldown) {
+        cooldownsToRemove.add(abstractCooldown);
+    }
+
+    public void subtractTicksOnRegularCooldowns(int ticks, CooldownTypes... cooldownTypes) {
+        List<CooldownTypes> types = Arrays.asList(cooldownTypes);
+        new ArrayList<>(abstractCooldowns).stream()
+                                          .filter(abstractCooldown -> types.contains(abstractCooldown.getCooldownType()))
+                                          .filter(regularCooldown -> !regularCooldown.getFlags().contains(CooldownFlag.CANNOT_BE_REDUCED))
+                                          .filter(RegularCooldown.class::isInstance)
+                                          .map(RegularCooldown.class::cast)
+                                          .forEachOrdered(regularCooldown -> regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() - ticks));
     }
 
     private void updatePlayerNames() {
@@ -155,14 +165,8 @@ public class CooldownManager {
         return totalCooldowns;
     }
 
-    public void subtractTicksOnRegularCooldowns(int ticks, CooldownTypes... cooldownTypes) {
-        List<CooldownTypes> types = Arrays.asList(cooldownTypes);
-        new ArrayList<>(abstractCooldowns).stream()
-                         .filter(abstractCooldown -> types.contains(abstractCooldown.getCooldownType()))
-                         .filter(regularCooldown -> !regularCooldown.getFlags().contains(CooldownFlag.CANNOT_BE_REDUCED))
-                         .filter(RegularCooldown.class::isInstance)
-                         .map(RegularCooldown.class::cast)
-                         .forEachOrdered(regularCooldown -> regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() - ticks));
+    public void removeCooldown(Predicate<AbstractCooldown<?>> predicate) {
+        removeCooldown(predicate, false);
     }
 
     public void addTicksToRegularCooldowns(int ticks, CooldownTypes... cooldownTypes) {
@@ -178,6 +182,28 @@ public class CooldownManager {
         removeCooldown(cd -> cd.getCooldownType() == CooldownTypes.BUFF);
     }
 
+    public void removeCooldown(Predicate<AbstractCooldown<?>> predicate, boolean noForce) {
+        new ArrayList<>(abstractCooldowns).forEach(cd -> {
+            if (predicate.test(cd)) {
+                removeCooldown(cd, noForce);
+            }
+        });
+    }
+
+    private void removeCooldown(AbstractCooldown<?> abstractCooldown, boolean noForce) {
+        if (noForce) {
+            // always remove listener
+            Listener activeListener = abstractCooldown.getActiveListener();
+            if (activeListener != null) {
+                HandlerList.unregisterAll(activeListener);
+            }
+        } else {
+            abstractCooldown.getOnRemoveForce().accept(this);
+        }
+        cooldownsToRemove.add(abstractCooldown);
+        updatePlayerNames(abstractCooldown);
+    }
+
     public List<AbstractCooldown<?>> getDebuffCooldowns(boolean distinct) {
         if (distinct) {
             return getCooldownsSingular().stream()
@@ -185,8 +211,8 @@ public class CooldownManager {
                                          .toList();
         } else {
             return new ArrayList<>(abstractCooldowns).stream()
-                                    .filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.LOW_LEVEL_DEBUFF)
-                                    .toList();
+                                                     .filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.LOW_LEVEL_DEBUFF)
+                                                     .toList();
         }
     }
 
@@ -223,18 +249,6 @@ public class CooldownManager {
             }
         }
         return cooldowns;
-    }
-
-    public void removeCooldown(Predicate<AbstractCooldown<?>> predicate) {
-        removeCooldown(predicate, false);
-    }
-
-    public void removeCooldown(Predicate<AbstractCooldown<?>> predicate, boolean noForce) {
-        new ArrayList<>(abstractCooldowns).forEach(cd -> {
-            if (predicate.test(cd)) {
-                removeCooldown(cd, noForce);
-            }
-        });
     }
 
     public void removeAbilityCooldowns() {

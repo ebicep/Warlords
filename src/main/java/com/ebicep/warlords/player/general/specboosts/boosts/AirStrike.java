@@ -157,7 +157,7 @@ public class AirStrike implements SpecBoostManager.SpecBoost<AirStrike> {
 
                                     @EventHandler
                                     public void onWarlordsAbilityActivatePreEvent(WarlordsAbilityActivateEvent.Pre event) {
-                                        if (isMarkedForRemoval()) {
+                                        if (warlordsEntity.getCooldownManager().markedForRemoval(regularCooldown)) {
                                             return;
                                         }
                                         if (!warlordsEntity.equals(event.getWarlordsEntity())) {
@@ -170,7 +170,7 @@ public class AirStrike implements SpecBoostManager.SpecBoost<AirStrike> {
 
                                     @EventHandler
                                     public void onWarlordsAbilityActivatePreEvent(WarlordsAbilityActivateEvent.Post event) {
-                                        if (isMarkedForRemoval()) {
+                                        if (warlordsEntity.getCooldownManager().markedForRemoval(regularCooldown)) {
                                             return;
                                         }
                                         if (!warlordsEntity.equals(event.getWarlordsEntity())) {

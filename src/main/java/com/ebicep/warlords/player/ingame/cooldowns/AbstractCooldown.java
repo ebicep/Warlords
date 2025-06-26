@@ -29,7 +29,6 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
     private List<DamageInstance> extraDamageInstances = null;
     private List<HealingInstance> extraHealingInstances = null;
     private List<CooldownFlag> flags = new ArrayList<>();
-    private boolean markedForRemoval = false;
 
     public AbstractCooldown(
             String name,
@@ -128,7 +127,7 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
     }
 
     public void expire(CooldownManager cooldownManager) {
-        setMarkedForRemoval(true);
+        cooldownManager.markForRemoval(this);
         getOnRemove().accept(cooldownManager);
         getOnRemoveForce().accept(cooldownManager);
         cooldownManager.updatePlayerNames(this);
@@ -224,14 +223,6 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
 
     public List<CooldownFlag> getFlags() {
         return flags;
-    }
-
-    public boolean isMarkedForRemoval() {
-        return markedForRemoval;
-    }
-
-    public void setMarkedForRemoval(boolean markedForRemoval) {
-        this.markedForRemoval = markedForRemoval;
     }
 
 }
