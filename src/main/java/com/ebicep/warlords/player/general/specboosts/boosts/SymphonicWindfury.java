@@ -69,7 +69,7 @@ public class SymphonicWindfury implements SpecBoostManager.SpecBoost<SymphonicWi
                 warlordsEntity.getSpeed().removeNegativeModifiers();
                 warlordsEntity.getCooldownManager().addCooldown(new RegularCooldown<>(
                         getStringName(),
-                        "SYM",
+                        "TAP",
                         Boost.class,
                         null,
                         warlordsEntity,
