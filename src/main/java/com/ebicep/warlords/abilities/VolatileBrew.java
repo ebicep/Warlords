@@ -8,7 +8,6 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.LinkedCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
-import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
@@ -110,7 +109,6 @@ public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, 
                                                 .source(wp)
                                                 .min(damageValues.brewDamage.getMinValue() * multiplier)
                                                 .max(damageValues.brewDamage.getMaxValue() * multiplier)
-                                                .flags(InstanceFlags.TRUE_DAMAGE)
                                         );
                                     });
                     }
@@ -257,7 +255,7 @@ public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, 
                 .text("Corrosive Concoction", NamedTextColor.DARK_RED)
                 .text(": Deals ")
                 .damage(damageValues.brewDamage)
-                .text(" true damage to nearby enemies. Deals ")
+                .text(" damage to nearby enemies. Deals ")
                 .percent(earlyActivationEffectivenessReduction, NamedTextColor.BLUE)
                 .text(" less damage if detonated early.")
                 .text("Restorative Elixir", NamedTextColor.DARK_GREEN)
