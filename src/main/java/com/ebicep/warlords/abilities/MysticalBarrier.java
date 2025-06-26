@@ -74,7 +74,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                 .create("Grant the target ally ")
                 .text(stacksGranted, NamedTextColor.BLUE)
                 .text(" stacks of ")
-                .text("FHEX", NamedTextColor.DARK_GREEN)
+                .text("FHEX", NamedTextColor.YELLOW)
                 .text(" and the protection of magical spirits that reduce all melee damage taken by")
                 .percent(meleeDamageReduction, AbilityDescriptionBuilder.COLOR_BROWN)
                 .text(".")

@@ -185,15 +185,15 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder
                 .create("Summon your full protective power, increasing ")
-                .text("FHEX", NamedTextColor.DARK_GREEN)
+                .text("FHEX", NamedTextColor.YELLOW)
                 .text(" duration by ")
                 .durationTicks(hexTickDurationIncrease)
                 .text(" and causing Guardian Beam to not consume ")
-                .text("FHEX", NamedTextColor.DARK_GREEN)
+                .text("FHEX", NamedTextColor.YELLOW)
                 .text(" stacks.")
                 .emptyLine()
                 .text("All allies with max stacks of ")
-                .text("FHEX", NamedTextColor.DARK_GREEN)
+                .text("FHEX", NamedTextColor.YELLOW)
                 .text(" gain an additional ")
                 .percent(additionalDamageReduction, AbilityDescriptionBuilder.COLOR_BROWN)
                 .text(" damage reduction per stack and are resurrected at ")

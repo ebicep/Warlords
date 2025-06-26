@@ -102,7 +102,7 @@ public class GuardianBeam extends AbstractBeam<GuardianBeam, GuardianBeam.Guardi
         }
         description = builder
                 .text(". Any hit ally with stacks of ")
-                .text("FHEX", NamedTextColor.DARK_GREEN)
+                .text("FHEX", NamedTextColor.YELLOW)
                 .text(" is granted a shield with ")
                 .text(shieldValues.get(0), AbilityDescriptionBuilder.COLOR_BROWN)
                 .text("/")
