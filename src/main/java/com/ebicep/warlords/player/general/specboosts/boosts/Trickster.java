@@ -29,7 +29,6 @@ public class Trickster implements SpecBoostManager.SpecBoost<Trickster> {
     private int soulSwitchInvisTickDuration;
     private int soulSwitchDummyDurationTicks;
     private int soulSwitchDummyHealth;
-    private float shadowLeapCooldownReductionSeconds;
     private int shadowLeapHealthThreshold;
 
     @Override
@@ -40,7 +39,6 @@ public class Trickster implements SpecBoostManager.SpecBoost<Trickster> {
         this.soulSwitchInvisTickDuration = getValue("soulSwitchInvisTickDuration", int.class);
         this.soulSwitchDummyDurationTicks = getValue("soulSwitchDummyDurationTicks", int.class);
         this.soulSwitchDummyHealth = getValue("soulSwitchDummyHealth", int.class);
-        this.shadowLeapCooldownReductionSeconds = getValue("shadowLeapCooldownReductionSeconds", float.class);
         this.shadowLeapHealthThreshold = getValue("shadowLeapHealthThreshold", int.class);
     }
 
@@ -58,7 +56,6 @@ public class Trickster implements SpecBoostManager.SpecBoost<Trickster> {
                 soulSwitchInvisTickDuration,
                 soulSwitchDummyDurationTicks,
                 soulSwitchDummyHealth,
-                shadowLeapCooldownReductionSeconds,
                 shadowLeapHealthThreshold
         );
     }
@@ -88,7 +85,6 @@ public class Trickster implements SpecBoostManager.SpecBoost<Trickster> {
                 incendiaryCurse.getEnergyCost().addAdditiveModifier("Spec Boost", incendiaryCurseEnergyCostIncrease);
             });
             warlordsPlayer.getAbilitiesMatching(ShadowStep.class).forEach(shadowStep -> {
-                shadowStep.getCooldown().addAdditiveModifier("Spec Boost", -shadowLeapCooldownReductionSeconds);
                 shadowStep.setLeapHealThreshold(shadowLeapHealthThreshold);
             });
         }
