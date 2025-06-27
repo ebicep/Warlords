@@ -80,6 +80,7 @@ public class SpecBoostManager {
     public static final SpecBoost<RecklessAscent> RECKLESS_ASCENT = new RecklessAscent();
     public static final SpecBoost<RiftAmbush> RIFT_AMBUSH = new RiftAmbush();
     public static final SpecBoost<SanctionBurst> SANCTION_BURST = new SanctionBurst();
+    public static final SpecBoost<SanctuaryOfRetribution> SANCTUARY_OF_RETRIBUTION = new SanctuaryOfRetribution();
     public static final SpecBoost<SeismicShift> SEISMIC_SHIFT = new SeismicShift();
     public static final SpecBoost<SharpFangs> SHARP_FANGS = new SharpFangs();
     public static final SpecBoost<Solitary> SOLITARY = new Solitary();
@@ -126,7 +127,7 @@ public class SpecBoostManager {
         SPEC_BOOSTS.put(Specializations.VINDICATOR, List.of(ABYSSAL_GRASP, VITAL_PULSE, SANCTION_BURST, RIGHTEOUS_RAMPAGE, SWIFT_JUSTICE));
         SPEC_BOOSTS.put(Specializations.APOTHECARY, List.of(AURA_OF_RESTORATION, ALCHEMISTS_FURY, SUSTAINED_ONSLAUGHT, DETONATION_CATALYST, SUPER_BREW));
         SPEC_BOOSTS.put(Specializations.CONJURER, List.of(SHARP_FANGS, STACKULATOR_MAX, HOUSE_OF_LIFE, CONTAGION, AIR_STRIKE));
-        SPEC_BOOSTS.put(Specializations.SENTINEL, List.of(DIVINE_SHIELDS, PACT_OF_PROTECTION));
+        SPEC_BOOSTS.put(Specializations.SENTINEL, List.of(DIVINE_SHIELDS, PACT_OF_PROTECTION, SANCTUARY_OF_RETRIBUTION));
         SPEC_BOOSTS.put(Specializations.LUMINARY, List.of(RADIANT_LIGHT, UNMERCIFUL_HEX, ENERGY_OVERSURGE, CONSECRATED_BEACON, HOLY_NOVA));
     }
 
