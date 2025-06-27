@@ -46,6 +46,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
     private int reactivateTickDuration = 100;
     private int stacksGranted = 2;
     private float guardianBeamShieldMultiplier;
+    private boolean canTargetAllies = true;
 
     public MysticalBarrier() {
         super(AbstractAbilityBuilder.create("mysticalBarrier").pvp());
@@ -67,6 +68,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
         this.reactivateTickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("reactivateTickDuration"), int.class);
         this.stacksGranted = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("stacksGranted"), int.class);
         this.guardianBeamShieldMultiplier = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("guardianBeamShieldMultiplier"), float.class);
+        this.canTargetAllies = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("canTargetAllies"), boolean.class);
     }
 
     @Override
@@ -108,7 +110,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
             if (targets.isEmpty()) {
                 subtractCurrentCooldown(cooldown.getBaseValue() * .35f);
             } else {
-                giveBarrier(wp, targets.get(0));
+                giveBarrier(wp, !canTargetAllies ? wp : targets.get(0));
             }
         } else {
             List<WarlordsEntity> targets = PlayerFilter
@@ -118,10 +120,14 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                     .lookingAtFirst(wp)
                     .limit(1)
                     .toList();
-            WarlordsEntity target = targets.isEmpty() ? wp : targets.get(0);
+            WarlordsEntity target = !canTargetAllies || targets.isEmpty() ? wp : targets.get(0);
             giveBarrier(wp, target);
         }
         return true;
+    }
+
+    public void setCanTargetAllies(boolean canTargetAllies) {
+        this.canTargetAllies = canTargetAllies;
     }
 
     private void giveBarrier(@Nonnull WarlordsEntity wp, WarlordsEntity target) {

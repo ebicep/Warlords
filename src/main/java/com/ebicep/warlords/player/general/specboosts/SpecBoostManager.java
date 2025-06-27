@@ -66,6 +66,7 @@ public class SpecBoostManager {
     public static final SpecBoost<HolyNova> HOLY_NOVA = new HolyNova();
     public static final SpecBoost<HouseOfLife> HOUSE_OF_LIFE = new HouseOfLife();
     public static final SpecBoost<IceBlock> ICE_BLOCK = new IceBlock();
+    public static final SpecBoost<LoneSentinel> LONE_SENTINEL = new LoneSentinel();
     public static final SpecBoost<LustrousCrown> LUSTROUS_CROWN = new LustrousCrown();
     public static final SpecBoost<MarkedForDeath> MARKED_FOR_DEATH = new MarkedForDeath();
     public static final SpecBoost<MegalithicBoulder> MEGALITHIC_BOULDER = new MegalithicBoulder();
@@ -128,7 +129,7 @@ public class SpecBoostManager {
         SPEC_BOOSTS.put(Specializations.VINDICATOR, List.of(ABYSSAL_GRASP, VITAL_PULSE, SANCTION_BURST, RIGHTEOUS_RAMPAGE, SWIFT_JUSTICE));
         SPEC_BOOSTS.put(Specializations.APOTHECARY, List.of(AURA_OF_RESTORATION, ALCHEMISTS_FURY, SUSTAINED_ONSLAUGHT, DETONATION_CATALYST, SUPER_BREW));
         SPEC_BOOSTS.put(Specializations.CONJURER, List.of(SHARP_FANGS, STACKULATOR_MAX, HOUSE_OF_LIFE, CONTAGION, AIR_STRIKE));
-        SPEC_BOOSTS.put(Specializations.SENTINEL, List.of(DIVINE_SHIELDS, RUINOUS_HEX, PACT_OF_PROTECTION, SANCTUARY_OF_RETRIBUTION));
+        SPEC_BOOSTS.put(Specializations.SENTINEL, List.of(DIVINE_SHIELDS, RUINOUS_HEX, LONE_SENTINEL, PACT_OF_PROTECTION, SANCTUARY_OF_RETRIBUTION));
         SPEC_BOOSTS.put(Specializations.LUMINARY, List.of(RADIANT_LIGHT, UNMERCIFUL_HEX, ENERGY_OVERSURGE, CONSECRATED_BEACON, HOLY_NOVA));
     }
 
@@ -154,6 +155,8 @@ public class SpecBoostManager {
             return ConfigManager.getSpecBoostConfigValue(NAMESPACES, getConfigFieldName() + "." + fieldName, clazz, optionalField);
         }
 
+        String getConfigFieldName();
+
         default TextComponent getName() {
             return Component.text(getStringName(), NamedTextColor.GREEN);
         }
@@ -162,15 +165,13 @@ public class SpecBoostManager {
             return getValue("name", String.class);
         }
 
-        default TextComponent getDifficulty() {
-            return Component.text("☆".repeat(getValue("difficulty", int.class, true)), NamedTextColor.YELLOW);
-        }
-
         default <T> T getValue(String fieldName, Class<T> clazz) {
             return ConfigManager.getSpecBoostConfigValue(NAMESPACES, getConfigFieldName() + "." + fieldName, clazz);
         }
 
-        String getConfigFieldName();
+        default TextComponent getDifficulty() {
+            return Component.text("☆".repeat(getValue("difficulty", int.class, true)), NamedTextColor.YELLOW);
+        }
 
         default List<Component> getDescriptionLore() {
             return WordWrap.wrap(getDescription(), getMaxDescriptionWidth());
