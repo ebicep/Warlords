@@ -180,6 +180,7 @@ public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, 
                             );
                             return;
                         }
+                        data.target.getCooldownManager().removeCooldownNoForce(cooldown);
                         cooldown.getLinkedEntities().remove(data.target);
                         data.target = wp;
                         wp.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN

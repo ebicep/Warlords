@@ -15,8 +15,6 @@ import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.java.TriConsumer;
 import org.bukkit.Bukkit;
-import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -191,13 +189,7 @@ public class CooldownManager {
     }
 
     private void removeCooldown(AbstractCooldown<?> abstractCooldown, boolean noForce) {
-        if (noForce) {
-            // always remove listener
-            Listener activeListener = abstractCooldown.getActiveListener();
-            if (activeListener != null) {
-                HandlerList.unregisterAll(activeListener);
-            }
-        } else {
+        if (!noForce) {
             abstractCooldown.getOnRemoveForce().accept(this);
         }
         cooldownsToRemove.add(abstractCooldown);
