@@ -63,6 +63,9 @@ public class SanctuaryOfRetribution implements SpecBoostManager.SpecBoost<Sanctu
 
         @EventHandler
         public void onDamageHealFinalEvent(WarlordsDamageHealingFinalEvent event) {
+            if (!warlordsEntity.getCooldownManager().hasCooldown(Sanctuary.class)) {
+                return;
+            }
             if (event.isHealingInstance()) {
                 return;
             }

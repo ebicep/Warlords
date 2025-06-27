@@ -77,7 +77,7 @@ public class PactOfProtection implements SpecBoostManager.SpecBoost<PactOfProtec
 
                 @Override
                 public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    return currentDamageValue * AbstractAbility.convertToMultiplicationDecimal(targetDamageReductionPercent);
+                    return currentDamageValue * AbstractAbility.convertToDivisionDecimal(targetDamageReductionPercent);
                 }
 
             });
