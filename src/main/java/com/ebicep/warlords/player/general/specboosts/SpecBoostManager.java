@@ -33,6 +33,7 @@ public class SpecBoostManager {
     public static final SpecBoost<BlizzardBreath> BLIZZARD_BREATH = new BlizzardBreath();
     public static final SpecBoost<BloodFrenzy> BLOOD_FRENZY = new BloodFrenzy();
     public static final SpecBoost<RighteousRampage> RIGHTEOUS_RAMPAGE = new RighteousRampage();
+    public static final SpecBoost<RuinousHex> RUINOUS_HEX = new RuinousHex();
     public static final SpecBoost<BurstChain> BURST_CHAIN = new BurstChain();
     public static final SpecBoost<ChillyAura> CHILLY_AURA = new ChillyAura();
     public static final SpecBoost<Clairvoyance> CLAIRVOYANCE = new Clairvoyance();
@@ -127,7 +128,7 @@ public class SpecBoostManager {
         SPEC_BOOSTS.put(Specializations.VINDICATOR, List.of(ABYSSAL_GRASP, VITAL_PULSE, SANCTION_BURST, RIGHTEOUS_RAMPAGE, SWIFT_JUSTICE));
         SPEC_BOOSTS.put(Specializations.APOTHECARY, List.of(AURA_OF_RESTORATION, ALCHEMISTS_FURY, SUSTAINED_ONSLAUGHT, DETONATION_CATALYST, SUPER_BREW));
         SPEC_BOOSTS.put(Specializations.CONJURER, List.of(SHARP_FANGS, STACKULATOR_MAX, HOUSE_OF_LIFE, CONTAGION, AIR_STRIKE));
-        SPEC_BOOSTS.put(Specializations.SENTINEL, List.of(DIVINE_SHIELDS, PACT_OF_PROTECTION, SANCTUARY_OF_RETRIBUTION));
+        SPEC_BOOSTS.put(Specializations.SENTINEL, List.of(DIVINE_SHIELDS, RUINOUS_HEX, PACT_OF_PROTECTION, SANCTUARY_OF_RETRIBUTION));
         SPEC_BOOSTS.put(Specializations.LUMINARY, List.of(RADIANT_LIGHT, UNMERCIFUL_HEX, ENERGY_OVERSURGE, CONSECRATED_BEACON, HOLY_NOVA));
     }
 
