@@ -87,6 +87,9 @@ public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, 
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
+                    if (!cooldownManager.getWarlordsEntity().equals(wp)) {
+                        return;
+                    }
                     if (bothStatesActive || data.damageMode) {
                         float multiplier = data.activatedEarly ? convertToDivisionDecimal(earlyActivationEffectivenessReduction) : 1.0f;
                         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_SPIDER_HURT, 2, .25f);
