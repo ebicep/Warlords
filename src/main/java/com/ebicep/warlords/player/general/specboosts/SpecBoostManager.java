@@ -44,6 +44,7 @@ public class SpecBoostManager {
     public static final SpecBoost<DimensionalWarp> DIMENSIONAL_WARP = new DimensionalWarp();
     public static final SpecBoost<DivineEffulgence> DIVINE_EFFULGENCE = new DivineEffulgence();
     public static final SpecBoost<DivinePurification> DIVINE_PURIFICATION = new DivinePurification();
+    public static final SpecBoost<DivineShields> DIVINE_SHIELDS = new DivineShields();
     public static final SpecBoost<EarthboundInfusion> EARTHBOUND_INFUSION = new EarthboundInfusion();
     public static final SpecBoost<EcoDrive> ECO_DRIVE = new EcoDrive();
     public static final SpecBoost<EfficientStrikes> EFFICIENT_STRIKES = new EfficientStrikes();
@@ -124,6 +125,7 @@ public class SpecBoostManager {
         SPEC_BOOSTS.put(Specializations.VINDICATOR, List.of(ABYSSAL_GRASP, VITAL_PULSE, SANCTION_BURST, RIGHTEOUS_RAMPAGE, SWIFT_JUSTICE));
         SPEC_BOOSTS.put(Specializations.APOTHECARY, List.of(AURA_OF_RESTORATION, ALCHEMISTS_FURY, SUSTAINED_ONSLAUGHT, DETONATION_CATALYST, SUPER_BREW));
         SPEC_BOOSTS.put(Specializations.CONJURER, List.of(SHARP_FANGS, STACKULATOR_MAX, HOUSE_OF_LIFE, CONTAGION, AIR_STRIKE));
+        SPEC_BOOSTS.put(Specializations.SENTINEL, List.of(DIVINE_SHIELDS));
         SPEC_BOOSTS.put(Specializations.LUMINARY, List.of(RADIANT_LIGHT, UNMERCIFUL_HEX, ENERGY_OVERSURGE, CONSECRATED_BEACON, HOLY_NOVA));
     }
 
