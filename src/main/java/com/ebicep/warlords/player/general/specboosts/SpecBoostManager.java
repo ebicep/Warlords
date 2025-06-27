@@ -71,6 +71,7 @@ public class SpecBoostManager {
     public static final SpecBoost<Meteor> METEOR = new Meteor();
     public static final SpecBoost<MightyFists> MIGHTY_FISTS = new MightyFists();
     public static final SpecBoost<OneManArmy> ONE_MAN_ARMY = new OneManArmy();
+    public static final SpecBoost<PactOfProtection> PACT_OF_PROTECTION = new PactOfProtection();
     public static final SpecBoost<Parry> PARRY = new Parry();
     public static final SpecBoost<PenitentResolve> PENITENT_RESOLVE = new PenitentResolve();
     public static final SpecBoost<PermeatingLink> PERMEATING_LINK = new PermeatingLink();
@@ -125,7 +126,7 @@ public class SpecBoostManager {
         SPEC_BOOSTS.put(Specializations.VINDICATOR, List.of(ABYSSAL_GRASP, VITAL_PULSE, SANCTION_BURST, RIGHTEOUS_RAMPAGE, SWIFT_JUSTICE));
         SPEC_BOOSTS.put(Specializations.APOTHECARY, List.of(AURA_OF_RESTORATION, ALCHEMISTS_FURY, SUSTAINED_ONSLAUGHT, DETONATION_CATALYST, SUPER_BREW));
         SPEC_BOOSTS.put(Specializations.CONJURER, List.of(SHARP_FANGS, STACKULATOR_MAX, HOUSE_OF_LIFE, CONTAGION, AIR_STRIKE));
-        SPEC_BOOSTS.put(Specializations.SENTINEL, List.of(DIVINE_SHIELDS));
+        SPEC_BOOSTS.put(Specializations.SENTINEL, List.of(DIVINE_SHIELDS, PACT_OF_PROTECTION));
         SPEC_BOOSTS.put(Specializations.LUMINARY, List.of(RADIANT_LIGHT, UNMERCIFUL_HEX, ENERGY_OVERSURGE, CONSECRATED_BEACON, HOLY_NOVA));
     }
 

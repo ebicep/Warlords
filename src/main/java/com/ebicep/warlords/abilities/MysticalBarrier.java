@@ -14,6 +14,7 @@ import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.sentinel.MysticalBarrierBranch;
+import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
@@ -90,7 +91,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                 .text(" health, that lasts ")
                 .durationTicks(reactivateTickDuration)
                 .text(". Players under Mystical Barrier receive ")
-                .text(guardianBeamShieldMultiplier + "x", AbilityDescriptionBuilder.COLOR_BROWN)
+                .text(NumberFormat.formatOptionalHundredths(guardianBeamShieldMultiplier) + "x", AbilityDescriptionBuilder.COLOR_BROWN)
                 .text(" more shields from Guardian Beam.")
                 .emptyLine()
                 .text("If no ally is targeted, receive all the effects yourself.")
