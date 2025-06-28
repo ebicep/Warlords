@@ -100,6 +100,9 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
                     return;
                 }
                 playerSettings.forEach((warlordsEntity, cooldownData) -> {
+                    if (!warlordsEntity.isOnline()) {
+                        return;
+                    }
                     if (ticksElapsed % 10 == 0) { // TODO update based on ability updateItem
                         cooldownData.cooldowns.update(warlordsEntity, entityDataByID, forcePacketUpdate);
                     }
