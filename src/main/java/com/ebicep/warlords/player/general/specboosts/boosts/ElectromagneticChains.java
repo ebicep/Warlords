@@ -18,12 +18,14 @@ public class ElectromagneticChains implements SpecBoostManager.SpecBoost<Electro
 
     private float damageReductionPercent;
     private float chainLightningDamageReductionPercent;
+    private int chainLightningDurationTicks;
     private int maxStacks;
 
     @Override
     public void init() {
         this.damageReductionPercent = getValue("damageReductionPercent", float.class);
         this.chainLightningDamageReductionPercent = getValue("chainLightningDamageReductionPercent", float.class);
+        this.chainLightningDurationTicks = getValue("chainLightningDurationTicks", int.class);
         this.maxStacks = getValue("maxStacks", int.class);
     }
 
@@ -34,7 +36,7 @@ public class ElectromagneticChains implements SpecBoostManager.SpecBoost<Electro
 
     @Override
     public List<Object> getVariables() {
-        return List.of(damageReductionPercent, chainLightningDamageReductionPercent, maxStacks);
+        return List.of(damageReductionPercent, chainLightningDamageReductionPercent, chainLightningDurationTicks, maxStacks);
     }
 
     @Override
@@ -84,7 +86,7 @@ public class ElectromagneticChains implements SpecBoostManager.SpecBoost<Electro
                     warlordsEntity,
                     CooldownTypes.HIGH_LEVEL_DEBUFF,
                     cooldownManager -> {},
-                    chainLightning.getDamageReductionTickDuration()
+                    chainLightningDurationTicks
             ) {
                 @Override
                 public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
