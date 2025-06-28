@@ -13,11 +13,13 @@ public class Parry implements SpecBoostManager.SpecBoost<Parry> {
 
     private int healthIncrease;
     private int crusaderStrikeEnergyIncrease;
+    private int maxAbilityCharges;
 
     @Override
     public void init() {
         this.healthIncrease = getValue("healthIncrease", int.class);
         this.crusaderStrikeEnergyIncrease = getValue("crusaderStrikeEnergyIncrease", int.class);
+        this.maxAbilityCharges = getValue("maxAbilityCharges", int.class);
     }
 
     @Override
@@ -58,7 +60,9 @@ public class Parry implements SpecBoostManager.SpecBoost<Parry> {
                 AbstractAbility ability = abilities.get(i);
                 if (ability instanceof ConsecrateCrusader) {
                     com.ebicep.warlords.abilities.Parry parry = new com.ebicep.warlords.abilities.Parry();
+                    parry.setMaxCharges(maxAbilityCharges);
                     parry.init(parry.getBuilder());
+                    parry.setCurrentCooldown(1);
                     abilities.set(i, parry);
                 }
             }
