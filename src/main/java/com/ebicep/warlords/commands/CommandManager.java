@@ -80,6 +80,7 @@ public class CommandManager {
     public static void init(Warlords instance) {
         manager = new PaperCommandManager(instance);
         manager.enableUnstableAPI("help");
+        manager.enableUnstableAPI("brigadier");
         registerContexts();
         registerCompletions();
         registerConditions();

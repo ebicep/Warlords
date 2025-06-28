@@ -202,6 +202,16 @@ bukkitPluginYaml {
             description = "Old test command"
             permission = "group.administrator"
         }
+        register("me") {
+            aliases = listOf("me")
+            description = "Me"
+            permission = "group.administrator"
+        }
+        register("help") {
+            aliases = listOf("help")
+            description = "Help"
+            permission = "group.administrator"
+        }
     }
 }
 
