@@ -27,7 +27,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, HitBox, AbilityStats<VolatileBrew, VolatileBrew.VolatileBrewStats>, Damages<VolatileBrew.DamageValues>, Heals<VolatileBrew.HealingValues> {
+public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, Duration, HitBox, AbilityStats<VolatileBrew, VolatileBrew.VolatileBrewStats>,
+        Damages<VolatileBrew.DamageValues>, Heals<VolatileBrew.HealingValues> {
 
     private final VolatileBrewStats stats = new VolatileBrewStats();
     private final DamageValues damageValues = new DamageValues();
@@ -300,6 +301,16 @@ public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, 
 
     public void setEarlyActivationEffectivenessReduction(int earlyActivationEffectivenessReduction) {
         this.earlyActivationEffectivenessReduction = earlyActivationEffectivenessReduction;
+    }
+
+    @Override
+    public int getTickDuration() {
+        return ticksUntilExplosion;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.ticksUntilExplosion = tickDuration;
     }
 
     public static class VolatileBrewData {
