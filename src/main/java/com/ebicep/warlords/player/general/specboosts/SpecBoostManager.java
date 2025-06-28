@@ -170,7 +170,7 @@ public class SpecBoostManager {
         }
 
         default <T> List<T> getListValue(String fieldName, Class<T> clazz) {
-            return ConfigManager.getSpecsConfigListValue(NAMESPACES, getConfigFieldName() + "." + fieldName, clazz);
+            return ConfigManager.getSpecBoostConfigListValue(NAMESPACES, getConfigFieldName() + "." + fieldName, clazz);
         }
 
         default TextComponent getDifficulty() {
