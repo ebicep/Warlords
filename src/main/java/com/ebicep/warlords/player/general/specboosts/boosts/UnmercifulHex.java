@@ -10,12 +10,12 @@ import java.util.List;
 
 public class UnmercifulHex implements SpecBoostManager.SpecBoost<UnmercifulHex> {
 
-    private float mercifulHexSelfHealingIncreasePercent;
+    private int mercifulHexEnemyPierceIncrease;
     private float mercifulHexDamageIncreasePercent;
 
     @Override
     public void init() {
-        this.mercifulHexSelfHealingIncreasePercent = getValue("mercifulHexSelfHealingIncreasePercent", float.class);
+        this.mercifulHexEnemyPierceIncrease = getValue("mercifulHexEnemyPierceIncrease", int.class);
         this.mercifulHexDamageIncreasePercent = getValue("mercifulHexDamageIncreasePercent", float.class);
     }
 
@@ -26,7 +26,7 @@ public class UnmercifulHex implements SpecBoostManager.SpecBoost<UnmercifulHex> 
 
     @Override
     public List<Object> getVariables() {
-        return List.of(mercifulHexSelfHealingIncreasePercent, mercifulHexDamageIncreasePercent);
+        return List.of(mercifulHexEnemyPierceIncrease, mercifulHexDamageIncreasePercent);
     }
 
     @Override
@@ -44,19 +44,17 @@ public class UnmercifulHex implements SpecBoostManager.SpecBoost<UnmercifulHex> 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getAbilitiesMatching(MercifulHex.class).forEach(mercifulHex -> {
-                mercifulHex.getHealValues().getHexSelfHealing().forEachValue(floatModifiable ->
-                        floatModifiable.addMultiplicativeModifierAdd("Spec Boost", mercifulHexSelfHealingIncreasePercent / 100)
-                );
                 mercifulHex.getDamageValues().getHexDamage().forEachValue(floatModifiable ->
                         floatModifiable.addMultiplicativeModifierAdd("Spec Boost", mercifulHexDamageIncreasePercent / 100)
                 );
-                mercifulHex.setMaxEnemiesHit(Integer.MAX_VALUE);
+                mercifulHex.setMaxEnemiesHit(mercifulHex.getMaxEnemiesHit() + mercifulHexEnemyPierceIncrease);
+                mercifulHex.setHexStacksPerHitAfter(0);
             });
             warlordsPlayer.getAbilitiesMatching(RayOfLight.class).forEach(rayOfLight -> {
                 rayOfLight.setRemoveDebuffs(false);
             });
             warlordsPlayer.getAbilitiesMatching(SanctifiedBeacon.class).forEach(sanctifiedBeacon -> {
-                sanctifiedBeacon.setCritMultiplierReducedBy(0);
+                sanctifiedBeacon.setStacksGranted(0);
             });
         }
 

@@ -30,6 +30,8 @@ public class MercifulHexBranch extends AbstractUpgradeBranch<MercifulHex> {
                         """,
                 50000,
                 () -> {
+                    ability.setHexStacksPerHit(ability.getHexStacksPerHit() + 1);
+                    ability.setHexStacksPerHitAfter(ability.getHexStacksPerHitAfter() + 1);
                 }
         );
         masterUpgrade2 = new Upgrade(
@@ -37,7 +39,7 @@ public class MercifulHexBranch extends AbstractUpgradeBranch<MercifulHex> {
                 "Merciful Hex - Master Upgrade",
                 """
                         -15 Energy cost
-                                                
+                        
                         Merciful Hex healing occurs every .5s instead of 2s.
                         """,
                 50000,

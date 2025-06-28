@@ -50,6 +50,7 @@ public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, Mercifu
     private final DamageValues damageValues = new DamageValues();
     private final HealingValues healingValues = new HealingValues();
     private int hexStacksPerHit = 1;
+    private int hexStacksPerHitAfter = 1;
     private int maxAlliesHit = 2;
     private int maxEnemiesHit = 1;
     private int ticksBetweenDot = 40;
@@ -60,6 +61,16 @@ public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, Mercifu
         super(AbstractAbilityBuilder.create("mercifulHex").pvp());
         //TODO maybe inflate y separately
         this.hitboxInflation.setBaseValue(hitboxInflation.getBaseValue() + .75f);
+    }
+
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
+    @Override
+    public MercifulHexStats getAbilityStats() {
+        return stats;
     }
 
     @Nonnull
@@ -78,18 +89,48 @@ public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, Mercifu
     }
 
     @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder
+                .create("Send a wave of energy forward. The first ")
+                .text(maxAlliesHit, NamedTextColor.BLUE)
+                .text(" allies hit heal ")
+                .heal(healingValues.hexHealing)
+                .text(" health and receive ")
+                .text(hexStacksPerHit, NamedTextColor.BLUE)
+                .text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of ")
+                .text("MHEX", NamedTextColor.DARK_GREEN)
+                .text("; the first ally hit after receives ")
+                .text(hexStacksPerHitAfter, NamedTextColor.BLUE)
+                .text(" stack" + (hexStacksPerHitAfter != 1 ? "s" : "") + " of ")
+                .text("MHEX", NamedTextColor.DARK_GREEN)
+                .text(". The first enemy hit takes ")
+                .damage(damageValues.hexDamage)
+                .text(" damage. You also heal for ")
+                .heal(healingValues.hexSelfHealing)
+                .text(" and receive ")
+                .text(hexStacksPerHit, NamedTextColor.BLUE)
+                .text(" stack of ")
+                .text("MHEX", NamedTextColor.DARK_GREEN)
+                .text(".")
+                .emptyLine()
+                .text("Each stack of ")
+                .text("MHEX", NamedTextColor.DARK_GREEN)
+                .text(" heals ")
+                .heal(healingValues.hexDOTHealing)
+                .text(" health every ")
+                .durationTicks(ticksBetweenDot)
+                .text(" for ")
+                .durationTicks(tickDuration * 2)
+                .text(". Stacks up to")
+                .text(maxStacks, NamedTextColor.BLUE)
+                .text(" times.")
+                .maxRange(maxDistance)
+                .build();
+    }
+
+    @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new MercifulHexBranch(abilityTree, this);
-    }
-
-    @Override
-    public DamageValues getDamageValues() {
-        return damageValues;
-    }
-
-    @Override
-    public MercifulHexStats getAbilityStats() {
-        return stats;
     }
 
     public int getMaxStacks() {
@@ -100,6 +141,7 @@ public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, Mercifu
     public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.hexStacksPerHit = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hexStacksPerHit"), int.class);
+        this.hexStacksPerHitAfter = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hexStacksPerHitAfter"), int.class);
         this.maxAlliesHit = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxAlliesHit"), int.class);
         this.maxEnemiesHit = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxEnemiesHit"), int.class);
         this.ticksBetweenDot = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("ticksBetweenDot"), int.class);
@@ -107,8 +149,30 @@ public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, Mercifu
         this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
     }
 
+    @Override
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity shooter) {
+        boolean activate = super.onActivateInternal(shooter);
+        shooter.addInstance(InstanceBuilder.healing().ability(this).source(shooter).value(healingValues.hexSelfHealing));
+        for (int i = 0; i < hexStacksPerHit; i++) {
+            giveMercifulHex(shooter, shooter);
+        }
+        return activate;
+    }
+
     public HealingValues getHealValues() {
         return healingValues;
+    }
+
+    public int getMaxAlliesHit() {
+        return maxAlliesHit;
+    }
+
+    public void setMaxAlliesHit(int maxAlliesHit) {
+        this.maxAlliesHit = maxAlliesHit;
+    }
+
+    public int getMaxEnemiesHit() {
+        return maxEnemiesHit;
     }
 
     public static class DamageValues implements Value.ValueHolder {
@@ -174,64 +238,8 @@ public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, Mercifu
 
     }
 
-    @Override
-    protected boolean onActivateInternal(@Nonnull WarlordsEntity shooter) {
-        boolean activate = super.onActivateInternal(shooter);
-        shooter.addInstance(InstanceBuilder.healing().ability(this).source(shooter).value(healingValues.hexSelfHealing));
-        giveMercifulHex(shooter, shooter);
-        return activate;
-    }
-
-    @Override
-    protected boolean nonCollisionCheck(
-            AbstractPiercingProjectile<MercifulHex, MercifulHexStats>.InternalProjectile projectile,
-            Location currentLocation,
-            Vector speed,
-            WarlordsEntity shooter,
-            WarlordsEntity wp
-    ) {
-        return super.nonCollisionCheck(projectile, currentLocation, speed, shooter, wp) ||
-                (wp instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof PlayerMob && !(warlordsNPC.getMob() instanceof TestDummy));
-    }
-
-    @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder
-                .create("Send a wave of energy forward. The first ")
-                .text(maxAlliesHit, NamedTextColor.BLUE)
-                .text(" allies hit heal ")
-                .heal(healingValues.hexHealing)
-                .text(" health and receive ")
-                .text(hexStacksPerHit, NamedTextColor.BLUE)
-                .text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of ")
-                .text("MHEX", NamedTextColor.DARK_GREEN)
-                .text("; the first ally hit after receives ")
-                .text(hexStacksPerHit, NamedTextColor.BLUE)
-                .text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of ")
-                .text("MHEX", NamedTextColor.DARK_GREEN)
-                .text(". The first enemy hit takes ")
-                .damage(damageValues.hexDamage)
-                .text(" damage. You also heal for ")
-                .heal(healingValues.hexSelfHealing)
-                .text(" and receive ")
-                .text(hexStacksPerHit, NamedTextColor.BLUE)
-                .text(" stack of ")
-                .text("MHEX", NamedTextColor.DARK_GREEN)
-                .text(".")
-                .emptyLine()
-                .text("Each stack of ")
-                .text("MHEX", NamedTextColor.DARK_GREEN)
-                .text(" heals ")
-                .heal(healingValues.hexDOTHealing)
-                .text(" health every ")
-                .durationTicks(ticksBetweenDot)
-                .text(" for ")
-                .durationTicks(tickDuration * 2)
-                .text(". Stacks up to")
-                .text(maxStacks, NamedTextColor.BLUE)
-                .text(" times.")
-                .maxRange(maxDistance)
-                .build();
+    public void setMaxEnemiesHit(int maxEnemiesHit) {
+        this.maxEnemiesHit = maxEnemiesHit;
     }
 
     private boolean hitProjectile(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit) {
@@ -246,7 +254,9 @@ public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, Mercifu
             int teammatesHit = (int) hits.stream().filter(we -> we.isTeammate(wp)).count();
             if (teammatesHit > maxAlliesHit) {
                 if (teammatesHit == maxAlliesHit + 1) {
-                    giveMercifulHex(wp, hit);
+                    for (int i = 0; i < hexStacksPerHitAfter; i++) {
+                        giveMercifulHex(wp, hit);
+                    }
                 }
                 return false;
             }
@@ -256,8 +266,7 @@ public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, Mercifu
                     .source(wp)
                     .value(healingValues.hexHealing)
             );
-            giveMercifulHex(wp, hit);
-            if (pveMasterUpgrade) {
+            for (int i = 0; i < hexStacksPerHit; i++) {
                 giveMercifulHex(wp, hit);
             }
         } else {
@@ -279,16 +288,60 @@ public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, Mercifu
         return true;
     }
 
-    public int getMaxAlliesHit() {
-        return maxAlliesHit;
+
+    @Override
+    protected boolean nonCollisionCheck(
+            AbstractPiercingProjectile<MercifulHex, MercifulHexStats>.InternalProjectile projectile,
+            Location currentLocation,
+            Vector speed,
+            WarlordsEntity shooter,
+            WarlordsEntity wp
+    ) {
+        return super.nonCollisionCheck(projectile, currentLocation, speed, shooter, wp) ||
+                (wp instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof PlayerMob && !(warlordsNPC.getMob() instanceof TestDummy));
     }
 
-    public void setMaxAlliesHit(int maxAlliesHit) {
-        this.maxAlliesHit = maxAlliesHit;
+    public int getHexStacksPerHitAfter() {
+        return hexStacksPerHitAfter;
     }
 
-    public void setMaxEnemiesHit(int maxEnemiesHit) {
-        this.maxEnemiesHit = maxEnemiesHit;
+    public void setHexStacksPerHitAfter(int hexStacksPerHitAfter) {
+        this.hexStacksPerHitAfter = hexStacksPerHitAfter;
+    }
+
+    public int getHexStacksPerHit() {
+        return hexStacksPerHit;
+    }
+
+    public void setHexStacksPerHit(int hexStacksPerHit) {
+        this.hexStacksPerHit = hexStacksPerHit;
+    }
+
+    public static class MercifulHexStats extends AbstractPiercingProjectileStats<MercifulHex, MercifulHexStats> {
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.removeIf(abilityStatDisplay -> abilityStatDisplay.name().equals("Direct Hits"));
+            return statsDisplay;
+        }
+
+        @Override
+        public MercifulHexStats merge(MercifulHexStats other, int multiplier) {
+            MercifulHexStats stats = super.merge(other, multiplier);
+            return stats;
+        }
+
+        @Override
+        public Class<MercifulHexStats> getClazz() {
+            return MercifulHexStats.class;
+        }
+
+        @Override
+        public MercifulHexStats create() {
+            return new MercifulHexStats();
+        }
+
     }
 
     @Override
@@ -393,32 +446,6 @@ public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, Mercifu
         return new LocationBuilder(startingLocation.clone()).addY(-.3).backward(-.5f);
     }
 
-    public static class MercifulHexStats extends AbstractPiercingProjectileStats<MercifulHex, MercifulHexStats> {
-
-        @Override
-        public List<AbilityStatDisplay> getStatsDisplay() {
-            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
-            statsDisplay.removeIf(abilityStatDisplay -> abilityStatDisplay.name().equals("Direct Hits"));
-            return statsDisplay;
-        }
-
-        @Override
-        public MercifulHexStats merge(MercifulHexStats other, int multiplier) {
-            MercifulHexStats stats = super.merge(other, multiplier);
-            return stats;
-        }
-
-        @Override
-        public Class<MercifulHexStats> getClazz() {
-            return MercifulHexStats.class;
-        }
-
-        @Override
-        public MercifulHexStats create() {
-            return new MercifulHexStats();
-        }
-
-    }
 
     public static void giveMercifulHex(WarlordsEntity from, WarlordsEntity to) {
         MercifulHex fromHex = getFromHex(from);
