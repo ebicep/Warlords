@@ -34,7 +34,7 @@ public class Parry implements SpecBoostManager.SpecBoost<Parry> {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(healthIncrease, crusaderStrikeEnergyIncrease);
+        return List.of(healthIncrease, crusaderStrikeEnergyIncrease, maxAbilityCharges);
     }
 
     @Override
