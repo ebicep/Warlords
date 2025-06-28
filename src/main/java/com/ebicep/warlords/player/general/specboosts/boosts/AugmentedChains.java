@@ -15,12 +15,12 @@ import java.util.UUID;
 
 public class AugmentedChains implements SpecBoostManager.SpecBoost<AugmentedChains> {
 
-    private int chainHealCooldownReductionSeconds;
+    private float chainHealCooldownReductionSeconds;
     private float chainHealHealingIncreasePercent;
 
     @Override
     public void init() {
-        this.chainHealCooldownReductionSeconds = getValue("chainHealCooldownReductionSeconds", int.class);
+        this.chainHealCooldownReductionSeconds = getValue("chainHealCooldownReductionSeconds", float.class);
         this.chainHealHealingIncreasePercent = getValue("chainHealHealingIncreasePercent", float.class);
     }
 
