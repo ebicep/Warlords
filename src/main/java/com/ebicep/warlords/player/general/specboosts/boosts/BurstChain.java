@@ -1,30 +1,42 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
+import com.ebicep.warlords.abilities.ArcaneShield;
 import com.ebicep.warlords.abilities.FlameBurst;
+import com.ebicep.warlords.abilities.TimeWarpPyromancer;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import org.bukkit.event.EventHandler;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class BurstChain implements SpecBoostManager.SpecBoost<BurstChain> {
 
+    private int healthDecrease;
+    private float baseSpeedIncreasePercent;
+    private float timeWarpCooldownReductionSeconds;
+    private float arcaneShieldCooldownReductionSeconds;
     private float velocityIncreasePercentage;
-    private int energyCostIncrease;
-    private float damageIncrease;
     private int guaranteedCrit;
+    private float infernoDamageIncreasePercent;
+    private Set<String> damageReductionAbilities;
 
     @Override
     public void init() {
+        this.healthDecrease = getValue("healthDecrease", int.class);
+        this.baseSpeedIncreasePercent = getValue("baseSpeedIncreasePercent", float.class);
+        this.infernoDamageIncreasePercent = getValue("infernoDamageIncreasePercent", float.class);
+        this.timeWarpCooldownReductionSeconds = getValue("timeWarpCooldownReductionSeconds", float.class);
+        this.arcaneShieldCooldownReductionSeconds = getValue("arcaneShieldCooldownReductionSeconds", float.class);
         this.velocityIncreasePercentage = getValue("velocityIncreasePercentage", float.class);
-        this.energyCostIncrease = getValue("energyCostIncrease", int.class);
-        this.damageIncrease = getValue("damageIncrease", float.class);
         this.guaranteedCrit = getValue("guaranteedCrit", int.class);
+        this.infernoDamageIncreasePercent = getValue("infernoDamageIncreasePercent", float.class);
+        this.damageReductionAbilities = new HashSet<>(getListValue("damageReductionAbilities", String.class));
     }
 
     @Override
@@ -34,7 +46,15 @@ public class BurstChain implements SpecBoostManager.SpecBoost<BurstChain> {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(velocityIncreasePercentage, energyCostIncrease, damageIncrease, guaranteedCrit);
+        return List.of(
+                healthDecrease,
+                baseSpeedIncreasePercent,
+                timeWarpCooldownReductionSeconds,
+//                arcaneShieldCooldownReductionSeconds,
+                velocityIncreasePercentage,
+                guaranteedCrit,
+                infernoDamageIncreasePercent
+        );
     }
 
     @Override
@@ -55,12 +75,43 @@ public class BurstChain implements SpecBoostManager.SpecBoost<BurstChain> {
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
+            warlordsPlayer.getHealth().addAdditiveModifier("Spec Boost (Base)", -healthDecrease);
+            warlordsPlayer.getSpeed().addBaseModifier(baseSpeedIncreasePercent);
+            warlordsPlayer.getAbilitiesMatching(TimeWarpPyromancer.class).forEach(timeWarp -> {
+                timeWarp.getCooldown().addAdditiveModifier("Spec Boost", -timeWarpCooldownReductionSeconds);
+            });
+            warlordsPlayer.getAbilitiesMatching(ArcaneShield.class).forEach(arcaneShield -> {
+                arcaneShield.getCooldown().addAdditiveModifier("Spec Boost", -arcaneShieldCooldownReductionSeconds);
+            });
             warlordsPlayer.getAbilitiesMatching(FlameBurst.class).forEach(flameBurst -> {
                 flameBurst.getProjectileSpeed().addMultiplicativeModifierAdd("Spec Boost", (velocityIncreasePercentage + 100) / 100);
-                flameBurst.getEnergyCost().addAdditiveModifier("Spec Boost", energyCostIncrease);
-                flameBurst.getDamageValues().getFlameBurstDamage().forEachValue(floatModifiable ->
-                        floatModifiable.addMultiplicativeModifierAdd("Spec Boost", damageIncrease / 100)
-                );
+            });
+            warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                    getStringName(),
+                    null,
+                    Boost.class,
+                    null,
+                    warlordsPlayer,
+                    CooldownTypes.SPEC_BOOST,
+                    cooldownManager -> {
+                    },
+                    false
+            ) {
+
+                @Override
+                public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                    WarlordsEntity victim = event.getWarlordsEntity();
+                    if (victim.getCooldownManager()
+                              .getCooldowns()
+                              .stream()
+                              .map(AbstractCooldown::getName)
+                              .noneMatch(damageReductionAbilities::contains)
+                    ) {
+                        return currentDamageValue * AbstractAbility.convertToMultiplicationDecimal(infernoDamageIncreasePercent);
+                    }
+                    return currentDamageValue;
+                }
+
             });
         }
 

@@ -169,6 +169,10 @@ public class SpecBoostManager {
             return ConfigManager.getSpecBoostConfigValue(NAMESPACES, getConfigFieldName() + "." + fieldName, clazz);
         }
 
+        default <T> List<T> getListValue(String fieldName, Class<T> clazz) {
+            return ConfigManager.getSpecsConfigListValue(NAMESPACES, getConfigFieldName() + "." + fieldName, clazz);
+        }
+
         default TextComponent getDifficulty() {
             return Component.text("☆".repeat(getValue("difficulty", int.class, true)), NamedTextColor.YELLOW);
         }

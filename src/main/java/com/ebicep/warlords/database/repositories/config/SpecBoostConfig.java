@@ -36,4 +36,8 @@ public class SpecBoostConfig implements ConfigManager.Config {
         return ConfigUtils.getValue(specBoostConfig, namespaces, key, fieldType, defaultValue, optionalField);
     }
 
+    public <T> List<T> getListValue(List<String> namespaces, String key, Class<T> itemType) {
+        return ConfigUtils.getListValue(specBoostConfig, namespaces, key, itemType);
+    }
+
 }
