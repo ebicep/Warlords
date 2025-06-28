@@ -33,7 +33,7 @@ public class TheRift2 extends GameMap {
                 32,
                 12,
                 60 * SECOND,
-                "Rift2",
+                "Rift3",
                 1,
                 GameMode.CAPTURE_THE_FLAG
         );
