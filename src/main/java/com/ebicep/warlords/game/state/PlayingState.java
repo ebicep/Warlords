@@ -140,8 +140,8 @@ public class PlayingState implements State, TimerDebugAble {
 
             @Override
             public void run() {
-                game.warlordsPlayers().forEach(warlordsPlayer -> {
-                    updateBasedOnGameState(CustomScoreboard.getPlayerScoreboard(warlordsPlayer.getUuid()), warlordsPlayer);
+                game.forEachOnlinePlayer((player, team) -> {
+                    updateBasedOnGameState(CustomScoreboard.getPlayerScoreboard(player), (WarlordsPlayer) Warlords.getPlayer(player));
                 });
                 this.getGame().forEachOnlineWarlordsPlayer(warlordsPlayer -> {
                     if (!warlordsPlayer.isUpdateTabName()) {
