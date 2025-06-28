@@ -190,7 +190,9 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
                                                    .closestFirst(beacon.getGroundLocation())
                                                    .limit(maxAllies)) {
                 EffectUtils.playParticleLinkAnimation(crystal.getLocation().clone().add(0, .5, 0), ally.getLocation(), 20, 200, 20, 2);
-                MercifulHex.giveMercifulHex(wp, ally);
+                for (int i = 0; i < stacksGranted; i++) {
+                    MercifulHex.giveMercifulHex(wp, ally);
+                }
                 stats.hexesGiven++;
             }
             Utils.playGlobalSound(crystal.getLocation(), Sound.ENTITY_ALLAY_AMBIENT_WITHOUT_ITEM, 1, 2);
