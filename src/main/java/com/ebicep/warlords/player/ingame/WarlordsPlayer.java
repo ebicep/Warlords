@@ -552,4 +552,14 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
         return updateTabName;
     }
 
+    @Override
+    public void setTeam(Team team) {
+        super.setTeam(team);
+        queueUpdateTabName();
+    }
+
+    public void setUpdateTabName(boolean updateTabName) {
+        this.updateTabName = updateTabName;
+    }
+
 }

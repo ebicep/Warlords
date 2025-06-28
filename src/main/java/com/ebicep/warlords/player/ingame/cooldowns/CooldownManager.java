@@ -154,7 +154,7 @@ public class CooldownManager {
                     if (wp == null) {
                         return;
                     }
-                    playingState.updateNames(CustomScoreboard.getPlayerScoreboard(player), wp);
+                    playingState.getUpdater().updateNames(CustomScoreboard.getPlayerScoreboard(player), wp);
                 });
             });
     }
