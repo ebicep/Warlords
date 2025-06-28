@@ -49,6 +49,7 @@ public abstract class GameMap {
     public static final GameMap PHANTOM = new Phantom();
     public static final GameMap RIFT = new TheRift();
     public static final GameMap RIFT_2 = new TheRift2();
+    public static final GameMap RIFT_3 = new TheRift3();
     public static final GameMap RUINS = new Ruins();
     public static final GameMap SCORCHED = new Scorched();
     public static final GameMap SIEGE = new Siege();
@@ -97,6 +98,7 @@ public abstract class GameMap {
             PHANTOM,
             RIFT,
             RIFT_2,
+            RIFT_3,
             RUINS,
             SCORCHED,
             SIEGE,
