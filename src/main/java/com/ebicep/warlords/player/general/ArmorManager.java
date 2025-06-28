@@ -97,7 +97,7 @@ public class ArmorManager {
                 "Simple Mage Helmet",
                 Classes.MAGE,
                 new ItemStack(Material.GREEN_CANDLE),
-                new ItemStack(Material.LIME_CARPET)
+                new ItemStack(Material.WHITE_CANDLE)
         ),
         GREATER_MAGE_HELMET(
                 "Greater Mage Helmet",
@@ -134,7 +134,7 @@ public class ArmorManager {
                 "Masterwork Warrior Helmet",
                 Classes.WARRIOR,
                 new ItemStack(Material.BROWN_CANDLE),
-                new ItemStack(Material.ORANGE_CARPET)
+                new ItemStack(Material.ORANGE_CANDLE)
         ),
         LEGENDARY_WARRIOR_HELMET(
                 "Legendary Warrior Helmet",
