@@ -192,6 +192,16 @@ public class AirStrike implements SpecBoostManager.SpecBoost<AirStrike> {
                                             event.setCancelled(true);
                                         }
                                     }
+
+                                    @EventHandler(ignoreCancelled = true)
+                                    public void onDamageHeal(WarlordsDamageHealingEvent event) {
+                                        if (!event.getCause().isEmpty()) {
+                                            return;
+                                        }
+                                        if (event.getWarlordsEntity().equals(warlordsEntity) || event.getSource().equals(warlordsEntity)) {
+                                            event.setCancelled(true);
+                                        }
+                                    }
                                 };
                             }
 
@@ -238,6 +248,17 @@ public class AirStrike implements SpecBoostManager.SpecBoost<AirStrike> {
                                 event.setCancelled(true);
                             }
                         }
+
+                        @EventHandler(ignoreCancelled = true)
+                        public void onDamageHeal(WarlordsDamageHealingEvent event) {
+                            if (!event.getCause().isEmpty()) {
+                                return;
+                            }
+                            if (event.getWarlordsEntity().equals(warlordsEntity) || event.getSource().equals(warlordsEntity)) {
+                                event.setCancelled(true);
+                            }
+                        }
+
                     };
                 }
             });
