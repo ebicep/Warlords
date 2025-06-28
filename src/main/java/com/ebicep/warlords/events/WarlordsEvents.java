@@ -14,6 +14,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.FutureMessage;
 import com.ebicep.warlords.events.player.DatabasePlayerFirstLoadEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameManager;
@@ -63,10 +64,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class WarlordsEvents implements Listener {
@@ -86,11 +84,12 @@ public class WarlordsEvents implements Listener {
             UUID uuid = event.getUniqueId();
             for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
                 DatabaseManager.loadPlayer(uuid, activeCollection, (databasePlayer) -> {
-                    if (databasePlayer.getName() == null || !Objects.equals(databasePlayer.getName(), event.getName())) {
-                        databasePlayer.setName(event.getName());
-                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer, activeCollection);
-                    }
-                });
+                            if (databasePlayer.getName() == null || !Objects.equals(databasePlayer.getName(), event.getName())) {
+                                databasePlayer.setName(event.getName());
+                                DatabaseManager.queueUpdatePlayerAsync(databasePlayer, activeCollection);
+                            }
+                        }
+                );
             }
         }
     }
@@ -127,11 +126,12 @@ public class WarlordsEvents implements Listener {
             );
             ChatUtils.sendCenteredMessage(player, Component.text("-----------------------------------------------------", NamedTextColor.GRAY));
             ChatUtils.sendCenteredMessage(player, Component.textOfChildren(
-                    Component.text("Welcome to Warlords 2.0 ", NamedTextColor.GOLD, TextDecoration.BOLD),
-                    Component.text("(", NamedTextColor.GRAY),
-                    Component.text(Warlords.VERSION, Warlords.VERSION_COLOR),
-                    Component.text(")", NamedTextColor.GRAY)
-            ));
+                            Component.text("Welcome to Warlords 2.0 ", NamedTextColor.GOLD, TextDecoration.BOLD),
+                            Component.text("(", NamedTextColor.GRAY),
+                            Component.text(Warlords.VERSION, Warlords.VERSION_COLOR),
+                            Component.text(")", NamedTextColor.GRAY)
+                    )
+            );
 
             ChatUtils.sendCenteredMessage(player,
                     Component.text("Developed by ", NamedTextColor.GOLD)
@@ -142,9 +142,11 @@ public class WarlordsEvents implements Listener {
             ChatUtils.sendCenteredMessage(player, Component.empty());
             ChatUtils.sendCenteredMessage(player, Component.text("More Information: ", NamedTextColor.GOLD));
             ChatUtils.sendCenteredMessage(player, Component.text("https://docs.flairy.me/index.html", NamedTextColor.RED)
-                                                           .clickEvent(ClickEvent.openUrl("https://docs.flairy.me/index.html")));
+                                                           .clickEvent(ClickEvent.openUrl("https://docs.flairy.me/index.html"))
+            );
             ChatUtils.sendCenteredMessage(player, Component.text("https://ojagerl.nl/", NamedTextColor.RED)
-                                                           .clickEvent(ClickEvent.openUrl("https://ojagerl.nl/")));
+                                                           .clickEvent(ClickEvent.openUrl("https://ojagerl.nl/"))
+            );
             ChatUtils.sendCenteredMessage(player, Component.empty());
             ChatUtils.sendCenteredMessage(player,
                     Component.text("Discord: ", NamedTextColor.GOLD).append(Component.text("discord.gg/GWPAx9sEG7", NamedTextColor.DARK_PURPLE, TextDecoration.BOLD)
@@ -216,50 +218,51 @@ public class WarlordsEvents implements Listener {
             PlayerHotBarItemListener.giveLobbyHotBar(player, fromGame);
 
             DatabaseManager.getPlayer(uuid, databasePlayer -> {
-                if (fromGame) {
-                    ExperienceManager.checkForPrestige(player, uuid, databasePlayer);
-                } else {
-                    databasePlayer.setLastLogin(Instant.now());
-                    HeadUtils.updateHead(player);
-                    //future messages
-                    Warlords.newChain()
-                            .delay(20)
-                            .async(() -> {
-                                List<FutureMessage> futureMessages = databasePlayer.getFutureMessages();
-                                if (!futureMessages.isEmpty()) {
-                                    futureMessages.forEach(futureMessage -> futureMessage.sendToPlayer(player));
-                                    futureMessages.clear();
-                                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                                }
-                            }).execute();
+                        if (fromGame) {
+                            ExperienceManager.checkForPrestige(player, uuid, databasePlayer);
+                        } else {
+                            databasePlayer.setLastLogin(Instant.now());
+                            HeadUtils.updateHead(player);
+                            //future messages
+                            Warlords.newChain()
+                                    .delay(20)
+                                    .async(() -> {
+                                        List<FutureMessage> futureMessages = databasePlayer.getFutureMessages();
+                                        if (!futureMessages.isEmpty()) {
+                                            futureMessages.forEach(futureMessage -> futureMessage.sendToPlayer(player));
+                                            futureMessages.clear();
+                                            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                        }
+                                    }).execute();
 
-                    List<String> permissions = player.getEffectivePermissions()
-                                                     .stream()
-                                                     .map(PermissionAttachmentInfo::getPermission)
-                                                     .collect(Collectors.toList());
-                    permissions.remove("group.default");
-                    for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
-                        DatabaseManager.updatePlayer(uuid, activeCollection, dp -> dp.setPermissions(permissions));
-                    }
-                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                    Bukkit.getPluginManager().callEvent(new DatabasePlayerFirstLoadEvent(player, databasePlayer));
-                }
-                CustomScoreboard.updateLobbyPlayerNames();
-                ExperienceManager.giveExperienceBar(player);
-                if (StatsLeaderboardManager.loaded) {
-                    new BukkitRunnable() {
-                        @Override
-                        public void run() {
-                            StatsLeaderboardManager.setLeaderboardHologramVisibility(player);
-                            DatabaseGameBase.setGameHologramVisibility(player);
+                            List<String> permissions = player.getEffectivePermissions()
+                                                             .stream()
+                                                             .map(PermissionAttachmentInfo::getPermission)
+                                                             .collect(Collectors.toList());
+                            permissions.remove("group.default");
+                            for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
+                                DatabaseManager.updatePlayer(uuid, activeCollection, dp -> dp.setPermissions(permissions));
+                            }
+                            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                            Bukkit.getPluginManager().callEvent(new DatabasePlayerFirstLoadEvent(player, databasePlayer));
                         }
-                    }.runTaskLater(Warlords.getInstance(), 20);
-                }
-            }, () -> {
-                if (!fromGame) {
-                    player.kick(Component.text("Unable to load player data. Report this if this issue persists.*"));
-                }
-            });
+                        CustomScoreboard.updateLobbyPlayerNames();
+                        ExperienceManager.giveExperienceBar(player);
+                        if (StatsLeaderboardManager.loaded) {
+                            new BukkitRunnable() {
+                                @Override
+                                public void run() {
+                                    StatsLeaderboardManager.setLeaderboardHologramVisibility(player);
+                                    DatabaseGameBase.setGameHologramVisibility(player);
+                                }
+                            }.runTaskLater(Warlords.getInstance(), 20);
+                        }
+                    }, () -> {
+                        if (!fromGame) {
+                            player.kick(Component.text("Unable to load player data. Report this if this issue persists.*"));
+                        }
+                    }
+            );
             CustomScoreboard.getPlayerScoreboard(player).giveMainLobbyScoreboard();
         }
 
@@ -345,17 +348,12 @@ public class WarlordsEvents implements Listener {
         }
 
         wpAttacker.setHitCooldown(wpAttacker.getBaseHitCooldownValue());
-        float energyPerHit = wpAttacker.getEnergyPerHit().getCalculatedValue();
-        for (AbstractCooldown<?> abstractCooldown : wpAttacker.getCooldownManager().getCooldownsDistinct()) {
-            energyPerHit = abstractCooldown.addEnergyPerHit(wpAttacker, energyPerHit);
-        }
-        wpAttacker.addEnergy(wpAttacker, null, energyPerHit);
-        wpAttacker.getMinuteStats().addMeleeHits();
+        Optional<WarlordsDamageHealingFinalEvent> finalEvent = Optional.empty();
 
         if (wpAttacker instanceof WarlordsNPC warlordsNPC) {
             if (!warlordsNPC.getCooldownManager().hasCooldown(SoulShackle.class) && !(warlordsNPC.getMob() instanceof Unsilencable)) {
                 if (!(warlordsNPC.getMinMeleeDamage() == 0)) {
-                    wpVictim.addInstance(InstanceBuilder
+                    finalEvent = wpVictim.addInstance(InstanceBuilder
                             .melee()
                             .source(wpAttacker)
                             .min(warlordsNPC.getMinMeleeDamage())
@@ -369,7 +367,7 @@ public class WarlordsEvents implements Listener {
         } else {
             if (wpAttacker instanceof WarlordsPlayer warlordsPlayer && warlordsPlayer.getWeapon() != null) {
                 AbstractWeapon weapon = warlordsPlayer.getWeapon();
-                wpVictim.addInstance(InstanceBuilder
+                finalEvent = wpVictim.addInstance(InstanceBuilder
                         .melee()
                         .source(wpAttacker)
                         .min(weapon.getMeleeDamageMin())
@@ -379,7 +377,7 @@ public class WarlordsEvents implements Listener {
                         .flags(InstanceFlags.NO_HIT_SOUND)
                 );
             } else {
-                wpVictim.addInstance(InstanceBuilder
+                finalEvent = wpVictim.addInstance(InstanceBuilder
                         .melee()
                         .source(wpAttacker)
                         .min(132)
@@ -389,6 +387,14 @@ public class WarlordsEvents implements Listener {
                         .flags(InstanceFlags.NO_HIT_SOUND)
                 );
             }
+        }
+        if (finalEvent.isPresent()) {
+            float energyPerHit = wpAttacker.getEnergyPerHit().getCalculatedValue();
+            for (AbstractCooldown<?> abstractCooldown : wpAttacker.getCooldownManager().getCooldownsDistinct()) {
+                energyPerHit = abstractCooldown.addEnergyPerHit(wpAttacker, energyPerHit);
+            }
+            wpAttacker.addEnergy(wpAttacker, null, energyPerHit);
+            wpAttacker.getMinuteStats().addMeleeHits();
         }
         wpVictim.updateHealth();
     }
@@ -434,17 +440,18 @@ public class WarlordsEvents implements Listener {
                         ((WarlordsPlayer) wp).getAbilityTree().openAbilityTree();
                     }
                     default -> DatabaseManager.getPlayer(wp.getUuid(), databasePlayer -> {
-                        if (heldItemSlot == 0 || databasePlayer.getHotkeyMode() == HotkeyMode.CLASSIC_MODE) {
-                            if (heldItemSlot == 8 && wp instanceof WarlordsPlayer warlordsPlayer) {
-                                AbstractWeapon weapon = warlordsPlayer.getWeapon();
-                                if (weapon instanceof AbstractLegendaryWeapon) {
-                                    ((AbstractLegendaryWeapon) weapon).activateAbility(warlordsPlayer, player, false);
+                                if (heldItemSlot == 0 || databasePlayer.getHotkeyMode() == HotkeyMode.CLASSIC_MODE) {
+                                    if (heldItemSlot == 8 && wp instanceof WarlordsPlayer warlordsPlayer) {
+                                        AbstractWeapon weapon = warlordsPlayer.getWeapon();
+                                        if (weapon instanceof AbstractLegendaryWeapon) {
+                                            ((AbstractLegendaryWeapon) weapon).activateAbility(warlordsPlayer, player, false);
+                                        }
+                                    } else {
+                                        wp.getSpec().onRightClick(wp, player, heldItemSlot, false);
+                                    }
                                 }
-                            } else {
-                                wp.getSpec().onRightClick(wp, player, heldItemSlot, false);
                             }
-                        }
-                    });
+                    );
                 }
             } else {
                 Warlords.getGameManager().getPlayerGame(player.getUniqueId())
@@ -476,17 +483,18 @@ public class WarlordsEvents implements Listener {
         }
         int heldItemSlot = player.getInventory().getHeldItemSlot();
         DatabaseManager.getPlayer(wp.getUuid(), databasePlayer -> {
-            if (heldItemSlot == 0 || databasePlayer.getHotkeyMode() == HotkeyMode.CLASSIC_MODE) {
-                if (heldItemSlot == 8 && wp instanceof WarlordsPlayer warlordsPlayer) {
-                    AbstractWeapon weapon = warlordsPlayer.getWeapon();
-                    if (weapon instanceof AbstractLegendaryWeapon) {
-                        ((AbstractLegendaryWeapon) weapon).activateAbility(warlordsPlayer, player, false);
+                    if (heldItemSlot == 0 || databasePlayer.getHotkeyMode() == HotkeyMode.CLASSIC_MODE) {
+                        if (heldItemSlot == 8 && wp instanceof WarlordsPlayer warlordsPlayer) {
+                            AbstractWeapon weapon = warlordsPlayer.getWeapon();
+                            if (weapon instanceof AbstractLegendaryWeapon) {
+                                ((AbstractLegendaryWeapon) weapon).activateAbility(warlordsPlayer, player, false);
+                            }
+                        } else {
+                            wp.getSpec().onRightClick(wp, player, heldItemSlot, false);
+                        }
                     }
-                } else {
-                    wp.getSpec().onRightClick(wp, player, heldItemSlot, false);
                 }
-            }
-        });
+        );
     }
 
     @EventHandler
@@ -516,21 +524,22 @@ public class WarlordsEvents implements Listener {
         }
         List<AbstractAbility> abilities = wp.getAbilities();
         DatabaseManager.getPlayer(wp.getUuid(), databasePlayer -> {
-            if (databasePlayer.getHotkeyMode() == HotkeyMode.NEW_MODE) {
-                if (1 <= slot && slot <= 4 && slot < abilities.size()) {
-                    wp.getSpec().onRightClick(wp, player, slot, true);
-                } else if (slot == 8 && wp instanceof WarlordsPlayer warlordsPlayer) {
-                    AbstractWeapon weapon = warlordsPlayer.getWeapon();
-                    if (weapon instanceof AbstractLegendaryWeapon) {
-                        AbstractAbility ability = ((AbstractLegendaryWeapon) weapon).getAbility();
-                        if (ability != null) {
-                            ((AbstractLegendaryWeapon) weapon).activateAbility(warlordsPlayer, player, true);
-                            e.setCancelled(true);
+                    if (databasePlayer.getHotkeyMode() == HotkeyMode.NEW_MODE) {
+                        if (1 <= slot && slot <= 4 && slot < abilities.size()) {
+                            wp.getSpec().onRightClick(wp, player, slot, true);
+                        } else if (slot == 8 && wp instanceof WarlordsPlayer warlordsPlayer) {
+                            AbstractWeapon weapon = warlordsPlayer.getWeapon();
+                            if (weapon instanceof AbstractLegendaryWeapon) {
+                                AbstractAbility ability = ((AbstractLegendaryWeapon) weapon).getAbility();
+                                if (ability != null) {
+                                    ((AbstractLegendaryWeapon) weapon).activateAbility(warlordsPlayer, player, true);
+                                    e.setCancelled(true);
+                                }
+                            }
                         }
                     }
                 }
-            }
-        });
+        );
     }
 
     @EventHandler
