@@ -25,9 +25,9 @@ import java.util.List;
 
 import static com.ebicep.warlords.util.warlords.GameRunnable.SECOND;
 
-public class TheRift2 extends GameMap {
+public class TheRift3 extends GameMap {
 
-    public TheRift2() {
+    public TheRift3() {
         super(
                 "The Rift 3",
                 32,
