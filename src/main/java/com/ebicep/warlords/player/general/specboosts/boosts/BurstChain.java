@@ -2,6 +2,7 @@ package com.ebicep.warlords.player.general.specboosts.boosts;
 
 import com.ebicep.warlords.abilities.ArcaneShield;
 import com.ebicep.warlords.abilities.FlameBurst;
+import com.ebicep.warlords.abilities.Inferno;
 import com.ebicep.warlords.abilities.TimeWarpPyromancer;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -100,6 +101,9 @@ public class BurstChain implements SpecBoostManager.SpecBoost<BurstChain> {
 
                 @Override
                 public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                    if (!warlordsPlayer.getCooldownManager().hasCooldown(Inferno.class)) {
+                        return currentDamageValue;
+                    }
                     WarlordsEntity victim = event.getWarlordsEntity();
                     if (victim.getCooldownManager()
                               .getCooldowns()
