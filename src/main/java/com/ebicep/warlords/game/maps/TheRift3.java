@@ -58,11 +58,11 @@ public class TheRift3 extends GameMap {
         options.add(SpawnpointOption.forTeam(loc.addXYZ(-32.5, 34.5, -43.5, -90, 0), Team.BLUE));
         options.add(SpawnpointOption.forTeam(loc.addXYZ(33, 34.5, 45, 90, 0), Team.RED));
 
-        options.add(new FlagCapturePointOption(loc.addXYZ(-97.5, 45.5, 3, -90, 0), Team.BLUE));
-        options.add(new FlagSpawnPointOption(loc.addXYZ(-97.5, 45.5, 3, -90, 0), Team.BLUE));
+        options.add(new FlagCapturePointOption(loc.addXYZ(-97.5, 45.5, 2.5, -90, 0), Team.BLUE));
+        options.add(new FlagSpawnPointOption(loc.addXYZ(-97.5, 45.5, 2.5, -90, 0), Team.BLUE));
 
-        options.add(new FlagCapturePointOption(loc.addXYZ(98.5, 45.5, -3, 90, 0), Team.RED));
-        options.add(new FlagSpawnPointOption(loc.addXYZ(98.5, 45.5, -3, 90, 0), Team.RED));
+        options.add(new FlagCapturePointOption(loc.addXYZ(98.5, 45.5, -2.5, 90, 0), Team.RED));
+        options.add(new FlagSpawnPointOption(loc.addXYZ(98.5, 45.5, -2.5, 90, 0), Team.RED));
 
         options.add(new AbstractScoreOnEventOption.FlagCapture());
 
