@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 public class FloatModifiable {
@@ -29,14 +28,80 @@ public class FloatModifiable {
     }
 
     public void tick() {
-        AtomicBoolean dirty = new AtomicBoolean(false);
-        tickModifiers(overridingModifiers, dirty);
-        tickModifiers(additiveModifiers, dirty);
-        tickModifiers(multiplicativeModifiersAdditive, dirty);
-        tickModifiers(multiplicativeModifiersMultiplicative, dirty);
-        if (dirty.get()) {
+        boolean dirty = false;
+        dirty |= tickModifiers(overridingModifiers);
+        dirty |= tickModifiers(additiveModifiers);
+        dirty |= tickModifiers(multiplicativeModifiersAdditive);
+        dirty |= tickModifiers(multiplicativeModifiersMultiplicative);
+        if (dirty) {
             refresh();
         }
+    }
+
+    private boolean tickModifiers(List<FloatModifier> modifiers) {
+        boolean hasChanges = false;
+
+        for (int i = modifiers.size() - 1; i >= 0; i--) {
+            FloatModifier modifier = modifiers.get(i);
+
+            if (modifier.tick()) {
+                modifiers.remove(i);
+                hasChanges = true;
+            } else if (modifier.isDirty()) {
+                hasChanges = true;
+            }
+        }
+
+        return hasChanges;
+    }
+
+    public void refresh() {
+        if (!overridingModifiers.isEmpty()) {
+            processOverridingModifiers();
+            return;
+        }
+        processNormalModifiers();
+        if (!onRefresh.isEmpty()) {
+            onRefresh.values().forEach(Runnable::run);
+        }
+    }
+
+    private void processOverridingModifiers() {
+        filters.forEach((filterName, filter) -> {
+            overridingModifiers.stream()
+                               .filter(filter::overridingFilter)
+                               .findFirst()
+                               .ifPresent(modifier -> filter.setCachedValue(modifier.getModifier()));
+        });
+
+        if (!onRefresh.isEmpty()) {
+            onRefresh.values().forEach(Runnable::run);
+        }
+    }
+
+    private void processNormalModifiers() {
+        filters.forEach((filterName, filter) -> {
+            float additiveSum = calculateAdditiveSum(filter);
+            float multiplicativeAdditiveProduct = calculateMultiplicativeAdditive(filter);
+            float multiplicativeMultiplicativeProduct = calculateMultiplicativeMultiplicative(filter);
+
+            float finalValue = (baseValue + additiveSum) * multiplicativeAdditiveProduct * multiplicativeMultiplicativeProduct;
+
+            filter.setCachedValue(finalValue);
+            filter.setCachedAdditiveModifier(additiveSum);
+            filter.setCachedMultiplicativeModifierAdditive(multiplicativeAdditiveProduct);
+            filter.setCachedMultiplicativeModifierMultiplicative(multiplicativeMultiplicativeProduct);
+        });
+    }
+
+    private float calculateAdditiveSum(FloatModifiableFilter filter) {
+        float sum = 0f;
+        for (FloatModifier modifier : additiveModifiers) {
+            if (filter.additiveFilter(modifier)) {
+                sum += modifier.getModifier();
+            }
+        }
+        return sum;
     }
 
     public FloatModifiable(FloatModifiable floatModifiable) {
@@ -62,53 +127,26 @@ public class FloatModifiable {
         this.onRefresh.putAll(floatModifiable.onRefresh);
     }
 
-    public void refresh() {
-        if (!overridingModifiers.isEmpty()) {
-            filters.forEach((s, floatModifiableFilter) -> {
-                overridingModifiers.stream()
-                                   .filter(floatModifiableFilter::overridingFilter)
-                                   .findFirst()
-                                   .ifPresent(floatModifier -> floatModifiableFilter.setCachedValue(floatModifier.getModifier()));
-            });
-            onRefresh.values().forEach(Runnable::run);
-            return;
+    private float calculateMultiplicativeAdditive(FloatModifiableFilter filter) {
+        float sum = 0f;
+        for (FloatModifier modifier : multiplicativeModifiersAdditive) {
+            if (filter.multiplicativeAdditiveFilter(modifier)) {
+                sum += modifier.getModifier();
+            }
         }
-        filters.forEach((s, floatModifiableFilter) -> {
-            float cachedAdditiveModifier = (float) additiveModifiers
-                    .stream()
-                    .filter(floatModifiableFilter::additiveFilter)
-                    .mapToDouble(FloatModifier::getModifier)
-                    .sum();
-            float cachedMultiplicativeModifierAdditive = 1 + (float) multiplicativeModifiersAdditive
-                    .stream()
-                    .filter(floatModifiableFilter::multiplicativeAdditiveFilter)
-                    .mapToDouble(FloatModifier::getModifier)
-                    .sum();
-            float cachedMultiplicativeModifierMultiplicative = (float) multiplicativeModifiersMultiplicative
-                    .stream()
-                    .filter(floatModifiableFilter::multiplicativeMultiplicativeFilter)
-                    .mapToDouble(FloatModifier::getModifier)
-                    .reduce(1, (a, b) -> a * b);
-            floatModifiableFilter.setCachedValue((baseValue + cachedAdditiveModifier) * cachedMultiplicativeModifierAdditive * cachedMultiplicativeModifierMultiplicative);
-            floatModifiableFilter.setCachedAdditiveModifier(cachedAdditiveModifier);
-            floatModifiableFilter.setCachedMultiplicativeModifierAdditive(cachedMultiplicativeModifierAdditive);
-            floatModifiableFilter.setCachedMultiplicativeModifierMultiplicative(cachedMultiplicativeModifierMultiplicative);
-        });
-        onRefresh.values().forEach(Runnable::run);
+        return 1f + sum;
     }
 
-    private void tickModifiers(List<FloatModifier> modifiers, AtomicBoolean dirty) {
-        modifiers.removeIf(floatModifier -> {
-            if (floatModifier.tick()) {
-                dirty.set(true);
-                return true;
+    private float calculateMultiplicativeMultiplicative(FloatModifiableFilter filter) {
+        float product = 1f;
+        for (FloatModifier modifier : multiplicativeModifiersMultiplicative) {
+            if (filter.multiplicativeMultiplicativeFilter(modifier)) {
+                product *= modifier.getModifier();
             }
-            if (floatModifier.isDirty()) {
-                dirty.set(true);
-            }
-            return false;
-        });
+        }
+        return product;
     }
+
 
     public void removeModifier(String log) {
         overridingModifiers.removeIf(floatModifier -> floatModifier.getLog().equals(log));
