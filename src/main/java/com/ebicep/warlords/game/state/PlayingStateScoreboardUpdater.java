@@ -40,16 +40,25 @@ public class PlayingStateScoreboardUpdater {
         game.forEachOnlinePlayer((player, team) -> {
             WarlordsEntity p = Warlords.getPlayer(player);
             UUID uuid = player.getUniqueId();
-            gamePlayers.put(uuid, new GamePlayer(
-                            CustomScoreboard.getPlayerScoreboard(player),
-                            (WarlordsPlayer) p,
-                            p == null ? 0 : Math.round(p.getCurrentHealth())
-                    )
-            );
+            GamePlayer gp = gamePlayers.get(uuid);
+            int newHealth = p == null ? 0 : Math.round(p.getCurrentHealth());
+            CustomScoreboard scoreboard = CustomScoreboard.getPlayerScoreboard(player);
+            if (gp != null) {
+                gp.setCustomScoreboard(scoreboard);
+                gp.setWarlordsPlayer((WarlordsPlayer) p);
+                if (gp.getHealth() != newHealth) {
+                    gp.setHealth(newHealth);
+                    gp.setUpdateHealth(true);
+                } else {
+                    gp.setUpdateHealth(false);
+                }
+            } else {
+                gamePlayers.put(uuid, new GamePlayer(scoreboard, (WarlordsPlayer) p, newHealth));
+            }
         });
         List<WarlordsPlayerName> updatedNames = new ArrayList<>(gamePlayers.size() / 2);
         gamePlayers.forEach((uuid, gamePlayer) -> {
-            WarlordsPlayer warlordsPlayer = gamePlayer.warlordsPlayer();
+            WarlordsPlayer warlordsPlayer = gamePlayer.getWarlordsPlayer();
             if (warlordsPlayer != null && warlordsPlayer.isUpdateTabName() && warlordsPlayer.getEntity() instanceof Player player) {
                 warlordsPlayer.setUpdateTabName(false);
                 Component classComponent = getClassComponent(warlordsPlayer);
@@ -73,7 +82,7 @@ public class PlayingStateScoreboardUpdater {
                 updatedNames.add(name);
             }
 
-            CustomScoreboard customScoreboard = gamePlayer.customScoreboard();
+            CustomScoreboard customScoreboard = gamePlayer.getCustomScoreboard();
             updateBasedOnGameState(customScoreboard, warlordsPlayer);
         });
         updatedNames.forEach(warlordsPlayerName -> {
@@ -106,10 +115,13 @@ public class PlayingStateScoreboardUpdater {
         }
         Objective finalHealth = health;
         gamePlayers.values().forEach(gamePlayer -> {
-            if (gamePlayer.warlordsPlayer() == null) {
+            if (gamePlayer.getWarlordsPlayer() == null) {
                 return;
             }
-            finalHealth.getScore(gamePlayer.warlordsPlayer().getName()).setScore(gamePlayer.health());
+            if (!gamePlayer.isUpdateHealth()) {
+                return;
+            }
+            finalHealth.getScore(gamePlayer.getWarlordsPlayer().getName()).setScore(gamePlayer.getHealth());
         });
     }
 
@@ -122,7 +134,7 @@ public class PlayingStateScoreboardUpdater {
             cooldowns = new ArrayList<>();
         }
         gamePlayers.values().forEach(otherGamePlayer -> {
-            WarlordsPlayer otherWarlordsPlayer = otherGamePlayer.warlordsPlayer();
+            WarlordsPlayer otherWarlordsPlayer = otherGamePlayer.getWarlordsPlayer();
             if (otherWarlordsPlayer == null || otherWarlordsPlayer instanceof WarlordsPlayerDisguised) {
                 return;
             }
@@ -207,7 +219,52 @@ public class PlayingStateScoreboardUpdater {
         customScoreboard.giveNewSideBar(false, scoreboard);
     }
 
-    record GamePlayer(CustomScoreboard customScoreboard, @Nullable WarlordsPlayer warlordsPlayer, int health) {
+    static final class GamePlayer {
+
+        private CustomScoreboard customScoreboard;
+        @Nullable
+        private WarlordsPlayer warlordsPlayer;
+        private int health;
+        private boolean updateHealth = true;
+
+        GamePlayer(CustomScoreboard customScoreboard, @Nullable WarlordsPlayer warlordsPlayer, int health) {
+            this.customScoreboard = customScoreboard;
+            this.warlordsPlayer = warlordsPlayer;
+            this.health = health;
+        }
+
+        public CustomScoreboard getCustomScoreboard() {
+            return customScoreboard;
+        }
+
+        public void setCustomScoreboard(CustomScoreboard customScoreboard) {
+            this.customScoreboard = customScoreboard;
+        }
+
+        @Nullable
+        public WarlordsPlayer getWarlordsPlayer() {
+            return warlordsPlayer;
+        }
+
+        public void setWarlordsPlayer(@Nullable WarlordsPlayer warlordsPlayer) {
+            this.warlordsPlayer = warlordsPlayer;
+        }
+
+        public int getHealth() {
+            return health;
+        }
+
+        public void setHealth(int health) {
+            this.health = health;
+        }
+
+        public boolean isUpdateHealth() {
+            return updateHealth;
+        }
+
+        public void setUpdateHealth(boolean updateHealth) {
+            this.updateHealth = updateHealth;
+        }
 
     }
 
