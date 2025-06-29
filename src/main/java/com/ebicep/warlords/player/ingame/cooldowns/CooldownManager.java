@@ -250,10 +250,13 @@ public class CooldownManager {
     public <T extends AbstractCooldown<T>> void limitCooldowns(Class<T> cooldownClass, Class<?> filterCooldownClass, int limit) {
         List<T> matchingCooldowns = new CooldownFilter<>(this, cooldownClass)
                 .filterCooldownClass(filterCooldownClass)
+                .filter(t -> !cooldownsToRemove.contains(t))
                 .stream()
                 .toList();
         if (matchingCooldowns.size() >= limit) {
-            removeCooldown(matchingCooldowns.get(0));
+            for (int i = 0; i < matchingCooldowns.size() - limit + 1; i++) {
+                removeCooldown(matchingCooldowns.get(0));
+            }
         }
     }
 

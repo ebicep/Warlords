@@ -97,7 +97,7 @@ public class PoisonousHex extends AbstractPiercingProjectile<PoisonousHex, Poiso
         int tickDurationDot = fromHex.getTickDurationDot();
         int dotTickFrequency = fromHex.getTicksBetweenDot();
         DamageValues values = fromHex.damageValues;
-        to.getCooldownManager().limitCooldowns(RegularCooldown.class, PoisonousHex.class, 3);
+        to.getCooldownManager().limitCooldowns(RegularCooldown.class, PoisonousHex.class, fromHex.getMaxStacks());
         to.getCooldownManager().addCooldown(new RegularCooldown<>(
                 "Poisonous Hex",
                 "PHEX",
