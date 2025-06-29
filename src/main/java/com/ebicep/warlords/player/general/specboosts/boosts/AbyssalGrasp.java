@@ -16,12 +16,14 @@ import java.util.List;
 
 public class AbyssalGrasp implements SpecBoostManager.SpecBoost<AbyssalGrasp> {
 
+    private int soulShackleDamageIncrease;
     private int soulShackleRange;
     private float normalPullRange;
     private float flagCarrierPullRange;
 
     @Override
     public void init() {
+        this.soulShackleDamageIncrease = getValue("soulShackleDamageIncrease", int.class);
         this.soulShackleRange = getValue("soulShackleRange", int.class);
         this.normalPullRange = getValue("normalPullRange", float.class);
         this.flagCarrierPullRange = getValue("flagCarrierPullRange", float.class);
@@ -34,7 +36,7 @@ public class AbyssalGrasp implements SpecBoostManager.SpecBoost<AbyssalGrasp> {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(soulShackleRange, normalPullRange, flagCarrierPullRange);
+        return List.of(soulShackleDamageIncrease, soulShackleRange, normalPullRange, flagCarrierPullRange);
     }
 
     @Override
@@ -55,6 +57,9 @@ public class AbyssalGrasp implements SpecBoostManager.SpecBoost<AbyssalGrasp> {
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(SoulShackle.class).forEach(soulShackle -> {
+                soulShackle.getDamageValues()
+                           .getShackleDamage()
+                           .forEachValue(floatModifiable -> floatModifiable.addAdditiveModifier("Spec Boost", soulShackleDamageIncrease));
                 soulShackle.setShackleRange(soulShackleRange);
             });
         }
