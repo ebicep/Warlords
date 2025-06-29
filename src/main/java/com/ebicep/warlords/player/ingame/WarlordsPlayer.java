@@ -99,7 +99,7 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
     protected AbstractWeapon weapon;
     private int stunTicks = 0;
     private boolean updateTabName = true;
-    private float previousHealth = 40;
+    private float previousHealth = 1;
 
     public WarlordsPlayer() {
         super();
