@@ -99,6 +99,7 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
     protected AbstractWeapon weapon;
     private int stunTicks = 0;
     private boolean updateTabName = true;
+    private float previousHealth = 40;
 
     public WarlordsPlayer() {
         super();
@@ -284,7 +285,8 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
         // setting health/energy to player
         if (getEntity() instanceof Player player) {
             //precaution
-            if (newHealth != 0) {
+            if (newHealth != 0 && newHealth != previousHealth) {
+                previousHealth = newHealth;
                 player.setHealth(newHealth);
             }
             // Respawn fix for when a player is stuck or leaves the game.
