@@ -38,6 +38,7 @@ import com.ebicep.warlords.player.ingame.motionsystem.MotionModifier;
 import com.ebicep.warlords.player.ingame.motionsystem.MotionModifierBuilder;
 import com.ebicep.warlords.player.ingame.motionsystem.MotionSystem;
 import com.ebicep.warlords.player.ingame.motionsystem.speed.BaseToWalkingSpeedValueModifier;
+import com.ebicep.warlords.pve.mobs.player.TestDummy;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.TeleportUtils;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -138,7 +139,6 @@ public abstract class WarlordsEntity {
     private int flagPickCooldown = 0;
     private int hitCooldown = 20;
     private int currency;
-    private boolean wasSneaking = false;
     private int blocksTravelledCM = 0;
     private boolean noEnergyConsumption;
     private boolean disableCooldowns;
@@ -1057,14 +1057,6 @@ public abstract class WarlordsEntity {
         return this.entity.getLocation();
     }
 
-    public boolean isWasSneaking() {
-        return wasSneaking;
-    }
-
-    public void setWasSneaking(boolean wasSneaking) {
-        this.wasSneaking = wasSneaking;
-    }
-
     public boolean isEnemyAlive(@Nullable Entity other) {
         return isEnemyAlive(Warlords.getPlayer(other));
     }
@@ -1274,15 +1266,15 @@ public abstract class WarlordsEntity {
         this.decrementRespawnTimer();
 
         this.health.tick();
-        this.energy.tick();
-        this.energyPerSec.tick();
-        this.energyPerHit.tick();
+        if (!(this instanceof WarlordsNPC warlordsNPC) || !(warlordsNPC.getMob() instanceof TestDummy)) {
+            this.energy.tick();
+            this.energyPerSec.tick();
+            this.energyPerHit.tick();
+            getSpeed().tick();
+            getKnockback().tick();
+        }
         updateHealth();
-        getSpeed().tick();
-        getKnockback().tick();
         getCooldownManager().reduceCooldowns();
-
-        setWasSneaking(isSneaking());
 
         // Checks whether the player has overheal active and is full health or not.
         boolean hasOverhealCooldown = getCooldownManager().hasCooldown(Overheal.OVERHEAL_MARKER);
