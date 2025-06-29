@@ -903,7 +903,12 @@ public final class Game implements Runnable, AutoCloseable {
     }
 
     public boolean isFrozen() {
-        return getOption(GameFreezeOption.class).stream().anyMatch(GameFreezeOption::isFrozen);
+        for (GameFreezeOption gameFreezeOption : getOption(GameFreezeOption.class)) {
+            if (gameFreezeOption.isFrozen()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public int getLoopTickCounter() {
