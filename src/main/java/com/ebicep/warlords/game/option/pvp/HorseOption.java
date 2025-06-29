@@ -87,7 +87,7 @@ public class HorseOption implements Option, Listener {
                         warlordsHorse.setCurrentCooldown(previousCooldown - .05f);
                     }
                     float currentCooldown = warlordsHorse.getCurrentCooldown();
-                    if (previousCooldown != (int) currentCooldown &&
+                    if (((int) previousCooldown != (int) currentCooldown || previousCooldown > 0 && currentCooldown < 0) &&
                             warlordsEntity instanceof WarlordsPlayer warlordsPlayer &&
                             warlordsEntity.getEntity() instanceof Player player
                     ) { // only update if second changed
