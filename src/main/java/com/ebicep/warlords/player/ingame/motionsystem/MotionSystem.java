@@ -1,5 +1,6 @@
 package com.ebicep.warlords.player.ingame.motionsystem;
 
+import com.ebicep.warlords.player.ingame.motionsystem.motionaddon.MotionAddon;
 import com.ebicep.warlords.player.ingame.motionsystem.motionaddon.NewValueModifier;
 import com.ebicep.warlords.player.ingame.motionsystem.motionaddon.RemovalCondition;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
@@ -17,20 +18,28 @@ public class MotionSystem {
 
     public void tick() {
         modifiers.forEach(MotionModifier::tick);
-        modifiers.removeIf(modifier ->
-                modifier.getAddons()
-                        .stream()
-                        .filter(RemovalCondition.class::isInstance)
-                        .map(RemovalCondition.class::cast)
-                        .allMatch(RemovalCondition::removeAllMatch) ||
-                        modifier.getAddons()
-                                .stream()
-                                .filter(RemovalCondition.class::isInstance)
-                                .map(RemovalCondition.class::cast)
-                                .anyMatch(RemovalCondition::removeAnyMatch)
-        );
+        modifiers.removeIf(modifier -> {
+            List<MotionAddon> addons = modifier.getAddons();
+
+            boolean hasRemovalConditions = false;
+            boolean allMatch = true;
+
+            for (MotionAddon addon : addons) {
+                if (addon instanceof RemovalCondition rc) {
+                    hasRemovalConditions = true;
+                    if (!rc.removeAllMatch()) {
+                        allMatch = false;
+                    }
+                    if (rc.removeAnyMatch()) {
+                        return true;
+                    }
+                }
+            }
+
+            return hasRemovalConditions && allMatch;
+        });
         float newValue = getNewValue();
-        if (newValue != lastValue) {
+        if (Float.compare(newValue, lastValue) != 0) {
             lastValue = newValue;
             onChangeListeners.forEach(listener -> listener.accept(newValue));
         }
@@ -39,16 +48,20 @@ public class MotionSystem {
     private float getNewValue() {
         MotionModifier minModifier = null;
         MotionModifier maxModifier = null;
+        float minValue = 0;
+        float maxValue = 0;
         for (MotionModifier modifier : modifiers) {
             float value = modifier.getModifier();
-            if (value < 0 && (minModifier == null || value < minModifier.getModifier())) {
+            if (value < 0 && (minModifier == null || value < minValue)) {
                 minModifier = modifier;
-            } else if (value > 0 && (maxModifier == null || value > maxModifier.getModifier())) {
+                minValue = value;
+            } else if (value > 0 && (maxModifier == null || value > maxValue)) {
                 maxModifier = modifier;
+                maxValue = value;
             }
         }
-        float min = 1 + (minModifier != null ? minModifier.getModifier() / 100 : 0);
-        float max = 1 - (maxModifier != null ? -maxModifier.getModifier() / 100 : 0);
+        float min = 1 + (minModifier != null ? minValue / 100 : 0);
+        float max = 1 - (maxModifier != null ? -maxValue / 100 : 0);
         FloatModifiable newValue = new FloatModifiable(max * min);
         NewValueData newValueData = new NewValueData(newValue, min, max);
         for (MotionModifier modifier : modifiers) {
