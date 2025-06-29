@@ -285,7 +285,7 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
         // setting health/energy to player
         if (getEntity() instanceof Player player) {
             //precaution
-            if (newHealth != 0 && newHealth != previousHealth) {
+            if (newHealth != 0 && Float.compare(newHealth, previousHealth) != 0) {
                 previousHealth = newHealth;
                 player.setHealth(newHealth);
             }
