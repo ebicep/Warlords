@@ -41,7 +41,7 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, H
 
     private final RecklessChargeStats stats = new RecklessChargeStats();
     private final DamageValues damageValues = new DamageValues();
-    private final FloatModifiable hitbox = new FloatModifiable(2.5f);
+    private FloatModifiable hitbox = new FloatModifiable(2.5f);
     private int stunTimeInTicks = 10;
     private float additionalBlocks = 0;
     private boolean verticalMovement = false;
@@ -58,6 +58,7 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, H
         this.stunTimeInTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("stunTimeInTicks"), int.class);
         this.additionalBlocks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("additionalBlocks"), int.class);
         this.flagBlockReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("flagBlockReduction"), int.class);
+        this.hitbox = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hitBox"), float.class));
     }
 
     @Override
