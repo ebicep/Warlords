@@ -47,6 +47,7 @@ public class PlayingStateScoreboardUpdater {
                     )
             );
         });
+        List<WarlordsPlayerName> updatedNames = new ArrayList<>(gamePlayers.size() / 2);
         gamePlayers.forEach((uuid, gamePlayer) -> {
             WarlordsPlayer warlordsPlayer = gamePlayer.warlordsPlayer();
             if (warlordsPlayer != null && warlordsPlayer.isUpdateTabName() && warlordsPlayer.getEntity() instanceof Player player) {
@@ -67,11 +68,16 @@ public class PlayingStateScoreboardUpdater {
                 WarlordsPlayerName name = cachedNames.computeIfAbsent(warlordsPlayer, k -> new WarlordsPlayerName());
                 name.setBasePrefix(classComponent);
                 name.setBaseSuffix(baseSuffix.build());
+                name.setUpdateColor(true);
                 player.playerListName(playerTabName.build());
+                updatedNames.add(name);
             }
 
             CustomScoreboard customScoreboard = gamePlayer.customScoreboard();
             updateBasedOnGameState(customScoreboard, warlordsPlayer);
+        });
+        updatedNames.forEach(warlordsPlayerName -> {
+            warlordsPlayerName.setUpdateColor(false);
         });
     }
 
@@ -120,17 +126,20 @@ public class PlayingStateScoreboardUpdater {
             if (otherWarlordsPlayer == null || otherWarlordsPlayer instanceof WarlordsPlayerDisguised) {
                 return;
             }
+            WarlordsPlayerName name = cachedNames.computeIfAbsent(otherWarlordsPlayer, k -> new WarlordsPlayerName(otherWarlordsPlayer));
             Entity entity = otherWarlordsPlayer.getEntity();
             UUID uuid = otherWarlordsPlayer.getUuid();
             List<AbstractCooldown<?>> otherPlayerCooldowns = otherWarlordsPlayer.getCooldownManager().getCooldowns();
             Team playerTeam = scoreboard.getEntityTeam(entity);
-            if (playerTeam == null) {
+            boolean noTeam = playerTeam == null;
+            if (noTeam) {
                 playerTeam = scoreboard.registerNewTeam(((CraftEntity) entity).getHandle().getScoreboardName());
                 playerTeam.addEntity(entity);
             }
-            playerTeam.color(otherWarlordsPlayer.getTeam().getTeamColor());
+            if (noTeam || name.isUpdateColor()) {
+                playerTeam.color(otherWarlordsPlayer.getTeam().getTeamColor());
+            }
 
-            WarlordsPlayerName name = cachedNames.computeIfAbsent(otherWarlordsPlayer, k -> new WarlordsPlayerName(otherWarlordsPlayer));
             TextComponent.Builder prefix = Component.text();
             TextComponent.Builder suffix = Component.text();
             suffix.append(name.getBaseSuffix());
@@ -157,8 +166,18 @@ public class PlayingStateScoreboardUpdater {
                 });
             }
             prefix.append(name.getBasePrefix());
-            playerTeam.prefix(prefix.build());
-            playerTeam.suffix(suffix.build());
+            Map<WarlordsEntity, OtherWarlordsPlayerName> cachedOtherNames = name.getCachedOtherNames();
+            OtherWarlordsPlayerName otherWarlordsPlayerName = cachedOtherNames.computeIfAbsent(otherWarlordsPlayer, k -> new OtherWarlordsPlayerName());
+            Component builtPrefix = prefix.build().compact();
+            if (!otherWarlordsPlayerName.getPrefix().equals(builtPrefix)) {
+                otherWarlordsPlayerName.setPrefix(builtPrefix);
+                playerTeam.prefix(builtPrefix);
+            }
+            Component builtSuffix = suffix.build().compact();
+            if (!otherWarlordsPlayerName.getSuffix().equals(builtSuffix)) {
+                otherWarlordsPlayerName.setSuffix(builtSuffix);
+                playerTeam.suffix(builtSuffix);
+            }
         });
     }
 
@@ -194,8 +213,10 @@ public class PlayingStateScoreboardUpdater {
 
     static final class WarlordsPlayerName {
 
+        private final Map<WarlordsEntity, OtherWarlordsPlayerName> cachedOtherNames = new HashMap<>();
         private Component basePrefix;
         private Component baseSuffix;
+        private boolean updateColor = true;
 
         public WarlordsPlayerName() {
         }
@@ -219,6 +240,41 @@ public class PlayingStateScoreboardUpdater {
 
         public void setBaseSuffix(Component baseSuffix) {
             this.baseSuffix = baseSuffix;
+        }
+
+        public boolean isUpdateColor() {
+            return updateColor;
+        }
+
+        public void setUpdateColor(boolean updateColor) {
+            this.updateColor = updateColor;
+        }
+
+        public Map<WarlordsEntity, OtherWarlordsPlayerName> getCachedOtherNames() {
+            return cachedOtherNames;
+        }
+
+    }
+
+    static final class OtherWarlordsPlayerName {
+
+        private Component prefix = Component.empty();
+        private Component suffix = Component.empty();
+
+        public Component getPrefix() {
+            return prefix;
+        }
+
+        public void setPrefix(Component prefix) {
+            this.prefix = prefix;
+        }
+
+        public Component getSuffix() {
+            return suffix;
+        }
+
+        public void setSuffix(Component suffix) {
+            this.suffix = suffix;
         }
 
     }
