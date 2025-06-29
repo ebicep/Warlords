@@ -178,16 +178,12 @@ public class PlayingStateScoreboardUpdater {
                 });
             }
             prefix.append(name.getBasePrefix());
-            Map<WarlordsEntity, OtherWarlordsPlayerName> cachedOtherNames = name.getCachedOtherNames();
-            OtherWarlordsPlayerName otherWarlordsPlayerName = cachedOtherNames.computeIfAbsent(otherWarlordsPlayer, k -> new OtherWarlordsPlayerName());
             Component builtPrefix = prefix.build().compact();
-            if (!otherWarlordsPlayerName.getPrefix().equals(builtPrefix)) {
-                otherWarlordsPlayerName.setPrefix(builtPrefix);
+            if (!playerTeam.prefix().equals(builtPrefix)) {
                 playerTeam.prefix(builtPrefix);
             }
             Component builtSuffix = suffix.build().compact();
-            if (!otherWarlordsPlayerName.getSuffix().equals(builtSuffix)) {
-                otherWarlordsPlayerName.setSuffix(builtSuffix);
+            if (!playerTeam.suffix().equals(builtSuffix)) {
                 playerTeam.suffix(builtSuffix);
             }
         });
@@ -270,7 +266,6 @@ public class PlayingStateScoreboardUpdater {
 
     static final class WarlordsPlayerName {
 
-        private final Map<WarlordsEntity, OtherWarlordsPlayerName> cachedOtherNames = new HashMap<>();
         private Component basePrefix;
         private Component baseSuffix;
         private boolean updateColor = true;
@@ -305,33 +300,6 @@ public class PlayingStateScoreboardUpdater {
 
         public void setUpdateColor(boolean updateColor) {
             this.updateColor = updateColor;
-        }
-
-        public Map<WarlordsEntity, OtherWarlordsPlayerName> getCachedOtherNames() {
-            return cachedOtherNames;
-        }
-
-    }
-
-    static final class OtherWarlordsPlayerName {
-
-        private Component prefix = Component.empty();
-        private Component suffix = Component.empty();
-
-        public Component getPrefix() {
-            return prefix;
-        }
-
-        public void setPrefix(Component prefix) {
-            this.prefix = prefix;
-        }
-
-        public Component getSuffix() {
-            return suffix;
-        }
-
-        public void setSuffix(Component suffix) {
-            this.suffix = suffix;
         }
 
     }
