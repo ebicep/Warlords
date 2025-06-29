@@ -106,7 +106,7 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance implements Heals<H
                 },
                 markDuration * 20,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    if (ticksElapsed % 12 == 0) {
+                    if (ticksElapsed % 20 == 0) {
                         EffectUtils.playCylinderAnimation(target.getLocation(), 1, 250, 25, 25);
                     }
                 })

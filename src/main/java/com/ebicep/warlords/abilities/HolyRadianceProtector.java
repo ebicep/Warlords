@@ -111,7 +111,7 @@ public class HolyRadianceProtector extends AbstractHolyRadiance implements Heals
                 },
                 markDuration * 20,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    if (ticksElapsed % 12 == 0) {
+                    if (ticksElapsed % 20 == 0) {
                         Location playerLoc = target.getLocation();
                         Location particleLoc = playerLoc.clone();
                         for (int i = 0; i < 4; i++) {
