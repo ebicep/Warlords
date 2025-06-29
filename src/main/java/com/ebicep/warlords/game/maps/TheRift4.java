@@ -25,16 +25,16 @@ import java.util.List;
 
 import static com.ebicep.warlords.util.warlords.GameRunnable.SECOND;
 
-public class TheRift3 extends GameMap {
+public class TheRift4 extends GameMap {
 
-    public TheRift3() {
+    public TheRift4() {
         super(
-                "The Rift 3",
+                "The Rift",
                 32,
                 12,
                 60 * SECOND,
-                "Rift3",
-                1,
+                "Rift",
+                3,
                 GameMode.CAPTURE_THE_FLAG
         );
     }
@@ -55,14 +55,14 @@ public class TheRift3 extends GameMap {
         options.add(new PowerupOption(loc.addXYZ(-0.5, 24.5, 64.5), PowerupOption.PowerUp.HEALING));
         options.add(new PowerupOption(loc.addXYZ(1.5, 24.5, -62.5), PowerupOption.PowerUp.HEALING));
 
-        options.add(SpawnpointOption.forTeam(loc.addXYZ(-98.5, 45.5, -17.5, -90, 0), Team.BLUE));
-        options.add(SpawnpointOption.forTeam(loc.addXYZ(99.5, 45.5, 17.5, 90, 0), Team.RED));
+        options.add(SpawnpointOption.forTeam(loc.addXYZ(-32.5, 34.5, -43.5, -90, 0), Team.BLUE));
+        options.add(SpawnpointOption.forTeam(loc.addXYZ(33, 34.5, 45, 90, 0), Team.RED));
 
-        options.add(new FlagCapturePointOption(loc.addXYZ(-97.5, 45.5, 3, -90, 0), Team.BLUE));
-        options.add(new FlagSpawnPointOption(loc.addXYZ(-97.5, 45.5, 3, -90, 0), Team.BLUE));
+        options.add(new FlagCapturePointOption(loc.addXYZ(-98.5, 45.5, -17.5, -90, 0), Team.BLUE));
+        options.add(new FlagSpawnPointOption(loc.addXYZ(-98.5, 45.5, -17.5, -90, 0), Team.BLUE));
 
-        options.add(new FlagCapturePointOption(loc.addXYZ(98.5, 45.5, -3, 90, 0), Team.RED));
-        options.add(new FlagSpawnPointOption(loc.addXYZ(98.5, 45.5, -3, 90, 0), Team.RED));
+        options.add(new FlagCapturePointOption(loc.addXYZ(99.5, 45.5, 17.5, 90, 0), Team.RED));
+        options.add(new FlagSpawnPointOption(loc.addXYZ(99.5, 45.5, 17.5, 90, 0), Team.RED));
 
         options.add(new AbstractScoreOnEventOption.FlagCapture());
 

@@ -55,21 +55,28 @@ public class TheRift2 extends GameMap {
         options.add(new PowerupOption(loc.addXYZ(-0.5, 24.5, 64.5), PowerupOption.PowerUp.HEALING));
         options.add(new PowerupOption(loc.addXYZ(1.5, 24.5, -62.5), PowerupOption.PowerUp.HEALING));
 
-        options.add(SpawnpointOption.forTeam(loc.addXYZ(-32.5, 34.5, -43.5, -90, 0), Team.BLUE));
-        options.add(SpawnpointOption.forTeam(loc.addXYZ(33, 34.5, 45, 90, 0), Team.RED));
+        options.add(SpawnpointOption.forTeam(loc.addXYZ(-98.5, 45.5, -17.5, -90, 0), Team.BLUE));
+        options.add(SpawnpointOption.forTeam(loc.addXYZ(99.5, 45.5, 17.5, 90, 0), Team.RED));
 
-        options.add(new FlagCapturePointOption(loc.addXYZ(-98.5, 45.5, -17.5, -90, 0), Team.BLUE));
-        options.add(new FlagSpawnPointOption(loc.addXYZ(-98.5, 45.5, -17.5, -90, 0), Team.BLUE));
+        options.add(new FlagCapturePointOption(loc.addXYZ(-97.5, 45.5, 3, -90, 0), Team.BLUE));
+        options.add(new FlagSpawnPointOption(loc.addXYZ(-97.5, 45.5, 3, -90, 0), Team.BLUE));
 
-        options.add(new FlagCapturePointOption(loc.addXYZ(99.5, 45.5, 17.5, 90, 0), Team.RED));
-        options.add(new FlagSpawnPointOption(loc.addXYZ(99.5, 45.5, 17.5, 90, 0), Team.RED));
+        options.add(new FlagCapturePointOption(loc.addXYZ(98.5, 45.5, -3, 90, 0), Team.RED));
+        options.add(new FlagSpawnPointOption(loc.addXYZ(98.5, 45.5, -3, 90, 0), Team.RED));
 
         options.add(new AbstractScoreOnEventOption.FlagCapture());
 
         options.add(new GateOption(loc, -79, 45, -29, -79, 49, -24));
-        options.add(new GateOption(loc, -91, 45, -6, -86, 49, -6));
+        options.add(new GateOption(loc, -76, 51, -3, -76, 54, 3));
+        options.add(new GateOption(loc, -82, 53, -44, -82, 58, -41));
+        options.add(new GateOption(loc, -92, 43, 29, -96, 49, 29));
+        options.add(new GateOption(loc, -92, 50, 33, -96, 53, 33));
+
         options.add(new GateOption(loc, 79, 45, 25, 79, 49, 29));
-        options.add(new GateOption(loc, 87, 45, 6, 91, 49, 6));
+        options.add(new GateOption(loc, 76, 51, 3, 76, 54, -3));
+        options.add(new GateOption(loc, 82, 53, 44, 82, 58, 41));
+        options.add(new GateOption(loc, 92, 43, -29, 96, 49, -29));
+        options.add(new GateOption(loc, 92, 50, -33, 96, 53, -33));
 
         options.add(new WinByPointsOption());
         options.add(new MercyWinOption());
