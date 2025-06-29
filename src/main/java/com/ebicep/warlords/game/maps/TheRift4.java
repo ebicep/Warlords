@@ -29,11 +29,11 @@ public class TheRift4 extends GameMap {
 
     public TheRift4() {
         super(
-                "The Rift",
+                "The Rift 4",
                 32,
                 12,
                 60 * SECOND,
-                "Rift",
+                "Rift4",
                 3,
                 GameMode.CAPTURE_THE_FLAG
         );
