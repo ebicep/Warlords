@@ -29,7 +29,7 @@ public class CompassOption implements Option {
 
     private final ItemStack compassItem;
     private final int compassSlot = 8;
-    private final int updatePeriod = 10;
+    private final int updatePeriod = 20;
 
     public CompassOption(Component compassName) {
         this.compassItem = new ItemBuilder(Material.COMPASS)
