@@ -108,6 +108,7 @@ public class SpecBoostManager {
     public static final SpecBoost<VitalityBoost> VITALITY_BOOST = new VitalityBoost();
     public static final SpecBoost<VitalPulse> VITAL_PULSE = new VitalPulse();
     public static final SpecBoost<WardingWrath> WARDING_WRATH = new WardingWrath();
+    public static final SpecBoost<WitheringPlague> WITHERING_PLAGUE = new WitheringPlague();
 
 
     private static final Map<Specializations, List<SpecBoost<?>>> SPEC_BOOSTS = new HashMap<>();
@@ -128,7 +129,7 @@ public class SpecBoostManager {
         SPEC_BOOSTS.put(Specializations.ASSASSIN, List.of(TRICKSTER, BLINK, RIFT_AMBUSH, TORRENTIAL_SOUL, HAZE));
         SPEC_BOOSTS.put(Specializations.VINDICATOR, List.of(ABYSSAL_GRASP, VITAL_PULSE, SANCTION_BURST, RIGHTEOUS_RAMPAGE, SWIFT_JUSTICE));
         SPEC_BOOSTS.put(Specializations.APOTHECARY, List.of(AURA_OF_RESTORATION, ALCHEMISTS_FURY, SUSTAINED_ONSLAUGHT, DETONATION_CATALYST, SUPER_BREW));
-        SPEC_BOOSTS.put(Specializations.CONJURER, List.of(SHARP_FANGS, STACKULATOR_MAX, HOUSE_OF_LIFE, CONTAGION, AIR_STRIKE));
+        SPEC_BOOSTS.put(Specializations.CONJURER, List.of(STACKULATOR_MAX, HOUSE_OF_LIFE, CONTAGION, WITHERING_PLAGUE, AIR_STRIKE));
         SPEC_BOOSTS.put(Specializations.SENTINEL, List.of(DIVINE_SHIELDS, RUINOUS_HEX, LONE_SENTINEL, PACT_OF_PROTECTION, SANCTUARY_OF_RETRIBUTION));
         SPEC_BOOSTS.put(Specializations.LUMINARY, List.of(RADIANT_LIGHT, UNMERCIFUL_HEX, ENERGY_OVERSURGE, CONSECRATED_BEACON, HOLY_NOVA));
     }
