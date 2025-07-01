@@ -70,12 +70,13 @@ public class AbilityCommand extends BaseCommand {
                         Component.text("Unregistered Cooldown: " + listener.getName() + " - " + listener + " - " + listener.getCooldownObject(), NamedTextColor.GOLD)
                 );
             }
+            AbstractCooldown.COOLDOWNS_WITH_LISTENERS.clear();
         }
 
         @Subcommand("forceunregisterfirst")
         public void forceUnregisterFirst(Player player) {
             if (!AbstractCooldown.COOLDOWNS_WITH_LISTENERS.isEmpty()) {
-                AbstractCooldown<?> listener = AbstractCooldown.COOLDOWNS_WITH_LISTENERS.get(0);
+                AbstractCooldown<?> listener = AbstractCooldown.COOLDOWNS_WITH_LISTENERS.remove(0);
                 HandlerList.unregisterAll(listener.getActiveListener());
                 sendDebugMessage(player,
                         Component.text("Unregistered Cooldown: " + listener.getName() + " - " + listener + " - " + listener.getCooldownObject(), NamedTextColor.GOLD)
