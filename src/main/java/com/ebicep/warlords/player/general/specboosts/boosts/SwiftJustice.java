@@ -74,45 +74,45 @@ public class SwiftJustice implements SpecBoostManager.SpecBoost<SwiftJustice> {
                 return;
             }
             warlordsEntity.getAbilitiesMatching(Vindicate.class).forEach(vindicate -> {
-                RegularCooldown<Boost> cd = new RegularCooldown<>(
-                        getStringName(),
-                        "JUSTICE",
-                        Boost.class,
-                        null,
-                        warlordsEntity,
-                        CooldownTypes.SPEC_BOOST,
-                        cooldownManager -> {},
-                        recastDurationTicks
-                ) {
-                    private boolean strikeUsed = false;
-
-                    @Override
-                    protected Listener getListener() {
-                        return CooldownUtils.getDebuffImmunityListener(CooldownUtils.DebuffImmunity
-                                .create(warlordsEntity)
-                                .speedPredicate(CooldownUtils.DebuffImmunity.DEFAULT_SPEED)
-                        );
-                    }
-
-                    @Override
-                    public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                        WarlordsEntity victim = event.getWarlordsEntity();
-                        if (event.getAbility() instanceof RighteousStrike && !strikeUsed) {
-                            strikeUsed = true;
-                            victim.getCooldownManager().subtractTicksOnRegularCooldowns(nextStrikeCooldownReductionTicks, CooldownTypes.ABILITY);
-                            new CooldownFilter<>(victim, RegularCooldown.class)
-                                    .filter(regularCooldown -> regularCooldown.getCooldownType() == CooldownTypes.ABILITY)
-                                    .filter(regularCooldown -> !regularCooldown.getFlags().contains(CooldownFlag.CANNOT_BE_REDUCED) &&
-                                            !regularCooldown.getFlags().contains(CooldownFlag.CANNOT_BE_REDUCED_VIND))
-                                    .forEach(regularCooldown -> regularCooldown.subtractTime(nextStrikeCooldownReductionTicks));
-                            return currentDamageValue * AbstractAbility.convertToMultiplicationDecimal(nextStrikeDamageIncreasePercent);
-                        }
-                        return currentDamageValue;
-                    }
-                };
                 vindicate.addSecondaryAbility(
                         5,
                         () -> {
+                            RegularCooldown<Boost> cd = new RegularCooldown<>(
+                                    getStringName(),
+                                    "JUSTICE",
+                                    Boost.class,
+                                    null,
+                                    warlordsEntity,
+                                    CooldownTypes.SPEC_BOOST,
+                                    cooldownManager -> {},
+                                    recastDurationTicks
+                            ) {
+                                private boolean strikeUsed = false;
+
+                                @Override
+                                protected Listener getListener() {
+                                    return CooldownUtils.getDebuffImmunityListener(CooldownUtils.DebuffImmunity
+                                            .create(warlordsEntity)
+                                            .speedPredicate(CooldownUtils.DebuffImmunity.DEFAULT_SPEED)
+                                    );
+                                }
+
+                                @Override
+                                public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                                    WarlordsEntity victim = event.getWarlordsEntity();
+                                    if (event.getAbility() instanceof RighteousStrike && !strikeUsed) {
+                                        strikeUsed = true;
+                                        victim.getCooldownManager().subtractTicksOnRegularCooldowns(nextStrikeCooldownReductionTicks, CooldownTypes.ABILITY);
+                                        new CooldownFilter<>(victim, RegularCooldown.class)
+                                                .filter(regularCooldown -> regularCooldown.getCooldownType() == CooldownTypes.ABILITY)
+                                                .filter(regularCooldown -> !regularCooldown.getFlags().contains(CooldownFlag.CANNOT_BE_REDUCED) &&
+                                                        !regularCooldown.getFlags().contains(CooldownFlag.CANNOT_BE_REDUCED_VIND))
+                                                .forEach(regularCooldown -> regularCooldown.subtractTime(nextStrikeCooldownReductionTicks));
+                                        return currentDamageValue * AbstractAbility.convertToMultiplicationDecimal(nextStrikeDamageIncreasePercent);
+                                    }
+                                    return currentDamageValue;
+                                }
+                            };
                             warlordsEntity.getSpeed().removeNegativeModifiers();
                             warlordsEntity.getCooldownManager().addCooldown(cd);
                             if (!warlordsEntity.hasFlag()) {
