@@ -16,12 +16,20 @@ import java.util.List;
 
 public class TotemicBoon implements SpecBoostManager.SpecBoost<TotemicBoon> {
 
+    private int healingTotemHealingDecreasePercent;
+    private int healingTotemEnergyDecreasePercent;
+    private int healingTotemCooldownDecreasePercent;
+    private int healingTotemMaxAbilityCharges;
     private float healingTotemSpeedMultiplier;
     private float healingTotemRadiusIncrease;
     private float healthTransferThresholdPercent;
 
     @Override
     public void init() {
+        this.healingTotemHealingDecreasePercent = getValue("healingTotemHealingDecreasePercent", int.class);
+        this.healingTotemEnergyDecreasePercent = getValue("healingTotemEnergyDecreasePercent", int.class);
+        this.healingTotemCooldownDecreasePercent = getValue("healingTotemCooldownDecreasePercent", int.class);
+        this.healingTotemMaxAbilityCharges = getValue("healingTotemMaxAbilityCharges", int.class);
         this.healingTotemSpeedMultiplier = getValue("healingTotemSpeedMultiplier", float.class);
         this.healingTotemRadiusIncrease = getValue("healingTotemRadiusIncrease", float.class);
         this.healthTransferThresholdPercent = getValue("healthTransferThresholdPercent", float.class);
@@ -34,7 +42,14 @@ public class TotemicBoon implements SpecBoostManager.SpecBoost<TotemicBoon> {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(healingTotemSpeedMultiplier, healingTotemRadiusIncrease, healthTransferThresholdPercent);
+        return List.of(healingTotemHealingDecreasePercent,
+                healingTotemEnergyDecreasePercent,
+                healingTotemCooldownDecreasePercent,
+                healingTotemMaxAbilityCharges,
+                healingTotemSpeedMultiplier,
+                healingTotemRadiusIncrease,
+                healthTransferThresholdPercent
+        );
     }
 
     @Override
@@ -55,6 +70,13 @@ public class TotemicBoon implements SpecBoostManager.SpecBoost<TotemicBoon> {
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(HealingTotem.class).forEach(healingTotem -> {
+                healingTotem.getHealValues()
+                            .getTotemHealing()
+                            .forEachValue(floatModifiable -> floatModifiable.addMultiplicativeModifierAdd("Spec Boost", -healingTotemHealingDecreasePercent / 100f));
+                healingTotem.getEnergyCost().addMultiplicativeModifierAdd("Spec Boost", -healingTotemEnergyDecreasePercent / 100f);
+                healingTotem.getCooldown().addMultiplicativeModifierAdd("Spec Boost", -healingTotemCooldownDecreasePercent / 100f);
+                healingTotem.setMaxCharges(healingTotemMaxAbilityCharges);
+                healingTotem.setCurrentCharges(healingTotemMaxAbilityCharges);
                 healingTotem.setHealingPeriod((int) (healingTotem.getHealingPeriod() / healingTotemSpeedMultiplier));
                 healingTotem.setTickDuration((int) (healingTotem.getTickDuration() / healingTotemSpeedMultiplier));
                 healingTotem.getHitBoxRadius().addAdditiveModifier("Spec Boost", healingTotemRadiusIncrease);
