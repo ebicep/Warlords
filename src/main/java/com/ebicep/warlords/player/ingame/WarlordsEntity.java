@@ -228,15 +228,6 @@ public abstract class WarlordsEntity {
         this.speed.addChangeListener(this::setWalkSpeed);
     }
 
-    @Override
-    public String toString() {
-        return "WarlordsEntity{" +
-                "name='" + name + '\'' +
-                ", uuid=" + uuid +
-                ", specClass=" + specClass +
-                '}';
-    }
-
     protected void setWalkSpeed(float walkSpeed) {
         Player player = Bukkit.getPlayer(uuid);
         if (player != null) {
@@ -244,6 +235,15 @@ public abstract class WarlordsEntity {
         } else if (entity instanceof LivingEntity livingEntity) {
             livingEntity.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(walkSpeed);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "WarlordsEntity{" +
+                "name='" + name + '\'' +
+                ", uuid=" + uuid +
+                ", specClass=" + specClass +
+                '}';
     }
 
     public boolean isInPve() {
@@ -1339,18 +1339,6 @@ public abstract class WarlordsEntity {
         }
     }
 
-    @Nonnull
-    public Entity getEntity() {
-        return this.entity;
-    }
-
-    @Nullable
-    public CompassTargetMarker getCompassTarget() {
-        return this.compassTarget;
-    }
-
-    public abstract void updateHealth();
-
     public MotionSystem getSpeed() {
         return speed;
     }
@@ -1359,9 +1347,7 @@ public abstract class WarlordsEntity {
         return knockback;
     }
 
-    public boolean isSneaking() {
-        return this.entity instanceof Player && this.entity.isSneaking();
-    }
+    public abstract void updateHealth();
 
     public float getCurrentHealth() {
         return currentHealth;
@@ -1383,8 +1369,8 @@ public abstract class WarlordsEntity {
         this.currentEnergy = currentEnergy;
     }
 
-    public AbstractPlayerClass getSpec() {
-        return spec;
+    public FloatModifiable getEnergyPerSec() {
+        return energyPerSec;
     }
 
     public int getHitCooldown() {
@@ -1453,6 +1439,23 @@ public abstract class WarlordsEntity {
 
     public abstract void updateEntity();
 
+    public void setSpeed(MotionSystem speed) {
+        this.speed = speed;
+    }
+
+    @Nullable
+    public CompassTargetMarker getCompassTarget() {
+        return this.compassTarget;
+    }
+
+    public boolean isSneaking() {
+        return this.entity instanceof Player && this.entity.isSneaking();
+    }
+
+    public AbstractPlayerClass getSpec() {
+        return spec;
+    }
+
     public void setSpec(Specializations spec) {
         this.spec = spec.create(game.getNamespace());
         this.spec.updateCustomStats(this);
@@ -1470,20 +1473,8 @@ public abstract class WarlordsEntity {
         this.resetSpeed();
     }
 
-    public void setSpeed(MotionSystem speed) {
-        this.speed = speed;
-    }
-
-    public void setEntity(Entity entity) {
-        this.entity = entity;
-    }
-
     public FloatModifiable getEnergy() {
         return energy;
-    }
-
-    public FloatModifiable getEnergyPerSec() {
-        return energyPerSec;
     }
 
     public FloatModifiable getEnergyPerHit() {
@@ -1491,14 +1482,10 @@ public abstract class WarlordsEntity {
     }
 
     public void displayCompassActionBar() {
-        Component newActionBar = compassTarget != null
-                                 ? compassTarget.getToolbarName(this).compact()
-                                 : Component.empty();
-        if (previousActionBar.equals(newActionBar)) {
-            return;
-        }
-        previousActionBar = newActionBar;
-        entity.sendActionBar(newActionBar);
+        entity.sendActionBar(compassTarget != null
+                             ? compassTarget.getToolbarName(this)
+                             : Component.empty()
+        );
     }
 
     public void displayActionBar(boolean force) {
@@ -1672,6 +1659,15 @@ public abstract class WarlordsEntity {
         });
         getSecondStats().getEntries().clear();
         getCooldownManager().clearAllCooldowns();
+    }
+
+    @Nonnull
+    public Entity getEntity() {
+        return this.entity;
+    }
+
+    public void setEntity(Entity entity) {
+        this.entity = entity;
     }
 
     public PlayerStatisticsSecond getSecondStats() {
