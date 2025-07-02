@@ -151,7 +151,8 @@ public abstract class WarlordsEntity {
     private boolean isInPve = false;
     private boolean showDebugMessage = false;
     private float bonusAggroWeight = 0;
-
+    @NotNull
+    private Component previousActionBar = Component.empty();
 
     public WarlordsEntity(Player player, Specializations specialization, List<String> namespaces) {
         this();
@@ -1489,16 +1490,24 @@ public abstract class WarlordsEntity {
         return energyPerHit;
     }
 
-    public void displayCompassActionBar(@Nonnull Player player) {
-        if (this.compassTarget != null) {
-            player.sendActionBar(this.compassTarget.getToolbarName(this));
-        } else {
-            player.sendActionBar(Component.empty());
+    public void displayCompassActionBar(boolean force) {
+        Component newActionBar = compassTarget != null
+                                 ? compassTarget.getToolbarName(this).compact()
+                                 : Component.empty();
+        if (previousActionBar.equals(newActionBar)) {
+            return;
         }
+        previousActionBar = newActionBar;
+        entity.sendActionBar(newActionBar);
     }
 
-    public void displayActionBar() {
-        entity.sendActionBar(getActionBar(getDatabasePlayer()));
+    public void displayActionBar(boolean force) {
+        @NotNull Component newActionBar = getActionBar(getDatabasePlayer()).compact();
+        if (previousActionBar.equals(newActionBar)) {
+            return;
+        }
+        previousActionBar = newActionBar;
+        entity.sendActionBar(newActionBar);
     }
 
     public TextComponent getActionBar(DatabasePlayer databasePlayer) {
