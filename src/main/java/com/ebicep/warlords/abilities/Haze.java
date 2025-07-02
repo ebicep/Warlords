@@ -23,7 +23,6 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 public class Haze extends AbstractAbility implements OrangeAbilityIcon, Damages<Haze.DamageValues>, AbilityStats<Haze, Haze.VanishStats>, OrderOfEviscerateLike {
 
@@ -118,19 +117,18 @@ public class Haze extends AbstractAbility implements OrangeAbilityIcon, Damages<
         ) {
 
             @Override
-            public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (event.getAbility() instanceof ShadowStep || event.getAbility() instanceof Haze || Objects.equals(event.getCause(), "Intervene")) {
-                    return;
-                }
-                setTicksLeft(0);
-            }
-
-            @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 if (!data.vanished) {
                     return currentDamageValue;
                 }
                 return currentDamageValue * convertToDivisionDecimal(incomingDamageReduction);
+            }
+
+            @Override
+            public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                if (event.getAbility() instanceof JudgementStrike || event.getCause().isEmpty()) {
+                    setTicksLeft(0);
+                }
             }
 
             @Override
@@ -163,7 +161,7 @@ public class Haze extends AbstractAbility implements OrangeAbilityIcon, Damages<
                 .damage(damageValues.hazeDamage)
                 .text(" damage per second to all enemies within ")
                 .blocks(hazeRadius)
-                .text(". All attacks except Shadow Step end the skill.")
+                .text(". Judgement Strike and melee attacks will end the skill.")
                 .emptyLine()
                 .text("When Haze ends, all nearby enemies will be marked as Vulnerable. Vulnerable enemies take ")
                 .percent(vulnerableDamageBonus, NamedTextColor.RED)
