@@ -483,11 +483,12 @@ public class Warlords extends JavaPlugin {
                         Player player = we.getEntity() instanceof Player ? (Player) we.getEntity() : null;
                         if (player != null) {
                             //ACTION BAR
-                            boolean forceDisplayActionBar = loopTickCounter % 40 == 0; // force display every 2 seconds since it fades on client after 3, else only update if diff
                             if (player.getInventory().getItemInMainHand().getType() == Material.COMPASS) {
-                                we.displayCompassActionBar(forceDisplayActionBar);
+                                if (loopTickCounter % 20 == 0) { // update compass action bar every second
+                                    we.displayCompassActionBar();
+                                }
                             } else {
-                                we.displayActionBar(forceDisplayActionBar);
+                                we.displayActionBar(loopTickCounter % 40 == 0); // force display every 2 seconds since it fades on client after 3, else only update if diff
                                 game.spectators()
                                     .map(Bukkit::getPlayer)
                                     .filter(Objects::nonNull)

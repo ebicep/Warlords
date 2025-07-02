@@ -1490,7 +1490,7 @@ public abstract class WarlordsEntity {
         return energyPerHit;
     }
 
-    public void displayCompassActionBar(boolean force) {
+    public void displayCompassActionBar() {
         Component newActionBar = compassTarget != null
                                  ? compassTarget.getToolbarName(this).compact()
                                  : Component.empty();
@@ -1503,7 +1503,7 @@ public abstract class WarlordsEntity {
 
     public void displayActionBar(boolean force) {
         @NotNull Component newActionBar = getActionBar(getDatabasePlayer()).compact();
-        if (previousActionBar.equals(newActionBar)) {
+        if (previousActionBar.equals(newActionBar) && !force) {
             return;
         }
         previousActionBar = newActionBar;
