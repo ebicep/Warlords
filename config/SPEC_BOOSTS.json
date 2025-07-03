@@ -34,7 +34,7 @@
       "burstChain": {
         "difficulty": 1,
         "name": "Burst Chain",
-        "description": "Lose {{heal}} max health but gain {{speed;%}} base speed. Reduce the cooldowns of {{aqua:Time Warp}} and {{aqua:Arcane Shield}} by {{ticks}}. Increase the speed of {{aqua:Flame Burst}} by {{speed;%}} and it guarantees at least {{red}} critical hit. For the duration of {{aqua:Inferno}}, deal {{damage;%}} more damage to enemies without the given damage reducing abilities active:\n\n{{aqua:Last Stand}}\n{{aqua:Ice Barrier}}\n{{aqua:Arcane Shield}}\n{{aqua:Prism Guard}}\n{{aqua:Intervene}}\nSolitary\nIce Block\n{{aqua:Contagious Facade}}\n{{aqua:Mystical Barrier}}",
+        "description": "Lose {{heal}} max health but gain {{speed;%}} base speed. Reduce the cooldowns of {{aqua:Time Warp}} and {{aqua:Arcane Shield}} by {{ticks}}. Increase the speed of {{aqua:Flame Burst}} by {{speed;%}} and it guarantees at least {{red}} critical hit. For the duration of {{aqua:Inferno}}, deal {{damage;%}} more damage to enemies without the given damage reducing abilities active:\n\n{{aqua:Last Stand}}\n{{aqua:Ice Barrier}}\n{{aqua:Arcane Shield}}\n{{aqua:Prism Guard}}\n{{aqua:Intervene}}\n{{aqua:Solitary}}\n{{aqua:Ice Block}}\n{{aqua:Contagious Facade}}\n{{aqua:Mystical Barrier}}",
         "healthDecrease": 800,
         "baseSpeedIncreasePercent": 5,
         "timeWarpCooldownReductionSeconds": 2,
@@ -43,15 +43,15 @@
         "guaranteedCrit": 1,
         "infernoDamageIncreasePercent": 20,
         "damageReductionAbilities": [
-          "Last xStand",
-          "Ice xBarrier",
-          "Arcane xShield",
-          "Prism xGuard",
-          "Interxvene",
-          "Solixtary",
-          "Ice xBlock",
-          "Contagious xFacade",
-          "Mystical xBarrier"
+          "Last Stand",
+          "Ice Barrier",
+          "Arcane Shield",
+          "Prism Guard",
+          "Intervene",
+          "Solitary",
+          "Ice Block",
+          "Contagious Facade",
+          "Mystical Barrier"
         ]
       },
       "flameBreath": {
@@ -107,7 +107,7 @@
       "iceBlock": {
         "difficulty": 4,
         "name": "Ice Block",
-        "description": "Increase the duration of {{aqua:Ice Barrier}} by {{ticks}}. {{aqua:Ice Barrier}} can be recasted after {{ticks}}, reducing the duration by {{ticks}} but becoming an ice block. Ice block prevents jumping, tremendously reduces movement speed, but prevents knockback and grants {{damageReduction;%}} damage reduction.",
+        "description": "Increase the duration of {{aqua:Ice Barrier}} by {{ticks}}. {{aqua:Ice Barrier}} can be recasted after {{ticks}}, reducing the duration by {{ticks}} but becoming {{aqua:Ice Block}}. {{aqua:Ice Block}} prevents jumping, tremendously reduces movement speed, but prevents knockback and grants {{damageReduction;%}} damage reduction.",
         "iceBarrierNewDurationTicks": 60,
         "recastDurationDecreaseTicks": 20,
         "recastDamageReductionPercent": 70,
