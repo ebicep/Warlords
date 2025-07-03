@@ -67,7 +67,9 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
                                         .text(maxAllies, NamedTextColor.BLUE)
                                         .text(" allies in range ")
                                         .text(stacksGranted, NamedTextColor.BLUE)
-                                        .text(" stack of Merciful Hex every ")
+                                        .text(" stack" + (stacksGranted != 1 ? "s" : "") + " of ")
+                                        .text("MHEX", NamedTextColor.DARK_GREEN)
+                                        .text(" every ")
                                         .durationTicks(hexIntervalTicks)
                                         .text(".")
                                         .build();

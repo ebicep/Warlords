@@ -93,9 +93,9 @@ public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, Mercifu
         description = AbilityDescriptionBuilder
                 .create("Send a wave of energy forward. The first ")
                 .text(maxAlliesHit, NamedTextColor.BLUE)
-                .text(" allies hit heal ")
+                .text(" ally hit heals ")
                 .heal(healingValues.hexHealing)
-                .text(" health and receive ")
+                .text(" health and receives ")
                 .text(hexStacksPerHit, NamedTextColor.BLUE)
                 .text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of ")
                 .text("MHEX", NamedTextColor.DARK_GREEN)
