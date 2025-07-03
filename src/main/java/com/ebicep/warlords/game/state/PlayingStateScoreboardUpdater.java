@@ -36,6 +36,11 @@ public class PlayingStateScoreboardUpdater {
         this.game = game;
     }
 
+    public void removePlayer(UUID uuid) {
+        gamePlayers.remove(uuid);
+        cachedNames.remove(Warlords.getPlayer(uuid));
+    }
+
     public void update() {
         game.forEachOnlinePlayer((player, team) -> {
             WarlordsEntity p = Warlords.getPlayer(player);

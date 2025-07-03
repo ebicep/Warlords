@@ -30,6 +30,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -273,6 +274,11 @@ public class PlayingState implements State, TimerDebugAble {
         for (Option option : game.getOptions()) {
             option.onPlayerReJoinGame(player);
         }
+    }
+
+    @Override
+    public void onPlayerQuitGame(OfflinePlayer player) {
+        updater.removePlayer(player.getUniqueId());
     }
 
     @Override
