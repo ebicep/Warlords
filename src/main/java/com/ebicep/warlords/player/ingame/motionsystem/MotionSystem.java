@@ -15,7 +15,7 @@ public class MotionSystem {
     private final List<MotionModifier> modifiers = new LinkedList<>();
     private final List<Consumer<Float>> onChangeListeners = new ArrayList<>();
     private float lastValue = 0;
-    private boolean update = false;
+    private boolean update = true;
 
     public void tick() {
         for (MotionModifier motionModifier : modifiers) {
