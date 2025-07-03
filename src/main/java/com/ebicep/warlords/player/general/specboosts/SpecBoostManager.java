@@ -201,8 +201,8 @@ public class SpecBoostManager {
                         abilityDescriptionBuilder.text(descriptionFormat);
                         break;
                     }
-                    if (nextCustomIndex != 0 || variables.isEmpty()) {
-                        String text = descriptionFormat.substring(0, nextCustomIndex - 1);
+                    if (nextCustomIndex != 0) {
+                        String text = descriptionFormat.substring(0, nextCustomIndex);
                         abilityDescriptionBuilder.text(text);
                         descriptionFormat = descriptionFormat.substring(nextCustomIndex);
                     } else {
