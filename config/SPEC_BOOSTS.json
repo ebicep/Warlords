@@ -777,11 +777,10 @@
       },
       "energyOversurge": {
         "difficulty": 3,
-        "disabled": true,
         "name": "Energy Oversurge",
         "description": "Reduce the cooldown of {{aqua:Energy Seer}} by {{ticks;%}}, increase the energy granted by {{energy}}, and the energy loss by {{energy;%}}.",
         "energySeerCooldownReductionPercent": 25,
-        "energySeerAdditionalEnergyGrant": 100,
+        "energySeerAdditionalEnergyGrant": 60,
         "energyLostIncreasePercent": 100
       },
       "holyNova": {
