@@ -38,8 +38,8 @@ public class WarlordsPlayerDisguised extends WarlordsPlayer {
         this.specClass = npc.specClass;
         this.spec = npc.spec;
         this.health = npc.getHealth();
-        this.speed.getModifiers().clear();
-        this.speed.getModifiers().addAll(npc.speed.getModifiers());
+        this.speed.clearModifiers();
+        this.speed.addModifiers(npc.speed.getModifiers());
         this.cooldownManager = npc.cooldownManager;
         this.weapon = new CommonWeapon(player.getUniqueId()) {
             {

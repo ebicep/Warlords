@@ -16,6 +16,7 @@ public class MotionModifier {
     private final WarlordsEntity from;
     private float modifier;
     private int ticksLeft;
+    private Runnable onChange = () -> {};
 
     public MotionModifier(@Nullable WarlordsEntity from, String name, float modifier, int duration, List<MotionAddon> addons) {
         this.from = from;
@@ -40,6 +41,10 @@ public class MotionModifier {
         if (ticksLeft > 0) {
             ticksLeft--;
         }
+    }
+
+    public void setOnChange(Runnable onChange) {
+        this.onChange = onChange;
     }
 
     public int getTicksLeft() {
@@ -67,7 +72,10 @@ public class MotionModifier {
     }
 
     public void setModifier(float modifier) {
-        this.modifier = modifier;
+        if (this.modifier != modifier) {
+            this.modifier = modifier;
+            onChange.run();
+        }
     }
 
 }

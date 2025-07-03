@@ -15,10 +15,11 @@ public class MotionSystem {
     private final List<MotionModifier> modifiers = new LinkedList<>();
     private final List<Consumer<Float>> onChangeListeners = new ArrayList<>();
     private float lastValue = 0;
+    private boolean update = false;
 
     public void tick() {
         modifiers.forEach(MotionModifier::tick);
-        modifiers.removeIf(modifier -> {
+        update |= modifiers.removeIf(modifier -> {
             List<MotionAddon> addons = modifier.getAddons();
 
             boolean hasRemovalConditions = false;
@@ -38,8 +39,9 @@ public class MotionSystem {
 
             return hasRemovalConditions && allMatch;
         });
-        float newValue = getNewValue();
-        if (Float.compare(newValue, lastValue) != 0) {
+        if (update) {
+            update = false;
+            float newValue = getNewValue();
             lastValue = newValue;
             onChangeListeners.forEach(listener -> listener.accept(newValue));
         }
@@ -91,8 +93,23 @@ public class MotionSystem {
     }
 
     public void addModifier(MotionModifier mod) {
+        mod.setOnChange(this::queueUpdate);
         modifiers.removeIf(modifier -> modifier.getName().equalsIgnoreCase(mod.getName()));
         modifiers.add(mod);
+        update = true;
+    }
+
+    public void queueUpdate() {
+        update = true;
+    }
+
+    public void addModifiers(List<MotionModifier> mods) {
+        for (MotionModifier mod : mods) {
+            mod.setOnChange(this::queueUpdate);
+            modifiers.removeIf(modifier -> modifier.getName().equalsIgnoreCase(mod.getName()));
+            modifiers.add(mod);
+        }
+        update = true;
     }
 
     public float getLastValue() {
@@ -100,11 +117,11 @@ public class MotionSystem {
     }
 
     public void removeNegativeModifiers() {
-        this.modifiers.removeIf(modifier -> modifier.getModifier() < 0);
+        update |= this.modifiers.removeIf(modifier -> modifier.getModifier() < 0);
     }
 
     public void removeModifier(String name) {
-        this.modifiers.removeIf(modifier -> modifier.getName().equals(name));
+        update |= this.modifiers.removeIf(modifier -> modifier.getName().equals(name));
     }
 
     public void addBaseModifier(float add) {
@@ -115,9 +132,15 @@ public class MotionSystem {
         for (MotionModifier modifier : this.modifiers) {
             if (modifier.getName().equals("BASE")) {
                 modifierConsumer.accept(modifier);
+                update = true;
                 return;
             }
         }
+    }
+
+    public void clearModifiers() {
+        modifiers.clear();
+        update = true;
     }
 
     public List<MotionModifier> getModifiers() {
