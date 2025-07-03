@@ -18,7 +18,9 @@ public class MotionSystem {
     private boolean update = false;
 
     public void tick() {
-        modifiers.forEach(MotionModifier::tick);
+        for (MotionModifier motionModifier : modifiers) {
+            motionModifier.tick();
+        }
         update |= modifiers.removeIf(modifier -> {
             List<MotionAddon> addons = modifier.getAddons();
 
