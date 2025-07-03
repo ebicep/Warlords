@@ -57,7 +57,7 @@ public class SovereignSolitude implements SpecBoostManager.SpecBoost<SovereignSo
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(CrusadersStrike.class).forEach(crusadersStrike -> {
-                crusadersStrike.setEnergyGiven(crusaderStrikeEnergyGrant);
+                crusadersStrike.setEnergyGiven(crusadersStrike.getEnergyGiven() + crusaderStrikeEnergyGrant);
                 crusadersStrike.setEnergyMaxAllies(1);
                 crusadersStrike.setBlockedByArcaneShield(false);
             });

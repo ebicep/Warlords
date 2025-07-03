@@ -61,7 +61,7 @@ public class Clairvoyance implements SpecBoostManager.SpecBoost<Clairvoyance> {
                     clairvoyance.init(clairvoyance.getBuilder());
                     abilities.set(i, clairvoyance);
                 } else if (ability instanceof HealingRain healingRain) {
-                    healingRain.setTickDuration(healingRainDurationTicks);
+                    healingRain.setTickDuration(healingRain.getTickDuration() - healingRainDurationTicks);
                     healingRain.getHealValues().getRainHealing().forEachValue(floatModifiable ->
                             floatModifiable.addMultiplicativeModifierAdd("Spec Boost", healingRainHealIncreasePercent / 100)
                     );

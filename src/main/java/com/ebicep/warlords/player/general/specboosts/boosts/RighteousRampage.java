@@ -105,7 +105,7 @@ public class RighteousRampage implements SpecBoostManager.SpecBoost<RighteousRam
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getSpec().setDamageResistance(warlordsPlayer.getSpec().getDamageResistance() - damageReductionDecrease); // TODO flaot modifable
             warlordsPlayer.getAbilitiesMatching(Vindicate.class).forEach(vindicate -> {
-                vindicate.setTickDuration(vindicateVINDDurationTicks);
+                vindicate.setTickDuration(vindicate.getTickDuration() - vindicateVINDDurationTicks);
                 vindicate.setDamageReductionTickDuration(vindicateDamageResistanceDurationTicks);
             });
             List<AbstractAbility> abilities = warlordsPlayer.getAbilities();

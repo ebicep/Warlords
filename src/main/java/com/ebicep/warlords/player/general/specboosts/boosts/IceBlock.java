@@ -82,7 +82,7 @@ public class IceBlock implements SpecBoostManager.SpecBoost<IceBlock> {
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(IceBarrier.class).forEach(iceBarrier -> {
-                iceBarrier.setTickDuration(iceBarrierNewDurationTicks);
+                iceBarrier.setTickDuration(iceBarrier.getTickDuration() + iceBarrierNewDurationTicks);
             });
         }
 
