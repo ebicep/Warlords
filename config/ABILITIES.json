@@ -1,0 +1,3086 @@
+{
+  "_id": {
+    "$oid": "6822a41ad59313d3e3cdee81"
+  },
+  "type": "ABILITIES",
+  "data": {
+    "pvp": {
+      "arcaneShield": {
+        "name": "Arcane Shield",
+        "cooldown": 31,
+        "energyCost": 40,
+        "shieldPercentage": 50,
+        "tickDuration": 120
+      },
+      "astralPlague": {
+        "name": "Astral Plague",
+        "cooldown": 50,
+        "energyCost": 40,
+        "tickDuration": 240,
+        "hexTickDurationIncrease": 40
+      },
+      "avengersStrike": {
+        "name": "Avenger's Strike",
+        "cooldown": 0,
+        "energyCost": 90,
+        "energySteal": 10,
+        "hitBox": 4.8,
+        "damageValues": {
+          "strikeDamage": {
+            "min": 369,
+            "max": 495,
+            "critChance": 25,
+            "critMultiplier": 185
+          }
+        }
+      },
+      "avengersWrath": {
+        "name": "Avenger's Wrath",
+        "cooldown": 53,
+        "energyCost": 0,
+        "tickDuration": 240,
+        "energyPerSecond": 20,
+        "maxTargets": 2,
+        "hitRadius": 5
+      },
+      "beaconOfLight": {
+        "name": "Beacon of Light",
+        "cooldown": 20,
+        "energyCost": 40,
+        "radius": 4,
+        "tickDuration": 20,
+        "healingValues": {
+          "beaconHealing": {
+            "min": 170,
+            "max": 230,
+            "critChance": 25,
+            "critMultiplier": 175
+          }
+        }
+      },
+      "berserk": {
+        "name": "Berserk",
+        "cooldown": 47,
+        "energyCost": 30,
+        "tickDuration": 360,
+        "speedBuff": 30,
+        "damageIncrease": 25,
+        "damageTakenIncrease": 0
+      },
+      "blink": {
+        "name": "Blink",
+        "cooldown": 9,
+        "energyCost": 30,
+        "radius": 13,
+        "radiusFlag": 3.5,
+        "verticalLimit": 4,
+        "verticalLimitFlag": 0.5,
+        "damageReduction": 10,
+        "damageReductionTickDuration": 60,
+        "maxGroundTeleportDistance": 5,
+        "healingValues": {
+          "blinkHealing": {
+            "value": 300
+          }
+        }
+      },
+      "bloodLust": {
+        "name": "Blood Lust",
+        "cooldown": 31.5,
+        "energyCost": 20,
+        "tickDuration": 300,
+        "damageConvertPercent": 55,
+        "healReductionPercent": 10
+      },
+      "boulder": {
+        "name": "Boulder",
+        "cooldown": 7,
+        "energyCost": 80,
+        "boulderSpeed": 0.29,
+        "hitbox": 5.5,
+        "velocity": 1.15,
+        "damageValues": {
+          "boulderDamage": {
+            "min": 524,
+            "max": 706,
+            "critChance": 15,
+            "critMultiplier": 175
+          },
+          "earthquakeDamage": {
+            "min": 450,
+            "max": 630
+          }
+        }
+      },
+      "bullRush": {
+        "name": "Bull Rush",
+        "cooldown": 17,
+        "energyCost": 20,
+        "damageValues": {
+          "bullRushDamage": {
+            "min": 506,
+            "max": 730
+          }
+        },
+        "healingValues": {
+          "bullRushHealing": {
+            "value": 600
+          }
+        },
+        "tickDuration": 14,
+        "speedBoost": 180,
+        "radius": 3.5,
+        "knockbackMagnitude": 1.25,
+        "knockbackMagnitudeFlag": 1,
+        "knockbackY": 0.25
+      },
+      "capacitorTotem": {
+        "name": "Capacitor Totem",
+        "cooldown": 63,
+        "energyCost": 20,
+        "tickDuration": 160,
+        "radius": 6,
+        "damageValues": {
+          "totemDamage": {
+            "min": 404,
+            "max": 523,
+            "critChance": 20,
+            "critMultiplier": 200
+          }
+        }
+      },
+      "chainHeal": {
+        "name": "Chain Heal",
+        "cooldown": 8,
+        "energyCost": 40,
+        "cooldownReductionInSeconds": 2.5,
+        "radius": 15,
+        "bounceRange": 10,
+        "additionalBounces": 1,
+        "healingValues": {
+          "chainHealing": {
+            "min": 504,
+            "max": 649,
+            "critChance": 20,
+            "critMultiplier": 175
+          }
+        }
+      },
+      "chainLightning": {
+        "name": "Chain Lightning",
+        "cooldown": 9.5,
+        "energyCost": 40,
+        "damageReductionPerBounce": 10,
+        "maxDamageReduction": 25,
+        "damageReductionTickDuration": 90,
+        "damageDecreasePerBounce": 15,
+        "radius": 20,
+        "bounceRange": 10,
+        "additionalBounces": 3,
+        "damageValues": {
+          "chainDamage": {
+            "min": 370,
+            "max": 499,
+            "critChance": 20,
+            "critMultiplier": 175
+          }
+        }
+      },
+      "clairvoyance": {
+        "name": "Clairvoyance",
+        "cooldown": 28,
+        "energyCost": 30,
+        "healingIncreasePercent": 30,
+        "speedIncrease": 40,
+        "tickDuration": 120,
+        "healingValues": {
+          "healing": {
+            "value": 300
+          }
+        }
+      },
+      "consecrateAvenger": {
+        "name": "Consecrate",
+        "cooldown": 8,
+        "energyCost": 50,
+        "strikeDamageBoost": 15,
+        "hitBox": 5,
+        "tickDuration": 80,
+        "damageValues": {
+          "consecrateDamage": {
+            "min": 198,
+            "max": 267,
+            "critChance": 20,
+            "critMultiplier": 175
+          }
+        }
+      },
+      "consecrateCrusader": {
+        "name": "Consecrate",
+        "cooldown": 8,
+        "energyCost": 50,
+        "strikeDamageBoost": 15,
+        "hitBox": 4,
+        "tickDuration": 100,
+        "damageValues": {
+          "consecrateDamage": {
+            "min": 144,
+            "max": 194,
+            "critChance": 20,
+            "critMultiplier": 175
+          }
+        }
+      },
+      "consecrateProtector": {
+        "name": "Consecrate",
+        "cooldown": 8,
+        "energyCost": 10,
+        "strikeDamageBoost": 15,
+        "hitBox": 4,
+        "tickDuration": 100,
+        "damageValues": {
+          "consecrateDamage": {
+            "min": 96,
+            "max": 130,
+            "critChance": 20,
+            "critMultiplier": 175
+          }
+        }
+      },
+      "contagiousFacade": {
+        "name": "Contagious Facade",
+        "cooldown": 30,
+        "energyCost": 20,
+        "damageAbsorption": 30,
+        "tickDuration": 100,
+        "shieldTickDuration": 100,
+        "poisonRadius": 8,
+        "speedIncrease": 40,
+        "speedIncreaseDuration": 100,
+        "stacksGranted": 2,
+        "infectedPlayers": 2
+      },
+      "cripplingStrike": {
+        "name": "Crippling Strike",
+        "cooldown": 0,
+        "energyCost": 100,
+        "crippleDuration": 3,
+        "cripple": 10,
+        "cripplePerStrike": 5,
+        "hitBox": 4.8,
+        "damageValues": {
+          "strikeDamage": {
+            "min": 362,
+            "max": 498,
+            "critChance": 20,
+            "critMultiplier": 175
+          }
+        }
+      },
+      "crusadersStrike": {
+        "name": "Crusader's Strike",
+        "cooldown": 0,
+        "energyCost": 90,
+        "energyGiven": 15,
+        "energyRadius": 10,
+        "energyMaxAllies": 2,
+        "allySpeedBoost": 40,
+        "allySpeedBoostDurationInTicks": 20,
+        "hitBox": 4.8,
+        "blockedByArcaneShield": true,
+        "damageValues": {
+          "strikeDamage": {
+            "min": 331,
+            "max": 446,
+            "critChance": 20,
+            "critMultiplier": 175
+          }
+        }
+      },
+      "crystalOfHealing": {
+        "name": "Crystal of Healing",
+        "cooldown": 20,
+        "energyCost": 20,
+        "duration": 15,
+        "maxHeal": 1500,
+        "lifeSpan": 45
+      },
+      "deathsDebt": {
+        "name": "Death's Debt",
+        "cooldown": 70.5,
+        "energyCost": 20,
+        "tickDuration": 120,
+        "respiteRadius": 10,
+        "debtRadius": 8,
+        "damagePercent": 15,
+        "delayedDamageTaken": 90,
+        "debtTickDuration": 120
+      },
+      "divineBlessing": {
+        "name": "Divine Blessing",
+        "cooldown": 50,
+        "energyCost": 40,
+        "hexTickDurationIncrease": 40,
+        "hexHealingBonus": 30,
+        "lethalDamageHealing": 15,
+        "postHealthTickDelay": 40,
+        "tickDuration": 240,
+        "healingValues": {
+          "divineBlessingPostHeal": {
+            "value": 800
+          }
+        }
+      },
+      "drainingMiasma": {
+        "name": "Draining Miasma",
+        "cooldown": 50,
+        "energyCost": 40,
+        "maxHealthDamage": 3,
+        "tickDuration": 100,
+        "leechTickDuration": 100,
+        "radius": 8,
+        "leechSelfAmount": 25,
+        "leechAllyAmount": 15,
+        "slowness": 25,
+        "slownessDuration": 3,
+        "damageValues": {
+          "miasmaDamage": {
+            "value": 50
+          }
+        }
+      },
+      "earthenSpike": {
+        "name": "Earthen Spike",
+        "cooldown": 0,
+        "energyCost": 100,
+        "radius": 10,
+        "speed": 1,
+        "spikeHitbox": 2.5,
+        "verticalVelocity": 0.375,
+        "damageValues": {
+          "spikeDamage": {
+            "min": 404,
+            "max": 562,
+            "critChance": 15,
+            "critMultiplier": 175
+          },
+          "earthenRuptureDamage": {
+            "min": 548,
+            "max": 695
+          }
+        }
+      },
+      "earthlivingWeapon": {
+        "name": "Earthliving Weapon",
+        "cooldown": 15.5,
+        "energyCost": 30,
+        "tickDuration": 160,
+        "procChance": 40,
+        "maxAllies": 2,
+        "weaponDamage": 240,
+        "maxHits": 1,
+        "guaranteedHits": 1,
+        "healingValues": {
+          "earthlivingHealing": {
+            "min": 132,
+            "max": 179,
+            "critChance": 25,
+            "critMultiplier": 200
+          }
+        }
+      },
+      "energySeerConjurer": {
+        "name": "Energy Seer",
+        "cooldown": 16,
+        "energyCost": 0,
+        "damageIncrease": 10,
+        "tickDuration": 100,
+        "postEffectTickDuration": 100,
+        "energyRestore": 100,
+        "epsDecrease": 10,
+        "speedBuff": 30,
+        "healingValues": {
+          "seerHealingMultiplier": {
+            "value": 3
+          }
+        }
+      },
+      "energySeerLuminary": {
+        "name": "Energy Seer",
+        "cooldown": 16,
+        "energyCost": 0,
+        "healingIncrease": 20,
+        "tickDuration": 100,
+        "postEffectTickDuration": 100,
+        "energyRestore": 100,
+        "epsDecrease": 10,
+        "speedBuff": 30,
+        "hexPierceIncrease": 1,
+        "healingValues": {
+          "seerHealingMultiplier": {
+            "value": 0
+          }
+        }
+      },
+      "energySeerSentinel": {
+        "name": "Energy Seer",
+        "cooldown": 16,
+        "energyCost": 0,
+        "damageResistance": 5,
+        "tickDuration": 100,
+        "postEffectTickDuration": 100,
+        "energyRestore": 100,
+        "epsDecrease": 10,
+        "speedBuff": 30,
+        "healingValues": {
+          "seerHealingMultiplier": {
+            "value": 3
+          }
+        }
+      },
+      "fallenSouls": {
+        "name": "Fallen Souls",
+        "cooldown": 0,
+        "energyCost": 55,
+        "cooldownReduction": 2,
+        "projectileSpeed": 2,
+        "maxDistance": 25,
+        "hitTeammates": false,
+        "damageValues": {
+          "fallenSoulDamage": {
+            "min": 150,
+            "max": 201,
+            "critChance": 20,
+            "critMultiplier": 180
+          }
+        }
+      },
+      "fireball": {
+        "name": "Fireball",
+        "cooldown": 0,
+        "energyCost": 70,
+        "maxFullDistance": 50,
+        "directHitMultiplier": 15,
+        "splashRadius": 4,
+        "projectileSpeed": 2.5,
+        "maxDistance": 300,
+        "hitTeammates": false,
+        "damageValues": {
+          "fireballDamage": {
+            "min": 334,
+            "max": 433,
+            "critChance": 20,
+            "critMultiplier": 175
+          },
+          "igniteDamage": {
+            "min": 450,
+            "max": 650
+          }
+        }
+      },
+      "flameBurst": {
+        "name": "Flame Burst",
+        "cooldown": 9.5,
+        "energyCost": 60,
+        "splash": 5.125,
+        "acceleration": 1.0275,
+        "projectileWidth": 0.24,
+        "projectileSpeed": 1.65,
+        "maxDistance": 200,
+        "hitTeammates": false,
+        "damageValues": {
+          "flameBurstDamage": {
+            "min": 557,
+            "max": 753,
+            "critChance": 25,
+            "critMultiplier": 185
+          }
+        }
+      },
+      "flameBreath": {
+        "name": "Flame Breath",
+        "cooldown": 7.05,
+        "energyCost": 30,
+        "maxAnimationTime": 12,
+        "maxAnimationEffects": 4,
+        "hitbox": 10,
+        "velocity": 1.1,
+        "damageValues": {
+          "flameBreathDamage": {
+            "min": 501.3,
+            "max": 677.7,
+            "critChance": 25,
+            "critMultiplier": 185
+          }
+        }
+      },
+      "fortifyingHex": {
+        "name": "Fortifying Hex",
+        "cooldown": 0,
+        "energyCost": 60,
+        "damageReduction": 2,
+        "damageReductionFlagMultiplier": 2,
+        "maxEnemiesHit": 1,
+        "maxAlliesHit": 2,
+        "maxFullDistance": 40,
+        "tickDuration": 120,
+        "hexStacksPerHit": 1,
+        "maxStacks": 3,
+        "projectileSpeed": 2.5,
+        "maxDistance": 40,
+        "hitTeammates": true,
+        "damageValues": {
+          "hexDamage": {
+            "min": 271,
+            "max": 365,
+            "critChance": 20,
+            "critMultiplier": 175
+          }
+        }
+      },
+      "freezingBreath": {
+        "name": "Freezing Breath",
+        "cooldown": 6.5,
+        "energyCost": 60,
+        "slowDuration": 4,
+        "slowness": 35,
+        "hitbox": 10,
+        "maxAnimationTime": 12,
+        "projectileSpeed": 1.25,
+        "maxDistance": 100,
+        "hitTeammates": false,
+        "damageValues": {
+          "freezingBreathDamage": {
+            "min": 405,
+            "max": 565,
+            "critChance": 20,
+            "critMultiplier": 175
+          }
+        }
+      },
+      "frostBolt": {
+        "name": "Frostbolt",
+        "cooldown": 0,
+        "energyCost": 70,
+        "maxFullDistance": 30,
+        "directHitMultiplier": 30,
+        "splash": 4,
+        "slowDuration": 2,
+        "slowness": 25,
+        "projectileSpeed": 2.25,
+        "maxDistance": 300,
+        "hitTeammates": false,
+        "damageValues": {
+          "boltDamage": {
+            "min": 249,
+            "max": 325,
+            "critChance": 20,
+            "critMultiplier": 175
+          },
+          "shatterBoltDamage": {
+            "min": 409,
+            "max": 554
+          }
+        }
+      },
+      "groundSlamBerserker": {
+        "name": "Ground Slam",
+        "cooldown": 9.5,
+        "energyCost": 60,
+        "velocity": 1.25,
+        "slamSize": 5,
+        "damageValues": {
+          "slamDamage": {
+            "min": 449,
+            "max": 606,
+            "critChance": 20,
+            "critMultiplier": 175
+          }
+        }
+      },
+      "groundSlamDefender": {
+        "name": "Ground Slam",
+        "cooldown": 7.5,
+        "energyCost": 0,
+        "velocity": 1.25,
+        "slamSize": 5,
+        "damageValues": {
+          "slamDamage": {
+            "min": 326,
+            "max": 441,
+            "critChance": 20,
+            "critMultiplier": 175
+          }
+        }
+      },
+      "groundSlamRevenant": {
+        "name": "Ground Slam",
+        "cooldown": 9.5,
+        "energyCost": 30,
+        "velocity": 1.25,
+        "slamSize": 5,
+        "damageValues": {
+          "slamDamage": {
+            "min": 326,
+            "max": 441,
+            "critChance": 35,
+            "critMultiplier": 200
+          }
+        }
+      },
+      "guardianBeam": {
+        "name": "Guardian Beam",
+        "cooldown": 10,
+        "energyCost": 40,
+        "carrierBonusMultiplier": 2,
+        "runeTimerIncrease": 1.5,
+        "tickDuration": 120,
+        "projectileSpeed": 30,
+        "maxDistance": 30,
+        "hitTeammates": true,
+        "damageValues": {
+          "beamDamage": {
+            "min": 282,
+            "max": 381,
+            "critChance": 20,
+            "critMultiplier": 175
+          }
+        },
+        "shieldValues": [
+          150,
+          300,
+          600
+        ]
+      },
+      "hammerOfLight": {
+        "name": "Hammer of Light",
+        "cooldown": 65,
+        "energyCost": 30,
+        "radius": 6,
+        "tickDuration": 160,
+        "crownEnergyReduction": 10,
+        "crownBonusHealing": 35,
+        "crownRadius": 6,
+        "hammerRadius": 6,
+        "damageValues": {
+          "hammerDamage": {
+            "min": 178,
+            "max": 244,
+            "critChance": 20,
+            "critMultiplier": 175
+          }
+        },
+        "healingValues": {
+          "hammerHealing": {
+            "min": 178,
+            "max": 244,
+            "critChance": 20,
+            "critMultiplier": 175
+          }
+        }
+      },
+      "haze": {
+        "name": "Haze",
+        "cooldown": 50,
+        "energyCost": 0,
+        "tickDuration": 160,
+        "incomingDamageReduction": 30,
+        "incomingHealingReduction": 15,
+        "hazeRadius": 6,
+        "vulnerableTickDuration": 120,
+        "vulnerableDamageBonus": 10,
+        "damageValues": {
+          "hazeDamage": {
+            "value": 150
+          }
+        }
+      },
+      "healingLink": {
+        "name": "Healing Link",
+        "cooldown": 10,
+        "energyCost": 0,
+        "radius": 10,
+        "damagePercentTaken": 30,
+        "tickDuration": 160,
+        "maxTargets": 1,
+        "healingValues": {
+          "linkHealing": {
+            "value": 250
+          },
+          "linkEndHealing": {
+            "value": 150
+          }
+        }
+      },
+      "healingRain": {
+        "name": "Healing Rain",
+        "cooldown": 54,
+        "energyCost": 20,
+        "tickDuration": 200,
+        "radius": 8,
+        "damageValues": {
+          "rainStrikeDamage": {
+            "min": 224,
+            "max": 377
+          }
+        },
+        "healingValues": {
+          "rainHealing": {
+            "min": 100,
+            "max": 125,
+            "critChance": 25,
+            "critMultiplier": 180
+          }
+        }
+      },
+      "healingTotem": {
+        "name": "Healing Totem",
+        "cooldown": 68,
+        "energyCost": 60,
+        "radius": 7,
+        "tickDuration": 100,
+        "crippleDuration": 6,
+        "healingIncrement": 25,
+        "healingPeriod": 20,
+        "healingValues": {
+          "totemHealing": {
+            "min": 591,
+            "max": 688,
+            "critChance": 25,
+            "critMultiplier": 175
+          }
+        }
+      },
+      "heartToHeart": {
+        "name": "Heart to Heart",
+        "cooldown": 12,
+        "energyCost": 20,
+        "radius": 15,
+        "vindDuration": 6,
+        "damageValues": {
+          "heartOfHeartsDamage": {
+            "min": 1635,
+            "max": 2096
+          }
+        },
+        "healingValues": {
+          "heartToHeartHealing": {
+            "value": 600
+          }
+        }
+      },
+      "holyRadianceAvenger": {
+        "name": "Holy Radiance",
+        "cooldown": 19.5,
+        "energyCost": 20,
+        "markDuration": 8,
+        "markRadius": 15,
+        "energyDrainPerSecond": 8,
+        "radius": 7,
+        "speed": 1.1,
+        "healingValues": {
+          "radianceHealing": {
+            "min": 582,
+            "max": 760,
+            "critChance": 15,
+            "critMultiplier": 175
+          }
+        }
+      },
+      "holyRadianceCrusader": {
+        "name": "Holy Radiance",
+        "cooldown": 19.5,
+        "energyCost": 20,
+        "markRadius": 15,
+        "markDuration": 8,
+        "energyPerSecond": 6,
+        "markSpeed": 25,
+        "radius": 7,
+        "speed": 1.1,
+        "healingValues": {
+          "radianceHealing": {
+            "min": 582,
+            "max": 760,
+            "critChance": 15,
+            "critMultiplier": 175
+          }
+        }
+      },
+      "holyRadianceProtector": {
+        "name": "Holy Radiance",
+        "cooldown": 10,
+        "energyCost": 60,
+        "markRadius": 15,
+        "markDuration": 8,
+        "markBonusHealing": 10,
+        "radius": 7,
+        "speed": 1.1,
+        "healingValues": {
+          "radianceHealing": {
+            "min": 582,
+            "max": 760,
+            "critChance": 15,
+            "critMultiplier": 175
+          },
+          "unrivalledRadianceHealing": {
+            "min": 150,
+            "max": 350
+          }
+        }
+      },
+      "iceBarrier": {
+        "name": "Ice Barrier",
+        "cooldown": 47,
+        "energyCost": 0,
+        "tickDuration": 120,
+        "damageReductionPercent": 50,
+        "slownessOnMeleeHit": 20,
+        "slowDuration": 2
+      },
+      "impalingStrike": {
+        "name": "Impaling Strike",
+        "cooldown": 0,
+        "energyCost": 90,
+        "leechTickDuration": 100,
+        "leechAmount": 7,
+        "hitBox": 4.8,
+        "damageValues": {
+          "strikeDamage": {
+            "min": 323,
+            "max": 427,
+            "critChance": 20,
+            "critMultiplier": 175
+          }
+        }
+      },
+      "incendiaryCurse": {
+        "name": "Incendiary Curse",
+        "cooldown": 6.5,
+        "energyCost": 60,
+        "hitbox": 5,
+        "blindDurationInTicks": 8,
+        "damageIncrease": 100,
+        "damageIncreaseHealthThreshold": 80,
+        "damageValues": {
+          "curseDamage": {
+            "min": 298,
+            "max": 402,
+            "critChance": 20,
+            "critMultiplier": 175
+          }
+        }
+      },
+      "inferno": {
+        "name": "Inferno",
+        "cooldown": 47,
+        "energyCost": 0,
+        "tickDuration": 360,
+        "critChanceIncrease": 30,
+        "critMultiplierIncrease": 30
+      },
+      "inspiringPresence": {
+        "name": "Inspiring Presence",
+        "cooldown": 65,
+        "energyCost": 0,
+        "speedBuff": 30,
+        "radius": 10,
+        "tickDuration": 240,
+        "energyPerSecond": 6
+      },
+      "intervene": {
+        "name": "Intervene",
+        "cooldown": 14,
+        "energyCost": 20,
+        "tickDuration": 100,
+        "maxDamagePrevented": 3600,
+        "damageReduction": 50,
+        "radius": 10,
+        "breakRadius": 15,
+        "maxTargets": 1
+      },
+      "judgementStrike": {
+        "name": "Judgement Strike",
+        "cooldown": 0,
+        "energyCost": 70,
+        "attacksDone": 0,
+        "speedOnCrit": 25,
+        "speedOnCritDuration": 2,
+        "strikeCritInterval": 4,
+        "hitBox": 4.8,
+        "damageIncrease": 20,
+        "damageIncreaseHealthThreshold": 60,
+        "orderCooldownReduction": 1.25,
+        "damageValues": {
+          "strikeDamage": {
+            "min": 326,
+            "max": 441,
+            "critChance": 20,
+            "critMultiplier": 185
+          }
+        },
+        "healingValues": {
+          "strikeHealing": {
+            "value": 0
+          }
+        }
+      },
+      "lastStand": {
+        "name": "Last Stand",
+        "cooldown": 57,
+        "energyCost": 40,
+        "radius": 7,
+        "selfTickDuration": 240,
+        "allyTickDuration": 120,
+        "selfDamageReductionPercent": 40,
+        "teammateDamageReductionPercent": 40
+      },
+      "lightInfusionAvenger": {
+        "name": "Light Infusion",
+        "cooldown": 15.5,
+        "energyCost": 0,
+        "tickDuration": 60,
+        "speedBuff": 50,
+        "energyGiven": 120
+      },
+      "lightInfusionCrusader": {
+        "name": "Light Infusion",
+        "cooldown": 15.5,
+        "energyCost": 0,
+        "tickDuration": 60,
+        "speedBuff": 40,
+        "energyGiven": 120
+      },
+      "lightInfusionProtector": {
+        "name": "Light Infusion",
+        "cooldown": 15.5,
+        "energyCost": 0,
+        "tickDuration": 60,
+        "speedBuff": 40,
+        "energyGiven": 120
+      },
+      "lightningBolt": {
+        "name": "Lightning Bolt",
+        "cooldown": 0,
+        "energyCost": 60,
+        "splash": 3,
+        "cooldownReduction": 2,
+        "projectileSpeed": 2.75,
+        "maxDistance": 60,
+        "hitTeammates": false,
+        "damageValues": {
+          "boltDamage": {
+            "min": 252,
+            "max": 340,
+            "critChance": 25,
+            "critMultiplier": 180
+          }
+        }
+      },
+      "lightningRod": {
+        "name": "Lightning Rod",
+        "cooldown": 31.5,
+        "energyCost": 0,
+        "knockbackRadius": 5,
+        "energyRestore": 160,
+        "horizontalTotemProcRange": 5,
+        "verticalTotemProcRange": 3,
+        "magnitude": 1.5,
+        "y": 0.35,
+        "healingValues": {
+          "healthRestore": {
+            "value": 30
+          }
+        }
+      },
+      "mercifulHex": {
+        "name": "Merciful Hex",
+        "cooldown": 0,
+        "energyCost": 60,
+        "hexStacksPerHit": 1,
+        "maxAlliesHit": 1,
+        "maxEnemiesHit": 1,
+        "subsequentReduction": 30,
+        "ticksBetweenDot": 40,
+        "maxStacks": 3,
+        "tickDuration": 60,
+        "projectileSpeed": 2.5,
+        "maxDistance": 40,
+        "hitTeammates": true,
+        "hexStacksPerHitAfter": 1,
+        "damageValues": {
+          "hexDamage": {
+            "min": 186,
+            "max": 250,
+            "critChance": 20,
+            "critMultiplier": 180
+          }
+        },
+        "healingValues": {
+          "hexHealing": {
+            "min": 247,
+            "max": 333,
+            "critChance": 20,
+            "critMultiplier": 180
+          },
+          "hexSelfHealing": {
+            "min": 215,
+            "max": 290,
+            "critChance": 20,
+            "critMultiplier": 180
+          },
+          "hexDOTHealing": {
+            "min": 30,
+            "max": 40
+          }
+        }
+      },
+      "mysticalBarrier": {
+        "name": "Mystical Barrier",
+        "cooldown": 20,
+        "energyCost": 20,
+        "runeTimerIncrease": 0.5,
+        "tickDuration": 100,
+        "meleeDamageReduction": 60,
+        "radius": 12,
+        "shieldBase": 400,
+        "shieldIncrease": 100,
+        "shieldMaxHealth": 1200,
+        "reactivateTickDuration": 100,
+        "stacksGranted": 3,
+        "guardianBeamShieldMultiplier": 2,
+        "canTargetAllies": true
+      },
+      "notAShield": {
+        "name": "Not A Shield",
+        "cooldown": 12,
+        "energyCost": 45,
+        "hitBox": 3,
+        "runeTickIncrease": 1.5,
+        "allyHitDamageReduction": 10,
+        "allyHexStacks": 1,
+        "allyHexTickDuration": 60,
+        "maxAlliesHit": 10,
+        "projectileSpeed": 1,
+        "maxDistance": 20,
+        "hitTeammates": true
+      },
+      "orbsOfLife": {
+        "name": "Orbs of Life",
+        "cooldown": 23,
+        "energyCost": 20,
+        "floatingOrbRadius": 20,
+        "tickDuration": 300,
+        "initialOrbs": 2,
+        "orbTickDuration": 160,
+        "healingIncreaseTickDelay": 30,
+        "healingIncreaseTickTime": 130,
+        "healingIncrease": 40,
+        "healRadius": 5,
+        "healingValues": {
+          "orbHealing": {
+            "value": 210
+          }
+        }
+      },
+      "orderOfEviscerate": {
+        "name": "Order of Eviscerate",
+        "cooldown": 50,
+        "energyCost": 20,
+        "tickDuration": 160,
+        "maxDamageThreshold": 600,
+        "vulnerableDamageBonus": 10,
+        "backstabDamageBonus": 10,
+        "speedBuff": 40,
+        "orderKillCooldownReduction": 30,
+        "orderAssistCooldownReduction": 20
+      },
+      "parry": {
+        "name": "Parry",
+        "cooldown": 8,
+        "energyCost": 10,
+        "blockTickDuration": 36,
+        "knockbackTickDuration": 50,
+        "damageReduction": 12,
+        "damageReductionTickDuration": 100
+      },
+      "poisonousHex": {
+        "name": "Poisonous Hex",
+        "cooldown": 0,
+        "energyCost": 60,
+        "maxFullDistance": 40,
+        "hexStacksPerHit": 1,
+        "maxStacks": 3,
+        "tickDuration": 120,
+        "tickDurationDot": 120,
+        "ticksBetweenDot": 40,
+        "maxEnemiesHit": 2,
+        "projectileSpeed": 2.5,
+        "maxDistance": 40,
+        "hitTeammates": false,
+        "damageValues": {
+          "hexDamage": {
+            "min": 263,
+            "max": 356,
+            "critChance": 20,
+            "critMultiplier": 175
+          },
+          "hexDOTDamage": {
+            "min": 25,
+            "max": 35
+          }
+        }
+      },
+      "prismGuard": {
+        "name": "Prism Guard",
+        "cooldown": 26,
+        "energyCost": 40,
+        "damageReductionActive": 5,
+        "damageReduction": 3,
+        "bubbleRadius": 4,
+        "tickDuration": 100,
+        "projectileDamageReduction": 30,
+        "maxHealing": 1200,
+        "maxDamageReduction": 15,
+        "healingValues": {
+          "bubbleBaseHealing": {
+            "value": 200
+          },
+          "bubbleMissingHealthHealing": {
+            "value": 1.5
+          }
+        }
+      },
+      "protectorsStrike": {
+        "name": "Protector's Strike",
+        "cooldown": 0,
+        "energyCost": 90,
+        "allyHealing": 100,
+        "selfHealing": 55,
+        "maxAllies": 2,
+        "strikeRadius": 10,
+        "hitBox": 4.8,
+        "damageValues": {
+          "strikeDamage": {
+            "min": 261,
+            "max": 352,
+            "critChance": 20,
+            "critMultiplier": 175
+          }
+        }
+      },
+      "rayOfLight": {
+        "name": "Ray of Light",
+        "cooldown": 10,
+        "energyCost": 40,
+        "projectileSpeed": 30,
+        "maxDistance": 30,
+        "hitTeammates": true,
+        "healingValues": {
+          "rayHealing": {
+            "min": 428,
+            "max": 575,
+            "critChance": 20,
+            "critMultiplier": 150
+          }
+        }
+      },
+      "recklessCharge": {
+        "name": "Reckless Charge",
+        "cooldown": 10.5,
+        "energyCost": 60,
+        "stunTimeInTicks": 10,
+        "additionalBlocks": 0,
+        "flagBlockReduction": 3,
+        "hitBox": 3,
+        "damageValues": {
+          "chargeDamage": {
+            "min": 457,
+            "max": 601,
+            "critChance": 20,
+            "critMultiplier": 200
+          }
+        }
+      },
+      "remedicChains": {
+        "name": "Remedic Chains",
+        "cooldown": 18,
+        "energyCost": 60,
+        "healingMultiplier": 12.5,
+        "allyDamageIncrease": 12,
+        "tickDuration": 160,
+        "alliesAffected": 3,
+        "linkBreakRadius": 18,
+        "castRange": 12,
+        "healMultiplierOne": 1.3,
+        "healMultiplierTwo": 0.95,
+        "healMultiplierThree": 0.8,
+        "healingValues": {
+          "chainHealing": {
+            "min": 100,
+            "max": 135
+          }
+        },
+        "damageValues": {
+          "bonusDamage": {
+            "value": 20
+          }
+        }
+      },
+      "repentance": {
+        "name": "Repentance",
+        "cooldown": 31.5,
+        "energyCost": 20,
+        "pool": 0,
+        "tickDuration": 240,
+        "poolDecay": 60,
+        "damageConvertPercent": 6,
+        "energyConvertPercent": 3.5
+      },
+      "righteousStrike": {
+        "name": "Righteous Strike",
+        "cooldown": 0,
+        "energyCost": 70,
+        "abilityReductionInTicks": 10,
+        "additionalReductionInTicks": 6,
+        "prismGuardCooldownReduction": 0.5,
+        "targetsStruck": 0,
+        "hitBox": 4.8,
+        "damageValues": {
+          "strikeDamage": {
+            "min": 324,
+            "max": 415,
+            "critChance": 20,
+            "critMultiplier": 175
+          }
+        }
+      },
+      "sanctifiedBeacon": {
+        "name": "Sanctified Beacon",
+        "cooldown": 20,
+        "energyCost": 40,
+        "maxAllies": 2,
+        "critMultiplierReducedBy": 25,
+        "hexIntervalTicks": 60,
+        "stacksGranted": 1,
+        "damageReductionPve": 30,
+        "radius": 8,
+        "tickDuration": 300
+      },
+      "sanctuary": {
+        "name": "Sanctuary",
+        "cooldown": 50,
+        "energyCost": 40,
+        "hexTickDurationIncrease": 40,
+        "additionalDamageReduction": 6,
+        "tickDuration": 240,
+        "lethalDamageHealing": 15
+      },
+      "seismicWaveBerserker": {
+        "name": "Seismic Wave",
+        "cooldown": 11.5,
+        "energyCost": 60,
+        "velocity": 1.25,
+        "waveLength": 8,
+        "waveWidth": 2,
+        "damageValues": {
+          "waveDamage": {
+            "min": 557,
+            "max": 753,
+            "critChance": 25,
+            "critMultiplier": 200
+          }
+        }
+      },
+      "seismicWaveDefender": {
+        "name": "Seismic Wave",
+        "cooldown": 11.5,
+        "energyCost": 60,
+        "velocity": 1.25,
+        "waveLength": 8,
+        "waveWidth": 2,
+        "damageValues": {
+          "waveDamage": {
+            "min": 506,
+            "max": 685,
+            "critChance": 25,
+            "critMultiplier": 200
+          }
+        }
+      },
+      "shadowStep": {
+        "name": "Shadow Step",
+        "cooldown": 12,
+        "energyCost": 10,
+        "fallDamageNegation": 10,
+        "leapHealThreshold": 1000,
+        "guaranteedCrit": 1,
+        "magnitude": 1.5,
+        "y": 0.7,
+        "magnitudeFlag": 1,
+        "yFlag": 0.35,
+        "damageValues": {
+          "shadowStepDamage": {
+            "min": 416,
+            "max": 498,
+            "critChance": 15,
+            "critMultiplier": 175
+          }
+        },
+        "healingValues": {
+          "leapHeal": {
+            "value": 600
+          }
+        }
+      },
+      "solitary": {
+        "name": "Solitary",
+        "cooldown": 57,
+        "energyCost": 40,
+        "tickDuration": 240,
+        "damageReduction": 45,
+        "healthPercentageHealing": 50
+      },
+      "soothingElixir": {
+        "name": "Soothing Elixir",
+        "cooldown": 9,
+        "energyCost": 70,
+        "puddleRadius": 5,
+        "puddleTickDuration": 80,
+        "leechStacksApplied": 1,
+        "damageValues": {
+          "elixirDamage": {
+            "min": 215,
+            "max": 322,
+            "critChance": 25,
+            "critMultiplier": 175
+          }
+        },
+        "healingValues": {
+          "elixirHealing": {
+            "min": 551,
+            "max": 648,
+            "critChance": 25,
+            "critMultiplier": 175
+          },
+          "elixirDOTHealing": {
+            "min": 68,
+            "max": 114,
+            "critChance": 25,
+            "critMultiplier": 175
+          }
+        }
+      },
+      "soulbindingWeapon": {
+        "name": "Soulbinding Weapon",
+        "cooldown": 22,
+        "energyCost": 30,
+        "tickDuration": 240,
+        "selfCooldownReduction": 1.5,
+        "allyCooldownReduction": 0.4,
+        "bindDuration": 60,
+        "radius": 8,
+        "maxAlliesHit": 2,
+        "maxStacks": 1,
+        "kbRes": 10,
+        "healingValues": {
+          "allyHealing": {
+            "value": 200
+          },
+          "selfHealing": {
+            "value": 300
+          }
+        }
+      },
+      "soulfireBeam": {
+        "name": "Soulfire Beam",
+        "cooldown": 10,
+        "energyCost": 40,
+        "projectileSpeed": 30,
+        "maxDistance": 30,
+        "hitTeammates": false,
+        "damageValues": {
+          "beamDamage": {
+            "min": 376,
+            "max": 508,
+            "critChance": 20,
+            "critMultiplier": 175
+          },
+          "damageMultipliers": [
+            1.0,
+            1.25,
+            1.5,
+            2.0
+          ]
+        }
+      },
+      "soulShackle": {
+        "name": "Soul Shackle",
+        "cooldown": 9,
+        "energyCost": 40,
+        "shackleRange": 15,
+        "shacklePool": 0,
+        "maxShackleTargets": 1,
+        "silenceDurationInTicks": 30,
+        "minSilenceDurationInTicks": 40,
+        "maxSilenceDurationInTicks": 70,
+        "speedBuff": 40,
+        "speedDuration": 1.5,
+        "damageValues": {
+          "shackleDamage": {
+            "min": 446,
+            "max": 589,
+            "critChance": 20,
+            "critMultiplier": 175
+          }
+        }
+      },
+      "soulSwitch": {
+        "name": "Soul Switch",
+        "cooldown": 18,
+        "energyCost": 30,
+        "radius": 14,
+        "radiusFlag": 3.5,
+        "verticalLimit": 5,
+        "verticalLimitFlag": 0.5,
+        "blindnessTicks": 30,
+        "decoyMaxTicksLived": 60,
+        "invisTicks": 30,
+        "damageReduction": 10,
+        "damageReductionTickDuration": 60,
+        "healingValues": {
+          "switchHealing": {
+            "min": 300,
+            "max": 500,
+            "critChance": 15,
+            "critMultiplier": 175
+          }
+        }
+      },
+      "spiritLink": {
+        "name": "Spirit Link",
+        "cooldown": 8.5,
+        "energyCost": 40,
+        "speedBuff": 40,
+        "speedDuration": 1.5,
+        "damageReduction": 15,
+        "damageReductionDuration": 4,
+        "damageDecreasePerBounce": 20,
+        "radius": 20,
+        "bounceRange": 10,
+        "additionalBounces": 2,
+        "maxStacks": 10,
+        "damageValues": {
+          "linkDamage": {
+            "min": 276,
+            "max": 372,
+            "critChance": 20,
+            "critMultiplier": 175
+          }
+        }
+      },
+      "superBrew": {
+        "name": "Super Brew",
+        "cooldown": 5,
+        "energyCost": 40,
+        "tickDuration": 800,
+        "radius": 10,
+        "energyPerSecondIncrease": 5,
+        "maxEnergyIncrease": 100,
+        "meleeDamageIncreasePercent": 10,
+        "meleeDamageTakenDecreasePercent": 10,
+        "ultCooldownReductionPercent": 20,
+        "trueDamageLeechIncreasePercent": 2
+      },
+      "temp": {
+        "name": "Placeholder Ability"
+      },
+      "timeSurge": {
+        "name": "Time Surge",
+        "cooldown": 28,
+        "energyCost": 30,
+        "healPercentage": 30
+      },
+      "timeWarpAquamancer": {
+        "name": "Time Warp",
+        "cooldown": 28,
+        "energyCost": 30,
+        "tickDuration": 100,
+        "warpHealPercentage": 30
+      },
+      "timeWarpCryomancer": {
+        "name": "Time Warp",
+        "cooldown": 28,
+        "energyCost": 30,
+        "tickDuration": 100,
+        "warpHealPercentage": 30
+      },
+      "timeWarpPyromancer": {
+        "name": "Time Warp",
+        "cooldown": 28,
+        "energyCost": 30,
+        "tickDuration": 100,
+        "warpHealPercentage": 30
+      },
+      "undyingArmy": {
+        "name": "Undying Army",
+        "cooldown": 70,
+        "energyCost": 60,
+        "radius": 12,
+        "tickDuration": 200,
+        "maxArmyAllies": 6,
+        "maxHealthDamage": 10,
+        "flatHealing": 100,
+        "missingHealing": 0,
+        "healPeriod": 20,
+        "damageValues": {
+          "relentlessArmy": {
+            "min": 458,
+            "max": 612
+          }
+        }
+      },
+      "vindicate": {
+        "name": "Vindicate",
+        "cooldown": 55,
+        "energyCost": 25,
+        "radius": 8,
+        "vindTickDuration": 240,
+        "damageReductionTickDuration": 160,
+        "vindicateDamageReduction": 30,
+        "knockbackResistance": 35
+      },
+      "vitalityConcoction": {
+        "name": "Vitality Concoction",
+        "cooldown": 10,
+        "energyCost": 20,
+        "tickDuration": 20,
+        "damageResistance": 80,
+        "speedBoost": 120,
+        "leechRadius": 3
+      },
+      "vitalityLiquor": {
+        "name": "Vitality Liquor",
+        "cooldown": 14,
+        "energyCost": 30,
+        "duration": 3,
+        "vitalityRange": 8,
+        "energyPerSecond": 15,
+        "healingValues": {
+          "liquorHealing": {
+            "min": 359,
+            "max": 485,
+            "critChance": 25,
+            "critMultiplier": 175
+          },
+          "waveHealing": {
+            "min": 268,
+            "max": 324,
+            "critChance": 25,
+            "critMultiplier": 175
+          }
+        }
+      },
+      "volatileBrew": {
+        "name": "Volatile Brew",
+        "cooldown": 54,
+        "energyCost": 40,
+        "ticksUntilExplosion": 240,
+        "radius": 7,
+        "energyRestore": 80,
+        "earlyActivationEffectivenessReduction": 20,
+        "damageValues": {
+          "brewDamage": {
+            "min": 1140,
+            "max": 1680
+          }
+        },
+        "healingValues": {
+          "brewHealing": {
+            "value": 1000
+          }
+        }
+      },
+      "waterBolt": {
+        "name": "Water Bolt",
+        "cooldown": 0,
+        "energyCost": 80,
+        "maxFullDistance": 40,
+        "directHitMultiplier": 15,
+        "splashRadius": 4,
+        "projectileSpeed": 2.25,
+        "maxDistance": 300,
+        "hitTeammates": true,
+        "damageValues": {
+          "boltDamage": {
+            "min": 236,
+            "max": 304,
+            "critChance": 20,
+            "critMultiplier": 175
+          }
+        },
+        "healingValues": {
+          "boltHealing": {
+            "min": 315,
+            "max": 434,
+            "critChance": 20,
+            "critMultiplier": 175
+          }
+        }
+      },
+      "waterBreath": {
+        "name": "Water Breath",
+        "cooldown": 8,
+        "energyCost": 50,
+        "maxAnimationTime": 12,
+        "maxAnimationEffects": 4,
+        "hitbox": 10,
+        "velocity": 1.1,
+        "healingValues": {
+          "breathHealing": {
+            "min": 496,
+            "max": 701,
+            "critChance": 25,
+            "critMultiplier": 175
+          }
+        }
+      },
+      "windfuryWeapon": {
+        "name": "Windfury Weapon",
+        "cooldown": 15.5,
+        "energyCost": 30,
+        "tickDuration": 160,
+        "procChance": 35,
+        "maxHits": 2,
+        "weaponDamage": 135,
+        "guaranteedHits": 1
+      },
+      "wonderTrap": {
+        "name": "Wonder Trap",
+        "cooldown": 10,
+        "energyCost": 40
+      },
+      "woundingStrikeBerserker": {
+        "name": "Wounding Strike",
+        "cooldown": 0,
+        "energyCost": 100,
+        "wounding": 40,
+        "woundingTickDuration": 60,
+        "hitBox": 4.8,
+        "damageValues": {
+          "strikeDamage": {
+            "min": 497,
+            "max": 632,
+            "critChance": 20,
+            "critMultiplier": 175
+          }
+        }
+      },
+      "woundingStrikeDefender": {
+        "name": "Wounding Strike",
+        "cooldown": 0,
+        "energyCost": 100,
+        "wounding": 25,
+        "woundingDurationInTicks": 60,
+        "hitBox": 4.8,
+        "damageValues": {
+          "strikeDamage": {
+            "min": 416,
+            "max": 557,
+            "critChance": 20,
+            "critMultiplier": 200
+          }
+        }
+      }
+    },
+    "pve": {
+      "acolyteOfNarmerRemoveTarget": {
+        "name": "Remove Target",
+        "cooldown": 10,
+        "energyCost": 100
+      },
+      "agonizedSoulRemoveTarget": {
+        "name": "Remove Target",
+        "cooldown": 15,
+        "energyCost": 100
+      },
+      "apolloPoisonArrow": {
+        "name": "Poison Arrow",
+        "cooldown": 5,
+        "energyCost": 100
+      },
+      "apolloSpawnSkeletalEntropy": {
+        "name": "Spawn Skeletal Entropy",
+        "cooldown": 10,
+        "energyCost": 50
+      },
+      "aresSpawnIntermediateWarriorBerserker": {
+        "name": "Spawn Intermediate Warrior Berserker",
+        "cooldown": 10,
+        "energyCost": 50
+      },
+      "aresSpawnAdvancedWarriorBerserker": {
+        "name": "Spawn Advanced Warrior Berserker",
+        "cooldown": 10,
+        "energyCost": 50
+      },
+      "athenaSpawnMobs": {
+        "name": "Athena Mobs",
+        "cooldown": 45,
+        "energyCost": 100
+      },
+      "athenaShockwave": {
+        "name": "Shockwave",
+        "cooldown": 8,
+        "energyCost": 100
+      },
+      "blazingKindleKindleWave": {
+        "name": "Kindle Wave",
+        "cooldown": 8,
+        "energyCost": 100
+      },
+      "celestialBowWielderFireball": {
+        "name": "Fireball",
+        "cooldown": 5.5,
+        "energyCost": 0,
+        "maxFullDistance": 50,
+        "directHitMultiplier": 15,
+        "splashRadius": 4,
+        "projectileSpeed": 2.5,
+        "maxDistance": 300,
+        "hitTeammates": false,
+        "damageValues": {
+          "fireballDamage": {
+            "min": 334,
+            "max": 433,
+            "critChance": 20,
+            "critMultiplier": 175
+          },
+          "igniteDamage": {
+            "min": 450,
+            "max": 650
+          }
+        }
+      },
+      "chesskingBelch": {
+        "name": "Belch",
+        "cooldown": 10,
+        "energyCost": 100
+      },
+      "chesskingSpawnSlimeGuard": {
+        "name": "Spawn Slime Guard",
+        "cooldown": 20,
+        "energyCost": 50
+      },
+      "chesskingSpawnSlimyChess": {
+        "name": "Spawn Slimy Chess",
+        "cooldown": 40,
+        "energyCost": 50
+      },
+      "cronusHeavenlyDamage": {
+        "name": "Heavenly Damage",
+        "cooldown": 10,
+        "energyCost": 100
+      },
+      "depressedSoulRemoveTarget": {
+        "name": "Remove Target",
+        "cooldown": 30,
+        "energyCost": 100
+      },
+      "djerGroundShred": {
+        "name": "Ground Shred",
+        "cooldown": 5,
+        "energyCost": 100
+      },
+      "djetDjet": {
+        "name": "Djet",
+        "cooldown": 5,
+        "energyCost": 50
+      },
+      "djetFlameBurst": {
+        "name": "Flame Burst",
+        "cooldown": 9.5,
+        "energyCost": 60,
+        "splash": 5.125,
+        "acceleration": 1.0275,
+        "projectileWidth": 0.24,
+        "projectileSpeed": 1.65,
+        "maxDistance": 200,
+        "hitTeammates": false,
+        "damageValues": {
+          "flameBurstDamage": {
+            "min": 1200,
+            "max": 1380,
+            "critChance": 25,
+            "critMultiplier": 185
+          }
+        }
+      },
+      "exiledApostateFireball": {
+        "name": "Fireball",
+        "cooldown": 5.5,
+        "energyCost": 0,
+        "maxFullDistance": 50,
+        "directHitMultiplier": 15,
+        "splashRadius": 4,
+        "projectileSpeed": 2,
+        "maxDistance": 300,
+        "hitTeammates": false,
+        "damageValues": {
+          "fireballDamage": {
+            "min": 200,
+            "max": 400,
+            "critChance": 20,
+            "critMultiplier": 175
+          },
+          "igniteDamage": {
+            "min": 450,
+            "max": 650
+          }
+        }
+      },
+      "forsakenRespiteBlindNear": {
+        "name": "Blind Near",
+        "cooldown": 5,
+        "energyCost": 50
+      },
+      "forsakenRespiteEarthlivingWeapon": {
+        "name": "Earthliving Weapon",
+        "cooldown": 10000,
+        "energyCost": 30,
+        "tickDuration": 18000,
+        "procChance": 80,
+        "maxAllies": 2,
+        "weaponDamage": 240,
+        "maxHits": 1,
+        "healingValues": {
+          "earthlivingHealing": {
+            "min": 132,
+            "max": 179,
+            "critChance": 25,
+            "critMultiplier": 200
+          }
+        }
+      },
+      "forsakenRespiteFrost": {
+        "name": "Frost",
+        "cooldown": 3,
+        "energyCost": 50
+      },
+      "forsakenRespiteLeechAll": {
+        "name": "Leech All",
+        "cooldown": 7,
+        "energyCost": 50
+      },
+      "forsakenRespiteWoundAll": {
+        "name": "Wound All",
+        "cooldown": 7,
+        "energyCost": 50
+      },
+      "furiousSoulRemoveTarget": {
+        "name": "Remove Target",
+        "cooldown": 12,
+        "energyCost": 100
+      },
+      "ghoulcallerGhoulcallersFury": {
+        "name": "Ghoulcaller's Fury",
+        "cooldown": 5,
+        "energyCost": 100
+      },
+      "ghoulcallerSpawnSouls": {
+        "name": "Spawn Souls",
+        "cooldown": 10,
+        "energyCost": 0
+      },
+      "enavurisSpawnEnavurite": {
+        "name": "Spawn Enavurite",
+        "cooldown": 12,
+        "energyCost": 50
+      },
+      "enavurisSpawnVanishingEnavurite": {
+        "name": "Spawn Vanishing Enavurite",
+        "cooldown": 18,
+        "energyCost": 50
+      },
+      "enavurisEnderStones": {
+        "name": "Ender Stones",
+        "cooldown": 2,
+        "energyCost": 50
+      },
+      "enavurisImprisonment": {
+        "name": "Imprisonment",
+        "cooldown": 20,
+        "energyCost": 50
+      },
+      "hadesFallenSouls": {
+        "name": "Fallen Souls",
+        "cooldown": 3,
+        "energyCost": 0,
+        "cooldownReduction": 2,
+        "projectileSpeed": 2,
+        "maxDistance": 25,
+        "hitTeammates": false,
+        "damageValues": {
+          "fallenSoulDamage": {
+            "min": 140,
+            "max": 181,
+            "critChance": 20,
+            "critMultiplier": 180
+          }
+        }
+      },
+      "hadesIncendiaryCurse": {
+        "name": "Incendiary Curse",
+        "cooldown": 8,
+        "energyCost": 0,
+        "hitbox": 5,
+        "blindDurationInTicks": 30,
+        "damageIncrease": 100,
+        "damageIncreaseHealthThreshold": 80,
+        "damageValues": {
+          "curseDamage": {
+            "min": 524,
+            "max": 607,
+            "critChance": 20,
+            "critMultiplier": 175
+          }
+        }
+      },
+      "hadesUndyingArmy": {
+        "name": "Undying Army",
+        "cooldown": 60,
+        "energyCost": 0,
+        "radius": 12,
+        "tickDuration": 200,
+        "maxArmyAllies": 6,
+        "maxHealthDamage": 10,
+        "flatHealing": 50,
+        "missingHealing": 3.5,
+        "healPeriod": 20,
+        "damageValues": {
+          "relentlessArmy": {
+            "min": 458,
+            "max": 612
+          }
+        }
+      },
+      "illuminaBramble": {
+        "name": "Bramble",
+        "cooldown": 5,
+        "energyCost": 100
+      },
+      "illuminaBrambleSlowness": {
+        "name": "Bramble Slowness",
+        "cooldown": 5,
+        "energyCost": 100
+      },
+      "illuminaSpawnSkeletalSorcerer": {
+        "name": "Spawn Skeletal Sorcerer",
+        "cooldown": 30,
+        "energyCost": 50
+      },
+      "illuminationLastStandNear": {
+        "name": "Last Stand Near",
+        "cooldown": 3,
+        "energyCost": 100,
+        "radius": 7,
+        "selfTickDuration": 240,
+        "allyTickDuration": 120,
+        "selfDamageReductionPercent": 35,
+        "teammateDamageReductionPercent": 35
+      },
+      "illuminaPrismGuard": {
+        "name": "Prism Guard",
+        "cooldown": 26,
+        "energyCost": 40,
+        "damageReduction": 3,
+        "bubbleRadius": 4,
+        "tickDuration": 200,
+        "projectileDamageReduction": 40,
+        "maxHealing": 1200,
+        "maxDamageReduction": 21,
+        "healingValues": {
+          "bubbleBaseHealing": {
+            "value": 200
+          },
+          "bubbleMissingHealthHealing": {
+            "value": 1.5
+          }
+        }
+      },
+      "inquisiteurEgaFreezingBreath": {
+        "name": "Freezing Breath",
+        "cooldown": 9.5,
+        "energyCost": 60,
+        "slowDuration": 4,
+        "slowness": 40,
+        "hitbox": 10,
+        "maxAnimationTime": 12,
+        "projectileSpeed": 1.25,
+        "maxDistance": 100,
+        "hitTeammates": false,
+        "damageValues": {
+          "freezingBreathDamage": {
+            "min": 443,
+            "max": 614,
+            "critChance": 20,
+            "critMultiplier": 175
+          }
+        }
+      },
+      "inquisiteurEgaGroundSlamDefender": {
+        "name": "Ground Slam",
+        "cooldown": 8.5,
+        "energyCost": 0,
+        "velocity": 1.25,
+        "slamSize": 5.5,
+        "damageValues": {
+          "slamDamage": {
+            "min": 449,
+            "max": 606,
+            "critChance": 20,
+            "critMultiplier": 175
+          }
+        }
+      },
+      "inquisiteurEgaInspiringPresence": {
+        "name": "Inspiring Presence",
+        "cooldown": 70.5,
+        "energyCost": 0,
+        "speedBuff": 30,
+        "radius": 10,
+        "tickDuration": 240,
+        "energyPerSecond": 10
+      },
+      "inquisiteurEgaMysticalBarrier": {
+        "name": "Mystical Barrier",
+        "cooldown": 28,
+        "energyCost": 20,
+        "runeTimerIncrease": 0.5,
+        "tickDuration": 100,
+        "meleeDamageReduction": 80,
+        "radius": 12,
+        "shieldBase": 400,
+        "shieldIncrease": 100,
+        "shieldMaxHealth": 1200,
+        "reactivateTickDuration": 100,
+        "stacksGranted": 2
+      },
+      "inquisiteurEgaRighteousStrike": {
+        "name": "Righteous Strike",
+        "cooldown": 0,
+        "energyCost": 70,
+        "abilityReductionInTicks": 16,
+        "additionalReductionInTicks": 4,
+        "vindicateCooldownReduction": 0.5,
+        "prismGuardCooldownReduction": 0.5,
+        "targetsStruck": 0,
+        "hitBox": 4.8,
+        "damageValues": {
+          "strikeDamage": {
+            "min": 334,
+            "max": 425,
+            "critChance": 20,
+            "critMultiplier": 175
+          }
+        }
+      },
+      "inquisiteurEwaBloodLust": {
+        "name": "Blood Lust",
+        "cooldown": 31.5,
+        "energyCost": 20,
+        "tickDuration": 300,
+        "damageConvertPercent": 65,
+        "healReductionPercent": 10
+      },
+      "inquisiteurEwaGroundSlamBerserker": {
+        "name": "Ground Slam",
+        "cooldown": 5,
+        "energyCost": 0,
+        "velocity": 1.25,
+        "slamSize": 5.5,
+        "damageValues": {
+          "slamDamage": {
+            "min": 449,
+            "max": 606,
+            "critChance": 20,
+            "critMultiplier": 175
+          }
+        }
+      },
+      "inquisiteurEwaIncendiaryCurse": {
+        "name": "Incendiary Curse",
+        "cooldown": 8,
+        "energyCost": 0,
+        "hitbox": 5,
+        "blindDurationInTicks": 30,
+        "damageValues": {
+          "curseDamage": {
+            "min": 524,
+            "max": 607,
+            "critChance": 20,
+            "critMultiplier": 175
+          }
+        }
+      },
+      "inquisiteurEwaInferno": {
+        "name": "Inferno",
+        "cooldown": 47,
+        "energyCost": 0,
+        "tickDuration": 360,
+        "critChanceIncrease": 30,
+        "critMultiplierIncrease": 30
+      },
+      "inquisiteurEwaWoundingStrikeBerserker": {
+        "name": "Wounding Strike",
+        "cooldown": 0,
+        "energyCost": 100,
+        "wounding": 40,
+        "woundingTickDuration": 60,
+        "hitBox": 4.8,
+        "damageValues": {
+          "strikeDamage": {
+            "min": 497,
+            "max": 632,
+            "critChance": 20,
+            "critMultiplier": 175
+          }
+        }
+      },
+      "inquisiteurVpaHealingRain": {
+        "name": "Healing Rain",
+        "cooldown": 60,
+        "energyCost": 50,
+        "tickDuration": 200,
+        "radius": 8,
+        "damageValues": {
+          "rainStrikeDamage": {
+            "min": 224,
+            "max": 377
+          }
+        },
+        "healingValues": {
+          "rainHealing": {
+            "min": 100,
+            "max": 125,
+            "critChance": 25,
+            "critMultiplier": 180
+          }
+        }
+      },
+      "inquisiteurVpaImpalingStrike": {
+        "name": "Impaling Strike",
+        "cooldown": 0,
+        "energyCost": 90,
+        "leechDuration": 3,
+        "leechAllyAmount": 20,
+        "leechSelfAmount": 15,
+        "leechTickDuration": 100,
+        "leechAmount": 8,
+        "hitBox": 4.8,
+        "damageValues": {
+          "strikeDamage": {
+            "min": 323,
+            "max": 427,
+            "critChance": 20,
+            "critMultiplier": 175
+          }
+        }
+      },
+      "inquisiteurVpaSanctifiedBeacon": {
+        "name": "Sanctified Beacon",
+        "cooldown": 20,
+        "energyCost": 40,
+        "maxAllies": 2,
+        "critMultiplierReducedBy": 25,
+        "hexIntervalTicks": 60,
+        "stacksGranted": 1,
+        "damageReductionPve": 30,
+        "radius": 8,
+        "tickDuration": 300
+      },
+      "inquisiteurVpaVitalityLiquor": {
+        "name": "Vitality Liquor",
+        "cooldown": 14,
+        "energyCost": 30,
+        "duration": 3,
+        "vitalityRange": 8,
+        "energyPerSecond": 15,
+        "healingValues": {
+          "liquorHealing": {
+            "min": 359,
+            "max": 485,
+            "critChance": 25,
+            "critMultiplier": 175
+          },
+          "waveHealing": {
+            "min": 268,
+            "max": 324,
+            "critChance": 25,
+            "critMultiplier": 175
+          }
+        }
+      },
+      "inquisiteurVpaWaterBreath": {
+        "name": "Water Breath",
+        "cooldown": 8,
+        "energyCost": 60,
+        "maxAnimationTime": 12,
+        "maxAnimationEffects": 4,
+        "hitbox": 10,
+        "velocity": 1.1,
+        "healingValues": {
+          "breathHealing": {
+            "min": 536,
+            "max": 743,
+            "critChance": 25,
+            "critMultiplier": 175
+          }
+        }
+      },
+      "magmaticOozeFieryProjectile": {
+        "name": "Fiery Projectile",
+        "cooldown": 5,
+        "energyCost": 50
+      },
+      "magmaticOozeFlamingSlam": {
+        "name": "Flaming Slam",
+        "cooldown": 12,
+        "energyCost": 50
+      },
+      "magmaticOozeHeatAura": {
+        "name": "Heat Aura",
+        "cooldown": 2,
+        "energyCost": 50
+      },
+      "magmaticOozeMoltenFissure": {
+        "name": "Molten Fissure",
+        "cooldown": 12,
+        "energyCost": 50
+      },
+      "mithraFlameBurst": {
+        "name": "Flame Burst",
+        "cooldown": 1000,
+        "energyCost": 60,
+        "splash": 5.125,
+        "acceleration": 1.0275,
+        "projectileWidth": 0.24,
+        "projectileSpeed": 1.65,
+        "maxDistance": 200,
+        "hitTeammates": false,
+        "damageValues": {
+          "flameBurstDamage": {
+            "min": 557,
+            "max": 753,
+            "critChance": 25,
+            "critMultiplier": 185
+          }
+        }
+      },
+      "mithraHibernatingEggSac": {
+        "name": "Hibernating Egg Sac",
+        "cooldown": 15,
+        "energyCost": 50
+      },
+      "mithraSpawnArachnoVeneratus": {
+        "name": "Spawn Arachno Veneratus",
+        "cooldown": 1000,
+        "energyCost": 50
+      },
+      "mithraGroundSlamBerserker": {
+        "name": "Ground Slam",
+        "cooldown": 5,
+        "energyCost": 0,
+        "velocity": 1.25,
+        "slamSize": 9,
+        "damageValues": {
+          "slamDamage": {
+            "min": 100,
+            "max": 100,
+            "critChance": 0,
+            "critMultiplier": 0
+          }
+        }
+      },
+      "narmerEventGroundShred": {
+        "name": "Ground Shred",
+        "cooldown": 8,
+        "energyCost": 50
+      },
+      "narmerFlameBurst": {
+        "name": "Flame Burst",
+        "cooldown": 15,
+        "energyCost": 60,
+        "splash": 5.125,
+        "acceleration": 1.0275,
+        "projectileWidth": 0.24,
+        "projectileSpeed": 1.65,
+        "maxDistance": 200,
+        "hitTeammates": false,
+        "damageValues": {
+          "flameBurstDamage": {
+            "min": 557,
+            "max": 753,
+            "critChance": 25,
+            "critMultiplier": 185
+          }
+        }
+      },
+      "narmerGroundShred": {
+        "name": "Ground Shred",
+        "cooldown": 8,
+        "energyCost": 100
+      },
+      "narmerSpawnZombieLancer": {
+        "name": "Spawn Zombie Lancer",
+        "cooldown": 0,
+        "energyCost": 50
+      },
+      "narmerSpawnAcolyte": {
+        "name": "Spawn Acolyte",
+        "cooldown": 15,
+        "energyCost": 0
+      },
+      "pigAlleviatorZombifaction": {
+        "name": "Zombifaction",
+        "cooldown": 3,
+        "energyCost": 100,
+        "healingValues": {
+          "zombificationHealing": {
+            "value": 300
+          }
+        }
+      },
+      "pigParticlePrismGuard": {
+        "name": "Prism Guard",
+        "cooldown": 20,
+        "energyCost": 0,
+        "damageReduction": 3,
+        "bubbleRadius": 4,
+        "tickDuration": 100,
+        "projectileDamageReduction": 40,
+        "maxHealing": 1200,
+        "maxDamageReduction": 21,
+        "healingValues": {
+          "bubbleBaseHealing": {
+            "value": 200
+          },
+          "bubbleMissingHealthHealing": {
+            "value": 1.5
+          }
+        }
+      },
+      "pigParticleVoidHealing": {
+        "name": "Void Healing",
+        "cooldown": 0.5,
+        "energyCost": 100
+      },
+      "pigShamanZombifaction": {
+        "name": "Zombifaction",
+        "cooldown": 3,
+        "energyCost": 100,
+        "healingValues": {
+          "zombificationHealing": {
+            "value": 150
+          }
+        }
+      },
+      "poisonousSpiderPoison": {
+        "name": "Poison",
+        "cooldown": 3,
+        "energyCost": 50
+      },
+      "poseidonBoulder": {
+        "name": "Boulder",
+        "cooldown": 5,
+        "energyCost": 0,
+        "boulderSpeed": 0.29,
+        "hitbox": 5.5,
+        "velocity": 1.15,
+        "damageValues": {
+          "boulderDamage": {
+            "min": 551,
+            "max": 773,
+            "critChance": 15,
+            "critMultiplier": 175
+          },
+          "earthquakeDamage": {
+            "min": 450,
+            "max": 630
+          }
+        }
+      },
+      "poseidonEarthenSpike": {
+        "name": "Earthen Spike",
+        "cooldown": 6,
+        "energyCost": 0,
+        "radius": 10,
+        "speed": 1,
+        "spikeHitbox": 2.5,
+        "verticalVelocity": 0.625,
+        "damageValues": {
+          "spikeDamage": {
+            "min": 600,
+            "max": 700,
+            "critChance": 15,
+            "critMultiplier": 175
+          },
+          "earthenRuptureDamage": {
+            "min": 548,
+            "max": 695
+          }
+        }
+      },
+      "poseidonGroundSlamBerserker": {
+        "name": "Ground Slam",
+        "cooldown": 10,
+        "energyCost": 0,
+        "velocity": 1.25,
+        "slamSize": 5.5,
+        "damageValues": {
+          "slamDamage": {
+            "min": 558,
+            "max": 616,
+            "critChance": 20,
+            "critMultiplier": 175
+          }
+        }
+      },
+      "poseidonLastStand": {
+        "name": "Last Stand",
+        "cooldown": 60,
+        "energyCost": 0,
+        "radius": 7,
+        "selfTickDuration": 240,
+        "allyTickDuration": 120,
+        "selfDamageReductionPercent": 35,
+        "teammateDamageReductionPercent": 35
+      },
+      "prometheusBurstOfFlames": {
+        "name": "Burst of Flames",
+        "cooldown": 5,
+        "energyCost": 100
+      },
+      "prometheusFireball": {
+        "name": "Fireball",
+        "cooldown": 1000,
+        "energyCost": 0,
+        "maxFullDistance": 50,
+        "directHitMultiplier": 15,
+        "splashRadius": 4,
+        "projectileSpeed": 2,
+        "maxDistance": 300,
+        "hitTeammates": false,
+        "damageValues": {
+          "fireballDamage": {
+            "min": 350,
+            "max": 450,
+            "critChance": 20,
+            "critMultiplier": 175
+          },
+          "igniteDamage": {
+            "min": 450,
+            "max": 650
+          }
+        }
+      },
+      "riftWalkerRiftSpeed": {
+        "name": "Rift Speed",
+        "cooldown": 10,
+        "energyCost": 100
+      },
+      "shadowBoltaroFireball": {
+        "name": "Fireball",
+        "cooldown": 5.5,
+        "energyCost": 0,
+        "maxFullDistance": 50,
+        "directHitMultiplier": 15,
+        "splashRadius": 4,
+        "projectileSpeed": 2,
+        "maxDistance": 300,
+        "hitTeammates": false,
+        "damageValues": {
+          "fireballDamage": {
+            "min": 100,
+            "max": 200,
+            "critChance": 20,
+            "critMultiplier": 175
+          },
+          "igniteDamage": {
+            "min": 450,
+            "max": 650
+          }
+        }
+      },
+      "skeletalArcherFireball": {
+        "name": "Fireball",
+        "cooldown": 5.5,
+        "energyCost": 0,
+        "maxFullDistance": 50,
+        "directHitMultiplier": 15,
+        "splashRadius": 4,
+        "projectileSpeed": 2,
+        "maxDistance": 300,
+        "hitTeammates": false,
+        "damageValues": {
+          "fireballDamage": {
+            "min": 334,
+            "max": 433,
+            "critChance": 20,
+            "critMultiplier": 175
+          },
+          "igniteDamage": {
+            "min": 450,
+            "max": 650
+          }
+        }
+      },
+      "skeletalEntropyFireball": {
+        "name": "Fireball",
+        "cooldown": 5.5,
+        "energyCost": 0,
+        "maxFullDistance": 50,
+        "directHitMultiplier": 15,
+        "splashRadius": 4,
+        "projectileSpeed": 2,
+        "maxDistance": 300,
+        "hitTeammates": false,
+        "damageValues": {
+          "fireballDamage": {
+            "min": 334,
+            "max": 433,
+            "critChance": 20,
+            "critMultiplier": 175
+          },
+          "igniteDamage": {
+            "min": 450,
+            "max": 650
+          }
+        }
+      },
+      "skeletalMageFireball": {
+        "name": "Fireball",
+        "cooldown": 5.5,
+        "energyCost": 0,
+        "maxFullDistance": 50,
+        "directHitMultiplier": 15,
+        "splashRadius": 4,
+        "projectileSpeed": 2,
+        "maxDistance": 300,
+        "hitTeammates": false,
+        "damageValues": {
+          "fireballDamage": {
+            "min": 334,
+            "max": 433,
+            "critChance": 20,
+            "critMultiplier": 175
+          },
+          "igniteDamage": {
+            "min": 450,
+            "max": 650
+          }
+        }
+      },
+      "skeletalMesmerAdvancedVoidShred": {
+        "name": "Void Shred",
+        "cooldown": 5,
+        "energyCost": 50
+      },
+      "skeletalMesmerFireball": {
+        "name": "Fireball",
+        "cooldown": 5.5,
+        "energyCost": 0,
+        "maxFullDistance": 50,
+        "directHitMultiplier": 15,
+        "splashRadius": 4,
+        "projectileSpeed": 2,
+        "maxDistance": 300,
+        "hitTeammates": false,
+        "damageValues": {
+          "fireballDamage": {
+            "min": 334,
+            "max": 433,
+            "critChance": 20,
+            "critMultiplier": 175
+          },
+          "igniteDamage": {
+            "min": 450,
+            "max": 650
+          }
+        }
+      },
+      "skeletalMesmerFlameBurst": {
+        "name": "Flame Burst",
+        "cooldown": 20,
+        "energyCost": 0,
+        "splash": 5.125,
+        "acceleration": 1.0275,
+        "projectileWidth": 0.24,
+        "projectileSpeed": 1.65,
+        "maxDistance": 200,
+        "hitTeammates": false,
+        "damageValues": {
+          "flameBurstDamage": {
+            "min": 557,
+            "max": 753,
+            "critChance": 0,
+            "critMultiplier": 185
+          }
+        }
+      },
+      "skeletalMesmerVoidShred": {
+        "name": "Void Shred",
+        "cooldown": 5,
+        "energyCost": 50
+      },
+      "skeletalPyromancerFireball": {
+        "name": "Fireball",
+        "cooldown": 5.5,
+        "energyCost": 0,
+        "maxFullDistance": 50,
+        "directHitMultiplier": 15,
+        "splashRadius": 4,
+        "projectileSpeed": 2,
+        "maxDistance": 300,
+        "hitTeammates": false,
+        "damageValues": {
+          "fireballDamage": {
+            "min": 334,
+            "max": 433,
+            "critChance": 20,
+            "critMultiplier": 175
+          },
+          "igniteDamage": {
+            "min": 450,
+            "max": 650
+          }
+        }
+      },
+      "skeletalPyromancerFlameBurst": {
+        "name": "Flame Burst",
+        "cooldown": 9.5,
+        "energyCost": 60,
+        "splash": 5.125,
+        "acceleration": 1.0275,
+        "projectileWidth": 0.24,
+        "projectileSpeed": 1.65,
+        "maxDistance": 200,
+        "hitTeammates": false,
+        "damageValues": {
+          "flameBurstDamage": {
+            "min": 557,
+            "max": 753,
+            "critChance": 25,
+            "critMultiplier": 185
+          }
+        }
+      },
+      "skeletalSorcererBlightedScorch": {
+        "name": "Blighted Scorch",
+        "cooldown": 4,
+        "energyCost": 100
+      },
+      "skeletalSorcererFireball": {
+        "name": "Fireball",
+        "cooldown": 5.5,
+        "energyCost": 0,
+        "maxFullDistance": 50,
+        "directHitMultiplier": 15,
+        "splashRadius": 4,
+        "projectileSpeed": 2,
+        "maxDistance": 300,
+        "hitTeammates": false,
+        "damageValues": {
+          "fireballDamage": {
+            "min": 334,
+            "max": 433,
+            "critChance": 20,
+            "critMultiplier": 175
+          },
+          "igniteDamage": {
+            "min": 450,
+            "max": 650
+          }
+        }
+      },
+      "skeletalWarlockFireball": {
+        "name": "Fireball",
+        "cooldown": 5.5,
+        "energyCost": 0,
+        "maxFullDistance": 50,
+        "directHitMultiplier": 15,
+        "splashRadius": 4,
+        "projectileSpeed": 2,
+        "maxDistance": 300,
+        "hitTeammates": false,
+        "damageValues": {
+          "fireballDamage": {
+            "min": 334,
+            "max": 433,
+            "critChance": 20,
+            "critMultiplier": 175
+          },
+          "igniteDamage": {
+            "min": 450,
+            "max": 650
+          }
+        }
+      },
+      "slimyAnomalyShimmer": {
+        "name": "Shimmer",
+        "cooldown": 0.3,
+        "energyCost": 50
+      },
+      "slimyChessBlob": {
+        "name": "Blob",
+        "cooldown": 1,
+        "energyCost": 50
+      },
+      "smartSkeletonFireball": {
+        "name": "Fireball",
+        "cooldown": 5.5,
+        "energyCost": 0,
+        "maxFullDistance": 50,
+        "directHitMultiplier": 15,
+        "splashRadius": 4,
+        "projectileSpeed": 2,
+        "maxDistance": 300,
+        "hitTeammates": false,
+        "damageValues": {
+          "fireballDamage": {
+            "min": 334,
+            "max": 433,
+            "critChance": 20,
+            "critMultiplier": 175
+          },
+          "igniteDamage": {
+            "min": 450,
+            "max": 650
+          }
+        }
+      },
+      "soulOfGradientRemoveTarget": {
+        "name": "Remove Target",
+        "cooldown": 20,
+        "energyCost": 100
+      },
+      "soulOfGradientTormentingMark": {
+        "name": "Tormenting Mark",
+        "cooldown": 0.5,
+        "energyCost": 50
+      },
+      "terasDryadSpiritHealing": {
+        "name": "Spirit Healing",
+        "cooldown": 2,
+        "energyCost": 75
+      },
+      "terasMinotaurGroundSlamBerserker": {
+        "name": "Ground Slam",
+        "cooldown": 5,
+        "energyCost": 0,
+        "velocity": 1.25,
+        "slamSize": 5.5,
+        "damageValues": {
+          "slamDamage": {
+            "min": 449,
+            "max": 606,
+            "critChance": 20,
+            "critMultiplier": 175
+          }
+        }
+      },
+      "theArchivistChainLightning": {
+        "name": "Chain Lightning",
+        "cooldown": 5,
+        "energyCost": 0,
+        "damageReductionPerBounce": 10,
+        "maxDamageReduction": 25,
+        "damageReductionTickDuration": 90,
+        "damageDecreasePerBounce": 15,
+        "radius": 20,
+        "bounceRange": 10,
+        "additionalBounces": 3,
+        "damageValues": {
+          "chainDamage": {
+            "min": 370,
+            "max": 499,
+            "critChance": 20,
+            "critMultiplier": 175
+          }
+        }
+      },
+      "theArchivistCripplingStrike": {
+        "name": "Crippling Strike",
+        "cooldown": 5,
+        "energyCost": 0,
+        "crippleDuration": 3,
+        "cripple": 10,
+        "cripplePerStrike": 5,
+        "hitBox": 4.8,
+        "damageValues": {
+          "strikeDamage": {
+            "min": 1560,
+            "max": 1960,
+            "critChance": 20,
+            "critMultiplier": 175
+          }
+        }
+      },
+      "theArchivistGroundSlamBerserker": {
+        "name": "Ground Slam",
+        "cooldown": 8,
+        "energyCost": 0,
+        "velocity": 1.25,
+        "slamSize": 5.5,
+        "damageValues": {
+          "slamDamage": {
+            "min": 449,
+            "max": 606,
+            "critChance": 20,
+            "critMultiplier": 175
+          }
+        }
+      },
+      "theArchivistInferno": {
+        "name": "Inferno",
+        "cooldown": 25,
+        "energyCost": 0,
+        "tickDuration": 360,
+        "critChanceIncrease": 30,
+        "critMultiplierIncrease": 30
+      },
+      "theArchivistPrismGuard": {
+        "name": "Prism Guard",
+        "cooldown": 18,
+        "energyCost": 0,
+        "damageReduction": 3,
+        "bubbleRadius": 4,
+        "tickDuration": 100,
+        "projectileDamageReduction": 40,
+        "maxHealing": 1200,
+        "maxDamageReduction": 21,
+        "healingValues": {
+          "bubbleBaseHealing": {
+            "value": 200
+          },
+          "bubbleMissingHealthHealing": {
+            "value": 1.5
+          }
+        }
+      },
+      "tormentedSoulRemoveTarget": {
+        "name": "Remove Target",
+        "cooldown": 20,
+        "energyCost": 100
+      },
+      "voidGroundShred": {
+        "name": "Void Ground Shred",
+        "cooldown": 8,
+        "energyCost": 50
+      },
+      "voidSpawnSouls": {
+        "name": "Spawn Souls",
+        "cooldown": 20,
+        "energyCost": 0
+      },
+      "voidThunderCloud": {
+        "name": "Thunder Cloud",
+        "cooldown": 10,
+        "energyCost": 50
+      },
+      "voidPrismGuard": {
+        "name": "Prism Guard",
+        "cooldown": 26,
+        "energyCost": 40,
+        "damageReduction": 3,
+        "bubbleRadius": 4,
+        "tickDuration": 200,
+        "projectileDamageReduction": 40,
+        "maxHealing": 1200,
+        "maxDamageReduction": 21,
+        "healingValues": {
+          "bubbleBaseHealing": {
+            "value": 200
+          },
+          "bubbleMissingHealthHealing": {
+            "value": 1.5
+          }
+        }
+      },
+      "zenithThunderCloud": {
+        "name": "Thunder Cloud",
+        "cooldown": 0,
+        "energyCost": 50
+      },
+      "voltaicSoulRemoveTarget": {
+        "name": "Remove Target",
+        "cooldown": 10,
+        "energyCost": 100
+      },
+      "berserkerZombieWoundingStrikeBerserker": {
+        "name": "Wounding Strike",
+        "cooldown": 5,
+        "energyCost": 100,
+        "wounding": 40,
+        "woundingTickDuration": 60,
+        "hitBox": 4.8,
+        "damageValues": {
+          "strikeDamage": {
+            "min": 497,
+            "max": 632,
+            "critChance": 20,
+            "critMultiplier": 175
+          }
+        }
+      },
+      "witchDeaconWitchBuff": {
+        "name": "Witch Buff",
+        "cooldown": 0,
+        "energyCost": 100
+      },
+      "zenithArmageddon": {
+        "name": "Armageddon",
+        "cooldown": 12,
+        "energyCost": 100
+      },
+      "zenithCleanse": {
+        "name": "Cleanse",
+        "cooldown": 4,
+        "energyCost": 100
+      },
+      "zenithLegionnaireRemedy": {
+        "name": "Remedy",
+        "cooldown": 10,
+        "energyCost": 100
+      },
+      "zenithSpawnZenithLegionnaire": {
+        "name": "Spawn Zenith Legionnaire",
+        "cooldown": 15,
+        "energyCost": 50
+      },
+      "zeusChainLightning": {
+        "name": "Chain Lightning",
+        "cooldown": 7,
+        "energyCost": 0,
+        "damageReductionPerBounce": 10,
+        "maxDamageReduction": 25,
+        "damageReductionTickDuration": 40,
+        "damageDecreasePerBounce": 15,
+        "radius": 20,
+        "bounceRange": 10,
+        "additionalBounces": 3,
+        "damageValues": {
+          "chainDamage": {
+            "min": 370,
+            "max": 499,
+            "critChance": 20,
+            "critMultiplier": 175
+          }
+        }
+      },
+      "zeusHealingRain": {
+        "name": "Healing Rain",
+        "cooldown": 60,
+        "energyCost": 0,
+        "tickDuration": 320,
+        "radius": 8,
+        "damageValues": {
+          "rainStrikeDamage": {
+            "min": 224,
+            "max": 377
+          }
+        },
+        "healingValues": {
+          "rainHealing": {
+            "min": 100,
+            "max": 125,
+            "critChance": 25,
+            "critMultiplier": 180
+          }
+        }
+      },
+      "zeusLightningBolt": {
+        "name": "Lightning Bolt",
+        "cooldown": 3,
+        "energyCost": 0,
+        "splash": 3,
+        "cooldownReduction": 2,
+        "projectileSpeed": 2.5,
+        "maxDistance": 60,
+        "hitTeammates": false,
+        "damageValues": {
+          "boltDamage": {
+            "min": 252,
+            "max": 340,
+            "critChance": 25,
+            "critMultiplier": 180
+          }
+        }
+      },
+      "zeusLightningRod": {
+        "name": "Lightning Rod",
+        "cooldown": 15,
+        "energyCost": 0,
+        "knockbackRadius": 5,
+        "energyRestore": 0,
+        "horizontalTotemProcRange": 5,
+        "verticalTotemProcRange": 3,
+        "magnitude": 1.5,
+        "y": 0.35,
+        "healingValues": {
+          "healthRestore": {
+            "value": 0
+          }
+        }
+      },
+      "zombieKnightReduceWeapon": {
+        "name": "Reduce Weapon",
+        "cooldown": 6,
+        "energyCost": 100
+      },
+      "zombieSingularityAdvancedVoidShred": {
+        "name": "Void Shred",
+        "cooldown": 0.5,
+        "energyCost": 50
+      },
+      "zombieSingularityVoidShred": {
+        "name": "Void Shred",
+        "cooldown": 2,
+        "energyCost": 100
+      }
+    },
+    "td": {
+      "protectorProtectorsStrike": {
+        "name": "Protector's Strike",
+        "cooldown": 0,
+        "energyCost": 90,
+        "allyHealing": 90,
+        "selfHealing": 60,
+        "maxAllies": 2,
+        "strikeRadius": 10,
+        "hitBox": 4.8,
+        "damageValues": {
+          "strikeDamage": {
+            "min": 261,
+            "max": 352,
+            "critChance": 20,
+            "critMultiplier": 175
+          }
+        }
+      }
+    },
+    "weapon": {
+      "gale": {
+        "name": "Gale",
+        "cooldown": 30,
+        "energyCost": 0
+      },
+      "vigorous": {
+        "name": "Vigorous",
+        "cooldown": 30,
+        "energyCost": 0
+      }
+    }
+  }
+}
+
+

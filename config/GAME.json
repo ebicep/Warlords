@@ -1,0 +1,34 @@
+{
+  "_id": {
+    "$oid": "683cfe74a1ec79876010e754"
+  },
+  "type": "GAME",
+  "data": {
+    "pvp": {
+      "baseMeleeCooldown": 20,
+      "playerMeleeCooldown": 13,
+      "regenHealth": 110,
+      "ctf": {
+        "spawnDamageTickDuration": 200,
+        "spawnDamageBoost": 30,
+        "flagSpeedModifier": -20,
+        "flagPickResistance": 0,
+        "flagPercentageIncreaseTickDelay": 0,
+        "flagDisableRepicks": true,
+        "flagBonusRepickMultiplier": 20,
+        "flagReturnCarrierMultiplierDecrease": 0.25,
+        "flagReturnSpawnFlagMultiplierDecrease": 0.4,
+        "flagMultiplierCap": 100,
+        "flagKillRepickTickCooldown": 10,
+        "horseCooldown": 14,
+        "pointsToWin": 1500,
+        "pointsFlagCap": 250,
+        "pointsKill": 5,
+        "pointsToMercy": 800,
+        "gameTimeSeconds": 900,
+        "overtimePoints": 20,
+        "overtimeSeconds": 300
+      }
+    }
+  }
+}

@@ -1,0 +1,346 @@
+{
+  "_id": {
+    "$oid": "683bcae0abe670afd54f2396"
+  },
+  "type": "CLASSES",
+  "data": {
+    "pvp": {
+      "pyromancer": {
+        "className": "Mage",
+        "name": "Pyromancer",
+        "maxHealth": 5200,
+        "maxEnergy": 305,
+        "energyPerSec": 20,
+        "energyPerHit": 14,
+        "damageResistance": 0.0,
+        "speed": 0.0,
+        "knockbackResistance": 0.0,
+        "abilities": [
+          "FIREBALL",
+          "FLAME_BURST",
+          "TIME_WARP_PYROMANCER",
+          "ARCANE_SHIELD",
+          "INFERNO"
+        ]
+      },
+      "cryomancer": {
+        "className": "Mage",
+        "name": "Cryomancer",
+        "maxHealth": 6100,
+        "maxEnergy": 305,
+        "energyPerSec": 20,
+        "energyPerHit": 14,
+        "damageResistance": 10.0,
+        "speed": 0.0,
+        "knockbackResistance": 0.0,
+        "abilities": [
+          "FROST_BOLT",
+          "FREEZING_BREATH",
+          "TIME_WARP_CRYOMANCER",
+          "ARCANE_SHIELD",
+          "ICE_BARRIER"
+        ]
+      },
+      "aquamancer": {
+        "className": "Mage",
+        "name": "Aquamancer",
+        "maxHealth": 5400,
+        "maxEnergy": 405,
+        "energyPerSec": 20,
+        "energyPerHit": 14,
+        "damageResistance": 0.0,
+        "speed": 0.0,
+        "knockbackResistance": 0.0,
+        "abilities": [
+          "WATER_BOLT",
+          "WATER_BREATH",
+          "TIME_WARP_AQUAMANCER",
+          "ARCANE_SHIELD",
+          "HEALING_RAIN"
+        ]
+      },
+      "berserker": {
+        "className": "Warrior",
+        "name": "Berserker",
+        "maxHealth": 6300,
+        "maxEnergy": 305,
+        "energyPerSec": 20,
+        "energyPerHit": 20,
+        "damageResistance": 0.0,
+        "speed": 0.0,
+        "knockbackResistance": 0.0,
+        "abilities": [
+          "WOUNDING_STRIKE_BERSERKER",
+          "SEISMIC_WAVE_BERSERKER",
+          "GROUND_SLAM_BERSERKER",
+          "BLOOD_LUST",
+          "BERSERK"
+        ]
+      },
+      "defender": {
+        "className": "Warrior",
+        "name": "Defender",
+        "maxHealth": 7400,
+        "maxEnergy": 305,
+        "energyPerSec": 20,
+        "energyPerHit": 20,
+        "damageResistance": 10.0,
+        "speed": 0.0,
+        "knockbackResistance": 0.0,
+        "abilities": [
+          "WOUNDING_STRIKE_DEFENDER",
+          "SEISMIC_WAVE_DEFENDER",
+          "GROUND_SLAM_DEFENDER",
+          "INTERVENE",
+          "LAST_STAND"
+        ]
+      },
+      "revenant": {
+        "className": "Warrior",
+        "name": "Revenant",
+        "maxHealth": 6300,
+        "maxEnergy": 305,
+        "energyPerSec": 20,
+        "energyPerHit": 20,
+        "damageResistance": 0.0,
+        "speed": 0.0,
+        "knockbackResistance": 0.0,
+        "abilities": [
+          "CRIPPLING_STRIKE",
+          "RECKLESS_CHARGE",
+          "GROUND_SLAM_REVENANT",
+          "ORBS_OF_LIFE",
+          "UNDYING_ARMY"
+        ]
+      },
+      "avenger": {
+        "className": "Paladin",
+        "name": "Avenger",
+        "maxHealth": 6300,
+        "maxEnergy": 305,
+        "energyPerSec": 20,
+        "energyPerHit": 20,
+        "damageResistance": 0.0,
+        "speed": 0.0,
+        "knockbackResistance": 0.0,
+        "abilities": [
+          "AVENGERS_STRIKE",
+          "CONSECRATE_AVENGER",
+          "LIGHT_INFUSION_AVENGER",
+          "HOLY_RADIANCE_AVENGER",
+          "AVENGERS_WRATH"
+        ]
+      },
+      "crusader": {
+        "className": "Paladin",
+        "name": "Crusader",
+        "maxHealth": 6850,
+        "maxEnergy": 305,
+        "energyPerSec": 20,
+        "energyPerHit": 20,
+        "damageResistance": 20.0,
+        "speed": 0.0,
+        "knockbackResistance": 0.0,
+        "abilities": [
+          "CRUSADERS_STRIKE",
+          "CONSECRATE_CRUSADER",
+          "LIGHT_INFUSION_CRUSADER",
+          "HOLY_RADIANCE_CRUSADER",
+          "INSPIRING_PRESENCE"
+        ]
+      },
+      "protector": {
+        "className": "Paladin",
+        "name": "Protector",
+        "maxHealth": 6000,
+        "maxEnergy": 385,
+        "energyPerSec": 20,
+        "energyPerHit": 20,
+        "damageResistance": 0.0,
+        "speed": 0.0,
+        "knockbackResistance": 0.0,
+        "abilities": [
+          "PROTECTORS_STRIKE",
+          "CONSECRATE_PROTECTOR",
+          "LIGHT_INFUSION_PROTECTOR",
+          "HOLY_RADIANCE_PROTECTOR",
+          "HAMMER_OF_LIGHT"
+        ]
+      },
+      "thunderlord": {
+        "className": "Shaman",
+        "name": "Thunderlord",
+        "maxHealth": 5200,
+        "maxEnergy": 305,
+        "energyPerSec": 20,
+        "energyPerHit": 20,
+        "damageResistance": 0.0,
+        "speed": 0.0,
+        "knockbackResistance": 0.0,
+        "abilities": [
+          "LIGHTNING_BOLT",
+          "CHAIN_LIGHTNING",
+          "WINDFURY_WEAPON",
+          "LIGHTNING_ROD",
+          "CAPACITOR_TOTEM"
+        ]
+      },
+      "spiritguard": {
+        "className": "Shaman",
+        "name": "Spiritguard",
+        "maxHealth": 5530,
+        "maxEnergy": 305,
+        "energyPerSec": 20,
+        "energyPerHit": 20,
+        "damageResistance": 10.0,
+        "speed": 0.0,
+        "knockbackResistance": 0.0,
+        "abilities": [
+          "FALLEN_SOULS",
+          "SPIRIT_LINK",
+          "SOULBINDING",
+          "REPENTANCE",
+          "DEATHS_DEBT"
+        ]
+      },
+      "earthwarden": {
+        "className": "Shaman",
+        "name": "Earthwarden",
+        "maxHealth": 5500,
+        "maxEnergy": 355,
+        "energyPerSec": 20,
+        "energyPerHit": 20,
+        "damageResistance": 10.0,
+        "speed": 0.0,
+        "knockbackResistance": 0.0,
+        "abilities": [
+          "EARTHEN_SPIKE",
+          "BOULDER",
+          "EARTHLIVING_WEAPON",
+          "CHAIN_HEAL",
+          "HEALING_TOTEM"
+        ]
+      },
+      "assassin": {
+        "className": "Rogue",
+        "name": "Assassin",
+        "maxHealth": 5200,
+        "maxEnergy": 305,
+        "energyPerSec": 20,
+        "energyPerHit": 20,
+        "damageResistance": 0.0,
+        "speed": 10.0,
+        "knockbackResistance": 0.0,
+        "abilities": [
+          "JUDGEMENT_STRIKE",
+          "INCENDIARY_CURSE",
+          "SHADOW_STEP",
+          "SOUL_SWITCH",
+          "ORDER_OF_EVISCERATE"
+        ]
+      },
+      "vindicator": {
+        "className": "Rogue",
+        "name": "Vindicator",
+        "maxHealth": 6000,
+        "maxEnergy": 305,
+        "energyPerSec": 20,
+        "energyPerHit": 20,
+        "damageResistance": 20.0,
+        "speed": 0.0,
+        "knockbackResistance": 0.0,
+        "abilities": [
+          "RIGHTEOUS_STRIKE",
+          "SOUL_SHACKLE",
+          "HEART_TO_HEART",
+          "PRISM_GUARD",
+          "VINDICATE"
+        ]
+      },
+      "apothecary": {
+        "className": "Rogue",
+        "name": "Apothecary",
+        "maxHealth": 5500,
+        "maxEnergy": 375,
+        "energyPerSec": 20,
+        "energyPerHit": 20,
+        "damageResistance": 0.0,
+        "speed": 10.0,
+        "leechHealPercent": 5.0,
+        "knockbackResistance": 0.0,
+        "abilities": [
+          "IMPALING_STRIKE",
+          "SOOTHING_ELIXIR",
+          "VITALITY_CONCOCTION",
+          "REMEDIC_CHAINS",
+          "VOLATILE_BREW"
+        ]
+      },
+      "conjurer": {
+        "className": "Arcanist",
+        "name": "Conjurer",
+        "maxHealth": 5200,
+        "maxEnergy": 305,
+        "energyPerSec": 20,
+        "energyPerHit": 14,
+        "damageResistance": 0.0,
+        "speed": 0.0,
+        "knockbackResistance": 0.0,
+        "abilities": [
+          "POISONOUS_HEX",
+          "SOULFIRE_BEAM",
+          "ENERGY_SEER_CONJURER",
+          "CONTAGIOUS_FACADE",
+          "ASTRAL_PLAGUE"
+        ]
+      },
+      "sentinel": {
+        "className": "Arcanist",
+        "name": "Sentinel",
+        "maxHealth": 5200,
+        "maxEnergy": 305,
+        "energyPerSec": 20,
+        "energyPerHit": 14,
+        "damageResistance": 20.0,
+        "speed": 0.0,
+        "knockbackResistance": 0.0,
+        "abilities": [
+          "FORTIFYING_HEX",
+          "GUARDIAN_BEAM",
+          "ENERGY_SEER_SENTINEL",
+          "MYSTICAL_BARRIER",
+          "SANCTUARY"
+        ]
+      },
+      "luminary": {
+        "className": "Arcanist",
+        "name": "Luminary",
+        "maxHealth": 5750,
+        "maxEnergy": 355,
+        "energyPerSec": 20,
+        "energyPerHit": 14,
+        "damageResistance": 0.0,
+        "speed": 0.0,
+        "knockbackResistance": 0.0,
+        "abilities": [
+          "MERCIFUL_HEX",
+          "RAY_OF_LIGHT",
+          "ENERGY_SEER_LUMINARY",
+          "SANCTIFIED_BEACON",
+          "DIVINE_BLESSING"
+        ]
+      }
+    },
+    "pve": {
+      "apothecary": {
+        "abilities": [
+          "IMPALING_STRIKE",
+          "SOOTHING_ELIXIR",
+          "VITALITY_CONCOCTION",
+          "REMEDIC_CHAINS",
+          "DRAINING_MIASMA"
+        ]
+      }
+    }
+  }
+}
