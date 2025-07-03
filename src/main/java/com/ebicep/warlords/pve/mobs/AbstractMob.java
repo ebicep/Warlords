@@ -333,17 +333,17 @@ public abstract class AbstractMob implements Mob {
         if (!(warlordsNPC.getSpec() instanceof MobPlayerClass)) {
             return;
         }
-        warlordsNPC.getAbilities().forEach(ability -> {
+        for (AbstractAbility ability : warlordsNPC.getAbilities()) {
             if (ability.getCooldownValue() != 0 && !ability.anyCharges()) {
-                return;
+                continue;
             }
             if (warlordsNPC.getCurrentEnergy() < ability.getEnergyCostValue() * warlordsNPC.getEnergyModifier()) {
-                return;
+                continue;
             }
             WarlordsAbilityActivateEvent.Pre event = new WarlordsAbilityActivateEvent.Pre(warlordsNPC, null, ability, -1);
             Bukkit.getPluginManager().callEvent(event);
             if (event.isCancelled()) {
-                return;
+                continue;
             }
             boolean shouldApplyCooldown = ability.onActivate(warlordsNPC);
             if (shouldApplyCooldown) {
@@ -357,7 +357,7 @@ public abstract class AbstractMob implements Mob {
                     ability.useAbility();
                 }
             }
-        });
+        }
     }
 
     public void onEntityTarget(WarlordsEntity warlordsEntity) {

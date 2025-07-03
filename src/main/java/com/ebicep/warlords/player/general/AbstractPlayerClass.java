@@ -290,24 +290,30 @@ public abstract class AbstractPlayerClass {
     }
 
     public void runEverySecond(@Nullable WarlordsEntity warlordsEntity) {
-        abilities.forEach(ability -> ability.runEverySecond(warlordsEntity));
+        for (AbstractAbility ability : abilities) {
+            ability.runEverySecond(warlordsEntity);
+        }
     }
 
     public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
-        abilities.forEach(ability -> ability.runEveryTick(warlordsEntity));
+        for (AbstractAbility ability : abilities) {
+            ability.runEveryTick(warlordsEntity);
+        }
     }
 
     public void increaseAllCooldownTimersBy(float amount) {
-        abilities.forEach(ability -> {
+        for (AbstractAbility ability : abilities) {
             if (ability instanceof WeaponAbilityIcon && ability.getCooldownValue() == 0) {
-                return;
+                continue;
             }
             ability.addCurrentCooldown(amount);
-        });
+        }
     }
 
     public void decreaseAllCooldownTimersBy(float amount) {
-        abilities.forEach(ability -> ability.subtractCurrentCooldown(amount));
+        for (AbstractAbility ability : abilities) {
+            ability.subtractCurrentCooldown(amount);
+        }
     }
 
 }

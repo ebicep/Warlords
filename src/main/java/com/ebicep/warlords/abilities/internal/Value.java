@@ -16,11 +16,15 @@ public interface Value {
     static void applyDamageHealing(AbstractAbility ability, BiConsumer<Boolean, ? super Value> consumer) {
         if (ability instanceof Damages<?> damages) {
             ValueHolder damageValues = damages.getDamageValues();
-            damageValues.getValues().forEach(value -> consumer.accept(true, value));
+            for (Value value : damageValues.getValues()) {
+                consumer.accept(true, value);
+            }
         }
         if (ability instanceof Heals<?> heals) {
             ValueHolder healValues = heals.getHealValues();
-            healValues.getValues().forEach(value -> consumer.accept(false, value));
+            for (Value value : healValues.getValues()) {
+                consumer.accept(false, value);
+            }
         }
     }
 
@@ -47,7 +51,9 @@ public interface Value {
     }
 
     default void forEachAllValues(Consumer<FloatModifiable> consumer) {
-        getAllValues().forEach(consumer);
+        for (FloatModifiable floatModifiable : getAllValues()) {
+            consumer.accept(floatModifiable);
+        }
     }
 
     interface ValueHolder {
