@@ -99,9 +99,10 @@
       "blizzardBreath": {
         "difficulty": 2,
         "name": "Blizzard Breath",
-        "description": "Freezing Breath reduces the cooldown of all your skills by {{ticks;%}} for each enemy hit and grants immunity to knockback and stun for {{ticks}}.",
+        "description": "Freezing Breath reduces the cooldown of all your skills by {{ticks;%}} for each enemy hit and grants immunity to knockback and stun for {{ticks}}. Replace Time Warp with Time Surge. Arcane Shield's and Time Surge's cooldown, energy cost, and healing/shield lowered by {{blue;%}}",
         "cooldownReductionPerEnemyHitPercent": 2,
-        "immunityDurationTicks": 20
+        "immunityDurationTicks": 20,
+        "productionValuesDecreasePercent": 30
       },
       "typhoonBolt": {
         "difficulty": 1,

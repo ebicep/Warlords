@@ -1,6 +1,9 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
+import com.ebicep.warlords.abilities.ArcaneShield;
 import com.ebicep.warlords.abilities.FreezingBreath;
+import com.ebicep.warlords.abilities.TimeSurge;
+import com.ebicep.warlords.abilities.TimeWarpCryomancer;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -11,6 +14,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import net.kyori.adventure.text.TextComponent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -23,11 +27,13 @@ public class BlizzardBreath implements SpecBoostManager.SpecBoost<BlizzardBreath
 
     private float cooldownReductionPerEnemyHitPercent;
     private int immunityDurationTicks;
+    private int productionValuesDecreasePercent;
 
     @Override
     public void init() {
         this.cooldownReductionPerEnemyHitPercent = getValue("cooldownReductionPerEnemyHitPercent", float.class);
         this.immunityDurationTicks = getValue("immunityDurationTicks", int.class);
+        this.productionValuesDecreasePercent = getValue("productionValuesDecreasePercent", int.class);
     }
 
     @Override
@@ -36,8 +42,13 @@ public class BlizzardBreath implements SpecBoostManager.SpecBoost<BlizzardBreath
     }
 
     @Override
+    public TextComponent getDescription() {
+        return appendAbility(getTextDescription(), new com.ebicep.warlords.abilities.TimeSurge());
+    }
+
+    @Override
     public List<Object> getVariables() {
-        return List.of(cooldownReductionPerEnemyHitPercent, immunityDurationTicks);
+        return List.of(cooldownReductionPerEnemyHitPercent, immunityDurationTicks, productionValuesDecreasePercent);
     }
 
     @Override
@@ -58,6 +69,26 @@ public class BlizzardBreath implements SpecBoostManager.SpecBoost<BlizzardBreath
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
+            List<AbstractAbility> abilities = warlordsPlayer.getAbilities();
+            for (int i = 0; i < abilities.size(); i++) {
+                if (abilities.get(i) instanceof TimeWarpCryomancer) {
+                    TimeSurge timeSurge = new TimeSurge();
+                    timeSurge.init(timeSurge.getBuilder());
+                    abilities.set(i, timeSurge);
+                }
+            }
+            warlordsPlayer.resetAbilityTree();
+            warlordsPlayer.getAbilitiesMatching(ArcaneShield.class).forEach(arcaneShield -> {
+                arcaneShield.getCooldown().addMultiplicativeModifierAdd("Spec Boost", -productionValuesDecreasePercent / 100.0f);
+                arcaneShield.getEnergyCost().addMultiplicativeModifierAdd("Spec Boost", -productionValuesDecreasePercent / 100.0f);
+                arcaneShield.setShieldPercentage(arcaneShield.getShieldPercentage() * AbstractAbility.convertToDivisionDecimal(productionValuesDecreasePercent));
+                arcaneShield.updateCustomStats(warlordsPlayer);
+            });
+            warlordsPlayer.getAbilitiesMatching(TimeSurge.class).forEach(timeSurge -> {
+                timeSurge.getCooldown().addMultiplicativeModifierAdd("Spec Boost", -productionValuesDecreasePercent / 100.0f);
+                timeSurge.getEnergyCost().addMultiplicativeModifierAdd("Spec Boost", -productionValuesDecreasePercent / 100.0f);
+                timeSurge.setHealPercentage(timeSurge.getHealPercentage() * AbstractAbility.convertToDivisionDecimal(productionValuesDecreasePercent));
+            });
         }
 
         @EventHandler

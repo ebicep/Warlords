@@ -16,7 +16,7 @@ import java.util.List;
 public class TimeSurge extends AbstractAbility implements PurpleAbilityIcon, AbilityStats<TimeSurge, TimeSurge.TimeSurgeStats> {
 
     private TimeSurgeStats stats = new TimeSurgeStats();
-    protected int healPercentage = 30;
+    protected float healPercentage = 30;
 
     public TimeSurge() {
         super(AbstractAbilityBuilder.create("timeSurge").pvp());
@@ -25,7 +25,7 @@ public class TimeSurge extends AbstractAbility implements PurpleAbilityIcon, Abi
     @Override
     public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
-        this.healPercentage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("healPercentage"), int.class);
+        this.healPercentage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("healPercentage"), float.class);
     }
 
     @Override
@@ -53,6 +53,14 @@ public class TimeSurge extends AbstractAbility implements PurpleAbilityIcon, Abi
     @Override
     public TimeSurgeStats getAbilityStats() {
         return stats;
+    }
+
+    public float getHealPercentage() {
+        return healPercentage;
+    }
+
+    public void setHealPercentage(float healPercentage) {
+        this.healPercentage = healPercentage;
     }
 
     public static class TimeSurgeStats extends AbstractAbilityStats<TimeSurge, TimeSurge.TimeSurgeStats> {
