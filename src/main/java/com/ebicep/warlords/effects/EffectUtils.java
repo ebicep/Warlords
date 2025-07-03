@@ -155,73 +155,107 @@ public class EffectUtils {
         }
     }
 
-    /**
-     * @param loc            what location should the cylinder be around.
-     * @param cylinderRadius is how big the helix should be.
-     * @param red            which particle effect should be displayed.
-     * @param green          the amount of particles that should be displayed.
-     * @param blue           the amount of particles that should be displayed.
-     */
     public static void playCylinderAnimation(Location loc, double cylinderRadius, int red, int green, int blue) {
-        Location particleLoc = loc.clone();
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
-                double angle = j / 10D * Math.PI * 2;
-                particleLoc.setX(loc.getX() + Math.sin(angle) * cylinderRadius);
-                particleLoc.setY(loc.getY() + i / 5D);
-                particleLoc.setZ(loc.getZ() + cos(angle) * cylinderRadius);
-                Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(red, green, blue), 1);
-                displayParticle(Particle.DUST, particleLoc, 1, dustOptions);
+        playCylinderAnimation(
+                loc,
+                cylinderRadius,
+                Particle.DUST,
+                new Particle.DustOptions(Color.fromRGB(red, green, blue), 1),
+                1,
+                10,
+                10,
+                0.2
+        );
+    }
+
+    public static void playCylinderAnimation(
+            Location loc,
+            double cylinderRadius,
+            @Nullable Particle effect,
+            @Nullable Object data,
+            int particleCount,
+            int cylinderDots,
+            int cylinderHeight,
+            double spaceBetweenParticles
+    ) {
+        for (int i = 0; i < cylinderHeight; i++) {
+            double y = loc.getY() + i * spaceBetweenParticles;
+            for (int j = 0; j < cylinderDots; j++) {
+                double angle = j * 2 * Math.PI / cylinderDots;
+                double x = loc.getX() + Math.cos(angle) * cylinderRadius;
+                double z = loc.getZ() + Math.sin(angle) * cylinderRadius;
+                Location particleLoc = new Location(loc.getWorld(), x, y, z);
+
+                if (data != null) {
+                    displayParticle(effect, particleLoc, particleCount, data);
+                } else if (effect != null) {
+                    displayParticle(effect, particleLoc, particleCount);
+                }
             }
         }
     }
 
     public static void playCylinderAnimation(Location loc, double cylinderRadius, int red, int green, int blue, int cylinderDots, int cylinderHeight) {
-        Location particleLoc = loc.clone();
-        for (int i = 0; i < cylinderHeight; i++) {
-            for (int j = 0; j < cylinderDots; j++) {
-                double angle = j / 10D * Math.PI * 2;
-                particleLoc.setX(loc.getX() + Math.sin(angle) * cylinderRadius);
-                particleLoc.setY(loc.getY() + i / 5D);
-                particleLoc.setZ(loc.getZ() + cos(angle) * cylinderRadius);
-                Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(red, green, blue), 1);
-                displayParticle(Particle.DUST, particleLoc, 1, dustOptions);
-            }
-        }
+        playCylinderAnimation(
+                loc,
+                cylinderRadius,
+                Particle.DUST,
+                new Particle.DustOptions(Color.fromRGB(red, green, blue), 1),
+                1,
+                cylinderDots,
+                cylinderHeight,
+                0.2
+        );
+    }
+
+    public static void playCylinderAnimation(
+            Location loc,
+            double cylinderRadius,
+            int red,
+            int green,
+            int blue,
+            int cylinderDots,
+            int cylinderHeight,
+            double spaceBetweenParticles
+    ) {
+        playCylinderAnimation(
+                loc,
+                cylinderRadius,
+                Particle.DUST,
+                new Particle.DustOptions(Color.fromRGB(red, green, blue), 1),
+                1,
+                cylinderDots,
+                cylinderHeight,
+                spaceBetweenParticles
+        );
+    }
+
+    public static void playCylinderAnimation(Location loc, double cylinderRadius, Particle effect, int particleCount) {
+        playCylinderAnimation(
+                loc,
+                cylinderRadius,
+                effect,
+                null,
+                particleCount,
+                10,
+                10,
+                0.2
+        );
     }
 
     public static void playCylinderAnimation(Location loc, double cylinderRadius, Particle effect, int cylinderDots, int cylinderHeight, int particleCount) {
-        Location particleLoc = loc.clone();
-        for (int i = 0; i < cylinderHeight; i++) {
-            for (double j = 0; j < cylinderDots; j++) {
-                double angle = j / cylinderDots * Math.PI * 2;
-                particleLoc.setX(loc.getX() + Math.sin(angle) * cylinderRadius);
-                particleLoc.setY(loc.getY() + i);
-                particleLoc.setZ(loc.getZ() + cos(angle) * cylinderRadius);
-                displayParticle(effect, particleLoc, particleCount);
-            }
-        }
+        playCylinderAnimation(
+                loc,
+                cylinderRadius,
+                effect,
+                null,
+                particleCount,
+                cylinderDots,
+                cylinderHeight,
+                0.2
+        );
     }
 
-    /**
-     * @param loc            what location should the cylinder be around.
-     * @param cylinderRadius is how big the helix should be.
-     * @param effect         which particle effect should be displayed.
-     * @param particleCount  the amount of particles that should be displayed.
-     */
-
-    public static void playCylinderAnimation(Location loc, double cylinderRadius, Particle effect, int particleCount) {
-        Location particleLoc = loc.clone();
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
-                double angle = j / 10D * Math.PI * 2;
-                particleLoc.setX(loc.getX() + Math.sin(angle) * cylinderRadius);
-                particleLoc.setY(loc.getY() + i / 5D);
-                particleLoc.setZ(loc.getZ() + cos(angle) * cylinderRadius);
-                displayParticle(effect, particleLoc, particleCount);
-            }
-        }
-    }
 
     public static void playCircularEffectAround(
             Particle particle,
