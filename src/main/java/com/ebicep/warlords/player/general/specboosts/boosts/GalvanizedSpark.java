@@ -74,9 +74,9 @@ public class GalvanizedSpark implements SpecBoostManager.SpecBoost<GalvanizedSpa
             warlordsPlayer.getAbilitiesMatching(LightningRod.class).forEach(lightningRod -> {
                 lightningRod.setMaxCharges(lightningRodMaxAbilityCharges);
                 lightningRod.setCurrentCharges(lightningRodMaxAbilityCharges);
-                lightningRod.getCooldown().addOverridingModifier("Spec Boost", lightningRodCooldownSeconds);
-                lightningRod.getHealValues().getHealthRestore().value().setBaseValue(lightningRodHealingPercent);
-                lightningRod.setEnergyRestore(lightningRodEnergyRestore);
+                lightningRod.getCooldown().addAdditiveModifier("Spec Boost", -lightningRodCooldownSeconds);
+                lightningRod.getHealValues().getHealthRestore().value().setBaseValue(lightningRod.getHealValues().getHealthRestore().getValue() - lightningRodHealingPercent);
+                lightningRod.setEnergyRestore(lightningRod.getEnergyRestore() - lightningRodEnergyRestore);
                 lightningRod.setMagnitude(lightningRodMagnitude);
                 lightningRod.setY(lightningRodY);
             });

@@ -73,7 +73,7 @@ public class DimensionalWarp implements SpecBoostManager.SpecBoost<DimensionalWa
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getEnergy().addAdditiveModifier("Spec Boost", maxEnergyGain);
             warlordsPlayer.getAbilitiesMatching(TimeWarpPyromancer.class).forEach(timeWarp -> {
-                timeWarp.setTickDuration(ticks);
+                timeWarp.setTickDuration(timeWarp.getTickDuration() - ticks);
             });
         }
 

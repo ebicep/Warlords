@@ -51,7 +51,7 @@ public class EcoDrive implements SpecBoostManager.SpecBoost<EcoDrive> {
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getAbilitiesMatching(HolyRadianceProtector.class).forEach(holyRadiance -> {
-                holyRadiance.getEnergyCost().addOverridingModifier("Spec Boost", holyRadianceEnergyCost);
+                holyRadiance.getEnergyCost().addAdditiveModifier("Spec Boost", -holyRadianceEnergyCost);
             });
             warlordsPlayer.getAbilitiesMatching(LightInfusionProtector.class).forEach(lightInfusion -> {
                 lightInfusion.getCooldown().addAdditiveModifier("Spec Boost", -lightInfusionCooldownReductionTicks / 20f);
