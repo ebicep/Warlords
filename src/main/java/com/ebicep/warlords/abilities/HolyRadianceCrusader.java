@@ -15,10 +15,7 @@ import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Color;
-import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -86,20 +83,8 @@ public class HolyRadianceCrusader extends AbstractHolyRadiance implements Heals<
                     },
                     markDuration * 20,
                     Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                        if (ticksElapsed % 20 == 0) {
-                            Location playerLoc = markTarget.getLocation();
-                            Location particleLoc = playerLoc.clone();
-                            for (int i = 0; i < 4; i++) {
-                                for (int j = 0; j < 10; j++) {
-                                    double angle = j / 8D * Math.PI * 2;
-                                    double width = 1;
-                                    particleLoc.setX(playerLoc.getX() + Math.sin(angle) * width);
-                                    particleLoc.setY(playerLoc.getY() + i / 6D);
-                                    particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
-                                    particleLoc.getWorld()
-                                               .spawnParticle(Particle.DUST, particleLoc, 1, 0, 0, 0, 0, new Particle.DustOptions(Color.fromRGB(255, 170, 0), 1), true);
-                                }
-                            }
+                        if (ticksElapsed % 16 == 0) {
+                            EffectUtils.playCylinderAnimation(markTarget.getLocation(), 1, 255, 170, 0, 8, 3, .3);
                         }
                     })
             ) {
