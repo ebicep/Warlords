@@ -159,6 +159,7 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
                                         .append(Component.text(" resurrected " + warlordsEntity.getName() + "!", NamedTextColor.GRAY))
                                 );
                             }
+                            stats.playersResurrected++;
                         }
                     };
                 }
@@ -251,6 +252,9 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
         @Field("total_damage_reflected")
         private float totalDamageReflected = 0;
 
+        @Field("players_resurrected")
+        private int playersResurrected = 0;
+
         @Override
         public Class<SanctuaryStats> getClazz() {
             return SanctuaryStats.class;
@@ -260,8 +264,9 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
             statsDisplay.add(new AbilityStatDisplay("Hexes Prolonged", hexesProlonged));
-            statsDisplay.add(new AbilityStatDisplay("Total Damage Reflected", totalDamageReflected));
             statsDisplay.add(new AbilityStatDisplay("Hexes Not Consumed", hexesNotConsumed));
+            statsDisplay.add(new AbilityStatDisplay("Total Damage Reflected", totalDamageReflected));
+            statsDisplay.add(new AbilityStatDisplay("Players Resurrected", playersResurrected));
             return statsDisplay;
         }
 
@@ -271,6 +276,7 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
             stats.hexesProlonged = this.hexesProlonged + other.hexesProlonged * multiplier;
             stats.hexesNotConsumed = this.hexesNotConsumed + other.hexesNotConsumed * multiplier;
             stats.totalDamageReflected = this.totalDamageReflected + other.totalDamageReflected * multiplier;
+            stats.playersResurrected = this.playersResurrected + other.playersResurrected * multiplier;
             return stats;
         }
 

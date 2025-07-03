@@ -20,6 +20,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -114,6 +115,7 @@ public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, 
                                                 .min(damageValues.brewDamage.getMinValue() * multiplier)
                                                 .max(damageValues.brewDamage.getMaxValue() * multiplier)
                                         );
+                                        stats.enemiesDamaged++;
                                     });
                     }
                     if (bothStatesActive || !data.damageMode) {
@@ -138,6 +140,7 @@ public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, 
                                                 .value(healingValues.brewHealing)
                                         );
                                         warlordsEntity.addEnergy(wp, "Restorative Elixir", energyRestore);
+                                        stats.alliesRestored++;
                                     });
                     }
                 },
@@ -373,6 +376,11 @@ public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, 
 
     public static class VolatileBrewStats extends AbstractAbilityStats<VolatileBrew, VolatileBrew.VolatileBrewStats> {
 
+        @Field("allies_restored")
+        private int alliesRestored = 0;
+
+        @Field("enemies_damaged")
+        private int enemiesDamaged = 0;
 
         @Override
         public Class<VolatileBrew.VolatileBrewStats> getClazz() {
@@ -382,12 +390,16 @@ public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, 
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Allies Healed", alliesRestored));
+            statsDisplay.add(new AbilityStatDisplay("Enemies Damaged", enemiesDamaged));
             return statsDisplay;
         }
 
         @Override
         public VolatileBrew.VolatileBrewStats merge(VolatileBrew.VolatileBrewStats other, int multiplier) {
             VolatileBrew.VolatileBrewStats stats = super.merge(other, multiplier);
+            stats.alliesRestored = this.alliesRestored + other.alliesRestored * multiplier;
+            stats.enemiesDamaged = this.enemiesDamaged + other.enemiesDamaged * multiplier;
             return stats;
         }
 
