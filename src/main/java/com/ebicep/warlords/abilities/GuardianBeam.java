@@ -109,7 +109,7 @@ public class GuardianBeam extends AbstractBeam<GuardianBeam, GuardianBeam.Guardi
                 .text(shieldValues.get(1), AbilityDescriptionBuilder.COLOR_BROWN)
                 .text("/")
                 .text(shieldValues.get(2), AbilityDescriptionBuilder.COLOR_BROWN)
-                .text(" of the ally’s maximum health relative to the number of stacks and all stacks are removed. Shield health on flag carriers is increased by ")
+                .text(" health and all stacks are removed. Shield health on flag carriers is increased by ")
                 .text(format(carrierBonusMultiplier) + "x", AbilityDescriptionBuilder.COLOR_BROWN)
                 .text(". Lasts ")
                 .durationTicks(tickDuration)

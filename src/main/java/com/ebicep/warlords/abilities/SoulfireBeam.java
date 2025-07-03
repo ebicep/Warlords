@@ -50,7 +50,9 @@ public class SoulfireBeam extends AbstractBeam<SoulfireBeam, SoulfireBeam.Soulfi
         description = AbilityDescriptionBuilder
                 .create("Unleash a concentrated beam of demonic power, dealing ")
                 .damage(damageValues.beamDamage)
-                .text(" damage to all enemies hit. If the target is affected by Poisonous Hex the damage dealt is increased by ")
+                .text(" damage to all enemies hit. If the target is affected by ")
+                .text("PHEX", NamedTextColor.DARK_RED)
+                .text(" the damage dealt is increased by ")
                 .percent((damageValues.damageMultipliers.get(1) - 1) * 100, NamedTextColor.RED)
                 .text("/")
                 .percent((damageValues.damageMultipliers.get(2) - 1) * 100, NamedTextColor.RED)

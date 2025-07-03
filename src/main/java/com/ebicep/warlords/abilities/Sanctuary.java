@@ -196,7 +196,7 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
                 .text("FHEX", NamedTextColor.YELLOW)
                 .text(" gain an additional ")
                 .percent(additionalDamageReduction, AbilityDescriptionBuilder.COLOR_BROWN)
-                .text(" damage reduction per stack and are resurrected at ")
+                .text(" damage reduction per stack and are resurrected to ")
                 .percent(lethalDamageHealing, NamedTextColor.GREEN)
                 .text(" of their maximum health when taking lethal damage for the first time. Lasts ")
                 .durationTicks(tickDuration)
