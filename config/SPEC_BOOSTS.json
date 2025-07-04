@@ -457,12 +457,13 @@
       "acceleratedSpike": {
         "difficulty": 4,
         "name": "Dirt Torpedo",
-        "description": "Remove the knockback from {{aqua:Earthen Spike}}, but increase the speed by {{speed;%}}, the cast range by {{blocks}} farther, the hit radius to {{blocks}}, and the damage by {{damage;%}}. Gain {{energy}} max energy.",
+        "description": "Gain {{energy}} max energy. Increase the energy cost of {{aqua:Boulder}} by {{energy}}. Remove the knockback from {{aqua:Earthen Spike}}, but increase the speed by {{speed;%}}, the cast range by {{blocks}} farther, the hit radius to {{blocks}}, and the damage by {{damage;%}}.",
         "travelSpeedIncreasePercent": 50,
         "castRangeIncrease": 10,
         "hitRadiusIncrease": 3.5,
         "damageIncreasePercent": 25,
-        "maxEnergyIncrease": 50
+        "maxEnergyIncrease": 50,
+        "boulderEnergyCostIncrease": 10
       },
       "megalithicBoulder": {
         "difficulty": 1,
