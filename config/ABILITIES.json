@@ -114,12 +114,12 @@
       },
       "bullRush": {
         "name": "Bull Rush",
-        "cooldown": 17,
+        "cooldown": 16,
         "energyCost": 20,
         "damageValues": {
           "bullRushDamage": {
-            "min": 506,
-            "max": 730
+            "min": 556,
+            "max": 680
           }
         },
         "healingValues": {

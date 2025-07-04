@@ -634,11 +634,11 @@
         "vindicateVINDDurationTicks": 40,
         "vindicateDamageResistanceDurationTicks": 160,
         "vindicateLeapDamage": {
-          "min": 468,
-          "max": 857
+          "min": 568,
+          "max": 757
         },
         "vindicateLeapRadius": 6,
-        "knockbackMagnitude": 1.25,
+        "knockbackMagnitude": 1.5,
         "knockbackY": 0.25,
         "leapMagnitude": 1.5,
         "leapY": 0.7,
