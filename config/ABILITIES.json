@@ -705,7 +705,7 @@
         "maxTargets": 1,
         "healingValues": {
           "linkHealing": {
-            "value": 250
+            "value": 280
           },
           "linkEndHealing": {
             "value": 150

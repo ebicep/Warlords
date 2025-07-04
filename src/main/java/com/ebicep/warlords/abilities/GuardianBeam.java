@@ -101,9 +101,9 @@ public class GuardianBeam extends AbstractBeam<GuardianBeam, GuardianBeam.Guardi
                    .durationSeconds(runeTimerIncrease);
         }
         description = builder
-                .text(". Any hit ally with stacks of ")
+                .text(". You and any hit allies with stacks of ")
                 .text("FHEX", NamedTextColor.YELLOW)
-                .text(" is granted a shield with ")
+                .text(" are granted shields with ")
                 .text(shieldValues.get(0), AbilityDescriptionBuilder.COLOR_BROWN)
                 .text("/")
                 .text(shieldValues.get(1), AbilityDescriptionBuilder.COLOR_BROWN)
@@ -114,8 +114,6 @@ public class GuardianBeam extends AbstractBeam<GuardianBeam, GuardianBeam.Guardi
                 .text(". Lasts ")
                 .durationTicks(tickDuration)
                 .text(".")
-                .emptyLine()
-                .text("If Guardian Beam hits a target, you also receive a shield based on the same percentages.")
                 .maxRange(maxDistance)
                 .build();
     }
