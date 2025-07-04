@@ -404,7 +404,7 @@ public class EndState implements State, TimerDebugAble {
                                      Component.text("Lv", NamedTextColor.DARK_GRAY)
                                               .append(Component.text((levelForSpec < 10 ? "0" : "") + levelForSpec + " ", NamedTextColor.GRAY))
                                               .append(Component.text(we.getSpec().getClassName(), NamedTextColor.GOLD))
-                                              .append(Component.text(" (" + we.getSpec().getClass().getSimpleName() + ")", NamedTextColor.GREEN))
+                                              .append(Component.text(" (" + we.getSpec().getName() + ")", NamedTextColor.GREEN))
 
                              )));
 
@@ -443,7 +443,7 @@ public class EndState implements State, TimerDebugAble {
                                      Component.text("Lv", NamedTextColor.DARK_GRAY)
                                               .append(Component.text((levelForSpec < 10 ? "0" : "") + levelForSpec + " ", NamedTextColor.GRAY))
                                               .append(Component.text(we.getSpec().getClassName(), NamedTextColor.GOLD))
-                                              .append(Component.text(" (" + we.getSpec().getClass().getSimpleName() + ")", NamedTextColor.GREEN))
+                                              .append(Component.text(" (" + we.getSpec().getName() + ")", NamedTextColor.GREEN))
                              )));
 
             if (i != players.size() - 1 && i != 2) {
