@@ -73,58 +73,71 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "warrior.revenant.orbsoflife", 2, 1);
+        wp.getCooldownManager().removeCooldown(OrbsOfLifeData.class, false);
         OrbsOfLifeData data = new OrbsOfLifeData(this);
-        PersistentCooldown<OrbsOfLifeData> orbsOfLifeCooldown = new PersistentCooldown<>(name, "ORBS", OrbsOfLifeData.class, data, wp, CooldownTypes.ABILITY, cooldownManager -> {
-        }, cooldownManager -> {
-            List<OrbPassenger> orbs = new ArrayList<>(data.getSpawnedOrbs());
-            orbs.forEach(OrbPassenger::remove);
-        }, false, tickDuration, orbsOfLife -> orbsOfLife.getSpawnedOrbs().isEmpty(), Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-            if (ticksElapsed % 4 != 0) {
-                return;
-            }
-            OrbsOfLifeData orbsOfLife = cooldown.getCooldownObject();
-            Iterator<OrbOfLife> itr = new ArrayList<>(orbsOfLife.getSpawnedOrbs()).iterator();
-            while (itr.hasNext()) {
-                OrbOfLife orb = itr.next();
-                Location orbPosition = orb.getArmorStand().getLocation();
-                WarlordsEntity teammateToHeal = orb.getPlayerToMoveTowards() != null && orbPosition.distanceSquared(orb.getPlayerToMoveTowards()
-                                                                                                                       .getLocation()) < ORB_HITBOX_SQUARED ?
-                                                orb.getPlayerToMoveTowards() :
-                                                PlayerFilter.entitiesAround(orbPosition, ORB_HITBOX, ORB_HITBOX, ORB_HITBOX)
-                                                            .aliveTeammatesOf(wp)
-                                                            .closestFirst(orbPosition)
-                                                            .findFirst()
-                                                            .orElse(null);
-                int ticksLived = orb.getArmorStand().getTicksLived();
-                if (teammateToHeal != null) {
-                    orb.remove();
-                    itr.remove();
-                    float orbHeal = healingValues.orbHealing.getValue();
-                    // Increasing heal for low long orb lived for (up to +40%)
-                    // 6.5 seconds = 130 ticks
-                    // 6.5 seconds = 1 + (130/325) = 1.4
-                    // 225 *= 1.4 = 315
-                    int healingIncreaseTicksLived = ticksLived - healingIncreaseTickDelay;
-                    if ((pveMasterUpgrade2 || orb.getPlayerToMoveTowards() == null) && healingIncreaseTicksLived > 0) {
-                        orbHeal *= 1 + healingIncreaseTicksLived / ((float) healingIncreaseTickTime / healingIncrease * 100);
+        PersistentCooldown<OrbsOfLifeData> orbsOfLifeCooldown = new PersistentCooldown<>(
+                name,
+                "ORBS",
+                OrbsOfLifeData.class,
+                data,
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                },
+                cooldownManager -> {
+                    List<OrbPassenger> orbs = new ArrayList<>(data.getSpawnedOrbs());
+                    orbs.forEach(OrbPassenger::remove);
+                },
+                false,
+                tickDuration,
+                orbsOfLife -> orbsOfLife.getSpawnedOrbs().isEmpty(),
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed % 4 != 0) {
+                        return;
                     }
-                    healPlayer(teammateToHeal, wp, orbHeal);
-                    Utils.playGlobalSound(teammateToHeal.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.2f, 1);
-                    for (WarlordsEntity nearPlayer : PlayerFilter.entitiesAround(teammateToHeal, healRadius, healRadius, healRadius)
-                                                                 .aliveTeammatesOfExcludingSelf(teammateToHeal)
-                                                                 .leastAliveFirst()
-                                                                 .limit(MAX_ALLIES)) {
-                        healPlayer(nearPlayer, wp, orbHeal);
-                        Utils.playGlobalSound(teammateToHeal.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.2f, 1);
+                    OrbsOfLifeData orbsOfLife = cooldown.getCooldownObject();
+                    Iterator<OrbOfLife> itr = new ArrayList<>(orbsOfLife.getSpawnedOrbs()).iterator();
+                    while (itr.hasNext()) {
+                        OrbOfLife orb = itr.next();
+                        Location orbPosition = orb.getArmorStand().getLocation();
+                        WarlordsEntity teammateToHeal = orb.getPlayerToMoveTowards() != null && orbPosition.distanceSquared(orb.getPlayerToMoveTowards()
+                                                                                                                               .getLocation()) < ORB_HITBOX_SQUARED ?
+                                                        orb.getPlayerToMoveTowards() :
+                                                        PlayerFilter.entitiesAround(orbPosition, ORB_HITBOX, ORB_HITBOX, ORB_HITBOX)
+                                                                    .aliveTeammatesOf(wp)
+                                                                    .closestFirst(orbPosition)
+                                                                    .findFirst()
+                                                                    .orElse(null);
+                        int ticksLived = orb.getArmorStand().getTicksLived();
+                        if (teammateToHeal != null) {
+                            orb.remove();
+                            itr.remove();
+                            float orbHeal = healingValues.orbHealing.getValue();
+                            // Increasing heal for low long orb lived for (up to +40%)
+                            // 6.5 seconds = 130 ticks
+                            // 6.5 seconds = 1 + (130/325) = 1.4
+                            // 225 *= 1.4 = 315
+                            int healingIncreaseTicksLived = ticksLived - healingIncreaseTickDelay;
+                            if ((pveMasterUpgrade2 || orb.getPlayerToMoveTowards() == null) && healingIncreaseTicksLived > 0) {
+                                orbHeal *= 1 + healingIncreaseTicksLived / ((float) healingIncreaseTickTime / healingIncrease * 100);
+                            }
+                            healPlayer(teammateToHeal, wp, orbHeal);
+                            Utils.playGlobalSound(teammateToHeal.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.2f, 1);
+                            for (WarlordsEntity nearPlayer : PlayerFilter.entitiesAround(teammateToHeal, healRadius, healRadius, healRadius)
+                                                                         .aliveTeammatesOfExcludingSelf(teammateToHeal)
+                                                                         .leastAliveFirst()
+                                                                         .limit(MAX_ALLIES)) {
+                                healPlayer(nearPlayer, wp, orbHeal);
+                                Utils.playGlobalSound(teammateToHeal.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.2f, 1);
+                            }
+                        } else {
+                            if (ticksLived > orbTickDuration || (orb.getPlayerToMoveTowards() != null && orb.getPlayerToMoveTowards().isDead())) {
+                                orb.remove();
+                                itr.remove();
+                            }
+                        }
                     }
-                } else {
-                    if (ticksLived > orbTickDuration || (orb.getPlayerToMoveTowards() != null && orb.getPlayerToMoveTowards().isDead())) {
-                        orb.remove();
-                        itr.remove();
-                    }
-                }
-            }
-        })
+                })
         ) {
 
             @Override
