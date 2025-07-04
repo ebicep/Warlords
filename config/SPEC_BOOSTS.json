@@ -666,8 +666,10 @@
       "sanctionBurst": {
         "difficulty": 3,
         "name": "Cold Shoulder",
-        "description": "{{aqua:Heart to Heart}} can now target enemies, and resets the cooldown of {{aqua:Soul Shackle}}. Reduce the damage of {{aqua:Soul Shackle}} by {{damage}}. {{aqua:Prism Guard}} explodes when it ends, dealing massive knockback to enemies in range and cleansing all debuffs and slow effects.",
-        "soulShackleDamageDecrease": 100
+        "description": "{{aqua:Heart to Heart}} can now target enemies, and resets the cooldown of {{aqua:Soul Shackle}}. Enemies targeted become crippled and deal {{damage;%}} less damage for {{ticks}}. Reduce the damage of {{aqua:Soul Shackle}} by {{damage}}. {{aqua:Prism Guard}} explodes when it ends, dealing massive knockback to enemies in range and cleansing all debuffs and slow effects.",
+        "soulShackleDamageDecrease": 100,
+        "crippledDamageReductionPercent": 15,
+        "crippledDurationTicks": 50
       },
       "sharpFangs": {
         "difficulty": 1,
