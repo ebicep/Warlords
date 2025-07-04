@@ -346,7 +346,7 @@
         "description": "Reduce the duration of {{aqua:Inspiring Presence}} by {{ticks}} but increase the energy per second granted by {{energy}} and the speed granted by {{speed;%}}.",
         "durationDecreaseTicks": 40,
         "energyPerSecondIncrease": 9,
-        "speedIncreasePercent": 10
+        "speedIncreasePercent": 15
       },
       "sovereignSolitude": {
         "difficulty": 3,
