@@ -102,7 +102,7 @@ public class BotListener extends ListenerAdapter implements Listener {
     private void readOnGoingBalance(Message message) {
         if (message.getContentRaw().contains(", Balance Cancelled")) {
             cancelOnGoingBalance();
-        } else if (!message.getEmbeds().isEmpty() && message.getEmbeds().get(0).getFields().size() == 2) {
+        } else if (!message.getEmbeds().isEmpty() && message.getEmbeds().get(0).getFields().size() >= 2) {
             cancelOnGoingBalance();
             MessageEmbed embed = message.getEmbeds().get(0);
             List<String> playerNames = new ArrayList<>();
