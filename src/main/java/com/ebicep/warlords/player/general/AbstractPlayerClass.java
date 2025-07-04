@@ -292,6 +292,9 @@ public abstract class AbstractPlayerClass {
     public void runEverySecond(@Nullable WarlordsEntity warlordsEntity) {
         for (AbstractAbility ability : abilities) {
             ability.runEverySecond(warlordsEntity);
+            if (warlordsEntity != null && warlordsEntity.isDisableCooldowns() && !ability.anyCharges() && ability.getSecondaryAbilities().isEmpty()) {
+                ability.setCurrentCooldown(0);
+            }
         }
     }
 
