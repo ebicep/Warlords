@@ -178,7 +178,7 @@
         "description": "Increase the wounding inflicted by {{aqua:Wounding Strike}} by {{damage;%}}. Each consecutive strike on a target increases the wounding by an additional {{damage;%}}, up to {{damage;%}}. While {{aqua:Berserk}} is active, {{aqua:Seismic Wave}} and {{aqua:Ground Slam}} inflict {{damage;%}} wounding for {{ticks}}.",
         "woundingIncreasePercent": 5,
         "consecutiveStrikeWoundingIncreasePercent": 7.5,
-        "maxConsecutiveStrikeWoundingIncreasePercent": 65,
+        "maxConsecutiveStrikeWoundingIncreasePercent": 60,
         "seismicWaveGroundSlamWoundingPercent": 30,
         "seismicWaveGroundSlamWoundingDurationTicks": 60
       },
