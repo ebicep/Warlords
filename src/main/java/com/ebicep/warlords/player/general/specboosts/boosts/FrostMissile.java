@@ -9,12 +9,10 @@ import java.util.List;
 public class FrostMissile implements SpecBoostManager.SpecBoost<FrostMissile> {
 
     private float damageIncrease;
-    private float directHitDamageIncrease;
 
     @Override
     public void init() {
         this.damageIncrease = getValue("damageIncrease", float.class);
-        this.directHitDamageIncrease = getValue("directHitDamageIncrease", float.class);
     }
 
     @Override
@@ -24,7 +22,7 @@ public class FrostMissile implements SpecBoostManager.SpecBoost<FrostMissile> {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(damageIncrease, directHitDamageIncrease);
+        return List.of(damageIncrease);
     }
 
     @Override
@@ -45,7 +43,6 @@ public class FrostMissile implements SpecBoostManager.SpecBoost<FrostMissile> {
                 frostBolt.getDamageValues()
                          .getBoltDamage()
                          .forEachValue(floatModifiable -> floatModifiable.addMultiplicativeModifierAdd("Spec Boost", damageIncrease / 100));
-                frostBolt.setDirectHitMultiplier(frostBolt.getDirectHitMultiplier() + directHitDamageIncrease);
             });
         }
 

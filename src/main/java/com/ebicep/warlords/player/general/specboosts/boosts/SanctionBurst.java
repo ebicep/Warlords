@@ -1,10 +1,13 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
+import com.ebicep.warlords.abilities.CripplingStrike;
 import com.ebicep.warlords.abilities.HeartToHeart;
 import com.ebicep.warlords.abilities.PrismGuard;
 import com.ebicep.warlords.abilities.SoulShackle;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsPlayerHeartToHeartEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -22,10 +25,14 @@ import java.util.function.Consumer;
 public class SanctionBurst implements SpecBoostManager.SpecBoost<SanctionBurst> {
 
     private float soulShackleDamageDecrease;
+    private float crippledDamageReductionPercent;
+    private int crippledDurationTicks;
 
     @Override
     public void init() {
         this.soulShackleDamageDecrease = getValue("soulShackleDamageDecrease", float.class);
+        this.crippledDamageReductionPercent = getValue("crippledDamageReductionPercent", float.class);
+        this.crippledDurationTicks = getValue("crippledDurationTicks", int.class);
     }
 
     @Override
@@ -35,7 +42,7 @@ public class SanctionBurst implements SpecBoostManager.SpecBoost<SanctionBurst> 
 
     @Override
     public List<Object> getVariables() {
-        return List.of(soulShackleDamageDecrease);
+        return List.of(crippledDamageReductionPercent, crippledDurationTicks, soulShackleDamageDecrease);
     }
 
     @Override
@@ -65,6 +72,25 @@ public class SanctionBurst implements SpecBoostManager.SpecBoost<SanctionBurst> 
             });
         }
 
+        @EventHandler
+        public void onWarlordsPlayerHeartToHeartEvent(WarlordsPlayerHeartToHeartEvent event) {
+            if (!warlordsEntity.equals(event.getWarlordsEntity())) {
+                return;
+            }
+            WarlordsEntity heartTarget = event.getHeartTarget();
+            if (heartTarget.isTeammate(warlordsEntity)) {
+                return;
+            }
+            CripplingStrike.cripple(
+                    warlordsEntity,
+                    heartTarget,
+                    null,
+                    getStringName(),
+                    0,
+                    crippledDurationTicks,
+                    AbstractAbility.convertToDivisionDecimal(crippledDamageReductionPercent)
+            );
+        }
 
         @EventHandler
         public void onWarlordsAbilityActivatePostApplyEvent(WarlordsAbilityActivateEvent.Post event) {

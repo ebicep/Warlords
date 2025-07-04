@@ -22,13 +22,14 @@
       "burstChain": {
         "difficulty": 2,
         "name": "Burst Chain",
-        "description": "Lose {{heal}} max health but gain {{speed;%}} base speed. Reduce the cooldowns of {{aqua:Time Warp}} and {{aqua:Arcane Shield}} by {{ticks}}. Increase the speed of {{aqua:Flame Burst}} by {{speed;%}} and it guarantees at least {{red}} critical hit. For the duration of {{aqua:Inferno}}, deal {{damage;%}} more damage to enemies without the given damage reducing abilities active:\n\n{{aqua:Last Stand}}\n{{aqua:Ice Barrier}}\n{{aqua:Arcane Shield}}\n{{aqua:Prism Guard}}\n{{aqua:Intervene}}\n{{aqua:Solitary}}\n{{aqua:Ice Block}}\n{{aqua:Contagious Facade}}\n{{aqua:Mystical Barrier}}",
+        "description": "Lose {{heal}} max health but gain {{speed;%}} base speed. Reduce the cooldowns of {{aqua:Time Warp}} and {{aqua:Arcane Shield}} by {{ticks}}. Increase the speed of {{aqua:Flame Burst}} by {{speed;%}} and it guarantees at least {{red}} critical hit. You deal {{damage;%}} more damage, {{damage;%}} with {{aqua:Inferno}} active, to enemies without the given damage reducing abilities active:\n\n{{aqua:Last Stand}}\n{{aqua:Ice Barrier}}\n{{aqua:Arcane Shield}}\n{{aqua:Prism Guard}}\n{{aqua:Intervene}}\n{{aqua:Solitary}}\n{{aqua:Ice Block}}\n{{aqua:Contagious Facade}}\n{{aqua:Mystical Barrier}}",
         "healthDecrease": 800,
         "baseSpeedIncreasePercent": 5,
         "timeWarpCooldownReductionSeconds": 2,
         "arcaneShieldCooldownReductionSeconds": 2,
         "velocityIncreasePercentage": 100,
         "guaranteedCrit": 1,
+        "damageIncreasePercent": 10,
         "infernoDamageIncreasePercent": 20,
         "damageReductionAbilities": [
           "Last Stand",
@@ -65,9 +66,8 @@
       "frostMissile": {
         "difficulty": 1,
         "name": "Frost Missile",
-        "description": "Increase the damage of {{aqua:Frostbolt}} by {{damage;%}} and the direct hit damage bonus by {{damage;%}}.",
-        "damageIncrease": 10,
-        "directHitDamageIncrease": 25
+        "description": "Increase the damage of {{aqua:Frostbolt}} by {{damage;%}}.",
+        "damageIncrease": 20
       },
       "blizzardBreath": {
         "difficulty": 2,
@@ -100,7 +100,7 @@
         "difficulty": 4,
         "name": "Ice Block",
         "description": "Increase the duration of {{aqua:Ice Barrier}} by {{ticks}}. {{aqua:Ice Barrier}} can be recasted after {{ticks}}, reducing the duration by {{ticks}} but becoming {{aqua:Ice Block}}. {{aqua:Ice Block}} prevents jumping, tremendously reduces movement speed, but prevents knockback and grants {{damageReduction;%}} damage reduction.",
-        "iceBarrierNewDurationTicks": 60,
+        "iceBarrierNewDurationTicks": 40,
         "recastDurationDecreaseTicks": 20,
         "recastDamageReductionPercent": 70,
         "recastMovementSpeed": 0.3,
@@ -169,7 +169,7 @@
         "description": "Increase the wounding inflicted by {{aqua:Wounding Strike}} by {{damage;%}}. Each consecutive strike on a target increases the wounding by an additional {{damage;%}}, up to {{damage;%}}. While {{aqua:Berserk}} is active, {{aqua:Seismic Wave}} and {{aqua:Ground Slam}} inflict {{damage;%}} wounding for {{ticks}}.",
         "woundingIncreasePercent": 5,
         "consecutiveStrikeWoundingIncreasePercent": 7.5,
-        "maxConsecutiveStrikeWoundingIncreasePercent": 65,
+        "maxConsecutiveStrikeWoundingIncreasePercent": 60,
         "seismicWaveGroundSlamWoundingPercent": 30,
         "seismicWaveGroundSlamWoundingDurationTicks": 60
       },
@@ -250,7 +250,8 @@
         "travelDistanceIncrease": 2,
         "damageReductionPercent": 20,
         "damageReductionDurationTicks": 40,
-        "verticalAscentDamage": 2500
+        "verticalAscentDamage": 2000,
+        "bonusVerticalBlocks": 1.5
       },
       "healingLink": {
         "difficulty": 2,
@@ -328,7 +329,7 @@
         "difficulty": 4,
         "name": "Parry",
         "description": "Gain {{heal}} max health. Increase the energy granted by {{aqua:Crusader's Strike}} by {{energy}}. Replace {{aqua:Consecrate}} with {{aqua:Parry}}, which has {{blue}} charges.",
-        "healthIncrease": 0,
+        "healthIncrease": 300,
         "crusaderStrikeEnergyIncrease": 3,
         "maxAbilityCharges": 2
       },
@@ -345,7 +346,7 @@
         "difficulty": 4,
         "name": "Solo Support",
         "description": "Increase the energy granted by {{aqua:Crusader's Strike}} by {{energy}} and allow it to grant energy while striking through {{aqua:Arcane Shield}}, but it only grants to 1 ally. A marked ally gains {{speed;%}} movement speed and is the only one that will receive energy even if allies are nearby. This ally will receive the energy until a new ally is marked, even if the original mark expires. Reduce the cooldown of {{aqua:Holy Radiance}} by {{ticks}}.",
-        "crusaderStrikeEnergyGrant": 5,
+        "crusaderStrikeEnergyGrant": 11,
         "markedAllySpeedPercent": 40,
         "radianceCooldownReductionTicks": 60
       },
@@ -386,10 +387,9 @@
       "lustrousCrown": {
         "difficulty": 1,
         "name": "Lustrous Crown",
-        "description": "Reduce the duration of {{aqua:Hammer of Light}} by {{ticks}}, but increase the radius of {{aqua:Crown of Light}} by {{blocks}}, the healing by {{heal;%}}, and gain {{speed;%}} speed for its duration.",
-        "hammerOfLightDurationReductionTicks": 20,
+        "description": "Increase the radius of {{aqua:Crown of Light}} by {{blocks}}, the healing by {{heal;%}}, and gain {{speed;%}} speed for its duration.",
         "crownOfLightRadiusIncrease": 2,
-        "crownOfLightHealingIncreasePercent": 80,
+        "crownOfLightHealingIncreasePercent": 75,
         "crownOfLightSpeedPercent": 40
       },
       "hammerOfJudgement": {
@@ -488,12 +488,13 @@
       "acceleratedSpike": {
         "difficulty": 2,
         "name": "Dirt Torpedo",
-        "description": "Remove the knockback from {{aqua:Earthen Spike}}, but increase the speed by {{speed;%}}, the cast range by {{blocks}} farther, the hit radius to {{blocks}}, and the damage by {{damage;%}}. Gain {{energy}} max energy.",
+        "description": "Gain {{energy}} max energy. Increase the energy cost of {{aqua:Boulder}} by {{energy}}. Remove the knockback from {{aqua:Earthen Spike}}, but increase the speed by {{speed;%}}, the cast range by {{blocks}} farther, the hit radius to {{blocks}}, and the damage by {{damage;%}}.",
         "travelSpeedIncreasePercent": 50,
         "castRangeIncrease": 10,
         "hitRadiusIncrease": 3.5,
         "damageIncreasePercent": 25,
-        "maxEnergyIncrease": 50
+        "maxEnergyIncrease": 50,
+        "boulderEnergyCostIncrease": 10
       },
       "megalithicBoulder": {
         "difficulty": 1,
@@ -534,7 +535,7 @@
         "name": "Trickster",
         "description": "Reduce the bonus damage threshold of {{aqua:Incendiary Curse}} by {{damage;%}}, increase the damage by {{damage}}, and the energy cost by {{energy}}. {{aqua:Soul Switch}} grants invisibility for {{ticks}}, and leaves behind a dummy for {{ticks}} that has {{heal}} health and will damage enemies for how much they deal to it. {{aqua:Shadow Leap}} will now heal if you are below {{heal}} health.",
         "incendiaryCurseDamageThresholdDecrease": 10,
-        "incendiaryCurseDamageIncrease": 100,
+        "incendiaryCurseDamageIncrease": 70,
         "incendiaryCurseIgnitePeriod": 20,
         "incendiaryCurseIgniteDurationTicks": 40,
         "incendiaryCurseIgniteDamage": {
@@ -561,7 +562,7 @@
         "soulSwitchVerticalLimit": 5,
         "soulSwitchDamage": 200,
         "soulSwitchDamageReductionIncreasePercent": 15,
-        "tetherRadius": 2.5,
+        "tetherRadius": 2,
         "tetherTickDuration": 30
       },
       "torrentialSoul": {
@@ -597,8 +598,10 @@
       "sanctionBurst": {
         "difficulty": 3,
         "name": "Cold Shoulder",
-        "description": "{{aqua:Heart to Heart}} can now target enemies, and resets the cooldown of {{aqua:Soul Shackle}}. Reduce the damage of {{aqua:Soul Shackle}} by {{damage}}. {{aqua:Prism Guard}} explodes when it ends, dealing massive knockback to enemies in range and cleansing all debuffs and slow effects.",
-        "soulShackleDamageDecrease": 100
+        "description": "{{aqua:Heart to Heart}} can now target enemies, and resets the cooldown of {{aqua:Soul Shackle}}. Enemies targeted become crippled and deal {{damage;%}} less damage for {{ticks}}. Reduce the damage of {{aqua:Soul Shackle}} by {{damage}}. {{aqua:Prism Guard}} explodes when it ends, dealing massive knockback to enemies in range and cleansing all debuffs and slow effects.",
+        "soulShackleDamageDecrease": 100,
+        "crippledDamageReductionPercent": 15,
+        "crippledDurationTicks": 50
       },
       "righteousRampage": {
         "difficulty": 3,

@@ -84,7 +84,8 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, H
               });
         }
         Location location = wp.getLocation();
-        if (!verticalMovement || Math.abs(location.getPitch()) < 50) {
+        boolean horizontal = Math.abs(location.getPitch()) < 50;
+        if (!verticalMovement || horizontal) {
             location.setPitch(0);
         }
         Location chargeLocation = location.clone();
@@ -92,7 +93,7 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, H
         playersHit.add(wp);
         boolean inAir;
         double chargeDistance;
-        if (location.getWorld().getBlockAt(location.clone().add(0, -1, 0)).getType() != Material.AIR) {
+        if (location.getWorld().getBlockAt(location.clone().add(0, -.01, 0)).getType() == Material.AIR) {
             inAir = true;
             //travels 5 blocks
             chargeDistance = 5;
@@ -117,11 +118,11 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, H
                 if (chargeDuration == maxChargeDuration) {
                     Vector vector;
                     if (inAir) {
-                        vector = location.getDirection().multiply(2);
+                        vector = location.getDirection().multiply(1.75);
                     } else {
-                        vector = location.getDirection().multiply(1.5);
+                        vector = location.getDirection().multiply(2.5);
                     }
-                    if (!verticalMovement || FlagHolder.isPlayerHolderFlag(wp)) {
+                    if (horizontal || FlagHolder.isPlayerHolderFlag(wp)) {
                         vector.setY(.2);
                     }
                     wp.setVelocity(name, vector, true);

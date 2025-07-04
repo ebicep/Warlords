@@ -24,6 +24,7 @@ public class BurstChain implements SpecBoostManager.SpecBoost<BurstChain> {
     private float arcaneShieldCooldownReductionSeconds;
     private float velocityIncreasePercentage;
     private int guaranteedCrit;
+    private float damageIncreasePercent;
     private float infernoDamageIncreasePercent;
     private Set<String> damageReductionAbilities;
 
@@ -31,11 +32,11 @@ public class BurstChain implements SpecBoostManager.SpecBoost<BurstChain> {
     public void init() {
         this.healthDecrease = getValue("healthDecrease", int.class);
         this.baseSpeedIncreasePercent = getValue("baseSpeedIncreasePercent", float.class);
-        this.infernoDamageIncreasePercent = getValue("infernoDamageIncreasePercent", float.class);
         this.timeWarpCooldownReductionSeconds = getValue("timeWarpCooldownReductionSeconds", float.class);
         this.arcaneShieldCooldownReductionSeconds = getValue("arcaneShieldCooldownReductionSeconds", float.class);
         this.velocityIncreasePercentage = getValue("velocityIncreasePercentage", float.class);
         this.guaranteedCrit = getValue("guaranteedCrit", int.class);
+        this.damageIncreasePercent = getValue("damageIncreasePercent", float.class);
         this.infernoDamageIncreasePercent = getValue("infernoDamageIncreasePercent", float.class);
         this.damageReductionAbilities = new HashSet<>(getListValue("damageReductionAbilities", String.class));
     }
@@ -54,6 +55,7 @@ public class BurstChain implements SpecBoostManager.SpecBoost<BurstChain> {
 //                arcaneShieldCooldownReductionSeconds,
                 velocityIncreasePercentage,
                 guaranteedCrit,
+                damageIncreasePercent,
                 infernoDamageIncreasePercent
         );
     }
@@ -101,9 +103,6 @@ public class BurstChain implements SpecBoostManager.SpecBoost<BurstChain> {
 
                 @Override
                 public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    if (!warlordsPlayer.getCooldownManager().hasCooldown(Inferno.class)) {
-                        return currentDamageValue;
-                    }
                     WarlordsEntity victim = event.getWarlordsEntity();
                     if (victim.getCooldownManager()
                               .getCooldowns()
@@ -111,7 +110,8 @@ public class BurstChain implements SpecBoostManager.SpecBoost<BurstChain> {
                               .map(AbstractCooldown::getName)
                               .noneMatch(damageReductionAbilities::contains)
                     ) {
-                        return currentDamageValue * AbstractAbility.convertToMultiplicationDecimal(infernoDamageIncreasePercent);
+                        boolean hasInferno = warlordsPlayer.getCooldownManager().hasCooldown(Inferno.class);
+                        return currentDamageValue * AbstractAbility.convertToMultiplicationDecimal(hasInferno ? infernoDamageIncreasePercent : damageIncreasePercent);
                     }
                     return currentDamageValue;
                 }

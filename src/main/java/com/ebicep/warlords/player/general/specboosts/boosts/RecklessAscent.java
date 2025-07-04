@@ -23,6 +23,7 @@ public class RecklessAscent implements SpecBoostManager.SpecBoost<RecklessAscent
     private float damageReductionPercent;
     private int damageReductionDurationTicks;
     private int verticalAscentDamage;
+    private float bonusVerticalBlocks;
 
     @Override
     public void init() {
@@ -31,6 +32,7 @@ public class RecklessAscent implements SpecBoostManager.SpecBoost<RecklessAscent
         this.damageReductionPercent = getValue("damageReductionPercent", float.class);
         this.damageReductionDurationTicks = getValue("damageReductionDurationTicks", int.class);
         this.verticalAscentDamage = getValue("verticalAscentDamage", int.class);
+        this.bonusVerticalBlocks = getValue("bonusVerticalBlocks", float.class);
     }
 
     @Override
@@ -72,17 +74,14 @@ public class RecklessAscent implements SpecBoostManager.SpecBoost<RecklessAscent
             if (!warlordsEntity.equals(event.getWarlordsEntity())) {
                 return;
             }
-            if (!(event.getAbility() instanceof RecklessCharge)) {
+            if (!(event.getAbility() instanceof RecklessCharge recklessCharge)) {
                 return;
             }
             Location location = warlordsEntity.getLocation();
             if (Math.abs(location.getPitch()) < 50) {
                 return;
             }
-            if (warlordsEntity.getCurrentHealth() < verticalAscentDamage) {
-                event.setCancelled(true);
-                return;
-            }
+            recklessCharge.setAdditionalBlocks(recklessCharge.getAdditionalBlocks() + bonusVerticalBlocks);
             warlordsEntity.addInstance(InstanceBuilder
                     .fall()
                     .source(warlordsEntity)
@@ -95,7 +94,10 @@ public class RecklessAscent implements SpecBoostManager.SpecBoost<RecklessAscent
             if (!warlordsEntity.equals(event.getWarlordsEntity())) {
                 return;
             }
-            if (event.getAbility() instanceof RecklessCharge) {
+            if (event.getAbility() instanceof RecklessCharge recklessCharge) {
+                if (Math.abs(warlordsEntity.getLocation().getPitch()) >= 50) {
+                    recklessCharge.setAdditionalBlocks(recklessCharge.getAdditionalBlocks() - bonusVerticalBlocks);
+                }
                 warlordsEntity.getCooldownManager().addCooldown(new RegularCooldown<>(
                         getStringName(),
                         "ASC",
