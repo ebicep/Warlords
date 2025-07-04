@@ -274,9 +274,10 @@
       "vigorousInfusion": {
         "difficulty": 2,
         "name": "Vigorous Infusion",
-        "description": "Increases the speed granted by {{aqua:Light Infusion}} by {{speed;%}} and the duration by {{ticks}}. Reduce the cooldown by {{ticks}}.",
+        "description": "Gain {{energy;}} max energy. Increases the speed granted by {{aqua:Light Infusion}} by {{speed;%}} and the duration by {{ticks}}. Reduce the cooldown by {{ticks}}.",
+        "maxEnergyIncrease": 50,
         "infusionSpeedIncrease": 20,
-        "infusionDurationIncreaseTicks": 20,
+        "infusionDurationIncreaseTicks": 30,
         "cooldownReductionSeconds": 2.5
       },
       "conduit": {

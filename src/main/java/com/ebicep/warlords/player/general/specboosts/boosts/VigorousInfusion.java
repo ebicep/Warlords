@@ -8,12 +8,14 @@ import java.util.List;
 
 public class VigorousInfusion implements SpecBoostManager.SpecBoost<VigorousInfusion> {
 
+    private int maxEnergyIncrease;
     private float infusionSpeedIncrease;
     private int infusionDurationIncreaseTicks;
     private float cooldownReductionSeconds;
 
     @Override
     public void init() {
+        this.maxEnergyIncrease = getValue("maxEnergyIncrease", int.class);
         this.infusionSpeedIncrease = getValue("infusionSpeedIncrease", float.class);
         this.infusionDurationIncreaseTicks = getValue("infusionDurationIncreaseTicks", int.class);
         this.cooldownReductionSeconds = getValue("cooldownReductionSeconds", float.class);
@@ -26,7 +28,7 @@ public class VigorousInfusion implements SpecBoostManager.SpecBoost<VigorousInfu
 
     @Override
     public List<Object> getVariables() {
-        return List.of(infusionSpeedIncrease, infusionDurationIncreaseTicks, cooldownReductionSeconds);
+        return List.of(maxEnergyIncrease, infusionSpeedIncrease, infusionDurationIncreaseTicks, cooldownReductionSeconds);
     }
 
     @Override
@@ -44,6 +46,7 @@ public class VigorousInfusion implements SpecBoostManager.SpecBoost<VigorousInfu
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
+            warlordsPlayer.getEnergy().addAdditiveModifier("Spec Boost", maxEnergyIncrease);
             warlordsPlayer.getAbilitiesMatching(LightInfusionCrusader.class).forEach(lightInfusion -> {
                 lightInfusion.setSpeedBuff(lightInfusion.getSpeedBuff() + infusionSpeedIncrease);
                 lightInfusion.setTickDuration(lightInfusion.getTickDuration() + infusionDurationIncreaseTicks);
