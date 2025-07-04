@@ -18,7 +18,6 @@ import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
-import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Particle;
@@ -61,17 +60,13 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
         this.orderAssistCooldownReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("orderAssistCooldownReduction"), float.class);
     }
 
-    public int getSpeedBuff() {
-        return speedBuff;
-    }
-
-    public void setSpeedBuff(int speedBuff) {
-        this.speedBuff = speedBuff;
-    }
-
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
-        Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_GHAST_SHOOT, 1.5f, 0.7f);
+        PlayerFilter.playingGame(wp.getGame())
+                    .enemiesOf(wp)
+                    .forEach(warlordsEntity -> {
+                        warlordsEntity.playSound(wp.getLocation(), Sound.ENTITY_GHAST_SHOOT, 1.5f, 0.7f);
+                    });
         wp.addSpeedModifier(wp, name, speedBuff, tickDuration);
         wp.getCooldownManager().removeCooldown(OrderOfEviscerateData.class, false);
         if (!FlagHolder.isPlayerHolderFlag(wp)) {
@@ -99,7 +94,11 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 2 == 0) {
-                        Utils.playGlobalSound(wp.getLocation(), Sound.AMBIENT_CAVE, 0.25f, 2);
+                        PlayerFilter.playingGame(wp.getGame())
+                                    .enemiesOf(wp)
+                                    .forEach(warlordsEntity -> {
+                                        warlordsEntity.playSound(wp.getLocation(), Sound.AMBIENT_CAVE, 0.25f, 2);
+                                    });
                     }
                     EffectUtils.displayParticle(Particle.SMOKE, wp.getLocation(), 4, 0.2, 0.2, 0.2, 0.05);
                 })
@@ -308,14 +307,6 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
         return new OrderOfEviscerateBranch(abilityTree, this);
     }
 
-    public static void removeCloak(WarlordsEntity warlordsPlayer, boolean forceRemove) {
-        if (warlordsPlayer.getCooldownManager().hasCooldownFromName("Cloaked") || forceRemove) {
-            warlordsPlayer.getCooldownManager().removeCooldownByName("Cloaked");
-            warlordsPlayer.removePotionEffect(PotionEffectType.INVISIBILITY);
-            warlordsPlayer.updateArmor();
-        }
-    }
-
     public static void giveCloak(@Nonnull WarlordsEntity wp, int tickDuration) {
         wp.getCooldownManager().removeCooldownByName("Cloaked");
         RegularCooldown<OrderOfEviscerateData> orderOfEviscerateCooldown = new RegularCooldown<>("Cloaked",
@@ -359,6 +350,14 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
         wp.getCooldownManager().addCooldown(orderOfEviscerateCooldown);
     }
 
+    public static void removeCloak(WarlordsEntity warlordsPlayer, boolean forceRemove) {
+        if (warlordsPlayer.getCooldownManager().hasCooldownFromName("Cloaked") || forceRemove) {
+            warlordsPlayer.getCooldownManager().removeCooldownByName("Cloaked");
+            warlordsPlayer.removePotionEffect(PotionEffectType.INVISIBILITY);
+            warlordsPlayer.updateArmor();
+        }
+    }
+
     @Override
     public int getTickDuration() {
         return tickDuration;
@@ -372,6 +371,14 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
     @Override
     public OrderOfEviscerateStats getAbilityStats() {
         return stats;
+    }
+
+    public int getSpeedBuff() {
+        return speedBuff;
+    }
+
+    public void setSpeedBuff(int speedBuff) {
+        this.speedBuff = speedBuff;
     }
 
     public float getVulnerableDamageBonus() {
