@@ -25,6 +25,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 public abstract class AbstractHolyRadiance extends AbstractAbility implements BlueAbilityIcon, HitBox, AbilityStats<AbstractHolyRadiance, AbstractHolyRadiance.AbstractHolyRadianceStats> {
@@ -54,14 +55,19 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
                 .value(radianceHealing)
         );
 
-        if (chain(wp)) {
-            stats.playersMarked++;
+        List<WarlordsEntity> chained = chain(wp);
+        stats.playersMarked += chained.size();
+        for (WarlordsEntity warlordsEntity : chained) {
+            if (warlordsEntity.isTeammate(wp)) {
+                heal(wp, warlordsEntity);
+            }
         }
 
         float rad = radius.getCalculatedValue();
         Set<WarlordsEntity> warlordsEntities = PlayerFilter
                 .entitiesAround(wp, rad, rad, rad)
                 .aliveTeammatesOfExcludingSelf(wp)
+                .excluding(chained)
                 .stream()
                 .collect(Collectors.toSet());
         for (WarlordsEntity radianceTarget : warlordsEntities) {
@@ -71,7 +77,7 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
                     radianceTarget,
                     wp,
                     speed.getCalculatedValue(),
-                    radianceHealing
+                    this::heal
             ).runTaskTimer(1, 1);
         }
         Bukkit.getPluginManager().callEvent(new WarlordsAbilityTargetEvent.WarlordsBlueAbilityTargetEvent(wp, name, warlordsEntities));
@@ -115,7 +121,22 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
 
     public abstract Value.RangedValueCritable getRadianceHealing();
 
-    public abstract boolean chain(WarlordsEntity wp);
+    public abstract List<WarlordsEntity> chain(WarlordsEntity wp);
+
+    public void heal(WarlordsEntity owner, WarlordsEntity target) {
+        target.addInstance(InstanceBuilder
+                .healing()
+                .ability(this)
+                .source(owner)
+                .value(getRadianceHealing())
+        ).ifPresent(warlordsDamageHealingFinalEvent -> {
+            stats.playersHealed++;
+            new CooldownFilter<>(owner, RegularCooldown.class)
+                    .filterCooldownFrom(owner)
+                    .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.HammerOfLightData.class)
+                    .forEach(hammerOfLight -> hammerOfLight.addAmountHealed(warlordsDamageHealingFinalEvent.getValue()));
+        });
+    }
 
     @Override
     public FloatModifiable getHitBoxRadius() {
@@ -125,6 +146,10 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
     @Override
     public AbstractHolyRadianceStats getAbilityStats() {
         return stats;
+    }
+
+    public FloatModifiable getSpeed() {
+        return speed;
     }
 
     public static class AbstractHolyRadianceStats extends AbstractAbilityStats<AbstractHolyRadiance, AbstractHolyRadianceStats> {
@@ -162,25 +187,28 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
 
     }
 
-    public FloatModifiable getSpeed() {
-        return speed;
-    }
-
-    public class FlyingArmorStand extends GameRunnable {
+    public static class FlyingArmorStand extends GameRunnable {
 
         private final WarlordsEntity target;
         private final WarlordsEntity owner;
         private final double speed;
         private final ArmorStand armorStand;
-        private final Value.RangedValueCritable radianceHealing;
+        private final BiConsumer<WarlordsEntity, WarlordsEntity> healFunction;
 
-        public FlyingArmorStand(Game game, Location location, WarlordsEntity target, WarlordsEntity owner, double speed, Value.RangedValueCritable radianceHealing) {
+        public FlyingArmorStand(
+                Game game,
+                Location location,
+                WarlordsEntity target,
+                WarlordsEntity owner,
+                double speed,
+                BiConsumer<WarlordsEntity, WarlordsEntity> healFunction
+        ) {
             super(game);
             this.armorStand = Utils.spawnArmorStand(location);
             this.target = target;
             this.speed = speed;
             this.owner = owner;
-            this.radianceHealing = radianceHealing;
+            this.healFunction = healFunction;
         }
 
         @Override
@@ -200,19 +228,7 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
             double distance = targetLocation.distanceSquared(armorStandLocation);
 
             if (distance < speed * speed) {
-                stats.playersHealed++;
-
-                target.addInstance(InstanceBuilder
-                        .healing()
-                        .cause("Holy Radiance")
-                        .source(owner)
-                        .value(radianceHealing)
-                ).ifPresent(warlordsDamageHealingFinalEvent -> {
-                    new CooldownFilter<>(owner, RegularCooldown.class)
-                            .filterCooldownFrom(owner)
-                            .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.HammerOfLightData.class)
-                            .forEach(hammerOfLight -> hammerOfLight.addAmountHealed(warlordsDamageHealingFinalEvent.getValue()));
-                });
+                healFunction.accept(owner, target);
                 this.cancel();
                 return;
             }

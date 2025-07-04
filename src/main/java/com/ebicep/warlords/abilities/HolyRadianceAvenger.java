@@ -48,15 +48,16 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance implements Heals<H
     }
 
     @Override
-    public boolean chain(WarlordsEntity wp) {
+    public List<WarlordsEntity> chain(WarlordsEntity wp) {
         if (pveMasterUpgrade || pveMasterUpgrade2) {
-            for (WarlordsEntity markTarget : PlayerFilter.entitiesAround(wp, 8, 8, 8).aliveEnemiesOf(wp)) {
+            List<WarlordsEntity> targets = PlayerFilter.entitiesAround(wp, 8, 8, 8).aliveEnemiesOf(wp).toList();
+            for (WarlordsEntity markTarget : targets) {
                 Utils.playGlobalSound(wp.getLocation(), "paladin.consecrate.activation", 2, 0.65f);
                 EffectUtils.playParticleLinkAnimation(wp.getLocation(), markTarget.getLocation(), 255, 50, 0, 1);
                 EffectUtils.playChainAnimation(wp, markTarget, ITEM_STACK, 8);
                 aoeMark(wp, markTarget);
             }
-            return true;
+            return targets;
         }
         for (WarlordsEntity markTarget : PlayerFilter.entitiesAround(wp, markRadius, markRadius, markRadius).aliveEnemiesOf(wp).lookingAtFirst(wp).limit(1)) {
             if (!LocationUtils.isLookingAtMark(wp, markTarget) || !LocationUtils.hasLineOfSight(wp, markTarget)) {
@@ -67,9 +68,9 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance implements Heals<H
             EffectUtils.playParticleLinkAnimation(wp.getLocation(), markTarget.getLocation(), 255, 50, 0, 1);
             EffectUtils.playChainAnimation(wp, markTarget, ITEM_STACK, 8);
             mark(wp, markTarget);
-            return true;
+            return List.of(markTarget);
         }
-        return false;
+        return Collections.emptyList();
     }
 
     @Override

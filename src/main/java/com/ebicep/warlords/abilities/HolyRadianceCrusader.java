@@ -50,7 +50,7 @@ public class HolyRadianceCrusader extends AbstractHolyRadiance implements Heals<
     }
 
     @Override
-    public boolean chain(WarlordsEntity wp) {
+    public List<WarlordsEntity> chain(WarlordsEntity wp) {
         for (WarlordsEntity markTarget : PlayerFilter.entitiesAround(wp, markRadius, markRadius, markRadius).aliveTeammatesOfExcludingSelf(wp).lookingAtFirst(wp).limit(1)) {
             if (!LocationUtils.isLookingAtMark(wp, markTarget) || !LocationUtils.hasLineOfSight(wp, markTarget)) {
                 wp.sendMessage(Component.text("Your mark was out of range or you did not target a player!", NamedTextColor.RED));
@@ -100,9 +100,9 @@ public class HolyRadianceCrusader extends AbstractHolyRadiance implements Heals<
             markTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN.append(Component.text(" You have been granted ", NamedTextColor.GRAY))
                                                                      .append(Component.text("Crusader's Mark", NamedTextColor.YELLOW))
                                                                      .append(Component.text(" by " + wp.getName() + "!", NamedTextColor.GRAY)));
-            return true;
+            return List.of(markTarget);
         }
-        return false;
+        return Collections.emptyList();
     }
 
     @Override

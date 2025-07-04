@@ -49,13 +49,14 @@ public class HolyRadianceProtector extends AbstractHolyRadiance implements Heals
     }
 
     @Override
-    public boolean chain(WarlordsEntity wp) {
+    public List<WarlordsEntity> chain(WarlordsEntity wp) {
         float radius = markRadius.getCalculatedValue();
         if (pveMasterUpgrade) {
-            for (WarlordsEntity circleTarget : PlayerFilter.entitiesAround(wp, radius, radius, radius).aliveTeammatesOfExcludingSelf(wp)) {
+            List<WarlordsEntity> targets = PlayerFilter.entitiesAround(wp, radius, radius, radius).aliveTeammatesOfExcludingSelf(wp).toList();
+            for (WarlordsEntity circleTarget : targets) {
                 emitMarkRadiance(wp, circleTarget);
             }
-            return true;
+            return targets;
         }
         for (WarlordsEntity markTarget : PlayerFilter.entitiesAround(wp, radius, radius, radius).aliveTeammatesOfExcludingSelf(wp).lookingAtFirst(wp).limit(1)) {
             if (!LocationUtils.isLookingAtMark(wp, markTarget) || !LocationUtils.hasLineOfSight(wp, markTarget)) {
@@ -73,9 +74,9 @@ public class HolyRadianceProtector extends AbstractHolyRadiance implements Heals
             markTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN.append(Component.text(" You have been granted ", NamedTextColor.GRAY))
                                                                      .append(Component.text("Protector's Mark", NamedTextColor.YELLOW))
                                                                      .append(Component.text(" by " + wp.getName() + "!", NamedTextColor.GRAY)));
-            return true;
+            return List.of(markTarget);
         }
-        return false;
+        return Collections.emptyList();
     }
 
     @Override
