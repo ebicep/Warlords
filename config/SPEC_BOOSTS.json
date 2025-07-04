@@ -337,7 +337,7 @@
         "difficulty": 5,
         "name": "Parry",
         "description": "Gain {{heal}} max health. Increase the energy granted by {{aqua:Crusader's Strike}} by {{energy}}. Replace {{aqua:Consecrate}} with {{aqua:Parry}}, which has {{blue}} charges.",
-        "healthIncrease": 0,
+        "healthIncrease": 300,
         "crusaderStrikeEnergyIncrease": 3,
         "maxAbilityCharges": 2
       },
