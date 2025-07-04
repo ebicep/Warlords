@@ -573,7 +573,7 @@
         "soulSwitchVerticalLimit": 5,
         "soulSwitchDamage": 200,
         "soulSwitchDamageReductionIncreasePercent": 15,
-        "tetherRadius": 2.5,
+        "tetherRadius": 2,
         "tetherTickDuration": 30
       },
       "auraOfRestoration": {

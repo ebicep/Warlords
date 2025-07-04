@@ -298,7 +298,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                    .text(". Assists only reduce ")
                    .durationSeconds(orderAssistCooldownReduction)
                    .emptyLine()
-                   .text("If your mark does, the cooldown of Soul Switch is reset.");
+                   .text("If your mark dies, the cooldown of Soul Switch is reset.");
         }
         description = builder.build();
     }
