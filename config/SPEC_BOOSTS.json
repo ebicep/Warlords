@@ -611,7 +611,6 @@
         "soulShackleAoEDamagePercent": 60,
         "soulShackleAoERadius": 4,
         "vindicateVINDDurationTicks": 40,
-        "vindicateDamageResistanceDurationTicks": 160,
         "vindicateLeapDamage": {
           "min": 568,
           "max": 757

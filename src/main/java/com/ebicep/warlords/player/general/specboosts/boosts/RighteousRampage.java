@@ -36,7 +36,6 @@ public class RighteousRampage implements SpecBoostManager.SpecBoost<RighteousRam
     private float soulShackleAoEDamagePercent;
     private float soulShackleAoERadius;
     private int vindicateVINDDurationTicks;
-    private int vindicateDamageResistanceDurationTicks;
     private Value.RangedValue vindicateLeapDamage;
     private float vindicateLeapRadius;
     private float knockbackMagnitude;
@@ -52,7 +51,6 @@ public class RighteousRampage implements SpecBoostManager.SpecBoost<RighteousRam
         this.soulShackleAoEDamagePercent = getValue("soulShackleAoEDamagePercent", float.class);
         this.soulShackleAoERadius = getValue("soulShackleAoERadius", float.class);
         this.vindicateVINDDurationTicks = getValue("vindicateVINDDurationTicks", int.class);
-        this.vindicateDamageResistanceDurationTicks = getValue("vindicateDamageResistanceDurationTicks", int.class);
         this.vindicateLeapDamage = getValue("vindicateLeapDamage", Value.RangedValue.class);
         this.vindicateLeapRadius = getValue("vindicateLeapRadius", float.class);
         this.knockbackMagnitude = getValue("knockbackMagnitude", float.class);
@@ -80,7 +78,6 @@ public class RighteousRampage implements SpecBoostManager.SpecBoost<RighteousRam
                 soulShackleAoERadius,
                 soulShackleAoEDamagePercent,
                 vindicateVINDDurationTicks,
-                vindicateDamageResistanceDurationTicks,
                 vindicateLeapRadius,
                 vindicateLeapDamage
         );
@@ -106,7 +103,6 @@ public class RighteousRampage implements SpecBoostManager.SpecBoost<RighteousRam
             warlordsPlayer.getSpec().setDamageResistance(warlordsPlayer.getSpec().getDamageResistance() - damageReductionDecrease); // TODO flaot modifable
             warlordsPlayer.getAbilitiesMatching(Vindicate.class).forEach(vindicate -> {
                 vindicate.setTickDuration(vindicate.getTickDuration() - vindicateVINDDurationTicks);
-                vindicate.setDamageReductionTickDuration(vindicateDamageResistanceDurationTicks);
             });
             List<AbstractAbility> abilities = warlordsPlayer.getAbilities();
             for (int i = 0; i < abilities.size(); i++) {
