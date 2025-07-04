@@ -329,7 +329,7 @@
       "crusadersMight": {
         "name": "Crusader's Might",
         "description": "Increase the damage of {{aqua:Crusader's Strike}} by {{damage;%}}.",
-        "damageIncreasePercent": 20
+        "damageIncreasePercent": 25
       },
       "parry": {
         "difficulty": 5,
