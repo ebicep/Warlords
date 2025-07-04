@@ -126,20 +126,22 @@ public class BotListener extends ListenerAdapter implements Listener {
 
                 @Override
                 public void run() {
-                    playerNames.forEach(name -> {
-                        Player player = Bukkit.getPlayer(name);
-                        if (player != null) {
-                            Random random = new Random();
-                            TextComponent subtitle = random.nextInt(2) == 0 ?
-                                                     Component.text("BLUE", NamedTextColor.BLUE) :
-                                                     Component.text("RED", NamedTextColor.RED);
-                            player.showTitle(Title.title(
-                                    Component.text(Utils.SPECS_ORDERED[random.nextInt(Utils.SPECS_ORDERED.length)], NamedTextColor.GREEN),
-                                    subtitle,
-                                    Title.Times.times(Ticks.duration(0), Ticks.duration(5), Ticks.duration(0))
-                            ));
-                        }
-                    });
+                    if (counter % 2 == 0) {
+                        playerNames.forEach(name -> {
+                            Player player = Bukkit.getPlayer(name);
+                            if (player != null) {
+                                Random random = new Random();
+                                TextComponent subtitle = random.nextInt(2) == 0 ?
+                                                         Component.text("BLUE", NamedTextColor.BLUE) :
+                                                         Component.text("RED", NamedTextColor.RED);
+                                player.showTitle(Title.title(
+                                        Component.text(Utils.SPECS_ORDERED[random.nextInt(Utils.SPECS_ORDERED.length)], NamedTextColor.GREEN),
+                                        subtitle,
+                                        Title.Times.times(Ticks.duration(0), Ticks.duration(5), Ticks.duration(0))
+                                ));
+                            }
+                        });
+                    }
                     //auto cancel after 15 seconds
                     if (counter++ > 20 * 15) {
                         this.cancel();
