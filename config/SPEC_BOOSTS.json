@@ -66,9 +66,8 @@
       "frostMissile": {
         "difficulty": 1,
         "name": "Frost Missile",
-        "description": "Increase the damage of {{aqua:Frostbolt}} by {{damage;%}} and the direct hit damage bonus by {{damage;%}}.",
-        "damageIncrease": 10,
-        "directHitDamageIncrease": 25
+        "description": "Increase the damage of {{aqua:Frostbolt}} by {{damage;%}}.",
+        "damageIncrease": 20
       },
       "arcaneRecluse": {
         "difficulty": 1,
