@@ -221,6 +221,7 @@ public abstract class WarlordsEntity {
         this.knockback = new MotionSystem();
         this.entity = entity;
         this.deathLocation = this.entity.getLocation();
+        this.specClass = Specializations.PYROMANCER; // default for PvE
     }
 
     protected void resetSpeed() {

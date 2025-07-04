@@ -11,15 +11,9 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownFlag;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
-import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.player.ingame.instances.type.DamageInstance;
-import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 
 import java.util.List;
 
@@ -70,7 +64,7 @@ public class WitheringPlague implements SpecBoostManager.SpecBoost<WitheringPlag
                 return;
             }
             AbstractCooldown<?> cooldown = event.getAbstractCooldown();
-            if (!warlordsEntity.getCooldownManager().hasCooldown(AstralPlague.class) || !cooldown.getFrom().equals(warlordsEntity)) {
+            if (!cooldown.getCooldownClass().equals(AstralPlague.class) || !cooldown.getFrom().equals(warlordsEntity)) {
                 return;
             }
             cooldown.addExtraDamageInstance(new DamageInstance() {
