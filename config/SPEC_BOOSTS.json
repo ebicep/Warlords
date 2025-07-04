@@ -250,7 +250,8 @@
         "travelDistanceIncrease": 2,
         "damageReductionPercent": 20,
         "damageReductionDurationTicks": 40,
-        "verticalAscentDamage": 2500
+        "verticalAscentDamage": 2000,
+        "bonusVerticalBlocks": 1.5
       },
       "undyingSteed": {
         "difficulty": 3,
