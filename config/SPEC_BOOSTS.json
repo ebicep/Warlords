@@ -538,7 +538,7 @@
         "name": "Trickster",
         "description": "Reduce the bonus damage threshold of {{aqua:Incendiary Curse}} by {{damage;%}}, increase the damage by {{damage}}, and the energy cost by {{energy}}. {{aqua:Soul Switch}} grants invisibility for {{ticks}}, and leaves behind a dummy for {{ticks}} that has {{heal}} health and will damage enemies for how much they deal to it. {{aqua:Shadow Leap}} will now heal if you are below {{heal}} health.",
         "incendiaryCurseDamageThresholdDecrease": 10,
-        "incendiaryCurseDamageIncrease": 100,
+        "incendiaryCurseDamageIncrease": 70,
         "incendiaryCurseIgnitePeriod": 20,
         "incendiaryCurseIgniteDurationTicks": 40,
         "incendiaryCurseIgniteDamage": {
