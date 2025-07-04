@@ -611,7 +611,6 @@
         "soulShackleAoEDamagePercent": 60,
         "soulShackleAoERadius": 4,
         "vindicateVINDDurationTicks": 40,
-        "vindicateDamageResistanceDurationTicks": 160,
         "vindicateLeapDamage": {
           "min": 568,
           "max": 757
@@ -637,7 +636,7 @@
       "auraOfRestoration": {
         "difficulty": 1,
         "name": "Aura of Restoration",
-        "description": "Increase the cooldown of {{aqua:Soothing Elixir}} by {{ticks}} and the healing over time by {{heal}}, which will now always affecting allies within the splash radius, even while moving. Increase the break range of {{aqua:Remedic Chains}} by {{blocks}}.",
+        "description": "Increase the cooldown of {{aqua:Soothing Elixir}} by {{ticks}} and the healing over time by {{heal}}, which will now always affect allies within the splash radius, even while moving. Increase the break range of {{aqua:Remedic Chains}} by {{blocks}}.",
         "soothingElixirCooldownIncreaseSeconds": 1.5,
         "puddleHealingIncrease": 10,
         "remedicChainsBreakRadiusIncrease": 5
