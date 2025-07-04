@@ -359,10 +359,9 @@
       "lustrousCrown": {
         "difficulty": 1,
         "name": "Lustrous Crown",
-        "description": "Reduce the duration of {{aqua:Hammer of Light}} by {{ticks}}, but increase the radius of {{aqua:Crown of Light}} by {{blocks}}, the healing by {{heal;%}}, and gain {{speed;%}} speed for its duration.",
-        "hammerOfLightDurationReductionTicks": 20,
+        "description": "Increase the radius of {{aqua:Crown of Light}} by {{blocks}}, the healing by {{heal;%}}, and gain {{speed;%}} speed for its duration.",
         "crownOfLightRadiusIncrease": 2,
-        "crownOfLightHealingIncreasePercent": 80,
+        "crownOfLightHealingIncreasePercent": 75,
         "crownOfLightSpeedPercent": 40
       },
       "divineEffulgence": {

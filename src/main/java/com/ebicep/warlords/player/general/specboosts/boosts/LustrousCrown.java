@@ -13,14 +13,12 @@ import java.util.List;
 
 public class LustrousCrown implements SpecBoostManager.SpecBoost<LustrousCrown> {
 
-    private int hammerOfLightDurationReductionTicks;
     private float crownOfLightRadiusIncrease;
     private float crownOfLightHealingIncreasePercent;
     private float crownOfLightSpeedPercent;
 
     @Override
     public void init() {
-        this.hammerOfLightDurationReductionTicks = getValue("hammerOfLightDurationReductionTicks", int.class);
         this.crownOfLightRadiusIncrease = getValue("crownOfLightRadiusIncrease", float.class);
         this.crownOfLightHealingIncreasePercent = getValue("crownOfLightHealingIncreasePercent", float.class);
         this.crownOfLightSpeedPercent = getValue("crownOfLightSpeedPercent", float.class);
@@ -33,7 +31,7 @@ public class LustrousCrown implements SpecBoostManager.SpecBoost<LustrousCrown> 
 
     @Override
     public List<Object> getVariables() {
-        return List.of(hammerOfLightDurationReductionTicks, crownOfLightRadiusIncrease, crownOfLightHealingIncreasePercent, crownOfLightSpeedPercent);
+        return List.of(crownOfLightRadiusIncrease, crownOfLightHealingIncreasePercent, crownOfLightSpeedPercent);
     }
 
     @Override
@@ -54,7 +52,6 @@ public class LustrousCrown implements SpecBoostManager.SpecBoost<LustrousCrown> 
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(HammerOfLight.class).forEach(hammerOfLight -> {
-                hammerOfLight.setTickDuration(hammerOfLight.getTickDuration() - hammerOfLightDurationReductionTicks);
                 hammerOfLight.getCrownRadius().addAdditiveModifier("Spec Boost", crownOfLightRadiusIncrease);
                 hammerOfLight.setCrownBonusHealing(hammerOfLight.getCrownBonusHealing() + crownOfLightHealingIncreasePercent);
             });
