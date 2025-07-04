@@ -18,7 +18,7 @@ public class TotemicBoon implements SpecBoostManager.SpecBoost<TotemicBoon> {
 
     private int healingTotemHealingDecreasePercent;
     private int healingTotemEnergyDecreasePercent;
-    private int healingTotemCooldownDecreasePercent;
+    private float healingTotemCooldownDecreasePercent;
     private int healingTotemMaxAbilityCharges;
     private float healingTotemSpeedMultiplier;
     private float healingTotemRadiusIncrease;
@@ -28,7 +28,7 @@ public class TotemicBoon implements SpecBoostManager.SpecBoost<TotemicBoon> {
     public void init() {
         this.healingTotemHealingDecreasePercent = getValue("healingTotemHealingDecreasePercent", int.class);
         this.healingTotemEnergyDecreasePercent = getValue("healingTotemEnergyDecreasePercent", int.class);
-        this.healingTotemCooldownDecreasePercent = getValue("healingTotemCooldownDecreasePercent", int.class);
+        this.healingTotemCooldownDecreasePercent = getValue("healingTotemCooldownDecreasePercent", float.class);
         this.healingTotemMaxAbilityCharges = getValue("healingTotemMaxAbilityCharges", int.class);
         this.healingTotemSpeedMultiplier = getValue("healingTotemSpeedMultiplier", float.class);
         this.healingTotemRadiusIncrease = getValue("healingTotemRadiusIncrease", float.class);
