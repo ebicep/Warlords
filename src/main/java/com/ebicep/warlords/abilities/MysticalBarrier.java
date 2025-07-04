@@ -216,6 +216,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                             float newShieldHealth = guardianBeamShield.getShieldValue() * guardianBeamShieldMultiplier;
                             guardianBeamShield.setMaxShieldHealth(newShieldHealth);
                             guardianBeamShield.setShieldHealth(newShieldHealth);
+                            stats.shieldsIncreased++;
                         }
                     }
                 };
@@ -323,6 +324,9 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
         @Field("times_cooldowns_increased")
         private int timesCooldownsIncreased = 0;
 
+        @Field("shields_increased")
+        private int shieldsIncreased = 0;
+
         @Override
         public Class<MysticalBarrierStats> getClazz() {
             return MysticalBarrierStats.class;
@@ -335,6 +339,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
             statsDisplay.add(new AbilityStatDisplay("Times Cooldowns Increased", timesCooldownsIncreased));
             statsDisplay.add(new AbilityStatDisplay("Times Teammates Shielded", timesTeammatesShielded));
             statsDisplay.add(new AbilityStatDisplay("Times Carrier Shielded", timesCarrierShielded));
+            statsDisplay.add(new AbilityStatDisplay("Shields Increased", shieldsIncreased));
             return statsDisplay;
         }
 
@@ -345,6 +350,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
             stats.timesCarrierShielded = this.timesCarrierShielded + other.timesCarrierShielded * multiplier;
             stats.meleesReduced = this.meleesReduced + other.meleesReduced * multiplier;
             stats.timesCooldownsIncreased = this.timesCooldownsIncreased + other.timesCooldownsIncreased * multiplier;
+            stats.shieldsIncreased = this.shieldsIncreased + other.shieldsIncreased * multiplier;
             return stats;
         }
 
