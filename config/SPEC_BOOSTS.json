@@ -591,9 +591,9 @@
         "name": "Abyssal Grasp",
         "description": "Increase the damage of {{aqua:Soul Shackle}} by {{damage}} and reduce the range to {{blocks}}. {{aqua:Soul Shackle}} now pulls the target directly in front of you. Has reduced effect on flag carriers.",
         "soulShackleDamageIncrease": 150,
-        "soulShackleRange": 9,
-        "normalPullRange": 7,
-        "flagCarrierPullRange": 4
+        "soulShackleRange": 13,
+        "normalPullRange": 10,
+        "flagCarrierPullRange": 6
       },
       "sanctionBurst": {
         "difficulty": 3,
@@ -613,11 +613,11 @@
         "vindicateVINDDurationTicks": 40,
         "vindicateDamageResistanceDurationTicks": 160,
         "vindicateLeapDamage": {
-          "min": 468,
-          "max": 857
+          "min": 568,
+          "max": 757
         },
         "vindicateLeapRadius": 6,
-        "knockbackMagnitude": 1.25,
+        "knockbackMagnitude": 1.5,
         "knockbackY": 0.25,
         "leapMagnitude": 1.5,
         "leapY": 0.7,
