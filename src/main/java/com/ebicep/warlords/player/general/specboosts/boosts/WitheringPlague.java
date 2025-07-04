@@ -81,7 +81,7 @@ public class WitheringPlague implements SpecBoostManager.SpecBoost<WitheringPlag
                         return currentDamageValue;
                     }
                     int hexStacks = (int) new CooldownFilter<>(victim, RegularCooldown.class).filterCooldownClass(PoisonousHex.class).stream().count();
-                    PoisonousHex hex = PoisonousHex.getFromHex(victim);
+                    PoisonousHex hex = PoisonousHex.getFromHex(warlordsEntity);
                     int maxStacks = hex.getMaxStacks();
                     if (hexStacks < maxStacks) {
                         return currentDamageValue;
