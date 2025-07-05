@@ -514,9 +514,11 @@
       "augmentedChains": {
         "difficulty": 3,
         "name": "Augmented Chains",
-        "description": "{{aqua:Earthen Spike}} reduces the cooldown of {{aqua:Chain Heal}} by {{ticks}} upon hitting a target. Increase the healing of {{aqua:Chain Heal}} by {{heal;%}}.",
+        "description": "{{aqua:Earthen Spike}} reduces the cooldown of {{aqua:Chain Heal}} by {{ticks}} upon hitting a target. Increase the healing of {{aqua:Chain Heal}} by {{heal;%}} and decrease the energy cost by {{energy}}. Decrease the damage of {{aqua:Boulder}} by {{damage;%}}.",
         "chainHealCooldownReductionSeconds": 2,
-        "chainHealHealingIncreasePercent": 15
+        "chainHealHealingIncreasePercent": 15,
+        "chainHealEnergyCostDecrease": 20,
+        "boulderDamageDecreasePercent": 10
       },
       "totemicBoon": {
         "difficulty": 2,
