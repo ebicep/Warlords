@@ -6,10 +6,14 @@ import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.state.PlayingState;
+import com.ebicep.warlords.party.Party;
+import com.ebicep.warlords.party.PartyManager;
+import com.ebicep.warlords.party.PartyPlayer;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.java.NumberFormat;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
@@ -122,6 +126,10 @@ public class AFKDetectionOption implements Option {
                                 freezeOption.addFrozenCause(Component.text(we.getName(), NamedTextColor.AQUA)
                                                                      .append(Component.text(" has been detected as AFK.", NamedTextColor.RED)));
                                 wasFrozen = true;
+                                Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(we.getUuid());
+                                if (partyPlayerPair != null) {
+                                    partyPlayerPair.getA().afk(we.getUuid());
+                                }
                             });
                         }
                     }
