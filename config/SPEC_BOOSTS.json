@@ -32,13 +32,13 @@
         "damageIncreasePercent": 10,
         "infernoDamageIncreasePercent": 20,
         "damageReductionAbilities": [
-          "Last Stand",
-          "Ice Barrier",
           "Arcane Shield",
-          "Prism Guard",
-          "Intervene",
-          "Solitary",
+          "Ice Barrier",
           "Ice Block",
+          "Intervene",
+          "Last Stand",
+          "Solitary",
+          "Prism Guard",
           "Contagious Facade",
           "Mystical Barrier"
         ]
@@ -198,7 +198,7 @@
         "healthIncrease": 1200,
         "maxEnergyIncrease": 100,
         "berserkCooldownIncreaseTicks": 360,
-        "berserkActivationHeal": 2000
+        "berserkActivationHeal": 1800
       },
       "striker": {
         "difficulty": 1,
@@ -381,8 +381,8 @@
         "description": "Gain {{heal}} max health and {{energy;}} max energy. {{aqua:Protector's Strike}} now heals you for {{heal;%}} and allies for {{heal;%}}.",
         "healthIncrease": 500,
         "maxEnergyIncrease": 50,
-        "strikeSelfHealingPercent": 90,
-        "strikeAllyHealingPercent": 70
+        "strikeSelfHealingPercent": 80,
+        "strikeAllyHealingPercent": 80
       },
       "lustrousCrown": {
         "difficulty": 1,
@@ -506,17 +506,22 @@
       "earthboundInfusion": {
         "difficulty": 2,
         "name": "Earthbound Infusion",
-        "description": "Gain {{heal}} max health. Increase the number of guaranteed hits of {{aqua:Earthliving Weapon}} by {{blue}} and the healing by {{heal}} if you are the only player healed.",
-        "healthIncrease": 500,
+        "description": "Gain {{heal}} max health. Decrease the cooldown of {{aqua:Earthliving Weapon}} by {{ticks}}, decrease the duration by {{ticks}}, increase the number of guaranteed hits by {{blue}}, and increase the healing by {{heal}} if you are the only player healed. Increase the range of {{aqua:Chain Heal}} by {{blocks}}.",
+        "healthIncrease": 600,
+        "earthlivingCooldownReductionSeconds": 3,
+        "earthlivingDurationDecreaseTicks": 60,
         "earthlivingExtraGuaranteedHits": 1,
-        "earthlivingSingleHealBonus": 200
+        "earthlivingSingleHealBonus": 150,
+        "ChainHealRangeIncrease": 20
       },
       "augmentedChains": {
         "difficulty": 3,
         "name": "Augmented Chains",
-        "description": "{{aqua:Earthen Spike}} reduces the cooldown of {{aqua:Chain Heal}} by {{ticks}} upon hitting a target. Increase the healing of {{aqua:Chain Heal}} by {{heal;%}}.",
+        "description": "{{aqua:Earthen Spike}} reduces the cooldown of {{aqua:Chain Heal}} by {{ticks}} upon hitting a target. Increase the healing of {{aqua:Chain Heal}} by {{heal;%}} and decrease the energy cost by {{energy}}. Decrease the damage of {{aqua:Boulder}} by {{damage;%}}.",
         "chainHealCooldownReductionSeconds": 2,
-        "chainHealHealingIncreasePercent": 15
+        "chainHealHealingIncreasePercent": 15,
+        "chainHealEnergyCostDecrease": 20,
+        "boulderDamageDecreasePercent": 10
       },
       "totemicBoon": {
         "difficulty": 2,
@@ -700,7 +705,7 @@
         "difficulty": 3,
         "name": "Withering Plague",
         "description": "{{aqua:Astral Plague}} no longer grants shield piercing. For the duration of {{aqua:Astral Plague}} increase the damage dealt to non-Tank enemies with max stacks of {{dark_red:PHEX}} by {{damage;%}}.",
-        "damageIncrease": 40
+        "damageIncrease": 35
       },
       "airStrike": {
         "difficulty": 5,

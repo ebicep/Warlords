@@ -176,7 +176,7 @@ public class SuperBrew extends AbstractAbility implements OrangeAbilityIcon, Hit
                 .emptyLine()
                 .text("If no ally is targeted, receive the brew yourself.")
                 .emptyLine()
-                .text("A player can only have one super brew active and only one super brew can be active at a time from you. ")
+                .text("A player can only have one Super Brew active and ONLY ONE Super Brew can be active at a time from you.")
                 .build();
     }
 
