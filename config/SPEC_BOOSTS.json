@@ -746,7 +746,7 @@
         "difficulty": 3,
         "name": "Lone Sentinel",
         "description": "Gain {{damageReduction;%}} damage resistance. Increase the healing of {{aqua:Energy Seer}} to {{heal;%}}. Reduce the pierce for allies of {{aqua:Fortifying Hex}} by {{blue}}. {{aqua:Mystical Barrier}} can only affect yourself.",
-        "resistanceIncreasePercent": 15,
+        "resistanceIncreasePercent": 10,
         "energySeerHealingMultiplier": 500,
         "fortifyingHexAllyPierceReduction": 1
       },
