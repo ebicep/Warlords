@@ -10,8 +10,10 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.util.java.NumberFormat;
+import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -49,6 +51,7 @@ public class Parry extends AbstractAbility implements AbilityStats<Parry, Parry.
 
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
+        Utils.playGlobalSound(wp.getLocation(), Sound.ITEM_ARMOR_EQUIP_IRON, 2, 0.5f);
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "BLOCK",
@@ -87,6 +90,7 @@ public class Parry extends AbstractAbility implements AbilityStats<Parry, Parry.
                         if (event.getFlags().contains(InstanceFlags.DOT)) {
                             return;
                         }
+                        Utils.playGlobalSound(wp.getLocation(), Sound.ITEM_SHIELD_BLOCK, 10, .7f);
                         WarlordsEntity source = event.getSource();
                         wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" You ", NamedTextColor.GRAY))
                                                                       .append(Component.text("Parried", NamedTextColor.YELLOW))
