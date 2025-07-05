@@ -32,13 +32,13 @@
         "damageIncreasePercent": 10,
         "infernoDamageIncreasePercent": 20,
         "damageReductionAbilities": [
-          "Last Stand",
-          "Ice Barrier",
           "Arcane Shield",
-          "Prism Guard",
-          "Intervene",
-          "Solitary",
+          "Ice Barrier",
           "Ice Block",
+          "Intervene",
+          "Last Stand",
+          "Solitary",
+          "Prism Guard",
           "Contagious Facade",
           "Mystical Barrier"
         ]
