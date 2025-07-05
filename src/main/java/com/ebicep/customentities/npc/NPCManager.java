@@ -1,10 +1,15 @@
 package com.ebicep.customentities.npc;
 
 import com.ebicep.customentities.npc.traits.*;
+import com.ebicep.holograms.Hologram;
+import com.ebicep.holograms.HologramDataText;
+import com.ebicep.holograms.HologramManager;
+import com.ebicep.holograms.VisibilityType;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.game.option.pve.ReadyUpOption;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.DespawnReason;
@@ -15,9 +20,11 @@ import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitInfo;
 import net.citizensnpcs.api.trait.trait.Equipment;
 import net.citizensnpcs.trait.*;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Display;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
@@ -70,30 +77,6 @@ public class NPCManager {
         npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 20.5, 82, 140.5, 45, 0));
     }
 
-    public static void createTeamDeathmatchNPC() {
-        registerTrait(TeamDeathmatchTrait.class, "TeamDeathmatchTrait");
-
-        NPC npc = NPC_REGISTRY.createNPC(EntityType.PLAYER, "team-deathmatch");
-        npc.addTrait(TeamDeathmatchTrait.class);
-//        npc.getOrAddTrait(SkinTrait.class).setSkinName("Richdragon123");
-
-        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
-
-        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 2.5, 82, 140.5, -45, 0));
-    }
-
-    public static void createInterceptionNPC() {
-        registerTrait(InterceptionTrait.class, "InterceptionTrait");
-
-        NPC npc = NPC_REGISTRY.createNPC(EntityType.PLAYER, "interception");
-        npc.addTrait(InterceptionTrait.class);
-//        npc.getOrAddTrait(SkinTrait.class).setSkinName("AwesomeRaki");
-
-        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
-
-        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 5.5, 82, 138.5, -45, 0));
-    }
-
     private static void createWaveDefenseNPC() {
         registerTrait(PvEStartTrait.class, "PveStartTrait");
 
@@ -116,6 +99,37 @@ public class NPCManager {
         npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 5.5, 82, 160.5, -135, 0));
     }
 
+    public static void createTeamDeathmatchNPC() {
+        registerTrait(TeamDeathmatchTrait.class, "TeamDeathmatchTrait");
+
+        NPC npc = NPC_REGISTRY.createNPC(EntityType.PLAYER, "team-deathmatch");
+        npc.addTrait(TeamDeathmatchTrait.class);
+//        npc.getOrAddTrait(SkinTrait.class).setSkinName("Richdragon123");
+
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
+
+        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 2.5, 82, 140.5, -45, 0));
+    }
+
+    public static void registerTrait(Class<? extends Trait> trait, String traitName) {
+        if (CitizensAPI.getTraitFactory().getTrait(traitName) != null) {
+            CitizensAPI.getTraitFactory().deregisterTrait(TraitInfo.create(trait).withName(traitName));
+        }
+        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(trait).withName(traitName));
+    }
+
+    public static void createInterceptionNPC() {
+        registerTrait(InterceptionTrait.class, "InterceptionTrait");
+
+        NPC npc = NPC_REGISTRY.createNPC(EntityType.PLAYER, "interception");
+        npc.addTrait(InterceptionTrait.class);
+//        npc.getOrAddTrait(SkinTrait.class).setSkinName("AwesomeRaki");
+
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
+
+        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 5.5, 82, 138.5, -45, 0));
+    }
+
     private static void createTreasureHuntNPC() {
         registerTrait(TreasureHuntStartTrait.class, "TreasureHuntStartTrait");
 
@@ -136,13 +150,6 @@ public class NPCManager {
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
         npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 2.5, 82, 158.5, -135, 0));
-    }
-
-    public static void registerTrait(Class<? extends Trait> trait, String traitName) {
-        if (CitizensAPI.getTraitFactory().getTrait(traitName) != null) {
-            CitizensAPI.getTraitFactory().deregisterTrait(TraitInfo.create(trait).withName(traitName));
-        }
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(trait).withName(traitName));
     }
 
     public static void createDatabaseRequiredNPCs() {
@@ -190,16 +197,25 @@ public class NPCManager {
 
         NPC npc = NPC_REGISTRY.createNPC(EntityType.VILLAGER, "weapon-manager");
         npc.addTrait(WeaponMangerTrait.class);
-        HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
-//        hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK");
-        hologramTrait.setLine(0, ChatColor.GREEN + "The Weaponsmith");
+
         LookClose lookClose = npc.getOrAddTrait(LookClose.class);
         lookClose.setPerPlayer(true);
         lookClose.toggle();
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
-        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 53.5, 81, 157.5, 180, 0));
+        Location location = new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 53.5, 81, 157.5, 180, 0);
+        npc.spawn(location);
 
+        HologramDataText hologramDataText = new HologramDataText.Builder<>(ComponentBuilder.create(
+                "The Weaponsmith",
+                NamedTextColor.GREEN
+        ).build()).setBillboard(Display.Billboard.CENTER).build();
+        HologramManager.addHologram(new Hologram.Builder(
+                        "theWeaponsmith",
+                        location.clone().add(0, 2.1, 0),
+                        player -> hologramDataText
+                ).setVisibility(VisibilityType.ALL).build()
+        );
     }
 
     public static void createLegendaryWeaponNPC() {
@@ -216,6 +232,33 @@ public class NPCManager {
 
     }
 
+    public static void createSupplyDropFairNPC() {
+        registerTrait(SupplyDropTrait.class, "SupplyDropTrait");
+
+        NPC npc = NPC_REGISTRY.createNPC(EntityType.RABBIT, "supply-drop");
+        npc.addTrait(SupplyDropTrait.class);
+
+        LookClose lookClose = npc.getOrAddTrait(LookClose.class);
+        lookClose.setPerPlayer(true);
+        lookClose.toggle();
+
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
+
+        Location location = new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 49.5, 81, 142.5, 0, 0);
+        npc.spawn(location);
+
+        HologramDataText hologramDataText = new HologramDataText.Builder<>(ComponentBuilder.create(
+                "Supply Drop Susan",
+                NamedTextColor.GREEN
+        ).build()).setBillboard(Display.Billboard.CENTER).build();
+        HologramManager.addHologram(new Hologram.Builder(
+                        "supplyDropSusan",
+                        location.clone().add(0, .6, 0),
+                        player -> hologramDataText
+                ).setVisibility(VisibilityType.ALL).build()
+        );
+    }
+
     public static void createBountyMenuNPC() {
         registerTrait(BountyMenuTrait.class, "BountyMenuTrait");
 
@@ -226,16 +269,25 @@ public class NPCManager {
                 "ewogICJ0aW1lc3RhbXAiIDogMTY5MTU2ODc1NjcyOSwKICAicHJvZmlsZUlkIiA6ICI0YjJlMGM1ODliZjU0ZTk1OWM1ZmJlMzg5MjQ1MzQzZSIsCiAgInByb2ZpbGVOYW1lIiA6ICJfTmVvdHJvbl8iLAogICJzaWduYXR1cmVSZXF1aXJlZCIgOiB0cnVlLAogICJ0ZXh0dXJlcyIgOiB7CiAgICAiU0tJTiIgOiB7CiAgICAgICJ1cmwiIDogImh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjAwMzhmNTU5MDBjNTgzZjJhNzE3NWE1MDFhNTU1MWE2ZjBlNjM4OGVkYzkyNzBhZjk2NDk4N2YzYjNmMTNjNSIsCiAgICAgICJtZXRhZGF0YSIgOiB7CiAgICAgICAgIm1vZGVsIiA6ICJzbGltIgogICAgICB9CiAgICB9CiAgfQp9"
         );
         npc.addTrait(BountyMenuTrait.class);
-        HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
-//        hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK");
-        hologramTrait.setLine(0, ChatColor.AQUA + "Bounty Hunter");
+
         LookClose lookClose = npc.getOrAddTrait(LookClose.class);
         lookClose.setPerPlayer(true);
         lookClose.toggle();
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
-        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 29.5, 81, 166.5, 90, 0));
+        Location location = new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 29.5, 81, 166.5, 90, 0);
+        npc.spawn(location);
 
+        HologramDataText hologramDataText = new HologramDataText.Builder<>(ComponentBuilder.create(
+                "Bounty Hunter",
+                NamedTextColor.AQUA
+        ).build()).setBillboard(Display.Billboard.CENTER).build();
+        HologramManager.addHologram(new Hologram.Builder(
+                        "bountyHunter",
+                        location.clone().add(0, 2.1, 0),
+                        player -> hologramDataText
+                ).setVisibility(VisibilityType.ALL).build()
+        );
     }
 
     public static void createStarPieceSynthesizerNPC() {
@@ -259,13 +311,22 @@ public class NPCManager {
         LookClose lookClose = npc.getOrAddTrait(LookClose.class);
         lookClose.setPerPlayer(true);
         lookClose.toggle();
-        HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
-//        hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK");
-        hologramTrait.setLine(0, ChatColor.GREEN + "Ethical Enya");
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
 
-        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 64, 81, 154.5, 90, 0));
+        Location location = new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 64, 81, 154.5, 90, 0);
+        npc.spawn(location);
+
+        HologramDataText hologramDataText = new HologramDataText.Builder<>(ComponentBuilder.create(
+                "Ethical Enya",
+                NamedTextColor.GREEN
+        ).build()).setBillboard(Display.Billboard.CENTER).build();
+        HologramManager.addHologram(new Hologram.Builder(
+                        "ethicalEnya",
+                        location.clone().add(0, 2.1, 0),
+                        player -> hologramDataText
+                ).setVisibility(VisibilityType.ALL).build()
+        );
     }
 
     public static void createIllusionVendorNPC() {
@@ -290,13 +351,22 @@ public class NPCManager {
         npc.addTrait(ItemMichaelTrait.class);
         npc.getOrAddTrait(LookClose.class)
            .toggle();
-        HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
-//        hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK");
-        hologramTrait.setLine(0, ChatColor.GREEN + "Mysterious Michael");
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
 
-        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), -2528, 50, 770, 125, 0));
+        Location location = new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), -2528, 50, 770, 125, 0);
+        npc.spawn(location);
+
+        HologramDataText hologramDataText = new HologramDataText.Builder<>(ComponentBuilder.create(
+                "Mysterious Michael",
+                NamedTextColor.GREEN
+        ).build()).setBillboard(Display.Billboard.CENTER).build();
+        HologramManager.addHologram(new Hologram.Builder(
+                        "mysteriousMichael",
+                        location.clone().add(0, 2.1, 0),
+                        player -> hologramDataText
+                ).setVisibility(VisibilityType.ALL).build()
+        );
     }
 
     public static void createQuestMenuNPC() {
@@ -321,25 +391,6 @@ public class NPCManager {
 
         NPC_REGISTRY.despawnNPCs(DespawnReason.RELOAD);
         NPC_REGISTRY.deregisterAll();
-    }
-
-    public static void createSupplyDropFairNPC() {
-        registerTrait(SupplyDropTrait.class, "SupplyDropTrait");
-
-        NPC npc = NPC_REGISTRY.createNPC(EntityType.RABBIT, "supply-drop");
-        npc.addTrait(SupplyDropTrait.class);
-        HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
-//        hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK");
-        hologramTrait.setLine(0, ChatColor.GREEN + "Supply Drop Susan");
-        //hologramTrait.setLine(2, ChatColor.GOLD.toString() + ChatColor.MAGIC + "   " + ChatColor.GOLD + " ROLL FOR GREAT REWARDS " + ChatColor.MAGIC + "   ");
-
-        LookClose lookClose = npc.getOrAddTrait(LookClose.class);
-        lookClose.setPerPlayer(true);
-        lookClose.toggle();
-
-        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
-
-        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 49.5, 81, 142.5, 0, 0));
     }
 
     public static void createMysteriousTokenNPC() {

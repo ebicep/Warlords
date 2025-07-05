@@ -200,6 +200,14 @@ public class HologramManager implements Listener {
         hologram.getVisibilityManager().removeCurrentViewer(player.getUniqueId());
     }
 
+    public static void updateHologram(Hologram hologram) {
+        for (Player player : hologram.getLocation().getWorld().getPlayers()) {
+            if (hologram.withinRange(player)) {
+                updateHologram(player, hologram);
+            }
+        }
+    }
+
     public static void updateHologram(Player player, Hologram hologram) {
         HologramData data = hologram.getDataForPlayer(player);
         if (data == null) {
