@@ -394,7 +394,7 @@
       },
       "hammerOfJudgement": {
         "difficulty": 3,
-        "name": "Hammer of Judgement",
+        "name": "Mega Hammer",
         "description": "Increase the cooldown of {{aqua:Hammer of Light}} by {{ticks}}. Upon cast, enemies within {{blocks}} take {{damage}} damage and will be Consecrated for {{ticks}}. Consecrated enemies cannot be hit by your {{aqua:Consecrate}}.",
         "hammerOfLightCooldownIncreaseTicks": 200,
         "hammerThrowRadius": 8,
