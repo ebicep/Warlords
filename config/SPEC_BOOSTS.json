@@ -276,7 +276,7 @@
         "difficulty": 1,
         "name": "Conduit",
         "description": "Increase the damage of {{aqua:Avenger's Strike}} by {{damage;%}} and the energy removal by {{energy}}.",
-        "avengerStrikeDamageIncreasePercent": 10,
+        "avengerStrikeDamageIncreasePercent": 8,
         "energyRemovalIncrease": 5
       },
       "armOfTheAlmighty": {
