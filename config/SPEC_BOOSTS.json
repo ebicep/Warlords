@@ -198,7 +198,7 @@
         "healthIncrease": 1200,
         "maxEnergyIncrease": 100,
         "berserkCooldownIncreaseTicks": 360,
-        "berserkActivationHeal": 2000
+        "berserkActivationHeal": 1800
       },
       "striker": {
         "difficulty": 1,
