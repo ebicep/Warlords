@@ -1,5 +1,6 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
+import com.ebicep.warlords.abilities.ChainHeal;
 import com.ebicep.warlords.abilities.EarthlivingWeapon;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
@@ -14,14 +15,20 @@ import java.util.List;
 public class EarthboundInfusion implements SpecBoostManager.SpecBoost<EarthboundInfusion> {
 
     private int healthIncrease;
+    private float earthlivingCooldownReductionSeconds;
+    private int earthlivingDurationDecreaseTicks;
     private int earthlivingExtraGuaranteedHits;
     private int earthlivingSingleHealBonus;
+    private int chainHealRangeIncrease;
 
     @Override
     public void init() {
         this.healthIncrease = getValue("healthIncrease", int.class);
+        this.earthlivingCooldownReductionSeconds = getValue("earthlivingCooldownReductionSeconds", float.class);
+        this.earthlivingDurationDecreaseTicks = getValue("earthlivingDurationDecreaseTicks", int.class);
         this.earthlivingExtraGuaranteedHits = getValue("earthlivingExtraGuaranteedHits", int.class);
         this.earthlivingSingleHealBonus = getValue("earthlivingSingleHealBonus", int.class);
+        this.chainHealRangeIncrease = getValue("chainHealRangeIncrease", int.class);
     }
 
     @Override
@@ -36,7 +43,7 @@ public class EarthboundInfusion implements SpecBoostManager.SpecBoost<Earthbound
 
     @Override
     public List<Object> getVariables() {
-        return List.of(healthIncrease, earthlivingExtraGuaranteedHits, earthlivingSingleHealBonus);
+        return List.of(healthIncrease, earthlivingCooldownReductionSeconds, earthlivingDurationDecreaseTicks, earthlivingExtraGuaranteedHits, earthlivingSingleHealBonus, chainHealRangeIncrease);
     }
 
     @Override
@@ -55,7 +62,12 @@ public class EarthboundInfusion implements SpecBoostManager.SpecBoost<Earthbound
         public void apply(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getHealth().addAdditiveModifier("Spec Boost (Base)", healthIncrease);
             warlordsPlayer.getAbilitiesMatching(EarthlivingWeapon.class).forEach(earthlivingWeapon -> {
+                earthlivingWeapon.getCooldown().addAdditiveModifier("Spec Boost", -earthlivingCooldownReductionSeconds);
+                earthlivingWeapon.setTickDuration(earthlivingWeapon.getTickDuration() - earthlivingDurationDecreaseTicks);
                 earthlivingWeapon.setGuaranteedHits(earthlivingWeapon.getGuaranteedHits() + earthlivingExtraGuaranteedHits);
+            });
+            warlordsPlayer.getAbilitiesMatching(ChainHeal.class).forEach(chainHeal -> {
+                chainHeal.setRadius(chainHeal.getRadius() + chainHealRangeIncrease);
             });
             warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
                     getStringName(),

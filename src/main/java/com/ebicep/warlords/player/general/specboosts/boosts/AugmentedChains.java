@@ -1,5 +1,6 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
+import com.ebicep.warlords.abilities.Boulder;
 import com.ebicep.warlords.abilities.ChainHeal;
 import com.ebicep.warlords.abilities.EarthenSpike;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
@@ -17,11 +18,15 @@ public class AugmentedChains implements SpecBoostManager.SpecBoost<AugmentedChai
 
     private float chainHealCooldownReductionSeconds;
     private float chainHealHealingIncreasePercent;
+    private float chainHealEnergyCostDecrease;
+    private float boulderDamageDecreasePercent;
 
     @Override
     public void init() {
         this.chainHealCooldownReductionSeconds = getValue("chainHealCooldownReductionSeconds", float.class);
         this.chainHealHealingIncreasePercent = getValue("chainHealHealingIncreasePercent", float.class);
+        this.chainHealEnergyCostDecrease = getValue("chainHealEnergyCostDecrease", float.class);
+        this.boulderDamageDecreasePercent = getValue("boulderDamageDecreasePercent", float.class);
     }
 
     @Override
@@ -31,7 +36,7 @@ public class AugmentedChains implements SpecBoostManager.SpecBoost<AugmentedChai
 
     @Override
     public List<Object> getVariables() {
-        return List.of(chainHealCooldownReductionSeconds, chainHealHealingIncreasePercent);
+        return List.of(chainHealCooldownReductionSeconds, chainHealHealingIncreasePercent, chainHealEnergyCostDecrease, boulderDamageDecreasePercent);
     }
 
     @Override
@@ -55,6 +60,12 @@ public class AugmentedChains implements SpecBoostManager.SpecBoost<AugmentedChai
             warlordsPlayer.getAbilitiesMatching(ChainHeal.class).forEach(chainHeal -> {
                 chainHeal.getHealValues().getChainHealing().forEachValue(floatModifiable ->
                         floatModifiable.addMultiplicativeModifierAdd("Spec Boost", chainHealHealingIncreasePercent / 100)
+                );
+                chainHeal.getEnergyCost().addAdditiveModifier("Spec Boost", -chainHealEnergyCostDecrease);
+            });
+            warlordsPlayer.getAbilitiesMatching(Boulder.class).forEach(boulder -> {
+                boulder.getDamageValues().getBoulderDamage().forEachValue(floatModifiable ->
+                        floatModifiable.addMultiplicativeModifierAdd("Spec Boost", -boulderDamageDecreasePercent / 100)
                 );
             });
         }

@@ -1482,7 +1482,7 @@
         "name": "Super Brew",
         "cooldown": 5,
         "energyCost": 40,
-        "tickDuration": 800,
+        "tickDuration": 1200,
         "radius": 10,
         "energyPerSecondIncrease": 5,
         "maxEnergyIncrease": 100,
