@@ -700,7 +700,7 @@
         "difficulty": 3,
         "name": "Withering Plague",
         "description": "{{aqua:Astral Plague}} no longer grants shield piercing. For the duration of {{aqua:Astral Plague}} increase the damage dealt to non-Tank enemies with max stacks of {{dark_red:PHEX}} by {{damage;%}}.",
-        "damageIncrease": 40
+        "damageIncrease": 35
       },
       "airStrike": {
         "difficulty": 5,
