@@ -512,7 +512,7 @@
         "earthlivingDurationDecreaseTicks": 60,
         "earthlivingExtraGuaranteedHits": 1,
         "earthlivingSingleHealBonus": 150,
-        "ChainHealRangeIncrease": 20
+        "chainHealRangeIncrease": 20
       },
       "augmentedChains": {
         "difficulty": 3,
