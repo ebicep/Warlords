@@ -8,6 +8,7 @@
       "baseMeleeCooldown": 20,
       "playerMeleeCooldown": 13,
       "regenHealth": 110,
+      "maxCompGamePlayerCount": 24,
       "ctf": {
         "spawnDamageTickDuration": 200,
         "spawnDamageBoost": 30,

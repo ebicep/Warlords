@@ -6,6 +6,7 @@ import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.HelpEntry;
 import co.aikar.commands.annotation.*;
 import com.ebicep.jda.queuesystem.QueueManager;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.party.Party;
 import com.ebicep.warlords.party.PartyManager;
 import com.ebicep.warlords.party.PartyPlayer;
@@ -339,8 +340,9 @@ public class PartyCommand extends BaseCommand {
     @Description("Invites the players in the queue")
     public void inviteQueue(@Conditions("party:true") Player player, PartyPlayerWrapper partyPlayerWrapper) {
         int partySize = partyPlayerWrapper.getParty().getPartyPlayers().size();
-        if (partySize != 24) {
-            int availableSpots = 24 - partySize;
+        int maxPartySize = ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "maxCompGamePlayerCount", int.class);
+        if (partySize != maxPartySize) {
+            int availableSpots = maxPartySize - partySize;
             int onlineQueueSize = (int) QueueManager.QUEUE.stream().filter(uuid -> Bukkit.getPlayer(uuid) != null).count();
             List<UUID> toInvite = new ArrayList<>();
             int inviteNumber;
