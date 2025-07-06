@@ -17,6 +17,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class AbstractSeismicWave extends AbstractAbility implements RedAbilityIcon, AbilityStats<AbstractSeismicWave, AbstractSeismicWave.AbstractSeismicWaveStats> {
 
@@ -47,11 +48,15 @@ public abstract class AbstractSeismicWave extends AbstractAbility implements Red
 
         new GameRunnable(wp.getGame()) {
 
+            final ThreadLocalRandom random = ThreadLocalRandom.current();
+
             @Override
             public void run() {
                 for (List<Location> fallingBlockLocation : fallingBlockLocations) {
                     for (Location location : fallingBlockLocation) {
-                        Utils.addFallingBlock(location);
+                        if (random.nextDouble() < 0.6) {
+                            Utils.addFallingBlock(location);
+                        }
                     }
                     fallingBlockLocations.remove(fallingBlockLocation);
                     break;

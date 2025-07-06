@@ -20,6 +20,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class AbstractGroundSlam extends AbstractAbility implements PurpleAbilityIcon, HitBox, AbilityStats<AbstractGroundSlam, AbstractGroundSlam.AbstractGroundSlamStats> {
 
@@ -111,11 +112,16 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
         fallingBlockLocations.get(0).add(wp.getLocation());
 
         new GameRunnable(wp.getGame()) {
+
+            final ThreadLocalRandom random = ThreadLocalRandom.current();
+
             @Override
             public void run() {
                 for (List<Location> fallingBlockLocation : fallingBlockLocations) {
                     for (Location location : fallingBlockLocation) {
-                        Utils.addFallingBlock(location);
+                        if (random.nextDouble() < 0.6) {
+                            Utils.addFallingBlock(location);
+                        }
                         // Damage
                         for (WarlordsEntity slamTarget : PlayerFilter
                                 .entitiesAroundRectangle(location.clone().add(0, -.75, 0), 0.6, 4.5, 0.6)
