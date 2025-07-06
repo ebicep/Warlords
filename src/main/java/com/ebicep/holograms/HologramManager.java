@@ -50,7 +50,7 @@ public class HologramManager implements Listener {
 
             @Override
             public void run() {
-                HOLOGRAMS.forEach((s, hologram) -> {
+                for (Hologram hologram : HOLOGRAMS.values()) {
                     Location location = hologram.getLocation();
                     World world = location.getWorld();
                     VisibilityManager visibilityManager = hologram.getVisibilityManager();
@@ -77,7 +77,7 @@ public class HologramManager implements Listener {
                             }
                         }
                     }
-                });
+                }
             }
 
         }.runTaskTimerAsynchronously(instance, 0, 10);
