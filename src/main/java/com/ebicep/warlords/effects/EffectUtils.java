@@ -29,25 +29,39 @@ import static java.lang.Math.sin;
 public class EffectUtils {
 
     /**
-     * @param loc          what location should the sphere be around.
+     * @param center       what location should the sphere be around.
      * @param sphereRadius is how big the sphere should be.
      * @param red          is the RGB assigned color for the particles.
      * @param green        is the RGB assigned color for the particles.
      * @param blue         is the RGB assigned color for the particles.
      */
-    public static void playSphereAnimation(Location loc, double sphereRadius, int red, int green, int blue) {
-        loc.add(0, 1, 0);
-        for (double i = 0; i <= Math.PI; i += Math.PI / 10) {
+    public static void playSphereAnimation(Location center, double sphereRadius, int red, int green, int blue) {
+        Particle.DustOptions data = new Particle.DustOptions(Color.fromRGB(red, green, blue), 1);
+        Location particleLoc = new Location(center.getWorld(), 0, 0, 0);
+
+        double centerX = center.getX();
+        double centerY = center.getY() + 1; // one block above
+        double centerZ = center.getZ();
+
+        int quality = 6;
+        double verticalStep = Math.PI / quality; // fewer latitudinal slices
+
+        for (double i = 0; i <= Math.PI; i += verticalStep) {
             double radius = Math.sin(i) * sphereRadius + 0.5;
-            double y = cos(i) * sphereRadius;
-            for (double a = 0; a < Math.PI * 2; a += Math.PI / 10) {
-                double x = cos(a) * radius;
+            double y = Math.cos(i) * sphereRadius;
+
+            // Dynamic horizontal resolution: more points near equator
+            double horizontalStep = Math.PI / (quality + Math.abs(Math.cos(i)) * quality); // wider gaps near poles
+
+            for (double a = 0; a < Math.PI * 2; a += horizontalStep) {
+                double x = Math.cos(a) * radius;
                 double z = Math.sin(a) * radius;
 
-                loc.add(x, y, z);
-                Particle.DustOptions data = new Particle.DustOptions(Color.fromRGB(red, green, blue), 1);
-                displayParticle(Particle.DUST, loc, 1, data);
-                loc.subtract(x, y, z);
+                particleLoc.setX(centerX + x);
+                particleLoc.setY(centerY + y);
+                particleLoc.setZ(centerZ + z);
+
+                displayParticle(Particle.DUST, particleLoc, 1, data);
             }
         }
     }
