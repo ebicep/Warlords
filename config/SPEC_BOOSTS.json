@@ -240,7 +240,7 @@
         "difficulty": 1,
         "name": "Vibrant Orbs",
         "description": "Increase the healing of {{aqua:Orbs of Life}} by {{heal;%}}.",
-        "healingIncreasePercent": 20
+        "healingIncreasePercent": 25
       },
       "recklessAscent": {
         "difficulty": 2,
