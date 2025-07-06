@@ -154,7 +154,11 @@ public class CustomScoreboard {
             scoreboardTeam.addEntry(ChatColor.values()[team - 1].toString());
             sideBar.getScore(ChatColor.values()[team - 1].toString()).setScore(team);
         }
-        scoreboardTeam.prefix(entry);
+        Component oldPrefix = scoreboardTeam.prefix();
+        Component newPrefix = entry.compact();
+        if (!oldPrefix.equals(newPrefix)) {
+            scoreboardTeam.prefix(newPrefix);
+        }
     }
 
     public static void updateLobbyPlayerNames() {
