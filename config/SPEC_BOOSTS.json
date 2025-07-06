@@ -240,7 +240,7 @@
         "difficulty": 1,
         "name": "Vibrant Orbs",
         "description": "Increase the healing of {{aqua:Orbs of Life}} by {{heal;%}}.",
-        "healingIncreasePercent": 20
+        "healingIncreasePercent": 25
       },
       "recklessAscent": {
         "difficulty": 2,
@@ -704,8 +704,9 @@
       "witheringPlague": {
         "difficulty": 3,
         "name": "Withering Plague",
-        "description": "{{aqua:Astral Plague}} no longer grants shield piercing. For the duration of {{aqua:Astral Plague}} increase the damage dealt to non-Tank enemies with max stacks of {{dark_red:PHEX}} by {{damage;%}}.",
-        "damageIncrease": 35
+        "description": "{{aqua:Astral Plague}} no longer grants shield piercing. For the duration of {{aqua:Astral Plague}} increase the damage dealt to non-Tank enemies with max stacks of {{dark_red:PHEX}} by {{damage;%}}. Reduce the energy cost of {{aqua:Astral Plague}} to {{energy}}.",
+        "damageIncrease": 40,
+        "witheringPlagueEnergyCost": 0
       },
       "airStrike": {
         "difficulty": 5,
@@ -745,9 +746,9 @@
       "loneSentinel": {
         "difficulty": 3,
         "name": "Lone Sentinel",
-        "description": "Gain {{damageReduction;%}} damage resistance. Increase the healing of {{aqua:Energy Seer}} to {{heal;%}}. Reduce the pierce for allies of {{aqua:Fortifying Hex}} by {{blue}}. {{aqua:Mystical Barrier}} can only affect yourself.",
-        "resistanceIncreasePercent": 10,
-        "energySeerHealingMultiplier": 500,
+        "description": "Gain {{damageReduction;%}} damage reduction. Increase the flag multiplier of {{aqua:Fortifying Hex}} to {{damageReduction;x}, but reduce the pierce for allies by {{blue}}. {{aqua:Mystical Barrier}} can only affect yourself.",
+        "resistanceIncreasePercent": 5,
+        "fortifyingHexFlagMultiplier": 3,
         "fortifyingHexAllyPierceReduction": 1
       },
       "pactOfProtection": {

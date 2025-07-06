@@ -135,7 +135,9 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
                 .durationTicks(tickDuration)
                 .text(" and grants")
                 .percent(damageReduction, AbilityDescriptionBuilder.COLOR_BROWN)
-                .text(" damage reduction. Stacks up to")
+                .text(" damage reduction, increased by ")
+                .text(format(damageReductionFlagMultiplier) + "x", AbilityDescriptionBuilder.COLOR_BROWN)
+                .text("on flag carriers. Stacks up to")
                 .text(maxStacks, NamedTextColor.BLUE)
                 .text(" times.")
                 .maxRange(maxFullDistance)
@@ -469,6 +471,10 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
 
     public float getDamageReductionFlagMultiplier() {
         return damageReductionFlagMultiplier;
+    }
+
+    public void setDamageReductionFlagMultiplier(float damageReductionFlagMultiplier) {
+        this.damageReductionFlagMultiplier = damageReductionFlagMultiplier;
     }
 
     @Override

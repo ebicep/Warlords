@@ -11,13 +11,13 @@ import java.util.List;
 public class LoneSentinel implements SpecBoostManager.SpecBoost<LoneSentinel> {
 
     private float resistanceIncreasePercent;
-    private float energySeerHealingMultiplier;
+    private float fortifyingHexFlagMultiplier;
     private int fortifyingHexAllyPierceReduction;
 
     @Override
     public void init() {
         this.resistanceIncreasePercent = getValue("resistanceIncreasePercent", float.class);
-        this.energySeerHealingMultiplier = getValue("energySeerHealingMultiplier", float.class);
+        this.fortifyingHexFlagMultiplier = getValue("fortifyingHexFlagMultiplier", float.class);
         this.fortifyingHexAllyPierceReduction = getValue("fortifyingHexAllyPierceReduction", int.class);
     }
 
@@ -28,7 +28,7 @@ public class LoneSentinel implements SpecBoostManager.SpecBoost<LoneSentinel> {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(resistanceIncreasePercent, energySeerHealingMultiplier, fortifyingHexAllyPierceReduction);
+        return List.of(resistanceIncreasePercent, fortifyingHexFlagMultiplier, fortifyingHexAllyPierceReduction);
     }
 
     @Override
@@ -46,12 +46,8 @@ public class LoneSentinel implements SpecBoostManager.SpecBoost<LoneSentinel> {
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.setDamageResistance(warlordsPlayer.getSpec().getDamageResistance() + resistanceIncreasePercent);
-            warlordsPlayer.getAbilitiesMatching(EnergySeerSentinel.class).forEach(energySeer -> {
-                energySeer.getHealValues().getSeerHealingMultiplier().forEachValue(floatModifiable ->
-                        floatModifiable.addOverridingModifier("Spec Boost", energySeerHealingMultiplier / 100)
-                );
-            });
             warlordsPlayer.getAbilitiesMatching(FortifyingHex.class).forEach(fortifyingHex -> {
+                fortifyingHex.setDamageReductionFlagMultiplier(fortifyingHexFlagMultiplier);
                 fortifyingHex.setMaxAlliesHit(fortifyingHex.getMaxAlliesHit() - fortifyingHexAllyPierceReduction);
             });
             warlordsPlayer.getAbilitiesMatching(MysticalBarrier.class).forEach(mysticalBarrier -> {
