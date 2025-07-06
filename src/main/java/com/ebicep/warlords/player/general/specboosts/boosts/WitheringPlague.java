@@ -20,10 +20,12 @@ import java.util.List;
 public class WitheringPlague implements SpecBoostManager.SpecBoost<WitheringPlague> {
 
     private float damageIncrease;
+    private float witheringPlagueEnergyCost;
 
     @Override
     public void init() {
         this.damageIncrease = getValue("damageIncrease", float.class);
+        this.witheringPlagueEnergyCost = getValue("witheringPlagueEnergyCost", float.class);
     }
 
     @Override
@@ -33,7 +35,7 @@ public class WitheringPlague implements SpecBoostManager.SpecBoost<WitheringPlag
 
     @Override
     public List<Object> getVariables() {
-        return List.of(damageIncrease);
+        return List.of(damageIncrease, witheringPlagueEnergyCost);
     }
 
     @Override
@@ -55,6 +57,7 @@ public class WitheringPlague implements SpecBoostManager.SpecBoost<WitheringPlag
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(AstralPlague.class).forEach(astralPlague -> {
                 astralPlague.setPierceShields(false);
+                astralPlague.getEnergyCost().addOverridingModifier("Spec Boost", witheringPlagueEnergyCost);
             });
         }
 
