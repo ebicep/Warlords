@@ -18,7 +18,7 @@
         "flagDisableRepicks": true,
         "flagBonusRepickMultiplier": 20,
         "flagReturnCarrierMultiplierDecrease": 0.25,
-        "flagReturnSpawnFlagMultiplierDecrease": 0.4,
+        "flagReturnSpawnFlagMultiplierDecrease": 0.5,
         "flagMultiplierCap": 100,
         "flagKillRepickTickCooldown": 10,
         "horseCooldown": 14,
