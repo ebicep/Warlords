@@ -473,6 +473,10 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
         return damageReductionFlagMultiplier;
     }
 
+    public void setDamageReductionFlagMultiplier(float damageReductionFlagMultiplier) {
+        this.damageReductionFlagMultiplier = damageReductionFlagMultiplier;
+    }
+
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity shooter) {
         giveFortifyingHex(shooter, shooter);
