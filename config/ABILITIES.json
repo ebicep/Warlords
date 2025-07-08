@@ -124,7 +124,7 @@
         },
         "healingValues": {
           "bullRushHealing": {
-            "value": 600
+            "value": 800
           }
         },
         "tickDuration": 14,
