@@ -248,7 +248,7 @@
         "description": "Increase the radius of {{aqua:Reckless Charge}} by {{blocks}}, the range by {{blocks}}. Gain {{damageReduction;%}} damage reduction for {{ticks}} after casting {{aqua:Reckless Charge}}. {{aqua:Reckless Charge}} can ascend vertically, but you take {{damage}} when moving vertically.",
         "radiusIncrease": 1,
         "travelDistanceIncrease": 2,
-        "damageReductionPercent": 20,
+        "damageReductionPercent": 15,
         "damageReductionDurationTicks": 40,
         "verticalAscentDamage": 2000,
         "bonusVerticalBlocks": 1.5
