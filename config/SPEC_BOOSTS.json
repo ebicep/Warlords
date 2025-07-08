@@ -399,8 +399,8 @@
         "hammerOfLightCooldownIncreaseTicks": 200,
         "hammerThrowRadius": 8,
         "hammerThrowDamage": {
-          "min": 629,
-          "max": 816
+          "min": 498,
+          "max": 648
         },
         "consecrateDurationTicks": 100
       },
