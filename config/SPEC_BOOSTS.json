@@ -565,7 +565,7 @@
         "description": "{{aqua:Soul Switch}} will now only teleport you to your target and deal {{damage}} true damage. Increase the range of {{aqua:Soul Switch}} by {{blocks}}, and the damage reduction by {{damageReduction;%}}. The target will be trapped in a {{blocks}} radius for {{ticks}}.",
         "soulSwitchRadiusIncrease": 3,
         "soulSwitchVerticalLimit": 5,
-        "soulSwitchDamage": 200,
+        "soulSwitchDamage": 300,
         "soulSwitchDamageReductionIncreasePercent": 15,
         "tetherRadius": 2,
         "tetherTickDuration": 30
