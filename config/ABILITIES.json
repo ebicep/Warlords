@@ -69,14 +69,12 @@
       },
       "blink": {
         "name": "Blink",
-        "cooldown": 9,
+        "cooldown": 10.5,
         "energyCost": 30,
         "radius": 13,
         "radiusFlag": 3.5,
         "verticalLimit": 4,
         "verticalLimitFlag": 0.5,
-        "damageReduction": 10,
-        "damageReductionTickDuration": 60,
         "maxGroundTeleportDistance": 5,
         "healingValues": {
           "blinkHealing": {
