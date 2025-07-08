@@ -650,8 +650,8 @@
         "difficulty": 3,
         "name": "Alchemist's Fury",
         "description": "{{aqua:Soothing Elixir}}'s puddle no longer heals allies. Decrease the cooldown by {{ticks}}, double the projectile speed, increase the damage by {{damage;%}}, and the radius by {{blocks}}. {{aqua:Volatile Brew}} does full damage when activated early.",
-        "soothingElixirCooldownReductionSeconds": 1,
-        "soothingElixirDamageIncreasePercent": 130,
+        "soothingElixirCooldownReductionSeconds": 0.5,
+        "soothingElixirDamageIncreasePercent": 120,
         "soothingElixirProjectileSpeedMultiplier": 2,
         "soothingElixirRadiusIncrease": 1
       },
