@@ -84,8 +84,7 @@
         "healthIncrease": 1300,
         "absorptionDecreasePercent": 25,
         "warpHealDecreasePercent": 7,
-        "recastDelayTicks": 20,
-        "kbResistanceLossOnRecastTicks": 40
+        "recastDelayTicks": 20
       },
       "chillyAura": {
         "difficulty": 1,
