@@ -34,7 +34,7 @@ public class Haze extends AbstractAbility implements OrangeAbilityIcon, Damages<
     private float incomingDamageReduction = 30;
     private float hazeRadius = 5;
     private int hazeSlowness = 20;
-    private int slowDurationTicks = 20;
+    private int hazeSlowDurationTicks = 20;
     private int vulnerableTickDuration = 160;
     private float vulnerableDamageBonus = 20;
 
@@ -50,6 +50,7 @@ public class Haze extends AbstractAbility implements OrangeAbilityIcon, Damages<
         this.incomingDamageReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("incomingDamageReduction"), float.class);
         this.hazeRadius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hazeRadius"), float.class);
         this.hazeSlowness = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hazeSlowness"), int.class);
+        this.hazeSlowDurationTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hazeSlowDurationTicks"), int.class);
         this.vulnerableTickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("vulnerableTickDuration"), int.class);
         this.vulnerableDamageBonus = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("vulnerableDamageBonus"), float.class);
     }
@@ -116,7 +117,7 @@ public class Haze extends AbstractAbility implements OrangeAbilityIcon, Damages<
                                                 .source(wp)
                                                 .value(damageValues.hazeDamage)
                                         );
-                                        enemy.addSpeedModifier(wp, "Haze", -hazeSlowness, slowDurationTicks);
+                                        enemy.addSpeedModifier(wp, "Haze", -hazeSlowness, hazeSlowDurationTicks);
                                     });
                     }
                 })
@@ -161,7 +162,7 @@ public class Haze extends AbstractAbility implements OrangeAbilityIcon, Damages<
                 .text(" and slowing them by ")
                 .percent(hazeSlowness, NamedTextColor.WHITE)
                 .text(" for ")
-                .durationTicks(slowDurationTicks)
+                .durationTicks(hazeSlowDurationTicks)
                 .text(". Judgement Strike and melee attacks will end the skill.")
                 .emptyLine()
                 .text("When Haze ends, all nearby enemies will be marked as Vulnerable. Vulnerable enemies take ")
