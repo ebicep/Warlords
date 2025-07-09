@@ -682,14 +682,21 @@
         "cooldown": 50,
         "energyCost": 0,
         "tickDuration": 160,
-        "incomingDamageReduction": 30,
-        "incomingHealingReduction": 15,
-        "hazeRadius": 6,
+        "speedBuff": 35,
+        "incomingDamageReduction": 20,
+        "hazeRadius": 6.5,
+        "hazeSlowness": 20,
+        "hazeSlownessDurationTicks": 20,
         "vulnerableTickDuration": 120,
         "vulnerableDamageBonus": 10,
         "damageValues": {
           "hazeDamage": {
-            "value": 150
+            "value": 120
+          }
+        },
+        "healingValues": {
+          "hazeHealing": {
+            "value": 1000
           }
         }
       },

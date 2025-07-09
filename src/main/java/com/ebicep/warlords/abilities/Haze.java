@@ -28,11 +28,13 @@ public class Haze extends AbstractAbility implements OrangeAbilityIcon, Damages<
 
     private final VanishStats stats = new VanishStats();
     private final DamageValues damageValues = new DamageValues();
-
+    private final HealingValues healingValues = new Haze.HealingValues();
     private int tickDuration = 100;
+    private int speedBuff = 35;
     private float incomingDamageReduction = 30;
-    private float incomingHealingReduction = 30;
     private float hazeRadius = 5;
+    private int hazeSlowness = 20;
+    private int slowDurationTicks = 20;
     private int vulnerableTickDuration = 160;
     private float vulnerableDamageBonus = 20;
 
@@ -44,9 +46,10 @@ public class Haze extends AbstractAbility implements OrangeAbilityIcon, Damages<
     public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
+        this.speedBuff = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("speedBuff"), int.class);
         this.incomingDamageReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("incomingDamageReduction"), float.class);
-        this.incomingHealingReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("incomingHealingReduction"), float.class);
         this.hazeRadius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hazeRadius"), float.class);
+        this.hazeSlowness = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hazeSlowness"), int.class);
         this.vulnerableTickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("vulnerableTickDuration"), int.class);
         this.vulnerableDamageBonus = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("vulnerableDamageBonus"), float.class);
     }
@@ -59,6 +62,8 @@ public class Haze extends AbstractAbility implements OrangeAbilityIcon, Damages<
             OrderOfEviscerate.giveCloak(wp, tickDuration);
         }
 
+        wp.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(healingValues.hazeHealing));
+        wp.addSpeedModifier(wp, name, speedBuff, tickDuration);
         HazeData data = new HazeData(!FlagHolder.isPlayerHolderFlag(wp));
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
@@ -111,6 +116,7 @@ public class Haze extends AbstractAbility implements OrangeAbilityIcon, Damages<
                                                 .source(wp)
                                                 .value(damageValues.hazeDamage)
                                         );
+                                        enemy.addSpeedModifier(wp, "Haze", -hazeSlowness, slowDurationTicks);
                                     });
                     }
                 })
@@ -130,17 +136,6 @@ public class Haze extends AbstractAbility implements OrangeAbilityIcon, Damages<
                     setTicksLeft(0);
                 }
             }
-
-            @Override
-            public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-                if (!data.vanished) {
-                    return currentHealValue;
-                }
-                if (!event.getSource().equals(wp)) {
-                    return currentHealValue * convertToDivisionDecimal(incomingHealingReduction);
-                }
-                return currentHealValue;
-            }
         });
 
         return true;
@@ -151,16 +146,22 @@ public class Haze extends AbstractAbility implements OrangeAbilityIcon, Damages<
         description = AbilityDescriptionBuilder
                 .create("Cloak yourself for ")
                 .durationTicks(tickDuration)
-                .text(", reducing incoming damage by ")
+                .text(", gaining ")
+                .percent(speedBuff, NamedTextColor.WHITE)
+                .text(" extra movement speed, reducing incoming damage by ")
                 .percent(incomingDamageReduction, NamedTextColor.RED)
-                .text(", and incoming healing by ")
-                .percent(incomingHealingReduction, NamedTextColor.RED)
-                .text(".")
+                .text(", and immediately heal for ")
+                .heal(healingValues.hazeHealing)
+                .text(" health.")
                 .emptyLine()
                 .text("During this period, you will create a haze of smoke around you, dealing ")
                 .damage(damageValues.hazeDamage)
                 .text(" damage per second to all enemies within ")
                 .blocks(hazeRadius)
+                .text(" and slowing them by ")
+                .percent(hazeSlowness, NamedTextColor.WHITE)
+                .text(" for ")
+                .durationTicks(slowDurationTicks)
                 .text(". Judgement Strike and melee attacks will end the skill.")
                 .emptyLine()
                 .text("When Haze ends, all nearby enemies will be marked as Vulnerable. Vulnerable enemies take ")
@@ -213,6 +214,32 @@ public class Haze extends AbstractAbility implements OrangeAbilityIcon, Damages<
 
         public Value.SetValue getHazeDamage() {
             return hazeDamage;
+        }
+
+    }
+
+    public static class HealingValues implements Value.ValueHolder {
+
+        private Value.SetValue hazeHealing = new Value.SetValue(1000);
+
+        private List<Value> values = List.of(hazeHealing);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+        @Override
+        public void init(AbstractAbilityBuilder builder) {
+            this.hazeHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(),
+                    builder.getAppendedFieldNameHealing("hazeHealing"),
+                    Value.SetValue.class
+            );
+            this.values = List.of(hazeHealing);
+        }
+
+        public Value.SetValue getHazeHealing() {
+            return hazeHealing;
         }
 
     }
