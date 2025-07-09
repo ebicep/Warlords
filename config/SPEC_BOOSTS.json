@@ -589,7 +589,7 @@
         "description": "Gain {{heal}} max health. Reduce the cooldown of {{aqua:Heart to Heart}} by {{ticks}} and increase the healing by {{heal}}.",
         "healthIncrease": 400,
         "heartToHeartCooldownReductionSeconds": 2.5,
-        "heartToHeartHealingIncrease": 200
+        "heartToHeartHealingIncrease": 100
       },
       "abyssalGrasp": {
         "difficulty": 4,
