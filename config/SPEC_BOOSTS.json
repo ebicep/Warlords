@@ -699,7 +699,7 @@
         "name": "Contagion",
         "description": "Gain {{energy}} energy per melee hit. Increase the damage reduction of {{aqua:Contagious Facade}} by {{damageReduction;%}}, and its activation effect is activated on use and does not override the nonactivation post effect.",
         "ephIncrease": 6,
-        "facadeResistanceIncreasePercent": 10
+        "facadeResistanceIncreasePercent": 15
       },
       "witheringPlague": {
         "difficulty": 3,
