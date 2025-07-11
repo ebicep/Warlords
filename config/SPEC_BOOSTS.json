@@ -53,6 +53,18 @@
         "speedIncrease": 90,
         "damageIncrease": 10
       },
+      "suicideInferno": {
+        "difficulty": 4,
+        "name": "Suicide Inferno",
+        "description": "Gain {{energy}} max energy. You will be warped back at {{heal;%}} health upon taking lethal damage. Reduce the duration of {{aqua:Time Warp}} by {{ticks}} but gain {{speed;%}} movement speed and {{damage;%}} damage for the duration. Warping back from lethal damage does not drop the flag.",
+        "energyPerMelee": 20,
+        "infernoDurationReductionTicks": 220,
+        "knockbackRangeBlocks": 5,
+        "infernoDeathDamage": {
+          "min": 728,
+          "max": 1016
+        }
+      },
       "arcaneShatter": {
         "difficulty": 4,
         "name": "Arcane Shatter",
