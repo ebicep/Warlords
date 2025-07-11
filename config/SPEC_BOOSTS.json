@@ -29,7 +29,7 @@
         "arcaneShieldCooldownReductionSeconds": 2,
         "velocityIncreasePercentage": 100,
         "guaranteedCrit": 1,
-        "damageIncreasePercent": 10,
+        "damageIncreasePercent": 8,
         "infernoDamageIncreasePercent": 20,
         "damageReductionAbilities": [
           "Arcane Shield",
