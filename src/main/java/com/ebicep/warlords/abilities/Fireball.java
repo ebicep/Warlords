@@ -108,7 +108,8 @@ public class Fireball extends AbstractProjectile<Fireball, Fireball.FireballStat
                                            .source(shooter)
                                            .min(damageValues.fireballDamage.getMinValue() * convertToMultiplicationDecimal(directHitMultiplier))
                                            .max(damageValues.fireballDamage.getMaxValue() * convertToMultiplicationDecimal(directHitMultiplier))
-                                           .crit(damageValues.fireballDamage));
+                                           .crit(damageValues.fireballDamage)
+                                           .flags(InstanceFlags.DIRECT_HIT));
             if (pveMasterUpgrade) {
                 applyBurnEffect(hit, shooter);
             } else if (pveMasterUpgrade2) {

@@ -7,6 +7,7 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.cryomancer.FrostboltBranch;
@@ -151,7 +152,8 @@ public class FrostBolt extends AbstractPiercingProjectile<FrostBolt, FrostBolt.F
                                            .source(shooter)
                                            .min(damageValues.boltDamage.getMinValue() * convertToMultiplicationDecimal(directHitMultiplier) * toReduceBy)
                                            .max(damageValues.boltDamage.getMaxValue() * convertToMultiplicationDecimal(directHitMultiplier) * toReduceBy)
-                                           .crit(damageValues.boltDamage));
+                                           .crit(damageValues.boltDamage)
+                                           .flags(InstanceFlags.DIRECT_HIT));
             if (pveMasterUpgrade) {
                 freezeExplodeOnHit(shooter, hit);
             }
