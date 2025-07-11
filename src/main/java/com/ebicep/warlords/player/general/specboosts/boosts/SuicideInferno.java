@@ -24,31 +24,31 @@ import java.util.function.Consumer;
 public class SuicideInferno implements SpecBoostManager.SpecBoost<SuicideInferno> {
 
 
-    private float energyPerMelee;
     private int infernoDurationReductionTicks;
-    private float knockbackRangeBlocks;
+    private float energyPerMelee;
     private Value.RangedValue infernoDeathDamage;
+    private float knockbackRangeBlocks;
 
     @Override
     public void init() {
-        this.energyPerMelee = getValue("energyPerMelee", float.class);
         this.infernoDurationReductionTicks = getValue("infernoDurationReductionTicks", int.class);
-        this.knockbackRangeBlocks = getValue("knockbackRangeBlocks", float.class);
+        this.energyPerMelee = getValue("energyPerMelee", float.class);
         this.infernoDeathDamage = getValue("infernoDeathDamage", Value.RangedValue.class);
+        this.knockbackRangeBlocks = getValue("knockbackRangeBlocks", float.class);
     }
 
     @Override
     public String getConfigFieldName() {
-        return "burstChain";
+        return "suicideInferno";
     }
 
     @Override
     public List<Object> getVariables() {
         return List.of(
-                energyPerMelee,
                 infernoDurationReductionTicks,
-                knockbackRangeBlocks,
-                infernoDeathDamage
+                energyPerMelee,
+                infernoDeathDamage,
+                knockbackRangeBlocks
         );
     }
 
@@ -100,16 +100,12 @@ public class SuicideInferno implements SpecBoostManager.SpecBoost<SuicideInferno
                             final Vector v = warlordsEntity.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.5).setY(0.35);
                             target.setVelocity(getStringName(), v, false);
                         });
+                warlordsEntity.addInstance(InstanceBuilder
+                        .melee()
+                        .source(warlordsEntity)
+                        .value(100000)
+                );
             });
-
-
-            warlordsEntity.addInstance(InstanceBuilder
-                    .melee()
-                    .source(warlordsEntity)
-                    .value(100000)
-            );
-
-
 
             Consumer<CooldownManager> oldOnRemoveForce = cooldown.getOnRemoveForce();
             cooldown.setOnRemoveForce(cooldownManager -> {
