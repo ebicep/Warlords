@@ -96,6 +96,7 @@
         "healthIncrease": 1300,
         "absorptionDecreasePercent": 25,
         "warpHealDecreasePercent": 8,
+        "warpBackMaxHeal": 3500,
         "recastDelayTicks": 20,
         "kbResistanceLossOnRecastTicks": 40
       },

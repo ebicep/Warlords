@@ -18,6 +18,7 @@ public class SteadfastWarp implements SpecBoostManager.SpecBoost<SteadfastWarp> 
     private int healthIncrease;
     private int absorptionDecreasePercent;
     private int warpHealDecreasePercent;
+    private int warpBackMaxHeal;
     private int recastDelayTicks;
     private int kbResistanceLossOnRecastTicks;
 
@@ -26,6 +27,7 @@ public class SteadfastWarp implements SpecBoostManager.SpecBoost<SteadfastWarp> 
         this.healthIncrease = getValue("healthIncrease", int.class);
         this.absorptionDecreasePercent = getValue("absorptionDecreasePercent", int.class);
         this.warpHealDecreasePercent = getValue("warpHealDecreasePercent", int.class);
+        this.warpBackMaxHeal = getValue("warpBackMaxHeal", int.class);
         this.recastDelayTicks = getValue("recastDelayTicks", int.class);
         this.kbResistanceLossOnRecastTicks = getValue("kbResistanceLossOnRecastTicks", int.class);
     }
@@ -37,7 +39,7 @@ public class SteadfastWarp implements SpecBoostManager.SpecBoost<SteadfastWarp> 
 
     @Override
     public List<Object> getVariables() {
-        return List.of(healthIncrease, absorptionDecreasePercent, warpHealDecreasePercent, recastDelayTicks, kbResistanceLossOnRecastTicks);
+        return List.of(healthIncrease, absorptionDecreasePercent, warpHealDecreasePercent, warpBackMaxHeal, recastDelayTicks, kbResistanceLossOnRecastTicks);
     }
 
     @Override
@@ -86,12 +88,18 @@ public class SteadfastWarp implements SpecBoostManager.SpecBoost<SteadfastWarp> 
                 float preWarpHealing = preWarpHealth - warlordsEntity.getCurrentHealth();
                 if (regularWarpHealing > preWarpHealing) {
                     regularWarpHeal.run();
-                } else {
+                } else if (warpBackMaxHeal > preWarpHealing){
                     warlordsEntity.addInstance(InstanceBuilder
                             .healing()
                             .cause(getStringName())
                             .source(warlordsEntity)
                             .value(preWarpHealing));
+                } else {
+                    warlordsEntity.addInstance(InstanceBuilder
+                            .healing()
+                            .cause(getStringName())
+                            .source(warlordsEntity)
+                            .value(warpBackMaxHeal));
                 }
             });
             timeWarpCryomancer.addSecondaryAbility(
