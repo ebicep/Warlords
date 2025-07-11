@@ -114,6 +114,15 @@ public enum SupplyDropRewards {
             databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.FAIRY_ESSENCE, 40),
             200,
             WeaponsPvE.RARE
+    ),LEGEND_FRAGMENTS_2("5 Legend Fragments",
+            databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.LEGEND_FRAGMENTS, 5),
+            100,
+            WeaponsPvE.RARE
+    ),
+    LEGEND_FRAGMENTS_5("20 Legend Fragments",
+            databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.LEGEND_FRAGMENTS, 20),
+            50,
+            WeaponsPvE.EPIC
     ),
 
     ;
