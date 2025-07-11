@@ -53,6 +53,11 @@
         "speedIncrease": 90,
         "damageIncrease": 10
       },
+      "portal": {
+        "difficulty": 4,
+        "name": "Portal",
+        "description": "Replace {{aqua:Time Warp}} with {{aqua:Portal}}."
+      },
       "arcaneShatter": {
         "difficulty": 4,
         "name": "Arcane Shatter",

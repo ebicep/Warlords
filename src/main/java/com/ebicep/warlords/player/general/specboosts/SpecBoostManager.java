@@ -77,6 +77,7 @@ public class SpecBoostManager {
     public static final SpecBoost<Parry> PARRY = new Parry();
     public static final SpecBoost<PenitentResolve> PENITENT_RESOLVE = new PenitentResolve();
     public static final SpecBoost<PermeatingLink> PERMEATING_LINK = new PermeatingLink();
+    public static final SpecBoost<Portal> PORTAL = new Portal();
     public static final SpecBoost<RadiantLight> RADIANT_LIGHT = new RadiantLight();
     public static final SpecBoost<RallyingPresence> RALLYING_PRESENCE = new RallyingPresence();
     public static final SpecBoost<RecklessAscent> RECKLESS_ASCENT = new RecklessAscent();
@@ -114,7 +115,7 @@ public class SpecBoostManager {
     private static final Map<Specializations, List<SpecBoost<?>>> SPEC_BOOSTS = new HashMap<>();
 
     static {
-        SPEC_BOOSTS.put(Specializations.PYROMANCER, List.of(METEOR, FLAME_BREATH, BURST_CHAIN, DIMENSIONAL_WARP, ARCANE_SHATTER));
+        SPEC_BOOSTS.put(Specializations.PYROMANCER, List.of(METEOR, FLAME_BREATH, BURST_CHAIN, DIMENSIONAL_WARP, PORTAL));
         SPEC_BOOSTS.put(Specializations.CRYOMANCER, List.of(FROST_MISSILE, BLIZZARD_BREATH, STEADFAST_WARP, CHILLY_AURA, ICE_BLOCK));
         SPEC_BOOSTS.put(Specializations.AQUAMANCER, List.of(TYPHOON_BOLT, DIVINE_PURIFICATION, CLAIRVOYANCE, FORTIFIED_AEGIS, ARCANE_REFLECTION));
         SPEC_BOOSTS.put(Specializations.BERSERKER, List.of(EFFICIENT_STRIKES, MIGHTY_FISTS, SEISMIC_SHIFT, BLOOD_FRENZY, GOLIATH));
