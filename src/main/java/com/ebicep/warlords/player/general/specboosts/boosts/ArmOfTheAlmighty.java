@@ -70,7 +70,9 @@ public class ArmOfTheAlmighty implements SpecBoostManager.SpecBoost<ArmOfTheAlmi
             }
             boolean wrathActive = warlordsEntity.getCooldownManager().hasCooldown(AvengersWrath.AvengersWrathData.class);
             if (wrathActive) {
-                return;
+                avengersStrike.getDamageValues().getStrikeDamage().forEachValue(floatModifiable ->
+                        floatModifiable.addMultiplicativeModifierAdd("Spec Boost", cleaveDamagePercent / 100f)
+                );
             }
             WarlordsEntity hit = event.getWarlordsEntity();
             PlayerFilter.entitiesAround(hit, cleaveRange, cleaveRange, cleaveRange)
