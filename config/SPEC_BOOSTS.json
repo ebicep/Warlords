@@ -74,7 +74,7 @@
         "name": "Blizzard Breath",
         "description": "{{aqua:Freezing Breath}} reduces the cooldown of all your skills by {{ticks;%}} for each enemy hit and grants immunity to knockback and stun for {{ticks}}. Replace {{aqua:Time Warp}} with {{aqua:Time Surge}}. Reduce the cooldowns, energy costs, and shield/healing granted of {{aqua:Arcane Shield}} and {{aqua:Time Surge}} by {{blue;%}}",
         "cooldownReductionPerEnemyHitPercent": 2,
-        "immunityDurationTicks": 20,
+        "immunityDurationTicks": 40,
         "productionValuesDecreasePercent": 30
       },
       "steadfastWarp": {
