@@ -18,6 +18,7 @@ public class SteadfastWarp implements SpecBoostManager.SpecBoost<SteadfastWarp> 
     private int healthIncrease;
     private int absorptionDecreasePercent;
     private int warpHealDecreasePercent;
+    private int warpHealCap;
     private int recastDelayTicks;
 
     @Override
@@ -25,6 +26,7 @@ public class SteadfastWarp implements SpecBoostManager.SpecBoost<SteadfastWarp> 
         this.healthIncrease = getValue("healthIncrease", int.class);
         this.absorptionDecreasePercent = getValue("absorptionDecreasePercent", int.class);
         this.warpHealDecreasePercent = getValue("warpHealDecreasePercent", int.class);
+        this.warpHealCap = getValue("warpHealCap", int.class);
         this.recastDelayTicks = getValue("recastDelayTicks", int.class);
     }
 
@@ -35,7 +37,7 @@ public class SteadfastWarp implements SpecBoostManager.SpecBoost<SteadfastWarp> 
 
     @Override
     public List<Object> getVariables() {
-        return List.of(healthIncrease, absorptionDecreasePercent, warpHealDecreasePercent, recastDelayTicks);
+        return List.of(healthIncrease, absorptionDecreasePercent, warpHealDecreasePercent, warpHealCap, recastDelayTicks);
     }
 
     @Override
@@ -89,7 +91,7 @@ public class SteadfastWarp implements SpecBoostManager.SpecBoost<SteadfastWarp> 
                             .healing()
                             .cause(getStringName())
                             .source(warlordsEntity)
-                            .value(preWarpHealing));
+                            .value(Math.min(warpHealCap, preWarpHealing)));
                 }
             });
             timeWarpCryomancer.addSecondaryAbility(
