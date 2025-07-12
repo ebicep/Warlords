@@ -353,7 +353,7 @@
         "difficulty": 1,
         "name": "Rallying Presence",
         "description": "Reduce the duration of {{aqua:Inspiring Presence}} by {{ticks}} but increase the energy per second granted by {{energy}} and the speed granted by {{speed;%}}.",
-        "durationDecreaseTicks": 40,
+        "durationDecreaseTicks": 20,
         "energyPerSecondIncrease": 9,
         "speedIncreasePercent": 15
       },
