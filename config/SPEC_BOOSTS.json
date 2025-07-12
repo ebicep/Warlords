@@ -493,7 +493,7 @@
         "hitRadiusIncrease": 3.5,
         "damageIncreasePercent": 25,
         "maxEnergyIncrease": 50,
-        "boulderEnergyCostIncrease": 10
+        "boulderEnergyCostIncrease": 5
       },
       "megalithicBoulder": {
         "difficulty": 1,
