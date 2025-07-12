@@ -379,8 +379,8 @@
         "description": "Gain {{heal}} max health and {{energy;}} max energy. {{aqua:Protector's Strike}} now heals you for {{heal;%}} and allies for {{heal;%}}.",
         "healthIncrease": 500,
         "maxEnergyIncrease": 50,
-        "strikeSelfHealingPercent": 80,
-        "strikeAllyHealingPercent": 80
+        "strikeSelfHealingPercent": 90,
+        "strikeAllyHealingPercent": 85
       },
       "lustrousCrown": {
         "difficulty": 1,
