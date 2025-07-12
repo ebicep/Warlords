@@ -22,11 +22,9 @@
       "burstChain": {
         "difficulty": 2,
         "name": "Burst Chain",
-        "description": "Lose {{heal}} max health but gain {{speed;%}} base speed. Reduce the cooldowns of {{aqua:Time Warp}} and {{aqua:Arcane Shield}} by {{ticks}}. Increase the speed of {{aqua:Flame Burst}} by {{speed;%}} and it guarantees at least {{red}} critical hit. You deal {{damage;%}} more damage, {{damage;%}} with {{aqua:Inferno}} active, to enemies without the given damage reducing abilities active:\n\n{{aqua:Last Stand}}\n{{aqua:Ice Barrier}}\n{{aqua:Arcane Shield}}\n{{aqua:Prism Guard}}\n{{aqua:Intervene}}\n{{aqua:Solitary}}\n{{aqua:Ice Block}}\n{{aqua:Contagious Facade}}\n{{aqua:Mystical Barrier}}",
+        "description": "Lose {{heal}} max health but gain {{speed;%}} base speed. Increase the speed of {{aqua:Flame Burst}} by {{speed;%}} and it guarantees at least {{red}} critical hit. You deal {{damage;%}} more damage, {{damage;%}} with {{aqua:Inferno}} active, to enemies without the given damage reducing abilities active:\n\n{{aqua:Last Stand}}\n{{aqua:Ice Barrier}}\n{{aqua:Arcane Shield}}\n{{aqua:Prism Guard}}\n{{aqua:Intervene}}\n{{aqua:Solitary}}\n{{aqua:Ice Block}}\n{{aqua:Contagious Facade}}\n{{aqua:Mystical Barrier}}",
         "healthDecrease": 800,
         "baseSpeedIncreasePercent": 5,
-        "timeWarpCooldownReductionSeconds": 2,
-        "arcaneShieldCooldownReductionSeconds": 2,
         "velocityIncreasePercentage": 100,
         "guaranteedCrit": 1,
         "damageIncreasePercent": 8,
