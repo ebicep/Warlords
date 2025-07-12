@@ -235,6 +235,9 @@ public class CooldownManager {
             ) {
                 continue;
             }
+            if (cooldownsToRemove.contains(abstractCooldown)) {
+                continue;
+            }
             cooldowns.add(abstractCooldown);
             if (abstractCooldown.distinct()) {
                 previousCooldowns.add(new Pair<>(abstractCooldown.getCooldownClass(), abstractCooldown.getName()));
