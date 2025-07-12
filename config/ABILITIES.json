@@ -1484,10 +1484,10 @@
         "energyCost": 40,
         "tickDuration": 1200,
         "radius": 10,
-        "energyPerSecondIncrease": 5,
-        "maxEnergyIncrease": 100,
+        "energyPerSecondIncrease": 4,
+        "maxEnergyIncrease": 80,
         "meleeDamageIncreasePercent": 10,
-        "meleeDamageTakenDecreasePercent": 10,
+        "meleeDamageTakenDecreasePercent": 13,
         "ultCooldownReductionPercent": 20,
         "trueDamageLeechIncreasePercent": 2
       },
