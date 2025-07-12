@@ -42,8 +42,6 @@ public class Portal implements SpecBoostManager.SpecBoost<Portal> {
 
     public class Boost implements SpecBoostManager.Boost {
 
-        private WarlordsEntity warlordsEntity;
-
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             List<AbstractAbility> abilities = warlordsPlayer.getAbilities();

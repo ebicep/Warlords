@@ -8,8 +8,10 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -66,15 +68,31 @@ public class Portal extends AbstractAbility implements PurpleAbilityIcon, Abilit
                     Utils.playGlobalSound(wp.getLocation(), "mage.timewarp.teleport", 1, 1);
                     wp.getEntity().teleport(data.warpLocation);
                 },
-                true
+                true,
+                (cooldown, ticksElapsed) -> {
+                    if (ticksElapsed % 10 == 0) {
+                        data.warpLocation.getWorld().spawnParticle(Particle.WITCH, data.warpLocation, 4, 0.1, 0, 0.1, 0.001, null, true);
+                        int points = 6;
+                        double radius = 0.5d;
+                        for (int e = 0; e < points; e++) {
+                            double angle = 2 * Math.PI * e / points;
+                            Location point = data.warpLocation.clone().add(radius * Math.sin(angle), 0.0d, radius * Math.cos(angle));
+                            point.getWorld().spawnParticle(Particle.CLOUD, point, 1, 0.1, 0, 0.1, 0.001, null, true);
+                        }
+                    }
+                }
         ) {
         };
-        wp.addSpeedModifier(wp, name, -portalSpeedReductionPercent, portalCooldown);
         wp.getCooldownManager().addCooldown(portalCooldown);
+        wp.addSpeedModifier(wp, name, -portalSpeedReductionPercent, portalCooldown);
         addSecondaryAbility(
                 recastDelayTicks,
                 () -> {
-                    if (wp.isDead() || wp.hasFlag()) {
+                    if (wp.isDead()) {
+                        return;
+                    }
+                    if (wp.hasFlag()) {
+                        wp.sendMessage(Component.text("You cannot teleport with the flag!", NamedTextColor.RED));
                         return;
                     }
                     wp.getCooldownManager().removeCooldown(portalCooldown);

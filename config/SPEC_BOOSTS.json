@@ -54,7 +54,7 @@
         "damageIncrease": 10
       },
       "portal": {
-        "difficulty": 4,
+        "difficulty": 5,
         "name": "Portal",
         "description": "Replace {{aqua:Time Warp}} with {{aqua:Portal}}."
       },
