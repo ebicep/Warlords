@@ -1194,7 +1194,7 @@
         "cooldown": 10.5,
         "energyCost": 60,
         "stunTimeInTicks": 10,
-        "additionalBlocks": 0,
+        "additionalBlocks": 0.5,
         "flagBlockReduction": 3,
         "hitBox": 3,
         "damageValues": {
