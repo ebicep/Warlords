@@ -506,7 +506,7 @@
         "difficulty": 2,
         "name": "Earthbound Infusion",
         "description": "Gain {{heal}} max health. Decrease the cooldown of {{aqua:Earthliving Weapon}} by {{ticks}}, decrease the duration by {{ticks}}, increase the number of guaranteed hits by {{blue}}, and increase the healing by {{heal}} if you are the only player healed. Increase the range of {{aqua:Chain Heal}} by {{blocks}}.",
-        "healthIncrease": 600,
+        "healthIncrease": 500,
         "earthlivingCooldownReductionSeconds": 3,
         "earthlivingDurationDecreaseTicks": 60,
         "earthlivingExtraGuaranteedHits": 1,
