@@ -87,11 +87,12 @@
       "chillyAura": {
         "difficulty": 1,
         "name": "Chilly Aura",
-        "description": "{{aqua:Ice Barrier}} now slows enemies within {{blocks}} by {{speed;%}} and deals {{heal;%}} of their maximum health every {{ticks}}.",
+        "description": "{{aqua:Ice Barrier}} now slows enemies within {{blocks}} by {{speed;%}} and deals {{heal;%}} of their maximum health every {{ticks}}. Ice Barrier reduces melee attacker's speed by an additional {{speed;%}}.",
         "rangeBlocks": 8,
-        "slowAmountPercent": 12,
+        "slowAmountPercent": 16,
         "healthLossPercent": 1.5,
-        "healthLossTickPeriod": 20
+        "healthLossTickPeriod": 20,
+        "meleeSpeedReductionPercent": 30
       },
       "iceBlock": {
         "difficulty": 4,

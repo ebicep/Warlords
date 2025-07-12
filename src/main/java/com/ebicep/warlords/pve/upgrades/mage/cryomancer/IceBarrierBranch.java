@@ -37,7 +37,7 @@ public class IceBarrierBranch extends AbstractUpgradeBranch<IceBarrier> {
 
                     @Override
                     public void run(float value) {
-                        ability.setSlownessOnMeleeHit((int) (ability.getSlownessOnMeleeHit() + value));
+                        ability.setSlownessOnMeleeHit(ability.getSlownessOnMeleeHit() + value);
                     }
                 }, 20f, 4)
                 .addTo(treeB);
