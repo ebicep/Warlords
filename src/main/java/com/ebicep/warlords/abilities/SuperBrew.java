@@ -5,9 +5,10 @@ import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
-import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.LinkedCooldown;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
@@ -19,9 +20,7 @@ import org.bukkit.entity.Player;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class SuperBrew extends AbstractAbility implements OrangeAbilityIcon, HitBox, Duration, AbilityStats<SuperBrew, SuperBrew.SuperBrewStats> {
@@ -35,7 +34,9 @@ public class SuperBrew extends AbstractAbility implements OrangeAbilityIcon, Hit
     private int meleeDamageTakenDecreasePercent;
     private int ultCooldownReductionPercent;
     private int trueDamageLeechIncreasePercent;
-    private RegularCooldown<SuperBrewData> superBrewCooldown;
+    private int healthPerSecondIncrease;
+    private int bonusHealthPerSecondIncrease;
+    private LinkedCooldown<SuperBrewData> superBrewCooldown;
 
     public SuperBrew() {
         super(AbstractAbilityBuilder.create("superBrew").pvp());
@@ -58,6 +59,8 @@ public class SuperBrew extends AbstractAbility implements OrangeAbilityIcon, Hit
                 builder.getAppendedFieldName("trueDamageLeechIncreasePercent"),
                 int.class
         );
+        this.healthPerSecondIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("healthPerSecondIncrease"), int.class);
+        this.bonusHealthPerSecondIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("bonusHealthPerSecondIncrease"), int.class);
     }
 
 
@@ -91,7 +94,11 @@ public class SuperBrew extends AbstractAbility implements OrangeAbilityIcon, Hit
         }
         SuperBrewData data = new SuperBrewData(this);
         target.getCooldownManager().removeCooldown(SuperBrewData.class, false);
-        superBrewCooldown = new RegularCooldown<>(
+        wp.getCooldownManager().removeCooldown(SuperBrewData.class, false);
+        Set<WarlordsEntity> linkedEntities = new HashSet<>();
+        linkedEntities.add(target);
+        linkedEntities.add(wp);
+        superBrewCooldown = new LinkedCooldown<>(
                 name,
                 "SUPER",
                 SuperBrewData.class,
@@ -104,29 +111,32 @@ public class SuperBrew extends AbstractAbility implements OrangeAbilityIcon, Hit
                 cooldownManager -> {
                     modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
                 },
-                false,
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    if (ticksElapsed % 4 == 0) {
+                    if (ticksElapsed % 7 == 0) {
                         EffectUtils.displayParticle(
                                 Particle.END_ROD,
                                 target.getLocation(),
-                                3,
+                                2,
                                 random.nextDouble(.5),
-                                0,
+                                .2,
                                 random.nextDouble(.5),
                                 .1
                         );
                     }
                     if (ticksElapsed % 20 == 0) {
-                        int regenHealth = ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "regenHealth", int.class);
-                        target.setCurrentHealth(Math.max(target.getCurrentHealth(), Math.min(target.getCurrentHealth() + regenHealth, target.getMaxHealth())));
+                        int healthIncrease = healthPerSecondIncrease;
+                        if (target.hasFlag() || target.getSpecClass() == Specializations.APOTHECARY) {
+                            healthIncrease += bonusHealthPerSecondIncrease;
+                        }
+                        target.setCurrentHealth(Math.max(target.getCurrentHealth(), Math.min(target.getCurrentHealth() + healthIncrease, target.getMaxHealth())));
                     }
-                })
+                }),
+                linkedEntities
         ) {
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (event.getCause().isEmpty()) {
+                if (event.getCause().isEmpty() && event.getSource().equals(target)) {
                     return currentDamageValue * AbstractAbility.convertToMultiplicationDecimal(meleeDamageIncreasePercent);
                 }
                 return currentDamageValue;
@@ -134,10 +144,17 @@ public class SuperBrew extends AbstractAbility implements OrangeAbilityIcon, Hit
 
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * convertToDivisionDecimal(meleeDamageTakenDecreasePercent);
+                if (event.getWarlordsEntity().equals(target)) {
+                    return currentDamageValue * convertToDivisionDecimal(meleeDamageTakenDecreasePercent);
+                }
+                return currentDamageValue;
             }
         };
+        superBrewCooldown.setRemoveOnDeath(false);
         target.getCooldownManager().addCooldown(superBrewCooldown);
+        if (target != wp) {
+            wp.getCooldownManager().addCooldown(superBrewCooldown);
+        }
         if (wp != target) {
             wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
                     .append(Component.text(" You gave a ", NamedTextColor.GRAY))
@@ -170,9 +187,11 @@ public class SuperBrew extends AbstractAbility implements OrangeAbilityIcon, Hit
                 .percent(meleeDamageTakenDecreasePercent, NamedTextColor.RED)
                 .text(" melee damage resistance, ")
                 .percent(ultCooldownReductionPercent, NamedTextColor.GOLD)
-                .text(" ultimate cooldown reduction, permanent passive health regen, and Apothecary's gain ")
-                .percent(trueDamageLeechIncreasePercent, NamedTextColor.GREEN)
-                .text(" more true damage leech heal.")
+                .text(" ultimate cooldown reduction, and heal for ")
+                .text(healthPerSecondIncrease, NamedTextColor.GREEN)
+                .text(" health per second, ")
+                .text(healthPerSecondIncrease + bonusHealthPerSecondIncrease, NamedTextColor.GREEN)
+                .text(" if you have the flag or are an Apothecary.")
                 .emptyLine()
                 .text("If no ally is targeted, receive the brew yourself.")
                 .emptyLine()

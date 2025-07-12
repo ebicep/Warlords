@@ -1494,7 +1494,9 @@
         "meleeDamageIncreasePercent": 10,
         "meleeDamageTakenDecreasePercent": 13,
         "ultCooldownReductionPercent": 20,
-        "trueDamageLeechIncreasePercent": 2
+        "trueDamageLeechIncreasePercent": 2,
+        "healthPerSecondIncrease": 90,
+        "bonusHealthPerSecondIncrease": 20
       },
       "temp": {
         "name": "Placeholder Ability"
