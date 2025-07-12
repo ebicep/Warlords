@@ -1,7 +1,7 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
 import com.ebicep.warlords.abilities.WaterBolt;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -62,14 +62,14 @@ public class Syringe implements SpecBoostManager.SpecBoost<Syringe> {
         }
 
         @EventHandler
-        public void onDamageHealEvent(WarlordsDamageHealingEvent event) {
+        public void onDamageHealFinalEvent(WarlordsDamageHealingFinalEvent event) {
             if (!event.getSource().equals(warlordsEntity)) {
                 return;
             }
             if (!(event.getAbility() instanceof WaterBolt waterBolt)) {
                 return;
             }
-            EnumSet<InstanceFlags> flags = event.getFlags();
+            EnumSet<InstanceFlags> flags = event.getInstanceFlags();
             if (!flags.contains(InstanceFlags.DIRECT_HIT)) {
                 return;
             }
