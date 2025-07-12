@@ -34,7 +34,7 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
     private final IceBarrierStats stats = new IceBarrierStats();
     private int tickDuration = 120;
     private float damageReductionPercent = 50;
-    private int slownessOnMeleeHit = 20;
+    private float slownessOnMeleeHit = 20;
     private int slowDuration = 2;
 
     public IceBarrier() {
@@ -193,11 +193,11 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
         this.damageReductionPercent = damageReductionPercent;
     }
 
-    public int getSlownessOnMeleeHit() {
+    public float getSlownessOnMeleeHit() {
         return slownessOnMeleeHit;
     }
 
-    public void setSlownessOnMeleeHit(int slownessOnMeleeHit) {
+    public void setSlownessOnMeleeHit(float slownessOnMeleeHit) {
         this.slownessOnMeleeHit = slownessOnMeleeHit;
     }
 

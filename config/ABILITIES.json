@@ -69,14 +69,12 @@
       },
       "blink": {
         "name": "Blink",
-        "cooldown": 9,
+        "cooldown": 10.5,
         "energyCost": 30,
         "radius": 13,
         "radiusFlag": 3.5,
         "verticalLimit": 4,
         "verticalLimitFlag": 0.5,
-        "damageReduction": 10,
-        "damageReductionTickDuration": 60,
         "maxGroundTeleportDistance": 5,
         "healingValues": {
           "blinkHealing": {
@@ -124,7 +122,7 @@
         },
         "healingValues": {
           "bullRushHealing": {
-            "value": 600
+            "value": 1000
           }
         },
         "tickDuration": 14,
@@ -684,14 +682,21 @@
         "cooldown": 50,
         "energyCost": 0,
         "tickDuration": 160,
-        "incomingDamageReduction": 30,
-        "incomingHealingReduction": 15,
-        "hazeRadius": 6,
+        "speedBuff": 35,
+        "incomingDamageReduction": 20,
+        "hazeRadius": 6.5,
+        "hazeSlowness": 20,
+        "hazeSlownessDurationTicks": 20,
         "vulnerableTickDuration": 120,
         "vulnerableDamageBonus": 10,
         "damageValues": {
           "hazeDamage": {
-            "value": 150
+            "value": 120
+          }
+        },
+        "healingValues": {
+          "hazeHealing": {
+            "value": 1000
           }
         }
       },
@@ -1042,8 +1047,8 @@
         "tickDuration": 100,
         "meleeDamageReduction": 60,
         "radius": 12,
-        "shieldBase": 400,
-        "shieldIncrease": 100,
+        "shieldBase": 300,
+        "shieldIncrease": 60,
         "shieldMaxHealth": 1200,
         "reactivateTickDuration": 100,
         "stacksGranted": 3,
@@ -1189,7 +1194,7 @@
         "cooldown": 10.5,
         "energyCost": 60,
         "stunTimeInTicks": 10,
-        "additionalBlocks": 0,
+        "additionalBlocks": 0.5,
         "flagBlockReduction": 3,
         "hitBox": 3,
         "damageValues": {
@@ -1484,10 +1489,10 @@
         "energyCost": 40,
         "tickDuration": 1200,
         "radius": 10,
-        "energyPerSecondIncrease": 5,
-        "maxEnergyIncrease": 100,
+        "energyPerSecondIncrease": 4,
+        "maxEnergyIncrease": 80,
         "meleeDamageIncreasePercent": 10,
-        "meleeDamageTakenDecreasePercent": 10,
+        "meleeDamageTakenDecreasePercent": 13,
         "ultCooldownReductionPercent": 20,
         "trueDamageLeechIncreasePercent": 2
       },

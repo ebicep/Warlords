@@ -18,16 +18,16 @@ public class SteadfastWarp implements SpecBoostManager.SpecBoost<SteadfastWarp> 
     private int healthIncrease;
     private int absorptionDecreasePercent;
     private int warpHealDecreasePercent;
+    private int warpHealCap;
     private int recastDelayTicks;
-    private int kbResistanceLossOnRecastTicks;
 
     @Override
     public void init() {
         this.healthIncrease = getValue("healthIncrease", int.class);
         this.absorptionDecreasePercent = getValue("absorptionDecreasePercent", int.class);
         this.warpHealDecreasePercent = getValue("warpHealDecreasePercent", int.class);
+        this.warpHealCap = getValue("warpHealCap", int.class);
         this.recastDelayTicks = getValue("recastDelayTicks", int.class);
-        this.kbResistanceLossOnRecastTicks = getValue("kbResistanceLossOnRecastTicks", int.class);
     }
 
     @Override
@@ -37,7 +37,7 @@ public class SteadfastWarp implements SpecBoostManager.SpecBoost<SteadfastWarp> 
 
     @Override
     public List<Object> getVariables() {
-        return List.of(healthIncrease, absorptionDecreasePercent, warpHealDecreasePercent, recastDelayTicks, kbResistanceLossOnRecastTicks);
+        return List.of(healthIncrease, absorptionDecreasePercent, warpHealDecreasePercent, warpHealCap, recastDelayTicks);
     }
 
     @Override
@@ -91,18 +91,13 @@ public class SteadfastWarp implements SpecBoostManager.SpecBoost<SteadfastWarp> 
                             .healing()
                             .cause(getStringName())
                             .source(warlordsEntity)
-                            .value(preWarpHealing));
+                            .value(Math.min(warpHealCap, preWarpHealing)));
                 }
             });
             timeWarpCryomancer.addSecondaryAbility(
                     recastDelayTicks,
                     () -> {
-                        int remainingKbResTickDuration = regularCooldown.getTicksLeft() - kbResistanceLossOnRecastTicks;
                         regularCooldown.setTicksLeft(1);
-                        if (remainingKbResTickDuration < 0) {
-                            return;
-                        }
-                        warlordsEntity.addKnockbackModifier(warlordsEntity, getStringName(), -100, remainingKbResTickDuration);
                     },
                     false,
                     secondaryAbility -> !warlordsEntity.getCooldownManager().hasCooldown(regularCooldown)

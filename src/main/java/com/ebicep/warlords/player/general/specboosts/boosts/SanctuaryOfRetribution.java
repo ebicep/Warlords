@@ -99,6 +99,10 @@ public class SanctuaryOfRetribution implements SpecBoostManager.SpecBoost<Sanctu
                     .value(damageToReflect)
                     .flags(InstanceFlags.RECURSIVE, InstanceFlags.REFLECTIVE_DAMAGE)
             );
+            warlordsEntity.getAbilitiesMatching(Sanctuary.class).forEach(sanctuary -> {
+                Sanctuary.SanctuaryStats stats = sanctuary.getAbilityStats();
+                stats.setTotalDamageReflected(stats.getTotalDamageReflected() + damageToReflect);
+            });
         }
 
     }
