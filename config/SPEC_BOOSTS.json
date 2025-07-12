@@ -129,7 +129,7 @@
         "waterBoltHealingDecreasePercent": 20,
         "waterBoltDirectHitHealingIncreasePercent": 100,
         "waterBoltDirectHitSpeedIncreasePercent": 30,
-        "waterBoltDirectHitDurationTicks": 20
+        "waterBoltDirectHitDurationTicks": 40
       },
       "divinePurification": {
         "difficulty": 1,
