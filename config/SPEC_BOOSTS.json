@@ -22,14 +22,12 @@
       "burstChain": {
         "difficulty": 2,
         "name": "Burst Chain",
-        "description": "Lose {{heal}} max health but gain {{speed;%}} base speed. Reduce the cooldowns of {{aqua:Time Warp}} and {{aqua:Arcane Shield}} by {{ticks}}. Increase the speed of {{aqua:Flame Burst}} by {{speed;%}} and it guarantees at least {{red}} critical hit. You deal {{damage;%}} more damage, {{damage;%}} with {{aqua:Inferno}} active, to enemies without the given damage reducing abilities active:\n\n{{aqua:Last Stand}}\n{{aqua:Ice Barrier}}\n{{aqua:Arcane Shield}}\n{{aqua:Prism Guard}}\n{{aqua:Intervene}}\n{{aqua:Solitary}}\n{{aqua:Ice Block}}\n{{aqua:Contagious Facade}}\n{{aqua:Mystical Barrier}}",
+        "description": "Lose {{heal}} max health but gain {{speed;%}} base speed. Increase the speed of {{aqua:Flame Burst}} by {{speed;%}} and it guarantees at least {{red}} critical hit. You deal {{damage;%}} more damage, {{damage;%}} with {{aqua:Inferno}} active, to enemies without the given damage reducing abilities active:\n\n{{aqua:Last Stand}}\n{{aqua:Ice Barrier}}\n{{aqua:Arcane Shield}}\n{{aqua:Prism Guard}}\n{{aqua:Intervene}}\n{{aqua:Solitary}}\n{{aqua:Ice Block}}\n{{aqua:Contagious Facade}}\n{{aqua:Mystical Barrier}}",
         "healthDecrease": 800,
         "baseSpeedIncreasePercent": 5,
-        "timeWarpCooldownReductionSeconds": 2,
-        "arcaneShieldCooldownReductionSeconds": 2,
         "velocityIncreasePercentage": 100,
         "guaranteedCrit": 1,
-        "damageIncreasePercent": 10,
+        "damageIncreasePercent": 8,
         "infernoDamageIncreasePercent": 20,
         "damageReductionAbilities": [
           "Arcane Shield",
@@ -79,33 +77,34 @@
         "name": "Blizzard Breath",
         "description": "{{aqua:Freezing Breath}} reduces the cooldown of all your skills by {{ticks;%}} for each enemy hit and grants immunity to knockback and stun for {{ticks}}. Replace {{aqua:Time Warp}} with {{aqua:Time Surge}}. Reduce the cooldowns, energy costs, and shield/healing granted of {{aqua:Arcane Shield}} and {{aqua:Time Surge}} by {{blue;%}}",
         "cooldownReductionPerEnemyHitPercent": 2,
-        "immunityDurationTicks": 20,
+        "immunityDurationTicks": 40,
         "productionValuesDecreasePercent": 30
       },
       "steadfastWarp": {
         "difficulty": 2,
         "name": "Steadfast Warp",
-        "description": "Gain {{heal}} max health. Decrease the absorption of {{aqua:Arcane Shield}} by {{damageReduction;%}}. Reduce the healing of {{aqua:Time Warp}} by {{heal;%}}, but you heal for the greater of its normal amount and your pre-Warp health. After {{ticks}}, you can recast to instantly warp back. You gain full knockback immunity during the initial warp, but recasting the warp reduces that duration by {{ticks}}.",
+        "description": "Gain {{heal}} max health. Decrease the absorption of {{aqua:Arcane Shield}} by {{damageReduction;%}}. Reduce the healing of {{aqua:Time Warp}} by {{heal;%}}, but you heal for the greater of its normal amount and your pre-Warp health, up to a maximum of {{heal}}. After {{ticks}}, you can recast to instantly warp back. You gain full knockback immunity during the initial warp, but recasting the warp reduces that duration by {{ticks}}.",
         "healthIncrease": 1300,
         "absorptionDecreasePercent": 25,
-        "warpHealDecreasePercent": 7,
-        "recastDelayTicks": 20,
-        "kbResistanceLossOnRecastTicks": 40
+        "warpHealDecreasePercent": 8,
+        "warpHealCap": 3500,
+        "recastDelayTicks": 20
       },
       "chillyAura": {
         "difficulty": 1,
         "name": "Chilly Aura",
-        "description": "{{aqua:Ice Barrier}} now slows enemies within {{blocks}} by {{speed;%}} and deals {{heal;%}} of their maximum health every {{ticks}}.",
+        "description": "{{aqua:Ice Barrier}} now slows enemies within {{blocks}} by {{speed;%}} and deals {{heal;%}} of their maximum health every {{ticks}}. Ice Barrier reduces melee attacker's speed by an additional {{speed;%}}.",
         "rangeBlocks": 8,
-        "slowAmountPercent": 12,
+        "slowAmountPercent": 16,
         "healthLossPercent": 1.5,
-        "healthLossTickPeriod": 20
+        "healthLossTickPeriod": 20,
+        "meleeSpeedReductionPercent": 30
       },
       "iceBlock": {
         "difficulty": 4,
         "name": "Ice Block",
         "description": "Increase the duration of {{aqua:Ice Barrier}} by {{ticks}}. {{aqua:Ice Barrier}} can be recasted after {{ticks}}, reducing the duration by {{ticks}} but becoming {{aqua:Ice Block}}. {{aqua:Ice Block}} prevents jumping, tremendously reduces movement speed, but prevents knockback and grants {{damageReduction;%}} damage reduction.",
-        "iceBarrierNewDurationTicks": 40,
+        "iceBarrierNewDurationTicks": 50,
         "recastDurationDecreaseTicks": 20,
         "recastDamageReductionPercent": 70,
         "recastMovementSpeed": 0.3,
@@ -190,11 +189,11 @@
         "difficulty": 4,
         "name": "Blood Frenzy",
         "description": "Reduce the cooldown of {{aqua:Bloodlust}} by {{ticks}}, the duration by {{ticks}}, and the energy cost by {{energy}}. Reduce its damage converted to healing by {{heal;%}} but it now heals an additional {{heal;%}} based on damage before any reductions.",
-        "bloodLustCooldownReductionTicks": 390,
-        "bloodLustDurationReductionTicks": 180,
+        "bloodLustCooldownReductionTicks": 430,
+        "bloodLustDurationReductionTicks": 200,
         "bloodLustEnergyCostReduction": 20,
         "bloodLustHealingPercent": 15,
-        "bloodLustHealingPiercePercent": 20
+        "bloodLustHealingPiercePercent": 25
       },
       "goliath": {
         "difficulty": 2,
@@ -253,7 +252,7 @@
         "description": "Increase the radius of {{aqua:Reckless Charge}} by {{blocks}}, the range by {{blocks}}. Gain {{damageReduction;%}} damage reduction for {{ticks}} after casting {{aqua:Reckless Charge}}. {{aqua:Reckless Charge}} can ascend vertically, but you take {{damage}} when moving vertically.",
         "radiusIncrease": 1,
         "travelDistanceIncrease": 2,
-        "damageReductionPercent": 20,
+        "damageReductionPercent": 15,
         "damageReductionDurationTicks": 40,
         "verticalAscentDamage": 2000,
         "bonusVerticalBlocks": 1.5
@@ -287,11 +286,12 @@
       "armOfTheAlmighty": {
         "difficulty": 1,
         "name": "Arm of the Almighty",
-        "description": "{{aqua:Avenger's Strike}} will now cleave up to {{blue}} enemies within {{blocks}} for {{damage;%}} damage and will remove {{energy}} energy.",
+        "description": "{{aqua:Avenger's Strike}} will now cleave up to {{blue}} enemies within {{blocks}} for {{damage;%}} damage and will remove {{energy}} energy. During {{aqua:Avenger's Wrath}}, instead increase the damage of {{aqua:Avenger's Strike}} by {{damage;%}}.",
         "cleaveTargets": 2,
-        "cleaveRange": 3,
-        "cleaveDamagePercent": 40,
-        "energyStealPerCleave": 5
+        "cleaveRange": 4,
+        "cleaveDamagePercent": 25,
+        "energyStealPerCleave": 5,
+        "wrathDamageBoostPercent": 25
       },
       "unstoppableSurge": {
         "difficulty": 1,
@@ -359,7 +359,7 @@
         "difficulty": 1,
         "name": "Rallying Presence",
         "description": "Reduce the duration of {{aqua:Inspiring Presence}} by {{ticks}} but increase the energy per second granted by {{energy}} and the speed granted by {{speed;%}}.",
-        "durationDecreaseTicks": 40,
+        "durationDecreaseTicks": 20,
         "energyPerSecondIncrease": 9,
         "speedIncreasePercent": 15
       },
@@ -386,8 +386,8 @@
         "description": "Gain {{heal}} max health and {{energy;}} max energy. {{aqua:Protector's Strike}} now heals you for {{heal;%}} and allies for {{heal;%}}.",
         "healthIncrease": 500,
         "maxEnergyIncrease": 50,
-        "strikeSelfHealingPercent": 80,
-        "strikeAllyHealingPercent": 80
+        "strikeSelfHealingPercent": 90,
+        "strikeAllyHealingPercent": 85
       },
       "lustrousCrown": {
         "difficulty": 1,
@@ -404,8 +404,8 @@
         "hammerOfLightCooldownIncreaseTicks": 200,
         "hammerThrowRadius": 8,
         "hammerThrowDamage": {
-          "min": 629,
-          "max": 816
+          "min": 498,
+          "max": 648
         },
         "consecrateDurationTicks": 100
       },
@@ -499,7 +499,7 @@
         "hitRadiusIncrease": 3.5,
         "damageIncreasePercent": 25,
         "maxEnergyIncrease": 50,
-        "boulderEnergyCostIncrease": 10
+        "boulderEnergyCostIncrease": 5
       },
       "megalithicBoulder": {
         "difficulty": 1,
@@ -512,7 +512,7 @@
         "difficulty": 2,
         "name": "Earthbound Infusion",
         "description": "Gain {{heal}} max health. Decrease the cooldown of {{aqua:Earthliving Weapon}} by {{ticks}}, decrease the duration by {{ticks}}, increase the number of guaranteed hits by {{blue}}, and increase the healing by {{heal}} if you are the only player healed. Increase the range of {{aqua:Chain Heal}} by {{blocks}}.",
-        "healthIncrease": 600,
+        "healthIncrease": 500,
         "earthlivingCooldownReductionSeconds": 3,
         "earthlivingDurationDecreaseTicks": 60,
         "earthlivingExtraGuaranteedHits": 1,
@@ -570,7 +570,7 @@
         "description": "{{aqua:Soul Switch}} will now only teleport you to your target and deal {{damage}} true damage. Increase the range of {{aqua:Soul Switch}} by {{blocks}}, and the damage reduction by {{damageReduction;%}}. The target will be trapped in a {{blocks}} radius for {{ticks}}.",
         "soulSwitchRadiusIncrease": 3,
         "soulSwitchVerticalLimit": 5,
-        "soulSwitchDamage": 200,
+        "soulSwitchDamage": 300,
         "soulSwitchDamageReductionIncreasePercent": 15,
         "tetherRadius": 2,
         "tetherTickDuration": 30
@@ -594,7 +594,7 @@
         "description": "Gain {{heal}} max health. Reduce the cooldown of {{aqua:Heart to Heart}} by {{ticks}} and increase the healing by {{heal}}.",
         "healthIncrease": 400,
         "heartToHeartCooldownReductionSeconds": 2.5,
-        "heartToHeartHealingIncrease": 200
+        "heartToHeartHealingIncrease": 100
       },
       "abyssalGrasp": {
         "difficulty": 4,
@@ -616,16 +616,16 @@
       "righteousRampage": {
         "difficulty": 3,
         "name": "Righteous Rampage",
-        "description": "Lose {{damageReduction;%}} damage reduction. Replace {{aqua:Heart to Heart}} with {{aqua:Bull Rush}}. {{aqua:Soul Shackle}} damages all enemies within a {{blocks}} radius for {{damage;%}} damage. Reduce the duration of the {{dark_green:VIND}} effect from {{aqua:Vindicate}} by {{ticks}}. {{aqua:Vindicate}} can be recasted to perform a huge leap, which will damage all enemies within {{blocks}} for {{damage}} damage and deal massive knockback upon landing.",
+        "description": "Lose {{damageReduction;%}} damage reduction. Replace {{aqua:Heart to Heart}} with {{aqua:Bull Rush}}. {{aqua:Soul Shackle}} damages all enemies within a {{blocks}} radius for {{damage;%}} damage. {{aqua:Vindicate}} can be recasted to perform a huge leap, which will damage all enemies within {{blocks}} for {{damage}} damage, silence them for {{ticks}}, and deal massive knockback upon landing.",
         "damageReductionDecrease": 5,
         "soulShackleAoEDamagePercent": 60,
         "soulShackleAoERadius": 4,
-        "vindicateVINDDurationTicks": 40,
+        "vindicateLeapRadius": 6,
         "vindicateLeapDamage": {
           "min": 568,
           "max": 757
         },
-        "vindicateLeapRadius": 6,
+        "vindicateSilenceTicks": 30,
         "knockbackMagnitude": 1.5,
         "knockbackY": 0.25,
         "leapMagnitude": 1.5,
@@ -647,16 +647,16 @@
         "difficulty": 1,
         "name": "Aura of Restoration",
         "description": "Increase the cooldown of {{aqua:Soothing Elixir}} by {{ticks}} and the healing over time by {{heal}}, which will now always affect allies within the splash radius, even while moving. Increase the break range of {{aqua:Remedic Chains}} by {{blocks}}.",
-        "soothingElixirCooldownIncreaseSeconds": 1.5,
-        "puddleHealingIncrease": 10,
+        "soothingElixirCooldownIncreaseSeconds": 1,
+        "puddleHealingIncrease": 15,
         "remedicChainsBreakRadiusIncrease": 5
       },
       "alchemistsFury": {
         "difficulty": 3,
         "name": "Alchemist's Fury",
         "description": "{{aqua:Soothing Elixir}}'s puddle no longer heals allies. Decrease the cooldown by {{ticks}}, double the projectile speed, increase the damage by {{damage;%}}, and the radius by {{blocks}}. {{aqua:Volatile Brew}} does full damage when activated early.",
-        "soothingElixirCooldownReductionSeconds": 1,
-        "soothingElixirDamageIncreasePercent": 130,
+        "soothingElixirCooldownReductionSeconds": 0.5,
+        "soothingElixirDamageIncreasePercent": 120,
         "soothingElixirProjectileSpeedMultiplier": 2,
         "soothingElixirRadiusIncrease": 1
       },
@@ -704,7 +704,7 @@
         "name": "Contagion",
         "description": "Gain {{energy}} energy per melee hit. Increase the damage reduction of {{aqua:Contagious Facade}} by {{damageReduction;%}}, and its activation effect is activated on use and does not override the nonactivation post effect.",
         "ephIncrease": 6,
-        "facadeResistanceIncreasePercent": 10
+        "facadeResistanceIncreasePercent": 15
       },
       "witheringPlague": {
         "difficulty": 3,
@@ -781,7 +781,7 @@
         "name": "Unmerciful Hex",
         "description": "Increase the pierce against enemies of {{aqua:Merciful Hex}} by {{blue}}, and the damage by {{damage;%}}, but it no longer grants the second ally {{dark_green:MHEX}}. {{aqua:Ray of Light}} no longer cleanses allies. {{aqua:Sanctified Beacon}} no longer grants {{dark_green:MHEX}}.",
         "mercifulHexEnemyPierceIncrease": 1,
-        "mercifulHexDamageIncreasePercent": 15
+        "mercifulHexDamageIncreasePercent": 25
       },
       "energyOversurge": {
         "difficulty": 3,

@@ -35,9 +35,9 @@ public class RighteousRampage implements SpecBoostManager.SpecBoost<RighteousRam
     private float damageReductionDecrease;
     private float soulShackleAoEDamagePercent;
     private float soulShackleAoERadius;
-    private int vindicateVINDDurationTicks;
-    private Value.RangedValue vindicateLeapDamage;
     private float vindicateLeapRadius;
+    private Value.RangedValue vindicateLeapDamage;
+    private int vindicateSilenceTicks;
     private float knockbackMagnitude;
     private float knockbackY;
     private float leapMagnitude;
@@ -50,9 +50,9 @@ public class RighteousRampage implements SpecBoostManager.SpecBoost<RighteousRam
         this.damageReductionDecrease = getValue("damageReductionDecrease", float.class);
         this.soulShackleAoEDamagePercent = getValue("soulShackleAoEDamagePercent", float.class);
         this.soulShackleAoERadius = getValue("soulShackleAoERadius", float.class);
-        this.vindicateVINDDurationTicks = getValue("vindicateVINDDurationTicks", int.class);
-        this.vindicateLeapDamage = getValue("vindicateLeapDamage", Value.RangedValue.class);
         this.vindicateLeapRadius = getValue("vindicateLeapRadius", float.class);
+        this.vindicateLeapDamage = getValue("vindicateLeapDamage", Value.RangedValue.class);
+        this.vindicateSilenceTicks = getValue("vindicateSilenceTicks", int.class);
         this.knockbackMagnitude = getValue("knockbackMagnitude", float.class);
         this.knockbackY = getValue("knockbackY", float.class);
         this.leapMagnitude = getValue("leapMagnitude", float.class);
@@ -77,9 +77,9 @@ public class RighteousRampage implements SpecBoostManager.SpecBoost<RighteousRam
                 damageReductionDecrease,
                 soulShackleAoERadius,
                 soulShackleAoEDamagePercent,
-                vindicateVINDDurationTicks,
                 vindicateLeapRadius,
-                vindicateLeapDamage
+                vindicateLeapDamage,
+                vindicateSilenceTicks
         );
     }
 
@@ -101,9 +101,6 @@ public class RighteousRampage implements SpecBoostManager.SpecBoost<RighteousRam
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getSpec().setDamageResistance(warlordsPlayer.getSpec().getDamageResistance() - damageReductionDecrease); // TODO flaot modifable
-            warlordsPlayer.getAbilitiesMatching(Vindicate.class).forEach(vindicate -> {
-                vindicate.setTickDuration(vindicate.getTickDuration() - vindicateVINDDurationTicks);
-            });
             List<AbstractAbility> abilities = warlordsPlayer.getAbilities();
             for (int i = 0; i < abilities.size(); i++) {
                 if (abilities.get(i) instanceof HeartToHeart) {
@@ -215,6 +212,7 @@ public class RighteousRampage implements SpecBoostManager.SpecBoost<RighteousRam
                                                 .source(warlordsEntity)
                                                 .value(vindicateLeapDamage)
                                         );
+                                        SoulShackle.shacklePlayer(warlordsEntity, landingTarget, vindicateSilenceTicks);
                                         final Location loc = landingTarget.getLocation();
                                         final Vector v = warlordsEntity
                                                 .getLocation()
