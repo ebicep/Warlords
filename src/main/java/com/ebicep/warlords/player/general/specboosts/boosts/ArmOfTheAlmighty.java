@@ -23,6 +23,7 @@ public class ArmOfTheAlmighty implements SpecBoostManager.SpecBoost<ArmOfTheAlmi
     private float cleaveRange;
     private float cleaveDamagePercent;
     private int energyStealPerCleave;
+    private float wrathDamageBoostPercent;
 
     @Override
     public void init() {
@@ -30,6 +31,7 @@ public class ArmOfTheAlmighty implements SpecBoostManager.SpecBoost<ArmOfTheAlmi
         this.cleaveRange = getValue("cleaveRange", float.class);
         this.cleaveDamagePercent = getValue("cleaveDamagePercent", float.class);
         this.energyStealPerCleave = getValue("energyStealPerCleave", int.class);
+        this.wrathDamageBoostPercent = getValue("wrathDamageBoostPercent", float.class);
     }
 
     @Override
@@ -39,7 +41,7 @@ public class ArmOfTheAlmighty implements SpecBoostManager.SpecBoost<ArmOfTheAlmi
 
     @Override
     public List<Object> getVariables() {
-        return List.of(cleaveTargets, cleaveRange, cleaveDamagePercent, energyStealPerCleave);
+        return List.of(cleaveTargets, cleaveRange, cleaveDamagePercent, energyStealPerCleave, wrathDamageBoostPercent);
     }
 
     @Override
@@ -76,7 +78,7 @@ public class ArmOfTheAlmighty implements SpecBoostManager.SpecBoost<ArmOfTheAlmi
                     if (!(event.getAbility() instanceof AvengersStrike) || !warlordsPlayer.getCooldownManager().hasCooldown(AvengersWrath.class)) {
                         return currentDamageValue;
                     }
-                    return currentDamageValue * AbstractAbility.convertToMultiplicationDecimal(cleaveDamagePercent);
+                    return currentDamageValue * AbstractAbility.convertToMultiplicationDecimal(wrathDamageBoostPercent);
                 }
 
             });
