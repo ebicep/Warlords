@@ -610,11 +610,10 @@
       "righteousRampage": {
         "difficulty": 3,
         "name": "Righteous Rampage",
-        "description": "Lose {{damageReduction;%}} damage reduction. Replace {{aqua:Heart to Heart}} with {{aqua:Bull Rush}}. {{aqua:Soul Shackle}} damages all enemies within a {{blocks}} radius for {{damage;%}} damage. Reduce the duration of the {{dark_green:VIND}} effect from {{aqua:Vindicate}} by {{ticks}}. {{aqua:Vindicate}} can be recasted to perform a huge leap, which will damage all enemies within {{blocks}} for {{damage}} damage, silence them for {{ticks}}, and deal massive knockback upon landing.",
+        "description": "Lose {{damageReduction;%}} damage reduction. Replace {{aqua:Heart to Heart}} with {{aqua:Bull Rush}}. {{aqua:Soul Shackle}} damages all enemies within a {{blocks}} radius for {{damage;%}} damage. {{aqua:Vindicate}} can be recasted to perform a huge leap, which will damage all enemies within {{blocks}} for {{damage}} damage, silence them for {{ticks}}, and deal massive knockback upon landing.",
         "damageReductionDecrease": 5,
         "soulShackleAoEDamagePercent": 60,
         "soulShackleAoERadius": 4,
-        "vindicateVINDDurationTicks": 40,
         "vindicateLeapRadius": 6,
         "vindicateLeapDamage": {
           "min": 568,
