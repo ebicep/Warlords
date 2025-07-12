@@ -22,6 +22,7 @@ public class ChillyAura implements SpecBoostManager.SpecBoost<ChillyAura> {
     private float slowAmountPercent;
     private float healthLossPercent;
     private int healthLossTickPeriod;
+    private float meleeSpeedReductionPercent;
 
     @Override
     public void init() {
@@ -29,6 +30,7 @@ public class ChillyAura implements SpecBoostManager.SpecBoost<ChillyAura> {
         this.slowAmountPercent = getValue("slowAmountPercent", float.class);
         this.healthLossPercent = getValue("healthLossPercent", float.class);
         this.healthLossTickPeriod = getValue("healthLossTickPeriod", int.class);
+        this.meleeSpeedReductionPercent = getValue("meleeSpeedReductionPercent", float.class);
     }
 
     @Override
@@ -38,7 +40,7 @@ public class ChillyAura implements SpecBoostManager.SpecBoost<ChillyAura> {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(rangeBlocks, slowAmountPercent, healthLossPercent, healthLossTickPeriod);
+        return List.of(rangeBlocks, slowAmountPercent, healthLossPercent, healthLossTickPeriod, meleeSpeedReductionPercent);
     }
 
     @Override
@@ -58,7 +60,9 @@ public class ChillyAura implements SpecBoostManager.SpecBoost<ChillyAura> {
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
-
+            warlordsPlayer.getAbilitiesMatching(IceBarrier.class).forEach(iceBarrier -> {
+                iceBarrier.setSlownessOnMeleeHit(iceBarrier.getSlownessOnMeleeHit() + meleeSpeedReductionPercent);
+            });
         }
 
         @EventHandler(ignoreCancelled = true)

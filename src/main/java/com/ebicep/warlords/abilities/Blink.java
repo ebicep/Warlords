@@ -34,8 +34,6 @@ public class Blink extends AbstractAbility implements BlueAbilityIcon, Heals<Bli
     private FloatModifiable radiusFlag = new FloatModifiable(3.5f);
     private float verticalLimit;
     private float verticalLimitFlag;
-    private int damageReduction;
-    private int damageReductionTickDuration;
     private float maxGroundTeleportDistance;
 
     public Blink() {
@@ -49,8 +47,6 @@ public class Blink extends AbstractAbility implements BlueAbilityIcon, Heals<Bli
         this.radiusFlag = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radiusFlag"), float.class));
         this.verticalLimit = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("verticalLimit"), float.class);
         this.verticalLimitFlag = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("verticalLimitFlag"), float.class);
-        this.damageReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageReduction"), int.class);
-        this.damageReductionTickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageReductionTickDuration"), int.class);
         this.maxGroundTeleportDistance = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxGroundTeleportDistance"), float.class);
     }
 
@@ -85,22 +81,6 @@ public class Blink extends AbstractAbility implements BlueAbilityIcon, Heals<Bli
         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 2, 1.5f);
         Location floorLocation = LocationUtils.getGroundLocation(locationBuilder.clone());
         wp.teleportLocationOnly(locationBuilder.getY() - floorLocation.getY() > maxGroundTeleportDistance ? locationBuilder : floorLocation);
-
-        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
-                "Soul Switch Res",
-                "SWITCH",
-                SoulSwitch.class,
-                null,
-                wp,
-                CooldownTypes.BUFF,
-                cooldownManager -> {},
-                damageReductionTickDuration
-        ) {
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * convertToDivisionDecimal(damageReduction);
-            }
-        });
         return true;
     }
 
@@ -109,13 +89,9 @@ public class Blink extends AbstractAbility implements BlueAbilityIcon, Heals<Bli
         description = AbilityDescriptionBuilder
                 .create("Teleport ")
                 .blocks(radius)
-                .text(" blocks forward and gain ")
-                .percent(damageReduction, AbilityDescriptionBuilder.COLOR_BROWN)
-                .text(" damage reduction for ")
-                .durationTicks(damageReductionTickDuration)
-                .text(". Heal for ")
+                .text(" blocks forward, heal for ")
                 .heal(healingValues.blinkHealing)
-                .text(" health and instantly active your passive regeneration.")
+                .text(" health, and instantly active your passive regeneration.")
                 .emptyLine()
                 .text(" Blink has low vertical range.")
                 .build();
@@ -135,14 +111,6 @@ public class Blink extends AbstractAbility implements BlueAbilityIcon, Heals<Bli
     @Override
     public HealingValues getHealValues() {
         return healingValues;
-    }
-
-    public int getDamageReduction() {
-        return damageReduction;
-    }
-
-    public void setDamageReduction(int damageReduction) {
-        this.damageReduction = damageReduction;
     }
 
     public float getVerticalLimit() {

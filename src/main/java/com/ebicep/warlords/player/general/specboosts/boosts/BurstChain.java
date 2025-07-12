@@ -1,9 +1,7 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
-import com.ebicep.warlords.abilities.ArcaneShield;
 import com.ebicep.warlords.abilities.FlameBurst;
 import com.ebicep.warlords.abilities.Inferno;
-import com.ebicep.warlords.abilities.TimeWarpPyromancer;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
@@ -20,8 +18,6 @@ public class BurstChain implements SpecBoostManager.SpecBoost<BurstChain> {
 
     private int healthDecrease;
     private float baseSpeedIncreasePercent;
-    private float timeWarpCooldownReductionSeconds;
-    private float arcaneShieldCooldownReductionSeconds;
     private float velocityIncreasePercentage;
     private int guaranteedCrit;
     private float damageIncreasePercent;
@@ -32,8 +28,6 @@ public class BurstChain implements SpecBoostManager.SpecBoost<BurstChain> {
     public void init() {
         this.healthDecrease = getValue("healthDecrease", int.class);
         this.baseSpeedIncreasePercent = getValue("baseSpeedIncreasePercent", float.class);
-        this.timeWarpCooldownReductionSeconds = getValue("timeWarpCooldownReductionSeconds", float.class);
-        this.arcaneShieldCooldownReductionSeconds = getValue("arcaneShieldCooldownReductionSeconds", float.class);
         this.velocityIncreasePercentage = getValue("velocityIncreasePercentage", float.class);
         this.guaranteedCrit = getValue("guaranteedCrit", int.class);
         this.damageIncreasePercent = getValue("damageIncreasePercent", float.class);
@@ -51,8 +45,6 @@ public class BurstChain implements SpecBoostManager.SpecBoost<BurstChain> {
         return List.of(
                 healthDecrease,
                 baseSpeedIncreasePercent,
-                timeWarpCooldownReductionSeconds,
-//                arcaneShieldCooldownReductionSeconds,
                 velocityIncreasePercentage,
                 guaranteedCrit,
                 damageIncreasePercent,
@@ -80,12 +72,6 @@ public class BurstChain implements SpecBoostManager.SpecBoost<BurstChain> {
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getHealth().addAdditiveModifier("Spec Boost (Base)", -healthDecrease);
             warlordsPlayer.getSpeed().addBaseModifier(baseSpeedIncreasePercent);
-            warlordsPlayer.getAbilitiesMatching(TimeWarpPyromancer.class).forEach(timeWarp -> {
-                timeWarp.getCooldown().addAdditiveModifier("Spec Boost", -timeWarpCooldownReductionSeconds);
-            });
-            warlordsPlayer.getAbilitiesMatching(ArcaneShield.class).forEach(arcaneShield -> {
-                arcaneShield.getCooldown().addAdditiveModifier("Spec Boost", -arcaneShieldCooldownReductionSeconds);
-            });
             warlordsPlayer.getAbilitiesMatching(FlameBurst.class).forEach(flameBurst -> {
                 flameBurst.getProjectileSpeed().addMultiplicativeModifierAdd("Spec Boost", (velocityIncreasePercentage + 100) / 100);
             });
