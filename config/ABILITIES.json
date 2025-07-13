@@ -685,7 +685,7 @@
         "speedBuff": 35,
         "incomingDamageReduction": 20,
         "hazeRadius": 6.5,
-        "hazeSlowness": 20,
+        "hazeSlowness": 30,
         "hazeSlowDurationTicks": 20,
         "vulnerableTickDuration": 120,
         "vulnerableDamageBonus": 10,
