@@ -13,14 +13,14 @@ import java.util.List;
 
 public class Syringe implements SpecBoostManager.SpecBoost<Syringe> {
 
-    private float waterBoltHealingDecreasePercent;
+    private float waterBoltStatsDecreasePercent;
     private float waterBoltDirectHitHealingIncreasePercent;
     private float waterBoltDirectHitSpeedIncreasePercent;
     private int waterBoltDirectHitDurationTicks;
 
     @Override
     public void init() {
-        this.waterBoltHealingDecreasePercent = getValue("waterBoltHealingDecreasePercent", float.class);
+        this.waterBoltStatsDecreasePercent = getValue("waterBoltStatsDecreasePercent", float.class);
         this.waterBoltDirectHitHealingIncreasePercent = getValue("waterBoltDirectHitHealingIncreasePercent", float.class);
         this.waterBoltDirectHitSpeedIncreasePercent = getValue("waterBoltDirectHitSpeedIncreasePercent", float.class);
         this.waterBoltDirectHitDurationTicks = getValue("waterBoltDirectHitDurationTicks", int.class);
@@ -33,7 +33,7 @@ public class Syringe implements SpecBoostManager.SpecBoost<Syringe> {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(waterBoltHealingDecreasePercent, waterBoltDirectHitHealingIncreasePercent, waterBoltDirectHitSpeedIncreasePercent, waterBoltDirectHitDurationTicks);
+        return List.of(waterBoltStatsDecreasePercent, waterBoltDirectHitHealingIncreasePercent, waterBoltDirectHitSpeedIncreasePercent, waterBoltDirectHitDurationTicks);
     }
 
     @Override
@@ -54,8 +54,11 @@ public class Syringe implements SpecBoostManager.SpecBoost<Syringe> {
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(WaterBolt.class).forEach(waterBolt -> {
+                waterBolt.getDamageValues().getBoltDamage().forEachValue(floatModifiable ->
+                        floatModifiable.addMultiplicativeModifierAdd("Spec Boost", -waterBoltStatsDecreasePercent / 100)
+                );
                 waterBolt.getHealValues().getBoltHealing().forEachValue(floatModifiable ->
-                        floatModifiable.addMultiplicativeModifierAdd("Spec Boost", -waterBoltHealingDecreasePercent / 100)
+                        floatModifiable.addMultiplicativeModifierAdd("Spec Boost", -waterBoltStatsDecreasePercent / 100)
                 );
                 waterBolt.getDirectHitMultiplier().addAdditiveModifier("Spec Boost", waterBoltDirectHitHealingIncreasePercent);
             });
