@@ -51,6 +51,11 @@
         "speedIncrease": 90,
         "damageIncrease": 10
       },
+      "portal": {
+        "difficulty": 5,
+        "name": "Portal",
+        "description": "Replace {{aqua:Time Warp}} with {{aqua:Portal}}."
+      },
       "arcaneShatter": {
         "difficulty": 4,
         "name": "Arcane Shatter",
@@ -605,7 +610,7 @@
         "difficulty": 4,
         "name": "Abyssal Grasp",
         "description": "Increase the damage of {{aqua:Soul Shackle}} by {{damage}} and reduce the range to {{blocks}}. {{aqua:Soul Shackle}} now pulls the target directly in front of you. Has reduced effect on flag carriers.",
-        "soulShackleDamageIncrease": 150,
+        "soulShackleDamageIncrease": 50,
         "soulShackleRange": 13,
         "normalPullRange": 10,
         "flagCarrierPullRange": 6
