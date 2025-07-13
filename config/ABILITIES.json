@@ -686,7 +686,7 @@
         "incomingDamageReduction": 20,
         "hazeRadius": 6.5,
         "hazeSlowness": 20,
-        "hazeSlownessDurationTicks": 20,
+        "hazeSlowDurationTicks": 20,
         "vulnerableTickDuration": 120,
         "vulnerableDamageBonus": 10,
         "damageValues": {
