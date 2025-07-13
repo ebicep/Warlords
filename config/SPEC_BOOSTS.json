@@ -298,7 +298,7 @@
         "name": "Arm of the Almighty",
         "description": "{{aqua:Avenger's Strike}} will now cleave up to {{blue}} enemies within {{blocks}} for {{damage;%}} damage and will remove {{energy}} energy. During {{aqua:Avenger's Wrath}}, instead increase the damage of {{aqua:Avenger's Strike}} by {{damage;%}}.",
         "cleaveTargets": 2,
-        "cleaveRange": 4,
+        "cleaveRange": 3.5,
         "cleaveDamagePercent": 25,
         "energyStealPerCleave": 5,
         "wrathDamageBoostPercent": 25
