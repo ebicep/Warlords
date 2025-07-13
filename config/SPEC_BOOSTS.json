@@ -240,8 +240,8 @@
         "name": "Vitality Boost",
         "description": "Gain {{heal}} max health. Receive {{heal;%}} more healing. Reduce the cooldown of {{aqua:Last Stand}} by {{ticks}}.",
         "healthIncrease": 600,
-        "healingReceivedIncreasePercent": 5,
-        "lastStandCooldownReductionTicks": 60
+        "healingReceivedIncreasePercent": 8,
+        "lastStandCooldownReductionTicks": 80
       },
       "solitary": {
         "difficulty": 3,
