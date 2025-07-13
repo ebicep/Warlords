@@ -269,8 +269,9 @@
       "oneManArmy": {
         "difficulty": 2,
         "name": "One Man Army",
-        "description": "Increase the duration of {{aqua:Undying Army}} by {{ticks}} and the cooldown by {{ticks}}. {{aqua:Undying Army}} will no longer heal you or damage you after being popped but resets {{aqua:Orbs of Life}} cooldown.",
+        "description": "Increase the duration of {{aqua:Undying Army}} by {{ticks}}, {{ticks}} for the caster, and the cooldown by {{ticks}}. {{aqua:Undying Army}} will no longer heal you or damage you after being popped but resets {{aqua:Orbs of Life}} cooldown.",
         "undyingArmyTickDurationIncrease": 40,
+        "undyingArmyTickDurationCaster": 360,
         "undyingArmyCooldownIncreaseTicks": 100
       },
       "undyingSteed": {
