@@ -20,7 +20,7 @@ import java.util.List;
 
 public class Portal extends AbstractAbility implements PurpleAbilityIcon, AbilityStats<Portal, Portal.PortalStats> {
 
-    private PortalStats stats = new PortalStats();
+    private final PortalStats stats = new PortalStats();
     private int recastDelayTicks;
     private float portalSpeedReductionPercent;
 
@@ -61,13 +61,7 @@ public class Portal extends AbstractAbility implements PurpleAbilityIcon, Abilit
                 data,
                 wp,
                 CooldownTypes.ABILITY,
-                cooldownManager -> {
-                    if (wp.isDead() || wp.getGame().getState() instanceof EndState) {
-                        return;
-                    }
-                    Utils.playGlobalSound(wp.getLocation(), "mage.timewarp.teleport", 1, 1);
-                    wp.getEntity().teleport(data.warpLocation);
-                },
+                cooldownManager -> {},
                 true,
                 (cooldown, ticksElapsed) -> {
                     if (ticksElapsed % 10 == 0) {
@@ -88,14 +82,19 @@ public class Portal extends AbstractAbility implements PurpleAbilityIcon, Abilit
         addSecondaryAbility(
                 recastDelayTicks,
                 () -> {
-                    if (wp.isDead()) {
+                    if (wp.isDead() || wp.getGame().getState() instanceof EndState) {
                         return;
                     }
                     if (wp.hasFlag()) {
                         wp.sendMessage(Component.text("You cannot teleport with the flag!", NamedTextColor.RED));
                         return;
                     }
+                    Utils.playGlobalSound(wp.getLocation(), "mage.timewarp.teleport", 1, 1);
+                    wp.getEntity().teleport(data.warpLocation);
                     wp.getCooldownManager().removeCooldown(portalCooldown);
+                    wp.getAbilitiesMatching(Portal.class).forEach(portal -> {
+                        portal.setCurrentCooldown(0);
+                    });
                 },
                 false,
                 secondaryAbility -> !wp.getCooldownManager().hasCooldown(portalCooldown)
