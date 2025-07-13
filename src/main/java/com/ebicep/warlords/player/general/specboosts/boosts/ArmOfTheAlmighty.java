@@ -2,10 +2,14 @@ package com.ebicep.warlords.player.general.specboosts.boosts;
 
 import com.ebicep.warlords.abilities.AvengersStrike;
 import com.ebicep.warlords.abilities.AvengersWrath;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -19,6 +23,7 @@ public class ArmOfTheAlmighty implements SpecBoostManager.SpecBoost<ArmOfTheAlmi
     private float cleaveRange;
     private float cleaveDamagePercent;
     private int energyStealPerCleave;
+    private float wrathDamageBoostPercent;
 
     @Override
     public void init() {
@@ -26,6 +31,7 @@ public class ArmOfTheAlmighty implements SpecBoostManager.SpecBoost<ArmOfTheAlmi
         this.cleaveRange = getValue("cleaveRange", float.class);
         this.cleaveDamagePercent = getValue("cleaveDamagePercent", float.class);
         this.energyStealPerCleave = getValue("energyStealPerCleave", int.class);
+        this.wrathDamageBoostPercent = getValue("wrathDamageBoostPercent", float.class);
     }
 
     @Override
@@ -35,7 +41,7 @@ public class ArmOfTheAlmighty implements SpecBoostManager.SpecBoost<ArmOfTheAlmi
 
     @Override
     public List<Object> getVariables() {
-        return List.of(cleaveTargets, cleaveRange, cleaveDamagePercent, energyStealPerCleave);
+        return List.of(cleaveTargets, cleaveRange, cleaveDamagePercent, energyStealPerCleave, wrathDamageBoostPercent);
     }
 
     @Override
@@ -55,6 +61,27 @@ public class ArmOfTheAlmighty implements SpecBoostManager.SpecBoost<ArmOfTheAlmi
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
+            warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                    getStringName(),
+                    null,
+                    ArmOfTheAlmighty.Boost.class,
+                    null,
+                    warlordsPlayer,
+                    CooldownTypes.SPEC_BOOST,
+                    cooldownManager -> {
+                    },
+                    false
+            ) {
+
+                @Override
+                public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                    if (!(event.getAbility() instanceof AvengersStrike) || !warlordsPlayer.getCooldownManager().hasCooldown(AvengersWrath.class)) {
+                        return currentDamageValue;
+                    }
+                    return currentDamageValue * AbstractAbility.convertToMultiplicationDecimal(wrathDamageBoostPercent);
+                }
+
+            });
         }
 
         @EventHandler

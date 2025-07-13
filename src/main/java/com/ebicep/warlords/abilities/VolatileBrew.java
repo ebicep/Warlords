@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.LinkedCooldown;
@@ -168,20 +169,39 @@ public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, 
                 return new Listener() {
                     @EventHandler
                     public void onSneak(PlayerToggleSneakEvent event) {
-                        if (!event.getPlayer().equals(wp.getEntity()) || !event.isSneaking()) {
+                        Player player = event.getPlayer();
+                        boolean wpShifting = player.equals(wp.getEntity());
+                        boolean targetShifting = player.equals(data.target.getEntity());
+                        if (!wpShifting && !targetShifting) {
+                            return;
+                        }
+                        if (!event.isSneaking()) {
                             return;
                         }
                         if (cooldown.getTicksLeft() <= 1) {
                             return;
                         }
-                        if (data.target.equals(wp)) {
+                        if (data.target.equals(wp) || targetShifting) {
                             data.activatedEarly = true;
                             cooldown.setTicksLeft(1);
-                            wp.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
-                                    .append(Component.text(" You detonated your ", NamedTextColor.GRAY))
-                                    .append(Component.text(name, NamedTextColor.YELLOW))
-                                    .append(Component.text(" early!", NamedTextColor.GRAY))
-                            );
+                            if (!data.target.equals(wp)) {
+                                data.target.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
+                                        .append(Component.text(" You detonated " + wp.getName() + "'s ", NamedTextColor.GRAY))
+                                        .append(Component.text(name, NamedTextColor.YELLOW))
+                                        .append(Component.text(" early!", NamedTextColor.GRAY))
+                                );
+                                wp.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
+                                        .append(Component.text(" " + data.target.getName() + " detonated your ", NamedTextColor.GRAY))
+                                        .append(Component.text(name, NamedTextColor.YELLOW))
+                                        .append(Component.text(" early!", NamedTextColor.GRAY))
+                                );
+                            } else {
+                                wp.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
+                                        .append(Component.text(" You detonated your ", NamedTextColor.GRAY))
+                                        .append(Component.text(name, NamedTextColor.YELLOW))
+                                        .append(Component.text(" early!", NamedTextColor.GRAY))
+                                );
+                            }
                             return;
                         }
                         data.target.getCooldownManager().removeCooldownNoForce(cooldown);
@@ -192,6 +212,14 @@ public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, 
                                 .append(Component.text(name, NamedTextColor.YELLOW))
                                 .append(Component.text(" to yourself!", NamedTextColor.GRAY))
                         );
+                    }
+
+                    @EventHandler(ignoreCancelled = true)
+                    public void onDeathEvent(WarlordsDeathEvent event) {
+                        if (data.target != wp && event.getWarlordsEntity().equals(data.target)) {
+                            data.activatedEarly = true;
+                            expire(wp.getCooldownManager());
+                        }
                     }
                 };
             }
@@ -273,7 +301,7 @@ public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, 
                 .energy(energyRestore)
                 .text(" to nearby allies.")
                 .emptyLine()
-                .text("Recast to toggle between the two states. Sneak to recall the brew to yourself; the brew detonates if you already have it.")
+                .text("Recast to toggle between the two states. Sneak to recall the brew to yourself; the brew detonates if you already have it. If an ally sneaks with the brew, it detonates early.")
                 .emptyLine()
                 .text("If no ally is targeted, receive the brew yourself.")
                 .build();
@@ -294,6 +322,16 @@ public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, 
         return radius;
     }
 
+    @Override
+    public int getTickDuration() {
+        return ticksUntilExplosion;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.ticksUntilExplosion = tickDuration;
+    }
+
     public void setBothStatesActive(boolean bothStatesActive) {
         this.bothStatesActive = bothStatesActive;
     }
@@ -304,16 +342,6 @@ public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, 
 
     public void setEarlyActivationEffectivenessReduction(int earlyActivationEffectivenessReduction) {
         this.earlyActivationEffectivenessReduction = earlyActivationEffectivenessReduction;
-    }
-
-    @Override
-    public int getTickDuration() {
-        return ticksUntilExplosion;
-    }
-
-    @Override
-    public void setTickDuration(int tickDuration) {
-        this.ticksUntilExplosion = tickDuration;
     }
 
     public static class VolatileBrewData {

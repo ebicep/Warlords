@@ -293,6 +293,14 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
             this.hexesNotConsumed = hexesNotConsumed;
         }
 
+        public float getTotalDamageReflected() {
+            return totalDamageReflected;
+        }
+
+        public void setTotalDamageReflected(float totalDamageReflected) {
+            this.totalDamageReflected = totalDamageReflected;
+        }
+
     }
 
 }
