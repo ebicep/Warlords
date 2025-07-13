@@ -144,7 +144,7 @@ public class SuperBrew extends AbstractAbility implements OrangeAbilityIcon, Hit
 
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (event.getWarlordsEntity().equals(target)) {
+                if (event.getCause().isEmpty() && event.getWarlordsEntity().equals(target)) {
                     return currentDamageValue * convertToDivisionDecimal(meleeDamageTakenDecreasePercent);
                 }
                 return currentDamageValue;
