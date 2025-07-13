@@ -51,11 +51,6 @@
         "speedIncrease": 90,
         "damageIncrease": 10
       },
-      "portal": {
-        "difficulty": 5,
-        "name": "Portal",
-        "description": "Replace {{aqua:Time Warp}} with {{aqua:Portal}}."
-      },
       "arcaneShatter": {
         "difficulty": 4,
         "name": "Arcane Shatter",
@@ -84,10 +79,10 @@
         "difficulty": 2,
         "name": "Steadfast Warp",
         "description": "Gain {{heal}} max health. Decrease the absorption of {{aqua:Arcane Shield}} by {{damageReduction;%}}. Reduce the healing of {{aqua:Time Warp}} by {{heal;%}}, but you heal for the greater of its normal amount and your pre-Warp health, up to a maximum of {{heal}}. After {{ticks}}, you can recast to instantly warp back. You gain full knockback immunity during the initial warp, but recasting the warp reduces that duration by {{ticks}}.",
-        "healthIncrease": 1100,
+        "healthIncrease": 1300,
         "absorptionDecreasePercent": 25,
-        "warpHealDecreasePercent": 16,
-        "warpHealCap": 3000,
+        "warpHealDecreasePercent": 8,
+        "warpHealCap": 3500,
         "recastDelayTicks": 20
       },
       "chillyAura": {
@@ -240,8 +235,8 @@
         "name": "Vitality Boost",
         "description": "Gain {{heal}} max health. Receive {{heal;%}} more healing. Reduce the cooldown of {{aqua:Last Stand}} by {{ticks}}.",
         "healthIncrease": 600,
-        "healingReceivedIncreasePercent": 8,
-        "lastStandCooldownReductionTicks": 80
+        "healingReceivedIncreasePercent": 5,
+        "lastStandCooldownReductionTicks": 60
       },
       "solitary": {
         "difficulty": 3,
@@ -274,8 +269,9 @@
       "oneManArmy": {
         "difficulty": 2,
         "name": "One Man Army",
-        "description": "Increase the duration of {{aqua:Undying Army}} by {{ticks}} and the cooldown by {{ticks}}. {{aqua:Undying Army}} will no longer heal you or damage you after being popped but resets {{aqua:Orbs of Life}} cooldown.",
+        "description": "Increase the duration of {{aqua:Undying Army}} by {{ticks}}, {{ticks}} for the caster, and the cooldown by {{ticks}}. {{aqua:Undying Army}} will no longer heal you or damage you after being popped but resets {{aqua:Orbs of Life}} cooldown.",
         "undyingArmyTickDurationIncrease": 40,
+        "undyingArmyTickDurationCaster": 360,
         "undyingArmyCooldownIncreaseTicks": 100
       },
       "undyingSteed": {
@@ -609,7 +605,7 @@
         "difficulty": 4,
         "name": "Abyssal Grasp",
         "description": "Increase the damage of {{aqua:Soul Shackle}} by {{damage}} and reduce the range to {{blocks}}. {{aqua:Soul Shackle}} now pulls the target directly in front of you. Has reduced effect on flag carriers.",
-        "soulShackleDamageIncrease": 50,
+        "soulShackleDamageIncrease": 150,
         "soulShackleRange": 13,
         "normalPullRange": 10,
         "flagCarrierPullRange": 6

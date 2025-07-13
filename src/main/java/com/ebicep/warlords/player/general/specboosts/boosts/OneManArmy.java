@@ -16,11 +16,13 @@ import java.util.function.BiConsumer;
 public class OneManArmy implements SpecBoostManager.SpecBoost<OneManArmy> {
 
     private int undyingArmyTickDurationIncrease;
+    private int undyingArmyTickDurationCaster;
     private int undyingArmyCooldownIncreaseTicks;
 
     @Override
     public void init() {
         this.undyingArmyTickDurationIncrease = getValue("undyingArmyTickDurationIncrease", int.class);
+        this.undyingArmyTickDurationCaster = getValue("undyingArmyTickDurationCaster", int.class);
         this.undyingArmyCooldownIncreaseTicks = getValue("undyingArmyCooldownIncreaseTicks", int.class);
     }
 
@@ -31,7 +33,7 @@ public class OneManArmy implements SpecBoostManager.SpecBoost<OneManArmy> {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(undyingArmyTickDurationIncrease, undyingArmyCooldownIncreaseTicks);
+        return List.of(undyingArmyTickDurationIncrease, undyingArmyTickDurationCaster, undyingArmyCooldownIncreaseTicks);
     }
 
     @Override
@@ -69,6 +71,7 @@ public class OneManArmy implements SpecBoostManager.SpecBoost<OneManArmy> {
             if (!(cooldown.getCooldownObject() instanceof UndyingArmy.UndyingArmyData data) || !cooldown.getFrom().equals(warlordsEntity)) {
                 return;
             }
+            regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + undyingArmyTickDurationCaster);
             BiConsumer<RegularCooldown<UndyingArmy.UndyingArmyData>, WarlordsEntity> oldOnPop = data.getOnPop();
             data.setOnPop((cd, we) -> {
                 if (!we.equals(warlordsEntity)) {
