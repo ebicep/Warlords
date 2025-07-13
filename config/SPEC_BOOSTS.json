@@ -28,7 +28,7 @@
         "velocityIncreasePercentage": 100,
         "guaranteedCrit": 1,
         "damageIncreasePercent": 8,
-        "infernoDamageIncreasePercent": 20,
+        "infernoDamageIncreasePercent": 16,
         "damageReductionAbilities": [
           "Arcane Shield",
           "Ice Barrier",
