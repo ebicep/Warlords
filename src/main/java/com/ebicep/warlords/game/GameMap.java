@@ -55,6 +55,7 @@ public abstract class GameMap {
     public static final GameMap SCORCHED = new Scorched();
     public static final GameMap SIEGE = new Siege();
     public static final GameMap STORM_WIND = new StormWind();
+    public static final GameMap STORM_WIND2 = new Stormwind2();
     public static final GameMap SUN_AND_MOON = new SunAndMoon();
     public static final GameMap TARTARUS = new Tartarus();
     public static final GameMap THE_OBSIDIAN_TRAIL_RAID = new TheObsidianTrailRaid();
@@ -105,6 +106,7 @@ public abstract class GameMap {
             SCORCHED,
             SIEGE,
             STORM_WIND,
+            STORM_WIND2,
             SUN_AND_MOON,
             TARTARUS,
             THE_OBSIDIAN_TRAIL_RAID,
