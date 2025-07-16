@@ -609,10 +609,11 @@
       "abyssalGrasp": {
         "difficulty": 4,
         "name": "Abyssal Grasp",
-        "description": "Increase the damage of {{aqua:Soul Shackle}} by {{damage}} and reduce the range to {{blocks}}. {{aqua:Soul Shackle}} now pulls the target directly in front of you. Has reduced effect on flag carriers.",
-        "soulShackleDamageIncrease": 50,
-        "soulShackleRange": 13,
-        "normalPullRange": 10,
+        "description": "Increase the damage of {{aqua:Soul Shackle}} by {{damage;%}} but increase the cooldown by {{ticks}} and reduce the range by {{blocks}}. {{aqua:Soul Shackle}} now pulls the target directly in front of you. Has reduced effect on flag carriers.",
+        "soulShackleDamageIncreasePercent": 40,
+        "soulShackleCooldownIncreaseTicks": 40,
+        "soulShackleRangeDecrease": 4,
+        "normalPullRange": 9,
         "flagCarrierPullRange": 6
       },
       "sanctionBurst": {
