@@ -15,10 +15,10 @@ public class FrostMissile implements SpecBoostManager.SpecBoost<FrostMissile> {
 
     @Override
     public void init() {
-        this.energyDecrease = getValue("frostMissileEnergyDecrease", int.class);
-        this.damageDecreasePercent = getValue("frostMissileDamageDecreasePercent", float.class);
-        this.slowIncrease = getValue("frostMissileSlowIncrease", int.class);
-        this.directHitSlowIncrease = getValue("frostMissileDirectHitSlowIncrease", int.class);
+        this.energyDecrease = getValue("energyDecrease", int.class);
+        this.damageDecreasePercent = getValue("damageDecreasePercent", float.class);
+        this.slowIncrease = getValue("slowIncrease", int.class);
+        this.directHitSlowIncrease = getValue("directHitSlowIncrease", int.class);
     }
 
     @Override
