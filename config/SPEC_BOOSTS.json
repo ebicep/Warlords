@@ -429,9 +429,9 @@
         "difficulty": 2,
         "name": "Nerfinator",
         "description": "Reduce the damage of {{aqua:Lightning Bolt}} and {{aqua:Chain Lightning}} by {{damageReduction;%}}. {{aqua:Chain Lightning}} reduces the damage enemies deal by {{damageReduction;%}} for {{ticks}}. This effect stacks up to {{blue}} times.",
-        "damageReductionPercent": 10,
-        "chainLightningDamageReductionPercent": 10,
-        "chainLightningDurationTicks": 80,
+        "damageReductionPercent": 5,
+        "chainLightningDamageReductionPercent": 12,
+        "chainLightningDurationTicks": 90,
         "maxStacks": 3
       },
       "symphonicWindfury": {
