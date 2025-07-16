@@ -122,10 +122,10 @@
         },
         "healingValues": {
           "bullRushHealing": {
-            "value": 1000
+            "value": 600
           }
         },
-        "tickDuration": 14,
+        "tickDuration": 12,
         "speedBoost": 180,
         "radius": 3.5,
         "knockbackMagnitude": 1.25,
