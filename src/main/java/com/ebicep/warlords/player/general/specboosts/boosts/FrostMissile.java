@@ -8,11 +8,17 @@ import java.util.List;
 
 public class FrostMissile implements SpecBoostManager.SpecBoost<FrostMissile> {
 
-    private float damageIncrease;
+    private int energyDecrease;
+    private float damageDecreasePercent;
+    private int slowIncrease;
+    private int directHitSlowIncrease;
 
     @Override
     public void init() {
-        this.damageIncrease = getValue("damageIncrease", float.class);
+        this.energyDecrease = getValue("frostMissileEnergyDecrease", int.class);
+        this.damageDecreasePercent = getValue("frostMissileDamageDecreasePercent", float.class);
+        this.slowIncrease = getValue("frostMissileSlowIncrease", int.class);
+        this.directHitSlowIncrease = getValue("frostMissileDirectHitSlowIncrease", int.class);
     }
 
     @Override
@@ -22,7 +28,7 @@ public class FrostMissile implements SpecBoostManager.SpecBoost<FrostMissile> {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(damageIncrease);
+        return List.of(energyDecrease, damageDecreasePercent, slowIncrease, directHitSlowIncrease);
     }
 
     @Override
@@ -40,9 +46,12 @@ public class FrostMissile implements SpecBoostManager.SpecBoost<FrostMissile> {
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getAbilitiesMatching(FrostBolt.class).forEach(frostBolt -> {
+                frostBolt.getEnergyCost().addAdditiveModifier("Spec Boost", -energyDecrease);
                 frostBolt.getDamageValues()
                          .getBoltDamage()
-                         .forEachValue(floatModifiable -> floatModifiable.addMultiplicativeModifierAdd("Spec Boost", damageIncrease / 100));
+                         .forEachValue(floatModifiable -> floatModifiable.addMultiplicativeModifierAdd("Spec Boost", -damageDecreasePercent / 100));
+                frostBolt.setSlowness(frostBolt.getSlowness() + slowIncrease);
+                frostBolt.setDirectHitAdditionalSlowness(frostBolt.getDirectHitAdditionalSlowness() + directHitSlowIncrease);
             });
         }
 

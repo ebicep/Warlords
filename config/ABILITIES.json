@@ -565,6 +565,7 @@
         "splash": 4,
         "slowDuration": 2,
         "slowness": 25,
+        "directHitAdditionalSlowness": 0,
         "projectileSpeed": 2.25,
         "maxDistance": 300,
         "hitTeammates": false,
