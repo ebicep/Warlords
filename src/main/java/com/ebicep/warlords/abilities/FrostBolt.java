@@ -43,6 +43,7 @@ public class FrostBolt extends AbstractPiercingProjectile<FrostBolt, FrostBolt.F
     private FloatModifiable splash = new FloatModifiable(4.125f);
     private int slowDuration = 2;
     private int slowness = 30;
+    private int directHitAdditionalSlowness = 0;
 
     public FrostBolt() {
         super(AbstractAbilityBuilder.create("frostBolt").pvp());
@@ -57,6 +58,7 @@ public class FrostBolt extends AbstractPiercingProjectile<FrostBolt, FrostBolt.F
         this.splash = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("splash"), float.class));
         this.slowDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("slowDuration"), int.class);
         this.slowness = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("slowness"), int.class);
+        this.directHitAdditionalSlowness = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("directHitAdditionalSlowness"), int.class);
     }
 
     @Override
@@ -146,7 +148,7 @@ public class FrostBolt extends AbstractPiercingProjectile<FrostBolt, FrostBolt.F
             if (hit.onHorse()) {
                 stats.addNumberOfDismounts();
             }
-            hit.addSpeedModifier(shooter, "Frostbolt", -slowness, slowDuration * 20);
+            hit.addSpeedModifier(shooter, "Frostbolt", -(slowness + directHitAdditionalSlowness), slowDuration * 20);
             hit.addInstance(InstanceBuilder.damage()
                                            .ability(this)
                                            .source(shooter)
@@ -192,7 +194,7 @@ public class FrostBolt extends AbstractPiercingProjectile<FrostBolt, FrostBolt.F
             toReduceBy = .2f;
         }
         if (projectile.getHit().isEmpty()) {
-            toReduceBy += .15;
+            toReduceBy += .15f;
         }
         hit(projectile, shooter, toReduceBy, stats.getTargetsHit(), hit);
         hit.addSpeedModifier(shooter, "Splintered Ice", -25, 40);
@@ -220,7 +222,7 @@ public class FrostBolt extends AbstractPiercingProjectile<FrostBolt, FrostBolt.F
         if (nearEntity.onHorse()) {
             stats.addNumberOfDismounts();
         }
-        nearEntity.addSpeedModifier(shooter, "Frostbolt", -slowness, 2 * 20);
+        nearEntity.addSpeedModifier(shooter, "Frostbolt", -slowness, slowDuration * 20);
         nearEntity.addInstance(InstanceBuilder.damage()
                                               .ability(this)
                                               .source(shooter)
@@ -271,6 +273,14 @@ public class FrostBolt extends AbstractPiercingProjectile<FrostBolt, FrostBolt.F
 
     public void setSlowness(int slowness) {
         this.slowness = slowness;
+    }
+
+    public int getDirectHitAdditionalSlowness() {
+        return directHitAdditionalSlowness;
+    }
+
+    public void setDirectHitAdditionalSlowness(int directHitAdditionalSlowness) {
+        this.directHitAdditionalSlowness = directHitAdditionalSlowness;
     }
 
     public float getDirectHitMultiplier() {
