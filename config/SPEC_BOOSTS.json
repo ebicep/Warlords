@@ -791,9 +791,7 @@
       "unmercifulHex": {
         "difficulty": 2,
         "name": "Unmerciful Hex",
-        "description": "Increase the pierce against enemies of {{aqua:Merciful Hex}} by {{blue}}, and the damage by {{damage;%}}, but it no longer grants the second ally {{dark_green:MHEX}}. {{aqua:Ray of Light}} no longer cleanses allies. {{aqua:Sanctified Beacon}} no longer grants {{dark_green:MHEX}}.",
-        "mercifulHexEnemyPierceIncrease": 1,
-        "mercifulHexDamageIncreasePercent": 25
+        "description": "{{aqua:Merciful Hex}} gains unlimited pierce against enemies, but it no longer grants the second ally {{dark_green:MHEX}} stacks. {{aqua:Ray of Light}} no longer cleanses allies. {{aqua:Sanctified Beacon}} no longer grants {{dark_green:MHEX}}."
       },
       "energyOversurge": {
         "difficulty": 3,
