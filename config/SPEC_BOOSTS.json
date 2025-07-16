@@ -713,9 +713,10 @@
       "contagion": {
         "difficulty": 2,
         "name": "Contagion",
-        "description": "Gain {{energy}} energy per melee hit. Increase the damage reduction of {{aqua:Contagious Facade}} by {{damageReduction;%}}, and its activation effect is activated on use and does not override the nonactivation post effect.",
+        "description": "Gain {{energy}} energy per melee hit. Increase the damage reduction of {{aqua:Contagious Facade}} by {{damageReduction;%}} and the {{dark_red:PHEX}} stacks granted by {{blue}}, and its activation effect is activated on use and does not override the nonactivation post effect.",
         "ephIncrease": 6,
-        "facadeResistanceIncreasePercent": 15
+        "facadeResistanceIncreasePercent": 15,
+        "facadePhexStacksIncrease": 1
       },
       "witheringPlague": {
         "difficulty": 3,
