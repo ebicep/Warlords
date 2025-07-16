@@ -34,7 +34,7 @@ public class Stormwind2 extends GameMap {
                 12,
                 60 * SECOND,
                 "Stormwind2",
-                3,
+                1,
                 GameMode.CAPTURE_THE_FLAG
         );
     }
