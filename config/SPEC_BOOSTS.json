@@ -797,7 +797,7 @@
         "difficulty": 3,
         "name": "Energy Oversurge",
         "description": "Reduce the cooldown of {{aqua:Energy Seer}} by {{ticks;%}}, increase the energy granted by {{energy}}, and the energy loss by {{energy;%}}.",
-        "energySeerCooldownReductionPercent": 25,
+        "energySeerCooldownReductionPercent": 35,
         "energySeerAdditionalEnergyGrant": 60,
         "energyLostIncreasePercent": 100
       },
