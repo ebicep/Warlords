@@ -25,15 +25,15 @@ import java.util.List;
 
 import static com.ebicep.warlords.util.warlords.GameRunnable.SECOND;
 
-public class Stormwind2 extends GameMap {
+public class StormWind2 extends GameMap {
 
-    public Stormwind2() {
+    public StormWind2() {
         super(
-                "Stormwind2",
+                "StormWind2",
                 32,
                 12,
                 60 * SECOND,
-                "Stormwind2",
+                "StormWind2",
                 1,
                 GameMode.CAPTURE_THE_FLAG
         );
