@@ -56,8 +56,8 @@ public class StormWind2 extends GameMap {
         options.add(new PowerupOption(loc.addXYZ(-28.5, 54.5, 62.5), PowerupOption.PowerUp.HEALING));
         options.add(new PowerupOption(loc.addXYZ(44.5, 54.5, -46.5), PowerupOption.PowerUp.HEALING));
 
-        options.add(SpawnpointOption.forTeam(loc.addXYZ(43, 58, 84.5, 180, 0), Team.BLUE));
-        options.add(SpawnpointOption.forTeam(loc.addXYZ(-27, -58, -68.5, 45, 0), Team.RED));
+        options.add(SpawnpointOption.forTeam(loc.addXYZ(43, 58, 84.5, 135, 0), Team.BLUE));
+        options.add(SpawnpointOption.forTeam(loc.addXYZ(-27, 58, -68.5, -45, 0), Team.RED));
 
         options.add(new FlagCapturePointOption(loc.addXYZ(89.5, 58, 66.5, 90, 0), Team.BLUE));
         options.add(new FlagSpawnPointOption(loc.addXYZ(89.5, 58, 66.5, 90, 0), Team.BLUE));
