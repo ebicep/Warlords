@@ -653,8 +653,8 @@
         "name": "Swift Justice",
         "description": "Reduce the cooldown of {{aqua:Vindicate}} by {{ticks}} and it can now be recasted, which cleanses slowness and grants full knockback and slow immunity, {{speed;%}} speed for {{ticks}}, and increases the damage of the next {{aqua:Righteous Strike}} by {{damage;%}} and the active ability reduction by {{ticks}}.",
         "vindicateCooldownReductionSeconds": 7,
-        "recastSpeedIncreasePercent": 60,
-        "recastDurationTicks": 80,
+        "recastSpeedIncreasePercent": 65,
+        "recastDurationTicks": 100,
         "nextStrikeDamageIncreasePercent": 150,
         "nextStrikeCooldownReductionTicks": 60
       },
