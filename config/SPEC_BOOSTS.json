@@ -110,8 +110,8 @@
         "iceBarrierNewDurationTicks": 50,
         "recastDurationDecreaseTicks": 20,
         "recastDamageReductionPercent": 70,
-        "recastMovementSpeed": 0.3,
-        "recastMovementSpeedFlag": 0.2,
+        "recastMovementSpeed": 0.4,
+        "recastMovementSpeedFlag": 0.3,
         "iceBlockRecastDelayTicks": 20
       },
       "arcaneRecluse": {
