@@ -87,7 +87,6 @@ public class RiftAmbush implements SpecBoostManager.SpecBoost<RiftAmbush> {
                     .cause(getStringName())
                     .source(warlordsEntity)
                     .value(soulSwitchDamage)
-                    .flags(InstanceFlags.TRUE_DAMAGE)
             );
             float radius = tetherRadius * tetherRadius;
             warlordsEntity.getCooldownManager().addCooldown(new RegularCooldown<>(
