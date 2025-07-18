@@ -750,8 +750,7 @@
       "divineShields": {
         "difficulty": 1,
         "name": "Divine Shields",
-        "description": "Increase the damage reduction granted by {{yellow:FHEX}} by {{damageReduction;%}}. Increase the shield health granted by {{aqua:Guardian Beam}} by {{damageReduction;%}}.",
-        "fortifyingHexDamageReductionIncreasePercent": 1,
+        "description": "Increase the shield health granted by {{aqua:Guardian Beam}} by {{damageReduction;%}}.",
         "guardianBeamShieldIncreasePercent": 20
       },
       "ruinousHex": {
