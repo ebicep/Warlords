@@ -111,7 +111,7 @@ public class WaterBolt extends AbstractProjectile<WaterBolt, WaterBolt.WaterBolt
                                                .max(healingValues.boltHealing.getMaxValue() * convertToMultiplicationDecimal(directHitMultiplierCalculatedValue) * toReduceBy)
                                                .critChance(cc)
                                                .critMultiplier(healingValues.boltHealing.getCritMultiplierValue())
-                                               .flags(InstanceFlags.CAN_OVERHEAL_OTHERS));
+                                               .flags(InstanceFlags.CAN_OVERHEAL_OTHERS, InstanceFlags.DIRECT_HIT));
                 if (hit != shooter) {
                     Overheal.giveOverHeal(shooter, hit);
                 }
@@ -129,7 +129,8 @@ public class WaterBolt extends AbstractProjectile<WaterBolt, WaterBolt.WaterBolt
                                                .min(damageValues.boltDamage.getMinValue() * convertToMultiplicationDecimal(directHitMultiplierCalculatedValue) * toReduceBy)
                                                .max(damageValues.boltDamage.getMaxValue() * convertToMultiplicationDecimal(directHitMultiplierCalculatedValue) * toReduceBy)
                                                .critChance(cc)
-                                               .critMultiplier(damageValues.boltDamage.getCritMultiplierValue()));
+                                               .critMultiplier(damageValues.boltDamage.getCritMultiplierValue())
+                                               .flags(InstanceFlags.DIRECT_HIT));
             }
         }
         int playersHit = 0;

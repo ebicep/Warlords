@@ -685,8 +685,8 @@
         "speedBuff": 35,
         "incomingDamageReduction": 20,
         "hazeRadius": 6.5,
-        "hazeSlowness": 20,
-        "hazeSlownessDurationTicks": 20,
+        "hazeSlowness": 30,
+        "hazeSlowDurationTicks": 20,
         "vulnerableTickDuration": 120,
         "vulnerableDamageBonus": 10,
         "damageValues": {
@@ -1501,7 +1501,9 @@
         "meleeDamageIncreasePercent": 10,
         "meleeDamageTakenDecreasePercent": 13,
         "ultCooldownReductionPercent": 20,
-        "trueDamageLeechIncreasePercent": 2
+        "trueDamageLeechIncreasePercent": 2,
+        "healthPerSecondIncrease": 90,
+        "bonusHealthPerSecondIncrease": 20
       },
       "temp": {
         "name": "Placeholder Ability"

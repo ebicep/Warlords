@@ -28,7 +28,7 @@
         "velocityIncreasePercentage": 100,
         "guaranteedCrit": 1,
         "damageIncreasePercent": 8,
-        "infernoDamageIncreasePercent": 20,
+        "infernoDamageIncreasePercent": 16,
         "damageReductionAbilities": [
           "Arcane Shield",
           "Ice Barrier",
@@ -83,11 +83,11 @@
       "steadfastWarp": {
         "difficulty": 2,
         "name": "Steadfast Warp",
-        "description": "Gain {{heal}} max health. Decrease the absorption of {{aqua:Arcane Shield}} by {{damageReduction;%}}. Reduce the healing of {{aqua:Time Warp}} by {{heal;%}}, but you heal for the greater of its normal amount and your pre-Warp health, up to a maximum of {{heal}}. After {{ticks}}, you can recast to instantly warp back. You gain full knockback immunity during the initial warp, but recasting the warp reduces that duration by {{ticks}}.",
-        "healthIncrease": 1300,
+        "description": "Gain {{heal}} max health. Decrease the absorption of {{aqua:Arcane Shield}} by {{damageReduction;%}}. Reduce the healing of {{aqua:Time Warp}} by {{heal;%}}, but you heal for the greater of its normal amount and your pre-Warp health, up to a maximum of {{heal}}. After {{ticks}}, you can recast to instantly warp back. You gain full knockback immunity during the initial warp.",
+        "healthIncrease": 1100,
         "absorptionDecreasePercent": 25,
-        "warpHealDecreasePercent": 8,
-        "warpHealCap": 3500,
+        "warpHealDecreasePercent": 16,
+        "warpHealCap": 3000,
         "recastDelayTicks": 20
       },
       "chillyAura": {
@@ -125,6 +125,15 @@
         "description": "Increase the healing of {{aqua:Water Bolt}} by {{heal;%}}.",
         "waterBoltHealingIncreasePercent": 20,
         "waterBoltDirectHitDamageAndHealingIncreasePercent": 10
+      },
+      "syringe": {
+        "difficulty": 3,
+        "name": "Syringe",
+        "description": "Reduce the healing of {{aqua:Water Bolt}} by {{heal;%}}, but increase the direct hit multiplier by {{heal;%}}. {{aqua:Water Bolt}} direct hits grant hit allies and the user {{speed;%}} speed for {{ticks}}.",
+        "waterBoltStatsDecreasePercent": 20,
+        "waterBoltDirectHitHealingIncreasePercent": 100,
+        "waterBoltDirectHitSpeedIncreasePercent": 30,
+        "waterBoltDirectHitDurationTicks": 30
       },
       "divinePurification": {
         "difficulty": 1,
@@ -231,8 +240,8 @@
         "name": "Vitality Boost",
         "description": "Gain {{heal}} max health. Receive {{heal;%}} more healing. Reduce the cooldown of {{aqua:Last Stand}} by {{ticks}}.",
         "healthIncrease": 600,
-        "healingReceivedIncreasePercent": 5,
-        "lastStandCooldownReductionTicks": 60
+        "healingReceivedIncreasePercent": 8,
+        "lastStandCooldownReductionTicks": 80
       },
       "solitary": {
         "difficulty": 3,
@@ -265,8 +274,9 @@
       "oneManArmy": {
         "difficulty": 2,
         "name": "One Man Army",
-        "description": "Increase the duration of {{aqua:Undying Army}} by {{ticks}} and the cooldown by {{ticks}}. {{aqua:Undying Army}} will no longer heal you or damage you after being popped but resets {{aqua:Orbs of Life}} cooldown.",
+        "description": "Increase the duration of {{aqua:Undying Army}} by {{ticks}}, {{ticks}} for the caster, and the cooldown by {{ticks}}. {{aqua:Undying Army}} will no longer heal you or damage you after being popped but resets {{aqua:Orbs of Life}} cooldown.",
         "undyingArmyTickDurationIncrease": 40,
+        "undyingArmyTickDurationCaster": 360,
         "undyingArmyCooldownIncreaseTicks": 100
       },
       "undyingSteed": {
@@ -288,7 +298,7 @@
         "name": "Arm of the Almighty",
         "description": "{{aqua:Avenger's Strike}} will now cleave up to {{blue}} enemies within {{blocks}} for {{damage;%}} damage and will remove {{energy}} energy. During {{aqua:Avenger's Wrath}}, instead increase the damage of {{aqua:Avenger's Strike}} by {{damage;%}}.",
         "cleaveTargets": 2,
-        "cleaveRange": 4,
+        "cleaveRange": 3.5,
         "cleaveDamagePercent": 25,
         "energyStealPerCleave": 5,
         "wrathDamageBoostPercent": 25
@@ -320,9 +330,9 @@
         "difficulty": 1,
         "name": "Shaq Attack",
         "description": "Gain a {{damageReduction}} health shield each time you strike an enemy. Increase the radius of {{aqua:Avenger's Wrath}} by {{blocks}} and the shield health gained to {{damageReduction}} while active. Shield granted do not expire or have a limit.",
-        "shieldPerStrike": 50,
+        "shieldPerStrike": 75,
         "avengerWrathRadiusIncrease": 1,
-        "wrathShieldPerStrike": 200
+        "wrathShieldPerStrike": 175
       },
       "crusadersMight": {
         "difficulty": 1,
@@ -600,7 +610,7 @@
         "difficulty": 4,
         "name": "Abyssal Grasp",
         "description": "Increase the damage of {{aqua:Soul Shackle}} by {{damage}} and reduce the range to {{blocks}}. {{aqua:Soul Shackle}} now pulls the target directly in front of you. Has reduced effect on flag carriers.",
-        "soulShackleDamageIncrease": 150,
+        "soulShackleDamageIncrease": 50,
         "soulShackleRange": 13,
         "normalPullRange": 10,
         "flagCarrierPullRange": 6

@@ -122,6 +122,9 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, H
                     } else {
                         vector = location.getDirection().multiply(2.5);
                     }
+                    if (!horizontal) {
+                        vector.multiply(3);
+                    }
                     if (horizontal || FlagHolder.isPlayerHolderFlag(wp)) {
                         vector.setY(.2);
                     }

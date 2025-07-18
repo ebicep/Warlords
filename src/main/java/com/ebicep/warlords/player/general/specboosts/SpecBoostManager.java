@@ -95,6 +95,7 @@ public class SpecBoostManager {
     public static final SpecBoost<SuperBrew> SUPER_BREW = new SuperBrew();
     public static final SpecBoost<SustainedOnslaught> SUSTAINED_ONSLAUGHT = new SustainedOnslaught();
     public static final SpecBoost<SwiftJustice> SWIFT_JUSTICE = new SwiftJustice();
+    public static final SpecBoost<Syringe> SYRINGE = new Syringe();
     public static final SpecBoost<SymphonicWindfury> SYMPHONIC_WINDFURY = new SymphonicWindfury();
     public static final SpecBoost<TorrentialSoul> TORRENTIAL_SOUL = new TorrentialSoul();
     public static final SpecBoost<TotemicBoon> TOTEMIC_BOON = new TotemicBoon();
@@ -117,7 +118,7 @@ public class SpecBoostManager {
     static {
         SPEC_BOOSTS.put(Specializations.PYROMANCER, List.of(METEOR, FLAME_BREATH, BURST_CHAIN, DIMENSIONAL_WARP, PORTAL));
         SPEC_BOOSTS.put(Specializations.CRYOMANCER, List.of(FROST_MISSILE, BLIZZARD_BREATH, STEADFAST_WARP, CHILLY_AURA, ICE_BLOCK));
-        SPEC_BOOSTS.put(Specializations.AQUAMANCER, List.of(TYPHOON_BOLT, DIVINE_PURIFICATION, CLAIRVOYANCE, FORTIFIED_AEGIS, ARCANE_REFLECTION));
+        SPEC_BOOSTS.put(Specializations.AQUAMANCER, List.of(TYPHOON_BOLT, SYRINGE, DIVINE_PURIFICATION, CLAIRVOYANCE, ARCANE_REFLECTION));
         SPEC_BOOSTS.put(Specializations.BERSERKER, List.of(EFFICIENT_STRIKES, MIGHTY_FISTS, SEISMIC_SHIFT, BLOOD_FRENZY, GOLIATH));
         SPEC_BOOSTS.put(Specializations.DEFENDER, List.of(STRIKER, FERVENT_FORCE, HEROIC_INTERVENTION, VITALITY_BOOST, SOLITARY));
         SPEC_BOOSTS.put(Specializations.REVENANT, List.of(VIBRANT_ORBS, RECKLESS_ASCENT, HEALING_LINK, ONE_MAN_ARMY, UNDYING_STEED));
