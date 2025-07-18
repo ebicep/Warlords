@@ -148,19 +148,13 @@ public abstract class AbstractPlayerClass {
     }
 
     public void onRightClickAbility(AbstractAbility ability, WarlordsEntity wp, Player player, int slot) {
-        if (!ability.anyCharges()) {
-            if (secondaryAbilityCD && ability.hasActiveSecondaryAbilities()) {
-                ability.runSecondAbilities(wp);
-                resetSecondaryAbilityCD(wp);
-                if (wp.isDisableCooldowns() && ability.getSecondaryAbilities().isEmpty()) {
-                    ability.setCurrentCooldown(0);
-                }
-            } else {
-                player.playSound(player.getLocation(), "notreadyalert", 1, 1);
+        if (secondaryAbilityCD && ability.hasActiveSecondaryAbilities()) {
+            ability.runSecondAbilities(wp);
+            resetSecondaryAbilityCD(wp);
+            if (wp.isDisableCooldowns() && ability.getSecondaryAbilities().isEmpty()) {
+                ability.setCurrentCooldown(0);
             }
-            return;
-        }
-        if (player.getLevel() >= ability.getEnergyCostValue() * wp.getEnergyModifier() && abilityCD) {
+        } else if (ability.anyCharges() && player.getLevel() >= ability.getEnergyCostValue() * wp.getEnergyModifier() && abilityCD) {
             WarlordsAbilityActivateEvent.Pre pre = new WarlordsAbilityActivateEvent.Pre(wp, player, ability, slot);
             Bukkit.getPluginManager().callEvent(pre);
             if (pre.isCancelled()) {

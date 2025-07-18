@@ -286,6 +286,9 @@ public abstract class AbstractAbility implements AbilityIcon {
                 if (getCurrentCooldown() > 0) {
                     item.setAmount(getCurrentCooldownItem());
                 }
+                if (hasActiveSecondaryAbilities()) {
+                    item.addEnchantment(Enchantment.RESPIRATION, 1);
+                }
                 player.getInventory().setItem(inventoryIndex, item);
             }
         }
