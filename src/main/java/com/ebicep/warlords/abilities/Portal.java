@@ -96,7 +96,7 @@ public class Portal extends AbstractAbility implements PurpleAbilityIcon, Abilit
                         portal.setCurrentCooldown(0);
                     });
                 },
-                false,
+                true,
                 secondaryAbility -> !wp.getCooldownManager().hasCooldown(portalCooldown)
         );
         return true;
