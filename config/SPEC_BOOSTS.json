@@ -758,8 +758,8 @@
         "name": "Ruinous Hex",
         "description": "Increase the pierce against enemies of {{aqua:Fortifying Hex}} by {{blue}} and the damage by {{damage;%}}, but increase the energy cost by {{energy}}, reduce the pierce for allies by {{blue}}, and the damage reduction granted by {{damageReduction;%}}.",
         "fortifyingHexEnemyPierceIncrease": 1,
-        "fortifyingHexDamageIncreasePercent": 60,
-        "fortifyingHexEnergyCostIncrease": 20,
+        "fortifyingHexDamageIncreasePercent": 45,
+        "fortifyingHexEnergyCostIncrease": 10,
         "fortifyingHexAllyPierceReduction": 1,
         "fortifyingHexDamageReductionDecreasePercent": 1
       },
