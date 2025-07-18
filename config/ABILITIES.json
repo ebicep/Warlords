@@ -78,7 +78,7 @@
         "maxGroundTeleportDistance": 5,
         "healingValues": {
           "blinkHealing": {
-            "value": 300
+            "value": 200
           }
         }
       },
