@@ -271,7 +271,8 @@
       "healingLink": {
         "difficulty": 2,
         "name": "Healing Link",
-        "description": "Replace {{aqua:Reckless Charge}} with {{aqua:Healing Link}}."
+        "description": "Replace {{aqua:Reckless Charge}} with {{aqua:Healing Link}}. Reduce the cooldown of {{aqua:Ground Slam}} by {{ticks}}.",
+        "groundSlamCooldownReductionTicks": 30
       },
       "oneManArmy": {
         "difficulty": 2,
