@@ -56,6 +56,7 @@ public abstract class GameMap {
     public static final GameMap SIEGE = new Siege();
     public static final GameMap STORM_WIND = new StormWind();
     public static final GameMap SUN_AND_MOON = new SunAndMoon();
+    public static final GameMap SUN_AND_MOON2 = new SunAndMoon2();
     public static final GameMap TARTARUS = new Tartarus();
     public static final GameMap THE_OBSIDIAN_TRAIL_RAID = new TheObsidianTrailRaid();
     public static final GameMap TREASURE_HUNT = new TreasureHunt();
@@ -106,6 +107,7 @@ public abstract class GameMap {
             SIEGE,
             STORM_WIND,
             SUN_AND_MOON,
+            SUN_AND_MOON2,
             TARTARUS,
             THE_OBSIDIAN_TRAIL_RAID,
             TREASURE_HUNT,
