@@ -1281,9 +1281,9 @@
         "cooldown": 50,
         "energyCost": 40,
         "hexTickDurationIncrease": 40,
-        "additionalDamageReduction": 8,
+        "additionalDamageReduction": 6,
         "tickDuration": 240,
-        "lethalDamageHealing": 15
+        "lethalDamageHealing": 35
       },
       "seismicWaveBerserker": {
         "name": "Seismic Wave",
