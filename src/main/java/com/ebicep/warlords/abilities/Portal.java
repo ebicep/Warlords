@@ -92,9 +92,6 @@ public class Portal extends AbstractAbility implements PurpleAbilityIcon, Abilit
                     Utils.playGlobalSound(wp.getLocation(), "mage.timewarp.teleport", 1, 1);
                     wp.getEntity().teleport(data.warpLocation);
                     wp.getCooldownManager().removeCooldown(portalCooldown);
-                    wp.getAbilitiesMatching(Portal.class).forEach(portal -> {
-                        portal.setCurrentCooldown(0);
-                    });
                 },
                 true,
                 secondaryAbility -> !wp.getCooldownManager().hasCooldown(portalCooldown)
@@ -109,7 +106,7 @@ public class Portal extends AbstractAbility implements PurpleAbilityIcon, Abilit
 
     public static class PortalData {
 
-        private Portal portal;
+        private final Portal portal;
         private final Location warpLocation;
 
         public PortalData(Portal portal, Location warpLocation) {
