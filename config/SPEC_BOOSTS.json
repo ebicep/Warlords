@@ -370,12 +370,15 @@
         "radianceCooldownReductionTicks": 60
       },
       "rallyingPresence": {
-        "difficulty": 1,
+        "difficulty": 2,
         "name": "Rallying Presence",
-        "description": "Reduce the duration of {{aqua:Inspiring Presence}} by {{ticks}} but increase the energy per second granted by {{energy}} and the speed granted by {{speed;%}}.",
-        "durationDecreaseTicks": 20,
-        "energyPerSecondIncrease": 9,
-        "speedIncreasePercent": 15
+        "description": "Reduce the duration of {{aqua:Inspiring Presence}} by {{ticks}} but increase the energy per second granted by {{energy}} and the speed granted by {{speed;%}}. While holding the flag, gain {{speed;%}} speed and {{damageReduction;%}} knockback resistance and increase the energy granted by {{aqua:Crusader's Strike}} by {{energy}}.",
+        "durationDecreaseTicks": 40,
+        "energyPerSecondIncrease": 6,
+        "speedIncreasePercent": 15,
+        "flagSpeedIncreasePercent": 30,
+        "flagKnockbackResistancePercent": 15,
+        "crusaderStrikeEnergyIncrease": 5
       },
       "ecoDrive": {
         "difficulty": 1,
