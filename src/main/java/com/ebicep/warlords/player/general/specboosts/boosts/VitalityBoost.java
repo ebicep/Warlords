@@ -14,13 +14,11 @@ public class VitalityBoost implements SpecBoostManager.SpecBoost<VitalityBoost> 
 
     private int healthIncrease;
     private float healingReceivedIncreasePercent;
-    private int lastStandCooldownReductionTicks;
 
     @Override
     public void init() {
         this.healthIncrease = getValue("healthIncrease", int.class);
         this.healingReceivedIncreasePercent = getValue("healingReceivedIncreasePercent", float.class);
-        this.lastStandCooldownReductionTicks = getValue("lastStandCooldownReductionTicks", int.class);
     }
 
     @Override
@@ -30,7 +28,7 @@ public class VitalityBoost implements SpecBoostManager.SpecBoost<VitalityBoost> 
 
     @Override
     public List<Object> getVariables() {
-        return List.of(healthIncrease, healingReceivedIncreasePercent, lastStandCooldownReductionTicks);
+        return List.of(healthIncrease, healingReceivedIncreasePercent);
     }
 
     @Override
@@ -48,9 +46,6 @@ public class VitalityBoost implements SpecBoostManager.SpecBoost<VitalityBoost> 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getHealth().addAdditiveModifier("Spec Boost (Base)", healthIncrease);
-            warlordsPlayer.getAbilitiesMatching(LastStand.class).forEach(lastStand -> {
-                lastStand.getCooldown().addAdditiveModifier("Spec Boost", -lastStandCooldownReductionTicks / 20f);
-            });
             warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
                     getStringName(),
                     null,
