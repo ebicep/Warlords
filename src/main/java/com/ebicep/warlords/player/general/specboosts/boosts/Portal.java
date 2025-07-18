@@ -1,9 +1,8 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
-import com.ebicep.warlords.abilities.TimeWarpPyromancer;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractTimeWarp;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
-import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import net.kyori.adventure.text.TextComponent;
 
@@ -47,7 +46,7 @@ public class Portal implements SpecBoostManager.SpecBoost<Portal> {
             List<AbstractAbility> abilities = warlordsPlayer.getAbilities();
             for (int i = 0; i < abilities.size(); i++) {
                 AbstractAbility ability = abilities.get(i);
-                if (ability instanceof TimeWarpPyromancer) {
+                if (ability instanceof AbstractTimeWarp) {
                     com.ebicep.warlords.abilities.Portal portal = new com.ebicep.warlords.abilities.Portal();
                     portal.init(portal.getBuilder());
                     abilities.set(i, portal);
