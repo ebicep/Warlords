@@ -704,17 +704,14 @@
       "healingLink": {
         "name": "Healing Link",
         "cooldown": 10,
-        "energyCost": 0,
-        "radius": 10,
-        "damagePercentTaken": 30,
+        "energyCost": 30,
+        "radius": 15,
+        "damagePercentTaken": 15,
         "tickDuration": 160,
         "maxTargets": 1,
         "healingValues": {
           "linkHealing": {
-            "value": 280
-          },
-          "linkEndHealing": {
-            "value": 150
+            "value": 300
           }
         }
       },

@@ -69,17 +69,6 @@ public class HealingLink extends AbstractAbility implements RedAbilityIcon, Dura
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
-                    if (!Objects.equals(cooldownManager.getWarlordsEntity(), wp)) {
-                        return;
-                    }
-                    if (wp.isDead()) {
-                        return;
-                    }
-                    wp.addInstance(InstanceBuilder.healing()
-                                                  .ability(this)
-                                                  .source(wp)
-                                                  .value(healingValues.linkEndHealing)
-                    );
                 },
                 cooldownManager -> {
                 },
