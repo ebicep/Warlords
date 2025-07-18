@@ -309,10 +309,11 @@
       "unstoppableSurge": {
         "difficulty": 1,
         "name": "Unstoppable Surge",
-        "description": "{{aqua:Light Infusion}} heals you for {{heal}} health, increase the speed granted by {{speed;%}} and the duration by {{ticks}}. Gain permanent {{speed;%}} slow resistance and {{damageReduction;%}} knockback resistance.",
+        "description": "{{aqua:Light Infusion}} heals you for {{heal}} health, increase the speed granted by {{speed;%}} and the duration by {{ticks}}. Heal an additional {{heal}} health if Avenger's Strike was not used during Light Infusion. Gain permanent {{speed;%}} slow resistance and {{damageReduction;%}} knockback resistance.",
         "lightInfusionHealing": 800,
         "lightInfusionSpeedIncreasePercent": 10,
         "lightInfusionDurationIncreaseTicks": 20,
+        "postLightInfusionHealing": 600,
         "slowResistancePercent": 15,
         "knockbackResistancePercent": 20
       },
@@ -766,7 +767,7 @@
       "loneSentinel": {
         "difficulty": 3,
         "name": "Lone Sentinel",
-        "description": "Gain {{damageReduction;%}} damage reduction. Increase the flag multiplier of {{aqua:Fortifying Hex}} to {{damageReduction;x}, but reduce the pierce for allies by {{blue}}. {{aqua:Mystical Barrier}} can only affect yourself.",
+        "description": "Gain {{damageReduction;%}} damage reduction. Increase the flag multiplier of {{aqua:Fortifying Hex}} to {{damageReduction;x}}, but reduce the pierce for allies by {{blue}}. {{aqua:Mystical Barrier}} can only affect yourself.",
         "resistanceIncreasePercent": 5,
         "fortifyingHexFlagMultiplier": 3,
         "fortifyingHexAllyPierceReduction": 1
