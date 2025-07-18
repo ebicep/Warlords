@@ -200,12 +200,12 @@
       "bloodFrenzy": {
         "difficulty": 4,
         "name": "Blood Frenzy",
-        "description": "Reduce the cooldown of {{aqua:Bloodlust}} by {{ticks}}, the duration by {{ticks}}, and the energy cost by {{energy}}. Reduce its damage converted to healing by {{heal;%}} but it now heals an additional {{heal;%}} based on damage before any reductions.",
-        "bloodLustCooldownReductionTicks": 430,
-        "bloodLustDurationReductionTicks": 200,
+        "description": "Reduce the cooldown of {{aqua:Bloodlust}} by {{ticks}}, the duration by {{ticks}}, and the energy cost by {{energy}}. Reduce its damage converted to healing by {{heal;%}} but it now heals an additional {{heal;%}} based on damage before any reductions. {{aqua:Berserk}} resets the cooldown of {{aqua:Bloodlust}}.",
+        "bloodLustCooldownReductionTicks": 400,
+        "bloodLustDurationReductionTicks": 180,
         "bloodLustEnergyCostReduction": 20,
-        "bloodLustHealingPercent": 15,
-        "bloodLustHealingPiercePercent": 25
+        "bloodLustHealingPercent": 20,
+        "bloodLustHealingPiercePercent": 30
       },
       "goliath": {
         "difficulty": 2,
