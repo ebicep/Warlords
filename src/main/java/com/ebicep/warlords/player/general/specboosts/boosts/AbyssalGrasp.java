@@ -16,7 +16,7 @@ import java.util.List;
 
 public class AbyssalGrasp implements SpecBoostManager.SpecBoost<AbyssalGrasp> {
 
-    private int soulShackleDamageIncreasePercent;
+    private float soulShackleDamageIncreasePercent;
     private int soulShackleCooldownIncreaseTicks;
     private int soulShackleRangeDecrease;
     private float normalPullRange;
@@ -24,7 +24,7 @@ public class AbyssalGrasp implements SpecBoostManager.SpecBoost<AbyssalGrasp> {
 
     @Override
     public void init() {
-        this.soulShackleDamageIncreasePercent = getValue("soulShackleDamageIncreasePercent", int.class);
+        this.soulShackleDamageIncreasePercent = getValue("soulShackleDamageIncreasePercent", float.class);
         this.soulShackleCooldownIncreaseTicks = getValue("soulShackleCooldownIncreaseTicks", int.class);
         this.soulShackleRangeDecrease = getValue("soulShackleRangeDecrease", int.class);
         this.normalPullRange = getValue("normalPullRange", float.class);
@@ -54,6 +54,7 @@ public class AbyssalGrasp implements SpecBoostManager.SpecBoost<AbyssalGrasp> {
     public class Boost implements SpecBoostManager.Boost {
 
         private WarlordsEntity warlordsEntity;
+        private int soulShackleRange;
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
@@ -61,9 +62,10 @@ public class AbyssalGrasp implements SpecBoostManager.SpecBoost<AbyssalGrasp> {
             warlordsPlayer.getAbilitiesMatching(SoulShackle.class).forEach(soulShackle -> {
                 soulShackle.getDamageValues()
                            .getShackleDamage()
-                           .forEachValue(floatModifiable -> floatModifiable.addAdditiveModifier("Spec Boost", soulShackleDamageIncreasePercent));
+                           .forEachValue(floatModifiable -> floatModifiable.addMultiplicativeModifierAdd("Spec Boost", soulShackleDamageIncreasePercent / 100));
                 soulShackle.getCooldown().addAdditiveModifier("Spec Boost", soulShackleCooldownIncreaseTicks / 20f);
-                soulShackle.setShackleRange(soulShackle.getShackleRange() - soulShackleRangeDecrease);
+                this.soulShackleRange = soulShackle.getShackleRange() - soulShackleRangeDecrease;
+                soulShackle.setShackleRange(soulShackleRange);
             });
         }
 
@@ -90,7 +92,7 @@ public class AbyssalGrasp implements SpecBoostManager.SpecBoost<AbyssalGrasp> {
                         this.cancel();
                         return;
                     }
-                    float ratio = (float) ticksElapsed / soulShackleRangeDecrease;
+                    float ratio = (float) ticksElapsed / soulShackleRange;
                     Location targetLoc = target.getLocation();
                     Location newLocation = new Location(location.getWorld(),
                             MathUtils.lerp(targetLoc.getX(), location.getX(), ratio),
