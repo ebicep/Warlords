@@ -137,7 +137,7 @@ public class TimeWarpCryomancer extends AbstractTimeWarp {
                 },
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    if (ticksElapsed % 10 == 0) {
+                    if (ticksElapsed % 6 == 0) {
                         for (Location location : warpTrail) {
                             location.getWorld().spawnParticle(Particle.WITCH, location, 1, 0.01, 0, 0.01, 0.001, null, true);
                         }
