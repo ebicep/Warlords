@@ -78,7 +78,7 @@
         "maxGroundTeleportDistance": 5,
         "healingValues": {
           "blinkHealing": {
-            "value": 300
+            "value": 200
           }
         }
       },
@@ -122,10 +122,10 @@
         },
         "healingValues": {
           "bullRushHealing": {
-            "value": 1000
+            "value": 600
           }
         },
-        "tickDuration": 14,
+        "tickDuration": 12,
         "speedBoost": 180,
         "radius": 3.5,
         "knockbackMagnitude": 1.25,
@@ -565,6 +565,7 @@
         "splash": 4,
         "slowDuration": 2,
         "slowness": 25,
+        "directHitAdditionalSlowness": 0,
         "projectileSpeed": 2.25,
         "maxDistance": 300,
         "hitTeammates": false,
@@ -703,17 +704,14 @@
       "healingLink": {
         "name": "Healing Link",
         "cooldown": 10,
-        "energyCost": 0,
-        "radius": 10,
-        "damagePercentTaken": 30,
+        "energyCost": 30,
+        "radius": 15,
+        "damagePercentTaken": 15,
         "tickDuration": 160,
         "maxTargets": 1,
         "healingValues": {
           "linkHealing": {
-            "value": 280
-          },
-          "linkEndHealing": {
-            "value": 150
+            "value": 300
           }
         }
       },
@@ -1047,9 +1045,9 @@
         "tickDuration": 100,
         "meleeDamageReduction": 60,
         "radius": 12,
-        "shieldBase": 300,
-        "shieldIncrease": 60,
-        "shieldMaxHealth": 1200,
+        "shieldBase": 150,
+        "shieldIncrease": 30,
+        "shieldMaxHealth": 600,
         "reactivateTickDuration": 100,
         "stacksGranted": 3,
         "guardianBeamShieldMultiplier": 2,
@@ -1101,11 +1099,11 @@
       },
       "parry": {
         "name": "Parry",
-        "cooldown": 8,
+        "cooldown": 7.5,
         "energyCost": 0,
-        "blockTickDuration": 36,
+        "blockTickDuration": 32,
         "knockbackTickDuration": 50,
-        "damageReduction": 10,
+        "damageReduction": 8,
         "damageReductionTickDuration": 100
       },
       "poisonousHex": {
@@ -1134,6 +1132,13 @@
             "max": 35
           }
         }
+      },
+      "portal": {
+        "name": "Portal",
+        "cooldown": 10,
+        "energyCost": 30,
+        "recastDelayTicks": 100,
+        "portalSpeedReductionPercent": 10
       },
       "prismGuard": {
         "name": "Prism Guard",
@@ -1276,9 +1281,9 @@
         "cooldown": 50,
         "energyCost": 40,
         "hexTickDurationIncrease": 40,
-        "additionalDamageReduction": 8,
+        "additionalDamageReduction": 6,
         "tickDuration": 240,
-        "lethalDamageHealing": 15
+        "lethalDamageHealing": 35
       },
       "seismicWaveBerserker": {
         "name": "Seismic Wave",

@@ -1623,7 +1623,7 @@ public enum GameEvents {
         npc.addTrait(GameEventTrait.class);
         editNPC(npc);
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
-        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 11.5, 85, 166.5, 180, 0));
+        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 11.5, 81, 166.5, 180, 0));
     }
 
     public void editNPC(NPC npc) {

@@ -282,11 +282,14 @@ public abstract class AbstractAbility implements AbilityIcon {
                 }
                 player.getInventory().setItem(inventoryIndex, cooldown.get());
             } else {
-                ItemStack item = getItem(this instanceof WeaponAbilityIcon ? warlordsEntity.getWeaponItem() : getAbilityIcon());
+                ItemBuilder item = new ItemBuilder(getItem(this instanceof WeaponAbilityIcon ? warlordsEntity.getWeaponItem() : getAbilityIcon()));
                 if (getCurrentCooldown() > 0) {
-                    item.setAmount(getCurrentCooldownItem());
+                    item.amount(getCurrentCooldownItem());
                 }
-                player.getInventory().setItem(inventoryIndex, item);
+                if (hasActiveSecondaryAbilities()) {
+                    item.glow();
+                }
+                player.getInventory().setItem(inventoryIndex, item.get());
             }
         }
     }

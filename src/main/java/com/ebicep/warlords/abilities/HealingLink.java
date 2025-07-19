@@ -69,17 +69,6 @@ public class HealingLink extends AbstractAbility implements RedAbilityIcon, Dura
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
-                    if (!Objects.equals(cooldownManager.getWarlordsEntity(), wp)) {
-                        return;
-                    }
-                    if (wp.isDead()) {
-                        return;
-                    }
-                    wp.addInstance(InstanceBuilder.healing()
-                                                  .ability(this)
-                                                  .source(wp)
-                                                  .value(healingValues.linkEndHealing)
-                    );
                 },
                 cooldownManager -> {
                 },
@@ -122,9 +111,7 @@ public class HealingLink extends AbstractAbility implements RedAbilityIcon, Dura
                                                .durationTicks(tickDuration)
                                                .text(". You receive damage equal to ")
                                                .percent(damagePercentTaken, NamedTextColor.RED)
-                                               .text(" of the amount healed. Heal for ")
-                                               .heal(healingValues.linkEndHealing)
-                                               .text(" when the link ends.")
+                                               .text(" of the amount healed.")
                                                .build();
     }
 
@@ -141,7 +128,6 @@ public class HealingLink extends AbstractAbility implements RedAbilityIcon, Dura
     public static class HealingValues implements Value.ValueHolder {
 
         private Value.SetValue linkHealing = new Value.SetValue(350);
-        private Value.SetValue linkEndHealing = new Value.SetValue(300);
 
         private List<Value> values = List.of(linkHealing);
 
@@ -154,10 +140,6 @@ public class HealingLink extends AbstractAbility implements RedAbilityIcon, Dura
         public void init(AbstractAbilityBuilder builder) {
             this.linkHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(),
                     builder.getAppendedFieldNameHealing("linkHealing"),
-                    Value.SetValue.class
-            );
-            this.linkEndHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(),
-                    builder.getAppendedFieldNameHealing("linkEndHealing"),
                     Value.SetValue.class
             );
             this.values = List.of(linkHealing);

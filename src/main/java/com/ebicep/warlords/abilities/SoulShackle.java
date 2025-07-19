@@ -217,6 +217,10 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
         }
     }
 
+    public int getShackleRange() {
+        return shackleRange;
+    }
+
     public void setShackleRange(int shackleRange) {
         this.shackleRange = shackleRange;
     }

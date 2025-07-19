@@ -30,6 +30,7 @@ public class AirStrike implements SpecBoostManager.SpecBoost<AirStrike> {
     private int airStrikeDurationTicks;
     private float soulfireBeamDamageReductionPercent;
     private float soulfireBeamMaxRange;
+    private float soulfireBeamHitboxIncrease;
     private int maxBeamCastsNormal;
     private int maxBeamCastsOnCooldown;
 
@@ -40,6 +41,7 @@ public class AirStrike implements SpecBoostManager.SpecBoost<AirStrike> {
         this.airStrikeDurationTicks = getValue("airStrikeDurationTicks", int.class);
         this.soulfireBeamDamageReductionPercent = getValue("soulfireBeamDamageReductionPercent", float.class);
         this.soulfireBeamMaxRange = getValue("soulfireBeamMaxRange", float.class);
+        this.soulfireBeamHitboxIncrease = getValue("soulfireBeamHitboxIncrease", float.class);
         this.maxBeamCastsNormal = getValue("maxBeamCastsNormal", int.class);
         this.maxBeamCastsOnCooldown = getValue("maxBeamCastsOnCooldown", int.class);
     }
@@ -56,6 +58,7 @@ public class AirStrike implements SpecBoostManager.SpecBoost<AirStrike> {
                 ascendDurationTicks,
                 soulfireBeamDamageReductionPercent,
                 soulfireBeamMaxRange,
+                soulfireBeamHitboxIncrease,
                 airStrikeDurationTicks,
                 maxBeamCastsNormal,
                 maxBeamCastsOnCooldown
@@ -163,7 +166,9 @@ public class AirStrike implements SpecBoostManager.SpecBoost<AirStrike> {
                                         if (!warlordsEntity.equals(event.getWarlordsEntity())) {
                                             return;
                                         }
-                                        if (!(event.getAbility() instanceof SoulfireBeam)) {
+                                        if (event.getAbility() instanceof SoulfireBeam soulfireBeam) {
+                                            soulfireBeam.getHitBoxRadius().addAdditiveModifier("Spec Boost", soulfireBeamHitboxIncrease);
+                                        } else {
                                             event.setCancelled(true);
                                         }
                                     }

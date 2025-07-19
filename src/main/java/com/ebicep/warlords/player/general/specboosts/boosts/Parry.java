@@ -11,15 +11,13 @@ import java.util.List;
 
 public class Parry implements SpecBoostManager.SpecBoost<Parry> {
 
-    private int healthIncrease;
-    private int crusaderStrikeEnergyIncrease;
     private int maxAbilityCharges;
+    private int crusaderStrikeEnergyIncrease;
 
     @Override
     public void init() {
-        this.healthIncrease = getValue("healthIncrease", int.class);
-        this.crusaderStrikeEnergyIncrease = getValue("crusaderStrikeEnergyIncrease", int.class);
         this.maxAbilityCharges = getValue("maxAbilityCharges", int.class);
+        this.crusaderStrikeEnergyIncrease = getValue("crusaderStrikeEnergyIncrease", int.class);
     }
 
     @Override
@@ -34,7 +32,7 @@ public class Parry implements SpecBoostManager.SpecBoost<Parry> {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(healthIncrease, crusaderStrikeEnergyIncrease, maxAbilityCharges);
+        return List.of(maxAbilityCharges, crusaderStrikeEnergyIncrease);
     }
 
     @Override
@@ -51,7 +49,6 @@ public class Parry implements SpecBoostManager.SpecBoost<Parry> {
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getHealth().addAdditiveModifier("Spec Boost (Base)", healthIncrease);
             warlordsPlayer.getAbilitiesMatching(CrusadersStrike.class).forEach(crusadersStrike -> {
                 crusadersStrike.setEnergyGiven(crusadersStrike.getEnergyGiven() + crusaderStrikeEnergyIncrease);
             });

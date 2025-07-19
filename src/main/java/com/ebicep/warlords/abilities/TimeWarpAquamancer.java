@@ -117,7 +117,7 @@ public class TimeWarpAquamancer extends AbstractTimeWarp {
                             Utils.playGlobalSound(wp.getLocation(), "mage.waterbreath.activation", 2, .5f);
                         }
                     }
-                    if (ticksElapsed % 10 == 0) {
+                    if (ticksElapsed % 6 == 0) {
                         for (Location location : warpTrail) {
                             location.getWorld().spawnParticle(Particle.WITCH, location, 1, 0.01, 0, 0.01, 0.001, null, true);
                         }
