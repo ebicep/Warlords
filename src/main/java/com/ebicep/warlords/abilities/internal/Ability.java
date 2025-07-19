@@ -88,6 +88,7 @@ public class Ability<T extends AbstractAbility> {
     public static final Ability<OrderOfEviscerate> ORDER_OF_EVISCERATE = new Ability<>(OrderOfEviscerate.class, OrderOfEviscerate::new);
     public static final Ability<Parry> PARRY = new Ability<>(Parry.class, Parry::new);
     public static final Ability<PoisonousHex> POISONOUS_HEX = new Ability<>(PoisonousHex.class, PoisonousHex::new);
+    public static final Ability<Portal> PORTAL = new Ability<>(Portal.class, Portal::new);
     public static final Ability<PrismGuard> PRISM_GUARD = new Ability<>(PrismGuard.class, PrismGuard::new);
     public static final Ability<ProtectorsStrike> PROTECTORS_STRIKE = new Ability<>(ProtectorsStrike.class, ProtectorsStrike::new);
     public static final Ability<RayOfLight> RAY_OF_LIGHT = new Ability<>(RayOfLight.class, RayOfLight::new);
@@ -194,6 +195,7 @@ public class Ability<T extends AbstractAbility> {
             ORDER_OF_EVISCERATE,
             PARRY,
             POISONOUS_HEX,
+            PORTAL,
             PRISM_GUARD,
             PROTECTORS_STRIKE,
             RAY_OF_LIGHT,

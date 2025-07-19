@@ -10,13 +10,8 @@ import java.util.List;
 
 public class UnmercifulHex implements SpecBoostManager.SpecBoost<UnmercifulHex> {
 
-    private int mercifulHexEnemyPierceIncrease;
-    private float mercifulHexDamageIncreasePercent;
-
     @Override
     public void init() {
-        this.mercifulHexEnemyPierceIncrease = getValue("mercifulHexEnemyPierceIncrease", int.class);
-        this.mercifulHexDamageIncreasePercent = getValue("mercifulHexDamageIncreasePercent", float.class);
     }
 
     @Override
@@ -26,7 +21,7 @@ public class UnmercifulHex implements SpecBoostManager.SpecBoost<UnmercifulHex> 
 
     @Override
     public List<Object> getVariables() {
-        return List.of(mercifulHexEnemyPierceIncrease, mercifulHexDamageIncreasePercent);
+        return List.of();
     }
 
     @Override
@@ -44,10 +39,7 @@ public class UnmercifulHex implements SpecBoostManager.SpecBoost<UnmercifulHex> 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getAbilitiesMatching(MercifulHex.class).forEach(mercifulHex -> {
-                mercifulHex.getDamageValues().getHexDamage().forEachValue(floatModifiable ->
-                        floatModifiable.addMultiplicativeModifierAdd("Spec Boost", mercifulHexDamageIncreasePercent / 100)
-                );
-                mercifulHex.setMaxEnemiesHit(mercifulHex.getMaxEnemiesHit() + mercifulHexEnemyPierceIncrease);
+                mercifulHex.setMaxEnemiesHit(Integer.MAX_VALUE);
                 mercifulHex.setHexStacksPerHitAfter(0);
             });
             warlordsPlayer.getAbilitiesMatching(RayOfLight.class).forEach(rayOfLight -> {

@@ -1,6 +1,8 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
+import com.ebicep.warlords.abilities.Berserk;
 import com.ebicep.warlords.abilities.BloodLust;
+import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
@@ -82,6 +84,18 @@ public class BloodFrenzy implements SpecBoostManager.SpecBoost<BloodFrenzy> {
                     event.setMax(event.getMax() + additionalHealing);
                     return;
                 }
+            }
+        }
+
+        @EventHandler
+        public void onWarlordsAbilityActivatePostApplyEvent(WarlordsAbilityActivateEvent.Post event) {
+            if (!warlordsEntity.equals(event.getWarlordsEntity())) {
+                return;
+            }
+            if (event.getAbility() instanceof Berserk) {
+                warlordsEntity.getAbilitiesMatching(BloodLust.class).forEach(bloodLust -> {
+                    bloodLust.setCurrentCooldown(0);
+                });
             }
         }
 
