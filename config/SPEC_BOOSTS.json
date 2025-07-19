@@ -732,12 +732,13 @@
       "airStrike": {
         "difficulty": 5,
         "name": "Air Strike",
-        "description": "{{aqua:Astral Plague}} will prevent you from moving and ascend you {{blocks}} into the air over {{ticks}}. Once at maximum height, you can only use {{aqua:Soulfire Beam}}, it has no cooldown, deals {{damage;%}} less damage, and has a maximum range of {{blocks}}. This will last for {{ticks}} or until you cast beam {{blue}} times, {{blue}} if it was on cooldown when {{aqua:Astral Plague}} was used.",
+        "description": "{{aqua:Astral Plague}} will prevent you from moving and ascend you {{blocks}} into the air over {{ticks}}. Once at maximum height, you can only use {{aqua:Soulfire Beam}}, it has no cooldown, deals {{damage;%}} less damage, has a maximum range of {{blocks}}, and an increased hitbox by {{blocks}}. This will last for {{ticks}} or until you cast beam {{blue}} times, {{blue}} if it was on cooldown when {{aqua:Astral Plague}} was used.",
         "ascendHeight": 4,
         "ascendDurationTicks": 20,
         "airStrikeDurationTicks": 80,
         "soulfireBeamDamageReductionPercent": 30,
         "soulfireBeamMaxRange": 12,
+        "soulfireBeamHitboxIncrease": 0.4,
         "maxBeamCastsNormal": 3,
         "maxBeamCastsOnCooldown": 2
       },
