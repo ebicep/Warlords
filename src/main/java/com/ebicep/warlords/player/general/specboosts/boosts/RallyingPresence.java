@@ -3,7 +3,6 @@ package com.ebicep.warlords.player.general.specboosts.boosts;
 import com.ebicep.warlords.abilities.CrusadersStrike;
 import com.ebicep.warlords.abilities.InspiringPresence;
 import com.ebicep.warlords.events.game.WarlordsFlagUpdatedEvent;
-import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.game.flags.PlayerFlagLocation;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -67,16 +66,6 @@ public class RallyingPresence implements SpecBoostManager.SpecBoost<RallyingPres
         }
 
         @EventHandler
-        public void onWarlordsAbilityActivate(WarlordsAbilityActivateEvent.Pre event) {
-            if (!warlordsEntity.equals(event.getWarlordsEntity())) {
-                return;
-            }
-            if (warlordsEntity.hasFlag() && event.getAbility() instanceof CrusadersStrike crusadersStrike) {
-                crusadersStrike.setEnergyGiven(crusadersStrike.getEnergyGiven() + crusaderStrikeEnergyIncrease);
-            }
-        }
-
-        @EventHandler
         public void onWarlordsFlagUpdated(WarlordsFlagUpdatedEvent event) {
             if (event.getNew() instanceof PlayerFlagLocation playerFlagLocation && playerFlagLocation.getPlayer().equals(warlordsEntity)) {
                 warlordsEntity.getKnockback().addModifier(new MotionModifierBuilder()
@@ -87,9 +76,15 @@ public class RallyingPresence implements SpecBoostManager.SpecBoost<RallyingPres
                         .build()
                 );
                 warlordsEntity.addSpeedModifier(warlordsEntity, getStringName(), flagSpeedIncreasePercent, -1);
+                warlordsEntity.getAbilitiesMatching(CrusadersStrike.class).forEach(crusadersStrike -> {
+                    crusadersStrike.setEnergyGiven(crusadersStrike.getEnergyGiven() + crusaderStrikeEnergyIncrease);
+                });
             } else if (event.getOld() instanceof PlayerFlagLocation playerFlagLocation && playerFlagLocation.getPlayer().equals(warlordsEntity)) {
                 warlordsEntity.getKnockback().removeModifier(getStringName());
                 warlordsEntity.getSpeed().removeModifier(getStringName());
+                warlordsEntity.getAbilitiesMatching(CrusadersStrike.class).forEach(crusadersStrike -> {
+                    crusadersStrike.setEnergyGiven(crusadersStrike.getEnergyGiven() - crusaderStrikeEnergyIncrease);
+                });
             }
         }
 
