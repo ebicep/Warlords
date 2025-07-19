@@ -86,7 +86,7 @@
         "description": "Gain {{heal}} max health. Decrease the absorption of {{aqua:Arcane Shield}} by {{damageReduction;%}}. Reduce the healing of {{aqua:Time Warp}} by {{heal;%}}, but you heal for the greater of its normal amount and your pre-Warp health, up to a maximum of {{heal}}. After {{ticks}}, you can recast to instantly warp back. You gain full knockback immunity during the initial warp.",
         "healthIncrease": 1100,
         "absorptionDecreasePercent": 25,
-        "warpHealDecreasePercent": 16,
+        "warpHealDecreasePercent": 8,
         "warpHealCap": 3000,
         "recastDelayTicks": 20
       },
