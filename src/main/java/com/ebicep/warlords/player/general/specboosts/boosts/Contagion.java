@@ -26,7 +26,7 @@ public class Contagion implements SpecBoostManager.SpecBoost<Contagion> {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(ephIncrease, facadeResistanceIncreasePercent);
+        return List.of(ephIncrease, facadeResistanceIncreasePercent, facadePhexStacksIncrease);
     }
 
     @Override
