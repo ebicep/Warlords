@@ -55,7 +55,7 @@ public class HealingLink implements SpecBoostManager.SpecBoost<HealingLink> {
                     healingLink.init(healingLink.getBuilder());
                     abilities.set(i, healingLink);
                 } else if (ability instanceof GroundSlamRevenant groundSlam) {
-                    groundSlam.getCooldown().addAdditiveModifier("Spec Boost", -groundSlamCooldownReductionTicks);
+                    groundSlam.getCooldown().addAdditiveModifier("Spec Boost", -groundSlamCooldownReductionTicks / 20f);
                 }
             }
             warlordsPlayer.resetAbilityTree();
