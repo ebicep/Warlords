@@ -31,22 +31,21 @@ public class GameEventTrait extends WarlordsTrait {
         super("GameEventTrait");
     }
 
-
     @Override
     public void run() {
-        if (ticks++ % 600 != 0) {
-            return;
-        }
-        updateHologram();
-    }
-
-    private void updateHologram() {
-        DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
-        if (!currentGameEvent.isActive()) {
-            return;
-        }
         Location location = this.getNPC().getStoredLocation();
         if (location == null) {
+            return;
+        }
+        if (ticks % 600 == 0) {
+            updateHologram(location);
+        }
+        ticks++;
+    }
+
+    private void updateHologram(Location location) {
+        DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
+        if (ticks != 0 && !currentGameEvent.isActive()) {
             return;
         }
         long playerCount = Warlords.getGameManager().getPlayerCount(GameMode.EVENT_WAVE_DEFENSE);
