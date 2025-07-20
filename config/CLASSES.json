@@ -246,7 +246,7 @@
         "maxEnergy": 305,
         "energyPerSec": 20,
         "energyPerHit": 20,
-        "damageResistance": 20.0,
+        "damageResistance": 18.0,
         "speed": 0.0,
         "knockbackResistance": 0.0,
         "abilities": [
