@@ -72,7 +72,7 @@
         "description": "Decrease the energy cost of {{aqua:Frostbolt}} by {{energy}}, the damage by {{damage;%}}, increase the slowness inflicted by {{speed;%}} and direct hits increase the slowness by an additional {{speed;%}}.",
         "energyDecrease": 15,
         "damageDecreasePercent": 10,
-        "slowIncrease": 5,
+        "slowIncrease": 10,
         "directHitSlowIncrease": 5
       },
       "blizzardBreath": {
