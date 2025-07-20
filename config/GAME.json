@@ -21,7 +21,7 @@
         "flagReturnSpawnFlagMultiplierDecrease": 0.5,
         "flagMultiplierCap": 100,
         "flagKillRepickTickCooldown": 10,
-        "horseCooldown": 14,
+        "horseCooldown": 15,
         "pointsToWin": 1500,
         "pointsFlagCap": 250,
         "pointsKill": 5,
