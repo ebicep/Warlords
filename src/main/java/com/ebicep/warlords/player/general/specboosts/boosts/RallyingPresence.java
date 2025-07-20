@@ -20,6 +20,7 @@ public class RallyingPresence implements SpecBoostManager.SpecBoost<RallyingPres
     private float flagSpeedIncreasePercent;
     private float flagKnockbackResistancePercent;
     private int crusaderStrikeEnergyIncrease;
+    private int crusaderStrikeRadiusIncrease;
 
     @Override
     public void init() {
@@ -29,6 +30,7 @@ public class RallyingPresence implements SpecBoostManager.SpecBoost<RallyingPres
         this.flagSpeedIncreasePercent = getValue("flagSpeedIncreasePercent", float.class);
         this.flagKnockbackResistancePercent = getValue("flagKnockbackResistancePercent", float.class);
         this.crusaderStrikeEnergyIncrease = getValue("crusaderStrikeEnergyIncrease", int.class);
+        this.crusaderStrikeRadiusIncrease = getValue("crusaderStrikeRadiusIncrease", int.class);
     }
 
     @Override
@@ -38,7 +40,14 @@ public class RallyingPresence implements SpecBoostManager.SpecBoost<RallyingPres
 
     @Override
     public List<Object> getVariables() {
-        return List.of(durationDecreaseTicks, energyPerSecondIncrease, speedIncreasePercent, flagSpeedIncreasePercent, flagKnockbackResistancePercent, crusaderStrikeEnergyIncrease);
+        return List.of(
+                durationDecreaseTicks,
+                energyPerSecondIncrease,
+                speedIncreasePercent,
+                flagSpeedIncreasePercent,
+                flagKnockbackResistancePercent,
+                crusaderStrikeEnergyIncrease,
+                crusaderStrikeRadiusIncrease);
     }
 
     @Override
@@ -78,12 +87,14 @@ public class RallyingPresence implements SpecBoostManager.SpecBoost<RallyingPres
                 warlordsEntity.addSpeedModifier(warlordsEntity, getStringName(), flagSpeedIncreasePercent, -1);
                 warlordsEntity.getAbilitiesMatching(CrusadersStrike.class).forEach(crusadersStrike -> {
                     crusadersStrike.setEnergyGiven(crusadersStrike.getEnergyGiven() + crusaderStrikeEnergyIncrease);
+                    crusadersStrike.setEnergyRadius(crusadersStrike.getEnergyRadius() + crusaderStrikeRadiusIncrease);
                 });
             } else if (event.getOld() instanceof PlayerFlagLocation playerFlagLocation && playerFlagLocation.getPlayer().equals(warlordsEntity)) {
                 warlordsEntity.getKnockback().removeModifier(getStringName());
                 warlordsEntity.getSpeed().removeModifier(getStringName());
                 warlordsEntity.getAbilitiesMatching(CrusadersStrike.class).forEach(crusadersStrike -> {
                     crusadersStrike.setEnergyGiven(crusadersStrike.getEnergyGiven() - crusaderStrikeEnergyIncrease);
+                    crusadersStrike.setEnergyRadius(crusadersStrike.getEnergyRadius() - crusaderStrikeRadiusIncrease);
                 });
             }
         }
