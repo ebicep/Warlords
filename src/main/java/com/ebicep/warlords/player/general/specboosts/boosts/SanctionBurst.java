@@ -97,8 +97,6 @@ public class SanctionBurst implements SpecBoostManager.SpecBoost<SanctionBurst> 
             Consumer<CooldownManager> oldOnRemove = cooldown.getOnRemove();
             cooldown.setOnRemove(cooldownManager -> {
                 oldOnRemove.accept(cooldownManager);
-                warlordsEntity.getSpeed().removeNegativeModifiers();
-                warlordsEntity.getCooldownManager().removeDebuffCooldowns();
                 float radius = data.getPrismGuard().getBubbleRadius();
                 PlayerFilter.entitiesAround(warlordsEntity, radius, radius, radius).aliveEnemiesOf(warlordsEntity).forEach(target -> {
                     final Location loc = target.getLocation();
