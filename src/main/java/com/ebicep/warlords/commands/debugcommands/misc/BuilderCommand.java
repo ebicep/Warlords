@@ -35,6 +35,13 @@ public class BuilderCommand extends BaseCommand {
         ChatChannels.sendDebugMessage(player, Component.text("Gave yourself a barrier block", NamedTextColor.GREEN));
     }
 
+    @Subcommand("light")
+    @Description("Give yourself a light block")
+    public void light(@Conditions("outsideGame") Player player) {
+        player.getInventory().addItem(new ItemStack(Material.LIGHT));
+        ChatChannels.sendDebugMessage(player, Component.text("Gave yourself a light block", NamedTextColor.GREEN));
+    }
+
     @Subcommand("togglebuilding")
     @Description("Toggles if you can break blocks")
     public void toggleBuilding(@Conditions("outsideGame") Player player) {
