@@ -3,17 +3,20 @@ package com.ebicep.warlords.player.general.specboosts.boosts;
 import com.ebicep.warlords.abilities.AvengersStrike;
 import com.ebicep.warlords.abilities.LightInfusionAvenger;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddSpeedModifierEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.motionsystem.MotionModifierBuilder;
 import org.bukkit.event.EventHandler;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public class UnstoppableSurge implements SpecBoostManager.SpecBoost<UnstoppableSurge> {
 
@@ -80,7 +83,7 @@ public class UnstoppableSurge implements SpecBoostManager.SpecBoost<UnstoppableS
             if (!warlordsEntity.equals(event.getWarlordsEntity())) {
                 return;
             }
-            if (event.getAbility() instanceof LightInfusionAvenger lightInfusionAvenger) {
+            if (event.getAbility() instanceof LightInfusionAvenger) {
                 warlordsEntity.addInstance(InstanceBuilder
                         .healing()
                         .cause(getStringName())
@@ -88,30 +91,37 @@ public class UnstoppableSurge implements SpecBoostManager.SpecBoost<UnstoppableS
                         .value(lightInfusionHealing)
                 );
                 usedStrike = false;
-                warlordsEntity.getCooldownManager().addCooldown(new RegularCooldown<>(
-                        getStringName(),
-                        null,
-                        Boost.class,
-                        null,
-                        warlordsEntity,
-                        CooldownTypes.SPEC_BOOST,
-                        cooldown -> {
-                            if (!usedStrike) {
-                                warlordsEntity.addInstance(InstanceBuilder
-                                        .healing()
-                                        .cause(getStringName())
-                                        .source(warlordsEntity)
-                                        .value(postLightInfusionHealing)
-                                );
-                            }
-                        },
-                        lightInfusionAvenger.getTickDuration()
-                ));
             } else if (event.getAbility() instanceof AvengersStrike) {
                 if (warlordsEntity.getCooldownManager().hasCooldown(LightInfusionAvenger.class)) {
                     usedStrike = true;
                 }
             }
+        }
+
+        @EventHandler(ignoreCancelled = true)
+        public void onCooldownAddEvent(WarlordsAddCooldownEvent event) {
+            if (!warlordsEntity.equals(event.getWarlordsEntity())) {
+                return;
+            }
+            AbstractCooldown<?> cooldown = event.getAbstractCooldown();
+            if (!(cooldown instanceof RegularCooldown<?>)) {
+                return;
+            }
+            if (!(cooldown.getName().equals("Light Infusion")) || !cooldown.getFrom().equals(warlordsEntity)) {
+                return;
+            }
+            Consumer<CooldownManager> oldOnRemove = cooldown.getOnRemove();
+            cooldown.setOnRemove(cooldownManager -> {
+                oldOnRemove.accept(cooldownManager);
+                if (!usedStrike) {
+                    warlordsEntity.addInstance(InstanceBuilder
+                            .healing()
+                            .cause(getStringName())
+                            .source(warlordsEntity)
+                            .value(postLightInfusionHealing)
+                    );
+                }
+            });
         }
 
         @EventHandler
