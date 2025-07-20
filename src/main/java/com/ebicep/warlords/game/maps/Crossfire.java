@@ -66,9 +66,11 @@ public class Crossfire extends GameMap {
         options.add(new FlagSpawnPointOption(loc.addXYZ(5.5, 36.5, 1.5, -25, 0), Team.RED));
 
         options.add(new GateOption(loc.addXYZ(203, 36, 119), loc.addXYZ(203, 42, 124)));
-        options.add(new GateOption(loc.addXYZ(227, 36, 109), loc.addXYZ(227, 40, 115)));
+        options.add(new GateOption(loc.addXYZ(198, 41, 105), loc.addXYZ(198, 43, 103)));
+        options.add(new GateOption(loc.addXYZ(219, 14, 69), loc.addXYZ(219, 17, 65)));
         options.add(new GateOption(loc.addXYZ(19, 36, 4), loc.addXYZ(19, 40, 9)));
-        options.add(new GateOption(loc.addXYZ(-3, 36, 14), loc.addXYZ(-3, 40, 18)));
+        options.add(new GateOption(loc.addXYZ(25, 41, 22), loc.addXYZ(25, 44, 25)));
+        options.add(new GateOption(loc.addXYZ(4, 14, 58), loc.addXYZ(4, 17, 62)));
 
         options.add(new WinByPointsOption());
         options.add(new MercyWinOption());

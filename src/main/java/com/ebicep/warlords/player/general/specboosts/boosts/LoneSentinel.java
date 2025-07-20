@@ -1,6 +1,5 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
-import com.ebicep.warlords.abilities.EnergySeerSentinel;
 import com.ebicep.warlords.abilities.FortifyingHex;
 import com.ebicep.warlords.abilities.MysticalBarrier;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
@@ -10,15 +9,15 @@ import java.util.List;
 
 public class LoneSentinel implements SpecBoostManager.SpecBoost<LoneSentinel> {
 
-    private float resistanceIncreasePercent;
     private float fortifyingHexFlagMultiplier;
     private int fortifyingHexAllyPierceReduction;
+    private float mysticalBarrierMeleeDamageReductionPercent;
 
     @Override
     public void init() {
-        this.resistanceIncreasePercent = getValue("resistanceIncreasePercent", float.class);
         this.fortifyingHexFlagMultiplier = getValue("fortifyingHexFlagMultiplier", float.class);
         this.fortifyingHexAllyPierceReduction = getValue("fortifyingHexAllyPierceReduction", int.class);
+        this.mysticalBarrierMeleeDamageReductionPercent = getValue("mysticalBarrierMeleeDamageReductionPercent", float.class);
     }
 
     @Override
@@ -28,7 +27,7 @@ public class LoneSentinel implements SpecBoostManager.SpecBoost<LoneSentinel> {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(resistanceIncreasePercent, fortifyingHexFlagMultiplier, fortifyingHexAllyPierceReduction);
+        return List.of(fortifyingHexFlagMultiplier, fortifyingHexAllyPierceReduction, mysticalBarrierMeleeDamageReductionPercent);
     }
 
     @Override
@@ -45,13 +44,13 @@ public class LoneSentinel implements SpecBoostManager.SpecBoost<LoneSentinel> {
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.setDamageResistance(warlordsPlayer.getSpec().getDamageResistance() + resistanceIncreasePercent);
             warlordsPlayer.getAbilitiesMatching(FortifyingHex.class).forEach(fortifyingHex -> {
                 fortifyingHex.setDamageReductionFlagMultiplier(fortifyingHexFlagMultiplier);
                 fortifyingHex.setMaxAlliesHit(fortifyingHex.getMaxAlliesHit() - fortifyingHexAllyPierceReduction);
             });
             warlordsPlayer.getAbilitiesMatching(MysticalBarrier.class).forEach(mysticalBarrier -> {
                 mysticalBarrier.setCanTargetAllies(false);
+                mysticalBarrier.setMeleeDamageReduction(mysticalBarrier.getMeleeDamageReduction() + mysticalBarrierMeleeDamageReductionPercent);
             });
         }
 

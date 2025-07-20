@@ -67,8 +67,10 @@ public class TheRift extends GameMap {
         options.add(new AbstractScoreOnEventOption.FlagCapture());
 
         options.add(new GateOption(loc, -79, 45, -29, -79, 49, -24));
+        options.add(new GateOption(loc, -76, 51, -3, -76, 54, 3));
         options.add(new GateOption(loc, -91, 45, -6, -86, 49, -6));
         options.add(new GateOption(loc, 79, 45, 25, 79, 49, 29));
+        options.add(new GateOption(loc, 76, 51, 3, 76, 54, -3));
         options.add(new GateOption(loc, 87, 45, 6, 91, 49, 6));
 
         options.add(new WinByPointsOption());

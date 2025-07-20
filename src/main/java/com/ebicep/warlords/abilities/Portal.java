@@ -71,7 +71,7 @@ public class Portal extends AbstractAbility implements PurpleAbilityIcon, Abilit
                         for (int e = 0; e < points; e++) {
                             double angle = 2 * Math.PI * e / points;
                             Location point = data.warpLocation.clone().add(radius * Math.sin(angle), 0.0d, radius * Math.cos(angle));
-                            point.getWorld().spawnParticle(Particle.CLOUD, point, 1, 0.1, 0, 0.1, 0.001, null, true);
+                            point.getWorld().spawnParticle(Particle.CHERRY_LEAVES, point, 2, 0.1, 0.3, 0.1, 0.001, null, true);
                         }
                     }
                 }

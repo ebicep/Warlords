@@ -72,7 +72,7 @@
         "description": "Decrease the energy cost of {{aqua:Frostbolt}} by {{energy}}, the damage by {{damage;%}}, increase the slowness inflicted by {{speed;%}} and direct hits increase the slowness by an additional {{speed;%}}.",
         "energyDecrease": 15,
         "damageDecreasePercent": 10,
-        "slowIncrease": 5,
+        "slowIncrease": 10,
         "directHitSlowIncrease": 5
       },
       "blizzardBreath": {
@@ -183,8 +183,8 @@
         "difficulty": 3,
         "name": "Mighty Fists",
         "description": "Increase the wounding inflicted by {{aqua:Wounding Strike}} by {{damage;%}}. Each consecutive strike on a target increases the wounding by an additional {{damage;%}}, up to {{damage;%}}. While {{aqua:Berserk}} is active, {{aqua:Seismic Wave}} and {{aqua:Ground Slam}} inflict {{damage;%}} wounding for {{ticks}}.",
-        "woundingIncreasePercent": 5,
-        "consecutiveStrikeWoundingIncreasePercent": 7.5,
+        "woundingIncreasePercent": 8,
+        "consecutiveStrikeWoundingIncreasePercent": 6,
         "maxConsecutiveStrikeWoundingIncreasePercent": 60,
         "seismicWaveGroundSlamWoundingPercent": 30,
         "seismicWaveGroundSlamWoundingDurationTicks": 60
@@ -371,13 +371,14 @@
       "rallyingPresence": {
         "difficulty": 2,
         "name": "Rallying Presence",
-        "description": "Reduce the duration of {{aqua:Inspiring Presence}} by {{ticks}} but increase the energy per second granted by {{energy}} and the speed granted by {{speed;%}}. While holding the flag, gain {{speed;%}} speed and {{damageReduction;%}} knockback resistance and increase the energy granted by {{aqua:Crusader's Strike}} by {{energy}}.",
+        "description": "Reduce the duration of {{aqua:Inspiring Presence}} by {{ticks}} but increase the energy per second granted by {{energy}} and the speed granted by {{speed;%}}. While holding the flag, gain {{speed;%}} speed and {{damageReduction;%}} knockback resistance, and increase the energy granted by {{aqua:Crusader's Strike}} by {{energy}} and the number of allies granted by {{blue}}.",
         "durationDecreaseTicks": 40,
         "energyPerSecondIncrease": 6,
         "speedIncreasePercent": 15,
-        "flagSpeedIncreasePercent": 30,
-        "flagKnockbackResistancePercent": 15,
-        "crusaderStrikeEnergyIncrease": 5
+        "flagSpeedIncreasePercent": 35,
+        "flagKnockbackResistancePercent": 30,
+        "crusaderStrikeEnergyIncrease": 9,
+        "crusaderStrikeAllyIncrease": 1
       },
       "ecoDrive": {
         "difficulty": 1,
@@ -767,10 +768,10 @@
       "loneSentinel": {
         "difficulty": 3,
         "name": "Lone Sentinel",
-        "description": "Gain {{damageReduction;%}} damage reduction. Increase the flag multiplier of {{aqua:Fortifying Hex}} to {{damageReduction;x}}, but reduce the pierce for allies by {{blue}}. {{aqua:Mystical Barrier}} can only affect yourself.",
-        "resistanceIncreasePercent": 5,
-        "fortifyingHexFlagMultiplier": 3,
-        "fortifyingHexAllyPierceReduction": 1
+        "description": "Increase the flag multiplier of {{aqua:Fortifying Hex}} to {{damageReduction;x}}, but reduce the pierce for allies by {{blue}}. {{aqua:Mystical Barrier}} can only affect yourself but reduces melee damage by an additional {{damageReduction;%}}.",
+        "fortifyingHexFlagMultiplier": 4,
+        "fortifyingHexAllyPierceReduction": 1,
+        "mysticalBarrierMeleeDamageReductionPercent": 20
       },
       "pactOfProtection": {
         "difficulty": 4,

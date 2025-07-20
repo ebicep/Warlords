@@ -1138,11 +1138,11 @@
         "cooldown": 10,
         "energyCost": 30,
         "recastDelayTicks": 100,
-        "portalSpeedReductionPercent": 10
+        "portalSpeedReductionPercent": 5
       },
       "prismGuard": {
         "name": "Prism Guard",
-        "cooldown": 26,
+        "cooldown": 25,
         "energyCost": 40,
         "damageReductionActive": 5,
         "damageReduction": 3,
@@ -1283,7 +1283,7 @@
         "hexTickDurationIncrease": 40,
         "additionalDamageReduction": 6,
         "tickDuration": 240,
-        "lethalDamageHealing": 35
+        "lethalDamageHealing": 25
       },
       "seismicWaveBerserker": {
         "name": "Seismic Wave",
