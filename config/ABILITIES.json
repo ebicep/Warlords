@@ -1142,7 +1142,7 @@
       },
       "prismGuard": {
         "name": "Prism Guard",
-        "cooldown": 26,
+        "cooldown": 25,
         "energyCost": 40,
         "damageReductionActive": 5,
         "damageReduction": 3,
