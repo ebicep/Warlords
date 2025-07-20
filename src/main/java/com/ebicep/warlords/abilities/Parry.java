@@ -90,7 +90,7 @@ public class Parry extends AbstractAbility implements AbilityStats<Parry, Parry.
                         if (event.getFlags().contains(InstanceFlags.DOT)) {
                             return;
                         }
-                        Utils.playGlobalSound(wp.getLocation(), Sound.ITEM_SHIELD_BLOCK, 10, .7f);
+                        Utils.playGlobalSound(wp.getLocation(), Sound.ITEM_SHIELD_BLOCK, 3, .7f);
                         WarlordsEntity source = event.getSource();
                         wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" You ", NamedTextColor.GRAY))
                                                                       .append(Component.text("Parried", NamedTextColor.YELLOW))
