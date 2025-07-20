@@ -768,10 +768,10 @@
       "loneSentinel": {
         "difficulty": 3,
         "name": "Lone Sentinel",
-        "description": "Gain {{damageReduction;%}} damage reduction. Increase the flag multiplier of {{aqua:Fortifying Hex}} to {{damageReduction;x}}, but reduce the pierce for allies by {{blue}}. {{aqua:Mystical Barrier}} can only affect yourself.",
-        "resistanceIncreasePercent": 5,
-        "fortifyingHexFlagMultiplier": 3,
-        "fortifyingHexAllyPierceReduction": 1
+        "description": "Increase the flag multiplier of {{aqua:Fortifying Hex}} to {{damageReduction;x}}, but reduce the pierce for allies by {{blue}}. {{aqua:Mystical Barrier}} can only affect yourself but reduces melee damage by an additional {{damageReduction;%}}.",
+        "fortifyingHexFlagMultiplier": 4,
+        "fortifyingHexAllyPierceReduction": 1,
+        "mysticalBarrierMeleeDamageReductionPercent": 20
       },
       "pactOfProtection": {
         "difficulty": 4,

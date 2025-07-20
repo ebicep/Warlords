@@ -310,6 +310,14 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
         this.stacksGranted = stacksGranted;
     }
 
+    public float getMeleeDamageReduction() {
+        return meleeDamageReduction;
+    }
+
+    public void setMeleeDamageReduction(float meleeDamageReduction) {
+        this.meleeDamageReduction = meleeDamageReduction;
+    }
+
     public static class MysticalBarrierStats extends AbstractAbilityStats<MysticalBarrier, MysticalBarrierStats> {
 
         @Field("times_teammates_shielded")
