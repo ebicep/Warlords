@@ -737,7 +737,7 @@
         "ascendDurationTicks": 20,
         "airStrikeDurationTicks": 80,
         "soulfireBeamDamageReductionPercent": 30,
-        "soulfireBeamMaxRange": 12,
+        "soulfireBeamMaxRange": 15,
         "soulfireBeamHitboxIncrease": 0.4,
         "maxBeamCastsNormal": 3,
         "maxBeamCastsOnCooldown": 2
