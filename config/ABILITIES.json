@@ -692,7 +692,7 @@
         "vulnerableDamageBonus": 10,
         "damageValues": {
           "hazeDamage": {
-            "value": 120
+            "value": 160
           }
         },
         "healingValues": {
