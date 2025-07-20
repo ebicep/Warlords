@@ -1283,7 +1283,7 @@
         "hexTickDurationIncrease": 40,
         "additionalDamageReduction": 6,
         "tickDuration": 240,
-        "lethalDamageHealing": 35
+        "lethalDamageHealing": 25
       },
       "seismicWaveBerserker": {
         "name": "Seismic Wave",
