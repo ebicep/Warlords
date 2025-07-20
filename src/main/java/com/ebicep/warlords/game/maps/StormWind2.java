@@ -29,7 +29,7 @@ public class StormWind2 extends GameMap {
 
     public StormWind2() {
         super(
-                "Stormwind2",
+                "Storm Wind 2",
                 32,
                 12,
                 60 * SECOND,
