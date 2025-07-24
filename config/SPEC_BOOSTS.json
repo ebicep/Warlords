@@ -680,7 +680,7 @@
         "description": "Gain {{speed;%}} base speed. Reduce the energy cost of {{aqua:Impaling Strike}} by {{energy}}. {{aqua:Vitality Concoction}} heals you for {{heal}} health, and reduce the cooldown by {{ticks}}.",
         "speedIncrease": 5,
         "impalingStrikeEnergyCostReduction": 12,
-        "vitalityConcoctionHealing": 500,
+        "vitalityConcoctionHealing": 600,
         "vitalityConcoctionCooldownReductionSeconds": 1
       },
       "detonationCatalyst": {
