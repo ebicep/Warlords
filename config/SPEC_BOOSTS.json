@@ -788,7 +788,8 @@
       "unmercifulHex": {
         "difficulty": 2,
         "name": "Unmerciful Hex",
-        "description": "Increase the pierce against enemies of {{aqua:Merciful Hex}} to infinity, but it no longer grants the second ally {{dark_green:MHEX}} stacks. {{aqua:Ray of Light}} no longer cleanses allies. {{aqua:Sanctified Beacon}} no longer grants {{dark_green:MHEX}} stacks."
+        "description": "Increase the pierce against enemies of {{aqua:Merciful Hex}} to infinity and the damage by {{damage;%}}, but it no longer grants the second ally {{dark_green:MHEX}} stacks. {{aqua:Ray of Light}} no longer cleanses allies.",
+        "mercifulHexDamageIncrease": 10
       },
       "radiantLight": {
         "difficulty": 1,
