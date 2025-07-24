@@ -816,10 +816,10 @@
         "difficulty": 3,
         "name": "Holy Nova",
         "description": "{{aqua:Divine Blessing}} heals allies more than {{blocks}} from you for an additional {{heal;%}} and deals {{damage}} damage to all enemies as it heals. Increase the cooldown of {{aqua:Divine Blessing}} by {{ticks;%}}.",
+        "divineBlessingFarRangeBlocks": 50,
         "divineBlessingHealingIncreasePercentFar": 50,
         "divineBlessingDamageToEnemies": 200,
-        "divineBlessingCooldownIncreasePercent": 20,
-        "divineBlessingFarRangeBlocks": 50
+        "divineBlessingCooldownIncreasePercent": 10
       }
     }
   }
