@@ -12,14 +12,12 @@ public class AlchemistsFury implements SpecBoostManager.SpecBoost<AlchemistsFury
     private float soothingElixirCooldownReductionSeconds;
     private float soothingElixirDamageIncreasePercent;
     private float soothingElixirProjectileSpeedMultiplier;
-    private float soothingElixirRadiusIncrease;
 
     @Override
     public void init() {
         this.soothingElixirCooldownReductionSeconds = getValue("soothingElixirCooldownReductionSeconds", float.class);
         this.soothingElixirDamageIncreasePercent = getValue("soothingElixirDamageIncreasePercent", float.class);
         this.soothingElixirProjectileSpeedMultiplier = getValue("soothingElixirProjectileSpeedMultiplier", float.class);
-        this.soothingElixirRadiusIncrease = getValue("soothingElixirRadiusIncrease", float.class);
     }
 
     @Override
@@ -32,8 +30,7 @@ public class AlchemistsFury implements SpecBoostManager.SpecBoost<AlchemistsFury
         return List.of(
                 soothingElixirCooldownReductionSeconds,
                 soothingElixirDamageIncreasePercent,
-                soothingElixirProjectileSpeedMultiplier,
-                soothingElixirRadiusIncrease
+                soothingElixirProjectileSpeedMultiplier
         );
     }
 
@@ -61,7 +58,6 @@ public class AlchemistsFury implements SpecBoostManager.SpecBoost<AlchemistsFury
                 soothingElixir.getHealValues().getElixirDOTHealing().forEachValue(floatModifiable ->
                         floatModifiable.addOverridingModifier("Spec Boost", 0)
                 );
-                soothingElixir.getHitBoxRadius().addAdditiveModifier("Spec Boost", soothingElixirRadiusIncrease);
             });
             warlordsPlayer.getAbilitiesMatching(VolatileBrew.class).forEach(volatileBrew -> {
                 volatileBrew.setEarlyActivationEffectivenessReduction(0);

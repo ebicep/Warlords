@@ -668,11 +668,10 @@
       "alchemistsFury": {
         "difficulty": 2,
         "name": "Alchemist's Fury",
-        "description": "Reduce the cooldown of {{aqua:Soothing Elixir}} by {{ticks}}, double the projectile speed, increase the damage by {{damage;%}} and the radius by {{blocks}}, but it no longer heals over time. {{aqua:Volatile Brew}} deals full damage when activated early.",
+        "description": "Reduce the cooldown of {{aqua:Soothing Elixir}} by {{ticks}}, double the projectile speed, and increase the damage by {{damage;%}}, but it no longer heals over time. {{aqua:Volatile Brew}} deals full damage when activated early.",
         "soothingElixirCooldownReductionSeconds": 0.5,
-        "soothingElixirDamageIncreasePercent": 120,
-        "soothingElixirProjectileSpeedMultiplier": 2,
-        "soothingElixirRadiusIncrease": 1
+        "soothingElixirDamageIncreasePercent": 100,
+        "soothingElixirProjectileSpeedMultiplier": 2
       },
       "sustainedOnslaught": {
         "difficulty": 1,
