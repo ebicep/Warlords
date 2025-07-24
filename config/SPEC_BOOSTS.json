@@ -27,7 +27,7 @@
         "baseSpeedIncreasePercent": 5,
         "velocityIncreasePercentage": 100,
         "guaranteedCrit": 1,
-        "damageIncreasePercent": 8,
+        "damageIncreasePercent": 10,
         "infernoDamageIncreasePercent": 16,
         "damageReductionAbilities": [
           "Arcane Shield",
