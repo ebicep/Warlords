@@ -116,8 +116,8 @@
         "energyCost": 20,
         "damageValues": {
           "bullRushDamage": {
-            "min": 556,
-            "max": 680
+            "min": 530,
+            "max": 705
           }
         },
         "healingValues": {
@@ -357,8 +357,8 @@
         "verticalVelocity": 0.375,
         "damageValues": {
           "spikeDamage": {
-            "min": 404,
-            "max": 562,
+            "min": 414,
+            "max": 551,
             "critChance": 15,
             "critMultiplier": 175
           },
@@ -497,7 +497,7 @@
       },
       "flameBreath": {
         "name": "Flame Breath",
-        "cooldown": 7.05,
+        "cooldown": 7,
         "energyCost": 30,
         "maxAnimationTime": 12,
         "maxAnimationEffects": 4,
@@ -505,8 +505,8 @@
         "velocity": 1.1,
         "damageValues": {
           "flameBreathDamage": {
-            "min": 501.3,
-            "max": 677.7,
+            "min": 501,
+            "max": 678,
             "critChance": 25,
             "critMultiplier": 185
           }
@@ -549,8 +549,8 @@
         "hitTeammates": false,
         "damageValues": {
           "freezingBreathDamage": {
-            "min": 405,
-            "max": 565,
+            "min": 414,
+            "max": 555,
             "critChance": 20,
             "critMultiplier": 175
           }
@@ -747,8 +747,8 @@
         "healingPeriod": 20,
         "healingValues": {
           "totemHealing": {
-            "min": 591,
-            "max": 688,
+            "min": 547,
+            "max": 733,
             "critChance": 25,
             "critMultiplier": 175
           }
@@ -1257,8 +1257,8 @@
         "hitBox": 4.8,
         "damageValues": {
           "strikeDamage": {
-            "min": 324,
-            "max": 415,
+            "min": 316,
+            "max": 423,
             "critChance": 20,
             "critMultiplier": 175
           }
@@ -1330,8 +1330,8 @@
         "yFlag": 0.35,
         "damageValues": {
           "shadowStepDamage": {
-            "min": 416,
-            "max": 498,
+            "min": 390,
+            "max": 523,
             "critChance": 15,
             "critMultiplier": 175
           }
@@ -1359,22 +1359,22 @@
         "leechStacksApplied": 1,
         "damageValues": {
           "elixirDamage": {
-            "min": 215,
-            "max": 322,
+            "min": 229,
+            "max": 307,
             "critChance": 25,
             "critMultiplier": 175
           }
         },
         "healingValues": {
           "elixirHealing": {
-            "min": 551,
-            "max": 648,
+            "min": 512,
+            "max": 686,
             "critChance": 25,
             "critMultiplier": 175
           },
           "elixirDOTHealing": {
-            "min": 68,
-            "max": 114,
+            "min": 79,
+            "max": 103,
             "critChance": 25,
             "critMultiplier": 175
           }
@@ -1459,8 +1459,8 @@
         "damageReductionTickDuration": 60,
         "healingValues": {
           "switchHealing": {
-            "min": 300,
-            "max": 500,
+            "min": 350,
+            "max": 450,
             "critChance": 15,
             "critMultiplier": 175
           }
@@ -1602,8 +1602,8 @@
         "earlyActivationEffectivenessReduction": 20,
         "damageValues": {
           "brewDamage": {
-            "min": 1140,
-            "max": 1680
+            "min": 1200,
+            "max": 1620
           }
         },
         "healingValues": {
@@ -1624,8 +1624,8 @@
         "hitTeammates": true,
         "damageValues": {
           "boltDamage": {
-            "min": 236,
-            "max": 304,
+            "min": 231,
+            "max": 310,
             "critChance": 20,
             "critMultiplier": 175
           }
@@ -1649,8 +1649,8 @@
         "velocity": 1.1,
         "healingValues": {
           "breathHealing": {
-            "min": 496,
-            "max": 701,
+            "min": 511,
+            "max": 685,
             "critChance": 25,
             "critMultiplier": 175
           }
@@ -1680,8 +1680,8 @@
         "hitBox": 4.8,
         "damageValues": {
           "strikeDamage": {
-            "min": 497,
-            "max": 632,
+            "min": 482,
+            "max": 646,
             "critChance": 20,
             "critMultiplier": 175
           }
