@@ -65,9 +65,6 @@ public class PactOfProtection implements SpecBoostManager.SpecBoost<PactOfProtec
 
         @EventHandler(ignoreCancelled = true)
         public void onCooldownAddEvent(WarlordsAddCooldownEvent event) {
-            if (warlordsEntity.equals(event.getWarlordsEntity())) {
-                return;
-            }
             AbstractCooldown<?> cooldown = event.getAbstractCooldown();
             if (!(cooldown instanceof RegularCooldown<?> regularCooldown)) {
                 return;

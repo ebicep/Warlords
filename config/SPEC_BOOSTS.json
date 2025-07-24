@@ -774,7 +774,7 @@
       "pactOfProtection": {
         "difficulty": 4,
         "name": "Pact of Protection",
-        "description": "Reduce the cooldown of {{aqua:Mystical Barrier}} by {{ticks;%}}. If casted on a teammate, the target gains {{damageReduction;%}} damage reduction but you receive {{damage;%}} more damage for the duration of {{aqua:Mystical Barrier}}.",
+        "description": "Reduce the cooldown of {{aqua:Mystical Barrier}} by {{ticks;%}}. {{aqua:Mystical Barrier}} grants {{damageReduction;%}} damage reduction but you receive {{damage;%}} more damage for the duration.",
         "mysticalBarrierCooldownReductionPercent": 35,
         "targetDamageReductionPercent": 25,
         "selfDamageIncreasePercent": 25
