@@ -85,7 +85,7 @@ public class RallyingPresence implements SpecBoostManager.SpecBoost<RallyingPres
             if (!(cooldown instanceof RegularCooldown<?> regularCooldown)) {
                 return;
             }
-            if (!cooldown.getCooldownClass().equals(InspiringPresence.class) || !cooldown.getFrom().equals(warlordsEntity)) {
+            if (!cooldown.getCooldownClass().equals(InspiringPresence.InspiringPresenceData.class) || !cooldown.getFrom().equals(warlordsEntity)) {
                 return;
             }
             regularCooldown.addExtraDamageInstance(new DamageInstance() {
