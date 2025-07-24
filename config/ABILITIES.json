@@ -707,11 +707,11 @@
         "energyCost": 30,
         "radius": 15,
         "damagePercentTaken": 15,
-        "tickDuration": 160,
+        "tickDuration": 120,
         "maxTargets": 1,
         "healingValues": {
           "linkHealing": {
-            "value": 300
+            "value": 400
           }
         }
       },
