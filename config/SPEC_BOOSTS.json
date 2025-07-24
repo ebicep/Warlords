@@ -349,7 +349,7 @@
         "name": "Parry",
         "description": "Replace {{aqua:Consecrate}} with {{aqua:Parry}}, which has {{blue}} charges. Increase the energy granted by {{aqua:Crusader's Strike}} by {{energy}}.",
         "maxAbilityCharges": 2,
-        "crusaderStrikeEnergyIncrease": 3
+        "crusaderStrikeEnergyIncrease": 4
       },
       "vigorousInfusion": {
         "difficulty": 1,

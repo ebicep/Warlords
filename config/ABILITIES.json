@@ -1099,12 +1099,12 @@
       },
       "parry": {
         "name": "Parry",
-        "cooldown": 7.5,
+        "cooldown": 9,
         "energyCost": 0,
-        "blockTickDuration": 32,
+        "blockTickDuration": 30,
         "knockbackTickDuration": 50,
-        "damageReduction": 8,
-        "damageReductionTickDuration": 100
+        "damageReduction": 10,
+        "damageReductionTickDuration": 80
       },
       "poisonousHex": {
         "name": "Poisonous Hex",
