@@ -1135,10 +1135,9 @@
       },
       "portal": {
         "name": "Portal",
-        "cooldown": 10,
-        "energyCost": 30,
-        "recastDelayTicks": 100,
-        "portalSpeedReductionPercent": 5
+        "cooldown": 16,
+        "energyCost": 40,
+        "recastDelayTicks": 100
       },
       "prismGuard": {
         "name": "Prism Guard",
