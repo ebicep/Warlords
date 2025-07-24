@@ -10,8 +10,13 @@ import java.util.List;
 
 public class Portal implements SpecBoostManager.SpecBoost<Portal> {
 
+    private float fireballCritChanceIncrease;
+    private int fireballRangeDecreaseBlocks;
+
     @Override
     public void init() {
+        this.fireballCritChanceIncrease = getValue("fireballCritChanceIncrease", float.class);
+        this.fireballRangeDecreaseBlocks = getValue("fireballRangeDecreaseBlocks", int.class);
     }
 
     @Override
@@ -26,7 +31,7 @@ public class Portal implements SpecBoostManager.SpecBoost<Portal> {
 
     @Override
     public List<Object> getVariables() {
-        return List.of();
+        return List.of(fireballCritChanceIncrease, fireballRangeDecreaseBlocks);
     }
 
     @Override
@@ -43,6 +48,10 @@ public class Portal implements SpecBoostManager.SpecBoost<Portal> {
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
+            warlordsPlayer.getAbilitiesMatching(com.ebicep.warlords.abilities.Fireball.class).forEach(fireball -> {
+                fireball.getDamageValues().getFireballDamage().critChance().addAdditiveModifier("Spec Boost", fireballCritChanceIncrease);
+                fireball.setMaxFullDistance(fireball.getMaxFullDistance() - fireballRangeDecreaseBlocks);
+            });
             List<AbstractAbility> abilities = warlordsPlayer.getAbilities();
             for (int i = 0; i < abilities.size(); i++) {
                 AbstractAbility ability = abilities.get(i);
