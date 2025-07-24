@@ -10,7 +10,6 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
-import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -22,20 +21,20 @@ import java.util.List;
 public class RiftAmbush implements SpecBoostManager.SpecBoost<RiftAmbush> {
 
     private float soulSwitchRadiusIncrease;
-    private float soulSwitchVerticalLimit;
-    private float soulSwitchDamage;
     private int soulSwitchDamageReductionIncreasePercent;
+    private float soulSwitchDamage;
     private float tetherRadius;
     private int tetherTickDuration;
+    private float soulSwitchVerticalLimit;
 
     @Override
     public void init() {
         this.soulSwitchRadiusIncrease = getValue("soulSwitchRadiusIncrease", float.class);
-        this.soulSwitchVerticalLimit = getValue("soulSwitchVerticalLimit", float.class);
-        this.soulSwitchDamage = getValue("soulSwitchDamage", float.class);
         this.soulSwitchDamageReductionIncreasePercent = getValue("soulSwitchDamageReductionIncreasePercent", int.class);
+        this.soulSwitchDamage = getValue("soulSwitchDamage", float.class);
         this.tetherRadius = getValue("tetherRadius", float.class);
         this.tetherTickDuration = getValue("tetherTickDuration", int.class);
+        this.soulSwitchVerticalLimit = getValue("soulSwitchVerticalLimit", float.class);
     }
 
     @Override
@@ -45,7 +44,7 @@ public class RiftAmbush implements SpecBoostManager.SpecBoost<RiftAmbush> {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(soulSwitchDamage, soulSwitchRadiusIncrease, soulSwitchDamageReductionIncreasePercent, tetherRadius, tetherTickDuration);
+        return List.of(soulSwitchRadiusIncrease, soulSwitchDamageReductionIncreasePercent, soulSwitchDamage, tetherRadius, tetherTickDuration);
     }
 
     @Override

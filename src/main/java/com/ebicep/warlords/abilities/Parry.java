@@ -186,13 +186,13 @@ public class Parry extends AbstractAbility implements AbilityStats<Parry, Parry.
         description = AbilityDescriptionBuilder
                 .create("For ")
                 .durationTicks(blockTickDuration)
-                .text(", you are able to block the first skill that hits you. For ")
-                .durationTicks(knockbackTickDuration)
-                .text(", you are able to deal massive knockback with your next strike.  Every time you block a skill you gain ")
+                .text(", you block the damage of the first skill that hits you and gain ")
                 .damageReduction(damageReduction)
                 .text(" damage reduction for ")
                 .durationTicks(damageReductionTickDuration)
-                .text(".")
+                .text(". For ")
+                .durationTicks(knockbackTickDuration)
+                .text(", you deal massive knockback with your next Crusader's Strike.")
                 .build();
     }
 
