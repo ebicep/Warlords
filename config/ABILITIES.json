@@ -1045,13 +1045,12 @@
         "tickDuration": 100,
         "meleeDamageReduction": 60,
         "radius": 12,
-        "shieldBase": 150,
-        "shieldIncrease": 30,
-        "shieldMaxHealth": 600,
+        "shieldBase": 200,
+        "shieldIncrease": 40,
+        "shieldMaxHealth": 1200,
         "reactivateTickDuration": 100,
         "stacksGranted": 3,
-        "guardianBeamShieldMultiplier": 2,
-        "canTargetAllies": true
+        "guardianBeamShieldMultiplier": 2
       },
       "notAShield": {
         "name": "Not A Shield",
