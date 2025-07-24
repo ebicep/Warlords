@@ -626,7 +626,7 @@
         "difficulty": 4,
         "name": "Cold Shoulder",
         "description": "{{aqua:Heart to Heart}} can now target enemies, and resets the cooldown of {{aqua:Soul Shackle}}. Reduce the damage of {{aqua:Soul Shackle}} by {{damage}}. {{aqua:Prism Guard}} explodes when it ends, dealing massive knockback to enemies in range. {{aqua:Vindicate}} resets the cooldown of {{aqua:Heart to Heart}}.",
-        "soulShackleDamageDecrease": 100
+        "soulShackleDamageDecrease": 50
       },
       "righteousRampage": {
         "difficulty": 3,
