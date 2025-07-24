@@ -19,13 +19,13 @@ import java.util.List;
 
 public class WitheringPlague implements SpecBoostManager.SpecBoost<WitheringPlague> {
 
+    private float poisonousHexDamageIncreasePercent;
     private float damageIncrease;
-    private float witheringPlagueEnergyCost;
 
     @Override
     public void init() {
+        this.poisonousHexDamageIncreasePercent = getValue("poisonousHexDamageIncreasePercent", float.class);
         this.damageIncrease = getValue("damageIncrease", float.class);
-        this.witheringPlagueEnergyCost = getValue("witheringPlagueEnergyCost", float.class);
     }
 
     @Override
@@ -35,7 +35,7 @@ public class WitheringPlague implements SpecBoostManager.SpecBoost<WitheringPlag
 
     @Override
     public List<Object> getVariables() {
-        return List.of(damageIncrease, witheringPlagueEnergyCost);
+        return List.of(poisonousHexDamageIncreasePercent, damageIncrease);
     }
 
     @Override
@@ -55,9 +55,16 @@ public class WitheringPlague implements SpecBoostManager.SpecBoost<WitheringPlag
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
+            warlordsPlayer.getAbilitiesMatching(PoisonousHex.class).forEach(poisonousHex -> {
+                poisonousHex.getDamageValues().getHexDamage().forEachValue(floatModifiable ->
+                        floatModifiable.addMultiplicativeModifierAdd("Spec Boost", poisonousHexDamageIncreasePercent / 100)
+                );
+                poisonousHex.getDamageValues().getHexDOTDamage().forEachValue(floatModifiable ->
+                        floatModifiable.addMultiplicativeModifierAdd("Spec Boost", poisonousHexDamageIncreasePercent / 100)
+                );
+            });
             warlordsPlayer.getAbilitiesMatching(AstralPlague.class).forEach(astralPlague -> {
                 astralPlague.setPierceShields(false);
-                astralPlague.getEnergyCost().addOverridingModifier("Spec Boost", witheringPlagueEnergyCost);
             });
         }
 

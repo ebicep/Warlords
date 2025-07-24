@@ -724,9 +724,9 @@
       "witheringPlague": {
         "difficulty": 3,
         "name": "Withering Plague",
-        "description": "{{aqua:Astral Plague}} no longer grants shield piercing. For the duration of {{aqua:Astral Plague}}, increase the damage dealt to non-Tank enemies with max stacks of {{dark_red:PHEX}} by {{damage;%}}. Reduce the energy cost of {{aqua:Astral Plague}} to {{energy}}.",
-        "damageIncrease": 40,
-        "witheringPlagueEnergyCost": 0
+        "description": "Increase the damage of {{aqua:Poisonous Hex}} and {{dark_red:PHEX}} by {{damage;%}}. {{aqua:Astral Plague}} no longer grants shield piercing. For the duration of {{aqua:Astral Plague}}, increase the damage dealt to non-Tank enemies with max stacks of {{dark_red:PHEX}} by {{damage;%}}.",
+        "poisonousHexDamageIncreasePercent": 10,
+        "damageIncrease": 30
       },
       "airStrike": {
         "difficulty": 5,
