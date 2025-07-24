@@ -808,7 +808,7 @@
         "difficulty": 2,
         "name": "Consecrated Beacon",
         "description": "Reduce the energy cost of {{aqua:Sanctified Beacon}} to {{energy}}, the cooldown by {{ticks;%}}, and increase the {{dark_green:MHEX}} stacks granted by {{blue}}.",
-        "sanctifiedBeaconEnergyCost": 0,
+        "sanctifiedBeaconEnergyCostDecrease": 10,
         "sanctifiedBeaconCooldownReductionPercent": 50,
         "sanctifiedBeaconAdditionalHexStacks": 1
       },

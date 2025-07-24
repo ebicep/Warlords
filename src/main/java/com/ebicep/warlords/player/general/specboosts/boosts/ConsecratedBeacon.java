@@ -8,13 +8,13 @@ import java.util.List;
 
 public class ConsecratedBeacon implements SpecBoostManager.SpecBoost<ConsecratedBeacon> {
 
-    private float sanctifiedBeaconEnergyCost;
+    private float sanctifiedBeaconEnergyCostDecrease;
     private float sanctifiedBeaconCooldownReductionPercent;
     private int sanctifiedBeaconAdditionalHexStacks;
 
     @Override
     public void init() {
-        this.sanctifiedBeaconEnergyCost = getValue("sanctifiedBeaconEnergyCost", float.class);
+        this.sanctifiedBeaconEnergyCostDecrease = getValue("sanctifiedBeaconEnergyCostDecrease", float.class);
         this.sanctifiedBeaconCooldownReductionPercent = getValue("sanctifiedBeaconCooldownReductionPercent", float.class);
         this.sanctifiedBeaconAdditionalHexStacks = getValue("sanctifiedBeaconAdditionalHexStacks", int.class);
     }
@@ -26,7 +26,7 @@ public class ConsecratedBeacon implements SpecBoostManager.SpecBoost<Consecrated
 
     @Override
     public List<Object> getVariables() {
-        return List.of(sanctifiedBeaconEnergyCost, sanctifiedBeaconCooldownReductionPercent, sanctifiedBeaconAdditionalHexStacks);
+        return List.of(sanctifiedBeaconEnergyCostDecrease, sanctifiedBeaconCooldownReductionPercent, sanctifiedBeaconAdditionalHexStacks);
     }
 
     @Override
@@ -44,7 +44,7 @@ public class ConsecratedBeacon implements SpecBoostManager.SpecBoost<Consecrated
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getAbilitiesMatching(SanctifiedBeacon.class).forEach(sanctifiedBeacon -> {
-                sanctifiedBeacon.getEnergyCost().addOverridingModifier("Spec Boost", sanctifiedBeaconEnergyCost);
+                sanctifiedBeacon.getEnergyCost().addAdditiveModifier("Spec Boost", -sanctifiedBeaconEnergyCostDecrease);
                 sanctifiedBeacon.getCooldown().addMultiplicativeModifierAdd("Spec Boost", -sanctifiedBeaconCooldownReductionPercent / 100);
                 sanctifiedBeacon.setStacksGranted(sanctifiedBeacon.getStacksGranted() + sanctifiedBeaconAdditionalHexStacks);
             });
