@@ -373,10 +373,10 @@
       "rallyingPresence": {
         "difficulty": 2,
         "name": "Rallying Presence",
-        "description": "Reduce the duration of {{aqua:Inspiring Presence}} by {{ticks}}, but increase the energy per second granted by {{energy}} and the speed granted by {{speed;%}}. While holding the flag, gain {{speed;%}} speed, {{damageReduction;%}} knockback resistance, and increase the energy granted by {{aqua:Crusader's Strike}} by {{energy}}.",
-        "durationDecreaseTicks": 40,
-        "energyPerSecondIncrease": 6,
+        "description": "Increase the energy per second granted by {{aqua:Inspiring Presence}} by {{energy}} and the speed granted by {{speed;%}}. Inspiring Presence grants the user {{damageReduction;%}} damage reduction for its duration. While holding the flag, gain {{speed;%}} speed, {{damageReduction;%}} knockback resistance, and increase the energy granted by {{aqua:Crusader's Strike}} by {{energy}}.",
+        "energyPerSecondIncrease": 3,
         "speedIncreasePercent": 15,
+        "inspiringPresenceDamageReductionPercent": 20,
         "flagSpeedIncreasePercent": 35,
         "flagKnockbackResistancePercent": 30,
         "crusaderStrikeEnergyIncrease": 9
