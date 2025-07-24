@@ -570,7 +570,7 @@
         "incendiaryCurseEnergyCostIncrease": 20,
         "soulSwitchInvisTickDuration": 30,
         "soulSwitchDummyDurationTicks": 50,
-        "soulSwitchDummyHealth": 1000,
+        "soulSwitchDummyHealth": 1500,
         "shadowLeapHealthThreshold": 5200
       },
       "blink": {
