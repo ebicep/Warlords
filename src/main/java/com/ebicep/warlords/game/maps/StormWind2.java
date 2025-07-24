@@ -29,11 +29,11 @@ public class StormWind2 extends GameMap {
 
     public StormWind2() {
         super(
-                "StormWind2",
+                "Storm Wind 2",
                 32,
                 12,
                 60 * SECOND,
-                "StormWind2",
+                "Stormwind2",
                 1,
                 GameMode.CAPTURE_THE_FLAG
         );

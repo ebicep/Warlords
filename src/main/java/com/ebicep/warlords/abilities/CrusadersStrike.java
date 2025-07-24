@@ -180,6 +180,10 @@ public class CrusadersStrike extends AbstractStrike<CrusadersStrike, CrusadersSt
         return new CrusadersStrikeBranch(abilityTree, this);
     }
 
+    public int getEnergyMaxAllies() {
+        return energyMaxAllies;
+    }
+
     public void setEnergyMaxAllies(int energyMaxAllies) {
         this.energyMaxAllies = energyMaxAllies;
     }

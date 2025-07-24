@@ -67,10 +67,12 @@ public class Valley extends GameMap {
         options.add(new FlagCapturePointOption(loc.addXYZ(30.5, 38.5, 89.5, 90, 0), Team.RED));
         options.add(new FlagSpawnPointOption(loc.addXYZ(30.5, 38.5, 89.5, 90, 0), Team.RED));
 
-        options.add(new GateOption(loc.addXYZ(-26, 33, -96), loc.addXYZ(-19, 40, -96)));
-        options.add(new GateOption(loc.addXYZ(-28, 31, -81), loc.addXYZ(-28, 41, -75)));
+        options.add(new GateOption(loc.addXYZ(-26, 33, -96), loc.addXYZ(-20, 40, -96)));
+        options.add(new GateOption(loc.addXYZ(-26, 43, -96), loc.addXYZ(-20, 50, -96)));
+        options.add(new GateOption(loc.addXYZ(-29, 31, -81), loc.addXYZ(-29, 41, -76)));
         options.add(new GateOption(loc.addXYZ(20, 33, 96), loc.addXYZ(26, 42, 96)));
-        options.add(new GateOption(loc.addXYZ(29, 31, 76), loc.addXYZ(29, 41, 82)));
+        options.add(new GateOption(loc.addXYZ(20, 43, 96), loc.addXYZ(26, 50, 96)));
+        options.add(new GateOption(loc.addXYZ(29, 31, 76), loc.addXYZ(29, 41, 81)));
 
         options.add(new WinByPointsOption());
         options.add(new MercyWinOption());

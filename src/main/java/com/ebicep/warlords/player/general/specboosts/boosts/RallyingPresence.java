@@ -38,7 +38,13 @@ public class RallyingPresence implements SpecBoostManager.SpecBoost<RallyingPres
 
     @Override
     public List<Object> getVariables() {
-        return List.of(durationDecreaseTicks, energyPerSecondIncrease, speedIncreasePercent, flagSpeedIncreasePercent, flagKnockbackResistancePercent, crusaderStrikeEnergyIncrease);
+        return List.of(
+                durationDecreaseTicks,
+                energyPerSecondIncrease,
+                speedIncreasePercent,
+                flagSpeedIncreasePercent,
+                flagKnockbackResistancePercent,
+                crusaderStrikeEnergyIncrease);
     }
 
     @Override

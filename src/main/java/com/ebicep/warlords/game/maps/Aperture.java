@@ -64,15 +64,15 @@ public class Aperture extends GameMap {
         options.add(new FlagCapturePointOption(loc.addXYZ(694.5, 37, 234.5, 90, 0), Team.RED));
         options.add(new FlagSpawnPointOption(loc.addXYZ(694.5, 37, 234.5, 90, 0), Team.RED));
 
-        options.add(new GateOption(loc.addXYZ(665.5, 37, 228.5), loc.addXYZ(665.5, 41, 232.5)));
-        options.add(new GateOption(loc.addXYZ(683.5, 37, 245), loc.addXYZ(690.5, 42, 245)));
-        options.add(new GateOption(loc.addXYZ(672.5, 37, 234.5), loc.addXYZ(668.5, 43, 234.5)));
-        options.add(new GateOption(loc.addXYZ(666.5, 42, 214.5), loc.addXYZ(666.5, 45.5, 212.5)));
+        options.add(new GateOption(loc.addXYZ(665, 37, 228), loc.addXYZ(665, 41, 232)));
+        options.add(new GateOption(loc.addXYZ(683, 37, 245), loc.addXYZ(690, 42, 245)));
+        options.add(new GateOption(loc.addXYZ(672, 37, 234), loc.addXYZ(668, 49, 234)));
+        options.add(new GateOption(loc.addXYZ(665, 42, 214), loc.addXYZ(665, 46, 212)));
 
         options.add(new GateOption(loc.addXYZ(535, 37, 242), loc.addXYZ(535, 41, 247)));
-        options.add(new GateOption(loc.addXYZ(517.5, 37, 229.5), loc.addXYZ(510.5, 42, 229.5)));
-        options.add(new GateOption(loc.addXYZ(532.5, 37, 240), loc.addXYZ(528.5, 43, 240)));
-        options.add(new GateOption(loc.addXYZ(534.5, 42, 260.5), loc.addXYZ(534.5, 45.5, 262.5)));
+        options.add(new GateOption(loc.addXYZ(517, 37, 229), loc.addXYZ(510, 42, 229)));
+        options.add(new GateOption(loc.addXYZ(532, 37, 240), loc.addXYZ(528, 49, 240)));
+        options.add(new GateOption(loc.addXYZ(535, 42, 260), loc.addXYZ(535, 46, 262)));
 
         options.add(new WinByPointsOption());
         options.add(new MercyWinOption());
