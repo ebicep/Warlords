@@ -584,7 +584,7 @@
         "difficulty": 4,
         "name": "Rift Ambush",
         "description": "{{aqua:Soul Switch}} will now only teleport you to your target and deal {{damage}} damage. Increase the range of {{aqua:Soul Switch}} by {{blocks}}, and the damage reduction by {{damageReduction;%}}. The target will be trapped in a {{blocks}} radius for {{ticks}}.",
-        "soulSwitchRadiusIncrease": 3,
+        "soulSwitchRadiusIncrease": 5,
         "soulSwitchVerticalLimit": 5,
         "soulSwitchDamage": 400,
         "soulSwitchDamageReductionIncreasePercent": 15,
