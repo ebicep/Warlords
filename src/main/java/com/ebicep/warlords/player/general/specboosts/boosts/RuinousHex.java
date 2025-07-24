@@ -12,7 +12,6 @@ public class RuinousHex implements SpecBoostManager.SpecBoost<RuinousHex> {
     private float fortifyingHexDamageIncreasePercent;
     private int fortifyingHexEnergyCostIncrease;
     private int fortifyingHexAllyPierceReduction;
-    private float fortifyingHexDamageReductionDecreasePercent;
 
     @Override
     public void init() {
@@ -20,7 +19,6 @@ public class RuinousHex implements SpecBoostManager.SpecBoost<RuinousHex> {
         this.fortifyingHexDamageIncreasePercent = getValue("fortifyingHexDamageIncreasePercent", float.class);
         this.fortifyingHexEnergyCostIncrease = getValue("fortifyingHexEnergyCostIncrease", int.class);
         this.fortifyingHexAllyPierceReduction = getValue("fortifyingHexAllyPierceReduction", int.class);
-        this.fortifyingHexDamageReductionDecreasePercent = getValue("fortifyingHexDamageReductionDecreasePercent", float.class);
     }
 
     @Override
@@ -34,8 +32,7 @@ public class RuinousHex implements SpecBoostManager.SpecBoost<RuinousHex> {
                 fortifyingHexEnemyPierceIncrease,
                 fortifyingHexDamageIncreasePercent,
                 fortifyingHexEnergyCostIncrease,
-                fortifyingHexAllyPierceReduction,
-                fortifyingHexDamageReductionDecreasePercent
+                fortifyingHexAllyPierceReduction
         );
     }
 
@@ -60,7 +57,6 @@ public class RuinousHex implements SpecBoostManager.SpecBoost<RuinousHex> {
                 );
                 fortifyingHex.getEnergyCost().addAdditiveModifier("Spec Boost", fortifyingHexEnergyCostIncrease);
                 fortifyingHex.setMaxAlliesHit(fortifyingHex.getMaxAlliesHit() - fortifyingHexAllyPierceReduction);
-                fortifyingHex.getDamageReduction().addAdditiveModifier("Spec Boost", -fortifyingHexDamageReductionDecreasePercent);
             });
         }
 
