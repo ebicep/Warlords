@@ -284,10 +284,9 @@
       "oneManArmy": {
         "difficulty": 2,
         "name": "One Man Army",
-        "description": "Increase the duration of {{aqua:Undying Army}} by {{ticks}}, {{ticks}} for the caster, and the cooldown by {{ticks}}. {{aqua:Undying Army}} will no longer heal nor damage you after being revived and resets the cooldown of {{aqua:Orbs of Life}}.",
+        "description": "Increase the duration of {{aqua:Undying Army}} by {{ticks}}, {{ticks}} for the caster. {{aqua:Undying Army}} will no longer heal nor damage you after being revived and resets the cooldown of {{aqua:Orbs of Life}}.",
         "undyingArmyTickDurationIncrease": 40,
-        "undyingArmyTickDurationCaster": 360,
-        "undyingArmyCooldownIncreaseTicks": 100
+        "undyingArmyTickDurationCaster": 360
       },
       "conduit": {
         "difficulty": 1,
