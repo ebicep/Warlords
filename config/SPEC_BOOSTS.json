@@ -366,7 +366,7 @@
         "description": "Increase the energy granted by {{aqua:Crusader's Strike}} by {{energy}} and allow it to grant energy while striking through {{aqua:Arcane Shield}}, but it only grants to 1 ally. A marked ally gains {{speed;%}} movement speed and is the only one that will receive energy even if allies are nearby. This ally will receive the energy until a new ally is marked, even if the original mark expires. Reduce the cooldown of {{aqua:Holy Radiance}} by {{ticks}}.",
         "crusaderStrikeEnergyGrant": 11,
         "markedAllySpeedPercent": 40,
-        "radianceCooldownReductionTicks": 60
+        "radianceCooldownReductionTicks": 80
       },
       "rallyingPresence": {
         "difficulty": 2,
