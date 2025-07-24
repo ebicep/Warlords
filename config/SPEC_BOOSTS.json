@@ -631,13 +631,13 @@
         "difficulty": 3,
         "name": "Righteous Rampage",
         "description": "Replace {{aqua:Heart to Heart}} with {{aqua:Bull Rush}}. Lose {{damageReduction;%}} damage reduction. {{aqua:Soul Shackle}} damages all enemies within a {{blocks}} radius for {{damage;%}} damage. {{aqua:Vindicate}} can be recasted to perform a huge leap, which upon landing will damage all enemies within {{blocks}} for {{damage}} damage, silence them for {{ticks}}, and deal massive knockback.",
-        "damageReductionDecrease": 5,
+        "damageReductionDecrease": 8,
         "soulShackleAoEDamagePercent": 40,
         "soulShackleAoERadius": 4,
         "vindicateLeapRadius": 6,
         "vindicateLeapDamage": {
-          "min": 568,
-          "max": 757
+          "min": 498,
+          "max": 657
         },
         "vindicateSilenceTicks": 30,
         "knockbackMagnitude": 1.5,
