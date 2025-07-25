@@ -59,7 +59,7 @@ public class SanctionBurst implements SpecBoostManager.SpecBoost<SanctionBurst> 
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(HeartToHeart.class).forEach(heartToHeart -> {
                 heartToHeart.getHitBoxRadius().addAdditiveModifier("Spec Boost", heartToHeartRangeIncrease);
-                heartToHeart.getFlagRadius().addAdditiveModifier("Spec Boost", heartToHeartFlagRangeIncrease);
+                heartToHeart.setFlagRadius(heartToHeart.getFlagRadius() + heartToHeartFlagRangeIncrease);
                 heartToHeart.setTargetEnemies(true);
             });
             warlordsPlayer.getAbilitiesMatching(SoulShackle.class).forEach(soulShackle -> {
