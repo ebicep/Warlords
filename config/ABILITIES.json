@@ -129,7 +129,7 @@
         "speedBoost": 180,
         "radius": 3.5,
         "knockbackMagnitude": 1.25,
-        "knockbackMagnitudeFlag": 1,
+        "knockbackMagnitudeFlag": 0.8,
         "knockbackY": 0.25
       },
       "capacitorTotem": {
