@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.cuboid;
 
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
@@ -45,7 +46,14 @@ public class GateOption extends AbstractCuboidOption implements TimerSkipAbleMar
     private Game game;
 
     public GateOption(Location a, Location b) {
-        this(a, b, DEFAULT_CLOSED_MATERIAL, DEFAULT_OPEN_MATERIAL, DEFAULT_GATE_DELAY, DEFAULT_SHOULD_BROADCAST);
+        this(
+                a,
+                b,
+                DEFAULT_CLOSED_MATERIAL,
+                DEFAULT_OPEN_MATERIAL,
+                ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "ctf.gateDelaySeconds", int.class, DEFAULT_GATE_DELAY),
+                DEFAULT_SHOULD_BROADCAST
+        );
     }
 
     public GateOption(Location a, Location b, Material closed, Material open, int delay, Boolean shouldBroadcast) {
@@ -64,22 +72,68 @@ public class GateOption extends AbstractCuboidOption implements TimerSkipAbleMar
     }
 
     public GateOption(Location a, Location b, Material closed) {
-        this(a, b, closed, DEFAULT_OPEN_MATERIAL, DEFAULT_GATE_DELAY, DEFAULT_SHOULD_BROADCAST);
+        this(
+                a,
+                b,
+                closed,
+                DEFAULT_OPEN_MATERIAL,
+                ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "ctf.gateDelaySeconds", int.class, DEFAULT_GATE_DELAY),
+
+                DEFAULT_SHOULD_BROADCAST
+        );
     }
 
     public GateOption(Location a, Location b, Material closed, Material open) {
-        this(a, b, closed, open, DEFAULT_GATE_DELAY, DEFAULT_SHOULD_BROADCAST);
+        this(
+                a,
+                b,
+                closed,
+                open,
+                ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "ctf.gateDelaySeconds", int.class, DEFAULT_GATE_DELAY),
+                DEFAULT_SHOULD_BROADCAST
+        );
     }
 
     public GateOption(Location a, Location b, Material closed, Material open, int delay) {
-        this(a, b, closed, open, delay, DEFAULT_SHOULD_BROADCAST);
+        this(
+                a,
+                b,
+                closed,
+                open,
+                delay,
+                DEFAULT_SHOULD_BROADCAST
+        );
     }
 
     public GateOption(LocationFactory loc, double x1, double y1, double z1, double x2, double y2, double z2) {
-        this(loc, x1, y1, z1, x2, y2, z2, DEFAULT_CLOSED_MATERIAL, DEFAULT_OPEN_MATERIAL, DEFAULT_GATE_DELAY, DEFAULT_SHOULD_BROADCAST);
+        this(
+                loc,
+                x1,
+                y1,
+                z1,
+                x2,
+                y2,
+                z2,
+                DEFAULT_CLOSED_MATERIAL,
+                DEFAULT_OPEN_MATERIAL,
+                ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "ctf.gateDelaySeconds", int.class, DEFAULT_GATE_DELAY),
+                DEFAULT_SHOULD_BROADCAST
+        );
     }
 
-    public GateOption(LocationFactory loc, double x1, double y1, double z1, double x2, double y2, double z2, Material closed, Material open, int delay, Boolean shouldBroadcast) {
+    public GateOption(
+            LocationFactory loc,
+            double x1,
+            double y1,
+            double z1,
+            double x2,
+            double y2,
+            double z2,
+            Material closed,
+            Material open,
+            int delay,
+            Boolean shouldBroadcast
+    ) {
         super(loc, x1, y1, z1, x2, y2, z2);
         if (closed == open) {
             throw new IllegalArgumentException("Cannot have the closed and open material of a gate be the same material");
@@ -95,15 +149,51 @@ public class GateOption extends AbstractCuboidOption implements TimerSkipAbleMar
     }
 
     public GateOption(LocationFactory loc, double x1, double y1, double z1, double x2, double y2, double z2, Material closed) {
-        this(loc, x1, y1, z1, x2, y2, z2, closed, DEFAULT_OPEN_MATERIAL, DEFAULT_GATE_DELAY, DEFAULT_SHOULD_BROADCAST);
+        this(
+                loc,
+                x1,
+                y1,
+                z1,
+                x2,
+                y2,
+                z2,
+                closed,
+                DEFAULT_OPEN_MATERIAL,
+                ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "ctf.gateDelaySeconds", int.class, DEFAULT_GATE_DELAY),
+                DEFAULT_SHOULD_BROADCAST
+        );
     }
 
     public GateOption(LocationFactory loc, double x1, double y1, double z1, double x2, double y2, double z2, Material closed, Material open) {
-        this(loc, x1, y1, z1, x2, y2, z2, closed, open, DEFAULT_GATE_DELAY, DEFAULT_SHOULD_BROADCAST);
+        this(
+                loc,
+                x1,
+                y1,
+                z1,
+                x2,
+                y2,
+                z2,
+                closed,
+                open,
+                ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "ctf.gateDelaySeconds", int.class, DEFAULT_GATE_DELAY),
+                DEFAULT_SHOULD_BROADCAST
+        );
     }
 
     public GateOption(LocationFactory loc, double x1, double y1, double z1, double x2, double y2, double z2, Material closed, Material open, int delay) {
-        this(loc, x1, y1, z1, x2, y2, z2, closed, open, delay, DEFAULT_SHOULD_BROADCAST);
+        this(
+                loc,
+                x1,
+                y1,
+                z1,
+                x2,
+                y2,
+                z2,
+                closed,
+                open,
+                delay,
+                DEFAULT_SHOULD_BROADCAST
+        );
     }
 
     @Override
@@ -112,18 +202,19 @@ public class GateOption extends AbstractCuboidOption implements TimerSkipAbleMar
         this.game = game;
         game.registerGameMarker(TimerSkipAbleMarker.class, this);
         game.registerGameMarker(DebugLocationMarker.class, DebugLocationMarker.create(Material.OAK_FENCE_GATE, 0, this.getClass(),
-                Component.text("Gates"),
-                new Location(
-                        getMin().getWorld(),
-                        (getMin().getX() + getMax().getX()) / 2,
-                        (getMin().getY() + getMax().getY()) / 2,
-                        (getMin().getZ() + getMax().getZ()) / 2
-                ),
-                () -> Arrays.asList(
-                        Component.text("MIN: " + getMin().getX() + ", " + getMin().getY() + ", " + getMin().getZ()),
-                        Component.text("MAX: " + getMax().getX() + ", " + getMax().getY() + ", " + getMax().getZ())
+                        Component.text("Gates"),
+                        new Location(
+                                getMin().getWorld(),
+                                (getMin().getX() + getMax().getX()) / 2,
+                                (getMin().getY() + getMax().getY()) / 2,
+                                (getMin().getZ() + getMax().getZ()) / 2
+                        ),
+                        () -> Arrays.asList(
+                                Component.text("MIN: " + getMin().getX() + ", " + getMin().getY() + ", " + getMin().getZ()),
+                                Component.text("MAX: " + getMax().getX() + ", " + getMax().getY() + ", " + getMax().getZ())
+                        )
                 )
-        ));
+        );
     }
 
     protected int changeGate(Material search, Material replace) {
@@ -201,7 +292,8 @@ public class GateOption extends AbstractCuboidOption implements TimerSkipAbleMar
                                 Player player = entry.getKey();
                                 sendMessage(player, false, Component.text("The gates will fall in ", NamedTextColor.YELLOW)
                                                                     .append(Component.text(delay, NamedTextColor.RED))
-                                                                    .append(Component.text(" second" + (delay == 1 ? "!" : "s!"))));
+                                                                    .append(Component.text(" second" + (delay == 1 ? "!" : "s!")))
+                                );
                             }
                             break;
                     }
