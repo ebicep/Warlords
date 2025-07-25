@@ -175,7 +175,9 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
                     if (hexStacks < FortifyingHex.getFromHex(wp).getMaxStacks()) {
                         return currentDamageValue;
                     }
-                    return (float) (currentDamageValue * Math.pow(convertToDivisionDecimal(additionalDamageReduction), 3));
+                    float afterValue = (float) (currentDamageValue * Math.pow(convertToDivisionDecimal(additionalDamageReduction), 3));
+                    stats.damageReduced += currentDamageValue - afterValue;
+                    return afterValue;
                 }
             });
         });
@@ -249,6 +251,9 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
         @Field("hexes_not_consumed")
         private int hexesNotConsumed = 0;
 
+        @Field("damage_reduced")
+        private float damageReduced = 0;
+
         @Field("total_damage_reflected")
         private float totalDamageReflected = 0;
 
@@ -265,6 +270,7 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
             statsDisplay.add(new AbilityStatDisplay("Hexes Prolonged", hexesProlonged));
             statsDisplay.add(new AbilityStatDisplay("Hexes Not Consumed", hexesNotConsumed));
+            statsDisplay.add(new AbilityStatDisplay("Damage Reduced", damageReduced));
             statsDisplay.add(new AbilityStatDisplay("Total Damage Reflected", totalDamageReflected));
             statsDisplay.add(new AbilityStatDisplay("Players Resurrected", playersResurrected));
             return statsDisplay;
@@ -275,6 +281,7 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
             SanctuaryStats stats = super.merge(other, multiplier);
             stats.hexesProlonged = this.hexesProlonged + other.hexesProlonged * multiplier;
             stats.hexesNotConsumed = this.hexesNotConsumed + other.hexesNotConsumed * multiplier;
+            stats.damageReduced = this.damageReduced + other.damageReduced * multiplier;
             stats.totalDamageReflected = this.totalDamageReflected + other.totalDamageReflected * multiplier;
             stats.playersResurrected = this.playersResurrected + other.playersResurrected * multiplier;
             return stats;
