@@ -54,7 +54,7 @@
       "portal": {
         "difficulty": 5,
         "name": "Portal",
-        "description": "Replace {{aqua:Time Warp}} with {{aqua:Portal}}. Increase the crit chance of {{aqua:Fireball}} by {{critChance;%}} but reduce the optimal range by {{blocks}}.",
+        "description": "Replace {{aqua:Time Warp}} with {{aqua:Portal}}. Increase the crit chance of {{aqua:Fireball}} by {{damage;%}} but reduce the optimal range by {{blocks}}.",
         "fireballCritChanceIncrease": 10,
         "fireballRangeDecreaseBlocks": 10
       },
@@ -625,9 +625,9 @@
       "sanctionBurst": {
         "difficulty": 4,
         "name": "Cold Shoulder",
-        "description": "Increase the range of {{aqua:Heart to Heart}} by {{blocks}}, it can now target enemies, and it resets the cooldown of {{aqua:Soul Shackle}}. Reduce the damage of {{aqua:Soul Shackle}} by {{damage}}. {{aqua:Prism Guard}} explodes upon expiry, dealing massive knockback to enemies in range. {{aqua:Vindicate}} resets the cooldown of {{aqua:Heart to Heart}}.",
+        "description": "Increase the range of {{aqua:Heart to Heart}} by {{blocks}}, it can now target enemies, and it resets the cooldown of {{aqua:Soul Shackle}}. Reduce the damage of {{aqua:Soul Shackle}} by {{damage;%}}. {{aqua:Prism Guard}} explodes upon expiry, dealing massive knockback to enemies in range. {{aqua:Vindicate}} resets the cooldown of {{aqua:Heart to Heart}}.",
         "heartToHeartRangeIncrease": 5,
-        "soulShackleDamageDecrease": 10,
+        "soulShackleDamageDecreasePercent": 10,
         "heartToHeartFlagRangeIncrease": 1
       },
       "righteousRampage": {

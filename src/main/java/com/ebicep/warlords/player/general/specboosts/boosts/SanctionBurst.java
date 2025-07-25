@@ -20,13 +20,13 @@ import java.util.function.Consumer;
 public class SanctionBurst implements SpecBoostManager.SpecBoost<SanctionBurst> {
 
     private float heartToHeartRangeIncrease;
-    private float soulShackleDamageDecrease;
+    private float soulShackleDamageDecreasePercent;
     private float heartToHeartFlagRangeIncrease;
 
     @Override
     public void init() {
         this.heartToHeartRangeIncrease = getValue("heartToHeartRangeIncrease", float.class);
-        this.soulShackleDamageDecrease = getValue("soulShackleDamageDecrease", float.class);
+        this.soulShackleDamageDecreasePercent = getValue("soulShackleDamageDecreasePercent", float.class);
         this.heartToHeartFlagRangeIncrease = getValue("heartToHeartFlagRangeIncrease", float.class);
     }
 
@@ -37,7 +37,7 @@ public class SanctionBurst implements SpecBoostManager.SpecBoost<SanctionBurst> 
 
     @Override
     public List<Object> getVariables() {
-        return List.of(heartToHeartRangeIncrease, soulShackleDamageDecrease);
+        return List.of(heartToHeartRangeIncrease, soulShackleDamageDecreasePercent);
     }
 
     @Override
@@ -65,7 +65,7 @@ public class SanctionBurst implements SpecBoostManager.SpecBoost<SanctionBurst> 
             warlordsPlayer.getAbilitiesMatching(SoulShackle.class).forEach(soulShackle -> {
                 soulShackle.getDamageValues()
                            .getShackleDamage()
-                           .forEachValue(floatModifier -> floatModifier.addMultiplicativeModifierAdd("Spec Boost", -soulShackleDamageDecrease / 100));
+                           .forEachValue(floatModifier -> floatModifier.addMultiplicativeModifierAdd("Spec Boost", -soulShackleDamageDecreasePercent / 100));
             });
         }
 

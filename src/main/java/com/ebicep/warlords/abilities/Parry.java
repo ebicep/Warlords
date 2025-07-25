@@ -194,7 +194,7 @@ public class Parry extends AbstractAbility implements AbilityStats<Parry, Parry.
                 .durationTicks(damageReductionTickDuration)
                 .text(". For ")
                 .durationTicks(knockbackTickDuration)
-                .text(", you deal massive knockback with your next Crusader's Strike.")
+                .text(", your next Crusader's Strike deals knockback.")
                 .build();
     }
 
