@@ -35,6 +35,7 @@ import org.bukkit.util.Transformation;
 import org.jetbrains.annotations.Nullable;
 import org.joml.AxisAngle4f;
 import org.joml.Vector3f;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -80,7 +81,9 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
 
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * convertToDivisionDecimal(data.damageReduction * (event.getWarlordsEntity().hasFlag() ? data.damageReductionFlagMultiplier : 1));
+                float afterValue = currentDamageValue * convertToDivisionDecimal(data.damageReduction * (event.getWarlordsEntity().hasFlag() ? data.damageReductionFlagMultiplier : 1));
+                fromHex.getAbilityStats().damageReduced += currentDamageValue - afterValue;
+                return afterValue;
             }
 
             @Override
@@ -444,16 +447,21 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
 
     public static class FortifyingHexStats extends AbstractPiercingProjectileStats<FortifyingHex, FortifyingHexStats> {
 
+        @Field("damage_reduced")
+        private float damageReduced = 0;
+
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
             statsDisplay.removeIf(abilityStatDisplay -> abilityStatDisplay.name().equals("Direct Hits"));
+            statsDisplay.add(new AbilityStatDisplay("Damage Reduced", damageReduced));
             return statsDisplay;
         }
 
         @Override
         public FortifyingHexStats merge(FortifyingHexStats other, int multiplier) {
             FortifyingHexStats stats = super.merge(other, multiplier);
+            stats.damageReduced = this.damageReduced + other.damageReduced * multiplier;
             return stats;
         }
 
