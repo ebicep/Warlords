@@ -39,6 +39,7 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
     private final DamageValues damageValues = new DamageValues();
     private final HealingValues healingValues = new HealingValues();
     private FloatModifiable radius = new FloatModifiable(15);
+    private FloatModifiable flagRadius = new FloatModifiable(7.5f);
     private int vindDuration = 6;
     private boolean targetEnemies = false;
 
@@ -50,6 +51,7 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
     public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.radius = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), float.class));
+        this.flagRadius = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("flagRadius"), float.class));
         this.vindDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("vindDuration"), int.class);
     }
 
@@ -58,7 +60,7 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
         float radius = getHitBoxRadius().getCalculatedValue();
         float verticalRadius = getHitBoxRadius().getCalculatedValue();
         if (wp.hasFlag()) {
-            radius = 7.5f;
+            radius = flagRadius.getCalculatedValue();
             verticalRadius = 2;
         } else {
             wp.setFlagPickCooldown(2);
@@ -208,6 +210,10 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
     @Override
     public FloatModifiable getHitBoxRadius() {
         return radius;
+    }
+
+    public FloatModifiable getFlagRadius() {
+        return flagRadius;
     }
 
     public void setTargetEnemies(boolean targetEnemies) {

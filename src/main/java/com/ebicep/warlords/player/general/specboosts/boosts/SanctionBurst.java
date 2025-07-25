@@ -19,11 +19,15 @@ import java.util.function.Consumer;
 
 public class SanctionBurst implements SpecBoostManager.SpecBoost<SanctionBurst> {
 
+    private float heartToHeartRangeIncrease;
     private float soulShackleDamageDecrease;
+    private float heartToHeartFlagRangeIncrease;
 
     @Override
     public void init() {
+        this.heartToHeartRangeIncrease = getValue("heartToHeartRangeIncrease", float.class);
         this.soulShackleDamageDecrease = getValue("soulShackleDamageDecrease", float.class);
+        this.heartToHeartFlagRangeIncrease = getValue("heartToHeartFlagRangeIncrease", float.class);
     }
 
     @Override
@@ -33,7 +37,7 @@ public class SanctionBurst implements SpecBoostManager.SpecBoost<SanctionBurst> 
 
     @Override
     public List<Object> getVariables() {
-        return List.of(soulShackleDamageDecrease);
+        return List.of(heartToHeartRangeIncrease, soulShackleDamageDecrease);
     }
 
     @Override
@@ -54,12 +58,14 @@ public class SanctionBurst implements SpecBoostManager.SpecBoost<SanctionBurst> 
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(HeartToHeart.class).forEach(heartToHeart -> {
+                heartToHeart.getHitBoxRadius().addAdditiveModifier("Spec Boost", heartToHeartRangeIncrease);
+                heartToHeart.getFlagRadius().addAdditiveModifier("Spec Boost", heartToHeartFlagRangeIncrease);
                 heartToHeart.setTargetEnemies(true);
             });
             warlordsPlayer.getAbilitiesMatching(SoulShackle.class).forEach(soulShackle -> {
                 soulShackle.getDamageValues()
                            .getShackleDamage()
-                           .forEachValue(floatModifier -> floatModifier.addAdditiveModifier("Spec Boost", -soulShackleDamageDecrease));
+                           .forEachValue(floatModifier -> floatModifier.addMultiplicativeModifierAdd("Spec Boost", -soulShackleDamageDecrease / 100));
             });
         }
 
