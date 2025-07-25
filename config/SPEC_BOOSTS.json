@@ -448,7 +448,7 @@
         "description": "Increase the number of guaranteed hits of {{aqua:Windfury Weapon}} by {{blue}}. Upon cast, {{aqua:Windfury Weapon}} cleanses all slowness effects, grants slowness and knockback immunity and {{speed;%}} speed for {{ticks}}.",
         "windfuryExtraGuaranteedHits": 2,
         "speedIncreasePercent": 40,
-        "speedDurationTicks": 60
+        "speedDurationTicks": 40
       },
       "galvanizedSpark": {
         "difficulty": 2,
