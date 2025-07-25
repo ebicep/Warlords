@@ -172,7 +172,7 @@ public class Parry extends AbstractAbility implements AbilityStats<Parry, Parry.
                     parried = true;
                     stats.timesKnockbacked++;
                     WarlordsEntity victim = event.getWarlordsEntity();
-                    Vector v = wp.getLocation().toVector().subtract(victim.getLocation().toVector()).normalize().multiply(-1.5).setY(0.35);
+                    Vector v = wp.getLocation().toVector().subtract(victim.getLocation().toVector()).normalize().multiply(-1.25).setY(0.35);
                     victim.setVelocity(name, v, false);
                     setTicksLeft(0);
                 }
