@@ -179,6 +179,23 @@ public class DebugMenuGameOptions {
                                     .setRequestedGameAddons(GameAddon.PRIVATE_GAME, GameAddon.FREEZE_GAME);
                         })
                 );
+                menu.setItem(4,
+                        0,
+                        new ItemBuilder(Material.IRON_BLOCK)
+                                .name(Component.text("Comps Preset 2", NamedTextColor.GREEN))
+                                .lore(Component.text("Select this to use the comps preset.", NamedTextColor.GOLD),
+                                        Component.text("- Private Game", NamedTextColor.GOLD),
+                                        Component.text("- Freeze Failsafe", NamedTextColor.GOLD),
+                                        Component.text("- Random Spec Boosts", NamedTextColor.GOLD)
+                                )
+                                .get(),
+                        (m, e) -> GameStartCommand.startGameFromDebugMenu(player, false, queueEntryBuilder -> {
+                            queueEntryBuilder
+                                    .setMap(selectedGameMap)
+                                    .setGameMode(selectedGameMode)
+                                    .setRequestedGameAddons(GameAddon.PRIVATE_GAME, GameAddon.FREEZE_GAME, GameAddon.RANDOM_SPEC_BOOST);
+                        })
+                );
                 menu.setItem(5,
                         0,
                         new ItemBuilder(Material.GOLD_BLOCK)

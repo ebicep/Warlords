@@ -9,6 +9,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
+import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.*;
 import com.ebicep.warlords.permissions.Permissions;
@@ -41,6 +42,7 @@ import javax.annotation.Nonnull;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
@@ -74,13 +76,11 @@ public class PlayingState implements State, TimerDebugAble {
         this.resetTimer();
         RemoveEntities.doRemove(this.game);
         ChatUtils.MessageType.GAME_DEBUG.sendMessage("Adding game options");
-        for (Option option : game.getOptions()) {
-            option.start(game);
-        }
-        ChatUtils.MessageType.GAME_DEBUG.sendMessage("Game options added");
 
-        List<WarlordsEntity> warlordsEntities = new ArrayList<>();
-        this.game.forEachOfflinePlayer((player, team) -> {
+        List<Map.Entry<OfflinePlayer, Team>> players = game.offlinePlayersWithoutSpectators().toList();
+        players.forEach(entry -> {
+            OfflinePlayer player = entry.getKey();
+            Team team = entry.getValue();
             Player p = player.getPlayer();
             if (team == null || (!player.isOnline() && com.ebicep.warlords.game.GameMode.isPvE(game.getGameMode()))) {
                 return;
@@ -103,6 +103,21 @@ public class PlayingState implements State, TimerDebugAble {
                         p.sendMessage(Component.text("All specializations are currently disabled. Game closing.", NamedTextColor.RED));
                     }
                 }
+            }
+        });
+
+        for (Option option : game.getOptions()) {
+            option.start(game);
+        }
+        ChatUtils.MessageType.GAME_DEBUG.sendMessage("Game options added");
+
+        List<WarlordsEntity> warlordsEntities = new ArrayList<>();
+        players.forEach(entry -> {
+            OfflinePlayer player = entry.getKey();
+            Team team = entry.getValue();
+            Player p = player.getPlayer();
+            if (team == null || (!player.isOnline() && com.ebicep.warlords.game.GameMode.isPvE(game.getGameMode()))) {
+                return;
             }
             WarlordsPlayer warlordsEntity = new WarlordsPlayer(
                     player,

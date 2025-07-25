@@ -70,7 +70,7 @@ public enum GameMode {
             List<Option> options = super.initMap(map, loc, addons);
 
             options.add(new WeaponOption());
-            options.add(new ApplySpecBoostsOption());
+            options.add(new ApplySpecBoostsOption(addons.contains(GameAddon.RANDOM_SPEC_BOOST)));
 
             return options;
         }
@@ -111,7 +111,7 @@ public enum GameMode {
             options.add(new FlagOption());
             options.add(new NoRespawnIfOfflineOption());
             options.add(new WeaponOption());
-            options.add(new ApplySpecBoostsOption());
+            options.add(new ApplySpecBoostsOption(addons.contains(GameAddon.RANDOM_SPEC_BOOST)));
             options.add(new HorseOption());
             options.add(new FlagGlowOption());
             options.add(new PlayerCooldownDisplayOption());
@@ -168,7 +168,7 @@ public enum GameMode {
 
             options.add(new NoRespawnIfOfflineOption());
             options.add(new WeaponOption());
-            options.add(new ApplySpecBoostsOption());
+            options.add(new ApplySpecBoostsOption(addons.contains(GameAddon.RANDOM_SPEC_BOOST)));
             options.add(new HorseOption());
 
             options.add(new AbstractScoreOnEventOption.OnInterceptionCapture(25));
@@ -234,7 +234,7 @@ public enum GameMode {
             ));
             options.add(new NoRespawnIfOfflineOption());
             options.add(new WeaponOption());
-            options.add(new ApplySpecBoostsOption());
+            options.add(new ApplySpecBoostsOption(addons.contains(GameAddon.RANDOM_SPEC_BOOST)));
             options.add(new HorseOption());
             options.add(new PlayerCooldownDisplayOption());
 
@@ -268,7 +268,7 @@ public enum GameMode {
             ));
 
             options.add(new WeaponOption());
-            options.add(new ApplySpecBoostsOption());
+            options.add(new ApplySpecBoostsOption(addons.contains(GameAddon.RANDOM_SPEC_BOOST)));
             options.add(new HorseOption());
             options.add(new PlayerCooldownDisplayOption());
 
@@ -304,7 +304,7 @@ public enum GameMode {
             ));
             options.add(new NoRespawnIfOfflineOption());
             options.add(new WeaponOption());
-            options.add(new ApplySpecBoostsOption());
+            options.add(new ApplySpecBoostsOption(addons.contains(GameAddon.RANDOM_SPEC_BOOST)));
             options.add(new HorseOption());
             options.add(new PlayerCooldownDisplayOption());
 
@@ -535,7 +535,7 @@ public enum GameMode {
 //            options.add(new ApplySpecBoostsOption());
             options.add(new HorseOption());
             options.add(new PlayerCooldownDisplayOption());
-            options.add(new ApplySpecBoostsOption());
+            options.add(new ApplySpecBoostsOption(addons.contains(GameAddon.RANDOM_SPEC_BOOST)));
 
             return options;
         }
@@ -624,7 +624,7 @@ public enum GameMode {
             options.add(new GameFreezeOption());
             options.add(new NoRespawnIfOfflineOption());
             options.add(new WeaponOption());
-            options.add(new ApplySpecBoostsOption());
+            options.add(new ApplySpecBoostsOption(addons.contains(GameAddon.RANDOM_SPEC_BOOST)));
             options.add(new HorseOption());
             options.add(new PlayerCooldownDisplayOption());
 
@@ -665,7 +665,7 @@ public enum GameMode {
             options.add(new GameFreezeOption());
             options.add(new NoRespawnIfOfflineOption());
             options.add(new WeaponOption());
-            options.add(new ApplySpecBoostsOption());
+            options.add(new ApplySpecBoostsOption(addons.contains(GameAddon.RANDOM_SPEC_BOOST)));
             options.add(new HorseOption());
 
             options.add(new RespawnWaveOption()); // timers handled by siegeoption

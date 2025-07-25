@@ -15,6 +15,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,16 +27,21 @@ public class CompGameCommand extends BaseCommand {
 
     private static final List<GameMap> MAP_ROTATION = new ArrayList<>(List.of(GameMap.RIFT, GameMap.CROSSFIRE, GameMap.APERTURE));
     private static int currentIndex = 0;
+    private boolean randomSpecBoosts = true;
 
     @Subcommand("start")
     @Description("Starts new comp ctf game with auto map rotation")
     public void start(Player player) {
         GameMap selectedGameMap = MAP_ROTATION.get(currentIndex);
         GameStartCommand.startGame(player, false, queueEntryBuilder -> {
+            EnumSet<GameAddon> addons = EnumSet.of(GameAddon.PRIVATE_GAME, GameAddon.FREEZE_GAME);
+            if (randomSpecBoosts) {
+                addons.add(GameAddon.RANDOM_SPEC_BOOST);
+            }
             queueEntryBuilder
                     .setMap(selectedGameMap)
                     .setGameMode(GameMode.CAPTURE_THE_FLAG)
-                    .setRequestedGameAddons(GameAddon.PRIVATE_GAME, GameAddon.FREEZE_GAME)
+                    .setRequestedGameAddons(addons)
                     .setOnResult((result, game) -> {
                         if (game == null) {
                             sendDebugMessage(player, Component.text("Engine failed to find a game server suitable for your request:", NamedTextColor.RED));
@@ -117,6 +123,13 @@ public class CompGameCommand extends BaseCommand {
         ChatChannels.sendDebugMessage(issuer, getRotationMessage());
     }
 
+    @Subcommand("randomspecboosts")
+    @Description("Toggles if spec boosts are random")
+    public void randomSpecBoosts(CommandIssuer issuer) {
+        randomSpecBoosts = !randomSpecBoosts;
+        ChatChannels.sendDebugMessage(issuer, Component.text("Random Spec Boosts set to " + randomSpecBoosts, NamedTextColor.GREEN));
+    }
+
     @Subcommand("setmap")
     @Description("Sets map at given index")
     @CommandCompletion("@maps")
@@ -138,6 +151,19 @@ public class CompGameCommand extends BaseCommand {
             ChatChannels.sendDebugMessage(issuer, Component.text("Set map at index " + index + " to " + gameMap.getMapName(), NamedTextColor.GREEN));
             ChatChannels.sendDebugMessage(issuer, getRotationMessage());
         }
+    }
+
+    @Subcommand("addmap")
+    @Description("Adds a map")
+    @CommandCompletion("@maps")
+    public void addMap(CommandIssuer issuer, GameMap gameMap) {
+        if (MAP_ROTATION.contains(gameMap)) {
+            ChatChannels.sendDebugMessage(issuer, Component.text("Map already in rotation", NamedTextColor.RED));
+            return;
+        }
+        MAP_ROTATION.add(gameMap);
+        ChatChannels.sendDebugMessage(issuer, Component.text("Added map " + gameMap.getMapName() + " to rotation", NamedTextColor.GREEN));
+        ChatChannels.sendDebugMessage(issuer, getRotationMessage());
     }
 
     @Subcommand("removemap")
