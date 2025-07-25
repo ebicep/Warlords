@@ -5,6 +5,7 @@ import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsSecondaryAbilityRunEvent;
+import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.towerdefense.towers.TDAbility;
 import com.ebicep.warlords.player.general.SkillBoosts;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -26,7 +27,10 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -111,6 +115,7 @@ public abstract class AbstractAbility implements AbilityIcon {
     private final AbstractAbilityBuilder builder;
     private boolean updateItem = true;
     private boolean initialized = false;
+    private boolean initializedGame = false;
 
     public AbstractAbility(AbstractAbilityBuilder builder) {
         this.builder = builder;
@@ -143,6 +148,20 @@ public abstract class AbstractAbility implements AbilityIcon {
             heals.getHealValues().init(builder);
         }
         initialized = true;
+    }
+
+    public void initGame(@NotNull Game game) {
+        if (this instanceof Listener listener) {
+            HandlerList.unregisterAll(listener);
+            game.registerEvents(listener);
+        }
+        initializedGame = true;
+    }
+
+    public void cleanup() {
+        if (this instanceof Listener listener) {
+            HandlerList.unregisterAll(listener);
+        }
     }
 
     public void useAbility() {
