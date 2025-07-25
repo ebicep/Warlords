@@ -1185,10 +1185,10 @@
         "hitTeammates": true,
         "healingValues": {
           "rayHealing": {
-            "min": 428,
-            "max": 575,
+            "min": 409,
+            "max": 550,
             "critChance": 20,
-            "critMultiplier": 150
+            "critMultiplier": 175
           }
         }
       },
