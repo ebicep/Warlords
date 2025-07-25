@@ -186,7 +186,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
             crystalLocation.setYaw(crystalLocation.getYaw() + yawIncrease);
             crystal.teleport(crystalLocation);
         }
-        if (ticksElapsed % hexIntervalTicks == 0 && ticksElapsed != 0) {
+        if (ticksElapsed % hexIntervalTicks == 0) {
             for (WarlordsEntity ally : PlayerFilter.entitiesAround(beacon.getGroundLocation(), rad, rad, rad)
                                                    .aliveTeammatesOf(wp)
                                                    .closestFirst(beacon.getGroundLocation())
