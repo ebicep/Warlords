@@ -281,7 +281,7 @@
         "difficulty": 1,
         "name": "Vibrant Orbs",
         "description": "Increase the healing of {{aqua:Orbs of Life}} by {{heal;%}}.",
-        "healingIncreasePercent": 25
+        "healingIncreasePercent": 20
       },
       "oneManArmy": {
         "difficulty": 2,
