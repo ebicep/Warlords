@@ -142,8 +142,8 @@
           "totemDamage": {
             "min": 404,
             "max": 523,
-            "critChance": 20,
-            "critMultiplier": 200
+            "critChance": 25,
+            "critMultiplier": 180
           }
         }
       },
@@ -1204,8 +1204,8 @@
           "chargeDamage": {
             "min": 457,
             "max": 601,
-            "critChance": 20,
-            "critMultiplier": 200
+            "critChance": 25,
+            "critMultiplier": 180
           }
         }
       },
@@ -1696,8 +1696,8 @@
           "strikeDamage": {
             "min": 416,
             "max": 557,
-            "critChance": 20,
-            "critMultiplier": 200
+            "critChance": 25,
+            "critMultiplier": 180
           }
         }
       }
