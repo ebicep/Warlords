@@ -19,13 +19,13 @@ import java.util.List;
 public class AuraOfRestoration implements SpecBoostManager.SpecBoost<AuraOfRestoration> {
 
     private float soothingElixirCooldownIncreaseSeconds;
-    private float puddleHealingIncrease;
+    private float puddleHealingIncreasePercent;
     private float remedicChainsBreakRadiusIncrease;
 
     @Override
     public void init() {
         this.soothingElixirCooldownIncreaseSeconds = getValue("soothingElixirCooldownIncreaseSeconds", float.class);
-        this.puddleHealingIncrease = getValue("puddleHealingIncrease", float.class);
+        this.puddleHealingIncreasePercent = getValue("puddleHealingIncreasePercent", float.class);
         this.remedicChainsBreakRadiusIncrease = getValue("remedicChainsBreakRadiusIncrease", float.class);
     }
 
@@ -38,7 +38,7 @@ public class AuraOfRestoration implements SpecBoostManager.SpecBoost<AuraOfResto
     public List<Object> getVariables() {
         return List.of(
                 soothingElixirCooldownIncreaseSeconds,
-                puddleHealingIncrease,
+                puddleHealingIncreasePercent,
                 remedicChainsBreakRadiusIncrease
         );
     }
@@ -63,7 +63,7 @@ public class AuraOfRestoration implements SpecBoostManager.SpecBoost<AuraOfResto
             warlordsPlayer.getAbilitiesMatching(SoothingElixir.class).forEach(soothingElixir -> {
                 soothingElixir.getCooldown().addAdditiveModifier("Spec Boost", soothingElixirCooldownIncreaseSeconds);
                 soothingElixir.getHealValues().getElixirDOTHealing()
-                              .forEachValue(floatModifiable -> floatModifiable.addMultiplicativeModifierAdd("Spec Boost", puddleHealingIncrease / 100));
+                              .forEachValue(floatModifiable -> floatModifiable.addMultiplicativeModifierAdd("Spec Boost", puddleHealingIncreasePercent / 100));
             });
             warlordsPlayer.getAbilitiesMatching(RemedicChains.class).forEach(remedicChains -> {
                 remedicChains.setLinkBreakRadius((int) (remedicChains.getLinkBreakRadius() + remedicChainsBreakRadiusIncrease));
