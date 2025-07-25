@@ -1104,7 +1104,8 @@
         "blockTickDuration": 30,
         "knockbackTickDuration": 50,
         "damageReduction": 10,
-        "damageReductionTickDuration": 80
+        "damageReductionTickDuration": 80,
+        "knockbackMagnitude": 1.25
       },
       "poisonousHex": {
         "name": "Poisonous Hex",
