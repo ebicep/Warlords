@@ -350,7 +350,7 @@
         "name": "Parry",
         "description": "Replace {{aqua:Consecrate}} with {{aqua:Parry}}, which has {{blue}} charges. Increase the energy granted by {{aqua:Crusader's Strike}} by {{energy}}.",
         "maxAbilityCharges": 2,
-        "crusaderStrikeEnergyIncrease": 3
+        "crusaderStrikeEnergyIncrease": 4
       },
       "vigorousInfusion": {
         "difficulty": 1,
@@ -368,7 +368,7 @@
         "crusaderStrikeEnergyGrant": 11,
         "allyCount": 1,
         "markedAllySpeedPercent": 40,
-        "radianceCooldownReductionTicks": 60
+        "radianceCooldownReductionTicks": 80
       },
       "rallyingPresence": {
         "difficulty": 2,
@@ -584,7 +584,7 @@
         "difficulty": 3,
         "name": "Rift Ambush",
         "description": "Increase the range of {{aqua:Soul Switch}} by {{blocks}} and the damage reduction granted by {{damageReduction;%}}. {{aqua:Soul Switch}} will now only teleport you to your target, deal {{damage}} damage, and trap the target in a {{blocks}} radius for {{ticks}}.",
-        "soulSwitchRadiusIncrease": 3,
+        "soulSwitchRadiusIncrease": 5,
         "soulSwitchDamageReductionIncreasePercent": 15,
         "soulSwitchDamage": 400,
         "tetherRadius": 2,
@@ -626,7 +626,7 @@
         "difficulty": 4,
         "name": "Cold Shoulder",
         "description": "{{aqua:Heart to Heart}} can now target enemies and resets the cooldown of {{aqua:Soul Shackle}}. Reduce the damage of {{aqua:Soul Shackle}} by {{damage}}. {{aqua:Prism Guard}} explodes upon expiry, dealing massive knockback to enemies in range. {{aqua:Vindicate}} resets the cooldown of {{aqua:Heart to Heart}}.",
-        "soulShackleDamageDecrease": 100
+        "soulShackleDamageDecrease": 50
       },
       "righteousRampage": {
         "difficulty": 3,

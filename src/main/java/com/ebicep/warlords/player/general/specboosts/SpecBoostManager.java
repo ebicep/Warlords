@@ -140,6 +140,10 @@ public class SpecBoostManager {
         return SPEC_BOOSTS.getOrDefault(specializations, new ArrayList<>());
     }
 
+    public static Map<Specializations, List<SpecBoost<?>>> getSpecBoosts() {
+        return SPEC_BOOSTS;
+    }
+
     public static void init() {
         SPEC_BOOSTS.values().stream().flatMap(List::stream).forEach(SpecBoost::init);
     }
@@ -174,6 +178,10 @@ public class SpecBoostManager {
 
         default <T> List<T> getListValue(String fieldName, Class<T> clazz) {
             return ConfigManager.getSpecBoostConfigListValue(NAMESPACES, getConfigFieldName() + "." + fieldName, clazz);
+        }
+
+        default List<String> getBannedPlayers() {
+            return getListValue("banned", String.class);
         }
 
         default TextComponent getDifficulty() {

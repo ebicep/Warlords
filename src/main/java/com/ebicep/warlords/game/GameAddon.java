@@ -153,6 +153,11 @@ public enum GameAddon {
             null,
             "Tournament Mode"
     ),
+    RANDOM_SPEC_BOOST(
+            "Random Spec Boost",
+            null,
+            "Gives random spec boosts to players if the game permits"
+    ),
 
     ;
 
@@ -187,9 +192,10 @@ public enum GameAddon {
      * Gets the maximum amount of internalPlayers allowed in a map.Map modifiers
      * such as mega games could override the map provided map maximum.
      *
-     * @param map The map to check
+     * @param map        The map to check
      * @param maxPlayers The max internalPlayers from the previous step, or the
-     * map maximum internalPlayers if it is the first check
+     *                   map maximum internalPlayers if it is the first check
+     *
      * @return The maximum amount of internalPlayers supported by the map
      */
     public int getMaxPlayers(@Nonnull GameMap map, int maxPlayers) {

@@ -271,13 +271,13 @@ public class BotListener extends ListenerAdapter implements Listener {
                                 targetPlayer.sendMessage("");
                                 targetPlayer.sendMessage(Component.text("Blue Team", NamedTextColor.DARK_BLUE).append(Component.text(" - ", NamedTextColor.DARK_GRAY)));
                                 blueTeam.forEach(s -> {
-                                    targetPlayer.sendMessage(Component.text(s.name, s.name.contains(name) ? NamedTextColor.GREEN : NamedTextColor.BLUE)
+                                    targetPlayer.sendMessage(Component.text(s.name, s.name.contains(name) ? NamedTextColor.AQUA : NamedTextColor.BLUE)
                                                                       .append(Component.text(" - ", NamedTextColor.GRAY))
                                                                       .append(getSpecComponent(s.spec)));
                                 });
                                 targetPlayer.sendMessage(Component.text("Red Team", NamedTextColor.DARK_RED).append(Component.text(" - ", NamedTextColor.DARK_GRAY)));
                                 redTeam.forEach(s -> {
-                                    targetPlayer.sendMessage(Component.text(s.name, s.name.contains(name) ? NamedTextColor.GREEN : NamedTextColor.RED)
+                                    targetPlayer.sendMessage(Component.text(s.name, s.name.contains(name) ? NamedTextColor.AQUA : NamedTextColor.RED)
                                                                       .append(Component.text(" - ", NamedTextColor.GRAY))
                                                                       .append(getSpecComponent(s.spec)));
                                 });
