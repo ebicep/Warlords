@@ -1533,6 +1533,15 @@
         "tickDuration": 100,
         "warpHealPercentage": 30
       },
+      "triage": {
+        "name": "Triage",
+        "cooldown": 16,
+        "energyCost": 20,
+        "speedBuff": 40,
+        "speedBuffDurationTicks": 100,
+        "targetBonusHealing": 40,
+        "bonusHealingDurationTicks": 100
+      },
       "undyingArmy": {
         "name": "Undying Army",
         "cooldown": 70,

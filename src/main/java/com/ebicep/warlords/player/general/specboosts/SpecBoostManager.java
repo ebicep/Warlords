@@ -62,6 +62,7 @@ public class SpecBoostManager {
     public static final SpecBoost<HammerOfJudgement> HAMMER_OF_JUDGEMENT = new HammerOfJudgement();
     public static final SpecBoost<Haze> HAZE = new Haze();
     public static final SpecBoost<HealingLink> HEALING_LINK = new HealingLink();
+    public static final SpecBoost<HeavyShields> HEAVY_SHIELDS = new HeavyShields();
     public static final SpecBoost<HeroicIntervention> HEROIC_INTERVENTION = new HeroicIntervention();
     public static final SpecBoost<HolyNova> HOLY_NOVA = new HolyNova();
     public static final SpecBoost<HouseOfLife> HOUSE_OF_LIFE = new HouseOfLife();
@@ -100,6 +101,7 @@ public class SpecBoostManager {
     public static final SpecBoost<TorrentialSoul> TORRENTIAL_SOUL = new TorrentialSoul();
     public static final SpecBoost<TotemicBoon> TOTEMIC_BOON = new TotemicBoon();
     public static final SpecBoost<Transistor> TRANSISTOR = new Transistor();
+    public static final SpecBoost<Triage> TRIAGE = new Triage();
     public static final SpecBoost<Trickster> TRICKSTER = new Trickster();
     public static final SpecBoost<TyphoonBolt> TYPHOON_BOLT = new TyphoonBolt();
     public static final SpecBoost<UndyingSteed> UNDYING_STEED = new UndyingSteed();
@@ -118,7 +120,7 @@ public class SpecBoostManager {
     static {
         SPEC_BOOSTS.put(Specializations.PYROMANCER, List.of(METEOR, FLAME_BREATH, BURST_CHAIN, DIMENSIONAL_WARP, PORTAL));
         SPEC_BOOSTS.put(Specializations.CRYOMANCER, List.of(FROST_MISSILE, BLIZZARD_BREATH, STEADFAST_WARP, CHILLY_AURA, ICE_BLOCK));
-        SPEC_BOOSTS.put(Specializations.AQUAMANCER, List.of(TYPHOON_BOLT, SYRINGE, DIVINE_PURIFICATION, CLAIRVOYANCE, PORTAL));
+        SPEC_BOOSTS.put(Specializations.AQUAMANCER, List.of(TYPHOON_BOLT, SYRINGE, DIVINE_PURIFICATION, CLAIRVOYANCE, TRIAGE));
         SPEC_BOOSTS.put(Specializations.BERSERKER, List.of(EFFICIENT_STRIKES, MIGHTY_FISTS, SEISMIC_SHIFT, BLOOD_FRENZY, GOLIATH));
         SPEC_BOOSTS.put(Specializations.DEFENDER, List.of(VITALITY_BOOST, STRIKER, FERVENT_FORCE, HEROIC_INTERVENTION, SOLITARY));
         SPEC_BOOSTS.put(Specializations.REVENANT, List.of(UNDYING_STEED, RECKLESS_ASCENT, HEALING_LINK, VIBRANT_ORBS, ONE_MAN_ARMY));
@@ -132,7 +134,7 @@ public class SpecBoostManager {
         SPEC_BOOSTS.put(Specializations.VINDICATOR, List.of(ABYSSAL_GRASP, VITAL_PULSE, SANCTION_BURST, RIGHTEOUS_RAMPAGE, SWIFT_JUSTICE));
         SPEC_BOOSTS.put(Specializations.APOTHECARY, List.of(AURA_OF_RESTORATION, ALCHEMISTS_FURY, SUSTAINED_ONSLAUGHT, DETONATION_CATALYST, SUPER_BREW));
         SPEC_BOOSTS.put(Specializations.CONJURER, List.of(STACKULATOR_MAX, HOUSE_OF_LIFE, CONTAGION, WITHERING_PLAGUE, AIR_STRIKE));
-        SPEC_BOOSTS.put(Specializations.SENTINEL, List.of(RUINOUS_HEX, DIVINE_SHIELDS, LONE_SENTINEL, PACT_OF_PROTECTION, SANCTUARY_OF_RETRIBUTION));
+        SPEC_BOOSTS.put(Specializations.SENTINEL, List.of(RUINOUS_HEX, HEAVY_SHIELDS, DIVINE_SHIELDS, PACT_OF_PROTECTION, SANCTUARY_OF_RETRIBUTION));
         SPEC_BOOSTS.put(Specializations.LUMINARY, List.of(UNMERCIFUL_HEX, RADIANT_LIGHT, ENERGY_OVERSURGE, CONSECRATED_BEACON, HOLY_NOVA));
     }
 

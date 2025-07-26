@@ -157,6 +157,12 @@
         "healingRainDurationTicks": 40,
         "healingRainHealIncreasePercent": 30
       },
+      "triage": {
+        "difficulty": 2,
+        "name": "Triage",
+        "description": "Replace {{aqua:Time Warp}} with {{aqua:Triage}}. Gain {{energy}} energy per melee hit.",
+        "ephIncrease": 6
+      },
       "fortifiedAegis": {
         "difficulty": 3,
         "name": "Fortified Aegis",
@@ -758,19 +764,19 @@
         "fortifyingHexEnergyCostIncrease": 10,
         "fortifyingHexAllyPierceReduction": 1
       },
+      "heavyShields": {
+        "difficulty": 3,
+        "name": "Heavy Shields",
+        "description": "{{aqua:Fortifying Hex}} deals knockback to enemies. {{aqua:Guardian Beam}} slows all enemies hit by {{speed;%}} for {{ticks}}.",
+        "guardianBeamSlowness": 80,
+        "guardianBeamSlownessDurationTicks": 10,
+        "fortifyingHexKnockback": 0.7
+      },
       "divineShields": {
         "difficulty": 1,
         "name": "Divine Shields",
         "description": "Increase the shield health granted by {{aqua:Guardian Beam}} by {{damageReduction;%}}.",
         "guardianBeamShieldIncreasePercent": 20
-      },
-      "loneSentinel": {
-        "difficulty": 1,
-        "name": "Lone Sentinel",
-        "description": "Increase the flag multiplier of {{yellow:FHEX}} to {{damageReduction;x}}, but reduce the pierce for allies by {{blue}}. {{aqua:Mystical Barrier}} can only affect yourself and reduces melee damage by an additional {{damageReduction;%}}.",
-        "fortifyingHexFlagMultiplier": 4,
-        "fortifyingHexAllyPierceReduction": 1,
-        "mysticalBarrierMeleeDamageReductionPercent": 20
       },
       "pactOfProtection": {
         "difficulty": 4,
@@ -785,6 +791,14 @@
         "name": "Sanctuary of Retribution",
         "description": "Increase the damage reduction per {{yellow:FHEX}} granted by {{aqua:Sanctuary}} by {{damageReduction;%}}. During {{aqua:Sanctuary}}, allies with max stacks of {{yellow:FHEX}} now reflect damage reduced by {{yellow:FHEX}} back to the dealer.",
         "sanctuaryDamageReductionPerHexStack": 6
+      },
+      "loneSentinel": {
+        "difficulty": 1,
+        "name": "Lone Sentinel",
+        "description": "Increase the flag multiplier of {{yellow:FHEX}} to {{damageReduction;x}}, but reduce the pierce for allies by {{blue}}. {{aqua:Mystical Barrier}} can only affect yourself and reduces melee damage by an additional {{damageReduction;%}}.",
+        "fortifyingHexFlagMultiplier": 4,
+        "fortifyingHexAllyPierceReduction": 1,
+        "mysticalBarrierMeleeDamageReductionPercent": 20
       },
       "unmercifulHex": {
         "difficulty": 2,
