@@ -16,6 +16,7 @@ import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -67,6 +68,7 @@ public class Triage extends AbstractAbility implements PurpleAbilityIcon, Listen
         } else {
             Utils.playGlobalSound(wp.getLocation(), "mage.timewarp.activation", 3, 1);
             wp.getLocation().getWorld().spawnParticle(Particle.WITCH, wp.getLocation(), 4, 0.1, 0, 0.1, 0.001, null, true);
+            stats.distanceTeleported += (float) wp.getLocation().distance(lastFlagCarrier.getLocation());
             wp.getEntity().teleport(lastFlagCarrier.getLocation());
         }
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
@@ -85,6 +87,7 @@ public class Triage extends AbstractAbility implements PurpleAbilityIcon, Listen
             @Override
             public float modifyHealingFromAttacker(WarlordsDamageHealingEvent event, float currentHealValue) {
                 if (event.getWarlordsEntity() == lastFlagCarrier) {
+                    stats.healingIncreased += currentHealValue * targetBonusHealing / 100f;
                     return currentHealValue * convertToMultiplicationDecimal(targetBonusHealing);
                 }
                 return currentHealValue;
@@ -108,6 +111,12 @@ public class Triage extends AbstractAbility implements PurpleAbilityIcon, Listen
 
     public static class TriageStats extends AbstractAbilityStats<Triage, TriageStats> {
 
+        @Field("distance_teleported")
+        private float distanceTeleported = 0;
+
+        @Field("healing_increased")
+        private float healingIncreased = 0;
+
         @Override
         public Class<TriageStats> getClazz() {
             return TriageStats.class;
@@ -116,12 +125,16 @@ public class Triage extends AbstractAbility implements PurpleAbilityIcon, Listen
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Distance Teleported", distanceTeleported));
+            statsDisplay.add(new AbilityStatDisplay("Healing Increased", healingIncreased));
             return statsDisplay;
         }
 
         @Override
         public TriageStats merge(TriageStats other, int multiplier) {
             TriageStats stats = super.merge(other, multiplier);
+            stats.distanceTeleported = this.distanceTeleported + other.distanceTeleported * multiplier;
+            stats.healingIncreased = this.healingIncreased + other.healingIncreased * multiplier;
             return stats;
         }
 

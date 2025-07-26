@@ -13,6 +13,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -90,7 +91,9 @@ public class Portal extends AbstractAbility implements PurpleAbilityIcon, Abilit
                         return;
                     }
                     Utils.playGlobalSound(wp.getLocation(), "mage.timewarp.teleport", 1, 1);
+                    Location loc = wp.getLocation();
                     wp.getEntity().teleport(data.warpLocation);
+                    stats.distanceTeleported += (float) loc.distance(data.warpLocation);
                     wp.getCooldownManager().removeCooldown(portalCooldown);
                 },
                 true,
@@ -126,6 +129,9 @@ public class Portal extends AbstractAbility implements PurpleAbilityIcon, Abilit
 
     public static class PortalStats extends AbstractAbilityStats<Portal, PortalStats> {
 
+        @Field("distance_teleported")
+        private float distanceTeleported = 0;
+
         @Override
         public Class<PortalStats> getClazz() {
             return PortalStats.class;
@@ -134,12 +140,14 @@ public class Portal extends AbstractAbility implements PurpleAbilityIcon, Abilit
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Distance Teleported", distanceTeleported));
             return statsDisplay;
         }
 
         @Override
         public PortalStats merge(PortalStats other, int multiplier) {
             PortalStats stats = super.merge(other, multiplier);
+            stats.distanceTeleported = this.distanceTeleported + other.distanceTeleported * multiplier;
             return stats;
         }
 

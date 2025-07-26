@@ -64,6 +64,7 @@ public class Clairvoyance extends AbstractAbility implements PurpleAbilityIcon, 
 
             @Override
             public float modifyHealingFromAttacker(WarlordsDamageHealingEvent event, float currentHealValue) {
+                stats.healingIncreased += currentHealValue * healingIncreasePercent / 100f;
                 return currentHealValue * convertToMultiplicationDecimal(healingIncreasePercent);
             }
 
