@@ -15,6 +15,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.siege.DatabaseGameS
 import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGameTDM;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.option.*;
+import com.ebicep.warlords.game.option.cuboid.GateOption;
 import com.ebicep.warlords.game.option.damage.DrowningDamage;
 import com.ebicep.warlords.game.option.damage.FallDamage;
 import com.ebicep.warlords.game.option.damage.KillDamage;
@@ -103,7 +104,7 @@ public enum GameMode {
                     Component.empty()
             ));
             options.add(TextOption.Type.TITLE.create(
-                    10,
+                    ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "ctf.gateDelaySeconds", int.class, GateOption.DEFAULT_GATE_DELAY),
                     Component.text("GO!", NamedTextColor.GREEN),
                     Component.text("Steal and capture the enemy flag!", NamedTextColor.YELLOW)
             ));

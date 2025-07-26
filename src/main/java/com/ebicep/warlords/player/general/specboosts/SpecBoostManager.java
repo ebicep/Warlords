@@ -181,7 +181,11 @@ public class SpecBoostManager {
         }
 
         default List<String> getBannedPlayers() {
-            return getListValue("banned", String.class);
+            return getListValue("banned", String.class, true);
+        }
+
+        default <T> List<T> getListValue(String fieldName, Class<T> clazz, boolean optionalField) {
+            return ConfigManager.getSpecBoostConfigListValue(NAMESPACES, getConfigFieldName() + "." + fieldName, clazz, optionalField);
         }
 
         default TextComponent getDifficulty() {

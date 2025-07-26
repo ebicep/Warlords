@@ -161,6 +161,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
                         ) {
                             if (isCrit) {
                                 stats.critsReduced++;
+                                stats.critDamageReduced += currentDamageValue / convertToDivisionDecimal(critMultiplierReducedBy) - currentDamageValue;
                             }
                         }
 
@@ -274,6 +275,9 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
         @Field("crits_reduced")
         private int critsReduced = 0;
 
+        @Field("crit_damage_reduced")
+        private float critDamageReduced = 0;
+
         @Override
         public Class<SanctifiedBeaconStats> getClazz() {
             return SanctifiedBeaconStats.class;
@@ -284,6 +288,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
             statsDisplay.add(new AbilityStatDisplay("Hexes Given", hexesGiven));
             statsDisplay.add(new AbilityStatDisplay("Crits Reduced", critsReduced));
+            statsDisplay.add(new AbilityStatDisplay("Crit Damage Reduced", critDamageReduced));
             return statsDisplay;
         }
 
@@ -292,6 +297,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
             SanctifiedBeaconStats stats = super.merge(other, multiplier);
             stats.hexesGiven = this.hexesGiven + other.hexesGiven * multiplier;
             stats.critsReduced = this.critsReduced + other.critsReduced * multiplier;
+            stats.critDamageReduced = this.critDamageReduced + other.critDamageReduced * multiplier;
             return stats;
         }
 

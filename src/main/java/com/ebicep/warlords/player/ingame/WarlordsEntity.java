@@ -216,6 +216,7 @@ public abstract class WarlordsEntity {
         this.energyPerSec = new FloatModifiable(this.spec.getEnergyPerSec());
         this.energyPerHit = new FloatModifiable(this.spec.getEnergyPerHit());
         this.spec.updateCustomStats(this);
+        this.spec.getAbilities().forEach(ability -> ability.initGame(game));
         this.resetSpeed();
         this.isInPve = com.ebicep.warlords.game.GameMode.isPvE(game.getGameMode());
         this.knockback = new MotionSystem();
@@ -1458,8 +1459,10 @@ public abstract class WarlordsEntity {
     }
 
     public void setSpec(Specializations spec) {
+        this.spec.getAbilities().forEach(AbstractAbility::cleanup);
         this.spec = spec.create(game.getNamespace());
         this.spec.updateCustomStats(this);
+        this.spec.getAbilities().forEach(ability -> ability.initGame(game));
         this.health.setBaseValue(this.spec.getMaxHealth());
         this.health.clearModifiers();
         this.energy.setBaseValue(this.spec.getMaxEnergy());

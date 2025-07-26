@@ -225,6 +225,10 @@ public class ConfigUtils {
     }
 
     public static <T> List<T> getListValue(Document document, List<String> namespaces, String key, Class<T> itemType) {
+        return getListValue(document, namespaces, key, itemType, false);
+    }
+
+    public static <T> List<T> getListValue(Document document, List<String> namespaces, String key, Class<T> itemType, boolean optionalField) {
         if (document == null) {
             ChatUtils.MessageType.CONFIG.sendErrorMessage("Config document not set");
             return List.of();
@@ -252,8 +256,10 @@ public class ConfigUtils {
             }
         }
 
-        String debug = " (" + String.join(",", namespaces) + ") (" + key + ")";
-        ChatUtils.MessageType.CONFIG.sendErrorMessage("List not found" + debug);
+        if (!optionalField) {
+            String debug = " (" + String.join(",", namespaces) + ") (" + key + ")";
+            ChatUtils.MessageType.CONFIG.sendErrorMessage("List not found" + debug);
+        }
         return List.of();
     }
 

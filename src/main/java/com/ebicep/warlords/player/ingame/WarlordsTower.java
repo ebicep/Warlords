@@ -18,7 +18,8 @@ public class WarlordsTower extends WarlordsEntity {
     private final AbstractTower tower;
 
     public WarlordsTower(
-            @Nonnull AbstractTower tower, @Nonnull UUID uuid,
+            @Nonnull AbstractTower tower,
+            @Nonnull UUID uuid,
             @Nonnull String name,
             @Nonnull Entity entity,
             @Nonnull Game game,

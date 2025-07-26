@@ -71,38 +71,27 @@ public class PreLobbyState implements State, TimerDebugAble {
             timerHasBeenSkipped = false;
             if (timer % 20 == 0) {
                 int time = timer / 20;
+
+                // Always update scoreboard and disable flight
                 game.forEachOnlinePlayerWithoutSpectators((player, team) -> {
                     giveLobbyScoreboard(false, player);
                     player.setAllowFlight(false);
                 });
-                if (time == 30) {
+
+                if (time == 30 || time == 20 || time == 10 || (time <= 5 && time > 0)) {
+                    NamedTextColor color = switch (time) {
+                        case 30 -> NamedTextColor.GREEN;
+                        case 10 -> NamedTextColor.GOLD;
+                        case 20 -> NamedTextColor.YELLOW;
+                        default -> NamedTextColor.RED;
+                    };
+
+                    String suffix = (time == 1) ? " second!" : " seconds!";
+                    Component message = Component.text("The game starts in ", NamedTextColor.YELLOW)
+                                                 .append(Component.text(time + suffix, color));
+
                     game.forEachOnlinePlayerWithoutSpectators((player, team) -> {
-                        sendMessage(player, false, Component.text("The game starts in ", NamedTextColor.YELLOW)
-                                                            .append(Component.text("30 ", NamedTextColor.GREEN))
-                                                            .append(Component.text("seconds!"))
-                        );
-                        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1, 1);
-                    });
-                } else if (time == 20) {
-                    game.forEachOnlinePlayerWithoutSpectators((player, team) -> {
-                        sendMessage(player, false, Component.text("The game starts in 20 seconds!", NamedTextColor.YELLOW));
-                        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1, 1);
-                    });
-                } else if (time == 10) {
-                    game.forEachOnlinePlayerWithoutSpectators((player, team) -> {
-                        sendMessage(player, false, Component.text("The game starts in ", NamedTextColor.YELLOW)
-                                                            .append(Component.text("10 ", NamedTextColor.GOLD))
-                                                            .append(Component.text("seconds!"))
-                        );
-                        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1, 1);
-                    });
-                } else if (time <= 5 && time != 0) {
-                    game.forEachOnlinePlayerWithoutSpectators((player, team) -> {
-                        String s = time == 1 ? "!" : "s!";
-                        sendMessage(player, false, Component.text("The game starts in ", NamedTextColor.YELLOW)
-                                                            .append(Component.text(time, NamedTextColor.RED))
-                                                            .append(Component.text(" second" + s))
-                        );
+                        sendMessage(player, false, message);
                         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1, 1);
                     });
                 } else if (time == 0) {
@@ -131,7 +120,6 @@ public class PreLobbyState implements State, TimerDebugAble {
             }
 
             if (timer <= 0) {
-
                 if (!game.getAddons().contains(GameAddon.PRIVATE_GAME) && !com.ebicep.warlords.game.GameMode.isPvE(game.getGameMode())) {
                     Balancer balancer = new Balancer(game);
                     balancer.balance(false);
