@@ -748,7 +748,21 @@
         "soulfireBeamRangeDecrease": 15,
         "soulfireBeamHitboxIncrease": 0.4,
         "maxBeamCastsNormal": 3,
-        "maxBeamCastsOnCooldown": 2
+        "maxBeamCastsOnCooldown": 2,
+        "permitted": [
+          "01c4a20e0a60466fbd98ea71c346e5e4",
+          "9f2b22303b2c4b0fa141d7b598e236c7",
+          "19f33c9c088d48ebbdaeea226f6773db",
+          "829451e69a6645a7b431ad740f4b7305",
+          "5bd149343c38455289c8c3a2e1c0b9bd",
+          "9048540afd2d4fa28aeab3e1c8b02ef6",
+          "0ffe5c87a1294c98ad913ffd577a0bb9",
+          "ef7e9f4f6895415991762b7448954e83",
+          "d22b2641ab2a4fadb00a4bc9371436ce",
+          "1a58c8a7e75a454ebeb0c49c63e267a1",
+          "09efc71583fc4440ad0a40069b0388eb",
+          "d9ef87ba1fde4b7895516c24a71e871f"
+        ]
       },
       "sharpFangs": {
         "difficulty": 1,
