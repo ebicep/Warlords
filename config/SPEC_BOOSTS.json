@@ -764,12 +764,6 @@
         "fortifyingHexEnergyCostIncrease": 10,
         "fortifyingHexAllyPierceReduction": 1
       },
-      "divineShields": {
-        "difficulty": 1,
-        "name": "Divine Shields",
-        "description": "Increase the shield health granted by {{aqua:Guardian Beam}} by {{damageReduction;%}}.",
-        "guardianBeamShieldIncreasePercent": 20
-      },
       "heavyShields": {
         "difficulty": 3,
         "name": "Heavy Shields",
@@ -778,23 +772,11 @@
         "guardianBeamSlownessDurationTicks": 10,
         "fortifyingHexKnockback": 0.7
       },
-      "ruinousHex": {
-        "difficulty": 3,
-        "name": "Ruinous Hex",
-        "description": "Increase the pierce against enemies of {{aqua:Fortifying Hex}} by {{blue}} and the damage by {{damage;%}}, but increase the energy cost by {{energy}}, reduce the pierce for allies by {{blue}}, and the damage reduction granted by {{damageReduction;%}}.",
-        "fortifyingHexEnemyPierceIncrease": 1,
-        "fortifyingHexDamageIncreasePercent": 45,
-        "fortifyingHexEnergyCostIncrease": 10,
-        "fortifyingHexAllyPierceReduction": 1,
-        "fortifyingHexDamageReductionDecreasePercent": 1
-      },
-      "loneSentinel": {
+      "divineShields": {
         "difficulty": 1,
-        "name": "Lone Sentinel",
-        "description": "Increase the flag multiplier of {{yellow:FHEX}} to {{damageReduction;x}}, but reduce the pierce for allies by {{blue}}. {{aqua:Mystical Barrier}} can only affect yourself and reduces melee damage by an additional {{damageReduction;%}}.",
-        "fortifyingHexFlagMultiplier": 4,
-        "fortifyingHexAllyPierceReduction": 1,
-        "mysticalBarrierMeleeDamageReductionPercent": 20
+        "name": "Divine Shields",
+        "description": "Increase the shield health granted by {{aqua:Guardian Beam}} by {{damageReduction;%}}.",
+        "guardianBeamShieldIncreasePercent": 20
       },
       "pactOfProtection": {
         "difficulty": 4,
@@ -809,6 +791,14 @@
         "name": "Sanctuary of Retribution",
         "description": "Increase the damage reduction per {{yellow:FHEX}} granted by {{aqua:Sanctuary}} by {{damageReduction;%}}. During {{aqua:Sanctuary}}, allies with max stacks of {{yellow:FHEX}} now reflect damage reduced by {{yellow:FHEX}} back to the dealer.",
         "sanctuaryDamageReductionPerHexStack": 6
+      },
+      "loneSentinel": {
+        "difficulty": 1,
+        "name": "Lone Sentinel",
+        "description": "Increase the flag multiplier of {{yellow:FHEX}} to {{damageReduction;x}}, but reduce the pierce for allies by {{blue}}. {{aqua:Mystical Barrier}} can only affect yourself and reduces melee damage by an additional {{damageReduction;%}}.",
+        "fortifyingHexFlagMultiplier": 4,
+        "fortifyingHexAllyPierceReduction": 1,
+        "mysticalBarrierMeleeDamageReductionPercent": 20
       },
       "unmercifulHex": {
         "difficulty": 2,
