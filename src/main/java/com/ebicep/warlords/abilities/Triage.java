@@ -51,9 +51,9 @@ public class Triage extends AbstractAbility implements PurpleAbilityIcon, Listen
                 .percent(speedBuff, NamedTextColor.WHITE)
                 .text(" speed for ")
                 .durationTicks(speedBuffDurationTicks)
-                .text(". Your most recent flag carrier receives ")
+                .text(". Increase your healing on them by ")
                 .percent(targetBonusHealing, NamedTextColor.GREEN)
-                .text(" bonus healing from you for ")
+                .text(" for ")
                 .durationTicks(bonusHealingDurationTicks)
                 .text(".")
                 .build();
