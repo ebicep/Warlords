@@ -771,7 +771,7 @@
         "description": "{{aqua:Fortifying Hex}} deals knockback to enemies. {{aqua:Guardian Beam}} slows all enemies hit by {{speed;%}} for {{ticks}}.",
         "guardianBeamSlowness": 80,
         "guardianBeamSlownessDurationTicks": 10,
-        "fortifyingHexKnockback": 0.4
+        "fortifyingHexKnockback": 0.2
       },
       "divineShields": {
         "difficulty": 1,
