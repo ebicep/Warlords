@@ -7,7 +7,6 @@ import com.ebicep.warlords.events.game.WarlordsFlagUpdatedEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.flags.PlayerFlagLocation;
-import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -62,14 +61,7 @@ public class Triage extends AbstractAbility implements PurpleAbilityIcon, Listen
 
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
-        if (wp.isDead() || wp.getGame().getState() instanceof EndState) {
-            return false;
-        }
-        WarlordsEntity lastFlagCarrier = lastFlagCarriers.get(wp.getTeam());
-        if (lastFlagCarrier == null) {
-            lastFlagCarriers.put(wp.getTeam(), wp);
-            lastFlagCarrier = wp;
-        }
+        WarlordsEntity lastFlagCarrier = lastFlagCarriers.computeIfAbsent(wp.getTeam(), k -> wp);
         if (lastFlagCarrier.isDead() || lastFlagCarrier == wp) {
             wp.addSpeedModifier(wp, name, speedBuff, speedBuffDurationTicks);
         } else {
@@ -77,12 +69,11 @@ public class Triage extends AbstractAbility implements PurpleAbilityIcon, Listen
             wp.getLocation().getWorld().spawnParticle(Particle.WITCH, wp.getLocation(), 4, 0.1, 0, 0.1, 0.001, null, true);
             wp.getEntity().teleport(lastFlagCarrier.getLocation());
         }
-        Triage.TriageData data = new Triage.TriageData(this);
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "TRIAGE",
-                TriageData.class,
-                data,
+                Triage.class,
+                null,
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
@@ -93,7 +84,7 @@ public class Triage extends AbstractAbility implements PurpleAbilityIcon, Listen
         ) {
             @Override
             public float modifyHealingFromAttacker(WarlordsDamageHealingEvent event, float currentHealValue) {
-                if (event.getWarlordsEntity() == lastFlagCarriers.get(wp.getTeam())) {
+                if (event.getWarlordsEntity() == lastFlagCarrier) {
                     return currentHealValue * convertToMultiplicationDecimal(targetBonusHealing);
                 }
                 return currentHealValue;
@@ -108,20 +99,6 @@ public class Triage extends AbstractAbility implements PurpleAbilityIcon, Listen
             WarlordsEntity player = playerFlagLocation.getPlayer();
             lastFlagCarriers.put(player.getTeam(), player);
         }
-    }
-
-    public static class TriageData {
-
-        private final Triage triage;
-
-        public TriageData(Triage triage) {
-            this.triage = triage;
-        }
-
-        public Triage getTriage() {
-            return triage;
-        }
-
     }
 
     @Override
