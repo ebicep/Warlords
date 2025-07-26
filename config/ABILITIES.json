@@ -1540,7 +1540,7 @@
         "speedBuff": 40,
         "speedBuffDurationTicks": 100,
         "targetBonusHealing": 40,
-        "bonusHealingDurationTicks": 100
+        "bonusHealingDurationTicks": 60
       },
       "undyingArmy": {
         "name": "Undying Army",
