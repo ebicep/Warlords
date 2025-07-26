@@ -760,6 +760,14 @@
         "description": "Increase the shield health granted by {{aqua:Guardian Beam}} by {{damageReduction;%}}.",
         "guardianBeamShieldIncreasePercent": 20
       },
+      "heavyShields": {
+        "difficulty": 3,
+        "name": "Heavy Shields",
+        "description": "{{aqua:Fortifying Hex}} deals knockback to enemies. {{aqua:Guardian Beam}} slows all enemies hit by {{speed;%}} for {{ticks}}.",
+        "guardianBeamSlowness": 80,
+        "guardianBeamSlownessDurationTicks": 10,
+        "fortifyingHexKnockback": 0.7
+      },
       "ruinousHex": {
         "difficulty": 3,
         "name": "Ruinous Hex",

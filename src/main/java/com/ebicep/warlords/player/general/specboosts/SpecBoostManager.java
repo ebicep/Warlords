@@ -62,6 +62,7 @@ public class SpecBoostManager {
     public static final SpecBoost<HammerOfJudgement> HAMMER_OF_JUDGEMENT = new HammerOfJudgement();
     public static final SpecBoost<Haze> HAZE = new Haze();
     public static final SpecBoost<HealingLink> HEALING_LINK = new HealingLink();
+    public static final SpecBoost<HeavyShields> HEAVY_SHIELDS = new HeavyShields();
     public static final SpecBoost<HeroicIntervention> HEROIC_INTERVENTION = new HeroicIntervention();
     public static final SpecBoost<HolyNova> HOLY_NOVA = new HolyNova();
     public static final SpecBoost<HouseOfLife> HOUSE_OF_LIFE = new HouseOfLife();
@@ -133,7 +134,7 @@ public class SpecBoostManager {
         SPEC_BOOSTS.put(Specializations.VINDICATOR, List.of(VITAL_PULSE, ABYSSAL_GRASP, SANCTION_BURST, RIGHTEOUS_RAMPAGE, SWIFT_JUSTICE));
         SPEC_BOOSTS.put(Specializations.APOTHECARY, List.of(AURA_OF_RESTORATION, ALCHEMISTS_FURY, SUSTAINED_ONSLAUGHT, DETONATION_CATALYST, SUPER_BREW));
         SPEC_BOOSTS.put(Specializations.CONJURER, List.of(STACKULATOR_MAX, HOUSE_OF_LIFE, CONTAGION, WITHERING_PLAGUE, AIR_STRIKE));
-        SPEC_BOOSTS.put(Specializations.SENTINEL, List.of(DIVINE_SHIELDS, RUINOUS_HEX, LONE_SENTINEL, PACT_OF_PROTECTION, SANCTUARY_OF_RETRIBUTION));
+        SPEC_BOOSTS.put(Specializations.SENTINEL, List.of(RUINOUS_HEX, HEAVY_SHIELDS, DIVINE_SHIELDS, PACT_OF_PROTECTION, SANCTUARY_OF_RETRIBUTION));
         SPEC_BOOSTS.put(Specializations.LUMINARY, List.of(RADIANT_LIGHT, UNMERCIFUL_HEX, ENERGY_OVERSURGE, CONSECRATED_BEACON, HOLY_NOVA));
     }
 

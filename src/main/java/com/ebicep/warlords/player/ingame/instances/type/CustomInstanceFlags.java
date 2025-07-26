@@ -1,5 +1,6 @@
 package com.ebicep.warlords.player.ingame.instances.type;
 
+import com.ebicep.warlords.abilities.internal.AbstractPiercingProjectile;
 import com.ebicep.warlords.abilities.internal.Shield;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -31,6 +32,10 @@ public interface CustomInstanceFlags {
     }
 
     record InstanceShieldsInstanceFlag(List<Shield> shields) implements CustomInstanceFlags {
+
+    }
+
+    record ProjectileHitInstanceFlag(AbstractPiercingProjectile.InternalProjectile projectile) implements CustomInstanceFlags {
 
     }
 

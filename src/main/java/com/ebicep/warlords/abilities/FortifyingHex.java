@@ -11,6 +11,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.type.CustomInstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.sentinel.FortifyingHexBranch;
@@ -173,13 +174,14 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
         this.maxAlliesHit = maxAlliesHit;
     }
 
-    private void hitEnemy(@Nonnull WarlordsEntity hit, WarlordsEntity wp, float toReduceBy) {
+    private void hitEnemy(@Nonnull WarlordsEntity hit, WarlordsEntity wp, float toReduceBy, InternalProjectile projectile) {
         hit.addInstance(InstanceBuilder.damage()
                                        .ability(this)
                                        .source(wp)
                                        .min(damageValues.hexDamage.getMinValue() * toReduceBy)
                                        .max(damageValues.hexDamage.getMaxValue() * toReduceBy)
-                                       .crit(damageValues.hexDamage));
+                                       .crit(damageValues.hexDamage)
+                                       .customFlags(new CustomInstanceFlags.ProjectileHitInstanceFlag(projectile)));
         if (pveMasterUpgrade2) {
             Optional<RegularCooldown> weakeningHexCooldown = new CooldownFilter<>(hit, RegularCooldown.class).filterCooldownClass(WeakeningHex.class).findFirst();
             if (weakeningHexCooldown.isPresent()) {
@@ -413,10 +415,10 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
             if (toReduceBy < .2) {
                 toReduceBy = .2f;
             }
-            hitEnemy(hit, wp, toReduceBy);
+            hitEnemy(hit, wp, toReduceBy, projectile);
             if (pveMasterUpgrade2) {
                 for (WarlordsEntity warlordsEntity : PlayerFilter.entitiesAround(hit, 3, 3, 3).aliveTeammatesOfExcludingSelf(hit).toList()) {
-                    hitEnemy(warlordsEntity, wp, toReduceBy);
+                    hitEnemy(warlordsEntity, wp, toReduceBy, projectile);
                     stats.addPlayersHit();
                 }
                 EffectUtils.displayParticle(Particle.EXPLOSION, hit.getLocation().add(0, 1, 0), 1, .1, .1, .1, 0);
