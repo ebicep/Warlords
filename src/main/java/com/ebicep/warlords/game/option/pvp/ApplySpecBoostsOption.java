@@ -10,6 +10,7 @@ import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
@@ -35,31 +36,39 @@ public class ApplySpecBoostsOption implements Option {
     @Override
     public void start(@Nonnull Game game) {
         if (random) {
-            Map<Specializations, List<SpecBoostManager.SpecBoost<?>>> boosts = new HashMap<>(SpecBoostManager.getSpecBoosts());
-            boosts.forEach((specializations, specBoosts) -> {
-                for (int i = 0; i < specBoosts.size(); i++) {
-                    SpecBoostManager.SpecBoost<?> specBoost = specBoosts.get(i);
-                    if (specBoost.isDisabled() ||
-                            game.offlinePlayersWithoutSpectators()
-                                .map(offlinePlayerTeamEntry -> offlinePlayerTeamEntry.getKey().getUniqueId())
-                                .anyMatch(uuid -> {
-                                            String uuidString = uuid.toString().replace("-", "");
-                                            return PlayerSettings.getPlayerSettings(uuid).getSelectedSpec() == specializations &&
-                                                    (!specBoost.getPermittedPlayers().contains(uuidString) || specBoost.getBannedPlayers().contains(uuidString));
-                                        }
-                                )
-                    ) {
-                        specBoosts.remove(i);
-                        i--;
-                    }
+            try {
+                Map<Specializations, List<SpecBoostManager.SpecBoost<?>>> boosts = new HashMap<>(SpecBoostManager.getSpecBoosts());
+                for (Map.Entry<Specializations, List<SpecBoostManager.SpecBoost<?>>> entry : SpecBoostManager.getSpecBoosts().entrySet()) {
+                    boosts.put(entry.getKey(), new ArrayList<>(entry.getValue()));
                 }
-            });
-            boosts.forEach((specializations, specBoosts) -> {
-                preassignedSpecBoosts.put(specializations, specBoosts.get(ThreadLocalRandom.current().nextInt(specBoosts.size())));
-            });
+                boosts.forEach((specializations, specBoosts) -> {
+                    for (int i = 0; i < specBoosts.size(); i++) {
+                        SpecBoostManager.SpecBoost<?> specBoost = specBoosts.get(i);
+                        if (specBoost.isDisabled() ||
+                                game.offlinePlayersWithoutSpectators()
+                                    .map(offlinePlayerTeamEntry -> offlinePlayerTeamEntry.getKey().getUniqueId())
+                                    .anyMatch(uuid -> {
+                                                String uuidString = uuid.toString().replace("-", "");
+                                                List<String> permittedPlayers = specBoost.getPermittedPlayers();
+                                                return PlayerSettings.getPlayerSettings(uuid).getSelectedSpec() == specializations &&
+                                                        (!permittedPlayers.isEmpty() && !permittedPlayers.contains(uuidString) || specBoost.getBannedPlayers().contains(uuidString));
+                                            }
+                                    )
+                        ) {
+                            System.out.println("REMOVED: " + specBoost.getStringName() + " for " + specializations.name);
+                            specBoosts.remove(i);
+                            i--;
+                        }
+                    }
+                });
+                boosts.forEach((specializations, specBoosts) -> {
+                    preassignedSpecBoosts.put(specializations, specBoosts.get(ThreadLocalRandom.current().nextInt(specBoosts.size())));
+                });
+            } catch (Exception e) {
+                ChatUtils.MessageType.GAME.sendErrorMessage(e);
+            }
         }
     }
-
     private final Map<WarlordsEntity, PlayerSpecAppliedBoost> playerSpecBoosts = new HashMap<>();
     private final Map<Specializations, SpecBoostManager.SpecBoost<?>> preassignedSpecBoosts = new HashMap<>();
     private final boolean random;
