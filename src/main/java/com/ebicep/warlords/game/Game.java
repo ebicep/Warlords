@@ -104,6 +104,7 @@ public final class Game implements Runnable, AutoCloseable {
         this.map = map;
         this.gameMode = gameMode;
         this.namespace = gameMode.namespaces;
+        this.gameMode.postMapModifyOptions(map, locations, gameAddons, options);
         this.options = new ArrayList<>(options);
         options.forEach(option -> this.cachedOptions.computeIfAbsent(option.getClass(), k -> new ArrayList<>()).add(option));
         this.minPlayers = map.getMinPlayers();

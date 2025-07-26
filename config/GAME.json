@@ -29,8 +29,9 @@
         "gameTimeSeconds": 920,
         "overtimePoints": 20,
         "overtimeSeconds": 300,
-        "gateDelaySeconds": 10,
-        "respawnWaveDelaySeconds": 440
+        "gateDelaySeconds": 20,
+        "respawnWaveDelaySeconds": 440,
+        "additionalPowerupCooldownSeconds": 21
       },
       "addons": {
         "privateGame": {

@@ -200,6 +200,10 @@ public class PowerupOption implements Option {
         return currentCooldown;
     }
 
+    public void setCurrentCooldown(int currentCooldown) {
+        this.currentCooldown = currentCooldown;
+    }
+
     public int getCooldown() {
         return cooldown;
     }

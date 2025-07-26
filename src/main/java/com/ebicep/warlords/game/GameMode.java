@@ -137,6 +137,22 @@ public enum GameMode {
 
             return options;
         }
+
+        @Override
+        public List<Option> postMapModifyOptions(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons, List<Option> options) {
+            int additionalCooldown = ConfigManager.getGameConfigValue(
+                    ConfigManager.DEFAULT_NAMESPACES,
+                    "ctf.additionalPowerupCooldownSeconds",
+                    int.class,
+                    0
+            );
+            for (Option option : options) {
+                if (option instanceof PowerupOption powerupOption) {
+                    powerupOption.setCurrentCooldown(powerupOption.getCurrentCooldown() + additionalCooldown);
+                }
+            }
+            return options;
+        }
     },
     INTERCEPTION(
             "Interception",
@@ -857,6 +873,15 @@ public enum GameMode {
         options.add(new FlyOption());
         options.add(new DebugLogOption());
 
+        return options;
+    }
+
+    public List<Option> postMapModifyOptions(
+            GameMap map,
+            LocationFactory loc,
+            EnumSet<GameAddon> addons,
+            List<Option> options
+    ) {
         return options;
     }
 
