@@ -28,7 +28,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 import org.bukkit.util.Vector;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -36,7 +35,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, HitBox, Listener, Damages<RecklessCharge.DamageValues>, AbilityStats<RecklessCharge,
+public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, HitBox, Damages<RecklessCharge.DamageValues>, AbilityStats<RecklessCharge,
         RecklessCharge.RecklessChargeStats>, CanReduceCooldowns {
 
     private final RecklessChargeStats stats = new RecklessChargeStats();

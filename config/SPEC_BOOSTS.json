@@ -155,6 +155,12 @@
         "healingRainDurationTicks": 40,
         "healingRainHealIncreasePercent": 50
       },
+      "triage": {
+        "difficulty": 2,
+        "name": "Triage",
+        "description": "Replace {{aqua:Time Warp}} with {{aqua:Triage}}. Gain {{energy}} energy per melee hit.",
+        "ephIncrease": 6
+      },
       "fortifiedAegis": {
         "difficulty": 3,
         "name": "Fortified Aegis",

@@ -100,6 +100,7 @@ public class SpecBoostManager {
     public static final SpecBoost<TorrentialSoul> TORRENTIAL_SOUL = new TorrentialSoul();
     public static final SpecBoost<TotemicBoon> TOTEMIC_BOON = new TotemicBoon();
     public static final SpecBoost<Transistor> TRANSISTOR = new Transistor();
+    public static final SpecBoost<Triage> TRIAGE = new Triage();
     public static final SpecBoost<Trickster> TRICKSTER = new Trickster();
     public static final SpecBoost<TyphoonBolt> TYPHOON_BOLT = new TyphoonBolt();
     public static final SpecBoost<UndyingSteed> UNDYING_STEED = new UndyingSteed();
@@ -118,7 +119,7 @@ public class SpecBoostManager {
     static {
         SPEC_BOOSTS.put(Specializations.PYROMANCER, List.of(METEOR, FLAME_BREATH, BURST_CHAIN, DIMENSIONAL_WARP, PORTAL));
         SPEC_BOOSTS.put(Specializations.CRYOMANCER, List.of(FROST_MISSILE, BLIZZARD_BREATH, STEADFAST_WARP, CHILLY_AURA, ICE_BLOCK));
-        SPEC_BOOSTS.put(Specializations.AQUAMANCER, List.of(TYPHOON_BOLT, SYRINGE, DIVINE_PURIFICATION, CLAIRVOYANCE, PORTAL));
+        SPEC_BOOSTS.put(Specializations.AQUAMANCER, List.of(TYPHOON_BOLT, SYRINGE, DIVINE_PURIFICATION, CLAIRVOYANCE, TRIAGE));
         SPEC_BOOSTS.put(Specializations.BERSERKER, List.of(EFFICIENT_STRIKES, MIGHTY_FISTS, SEISMIC_SHIFT, BLOOD_FRENZY, GOLIATH));
         SPEC_BOOSTS.put(Specializations.DEFENDER, List.of(STRIKER, FERVENT_FORCE, HEROIC_INTERVENTION, VITALITY_BOOST, SOLITARY));
         SPEC_BOOSTS.put(Specializations.REVENANT, List.of(VIBRANT_ORBS, RECKLESS_ASCENT, HEALING_LINK, ONE_MAN_ARMY, UNDYING_STEED));
