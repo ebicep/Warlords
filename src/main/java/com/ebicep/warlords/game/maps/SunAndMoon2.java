@@ -44,32 +44,32 @@ public class SunAndMoon2 extends GameMap {
         List<Option> options = category.initMap(this, loc, addons);
 
         options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
-        options.add(LobbyLocationMarker.create(loc.addXYZ(19.5, 67.5, -133.5, 180, 0), Team.BLUE).asOption());
-        options.add(LobbyLocationMarker.create(loc.addXYZ(-18.5, 67.5, 134.5, 0, 0), Team.RED).asOption());
+        options.add(LobbyLocationMarker.create(loc.addXYZ(19.5, 67.5, -133.5, 0, 0), Team.BLUE).asOption());
+        options.add(LobbyLocationMarker.create(loc.addXYZ(-18.5, 67.5, 134.5, 180, 0), Team.RED).asOption());
 
         options.add(new PowerupOption(loc.addXYZ(-51.5, 66.5, -61.5), PowerupOption.PowerUp.ENERGY));
         options.add(new PowerupOption(loc.addXYZ(52.5, 66.5, 62.5), PowerupOption.PowerUp.ENERGY));
 
-        options.add(new PowerupOption(loc.addXYZ(67.5, 72.5, -110.5), PowerupOption.PowerUp.SPEED));
-        options.add(new PowerupOption(loc.addXYZ(-66.5, 72.5, 111.5), PowerupOption.PowerUp.SPEED));
-        options.add(new PowerupOption(loc.addXYZ(-59.5, 75.5, -48.5), PowerupOption.PowerUp.SPEED));
+        options.add(new PowerupOption(loc.addXYZ(73.5, 79.5, -87.5), PowerupOption.PowerUp.SPEED)); // Base
+        options.add(new PowerupOption(loc.addXYZ(-72.5, 79.5, 88.5), PowerupOption.PowerUp.SPEED));
+        options.add(new PowerupOption(loc.addXYZ(-59.5, 75.5, -48.5), PowerupOption.PowerUp.SPEED)); // Stairs
         options.add(new PowerupOption(loc.addXYZ(60.5, 75.5, 49.5), PowerupOption.PowerUp.SPEED));
-        options.add(new PowerupOption(loc.addXYZ(-28.5, 66.5, -170.5), PowerupOption.PowerUp.SPEED));
-        options.add(new PowerupOption(loc.addXYZ(29.5, 66.5, 171.5), PowerupOption.PowerUp.SPEED));
+        options.add(new PowerupOption(loc.addXYZ(-26.5, 66.5, -151.5), PowerupOption.PowerUp.SPEED)); // Cliff
+        options.add(new PowerupOption(loc.addXYZ(27.5, 66.5, 152.5), PowerupOption.PowerUp.SPEED));
 
-        options.add(new PowerupOption(loc.addXYZ(60.5, 66.5, -54.5), PowerupOption.PowerUp.HEALING));
-        options.add(new PowerupOption(loc.addXYZ(-59.5, 66.5, 55.5), PowerupOption.PowerUp.HEALING));
+        options.add(new PowerupOption(loc.addXYZ(35.5, 65.5, 0.5), PowerupOption.PowerUp.HEALING));
+        options.add(new PowerupOption(loc.addXYZ(-34.5, 65.5, 0.5), PowerupOption.PowerUp.HEALING));
 
         options.add(new PowerupOption(loc.addXYZ(0.5, 85.5, 0.5), PowerupOption.PowerUp.COOLDOWN, 60, 60));
 
-        options.add(SpawnpointOption.forTeam(loc.addXYZ(37.5, 65.5, -89.5, 0, 0), Team.BLUE));
-        options.add(SpawnpointOption.forTeam(loc.addXYZ(-36.5, 65.5, 90.5, 180, 0), Team.RED));
+        options.add(SpawnpointOption.forTeam(loc.addXYZ(60.5, 75.5, -55.5, 0, 0), Team.BLUE));
+        options.add(SpawnpointOption.forTeam(loc.addXYZ(-59.5, 75.5, 56.5, 180, 0), Team.RED));
 
-        options.add(new FlagCapturePointOption(loc.addXYZ(25.5, 70.5, -167.5, 0, 0), Team.BLUE));
-        options.add(new FlagSpawnPointOption(loc.addXYZ(25.5, 70.5, -167.5, 0, 0), Team.BLUE));
+        options.add(new FlagCapturePointOption(loc.addXYZ(19.5, 67.5, -133.5, 45, 0), Team.BLUE));
+        options.add(new FlagSpawnPointOption(loc.addXYZ(19.5, 67.5, -133.5, 45, 0), Team.BLUE));
 
-        options.add(new FlagCapturePointOption(loc.addXYZ(-24.5, 70.5, 168.5, 180, 0), Team.RED));
-        options.add(new FlagSpawnPointOption(loc.addXYZ(-24.5, 70.5, 168.5, 180, 0), Team.RED));
+        options.add(new FlagCapturePointOption(loc.addXYZ(-18.5, 67.5, 134.5, -135, 0), Team.RED));
+        options.add(new FlagSpawnPointOption(loc.addXYZ(-18.5, 67.5, 134.5, -135, 0), Team.RED));
 
         options.add(new AbstractScoreOnEventOption.FlagCapture());
 
