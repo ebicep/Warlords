@@ -30,6 +30,11 @@
         "overtimePoints": 20,
         "overtimeSeconds": 300,
         "gateDelaySeconds": 10
+      },
+      "addons": {
+        "privateGame": {
+          "lobbyTimeSeconds": 60
+        }
       }
     }
   }

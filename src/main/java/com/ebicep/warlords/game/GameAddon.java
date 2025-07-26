@@ -1,6 +1,7 @@
 package com.ebicep.warlords.game;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.game.option.PreGameItemOption;
 import com.ebicep.warlords.game.option.freeze.AFKDetectionOption;
 import com.ebicep.warlords.game.option.freeze.GameFreezeWhenOfflineOption;
@@ -49,7 +50,7 @@ public enum GameAddon {
                 return;
             }
             if (newState instanceof PreLobbyState preLobbyState) {
-                preLobbyState.setMaxTimer(30 * 20);
+                preLobbyState.setMaxTimer(ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "addons.privateGame.lobbyTimeSeconds", int.class, 30) * 20);
                 preLobbyState.resetTimer();
                 game.setAcceptsPlayers(false);
             }
