@@ -177,7 +177,9 @@ public class SuperBrew extends AbstractAbility implements OrangeAbilityIcon, Hit
     @Override
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder
-                .create("Pass a powerful brew to yourself or an ally that grants them ")
+                .create("Pass a powerful brew to an ally that lasts")
+                .durationTicks(tickDuration)
+                .text(", granting ")
                 .energy(energyPerSecondIncrease)
                 .text(" per second, ")
                 .energy(maxEnergyIncrease, "")
@@ -191,7 +193,7 @@ public class SuperBrew extends AbstractAbility implements OrangeAbilityIcon, Hit
                 .text(healthPerSecondIncrease, NamedTextColor.GREEN)
                 .text(" health per second, ")
                 .text(healthPerSecondIncrease + bonusHealthPerSecondIncrease, NamedTextColor.GREEN)
-                .text(" if you have the flag or are an Apothecary.")
+                .text(" if holding the flag or is an Apothecary.")
                 .emptyLine()
                 .text("If no ally is targeted, receive the brew yourself.")
                 .emptyLine()

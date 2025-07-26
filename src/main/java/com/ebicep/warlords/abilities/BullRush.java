@@ -122,7 +122,7 @@ public class BullRush extends AbstractAbility implements PurpleAbilityIcon, HitB
                 .blocks(radius)
                 .text(" will take ")
                 .damage(damageValues.bullRushDamage)
-                .text(" damage and will be knocked opposite to where you are travelling.")
+                .text(" damage and will be knocked opposite the direction you are travelling.")
                 .build();
     }
 

@@ -200,6 +200,14 @@ public class Fireball extends AbstractProjectile<Fireball, Fireball.FireballStat
         return stats;
     }
 
+    public int getMaxFullDistance() {
+        return maxFullDistance;
+    }
+
+    public void setMaxFullDistance(int maxFullDistance) {
+        this.maxFullDistance = maxFullDistance;
+    }
+
     public float getDirectHitMultiplier() {
         return directHitMultiplier;
     }

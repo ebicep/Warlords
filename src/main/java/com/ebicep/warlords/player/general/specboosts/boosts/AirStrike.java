@@ -29,7 +29,7 @@ public class AirStrike implements SpecBoostManager.SpecBoost<AirStrike> {
     private int ascendDurationTicks;
     private int airStrikeDurationTicks;
     private float soulfireBeamDamageReductionPercent;
-    private float soulfireBeamMaxRange;
+    private float soulfireBeamRangeDecrease;
     private float soulfireBeamHitboxIncrease;
     private int maxBeamCastsNormal;
     private int maxBeamCastsOnCooldown;
@@ -40,7 +40,7 @@ public class AirStrike implements SpecBoostManager.SpecBoost<AirStrike> {
         this.ascendDurationTicks = getValue("ascendDurationTicks", int.class);
         this.airStrikeDurationTicks = getValue("airStrikeDurationTicks", int.class);
         this.soulfireBeamDamageReductionPercent = getValue("soulfireBeamDamageReductionPercent", float.class);
-        this.soulfireBeamMaxRange = getValue("soulfireBeamMaxRange", float.class);
+        this.soulfireBeamRangeDecrease = getValue("soulfireBeamRangeDecrease", float.class);
         this.soulfireBeamHitboxIncrease = getValue("soulfireBeamHitboxIncrease", float.class);
         this.maxBeamCastsNormal = getValue("maxBeamCastsNormal", int.class);
         this.maxBeamCastsOnCooldown = getValue("maxBeamCastsOnCooldown", int.class);
@@ -57,7 +57,7 @@ public class AirStrike implements SpecBoostManager.SpecBoost<AirStrike> {
                 ascendHeight,
                 ascendDurationTicks,
                 soulfireBeamDamageReductionPercent,
-                soulfireBeamMaxRange,
+                soulfireBeamRangeDecrease,
                 soulfireBeamHitboxIncrease,
                 airStrikeDurationTicks,
                 maxBeamCastsNormal,
@@ -123,7 +123,7 @@ public class AirStrike implements SpecBoostManager.SpecBoost<AirStrike> {
                         List<FloatModifiable.FloatModifier> modifiers = new ArrayList<>();
                         warlordsEntity.getAbilitiesMatching(SoulfireBeam.class).forEach(soulfireBeam -> {
                             modifiers.add(soulfireBeam.getCooldown().addOverridingModifier(getStringName(), 0, airStrikeDurationTicks));
-                            modifiers.add(soulfireBeam.getMaxDistance().addOverridingModifier(getStringName(), soulfireBeamMaxRange, airStrikeDurationTicks));
+                            modifiers.add(soulfireBeam.getMaxDistance().addAdditiveModifier(getStringName(), -soulfireBeamRangeDecrease, airStrikeDurationTicks));
                             soulfireBeam.setCurrentCooldown(0);
                         });
                         warlordsEntity.getCooldownManager().addCooldown(new RegularCooldown<>(

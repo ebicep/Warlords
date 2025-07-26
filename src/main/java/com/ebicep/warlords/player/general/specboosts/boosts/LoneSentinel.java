@@ -49,7 +49,6 @@ public class LoneSentinel implements SpecBoostManager.SpecBoost<LoneSentinel> {
                 fortifyingHex.setMaxAlliesHit(fortifyingHex.getMaxAlliesHit() - fortifyingHexAllyPierceReduction);
             });
             warlordsPlayer.getAbilitiesMatching(MysticalBarrier.class).forEach(mysticalBarrier -> {
-                mysticalBarrier.setCanTargetAllies(false);
                 mysticalBarrier.setMeleeDamageReduction(mysticalBarrier.getMeleeDamageReduction() + mysticalBarrierMeleeDamageReductionPercent);
             });
         }
