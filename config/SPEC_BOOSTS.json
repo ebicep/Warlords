@@ -255,6 +255,7 @@
       },
       "solitary": {
         "difficulty": 3,
+        "disabled": true,
         "name": "Solitary",
         "description": "Replace {{aqua:Last Stand}} with {{aqua:Solitary}}. Gain {{damageReduction;%}} knockback resistance.",
         "knockbackResistancePercent": 10
