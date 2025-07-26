@@ -113,6 +113,7 @@ public class Ability<T extends AbstractAbility> {
     public static final Ability<TimeWarpAquamancer> TIME_WARP_AQUAMANCER = new Ability<>(TimeWarpAquamancer.class, TimeWarpAquamancer::new);
     public static final Ability<TimeWarpCryomancer> TIME_WARP_CRYOMANCER = new Ability<>(TimeWarpCryomancer.class, TimeWarpCryomancer::new);
     public static final Ability<TimeWarpPyromancer> TIME_WARP_PYROMANCER = new Ability<>(TimeWarpPyromancer.class, TimeWarpPyromancer::new);
+    public static final Ability<Triage> TRIAGE = new Ability<>(Triage.class, Triage::new);
     public static final Ability<UndyingArmy> UNDYING_ARMY = new Ability<>(UndyingArmy.class, UndyingArmy::new);
     public static final Ability<Vindicate> VINDICATE = new Ability<>(Vindicate.class, Vindicate::new);
     public static final Ability<VitalityConcoction> VITALITY_CONCOCTION = new Ability<>(VitalityConcoction.class, VitalityConcoction::new);
@@ -220,6 +221,7 @@ public class Ability<T extends AbstractAbility> {
             TIME_WARP_AQUAMANCER,
             TIME_WARP_CRYOMANCER,
             TIME_WARP_PYROMANCER,
+            TRIAGE,
             UNDYING_ARMY,
             VINDICATE,
             VITALITY_CONCOCTION,
