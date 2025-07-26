@@ -700,6 +700,7 @@
       },
       "superBrew": {
         "difficulty": 4,
+        "disabled": true,
         "name": "Super Brew",
         "description": "Replace {{aqua:Volatile Brew}} with {{aqua:Super Brew}}."
       },
