@@ -9,6 +9,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
+import com.ebicep.warlords.game.GameManager;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.*;
@@ -100,7 +101,14 @@ public class PlayingState implements State, TimerDebugAble {
                 }
                 if (playerSettings.getSelectedSpec().isBanned()) {
                     if (p != null) {
-                        p.sendMessage(Component.text("All specializations are currently disabled. Game closing.", NamedTextColor.RED));
+                        game.forEachOnlinePlayer((player1, team1) -> {
+                            player1.sendMessage(Component.text("All specializations are currently disabled. Game closing.", NamedTextColor.RED));
+                        });
+                        for (GameManager.GameHolder gameHolder : Warlords.getGameManager().getGames()) {
+                            if (gameHolder.getGame() == game) {
+                                gameHolder.forceEndGame();
+                            }
+                        }
                     }
                 }
             }
@@ -306,10 +314,6 @@ public class PlayingState implements State, TimerDebugAble {
         return game;
     }
 
-    public PlayingStateScoreboardUpdater getUpdater() {
-        return updater;
-    }
-
     @Override
     public void skipTimer() {
         // TODO loop over options and decrement them is needed
@@ -329,6 +333,10 @@ public class PlayingState implements State, TimerDebugAble {
         for (TimerResetAbleMarker marker : game.getMarkers(TimerResetAbleMarker.class)) {
             marker.reset();
         }
+    }
+
+    public PlayingStateScoreboardUpdater getUpdater() {
+        return updater;
     }
 
 }

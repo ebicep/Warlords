@@ -186,6 +186,10 @@ public class SpecBoostManager {
             return getListValue("banned", String.class, true);
         }
 
+        default List<String> getPermittedPlayers() {
+            return getListValue("permitted", String.class, true);
+        }
+
         default <T> List<T> getListValue(String fieldName, Class<T> clazz, boolean optionalField) {
             return ConfigManager.getSpecBoostConfigListValue(NAMESPACES, getConfigFieldName() + "." + fieldName, clazz, optionalField);
         }
