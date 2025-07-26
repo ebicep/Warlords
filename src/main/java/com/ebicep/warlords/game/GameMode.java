@@ -116,6 +116,11 @@ public enum GameMode {
             options.add(new HorseOption());
             options.add(new FlagGlowOption());
             options.add(new PlayerCooldownDisplayOption());
+            options.add(new RespawnWaveOption(
+                    ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "ctf.respawnWaveDelaySeconds", int.class, RespawnWaveOption.DEFAULT_INITIAL_DELAY),
+                    ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "ctf.respawnWavePeriodSeconds", int.class, RespawnWaveOption.DEFAULT_TASK_PERIOD),
+                    ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "ctf.respawnWaveMinTimerSeconds", int.class, RespawnWaveOption.DEFAULT_MIN_RESPAWN_TIMER)
+            ));
             options.add(new RespawnSpawnDamageOption(
                     ConfigManager.getGameConfigValue(
                             ConfigManager.DEFAULT_NAMESPACES,
@@ -766,8 +771,8 @@ public enum GameMode {
     public final TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGameBase> createDatabaseGame;
     public final GamesCollections gamesCollections;
     public final int minPlayersToAddToDatabase;
-    private final boolean isHiddenInMenu;
     public final List<String> namespaces;
+    private final boolean isHiddenInMenu;
 
     GameMode(
             String name,

@@ -12,7 +12,6 @@ import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.pvp.GameOvertimeOption;
 import com.ebicep.warlords.game.option.respawn.RespawnProtectionOption;
-import com.ebicep.warlords.game.option.respawn.RespawnWaveOption;
 import com.ebicep.warlords.game.option.win.MercyWinOption;
 import com.ebicep.warlords.game.option.win.WinAfterTimeoutOption;
 import com.ebicep.warlords.game.option.win.WinByPointsOption;
@@ -87,7 +86,6 @@ public class StormWind extends GameMap {
         }
         options.add(new GameOvertimeOption());
         options.add(new AbstractScoreOnEventOption.OnKill(15));
-        options.add(new RespawnWaveOption());
         options.add(new RespawnProtectionOption());
         options.add(new GraveOption());
 

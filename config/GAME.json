@@ -29,7 +29,8 @@
         "gameTimeSeconds": 920,
         "overtimePoints": 20,
         "overtimeSeconds": 300,
-        "gateDelaySeconds": 30
+        "gateDelaySeconds": 10,
+        "respawnWaveDelaySeconds": 440
       },
       "addons": {
         "privateGame": {

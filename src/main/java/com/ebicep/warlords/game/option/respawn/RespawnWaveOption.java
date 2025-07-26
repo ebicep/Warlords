@@ -18,7 +18,8 @@ import javax.annotation.Nonnull;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class RespawnWaveOption implements Option, Listener {
-    public static final int DEFAULT_INITIAL_DELAY = 0;
+
+    public static final int DEFAULT_INITIAL_DELAY = 20;
     public static final int DEFAULT_TASK_PERIOD = 12;
     public static final int DEFAULT_MIN_RESPAWN_TIMER = 5;
 
@@ -48,7 +49,6 @@ public class RespawnWaveOption implements Option, Listener {
                 }
             }
         });
-        this.currentTimer = -initialDelay;
     }
 
     @Override
@@ -63,7 +63,7 @@ public class RespawnWaveOption implements Option, Listener {
                     }
                 }
             }
-        }.runTaskTimer(GameRunnable.SECOND, GameRunnable.SECOND);
+        }.runTaskTimer(initialDelay, GameRunnable.SECOND);
     }
 
     @EventHandler(ignoreCancelled = true)

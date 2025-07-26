@@ -14,7 +14,6 @@ import com.ebicep.warlords.game.option.pvp.FlagCapturePointOption;
 import com.ebicep.warlords.game.option.pvp.FlagSpawnPointOption;
 import com.ebicep.warlords.game.option.pvp.GameOvertimeOption;
 import com.ebicep.warlords.game.option.respawn.RespawnProtectionOption;
-import com.ebicep.warlords.game.option.respawn.RespawnWaveOption;
 import com.ebicep.warlords.game.option.win.MercyWinOption;
 import com.ebicep.warlords.game.option.win.WinAfterTimeoutOption;
 import com.ebicep.warlords.game.option.win.WinByPointsOption;
@@ -82,7 +81,6 @@ public class Warsong extends GameMap {
         options.add(new GameOvertimeOption());
         options.add(new AbstractScoreOnEventOption.FlagCapture());
         options.add(new AbstractScoreOnEventOption.OnKill());
-        options.add(new RespawnWaveOption());
         options.add(new RespawnProtectionOption());
         options.add(new GraveOption());
 
