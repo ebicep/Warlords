@@ -88,7 +88,8 @@ public class PreLobbyState implements State, TimerDebugAble {
 
                     String suffix = (time == 1) ? " second!" : " seconds!";
                     Component message = Component.text("The game starts in ", NamedTextColor.YELLOW)
-                                                 .append(Component.text(time + suffix, color));
+                                                 .append(Component.text(time, color))
+                                                 .append(Component.text(suffix, NamedTextColor.YELLOW));
 
                     game.forEachOnlinePlayerWithoutSpectators((player, team) -> {
                         sendMessage(player, false, message);
