@@ -53,6 +53,7 @@ public class Triage implements SpecBoostManager.SpecBoost<Triage> {
                 if (ability instanceof TimeWarpAquamancer) {
                     com.ebicep.warlords.abilities.Triage triage = new com.ebicep.warlords.abilities.Triage();
                     triage.init(triage.getBuilder());
+                    triage.initGame(warlordsPlayer.getGame());
                     abilities.set(i, triage);
                 }
             }
