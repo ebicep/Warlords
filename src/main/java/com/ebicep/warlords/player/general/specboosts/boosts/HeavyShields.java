@@ -18,12 +18,14 @@ public class HeavyShields implements SpecBoostManager.SpecBoost<HeavyShields> {
     private float guardianBeamSlowness;
     private int guardianBeamSlownessDurationTicks;
     private float fortifyingHexKnockback;
+    private float fortifyingHexKnockbackY;
 
     @Override
     public void init() {
         this.guardianBeamSlowness = getValue("guardianBeamSlowness", float.class);
         this.guardianBeamSlownessDurationTicks = getValue("guardianBeamSlownessDurationTicks", int.class);
         this.fortifyingHexKnockback = getValue("fortifyingHexKnockback", float.class);
+        this.fortifyingHexKnockbackY = getValue("fortifyingHexKnockbackY", float.class);
     }
 
     @Override
@@ -69,7 +71,7 @@ public class HeavyShields implements SpecBoostManager.SpecBoost<HeavyShields> {
                     if (customFlag instanceof CustomInstanceFlags.ProjectileHitInstanceFlag(
                             AbstractPiercingProjectile.InternalProjectile projectile
                             )) {
-                        Vector v = projectile.getStartingLocation().toVector().subtract(target.getLocation().toVector()).normalize().multiply(-fortifyingHexKnockback).setY(0.2);
+                        Vector v = projectile.getStartingLocation().toVector().subtract(target.getLocation().toVector()).normalize().multiply(-fortifyingHexKnockback).setY(fortifyingHexKnockbackY);
                         target.setVelocity(getStringName(), v, false);
                         return;
                     }
