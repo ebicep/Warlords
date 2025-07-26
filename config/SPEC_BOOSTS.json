@@ -404,8 +404,8 @@
         "description": "Increase the healing of {{aqua:Holy Radiance}} by {{heal;%}} and the travel speed by {{speed;%}}. Allies healed by {{aqua:Holy Radiance}} gain {{damageReduction;%}} damage reduction against ranged damage for {{ticks}}.",
         "holyRadianceHealingIncreasePercent": 20,
         "holyRadianceTravelSpeedPercentIncrease": 200,
-        "rangedDamageReductionPercent": 20,
-        "rangedDamageReductionDurationTicks": 50
+        "rangedDamageReductionPercent": 30,
+        "rangedDamageReductionDurationTicks": 60
       },
       "lustrousCrown": {
         "difficulty": 1,
