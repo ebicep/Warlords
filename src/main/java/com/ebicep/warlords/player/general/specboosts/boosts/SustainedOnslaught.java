@@ -14,16 +14,16 @@ import java.util.List;
 public class SustainedOnslaught implements SpecBoostManager.SpecBoost<SustainedOnslaught> {
 
     private int speedIncrease;
+    private int impalingStrikeEnergyCostReduction;
     private int vitalityConcoctionHealing;
     private float vitalityConcoctionCooldownReductionSeconds;
-    private int impalingStrikeEnergyCostReduction;
 
     @Override
     public void init() {
         this.speedIncrease = getValue("speedIncrease", int.class);
+        this.impalingStrikeEnergyCostReduction = getValue("impalingStrikeEnergyCostReduction", int.class);
         this.vitalityConcoctionHealing = getValue("vitalityConcoctionHealing", int.class);
         this.vitalityConcoctionCooldownReductionSeconds = getValue("vitalityConcoctionCooldownReductionSeconds", float.class);
-        this.impalingStrikeEnergyCostReduction = getValue("impalingStrikeEnergyCostReduction", int.class);
     }
 
     @Override
@@ -33,7 +33,7 @@ public class SustainedOnslaught implements SpecBoostManager.SpecBoost<SustainedO
 
     @Override
     public List<Object> getVariables() {
-        return List.of(speedIncrease, vitalityConcoctionHealing, vitalityConcoctionCooldownReductionSeconds, impalingStrikeEnergyCostReduction);
+        return List.of(speedIncrease, impalingStrikeEnergyCostReduction, vitalityConcoctionHealing, vitalityConcoctionCooldownReductionSeconds);
     }
 
     @Override
@@ -54,11 +54,11 @@ public class SustainedOnslaught implements SpecBoostManager.SpecBoost<SustainedO
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getSpeed().addBaseModifier(speedIncrease);
-            warlordsPlayer.getAbilitiesMatching(VitalityConcoction.class).forEach(vitalityConcoction -> {
-                vitalityConcoction.getCooldown().addAdditiveModifier("Spec Boost", -vitalityConcoctionCooldownReductionSeconds);
-            });
             warlordsPlayer.getAbilitiesMatching(ImpalingStrike.class).forEach(impalingStrike -> {
                 impalingStrike.getEnergyCost().addAdditiveModifier("Spec Boost", -impalingStrikeEnergyCostReduction);
+            });
+            warlordsPlayer.getAbilitiesMatching(VitalityConcoction.class).forEach(vitalityConcoction -> {
+                vitalityConcoction.getCooldown().addAdditiveModifier("Spec Boost", -vitalityConcoctionCooldownReductionSeconds);
             });
         }
 

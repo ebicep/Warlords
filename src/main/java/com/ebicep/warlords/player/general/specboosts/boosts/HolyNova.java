@@ -18,17 +18,17 @@ import java.util.List;
 
 public class HolyNova implements SpecBoostManager.SpecBoost<HolyNova> {
 
+    private float divineBlessingFarRangeBlocks;
     private float divineBlessingHealingIncreasePercentFar;
     private int divineBlessingDamageToEnemies;
     private float divineBlessingCooldownIncreasePercent;
-    private float divineBlessingFarRangeBlocks;
 
     @Override
     public void init() {
+        this.divineBlessingFarRangeBlocks = getValue("divineBlessingFarRangeBlocks", float.class);
         this.divineBlessingHealingIncreasePercentFar = getValue("divineBlessingHealingIncreasePercentFar", float.class);
         this.divineBlessingDamageToEnemies = getValue("divineBlessingDamageToEnemies", int.class);
         this.divineBlessingCooldownIncreasePercent = getValue("divineBlessingCooldownIncreasePercent", float.class);
-        this.divineBlessingFarRangeBlocks = getValue("divineBlessingFarRangeBlocks", float.class);
     }
 
     @Override

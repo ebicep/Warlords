@@ -23,7 +23,6 @@ public class Portal extends AbstractAbility implements PurpleAbilityIcon, Abilit
 
     private final PortalStats stats = new PortalStats();
     private int recastDelayTicks;
-    private float portalSpeedReductionPercent;
 
     public Portal() {
         super(AbstractAbilityBuilder.create("portal").pvp());
@@ -33,7 +32,6 @@ public class Portal extends AbstractAbility implements PurpleAbilityIcon, Abilit
     public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.recastDelayTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("recastDelayTicks"), int.class);
-        this.portalSpeedReductionPercent = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("portalSpeedReductionPercent"), float.class);
     }
 
     @Override
@@ -41,9 +39,7 @@ public class Portal extends AbstractAbility implements PurpleAbilityIcon, Abilit
         description = AbilityDescriptionBuilder
                 .create("Activate to place a portal on the ground with unlimited duration. After ")
                 .durationTicks(recastDelayTicks)
-                .text(", you can recast to teleport back to the portal location, removing the portal. You may not recast while holding the flag. Your speed is reduced by ")
-                .percent(portalSpeedReductionPercent, NamedTextColor.WHITE)
-                .text(" while a portal is active.")
+                .text(", you can recast to teleport back to the portal location, removing the portal. You may not recast while holding the flag.")
                 .build();
     }
 
@@ -79,7 +75,6 @@ public class Portal extends AbstractAbility implements PurpleAbilityIcon, Abilit
         ) {
         };
         wp.getCooldownManager().addCooldown(portalCooldown);
-        wp.addSpeedModifier(wp, name, -portalSpeedReductionPercent, portalCooldown);
         addSecondaryAbility(
                 recastDelayTicks,
                 () -> {

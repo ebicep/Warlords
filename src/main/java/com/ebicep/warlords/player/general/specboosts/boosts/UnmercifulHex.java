@@ -2,7 +2,6 @@ package com.ebicep.warlords.player.general.specboosts.boosts;
 
 import com.ebicep.warlords.abilities.MercifulHex;
 import com.ebicep.warlords.abilities.RayOfLight;
-import com.ebicep.warlords.abilities.SanctifiedBeacon;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 
@@ -10,8 +9,11 @@ import java.util.List;
 
 public class UnmercifulHex implements SpecBoostManager.SpecBoost<UnmercifulHex> {
 
+    private float mercifulHexDamageIncrease;
+
     @Override
     public void init() {
+        this.mercifulHexDamageIncrease = getValue("mercifulHexDamageIncrease", float.class);
     }
 
     @Override
@@ -21,7 +23,7 @@ public class UnmercifulHex implements SpecBoostManager.SpecBoost<UnmercifulHex> 
 
     @Override
     public List<Object> getVariables() {
-        return List.of();
+        return List.of(mercifulHexDamageIncrease);
     }
 
     @Override
@@ -41,12 +43,12 @@ public class UnmercifulHex implements SpecBoostManager.SpecBoost<UnmercifulHex> 
             warlordsPlayer.getAbilitiesMatching(MercifulHex.class).forEach(mercifulHex -> {
                 mercifulHex.setMaxEnemiesHit(Integer.MAX_VALUE);
                 mercifulHex.setHexStacksPerHitAfter(0);
+                mercifulHex.getDamageValues().getHexDamage().forEachValue(floatModifiable ->
+                        floatModifiable.addMultiplicativeModifierAdd("Spec Boost", mercifulHexDamageIncrease / 100)
+                );
             });
             warlordsPlayer.getAbilitiesMatching(RayOfLight.class).forEach(rayOfLight -> {
                 rayOfLight.setRemoveDebuffs(false);
-            });
-            warlordsPlayer.getAbilitiesMatching(SanctifiedBeacon.class).forEach(sanctifiedBeacon -> {
-                sanctifiedBeacon.setStacksGranted(0);
             });
         }
 

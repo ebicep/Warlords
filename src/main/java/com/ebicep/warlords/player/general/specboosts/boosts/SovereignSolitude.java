@@ -18,12 +18,14 @@ import java.util.Objects;
 public class SovereignSolitude implements SpecBoostManager.SpecBoost<SovereignSolitude> {
 
     private int crusaderStrikeEnergyGrant;
+    private int allyCount;
     private int markedAllySpeedPercent;
     private int radianceCooldownReductionTicks;
 
     @Override
     public void init() {
         this.crusaderStrikeEnergyGrant = getValue("crusaderStrikeEnergyGrant", int.class);
+        this.allyCount = getValue("allyCount", int.class);
         this.markedAllySpeedPercent = getValue("markedAllySpeedPercent", int.class);
         this.radianceCooldownReductionTicks = getValue("radianceCooldownReductionTicks", int.class);
     }
@@ -35,7 +37,7 @@ public class SovereignSolitude implements SpecBoostManager.SpecBoost<SovereignSo
 
     @Override
     public List<Object> getVariables() {
-        return List.of(crusaderStrikeEnergyGrant, markedAllySpeedPercent, radianceCooldownReductionTicks);
+        return List.of(crusaderStrikeEnergyGrant, allyCount, markedAllySpeedPercent, radianceCooldownReductionTicks);
     }
 
     @Override
@@ -58,7 +60,7 @@ public class SovereignSolitude implements SpecBoostManager.SpecBoost<SovereignSo
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(CrusadersStrike.class).forEach(crusadersStrike -> {
                 crusadersStrike.setEnergyGiven(crusadersStrike.getEnergyGiven() + crusaderStrikeEnergyGrant);
-                crusadersStrike.setEnergyMaxAllies(1);
+                crusadersStrike.setEnergyMaxAllies(allyCount);
                 crusadersStrike.setBlockedByArcaneShield(false);
             });
             warlordsPlayer.getAbilitiesMatching(HolyRadianceCrusader.class).forEach(holyRadiance -> {

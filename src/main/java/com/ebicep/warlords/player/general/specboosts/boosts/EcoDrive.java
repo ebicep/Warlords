@@ -14,14 +14,14 @@ import java.util.List;
 
 public class EcoDrive implements SpecBoostManager.SpecBoost<EcoDrive> {
 
-    private int holyRadianceEnergyCost;
     private int lightInfusionCooldownReductionTicks;
+    private int holyRadianceEnergyCost;
     private float singleAllyHealBonusPercent;
 
     @Override
     public void init() {
-        this.holyRadianceEnergyCost = getValue("holyRadianceEnergyCost", int.class);
         this.lightInfusionCooldownReductionTicks = getValue("lightInfusionCooldownReductionTicks", int.class);
+        this.holyRadianceEnergyCost = getValue("holyRadianceEnergyCost", int.class);
         this.singleAllyHealBonusPercent = getValue("singleAllyHealBonusPercent", float.class);
     }
 
@@ -32,7 +32,7 @@ public class EcoDrive implements SpecBoostManager.SpecBoost<EcoDrive> {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(holyRadianceEnergyCost, lightInfusionCooldownReductionTicks, singleAllyHealBonusPercent);
+        return List.of(lightInfusionCooldownReductionTicks, holyRadianceEnergyCost, singleAllyHealBonusPercent);
     }
 
     @Override
@@ -50,11 +50,11 @@ public class EcoDrive implements SpecBoostManager.SpecBoost<EcoDrive> {
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getAbilitiesMatching(HolyRadianceProtector.class).forEach(holyRadiance -> {
-                holyRadiance.getEnergyCost().addAdditiveModifier("Spec Boost", -holyRadianceEnergyCost);
-            });
             warlordsPlayer.getAbilitiesMatching(LightInfusionProtector.class).forEach(lightInfusion -> {
                 lightInfusion.getCooldown().addAdditiveModifier("Spec Boost", -lightInfusionCooldownReductionTicks / 20f);
+            });
+            warlordsPlayer.getAbilitiesMatching(HolyRadianceProtector.class).forEach(holyRadiance -> {
+                holyRadiance.getEnergyCost().addAdditiveModifier("Spec Boost", -holyRadianceEnergyCost);
             });
             warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
                     getStringName(),

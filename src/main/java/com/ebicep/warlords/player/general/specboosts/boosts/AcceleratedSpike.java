@@ -10,20 +10,20 @@ import java.util.List;
 
 public class AcceleratedSpike implements SpecBoostManager.SpecBoost<AcceleratedSpike> {
 
+    private int maxEnergyIncrease;
     private float travelSpeedIncreasePercent;
     private float castRangeIncrease;
     private float hitRadius;
     private float damageIncreasePercent;
-    private int maxEnergyIncrease;
     private int boulderEnergyCostIncrease;
 
     @Override
     public void init() {
+        this.maxEnergyIncrease = getValue("maxEnergyIncrease", int.class);
         this.travelSpeedIncreasePercent = getValue("travelSpeedIncreasePercent", float.class);
         this.castRangeIncrease = getValue("castRangeIncrease", float.class);
         this.hitRadius = getValue("hitRadiusIncrease", float.class);
         this.damageIncreasePercent = getValue("damageIncreasePercent", float.class);
-        this.maxEnergyIncrease = getValue("maxEnergyIncrease", int.class);
         this.boulderEnergyCostIncrease = getValue("boulderEnergyCostIncrease", int.class);
     }
 
@@ -36,11 +36,11 @@ public class AcceleratedSpike implements SpecBoostManager.SpecBoost<AcceleratedS
     public List<Object> getVariables() {
         return List.of(
                 maxEnergyIncrease,
-                boulderEnergyCostIncrease,
                 travelSpeedIncreasePercent,
                 castRangeIncrease,
                 hitRadius,
-                damageIncreasePercent
+                damageIncreasePercent,
+                boulderEnergyCostIncrease
         );
     }
 
@@ -58,6 +58,7 @@ public class AcceleratedSpike implements SpecBoostManager.SpecBoost<AcceleratedS
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
+            warlordsPlayer.getEnergy().addAdditiveModifier("Spec Boost", maxEnergyIncrease);
             warlordsPlayer.getAbilitiesMatching(EarthenSpike.class).forEach(earthenSpike -> {
                 earthenSpike.setVerticalVelocity(0);
                 earthenSpike.setSpeed(earthenSpike.getSpeed() * AbstractAbility.convertToMultiplicationDecimal(travelSpeedIncreasePercent));
@@ -70,7 +71,6 @@ public class AcceleratedSpike implements SpecBoostManager.SpecBoost<AcceleratedS
             warlordsPlayer.getAbilitiesMatching(Boulder.class).forEach(boulder -> {
                 boulder.getEnergyCost().addAdditiveModifier("Spec Boost", boulderEnergyCostIncrease);
             });
-            warlordsPlayer.getEnergy().addAdditiveModifier("Spec Boost", maxEnergyIncrease);
         }
 
     }

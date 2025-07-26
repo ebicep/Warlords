@@ -17,13 +17,11 @@ public class OneManArmy implements SpecBoostManager.SpecBoost<OneManArmy> {
 
     private int undyingArmyTickDurationIncrease;
     private int undyingArmyTickDurationCaster;
-    private int undyingArmyCooldownIncreaseTicks;
 
     @Override
     public void init() {
         this.undyingArmyTickDurationIncrease = getValue("undyingArmyTickDurationIncrease", int.class);
         this.undyingArmyTickDurationCaster = getValue("undyingArmyTickDurationCaster", int.class);
-        this.undyingArmyCooldownIncreaseTicks = getValue("undyingArmyCooldownIncreaseTicks", int.class);
     }
 
     @Override
@@ -33,7 +31,7 @@ public class OneManArmy implements SpecBoostManager.SpecBoost<OneManArmy> {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(undyingArmyTickDurationIncrease, undyingArmyTickDurationCaster, undyingArmyCooldownIncreaseTicks);
+        return List.of(undyingArmyTickDurationIncrease, undyingArmyTickDurationCaster);
     }
 
     @Override
@@ -55,7 +53,6 @@ public class OneManArmy implements SpecBoostManager.SpecBoost<OneManArmy> {
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(UndyingArmy.class).forEach(undyingArmy -> {
                 undyingArmy.setTickDuration(undyingArmy.getTickDuration() + undyingArmyTickDurationIncrease);
-                undyingArmy.getCooldown().addAdditiveModifier("Spec Boost", undyingArmyCooldownIncreaseTicks / 20f);
             });
         }
 

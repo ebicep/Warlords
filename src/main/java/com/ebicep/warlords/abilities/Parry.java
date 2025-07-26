@@ -35,6 +35,7 @@ public class Parry extends AbstractAbility implements AbilityStats<Parry, Parry.
     private int knockbackTickDuration;
     private float damageReduction;
     private int damageReductionTickDuration;
+    private float knockbackMagnitude;
 
     public Parry() {
         super(AbstractAbilityBuilder.create("parry").pvp());
@@ -47,6 +48,7 @@ public class Parry extends AbstractAbility implements AbilityStats<Parry, Parry.
         this.knockbackTickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("knockbackTickDuration"), int.class);
         this.damageReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageReduction"), float.class);
         this.damageReductionTickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageReductionTickDuration"), int.class);
+        this.knockbackMagnitude = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("knockbackMagnitude"), float.class);
     }
 
     @Override
@@ -172,7 +174,7 @@ public class Parry extends AbstractAbility implements AbilityStats<Parry, Parry.
                     parried = true;
                     stats.timesKnockbacked++;
                     WarlordsEntity victim = event.getWarlordsEntity();
-                    Vector v = wp.getLocation().toVector().subtract(victim.getLocation().toVector()).normalize().multiply(-1.5).setY(0.35);
+                    Vector v = wp.getLocation().toVector().subtract(victim.getLocation().toVector()).normalize().multiply(-knockbackMagnitude).setY(0.35);
                     victim.setVelocity(name, v, false);
                     setTicksLeft(0);
                 }
@@ -186,13 +188,13 @@ public class Parry extends AbstractAbility implements AbilityStats<Parry, Parry.
         description = AbilityDescriptionBuilder
                 .create("For ")
                 .durationTicks(blockTickDuration)
-                .text(", you are able to block the first skill that hits you. For ")
-                .durationTicks(knockbackTickDuration)
-                .text(", you are able to deal massive knockback with your next strike.  Every time you block a skill you gain ")
+                .text(", you block the damage of the first skill that hits you and gain ")
                 .damageReduction(damageReduction)
                 .text(" damage reduction for ")
                 .durationTicks(damageReductionTickDuration)
-                .text(".")
+                .text(". For ")
+                .durationTicks(knockbackTickDuration)
+                .text(", your next Crusader's Strike deals knockback.")
                 .build();
     }
 

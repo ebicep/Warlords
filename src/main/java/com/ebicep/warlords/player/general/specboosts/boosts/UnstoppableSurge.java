@@ -107,7 +107,7 @@ public class UnstoppableSurge implements SpecBoostManager.SpecBoost<UnstoppableS
             if (!(cooldown instanceof RegularCooldown<?>)) {
                 return;
             }
-            if (!(cooldown.getName().equals("Light Infusion")) || !cooldown.getFrom().equals(warlordsEntity)) {
+            if (!(cooldown.getCooldownClass().equals(LightInfusionAvenger.class)) || !cooldown.getFrom().equals(warlordsEntity)) {
                 return;
             }
             Consumer<CooldownManager> oldOnRemove = cooldown.getOnRemove();

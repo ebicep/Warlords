@@ -2,11 +2,17 @@ package com.ebicep.warlords.player.general.specboosts.boosts;
 
 import com.ebicep.warlords.abilities.CrusadersStrike;
 import com.ebicep.warlords.abilities.InspiringPresence;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.events.game.WarlordsFlagUpdatedEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.flags.PlayerFlagLocation;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.DamageInstance;
 import com.ebicep.warlords.player.ingame.motionsystem.MotionModifierBuilder;
 import org.bukkit.event.EventHandler;
 
@@ -14,18 +20,18 @@ import java.util.List;
 
 public class RallyingPresence implements SpecBoostManager.SpecBoost<RallyingPresence> {
 
-    private int durationDecreaseTicks;
     private int energyPerSecondIncrease;
     private int speedIncreasePercent;
+    private float inspiringPresenceDamageReductionPercent;
     private float flagSpeedIncreasePercent;
     private float flagKnockbackResistancePercent;
     private int crusaderStrikeEnergyIncrease;
 
     @Override
     public void init() {
-        this.durationDecreaseTicks = getValue("durationDecreaseTicks", int.class);
         this.energyPerSecondIncrease = getValue("energyPerSecondIncrease", int.class);
         this.speedIncreasePercent = getValue("speedIncreasePercent", int.class);
+        this.inspiringPresenceDamageReductionPercent = getValue("inspiringPresenceDamageReductionPercent", float.class);
         this.flagSpeedIncreasePercent = getValue("flagSpeedIncreasePercent", float.class);
         this.flagKnockbackResistancePercent = getValue("flagKnockbackResistancePercent", float.class);
         this.crusaderStrikeEnergyIncrease = getValue("crusaderStrikeEnergyIncrease", int.class);
@@ -39,9 +45,9 @@ public class RallyingPresence implements SpecBoostManager.SpecBoost<RallyingPres
     @Override
     public List<Object> getVariables() {
         return List.of(
-                durationDecreaseTicks,
                 energyPerSecondIncrease,
                 speedIncreasePercent,
+                inspiringPresenceDamageReductionPercent,
                 flagSpeedIncreasePercent,
                 flagKnockbackResistancePercent,
                 crusaderStrikeEnergyIncrease);
@@ -65,9 +71,30 @@ public class RallyingPresence implements SpecBoostManager.SpecBoost<RallyingPres
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(InspiringPresence.class).forEach(inspiringPresence -> {
-                inspiringPresence.setTickDuration(inspiringPresence.getTickDuration() - durationDecreaseTicks);
                 inspiringPresence.setEnergyPerSecond(inspiringPresence.getEnergyPerSecond() + energyPerSecondIncrease);
                 inspiringPresence.setSpeedBuff(inspiringPresence.getSpeedBuff() + speedIncreasePercent);
+            });
+        }
+
+        @EventHandler
+        public void onCooldownAddEvent(WarlordsAddCooldownEvent event) {
+            if (!warlordsEntity.equals(event.getWarlordsEntity())) {
+                return;
+            }
+            AbstractCooldown<?> cooldown = event.getAbstractCooldown();
+            if (!(cooldown instanceof RegularCooldown<?> regularCooldown)) {
+                return;
+            }
+            if (!cooldown.getCooldownClass().equals(InspiringPresence.InspiringPresenceData.class) || !cooldown.getFrom().equals(warlordsEntity)) {
+                return;
+            }
+            regularCooldown.addExtraDamageInstance(new DamageInstance() {
+
+                @Override
+                public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                    return currentDamageValue * AbstractAbility.convertToDivisionDecimal(inspiringPresenceDamageReductionPercent);
+                }
+
             });
         }
 
