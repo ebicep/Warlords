@@ -192,6 +192,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                     return;
                 }
                 damageInstances.getAndIncrement();
+                stats.timesCooldownsIncreased++;
             }
 
             @Override
@@ -322,6 +323,9 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
         @Field("melees_reduced")
         private int meleesReduced = 0;
 
+        @Field("times_cooldowns_increased")
+        private int timesCooldownsIncreased = 0;
+
         @Field("shields_increased")
         private int shieldsIncreased = 0;
 
@@ -334,6 +338,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
             statsDisplay.add(new AbilityStatDisplay("Melees Reduced", meleesReduced));
+            statsDisplay.add(new AbilityStatDisplay("Times Cooldowns Increased", timesCooldownsIncreased));
             statsDisplay.add(new AbilityStatDisplay("Times Teammates Shielded", timesTeammatesShielded));
             statsDisplay.add(new AbilityStatDisplay("Times Carrier Shielded", timesCarrierShielded));
             statsDisplay.add(new AbilityStatDisplay("Shields Increased", shieldsIncreased));
@@ -346,6 +351,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
             stats.timesTeammatesShielded = this.timesTeammatesShielded + other.timesTeammatesShielded * multiplier;
             stats.timesCarrierShielded = this.timesCarrierShielded + other.timesCarrierShielded * multiplier;
             stats.meleesReduced = this.meleesReduced + other.meleesReduced * multiplier;
+            stats.timesCooldownsIncreased = this.timesCooldownsIncreased + other.timesCooldownsIncreased * multiplier;
             stats.shieldsIncreased = this.shieldsIncreased + other.shieldsIncreased * multiplier;
             return stats;
         }
