@@ -301,9 +301,6 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
         @Field("healing_increased")
         private float healingIncreased = 0;
 
-        @Field("lethal_damge_healed")
-        private int lethalDamgeHealed = 0;
-
         @Override
         public Class<DivineBlessingStats> getClazz() {
             return DivineBlessingStats.class;
@@ -315,7 +312,6 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
             statsDisplay.add(new AbilityStatDisplay("Hexes Prolonged", hexesProlonged));
             statsDisplay.add(new AbilityStatDisplay("Hexes Not Consumed", hexesNotConsumed));
             statsDisplay.add(new AbilityStatDisplay("Healing Increased", Math.round(healingIncreased)));
-            statsDisplay.add(new AbilityStatDisplay("Lethal Damage Healed", lethalDamgeHealed));
             return statsDisplay;
         }
 
@@ -325,7 +321,6 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
             stats.hexesProlonged = this.hexesProlonged + other.hexesProlonged * multiplier;
             stats.hexesNotConsumed = this.hexesNotConsumed + other.hexesNotConsumed * multiplier;
             stats.healingIncreased = this.healingIncreased + other.healingIncreased * multiplier;
-            stats.lethalDamgeHealed = this.lethalDamgeHealed + other.lethalDamgeHealed * multiplier;
             return stats;
         }
 
