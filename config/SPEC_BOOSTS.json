@@ -342,7 +342,7 @@
         "difficulty": 1,
         "name": "Shaq Attack",
         "description": "Gain a {{damageReduction}} health shield each time you strike an enemy. Increase the radius of {{aqua:Avenger's Wrath}} by {{blocks}} and the shield health gained to {{damageReduction}} while active. Shields granted do not expire or have a limit.",
-        "shieldPerStrike": 75,
+        "shieldPerStrike": 100,
         "avengerWrathRadiusIncrease": 1,
         "wrathShieldPerStrike": 175
       },
