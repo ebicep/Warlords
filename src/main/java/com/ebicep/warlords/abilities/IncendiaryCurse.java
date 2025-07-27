@@ -39,7 +39,7 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
     private FloatModifiable hitbox = new FloatModifiable(5);
 
     private int blindDurationInTicks = 30;
-    private int damageIncrease;
+    private int damageIncreasePercent;
     private int damageIncreaseHealthThreshold;
 
     public IncendiaryCurse() {
@@ -55,7 +55,7 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
         super.init(builder);
         this.hitbox = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hitbox"), float.class));
         this.blindDurationInTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("blindDurationInTicks"), int.class);
-        this.damageIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageIncrease"), int.class);
+        this.damageIncreasePercent = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageIncreasePercent"), int.class);
         this.damageIncreaseHealthThreshold = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageIncreaseHealthThreshold"), int.class);
     }
 
@@ -89,7 +89,7 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
         description = AbilityDescriptionBuilder.create("Ignite the targeted area with a cross flame, dealing")
                                                .damage(damageValues.curseDamage)
                                                .text("damage. Deals ")
-                                               .percent(damageIncrease, NamedTextColor.RED)
+                                               .percent(damageIncreasePercent, NamedTextColor.RED)
                                                .text(" more damage to enemies above ")
                                                .percent(damageIncreaseHealthThreshold, NamedTextColor.RED)
                                                .text("health. Enemies hit are " + (inPve ? "stunned" : "blinded") + " for ")
@@ -117,7 +117,7 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
             stats.playersHit++;
             float damageMultiplier = convertToMultiplicationDecimal(
                     (nearEntity.getCurrentHealth() / nearEntity.getMaxBaseHealth()) > damageIncreaseHealthThreshold / 100f
-                    ? damageIncrease
+                    ? damageIncreasePercent
                     : 0
             );
             nearEntity.addInstance(InstanceBuilder
@@ -187,12 +187,12 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
         this.damageIncreaseHealthThreshold = damageIncreaseHealthThreshold;
     }
 
-    public int getDamageIncrease() {
-        return damageIncrease;
+    public int getDamageIncreasePercent() {
+        return damageIncreasePercent;
     }
 
-    public void setDamageIncrease(int damageIncrease) {
-        this.damageIncrease = damageIncrease;
+    public void setDamageIncreasePercent(int damageIncreasePercent) {
+        this.damageIncreasePercent = damageIncreasePercent;
     }
 
     public static class DamageValues implements Value.ValueHolder {

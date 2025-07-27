@@ -24,7 +24,7 @@ import java.util.List;
 public class Trickster implements SpecBoostManager.SpecBoost<Trickster> {
 
     private int incendiaryCurseDamageThresholdDecrease;
-    private int incendiaryCurseDamageIncrease;
+    private float incendiaryCurseDamageIncreasePercent;
     private int incendiaryCurseEnergyCostIncrease;
     private int soulSwitchInvisTickDuration;
     private int soulSwitchDummyDurationTicks;
@@ -34,7 +34,7 @@ public class Trickster implements SpecBoostManager.SpecBoost<Trickster> {
     @Override
     public void init() {
         this.incendiaryCurseDamageThresholdDecrease = getValue("incendiaryCurseDamageThresholdDecrease", int.class);
-        this.incendiaryCurseDamageIncrease = getValue("incendiaryCurseDamageIncrease", int.class);
+        this.incendiaryCurseDamageIncreasePercent = getValue("incendiaryCurseDamageIncreasePercent", float.class);
         this.incendiaryCurseEnergyCostIncrease = getValue("incendiaryCurseEnergyCostIncrease", int.class);
         this.soulSwitchInvisTickDuration = getValue("soulSwitchInvisTickDuration", int.class);
         this.soulSwitchDummyDurationTicks = getValue("soulSwitchDummyDurationTicks", int.class);
@@ -51,7 +51,7 @@ public class Trickster implements SpecBoostManager.SpecBoost<Trickster> {
     public List<Object> getVariables() {
         return List.of(
                 incendiaryCurseDamageThresholdDecrease,
-                incendiaryCurseDamageIncrease,
+                incendiaryCurseDamageIncreasePercent,
                 incendiaryCurseEnergyCostIncrease,
                 soulSwitchInvisTickDuration,
                 soulSwitchDummyDurationTicks,
@@ -80,7 +80,7 @@ public class Trickster implements SpecBoostManager.SpecBoost<Trickster> {
             warlordsPlayer.getAbilitiesMatching(IncendiaryCurse.class).forEach(incendiaryCurse -> {
                 incendiaryCurse.setDamageIncreaseHealthThreshold(incendiaryCurse.getDamageIncreaseHealthThreshold() - incendiaryCurseDamageThresholdDecrease);
                 incendiaryCurse.getDamageValues().getCurseDamage().forEachValue(floatModifiable ->
-                        floatModifiable.addAdditiveModifier("Spec Boost", incendiaryCurseDamageIncrease)
+                        floatModifiable.addMultiplicativeModifierAdd("Spec Boost", incendiaryCurseDamageIncreasePercent / 100)
                 );
                 incendiaryCurse.getEnergyCost().addAdditiveModifier("Spec Boost", incendiaryCurseEnergyCostIncrease);
             });
