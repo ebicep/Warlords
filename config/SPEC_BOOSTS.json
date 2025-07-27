@@ -160,8 +160,8 @@
       "triage": {
         "difficulty": 2,
         "name": "Triage",
-        "description": "Replace {{aqua:Time Warp}} with {{aqua:Triage}}. Gain {{energy}} energy per melee hit.",
-        "ephIncrease": 6
+        "description": "Replace {{aqua:Time Warp}} with {{aqua:Triage}}. Gain {{heal}} max health.",
+        "healthIncrease": 400
       },
       "fortifiedAegis": {
         "difficulty": 3,
