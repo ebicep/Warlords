@@ -467,10 +467,9 @@
         "lightningRodEnergyRestoreDecrease": 120,
         "lightningRodSpeedIncreasePercent": 70,
         "lightningRodSpeedDurationTicks": 20,
-        "totemPlaceRange": 10,
+        "capacitorTotemDamageDecreasePercent": 15,
         "lightningRodMagnitude": 1.25,
-        "lightningRodY": 0.3,
-        "capacitorTotemDamageDecrease": 70
+        "lightningRodY": 0.3
       },
       "eyeOfTheStorm": {
         "difficulty": 4,
