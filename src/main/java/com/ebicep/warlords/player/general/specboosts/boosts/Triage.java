@@ -10,11 +10,11 @@ import java.util.List;
 
 public class Triage implements SpecBoostManager.SpecBoost<Triage> {
 
-    private int ephIncrease;
+    private int healthIncrease;
 
     @Override
     public void init() {
-        this.ephIncrease = getValue("ephIncrease", int.class);
+        this.healthIncrease = getValue("healthIncrease", int.class);
     }
 
     @Override
@@ -29,7 +29,7 @@ public class Triage implements SpecBoostManager.SpecBoost<Triage> {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(ephIncrease);
+        return List.of(healthIncrease);
     }
 
     @Override
@@ -46,7 +46,7 @@ public class Triage implements SpecBoostManager.SpecBoost<Triage> {
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getEnergyPerHit().addAdditiveModifier("Spec Boost", ephIncrease);
+            warlordsPlayer.getHealth().addAdditiveModifier("Spec Boost", healthIncrease);
             List<AbstractAbility> abilities = warlordsPlayer.getAbilities();
             for (int i = 0; i < abilities.size(); i++) {
                 AbstractAbility ability = abilities.get(i);
