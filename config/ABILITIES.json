@@ -863,7 +863,7 @@
         "energyCost": 60,
         "hitbox": 5,
         "blindDurationInTicks": 8,
-        "damageIncrease": 100,
+        "damageIncreasePercent": 100,
         "damageIncreaseHealthThreshold": 80,
         "damageValues": {
           "curseDamage": {
