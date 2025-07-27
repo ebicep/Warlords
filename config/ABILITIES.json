@@ -1539,7 +1539,7 @@
         "energyCost": 20,
         "speedBuff": 40,
         "speedBuffDurationTicks": 100,
-        "targetBonusHealing": 40,
+        "targetBonusHealing": 30,
         "bonusHealingDurationTicks": 100
       },
       "undyingArmy": {
