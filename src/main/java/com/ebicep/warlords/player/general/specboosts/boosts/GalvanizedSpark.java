@@ -19,9 +19,9 @@ public class GalvanizedSpark implements SpecBoostManager.SpecBoost<GalvanizedSpa
     private int lightningRodEnergyRestoreDecrease;
     private float lightningRodSpeedIncreasePercent;
     private int lightningRodSpeedDurationTicks;
+    private float capacitorTotemDamageDecreasePercent;
     private float lightningRodMagnitude;
     private float lightningRodY;
-    private float capacitorTotemDamageDecrease;
 
     @Override
     public void init() {
@@ -31,9 +31,9 @@ public class GalvanizedSpark implements SpecBoostManager.SpecBoost<GalvanizedSpa
         this.lightningRodEnergyRestoreDecrease = getValue("lightningRodEnergyRestoreDecrease", int.class);
         this.lightningRodSpeedIncreasePercent = getValue("lightningRodSpeedIncreasePercent", float.class);
         this.lightningRodSpeedDurationTicks = getValue("lightningRodSpeedDurationTicks", int.class);
+        this.capacitorTotemDamageDecreasePercent = getValue("capacitorTotemDamageDecreasePercent", float.class);
         this.lightningRodMagnitude = getValue("lightningRodMagnitude", float.class);
         this.lightningRodY = getValue("lightningRodY", float.class);
-        this.capacitorTotemDamageDecrease = getValue("capacitorTotemDamageDecrease", float.class);
     }
 
     @Override
@@ -50,7 +50,7 @@ public class GalvanizedSpark implements SpecBoostManager.SpecBoost<GalvanizedSpa
                 lightningRodEnergyRestoreDecrease,
                 lightningRodSpeedIncreasePercent,
                 lightningRodSpeedDurationTicks,
-                capacitorTotemDamageDecrease
+                capacitorTotemDamageDecreasePercent
         );
     }
 
@@ -83,7 +83,7 @@ public class GalvanizedSpark implements SpecBoostManager.SpecBoost<GalvanizedSpa
             warlordsPlayer.getAbilitiesMatching(CapacitorTotem.class).forEach(capacitorTotem -> {
                 capacitorTotem.getDamageValues()
                               .getTotemDamage()
-                              .forEachValue(floatModifiable -> floatModifiable.addAdditiveModifier("Spec Boost", -capacitorTotemDamageDecrease));
+                              .forEachValue(floatModifiable -> floatModifiable.addMultiplicativeModifierAdd("Spec Boost", -capacitorTotemDamageDecreasePercent / 100));
             });
         }
 
