@@ -794,7 +794,7 @@
         "description": "Reduce the cooldown of {{aqua:Mystical Barrier}} by {{ticks;%}}. {{aqua:Mystical Barrier}} grants {{damageReduction;%}} damage reduction but you receive {{damage;%}} more damage for the duration.",
         "mysticalBarrierCooldownReductionPercent": 35,
         "targetDamageReductionPercent": 25,
-        "selfDamageIncreasePercent": 25
+        "selfDamageIncreasePercent": 20
       },
       "sanctuaryOfRetribution": {
         "difficulty": 2,
