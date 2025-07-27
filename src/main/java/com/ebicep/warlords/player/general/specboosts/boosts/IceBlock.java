@@ -32,21 +32,21 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class IceBlock implements SpecBoostManager.SpecBoost<IceBlock> {
 
-    private int iceBarrierNewDurationTicks;
+    private int iceBarrierDurationIncreaseTicks;
+    private int iceBlockRecastDelayTicks;
     private int recastDurationDecreaseTicks;
     private float recastDamageReductionPercent;
     private float recastMovementSpeed;
     private float recastMovementSpeedFlag;
-    private int iceBlockRecastDelayTicks;
 
     @Override
     public void init() {
-        this.iceBarrierNewDurationTicks = getValue("iceBarrierNewDurationTicks", int.class);
+        this.iceBarrierDurationIncreaseTicks = getValue("iceBarrierDurationIncreaseTicks", int.class);
+        this.iceBlockRecastDelayTicks = getValue("iceBlockRecastDelayTicks", int.class);
         this.recastDurationDecreaseTicks = getValue("recastDurationDecreaseTicks", int.class);
         this.recastDamageReductionPercent = getValue("recastDamageReductionPercent", float.class);
         this.recastMovementSpeed = getValue("recastMovementSpeed", float.class);
         this.recastMovementSpeedFlag = getValue("recastMovementSpeedFlag", float.class);
-        this.iceBlockRecastDelayTicks = getValue("iceBlockRecastDelayTicks", int.class);
     }
 
     @Override
@@ -57,7 +57,7 @@ public class IceBlock implements SpecBoostManager.SpecBoost<IceBlock> {
     @Override
     public List<Object> getVariables() {
         return List.of(
-                iceBarrierNewDurationTicks,
+                iceBarrierDurationIncreaseTicks,
                 iceBlockRecastDelayTicks,
                 recastDurationDecreaseTicks,
                 recastDamageReductionPercent
@@ -82,7 +82,7 @@ public class IceBlock implements SpecBoostManager.SpecBoost<IceBlock> {
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(IceBarrier.class).forEach(iceBarrier -> {
-                iceBarrier.setTickDuration(iceBarrier.getTickDuration() + iceBarrierNewDurationTicks);
+                iceBarrier.setTickDuration(iceBarrier.getTickDuration() + iceBarrierDurationIncreaseTicks);
             });
         }
 

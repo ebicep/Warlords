@@ -109,12 +109,12 @@
         "difficulty": 4,
         "name": "Ice Block",
         "description": "Increase the duration of {{aqua:Ice Barrier}} by {{ticks}}. {{aqua:Ice Barrier}} can be recasted after {{ticks}}, reducing the duration by {{ticks}} and becoming {{aqua:Ice Block}}. {{aqua:Ice Block}} prevents jumping, tremendously reduces movement speed, but prevents knockback and grants {{damageReduction;%}} damage reduction.",
-        "iceBarrierNewDurationTicks": 50,
+        "iceBarrierDurationIncreaseTicks": 50,
+        "iceBlockRecastDelayTicks": 20,
         "recastDurationDecreaseTicks": 20,
         "recastDamageReductionPercent": 70,
         "recastMovementSpeed": 0.4,
-        "recastMovementSpeedFlag": 0.3,
-        "iceBlockRecastDelayTicks": 20
+        "recastMovementSpeedFlag": 0.3
       },
       "arcaneRecluse": {
         "difficulty": 1,
@@ -154,7 +154,7 @@
         "name": "Clairvoyance",
         "description": "Replace {{aqua:Time Warp}} with {{aqua:Clairvoyance}}. Gain {{energy}} max energy. Reduce the duration of {{aqua:Healing Rain}} by {{ticks}}, but increase the healing by {{heal;%}}.",
         "maxEnergyIncrease": 100,
-        "healingRainDurationTicks": 40,
+        "healingRainDurationDecreaseTicks": 40,
         "healingRainHealIncreasePercent": 30
       },
       "triage": {
@@ -462,9 +462,9 @@
         "name": "Galvanized Spark",
         "description": "Increase the charges of {{aqua:Lightning Rod}} to {{blue}}, reduce the cooldown by {{ticks}}, the healing by {{heal;%}}, the energy granted by {{energy}}, and the knockback inflicted. {{aqua:Lightning Rod}} resets the cooldown of {{aqua:Chain Lightning}} and grants {{speed;%}} speed for {{ticks}}. Reduce the damage of {{aqua:Capacitor Totem}} by {{damage}}.",
         "lightningRodMaxAbilityCharges": 2,
-        "lightningRodCooldownSeconds": 16.5,
-        "lightningRodHealingPercent": 5,
-        "lightningRodEnergyRestore": 120,
+        "lightningRodCooldownDecreaseSeconds": 16.5,
+        "lightningRodHealingDecreasePercent": 5,
+        "lightningRodEnergyRestoreDecrease": 120,
         "lightningRodSpeedIncreasePercent": 70,
         "lightningRodSpeedDurationTicks": 20,
         "totemPlaceRange": 10,

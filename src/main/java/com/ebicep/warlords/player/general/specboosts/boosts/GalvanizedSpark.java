@@ -14,9 +14,9 @@ import java.util.List;
 public class GalvanizedSpark implements SpecBoostManager.SpecBoost<GalvanizedSpark> {
 
     private int lightningRodMaxAbilityCharges;
-    private float lightningRodCooldownSeconds;
-    private float lightningRodHealingPercent;
-    private int lightningRodEnergyRestore;
+    private float lightningRodCooldownDecreaseSeconds;
+    private float lightningRodHealingDecreasePercent;
+    private int lightningRodEnergyRestoreDecrease;
     private float lightningRodSpeedIncreasePercent;
     private int lightningRodSpeedDurationTicks;
     private float lightningRodMagnitude;
@@ -26,9 +26,9 @@ public class GalvanizedSpark implements SpecBoostManager.SpecBoost<GalvanizedSpa
     @Override
     public void init() {
         this.lightningRodMaxAbilityCharges = getValue("lightningRodMaxAbilityCharges", int.class);
-        this.lightningRodCooldownSeconds = getValue("lightningRodCooldownSeconds", float.class);
-        this.lightningRodHealingPercent = getValue("lightningRodHealingPercent", float.class);
-        this.lightningRodEnergyRestore = getValue("lightningRodEnergyRestore", int.class);
+        this.lightningRodCooldownDecreaseSeconds = getValue("lightningRodCooldownDecreaseSeconds", float.class);
+        this.lightningRodHealingDecreasePercent = getValue("lightningRodHealingDecreasePercent", float.class);
+        this.lightningRodEnergyRestoreDecrease = getValue("lightningRodEnergyRestoreDecrease", int.class);
         this.lightningRodSpeedIncreasePercent = getValue("lightningRodSpeedIncreasePercent", float.class);
         this.lightningRodSpeedDurationTicks = getValue("lightningRodSpeedDurationTicks", int.class);
         this.lightningRodMagnitude = getValue("lightningRodMagnitude", float.class);
@@ -45,9 +45,9 @@ public class GalvanizedSpark implements SpecBoostManager.SpecBoost<GalvanizedSpa
     public List<Object> getVariables() {
         return List.of(
                 lightningRodMaxAbilityCharges,
-                lightningRodCooldownSeconds,
-                lightningRodHealingPercent,
-                lightningRodEnergyRestore,
+                lightningRodCooldownDecreaseSeconds,
+                lightningRodHealingDecreasePercent,
+                lightningRodEnergyRestoreDecrease,
                 lightningRodSpeedIncreasePercent,
                 lightningRodSpeedDurationTicks,
                 capacitorTotemDamageDecrease
@@ -74,9 +74,9 @@ public class GalvanizedSpark implements SpecBoostManager.SpecBoost<GalvanizedSpa
             warlordsPlayer.getAbilitiesMatching(LightningRod.class).forEach(lightningRod -> {
                 lightningRod.setMaxCharges(lightningRodMaxAbilityCharges);
                 lightningRod.setCurrentCharges(lightningRodMaxAbilityCharges);
-                lightningRod.getCooldown().addAdditiveModifier("Spec Boost", -lightningRodCooldownSeconds);
-                lightningRod.getHealValues().getHealthRestore().value().setBaseValue(lightningRod.getHealValues().getHealthRestore().getValue() - lightningRodHealingPercent);
-                lightningRod.setEnergyRestore(lightningRod.getEnergyRestore() - lightningRodEnergyRestore);
+                lightningRod.getCooldown().addAdditiveModifier("Spec Boost", -lightningRodCooldownDecreaseSeconds);
+                lightningRod.getHealValues().getHealthRestore().value().setBaseValue(lightningRod.getHealValues().getHealthRestore().getValue() - lightningRodHealingDecreasePercent);
+                lightningRod.setEnergyRestore(lightningRod.getEnergyRestore() - lightningRodEnergyRestoreDecrease);
                 lightningRod.setMagnitude(lightningRodMagnitude);
                 lightningRod.setY(lightningRodY);
             });

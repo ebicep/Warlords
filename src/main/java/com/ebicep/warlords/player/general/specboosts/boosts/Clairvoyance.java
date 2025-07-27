@@ -12,13 +12,13 @@ import java.util.List;
 public class Clairvoyance implements SpecBoostManager.SpecBoost<Clairvoyance> {
 
     private int maxEnergyIncrease;
-    private int healingRainDurationTicks;
+    private int healingRainDurationDecreaseTicks;
     private float healingRainHealIncreasePercent;
 
     @Override
     public void init() {
         this.maxEnergyIncrease = getValue("maxEnergyIncrease", int.class);
-        this.healingRainDurationTicks = getValue("healingRainDurationTicks", int.class);
+        this.healingRainDurationDecreaseTicks = getValue("healingRainDurationDecreaseTicks", int.class);
         this.healingRainHealIncreasePercent = getValue("healingRainHealIncreasePercent", float.class);
     }
 
@@ -34,7 +34,7 @@ public class Clairvoyance implements SpecBoostManager.SpecBoost<Clairvoyance> {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(maxEnergyIncrease, healingRainDurationTicks, healingRainHealIncreasePercent);
+        return List.of(maxEnergyIncrease, healingRainDurationDecreaseTicks, healingRainHealIncreasePercent);
     }
 
     @Override
@@ -61,7 +61,7 @@ public class Clairvoyance implements SpecBoostManager.SpecBoost<Clairvoyance> {
                     clairvoyance.init(clairvoyance.getBuilder());
                     abilities.set(i, clairvoyance);
                 } else if (ability instanceof HealingRain healingRain) {
-                    healingRain.setTickDuration(healingRain.getTickDuration() - healingRainDurationTicks);
+                    healingRain.setTickDuration(healingRain.getTickDuration() - healingRainDurationDecreaseTicks);
                     healingRain.getHealValues().getRainHealing().forEachValue(floatModifiable ->
                             floatModifiable.addMultiplicativeModifierAdd("Spec Boost", healingRainHealIncreasePercent / 100)
                     );
