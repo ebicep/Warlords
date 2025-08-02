@@ -2,6 +2,7 @@ package com.ebicep.warlords.player.general.specboosts.boosts;
 
 import com.ebicep.warlords.abilities.IceBarrier;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -91,6 +92,7 @@ public class ChillyAura implements SpecBoostManager.SpecBoost<ChillyAura> {
                                             .build()
                                     );
                                     float damage = we.getMaxHealth() * healthLossPercent / 100;
+                                    damage = DamageCheck.clamp(damage);
                                     we.addInstance(InstanceBuilder
                                             .damage()
                                             .cause(getStringName())
