@@ -21,14 +21,12 @@ public class HolyNova implements SpecBoostManager.SpecBoost<HolyNova> {
     private float divineBlessingFarRangeBlocks;
     private float divineBlessingHealingIncreasePercentFar;
     private int divineBlessingDamageToEnemies;
-    private float divineBlessingCooldownIncreasePercent;
 
     @Override
     public void init() {
         this.divineBlessingFarRangeBlocks = getValue("divineBlessingFarRangeBlocks", float.class);
         this.divineBlessingHealingIncreasePercentFar = getValue("divineBlessingHealingIncreasePercentFar", float.class);
         this.divineBlessingDamageToEnemies = getValue("divineBlessingDamageToEnemies", int.class);
-        this.divineBlessingCooldownIncreasePercent = getValue("divineBlessingCooldownIncreasePercent", float.class);
     }
 
     @Override
@@ -41,8 +39,7 @@ public class HolyNova implements SpecBoostManager.SpecBoost<HolyNova> {
         return List.of(
                 divineBlessingFarRangeBlocks,
                 divineBlessingHealingIncreasePercentFar,
-                divineBlessingDamageToEnemies,
-                divineBlessingCooldownIncreasePercent
+                divineBlessingDamageToEnemies
         );
     }
 
@@ -63,9 +60,6 @@ public class HolyNova implements SpecBoostManager.SpecBoost<HolyNova> {
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
-            warlordsPlayer.getAbilitiesMatching(DivineBlessing.class).forEach(divineBlessing -> {
-                divineBlessing.getCooldown().addMultiplicativeModifierAdd("Spec Boost", divineBlessingCooldownIncreasePercent / 100);
-            });
         }
 
         @EventHandler(ignoreCancelled = true)
