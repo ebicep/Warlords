@@ -1536,9 +1536,11 @@
       "triage": {
         "name": "Triage",
         "cooldown": 21,
-        "energyCost": 30,
+        "energyCost": 0,
+        "speedBuffRange": 10,
         "speedBuff": 40,
         "speedBuffDurationTicks": 100,
+        "castEnergyCost": 30,
         "targetBonusHealing": 30,
         "bonusHealingDurationTicks": 100
       },
