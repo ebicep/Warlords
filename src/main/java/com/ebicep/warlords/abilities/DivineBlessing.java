@@ -315,7 +315,6 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
             statsDisplay.add(new AbilityStatDisplay("Hexes Prolonged", hexesProlonged));
             statsDisplay.add(new AbilityStatDisplay("Hexes Not Consumed", hexesNotConsumed));
             statsDisplay.add(new AbilityStatDisplay("Healing Increased", Math.round(healingIncreased)));
-            statsDisplay.add(new AbilityStatDisplay("Lethal Damage Healed", lethalDamgeHealed));
             return statsDisplay;
         }
 

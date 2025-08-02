@@ -338,7 +338,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
             statsDisplay.add(new AbilityStatDisplay("Melees Reduced", meleesReduced));
-            statsDisplay.add(new AbilityStatDisplay("Times Cooldowns Increased", timesCooldownsIncreased));
+            statsDisplay.add(new AbilityStatDisplay("Times Hit", timesCooldownsIncreased));
             statsDisplay.add(new AbilityStatDisplay("Times Teammates Shielded", timesTeammatesShielded));
             statsDisplay.add(new AbilityStatDisplay("Times Carrier Shielded", timesCarrierShielded));
             statsDisplay.add(new AbilityStatDisplay("Shields Increased", shieldsIncreased));
