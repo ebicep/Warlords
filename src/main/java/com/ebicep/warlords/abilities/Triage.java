@@ -11,6 +11,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
@@ -26,8 +27,10 @@ import java.util.List;
 public class Triage extends AbstractAbility implements PurpleAbilityIcon, Listener, AbilityStats<Triage, Triage.TriageStats> {
 
     private final TriageStats stats = new TriageStats();
+    private int speedBuffRange;
     private int speedBuff;
     private int speedBuffDurationTicks;
+    private int castEnergyCost;
     private float targetBonusHealing;
     private int bonusHealingDurationTicks;
     private final HashMap<Team, WarlordsEntity> lastFlagCarriers = new HashMap<>();
@@ -39,8 +42,10 @@ public class Triage extends AbstractAbility implements PurpleAbilityIcon, Listen
     @Override
     public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
+        this.speedBuffRange = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("speedBuffRange"), int.class);
         this.speedBuff = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("speedBuff"), int.class);
         this.speedBuffDurationTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("speedBuffDurationTicks"), int.class);
+        this.castEnergyCost = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("castEnergyCost"), int.class);
         this.targetBonusHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("targetBonusHealing"), float.class);
         this.bonusHealingDurationTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("bonusHealingDurationTicks"), int.class);
     }
@@ -48,10 +53,14 @@ public class Triage extends AbstractAbility implements PurpleAbilityIcon, Listen
     @Override
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder
-                .create("Teleport to your most recent flag carrier, if it is yourself or they are dead, instead gain ")
+                .create("Teleport to your most recent flag carrier, consuming energy equal to the blocks travelled. If they are dead or within ")
+                .blocks(speedBuffRange)
+                .text(", instead gain ")
                 .percent(speedBuff, NamedTextColor.WHITE)
                 .text(" speed for ")
                 .durationTicks(speedBuffDurationTicks)
+                .text(" and consume ")
+                .energy(castEnergyCost)
                 .text(". Increase your healing on them by ")
                 .percent(targetBonusHealing, NamedTextColor.GREEN)
                 .text(" for ")
@@ -63,13 +72,29 @@ public class Triage extends AbstractAbility implements PurpleAbilityIcon, Listen
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         WarlordsEntity lastFlagCarrier = lastFlagCarriers.computeIfAbsent(wp.getTeam(), k -> wp);
-        if (lastFlagCarrier.isDead() || lastFlagCarrier == wp) {
-            wp.addSpeedModifier(wp, name, speedBuff, speedBuffDurationTicks);
-        } else {
+        boolean teleport = false;
+        float distance = 0;
+        if (!lastFlagCarrier.isDead()) {
+            distance = (float) wp.getLocation().distance(lastFlagCarrier.getLocation());
+            if (distance > speedBuffRange) {
+                teleport = true;
+                castEnergyCost = (int) Math.ceil(distance);
+            }
+        }
+        if (wp.getCurrentEnergy() < castEnergyCost) {
+            wp.playSound(wp.getLocation(), "notreadyalert", 1, 1);
+            wp.sendMessage(Component.text("You do not have enough energy!", NamedTextColor.RED));
+            return false;
+        }
+        if (teleport) {
             Utils.playGlobalSound(wp.getLocation(), "mage.timewarp.activation", 3, 1);
             wp.getLocation().getWorld().spawnParticle(Particle.WITCH, wp.getLocation(), 4, 0.1, 0, 0.1, 0.001, null, true);
-            stats.distanceTeleported += (float) wp.getLocation().distance(lastFlagCarrier.getLocation());
+            wp.subtractEnergy(name, castEnergyCost, false);
             wp.getEntity().teleport(lastFlagCarrier.getLocation());
+            stats.distanceTeleported += distance;
+        } else {
+            wp.subtractEnergy(name, castEnergyCost, false);
+            wp.addSpeedModifier(wp, name, speedBuff, speedBuffDurationTicks);
         }
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
