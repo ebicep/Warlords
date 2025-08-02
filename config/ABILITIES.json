@@ -71,7 +71,7 @@
         "name": "Blink",
         "cooldown": 11,
         "energyCost": 30,
-        "radius": 13,
+        "radius": 11,
         "radiusFlag": 3.5,
         "verticalLimit": 4,
         "verticalLimitFlag": 0.5,
