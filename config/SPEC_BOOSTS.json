@@ -112,7 +112,7 @@
         "iceBarrierDurationIncreaseTicks": 50,
         "iceBlockRecastDelayTicks": 20,
         "recastDurationDecreaseTicks": 20,
-        "recastDamageReductionPercent": 70,
+        "recastDamageReductionPercent": 75,
         "recastMovementSpeed": 0.4,
         "recastMovementSpeedFlag": 0.3
       },
