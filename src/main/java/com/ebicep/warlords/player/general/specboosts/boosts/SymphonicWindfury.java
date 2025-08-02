@@ -65,6 +65,33 @@ public class SymphonicWindfury implements SpecBoostManager.SpecBoost<SymphonicWi
             }
             if (event.getAbility() instanceof WindfuryWeapon) {
                 warlordsEntity.getSpeed().removeNegativeModifiers();
+                warlordsEntity.getCooldownManager().addCooldown(new RegularCooldown<>(
+                        getStringName(),
+                        "TAP",
+                        Boost.class,
+                        null,
+                        warlordsEntity,
+                        CooldownTypes.SPEC_BOOST,
+                        cooldownManager -> {},
+                        speedDurationTicks
+                ) {
+                    @Override
+                    protected Listener getListener() {
+                        return new Listener() {
+                            @EventHandler
+                            public void onAddSpeed(WarlordsAddSpeedModifierEvent event) {
+                                if (event.getWarlordsEntity() != warlordsEntity) {
+                                    return;
+                                }
+                                if (event.getMotionModifier().getModifier() < 0) {
+                                    event.setCancelled(true);
+                                }
+                            }
+                        };
+                    }
+                });
+                warlordsEntity.addKnockbackModifier(warlordsEntity, getStringName(), -100, speedDurationTicks);
+                warlordsEntity.getSpeed().removeNegativeModifiers();
                 warlordsEntity.addSpeedModifier(warlordsEntity, getStringName(), speedIncreasePercent, speedDurationTicks);
             }
         }
