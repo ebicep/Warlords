@@ -18,12 +18,14 @@ public class SymphonicWindfury implements SpecBoostManager.SpecBoost<SymphonicWi
     private int windfuryExtraGuaranteedHits;
     private float speedIncreasePercent;
     private int speedDurationTicks;
+    private int slowKbResistancePercent;
 
     @Override
     public void init() {
         this.windfuryExtraGuaranteedHits = getValue("windfuryExtraGuaranteedHits", int.class);
         this.speedIncreasePercent = getValue("speedIncreasePercent", float.class);
         this.speedDurationTicks = getValue("speedDurationTicks", int.class);
+        this.slowKbResistancePercent = getValue("slowKbResistancePercent", int.class);
     }
 
     @Override
@@ -33,7 +35,7 @@ public class SymphonicWindfury implements SpecBoostManager.SpecBoost<SymphonicWi
 
     @Override
     public List<Object> getVariables() {
-        return List.of(windfuryExtraGuaranteedHits, speedIncreasePercent, speedDurationTicks);
+        return List.of(windfuryExtraGuaranteedHits, slowKbResistancePercent, speedIncreasePercent, speedDurationTicks);
     }
 
     @Override
@@ -84,13 +86,13 @@ public class SymphonicWindfury implements SpecBoostManager.SpecBoost<SymphonicWi
                                     return;
                                 }
                                 if (event.getMotionModifier().getModifier() < 0) {
-                                    event.setCancelled(true);
+                                    event.getMotionModifier().setModifier(Math.min(0, event.getMotionModifier().getModifier() + slowKbResistancePercent));
                                 }
                             }
                         };
                     }
                 });
-                warlordsEntity.addKnockbackModifier(warlordsEntity, getStringName(), -100, speedDurationTicks);
+                warlordsEntity.addKnockbackModifier(warlordsEntity, getStringName(), -slowKbResistancePercent, speedDurationTicks);
                 warlordsEntity.getSpeed().removeNegativeModifiers();
                 warlordsEntity.addSpeedModifier(warlordsEntity, getStringName(), speedIncreasePercent, speedDurationTicks);
             }
