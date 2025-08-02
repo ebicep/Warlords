@@ -690,6 +690,12 @@
         "volatileBrewCooldownReductionSeconds": 4,
         "volatileBrewExtraDurationTicks": 80
       },
+      "drainingMiasma": {
+        "difficulty": 2,
+        "name": "Draining Miasma",
+        "description": "Replace {{aqua:Volatile Brew}} with {{aqua:Draining Miasma}}. Reduce the cooldown of {{aqua:Draining Miasma}} by {{ticks;%}}.",
+        "drainingMiasmaCooldownReductionPercent": 20
+      },
       "superBrew": {
         "difficulty": 4,
         "disabled": true,
