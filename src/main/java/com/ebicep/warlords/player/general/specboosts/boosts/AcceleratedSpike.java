@@ -1,6 +1,5 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
-import com.ebicep.warlords.abilities.Boulder;
 import com.ebicep.warlords.abilities.EarthenSpike;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
@@ -15,7 +14,6 @@ public class AcceleratedSpike implements SpecBoostManager.SpecBoost<AcceleratedS
     private float castRangeIncrease;
     private float hitRadius;
     private float damageIncreasePercent;
-    private int boulderEnergyCostIncrease;
 
     @Override
     public void init() {
@@ -24,7 +22,6 @@ public class AcceleratedSpike implements SpecBoostManager.SpecBoost<AcceleratedS
         this.castRangeIncrease = getValue("castRangeIncrease", float.class);
         this.hitRadius = getValue("hitRadiusIncrease", float.class);
         this.damageIncreasePercent = getValue("damageIncreasePercent", float.class);
-        this.boulderEnergyCostIncrease = getValue("boulderEnergyCostIncrease", int.class);
     }
 
     @Override
@@ -39,8 +36,7 @@ public class AcceleratedSpike implements SpecBoostManager.SpecBoost<AcceleratedS
                 travelSpeedIncreasePercent,
                 castRangeIncrease,
                 hitRadius,
-                damageIncreasePercent,
-                boulderEnergyCostIncrease
+                damageIncreasePercent
         );
     }
 
@@ -67,9 +63,6 @@ public class AcceleratedSpike implements SpecBoostManager.SpecBoost<AcceleratedS
                 earthenSpike.getDamageValues().getSpikeDamage().forEachValue(floatModifiable ->
                         floatModifiable.addMultiplicativeModifierAdd("Spec Boost", damageIncreasePercent / 100)
                 );
-            });
-            warlordsPlayer.getAbilitiesMatching(Boulder.class).forEach(boulder -> {
-                boulder.getEnergyCost().addAdditiveModifier("Spec Boost", boulderEnergyCostIncrease);
             });
         }
 
