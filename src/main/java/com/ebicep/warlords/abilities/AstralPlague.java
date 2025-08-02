@@ -40,7 +40,6 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
     private final AstralPlagueStats stats = new AstralPlagueStats();
     private int tickDuration = 240;
     private int hexTickDurationIncrease = 40;
-    private boolean pierceShields = true;
 
     public AstralPlague() {
         super(AbstractAbilityBuilder.create("astralPlague").pvp());
@@ -105,9 +104,6 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
                             return;
                         }
                         event.setCritChance(100);
-                        if (!pierceShields) {
-                            return;
-                        }
                         PoisonousHex fromHex = PoisonousHex.getFromHex(wp);
                         if (new CooldownFilter<>(victim, RegularCooldown.class).filterCooldownClass(PoisonousHex.class).stream().count() < fromHex.getMaxStacks()) {
                             return;
@@ -207,10 +203,6 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
     @Override
     public void setTickDuration(int tickDuration) {
         this.tickDuration = tickDuration;
-    }
-
-    public void setPierceShields(boolean pierceShields) {
-        this.pierceShields = pierceShields;
     }
 
     @Override
