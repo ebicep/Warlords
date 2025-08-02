@@ -74,6 +74,7 @@ public class Triage extends AbstractAbility implements PurpleAbilityIcon, Listen
         WarlordsEntity lastFlagCarrier = lastFlagCarriers.computeIfAbsent(wp.getTeam(), k -> wp);
         boolean teleport = false;
         float distance = 0;
+        castEnergyCost = (int) getEnergyCostValue();
         if (!lastFlagCarrier.isDead()) {
             distance = (float) wp.getLocation().distance(lastFlagCarrier.getLocation());
             if (distance > speedBuffRange) {
