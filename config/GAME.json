@@ -26,16 +26,16 @@
         "pointsFlagCap": 250,
         "pointsKill": 5,
         "pointsToMercy": 800,
-        "gameTimeSeconds": 920,
+        "gameTimeSeconds": 900,
         "overtimePoints": 20,
         "overtimeSeconds": 300,
-        "gateDelaySeconds": 20,
-        "respawnWaveDelaySeconds": 440,
-        "additionalPowerupCooldownSeconds": 21
+        "gateDelaySeconds": 10,
+        "respawnWaveDelaySeconds": 40,
+        "additionalPowerupCooldownSeconds": 1
       },
       "addons": {
         "privateGame": {
-          "lobbyTimeSeconds": 10
+          "lobbyTimeSeconds": 20
         }
       }
     }
