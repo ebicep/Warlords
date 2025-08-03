@@ -8,13 +8,8 @@ import java.util.List;
 
 public class DetonationCatalyst implements SpecBoostManager.SpecBoost<DetonationCatalyst> {
 
-    private float volatileBrewCooldownReductionSeconds;
-    private int volatileBrewExtraDurationTicks;
-
     @Override
     public void init() {
-        this.volatileBrewCooldownReductionSeconds = getValue("volatileBrewCooldownReductionSeconds", float.class);
-        this.volatileBrewExtraDurationTicks = getValue("volatileBrewExtraDurationTicks", int.class);
     }
 
     @Override
@@ -24,7 +19,7 @@ public class DetonationCatalyst implements SpecBoostManager.SpecBoost<Detonation
 
     @Override
     public List<Object> getVariables() {
-        return List.of(volatileBrewCooldownReductionSeconds, volatileBrewExtraDurationTicks);
+        return List.of();
     }
 
     @Override
@@ -42,8 +37,6 @@ public class DetonationCatalyst implements SpecBoostManager.SpecBoost<Detonation
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getAbilitiesMatching(VolatileBrew.class).forEach(volatileBrew -> {
-                volatileBrew.getCooldown().addAdditiveModifier("Spec Boost", -volatileBrewCooldownReductionSeconds);
-                volatileBrew.setTickDuration(volatileBrew.getTickDuration() + volatileBrewExtraDurationTicks);
                 volatileBrew.setBothStatesActive(true);
             });
         }
