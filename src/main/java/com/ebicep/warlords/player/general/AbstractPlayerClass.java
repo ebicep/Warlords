@@ -10,6 +10,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.util.bukkit.packets.PacketUtils;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -160,7 +161,12 @@ public abstract class AbstractPlayerClass {
             if (pre.isCancelled()) {
                 return;
             }
-            boolean shouldApplyCooldown = ability.onActivate(wp);
+            boolean shouldApplyCooldown = true;
+            try {
+                shouldApplyCooldown = ability.onActivate(wp);
+            } catch (Exception e) {
+                ChatUtils.MessageType.GAME.sendErrorMessage(e);
+            }
             if (shouldApplyCooldown) {
                 WarlordsAbilityActivateEvent.Post post = new WarlordsAbilityActivateEvent.Post(wp, player, ability, slot);
                 Bukkit.getPluginManager().callEvent(post);
