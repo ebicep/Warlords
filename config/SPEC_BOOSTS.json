@@ -687,9 +687,7 @@
       "detonationCatalyst": {
         "difficulty": 1,
         "name": "BOGO Bomb",
-        "description": "Reduce the cooldown of {{aqua:Volatile Brew}} by {{ticks}} and increase the duration by {{ticks}}. Both effects of {{aqua:Volatile Brew}} activate when it explodes.",
-        "volatileBrewCooldownReductionSeconds": 4,
-        "volatileBrewExtraDurationTicks": 80
+        "description": "Both effects of {{aqua:Volatile Brew}} activate when it explodes."
       },
       "drainingMiasma": {
         "difficulty": 2,
