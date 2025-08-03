@@ -1136,7 +1136,7 @@
       },
       "portal": {
         "name": "Portal",
-        "cooldown": 16,
+        "cooldown": 24,
         "energyCost": 40,
         "recastDelayTicks": 100
       },
