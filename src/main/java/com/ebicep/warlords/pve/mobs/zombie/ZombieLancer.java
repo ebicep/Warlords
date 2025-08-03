@@ -13,7 +13,7 @@ public class ZombieLancer extends AbstractMob implements BasicMob {
                 spawnLocation,
                 "Zombie Lancer",
                 2800,
-                0.38f,
+                0.3f,
                 0,
                 200,
                 300

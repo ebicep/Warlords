@@ -20,9 +20,9 @@ public class ZombieLament extends AbstractMob implements IntermediateMob {
     public ZombieLament(Location spawnLocation) {
         super(
                 spawnLocation,
-                "Zombie Lament",
+                "Lament",
                 3500,
-                0.38f,
+                0.3f,
                 10,
                 300,
                 500

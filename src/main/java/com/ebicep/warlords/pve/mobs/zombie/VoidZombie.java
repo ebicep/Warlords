@@ -25,7 +25,7 @@ public class VoidZombie extends AbstractMob implements AdvancedMob {
     public VoidZombie(Location spawnLocation) {
         super(
                 spawnLocation,
-                "Zombie Singularity",
+                "Singularity",
                 11000,
                 0.1f,
                 0,

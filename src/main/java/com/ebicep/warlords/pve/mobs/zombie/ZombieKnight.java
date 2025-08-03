@@ -21,7 +21,7 @@ public class ZombieKnight extends AbstractMob implements AdvancedMob {
     public ZombieKnight(Location spawnLocation) {
         super(
                 spawnLocation,
-                "Zombie Knight",
+                "Void Knight",
                 7000,
                 0.3f,
                 10,

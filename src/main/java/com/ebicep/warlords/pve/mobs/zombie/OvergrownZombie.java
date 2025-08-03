@@ -11,9 +11,9 @@ public class OvergrownZombie extends AbstractMob implements EliteMob {
     public OvergrownZombie(Location spawnLocation) {
         super(
                 spawnLocation,
-                "Overgrown Zombie",
+                "Overgrown",
                 12000,
-                0.42f,
+                0.36f,
                 0,
                 700,
                 900

@@ -22,7 +22,7 @@ public class NightmareZombie extends AbstractMob implements ChampionMob {
     public NightmareZombie(Location spawnLocation) {
         super(
                 spawnLocation,
-                "Nightmare Zombie",
+                "Nightmare",
                 1600,
                 0.6f,
                 0,
