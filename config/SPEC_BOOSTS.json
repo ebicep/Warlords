@@ -453,6 +453,7 @@
         "name": "Triple Tap",
         "description": "Increase the number of guaranteed hits of {{aqua:Windfury Weapon}} by {{blue}}. Upon cast, {{aqua:Windfury Weapon}} cleanses all slowness effects, grants {{speed;%}} slowness and knockback resistance and {{speed;%}} speed for {{ticks}}.",
         "windfuryExtraGuaranteedHits": 2,
+        "slowKbResistancePercent": 50,
         "speedIncreasePercent": 40,
         "speedDurationTicks": 40
       },
