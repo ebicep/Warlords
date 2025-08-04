@@ -128,6 +128,7 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
         new GameRunnable(wp.getGame()) {
 
             final Location playerLoc = wp.getLocation();
+            final Location targetLoc = heartTarget.getLocation();
 
             int timer = 0;
 
@@ -152,7 +153,6 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
                     this.cancel();
                 }
                 double target = timer / 8D;
-                Location targetLoc = heartTarget.getLocation();
                 Location newLocation = new Location(playerLoc.getWorld(),
                         MathUtils.lerp(playerLoc.getX(), targetLoc.getX(), target),
                         MathUtils.lerp(playerLoc.getY(), targetLoc.getY(), target),
