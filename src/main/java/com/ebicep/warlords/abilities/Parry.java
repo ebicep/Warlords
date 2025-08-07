@@ -89,7 +89,7 @@ public class Parry extends AbstractAbility implements AbilityStats<Parry, Parry.
                         if (event.getCause().isEmpty()) {
                             return;
                         }
-                        if (event.getFlags().contains(InstanceFlags.DOT)) {
+                        if (event.getFlags().contains(InstanceFlags.DOT) || event.getFlags().contains(InstanceFlags.PIERCE)) {
                             return;
                         }
                         Utils.playGlobalSound(wp.getLocation(), Sound.ITEM_SHIELD_BLOCK, 2, .7f);
