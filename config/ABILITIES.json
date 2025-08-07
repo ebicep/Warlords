@@ -760,7 +760,7 @@
         "energyCost": 20,
         "radius": 15,
         "flagDistance": 7.5,
-        "vindDuration": 6,
+        "vindDuration": 3,
         "damageValues": {
           "heartOfHeartsDamage": {
             "min": 1635,
