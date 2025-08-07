@@ -759,7 +759,7 @@
         "cooldown": 12,
         "energyCost": 20,
         "radius": 15,
-        "flagRadius": 7.5,
+        "flagDistance": 7.5,
         "vindDuration": 6,
         "damageValues": {
           "heartOfHeartsDamage": {

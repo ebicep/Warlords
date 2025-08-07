@@ -39,7 +39,7 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
     private final DamageValues damageValues = new DamageValues();
     private final HealingValues healingValues = new HealingValues();
     private FloatModifiable radius = new FloatModifiable(15);
-    private float flagRadius;
+    private float flagDistance;
     private int vindDuration = 6;
     private boolean targetEnemies = false;
 
@@ -51,7 +51,7 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
     public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.radius = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), float.class));
-        this.flagRadius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("flagRadius"), float.class);
+        this.flagDistance = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("flagDistance"), float.class);
         this.vindDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("vindDuration"), int.class);
     }
 
@@ -60,7 +60,6 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
         float radius = getHitBoxRadius().getCalculatedValue();
         float verticalRadius = getHitBoxRadius().getCalculatedValue();
         if (wp.hasFlag()) {
-            radius = flagRadius;
             verticalRadius = 2;
         } else {
             wp.setFlagPickCooldown(2);
@@ -101,21 +100,23 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
 
     @Override
     public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Throw a chain towards an ally, grappling the Vindicator towards them. You and the targeted ally gain ")
+        description = AbilityDescriptionBuilder.create("Throw a chain towards an ally, grappling yourself towards them. You and the targeted ally gain ")
                                                .text("VIND", NamedTextColor.DARK_GREEN)
                                                .text(" for ")
                                                .durationSeconds(vindDuration)
-                                               .text(" and ")
+                                               .text(" and heal ")
                                                .heal(healingValues.heartToHeartHealing)
                                                .text(" health.")
                                                .maxRange(radius)
                                                .emptyLine()
-                                               .text("Heart to Heart has reduced range when holding a flag.")
+                                               .text("Heart to Heart has reduced vertical range and travel distance when holding a flag.")
                                                .build();
     }
 
     private void activateAbility(WarlordsEntity wp, WarlordsEntity heartTarget) {
+        float maxDistance = getHitBoxRadius().getCalculatedValue();
         if (wp.hasFlag()) {
+            maxDistance = getFlagDistance();
             stats.timesUsedWithFlag++;
         }
         Utils.playGlobalSound(wp.getLocation(), "rogue.hearttoheart.activation", 2, 1);
@@ -125,10 +126,24 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
             Vindicate.giveVindicateCooldown(wp, heartTarget, HeartToHeart.class, null, vindDuration * 20);
         }
         List<WarlordsEntity> playersHit = new ArrayList<>();
+
+        final Location playerLoc = wp.getLocation();
+        final Location heartTargetLoc = heartTarget.getLocation();
+        double ratio = 1;
+        if (playerLoc.distance(heartTargetLoc) > maxDistance) {
+            ratio = maxDistance / playerLoc.distance(heartTargetLoc);
+        }
+        final Location targetLoc = new Location(
+                playerLoc.getWorld(),
+                MathUtils.lerp(playerLoc.getX(), heartTargetLoc.getX(), ratio),
+                MathUtils.lerp(playerLoc.getY(), heartTargetLoc.getY(), ratio),
+                MathUtils.lerp(playerLoc.getZ(), heartTargetLoc.getZ(), ratio),
+                heartTargetLoc.getYaw(),
+                heartTargetLoc.getPitch()
+        );
+
         new GameRunnable(wp.getGame()) {
 
-            final Location playerLoc = wp.getLocation();
-            final Location targetLoc = heartTarget.getLocation();
 
             int timer = 0;
 
@@ -212,12 +227,12 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
         return radius;
     }
 
-    public float getFlagRadius() {
-        return flagRadius;
+    public float getFlagDistance() {
+        return flagDistance;
     }
 
-    public void setFlagRadius(float flagRadius) {
-        this.flagRadius = flagRadius;
+    public void setFlagDistance(float flagDistance) {
+        this.flagDistance = flagDistance;
     }
 
     public void setTargetEnemies(boolean targetEnemies) {
