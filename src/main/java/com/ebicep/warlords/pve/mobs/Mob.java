@@ -1,6 +1,8 @@
 package com.ebicep.warlords.pve.mobs;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.game.option.raid.bosses.Physira;
+import com.ebicep.warlords.game.option.raid.bosses.PhysiraCrystal;
 import com.ebicep.warlords.game.option.towerdefense.mobs.*;
 import com.ebicep.warlords.game.option.towerdefense.towers.*;
 import com.ebicep.warlords.game.option.whackamole.moles.MoleArmorStand;
@@ -448,8 +450,18 @@ public enum Mob {
             Weapons.VOID_EDGE.getItem()
     )
     ),
+    PHYSIRA(EntityType.WITHER_SKELETON, Physira.class, Physira::new, Physira::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.POSEIDON),
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 20, 20, 20),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 20, 20, 20),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 20, 20, 20),
+            Weapons.VOID_EDGE.getItem()
+    )
+    ),
     MAGMATIC_OOZE(EntityType.MAGMA_CUBE, MagmaticOoze.class, MagmaticOoze::new, MagmaticOoze::new, null),
     ENAVURIS(EntityType.ENDERMAN, Enavuris.class, Enavuris::new, Enavuris::new, null),
+
+
 
 
     // Boss minions
@@ -549,6 +561,7 @@ public enum Mob {
             null
     )
     ),
+    PHYSIRA_CRYSTAL(EntityType.BLAZE, PhysiraCrystal.class, PhysiraCrystal::new, PhysiraCrystal::new, null),
     ARACHNO_VENERATUS(EntityType.SPIDER, ArachnoVeneratus.class, ArachnoVeneratus::new, ArachnoVeneratus::new, null),
     CURSED_PSION(EntityType.WITHER_SKELETON, CursedPsion.class, CursedPsion::new, CursedPsion::new, null),
     ENAVURITE(EntityType.ENDERMITE, Enavurite.class, Enavurite::new, Enavurite::new, null),
@@ -992,7 +1005,7 @@ public enum Mob {
     };
     public static final Mob[] BOSSES = {
             BOLTARO, GHOULCALLER, NARMER, MITHRA, ZENITH,
-            CHESSKING, ILLUMINA, TORMENT, VOID, MAGMATIC_OOZE
+            CHESSKING, ILLUMINA, TORMENT, VOID, MAGMATIC_OOZE, PHYSIRA
     };
     public static final Mob[] EVENT_BOSSES = {
             EVENT_BOLTARO, EVENT_NARMER, EVENT_MITHRA, EVENT_ILLUSION_CORE, EVENT_EXILED_CORE, EVENT_CALAMITY_CORE, EVENT_ILLUMINA,

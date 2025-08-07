@@ -35,9 +35,40 @@ public class PhysiraCrystal extends AbstractMob implements BossMinionMob {
         this.spec = spec;
     }
 
+    public PhysiraCrystal(Location spawnLocation) {
+        super(
+                spawnLocation,
+                "Pylon",
+                1000,
+                0,
+                0,
+                0,
+                0
+        );
+    }
+
+    public PhysiraCrystal(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            float damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(spawnLocation,
+                name,
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage
+        );
+    }
+
     @Override
     public Mob getMobRegistry() {
-        return null;
+        return Mob.PHYSIRA_CRYSTAL;
     }
 
     @Override

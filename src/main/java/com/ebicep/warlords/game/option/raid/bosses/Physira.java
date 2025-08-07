@@ -54,7 +54,8 @@ public class Physira extends AbstractMob implements BossMob {
     private BossAbilityPhase phaseThree;
 
     public Physira(Location spawnLocation) {
-        super(spawnLocation,
+        super(
+                spawnLocation,
                 "Physira",
                 10000,
                 0,
@@ -69,7 +70,7 @@ public class Physira extends AbstractMob implements BossMob {
             String name,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
+            float damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage
     ) {
@@ -85,7 +86,7 @@ public class Physira extends AbstractMob implements BossMob {
 
     @Override
     public Mob getMobRegistry() {
-        return null;
+        return Mob.PHYSIRA;
     }
 
     @Override
@@ -227,7 +228,7 @@ public class Physira extends AbstractMob implements BossMob {
                                     we.getTeam(),
                                     we.getLocation().clone().add(0, 0.25, 0),
                                     8,
-                                    new CircumferenceEffect(Particle.FIREWORK, Particle.FIREWORK).particlesPerCircumference(1),
+                                    new CircumferenceEffect(Particle.FIREWORK, Particle.FIREWORK).particlesPerCircumference(0.5),
                                     new DoubleLineEffect(Particle.EFFECT)
                             ).playEffects();
                             if (ticksLeft % 2 == 0) {
