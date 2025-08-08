@@ -242,7 +242,7 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
 
         private Value.RangedValueCritable spikeDamage = new Value.RangedValueCritable(404, 562, 15, 175);
 
-        private Value.RangedValue earthenRuptureDamage = new Value.RangedValue(548, 695);
+        private Value.RangedValue earthenRuptureDamage = new Value.RangedValueCritable(548, 695, 15, 150);
 
         private List<Value> values = List.of(spikeDamage, earthenRuptureDamage);
 

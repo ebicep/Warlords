@@ -66,7 +66,7 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
                 """
                         +45% Crit multiplier
                         
-                        Judgement Strike will now hit twice in one use, the second strike is counted as an additional strike for a guarantee crit"
+                        Judgement Strike will now hit twice in one use, the second strike is counted as an additional strike for a guaranteed crit.
                         """,
                 50000,
                 () -> {

@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsApplyBurnEffectEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -14,13 +15,12 @@ import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.pyromancer.FireballBranch;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Particle;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -157,16 +157,19 @@ public class Fireball extends AbstractProjectile<Fireball, Fireball.FireballStat
         });
     }
 
-    private void applyIgniteEffect(@Nonnull WarlordsEntity hit, WarlordsEntity shooter) {
-        if (hit.getCooldownManager().hasCooldownFromName("Ignite")) {
-            return;
-        }
-        hit.getCooldownManager().addCooldown(new RegularCooldown<>("Ignite", "IGN", Fireball.class, new Fireball(), shooter, CooldownTypes.LOW_LEVEL_DEBUFF, cooldownManager -> {
-            PlayerFilter.entitiesAround(hit, 3, 3, 3).aliveTeammatesOf(hit).forEach(warlordsEntity -> {
-                warlordsEntity.addInstance(InstanceBuilder.damage().cause("Ignite").source(shooter).value(damageValues.igniteDamage).flags(InstanceFlags.TRUE_DAMAGE));
-            });
-        }, 20
-        ));
+    private void applyIgniteEffect(WarlordsEntity giver, WarlordsEntity hit) {
+        new GameRunnable(giver.getGame()) {
+
+            @Override
+            public void run() {
+                for (WarlordsEntity igniteTarget : PlayerFilter
+                        .entitiesAround(hit, 3, 3, 3)
+                        .aliveEnemiesOf(giver)
+                ) {
+                    igniteTarget.addInstance(InstanceBuilder.damage().ability(Fireball.this).source(giver).value(damageValues.igniteDamage));
+                }
+            }
+        }.runTaskLater(20);
     }
 
     @Override

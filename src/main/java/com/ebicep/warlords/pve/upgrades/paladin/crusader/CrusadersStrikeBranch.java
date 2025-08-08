@@ -13,7 +13,6 @@ public class CrusadersStrikeBranch extends AbstractUpgradeBranch<CrusadersStrike
         Value.RangedValueCritable damage = ability.getDamageValues().getStrikeDamage();
         damage.min().addMultiplicativeModifierAdd("PvE", .3f);
         damage.max().addMultiplicativeModifierAdd("PvE", .3f);
-        ability.setEnergyGiven(ability.getEnergyGiven() - 5);
     }
 
     public CrusadersStrikeBranch(AbilityTree abilityTree, CrusadersStrike ability) {

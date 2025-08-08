@@ -8,6 +8,11 @@ import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
 
 public class SoothingElixirBranch extends AbstractUpgradeBranch<SoothingElixir> {
 
+    @Override
+    public void runOnce() {
+        ability.setMaxCharges(2);
+    }
+
     public SoothingElixirBranch(AbilityTree abilityTree, SoothingElixir ability) {
         super(abilityTree, ability);
 

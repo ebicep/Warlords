@@ -41,7 +41,7 @@ public class TimeWarpBranchPyromancer extends AbstractUpgradeBranch<TimeWarpPyro
                 "Accursed Leap",
                 "Time Warp - Master Upgrade",
                 """
-                        After warping back, enemies within 8 blocks will combust dealing 5% of their max hp as damage.
+                        After warping back, enemies within 12 blocks will combust dealing 7.5% of their max hp as damage.
                         The cooldown of Time Warp is reduced by .75s for each enemy killed.
                         """,
                 50000,

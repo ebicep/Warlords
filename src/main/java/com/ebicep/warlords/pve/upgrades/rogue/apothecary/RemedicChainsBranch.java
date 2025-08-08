@@ -14,7 +14,7 @@ public class RemedicChainsBranch extends AbstractUpgradeBranch<RemedicChains> {
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgradeHealing(ability.getHealValues().getChainHealing(), 7.5f)
+                .addUpgradeHealing(ability.getHealValues().getChainHealing(), 12.5f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder

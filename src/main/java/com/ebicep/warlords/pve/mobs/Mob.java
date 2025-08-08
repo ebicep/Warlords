@@ -165,7 +165,7 @@ public enum Mob {
     )
     ),
     ZOMBIE_SWORDSMAN(EntityType.ZOMBIE, ZombieSwordsman.class, ZombieSwordsman::new, ZombieSwordsman::new, new Utils.SimpleEntityEquipment(
-            new ItemStack(Material.WHITE_CARPET),
+            new ItemStack(Material.RESIN_CLUMP),
             new ItemStack(Material.CHAINMAIL_CHESTPLATE),
             new ItemStack(Material.CHAINMAIL_LEGGINGS),
             new ItemStack(Material.CHAINMAIL_BOOTS),
@@ -258,7 +258,7 @@ public enum Mob {
     )
     ),
     SKELETAL_ENTROPY(EntityType.SKELETON, SkeletalEntropy.class, SkeletalEntropy::new, SkeletalEntropy::new, new Utils.SimpleEntityEquipment(
-            new ItemStack(Material.PINK_CARPET),
+            new ItemStack(Material.GRAY_CANDLE),
             new ItemStack(Material.DIAMOND_CHESTPLATE),
             new ItemStack(Material.DIAMOND_LEGGINGS),
             new ItemStack(Material.DIAMOND_BOOTS),
@@ -451,11 +451,11 @@ public enum Mob {
     )
     ),
     PHYSIRA(EntityType.WITHER_SKELETON, Physira.class, Physira::new, Physira::new, new Utils.SimpleEntityEquipment(
-            SkullUtils.getSkullFrom(SkullID.POSEIDON),
-            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 20, 20, 20),
-            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 20, 20, 20),
-            Utils.applyColorTo(Material.LEATHER_BOOTS, 20, 20, 20),
-            Weapons.VOID_EDGE.getItem()
+            SkullUtils.getSkullFrom(SkullID.SEEK_DOORS),
+            new ItemStack(Material.NETHERITE_CHESTPLATE),
+            new ItemStack(Material.NETHERITE_LEGGINGS),
+            new ItemStack(Material.NETHERITE_BOOTS),
+            Weapons.SOUL_REAVER.getItem()
     )
     ),
     MAGMATIC_OOZE(EntityType.MAGMA_CUBE, MagmaticOoze.class, MagmaticOoze::new, MagmaticOoze::new, null),

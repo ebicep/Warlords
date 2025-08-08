@@ -67,7 +67,7 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
                     wp.getEntity().teleport(data.warpLocation);
                     if (pveMasterUpgrade2) {
                         float cooldownReduction = 0;
-                        for (WarlordsEntity enemy : PlayerFilter.entitiesAround(wp, 8, 8, 8).aliveEnemiesOf(wp).toList()) {
+                        for (WarlordsEntity enemy : PlayerFilter.entitiesAround(wp, 12, 12, 12).aliveEnemiesOf(wp).toList()) {
                             float healthDamage = enemy.getMaxBaseHealth() * .075f;
                             if (enemy instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof BossLike) {
                                 healthDamage = DamageCheck.clamp(healthDamage);
@@ -85,6 +85,9 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
                             }
                         }
                         subtractCurrentCooldown(cooldownReduction);
+                    }
+                    if (pveMasterUpgrade) {
+                        giveDamageBoost(wp, startingBlocksTravelled);
                     }
                 },
                 cooldownManager -> {
@@ -157,6 +160,30 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new TimeWarpBranchPyromancer(abilityTree, this);
+    }
+
+    private void giveDamageBoost(WarlordsEntity we, int startingBlocksTravelled) {
+        RegularCooldown<TimeWarpPyromancer> damageBoost = new RegularCooldown<>(
+                name,
+                "WARP DMG",
+                TimeWarpPyromancer.class,
+                null,
+                we,
+                CooldownTypes.BUFF,
+                cooldownManager -> {
+
+                },
+                160
+        ) {
+            @Override
+            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                if (pveMasterUpgrade) {
+                    return currentDamageValue * convertToMultiplicationDecimal(we.getBlocksTravelled() - startingBlocksTravelled);
+                }
+                return currentDamageValue;
+            }
+        };
+        we.getCooldownManager().addCooldown(damageBoost);
     }
 
     @Override
