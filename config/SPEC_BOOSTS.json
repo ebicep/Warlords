@@ -642,12 +642,10 @@
         "heartToHeartFlagRangeIncrease": 2
       },
       "righteousRampage": {
-        "difficulty": 3,
+        "difficulty": 4,
         "name": "Righteous Rampage",
-        "description": "Replace {{aqua:Heart to Heart}} with {{aqua:Bull Rush}}. Lose {{damageReduction;%}} damage reduction. {{aqua:Soul Shackle}} damages all enemies within a {{blocks}} radius for {{damage;%}} damage. {{aqua:Vindicate}} can be recasted to perform a huge leap, which upon landing will damage all enemies within {{blocks}} for {{damage}} damage, silence them for {{ticks}}, and deal massive knockback.",
-        "damageReductionDecrease": 8,
-        "soulShackleAoEDamagePercent": 40,
-        "soulShackleAoERadius": 4,
+        "description": "Replace {{aqua:Heart to Heart}} with {{aqua:Bull Rush}}. Lose {{damageReduction;%}} damage reduction. {{aqua:Vindicate}} can be recasted to perform a huge leap, which upon landing will damage all enemies within {{blocks}} for {{damage}} damage, silence them for {{ticks}}, and deal massive knockback.",
+        "damageReductionDecrease": 10,
         "vindicateLeapRadius": 6,
         "vindicateLeapDamage": {
           "min": 498,
@@ -658,7 +656,7 @@
         "knockbackY": 0.25,
         "leapMagnitude": 1.5,
         "leapY": 0.7,
-        "leapMagnitudeFlag": 1,
+        "leapMagnitudeFlag": 0.75,
         "leapYFlag": 0.35
       },
       "swiftJustice": {
