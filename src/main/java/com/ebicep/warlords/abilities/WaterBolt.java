@@ -224,6 +224,14 @@ public class WaterBolt extends AbstractProjectile<WaterBolt, WaterBolt.WaterBolt
         return healingValues;
     }
 
+    public int getMaxFullDistance() {
+        return maxFullDistance;
+    }
+
+    public void setMaxFullDistance(int maxFullDistance) {
+        this.maxFullDistance = maxFullDistance;
+    }
+
     @Override
     public WaterBoltStats getAbilityStats() {
         return stats;

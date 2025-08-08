@@ -721,6 +721,7 @@
         "energyCost": 20,
         "tickDuration": 200,
         "radius": 8,
+        "castRadius": 15,
         "damageValues": {
           "rainStrikeDamage": {
             "min": 224,

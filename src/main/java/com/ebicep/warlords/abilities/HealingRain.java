@@ -41,6 +41,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
     private final DamageValues damageValues = new DamageValues();
     private final HealingValues healingValues = new HealingValues();
     private int tickDuration = 200;
+    private int castRadius;
 
     private FloatModifiable radius = new FloatModifiable(8);
 
@@ -57,13 +58,14 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
         super.init(builder);
         this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
         this.radius = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), float.class));
+        this.castRadius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("castRadius"), int.class);
     }
 
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         float radius = this.radius.getCalculatedValue();
         List<WarlordsEntity> targets = PlayerFilter
-                .entitiesAround(wp, radius, radius, radius)
+                .entitiesAround(wp, castRadius, castRadius, castRadius)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .requireLineOfSightIntervene(wp, false)
                 .lookingAtFirst(wp)
@@ -209,7 +211,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
                     if (wp.isAlive()) {
                         Location wpLocation = wp.getLocation();
                         List<WarlordsEntity> newTargets = PlayerFilter
-                                .entitiesAround(wp, radius, radius, radius)
+                                .entitiesAround(wp, castRadius, castRadius, castRadius)
                                 .aliveTeammatesOfExcludingSelf(wp)
                                 .requireLineOfSightIntervene(wp, false)
                                 .lookingAtFirst(wp)
