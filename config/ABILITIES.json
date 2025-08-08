@@ -837,7 +837,7 @@
         "name": "Ice Barrier",
         "cooldown": 47,
         "energyCost": 0,
-        "tickDuration": 120,
+        "tickDuration": 140,
         "damageReductionPercent": 50,
         "slownessOnMeleeHit": 20,
         "slowDuration": 2
