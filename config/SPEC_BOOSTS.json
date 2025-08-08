@@ -143,7 +143,7 @@
       "divinePurification": {
         "difficulty": 1,
         "name": "Divine Purification",
-        "description": "{{aqua:Water Breath}} cleanses debuffs and grants those healed immunity to true debuffs for {{ticks}}, and reduce its cooldown by {{ticks;%}} and the energy cost by {{energy;%}}. {{aqua:Arcane Shield}} costs {{energy}} energy.",
+        "description": "{{aqua:Water Breath}} grants those healed immunity to true debuffs for {{ticks}}, and reduce its cooldown by {{ticks;%}} and the energy cost by {{energy;%}}. {{aqua:Arcane Shield}} costs {{energy}} energy.",
         "waterBreathImmunityDurationTicks": 20,
         "waterBreathCooldownReductionPercent": 15,
         "waterBreathEnergyCostReductionPercent": 50,
@@ -160,7 +160,7 @@
       "downpour": {
         "difficulty": 2,
         "name": "Downpour",
-        "description": "Increase the speed of {{aqua:Water Bolt}} by {{speed;%}} and remove the optimal range. Increase the knockback of {{aqua:Water Breath}}. Increase the number of charges of {{aqua:Healing Rain}} to {{blue}} and the healing by {{heal;%}}, reduce the cooldown by {{ticks;%}}, the duration by {{ticks;%}}, and the radius by {{blocks}}.",
+        "description": "Increase the speed of {{aqua:Water Bolt}} by {{speed;%}} and remove the optimal range. Increase the knockback of {{aqua:Water Breath}}. Increase the number of charges of {{aqua:Healing Rain}} to {{blue}} and the healing by {{heal;%}}, but reduce the cooldown by {{ticks;%}}, the duration by {{ticks;%}}, and the radius by {{blocks}}.",
         "waterBoltSpeedIncreasePercent": 100,
         "waterBreathKnockbackIncrease": 0.15,
         "healingRainMaxCharges": 3,

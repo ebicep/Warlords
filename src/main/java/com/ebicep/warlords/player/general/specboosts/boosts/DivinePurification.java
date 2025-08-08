@@ -79,7 +79,6 @@ public class DivinePurification implements SpecBoostManager.SpecBoost<DivinePuri
                 return;
             }
             WarlordsEntity target = event.getWarlordsEntity();
-            target.getCooldownManager().removeDebuffCooldowns();
             target.getCooldownManager().addCooldown(new RegularCooldown<>(
                     getStringName(),
                     "PURI",
