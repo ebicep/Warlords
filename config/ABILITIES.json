@@ -116,8 +116,8 @@
         "energyCost": 20,
         "damageValues": {
           "bullRushDamage": {
-            "min": 530,
-            "max": 705
+            "min": 483,
+            "max": 652
           }
         },
         "healingValues": {
