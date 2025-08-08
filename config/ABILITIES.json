@@ -571,8 +571,8 @@
         "hitTeammates": false,
         "damageValues": {
           "boltDamage": {
-            "min": 249,
-            "max": 325,
+            "min": 226,
+            "max": 305,
             "critChance": 20,
             "critMultiplier": 175
           },
