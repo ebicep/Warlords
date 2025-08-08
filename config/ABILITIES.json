@@ -549,8 +549,8 @@
         "hitTeammates": false,
         "damageValues": {
           "freezingBreathDamage": {
-            "min": 414,
-            "max": 555,
+            "min": 392,
+            "max": 529,
             "critChance": 20,
             "critMultiplier": 175
           }
