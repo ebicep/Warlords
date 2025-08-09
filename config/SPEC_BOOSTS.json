@@ -143,7 +143,7 @@
       "divinePurification": {
         "difficulty": 1,
         "name": "Divine Purification",
-        "description": "{{aqua:Water Breath}} cleanses debuffs and grants those healed immunity to true debuffs for {{ticks}}, and reduce its cooldown by {{ticks;%}} and the energy cost by {{energy;%}}. {{aqua:Arcane Shield}} costs {{energy}} energy.",
+        "description": "{{aqua:Water Breath}} now cleanses strong debuffs and grants those healed immunity to all debuffs for {{ticks}}, and reduce its cooldown by {{ticks;%}} and the energy cost by {{energy;%}}. {{aqua:Arcane Shield}} costs {{energy}} energy.",
         "waterBreathImmunityDurationTicks": 20,
         "waterBreathCooldownReductionPercent": 15,
         "waterBreathEnergyCostReductionPercent": 50,
@@ -156,6 +156,18 @@
         "maxEnergyIncrease": 100,
         "healingRainDurationDecreaseTicks": 40,
         "healingRainHealIncreasePercent": 40
+      },
+      "downpour": {
+        "difficulty": 2,
+        "name": "Downpour",
+        "description": "Increase the speed of {{aqua:Water Bolt}} by {{speed;%}} and remove the optimal range. Increase the knockback of {{aqua:Water Breath}}. Increase the number of charges of {{aqua:Healing Rain}} to {{blue}} and the healing by {{heal;%}}, but reduce the cooldown by {{ticks;%}}, the duration by {{ticks;%}}, and the radius by {{blocks}}.",
+        "waterBoltSpeedIncreasePercent": 100,
+        "waterBreathKnockbackIncrease": 0.15,
+        "healingRainMaxCharges": 3,
+        "healingRainHealingIncreasePercent": 20,
+        "healingRainCooldownReductionPercent": 60,
+        "healingRainDurationDecreasePercent": 60,
+        "healingRainRadiusDecreaseBlocks": 4
       },
       "triage": {
         "difficulty": 2,
@@ -630,23 +642,21 @@
         "heartToHeartFlagRangeIncrease": 2
       },
       "righteousRampage": {
-        "difficulty": 3,
+        "difficulty": 4,
         "name": "Righteous Rampage",
-        "description": "Replace {{aqua:Heart to Heart}} with {{aqua:Bull Rush}}. Lose {{damageReduction;%}} damage reduction. {{aqua:Soul Shackle}} damages all enemies within a {{blocks}} radius for {{damage;%}} damage. {{aqua:Vindicate}} can be recasted to perform a huge leap, which upon landing will damage all enemies within {{blocks}} for {{damage}} damage, silence them for {{ticks}}, and deal massive knockback.",
-        "damageReductionDecrease": 8,
-        "soulShackleAoEDamagePercent": 40,
-        "soulShackleAoERadius": 4,
+        "description": "Replace {{aqua:Heart to Heart}} with {{aqua:Bull Rush}}. Lose {{damageReduction;%}} damage reduction. {{aqua:Vindicate}} can be recasted to perform a huge leap, which upon landing will damage all enemies within {{blocks}} for {{damage}} damage, silence them for {{ticks}}, and deal massive knockback.",
+        "damageReductionDecrease": 10,
         "vindicateLeapRadius": 6,
         "vindicateLeapDamage": {
-          "min": 498,
-          "max": 657
+          "min": 483,
+          "max": 652
         },
         "vindicateSilenceTicks": 30,
         "knockbackMagnitude": 1.5,
         "knockbackY": 0.25,
         "leapMagnitude": 1.5,
         "leapY": 0.7,
-        "leapMagnitudeFlag": 1,
+        "leapMagnitudeFlag": 0.75,
         "leapYFlag": 0.35
       },
       "swiftJustice": {

@@ -26,7 +26,7 @@
       "cryomancer": {
         "className": "Mage",
         "name": "Cryomancer",
-        "maxHealth": 6100,
+        "maxHealth": 6300,
         "maxEnergy": 305,
         "energyPerSec": 20,
         "energyPerHit": 14,

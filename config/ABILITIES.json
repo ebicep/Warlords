@@ -116,8 +116,8 @@
         "energyCost": 20,
         "damageValues": {
           "bullRushDamage": {
-            "min": 530,
-            "max": 705
+            "min": 483,
+            "max": 652
           }
         },
         "healingValues": {
@@ -549,8 +549,8 @@
         "hitTeammates": false,
         "damageValues": {
           "freezingBreathDamage": {
-            "min": 414,
-            "max": 555,
+            "min": 392,
+            "max": 529,
             "critChance": 20,
             "critMultiplier": 175
           }
@@ -571,8 +571,8 @@
         "hitTeammates": false,
         "damageValues": {
           "boltDamage": {
-            "min": 249,
-            "max": 325,
+            "min": 226,
+            "max": 305,
             "critChance": 20,
             "critMultiplier": 175
           },
@@ -721,6 +721,7 @@
         "energyCost": 20,
         "tickDuration": 200,
         "radius": 8,
+        "castRadius": 15,
         "damageValues": {
           "rainStrikeDamage": {
             "min": 224,
@@ -759,8 +760,8 @@
         "cooldown": 12,
         "energyCost": 20,
         "radius": 15,
-        "flagRadius": 7.5,
-        "vindDuration": 6,
+        "flagDistance": 7.5,
+        "vindDuration": 3,
         "damageValues": {
           "heartOfHeartsDamage": {
             "min": 1635,
@@ -836,7 +837,7 @@
         "name": "Ice Barrier",
         "cooldown": 47,
         "energyCost": 0,
-        "tickDuration": 120,
+        "tickDuration": 140,
         "damageReductionPercent": 50,
         "slownessOnMeleeHit": 20,
         "slowDuration": 2

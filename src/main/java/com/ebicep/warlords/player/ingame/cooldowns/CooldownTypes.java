@@ -13,16 +13,16 @@ public enum CooldownTypes {
             return NamedTextColor.RED;
         }
     },
-    HIGH_LEVEL_DEBUFF("TRUE DEBUFF") {
+    HIGH_LEVEL_DEBUFF("STRONG DEBUFF") {
         @Override
         public TextColor getTextColor() {
-            return TRUE_DEBUFF_COLOR;
+            return HIGH_LEVEL_DEBUFF_COLOR;
         }
     },
     TRUE_DEBUFF("TRUE DEBUFF") {
         @Override
         public TextColor getTextColor() {
-            return HIGH_LEVEL_DEBUFF_COLOR;
+            return TRUE_DEBUFF_COLOR;
         }
     },
     ABILITY("ABILITY"),

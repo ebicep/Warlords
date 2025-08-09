@@ -89,6 +89,7 @@ public class Portal extends AbstractAbility implements PurpleAbilityIcon, Abilit
                     Utils.playGlobalSound(wp.getLocation(), "mage.timewarp.teleport", 1, 1);
                     Location loc = wp.getLocation();
                     wp.getEntity().teleport(data.warpLocation);
+                    Utils.playGlobalSound(wp.getLocation(), "mage.timewarp.teleport", 1, 1);
                     stats.distanceTeleported += (float) loc.distance(data.warpLocation);
                     wp.getCooldownManager().removeCooldown(portalCooldown);
                 },
