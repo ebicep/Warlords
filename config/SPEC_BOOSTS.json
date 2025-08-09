@@ -648,8 +648,8 @@
         "damageReductionDecrease": 10,
         "vindicateLeapRadius": 6,
         "vindicateLeapDamage": {
-          "min": 498,
-          "max": 657
+          "min": 483,
+          "max": 652
         },
         "vindicateSilenceTicks": 30,
         "knockbackMagnitude": 1.5,
