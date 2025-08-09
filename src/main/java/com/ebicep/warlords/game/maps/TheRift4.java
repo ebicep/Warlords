@@ -18,6 +18,7 @@ import com.ebicep.warlords.game.option.win.MercyWinOption;
 import com.ebicep.warlords.game.option.win.WinAfterTimeoutOption;
 import com.ebicep.warlords.game.option.win.WinByPointsOption;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
+import org.bukkit.Material;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -71,11 +72,11 @@ public class TheRift4 extends GameMap {
         options.add(new GateOption(loc, -92, 43, 29, -96, 49, 29));
         options.add(new GateOption(loc, -92, 50, 33, -96, 53, 33));
 
-        options.add(new GateOption(loc, 79, 45, 25, 79, 49, 29));
-        options.add(new GateOption(loc, 76, 51, 3, 76, 54, -3));
-        options.add(new GateOption(loc, 82, 53, 44, 82, 58, 41));
-        options.add(new GateOption(loc, 92, 43, -29, 96, 49, -29));
-        options.add(new GateOption(loc, 92, 50, -33, 96, 53, -33));
+        options.add(new GateOption(loc.addXYZ(79, 45, 25), loc.addXYZ(79, 49, 29), Material.PALE_OAK_FENCE));
+        options.add(new GateOption(loc.addXYZ(76, 51, 3), loc.addXYZ(76, 54, 3), Material.PALE_OAK_FENCE));
+        options.add(new GateOption(loc.addXYZ(82, 53, 44), loc.addXYZ(82, 58, 41), Material.PALE_OAK_FENCE));
+        options.add(new GateOption(loc.addXYZ(92, 43, -29), loc.addXYZ(96, 49, -29), Material.PALE_OAK_FENCE));
+        options.add(new GateOption(loc.addXYZ(92, 50, -33), loc.addXYZ(96, 53, -33), Material.PALE_OAK_FENCE));
 
         options.add(new WinByPointsOption());
         options.add(new MercyWinOption());
