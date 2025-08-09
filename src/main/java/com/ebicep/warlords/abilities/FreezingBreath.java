@@ -151,7 +151,7 @@ public class FreezingBreath extends AbstractProjectile<FreezingBreath, FreezingB
             public void onDestroy(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile) {
                 ball.forEach(Entity::remove);
                 LocationBuilder impactLocation = new LocationBuilder(projectile.getCurrentLocation()).backward(1.5f);
-                Utils.spawnFallingBlocks(impactLocation, 1, 15, Material.ICE, Material.BLUE_ICE, Material.PACKED_ICE, Material.SNOW_BLOCK, Material.PODZOL);
+                Utils.spawnFallingBlocks(impactLocation, 1, 12, Material.ICE, Material.BLUE_ICE, Material.PACKED_ICE, Material.SNOW_BLOCK, Material.PODZOL);
                 EffectUtils.displayParticle(Particle.CLOUD, impactLocation, 15, 0.5, 0.5, 0.5, .5);
             }
         });

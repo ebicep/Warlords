@@ -279,17 +279,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
                     speed,
                     gravity,
                     this.speed,
-                    (newLoc, integer) -> wp.getLocation().getWorld().spawnParticle(
-                            Particle.FLAME,
-                            newLoc.clone().add(0, -1, 0),
-                            6,
-                            0.3F,
-                            0.3F,
-                            0.3F,
-                            0.1F,
-                            null,
-                            true
-                    ),
+                    (newLoc, integer) -> EffectUtils.displayParticle(Particle.FLAME, newLoc.clone().add(0, -1, 0), 6, 0.3F, 0.3F, 0.3F, 0.1F),
                     newLoc -> PlayerFilter
                             .entitiesAroundRectangle(newLoc, 1, 2, 1)
                             .aliveEnemiesOf(wp)

@@ -169,18 +169,7 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
                     }
                     if (ticksElapsed % 10 == 0) {
                         Utils.playGlobalSound(shackleTarget.getLocation(), Sound.BLOCK_SAND_BREAK, 2, 2);
-                        Location playerLoc = shackleTarget.getLocation();
-                        Location particleLoc = playerLoc.clone();
-                        for (int i = 0; i < 10; i++) {
-                            for (int j = 0; j < 10; j++) {
-                                double angle = j / 10D * Math.PI * 2;
-                                double width = 1.075;
-                                particleLoc.setX(playerLoc.getX() + Math.sin(angle) * width);
-                                particleLoc.setY(playerLoc.getY() + i / 5D);
-                                particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
-                                particleLoc.getWorld().spawnParticle(Particle.DUST, particleLoc, 1, 0, 0, 0, 0, new Particle.DustOptions(Color.fromRGB(25, 25, 25), 1), true);
-                            }
-                        }
+                        EffectUtils.playCylinderAnimation(shackleTarget.getLocation(), 1, 25, 25, 25, 6, 7, .3);
                     }
                 })
         ) {

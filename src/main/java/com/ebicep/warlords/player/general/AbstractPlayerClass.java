@@ -156,6 +156,7 @@ public abstract class AbstractPlayerClass {
                 ability.setCurrentCooldown(0);
             }
         } else if (ability.anyCharges() && player.getLevel() >= ability.getEnergyCostValue() * wp.getEnergyModifier() && abilityCD) {
+            resetAbilityCD(wp);
             WarlordsAbilityActivateEvent.Pre pre = new WarlordsAbilityActivateEvent.Pre(wp, player, ability, slot);
             Bukkit.getPluginManager().callEvent(pre);
             if (pre.isCancelled()) {
@@ -182,7 +183,6 @@ public abstract class AbstractPlayerClass {
                 WarlordsAbilityActivateEvent.PostApply postApply = new WarlordsAbilityActivateEvent.PostApply(wp, player, ability, slot);
                 Bukkit.getPluginManager().callEvent(postApply);
             }
-            resetAbilityCD(wp);
         } else {
             player.playSound(player.getLocation(), "notreadyalert", 1, 1);
         }

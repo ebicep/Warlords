@@ -81,8 +81,8 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
         List<EffectPlayer<? super CircleEffect>> effects = new ArrayList<>();
         effects.add(new CircumferenceEffect(Particle.HAPPY_VILLAGER, Particle.DUST));
         if (!pveMasterUpgrade2) {
-            effects.add(new AreaEffect(5, Particle.CLOUD).particlesPerSurface(0.025));
-            effects.add(new AreaEffect(5, Particle.DRIPPING_WATER).particlesPerSurface(0.025));
+            effects.add(new AreaEffect(5, Particle.CLOUD).particlesPerSurface(0.02));
+            effects.add(new AreaEffect(5, Particle.DRIPPING_WATER).particlesPerSurface(0.02));
         }
         CircleEffect circleEffect = new CircleEffect(wp.getGame(), wp.getTeam(), location, radius, effects.toArray(new EffectPlayer[0]));
         AtomicReference<List<Pair<WarlordsEntity, CircleEffect>>> personalCloud = new AtomicReference<>(new ArrayList<>()); // pveMasterUpgrade2
@@ -135,12 +135,14 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
                             effect.playEffects();
                         });
                     }
-                    if ((inPve && ticksElapsed % 8 == 0) || (!inPve && ticksElapsed % 4 == 0)) {
+                    if (ticksElapsed % 5 == 0) {
                         if (data.target.isAlive()) {
                             Location center = circleEffect.getCenter();
                             Location newLocation = data.target.getLocation();
                             center.set(newLocation.getX(), newLocation.getY() + .01, newLocation.getZ());
                         }
+                    }
+                    if ((inPve && ticksElapsed % 10 == 0) || (!inPve && ticksElapsed % 7 == 0)) {
                         circleEffect.playEffects();
                     }
                     if (ticksElapsed % 10 == 0) {

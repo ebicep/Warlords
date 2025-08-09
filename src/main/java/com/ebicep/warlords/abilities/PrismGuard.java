@@ -77,7 +77,7 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
 
             @Override
             public void run() {
-                playSphereAnimation(wp.getLocation(), bubbleRadius + 1, 65, 185, 205);
+//                playSphereAnimation(wp.getLocation(), bubbleRadius + 1, 65, 185, 205);
                 Utils.playGlobalSound(wp.getLocation(), "warrior.intervene.impact", 2, 0.2f);
             }
         }.runTaskLater(3);
@@ -105,7 +105,7 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                             wp.getTeam(),
                             wp.getLocation(),
                             bubbleRadius,
-                            new CircumferenceEffect(Particle.EFFECT).particlesPerCircumference(2)
+                            new CircumferenceEffect(Particle.EFFECT).particlesPerCircumference(1.5)
                     ).playEffects();
                     float baseHealing = healingValues.bubbleBaseHealing.getValue();
                     float additionalHealing = data.hitsTaken * healingValues.bubbleMissingHealthHealing.getMultiplicativePercent();
@@ -151,7 +151,7 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                     if (ticksElapsed < 5) {
                         return;
                     }
-                    if (ticksElapsed % 8 == 0) {
+                    if (ticksElapsed % 10 == 0) {
                         playSphereAnimation(wp.getLocation(), bubbleRadius, 120, 120, 220);
                         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_CREEPER_DEATH, 2, 2);
                     }

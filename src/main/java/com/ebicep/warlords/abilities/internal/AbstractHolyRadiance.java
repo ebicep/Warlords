@@ -3,6 +3,7 @@ package com.ebicep.warlords.abilities.internal;
 import com.ebicep.warlords.abilities.HammerOfLight;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityTargetEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -87,28 +88,8 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
 
         Location particleLoc = wp.getLocation().add(0, 1.2, 0);
 
-        particleLoc.getWorld().spawnParticle(
-                Particle.HAPPY_VILLAGER,
-                particleLoc,
-                2,
-                1,
-                1,
-                1,
-                0.1,
-                null,
-                true
-        );
-        particleLoc.getWorld().spawnParticle(
-                Particle.EFFECT,
-                particleLoc,
-                12,
-                1,
-                1,
-                1,
-                0.06,
-                null,
-                true
-        );
+        EffectUtils.displayParticle(Particle.HAPPY_VILLAGER, particleLoc, 2, 1, 1, 1, 0.1);
+        EffectUtils.displayParticle(Particle.EFFECT, particleLoc, 12, 1, 1, 1, 0.06);
 
         return true;
     }
@@ -240,17 +221,7 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
             armorStandLocation.add(targetLocation);
             this.armorStand.teleport(armorStandLocation);
 
-            armorStandLocation.getWorld().spawnParticle(
-                    Particle.EFFECT,
-                    armorStandLocation.add(0, 1.75, 0),
-                    2,
-                    0.01,
-                    0,
-                    0.01,
-                    0.1,
-                    null,
-                    true
-            );
+            EffectUtils.displayParticle(Particle.EFFECT, armorStandLocation.add(0, 1.75, 0), 2, 0.01, 0, 0.01, 0.1);
         }
 
         @Override

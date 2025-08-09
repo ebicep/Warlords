@@ -3,6 +3,7 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.game.WarlordsFlagUpdatedEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Team;
@@ -89,7 +90,7 @@ public class Triage extends AbstractAbility implements PurpleAbilityIcon, Listen
         }
         if (teleport) {
             Utils.playGlobalSound(wp.getLocation(), "mage.timewarp.activation", 3, 1);
-            wp.getLocation().getWorld().spawnParticle(Particle.WITCH, wp.getLocation(), 4, 0.1, 0, 0.1, 0.001, null, true);
+            EffectUtils.displayParticle(Particle.WITCH, wp.getLocation(), 4, 0.1, 0, 0.1, 0.001);
             wp.subtractEnergy(name, energyCost, false);
             wp.getEntity().teleport(lastFlagCarrier.getLocation());
             stats.distanceTeleported += distance;

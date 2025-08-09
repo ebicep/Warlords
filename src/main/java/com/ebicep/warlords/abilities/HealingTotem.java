@@ -68,7 +68,7 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                 wp.getTeam(),
                 totemStand.getLocation().add(0, 1, 0),
                 rad,
-                new CircumferenceEffect(Particle.HAPPY_VILLAGER, Particle.DUST).particlesPerCircumference(.75)
+                new CircumferenceEffect(Particle.HAPPY_VILLAGER, Particle.DUST).particlesPerCircumference(.7)
         );
         RegularCooldown<HealingTotemData> healingTotemCooldown = new RegularCooldown<>(
                 name,
@@ -119,15 +119,16 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                         Location totemLoc = totemStand.getLocation();
                         totemLoc.add(0, 2, 0);
                         Location particleLoc = totemLoc.clone();
-                        for (int i = 0; i < 1; i++) {
-                            for (int j = 0; j < 12; j++) {
-                                double angle = j / 10D * Math.PI * 2;
-                                particleLoc.setX(totemLoc.getX() + Math.sin(angle) * rad);
-                                particleLoc.setY(totemLoc.getY() + i / 2D);
-                                particleLoc.setZ(totemLoc.getZ() + Math.cos(angle) * rad);
-                                particleLoc.getWorld().spawnParticle(Particle.FIREWORK, particleLoc, 1, 0, 0, 0, 0, null, true);
-                            }
-                        }
+                        EffectUtils.playCylinderAnimation(totemLoc, rad, 25, 25, 25, 12, 1, .5);
+//                        for (int i = 0; i < 1; i++) {
+//                            for (int j = 0; j < 12; j++) {
+//                                double angle = j / 10D * Math.PI * 2;
+//                                particleLoc.setX(totemLoc.getX() + Math.sin(angle) * rad);
+//                                particleLoc.setY(totemLoc.getY() + i / 2D);
+//                                particleLoc.setZ(totemLoc.getZ() + Math.cos(angle) * rad);
+//                                EffectUtils.displayParticle(Particle.FIREWORK, particleLoc, 1, 0, 0, 0, 0);
+//                            }
+//                        }
                         int secondsElapsed = ticksElapsed / healingPeriod;
                         float healMultiplier = (float) Math.pow((1 - healingIncrement / 100f), secondsElapsed);
                         List<WarlordsEntity> toHeal = PlayerFilter.entitiesAround(totemStand, rad, rad, rad).aliveTeammatesOf(wp).toList();
