@@ -113,22 +113,10 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                     }
                     if (ticksElapsed % healingPeriod == 0) {
                         Utils.playGlobalSound(totemStand.getLocation(), "shaman.earthlivingweapon.impact", 2, pveMasterUpgrade ? 0.4f : 0.9f);
-                        totemStand.getLocation()
-                                  .getWorld()
-                                  .spawnParticle(Particle.HAPPY_VILLAGER, totemStand.getLocation().clone().add(0, 1.6, 0), 5, 0.4, 0.2, 0.4, 0.05, null, true);
+                        EffectUtils.displayParticle(Particle.HAPPY_VILLAGER, totemStand.getLocation().clone().add(0, 1.6, 0), 3, 0.4, 0.2, 0.4, 0.05);
                         Location totemLoc = totemStand.getLocation();
                         totemLoc.add(0, 2, 0);
-                        Location particleLoc = totemLoc.clone();
-                        EffectUtils.playCylinderAnimation(totemLoc, rad, 25, 25, 25, 12, 1, .5);
-//                        for (int i = 0; i < 1; i++) {
-//                            for (int j = 0; j < 12; j++) {
-//                                double angle = j / 10D * Math.PI * 2;
-//                                particleLoc.setX(totemLoc.getX() + Math.sin(angle) * rad);
-//                                particleLoc.setY(totemLoc.getY() + i / 2D);
-//                                particleLoc.setZ(totemLoc.getZ() + Math.cos(angle) * rad);
-//                                EffectUtils.displayParticle(Particle.FIREWORK, particleLoc, 1, 0, 0, 0, 0);
-//                            }
-//                        }
+                        EffectUtils.playCylinderAnimation(totemLoc, rad, Particle.FIREWORK, 10, 1, 1);
                         int secondsElapsed = ticksElapsed / healingPeriod;
                         float healMultiplier = (float) Math.pow((1 - healingIncrement / 100f), secondsElapsed);
                         List<WarlordsEntity> toHeal = PlayerFilter.entitiesAround(totemStand, rad, rad, rad).aliveTeammatesOf(wp).toList();

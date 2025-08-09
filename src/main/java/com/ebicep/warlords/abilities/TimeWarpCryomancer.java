@@ -157,7 +157,16 @@ public class TimeWarpCryomancer extends AbstractTimeWarp {
                             for (int e = 0; e < points; e++) {
                                 double angle = 2 * Math.PI * e / points;
                                 Location point = warpLocation.clone().add(radius * Math.sin(angle), 2.1, radius * Math.cos(angle));
-                                point.getWorld().spawnParticle(Particle.DUST, point, 1, 0, 0, 0, 0, new Particle.DustOptions(Color.fromRGB(0, 100, 100), 2), true);
+                                EffectUtils.displayParticle(
+                                        Particle.DUST,
+                                        point,
+                                        1,
+                                        0,
+                                        0,
+                                        0,
+                                        0,
+                                        new Particle.DustOptions(Color.fromRGB(0, 100, 100), 2)
+                                );
                             }
                         }
                     }

@@ -95,20 +95,15 @@ public class AdvancedWarriorBerserker extends AbstractBerserkZombie implements A
                 false,
                 (cooldown, ticksElapsed) -> {
                     if (ticksElapsed % 3 == 0) {
-                        warlordsNPC.getWorld().spawnParticle(
+                        EffectUtils.displayParticle(
                                 Particle.DUST,
-                                warlordsNPC.getLocation().add(
-                                        (Math.random() - 0.5) * 1,
-                                        1.2,
-                                        (Math.random() - 0.5) * 1
-                                ),
+                                warlordsNPC.getLocation(),
                                 1,
-                                0,
-                                0,
-                                0,
-                                0,
-                                new Particle.DustOptions(Color.fromRGB(255, 0, 0), 1),
-                                true
+                                (Math.random() - 0.5) * 1,
+                                1.2,
+                                (Math.random() - 0.5) * 1,
+                                1,
+                                new Particle.DustOptions(Color.fromRGB(255, 0, 0), 1)
                         );
                     }
                 }
@@ -125,4 +120,5 @@ public class AdvancedWarriorBerserker extends AbstractBerserkZombie implements A
             }
         });
     }
+
 }

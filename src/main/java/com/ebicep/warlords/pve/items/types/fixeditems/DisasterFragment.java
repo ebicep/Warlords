@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.items.types.fixeditems;
 import com.ebicep.warlords.abilities.SoulShackle;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.abilities.internal.WoundingCooldown;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
@@ -22,7 +23,9 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.util.Ticks;
-import org.bukkit.*;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
@@ -220,28 +223,7 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                                         Utils.playGlobalSound(victim.getLocation(), Sound.BLOCK_SAND_BREAK, 2, 2);
 
                                         Location playerLoc = victim.getLocation();
-                                        Location particleLoc = playerLoc.clone();
-                                        for (int i = 0; i < 10; i++) {
-                                            for (int j = 0; j < 10; j++) {
-                                                double angle = j / 10D * Math.PI * 2;
-                                                double width = 1.075;
-                                                particleLoc.setX(playerLoc.getX() + Math.sin(angle) * width);
-                                                particleLoc.setY(playerLoc.getY() + i / 5D);
-                                                particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
-
-                                                particleLoc.getWorld().spawnParticle(
-                                                        Particle.DUST,
-                                                        particleLoc,
-                                                        1,
-                                                        0,
-                                                        0,
-                                                        0,
-                                                        0,
-                                                        new Particle.DustOptions(Color.fromRGB(25, 25, 25), 1),
-                                                        true
-                                                );
-                                            }
-                                        }
+                                        EffectUtils.playCylinderAnimation(playerLoc, 1, 25, 25, 25, 6, 7, .3);
                                     }
                                 })
                         );

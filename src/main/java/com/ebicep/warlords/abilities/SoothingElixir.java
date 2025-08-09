@@ -38,11 +38,11 @@ import java.util.List;
 public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, Duration, HitBox, Damages<SoothingElixir.DamageValues>, Heals<SoothingElixir.HealingValues>, AbilityStats<SoothingElixir, SoothingElixir.SoothingElixirStats> {
 
     public static final ItemStack ITEM_STACK = new ItemStack(Material.CORNFLOWER);
-    private double speed = 0.220;
-    private double gravity = -0.008;
     private final SoothingElixirStats stats = new SoothingElixirStats();
     private final DamageValues damageValues = new DamageValues();
     private final HealingValues healingValues = new HealingValues();
+    private double speed = 0.220;
+    private double gravity = -0.008;
     private FloatModifiable puddleRadius = new FloatModifiable(5);
     private int puddleTickDuration = 80;
     private int leechStacksApplied;
@@ -57,23 +57,6 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
         this.puddleRadius = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("puddleRadius"), float.class));
         this.puddleTickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("puddleTickDuration"), int.class);
         this.leechStacksApplied = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("leechStacksApplied"), int.class);
-    }
-
-
-    public double getGravity() {
-        return gravity;
-    }
-
-    public void setGravity(double gravity) {
-        this.gravity = gravity;
-    }
-
-    public double getSpeed() {
-        return speed;
-    }
-
-    public void setSpeed(double speed) {
-        this.speed = speed;
     }
 
     @Override
@@ -96,17 +79,15 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
                     for (float i = 0; i < 6; i++) {
                         double angle = Math.toRadians(i * 90) + integer * 0.3;
                         double width = 0.3D;
-                        newLoc.getWorld()
-                              .spawnParticle(Particle.HAPPY_VILLAGER,
-                                      center.translateVector(newLoc.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width),
-                                      2,
-                                      0,
-                                      0,
-                                      0,
-                                      0,
-                                      null,
-                                      true
-                              );
+                        EffectUtils.displayParticle(
+                                Particle.HAPPY_VILLAGER,
+                                center.translateVector(newLoc.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width),
+                                2,
+                                0,
+                                0,
+                                0,
+                                0
+                        );
                     }
                 },
                 newLoc -> PlayerFilter.entitiesAroundRectangle(newLoc, .5, .5, .5).isAlive().excluding(wp).findFirstOrNull(),
@@ -193,10 +174,6 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
         return true;
     }
 
-    public int getPuddleTickDuration() {
-        return puddleTickDuration;
-    }
-
     @Override
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder.create("Throw a short range elixir bottle. The bottle will shatter upon impact, healing nearby allies for ")
@@ -213,14 +190,6 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
                                                .durationTicks(puddleTickDuration)
                                                .text(".")
                                                .build();
-    }
-
-    public int getLeechStacksApplied() {
-        return leechStacksApplied;
-    }
-
-    public void setLeechStacksApplied(int leechStacksApplied) {
-        this.leechStacksApplied = leechStacksApplied;
     }
 
     @Override
@@ -256,6 +225,34 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
     @Override
     public SoothingElixirStats getAbilityStats() {
         return stats;
+    }
+
+    public double getGravity() {
+        return gravity;
+    }
+
+    public void setGravity(double gravity) {
+        this.gravity = gravity;
+    }
+
+    public double getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(double speed) {
+        this.speed = speed;
+    }
+
+    public int getPuddleTickDuration() {
+        return puddleTickDuration;
+    }
+
+    public int getLeechStacksApplied() {
+        return leechStacksApplied;
+    }
+
+    public void setLeechStacksApplied(int leechStacksApplied) {
+        this.leechStacksApplied = leechStacksApplied;
     }
 
     public static class DamageValues implements Value.ValueHolder {

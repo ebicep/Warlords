@@ -174,23 +174,29 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
             for (int c = 0; c < 20; c++) {
                 double angle = c / 20D * Math.PI * 2;
                 double width = 1.2;
-                loc.getWorld()
-                   .spawnParticle(Particle.FLAME, matrix.translateVector(wp.getWorld(), distance, Math.sin(angle) * width, Math.cos(angle) * width), 1, 0, 0, 0, 0, null, true);
+                EffectUtils.displayParticle(
+                        Particle.FLAME,
+                        matrix.translateVector(wp.getWorld(), distance, Math.sin(angle) * width, Math.cos(angle) * width),
+                        1,
+                        0,
+                        0,
+                        0,
+                        0
+                );
             }
             for (int c = 0; c < 10; c++) {
                 double width = 0.6;
                 double angle = c / 10D * Math.PI * 2;
-                loc.getWorld()
-                   .spawnParticle(Particle.DUST,
-                           matrix.translateVector(wp.getWorld(), distance, Math.sin(angle) * width, Math.cos(angle) * width),
-                           1,
-                           0,
-                           0,
-                           0,
-                           0,
-                           new Particle.DustOptions(Color.fromRGB(255, 0, 0), 1),
-                           true
-                   );
+                EffectUtils.displayParticle(
+                        Particle.DUST,
+                        matrix.translateVector(wp.getWorld(), distance, Math.sin(angle) * width, Math.cos(angle) * width),
+                        1,
+                        0,
+                        0,
+                        0,
+                        0,
+                        new Particle.DustOptions(Color.fromRGB(255, 0, 0), 1)
+                );
             }
         }
         return true;

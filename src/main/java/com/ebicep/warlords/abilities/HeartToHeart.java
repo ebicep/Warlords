@@ -114,6 +114,16 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
                                                .build();
     }
 
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new HeartToHeartBranch(abilityTree, this);
+    }
+
+    @Override
+    public FloatModifiable getHitBoxRadius() {
+        return radius;
+    }
+
     private void activateAbility(WarlordsEntity wp, WarlordsEntity heartTarget) {
         if (wp.hasFlag()) {
             stats.timesUsedWithFlag++;
@@ -168,17 +178,15 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
                 for (float i = 0; i < 6; i++) {
                     double angle = Math.toRadians(i * 90) + timer * 0.6;
                     double width = 1.5D;
-                    playerLoc.getWorld()
-                             .spawnParticle(Particle.WITCH,
-                                     center.translateVector(playerLoc.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width),
-                                     1,
-                                     0,
-                                     0,
-                                     0,
-                                     0,
-                                     null,
-                                     true
-                             );
+                    EffectUtils.displayParticle(
+                            Particle.WITCH,
+                            center.translateVector(playerLoc.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width),
+                            1,
+                            0,
+                            0,
+                            0,
+                            0
+                    );
                 }
                 if (pveMasterUpgrade) {
                     for (WarlordsEntity we : PlayerFilter.entitiesAround(wp, 3, 3, 3).aliveEnemiesOf(wp).excluding(playersHit)) {
@@ -203,28 +211,6 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
     }
 
     @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new HeartToHeartBranch(abilityTree, this);
-    }
-
-    @Override
-    public FloatModifiable getHitBoxRadius() {
-        return radius;
-    }
-
-    public float getFlagRadius() {
-        return flagRadius;
-    }
-
-    public void setFlagRadius(float flagRadius) {
-        this.flagRadius = flagRadius;
-    }
-
-    public void setTargetEnemies(boolean targetEnemies) {
-        this.targetEnemies = targetEnemies;
-    }
-
-    @Override
     public DamageValues getDamageValues() {
         return damageValues;
     }
@@ -237,6 +223,18 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
     @Override
     public HeartToHeartStats getAbilityStats() {
         return stats;
+    }
+
+    public float getFlagRadius() {
+        return flagRadius;
+    }
+
+    public void setFlagRadius(float flagRadius) {
+        this.flagRadius = flagRadius;
+    }
+
+    public void setTargetEnemies(boolean targetEnemies) {
+        this.targetEnemies = targetEnemies;
     }
 
     public static class DamageValues implements Value.ValueHolder {

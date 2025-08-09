@@ -91,14 +91,28 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
             for (int c = 0; c < 30; c++) {
                 double angle = c / 30D * Math.PI * 2;
                 double width = 1.5;
-                wp.getWorld()
-                  .spawnParticle(Particle.ENCHANT, matrix.translateVector(wp.getWorld(), radius, Math.sin(angle) * width, Math.cos(angle) * width), 1, 0, 0.1, 0, 0, null, true);
+                EffectUtils.displayParticle(
+                        Particle.ENCHANT,
+                        matrix.translateVector(wp.getWorld(), radius, Math.sin(angle) * width, Math.cos(angle) * width),
+                        1,
+                        0,
+                        0.1,
+                        0,
+                        0
+                );
             }
             for (int c = 0; c < 15; c++) {
                 double angle = c / 15D * Math.PI * 2;
                 double width = 0.6;
-                wp.getWorld()
-                  .spawnParticle(Particle.EFFECT, matrix.translateVector(wp.getWorld(), radius, Math.sin(angle) * width, Math.cos(angle) * width), 1, 0, 0, 0, 0, null, true);
+                EffectUtils.displayParticle(
+                        Particle.EFFECT,
+                        matrix.translateVector(wp.getWorld(), radius, Math.sin(angle) * width, Math.cos(angle) * width),
+                        1,
+                        0,
+                        0,
+                        0,
+                        0
+                );
             }
         }
         new CircleEffect(wp.getGame(),
@@ -160,16 +174,7 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
                         Location playerLoc = teammate.getLocation();
                         playerLoc.add(0, 2.1, 0);
                         Location particleLoc = playerLoc.clone();
-                        for (int i = 0; i < 1; i++) {
-                            for (int j = 0; j < 10; j++) {
-                                double angle = j / 10D * Math.PI * 2;
-                                double width = 0.5;
-                                particleLoc.setX(playerLoc.getX() + Math.sin(angle) * width);
-                                particleLoc.setY(playerLoc.getY() + i / 5D);
-                                particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
-                                particleLoc.getWorld().spawnParticle(Particle.DUST, particleLoc, 1, 0, 0, 0, 0, new Particle.DustOptions(Color.fromRGB(255, 255, 255), 1), true);
-                            }
-                        }
+                        EffectUtils.playCylinderAnimation(particleLoc, 10, 255, 255, 255, 10, 1, 1);
                     })
             ) {
 
@@ -214,38 +219,38 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
         }
         if (pveMasterUpgrade2) {
             for (WarlordsEntity enemy : PlayerFilter.entitiesAround(wp, radius, radius, radius).aliveEnemiesOf(wp)) {
-                enemy.getCooldownManager().addCooldown(new RegularCooldown<>("Vengeful Army", null, UndyingArmy.class, null, wp, CooldownTypes.ABILITY, cooldownManager -> {
-                    if (enemy.isAlive()) {
-                        float healthDamage = enemy.getMaxHealth() * .10f;
-                        if (enemy instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof BossLike) {
-                            healthDamage = DamageCheck.clamp(healthDamage);
-                        }
-                        float damage = 2000 + healthDamage;
-                        enemy.addInstance(InstanceBuilder.damage().cause("Vengeful Army").source(wp).value(damage));
-                    } else {
-                        new CooldownFilter<>(wp, PersistentCooldown.class).filterCooldownClass(OrbsOfLife.class).forEach(persistentCooldown -> {
-                            OrbsOfLife.spawnOrbs(wp, enemy, "Vengeful Army", persistentCooldown);
-                        });
-                    }
-                }, 10 * 20, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    if (ticksElapsed % 20 != 0) {
-                        return;
-                    }
-                    // Particles
-                    Location playerLoc = enemy.getLocation();
-                    playerLoc.add(0, 2.1, 0);
-                    Location particleLoc = playerLoc.clone();
-                    for (int i = 0; i < 1; i++) {
-                        for (int j = 0; j < 10; j++) {
-                            double angle = j / 10D * Math.PI * 2;
-                            double width = 0.5;
-                            particleLoc.setX(playerLoc.getX() + Math.sin(angle) * width);
-                            particleLoc.setY(playerLoc.getY() + i / 5D);
-                            particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
-                            particleLoc.getWorld().spawnParticle(Particle.DUST, particleLoc, 1, 0, 0, 0, 0, new Particle.DustOptions(Color.fromRGB(113, 13, 12), 1), true);
-                        }
-                    }
-                })
+                enemy.getCooldownManager().addCooldown(new RegularCooldown<>(
+                        "Vengeful Army",
+                        null,
+                        UndyingArmy.class,
+                        null,
+                        wp,
+                        CooldownTypes.ABILITY,
+                        cooldownManager -> {
+                            if (enemy.isAlive()) {
+                                float healthDamage = enemy.getMaxHealth() * .10f;
+                                if (enemy instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof BossLike) {
+                                    healthDamage = DamageCheck.clamp(healthDamage);
+                                }
+                                float damage = 2000 + healthDamage;
+                                enemy.addInstance(InstanceBuilder.damage().cause("Vengeful Army").source(wp).value(damage));
+                            } else {
+                                new CooldownFilter<>(wp, PersistentCooldown.class).filterCooldownClass(OrbsOfLife.class).forEach(persistentCooldown -> {
+                                    OrbsOfLife.spawnOrbs(wp, enemy, "Vengeful Army", persistentCooldown);
+                                });
+                            }
+                        },
+                        10 * 20,
+                        Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                            if (ticksElapsed % 20 != 0) {
+                                return;
+                            }
+                            // Particles
+                            Location playerLoc = enemy.getLocation();
+                            playerLoc.add(0, 2.1, 0);
+                            Location particleLoc = playerLoc.clone();
+                            EffectUtils.playCylinderAnimation(particleLoc, 10, 113, 13, 12, 10, 1, 1);
+                        })
                 ));
             }
         }
