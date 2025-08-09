@@ -256,7 +256,7 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                                 angle += 40;
                                 Vector v = new Vector(x, 2, z);
                                 Location loc = wp.getLocation().clone().add(v);
-                                loc.getWorld().spawnParticle(Particle.EFFECT, loc, 1, 0, 0, 0, 0, null, true);
+                                EffectUtils.displayParticle(Particle.EFFECT, loc, 1, 0, 0, 0, 0);
                             }
                             new CircleEffect(wp.getGame(),
                                     wp.getTeam(),

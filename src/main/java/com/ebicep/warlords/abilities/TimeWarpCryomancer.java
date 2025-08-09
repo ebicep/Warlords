@@ -139,16 +139,16 @@ public class TimeWarpCryomancer extends AbstractTimeWarp {
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 6 == 0) {
                         for (Location location : warpTrail) {
-                            location.getWorld().spawnParticle(Particle.WITCH, location, 1, 0.01, 0, 0.01, 0.001, null, true);
+                            EffectUtils.displayParticle(Particle.WITCH, location, 1, 0.01, 0, 0.01, 0.001);
                         }
                         warpTrail.add(wp.getLocation());
-                        warpLocation.getWorld().spawnParticle(Particle.WITCH, warpLocation, 4, 0.1, 0, 0.1, 0.001, null, true);
+                        EffectUtils.displayParticle(Particle.CLOUD, warpLocation, 1, 0.1, 0, 0.1, 0.001);
                         int points = 6;
                         double radius = 0.5d;
                         for (int e = 0; e < points; e++) {
                             double angle = 2 * Math.PI * e / points;
                             Location point = warpLocation.clone().add(radius * Math.sin(angle), 0.0d, radius * Math.cos(angle));
-                            point.getWorld().spawnParticle(Particle.CLOUD, point, 1, 0.1, 0, 0.1, 0.001, null, true);
+                            EffectUtils.displayParticle(Particle.CLOUD, point, 1, 0.1, 0, 0.1, 0.001);
                         }
                         if (pveMasterUpgrade && cryoPod != null && cryoPod.getWarlordsNPC().isAlive()) {
                             EffectUtils.playCylinderAnimation(warpLocation, .7, Particle.CLOUD, 1);
@@ -157,7 +157,16 @@ public class TimeWarpCryomancer extends AbstractTimeWarp {
                             for (int e = 0; e < points; e++) {
                                 double angle = 2 * Math.PI * e / points;
                                 Location point = warpLocation.clone().add(radius * Math.sin(angle), 2.1, radius * Math.cos(angle));
-                                point.getWorld().spawnParticle(Particle.DUST, point, 1, 0, 0, 0, 0, new Particle.DustOptions(Color.fromRGB(0, 100, 100), 2), true);
+                                EffectUtils.displayParticle(
+                                        Particle.DUST,
+                                        point,
+                                        1,
+                                        0,
+                                        0,
+                                        0,
+                                        0,
+                                        new Particle.DustOptions(Color.fromRGB(0, 100, 100), 2)
+                                );
                             }
                         }
                     }

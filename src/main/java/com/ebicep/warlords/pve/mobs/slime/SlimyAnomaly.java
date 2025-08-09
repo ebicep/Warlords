@@ -111,28 +111,8 @@ public class SlimyAnomaly extends AbstractMob implements BasicMob {
                         if (ticksElapsed % 10 == 0) {
                             Location location = enemy.getLocation();
                             location.add(0, 1.5, 0);
-                            location.getWorld().spawnParticle(
-                                    Particle.SMOKE,
-                                    location,
-                                    1,
-                                    0.3F,
-                                    0.3F,
-                                    0.3F,
-                                    0.02F,
-                                    null,
-                                    true
-                            );
-                            location.getWorld().spawnParticle(
-                                    Particle.ITEM_SLIME,
-                                    location,
-                                    1,
-                                    0.3F,
-                                    0.3F,
-                                    0.3F,
-                                    0.5F,
-                                    null,
-                                    true
-                            );
+                            EffectUtils.displayParticle(Particle.SMOKE, location, 1, 0.3F, 0.3F, 0.3F, 0.02F);
+                            EffectUtils.displayParticle(Particle.ITEM_SLIME, location, 1, 0.3F, 0.3F, 0.3F, 0.5F);
 
                         }
 

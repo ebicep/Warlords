@@ -3,6 +3,7 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -62,13 +63,13 @@ public class Portal extends AbstractAbility implements PurpleAbilityIcon, Abilit
                 true,
                 (cooldown, ticksElapsed) -> {
                     if (ticksElapsed % 10 == 0) {
-                        data.warpLocation.getWorld().spawnParticle(Particle.WITCH, data.warpLocation, 4, 0.1, 0, 0.1, 0.001, null, true);
+                        EffectUtils.displayParticle(Particle.WITCH, data.warpLocation, 4, 0.1, 0, 0.1, 0.001);
                         int points = 6;
                         double radius = 0.5d;
                         for (int e = 0; e < points; e++) {
                             double angle = 2 * Math.PI * e / points;
                             Location point = data.warpLocation.clone().add(radius * Math.sin(angle), 0.0d, radius * Math.cos(angle));
-                            point.getWorld().spawnParticle(Particle.CHERRY_LEAVES, point, 2, 0.1, 0.3, 0.1, 0.001, null, true);
+                            EffectUtils.displayParticle(Particle.CHERRY_LEAVES, point, 2, 0.1, 0.3, 0.1, 0.001);
                         }
                     }
                 }

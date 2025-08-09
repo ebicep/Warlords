@@ -102,6 +102,7 @@ public class Utils {
      *
      * @param livingEntity
      * @param maxDistance
+     *
      * @return
      */
     public static Block getTargetBlock(LivingEntity livingEntity, int maxDistance) {
@@ -134,11 +135,6 @@ public class Utils {
         ) : Utils.getTargetBlock(warlordsEntity.getLocation(), maxDistance);
     }
 
-
-    public static Location getTargetLocation(Location location, int maxDistance) {
-        return getTargetBlock(location, maxDistance).getLocation();
-    }
-
     public static Block getTargetBlock(Location location, int maxDistance) {
         if (maxDistance > 120) {
             maxDistance = 120;
@@ -157,6 +153,10 @@ public class Utils {
             }
         }
         return blocks.get(0);
+    }
+
+    public static Location getTargetLocation(Location location, int maxDistance) {
+        return getTargetBlock(location, maxDistance).getLocation();
     }
 
     public static List<Block> getTargetBlockInBetween(Location location, int maxDistance) {
@@ -237,7 +237,9 @@ public class Utils {
      * Collector to pick a random element from a <code>Stream</code>
      *
      * @param <T> The type of the element
+     *
      * @return A collector for picking a random element, or null if the stream is empty
+     *
      * @see Stream#collect(java.util.stream.Collector)
      */
     public static <T> Collector<T, Pair<Integer, T>, T> randomElement() {
@@ -293,20 +295,22 @@ public class Utils {
 
     public static ArmorStand spawnArmorStand(Location location, @Nullable Consumer<ArmorStand> standConsumer) {
         return location.getWorld().spawn(location, ArmorStand.class, false, armorStand -> {
-            armorStand.setVisible(false);
-            armorStand.setGravity(false);
-            armorStand.setBasePlate(false);
-            armorStand.setCanPickupItems(false);
-            armorStand.setArms(false);
-            armorStand.setRemoveWhenFarAway(false);
-            if (standConsumer != null) {
-                standConsumer.accept(armorStand);
-            }
-        });
+                    armorStand.setVisible(false);
+                    armorStand.setGravity(false);
+                    armorStand.setBasePlate(false);
+                    armorStand.setCanPickupItems(false);
+                    armorStand.setArms(false);
+                    armorStand.setRemoveWhenFarAway(false);
+                    if (standConsumer != null) {
+                        standConsumer.accept(armorStand);
+                    }
+                }
+        );
     }
 
     /**
      * @param armor Must always be leather armor.
+     *
      * @return colored leather armor.
      */
     public static ItemStack applyColorTo(@Nonnull Material armor, int red, int green, int blue) {
@@ -440,19 +444,24 @@ public class Utils {
     public static void spawnFallingBlocks(Location impactLocation, double initialCircleRadius, int amount, double vectorMultiply, double vectorY, Material... materials) {
         List<Material> materialList = Arrays.asList(materials);
         ThreadLocalRandom random = ThreadLocalRandom.current();
+        World world = impactLocation.getWorld();
+        Vector targetVector = impactLocation.toVector();
+        double angleStep = 2 * Math.PI / amount;
         double angle = 0;
         for (int i = 0; i < amount; i++) {
-            FallingBlock fallingBlock;
-            Location spawnLoc = impactLocation.clone();
-
             double x = initialCircleRadius * Math.cos(angle);
             double z = initialCircleRadius * Math.sin(angle);
-            angle += 360.0 / amount + (int) (Math.random() * 4 - 2);
-            spawnLoc.add(x, 1, z);
+            angle += angleStep + Math.toRadians(random.nextInt(-2, 3));
+            Location spawnLoc = impactLocation.clone().add(x, 1, z);
+            if (world.getBlockAt(spawnLoc).getType() == Material.AIR) {
+                Material randomMaterial = materialList.get(random.nextInt(materialList.size()));
+                FallingBlock fallingBlock = world.spawnFallingBlock(spawnLoc, randomMaterial.createBlockData());
 
-            if (spawnLoc.getWorld().getBlockAt(spawnLoc).getType() == Material.AIR) {
-                fallingBlock = impactLocation.getWorld().spawnFallingBlock(spawnLoc, (materialList.get(random.nextInt(materialList.size())).createBlockData()));
-                fallingBlock.setVelocity(impactLocation.toVector().subtract(spawnLoc.toVector()).normalize().multiply(vectorMultiply).setY(vectorY));
+                Vector velocity = targetVector.clone()
+                                              .subtract(spawnLoc.toVector())
+                                              .normalize()
+                                              .multiply(vectorMultiply).setY(vectorY);
+                fallingBlock.setVelocity(velocity);
                 fallingBlock.setDropItem(false);
                 GeneralEvents.addEntityUUID(fallingBlock);
             }
@@ -707,5 +716,7 @@ public class Utils {
         public void setDropChance(@NotNull EquipmentSlot equipmentSlot, float v) {
 
         }
+
     }
+
 }

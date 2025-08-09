@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -28,11 +29,15 @@ public abstract class AbstractBeam<T extends AbstractPiercingProjectile<T, R>, R
     protected boolean onActivateInternal(@Nonnull WarlordsEntity shooter) {
         List<Location> locationsToFireShots = getLocationsToFireShots(shooter.getEyeLocation());
         for (Location locationsToFireShot : locationsToFireShots) {
-            Location location = Utils.getTargetLocation(locationsToFireShot, (int) maxDistance.getCalculatedValue()).clone().add(.5, -1, .5).clone();
-            EffectUtils.playChainAnimation(shooter.getLocation(), location, getBeamItem(), 9);
+            int distance = (int) maxDistance.getCalculatedValue();
+            Location location = Utils.getTargetLocation(locationsToFireShot, distance).clone().add(.5, .5, .5).clone();
+            Pair<Float, Float> animationData = getChainAnimationData(distance);
+            EffectUtils.playChainAnimation(shooter.getGame(), shooter.getEyeLocation(), location, getBeamItem(), animationData.getA(), animationData.getB(), 50);
         }
         return super.onActivateInternal(shooter);
     }
+
+    public abstract Pair<Float, Float> getChainAnimationData(int distance);
 
     @Override
     protected int onHit(@Nonnull InternalProjectile projectile, @Nullable WarlordsEntity hit) {

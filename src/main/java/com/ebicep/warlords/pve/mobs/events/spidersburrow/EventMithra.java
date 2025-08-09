@@ -292,17 +292,7 @@ public class EventMithra extends AbstractMob implements BossMob {
                 (cooldown, ticks) -> {
                     if (ticks % 3 == 0) {
                         Location location = warlordsNPC.getLocation();
-                        location.getWorld().spawnParticle(
-                                Particle.ANGRY_VILLAGER,
-                                location,
-                                1,
-                                0,
-                                0,
-                                0,
-                                0.1f,
-                                null,
-                                true
-                        );
+                        EffectUtils.displayParticle(Particle.ANGRY_VILLAGER, location, 1, 0, 0, 0, 0.1f);
                     }
                 }
         ) {

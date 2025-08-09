@@ -488,7 +488,7 @@ public class Warlords extends JavaPlugin {
                                     we.displayCompassActionBar();
                                 }
                             } else {
-                                we.displayActionBar(loopTickCounter % 40 == 0); // force display every 2 seconds since it fades on client after 3, else only update if diff
+                                we.displayActionBar(loopTickCounter % 50 == 0); // force display every 2.5 seconds since it fades on client after 3, else only update if diff
                                 game.spectators()
                                     .map(Bukkit::getPlayer)
                                     .filter(Objects::nonNull)

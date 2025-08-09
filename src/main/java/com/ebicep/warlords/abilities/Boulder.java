@@ -3,6 +3,7 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -67,7 +68,7 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon, Damages<
                 speed,
                 boulderGravity,
                 boulderSpeed,
-                (newLoc, integer) -> wp.getLocation().getWorld().spawnParticle(Particle.CRIT, newLoc.clone().add(0, -1, 0), 6, 0.3F, 0.3F, 0.3F, 0.1F, null, true),
+                (newLoc, integer) -> EffectUtils.displayParticle(Particle.CRIT, newLoc.clone().add(0, -1, 0), 6, 0.3F, 0.3F, 0.3F, 0.1F),
                 newLoc -> PlayerFilter.entitiesAroundRectangle(newLoc, 1, 2, 1).aliveEnemiesOf(wp).findFirstOrNull(),
                 (newLoc, directHit) -> {
                     Utils.playGlobalSound(newLoc, "shaman.boulder.impact", 2, 1);
@@ -97,12 +98,12 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon, Damages<
                     }
                     newLoc.setPitch(-12);
                     Location impactLocation = newLoc.clone().subtract(speed);
-                    Utils.spawnFallingBlocks(impactLocation, 3, 10);
+                    Utils.spawnFallingBlocks(impactLocation, 3, 7);
                     new GameRunnable(wp.getGame()) {
 
                         @Override
                         public void run() {
-                            Utils.spawnFallingBlocks(impactLocation, 3.5, 20);
+                            Utils.spawnFallingBlocks(impactLocation, 3.5, 15);
                         }
                     }.runTaskLater(1);
                     if (pveMasterUpgrade2) {

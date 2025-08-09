@@ -119,16 +119,16 @@ public class TimeWarpAquamancer extends AbstractTimeWarp {
                     }
                     if (ticksElapsed % 6 == 0) {
                         for (Location location : warpTrail) {
-                            location.getWorld().spawnParticle(Particle.WITCH, location, 1, 0.01, 0, 0.01, 0.001, null, true);
+                            EffectUtils.displayParticle(Particle.WITCH, location, 1, 0.01, 0, 0.01, 0.001);
                         }
                         warpTrail.add(wp.getLocation());
-                        warpLocation.getWorld().spawnParticle(Particle.WITCH, warpLocation, 4, 0.1, 0, 0.1, 0.001, null, true);
+                        EffectUtils.displayParticle(Particle.CLOUD, warpLocation, 1, 0.1, 0, 0.1, 0.001);
                         int points = 6;
                         double radius = 0.5d;
                         for (int e = 0; e < points; e++) {
                             double angle = 2 * Math.PI * e / points;
                             Location point = warpLocation.clone().add(radius * Math.sin(angle), 0.0d, radius * Math.cos(angle));
-                            point.getWorld().spawnParticle(Particle.CLOUD, point, 1, 0.1, 0, 0.1, 0.001, null, true);
+                            EffectUtils.displayParticle(Particle.CLOUD, point, 1, 0.1, 0, 0.1, 0.001);
                         }
                     }
                     if (pveMasterUpgrade && baseLocation != null) {
@@ -139,7 +139,7 @@ public class TimeWarpAquamancer extends AbstractTimeWarp {
                             });
                         }
                         if (ticksElapsed % 8 == 0 && ticksLeft >= 40) {
-                            baseLocation.getWorld().spawnParticle(Particle.DRIPPING_WATER, baseLocation.clone().add(0, 4, 0), 5, 1, 0, 1, 0.1, null, true);
+                            EffectUtils.displayParticle(Particle.DRIPPING_WATER, baseLocation.clone().add(0, 4, 0), 5, 1, 0, 1, 0.1);
                         }
                     }
                 })

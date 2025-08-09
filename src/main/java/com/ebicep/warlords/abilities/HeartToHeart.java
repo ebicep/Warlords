@@ -183,17 +183,15 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
                 for (float i = 0; i < 6; i++) {
                     double angle = Math.toRadians(i * 90) + timer * 0.6;
                     double width = 1.5D;
-                    playerLoc.getWorld()
-                             .spawnParticle(Particle.WITCH,
-                                     center.translateVector(playerLoc.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width),
-                                     1,
-                                     0,
-                                     0,
-                                     0,
-                                     0,
-                                     null,
-                                     true
-                             );
+                    EffectUtils.displayParticle(
+                            Particle.WITCH,
+                            center.translateVector(playerLoc.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width),
+                            1,
+                            0,
+                            0,
+                            0,
+                            0
+                    );
                 }
                 if (pveMasterUpgrade) {
                     for (WarlordsEntity we : PlayerFilter.entitiesAround(wp, 3, 3, 3).aliveEnemiesOf(wp).excluding(playersHit)) {

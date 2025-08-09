@@ -11,6 +11,7 @@ import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.luminary.RayOfLightBranch;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
@@ -39,6 +40,12 @@ public class RayOfLight extends AbstractBeam<RayOfLight, RayOfLight.RayOfLightSt
         beamPlayer(shooter, shooter);
         Utils.playGlobalSound(shooter.getLocation(), "arcanist.rayoflightalt.activation", 2, 0.9f);
         return super.onActivateInternal(shooter);
+    }
+
+    @Override
+    public Pair<Float, Float> getChainAnimationData(int distance) {
+        float increment = distance;
+        return new Pair<>(increment * .55f, increment);
     }
 
     @Override

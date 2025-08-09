@@ -10,6 +10,7 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.conjurer.SoulfireBeamBranch;
 import com.ebicep.warlords.util.java.MathUtils;
+import com.ebicep.warlords.util.java.Pair;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -38,6 +39,12 @@ public class SoulfireBeam extends AbstractBeam<SoulfireBeam, SoulfireBeam.Soulfi
     protected boolean onActivateInternal(@Nonnull WarlordsEntity shooter) {
         shooter.playSound(shooter.getLocation(), "mage.firebreath.activation", 2, 0.6f);
         return super.onActivateInternal(shooter);
+    }
+
+    @Override
+    public Pair<Float, Float> getChainAnimationData(int distance) {
+        float increment = distance / 3f;
+        return new Pair<>(increment * .8f, increment);
     }
 
     @Override

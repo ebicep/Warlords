@@ -54,7 +54,7 @@ public abstract class AbstractSeismicWave extends AbstractAbility implements Red
             public void run() {
                 for (List<Location> fallingBlockLocation : fallingBlockLocations) {
                     for (Location location : fallingBlockLocation) {
-                        if (random.nextDouble() < 0.6) {
+                        if (random.nextDouble() < 0.7) {
                             Utils.addFallingBlock(location);
                         }
                     }

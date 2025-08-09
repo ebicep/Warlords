@@ -221,7 +221,7 @@ public class LightningBolt extends AbstractPiercingProjectile<LightningBolt, Lig
 
     public int explode(@Nonnull InternalProjectile projectile, WarlordsEntity wp) {
         Location currentLocation = projectile.getCurrentLocation();
-        currentLocation.getWorld().spawnParticle(Particle.EXPLOSION, currentLocation, 1, 0, 0, 0, 0, null, true);
+        EffectUtils.displayParticle(Particle.EXPLOSION, currentLocation, 1, 0, 0, 0, 0);
         int playersHit = 0;
         float hitbox = this.splash.getCalculatedValue();
         for (WarlordsEntity enemy : PlayerFilter.entitiesAround(currentLocation, hitbox, hitbox, hitbox).aliveEnemiesOf(wp).excluding(projectile.getHit())) {

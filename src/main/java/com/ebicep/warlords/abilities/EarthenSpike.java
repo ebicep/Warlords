@@ -5,6 +5,7 @@ import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.ChasingBlockEffect;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
@@ -130,7 +131,7 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
                                     wave.addSpeedModifier(wp, "Spike Slow", -35, 20);
                                 }
                                 Utils.playGlobalSound(targetLocation, Sound.BLOCK_GRAVEL_BREAK, 2, 0.5f);
-                                targetLocation.getWorld().spawnParticle(Particle.EXPLOSION, targetLocation, 2, 1, 1, 1, 0.01F, null, true);
+                                EffectUtils.displayParticle(Particle.EXPLOSION, targetLocation, 2, 1, 1, 1, 0.01F);
                             }
                         }.runTaskLater(15);
                     }

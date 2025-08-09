@@ -13,7 +13,7 @@ import static com.ebicep.warlords.effects.circle.CircleEffect.RANDOM;
 
 public class DoubleLineEffect extends AbstractEffectPlayer<CircleEffect> {
 
-    private final DoubleUnaryOperator INITIAL_PARTICLES = i -> Math.sqrt(i) * 1.5;
+    private final DoubleUnaryOperator INITIAL_PARTICLES = i -> Math.sqrt(i) * 1;
     @Nonnull
     private TeamBasedEffect effect;
     @Nonnull

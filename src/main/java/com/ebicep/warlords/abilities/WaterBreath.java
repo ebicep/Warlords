@@ -80,7 +80,7 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "mage.waterbreath.activation", 2, 1);
-        wp.getWorld().spawnParticle(Particle.HEART, wp.getLocation().add(0, 0.7, 0), 2, 0.6, 0.6, 0.6, 1, null, true);
+        EffectUtils.displayParticle(Particle.HEART, wp.getLocation().add(0, 0.7, 0), 2, 0.6, 0.6, 0.6, 1);
         Location playerLoc = new LocationBuilder(wp.getLocation()).pitch(0).add(0, 1.7, 0);
         EffectUtils.playSpiralAnimation(
                 wp,

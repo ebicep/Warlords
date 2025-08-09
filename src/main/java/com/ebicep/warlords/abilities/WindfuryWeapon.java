@@ -3,6 +3,7 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
@@ -65,7 +66,7 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
             shreddingFurySpeed.setTicksLeft(0);
         }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
             if (ticksElapsed % 4 == 0) {
-                wp.getWorld().spawnParticle(Particle.CRIT, wp.getLocation().add(0, 1.2, 0), 3, 0.2, 0, 0.2, 0.1, null, true);
+                EffectUtils.displayParticle(Particle.CRIT, wp.getLocation().add(0, 1.2, 0), 3, 0.2, 0, 0.2, 0.1);
             }
         })
         ) {

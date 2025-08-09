@@ -101,6 +101,7 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
 
     protected void activateAbility(@Nonnull WarlordsEntity wp, float damageMultiplier, UUID abilityUUID, boolean second) {
         List<List<Location>> fallingBlockLocations = new ArrayList<>();
+        fallingBlockLocations.add(new ArrayList<>(List.of(wp.getLocation())));
         Set<WarlordsEntity> currentPlayersHit = new HashSet<>();
         Location location = wp.getLocation();
 
@@ -119,7 +120,7 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
             public void run() {
                 for (List<Location> fallingBlockLocation : fallingBlockLocations) {
                     for (Location location : fallingBlockLocation) {
-                        if (random.nextDouble() < 0.6) {
+                        if (random.nextDouble() < 0.7) {
                             Utils.addFallingBlock(location);
                         }
                         // Damage

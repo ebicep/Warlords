@@ -147,10 +147,10 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
                         if (outOfRange) {
                             linked.getCooldownManager().removeCooldownNoForce(cooldown);
                             Utils.playGlobalSound(linked.getLocation(), "rogue.remedicchains.impact", 0.1f, 1.4f);
-                            linked.getWorld().spawnParticle(Particle.HAPPY_VILLAGER, linked.getLocation().add(0, 1, 0), 10, 0.5, 0.5, 0.5, 1, null, true);
+                            EffectUtils.displayParticle(Particle.HAPPY_VILLAGER, linked.getLocation().add(0, 1, 0), 10, 0.5, 0.5, 0.5, 1);
                             stats.numberOfBrokenLinks++;
                         }
-                        EffectUtils.playParticleLinkAnimation(wp.getLocation(), linked.getLocation(), 250, 200, 250, 1);
+                        EffectUtils.playParticleLinkAnimation(wp.getLocation(), linked.getLocation(), 250, 200, 250, 1, 1.25f);
                         if (outOfRange || linked.isDead()) {
                             toRemove.add(linked);
                             if (pveMasterUpgrade) {

@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.mobs.zombie.berserkzombie;
 import com.ebicep.warlords.abilities.Berserk;
 import com.ebicep.warlords.abilities.BloodLust;
 import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -73,17 +74,7 @@ public class AdvancedWarriorBerserker extends AbstractBerserkZombie implements A
                 false,
                 (cooldown, ticksElapsed) -> {
                     if (ticksElapsed % 3 == 0) {
-                        warlordsNPC.getWorld().spawnParticle(
-                                Particle.ANGRY_VILLAGER,
-                                warlordsNPC.getLocation().add(0, 1.75, 0),
-                                1,
-                                0,
-                                0,
-                                0,
-                                0.1,
-                                null,
-                                true
-                        );
+                        EffectUtils.displayParticle(Particle.ANGRY_VILLAGER, warlordsNPC.getLocation().add(0, 1.75, 0), 1, 0, 0, 0, 0.1);
                     }
                 }
         ) {
@@ -104,20 +95,15 @@ public class AdvancedWarriorBerserker extends AbstractBerserkZombie implements A
                 false,
                 (cooldown, ticksElapsed) -> {
                     if (ticksElapsed % 3 == 0) {
-                        warlordsNPC.getWorld().spawnParticle(
+                        EffectUtils.displayParticle(
                                 Particle.DUST,
-                                warlordsNPC.getLocation().add(
-                                        (Math.random() - 0.5) * 1,
-                                        1.2,
-                                        (Math.random() - 0.5) * 1
-                                ),
+                                warlordsNPC.getLocation(),
                                 1,
-                                0,
-                                0,
-                                0,
-                                0,
-                                new Particle.DustOptions(Color.fromRGB(255, 0, 0), 1),
-                                true
+                                (Math.random() - 0.5) * 1,
+                                1.2,
+                                (Math.random() - 0.5) * 1,
+                                1,
+                                new Particle.DustOptions(Color.fromRGB(255, 0, 0), 1)
                         );
                     }
                 }
@@ -134,4 +120,5 @@ public class AdvancedWarriorBerserker extends AbstractBerserkZombie implements A
             }
         });
     }
+
 }
