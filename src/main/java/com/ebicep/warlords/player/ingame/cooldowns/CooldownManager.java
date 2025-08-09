@@ -99,6 +99,23 @@ public class CooldownManager {
         return toRemove.size();
     }
 
+    public int removeStrongDebuffCooldowns() {
+        List<AbstractCooldown<?>> toRemove = new ArrayList<>(abstractCooldowns)
+                .stream()
+                .filter(cooldown -> {
+                    boolean isDebuff = (cooldown.getCooldownType() == CooldownTypes.LOW_LEVEL_DEBUFF || cooldown.getCooldownType() == CooldownTypes.HIGH_LEVEL_DEBUFF);
+                    boolean clearedTrueDebuff = false;
+                    if (cooldown.getCooldownType() == CooldownTypes.TRUE_DEBUFF && cooldown instanceof RegularCooldown<?> regularCooldown) {
+                        regularCooldown.subtractTime(40);
+                        clearedTrueDebuff = !regularCooldown.hasTicksLeft();
+                    }
+                    return isDebuff || clearedTrueDebuff;
+                })
+                .toList();
+        toRemove.forEach(this::removeCooldown);
+        return toRemove.size();
+    }
+
     public WarlordsEntity getWarlordsEntity() {
         return warlordsEntity;
     }
