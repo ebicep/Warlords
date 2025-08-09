@@ -75,10 +75,11 @@ public class DivinePurification implements SpecBoostManager.SpecBoost<DivinePuri
             if (!event.getSource().equals(warlordsEntity)) {
                 return;
             }
-            if (!(event.getAbility() instanceof WaterBreath waterBreath)) {
+            if (!(event.getAbility() instanceof WaterBreath)) {
                 return;
             }
             WarlordsEntity target = event.getWarlordsEntity();
+            target.getCooldownManager().removeStrongDebuffCooldowns();
             target.getCooldownManager().addCooldown(new RegularCooldown<>(
                     getStringName(),
                     "PURI",
