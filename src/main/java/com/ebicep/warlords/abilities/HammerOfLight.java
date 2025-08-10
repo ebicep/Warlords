@@ -221,7 +221,7 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                                                                    .stream()
                                                                    .map(WarlordsDamageHealingFinalEvent.CooldownRecord::getAbstractCooldown)
                                                                    .collect(Collectors.toList());
-                        if (new CooldownFilter<>(cooldowns, RegularCooldown.class).filterCooldownClass(Intervene.class)
+                        if (new CooldownFilter<>(cooldowns, RegularCooldown.class).filterCooldownClass(Intervene.InterveneData.class)
                                                                                   .filter(regularCooldown -> !Objects.equals(regularCooldown.getFrom(), target))
                                                                                   .findAny()
                                                                                   .isPresent()) {

@@ -108,7 +108,7 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
             // Removing all other intervenes
             wp.getCooldownManager().removeCooldown(cd -> cd.getCooldownClass() == InterveneData.class && veneTarget.getCooldownManager().hasCooldown(cd.getCooldownObject()));
             veneTarget.getCooldownManager().removeCooldown(cd -> {
-                if (cd.getCooldownClass() == Intervene.class) {
+                if (cd.getCooldownClass() == InterveneData.class) {
                     cd.getFrom()
                       .sendMessage(WarlordsEntity.RECEIVE_ARROW_RED.append(Component.text(" " + cd.getFrom().getName() + "'s ", NamedTextColor.GRAY))
                                                                    .append(Component.text("Intervene", NamedTextColor.YELLOW))
@@ -191,7 +191,7 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
             Bukkit.getPluginManager().callEvent(new WarlordsAbilityTargetEvent.WarlordsBlueAbilityTargetEvent(wp, name, veneTarget));
         }
         if (inPve) {
-            wp.getCooldownManager().addCooldown(new RegularCooldown<>(name + " Damage", null, Intervene.class, new Intervene(), wp, CooldownTypes.BUFF, cooldownManager -> {
+            wp.getCooldownManager().addCooldown(new RegularCooldown<>(name + " Damage", null, InterveneData.class, null, wp, CooldownTypes.BUFF, cooldownManager -> {
             }, tickDuration
             ) {
 

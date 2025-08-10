@@ -130,7 +130,7 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
                                 .map(WarlordsDamageHealingFinalEvent.CooldownRecord::getAbstractCooldown)
                                 .collect(Collectors.toList());
                         if (new CooldownFilter<>(cooldowns, RegularCooldown.class)
-                                .filterCooldownClass(Intervene.class)
+                                .filterCooldownClass(Intervene.InterveneData.class)
                                 .filter(regularCooldown -> !Objects.equals(regularCooldown.getFrom(), target))
                                 .findAny()
                                 .isPresent()) {
