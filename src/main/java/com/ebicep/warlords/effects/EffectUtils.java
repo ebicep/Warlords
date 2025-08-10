@@ -510,7 +510,6 @@ public class EffectUtils {
                     }
             ));
             start.add(direction);
-            System.out.println(dist + " - " + maxDistance);
         }
 
         new GameRunnable(game) {

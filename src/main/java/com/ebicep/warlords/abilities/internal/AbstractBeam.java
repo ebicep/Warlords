@@ -32,7 +32,7 @@ public abstract class AbstractBeam<T extends AbstractPiercingProjectile<T, R>, R
             int distance = (int) maxDistance.getCalculatedValue();
             Location location = Utils.getTargetLocation(locationsToFireShot, distance).clone().add(.5, .5, .5).clone();
             Pair<Float, Float> animationData = getChainAnimationData(distance);
-            EffectUtils.playChainAnimation(shooter.getGame(), shooter.getEyeLocation(), location, getBeamItem(), animationData.getA(), animationData.getB(), 50);
+            EffectUtils.playChainAnimation(shooter.getGame(), shooter.getEyeLocation(), location, getBeamItem(), animationData.getA(), animationData.getB(), 9);
         }
         return super.onActivateInternal(shooter);
     }
