@@ -18,6 +18,7 @@ import com.ebicep.warlords.pve.mobs.tiers.Mob;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.npc.NPC;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Location;
@@ -171,13 +172,13 @@ public abstract class TowerDefenseTowerMob extends AbstractMob implements Mob {
     }
 
     @Override
-    public int getLevel() {
+    public int getInternalLevel() {
         return 0;
     }
 
     @Override
-    public TextColor getTextColor() {
-        return NamedTextColor.WHITE;
+    public Component getNamePrefix() {
+        return Component.text("", NamedTextColor.WHITE);
     }
 
     public TDTroopType getTroopType() {

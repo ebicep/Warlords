@@ -8,7 +8,8 @@ import com.ebicep.warlords.pve.weapons.weapontypes.CommonWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.EpicWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.RareWeapon;
 import com.ebicep.warlords.util.java.RandomCollection;
-import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 
 import java.util.HashMap;
 
@@ -34,8 +35,8 @@ public interface Mob {
         return new HashMap<>();
     }
 
-    int getLevel();
+    int getInternalLevel();
 
-    TextColor getTextColor();
+    Component getNamePrefix();
 
 }

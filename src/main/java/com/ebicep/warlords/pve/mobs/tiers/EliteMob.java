@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.tiers;
 
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 
@@ -26,14 +27,14 @@ public interface EliteMob extends Mob {
     }
 
     @Override
-    default int getLevel() {
+    default int getInternalLevel() {
         return 4;
     }
 
 
     @Override
-    default TextColor getTextColor() {
-        return NamedTextColor.DARK_GREEN;
+    default Component getNamePrefix() {
+        return Component.text("ELITE", NamedTextColor.DARK_PURPLE);
     }
 
 }

@@ -54,9 +54,9 @@ public class AvengersStrike extends AbstractStrike<AvengersStrike, AvengersStrik
         if (nearPlayer instanceof WarlordsNPC warlordsNPC) {
             if (pveMasterUpgrade) {
                 AbstractMob mob = warlordsNPC.getMob();
-                if (mob.getLevel() <= 3) {
+                if (mob.getInternalLevel() <= 3) {
                     multiplier += 0.4f;
-                } else if (mob.getLevel() >= 4) {
+                } else if (mob.getInternalLevel() >= 4) {
                     healthDamage = nearPlayer.getMaxHealth() * 0.01f;
                 }
             } else if (pveMasterUpgrade2) {
@@ -80,7 +80,7 @@ public class AvengersStrike extends AbstractStrike<AvengersStrike, AvengersStrik
             if (pveMasterUpgrade) {
                 for (WarlordsEntity we : PlayerFilter.entitiesAround(nearPlayer, 4, 4, 4).aliveEnemiesOf(wp).closestFirst(nearPlayer).excluding(nearPlayer).limit(2)) {
                     float damage = finalEvent.getValue() * 0.75f;
-                    if (we instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob().getLevel() >= 4) {
+                    if (we instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob().getInternalLevel() >= 4) {
                         damage = DamageCheck.clamp(we.getMaxHealth());
                     }
                     we.addInstance(InstanceBuilder.damage().ability(this).source(wp).value(damage).showAsCrit(finalEvent.isCrit()).flags(InstanceFlags.TRUE_DAMAGE));

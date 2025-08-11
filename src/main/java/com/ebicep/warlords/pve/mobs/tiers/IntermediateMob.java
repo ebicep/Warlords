@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.tiers;
 
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 
@@ -26,13 +27,13 @@ public interface IntermediateMob extends Mob {
     }
 
     @Override
-    default int getLevel() {
+    default int getInternalLevel() {
         return 2;
     }
 
     @Override
-    default TextColor getTextColor() {
-        return NamedTextColor.GOLD;
+    default Component getNamePrefix() {
+        return Component.text("INT", NamedTextColor.GREEN);
     }
 
 }
