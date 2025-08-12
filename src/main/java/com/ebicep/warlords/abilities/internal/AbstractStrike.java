@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities.internal;
 
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsStrikeEvent;
 import com.ebicep.warlords.player.general.AbstractPlayerClass;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -128,16 +129,15 @@ public abstract class AbstractStrike<T extends AbstractStrike<T, R>, R extends A
 
     protected void randomHitEffect(Location location, int particleAmount, int red, int green, int blue) {
         for (int i = 0; i < particleAmount; i++) {
-            location.getWorld().spawnParticle(
+            EffectUtils.displayParticle(
                     Particle.DUST,
-                    location.clone().add((Math.random() * 2) - 1, 1.2 + (Math.random() * 2) - 1, (Math.random() * 2) - 1),
+                    location,
                     1,
-                    0,
-                    0,
-                    0,
-                    0,
-                    new Particle.DustOptions(Color.fromRGB(red, green, blue), 1),
-                    true
+                    (Math.random() * 2) - 1,
+                    1.2 + (Math.random() * 2) - 1,
+                    (Math.random() * 2) - 1,
+                    1,
+                    new Particle.DustOptions(Color.fromRGB(red, green, blue), 1)
             );
         }
     }

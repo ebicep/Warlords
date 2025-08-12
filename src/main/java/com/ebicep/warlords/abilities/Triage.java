@@ -3,6 +3,7 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.game.WarlordsFlagUpdatedEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Team;
@@ -74,27 +75,27 @@ public class Triage extends AbstractAbility implements PurpleAbilityIcon, Listen
         WarlordsEntity lastFlagCarrier = lastFlagCarriers.computeIfAbsent(wp.getTeam(), k -> wp);
         boolean teleport = false;
         float distance = 0;
-        castEnergyCost = (int) getEnergyCostValue();
+        int energyCost = castEnergyCost;
         if (!lastFlagCarrier.isDead()) {
             distance = (float) wp.getLocation().distance(lastFlagCarrier.getLocation());
             if (distance > speedBuffRange) {
                 teleport = true;
-                castEnergyCost = (int) Math.ceil(distance);
+                energyCost = (int) Math.ceil(distance);
             }
         }
-        if (wp.getCurrentEnergy() < castEnergyCost) {
+        if (wp.getCurrentEnergy() < energyCost) {
             wp.playSound(wp.getLocation(), "notreadyalert", 1, 1);
             wp.sendMessage(Component.text("You do not have enough energy!", NamedTextColor.RED));
             return false;
         }
         if (teleport) {
             Utils.playGlobalSound(wp.getLocation(), "mage.timewarp.activation", 3, 1);
-            wp.getLocation().getWorld().spawnParticle(Particle.WITCH, wp.getLocation(), 4, 0.1, 0, 0.1, 0.001, null, true);
-            wp.subtractEnergy(name, castEnergyCost, false);
+            EffectUtils.displayParticle(Particle.WITCH, wp.getLocation(), 4, 0.1, 0, 0.1, 0.001);
+            wp.subtractEnergy(name, energyCost, false);
             wp.getEntity().teleport(lastFlagCarrier.getLocation());
             stats.distanceTeleported += distance;
         } else {
-            wp.subtractEnergy(name, castEnergyCost, false);
+            wp.subtractEnergy(name, energyCost, false);
             wp.addSpeedModifier(wp, name, speedBuff, speedBuffDurationTicks);
         }
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(

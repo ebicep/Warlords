@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
@@ -56,17 +57,15 @@ public class ProtectorsStrike extends AbstractStrike<ProtectorsStrike, Protector
     protected void playSoundAndEffect(Location location) {
         Utils.playGlobalSound(location, "paladin.paladinstrike.activation", 2, 1);
         randomHitEffect(location, 5, 255, 0, 0);
-        location.getWorld()
-                .spawnParticle(Particle.EFFECT,
-                        location.clone().add(0, 1, 0),
-                        4,
-                        (float) ((Math.random() * 2) - 1),
-                        (float) ((Math.random() * 2) - 1),
-                        (float) ((Math.random() * 2) - 1),
-                        1,
-                        null,
-                        true
-                );
+        EffectUtils.displayParticle(
+                Particle.EFFECT,
+                location.clone().add(0, 1, 0),
+                4,
+                (Math.random() * 2) - 1,
+                (Math.random() * 2) - 1,
+                (Math.random() * 2) - 1,
+                1
+        );
     }
 
     @Override

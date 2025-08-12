@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -169,7 +170,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
                         return;
                     }
                     Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.08f, 0.7f);
-                    wp.getWorld().spawnParticle(Particle.HAPPY_VILLAGER, wp.getLocation().add(0, 1.5, 0), 10, 0.8, 0, 0.8, 0.2, null, true);
+            EffectUtils.displayParticle(Particle.HAPPY_VILLAGER, wp.getLocation().add(0, 1.5, 0), 10, 0.8, 0, 0.8, 0.2);
                     //setting target player to move towards (includes self)
                     if (wp.isInPve()) {
                         data.getSpawnedOrbs().forEach(orb -> {
@@ -207,7 +208,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
                                                                                                           .normalize()
                                                                                                           .multiply(1)));
                                 orb.forEach(orbArmorStand::addPassenger);
-                                orbArmorStand.getWorld().spawnParticle(Particle.HAPPY_VILLAGER, orbArmorStand.getLocation().add(0, 1.65, 0), 1, 0, 0, 0, 0, null, true);
+                                EffectUtils.displayParticle(Particle.HAPPY_VILLAGER, orbArmorStand.getLocation().add(0, 1.65, 0), 1, 0, 0, 0, 0);
                             });
                             if (data.getSpawnedOrbs().stream().noneMatch(orb -> orb.getPlayerToMoveTowards() != null)) {
                                 this.cancel();

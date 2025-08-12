@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.mobs.zombie.berserkzombie;
 
 import com.ebicep.warlords.abilities.Berserk;
 import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -69,17 +70,7 @@ public class IntermediateWarriorBerserker extends AbstractBerserkZombie implemen
                 false,
                 (cooldown, ticksElapsed) -> {
                     if (ticksElapsed % 3 == 0) {
-                        warlordsNPC.getWorld().spawnParticle(
-                                Particle.ANGRY_VILLAGER,
-                                warlordsNPC.getLocation().add(0, 1.75, 0),
-                                1,
-                                0,
-                                0,
-                                0,
-                                0.1,
-                                null,
-                                true
-                        );
+                        EffectUtils.displayParticle(Particle.ANGRY_VILLAGER, warlordsNPC.getLocation().add(0, 1.75, 0), 1, 0, 0, 0, 0.1);
                     }
                 }
         ) {

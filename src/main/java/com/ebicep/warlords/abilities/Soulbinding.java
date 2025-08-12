@@ -3,6 +3,7 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
@@ -133,7 +134,7 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
                     if (ticksElapsed % 4 == 0) {
                         Location location = wp.getLocation();
                         location.add(0, 1.2, 0);
-                        location.getWorld().spawnParticle(Particle.WITCH, location, 2, 0.2, 0, 0.2, 0.1, null, true);
+                        EffectUtils.displayParticle(Particle.WITCH, location, 2, 0.2, 0, 0.2, 0.1);
                     }
                     data.getSoulBindedPlayers().forEach(SoulBoundPlayer::decrementTimeLeft);
                     data.getSoulBindedPlayers()

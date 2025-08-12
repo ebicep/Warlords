@@ -46,6 +46,7 @@ public class SpecBoostManager {
     public static final SpecBoost<DivineEffulgence> DIVINE_EFFULGENCE = new DivineEffulgence();
     public static final SpecBoost<DivinePurification> DIVINE_PURIFICATION = new DivinePurification();
     public static final SpecBoost<DivineShields> DIVINE_SHIELDS = new DivineShields();
+    public static final SpecBoost<Downpour> DOWNPOUR = new Downpour();
     public static final SpecBoost<DrainingMiasma> DRAINING_MIASMA = new DrainingMiasma();
     public static final SpecBoost<EarthboundInfusion> EARTHBOUND_INFUSION = new EarthboundInfusion();
     public static final SpecBoost<EcoDrive> ECO_DRIVE = new EcoDrive();
@@ -121,7 +122,7 @@ public class SpecBoostManager {
     static {
         SPEC_BOOSTS.put(Specializations.PYROMANCER, List.of(METEOR, FLAME_BREATH, BURST_CHAIN, DIMENSIONAL_WARP, PORTAL));
         SPEC_BOOSTS.put(Specializations.CRYOMANCER, List.of(FROST_MISSILE, BLIZZARD_BREATH, STEADFAST_WARP, CHILLY_AURA, ICE_BLOCK));
-        SPEC_BOOSTS.put(Specializations.AQUAMANCER, List.of(TYPHOON_BOLT, SYRINGE, DIVINE_PURIFICATION, CLAIRVOYANCE, TRIAGE));
+        SPEC_BOOSTS.put(Specializations.AQUAMANCER, List.of(TYPHOON_BOLT, SYRINGE, DIVINE_PURIFICATION, CLAIRVOYANCE, DOWNPOUR));
         SPEC_BOOSTS.put(Specializations.BERSERKER, List.of(EFFICIENT_STRIKES, MIGHTY_FISTS, SEISMIC_SHIFT, BLOOD_FRENZY, GOLIATH));
         SPEC_BOOSTS.put(Specializations.DEFENDER, List.of(VITALITY_BOOST, STRIKER, FERVENT_FORCE, HEROIC_INTERVENTION, SOLITARY));
         SPEC_BOOSTS.put(Specializations.REVENANT, List.of(UNDYING_STEED, RECKLESS_ASCENT, HEALING_LINK, VIBRANT_ORBS, ONE_MAN_ARMY));

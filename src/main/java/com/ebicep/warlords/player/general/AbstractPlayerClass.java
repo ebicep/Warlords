@@ -10,6 +10,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.util.bukkit.packets.PacketUtils;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -155,12 +156,18 @@ public abstract class AbstractPlayerClass {
                 ability.setCurrentCooldown(0);
             }
         } else if (ability.anyCharges() && player.getLevel() >= ability.getEnergyCostValue() * wp.getEnergyModifier() && abilityCD) {
+            resetAbilityCD(wp);
             WarlordsAbilityActivateEvent.Pre pre = new WarlordsAbilityActivateEvent.Pre(wp, player, ability, slot);
             Bukkit.getPluginManager().callEvent(pre);
             if (pre.isCancelled()) {
                 return;
             }
-            boolean shouldApplyCooldown = ability.onActivate(wp);
+            boolean shouldApplyCooldown = true;
+            try {
+                shouldApplyCooldown = ability.onActivate(wp);
+            } catch (Exception e) {
+                ChatUtils.MessageType.GAME.sendErrorMessage(e);
+            }
             if (shouldApplyCooldown) {
                 WarlordsAbilityActivateEvent.Post post = new WarlordsAbilityActivateEvent.Post(wp, player, ability, slot);
                 Bukkit.getPluginManager().callEvent(post);
@@ -176,7 +183,6 @@ public abstract class AbstractPlayerClass {
                 WarlordsAbilityActivateEvent.PostApply postApply = new WarlordsAbilityActivateEvent.PostApply(wp, player, ability, slot);
                 Bukkit.getPluginManager().callEvent(postApply);
             }
-            resetAbilityCD(wp);
         } else {
             player.playSound(player.getLocation(), "notreadyalert", 1, 1);
         }

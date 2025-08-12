@@ -64,7 +64,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
         Game game = wp.getGame();
         new GameRunnable(game) {
 
-            double interval = 3;
+            double interval = 2;
 
             @Override
             public void run() {

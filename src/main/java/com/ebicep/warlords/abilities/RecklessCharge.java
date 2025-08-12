@@ -138,18 +138,16 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, H
                     this.cancel();
                 }
                 for (int i = 0; i < 4; i++) {
-                    wp.getLocation()
-                      .getWorld()
-                      .spawnParticle(Particle.DUST,
-                              wp.getLocation().clone().add((Math.random() * 1.5) - .75, .5 + (Math.random() * 2) - 1, (Math.random() * 1.5) - .75),
-                              1,
-                              0,
-                              0,
-                              0,
-                              0,
-                              new Particle.DustOptions(Color.fromRGB(255, 0, 0), 1),
-                              true
-                      );
+                    EffectUtils.displayParticle(
+                            Particle.DUST,
+                            wp.getLocation().clone().add((Math.random() * 1.5) - .75, .5 + (Math.random() * 2) - 1, (Math.random() * 1.5) - .75),
+                            1,
+                            0,
+                            0,
+                            0,
+                            0,
+                            new Particle.DustOptions(Color.fromRGB(255, 0, 0), 1)
+                    );
                 }
                 PlayerFilter.entitiesAround(wp, hitboxValue, hitboxValue + 2.5, hitboxValue).excluding(playersHit).forEach(otherPlayer -> {
                     playersHit.add(otherPlayer);

@@ -12,6 +12,7 @@ import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.sentinel.GuardianBeamBranch;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -46,6 +47,12 @@ public class GuardianBeam extends AbstractBeam<GuardianBeam, GuardianBeam.Guardi
         shooter.playSound(shooter.getLocation(), "mage.firebreath.activation", 2, 0.7f);
         giveShield(shooter, shooter);
         return super.onActivateInternal(shooter);
+    }
+
+    @Override
+    public Pair<Float, Float> getChainAnimationData(int distance) {
+        float increment = distance / 3f;
+        return new Pair<>(increment * .75f, increment);
     }
 
     @Nullable

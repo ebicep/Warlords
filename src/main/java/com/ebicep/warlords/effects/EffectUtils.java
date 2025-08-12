@@ -14,7 +14,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.EulerAngle;
+import org.bukkit.util.Transformation;
 import org.bukkit.util.Vector;
+import org.joml.AxisAngle4f;
+import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -36,26 +39,31 @@ public class EffectUtils {
      * @param blue         is the RGB assigned color for the particles.
      */
     public static void playSphereAnimation(Location center, double sphereRadius, int red, int green, int blue) {
-        Particle.DustOptions data = new Particle.DustOptions(Color.fromRGB(red, green, blue), 1);
+        playSphereAnimation(center, sphereRadius, red, green, blue, 1.5f, 4, 0.75f);
+    }
+
+    public static void playSphereAnimation(Location center, double sphereRadius, int red, int green, int blue, float size, int verticalQuality, float density) {
+        Particle.DustOptions data = new Particle.DustOptions(Color.fromRGB(red, green, blue), size);
         Location particleLoc = new Location(center.getWorld(), 0, 0, 0);
 
         double centerX = center.getX();
         double centerY = center.getY() + 1; // one block above
         double centerZ = center.getZ();
 
-        int quality = 6;
-        double verticalStep = Math.PI / quality; // fewer latitudinal slices
+        double verticalStep = Math.PI / verticalQuality; // latitudinal slices
 
         for (double i = 0; i <= Math.PI; i += verticalStep) {
-            double radius = Math.sin(i) * sphereRadius + 0.5;
-            double y = Math.cos(i) * sphereRadius;
+            double ringRadius = sin(i) * sphereRadius;
+            double y = cos(i) * sphereRadius;
 
-            // Dynamic horizontal resolution: more points near equator
-            double horizontalStep = Math.PI / (quality + Math.abs(Math.cos(i)) * quality); // wider gaps near poles
+            // fewer points near poles
+            double circumference = 2 * Math.PI * ringRadius;
+            double points = Math.max(1, circumference * density); // min 1 point to keep pole visible
+            double horizontalStep = (2 * Math.PI) / points;
 
             for (double a = 0; a < Math.PI * 2; a += horizontalStep) {
-                double x = Math.cos(a) * radius;
-                double z = Math.sin(a) * radius;
+                double x = cos(a) * ringRadius;
+                double z = sin(a) * ringRadius;
 
                 particleLoc.setX(centerX + x);
                 particleLoc.setY(centerY + y);
@@ -78,6 +86,9 @@ public class EffectUtils {
             int count,
             T data
     ) {
+        if (loc.getBlock().getType().isOccluding()) {
+            return;
+        }
         loc.getWorld().spawnParticle(particle, loc, count, 0, 0, 0, 0, data, true);
     }
 
@@ -95,11 +106,11 @@ public class EffectUtils {
         float dens = 10 * density;
         loc.add(0, 1, 0);
         for (double i = 0; i <= Math.PI; i += Math.PI / dens) {
-            double radius = Math.sin(i) * sphereRadius + 0.5;
+            double radius = sin(i) * sphereRadius + 0.5;
             double y = cos(i) * sphereRadius;
             for (double a = 0; a < Math.PI * 2; a += Math.PI / dens) {
                 double x = cos(a) * radius;
-                double z = Math.sin(a) * radius;
+                double z = sin(a) * radius;
                 loc.add(x, y, z);
                 displayParticle(effect, loc, particleCount);
                 loc.subtract(x, y, z);
@@ -117,6 +128,9 @@ public class EffectUtils {
             Location loc,
             int count
     ) {
+        if (loc.getBlock().getType().isOccluding()) {
+            return;
+        }
         loc.getWorld().spawnParticle(particle, loc, count, 0, 0, 0, 0, null, true);
     }
 
@@ -137,7 +151,7 @@ public class EffectUtils {
                 float ratio = (float) j / particles;
                 double angle = curve * ratio * 2 * Math.PI / strands + (2 * Math.PI * i / strands) + rotation;
                 double x = cos(angle) * ratio * helixRadius;
-                double z = Math.sin(angle) * ratio * helixRadius;
+                double z = sin(angle) * ratio * helixRadius;
                 loc.add(x, 0, z);
                 Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(red, green, blue), 1);
                 displayParticle(Particle.DUST, loc, 1, dustOptions);
@@ -161,7 +175,7 @@ public class EffectUtils {
                 float ratio = (float) j / helixDots;
                 double angle = curve * ratio * 2 * Math.PI / strands + (2 * Math.PI * i / strands) + rotation;
                 double x = cos(angle) * ratio * helixRadius;
-                double z = Math.sin(angle) * ratio * helixRadius;
+                double z = sin(angle) * ratio * helixRadius;
                 loc.add(x, 0, z);
                 displayParticle(effect, loc, particleCount);
                 loc.subtract(x, 0, z);
@@ -192,17 +206,32 @@ public class EffectUtils {
             int cylinderHeight,
             double spaceBetweenParticles
     ) {
-        for (int i = 0; i < cylinderHeight; i++) {
-            double y = loc.getY() + i * spaceBetweenParticles;
-            for (int j = 0; j < cylinderDots; j++) {
-                double angle = j * 2 * Math.PI / cylinderDots;
-                double x = loc.getX() + Math.cos(angle) * cylinderRadius;
-                double z = loc.getZ() + Math.sin(angle) * cylinderRadius;
-                Location particleLoc = new Location(loc.getWorld(), x, y, z);
+        World world = loc.getWorld();
+        double baseX = loc.getX();
+        double baseY = loc.getY();
+        double baseZ = loc.getZ();
+        // precompute sin/cos values for all cylinderDots
+        double[] cosValues = new double[cylinderDots];
+        double[] sinValues = new double[cylinderDots];
+        for (int j = 0; j < cylinderDots; j++) {
+            double angle = j * 2 * Math.PI / cylinderDots;
+            cosValues[j] = cos(angle) * cylinderRadius;
+            sinValues[j] = sin(angle) * cylinderRadius;
+        }
 
-                if (data != null) {
+        Location particleLoc = new Location(world, 0, 0, 0);
+        boolean hasData = (data != null);
+        boolean hasEffect = (effect != null);
+        for (int i = 0; i < cylinderHeight; i++) {
+            double y = baseY + i * spaceBetweenParticles;
+            for (int j = 0; j < cylinderDots; j++) {
+                particleLoc.setX(baseX + cosValues[j]);
+                particleLoc.setY(y);
+                particleLoc.setZ(baseZ + sinValues[j]);
+
+                if (hasData) {
                     displayParticle(effect, particleLoc, particleCount, data);
-                } else if (effect != null) {
+                } else if (hasEffect) {
                     displayParticle(effect, particleLoc, particleCount);
                 }
             }
@@ -319,7 +348,7 @@ public class EffectUtils {
             displayParticle(
                     player,
                     particle,
-                    loc.clone().add(Math.sin(angle) * circleRadius, 0, Math.cos(angle) * circleRadius),
+                    loc.clone().add(sin(angle) * circleRadius, 0, cos(angle) * circleRadius),
                     1,
                     xOffset,
                     yOffset,
@@ -339,10 +368,34 @@ public class EffectUtils {
             double offsetZ,
             double speed
     ) {
+        if (loc.getBlock().getType().isOccluding()) {
+            return;
+        }
         if (player == null) {
             loc.getWorld().spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed, null, true);
         } else {
             player.spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed);
+        }
+    }
+
+    public static void displayParticle(
+            @Nullable Player player,
+            Particle particle,
+            Location loc,
+            int count,
+            double offsetX,
+            double offsetY,
+            double offsetZ,
+            double speed,
+            Object data
+    ) {
+        if (loc.getBlock().getType().isOccluding()) {
+            return;
+        }
+        if (player == null) {
+            loc.getWorld().spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed, data, true);
+        } else {
+            player.spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed, data);
         }
     }
 
@@ -362,7 +415,7 @@ public class EffectUtils {
                 double angle = 2 * Math.PI * x / particles;
                 final Random random = new Random(System.nanoTime());
                 float height = random.nextFloat() * spikeHeight;
-                Vector v = new Vector(cos(angle), 0, Math.sin(angle));
+                Vector v = new Vector(cos(angle), 0, sin(angle));
                 v.multiply((spikeHeight - height) * radius / spikeHeight);
                 v.setY(starRadius + height);
                 EffectUtils.rotateAroundAxisY(v, xRotation);
@@ -376,7 +429,7 @@ public class EffectUtils {
     public static Vector rotateAroundAxisY(Vector v, double angle) {
         double x, z, cos, sin;
         cos = cos(angle);
-        sin = Math.sin(angle);
+        sin = sin(angle);
         x = v.getX() * cos + v.getZ() * sin;
         z = v.getX() * -sin + v.getZ() * cos;
         return v.setX(x).setZ(z);
@@ -405,7 +458,7 @@ public class EffectUtils {
                         armorStand.getEquipment().setHelmet(item);
                     }
             );
-            from.add(from.getDirection().multiply(1.1));
+            from.add(from.getDirection().multiply(1.25));
             chains.add(chain);
             if (to.distanceSquared(from) < .3) {
                 break;
@@ -432,6 +485,41 @@ public class EffectUtils {
             }
 
         }.runTaskTimer(Warlords.getInstance(), 0, 0);
+    }
+
+    public static void playChainAnimation(Game game, Location location1, Location location2, ItemStack item, float initialDisplacement, float increment, int ticksLived) {
+        Vector direction = location2.toVector().subtract(location1.toVector()).normalize().multiply(increment);
+        double pitch = new LocationBuilder(location1).faceTowards(location2).getPitch();
+        LocationBuilder start = new LocationBuilder(location1).faceTowards(location2).forward(initialDisplacement).lookRight().pitch(0);
+        List<Entity> chains = new ArrayList<>();
+        double maxDistance = Math.ceil(location1.distance(location2)) + 1;
+        for (double dist = increment; dist < maxDistance; dist += increment) {
+            chains.add(location1.getWorld().spawn(
+                    start,
+                    ItemDisplay.class,
+                    false,
+                    display -> {
+                        display.setItemStack(item);
+                        display.setBrightness(new Display.Brightness(15, 15));
+                        display.setTransformation(new Transformation(
+                                new Vector3f(0f, 0f, 0f),
+                                new AxisAngle4f((float) Math.toRadians(-pitch), 0, 0, 1),
+                                new Vector3f(increment, 1f, 1f),
+                                new AxisAngle4f()
+                        ));
+                    }
+            ));
+            start.add(direction);
+        }
+
+        new GameRunnable(game) {
+
+            @Override
+            public void run() {
+                chains.forEach(Entity::remove);
+            }
+
+        }.runTaskLater(ticksLived);
     }
 
     public static void playChainAnimation(WarlordsEntity player1, WarlordsEntity player2, ItemStack item, int ticksLived) {
@@ -481,17 +569,22 @@ public class EffectUtils {
         playParticleLinkAnimation(to, from, red, green, blue, amount, 1);
     }
 
-    public static void playParticleLinkAnimation(Location to, Location from, int red, int green, int blue, int amount, int size) {
-        to = to.clone();
-        from = from.clone();
-        Location lineLocation = to.add(0, 1, 0).clone();
-        lineLocation.setDirection(lineLocation.toVector().subtract(from.add(0, 1, 0).toVector()).multiply(-1));
-        for (int i = 0; i < Math.floor(to.distance(from)) * 2; i++) {
-            for (int i1 = 0; i1 < amount; i1++) {
-                Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(red, green, blue), size);
-                displayParticle(Particle.DUST, lineLocation, amount, dustOptions);
+    public static void playParticleLinkAnimation(Location to, Location from, int red, int green, int blue, int amount, float size) {
+        final double stepSize = 1.25;
+
+        Location start = from.clone().add(0, 1, 0);
+        Location end = to.clone().add(0, 1, 0);
+        Vector direction = end.toVector().subtract(start.toVector()).normalize().multiply(stepSize);
+        double distance = start.distance(end);
+        int steps = (int) Math.floor(distance / stepSize);
+
+        Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(red, green, blue), size);
+        Location current = end.clone();
+        for (int i = 0; i < steps; i++) {
+            for (int j = 0; j < amount; j++) {
+                displayParticle(Particle.DUST, current, 0, dustOptions);
             }
-            lineLocation.add(lineLocation.getDirection().multiply(.5));
+            current.subtract(direction);
         }
     }
 
@@ -550,7 +643,7 @@ public class EffectUtils {
         Location particleLoc = location.clone();
         for (int j = 0; j < 10; j++) {
             double angle = j / 10D * Math.PI * 2;
-            particleLoc.setX(location.getX() + Math.sin(angle) * cylinderRadius);
+            particleLoc.setX(location.getX() + sin(angle) * cylinderRadius);
             particleLoc.setZ(location.getZ() + cos(angle) * cylinderRadius);
 
             strikeLightning(particleLoc, isSilent);
@@ -560,7 +653,7 @@ public class EffectUtils {
     public static Vector rotateAroundAxisX(Vector v, double angle) {
         double y, z, cos, sin;
         cos = cos(angle);
-        sin = Math.sin(angle);
+        sin = sin(angle);
         y = v.getY() * cos - v.getZ() * sin;
         z = v.getY() * sin + v.getZ() * cos;
         return v.setY(y).setZ(z);
@@ -569,7 +662,7 @@ public class EffectUtils {
     public static Vector rotateAroundAxisZ(Vector v, double angle) {
         double x, y, cos, sin;
         cos = cos(angle);
-        sin = Math.sin(angle);
+        sin = sin(angle);
         x = v.getX() * cos - v.getY() * sin;
         y = v.getX() * sin + v.getY() * cos;
         return v.setX(x).setY(y);
@@ -683,8 +776,8 @@ public class EffectUtils {
                         matrix.translateVector(
                                 loc.getWorld(),
                                 distance,
-                                Math.sin(angle) * circleRadius,
-                                Math.cos(angle) * circleRadius
+                                sin(angle) * circleRadius,
+                                cos(angle) * circleRadius
                         ),
                         1
                 );
@@ -721,7 +814,7 @@ public class EffectUtils {
                 double angle = c / 20D * Math.PI * 2;
                 displayParticle(
                         particle,
-                        matrix.translateVector(loc.getWorld(), distance, Math.sin(angle) * circleRadius, Math.cos(angle) * circleRadius),
+                        matrix.translateVector(loc.getWorld(), distance, sin(angle) * circleRadius, cos(angle) * circleRadius),
                         1
                 );
             }
@@ -730,7 +823,7 @@ public class EffectUtils {
                 double angle = c / 10D * Math.PI * 2;
                 displayParticle(
                         innerParticle,
-                        matrix.translateVector(loc.getWorld(), distance, Math.sin(angle) * innerCricleRadius, Math.cos(angle) * innerCricleRadius),
+                        matrix.translateVector(loc.getWorld(), distance, sin(angle) * innerCricleRadius, cos(angle) * innerCricleRadius),
                         1
                 );
             }
@@ -740,8 +833,8 @@ public class EffectUtils {
     public static void playCrownAnimation(Location loc, Particle particle) {
         double angle = 0;
         for (int i = 0; i < 9; i++) {
-            double x = .4 * Math.cos(angle);
-            double z = .4 * Math.sin(angle);
+            double x = .4 * cos(angle);
+            double z = .4 * sin(angle);
             angle += 40;
             Vector v = new Vector(x, 2, z);
             displayParticle(
@@ -793,6 +886,9 @@ public class EffectUtils {
             double speed,
             T data
     ) {
+        if (loc.getBlock().getType().isOccluding()) {
+            return;
+        }
         loc.getWorld().spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed, data, true);
     }
 

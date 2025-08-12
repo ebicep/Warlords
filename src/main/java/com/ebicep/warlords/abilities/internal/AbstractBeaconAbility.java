@@ -82,17 +82,20 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T, R
         );
 
         new GameRunnable(wp.getGame()) {
-            int interval = 4;
+            int interval = 3;
 
             @Override
             public void run() {
                 interval--;
                 EffectUtils.playSphereAnimation(
                         beacon.getLocation(),
-                        2.5 + interval,
+                        5.5,
                         150,
                         80,
-                        80
+                        80,
+                        2f,
+                        6,
+                        0.5f
                 );
 
                 if (interval <= 0) {
@@ -121,7 +124,7 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T, R
                 tickDuration + 1,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     //particle effects
-                    if ((inPve && ticksElapsed % 7 == 0) || (!inPve && ticksElapsed % 5 == 0)) {
+                    if ((inPve && ticksElapsed % 10 == 0) || (!inPve && ticksElapsed % 7 == 0)) {
                         teamCircleEffect.playEffects();
                     }
                     whileActive(wp, cooldown, ticksLeft, ticksElapsed);

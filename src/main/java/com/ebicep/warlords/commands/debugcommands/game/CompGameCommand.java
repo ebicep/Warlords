@@ -25,71 +25,75 @@ import static com.ebicep.warlords.util.chat.ChatChannels.sendDebugMessage;
 @CommandPermission("group.gamestarter")
 public class CompGameCommand extends BaseCommand {
 
-    private static final List<GameMap> MAP_ROTATION = new ArrayList<>(List.of(GameMap.RIFT, GameMap.CROSSFIRE, GameMap.APERTURE));
+    private static final List<GameMap> MAP_ROTATION = new ArrayList<>(List.of(GameMap.RIFT, GameMap.CROSSFIRE, GameMap.RIFT_4, GameMap.APERTURE));
     private static int currentIndex = 0;
-    private boolean randomSpecBoosts = true;
+    private boolean randomSpecBoosts = false;
 
     @Subcommand("start")
     @Description("Starts new comp ctf game with auto map rotation")
     public void start(Player player) {
         GameMap selectedGameMap = MAP_ROTATION.get(currentIndex);
         GameStartCommand.startGame(player, false, queueEntryBuilder -> {
-            EnumSet<GameAddon> addons = EnumSet.of(GameAddon.PRIVATE_GAME, GameAddon.FREEZE_GAME);
-            if (randomSpecBoosts) {
-                addons.add(GameAddon.RANDOM_SPEC_BOOST);
-            }
-            queueEntryBuilder
-                    .setMap(selectedGameMap)
-                    .setGameMode(GameMode.CAPTURE_THE_FLAG)
-                    .setRequestedGameAddons(addons)
-                    .setOnResult((result, game) -> {
-                        if (game == null) {
-                            sendDebugMessage(player, Component.text("Engine failed to find a game server suitable for your request:", NamedTextColor.RED));
-                            sendDebugMessage(player, Component.text(result.toString(), NamedTextColor.GRAY));
-                            return;
-                        }
-                        sendDebugMessage(player,
-                                Component.text("Engine " + (result == GameManager.QueueResult.READY_NEW ? "initiated" : "found") + " a game with the following parameters:",
-                                        NamedTextColor.GREEN
-                                )
-                        );
-                        sendDebugMessage(player, Component.empty()
-                                                          .append(Component.text("- Gamemode: ", NamedTextColor.GRAY))
-                                                          .append(Component.text(StringUtils.toTitleHumanCase(game.getGameMode()), NamedTextColor.RED)));
-                        sendDebugMessage(player, Component.empty()
-                                                          .append(Component.text("- Map: ", NamedTextColor.GRAY))
-                                                          .append(Component.text(StringUtils.toTitleHumanCase(game.getMap().getMapName()), NamedTextColor.RED)));
-                        sendDebugMessage(player, Component.empty()
-                                                          .append(Component.text("- Game Addons: ", NamedTextColor.GRAY))
-                                                          .append(Component.text(game.getAddons()
-                                                                                     .stream()
-                                                                                     .map(e -> StringUtils.toTitleHumanCase(e.name()))
-                                                                                     .collect(Collectors.joining(", ")), NamedTextColor.GOLD))
-                        );
-                        sendDebugMessage(player, Component.empty()
-                                                          .append(Component.text("- Min players: ", NamedTextColor.GRAY))
-                                                          .append(Component.text(game.getMinPlayers(), NamedTextColor.RED))
-                        );
+                    EnumSet<GameAddon> addons = EnumSet.of(GameAddon.PRIVATE_GAME, GameAddon.FREEZE_GAME);
+                    if (randomSpecBoosts) {
+                        addons.add(GameAddon.RANDOM_SPEC_BOOST);
+                    }
+                    queueEntryBuilder
+                            .setMap(selectedGameMap)
+                            .setGameMode(GameMode.CAPTURE_THE_FLAG)
+                            .setRequestedGameAddons(addons)
+                            .setOnResult((result, game) -> {
+                                if (game == null) {
+                                    sendDebugMessage(player, Component.text("Engine failed to find a game server suitable for your request:", NamedTextColor.RED));
+                                    sendDebugMessage(player, Component.text(result.toString(), NamedTextColor.GRAY));
+                                    return;
+                                }
+                                sendDebugMessage(player,
+                                        Component.text("Engine " + (result == GameManager.QueueResult.READY_NEW ? "initiated" : "found") + " a game with the following parameters:",
+                                                NamedTextColor.GREEN
+                                        )
+                                );
+                                sendDebugMessage(player, Component.empty()
+                                                                  .append(Component.text("- Gamemode: ", NamedTextColor.GRAY))
+                                                                  .append(Component.text(StringUtils.toTitleHumanCase(game.getGameMode()), NamedTextColor.RED))
+                                );
+                                sendDebugMessage(player, Component.empty()
+                                                                  .append(Component.text("- Map: ", NamedTextColor.GRAY))
+                                                                  .append(Component.text(StringUtils.toTitleHumanCase(game.getMap().getMapName()), NamedTextColor.RED))
+                                );
+                                sendDebugMessage(player, Component.empty()
+                                                                  .append(Component.text("- Game Addons: ", NamedTextColor.GRAY))
+                                                                  .append(Component.text(game.getAddons()
+                                                                                             .stream()
+                                                                                             .map(e -> StringUtils.toTitleHumanCase(e.name()))
+                                                                                             .collect(Collectors.joining(", ")), NamedTextColor.GOLD
+                                                                  ))
+                                );
+                                sendDebugMessage(player, Component.empty()
+                                                                  .append(Component.text("- Min players: ", NamedTextColor.GRAY))
+                                                                  .append(Component.text(game.getMinPlayers(), NamedTextColor.RED))
+                                );
 
-                        sendDebugMessage(player, Component.empty()
-                                                          .append(Component.text("- Max players: ", NamedTextColor.GRAY))
-                                                          .append(Component.text(game.getMaxPlayers(), NamedTextColor.RED))
-                        );
+                                sendDebugMessage(player, Component.empty()
+                                                                  .append(Component.text("- Max players: ", NamedTextColor.GRAY))
+                                                                  .append(Component.text(game.getMaxPlayers(), NamedTextColor.RED))
+                                );
 
-                        sendDebugMessage(player, Component.empty()
-                                                          .append(Component.text("- Open for public: ", NamedTextColor.GRAY))
-                                                          .append(Component.text(game.acceptsPeople(), NamedTextColor.RED))
-                        );
+                                sendDebugMessage(player, Component.empty()
+                                                                  .append(Component.text("- Open for public: ", NamedTextColor.GRAY))
+                                                                  .append(Component.text(game.acceptsPeople(), NamedTextColor.RED))
+                                );
 
-                        sendDebugMessage(player, Component.empty()
-                                                          .append(Component.text("- Game ID: ", NamedTextColor.GRAY))
-                                                          .append(Component.text(game.getGameId().toString(), NamedTextColor.RED))
-                        );
+                                sendDebugMessage(player, Component.empty()
+                                                                  .append(Component.text("- Game ID: ", NamedTextColor.GRAY))
+                                                                  .append(Component.text(game.getGameId().toString(), NamedTextColor.RED))
+                                );
 
-                        nextMap();
+                                nextMap();
 
-                    });
-        });
+                            });
+                }
+        );
     }
 
     private void nextMap() {

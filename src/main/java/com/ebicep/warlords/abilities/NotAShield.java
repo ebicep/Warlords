@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractPiercingProjectile;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -62,13 +63,13 @@ public class NotAShield extends AbstractPiercingProjectile<NotAShield, NotAShiel
             @Override
             public void run(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile) {
                 fallenSoul.teleport(projectile.getCurrentLocation().clone().add(0, -1.7, 0), PlayerTeleportEvent.TeleportCause.PLUGIN);
-                projectile.getCurrentLocation().getWorld().spawnParticle(Particle.CRIT, projectile.getCurrentLocation().clone().add(0, 0, 0), 2, 0, 0, 0, 0, null, true);
+                EffectUtils.displayParticle(Particle.CRIT, projectile.getCurrentLocation().clone().add(0, 0, 0), 2, 0, 0, 0, 0);
             }
 
             @Override
             public void onDestroy(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile) {
                 fallenSoul.remove();
-                projectile.getCurrentLocation().getWorld().spawnParticle(Particle.ENCHANTED_HIT, projectile.getCurrentLocation(), 1, 0, 0, 0, 0.7f, null, true);
+                EffectUtils.displayParticle(Particle.ENCHANTED_HIT, projectile.getCurrentLocation(), 1, 0, 0, 0, 0.7f);
             }
         });
     }

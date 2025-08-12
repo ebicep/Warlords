@@ -33,8 +33,6 @@ import java.util.List;
 public class RighteousRampage implements SpecBoostManager.SpecBoost<RighteousRampage> {
 
     private float damageReductionDecrease;
-    private float soulShackleAoEDamagePercent;
-    private float soulShackleAoERadius;
     private float vindicateLeapRadius;
     private Value.RangedValue vindicateLeapDamage;
     private int vindicateSilenceTicks;
@@ -48,8 +46,6 @@ public class RighteousRampage implements SpecBoostManager.SpecBoost<RighteousRam
     @Override
     public void init() {
         this.damageReductionDecrease = getValue("damageReductionDecrease", float.class);
-        this.soulShackleAoEDamagePercent = getValue("soulShackleAoEDamagePercent", float.class);
-        this.soulShackleAoERadius = getValue("soulShackleAoERadius", float.class);
         this.vindicateLeapRadius = getValue("vindicateLeapRadius", float.class);
         this.vindicateLeapDamage = getValue("vindicateLeapDamage", Value.RangedValue.class);
         this.vindicateSilenceTicks = getValue("vindicateSilenceTicks", int.class);
@@ -75,8 +71,6 @@ public class RighteousRampage implements SpecBoostManager.SpecBoost<RighteousRam
     public List<Object> getVariables() {
         return List.of(
                 damageReductionDecrease,
-                soulShackleAoERadius,
-                soulShackleAoEDamagePercent,
                 vindicateLeapRadius,
                 vindicateLeapDamage,
                 vindicateSilenceTicks
@@ -110,32 +104,6 @@ public class RighteousRampage implements SpecBoostManager.SpecBoost<RighteousRam
                 }
             }
             warlordsPlayer.resetAbilityTree();
-        }
-
-        @EventHandler
-        public void onDamageHealFinalEvent(WarlordsDamageHealingFinalEvent event) {
-            if (!event.getSource().equals(warlordsEntity)) {
-                return;
-            }
-            if (!(event.getAbility() instanceof SoulShackle)) {
-                return;
-            }
-            if (event.getInstanceFlags().contains(InstanceFlags.RECURSIVE)) {
-                return;
-            }
-            PlayerFilter.entitiesAround(event.getWarlordsEntity().getLocation(), soulShackleAoERadius, soulShackleAoERadius, soulShackleAoERadius)
-                        .aliveEnemiesOf(warlordsEntity)
-                        .excluding(event.getWarlordsEntity())
-                        .forEach(aoeTarget -> {
-                            float aoeDamage = event.getValue() * (soulShackleAoEDamagePercent / 100);
-                            aoeTarget.addInstance(InstanceBuilder
-                                    .damage()
-                                    .cause("Soul Shackle")
-                                    .source(warlordsEntity)
-                                    .value(aoeDamage)
-                                    .flags(InstanceFlags.RECURSIVE)
-                            );
-                        });
         }
 
         @EventHandler(ignoreCancelled = true)

@@ -41,6 +41,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
     private final DamageValues damageValues = new DamageValues();
     private final HealingValues healingValues = new HealingValues();
     private int tickDuration = 200;
+    private int castRadius;
 
     private FloatModifiable radius = new FloatModifiable(8);
 
@@ -57,13 +58,14 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
         super.init(builder);
         this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
         this.radius = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), float.class));
+        this.castRadius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("castRadius"), int.class);
     }
 
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         float radius = this.radius.getCalculatedValue();
         List<WarlordsEntity> targets = PlayerFilter
-                .entitiesAround(wp, radius, radius, radius)
+                .entitiesAround(wp, castRadius, castRadius, castRadius)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .requireLineOfSightIntervene(wp, false)
                 .lookingAtFirst(wp)
@@ -76,13 +78,12 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
         WarlordsEntity target = targets.isEmpty() ? wp : targets.get(0);
 
         Location location = target.getLocation();
-        location.add(0, 1, 0);
         Utils.playGlobalSound(location, "mage.healingrain.impact", 2, 1);
         List<EffectPlayer<? super CircleEffect>> effects = new ArrayList<>();
         effects.add(new CircumferenceEffect(Particle.HAPPY_VILLAGER, Particle.DUST));
         if (!pveMasterUpgrade2) {
-            effects.add(new AreaEffect(5, Particle.CLOUD).particlesPerSurface(0.025));
-            effects.add(new AreaEffect(5, Particle.DRIPPING_WATER).particlesPerSurface(0.025));
+            effects.add(new AreaEffect(5, Particle.CLOUD).particlesPerSurface(0.02));
+            effects.add(new AreaEffect(5, Particle.DRIPPING_WATER).particlesPerSurface(0.02));
         }
         CircleEffect circleEffect = new CircleEffect(wp.getGame(), wp.getTeam(), location, radius, effects.toArray(new EffectPlayer[0]));
         AtomicReference<List<Pair<WarlordsEntity, CircleEffect>>> personalCloud = new AtomicReference<>(new ArrayList<>()); // pveMasterUpgrade2
@@ -104,6 +105,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
                                      .append(Component.text("Healing Rain", NamedTextColor.GREEN))
                                      .append(Component.text(" upon you."))
                     ));
+            EffectUtils.playParticleLinkAnimation(wp.getLocation(), location, Particle.BUBBLE_POP);
         }
         RegularCooldown<HealingRainData> healingRainCooldown = new RegularCooldown<>(
                 name,
@@ -114,7 +116,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
                     if (pveMasterUpgrade) {
-                        for (WarlordsEntity enemyInRain : PlayerFilter.entitiesAround(target.getLocation(), radius, radius, radius).aliveEnemiesOf(wp).limit(8)) {
+                        for (WarlordsEntity enemyInRain : PlayerFilter.entitiesAround(data.target.getLocation(), radius, radius, radius).aliveEnemiesOf(wp).limit(8)) {
                             Utils.playGlobalSound(enemyInRain.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 2, 1.8f);
                             EffectUtils.playFirework(enemyInRain.getLocation(), FireworkEffect.builder().withColor(Color.AQUA).with(FireworkEffect.Type.BURST).build());
                             strikeInRain(wp, enemyInRain);
@@ -135,16 +137,18 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
                             effect.playEffects();
                         });
                     }
-                    if ((inPve && ticksElapsed % 8 == 0) || (!inPve && ticksElapsed % 4 == 0)) {
+                    if (ticksElapsed % 5 == 0) {
                         if (data.target.isAlive()) {
                             Location center = circleEffect.getCenter();
                             Location newLocation = data.target.getLocation();
                             center.set(newLocation.getX(), newLocation.getY() + .01, newLocation.getZ());
                         }
+                    }
+                    if ((inPve && ticksElapsed % 10 == 0) || (!inPve && ticksElapsed % 7 == 0)) {
                         circleEffect.playEffects();
                     }
                     if (ticksElapsed % 10 == 0) {
-                        List<WarlordsEntity> teammatesInRain = PlayerFilter.entitiesAround(target.getLocation(), radius, radius, radius).aliveTeammatesOf(wp).toList();
+                        List<WarlordsEntity> teammatesInRain = PlayerFilter.entitiesAround(data.target.getLocation(), radius, radius, radius).aliveTeammatesOf(wp).toList();
                         if (pveMasterUpgrade2) {
                             // cloud only give to those in cloud or has been in cloud and is within 40 blocks of player
                             personalCloudList.removeIf(teammate -> teammate.getA().getLocation().distanceSquared(wp.getLocation()) > 40 * 40);
@@ -191,7 +195,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
                     }
                     if (ticksElapsed % 40 == 0) {
                         if (pveMasterUpgrade) {
-                            for (WarlordsEntity enemyInRain : PlayerFilter.entitiesAround(target.getLocation(), radius, radius, radius).aliveEnemiesOf(wp).limit(8)) {
+                            for (WarlordsEntity enemyInRain : PlayerFilter.entitiesAround(data.target.getLocation(), radius, radius, radius).aliveEnemiesOf(wp).limit(8)) {
                                 Utils.playGlobalSound(enemyInRain.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 2, 1.8f);
                                 FireWorkEffectPlayer.playFirework(enemyInRain.getLocation(),
                                         FireworkEffect.builder().withColor(Color.AQUA).with(FireworkEffect.Type.BURST).build()
@@ -209,7 +213,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
                     if (wp.isAlive()) {
                         Location wpLocation = wp.getLocation();
                         List<WarlordsEntity> newTargets = PlayerFilter
-                                .entitiesAround(wp, radius, radius, radius)
+                                .entitiesAround(wp, castRadius, castRadius, castRadius)
                                 .aliveTeammatesOfExcludingSelf(wp)
                                 .requireLineOfSightIntervene(wp, false)
                                 .lookingAtFirst(wp)
@@ -220,7 +224,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
 
                         newTargets = new ArrayList<>(newPlaceEvent.getTargets());
                         data.target = newTargets.isEmpty() ? wp : newTargets.get(0);
-                        location.set(wpLocation.getX(), wpLocation.getY() + .01, wpLocation.getZ());
+                        location.set(wpLocation.getX(), wpLocation.getY(), wpLocation.getZ());
                         wp.playSound(wpLocation, "mage.timewarp.teleport", 2, 1.35f);
                         if (wp == data.target) {
                             wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
@@ -239,6 +243,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
                                                      .append(Component.text("Healing Rain", NamedTextColor.GREEN))
                                                      .append(Component.text(" upon you."))
                                     ));
+                            EffectUtils.playParticleLinkAnimation(wp.getLocation(), data.target.getLocation(), Particle.BUBBLE_POP);
                         }
                     }
                 },

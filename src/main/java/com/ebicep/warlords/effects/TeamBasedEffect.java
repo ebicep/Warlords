@@ -60,7 +60,7 @@ public class TeamBasedEffect {
             Iterable<? extends Player> players
     ) {
         for (Player player : players) {
-            player.spawnParticle(particle, center, amount, offsetX, offsetY, offsetZ, speed, data);
+            EffectUtils.displayParticle(player, particle, center, amount, offsetX, offsetY, offsetZ, speed, data);
         }
     }
 

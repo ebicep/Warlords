@@ -221,7 +221,7 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                                                                    .stream()
                                                                    .map(WarlordsDamageHealingFinalEvent.CooldownRecord::getAbstractCooldown)
                                                                    .collect(Collectors.toList());
-                        if (new CooldownFilter<>(cooldowns, RegularCooldown.class).filterCooldownClass(Intervene.class)
+                        if (new CooldownFilter<>(cooldowns, RegularCooldown.class).filterCooldownClass(Intervene.InterveneData.class)
                                                                                   .filter(regularCooldown -> !Objects.equals(regularCooldown.getFrom(), target))
                                                                                   .findAny()
                                                                                   .isPresent()) {
@@ -256,7 +256,7 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                                 angle += 40;
                                 Vector v = new Vector(x, 2, z);
                                 Location loc = wp.getLocation().clone().add(v);
-                                loc.getWorld().spawnParticle(Particle.EFFECT, loc, 1, 0, 0, 0, 0, null, true);
+                                EffectUtils.displayParticle(Particle.EFFECT, loc, 1, 0, 0, 0, 0);
                             }
                             new CircleEffect(wp.getGame(),
                                     wp.getTeam(),

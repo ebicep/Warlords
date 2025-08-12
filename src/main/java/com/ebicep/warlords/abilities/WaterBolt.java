@@ -3,6 +3,7 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -18,7 +19,6 @@ import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -75,11 +75,10 @@ public class WaterBolt extends AbstractProjectile<WaterBolt, WaterBolt.WaterBolt
 
     @Override
     protected void playEffect(@Nonnull Location currentLocation, int animationTimer) {
-        World world = currentLocation.getWorld();
-        world.spawnParticle(Particle.DRIPPING_WATER, currentLocation, 2, 0.3, 0.3, 0.3, 0.1, null, true);
-        world.spawnParticle(Particle.ENCHANT, currentLocation, 1, 0, 0, 0, 0.1, null, true);
-        world.spawnParticle(Particle.HAPPY_VILLAGER, currentLocation, 1, 0, 0, 0, 0.1, null, true);
-        world.spawnParticle(Particle.CLOUD, currentLocation, 1, 0, 0, 0, 0, null, true);
+        EffectUtils.displayParticle(Particle.DRIPPING_WATER, currentLocation, 2, 0.3, 0.3, 0.3, 0.1);
+        EffectUtils.displayParticle(Particle.ENCHANT, currentLocation, 1, 0, 0, 0, 0.1);
+        EffectUtils.displayParticle(Particle.HAPPY_VILLAGER, currentLocation, 1, 0, 0, 0, 0.1);
+        EffectUtils.displayParticle(Particle.CLOUD, currentLocation, 1, 0, 0, 0, 0);
     }
 
     @Override
@@ -87,10 +86,9 @@ public class WaterBolt extends AbstractProjectile<WaterBolt, WaterBolt.WaterBolt
         WarlordsEntity shooter = projectile.getShooter();
         Location startingLocation = projectile.getStartingLocation();
         Location currentLocation = projectile.getCurrentLocation();
-        World world = currentLocation.getWorld();
         Location effectLocation = hit != null ? hit.getEyeLocation() : currentLocation;
-        world.spawnParticle(Particle.HEART, effectLocation, 3, 1, 1, 1, 0.2, null, true);
-        world.spawnParticle(Particle.HAPPY_VILLAGER, effectLocation, 5, 1, 1, 1, 0.2, null, true);
+        EffectUtils.displayParticle(Particle.HEART, effectLocation, 3, 1, 1, 1, 0.2);
+        EffectUtils.displayParticle(Particle.HAPPY_VILLAGER, effectLocation, 5, 1, 1, 1, 0.2);
         Utils.playGlobalSound(effectLocation, "mage.waterbolt.impact", 2, 1);
         double distanceSquared = startingLocation.distanceSquared(effectLocation);
         float toReduceBy = maxFullDistance * maxFullDistance > distanceSquared ? 1 : (float) (1 - (Math.sqrt(distanceSquared) - maxFullDistance) / 75);
@@ -222,6 +220,14 @@ public class WaterBolt extends AbstractProjectile<WaterBolt, WaterBolt.WaterBolt
     @Override
     public HealingValues getHealValues() {
         return healingValues;
+    }
+
+    public int getMaxFullDistance() {
+        return maxFullDistance;
+    }
+
+    public void setMaxFullDistance(int maxFullDistance) {
+        this.maxFullDistance = maxFullDistance;
     }
 
     @Override

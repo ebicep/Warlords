@@ -1329,14 +1329,12 @@ public abstract class WarlordsEntity {
                 specMinuteStats.computeIfAbsent(specClass, k -> new PlayerStatisticsMinute()).addTotalRespawnTime();
             }
             respawnTickTimer--;
-            if (respawnTickTimer <= 600) {
-                if (entity instanceof Player) {
-                    entity.showTitle(Title.title(
-                            Component.empty(),
-                            Component.text("Respawning in... ", team.getTeamColor()).append(Component.text((respawnTickTimer / 20), NamedTextColor.YELLOW)),
-                            Title.Times.times(Ticks.duration(0), Ticks.duration(40), Ticks.duration(0))
-                    ));
-                }
+            if (respawnTickTimer <= 600 && respawnTickTimer % 20 == 0) {
+                entity.showTitle(Title.title(
+                        Component.empty(),
+                        Component.text("Respawning in... ", team.getTeamColor()).append(Component.text((respawnTickTimer / 20), NamedTextColor.YELLOW)),
+                        Title.Times.times(Ticks.duration(0), Ticks.duration(40), Ticks.duration(0))
+                ));
             }
         }
     }
