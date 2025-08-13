@@ -33,7 +33,7 @@ public interface IntermediateMob extends Mob {
 
     @Override
     default Component getNamePrefix() {
-        return Component.text("INT", NamedTextColor.GREEN);
+        return Component.text("INT", NamedTextColor.LIGHT_PURPLE);
     }
 
 }

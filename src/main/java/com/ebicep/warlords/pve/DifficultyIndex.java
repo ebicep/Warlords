@@ -31,7 +31,7 @@ public enum DifficultyIndex {
                     Component.text("Fight off 25 waves of monsters to"),
                     Component.text("earn rewards."),
                     Component.empty(),
-                    Component.text("Modifies:"),
+                    Component.text("Modifiers:"),
                     Component.text("None", NamedTextColor.GREEN)
             ),
             NamedTextColor.YELLOW,
@@ -94,7 +94,7 @@ public enum DifficultyIndex {
                     Component.text("waves of monsters to prove your"),
                     Component.text("worth against the Vanguard."),
                     Component.empty(),
-                    Component.text("Modifies:"),
+                    Component.text("Modifiers:"),
                     Component.text("+25% Mob Spawns", NamedTextColor.RED)
             ),
             NamedTextColor.RED,

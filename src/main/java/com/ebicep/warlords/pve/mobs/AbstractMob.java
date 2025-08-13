@@ -48,6 +48,7 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
+import org.bukkit.block.spawner.SpawnerEntry;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.entity.Entity;
@@ -245,7 +246,7 @@ public abstract class AbstractMob implements Mob {
 
         if (getDescription() != null) {
             BossBarTrait bossBarTrait = this.npc.getOrAddTrait(BossBarTrait.class);
-            bossBarTrait.setTitle(LegacyComponentSerializer.legacySection().serialize(Component.text(name + " - " + warlordsNPC.getCurrentHealth(), getColor())));
+            bossBarTrait.setTitle(LegacyComponentSerializer.legacySection().serialize(Component.text(name + " - " + warlordsNPC.getHealth(), getColor())));
             bossBarTrait.setColor(BarColor.RED);
             bossBarTrait.setStyle(BarStyle.SOLID);
             bossBarTrait.setProgressProvider(() -> {

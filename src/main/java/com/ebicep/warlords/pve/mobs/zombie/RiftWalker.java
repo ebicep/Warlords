@@ -68,9 +68,6 @@ public class RiftWalker extends AbstractMob implements EliteMob {
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
         warlordsNPC.getSpeed().removeNegativeModifiers();
-        if (ticksElapsed % 40 == 0) {
-            Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_CREEPER_PRIMED, 2, 0.2f);
-        }
     }
 
     @Override
@@ -86,7 +83,7 @@ public class RiftWalker extends AbstractMob implements EliteMob {
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         super.onDeath(killer, deathLocation, option);
-        FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
+        EffectUtils.playFirework(deathLocation, FireworkEffect.builder()
                                                                        .withColor(Color.PURPLE)
                                                                        .with(FireworkEffect.Type.BURST)
                                                                        .withTrail()
