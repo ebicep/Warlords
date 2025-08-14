@@ -342,7 +342,7 @@
         "description": "{{aqua:Avenger's Mark}} deals {{damage}} damage, slows by {{speed;%}}, and increases damage taken by {{damage;%}} for {{ticks}}. Each {{aqua:Avenger's Strike}} on the Marked target increases the duration of {{aqua:Avenger's Mark}} by {{ticks}}, up to {{ticks}}. Reduce the cooldown of {{aqua:Holy Radiance}} by {{ticks}} and the energy cost to {{energy}}.",
         "avengerMarkDamage": 100,
         "avengerMarkSlowPercent": 10,
-        "avengerMarkIncreaseDamagePercent": 15,
+        "avengerMarkIncreaseDamagePercent": 10,
         "holyRadianceCooldownReductionTicks": 40,
         "holyRadianceEnergyCost": 0,
         "strikeMarkDurationIncreaseTicks": 20,
