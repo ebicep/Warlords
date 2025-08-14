@@ -11,14 +11,12 @@ public class HouseOfLife implements SpecBoostManager.SpecBoost<HouseOfLife> {
     private int healthIncrease;
     private int energyIncrease;
     private float energySeerHealingMultiplier;
-    private int energySeerEnergyIncrease;
 
     @Override
     public void init() {
         this.healthIncrease = getValue("healthIncrease", int.class);
         this.energyIncrease = getValue("energyIncrease", int.class);
         this.energySeerHealingMultiplier = getValue("energySeerHealingMultiplier", float.class);
-        this.energySeerEnergyIncrease = getValue("energySeerEnergyIncrease", int.class);
     }
 
     @Override
@@ -28,7 +26,7 @@ public class HouseOfLife implements SpecBoostManager.SpecBoost<HouseOfLife> {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(healthIncrease, energyIncrease, energySeerHealingMultiplier, energySeerEnergyIncrease);
+        return List.of(healthIncrease, energyIncrease, energySeerHealingMultiplier);
     }
 
     @Override
@@ -53,7 +51,6 @@ public class HouseOfLife implements SpecBoostManager.SpecBoost<HouseOfLife> {
                 energySeer.getHealValues().getSeerHealingMultiplier().forEachValue(floatModifiable ->
                         floatModifiable.addOverridingModifier("Spec Boost", energySeerHealingMultiplier / 100)
                 );
-                energySeer.setEnergyRestore(energySeer.getEnergyRestore() + energySeerEnergyIncrease);
             });
         }
 
