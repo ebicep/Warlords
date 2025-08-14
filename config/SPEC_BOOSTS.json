@@ -636,9 +636,8 @@
       "sanctionBurst": {
         "difficulty": 4,
         "name": "Cold Shoulder",
-        "description": "Increase the range of {{aqua:Heart to Heart}} by {{blocks}}, it can now target enemies, and it resets the cooldown of {{aqua:Soul Shackle}}. Reduce the damage of {{aqua:Soul Shackle}} by {{damage;%}}. {{aqua:Prism Guard}} explodes upon expiry, dealing massive knockback to enemies in range. {{aqua:Vindicate}} resets the cooldown of {{aqua:Heart to Heart}}.",
+        "description": "Increase the range of {{aqua:Heart to Heart}} by {{blocks}}, it can now target enemies, and it resets the cooldown of {{aqua:Soul Shackle}}. {{aqua:Prism Guard}} explodes upon expiry, dealing massive knockback to enemies in range. {{aqua:Vindicate}} resets the cooldown of {{aqua:Heart to Heart}}.",
         "heartToHeartRangeIncrease": 5,
-        "soulShackleDamageDecreasePercent": 10,
         "heartToHeartFlagRangeIncrease": 2
       },
       "righteousRampage": {
