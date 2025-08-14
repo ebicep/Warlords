@@ -8,13 +8,11 @@ import java.util.List;
 
 public class Contagion implements SpecBoostManager.SpecBoost<Contagion> {
 
-    private int ephIncrease;
     private float facadeResistanceIncreasePercent;
     private int facadePhexStacksIncrease;
 
     @Override
     public void init() {
-        this.ephIncrease = getValue("ephIncrease", int.class);
         this.facadeResistanceIncreasePercent = getValue("facadeResistanceIncreasePercent", float.class);
         this.facadePhexStacksIncrease = getValue("facadePhexStacksIncrease", int.class);
     }
@@ -26,7 +24,7 @@ public class Contagion implements SpecBoostManager.SpecBoost<Contagion> {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(ephIncrease, facadeResistanceIncreasePercent, facadePhexStacksIncrease);
+        return List.of(facadeResistanceIncreasePercent, facadePhexStacksIncrease);
     }
 
     @Override
@@ -43,7 +41,6 @@ public class Contagion implements SpecBoostManager.SpecBoost<Contagion> {
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getEnergyPerHit().addAdditiveModifier("Spec Boost", ephIncrease);
             warlordsPlayer.getAbilitiesMatching(ContagiousFacade.class).forEach(contagiousFacade -> {
                 contagiousFacade.getDamageAbsorption().addAdditiveModifier("Spec Boost", facadeResistanceIncreasePercent);
                 contagiousFacade.setStacksGranted(contagiousFacade.getStacksGranted() + facadePhexStacksIncrease);
