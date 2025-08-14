@@ -66,6 +66,51 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
     }
 
     @Override
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
+        boolean hasShackled = false;
+        if (pveMasterUpgrade || pveMasterUpgrade2) {
+            Location playerLoc = new LocationBuilder(wp.getLocation()).pitch(0).add(0, 1.7, 0);
+            Location playerEyeLoc = new LocationBuilder(wp.getLocation()).pitch(0).backward(1);
+            Vector viewDirection = playerLoc.getDirection();
+            Utils.playGlobalSound(wp.getLocation(), "warrior.intervene.impact", 1.5f, 0.25f);
+            Utils.playGlobalSound(wp.getLocation(), "mage.fireball.activation", 1.5f, 0.2f);
+            for (WarlordsEntity shackleTarget : PlayerFilter
+                    .entitiesAroundRectangle(wp, shackleRange, shackleRange + 2, shackleRange)
+                    .aliveEnemiesOf(wp)
+                    .requireLineOfSightIntervene(wp, false)
+                    .lookingAtFirst(wp)
+                    .limit(8)
+            ) {
+                Vector direction = shackleTarget.getLocation().subtract(playerEyeLoc).toVector().normalize();
+                if (viewDirection.dot(direction) > .6) {
+                    activateAbility(wp, shackleTarget);
+                }
+                hasShackled = true;
+            }
+        } else {
+            for (WarlordsEntity shackleTarget : PlayerFilter
+                    .entitiesAround(wp, shackleRange, shackleRange, shackleRange)
+                    .aliveEnemiesOf(wp)
+                    .requireLineOfSightIntervene(wp, false)
+                    .lookingAtFirst(wp)
+                    .limit(maxShackleTargets)
+            ) {
+                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" You shackled ", NamedTextColor.GRAY))
+                                                              .append(Component.text(shackleTarget.getName(), NamedTextColor.YELLOW))
+                                                              .append(Component.text("!", NamedTextColor.GRAY)));
+                Utils.playGlobalSound(wp.getLocation(), "warrior.intervene.impact", 1.5f, 0.25f);
+                Utils.playGlobalSound(wp.getLocation(), "mage.fireball.activation", 1.5f, 0.2f);
+                activateAbility(wp, shackleTarget);
+                shacklePool = 0;
+                hasShackled = true;
+            }
+        }
+        if (hasShackled) {
+        }
+        return hasShackled;
+    }
+
+    @Override
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder.create("Shackle up to ")
                                                .text(maxShackleTargets, NamedTextColor.BLUE)
@@ -83,43 +128,16 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
     }
 
     @Override
-    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
-        boolean hasShackled = false;
-        if (pveMasterUpgrade || pveMasterUpgrade2) {
-            Location playerLoc = new LocationBuilder(wp.getLocation()).pitch(0).add(0, 1.7, 0);
-            Location playerEyeLoc = new LocationBuilder(wp.getLocation()).pitch(0).backward(1);
-            Vector viewDirection = playerLoc.getDirection();
-            Utils.playGlobalSound(wp.getLocation(), "warrior.intervene.impact", 1.5f, 0.25f);
-            Utils.playGlobalSound(wp.getLocation(), "mage.fireball.activation", 1.5f, 0.2f);
-            for (WarlordsEntity shackleTarget : PlayerFilter.entitiesAroundRectangle(wp, shackleRange, shackleRange + 2, shackleRange)
-                                                            .aliveEnemiesOf(wp)
-                                                            .closestFirst(wp)
-                                                            .limit(8)) {
-                Vector direction = shackleTarget.getLocation().subtract(playerEyeLoc).toVector().normalize();
-                if (viewDirection.dot(direction) > .6) {
-                    activateAbility(wp, shackleTarget);
-                }
-                hasShackled = true;
-            }
-        } else {
-            for (WarlordsEntity shackleTarget : PlayerFilter.entitiesAround(wp, shackleRange, shackleRange, shackleRange)
-                                                            .aliveEnemiesOf(wp)
-                                                            .requireLineOfSight(wp)
-                                                            .closestFirst(wp)
-                                                            .limit(maxShackleTargets)) {
-                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" You shackled ", NamedTextColor.GRAY))
-                                                              .append(Component.text(shackleTarget.getName(), NamedTextColor.YELLOW))
-                                                              .append(Component.text("!", NamedTextColor.GRAY)));
-                Utils.playGlobalSound(wp.getLocation(), "warrior.intervene.impact", 1.5f, 0.25f);
-                Utils.playGlobalSound(wp.getLocation(), "mage.fireball.activation", 1.5f, 0.2f);
-                activateAbility(wp, shackleTarget);
-                shacklePool = 0;
-                hasShackled = true;
-            }
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new SoulShackleBranch(abilityTree, this);
+    }
+
+    @Override
+    public void runEverySecond(@Nullable WarlordsEntity warlordsEntity) {
+        if (shacklePool > 0) {
+            float newPool = shacklePool - 200;
+            shacklePool = Math.max(newPool, 0);
         }
-        if (hasShackled) {
-        }
-        return hasShackled;
     }
 
     private void activateAbility(@Nonnull WarlordsEntity wp, WarlordsEntity shackleTarget) {
@@ -194,16 +212,13 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
     }
 
     @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new SoulShackleBranch(abilityTree, this);
+    public DamageValues getDamageValues() {
+        return damageValues;
     }
 
     @Override
-    public void runEverySecond(@Nullable WarlordsEntity warlordsEntity) {
-        if (shacklePool > 0) {
-            float newPool = shacklePool - 200;
-            shacklePool = Math.max(newPool, 0);
-        }
+    public SoulShackleStats getAbilityStats() {
+        return stats;
     }
 
     public int getShackleRange() {
@@ -212,16 +227,6 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
 
     public void setShackleRange(int shackleRange) {
         this.shackleRange = shackleRange;
-    }
-
-    @Override
-    public DamageValues getDamageValues() {
-        return damageValues;
-    }
-
-    @Override
-    public SoulShackleStats getAbilityStats() {
-        return stats;
     }
 
     public void addToShacklePool(float amount) {
