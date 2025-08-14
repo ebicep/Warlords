@@ -687,9 +687,8 @@
       "sustainedOnslaught": {
         "difficulty": 1,
         "name": "Sustained Onslaught",
-        "description": "Gain {{speed;%}} base speed. Reduce the energy cost of {{aqua:Impaling Strike}} by {{energy}}. {{aqua:Vitality Concoction}} heals you for {{heal}} health, and reduce the cooldown by {{ticks}}.",
-        "speedIncrease": 5,
-        "impalingStrikeEnergyCostReduction": 12,
+        "description": "Reduce the energy cost of {{aqua:Impaling Strike}} by {{energy}}. {{aqua:Vitality Concoction}} heals you for {{heal}} health, and reduce the cooldown by {{ticks}}.",
+        "impalingStrikeEnergyCostReduction": 5,
         "vitalityConcoctionHealing": 600,
         "vitalityConcoctionCooldownReductionSeconds": 1
       },
