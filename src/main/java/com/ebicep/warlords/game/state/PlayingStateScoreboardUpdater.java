@@ -42,25 +42,7 @@ public class PlayingStateScoreboardUpdater {
     }
 
     public void update() {
-        game.forEachOnlinePlayer((player, team) -> {
-            WarlordsEntity p = Warlords.getPlayer(player);
-            UUID uuid = player.getUniqueId();
-            GamePlayer gp = gamePlayers.get(uuid);
-            int newHealth = p == null ? 0 : Math.round(p.getCurrentHealth());
-            CustomScoreboard scoreboard = CustomScoreboard.getPlayerScoreboard(player);
-            if (gp != null) {
-                gp.setCustomScoreboard(scoreboard);
-                gp.setWarlordsPlayer((WarlordsPlayer) p);
-                if (gp.getHealth() != newHealth) {
-                    gp.setHealth(newHealth);
-                    gp.setUpdateHealth(true);
-                } else {
-                    gp.setUpdateHealth(false);
-                }
-            } else {
-                gamePlayers.put(uuid, new GamePlayer(scoreboard, (WarlordsPlayer) p, newHealth));
-            }
-        });
+        validGamePlayersCache();
         List<WarlordsPlayerName> updatedNames = new ArrayList<>(gamePlayers.size() / 2);
         gamePlayers.forEach((uuid, gamePlayer) -> {
             WarlordsPlayer warlordsPlayer = gamePlayer.getWarlordsPlayer();
@@ -92,6 +74,28 @@ public class PlayingStateScoreboardUpdater {
         });
         updatedNames.forEach(warlordsPlayerName -> {
             warlordsPlayerName.setUpdateColor(false);
+        });
+    }
+
+    private void validGamePlayersCache() {
+        game.forEachOnlinePlayer((player, team) -> {
+            WarlordsEntity p = Warlords.getPlayer(player);
+            UUID uuid = player.getUniqueId();
+            GamePlayer gp = gamePlayers.get(uuid);
+            int newHealth = p == null ? 0 : Math.round(p.getCurrentHealth());
+            CustomScoreboard scoreboard = CustomScoreboard.getPlayerScoreboard(player);
+            if (gp != null) {
+                gp.setCustomScoreboard(scoreboard);
+                gp.setWarlordsPlayer((WarlordsPlayer) p);
+                if (gp.getHealth() != newHealth) {
+                    gp.setHealth(newHealth);
+                    gp.setUpdateHealth(true);
+                } else {
+                    gp.setUpdateHealth(false);
+                }
+            } else {
+                gamePlayers.put(uuid, new GamePlayer(scoreboard, (WarlordsPlayer) p, newHealth));
+            }
         });
     }
 
@@ -218,6 +222,11 @@ public class PlayingStateScoreboardUpdater {
             }
         }
         customScoreboard.giveNewSideBar(false, scoreboard);
+    }
+
+    public void forceUpdatePlayerGameScoreboards() {
+        validGamePlayersCache();
+        gamePlayers.values().forEach(gamePlayer -> updateBasedOnGameScoreboards(gamePlayer.getCustomScoreboard(), gamePlayer.getWarlordsPlayer()));
     }
 
     static final class GamePlayer {

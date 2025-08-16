@@ -291,7 +291,7 @@ public class SiegePayloadState implements SiegeState, Listener, TimerSkipAbleMar
     @EventHandler
     public void onRespawnGive(WarlordsGiveRespawnEvent event) {
         Team team = event.getWarlordsEntity().getTeam();
-        event.getRespawnTimer().set((team == escortingTeam ? 14 : 18) + bonusRespawn);
+        event.getRespawnTimer().set(((team == escortingTeam ? 14 : 18) + bonusRespawn) * 20);
     }
 
     @Override

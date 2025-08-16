@@ -117,7 +117,7 @@ public enum GameMode {
             options.add(new FlagGlowOption());
             options.add(new PlayerCooldownDisplayOption());
             options.add(new RespawnWaveOption(
-                    ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "ctf.respawnWaveDelaySeconds", int.class, RespawnWaveOption.DEFAULT_INITIAL_DELAY),
+                    ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "ctf.respawnWaveDelayTicks", int.class, RespawnWaveOption.DEFAULT_INITIAL_DELAY),
                     ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "ctf.respawnWavePeriodSeconds", int.class, RespawnWaveOption.DEFAULT_TASK_PERIOD),
                     ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "ctf.respawnWaveMinTimerSeconds", int.class, RespawnWaveOption.DEFAULT_MIN_RESPAWN_TIMER)
             ));

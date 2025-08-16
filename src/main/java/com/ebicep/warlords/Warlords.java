@@ -527,14 +527,6 @@ public class Warlords extends JavaPlugin {
                     GeneralEvents.FALLING_BLOCK_ENTITIES.removeIf(e -> !e.isValid());
                 }
 
-                for (GameManager.GameHolder gameHolder : gameManager.getGames()) {
-                    Game game = gameHolder.getGame();
-                    if (game == null) {
-                        continue;
-                    }
-                    game.addTickCounter();
-                }
-
                 ticksElapsed++;
             }
         }.runTaskTimer(this, 0, 0);

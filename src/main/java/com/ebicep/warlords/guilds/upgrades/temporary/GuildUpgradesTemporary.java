@@ -148,7 +148,7 @@ public enum GuildUpgradesTemporary implements GuildUpgrade {
                     if (!validUUIDs.contains(event.getWarlordsEntity().getUuid())) {
                         return;
                     }
-                    event.getRespawnTimer().set((int) (event.getRespawnTimer().get() + getValueFromTier(tier)));
+                    event.getRespawnTimer().set((int) (event.getRespawnTimer().get() + getValueFromTier(tier) * 20));
                 }
 
             });

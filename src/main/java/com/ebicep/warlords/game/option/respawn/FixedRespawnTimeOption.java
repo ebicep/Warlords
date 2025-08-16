@@ -17,6 +17,7 @@ import javax.annotation.Nonnull;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class FixedRespawnTimeOption implements Option, Listener {
+
     private final int respawnTime; // seconds
 
     public FixedRespawnTimeOption(int respawnTime) {
@@ -51,15 +52,15 @@ public class FixedRespawnTimeOption implements Option, Listener {
     public void onEvent(WarlordsRespawnEvent event) {
         if (event.isCancelled()) {
             if (event.getWarlordsEntity().getRespawnTickTimer() == 0) {
-                event.getWarlordsEntity().setRespawnTimerSeconds(respawnTime);
+                event.getWarlordsEntity().setRespawnTimerTicks(respawnTime * 20);
             }
         }
     }
 
     public void giveRespawnTimer(WarlordsEntity player) {
-        AtomicInteger respawnTime = new AtomicInteger(this.respawnTime);
+        AtomicInteger respawnTime = new AtomicInteger(this.respawnTime * 20);
         Bukkit.getPluginManager().callEvent(new WarlordsGiveRespawnEvent(player, respawnTime));
-        player.setRespawnTimerSeconds(Math.max(2, respawnTime.get()));
+        player.setRespawnTimerTicks(Math.max(2, respawnTime.get()));
     }
 
 }
