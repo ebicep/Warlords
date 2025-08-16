@@ -721,10 +721,11 @@
       "houseOfLife": {
         "difficulty": 1,
         "name": "House of Life",
-        "description": "Gain {{heal}} max health and {{energy}} max energy. Increase the healing of {{aqua:Energy Seer}} to {{heal;%}}.",
+        "description": "Gain {{heal}} max health and {{energy}} max energy. Increase the healing of {{aqua:Energy Seer}} to {{heal;%}} and the energy granted by {{energy}}.",
         "healthIncrease": 500,
         "energyIncrease": 100,
-        "energySeerHealingMultiplier": 500
+        "energySeerHealingMultiplier": 500,
+        "energySeerEnergyIncrease": 20
       },
       "contagion": {
         "difficulty": 2,
