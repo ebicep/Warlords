@@ -732,7 +732,7 @@
         "difficulty": 2,
         "name": "Contagion",
         "description": "Gain {{energy}} energy per melee hit. Increase the damage reduction of {{aqua:Contagious Facade}} by {{damageReduction;%}} and the {{dark_red:PHEX}} stacks granted by {{blue}}, and its activation effect is activated on use and does not override the non-activation effect.",
-        "ephIncrease": 6,
+        "ephIncrease": 2,
         "facadeResistanceIncreasePercent": 15,
         "facadePhexStacksIncrease": 1
       },
