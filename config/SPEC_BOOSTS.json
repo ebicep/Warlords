@@ -725,7 +725,7 @@
         "healthIncrease": 500,
         "energyIncrease": 100,
         "energySeerHealingMultiplier": 500,
-        "energySeerEnergyIncrease": 20
+        "energySeerEnergyIncrease": 10
       },
       "contagion": {
         "difficulty": 2,
