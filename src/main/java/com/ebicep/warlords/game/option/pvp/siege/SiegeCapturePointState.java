@@ -208,7 +208,7 @@ public class SiegeCapturePointState implements SiegeState, Listener, TimerSkipAb
 
     @EventHandler
     public void onRespawnGive(WarlordsGiveRespawnEvent event) {
-        event.getRespawnTimer().set(BASE_RESPAWN + bonusRespawn);
+        event.getRespawnTimer().set((BASE_RESPAWN + bonusRespawn) * 20);
     }
 
     @Override

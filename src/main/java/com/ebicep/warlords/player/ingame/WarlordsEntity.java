@@ -1319,16 +1319,17 @@ public abstract class WarlordsEntity {
         }
     }
 
-    private void decrementRespawnTimer() {
+    private boolean decrementRespawnTimer() {
         // Respawn
-        if (respawnTickTimer == 20) {
+        if (respawnTickTimer == 0) {
             respawn();
-        } else if (respawnTickTimer > 0) {
+            return true;
+        }
+        if (respawnTickTimer > 0) {
             minuteStats.addTotalRespawnTime();
             if (specClass != null) {
                 specMinuteStats.computeIfAbsent(specClass, k -> new PlayerStatisticsMinute()).addTotalRespawnTime();
             }
-            respawnTickTimer--;
             if (respawnTickTimer <= 600 && respawnTickTimer % 20 == 0) {
                 entity.showTitle(Title.title(
                         Component.empty(),
@@ -1336,7 +1337,12 @@ public abstract class WarlordsEntity {
                         Title.Times.times(Ticks.duration(0), Ticks.duration(40), Ticks.duration(0))
                 ));
             }
+            respawnTickTimer--;
+        } else {
+            respawnTickTimer = -1;
+            return true;
         }
+        return false;
     }
 
     public MotionSystem getSpeed() {
@@ -1419,7 +1425,7 @@ public abstract class WarlordsEntity {
             player.setFlying(false);
             player.setGameMode(GameMode.ADVENTURE);
         }
-        setRespawnTimerSeconds(-1);
+        setRespawnTimerTicks(-1);
         setCurrentEnergy(getMaxEnergy() / 2);
         dead = false;
         teleport(respawnPoint);
@@ -1428,9 +1434,13 @@ public abstract class WarlordsEntity {
         updateEntity();
     }
 
-    public void setRespawnTimerSeconds(int respawnTickTimer) {
+    public void setRespawnTimerTicks(int respawnTickTimer) {
         //convert respawntimer to ticks
-        this.respawnTickTimer = respawnTickTimer == -1 ? -1 : respawnTickTimer * 20;
+        if (respawnTickTimer > 0) {
+            this.respawnTickTimer = respawnTickTimer;
+        } else {
+            this.respawnTickTimer = -1;
+        }
     }
 
     public void teleport(Location location) {

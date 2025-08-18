@@ -115,6 +115,9 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                                             .stream()
                                             .count() >= maxStacks)
                                     .forEach(teammate -> {
+                                        if (pveMasterUpgrade) {
+                                            Vindicate.giveVindicateCooldown(wp, teammate, DivineBlessing.class, new DivineBlessing(), tickDuration);
+                                        }
                                         teammate.getCooldownManager().removeCooldownByObject(data);
                                         teammate.getCooldownManager()
                                                 .addCooldown(new RegularCooldown<>(name, null, DivineBlessingData.class, data, wp, CooldownTypes.ABILITY, cooldownManager -> {

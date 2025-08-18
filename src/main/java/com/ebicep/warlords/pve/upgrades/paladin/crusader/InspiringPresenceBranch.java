@@ -51,6 +51,7 @@ public class InspiringPresenceBranch extends AbstractUpgradeBranch<InspiringPres
                 """
                         +20% Cooldown Reduction
                         +25% Speed
+                        +10% Passive damage reduction
                         
                         For the duration of Inspiring Presence, every hit you take restores 15 energy to you and any other ally affected by Inspiring Presence.
                         """,
@@ -58,6 +59,7 @@ public class InspiringPresenceBranch extends AbstractUpgradeBranch<InspiringPres
                 () -> {
                     ability.getCooldown().addMultiplicativeModifierMult("Resilient Presence", 0.8f);
                     ability.setSpeedBuff(ability.getSpeedBuff() + 25);
+                    abilityTree.getWarlordsPlayer().getSpec().setDamageResistance(abilityTree.getWarlordsPlayer().getSpec().getDamageResistance() + 10);
                 }
         );
     }

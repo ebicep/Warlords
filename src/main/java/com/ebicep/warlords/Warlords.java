@@ -488,7 +488,7 @@ public class Warlords extends JavaPlugin {
                                     we.displayCompassActionBar();
                                 }
                             } else {
-                                we.displayActionBar(loopTickCounter % 50 == 0); // force display every 2.5 seconds since it fades on client after 3, else only update if diff
+                                we.displayActionBar(loopTickCounter % 40 == 0); // force display every 2 seconds since it fades on client after 3, else only update if diff
                                 game.spectators()
                                     .map(Bukkit::getPlayer)
                                     .filter(Objects::nonNull)
@@ -525,14 +525,6 @@ public class Warlords extends JavaPlugin {
 //                    RemoveEntities.removeHorsesInGame();
                     // for removing falling blocks that didnt get removed prior
                     GeneralEvents.FALLING_BLOCK_ENTITIES.removeIf(e -> !e.isValid());
-                }
-
-                for (GameManager.GameHolder gameHolder : gameManager.getGames()) {
-                    Game game = gameHolder.getGame();
-                    if (game == null) {
-                        continue;
-                    }
-                    game.addTickCounter();
                 }
 
                 ticksElapsed++;

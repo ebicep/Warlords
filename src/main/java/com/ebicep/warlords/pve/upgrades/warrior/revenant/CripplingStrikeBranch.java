@@ -53,7 +53,7 @@ public class CripplingStrikeBranch extends AbstractUpgradeBranch<CripplingStrike
                         """,
                 50000,
                 () -> {
-                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -15);
+                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -20);
                 }
         );
     }

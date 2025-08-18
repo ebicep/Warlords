@@ -137,6 +137,7 @@ public final class Game implements Runnable, AutoCloseable {
             @Override
             public void run() {
                 Game.this.run();
+                loopTickCounter++;
             }
         }.runTaskTimer(0, 1);
         //this.printDebuggingInformation();
@@ -914,10 +915,6 @@ public final class Game implements Runnable, AutoCloseable {
 
     public int getLoopTickCounter() {
         return loopTickCounter;
-    }
-
-    public void addTickCounter() {
-        this.loopTickCounter++;
     }
 
     public List<String> getNamespace() {

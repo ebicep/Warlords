@@ -272,7 +272,7 @@ public class Narmer extends AbstractMob implements BossMob {
             ChatUtils.sendTitleToGamePlayers(
                     getWarlordsNPC().getGame(),
                     Component.text("Death Wish", NamedTextColor.RED),
-                    Component.text(acolyteDeathTickWindow / 10f, NamedTextColor.YELLOW),
+                    Component.text(acolyteDeathTickWindow / 20f, NamedTextColor.YELLOW),
                     0, acolyteDeathTickWindow, 0
             );
         }

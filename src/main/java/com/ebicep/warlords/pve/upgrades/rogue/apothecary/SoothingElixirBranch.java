@@ -16,6 +16,7 @@ public class SoothingElixirBranch extends AbstractUpgradeBranch<SoothingElixir> 
     public SoothingElixirBranch(AbilityTree abilityTree, SoothingElixir ability) {
         super(abilityTree, ability);
 
+
         UpgradeTreeBuilder
                 .create(abilityTree, this)
                 .addUpgradeHealing(ability.getHealValues().getElixirHealing(), 7.5f)
@@ -30,7 +31,7 @@ public class SoothingElixirBranch extends AbstractUpgradeBranch<SoothingElixir> 
         masterUpgrade = new Upgrade(
                 "Alleviating Elixir",
                 "Soothing Elixir - Master Upgrade",
-                "Soothing Puddle now heals every 0.5s instead of 1s within the puddle radius and inflicts LEECH with 2 extra stacks.",
+                "Soothing Puddle now heals every 0.25s instead of 1s within the puddle radius and inflicts LEECH with 2 extra stacks.",
                 50000,
                 () -> {
 
@@ -40,7 +41,7 @@ public class SoothingElixirBranch extends AbstractUpgradeBranch<SoothingElixir> 
                 "Healing Elixir",
                 "Soothing Elixir - Master Upgrade",
                 """
-                        Allies hit by Soothing Elixir, including the caster, have all current debuffs removed and become immune to debuffs for 4s. Additionally, for every target hit, increase the users max HP by 1.5% (max 25%) for 4s.
+                        Allies hit by Soothing Elixir, including the caster, have all current debuffs removed and become immune to debuffs for 5s. Additionally, for every target hit, increase the users max HP by 1.5% (max 25%) for 4s.
                         """,
                 50000,
                 () -> {

@@ -152,7 +152,7 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
                                 particleTask.cancel();
                             }
                         }
-                    }.runTaskTimer(20, pveMasterUpgrade ? 10 : 20);
+                    }.runTaskTimer(20, pveMasterUpgrade ? 5 : 20);
                     List<WarlordsEntity> enemiesHit = PlayerFilter.entitiesAround(newLoc, radius, radius, radius).aliveEnemiesOf(wp).toList();
                     for (WarlordsEntity nearEntity : enemiesHit) {
                         Utils.playGlobalSound(nearEntity.getLocation(), Sound.BLOCK_GLASS_BREAK, 1, 0.5f);

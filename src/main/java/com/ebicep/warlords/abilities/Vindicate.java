@@ -49,6 +49,10 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
 
             @Override
             protected Listener getListener() {
+                if (target.isInPve()) {
+                    return CooldownUtils.getDebuffImmunityListener(CooldownUtils.DebuffImmunity.getFullImmunity(target));
+                }
+
                 return CooldownUtils.getPartialDebuffImmunityListener(target);
             }
 
@@ -216,6 +220,14 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
 
     public void setDamageReductionTickDuration(int damageReductionTickDuration) {
         this.damageReductionTickDuration = damageReductionTickDuration;
+    }
+
+    public int getVindTickDuration() {
+        return vindTickDuration;
+    }
+
+    public void setVindTickDuration(int vindTickDuration) {
+        this.vindTickDuration = vindTickDuration;
     }
 
     public static class VindicateStats extends AbstractAbilityStats<Vindicate, VindicateStats> {

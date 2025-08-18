@@ -171,36 +171,7 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
 
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue + damageValues.getBonusDamage().getValue();
-            }
-
-            @Override
-            public void onEndFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (!pveMasterUpgrade2) {
-                    return;
-                }
-                if (!event.getCause().contains("Strike")) {
-                    return;
-                }
-                switch (Specializations.getClass(event.getSource().getSpecClass())) {
-                    case WARRIOR, PALADIN, ROGUE -> Leech.giveLeechCooldown(Leech.LeechInstance
-                            .create(wp, event.getWarlordsEntity())
-                            .withImpalingStrike()
-                    );
-                    default -> {
-                    }
-                }
-            }
-
-            @Override
-            public float addEnergyPerHit(WarlordsEntity we, float energyPerHit) {
-                if (!pveMasterUpgrade2) {
-                    return energyPerHit;
-                }
-                return switch (Specializations.getClass(we.getSpecClass())) {
-                    case MAGE, SHAMAN, ARCANIST -> energyPerHit * 2;
-                    default -> energyPerHit;
-                };
+                return (currentDamageValue + damageValues.getBonusDamage().getValue()) * (pveMasterUpgrade2 ? 1.1f : 1);
             }
         };
         wp.getCooldownManager().removeCooldown(RemedicChains.class, false);

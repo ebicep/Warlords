@@ -18,7 +18,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.scheduler.BukkitTask;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -46,15 +45,6 @@ public class WinAfterTimeoutOption implements Option {
         return OptionalInt.empty();
     }
 
-    public static OptionalInt getTimeInitial(@Nonnull Game game) {
-        for (Option option : game.getOptions()) {
-            if (option instanceof WinAfterTimeoutOption drawAfterTimeoutOption) {
-                return OptionalInt.of(drawAfterTimeoutOption.getTimeInitial());
-            }
-        }
-        return OptionalInt.empty();
-    }
-
     /**
      * Gets the time remaining in second
      *
@@ -62,10 +52,6 @@ public class WinAfterTimeoutOption implements Option {
      */
     public int getTimeRemaining() {
         return timeRemaining;
-    }
-
-    public int getTimeInitial() {
-        return timeInitial;
     }
 
     /**
@@ -78,13 +64,25 @@ public class WinAfterTimeoutOption implements Option {
         this.timeInitial = timeRemaining;
     }
 
+    public static OptionalInt getTimeInitial(@Nonnull Game game) {
+        for (Option option : game.getOptions()) {
+            if (option instanceof WinAfterTimeoutOption drawAfterTimeoutOption) {
+                return OptionalInt.of(drawAfterTimeoutOption.getTimeInitial());
+            }
+        }
+        return OptionalInt.empty();
+    }
+
+    public int getTimeInitial() {
+        return timeInitial;
+    }
     private int scoreboardPriority = 10;
     private String scoreboardGroup = "timeout";
     private int timeRemaining;
     private int timeInitial;
     private SimpleScoreboardHandler scoreboard;
-    private BukkitTask runTaskTimer;
     private Team winner;
+    private List<Component> scoreboardComponentCache = Collections.emptyList();
 
     public WinAfterTimeoutOption() {
         this(ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "ctf.gameTimeSeconds", int.class, DEFAULT_TIME_REMAINING), DEFAULT_WINNER);
@@ -109,23 +107,6 @@ public class WinAfterTimeoutOption implements Option {
         this(DEFAULT_TIME_REMAINING, winner);
     }
 
-    /**
-     * Computes the time elapsed in seconds
-     *
-     * @return The time elapsed
-     */
-    public int getTimeElapsed() {
-        return timeInitial - timeRemaining;
-    }
-
-    public Team getWinner() {
-        return winner;
-    }
-
-    public void setWinner(Team winner) {
-        this.winner = winner;
-    }
-
     @Override
     public void register(@Nonnull Game game) {
         new TimerSkipAbleMarker() {
@@ -141,81 +122,19 @@ public class WinAfterTimeoutOption implements Option {
 
         }.register(game);
         game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(scoreboardPriority, scoreboardGroup) {
-            @Nonnull
-            @Override
-            public List<Component> computeLines(@Nullable WarlordsPlayer player) {
-                final EnumSet<Team> teams = TeamMarker.getTeams(game);
-
-                Team winner = null;
-                int highestScore = Integer.MIN_VALUE;
-                int highestWinInSeconds = Integer.MAX_VALUE;
-                if (teams.size() > 1) {
-                    List<PointPredicterMarker> predictionMarkers = game
-                            .getMarkers(PointPredicterMarker.class);
-                    int scoreNeededToEndGame = game.getOptions()
-                                                   .stream()
-                                                   .filter(e -> e instanceof WinByPointsOption)
-                                                   .mapToInt(e -> ((WinByPointsOption) e).getPointLimit())
-                                                   .sorted()
-                                                   .findFirst()
-                                                   .orElse(Integer.MAX_VALUE);
-                    for (Team team : teams) {
-                        int points = game.getPoints(team);
-                        int winInSeconds;
-                        if (predictionMarkers.isEmpty()) {
-                            winInSeconds = Integer.MAX_VALUE;
-                        } else {
-                            double pointsPerMinute = predictionMarkers
-                                    .stream()
-                                    .mapToDouble(e -> e.predictPointsNextMinute(team))
-                                    .sum();
-                            int pointsRemaining = scoreNeededToEndGame - points;
-                            int winInSecondsCalculated = pointsPerMinute <= 0 ? Integer.MAX_VALUE : (int) (pointsRemaining / pointsPerMinute * 60);
-                            int pointsAfterTimeIsOver = (int) (points + timeRemaining * pointsPerMinute / 60);
-
-                            if (winInSecondsCalculated >= 0 && winInSecondsCalculated < timeRemaining) {
-                                // This teamis going to win before the timer is over
-                                winInSeconds = winInSecondsCalculated;
-                                points = scoreNeededToEndGame;
-                            } else {
-                                winInSeconds = timeRemaining;
-                                points = pointsAfterTimeIsOver;
-                            }
-                        }
-
-                        if (points > highestScore) {
-                            highestScore = points;
-                            highestWinInSeconds = winInSeconds;
-                            winner = team;
-                        } else if (points == highestScore) {
-                            if (winInSeconds < highestWinInSeconds) {
-                                highestWinInSeconds = winInSeconds;
-                                winner = team;
-                            } else if (winInSeconds == highestWinInSeconds) {
-                                winner = null;
-                            }
-                        }
+                    @Nonnull
+                    @Override
+                    public List<Component> computeLines(@Nullable WarlordsPlayer player) {
+                        return scoreboardComponentCache;
                     }
-                } else {
-                    highestWinInSeconds = timeRemaining;
                 }
-
-                TextComponent.Builder message = Component.text();
-                if (winner != null) {
-                    message.append(winner.coloredPrefix())
-                           .append(Component.text(" Wins in: ", NamedTextColor.GOLD));
-                } else {
-                    message.append(Component.text("Time Left: ", NamedTextColor.WHITE));
-                }
-                message.append(Component.text(StringUtils.formatTimeLeft(highestWinInSeconds == Integer.MAX_VALUE ? timeRemaining : highestWinInSeconds), NamedTextColor.GREEN));
-                return Collections.singletonList(message.build());
-            }
-        });
+        );
     }
 
     @Override
     public void start(@Nonnull Game game) {
-        this.runTaskTimer = new GameRunnable(game) {
+        scoreboardComponentCache = WinAfterTimeoutOption.this.getScoreboardComponent(game);
+        new GameRunnable(game) {
             @Override
             public void run() {
                 if (game.isState(EndState.class)) {
@@ -223,6 +142,9 @@ public class WinAfterTimeoutOption implements Option {
                     return;
                 }
                 timeRemaining--;
+                scoreboardComponentCache = WinAfterTimeoutOption.this.getScoreboardComponent(game);
+                scoreboard.markChanged();
+//                game.getState(PlayingState.class).ifPresent(playingState -> playingState.getUpdater().forceUpdateGamePlayerScoreboards());
                 if (timeRemaining <= 0) {
                     Team leader;
                     if (winner == null) {
@@ -251,16 +173,94 @@ public class WinAfterTimeoutOption implements Option {
                         cancel();
                     }
                 }
-                scoreboard.markChanged();
             }
         }.runTaskTimer(SECOND, SECOND);
     }
 
-    @Override
-    public void onGameEnding(@Nonnull Game game) {
-        if (runTaskTimer != null) {
-            runTaskTimer.cancel();
-            runTaskTimer = null;
+    @Nonnull
+    private List<Component> getScoreboardComponent(@Nonnull Game game) {
+        final EnumSet<Team> teams = TeamMarker.getTeams(game);
+
+        Team winner = null;
+        int highestScore = Integer.MIN_VALUE;
+        int highestWinInSeconds = Integer.MAX_VALUE;
+        if (teams.size() > 1) {
+            List<PointPredicterMarker> predictionMarkers = game
+                    .getMarkers(PointPredicterMarker.class);
+            int scoreNeededToEndGame = game.getOptions()
+                                           .stream()
+                                           .filter(e -> e instanceof WinByPointsOption)
+                                           .mapToInt(e -> ((WinByPointsOption) e).getPointLimit())
+                                           .sorted()
+                                           .findFirst()
+                                           .orElse(Integer.MAX_VALUE);
+            for (Team team : teams) {
+                int points = game.getPoints(team);
+                int winInSeconds;
+                if (predictionMarkers.isEmpty()) {
+                    winInSeconds = Integer.MAX_VALUE;
+                } else {
+                    double pointsPerMinute = predictionMarkers
+                            .stream()
+                            .mapToDouble(e -> e.predictPointsNextMinute(team))
+                            .sum();
+                    int pointsRemaining = scoreNeededToEndGame - points;
+                    int winInSecondsCalculated = pointsPerMinute <= 0 ? Integer.MAX_VALUE : (int) (pointsRemaining / pointsPerMinute * 60);
+                    int pointsAfterTimeIsOver = (int) (points + timeRemaining * pointsPerMinute / 60);
+
+                    if (winInSecondsCalculated >= 0 && winInSecondsCalculated < timeRemaining) {
+                        // This teamis going to win before the timer is over
+                        winInSeconds = winInSecondsCalculated;
+                        points = scoreNeededToEndGame;
+                    } else {
+                        winInSeconds = timeRemaining;
+                        points = pointsAfterTimeIsOver;
+                    }
+                }
+
+                if (points > highestScore) {
+                    highestScore = points;
+                    highestWinInSeconds = winInSeconds;
+                    winner = team;
+                } else if (points == highestScore) {
+                    if (winInSeconds < highestWinInSeconds) {
+                        highestWinInSeconds = winInSeconds;
+                        winner = team;
+                    } else if (winInSeconds == highestWinInSeconds) {
+                        winner = null;
+                    }
+                }
+            }
+        } else {
+            highestWinInSeconds = timeRemaining;
         }
+
+        TextComponent.Builder message = Component.text();
+        if (winner != null) {
+            message.append(winner.coloredPrefix())
+                   .append(Component.text(" Wins in: ", NamedTextColor.GOLD));
+        } else {
+            message.append(Component.text("Time Left: ", NamedTextColor.WHITE));
+        }
+        message.append(Component.text(StringUtils.formatTimeLeft(highestWinInSeconds == Integer.MAX_VALUE ? timeRemaining : highestWinInSeconds), NamedTextColor.GREEN));
+        return Collections.singletonList(message.build());
     }
+
+    /**
+     * Computes the time elapsed in seconds
+     *
+     * @return The time elapsed
+     */
+    public int getTimeElapsed() {
+        return timeInitial - timeRemaining;
+    }
+
+    public Team getWinner() {
+        return winner;
+    }
+
+    public void setWinner(Team winner) {
+        this.winner = winner;
+    }
+
 }

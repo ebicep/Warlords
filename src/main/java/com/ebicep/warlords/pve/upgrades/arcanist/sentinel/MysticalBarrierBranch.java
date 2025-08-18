@@ -25,25 +25,28 @@ public class MysticalBarrierBranch extends AbstractUpgradeBranch<MysticalBarrier
                 "Transcendent Barrier",
                 "Mystical Barrier - Master Upgrade",
                 """
+                        +3s Duration
                         +20% Additional Cooldown Reduction
                         
-                        Increase max shield health by 2000 and increase amount of shield granted for each damage instance by 120.
+                        Draw aggro from nearby mobs when acticvating Mystical Barrier. Increase max shield health by 2000 and increase amount of shield granted for each damage instance by 80.
                         """,
                 50000,
                 () -> {
                     ability.getCooldown().addMultiplicativeModifierMult("Transcendent Barrier", 0.8f);
-                    ability.setShieldMaxHealth(ability.getShieldMaxHealth() + 2000);
-                    ability.setShieldIncrease(ability.getShieldIncrease() + 120);
+                    ability.setShieldMaxHealth(ability.getShieldMaxHealth() + 3000);
+                    ability.setShieldIncrease(ability.getShieldIncrease() + 80);
+                    ability.setTickDuration(ability.getTickDuration() + 60);
                 }
         );
         masterUpgrade2 = new Upgrade(
                 "Illusory Barrier",
                 "Mystical Barrier - Master Upgrade",
                 """
-                        Mystical Barrier, will now grant yourself and a nearby allies the shield. If there was no nearby ally the ability will reduce its cooldown by 35%.
+                        Mystical Barrier, will now grant yourself and nearby allies the shield. Players under the effect of Mystical Barrier receive 3x more shields from Guardian Beam.
                         """,
                 50000,
                 () -> {
+                    ability.setGuardianBeamShieldMultiplier(3);
                 }
         );
     }

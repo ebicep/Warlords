@@ -56,7 +56,7 @@ public class RecklessChargeBranch extends AbstractUpgradeBranch<RecklessCharge> 
                 }
         );
         masterUpgrade2 = new Upgrade(
-                "Reverberation",
+                "Curated Charge",
                 "Reckless Charge - Master Upgrade",
                 """
                         +80% damage reduction on cast.

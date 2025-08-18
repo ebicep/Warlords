@@ -73,6 +73,18 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
                 activateAbility(wp, heartTarget);
                 return true;
             }
+            if (targetEnemies) {
+                for (WarlordsEntity heartTarget : PlayerFilter
+                        .entitiesAround(wp, radius, verticalRadius, radius)
+                        .excluding(wp)
+                        .requireLineOfSight(wp)
+                        .lookingAtFirst(wp)
+                ) {
+                    activateAbility(wp, heartTarget);
+                    heartTarget.addInstance(InstanceBuilder.damage().cause("Heart to Heart").source(wp).value(1800));
+                    return true;
+                }
+            }
         } else if (targetEnemies) {
             for (WarlordsEntity heartTarget : PlayerFilter
                     .entitiesAround(wp, radius, verticalRadius, radius)

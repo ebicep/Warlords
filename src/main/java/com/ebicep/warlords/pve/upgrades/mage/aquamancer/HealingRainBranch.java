@@ -8,6 +8,11 @@ import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
 
 public class HealingRainBranch extends AbstractUpgradeBranch<HealingRain> {
 
+    @Override
+    public void runOnce() {
+        ability.getCooldown().addAdditiveModifier("PVE", -6);
+    }
+
     public HealingRainBranch(AbilityTree abilityTree, HealingRain ability) {
         super(abilityTree, ability);
 

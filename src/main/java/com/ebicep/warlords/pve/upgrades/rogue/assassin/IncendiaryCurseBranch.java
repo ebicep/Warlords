@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.upgrades.rogue.assassin;
 
 import com.ebicep.warlords.abilities.IncendiaryCurse;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -10,7 +11,11 @@ public class IncendiaryCurseBranch extends AbstractUpgradeBranch<IncendiaryCurse
 
     @Override
     public void runOnce() {
+        Value.RangedValueCritable damage = ability.getDamageValues().getCurseDamage();
         ability.getEnergyCost().setBaseValue(40);
+        ability.setBlindDurationInTicks(30);
+        damage.min().addMultiplicativeModifierAdd("PvE", .3f);
+        damage.max().addMultiplicativeModifierAdd("PvE", .3f);
     }
 
     public IncendiaryCurseBranch(AbilityTree abilityTree, IncendiaryCurse ability) {
@@ -40,12 +45,18 @@ public class IncendiaryCurseBranch extends AbstractUpgradeBranch<IncendiaryCurse
                 "Unforeseen Curse",
                 "Incendiary Curse - Master Upgrade",
                 """
-                        Increase the block radius by 3. Additionally, every enemy stunned gives 10 energy (Max 200).
+                        +30% Damage
+                        
+                        Increase the block radius by 3. Additionally, every enemy stunned gives 20 energy (Max 200).
                         """,
                 50000,
                 () -> {
                     ability.getHitBoxRadius().addAdditiveModifier("Master Upgrade", 3);
                     ability.setBlindDurationInTicks(ability.getBlindDurationInTicks() + 40);
+
+                    Value.RangedValueCritable damage = ability.getDamageValues().getCurseDamage();
+                    damage.min().addMultiplicativeModifierAdd("PvE", .3f);
+                    damage.max().addMultiplicativeModifierAdd("PvE", .3f);
                 }
         );
     }

@@ -5,6 +5,9 @@ import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.pve.upgrades.*;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class GuardianBeamBranch extends AbstractUpgradeBranch<GuardianBeam> {
 
     @Override
@@ -12,6 +15,7 @@ public class GuardianBeamBranch extends AbstractUpgradeBranch<GuardianBeam> {
         Value.RangedValueCritable damage = ability.getDamageValues().getBeamDamage();
         damage.min().addMultiplicativeModifierAdd("PvE", .3f);
         damage.max().addMultiplicativeModifierAdd("PvE", .3f);
+        ability.setShieldValues(new ArrayList<>(List.of(600, 1200, 2400)));
     }
 
     public GuardianBeamBranch(AbilityTree abilityTree, GuardianBeam ability) {
@@ -55,10 +59,16 @@ public class GuardianBeamBranch extends AbstractUpgradeBranch<GuardianBeam> {
                 "Conservator Beam",
                 "Guardian Beam - Master Upgrade",
                 """
-                        When Guardian Beam hits an enemy, reduce their speed by 25% for 5s. Additionally, when Guardian Beam hits an ally, increase their speed by 25% for 7s.
+                        +10 Blocks range
+                        +25% Damage
+                        
+                        When Guardian Beam hits an enemy, reduce their speed by 25% for 5s. Additionally, when Guardian Beam hits an ally, reduce their cooldowns by 1.5 seconds.
                         """,
                 50000,
                 () -> {
+                    Value.RangedValueCritable damage = ability.getDamageValues().getBeamDamage();
+                    damage.min().addMultiplicativeModifierAdd("PvE", .25f);
+                    damage.max().addMultiplicativeModifierAdd("PvE", .25f);
                 }
         );
     }

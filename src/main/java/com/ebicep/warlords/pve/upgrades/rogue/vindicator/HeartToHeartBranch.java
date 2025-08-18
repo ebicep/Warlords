@@ -24,10 +24,10 @@ public class HeartToHeartBranch extends AbstractUpgradeBranch<HeartToHeart> {
         masterUpgrade = new Upgrade(
                 "Heart of Hearts",
                 "Heart To Heart - Master Upgrade",
-                "Heart To Heart now deals 1635 - 2096 damage to all enemies you pass through. Enemies hit are stunned for 1 second.",
+                "Heart To Heart no longer targets allies and now deals 1635 - 2096 damage to all enemies you pass through. Enemies hit are stunned for 1 second. Deal an additional 1800 damage to your initial target.",
                 50000,
                 () -> {
-
+                    ability.setTargetEnemies(true);
                 }
         );
         masterUpgrade2 = new Upgrade(

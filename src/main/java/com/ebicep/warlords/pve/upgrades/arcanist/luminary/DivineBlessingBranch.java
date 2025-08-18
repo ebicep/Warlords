@@ -25,10 +25,13 @@ public class DivineBlessingBranch extends AbstractUpgradeBranch<DivineBlessing> 
                 "Graceful Ascent",
                 "Divine Blessing - Master Upgrade",
                 """
-                        Healing from all sources bonus increased by 10%. All allies restore another 800 health after Divine Blessing ends.
+                        +5s Duration
+                        
+                        Healing from all sources bonus increased by 10%. All allies restore another 800 health after Divine Blessing ends. Additionally, you and allies at max stacks are immune to debuffs for the duration of Divine Blessing.
                         """,
                 50000,
                 () -> {
+                    ability.setTickDuration(ability.getTickDuration() + 100);
                     ability.setHexHealingBonus(ability.getHexHealingBonus() + 10);
                 }
         );

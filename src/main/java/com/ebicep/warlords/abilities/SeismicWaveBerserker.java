@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
-import com.ebicep.warlords.abilities.internal.AbstractSeismicWave;
-import com.ebicep.warlords.abilities.internal.Damages;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
@@ -74,6 +71,13 @@ public class SeismicWaveBerserker extends AbstractSeismicWave implements Damages
         float multiplier = 1;
         if (pveMasterUpgrade) {
             multiplier = (1.5f / 15f) * Math.min(i + 1, 15) + 1;
+        }
+        if (pveMasterUpgrade2) {
+            for (AbstractAbility ability : wp.getAbilities()) {
+                if (ability instanceof LastStand) {
+                    ability.setCurrentCooldown(Math.clamp(ability.getCurrentCooldown() - 0.25f, 0, 2));
+                }
+            }
         }
         waveTarget.addInstance(InstanceBuilder
                 .damage()

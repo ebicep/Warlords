@@ -157,6 +157,30 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
         return true;
     }
 
+    private void giveDamageBoost(WarlordsEntity we, int startingBlocksTravelled) {
+        RegularCooldown<TimeWarpPyromancer> damageBoost = new RegularCooldown<>(
+                name,
+                "WARP DMG",
+                TimeWarpPyromancer.class,
+                null,
+                we,
+                CooldownTypes.BUFF,
+                cooldownManager -> {
+
+                },
+                8 * 20
+        ) {
+            @Override
+            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                if (pveMasterUpgrade) {
+                    return currentDamageValue * convertToMultiplicationDecimal(we.getBlocksTravelled() - startingBlocksTravelled);
+                }
+                return currentDamageValue;
+            }
+        };
+        we.getCooldownManager().addCooldown(damageBoost);
+    }
+
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new TimeWarpBranchPyromancer(abilityTree, this);

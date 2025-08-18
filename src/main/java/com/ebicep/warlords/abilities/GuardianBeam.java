@@ -91,7 +91,7 @@ public class GuardianBeam extends AbstractBeam<GuardianBeam, GuardianBeam.Guardi
             } else {
                 giveShield(wp, hit);
                 if (pveMasterUpgrade2) {
-                    hit.addSpeedModifier(wp, "Conservator Beam", 25, 7 * 20);
+                    hit.getSpec().decreaseAllCooldownTimersBy(runeTimerIncrease);
                 }
             }
         }
@@ -241,6 +241,10 @@ public class GuardianBeam extends AbstractBeam<GuardianBeam, GuardianBeam.Guardi
 
     public void setRuneTimerIncrease(float runeTimerIncrease) {
         this.runeTimerIncrease = runeTimerIncrease;
+    }
+
+    public void setShieldValues(List<Integer> shieldValues) {
+        this.shieldValues = shieldValues;
     }
 
     public static class GuardianBeamShield extends Shield {

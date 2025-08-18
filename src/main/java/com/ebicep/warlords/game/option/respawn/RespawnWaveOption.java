@@ -21,7 +21,7 @@ public class RespawnWaveOption implements Option, Listener {
 
     public static final int DEFAULT_INITIAL_DELAY = 20;
     public static final int DEFAULT_TASK_PERIOD = 12;
-    public static final int DEFAULT_MIN_RESPAWN_TIMER = 5;
+    public static final int DEFAULT_MIN_RESPAWN_TIMER = 4;
 
     private final int initialDelay;
     private final int taskPeriod;
@@ -42,13 +42,14 @@ public class RespawnWaveOption implements Option, Listener {
     public void register(@Nonnull Game game) {
         game.registerEvents(this);
         game.registerGameMarker(TimerSkipAbleMarker.class, (delayInTicks) -> {
-            currentTimer += delayInTicks / 20;
-            for (WarlordsEntity player : PlayerFilter.playingGame(game)) {
-                if (player.getRespawnTickTimer() >= 0) {
-                    player.setRespawnTimerSeconds(Math.max((player.getRespawnTickTimer() / 20) - (delayInTicks * 20), 0));
+                    currentTimer += delayInTicks;
+                    for (WarlordsEntity player : PlayerFilter.playingGame(game)) {
+                        if (player.getRespawnTickTimer() >= 0) {
+                            giveRespawnTimer(player);
+                        }
+                    }
                 }
-            }
-        });
+        );
     }
 
     @Override
@@ -63,35 +64,35 @@ public class RespawnWaveOption implements Option, Listener {
                     }
                 }
             }
-        }.runTaskTimer(initialDelay, GameRunnable.SECOND);
+        }.runTaskTimer(initialDelay, 0);
+    }
+
+    public void giveRespawnTimer(WarlordsEntity player) {
+        AtomicInteger respawnTime = new AtomicInteger(getRespawnTimer());
+        Bukkit.getPluginManager().callEvent(new WarlordsGiveRespawnEvent(player, respawnTime));
+        player.setRespawnTimerTicks(Math.max(2, respawnTime.get()));
+    }
+
+    private int getRespawnTimer() {
+        int respawn = -currentTimer % (taskPeriod * 20);
+        while (respawn < minRespawnTimer * 20) {
+            respawn += taskPeriod * 20;
+        }
+        return respawn;
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onEvent(WarlordsDeathEvent event) {
         giveRespawnTimer(event.getWarlordsEntity());
     }
-    
+
     @EventHandler(priority = EventPriority.MONITOR)
     public void onEvent(WarlordsRespawnEvent event) {
         if (event.isCancelled()) {
             if (event.getWarlordsEntity().getRespawnTickTimer() == 0) {
-                int respawn = -currentTimer % this.taskPeriod;
-                while (respawn < 1) {
-                    respawn += this.taskPeriod;
-                }
-                event.getWarlordsEntity().setRespawnTimerSeconds(respawn);
+                giveRespawnTimer(event.getWarlordsEntity());
             }
         }
     }
 
-    public void giveRespawnTimer(WarlordsEntity player) {
-        int respawn = -currentTimer % this.taskPeriod;
-        while (respawn < minRespawnTimer) {
-            respawn += this.taskPeriod;
-        }
-        AtomicInteger respawnTime = new AtomicInteger(respawn);
-        Bukkit.getPluginManager().callEvent(new WarlordsGiveRespawnEvent(player, respawnTime));
-        player.setRespawnTimerSeconds(Math.max(2, respawnTime.get()));
-    }
-    
 }

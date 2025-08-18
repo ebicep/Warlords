@@ -26,10 +26,11 @@ public class WaterBoltBranch extends AbstractUpgradeBranch<WaterBolt> {
         masterUpgrade = new Upgrade(
                 "Aquatic Assault",
                 "Water Bolt - Master Upgrade",
-                "+100% Projectile speed\n\nWater Bolt increases the damage dealt of all allies it hits by 10% for 10 seconds.",
+                "+6 Energy per hit\n\n+100% Projectile speed\n\nWater Bolt increases the energy per hit of all allies it hits by +5 for 5 seconds.",
                 50000,
                 () -> {
                     ability.getProjectileSpeed().addMultiplicativeModifierAdd("Master Upgrade Branch", 1);
+                    abilityTree.getWarlordsPlayer().getEnergyPerHit().addAdditiveModifier("Master Upgrade Branch", 6);
                 }
         );
         masterUpgrade2 = new Upgrade(

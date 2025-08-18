@@ -52,6 +52,7 @@ public class BloodlustBranch extends AbstractUpgradeBranch<BloodLust> {
                         """,
                 50000,
                 () -> {
+
                 }
         );
     }
