@@ -29,11 +29,17 @@ import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
+import org.bukkit.entity.Display;
+import org.bukkit.entity.ItemDisplay;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Transformation;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -47,7 +53,8 @@ public class Physira extends AbstractMob implements BossMob {
 
     private Listener listener;
     List<WarlordsNPC> pylons = new ArrayList<>();
-    ;
+    private ItemDisplay blade;
+    float angleDeg = 0;
 
     private BossAbilityPhase phaseOne;
     private BossAbilityPhase phaseTwo;
@@ -332,14 +339,51 @@ public class Physira extends AbstractMob implements BossMob {
                 }
             }.runTaskTimer(140, 0);
         });
+
+        phaseThree = new BossAbilityPhase(warlordsNPC, 75, () -> {
+            final Quaternionf baseFlat;
+            baseFlat = new Quaternionf().rotateX((float) Math.toRadians(90)); // try Z instead if needed
+
+            blade = warlordsNPC.getWorld().spawn(warlordsNPC.getLocation().clone().add(0, 1, 0), ItemDisplay.class, d -> {
+                d.setItemStack(new ItemStack(Material.NETHERITE_SWORD));
+                d.setBillboard(Display.Billboard.FIXED);
+                d.setTransformation(new Transformation(
+                        new Vector3f(0, 0, 0),        // translation (pivot)
+                        new Quaternionf(),            // leftRotation (we animate this)
+                        new Vector3f(20f, 20f, 20f),     // scale
+                        new Quaternionf(baseFlat)     // rightRotation (constant flatten)
+                ));
+            });
+
+            new GameRunnable(warlordsNPC.getGame()) {
+                @Override
+                public void run() {
+                    angleDeg += 10f;                 // speed: 10°/tick  (~2 rev/sec). Tweak as you like.
+                    if (angleDeg >= 360f) {
+                        angleDeg -= 360f;
+                    }
+
+                    Quaternionf spinY = new Quaternionf().rotateY((float) Math.toRadians(angleDeg));
+
+                    // Build new transform: spin first (left), then flatten (right)
+                    Transformation t = blade.getTransformation();
+                    blade.setTransformation(new Transformation(
+                            new Vector3f(t.getTranslation()),    // keep translation
+                            spinY,                                // animate here
+                            new Vector3f(t.getScale()),           // keep scale
+                            new Quaternionf(baseFlat)             // keep flat orientation
+                    ));
+                }
+            }.runTaskTimer(20, 0);
+        });
     }
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
         float health = warlordsNPC.getCurrentHealth();
-        phaseOne.initialize(health);
-        phaseTwo.initialize(health);
-        //phaseThree.initialize(health);
+        //phaseOne.initialize(health);
+        //phaseTwo.initialize(health);
+        phaseThree.initialize(health);
     }
 
     @Override

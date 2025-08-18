@@ -16,7 +16,7 @@ public class EarthlivingWeaponBranch extends AbstractUpgradeBranch<EarthlivingWe
                 .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
                     @Override
                     public String getDescription0(String value) {
-                        return "+" + value + " Weapon Damage";
+                        return "+" + value + "% Weapon Damage";
                     }
 
                     @Override

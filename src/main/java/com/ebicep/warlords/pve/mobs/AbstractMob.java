@@ -246,7 +246,7 @@ public abstract class AbstractMob implements Mob {
 
         if (getDescription() != null) {
             BossBarTrait bossBarTrait = this.npc.getOrAddTrait(BossBarTrait.class);
-            bossBarTrait.setTitle(LegacyComponentSerializer.legacySection().serialize(Component.text(name + " - " + warlordsNPC.getHealth(), getColor())));
+            bossBarTrait.setTitle(LegacyComponentSerializer.legacySection().serialize(Component.text(name, getColor())));
             bossBarTrait.setColor(BarColor.RED);
             bossBarTrait.setStyle(BarStyle.SOLID);
             bossBarTrait.setProgressProvider(() -> {

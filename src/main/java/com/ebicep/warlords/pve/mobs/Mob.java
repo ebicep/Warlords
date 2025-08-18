@@ -458,6 +458,14 @@ public enum Mob {
             Weapons.SOUL_REAVER.getItem()
     )
     ),
+    ONE_OF_NINE(EntityType.WITHER_SKELETON, OneOfNine.class, OneOfNine::new, OneOfNine::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.GHOST_PURPLE),
+            new ItemStack(Material.NETHERITE_CHESTPLATE),
+            new ItemStack(Material.NETHERITE_LEGGINGS),
+            new ItemStack(Material.NETHERITE_BOOTS),
+            Weapons.SOUL_REAVER.getItem()
+    )
+    ),
     MAGMATIC_OOZE(EntityType.MAGMA_CUBE, MagmaticOoze.class, MagmaticOoze::new, MagmaticOoze::new, null),
     ENAVURIS(EntityType.ENDERMAN, Enavuris.class, Enavuris::new, Enavuris::new, null),
 
@@ -1004,7 +1012,7 @@ public enum Mob {
     };
     public static final Mob[] BOSSES = {
             BOLTARO, GHOULCALLER, NARMER, MITHRA, ZENITH,
-            CHESSKING, ILLUMINA, TORMENT, VOID, MAGMATIC_OOZE, PHYSIRA
+            CHESSKING, ILLUMINA, TORMENT, VOID, MAGMATIC_OOZE, PHYSIRA, ONE_OF_NINE
     };
     public static final Mob[] EVENT_BOSSES = {
             EVENT_BOLTARO, EVENT_NARMER, EVENT_MITHRA, EVENT_ILLUSION_CORE, EVENT_EXILED_CORE, EVENT_CALAMITY_CORE, EVENT_ILLUMINA,

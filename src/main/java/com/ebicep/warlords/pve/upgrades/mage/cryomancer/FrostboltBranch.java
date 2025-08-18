@@ -11,7 +11,7 @@ public class FrostboltBranch extends AbstractUpgradeBranch<FrostBolt> {
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgradeDamage(ability.getDamageValues().getBoltDamage(), 7.f)
+                .addUpgradeDamage(ability.getDamageValues().getBoltDamage(), 7.5f)
                 .addUpgrade(new UpgradeTypes.UpgradeType() {
                     @Override
                     public String getDescription0(String value) {
