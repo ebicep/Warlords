@@ -68,7 +68,7 @@ public class CrusadersStrike extends AbstractStrike<CrusadersStrike, CrusadersSt
         }
         if (pveMasterUpgrade) {
             additionalHit(
-                    2,
+                    3,
                     wp,
                     nearPlayer,
                     warlordsEntity -> {
@@ -79,7 +79,9 @@ public class CrusadersStrike extends AbstractStrike<CrusadersStrike, CrusadersSt
                                 .value(damageValues.strikeDamage)
                         );
                     }
-            );
+            );PlayerFilter.entitiesAround(wp, energyRadius, energyRadius, energyRadius).aliveTeammatesOfExcludingSelf(wp).limit(2).forEach(teammate -> {
+                teammate.addSpeedModifier(wp, "Crusading Strike", 10, 40);
+            });
         } else if (pveMasterUpgrade2) {
             PlayerFilter.entitiesAround(wp, energyRadius, energyRadius, energyRadius).aliveTeammatesOfExcludingSelf(wp).limit(2).forEach(teammate -> {
                 teammate.addSpeedModifier(wp, "Crusading Strike", 10, 40);

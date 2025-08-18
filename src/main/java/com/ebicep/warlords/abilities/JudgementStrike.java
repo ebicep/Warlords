@@ -155,6 +155,14 @@ public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementSt
         this.speedOnCritDuration = speedOnCritDuration;
     }
 
+    public int getDamageIncreaseHealthThreshold() {
+        return damageIncreaseHealthThreshold;
+    }
+
+    public void setDamageIncreaseHealthThreshold(int damageIncreaseHealthThreshold) {
+        this.damageIncreaseHealthThreshold = damageIncreaseHealthThreshold;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(326, 441, 20, 185);

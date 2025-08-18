@@ -54,6 +54,7 @@ public class LightInfusionCrusader extends AbstractLightInfusion implements CanR
             for (WarlordsEntity infusionTarget : PlayerFilter.entitiesAround(wp, 6, 6, 6).aliveTeammatesOfExcludingSelf(wp)) {
                 playCastEffect(infusionTarget);
                 infusionTarget.getSpec().decreaseAllCooldownTimersBy(2);
+                infusionTarget.addEnergy(wp, name, energyGiven / 4f);
             }
         }
         playCastEffect(wp);

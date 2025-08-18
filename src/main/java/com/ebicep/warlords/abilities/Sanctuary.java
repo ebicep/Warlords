@@ -12,6 +12,8 @@ import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.sentinel.SanctuaryBranch;
@@ -117,7 +119,7 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
                                 stats.hexesProlonged++;
                             }
                             if (pveMasterUpgrade2 && event.getWarlordsEntity().equals(teammate) && cdObject instanceof GuardianBeam.GuardianBeamShield guardianBeamShield) {
-                                float newShieldHealth = guardianBeamShield.getShieldValue() + 300;
+                                float newShieldHealth = guardianBeamShield.getShieldValue() + 600;
                                 guardianBeamShield.setMaxShieldHealth(newShieldHealth);
                                 guardianBeamShield.setShieldHealth(newShieldHealth);
                             }
@@ -141,6 +143,20 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
                             event.setCancelled(true);
                             warlordsEntity.setCurrentHealth(warlordsEntity.getMaxBaseHealth() * convertToPercent(lethalDamageHealing));
                             Utils.playGlobalSound(warlordsEntity.getLocation(), Sound.ITEM_TOTEM_USE, 2, 0.75f);
+                            if (pveMasterUpgrade) {
+                                for (WarlordsEntity resTarget : PlayerFilter
+                                        .entitiesAround(warlordsEntity, 15, 15, 15)
+                                        .aliveEnemiesOf(warlordsEntity)
+                                ) {
+                                    EffectUtils.strikeLightning(resTarget.getLocation(), true);
+                                    EffectUtils.playCrownAnimation(resTarget.getLocation(), Particle.CHERRY_LEAVES);
+                                    resTarget.addInstance(InstanceBuilder.damage()
+                                            .ability(Sanctuary.this)
+                                            .source(warlordsEntity)
+                                            .value(warlordsEntity.getMaxHealth() * 2)
+                                            .flag(InstanceFlags.TRUE_DAMAGE, true));
+                                }
+                            }
                             if (warlordsEntity.equals(wp)) {
                                 wp.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
                                         .append(Component.text(" Your ", NamedTextColor.GRAY))

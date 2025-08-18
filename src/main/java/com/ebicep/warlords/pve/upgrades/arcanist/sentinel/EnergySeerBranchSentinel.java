@@ -44,14 +44,14 @@ public class EnergySeerBranchSentinel extends AbstractUpgradeBranch<EnergySeerSe
                 "Energy Seer - Master Upgrade",
                 """
                         Remove energy loss.
-                        +5s duration.
-                        +20% Additional Cooldown Reduction
+                        +6s duration.
+                        +25% Additional Cooldown Reduction
                         """,
                 50000,
                 () -> {
                     ability.setEpsDecrease(0);
-                    ability.setTickDuration(ability.getTickDuration() + 100);
-                    ability.getCooldown().addMultiplicativeModifierMult("Collective Vaticinator", 0.8f);
+                    ability.setTickDuration(ability.getTickDuration() + 120);
+                    ability.getCooldown().addMultiplicativeModifierMult("Collective Vaticinator", 0.75f);
                 }
         );
     }

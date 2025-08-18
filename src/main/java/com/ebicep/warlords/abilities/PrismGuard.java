@@ -159,6 +159,21 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                         isInsideBubble.clear();
                         for (WarlordsEntity enemyInsideBubble : PlayerFilter.entitiesAround(wp, bubbleRadius, bubbleRadius, bubbleRadius).aliveEnemiesOf(wp)) {
                             isInsideBubble.add(enemyInsideBubble);
+                            if (pveMasterUpgrade2) {
+                                boolean silenced = enemyInsideBubble.getCooldownManager().hasCooldown(SoulShackle.class);
+                                if (silenced) {
+                                    enemyInsideBubble.getCooldownManager()
+                                            .addCooldown(new RegularCooldown<>(name, "BUBBLE DEBUFF", PrismGuard.class, new PrismGuard(), wp, CooldownTypes.LOW_LEVEL_DEBUFF, cooldownManager -> {
+                                            }, 20
+                                            ) {
+
+                                                @Override
+                                                public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                                                    return currentDamageValue * 1.1f;
+                                                }
+                                            });
+                                }
+                            }
                         }
                         for (WarlordsEntity bubblePlayer : PlayerFilter.entitiesAround(wp, bubbleRadius, bubbleRadius, bubbleRadius).aliveTeammatesOfExcludingSelf(wp)) {
                             if (!playersHit.contains(bubblePlayer)) {

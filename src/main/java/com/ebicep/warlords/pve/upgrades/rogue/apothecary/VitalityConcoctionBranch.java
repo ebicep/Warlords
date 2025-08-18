@@ -9,6 +9,10 @@ import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
 
 public class VitalityConcoctionBranch extends AbstractUpgradeBranch<VitalityConcoction> {
 
+    @Override
+    public void runOnce() {
+        ability.multiplyTickDuration(1.5f);
+    }
 
     public VitalityConcoctionBranch(AbilityTree abilityTree, VitalityConcoction ability) {
         super(abilityTree, ability);

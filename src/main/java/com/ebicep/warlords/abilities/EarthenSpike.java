@@ -127,7 +127,7 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
                             public void run() {
                                 new FallingBlockWaveEffect(targetLocation.add(0, 1, 0), 4, 0.9, Material.DIRT).play();
                                 for (WarlordsEntity wave : PlayerFilter.entitiesAround(targetLocation, 6, 6, 6).aliveEnemiesOf(wp)) {
-                                    wave.addInstance(InstanceBuilder.damage().cause("Earthen Rupture").source(wp).value(damageValues.earthenRuptureDamage));
+                                    wave.addInstance(InstanceBuilder.damage().cause("Earthen Rupture").source(wp).value(damageValues.spikeDamage));
                                     wave.addSpeedModifier(wp, "Spike Slow", -35, 20);
                                 }
                                 Utils.playGlobalSound(targetLocation, Sound.BLOCK_GRAVEL_BREAK, 2, 0.5f);
@@ -243,7 +243,7 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
 
         private Value.RangedValueCritable spikeDamage = new Value.RangedValueCritable(404, 562, 15, 175);
 
-        private Value.RangedValue earthenRuptureDamage = new Value.RangedValue(548, 695);
+        private Value.RangedValueCritable earthenRuptureDamage = new Value.RangedValueCritable(548, 695, 15, 150);
 
         private List<Value> values = List.of(spikeDamage, earthenRuptureDamage);
 
@@ -257,7 +257,7 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
             this.spikeDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("spikeDamage"), Value.RangedValueCritable.class);
             this.earthenRuptureDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(),
                     builder.getAppendedFieldNameDamage("earthenRuptureDamage"),
-                    Value.RangedValue.class
+                    Value.RangedValueCritable.class
             );
             this.values = List.of(spikeDamage, earthenRuptureDamage);
         }

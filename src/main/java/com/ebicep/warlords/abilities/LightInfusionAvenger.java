@@ -33,7 +33,7 @@ public class LightInfusionAvenger extends AbstractLightInfusion {
         wp.addSpeedModifier(wp, name, speedBuff, tickDuration);
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "INF", LightInfusionAvenger.class, null, wp, CooldownTypes.ABILITY, cooldownManager -> {
             if (pveMasterUpgrade) {
-                wp.addEnergy(wp, name, 30 * strikesUsed.get());
+                wp.addEnergy(wp, name, 20 * strikesUsed.get());
                 wp.playSound(wp.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 0.9f);
             }
         }, cooldownManager -> {

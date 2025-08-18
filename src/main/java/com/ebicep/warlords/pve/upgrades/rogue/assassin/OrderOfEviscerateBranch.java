@@ -8,6 +8,10 @@ import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
 
 public class OrderOfEviscerateBranch extends AbstractUpgradeBranch<OrderOfEviscerate> {
 
+    @Override
+    public void runOnce() {
+        ability.setVulnerableDamageBonus(ability.getVulnerableDamageBonus() + 20);
+    }
 
     public OrderOfEviscerateBranch(AbilityTree abilityTree, OrderOfEviscerate ability) {
         super(abilityTree, ability);
@@ -41,7 +45,7 @@ public class OrderOfEviscerateBranch extends AbstractUpgradeBranch<OrderOfEvisce
                 "Cloaked Engagement",
                 "Order of Eviscerate - Master Upgrade",
                 """
-                        Killing your mark will now increase your damage by 30% for 8s, max 2 stacks.
+                        Killing your mark will now increase your damage by 40% for 8s, max 2 stacks.
                         """,
                 50000,
                 () -> {

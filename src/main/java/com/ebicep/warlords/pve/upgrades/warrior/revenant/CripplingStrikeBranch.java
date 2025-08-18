@@ -32,10 +32,15 @@ public class CripplingStrikeBranch extends AbstractUpgradeBranch<CripplingStrike
         masterUpgrade = new Upgrade(
                 "Crippling Slash",
                 "Crippling Strike - Master Upgrade",
-                "Crippling Strike deals damage to 2 additional targets, the cripple status now reduces enemy damage dealt by 50%",
+                """
+                        -10 Energy cost
+                        
+                        Crippling Strike deals damage to 4 additional targets, the cripple status now reduces enemy damage dealt by 40%
+                        """,
                 50000,
                 () -> {
-                    ability.setCripple(50);
+                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -10);
+                    ability.setCripple(40);
                 }
         );
         masterUpgrade2 = new Upgrade(
@@ -48,7 +53,7 @@ public class CripplingStrikeBranch extends AbstractUpgradeBranch<CripplingStrike
                         """,
                 50000,
                 () -> {
-                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -15);
+                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -20);
                 }
         );
     }

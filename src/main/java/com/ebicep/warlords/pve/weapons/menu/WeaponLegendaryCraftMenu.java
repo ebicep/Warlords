@@ -28,8 +28,8 @@ import java.util.Map;
 public class WeaponLegendaryCraftMenu {
 
     public static final LinkedHashMap<Currencies, Long> COST = new LinkedHashMap<>() {{
-        put(Currencies.COIN, 1000000L);
-        put(Currencies.SYNTHETIC_SHARD, 10000L);
+        put(Currencies.COIN, 600000L);
+        put(Currencies.SYNTHETIC_SHARD, 6000L);
     }};
     public static final List<Component> COST_LORE = PvEUtils.getCostLore(COST, "Craft Cost", true);
 
@@ -37,7 +37,7 @@ public class WeaponLegendaryCraftMenu {
         DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
         for (Map.Entry<Currencies, Long> currenciesLongEntry : COST.entrySet()) {
             if (pveStats.getCurrencyValue(currenciesLongEntry.getKey()) < currenciesLongEntry.getValue()) {
-                player.sendMessage(Component.text("You are not worthy of crafting a legendary weapon yet, bring me 10.000 Synthetic Shards and 1.000.000 Coins first!", NamedTextColor.RED));
+                player.sendMessage(Component.text("You are not worthy of crafting a legendary weapon yet, bring me 6.000 Synthetic Shards and 600.000 Coins first!", NamedTextColor.RED));
                 return;
             }
         }

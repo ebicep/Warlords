@@ -7,6 +7,7 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -102,14 +103,18 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), Sound.ITEM_ARMOR_EQUIP_DIAMOND, 2, 0.4f);
         Utils.playGlobalSound(wp.getLocation(), "arcanist.mysticalbarrier.activation", 2, 1);
+        if (wp.isInPve()) {
+            for (WarlordsEntity npc : PlayerFilter.entitiesAround(wp, 15, 15 ,15)
+            ) {
+                if (npc instanceof WarlordsNPC) {
+                    ((WarlordsNPC) npc).getMob().setTarget(wp);
+                }
+            }
+        }
         if (pveMasterUpgrade2) {
             giveBarrier(wp, wp);
             List<WarlordsEntity> targets = PlayerFilter.entitiesAround(wp, radius, radius, radius).aliveTeammatesOfExcludingSelf(wp).limit(1).toList();
-            if (targets.isEmpty()) {
-                subtractCurrentCooldown(cooldown.getBaseValue() * .35f);
-            } else {
-                giveBarrier(wp, wp.hasFlag() ? wp : targets.get(0));
-            }
+            giveBarrier(wp, wp.hasFlag() ? wp : targets.get(0));
         } else {
             List<WarlordsEntity> targets = PlayerFilter
                     .entitiesAround(wp, radius, radius, radius)
@@ -310,6 +315,14 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
 
     public void setMeleeDamageReduction(float meleeDamageReduction) {
         this.meleeDamageReduction = meleeDamageReduction;
+    }
+
+    public float getGuardianBeamShieldMultiplier() {
+        return guardianBeamShieldMultiplier;
+    }
+
+    public void setGuardianBeamShieldMultiplier(float guardianBeamShieldMultiplier) {
+        this.guardianBeamShieldMultiplier = guardianBeamShieldMultiplier;
     }
 
     public static class MysticalBarrierStats extends AbstractAbilityStats<MysticalBarrier, MysticalBarrierStats> {

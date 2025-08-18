@@ -48,7 +48,7 @@ public class LightInfusionBranchAvenger extends AbstractUpgradeBranch<LightInfus
         masterUpgrade = new Upgrade(
                 "Holy Imbusion",
                 "Light Infusion - Master Upgrade",
-                "Each Avenger's Strike cast while Light Infusion is active will refund 30 energy when Light Infusion ends.",
+                "Each Avenger's Strike cast while Light Infusion is active will refund 20 energy when Light Infusion ends.",
                 50000,
                 () -> {
 

@@ -20,7 +20,7 @@ public class ZombieSwordsman extends AbstractMob implements IntermediateMob {
     public ZombieSwordsman(Location spawnLocation) {
         super(
                 spawnLocation,
-                "Zombie Swordsman",
+                "Swordsman",
                 4000,
                 0.38f,
                 10,

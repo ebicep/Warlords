@@ -27,7 +27,7 @@ public class OrbsOfLifeBranch extends AbstractUpgradeBranch<OrbsOfLife> {
                 """
                         Double orbs healing increase over time, and orbs last twice as long.
                         
-                        For each active orb, increase your damage by 0.5% (max 25%).""",
+                        For each active orb, increase your damage by 1% (max 30%).""",
                 50000,
                 () -> {
                     ability.setOrbTickDuration(ability.getOrbTickDuration() * 2);

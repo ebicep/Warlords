@@ -126,7 +126,7 @@ public class ShadowStep extends AbstractAbility implements
         Set<WarlordsEntity> hit = new HashSet<>();
         AtomicInteger guaranteedCrit = new AtomicInteger(this.guaranteedCrit);
         LocationBuilder locationBuilder = new LocationBuilder(wp.getEyeLocation());
-        for (Block ignored : Utils.getTargetBlockInBetween(wp.getEyeLocation(), 8)) {
+        for (Block ignored : Utils.getTargetBlockInBetween(wp.getEyeLocation(), 12)) {
             if (!Utils.getTargetBlock(locationBuilder, 1).getType().isAir() ||
                     !locationBuilder.getBlock().getType().isAir() ||
                     !locationBuilder.clone()
@@ -162,6 +162,11 @@ public class ShadowStep extends AbstractAbility implements
             @Override
             public float addCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
                 return currentCritMultiplier * convertToMultiplicationDecimal(Math.min(2f * hit.size(), 20));
+            }
+
+            @Override
+            public float addCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
+                return currentCritChance * convertToMultiplicationDecimal(Math.min(2f * hit.size(), 20));
             }
         });
     }
@@ -209,7 +214,7 @@ public class ShadowStep extends AbstractAbility implements
                     if (pveMasterUpgrade) {
                         pveMasterOnLand(wp);
                     }
-                    FireWorkEffectPlayer.playFirework(wp.getLocation(), FireworkEffect.builder().withColor(Color.BLACK).with(FireworkEffect.Type.BALL).build());
+                    EffectUtils.playFirework(wp.getLocation(), FireworkEffect.builder().withColor(Color.BLACK).with(FireworkEffect.Type.BALL).build());
                     this.cancel();
                 }
             }

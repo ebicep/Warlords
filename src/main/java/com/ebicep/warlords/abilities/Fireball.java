@@ -14,6 +14,7 @@ import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.pyromancer.FireballBranch;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
@@ -157,16 +158,19 @@ public class Fireball extends AbstractProjectile<Fireball, Fireball.FireballStat
         });
     }
 
-    private void applyIgniteEffect(@Nonnull WarlordsEntity hit, WarlordsEntity shooter) {
-        if (hit.getCooldownManager().hasCooldownFromName("Ignite")) {
-            return;
-        }
-        hit.getCooldownManager().addCooldown(new RegularCooldown<>("Ignite", "IGN", Fireball.class, new Fireball(), shooter, CooldownTypes.LOW_LEVEL_DEBUFF, cooldownManager -> {
-            PlayerFilter.entitiesAround(hit, 3, 3, 3).aliveTeammatesOf(hit).forEach(warlordsEntity -> {
-                warlordsEntity.addInstance(InstanceBuilder.damage().cause("Ignite").source(shooter).value(damageValues.igniteDamage).flags(InstanceFlags.TRUE_DAMAGE));
-            });
-        }, 20
-        ));
+    private void applyIgniteEffect(WarlordsEntity giver, WarlordsEntity hit) {
+        new GameRunnable(giver.getGame()) {
+
+            @Override
+            public void run() {
+                for (WarlordsEntity igniteTarget : PlayerFilter
+                        .entitiesAround(hit, 3, 3, 3)
+                        .aliveEnemiesOf(giver)
+                ) {
+                    igniteTarget.addInstance(InstanceBuilder.damage().ability(Fireball.this).source(giver).value(damageValues.igniteDamage));
+                }
+            }
+        }.runTaskLater(20);
     }
 
     @Override

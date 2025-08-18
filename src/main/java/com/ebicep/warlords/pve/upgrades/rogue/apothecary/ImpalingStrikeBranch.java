@@ -6,14 +6,15 @@ import com.ebicep.warlords.pve.upgrades.*;
 
 public class ImpalingStrikeBranch extends AbstractUpgradeBranch<ImpalingStrike> {
 
-    float leechAmount = ability.getLeechAmount();
-
     @Override
     public void runOnce() {
         Value.RangedValueCritable damage = ability.getDamageValues().getStrikeDamage();
         damage.min().addMultiplicativeModifierAdd("PvE", .3f);
         damage.max().addMultiplicativeModifierAdd("PvE", .3f);
+        ability.setLeechAmount(14);
     }
+
+    float leechAmount = ability.getLeechAmount();
 
     public ImpalingStrikeBranch(AbilityTree abilityTree, ImpalingStrike ability) {
         super(abilityTree, ability);

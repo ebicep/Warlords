@@ -14,7 +14,7 @@ public class RemedicChainsBranch extends AbstractUpgradeBranch<RemedicChains> {
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgradeHealing(ability.getHealValues().getChainHealing(), 7.5f)
+                .addUpgradeHealing(ability.getHealValues().getChainHealing(), 12.5f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder
@@ -41,9 +41,7 @@ public class RemedicChainsBranch extends AbstractUpgradeBranch<RemedicChains> {
                 """
                         +20 Block link break radius
                         
-                        Warriors', Paladins', and Rogues' linked have their strikes infused with LEECH application capability for 5s.
-                        
-                        Mages', Shamans', and Arcanists' linked have their EPH doubled for 5s.
+                        Increase linked ally damage by 10% and their EPS by 5.
                         """,
                 50000,
                 () -> {

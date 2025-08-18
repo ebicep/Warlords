@@ -433,6 +433,14 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
         return hammerRadius;
     }
 
+    public int getCrownEnergyReduction() {
+        return crownEnergyReduction;
+    }
+
+    public void setCrownEnergyReduction(int crownEnergyReduction) {
+        this.crownEnergyReduction = crownEnergyReduction;
+    }
+
     public static class HammerOfLightData {
 
         private final Location location;

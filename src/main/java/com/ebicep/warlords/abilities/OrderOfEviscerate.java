@@ -187,7 +187,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
 
                                           @Override
                                           public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                              return currentDamageValue * 1.3f;
+                                              return currentDamageValue * 1.4f;
                                           }
                                       });
                                 }

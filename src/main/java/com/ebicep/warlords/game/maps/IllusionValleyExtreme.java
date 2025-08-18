@@ -30,11 +30,11 @@ public class IllusionValleyExtreme extends GameMap {
 
     public IllusionValleyExtreme() {
         super(
-                "Illusion Valley",
+                "Illusion Basin",
                 4,
                 1,
                 120 * SECOND,
-                "IllusionValley2",
+                "IllusionBasin",
                 4,
                 GameMode.WAVE_DEFENSE
         );
@@ -44,16 +44,17 @@ public class IllusionValleyExtreme extends GameMap {
     public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
         List<Option> options = category.initMap(this, loc, addons);
         options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
-        options.add(LobbyLocationMarker.create(loc.addXYZ(1.5, 14, 13.5), Team.BLUE).asOption());
-        options.add(LobbyLocationMarker.create(loc.addXYZ(1.5, 14, 13.5), Team.RED).asOption());
+        options.add(LobbyLocationMarker.create(loc.addXYZ(0.5, 86, 0.5), Team.BLUE).asOption());
+        options.add(LobbyLocationMarker.create(loc.addXYZ(0.5, 86, 0.5), Team.RED).asOption());
 
-        options.add(SpawnpointOption.forTeam(loc.addXYZ(1.5, 14, 13.5), Team.BLUE));
-        options.add(SpawnpointOption.forTeam(loc.addXYZ(-14.5, 14, 3.5), Team.RED));
-        options.add(SpawnpointOption.forTeam(loc.addXYZ(-9.5, 14, -8.5), Team.RED));
-        options.add(SpawnpointOption.forTeam(loc.addXYZ(4.5, 14, -12.5), Team.RED));
-        options.add(SpawnpointOption.forTeam(loc.addXYZ(14.5, 14, -4.5), Team.RED));
-        options.add(SpawnpointOption.forTeam(loc.addXYZ(11.5, 14, 5.5), Team.RED));
-        options.add(SpawnpointOption.forTeam(loc.addXYZ(5.5, 14, 14.5), Team.RED));
+        options.add(SpawnpointOption.forTeam(loc.addXYZ(0.5, 86, 0.5), Team.BLUE));
+        options.add(SpawnpointOption.forTeam(loc.addXYZ(0.5, 83, 20.5), Team.RED));
+        options.add(SpawnpointOption.forTeam(loc.addXYZ(0.5, 83, -20.5), Team.RED));
+        options.add(SpawnpointOption.forTeam(loc.addXYZ(0.5, 86, 0.5), Team.RED));
+        options.add(SpawnpointOption.forTeam(loc.addXYZ(21.5, 83, 0.5), Team.RED));
+        options.add(SpawnpointOption.forTeam(loc.addXYZ(-21.5, 83, 0.5), Team.RED));
+        options.add(SpawnpointOption.forTeam(loc.addXYZ(-17.5, 83, 19.5), Team.RED));
+        options.add(SpawnpointOption.forTeam(loc.addXYZ(18.5, 83, -17.5), Team.RED));
 
         options.add(new GraveOption());
         options.add(new RespawnWaveOption(1, 20, 60));

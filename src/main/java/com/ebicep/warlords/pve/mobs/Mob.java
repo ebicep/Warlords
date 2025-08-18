@@ -163,7 +163,7 @@ public enum Mob {
     )
     ),
     ZOMBIE_SWORDSMAN(EntityType.ZOMBIE, ZombieSwordsman.class, ZombieSwordsman::new, ZombieSwordsman::new, new Utils.SimpleEntityEquipment(
-            new ItemStack(Material.WHITE_CARPET),
+            new ItemStack(Material.RESIN_CLUMP),
             new ItemStack(Material.CHAINMAIL_CHESTPLATE),
             new ItemStack(Material.CHAINMAIL_LEGGINGS),
             new ItemStack(Material.CHAINMAIL_BOOTS),
@@ -256,7 +256,7 @@ public enum Mob {
     )
     ),
     SKELETAL_ENTROPY(EntityType.SKELETON, SkeletalEntropy.class, SkeletalEntropy::new, SkeletalEntropy::new, new Utils.SimpleEntityEquipment(
-            new ItemStack(Material.PINK_CARPET),
+            new ItemStack(Material.GRAY_CANDLE),
             new ItemStack(Material.DIAMOND_CHESTPLATE),
             new ItemStack(Material.DIAMOND_LEGGINGS),
             new ItemStack(Material.DIAMOND_BOOTS),

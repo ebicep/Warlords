@@ -53,7 +53,7 @@ public enum SkullID implements Skull {
     // https://minecraft-heads.com/custom-heads/humans/53612-samurai-helmet
     SAMURAI("MzUyZjg3MzllZGM5OWNmMWYwM2NmZDdhYTI4ODQyNzA0YTVlOWMwZjMxMTNiMTE4OGE2MzFjYmFmNWY3ZmY5ZSJ9fX0="),
     // https://minecraft-heads.com/custom-heads/humans/54551-bandit
-    FACELESS_BANDIT("Y2VlZTJjYjQxY2VkZTVhYTQ0MTE3MTYyNGUxZTFlMzg4YjgyNjJhNGEwYmI5ZGZiZmQ4ODljYTAyYzQxY2IifX19="),
+    FACELESS_BANDIT("OGFiOGI2ZDA4YjRhMTdlYjVmMTlkYTNlNTI4MzczYTBkNmQzNjA5ZTEzZmU0OWRjMDIwMDkxNDQ3NWQ4MjNhZiJ9fX0"),
     // https://minecraft-heads.com/custom-heads/humanoid/54811-ghost
     FACELESS_MAGE("OGFiOGI2ZDA4YjRhMTdlYjVmMTlkYTNlNTI4MzczYTBkNmQzNjA5ZTEzZmU0OWRjMDIwMDkxNDQ3NWQ4MjNhZiJ9fX0="),
     // https://minecraft-heads.com/custom-heads/humanoid/50029-ghost-lime

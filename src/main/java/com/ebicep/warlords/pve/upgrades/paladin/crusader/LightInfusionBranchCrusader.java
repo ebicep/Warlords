@@ -56,7 +56,7 @@ public class LightInfusionBranchCrusader extends AbstractUpgradeBranch<LightInfu
                 "Proxima Light",
                 "Light Infusion - Master Upgrade",
                 """
-                        +2s Duration. Casting Light Infusion near allies will reduce their cooldowns by 2s.
+                        +2s Duration. Casting Light Infusion near allies will reduce their cooldowns by 2s and give them 25% of the energy given.
                         """,
                 50000,
                 () -> {

@@ -13,6 +13,7 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
         Value.RangedValueCritable damage = ability.getDamageValues().getStrikeDamage();
         damage.min().addMultiplicativeModifierAdd("PvE", .3f);
         damage.max().addMultiplicativeModifierAdd("PvE", .3f);
+        ability.setDamageIncreaseHealthThreshold(ability.getDamageIncreaseHealthThreshold() + 30);
     }
 
     public JudgementStrikeBranch(AbilityTree abilityTree, JudgementStrike ability) {

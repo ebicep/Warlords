@@ -90,7 +90,7 @@ public class RighteousStrike extends AbstractStrike<RighteousStrike, RighteousSt
                 }
                 we.addInstance(InstanceBuilder.damage().ability(this).source(wp).value(damageValues.strikeDamage));
                 if (pveMasterUpgrade2 && targetsStruck % 5 == 0) {
-                    wp.getAbilitiesMatching(SoulShackle.class).forEach(soulShackle -> soulShackle.subtractCurrentCooldown(.5f));
+                    wp.getAbilitiesMatching(SoulShackle.class).forEach(soulShackle -> soulShackle.subtractCurrentCooldown(1));
                     playCooldownReductionEffect(we);
                 }
             }

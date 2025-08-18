@@ -117,7 +117,7 @@ public class WindfuryBranch extends AbstractUpgradeBranch<WindfuryWeapon> {
                 "Windfury - Master Upgrade",
                 """
                         +15% Proc chance
-                         
+                        
                         For every Windfury proc, increase movement speed by 2.5% and reduce damage taken by 2.5% for the duration of Windfury, max 25% and 15% respectively.
                         """,
                 50000,

@@ -5,7 +5,10 @@ import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
@@ -196,8 +199,18 @@ public class FrostBolt extends AbstractPiercingProjectile<FrostBolt, FrostBolt.F
         if (projectile.getHit().isEmpty()) {
             toReduceBy += .15f;
         }
+        hit.getCooldownManager()
+                .addCooldown(new RegularCooldown<>(name, "INCEN", IncendiaryCurse.class, new IncendiaryCurse(), projectile.getShooter(), CooldownTypes.LOW_LEVEL_DEBUFF, cooldownManager -> {
+                }, 3 * 20
+                ) {
+
+                    @Override
+                    public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                        return currentDamageValue * 1.08f;
+                    }
+                });
         hit(projectile, shooter, toReduceBy, stats.getTargetsHit(), hit);
-        hit.addSpeedModifier(shooter, "Splintered Ice", -25, 40);
+        hit.addSpeedModifier(shooter, "Splintered Ice", -35, 40);
         EffectUtils.displayParticle(Particle.ITEM_SNOWBALL, hit.getLocation().add(0, 1, 0), 10, .2, .2, .2, 0);
     }
 

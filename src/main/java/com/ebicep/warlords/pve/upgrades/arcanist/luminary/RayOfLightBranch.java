@@ -22,6 +22,7 @@ public class RayOfLightBranch extends AbstractUpgradeBranch<RayOfLight> {
         UpgradeTreeBuilder
                 .create(abilityTree, this)
                 .addUpgradeCooldown(ability)
+                .addUpgradeHitBox(ability, 2f, 4)
                 .addTo(treeA);
 
         UpgradeTreeBuilder
@@ -43,10 +44,13 @@ public class RayOfLightBranch extends AbstractUpgradeBranch<RayOfLight> {
                 "Volatile Rays",
                 "Ray of Light - Master Upgrade",
                 """
+                        +45% Crit Multiplier
+                        
                         Ray of Light fires two additional beams.
                         """,
                 50000,
                 () -> {
+                    ability.getHealValues().getRayHealing().critMultiplier().addAdditiveModifier("Master Upgrade Branch", 50);
                     ability.setShotsFiredAtATime(3);
                 }
         );

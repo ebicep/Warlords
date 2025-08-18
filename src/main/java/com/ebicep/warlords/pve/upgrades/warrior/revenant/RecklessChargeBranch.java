@@ -46,7 +46,7 @@ public class RecklessChargeBranch extends AbstractUpgradeBranch<RecklessCharge> 
                         +80% damage reduction on cast.
                         +150% Damage.
                         
-                        Reckless Charge stuns enemies for 3 seconds. Additionally, stunned enemies take 15% more damage from all strikes.""",
+                        Reckless Charge stuns enemies for 3 seconds. Additionally, stunned enemies take 25% more damage from all strikes.""",
                 50000,
                 () -> {
                     Value.RangedValueCritable damage = ability.getDamageValues().getChargeDamage();
@@ -56,7 +56,7 @@ public class RecklessChargeBranch extends AbstractUpgradeBranch<RecklessCharge> 
                 }
         );
         masterUpgrade2 = new Upgrade(
-                "Reverberation",
+                "Curated Charge",
                 "Reckless Charge - Master Upgrade",
                 """
                         +80% damage reduction on cast.

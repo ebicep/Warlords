@@ -182,7 +182,7 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, H
                                 @Override
                                 public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                                     if (event.getCause().contains("Strike")) {
-                                        return currentDamageValue * 1.15f;
+                                        return currentDamageValue * 1.25f;
                                     }
                                     return currentDamageValue;
                                 }

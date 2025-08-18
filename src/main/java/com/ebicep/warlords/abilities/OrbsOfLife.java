@@ -156,7 +156,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 if (pveMasterUpgrade) {
-                    return currentDamageValue * convertToMultiplicationDecimal(Math.min(25f, .5f * data.spawnedOrbs.size()));
+                    return currentDamageValue * convertToMultiplicationDecimal(Math.min(30f, 1f * data.spawnedOrbs.size()));
                 }
                 return currentDamageValue;
             }

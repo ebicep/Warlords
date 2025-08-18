@@ -13,7 +13,6 @@ public class CrusadersStrikeBranch extends AbstractUpgradeBranch<CrusadersStrike
         Value.RangedValueCritable damage = ability.getDamageValues().getStrikeDamage();
         damage.min().addMultiplicativeModifierAdd("PvE", .3f);
         damage.max().addMultiplicativeModifierAdd("PvE", .3f);
-        ability.setEnergyGiven(ability.getEnergyGiven() - 5);
     }
 
     public CrusadersStrikeBranch(AbilityTree abilityTree, CrusadersStrike ability) {
@@ -43,10 +42,12 @@ public class CrusadersStrikeBranch extends AbstractUpgradeBranch<CrusadersStrike
         masterUpgrade = new Upgrade(
                 "Crusader’s Slash",
                 "Crusader's Strike - Master Upgrade",
-                "Double the energy given to allies radius. Additionally, Crusader's Strike hits 2 additional enemies. (excluding energy given)",
+                "Double the energy given to allies radius and increase the amount of allies that receive energy by 1 but reduce the energy given by 3. Additionally, Crusader's Strike hits 3 additional enemies. (excluding energy given)",
                 50000,
                 () -> {
                     ability.setEnergyRadius(ability.getEnergyRadius() * 2);
+                    ability.setEnergyGiven(ability.getEnergyGiven() - 3);
+                    ability.setEnergyMaxAllies(ability.getEnergyMaxAllies() + 1);
                 }
         );
         masterUpgrade2 = new Upgrade(
@@ -54,7 +55,7 @@ public class CrusadersStrikeBranch extends AbstractUpgradeBranch<CrusadersStrike
                 "Crusader's Strike - Master Upgrade",
                 """
                         -10 Energy cost
-                                                
+                        
                         Strike crit chance is increased by 5%. Crit hits grant an additional 5 energy from strike while also providing a 10% speed increase to nearby allies for 2s.
                         """,
                 50000,

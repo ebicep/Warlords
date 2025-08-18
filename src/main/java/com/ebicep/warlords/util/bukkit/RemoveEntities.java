@@ -2,10 +2,7 @@ package com.ebicep.warlords.util.bukkit;
 
 import com.ebicep.warlords.game.Game;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Horse;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +17,7 @@ public class RemoveEntities {
                 .getEntities()
                 .stream()
                 .filter(entity -> !(entity instanceof Player))
+                .filter(entity -> !(entity instanceof ItemDisplay))
                 .toList();
         collect.forEach(Entity::remove);
     }

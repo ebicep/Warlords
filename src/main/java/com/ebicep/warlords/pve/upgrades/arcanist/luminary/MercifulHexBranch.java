@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.upgrades.arcanist.luminary;
 
 import com.ebicep.warlords.abilities.MercifulHex;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -14,6 +15,7 @@ public class MercifulHexBranch extends AbstractUpgradeBranch<MercifulHex> {
         UpgradeTreeBuilder
                 .create(abilityTree, this)
                 .addUpgradeHealing(ability.getHealValues(), 15f)
+                .addUpgradeHitBox(ability, 1f, 3, 4)
                 .addTo(treeA);
 
         UpgradeTreeBuilder
@@ -26,12 +28,21 @@ public class MercifulHexBranch extends AbstractUpgradeBranch<MercifulHex> {
                 "Benevolent Hex",
                 "Merciful Hex - Master Upgrade",
                 """
+                        +100% Projectile speed
+                        -5 Energy cost
+                        +100 Healing (excluding HoT)
+                        
                         All allies hit receive 1 extra stack of Merciful Hex.
                         """,
                 50000,
                 () -> {
+                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -5);
+                    ability.getProjectileSpeed().addMultiplicativeModifierAdd("Master Upgrade Branch", 2);
                     ability.setHexStacksPerHit(ability.getHexStacksPerHit() + 1);
                     ability.setHexStacksPerHitAfter(ability.getHexStacksPerHitAfter() + 1);
+                    Value.RangedValueCritable healing = ability.getHealValues().getHexHealing();
+                    healing.min().addAdditiveModifier("PvE", 100f);
+                    healing.max().addAdditiveModifier("PvE", 100f);
                 }
         );
         masterUpgrade2 = new Upgrade(
