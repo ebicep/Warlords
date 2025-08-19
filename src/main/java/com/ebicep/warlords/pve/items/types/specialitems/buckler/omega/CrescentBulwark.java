@@ -26,7 +26,7 @@ public class CrescentBulwark extends SpecialOmegaBuckler implements AppliesToWar
 
     @Override
     public String getBonus() {
-        return "For every mob on the field, increase your damage by 0.25%.";
+        return "For every mob on the field, increase your damage by 0.5%.";
     }
 
     @Override
