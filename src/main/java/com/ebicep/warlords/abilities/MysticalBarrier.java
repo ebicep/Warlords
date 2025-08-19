@@ -113,8 +113,13 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
         }
         if (pveMasterUpgrade2) {
             giveBarrier(wp, wp);
-            List<WarlordsEntity> targets = PlayerFilter.entitiesAround(wp, radius, radius, radius).aliveTeammatesOfExcludingSelf(wp).limit(1).toList();
-            giveBarrier(wp, wp.hasFlag() ? wp : targets.get(0));
+            for (WarlordsEntity target : PlayerFilter
+                    .entitiesAround(wp, radius, radius, radius)
+                    .aliveTeammatesOfExcludingSelf(wp)
+                    .limit(5)
+            ) {
+                giveBarrier(wp, target);
+            }
         } else {
             List<WarlordsEntity> targets = PlayerFilter
                     .entitiesAround(wp, radius, radius, radius)
@@ -123,7 +128,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                     .lookingAtFirst(wp)
                     .limit(1)
                     .toList();
-            WarlordsEntity target = wp.hasFlag() || targets.isEmpty() ? wp : targets.get(0);
+            WarlordsEntity target = wp.hasFlag() || targets.isEmpty() ? wp : targets.getFirst();
             giveBarrier(wp, target);
         }
         return true;
