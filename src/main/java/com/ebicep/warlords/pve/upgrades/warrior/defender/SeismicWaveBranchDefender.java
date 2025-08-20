@@ -13,12 +13,13 @@ public class SeismicWaveBranchDefender extends AbstractSeismicWaveBranch {
         masterUpgrade2 = new Upgrade(
                 "Wild Wave",
                 "Seismic Wave - Master Upgrade",
-                """
-                        Enemies that are WOUNDED will take 30% more damage and enemies killed by Seismic Wave will reduce the cooldown of Last Stand by 1s.
+                """               
+                        Increase the size of Seismic Wave by 150%. Additionally, enemies hit by Seismic Wave will reduce the cooldown of Last Stand by 0.25s (max 2s).
                         """,
                 50000,
                 () -> {
-
+                    ability.setWaveLength((int) (ability.getWaveLength() * 2.5f));
+                    ability.setWaveWidth((int) (ability.getWaveWidth() * 2.5f));
                 }
         );
     }

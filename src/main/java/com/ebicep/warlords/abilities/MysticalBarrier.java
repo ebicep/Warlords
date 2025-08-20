@@ -179,6 +179,15 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                     if (ticksElapsed % 2 != 0) {
                         return;
                     }
+                    if (isSelf && wp.isInPve()) {
+                        for (WarlordsEntity npc : PlayerFilter
+                                .entitiesAround(wp, 15, 15 ,15)
+                        ) {
+                            if (npc instanceof WarlordsNPC) {
+                                ((WarlordsNPC) npc).getMob().setTarget(wp);
+                            }
+                        }
+                    }
                     EffectUtils.playCircularEffectAround(target.getGame(), target.getLocation(), Particle.TOTEM_OF_UNDYING, 3, 1, 0.15, 2.2, 8, 1, 4, ticksElapsed);
                 })
         ) {

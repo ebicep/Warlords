@@ -9,8 +9,7 @@ import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.defender.SeismicWaveBranchDefender;
 
 import javax.annotation.Nonnull;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class SeismicWaveDefender extends AbstractSeismicWave implements CanReduceCooldowns, Damages<SeismicWaveDefender.DamageValues> {
 
@@ -30,8 +29,6 @@ public class SeismicWaveDefender extends AbstractSeismicWave implements CanReduc
         float multiplier = 1;
         if (pveMasterUpgrade) {
             multiplier = (1.5f / 15f) * Math.min(i + 1, 15) + 1;
-        } else if (pveMasterUpgrade2) {
-            multiplier = waveTarget.getCooldownManager().hasCooldown(WoundingCooldown.WoundingData.class) ? 1.3f : 1;
         }
         waveTarget.addInstance(InstanceBuilder
                 .damage()
@@ -41,12 +38,14 @@ public class SeismicWaveDefender extends AbstractSeismicWave implements CanReduc
                 .max(damageValues.waveDamage.getMaxValue() * multiplier)
                 .crit(damageValues.waveDamage)
                 .uuid(abilityUUID)
-        ).ifPresent(event -> {
-            onHitFinalEvent(wp, waveTarget);
-            if (event.isDead() && pveMasterUpgrade2) {
-                wp.getAbilitiesMatching(LastStand.class).forEach(lastStand -> lastStand.subtractCurrentCooldown(1f));
-            }
-        });
+        );
+
+        if (pveMasterUpgrade2) {
+            Set<WarlordsEntity> targets = new HashSet<>();
+            targets.add(waveTarget);
+            float cdReduction = 0.25f * targets.size();
+            wp.getAbilitiesMatching(LastStand.class).forEach(lastStand -> lastStand.subtractCurrentCooldown(Math.min(cdReduction, 1)));
+        }
     }
 
     @Override

@@ -188,7 +188,7 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
                         .append(formatTitleUpgrade(ABILITY_ENERGY_COST_REDUCTION + ABILITY_ENERGY_COST_REDUCTION_PER_UPGRADE * getTitleLevel(), "%"))
                         .append(Component.text(" energy cost reduction for all abilities, " + ABILITY_DAMAGE_BOOST + "% increased damage, and "))
                         .append(formatTitleUpgrade(ABILITY_EPS + ABILITY_EPS_PER_UPGRADE * getTitleLevel()))
-                        .append(Component.text(" EPS for 6 seconds. Can be triggered every 40 seconds."));
+                        .append(Component.text(" EPS for 8 seconds. Can be triggered every 40 seconds."));
     }
 
     @Override
