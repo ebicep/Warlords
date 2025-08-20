@@ -25,6 +25,8 @@ public class TreasureHuntOption implements PveOption {
     private Floor floor;
     private final Map<Room, DungeonRoomMarker> rooms = new HashMap<>();
     private final int amountOfRooms;
+    private boolean conditionMimicsActive = false;
+    private int currentFloor = 1;
 
     public TreasureHuntOption(int amountOfRooms) {
         this.amountOfRooms = amountOfRooms;
@@ -111,5 +113,21 @@ public class TreasureHuntOption implements PveOption {
     @Override
     public int getTicksElapsed() {
         return ticksElapsed.get();
+    }
+
+    public boolean isConditionMimicsActive() {
+        return conditionMimicsActive;
+    }
+
+    public void setConditionMimicsActive(boolean conditionMimicsActive) {
+        this.conditionMimicsActive = conditionMimicsActive;
+    }
+
+    public int getCurrentFloor() {
+        return currentFloor;
+    }
+
+    public void setCurrentFloor(int currentFloor) {
+        this.currentFloor = currentFloor;
     }
 }
