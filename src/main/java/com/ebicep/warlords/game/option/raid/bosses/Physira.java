@@ -274,7 +274,7 @@ public class Physira extends AbstractMob implements BossMob {
                     }
 
                     if (counter % 3 == 0) {
-                        Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 500, 0.2f);
+                        Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_RAVAGER_ROAR, 500, 0.2f);
                         Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.AMBIENT_CRIMSON_FOREST_MOOD, 500, 1f);
 
                         EffectUtils.playSphereAnimation(

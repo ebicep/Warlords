@@ -432,7 +432,7 @@ public enum Mob {
             Weapons.NEW_LEAF_SCYTHE.getItem()
     )
     ),
-    TORMENT(EntityType.ZOMBIE, Torment.class, Torment::new, Torment::new, new Utils.SimpleEntityEquipment(
+    TORMENT(EntityType.WITHER_SKELETON, Torment.class, Torment::new, Torment::new, new Utils.SimpleEntityEquipment(
             SkullUtils.getSkullFrom(SkullID.DEMON_KING),
             Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 230, 60, 60),
             Utils.applyColorTo(Material.LEATHER_LEGGINGS, 230, 60, 60),

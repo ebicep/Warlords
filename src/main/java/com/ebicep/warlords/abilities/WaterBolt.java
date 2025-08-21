@@ -172,12 +172,21 @@ public class WaterBolt extends AbstractProjectile<WaterBolt, WaterBolt.WaterBolt
 
     private void increaseDamageOnHit(WarlordsEntity giver, WarlordsEntity hit) {
         hit.getCooldownManager().removeCooldown(WaterBolt.class, false);
-        hit.getCooldownManager().addCooldown(new RegularCooldown<>(name, "BOLT EPH", WaterBolt.class, new WaterBolt(), giver, CooldownTypes.ABILITY, cooldownManager -> {
-        }, 10 * 20
+        hit.getCooldownManager().addCooldown(new RegularCooldown<>(
+                name,
+                "BOLT EPH",
+                WaterBolt.class,
+                new WaterBolt(),
+                giver,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+
+                },
+                5 * 20
         ) {
             @Override
             public float addEnergyPerHit(WarlordsEntity we, float energyPerHit) {
-                return 5;
+                return energyPerHit + 6;
             }
         });
     }

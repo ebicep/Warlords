@@ -707,8 +707,8 @@ public class IllusionCrossfire extends GameMap {
                         .add(0.01, Mob.CELESTIAL_OPUS)
                         .add(0.003, Mob.CREEPY_BOMBER)
                 )
-                .add(90, new RandomSpawnWave(2, 10 * SECOND, Component.text("Boss"))
-                        .add(Mob.MITHRA)
+                .add(90, new RandomSpawnWave(1, 10 * SECOND, Component.text("Boss"))
+                        .add(Mob.TORMENT)
                 )
                 .add(91, new RandomSpawnWave(50, 5 * SECOND, null)
                         //basic
