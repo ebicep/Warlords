@@ -1,4 +1,4 @@
-package com.ebicep.warlords.game.option.raid.bosses;
+package com.ebicep.warlords.pve.mobs.bosses.bossminions;
 
 import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.effects.EffectUtils;

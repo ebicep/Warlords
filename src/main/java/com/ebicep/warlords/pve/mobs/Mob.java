@@ -1,8 +1,8 @@
 package com.ebicep.warlords.pve.mobs;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.game.option.raid.bosses.Physira;
-import com.ebicep.warlords.game.option.raid.bosses.PhysiraCrystal;
+import com.ebicep.warlords.pve.mobs.bosses.Physira;
+import com.ebicep.warlords.pve.mobs.bosses.bossminions.PhysiraCrystal;
 import com.ebicep.warlords.game.option.towerdefense.mobs.*;
 import com.ebicep.warlords.game.option.towerdefense.towers.*;
 import com.ebicep.warlords.game.option.whackamole.moles.MoleArmorStand;
@@ -1011,8 +1011,18 @@ public enum Mob {
             MITHRA_EGG_SAC, ARACHNO_VENERATUS
     };
     public static final Mob[] BOSSES = {
-            BOLTARO, GHOULCALLER, NARMER, MITHRA, ZENITH,
-            CHESSKING, ILLUMINA, TORMENT, VOID, MAGMATIC_OOZE, PHYSIRA, ONE_OF_NINE
+            BOLTARO,
+            GHOULCALLER,
+            NARMER,
+            MITHRA,
+            ZENITH,
+            CHESSKING,
+            ILLUMINA,
+            TORMENT,
+            VOID,
+            MAGMATIC_OOZE,
+            PHYSIRA,
+            ONE_OF_NINE
     };
     public static final Mob[] EVENT_BOSSES = {
             EVENT_BOLTARO, EVENT_NARMER, EVENT_MITHRA, EVENT_ILLUSION_CORE, EVENT_EXILED_CORE, EVENT_CALAMITY_CORE, EVENT_ILLUMINA,
