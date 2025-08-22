@@ -6,23 +6,51 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
+import com.ebicep.warlords.pve.mobs.OrbitingSwords;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import org.bukkit.Location;
 
 public class Vanguard extends AbstractMob implements BossMob {
 
-    public Vanguard(Location spawnLocation, String name, int maxHealth, float walkSpeed, float damageResistance, float minMeleeDamage, float maxMeleeDamage, AbstractAbility... abilities) {
-        super(spawnLocation, name, maxHealth, walkSpeed, damageResistance, minMeleeDamage, maxMeleeDamage, abilities);
+    public Vanguard(Location spawnLocation) {
+        super(spawnLocation,
+                "Vanguard",
+                200000,
+                0.25f,
+                20,
+                5000,
+                8000
+        );
+    }
+
+    public Vanguard(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            float damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(
+                spawnLocation,
+                name,
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage
+        );
     }
 
     @Override
     public Mob getMobRegistry() {
-        return null;
+        return Mob.VANGUARD;
     }
 
     @Override
     public void onSpawn(PveOption option) {
-        super.onSpawn(option);
+        new OrbitingSwords(warlordsNPC, 3, 2, 2);
     }
 
     @Override
