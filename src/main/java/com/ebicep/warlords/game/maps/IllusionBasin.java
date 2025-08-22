@@ -26,9 +26,9 @@ import java.util.List;
 
 import static com.ebicep.warlords.util.warlords.GameRunnable.SECOND;
 
-public class IllusionValleyExtreme extends GameMap {
+public class IllusionBasin extends GameMap {
 
-    public IllusionValleyExtreme() {
+    public IllusionBasin() {
         super(
                 "Illusion Basin",
                 4,

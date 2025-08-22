@@ -113,7 +113,7 @@ public class Fireball extends AbstractProjectile<Fireball, Fireball.FireballStat
             if (pveMasterUpgrade) {
                 applyBurnEffect(hit, shooter);
             } else if (pveMasterUpgrade2) {
-                applyIgniteEffect(hit, shooter);
+                applyIgniteEffect(shooter, hit);
             }
         }
         int playersHit = 0;
@@ -158,18 +158,27 @@ public class Fireball extends AbstractProjectile<Fireball, Fireball.FireballStat
     }
 
     private void applyIgniteEffect(WarlordsEntity giver, WarlordsEntity hit) {
-        new GameRunnable(giver.getGame()) {
-
-            @Override
-            public void run() {
-                for (WarlordsEntity igniteTarget : PlayerFilter
-                        .entitiesAround(hit, 3, 3, 3)
-                        .aliveEnemiesOf(giver)
-                ) {
-                    igniteTarget.addInstance(InstanceBuilder.damage().ability(Fireball.this).source(giver).value(damageValues.igniteDamage));
-                }
-            }
-        }.runTaskLater(20);
+        hit.getCooldownManager().addCooldown(new RegularCooldown<>(
+                "Ignite",
+                "IGN",
+                Fireball.class,
+                new Fireball(),
+                giver,
+                CooldownTypes.LOW_LEVEL_DEBUFF,
+                cooldownManager -> {
+                        PlayerFilter.entitiesAround(hit, 3, 3, 3)
+                                .aliveTeammatesOf(hit)
+                                .forEach(warlordsEntity -> {
+                                        warlordsEntity.addInstance(InstanceBuilder
+                                                .damage().cause("Ignite")
+                                                .source(giver)
+                                                .value(damageValues.igniteDamage)
+                                                .flags(InstanceFlags.TRUE_DAMAGE)
+                                        );
+                        });
+                },
+                20
+        ));
     }
 
     @Override

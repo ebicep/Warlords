@@ -40,7 +40,7 @@ public abstract class GameMap {
     public static final GameMap ILLUSION_RIFT_EVENT_4 = new SpidersBurrow();
     public static final GameMap ILLUSION_RIFT_EVENT_5 = new TheBorderlineOfIllusion();
     public static final GameMap ILLUSION_VALLEY = new IllusionValleyHard();
-    public static final GameMap ILLUSION_VALLEY2 = new IllusionValleyExtreme();
+    public static final GameMap ILLUSION_VALLEY2 = new IllusionBasin();
     public static final GameMap MAIN_LOBBY = new MainLobby();
     public static final GameMap MAIN_LOBBY_WHACK_A_MOLE = new MainLobby2();
     public static final GameMap NEOLITHIC = new Neolithic();

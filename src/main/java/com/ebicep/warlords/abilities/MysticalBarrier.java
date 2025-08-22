@@ -113,8 +113,13 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
         }
         if (pveMasterUpgrade2) {
             giveBarrier(wp, wp);
-            List<WarlordsEntity> targets = PlayerFilter.entitiesAround(wp, radius, radius, radius).aliveTeammatesOfExcludingSelf(wp).limit(1).toList();
-            giveBarrier(wp, wp.hasFlag() ? wp : targets.get(0));
+            for (WarlordsEntity target : PlayerFilter
+                    .entitiesAround(wp, radius, radius, radius)
+                    .aliveTeammatesOfExcludingSelf(wp)
+                    .limit(5)
+            ) {
+                giveBarrier(wp, target);
+            }
         } else {
             List<WarlordsEntity> targets = PlayerFilter
                     .entitiesAround(wp, radius, radius, radius)
@@ -123,7 +128,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                     .lookingAtFirst(wp)
                     .limit(1)
                     .toList();
-            WarlordsEntity target = wp.hasFlag() || targets.isEmpty() ? wp : targets.get(0);
+            WarlordsEntity target = wp.hasFlag() || targets.isEmpty() ? wp : targets.getFirst();
             giveBarrier(wp, target);
         }
         return true;
@@ -173,6 +178,15 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 2 != 0) {
                         return;
+                    }
+                    if (isSelf && wp.isInPve()) {
+                        for (WarlordsEntity npc : PlayerFilter
+                                .entitiesAround(wp, 15, 15 ,15)
+                        ) {
+                            if (npc instanceof WarlordsNPC) {
+                                ((WarlordsNPC) npc).getMob().setTarget(wp);
+                            }
+                        }
                     }
                     EffectUtils.playCircularEffectAround(target.getGame(), target.getLocation(), Particle.TOTEM_OF_UNDYING, 3, 1, 0.15, 2.2, 8, 1, 4, ticksElapsed);
                 })
