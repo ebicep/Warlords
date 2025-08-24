@@ -38,7 +38,6 @@ public class OrderOfEviscerateBranch extends AbstractUpgradeBranch<OrderOfEvisce
                 50000,
                 () -> {
                     ability.setTickDuration(ability.getTickDuration() + 80);
-                    ability.setVulnerableDamageBonus(ability.getVulnerableDamageBonus() + 70);
                 }
         );
         masterUpgrade2 = new Upgrade(
