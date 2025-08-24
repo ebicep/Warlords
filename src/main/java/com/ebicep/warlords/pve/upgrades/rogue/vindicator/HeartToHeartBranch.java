@@ -35,7 +35,7 @@ public class HeartToHeartBranch extends AbstractUpgradeBranch<HeartToHeart> {
                 "Heart To Heart - Master Upgrade",
                 """
                         +10 Additional Block Radius
-                                                
+                        
                         For every block traveled, gain a 3% damage reduction for 6s.
                         """,
                 50000,

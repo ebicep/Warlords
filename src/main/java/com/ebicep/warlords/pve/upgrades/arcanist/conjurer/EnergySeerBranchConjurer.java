@@ -44,6 +44,7 @@ public class EnergySeerBranchConjurer extends AbstractUpgradeBranch<EnergySeerCo
                 """
                         Remove energy loss.
                         +5s duration.
+                        
                         When nearby allies within a 10 block radius expend energy while Energy Seer is active, gain 7.5% of their energy spent.
                         """,
                 50000,

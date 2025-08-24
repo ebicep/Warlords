@@ -47,7 +47,7 @@ public class FortifyingHexBranch extends AbstractUpgradeBranch<FortifyingHex> {
                 "Fortifying Hex - Master Upgrade",
                 """
                         -15 Additional energy cost.
-                                                
+                       
                         Fortifying Hex can now pierce through infinite targets. Additionally, increase the damage reduction of Fortifying Hex by 3%.
                         """,
                 50000,

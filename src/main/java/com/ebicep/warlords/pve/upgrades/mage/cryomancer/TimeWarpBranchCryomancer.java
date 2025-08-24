@@ -43,7 +43,8 @@ public class TimeWarpBranchCryomancer extends AbstractUpgradeBranch<TimeWarpCryo
                 "Time Warp - Master Upgrade",
                 """
                         All enemies within a 30 block radius will be slowed by 80% for 5s.
-                        Additionally, enemies that are actively being slowed by Time Warp will be more susceptible to damage by 15%.
+                        
+                        Additionally, enemies that are actively being slowed by Time Warp will be more susceptible to damage from all sources by 15%.
                         """,
                 50000,
                 () -> {

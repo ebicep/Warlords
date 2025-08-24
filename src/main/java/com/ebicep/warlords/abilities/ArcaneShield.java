@@ -63,7 +63,7 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
                   .addCooldown(new RegularCooldown<>("Arcane Energy", "ARC", ArcaneShield.class, new ArcaneShield(), wp, CooldownTypes.ABILITY, cooldownManager2 -> {
                       modifier.forceEnd();
                       wp.updateItem(rightClick);
-                  }, 100, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                  }, 6 * 20, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                       if (ticksElapsed % 3 == 0) {
                           EffectUtils.displayParticle(Particle.ELECTRIC_SPARK, wp.getLocation().add(0, 1, 0), 10, .4, .4, .4, 0);
                       }

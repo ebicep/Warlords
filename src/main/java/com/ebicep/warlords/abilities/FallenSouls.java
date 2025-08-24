@@ -50,7 +50,7 @@ public class FallenSouls extends AbstractPiercingProjectile<FallenSouls, FallenS
     public FallenSouls(AbstractAbilityBuilder builder) {
         super(builder);
         this.shotsFiredAtATime = 3;
-        this.maxAngleOfShots = 54;
+        this.setMaxAngleOfShots(54);
         this.forwardTeleportAmount = 1.6f;
     }
 

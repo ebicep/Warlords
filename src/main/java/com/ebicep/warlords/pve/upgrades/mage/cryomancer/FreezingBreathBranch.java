@@ -45,7 +45,7 @@ public class FreezingBreathBranch extends AbstractUpgradeBranch<FreezingBreath> 
                 "Freezing Breath - Master Upgrade",
                 """
                         Unleash a blizzard typhoon in front of you, dealing 50% more damage.
-                                
+                        
                         Additionally, gain 5% damage reduction for each enemy hit, lasts 4 seconds. (up to 30%)
                         """,
                 50000,
@@ -61,9 +61,9 @@ public class FreezingBreathBranch extends AbstractUpgradeBranch<FreezingBreath> 
                 "Cold Front",
                 "Freezing Breath - Master Upgrade",
                 """
-                        Condense the breath into a ball of ice and snow, now a projectile, will explode on impact. Enemies hit will be CHILLED for 4s. Damage increases based on blocks traveled.
-                                                
-                        CHILLED: Become slowed by 50% and deal 25% less damage.
+                        Condense the breath into a ball of ice and snow, now a projectile, will explode on impact. Enemies hit will be CHILLED for 5s. Damage increases based on blocks traveled.
+                        
+                        CHILLED: Become slowed by 50% and deal 40% less damage.
                         """,
                 50000,
                 () -> {

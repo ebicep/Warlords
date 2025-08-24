@@ -9,8 +9,11 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.pve.mobs.flags.Unexecutable;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.assassin.OrderOfEviscerateBranch;
@@ -29,10 +32,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityIcon, Duration, AbilityStats<OrderOfEviscerate, OrderOfEviscerate.OrderOfEviscerateStats>, OrderOfEviscerateLike {
 
@@ -120,7 +120,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
 
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (Objects.equals(data.getMarkedPlayer(), event.getWarlordsEntity()) && !LocationUtils.isLineOfSightAssassin(event.getWarlordsEntity(), event.getSource())) {
+                if (Objects.equals(data.getMarkedPlayer(), event.getWarlordsEntity()) && LocationUtils.isLineOfSightAssassin(event.getWarlordsEntity(), event.getSource())) {
                     stats.numberOfBackstabs++;
                     return currentDamageValue;
                 } else {

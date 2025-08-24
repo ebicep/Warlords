@@ -137,7 +137,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
                         }
 
                     };
-                    nearBy.addKnockbackModifier(wp, "Shadow Garden", -10, shadowGardenCooldown);
+                    nearBy.addKnockbackModifier(wp, "Shadow Garden", -15, shadowGardenCooldown);
                     nearBy.getCooldownManager().addCooldown(shadowGardenCooldown);
                 } else {
                     nearBy.getCooldownManager().removeCooldownByObject(beacon);

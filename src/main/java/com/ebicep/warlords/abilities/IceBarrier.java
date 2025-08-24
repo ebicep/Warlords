@@ -70,7 +70,7 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
                     }
                     if (pveMasterUpgrade2) {
                         LocationBuilder locationBuilder = new LocationBuilder(wp.getLocation()).addY(-1).pitch(0).forward(3.5);
-                        List<Location> verticalRectangle = LocationUtils.getVerticalRectangle(locationBuilder, 4, 5);
+                        List<Location> verticalRectangle = LocationUtils.getVerticalRectangle(locationBuilder, 7, 5);
                         for (Location location : verticalRectangle) {
                             EffectUtils.displayParticle(Particle.BLOCK, location, 10, .1, .1, .1, 0, Material.BLUE_ICE.createBlockData());
                             PlayerFilter.entitiesAround(location, 1, 1, 1)

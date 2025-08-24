@@ -42,6 +42,7 @@ public class LightningRodBranch extends AbstractUpgradeBranch<LightningRod> {
                 "Lightning Rod - Master Upgrade",
                 """
                         Upon casting Lightning Rod, gain a 20% buff to speed and damage for 12 seconds.
+                        
                         Additionally, Lightning Rod will activate every 2s for a duration of 6s. The additional activations will only deal knockback, heal, and restore energy.
                         """,
                 50000,
@@ -53,7 +54,7 @@ public class LightningRodBranch extends AbstractUpgradeBranch<LightningRod> {
                 "Call of Thunder",
                 "Lightning Rod - Master Upgrade",
                 """
-                        Lightning Rod now applies SHOCKED and stuns enemies for 3s instead of knocking them away. Additionally, upon casting Lightning Rod, reduce the energy cost of chain lightning by 25 and gain +15 EPS for 8s.
+                        Lightning Rod now applies SHOCKED and stuns enemies for 3s instead of knocking them away. Additionally, upon casting Lightning Rod, reduce the energy cost of chain lightning by 25 and gain +15 EPS for 10s.
                         """,
                 50000,
                 () -> {

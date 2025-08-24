@@ -138,7 +138,7 @@ public class LightningBolt extends AbstractPiercingProjectile<LightningBolt, Lig
             if (playersHit == 1) {
                 damageMultiplier = 1.35f;
             } else {
-                damageMultiplier = 1.1f;
+                damageMultiplier = 1.15f;
             }
             EffectUtils.displayParticle(Particle.ENCHANTED_HIT, hit.getLocation().add(0, 1.2, 0), 5, .25, .25, .25, 0);
         }

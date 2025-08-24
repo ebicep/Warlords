@@ -31,7 +31,7 @@ public class VitalityConcoctionBranch extends AbstractUpgradeBranch<VitalityConc
                 "Concoction Zone",
                 "Vitality Concoction - Master Upgrade",
                 """
-                        Vitality Concoction now heals 1045 - 1425 to all allies in a 5 block radius.
+                        Vitality Concoction now grants allies the buff at half effect but for double the duration. Additionally, heal allies for  1045 - 1425 health in a 6 block radius.
                         """,
                 50000,
                 () -> {
