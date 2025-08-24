@@ -53,6 +53,7 @@
       },
       "portal": {
         "difficulty": 5,
+        "disabled": true,
         "name": "Portal",
         "description": "Replace {{aqua:Time Warp}} with {{aqua:Portal}}. Increase the crit chance of {{aqua:Fireball}} by {{damage;%}} but reduce the optimal range by {{blocks}}.",
         "fireballCritChanceIncrease": 10,
@@ -171,6 +172,7 @@
       },
       "triage": {
         "difficulty": 2,
+        "disabled": true,
         "name": "Triage",
         "description": "Replace {{aqua:Time Warp}} with {{aqua:Triage}}"
       },
@@ -638,7 +640,7 @@
         "name": "Cold Shoulder",
         "description": "Increase the range of {{aqua:Heart to Heart}} by {{blocks}}, it can now target enemies, and it resets the cooldown of {{aqua:Soul Shackle}}. Reduce the damage of {{aqua:Soul Shackle}} by {{damage;%}}. {{aqua:Prism Guard}} explodes upon expiry, dealing massive knockback to enemies in range. {{aqua:Vindicate}} resets the cooldown of {{aqua:Heart to Heart}}.",
         "heartToHeartRangeIncrease": 5,
-        "soulShackleDamageDecreasePercent": 10,
+        "soulShackleDamageDecreasePercent": 5,
         "heartToHeartFlagRangeIncrease": 2
       },
       "righteousRampage": {

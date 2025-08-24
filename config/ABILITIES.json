@@ -1928,7 +1928,10 @@
       "enavurisEnderStones": {
         "name": "Ender Stones",
         "cooldown": 2,
-        "energyCost": 50
+        "energyCost": 50,
+        "projectileSpeed": 10,
+        "maxDistance": 180,
+        "hitTeammates": false
       },
       "enavurisImprisonment": {
         "name": "Imprisonment",

@@ -102,7 +102,7 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
                 maxMeleeDamage,
                 new EnderStones(),
                 new Imprisonment(),
-                new SpawnMobAbility(AbstractAbilityBuilder.create("narmerSpawnZombieLancer").pve(), Mob.ENAVURITE) {
+                new SpawnMobAbility(AbstractAbilityBuilder.create("enavurisSpawnEnavurite").pve(), Mob.ENAVURITE) {
                     @Override
                     public int getSpawnAmount() {
                         int playerCount = pveOption.playerCount();
