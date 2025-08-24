@@ -65,7 +65,7 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
         EffectUtils.playCircularShieldAnimation(loc, Particle.DRIPPING_WATER, 3, 0.6, 1.2);
         List<FloatModifiable.FloatModifier> modifiers;
         if (pveMasterUpgrade2) {
-            modifiers = wp.getAbilitiesMatching(GuardianBeam.class).stream().map(ability -> ability.getCooldown().addMultiplicativeModifierMult(name + " Master", 0.55f)).toList();
+            modifiers = wp.getAbilitiesMatching(GuardianBeam.class).stream().map(ability -> ability.getCooldown().addMultiplicativeModifierMult(name + " Master", 0.7f)).toList();
         } else {
             modifiers = Collections.emptyList();
         }

@@ -193,7 +193,7 @@ public class FreezingBreath extends AbstractProjectile<FreezingBreath, FreezingB
             if (nearEntity.onHorse()) {
                 stats.addNumberOfDismounts();
             }
-            nearEntity.addSpeedModifier(shooter, name, -50, 4 * 20);
+            nearEntity.addSpeedModifier(shooter, name, -50, 5 * 20);
             float damageIncrease = (float) Math.min(1 + projectile.getBlocksTravelled() * .08, 2);
             nearEntity.addInstance(InstanceBuilder.damage()
                                                   .ability(this)
@@ -209,12 +209,12 @@ public class FreezingBreath extends AbstractProjectile<FreezingBreath, FreezingB
                               shooter,
                               CooldownTypes.LOW_LEVEL_DEBUFF,
                               cooldownManager -> {
-                      }, 4 * 20
+                      }, 5 * 20
                       ) {
 
                           @Override
                           public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                              return currentDamageValue * .75f;
+                              return currentDamageValue * .6f;
                           }
                       });
         }

@@ -136,7 +136,7 @@ public class Torment extends AbstractMob implements BossMob {
                 ChatUtils.sendTitleToGamePlayers(
                         warlordsNPC.getGame(),
                         Component.text("RUN!", NamedTextColor.RED),
-                        Component.text(we.getName() + " has been marked to give Divine Protection", NamedTextColor.GOLD),
+                        Component.text(we.getName() + " has been marked to give Divine Protection. Keep them alive!", NamedTextColor.GOLD),
                         20, 60, 20
                 );
                 we.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 540, 0, false));
@@ -250,7 +250,7 @@ public class Torment extends AbstractMob implements BossMob {
 
                     if (counter % 80 == 0) {
                         for (int i = 0; i < pveOption.playerCount(); i++) {
-                            pveOption.spawnNewMob(new CelestialOpus(warlordsNPC.getLocation()));
+                            pveOption.spawnNewMob(new CelestialOpus(pveOption.getRandomSpawnLocation(warlordsNPC)));
                         }
                     }
 
@@ -269,7 +269,7 @@ public class Torment extends AbstractMob implements BossMob {
         preventMarking = true;
 
         for (int i = 0; i < 5; i++) {
-            Utils.playGlobalSound(loc, Sound.ENTITY_ALLAY_ITEM_THROWN, 10f, 0.4f);
+            Utils.playGlobalSound(loc, Sound.ENTITY_ALLAY_ITEM_THROWN, 500f, 0.4f);
             EffectUtils.strikeLightning(loc, false);
         }
 
@@ -288,7 +288,6 @@ public class Torment extends AbstractMob implements BossMob {
                     .source(warlordsNPC)
                     .min(2000)
                     .max(3000)
-                    .flag(InstanceFlags.TRUE_DAMAGE, true)
             );
             Utils.addKnockback("KB", warlordsNPC.getLocation(), we, -5, 0.2, true);
         }
@@ -318,8 +317,8 @@ public class Torment extends AbstractMob implements BossMob {
                     }
                 }
 
-                if (counter % 24 == 0) {
-                    pveOption.spawnNewMob(new CelestialOpus(warlordsNPC.getLocation()));
+                if (counter % 48 == 0) {
+                    pveOption.spawnNewMob(new CelestialOpus(pveOption.getRandomSpawnLocation(warlordsNPC)));
                 }
 
                 if (counter % 5 == 0) {

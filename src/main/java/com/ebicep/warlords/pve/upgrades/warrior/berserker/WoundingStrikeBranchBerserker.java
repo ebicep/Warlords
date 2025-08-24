@@ -45,7 +45,8 @@ public class WoundingStrikeBranchBerserker extends AbstractUpgradeBranch<Woundin
                 "Lacerating Strike",
                 "Wounding Strike - Master Upgrade",
                 """
-                        +50% Wounding Strike Damage
+                        +50% Damage
+                        
                         Wounding Strike now applies BLEED instead of wounding.
 
                         BLEED: Enemies afflicted take 100% more damage from Wounding Strike while Blood Lust is active. Bleeding enemies have healing reduced by 80% and lose 0.5% of their max health per second.""",

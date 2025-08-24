@@ -136,20 +136,28 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                             }, false, secondaryAbility -> animus.getWarlordsNPC().isDead()
                     );
                     if (pveMasterUpgrade) {
-                        wp.getCooldownManager().addCooldown(new PermanentCooldown<>("Soul Burst", null, SoulSwitch.class, null, wp, CooldownTypes.ABILITY, cooldownManager -> {
-                        }, false
+                        wp.getCooldownManager().removeCooldown(SoulSwitch.class, false);
+                        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                "Soul Burst",
+                                "SOUL BURST",
+                                SoulSwitch.class,
+                                null,
+                                wp,
+                                CooldownTypes.ABILITY,
+                                cooldownManager -> {},
+                                20 * 20
                         ) {
 
                             @Override
                             public float modifyDamageAfterInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
                                 if (event.getCause().equals("Judgement Strike")) {
                                     double speed = animus.getWarlordsNPC()
-                                                         .getSpeed()
-                                                         .getModifiers()
-                                                         .stream()
-                                                         .filter(modifier -> modifier.getModifier() > 0)
-                                                         .mapToDouble(MotionModifier::getModifier)
-                                                         .sum();
+                                            .getSpeed()
+                                            .getModifiers()
+                                            .stream()
+                                            .filter(modifier -> modifier.getModifier() > 0)
+                                            .mapToDouble(MotionModifier::getModifier)
+                                            .sum();
                                     float damageBoost = Math.min(1.1f, (float) (1 + (speed * 0.5f) / 100));
                                     return currentDamageValue * damageBoost;
                                 }

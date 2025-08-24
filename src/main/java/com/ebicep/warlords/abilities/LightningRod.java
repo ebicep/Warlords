@@ -181,7 +181,7 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
         from.getCooldownManager().addCooldown(new RegularCooldown<>("Call of Thunder Buff", "THUN", LightningRod.class, null, from, CooldownTypes.BUFF, cooldownManager -> {
         }, cooldownManager -> {
             modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
-        }, 8 * 20
+        }, 10 * 20
         ) {
 
             @Override

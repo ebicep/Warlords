@@ -34,7 +34,7 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
 
     private final DrainingMiasmaStats stats = new DrainingMiasmaStats();
     private final DamageValues damageValues = new DamageValues();
-    private int maxHealthDamage = 3;
+    private float maxHealthDamage = 3;
     private int tickDuration = 100;
     private int leechTickDuration = 5;
     private int radius = 8;
@@ -48,7 +48,7 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
     @Override
     public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
-        this.maxHealthDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxHealthDamage"), int.class);
+        this.maxHealthDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxHealthDamage"), float.class);
         this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
         this.leechTickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("leechTickDuration"), int.class);
         this.radius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), int.class);
@@ -155,17 +155,24 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
             } else {
                 if (pveMasterUpgrade2) {
                     miasmaTarget.getCooldownManager()
-                                .addCooldown(new RegularCooldown<>("Toxic Immunity", "MIAS", DrainingMiasmaData.class, data, wp, CooldownTypes.ABILITY, cooldownManager -> {
-                                }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                                    if (ticksElapsed % 20 != 0) {
-                                        return;
-                                    }
-                                    float healing = miasmaTarget.getMaxHealth() * .02f;
-                                    miasmaTarget.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(healing).flags(InstanceFlags.CAN_OVERHEAL_OTHERS));
-                                    Overheal.giveOverHeal(wp, miasmaTarget);
+                                .addCooldown(new RegularCooldown<>(
+                                        "Toxic Immunity",
+                                        "MIAS",
+                                        DrainingMiasmaData.class,
+                                        data,
+                                        wp,
+                                        CooldownTypes.ABILITY,
+                                        cooldownManager -> {},
+                                        tickDuration,
+                                        Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                                            if (ticksElapsed % 20 != 0) {
+                                                return;
+                                            }
+                                            float healing = miasmaTarget.getMaxHealth() * .02f;
+                                            miasmaTarget.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(healing).flags(InstanceFlags.CAN_OVERHEAL_OTHERS));
+                                            Overheal.giveOverHeal(wp, miasmaTarget);
                                 })
                                 ) {
-
                                     @Override
                                     protected Listener getListener() {
                                         return CooldownUtils.getFullDebuffImmunityListener(miasmaTarget);
@@ -242,11 +249,11 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
         this.leechTickDuration = leechTickDuration;
     }
 
-    public int getMaxHealthDamage() {
+    public float getMaxHealthDamage() {
         return maxHealthDamage;
     }
 
-    public void setMaxHealthDamage(int maxHealthDamage) {
+    public void setMaxHealthDamage(float maxHealthDamage) {
         this.maxHealthDamage = maxHealthDamage;
     }
 

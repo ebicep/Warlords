@@ -50,7 +50,7 @@ public class RayOfLightBranch extends AbstractUpgradeBranch<RayOfLight> {
                         """,
                 50000,
                 () -> {
-                    ability.getHealValues().getRayHealing().critMultiplier().addAdditiveModifier("Master Upgrade Branch", 50);
+                    ability.getHealValues().getRayHealing().critMultiplier().addAdditiveModifier("Master Upgrade Branch", 45);
                     ability.setShotsFiredAtATime(3);
                 }
         );

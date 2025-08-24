@@ -3,6 +3,7 @@ package com.ebicep.customentities.npc.traits;
 import com.ebicep.customentities.npc.WarlordsTrait;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.GameMode;
+import com.ebicep.warlords.game.option.pve.onslaught.OnslaughtRewards;
 import com.ebicep.warlords.pve.OnslaughtMenu;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
@@ -29,6 +30,7 @@ public class OnslaughtStartTrait extends WarlordsTrait {
         if (ticks++ % 20 != 0) {
             return;
         }
+
         updateHologram(false);
     }
 

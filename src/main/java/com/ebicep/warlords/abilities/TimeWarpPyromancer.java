@@ -140,16 +140,7 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
                         }
                     }
                 })
-        ) {
-
-            @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (pveMasterUpgrade) {
-                    return currentDamageValue * convertToMultiplicationDecimal(wp.getBlocksTravelled() - startingBlocksTravelled);
-                }
-                return currentDamageValue;
-            }
-        };
+        );
         wp.getCooldownManager().addCooldown(timeWarpCooldown);
         if (pveMasterUpgrade) {
             addSecondaryAbility(1, () -> timeWarpCooldown.setTicksLeft(1), false, secondaryAbility -> !wp.getCooldownManager().hasCooldown(timeWarpCooldown));

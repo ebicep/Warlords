@@ -96,7 +96,7 @@ public class DatabaseGameEvent implements Listener {
                             currentGameEvent = gameEvent;
                             currentGameEvent.start();
                             if (eventChecker != null) {
-                                ChatUtils.MessageType.GAME_EVENTS.sendMessage("Cancelling event checker... but this shouldnt happen");
+                                ChatUtils.MessageType.GAME_EVENTS.sendMessage("Cancelling event checker... but this shouldn't happen");
                                 eventChecker.cancel();
                             }
                         } else {
@@ -137,7 +137,7 @@ public class DatabaseGameEvent implements Listener {
                                     public void run() {
                                         startGameEvent();
                                     }
-                                }.runTaskTimer(Warlords.getInstance(), 20 * 60 * 5, 20 * 60 * 5);
+                                }.runTaskTimer(Warlords.getInstance(), 20 * 60 * 30, 20 * 60 * 30);
                             }
                         }
                     }

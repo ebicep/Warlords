@@ -52,7 +52,11 @@ public class PrismGuardBranch extends AbstractUpgradeBranch<PrismGuard> {
         masterUpgrade = new Upgrade(
                 "Deflective Tesseract",
                 "Prism Guard - Master Upgrade",
-                "Gain 10% damage reduction and enemies in a 15 block radius will target you while Prism Guard is active. Additionally, double the range of Prism Guard and increase your passive damage reduction by 25%",
+                """
+                        Increase your passive damage reduction by 25%.
+                        
+                        Gain 10% damage reduction and enemies in a 15 block radius will target you while Prism Guard is active. Additionally, double the range of Prism Guard.
+                        """,
                 50000,
                 () -> {
                     abilityTree.getWarlordsPlayer().setDamageResistance(abilityTree.getWarlordsPlayer().getSpec().getDamageResistance() + 25);
@@ -63,7 +67,7 @@ public class PrismGuardBranch extends AbstractUpgradeBranch<PrismGuard> {
                 "Alacrity",
                 "Prism Guard - Master Upgrade",
                 """
-                        Double the radius of Prism Guard and reduce the melee damage of enemies in the radius by 25%. Additionally, gain knockback immunity while protected by Prism Guard.
+                        Double the radius of Prism Guard and reduce the melee damage of enemies in the radius by 25% and deal 10% more damage to silenced enemies. Additionally, gain knockback immunity while protected by Prism Guard.
                         """,
                 50000,
                 () -> {

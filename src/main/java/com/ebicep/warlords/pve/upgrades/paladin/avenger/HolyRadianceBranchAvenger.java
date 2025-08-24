@@ -29,6 +29,7 @@ public class HolyRadianceBranchAvenger extends AbstractUpgradeBranch<HolyRadianc
                 "Holy Radiance - Master Upgrade",
                 """
                         Avenger's Mark is now AoE.
+                        
                         Additionally, marked targets take 40% more damage from Avenger's Strike and receive strike priority.
                         Marked enemies also deal 10% less damage.""",
                 50000,
@@ -41,6 +42,7 @@ public class HolyRadianceBranchAvenger extends AbstractUpgradeBranch<HolyRadianc
                 "Holy Radiance - Master Upgrade",
                 """
                         Avenger's Mark is now an AoE.
+                        
                         Marked enemies take 20% more damage from all sources and receive strike priority.
                         """,
                 50000,

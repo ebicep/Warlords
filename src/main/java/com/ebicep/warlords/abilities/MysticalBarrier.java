@@ -104,7 +104,9 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
         Utils.playGlobalSound(wp.getLocation(), Sound.ITEM_ARMOR_EQUIP_DIAMOND, 2, 0.4f);
         Utils.playGlobalSound(wp.getLocation(), "arcanist.mysticalbarrier.activation", 2, 1);
         if (wp.isInPve()) {
-            for (WarlordsEntity npc : PlayerFilter.entitiesAround(wp, 15, 15 ,15)
+            for (WarlordsEntity npc : PlayerFilter
+                    .entitiesAround(wp, 15, 15 ,15)
+                    .aliveEnemiesOf(wp)
             ) {
                 if (npc instanceof WarlordsNPC) {
                     ((WarlordsNPC) npc).getMob().setTarget(wp);

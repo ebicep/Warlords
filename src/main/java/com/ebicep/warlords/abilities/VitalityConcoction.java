@@ -3,10 +3,10 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownUtils;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -20,6 +20,7 @@ import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -64,7 +65,7 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
         wp.getCooldownManager().removeDebuffCooldowns();
         wp.addSpeedModifier(wp, name, speedBoost, tickDuration);
         Set<WarlordsEntity> leeched = new HashSet<>();
-        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+        RegularCooldown<VitalityConcoction> cooldown = new RegularCooldown<>(
                 name,
                 "STIM",
                 VitalityConcoction.class,
@@ -77,7 +78,7 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
                     modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
                 },
                 tickDuration,
-                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                Collections.singletonList((cooldown2, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 3 == 0) {
                         PlayerFilter.entitiesAround(wp, leechRadius, leechRadius, leechRadius)
                                     .aliveEnemiesOf(wp)
@@ -102,11 +103,19 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 return currentDamageValue * convertToDivisionDecimal(damageResistance);
             }
-        });
+        };
+        wp.getCooldownManager().addCooldown(cooldown);
+
         if (pveMasterUpgrade) {
-            for (WarlordsEntity we : PlayerFilterGeneric.entitiesAround(wp, 5, 5, 5)
-                    .aliveTeammatesOf(wp)
+            for (WarlordsEntity we : PlayerFilterGeneric
+                    .entitiesAround(wp, 6, 6, 6)
+                    .aliveTeammatesOfExcludingSelf(wp)
             ) {
+                EffectUtils.playParticleLinkAnimation(wp.getLocation(), we.getLocation(), Particle.SCULK_SOUL);
+                cooldown.getCooldownObject().setDamageResistance(40);
+                cooldown.getCooldownObject().setSpeedBoost(75);
+                cooldown.getCooldownObject().setTickDuration(cooldown.getCooldownObject().getTickDuration() * 2);
+                we.getCooldownManager().addCooldown(cooldown);
                 we.addInstance(InstanceBuilder
                         .healing()
                         .ability(this)
@@ -155,6 +164,22 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
     @Override
     public VitalityConcoctionStats getAbilityStats() {
         return stats;
+    }
+
+    public int getDamageResistance() {
+        return damageResistance;
+    }
+
+    public void setDamageResistance(int damageResistance) {
+        this.damageResistance = damageResistance;
+    }
+
+    public int getSpeedBoost() {
+        return speedBoost;
+    }
+
+    public void setSpeedBoost(int speedBoost) {
+        this.speedBoost = speedBoost;
     }
 
     public static class VitalityConcoctionStats extends AbstractAbilityStats<VitalityConcoction, VitalityConcoctionStats> {

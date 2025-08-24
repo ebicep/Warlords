@@ -61,9 +61,9 @@ public class FreezingBreathBranch extends AbstractUpgradeBranch<FreezingBreath> 
                 "Cold Front",
                 "Freezing Breath - Master Upgrade",
                 """
-                        Condense the breath into a ball of ice and snow, now a projectile, will explode on impact. Enemies hit will be CHILLED for 4s. Damage increases based on blocks traveled.
+                        Condense the breath into a ball of ice and snow, now a projectile, will explode on impact. Enemies hit will be CHILLED for 5s. Damage increases based on blocks traveled.
                         
-                        CHILLED: Become slowed by 50% and deal 25% less damage.
+                        CHILLED: Become slowed by 50% and deal 40% less damage.
                         """,
                 50000,
                 () -> {

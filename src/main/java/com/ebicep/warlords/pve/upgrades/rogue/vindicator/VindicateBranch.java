@@ -43,7 +43,7 @@ public class VindicateBranch extends AbstractUpgradeBranch<Vindicate> {
                 "Liberation",
                 "Vindicate - Master Upgrade",
                 """
-                        +4s VIND Duration
+                        +4s VIND Buff Duration
                         
                         When activated, allies within the radius are granted 15% damage reduction and enemies within the radius are silenced for 10s.
                         """,

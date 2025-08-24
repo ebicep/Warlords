@@ -52,7 +52,7 @@ public class PoisonousHex extends AbstractPiercingProjectile<PoisonousHex, Poiso
     public PoisonousHex() {
         super(AbstractAbilityBuilder.create("poisonousHex").pvp());
         this.shotsFiredAtATime = 2;
-        this.maxAngleOfShots = 26;
+        this.setMaxAngleOfShots(26);
         this.forwardTeleportAmount = 1.6f;
         this.hitboxInflation.setBaseValue(hitboxInflation.getBaseValue() + .4f);
     }

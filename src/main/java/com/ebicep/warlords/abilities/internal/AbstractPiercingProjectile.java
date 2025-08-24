@@ -40,7 +40,7 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
     protected boolean hitTeammates;
     protected FloatModifiable hitboxInflation = new FloatModifiable(0.85f);
     protected float forwardTeleportAmount = 0;
-    protected int maxAngleOfShots = 45;
+    private int maxAngleOfShots = 45;
     protected int shotsFiredAtATime = 1;
     protected HashMap<InternalProjectile, List<InternalProjectile>> internalProjectileGroup = new HashMap<>();
     private final List<PendingHit> PENDING_HITS = new ArrayList<>();
@@ -402,6 +402,14 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
 
     public FloatModifiable getMaxDistance() {
         return maxDistance;
+    }
+
+    public int getMaxAngleOfShots() {
+        return maxAngleOfShots;
+    }
+
+    public void setMaxAngleOfShots(int maxAngleOfShots) {
+        this.maxAngleOfShots = maxAngleOfShots;
     }
 
     public interface InternalProjectileTask {

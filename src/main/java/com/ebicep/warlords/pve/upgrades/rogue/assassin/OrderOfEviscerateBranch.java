@@ -32,13 +32,13 @@ public class OrderOfEviscerateBranch extends AbstractUpgradeBranch<OrderOfEvisce
                 "Order of Eviscerate - Master Upgrade",
                 """
                         +4s Duration
-                        Increase damage vulnerable enemies take by 10%
+                        
                         Kills while Order of Eviscerate is active reduce the cooldown by an additional 4 seconds. Additionally, attacks from behind deal 70% more damage.
                         """,
                 50000,
                 () -> {
-                    ability.setTickDuration(ability.getTickDuration() + 100);
-                    ability.setVulnerableDamageBonus(ability.getVulnerableDamageBonus() + 10);
+                    ability.setTickDuration(ability.getTickDuration() + 80);
+                    ability.setVulnerableDamageBonus(ability.getVulnerableDamageBonus() + 70);
                 }
         );
         masterUpgrade2 = new Upgrade(

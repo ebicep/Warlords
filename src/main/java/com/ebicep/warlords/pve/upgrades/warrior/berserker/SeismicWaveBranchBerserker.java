@@ -14,8 +14,7 @@ public class SeismicWaveBranchBerserker extends AbstractSeismicWaveBranch {
                 "Wild Wave",
                 "Seismic Wave - Master Upgrade",
                 """
-                        Increase the size of Seismic Wave by 150%.
-                        Seismic knockback is reduced by 50%.
+                        Increase the size of Seismic Wave by 150% amd knockback is reduced by 50%.
                         
                         After seismic wave ends the area affected becomes unstable causing enemies to take 723-906 damage per second within the area for 4s.
                         """,
