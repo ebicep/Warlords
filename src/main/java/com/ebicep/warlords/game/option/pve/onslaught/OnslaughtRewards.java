@@ -21,14 +21,14 @@ public class OnslaughtRewards extends PveRewards<OnslaughtOption> {
 
     public static final RandomCollection<Pair<Spendable, Long>> SYNTHETIC_POUCH_LOOT_POOL = new RandomCollection<Pair<Spendable, Long>>()
             .add(54.9, new Pair<>(Currencies.COIN, 3000L))
-            .add(35, new Pair<>(Currencies.SYNTHETIC_SHARD, 40L))
-            .add(10, new Pair<>(Currencies.LEGEND_FRAGMENTS, 30L))
+            .add(35, new Pair<>(Currencies.SYNTHETIC_SHARD, 50L))
+            .add(10, new Pair<>(Currencies.LEGEND_FRAGMENTS, 50L))
             .add(.1, new Pair<>(MobDrop.ZENITH_STAR, 1L));
     public static final RandomCollection<Pair<Spendable, Long>> ASPIRANT_POUCH_LOOT_POOL = new RandomCollection<Pair<Spendable, Long>>()
-            .add(65, new Pair<>(Currencies.LEGEND_FRAGMENTS, 200L))
+            .add(55, new Pair<>(Currencies.LEGEND_FRAGMENTS, 250L))
             .add(25, new Pair<>(Currencies.SUPPLY_DROP_TOKEN, 20L))
-            .add(5, new Pair<>(MobDrop.ZENITH_STAR, 1L))
-            .add(5, new Pair<>(Currencies.LEGENDARY_STAR_PIECE, 1L));
+            .add(10, new Pair<>(MobDrop.ZENITH_STAR, 1L))
+            .add(10, new Pair<>(Currencies.LEGENDARY_STAR_PIECE, 1L));
 
     public OnslaughtRewards(OnslaughtOption pveOption) {
         super(pveOption);
