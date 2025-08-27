@@ -5,17 +5,20 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.option.raid.BossAbilityPhase;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
+import com.ebicep.warlords.pve.mobs.OrbitingSwords;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.*;
 import org.bukkit.entity.Display;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemDisplay;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Transformation;
@@ -27,7 +30,9 @@ import java.util.List;
 
 public class OneOfNine extends AbstractMob implements BossMob {
 
+    private Location mapCenter;
     private BossAbilityPhase phaseThree;
+    private BossAbilityPhase sawBladePhase;
 
     public OneOfNine(Location spawnLocation) {
         super(
@@ -62,6 +67,31 @@ public class OneOfNine extends AbstractMob implements BossMob {
 
     @Override
     public void onSpawn(PveOption option) {
+        mapCenter = new Location(warlordsNPC.getWorld(), 112.5, 13, 62.5);
+
+        new GameRunnable(warlordsNPC.getGame()) {
+            @Override
+            public void run() {
+                for (WarlordsEntity we : PlayerFilter
+                        .entitiesAround(warlordsNPC, 6, 6, 6)
+                        .aliveEnemiesOf(warlordsNPC)
+                ) {
+                    we.addInstance(InstanceBuilder
+                            .damage()
+                            .min(800)
+                            .max(1200)
+                            .source(warlordsNPC)
+                            .cause("Reaving Blades")
+                            .flag(InstanceFlags.TRUE_DAMAGE, true)
+                    );
+                }
+                if (warlordsNPC.isDead()) {
+                    this.cancel();
+                }
+            }
+        }.runTaskTimer(0, 10);
+        new OrbitingSwords(warlordsNPC.getLocation(), warlordsNPC, 6, 2, 9, 2);
+
         phaseThree = new BossAbilityPhase(warlordsNPC, 90, () -> {
             record Slot(double theta, int startTick, ItemDisplay display) {}
 
@@ -74,7 +104,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
             int delayBetween = 4;     // ticks between swords appearing
             int fallDuration = 8;    // ticks to complete the 90° fall (your old value)
 
-            Utils.playGlobalSound(warlordsNPC.getLocation(),    Sound.AMBIENT_BASALT_DELTAS_LOOP, 10, 0.7f);
+            Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.AMBIENT_BASALT_DELTAS_LOOP, 10, 0.7f);
             Utils.playGlobalSound(warlordsNPC.getLocation(), "arcanist.beaconshadow.activation", 10, 0.7f);
 
             // Prepare slots with theta and staggered start ticks
@@ -159,6 +189,10 @@ public class OneOfNine extends AbstractMob implements BossMob {
                 }
             }.runTaskTimer(0, 1);
         });
+
+        sawBladePhase = new BossAbilityPhase(warlordsNPC, 50, () -> {
+            //new SpinningSwords(loc, warlordsNPC, 5, 2, 270, 40);
+        });
     }
 
     @Override
@@ -166,7 +200,9 @@ public class OneOfNine extends AbstractMob implements BossMob {
         if (ticksElapsed % 20 == 0) {
             EffectUtils.playCrownAnimation(warlordsNPC.getLocation(), Particle.END_ROD);
         }
+
         phaseThree.initialize(warlordsNPC.getCurrentHealth());
+        sawBladePhase.initialize(warlordsNPC.getCurrentHealth());
     }
 
     @Override

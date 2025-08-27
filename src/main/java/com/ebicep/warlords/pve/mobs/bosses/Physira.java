@@ -48,7 +48,7 @@ import static java.lang.Math.cos;
 public class Physira extends AbstractMob implements BossMob {
 
     private Listener listener;
-    List<WarlordsNPC> pylons = new ArrayList<>();
+    List<WarlordsEntity> pylons = new ArrayList<>();
     private ItemDisplay blade;
     float angleDeg = 0;
 
@@ -95,6 +95,7 @@ public class Physira extends AbstractMob implements BossMob {
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
+
         phaseOne = new BossAbilityPhase(warlordsNPC, 75, () -> {
             ChatUtils.sendTitleToGamePlayers(
                     warlordsNPC.getGame(),
@@ -117,6 +118,17 @@ public class Physira extends AbstractMob implements BossMob {
                 pveOption.spawnNewMob(crystal, Team.RED);
             }
 
+            listener = new Listener() {
+                @EventHandler(ignoreCancelled = true)
+                private void onAllyDeath(WarlordsDeathEvent event) {
+                    WarlordsEntity we = event.getWarlordsEntity();
+                    pylons.remove(we);
+                    Bukkit.broadcast(Component.text("pylon removed"));
+                }
+            };
+
+            warlordsNPC.getGame().registerEvents(listener);
+
             AtomicInteger countdown = new AtomicInteger(30);
             new GameRunnable(warlordsNPC.getGame()) {
                 int counter = 0;
@@ -136,7 +148,7 @@ public class Physira extends AbstractMob implements BossMob {
                                         .withTrail()
                                         .build()
                         );
-                        warlordsNPC.getGame().registerEvents(listener);
+
                         this.cancel();
                     }
 
@@ -173,7 +185,6 @@ public class Physira extends AbstractMob implements BossMob {
                             );
                         }
 
-                        warlordsNPC.getGame().registerEvents(listener);
                         this.cancel();
                     }
 
@@ -187,153 +198,10 @@ public class Physira extends AbstractMob implements BossMob {
                     counter++;
                 }
             }.runTaskTimer(60, 0);
-
-            listener = new Listener() {
-                @EventHandler(ignoreCancelled = true)
-                private void onAllyDeath(WarlordsDeathEvent event) {
-                    WarlordsEntity we = event.getWarlordsEntity();
-                    pylons.remove(we);
-                    Bukkit.broadcast(Component.text("pylon removed"));
-                }
-            };
         });
 
         phaseTwo = new BossAbilityPhase(warlordsNPC, 50, () -> {
 
-            WarlordsEntity divineProtector = null;
-            for (WarlordsEntity we : PlayerFilter
-                    .playingGame(warlordsNPC.getGame())
-                    .aliveEnemiesOf(warlordsNPC)
-                    .limit(1)
-            ) {
-                divineProtector = we;
-                ChatUtils.sendTitleToGamePlayers(
-                        warlordsNPC.getGame(),
-                        Component.text("RUN!", NamedTextColor.RED),
-                        Component.text(we.getName() + " has been marked to give Divine Protection", NamedTextColor.GOLD),
-                        20, 60, 20
-                );
-                we.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 540, 0, false));
-                we.getCooldownManager().removeCooldown(DamageCheck.class, false);
-                we.getCooldownManager().addCooldown(new RegularCooldown<>(
-                        "Divine Protection",
-                        "DIVINE PROTECTION",
-                        DamageCheck.class,
-                        DamageCheck.DAMAGE_CHECK,
-                        warlordsNPC,
-                        CooldownTypes.ABILITY,
-                        cooldownManager -> {
-                        },
-                        28 * 20,
-                        Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                            new CircleEffect(
-                                    we.getGame(),
-                                    we.getTeam(),
-                                    we.getLocation().clone().add(0, 0.25, 0),
-                                    8,
-                                    new CircumferenceEffect(Particle.FIREWORK, Particle.FIREWORK).particlesPerCircumference(0.5),
-                                    new DoubleLineEffect(Particle.EFFECT)
-                            ).playEffects();
-                            if (ticksLeft % 2 == 0) {
-                                for (WarlordsEntity ally : PlayerFilter
-                                        .entitiesAround(we, 8, 100, 8)
-                                        .aliveTeammatesOfExcludingSelf(we)
-                                ) {
-                                    ally.getCooldownManager().removeCooldown(PhysiraCheck.class, false);
-                                    ally.getCooldownManager().addCooldown(new RegularCooldown<>(
-                                            "Divine Protection",
-                                            "DIVINE PROTECTION",
-                                            PhysiraCheck.class,
-                                            PhysiraCheck.PHYSIRA_CHECK,
-                                            warlordsNPC,
-                                            CooldownTypes.ABILITY,
-                                            cooldownManager -> {
-                                            },
-                                            3
-                                    ) {
-                                        @Override
-                                        public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                            return currentDamageValue * 0;
-                                        }
-                                    });
-                                }
-                            }
-                        })
-                ) {
-                    @Override
-                    public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                        return currentDamageValue * 0.05f;
-                    }
-                });
-            }
-
-            WarlordsEntity finalDivineProtector = divineProtector;
-            new GameRunnable(warlordsNPC.getGame()) {
-                int counter = 0;
-                @Override
-                public void run() {
-                    if (counter == 1) {
-                        warlordsNPC.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 400, 0, false));
-                        warlordsNPC.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 400, 0, false));
-                    }
-
-                    if (counter % 3 == 0) {
-                        Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_RAVAGER_ROAR, 500, 0.2f);
-                        Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.AMBIENT_CRIMSON_FOREST_MOOD, 500, 1f);
-
-                        EffectUtils.playSphereAnimation(
-                                warlordsNPC.getLocation(),
-                                1 + (0.1f * counter),
-                                Particle.CHERRY_LEAVES,
-                                1
-                        );
-
-                        for (WarlordsEntity we : PlayerFilter
-                                .playingGame(warlordsNPC.getGame())
-                                .aliveEnemiesOf(warlordsNPC)
-                        ) {
-                            we.addInstance(InstanceBuilder
-                                    .damage()
-                                    .cause("Divine Punishment")
-                                    .source(warlordsNPC)
-                                    .value(1000)
-                                    .flags(InstanceFlags.NO_MESSAGE)
-                            );
-                            EffectUtils.playParticleLinkAnimation(
-                                    we.getLocation(),
-                                    warlordsNPC.getLocation(),
-                                    255, 150, 150,
-                                    2
-                            );
-                        }
-
-                        if (finalDivineProtector == null) {
-                            return;
-                        }
-
-                        for (WarlordsEntity we : PlayerFilter
-                                .entitiesAround(finalDivineProtector, 100, 100, 100)
-                                .aliveEnemiesOf(finalDivineProtector)
-                        ) {
-                            if (we instanceof WarlordsNPC) {
-                                ((WarlordsNPC) we).getMob().setTarget(finalDivineProtector);
-                            }
-                        }
-                    }
-
-                    if (counter % 100 == 0) {
-                        for (int i = 0; i < pveOption.playerCount(); i++) {
-                            pveOption.spawnNewMob(new CelestialOpus(warlordsNPC.getLocation()));
-                        }
-                    }
-
-                    if (counter == 400) {
-                        this.cancel();
-                    }
-
-                    counter++;
-                }
-            }.runTaskTimer(140, 0);
         });
     }
 

@@ -569,6 +569,14 @@ public enum Mob {
             Weapons.TENDERIZER.getItem()
     )
     ),
+    ECHO_OF_BLADES(EntityType.ZOMBIE, EchoOfBlades.class, EchoOfBlades::new, EchoOfBlades::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.WITHER_SOUL),
+            null,
+            null,
+            null,
+            Weapons.SOUL_REAVER.getItem()
+    )
+    ),
     MITHRA_EGG_SAC(EntityType.ARMOR_STAND, EggSac.class, EggSac::new, EggSac::new, new Utils.SimpleEntityEquipment(
             EggSac.EGG_SAC_ITEM,
             null,

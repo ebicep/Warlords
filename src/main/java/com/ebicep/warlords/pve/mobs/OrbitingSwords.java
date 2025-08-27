@@ -19,37 +19,41 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class OrbitingSwords {
-    private final WarlordsEntity boss;
+
+    private final Location loc;
     private final List<ItemDisplay> swords = new ArrayList<>();
-    private final double radius;
+    private final WarlordsEntity boss;
+    private double radius;
     private final double height;
-    private final float speedDegPerTick;
+    private int swordCount;
+    private float speedDegPerTick;
     private float baseAngleDeg = 0f;
     private int taskId = -1;
 
-    public OrbitingSwords(WarlordsEntity boss, double radius, double height, float speedDegPerTick) {
+    public OrbitingSwords(Location loc, WarlordsEntity boss, double radius, double height, int swordCount, float speedDegPerTick) {
+        this.loc = loc;
         this.boss = boss;
         this.radius = radius;
         this.height = height;
+        this.swordCount = swordCount;
         this.speedDegPerTick = speedDegPerTick;
 
-        World w = boss.getWorld();
-        float[] offsets = {0f, 120f, 240f}; // 3 swords spaced evenly
-        for (float off : offsets) {
-            ItemDisplay d = w.spawn(boss.getLocation().add(0, height, 0), ItemDisplay.class, disp -> {
+        World w = loc.getWorld();
+        for (int i = 0; i < swordCount; i++) {
+            float offset = i * (360f / swordCount); // even spacing
+            ItemDisplay d = w.spawn(loc.add(0, height, 0), ItemDisplay.class, disp -> {
                 disp.setItemStack(new ItemStack(Material.NETHERITE_SWORD));
                 disp.setBillboard(Display.Billboard.FIXED);
-                disp.setInterpolationDuration(0); // we’re teleporting per tick
+                disp.setInterpolationDuration(0);
                 disp.setTransformation(new Transformation(
-                        new Vector3f(0, 0, 0),
-                        new Quaternionf(),                // animated/left
-                        new Vector3f(3f, 3f, 3f),      // scale if you like
-                        new Quaternionf()                 // base/right
+                        new Vector3f(0,0,0),
+                        new Quaternionf(),
+                        new Vector3f(3.5f,3.5f,3.5f), // scale up if needed
+                        new Quaternionf()
                 ));
-                disp.setPersistent(true);
             });
-            // store angle offset in entity’s persistent data if you prefer; here we attach as metadata
-            d.setMetadata("angleOffset", new FixedMetadataValue(Warlords.getInstance(), off));
+
+            d.setMetadata("angleOffset", new FixedMetadataValue(Warlords.getInstance(), offset));
             swords.add(d);
         }
 
@@ -70,19 +74,16 @@ public final class OrbitingSwords {
                     double z = center.getZ() + radius * Math.sin(aRad);
                     d.teleport(new Location(center.getWorld(), x, center.getY(), z));
 
-                    // Orientation: face the tangent of the orbit and lie flat
-                    // tangent yaw = angle + 90°
                     float yawRad = (float) Math.toRadians((baseAngleDeg + off));
 
                     Quaternionf faceTangent = new Quaternionf().rotateY(yawRad);
-                    Quaternionf flat = new Quaternionf().rotateX((float) Math.toRadians(90)); // lay sword horizontal
 
                     // Put spin in leftRotation (tangent), keep flat as rightRotation
                     d.setTransformation(new Transformation(
                             new Vector3f(0, 0, 0),
                             faceTangent,
                             d.getTransformation().getScale(),
-                            flat
+                            new Quaternionf()
                     ));
                 }
             }
@@ -96,5 +97,21 @@ public final class OrbitingSwords {
         }
         swords.forEach(e -> { if (!e.isDead()) e.remove(); });
         swords.clear();
+    }
+
+    public float getSpeedDegPerTick() {
+        return speedDegPerTick;
+    }
+
+    public double getRadius() {
+        return radius;
+    }
+
+    public void setSpeedDegPerTick(float speedDegPerTick) {
+        this.speedDegPerTick = speedDegPerTick;
+    }
+
+    public void setRadius(double radius) {
+        this.radius = radius;
     }
 }

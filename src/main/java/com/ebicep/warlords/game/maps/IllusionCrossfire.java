@@ -469,7 +469,7 @@ public class IllusionCrossfire extends GameMap {
                         .add(0.002, Mob.CREEPY_BOMBER)
                 )
                 .add(60, new RandomSpawnWave(1, 10 * SECOND, Component.text("Boss"))
-                        .add(Mob.CHESSKING)
+                        .add(Mob.ENAVURIS)
                 )
                 .add(61, new RandomSpawnWave(40, 5 * SECOND, null)
                         //basic
@@ -627,7 +627,7 @@ public class IllusionCrossfire extends GameMap {
                         .add(0.02, Mob.CELESTIAL_OPUS)
                 )
                 .add(80, new RandomSpawnWave(1, 10 * SECOND, Component.text("Boss"))
-                        .add(Mob.MAGMATIC_OOZE)
+                        .add(Mob.VOID)
                 )
                 .add(81, new RandomSpawnWave(50, 5 * SECOND, null)
                         //basic
@@ -789,7 +789,7 @@ public class IllusionCrossfire extends GameMap {
                         .add(0.004, Mob.CREEPY_BOMBER)
                 )
                 .add(100, new RandomSpawnWave(1, 10 * SECOND, Component.text("Boss"))
-                        .add(Mob.VOID)
+                        .add(Mob.ONE_OF_NINE)
                 )
                 .add(101, new RandomSpawnWave(80, 5 * SECOND, null)
                         //basic

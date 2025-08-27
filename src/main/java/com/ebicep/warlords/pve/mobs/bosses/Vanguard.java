@@ -50,7 +50,7 @@ public class Vanguard extends AbstractMob implements BossMob {
 
     @Override
     public void onSpawn(PveOption option) {
-        new OrbitingSwords(warlordsNPC, 3, 2, 2);
+        new OrbitingSwords(warlordsNPC.getLocation(), warlordsNPC, 3, 2, 6, 2);
     }
 
     @Override

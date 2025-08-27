@@ -271,6 +271,10 @@ public abstract class WarlordsEntity {
 
     @Nonnull
     public Location getLocation() {
+        if (this.entity == null) {
+            return new Location(this.getWorld(), 0, 150, 0);
+        }
+
         return this.entity.getLocation();
     }
 

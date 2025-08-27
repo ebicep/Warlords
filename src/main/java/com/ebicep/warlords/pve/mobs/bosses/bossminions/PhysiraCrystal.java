@@ -24,7 +24,7 @@ public class PhysiraCrystal extends AbstractMob implements BossMinionMob {
     public PhysiraCrystal(Location spawnLocation, WarlordsEntity owner, SpecType spec) {
         super(
                 spawnLocation,
-                owner.getName() + " - " + spec.name(),
+                owner.getName() + " - " + spec.getTextColor() + spec.name(),
                 1000,
                 0,
                 0,
@@ -91,7 +91,7 @@ public class PhysiraCrystal extends AbstractMob implements BossMinionMob {
                 if (spec == event.getSource().getSpecClass().specType) {
                     return currentDamageValue * 2;
                 } else {
-                    return currentDamageValue * 0.5f;
+                    return currentDamageValue * 0.25f;
                 }
             }
         });
