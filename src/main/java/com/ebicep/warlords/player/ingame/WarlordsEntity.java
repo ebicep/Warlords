@@ -1127,30 +1127,24 @@ public abstract class WarlordsEntity {
     }
 
     public void setVelocity(String from, Vector v, boolean ignoreModifications) {
-        setVelocity(from, v, true, ignoreModifications);
-    }
-
-    public void setVelocity(String from, Vector v, boolean kbAfterHorse, boolean ignoreModifications) {
-        if ((kbAfterHorse || this.entity.getVehicle() == null)) {
-            if (!ignoreModifications) {
-                float knockbackModifier = knockback.getLastValue();
-                v.multiply(knockbackModifier);
-            }
-            if (Double.isNaN(v.getX())) {
-                v.setX(0);
-            }
-            if (Double.isNaN(v.getY())) {
-                v.setY(0);
-            }
-            if (Double.isNaN(v.getZ())) {
-                v.setZ(0);
-            }
-            WarlordsAddVelocityEvent warlordsAddVelocityEvent = new WarlordsAddVelocityEvent(this, from, v);
-            Bukkit.getPluginManager().callEvent(warlordsAddVelocityEvent);
-            if (!warlordsAddVelocityEvent.isCancelled()) {
-                if (!v.isZero() || ignoreModifications) {
-                    this.entity.setVelocity(v);
-                }
+        if (!ignoreModifications) {
+            float knockbackModifier = knockback.getLastValue();
+            v.multiply(knockbackModifier);
+        }
+        if (Double.isNaN(v.getX())) {
+            v.setX(0);
+        }
+        if (Double.isNaN(v.getY())) {
+            v.setY(0);
+        }
+        if (Double.isNaN(v.getZ())) {
+            v.setZ(0);
+        }
+        WarlordsAddVelocityEvent warlordsAddVelocityEvent = new WarlordsAddVelocityEvent(this, from, v);
+        Bukkit.getPluginManager().callEvent(warlordsAddVelocityEvent);
+        if (!warlordsAddVelocityEvent.isCancelled()) {
+            if (!v.isZero() || ignoreModifications) {
+                this.entity.setVelocity(v);
             }
         }
     }

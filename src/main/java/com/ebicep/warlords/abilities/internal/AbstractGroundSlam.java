@@ -97,8 +97,6 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
         super.runEveryTick(warlordsEntity);
     }
 
-    public abstract Value.RangedValueCritable getSlamDamage();
-
     protected void activateAbility(@Nonnull WarlordsEntity wp, float damageMultiplier, UUID abilityUUID, boolean second) {
         List<List<Location>> fallingBlockLocations = new ArrayList<>();
         fallingBlockLocations.add(new ArrayList<>(List.of(wp.getLocation())));
@@ -151,7 +149,12 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
 
                                 Location loc = slamTarget.getLocation();
                                 Vector v = wp.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-velocity).setY(0.25);
-                                slamTarget.setVelocity(name, v, false, false);
+                                new GameRunnable(wp.getGame()) {
+                                    @Override
+                                    public void run() {
+                                        slamTarget.setVelocity(name, v, false);
+                                    }
+                                }.runTaskLater(1);
                             });
                         }
                     }
@@ -170,6 +173,8 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
 
         }.runTaskTimer(0, 2);
     }
+
+    public abstract Value.RangedValueCritable getSlamDamage();
 
     protected void onSecondSlamHit(WarlordsEntity wp, Set<WarlordsEntity> playersHit) {
 

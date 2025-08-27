@@ -139,7 +139,12 @@ public abstract class AbstractSeismicWave extends AbstractAbility implements Red
         }
 
         final Vector v = wp.getLocation().toVector().subtract(waveTarget.getLocation().toVector()).normalize().multiply(-velocity).setY(0.25);
-        waveTarget.setVelocity(name, v, false, false);
+        new GameRunnable(wp.getGame()) {
+            @Override
+            public void run() {
+                waveTarget.setVelocity(name, v, false);
+            }
+        }.runTaskLater(1);
     }
 
     public float getVelocity() {

@@ -15,7 +15,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.bukkit.util.Vector;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
@@ -102,12 +101,6 @@ public abstract class AbstractStrike<T extends AbstractStrike<T, R>, R extends A
     @Override
     public FloatModifiable getHitBoxRadius() {
         return hitbox;
-    }
-
-    public void knockbackOnHit(WarlordsEntity giver, WarlordsEntity kbTarget, double velocity, double y) {
-        final Location loc = kbTarget.getLocation();
-        final Vector v = giver.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-velocity).setY(y);
-        kbTarget.setVelocity(name, v, false);
     }
 
     public void additionalHit(

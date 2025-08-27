@@ -298,7 +298,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
                                     } else {
                                         v = new LocationBuilder(p.getLocation()).getVectorTowards(newLoc).multiply(-kbVelocity).setY(1);
                                     }
-                                    p.setVelocity(name, v, false, false);
+                                    p.setVelocity(name, v, false);
                                     p.addInstance(InstanceBuilder
                                             .damage()
                                             .ability(FieryProjectile.this)

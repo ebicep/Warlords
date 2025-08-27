@@ -93,7 +93,12 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon, Damages<
                             } else {
                                 v = p.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(velocity).setY(0.2);
                             }
-                            p.setVelocity(name, v, false, false);
+                            new GameRunnable(wp.getGame()) {
+                                @Override
+                                public void run() {
+                                    p.setVelocity(name, v, false);
+                                }
+                            }.runTaskLater(1);
                         });
                     }
                     newLoc.setPitch(-12);
