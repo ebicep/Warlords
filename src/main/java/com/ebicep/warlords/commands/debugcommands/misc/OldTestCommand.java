@@ -4,7 +4,6 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.pve.items.ItemTier;
-import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
@@ -12,16 +11,10 @@ import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.Transformation;
-import org.joml.AxisAngle4f;
-import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
@@ -122,17 +115,17 @@ public class OldTestCommand implements CommandExecutor {
         }
         int level = 20;
         if (commandSender instanceof Player player) {
-            player.getWorld().spawn(new LocationBuilder(player.getLocation()).lookRight().pitch(0), ItemDisplay.class, false, blockDisplay -> {
-                        blockDisplay.setItemStack(new ItemStack(Material.WITHER_ROSE));
-                        blockDisplay.setTransformation(new Transformation(
-                                        new Vector3f(),
-                                        new AxisAngle4f((float) Math.toRadians(-player.getLocation().getPitch()), 0, 0, 1),
-                                        new Vector3f(1f, 1f, 1f),
-                                        new AxisAngle4f()
-                                )
-                        );
-                    }
-            );
+//            player.getWorld().spawn(new LocationBuilder(player.getLocation()).lookRight().pitch(0), ItemDisplay.class, false, blockDisplay -> {
+//                        blockDisplay.setItemStack(new ItemStack(Material.WITHER_ROSE));
+//                        blockDisplay.setTransformation(new Transformation(
+//                                        new Vector3f(),
+//                                        new AxisAngle4f((float) Math.toRadians(-player.getLocation().getPitch()), 0, 0, 1),
+//                                        new Vector3f(1f, 1f, 1f),
+//                                        new AxisAngle4f()
+//                                )
+//                        );
+//                    }
+//            );
 //            List<Mob> mobs = Arrays.stream(Mob.VALUES).collect(Collectors.toList());
 //            for (Mob mob : Mob.BASIC) {
 //                mobs.remove(mob);

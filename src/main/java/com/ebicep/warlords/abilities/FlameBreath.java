@@ -8,6 +8,7 @@ import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
@@ -82,7 +83,13 @@ public class FlameBreath extends AbstractAbility implements RedAbilityIcon, Dama
             ).ifPresent(finalEvent -> {
                 Location loc = breathTarget.getLocation();
                 Vector v = wp.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-velocity).setY(0.2);
-                breathTarget.setVelocity(name, v, false);
+                new GameRunnable(wp.getGame()) {
+                    @Override
+                    public void run() {
+                        breathTarget.setVelocity(name, v, false);
+                    }
+                }.runTaskLater(1);
+
             });
         }
         return true;

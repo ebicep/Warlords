@@ -7,7 +7,6 @@ import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -16,7 +15,6 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownUtils;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
-import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -189,7 +187,13 @@ public class RighteousRampage implements SpecBoostManager.SpecBoost<RighteousRam
                                                 .normalize()
                                                 .multiply(-knockbackMagnitude)
                                                 .setY(knockbackY);
-                                        landingTarget.setVelocity(getStringName(), v, false);
+                                        new GameRunnable(warlordsEntity.getGame()) {
+                                            @Override
+                                            public void run() {
+                                                landingTarget.setVelocity(getStringName(), v, false);
+                                            }
+                                        }.runTaskLater(1);
+
                                         Utils.playGlobalSound(warlordsEntity.getLocation(), "warrior.revenant.orbsoflife", 2, .25f);
                                     }
                                     FireWorkEffectPlayer.playFirework(warlordsEntity.getLocation(), FireworkEffect

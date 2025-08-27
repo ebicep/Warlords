@@ -44,10 +44,8 @@ public class SeismicWaveDefender extends AbstractSeismicWave implements CanReduc
         ).ifPresent(event -> {
             onHitFinalEvent(wp, waveTarget);
             if (pveMasterUpgrade2) {
-                Set<WarlordsEntity> targets = new HashSet<>();
-                targets.add(waveTarget);
-                float cdReduction = 0.25f * targets.size();
-                wp.getAbilitiesMatching(LastStand.class).forEach(lastStand -> lastStand.subtractCurrentCooldown(Math.min(cdReduction, 1)));
+                float cdReduction = 0.25f;
+                wp.getAbilitiesMatching(LastStand.class).forEach(lastStand -> lastStand.subtractCurrentCooldown(cdReduction));
             }
         });
 

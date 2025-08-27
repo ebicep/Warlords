@@ -8,6 +8,7 @@ import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.instances.type.CustomInstanceFlags;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.util.Vector;
 
@@ -68,11 +69,19 @@ public class HeavyShields implements SpecBoostManager.SpecBoost<HeavyShields> {
             WarlordsEntity target = event.getWarlordsEntity();
             if (event.getAbility() instanceof FortifyingHex) {
                 for (CustomInstanceFlags customFlag : event.getCustomFlags()) {
-                    if (customFlag instanceof CustomInstanceFlags.ProjectileHitInstanceFlag(
-                            AbstractPiercingProjectile.InternalProjectile projectile
-                            )) {
-                        Vector v = projectile.getStartingLocation().toVector().subtract(target.getLocation().toVector()).normalize().multiply(-fortifyingHexKnockback).setY(fortifyingHexKnockbackY);
-                        target.setVelocity(getStringName(), v, false);
+                    if (customFlag instanceof CustomInstanceFlags.ProjectileHitInstanceFlag(AbstractPiercingProjectile.InternalProjectile projectile)) {
+                        Vector v = projectile.getStartingLocation()
+                                             .toVector()
+                                             .subtract(target.getLocation().toVector())
+                                             .normalize()
+                                             .multiply(-fortifyingHexKnockback)
+                                             .setY(fortifyingHexKnockbackY);
+                        new GameRunnable(target.getGame()) {
+                            @Override
+                            public void run() {
+                                target.setVelocity(getStringName(), v, false);
+                            }
+                        }.runTaskLater(1);
                         return;
                     }
                 }

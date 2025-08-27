@@ -10,6 +10,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.util.java.NumberFormat;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -175,7 +176,12 @@ public class Parry extends AbstractAbility implements AbilityStats<Parry, Parry.
                     stats.timesKnockbacked++;
                     WarlordsEntity victim = event.getWarlordsEntity();
                     Vector v = wp.getLocation().toVector().subtract(victim.getLocation().toVector()).normalize().multiply(-knockbackMagnitude).setY(0.35);
-                    victim.setVelocity(name, v, false);
+                    new GameRunnable(wp.getGame()) {
+                        @Override
+                        public void run() {
+                            victim.setVelocity(name, v, false);
+                        }
+                    }.runTaskLater(1);
                     setTicksLeft(0);
                 }
             }

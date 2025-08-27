@@ -69,7 +69,7 @@ public class Repentance extends AbstractAbility implements BlueAbilityIcon, Dura
                 //TODO message
                 float energyGain = (float) energyGained.get() / 10 / 20;
                 wp.getCooldownManager().addCooldown(new RegularCooldown<>("Remembrance", "REME", Repentance.class, new Repentance(), wp, CooldownTypes.BUFF, cooldownManager1 -> {
-                }, 5 * 20
+                }, 8 * 20
                 ) {
 
                     @Override

@@ -71,6 +71,7 @@ public class DeathsDebtBranch extends AbstractUpgradeBranch<DeathsDebt> {
                         """,
                 50000,
                 () -> {
+
                 }
         );
     }

@@ -35,8 +35,8 @@ public class UndyingArmyBranch extends AbstractUpgradeBranch<UndyingArmy> {
                 "Relentless Army",
                 "Undying Army - Master Upgrade",
                 """
-                        Double the range of Undying Army.
-                        Undying Army healing occurs every 0.5 seconds instead of 1 second.
+                        Double the range of Undying Army. Undying Army healing occurs every 0.5 seconds instead of 1 second.
+                        
                         Additionally, reduce the Cooldown of Reckless Charge and Ground Slam by 50% for the duration of Undying Army.""",
                 50000,
                 () -> {

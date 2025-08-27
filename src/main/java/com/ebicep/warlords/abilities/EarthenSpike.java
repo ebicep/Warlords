@@ -174,11 +174,16 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
                 .value(damageValues.spikeDamage)
                 .uuid(uuid)
         ).ifPresent(finalEvent -> {
-            if (LocationUtils.getDistance(spikeTarget.getEntity(),
-                    .1
-            ) < 1.82 && (PLAYER_SPIKE_COOLDOWN.get(spikeTarget.getUuid()) == null || PLAYER_SPIKE_COOLDOWN.get(spikeTarget.getUuid()) + 750 < System.currentTimeMillis())) {
+            boolean closeToGround = LocationUtils.getDistance(spikeTarget.getEntity(), .1) < 1.82;
+            boolean offSpikeCooldown = PLAYER_SPIKE_COOLDOWN.get(spikeTarget.getUuid()) == null || PLAYER_SPIKE_COOLDOWN.get(spikeTarget.getUuid()) + 750 < System.currentTimeMillis();
+            if (closeToGround && offSpikeCooldown) {
                 PLAYER_SPIKE_COOLDOWN.put(spikeTarget.getUuid(), System.currentTimeMillis());
-                spikeTarget.setVelocity(name, new Vector(0, verticalVelocity, 0), false);
+                new GameRunnable(caster.getGame()) {
+                    @Override
+                    public void run() {
+                        spikeTarget.setVelocity(name, new Vector(0, verticalVelocity, 0), false);
+                    }
+                }.runTaskLater(1);
             }
             if (!pveMasterUpgrade2) {
                 return;

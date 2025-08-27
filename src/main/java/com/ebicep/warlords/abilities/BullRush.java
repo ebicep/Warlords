@@ -9,6 +9,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownUtils;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
@@ -87,7 +88,12 @@ public class BullRush extends AbstractAbility implements PurpleAbilityIcon, HitB
                                         ).ifPresent(finalEvent -> {
                                             if (!warlordsEntity.hasFlag()) {
                                                 Vector v = wp.getCurrentVector().normalize().multiply(magnitude).setY(knockbackY);
-                                                warlordsEntity.setVelocity(name, v, false);
+                                                new GameRunnable(wp.getGame()) {
+                                                    @Override
+                                                    public void run() {
+                                                        warlordsEntity.setVelocity(name, v, false);
+                                                    }
+                                                }.runTaskLater(1);
                                             }
                                         });
                                     });
