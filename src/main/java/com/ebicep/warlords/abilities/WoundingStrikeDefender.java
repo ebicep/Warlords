@@ -6,8 +6,10 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.LinkedCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.flags.BossLike;
@@ -77,15 +79,36 @@ public class WoundingStrikeDefender extends AbstractStrike<WoundingStrikeDefende
                   .ifPresent(event -> onFinalEvent(wp, nearPlayer, event));
         if (pveMasterUpgrade2) {
             additionalHit(2, wp, nearPlayer, warlordsEntity -> {
-                        warlordsEntity.addInstance(InstanceBuilder.damage()
-                                                                  .ability(this)
-                                                                  .source(wp)
-                                                                  .value(damageValues.strikeDamage)
-                                                                  .flag(InstanceFlags.PIERCE,
-                                                                          warlordsEntity instanceof WarlordsNPC warlordsNPC && !(warlordsNPC.getMob() instanceof BossLike)
-                                                                  )).ifPresent(finalEvent -> onFinalEvent(wp, finalEvent.getWarlordsEntity(), finalEvent));
-                    }
+                warlordsEntity.addInstance(InstanceBuilder
+                        .damage()
+                        .ability(this)
+                        .source(wp)
+                        .value(damageValues.strikeDamage));
+                }
             );
+            if (nearPlayer instanceof WarlordsNPC) {
+                ((WarlordsNPC) nearPlayer).getMob().setTarget(wp);
+            }
+            nearPlayer.getCooldownManager().removeCooldown(WoundingStrikeDefender.class, false);
+            nearPlayer.getCooldownManager().addCooldown(new RegularCooldown<>(
+                    name,
+                    null,
+                    WoundingStrikeDefender.class,
+                    null,
+                    wp,
+                    CooldownTypes.HIGH_LEVEL_DEBUFF,
+                    cooldownManager -> {
+
+                    },
+                    4 * 20
+            ) {
+                @Override
+                public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                    return currentDamageValue * .85f;
+                }
+            });
+            new CooldownFilter<>(wp, RegularCooldown.class).filter(cd -> cd.getCooldownClass().equals(LastStand.LastStandData.class))
+                    .forEach(cd -> cd.setTicksLeft(cd.getTicksLeft() + 10));
         }
         return true;
     }

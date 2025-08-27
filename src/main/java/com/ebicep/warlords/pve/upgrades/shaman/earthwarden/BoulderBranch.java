@@ -43,13 +43,13 @@ public class BoulderBranch extends AbstractUpgradeBranch<Boulder> {
                 "Tectonic Rival",
                 "Boulder - Master Upgrade",
                 """
-                        Boulder will now deal 2x the damage and will explode on impact causing a small earthquake within a 5 block radius. The earthquake deals 450-630 damage.
+                        Boulder will now deal 3x the damage and will explode on impact causing a small earthquake within a 5 block radius. The earthquake deals 450-630 damage.
                         """,
                 50000,
                 () -> {
                     Value.RangedValueCritable damage = ability.getDamageValues().getBoulderDamage();
-                    damage.min().addMultiplicativeModifierAdd("Master Upgrade Branch", 1);
-                    damage.max().addMultiplicativeModifierAdd("Master Upgrade Branch", 1);
+                    damage.min().addMultiplicativeModifierAdd("Master Upgrade Branch", 2);
+                    damage.max().addMultiplicativeModifierAdd("Master Upgrade Branch", 2);
                 }
         );
     }

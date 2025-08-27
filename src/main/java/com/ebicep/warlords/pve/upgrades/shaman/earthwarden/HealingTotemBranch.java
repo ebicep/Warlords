@@ -37,20 +37,13 @@ public class HealingTotemBranch extends AbstractUpgradeBranch<HealingTotem> {
                 }
         );
         masterUpgrade2 = new Upgrade(
-                "Resurgent Artifact",
+                "Void Totem",
                 "Healing Totem - Master Upgrade",
                 """
-                        Healing Totem's crit chance and crit multiplier is increased by 25%, has double the duration and radius, and its decremental healing is reduced by 7.5%.
-                                                
-                        Allies within the range of totem have their own weapons imbued with Earthliving Weapon for the duration totem is active.
+                        Enemies are perpetually sucked into your healing totem every second. Enemies within 4 blocks of the Totem take 400-600 damage every second. The totem will explode at the end removing 15% damage resistance and dealing high damage.
                         """,
                 50000,
                 () -> {
-                    ability.getHealValues().getTotemHealing().critChance().addAdditiveModifier("Master Upgrade Branch", 25);
-                    ability.getHealValues().getTotemHealing().critMultiplier().addAdditiveModifier("Master Upgrade Branch", 25);
-                    ability.setHealingIncrement(ability.getHealingIncrement() - 7.5f);
-                    ability.setTickDuration(ability.getTickDuration() * 2);
-                    ability.getHitBoxRadius().addMultiplicativeModifierMult("Master Upgrade Branch", 2);
                 }
         );
     }

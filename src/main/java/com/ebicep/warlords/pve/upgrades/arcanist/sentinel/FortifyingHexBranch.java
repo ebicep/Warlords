@@ -68,7 +68,7 @@ public class FortifyingHexBranch extends AbstractUpgradeBranch<FortifyingHex> {
                         """,
                 50000,
                 () -> {
-                    ability.setMaxEnemiesHit(15);
+                    ability.setMaxEnemiesHit(ability.getMaxEnemiesHit() + 15);
                 }
         );
     }

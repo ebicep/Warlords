@@ -45,7 +45,7 @@ public class ChainHealBranch extends AbstractUpgradeBranch<ChainHeal> {
                         +5 Blocks cast and bounce range.
                         +2 Ally hit
                         
-                        Allies healed by chain will be connected to the caster for 5 seconds. All connected players gain 10 energy per second and are healed every second for 2.5% of the caster max HP.
+                        Allies healed by chain will be connected to the caster for 8 seconds. All connected players gain 12 energy per second and are healed every second for 2.5% of the caster max HP.
                         """,
                 50000,
                 () -> {

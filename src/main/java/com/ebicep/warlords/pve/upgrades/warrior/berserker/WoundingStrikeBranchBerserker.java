@@ -63,13 +63,13 @@ public class WoundingStrikeBranchBerserker extends AbstractUpgradeBranch<Woundin
                 """
                         -20 Energy cost
                         
-                        Wounding Strike now hits up to 3 enemies. Strikes deal 25% more damage while Blood Lust is active, additionally Blood lust healing is reduced by 35%.
+                        Wounding Strike now hits up to 3 enemies. Strikes deal 25% more damage while Blood Lust is active, additionally Blood lust healing is reduced by 25%.
                         """,
                 50000,
                 () -> {
                     ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -20);
                     abilityTree.getWarlordsPlayer().doOnStaticAbility(BloodLust.class, bloodLust -> {
-                        bloodLust.setDamageConvertPercent(bloodLust.getDamageConvertPercent() - 35);
+                        bloodLust.setDamageConvertPercent(bloodLust.getDamageConvertPercent() - 25);
                     });
                 }
         );

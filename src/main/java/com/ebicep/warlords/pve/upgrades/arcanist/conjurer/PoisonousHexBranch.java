@@ -59,6 +59,7 @@ public class PoisonousHexBranch extends AbstractUpgradeBranch<PoisonousHex> {
                 """
                         +35% Damage
                         +12 Pierce
+                        
                         Poisonous Hex damage occurs every 0.5s instead of 2s.
                         """,
                 50000,
