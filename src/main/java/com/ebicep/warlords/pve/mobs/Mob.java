@@ -569,11 +569,11 @@ public enum Mob {
             Weapons.TENDERIZER.getItem()
     )
     ),
-    ECHO_OF_BLADES(EntityType.ZOMBIE, EchoOfBlades.class, EchoOfBlades::new, EchoOfBlades::new, new Utils.SimpleEntityEquipment(
+    ECHO_OF_BLADES(EntityType.STRAY, EchoOfBlades.class, EchoOfBlades::new, EchoOfBlades::new, new Utils.SimpleEntityEquipment(
             SkullUtils.getSkullFrom(SkullID.WITHER_SOUL),
-            null,
-            null,
-            null,
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 0, 0, 0),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 0, 0, 0),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 0, 0, 0),
             Weapons.SOUL_REAVER.getItem()
     )
     ),
@@ -585,7 +585,7 @@ public enum Mob {
             null
     )
     ),
-    PHYSIRA_CRYSTAL(EntityType.BLAZE, PhysiraCrystal.class, PhysiraCrystal::new, PhysiraCrystal::new, null),
+    PHYSIRA_CRYSTAL(EntityType.BREEZE, PhysiraCrystal.class, PhysiraCrystal::new, PhysiraCrystal::new, null),
     ARACHNO_VENERATUS(EntityType.SPIDER, ArachnoVeneratus.class, ArachnoVeneratus::new, ArachnoVeneratus::new, null),
     CURSED_PSION(EntityType.WITHER_SKELETON, CursedPsion.class, CursedPsion::new, CursedPsion::new, null),
     ENAVURITE(EntityType.ENDERMITE, Enavurite.class, Enavurite::new, Enavurite::new, null),
@@ -1024,7 +1024,7 @@ public enum Mob {
             TORMENTED_SOUL, DEPRESSED_SOUL, FURIOUS_SOUL, VOLTAIC_SOUL, AGONIZED_SOUL,
             NARMER_ACOLYTE, NARMERS_DEATH_CHARGE,
             ZENITH_LEGIONNAIRE, SOUL_OF_GRADIENT,
-            MITHRA_EGG_SAC, ARACHNO_VENERATUS
+            MITHRA_EGG_SAC, ARACHNO_VENERATUS, ECHO_OF_BLADES
     };
     public static final Mob[] BOSSES = {
             BOLTARO,

@@ -6,7 +6,6 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
-import com.ebicep.warlords.pve.mobs.OrbitingSwords;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import org.bukkit.Location;
 
@@ -50,7 +49,6 @@ public class Vanguard extends AbstractMob implements BossMob {
 
     @Override
     public void onSpawn(PveOption option) {
-        new OrbitingSwords(warlordsNPC.getLocation(), warlordsNPC, 3, 2, 6, 2);
     }
 
     @Override

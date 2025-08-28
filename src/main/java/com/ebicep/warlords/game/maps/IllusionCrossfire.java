@@ -469,7 +469,7 @@ public class IllusionCrossfire extends GameMap {
                         .add(0.002, Mob.CREEPY_BOMBER)
                 )
                 .add(60, new RandomSpawnWave(1, 10 * SECOND, Component.text("Boss"))
-                        .add(Mob.ENAVURIS)
+                        .add(Mob.MAGMATIC_OOZE)
                 )
                 .add(61, new RandomSpawnWave(40, 5 * SECOND, null)
                         //basic

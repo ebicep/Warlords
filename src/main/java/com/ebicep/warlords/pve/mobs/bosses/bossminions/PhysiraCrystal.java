@@ -11,6 +11,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 
@@ -24,7 +25,7 @@ public class PhysiraCrystal extends AbstractMob implements BossMinionMob {
     public PhysiraCrystal(Location spawnLocation, WarlordsEntity owner, SpecType spec) {
         super(
                 spawnLocation,
-                owner.getName() + " - " + spec.getTextColor() + spec.name(),
+                ChatColor.BOLD + spec.name(),
                 1000,
                 0,
                 0,
@@ -39,7 +40,7 @@ public class PhysiraCrystal extends AbstractMob implements BossMinionMob {
         super(
                 spawnLocation,
                 "Pylon",
-                1000,
+                10000,
                 0,
                 0,
                 0,
@@ -100,7 +101,7 @@ public class PhysiraCrystal extends AbstractMob implements BossMinionMob {
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
         if (ticksElapsed % 20 == 0) {
-            EffectUtils.playParticleLinkAnimation(warlordsNPC.getLocation(), owner.getLocation(), Particle.CHERRY_LEAVES);
+            EffectUtils.playParticleLinkAnimation(warlordsNPC.getLocation(), new Location(warlordsNPC.getWorld(), 112.5, 13, 62.5), Particle.CHERRY_LEAVES);
         }
     }
 
