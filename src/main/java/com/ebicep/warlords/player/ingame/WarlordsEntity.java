@@ -271,6 +271,8 @@ public abstract class WarlordsEntity {
 
     @Nonnull
     public Location getLocation() {
+        if (entity == null) return new Location(Bukkit.getWorlds().getFirst().getSpawnLocation().getWorld(), 0, 0, 0);
+
         return this.entity.getLocation();
     }
 

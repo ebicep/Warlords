@@ -54,13 +54,13 @@ public class SpiritLinkBranch extends AbstractUpgradeBranch<SpiritLink> {
         masterUpgrade = new Upgrade(
                 "Phantasmic Bond",
                 "Spirit Link - Master Upgrade",
-                "Damage reduction and speed duration have been doubled. Additionally, Spirit Link will bounce 3 times instead of 2.",
+                "Damage reduction and speed duration have been doubled. Additionally, Spirit Link will bounce 3 times instead of 2 and the damage reduction has been increased by 10%.",
                 50000,
                 () -> {
                     ability.setAdditionalBounces(ability.getAdditionalBounces() + 1);
                     ability.setDamageReductionDuration(ability.getDamageReductionDuration() * 2);
                     ability.setSpeedDuration(ability.getSpeedDuration() * 2);
-
+                    ability.setDamageReduction(ability.getDamageReduction() + 10);
                 }
         );
         masterUpgrade2 = new Upgrade(

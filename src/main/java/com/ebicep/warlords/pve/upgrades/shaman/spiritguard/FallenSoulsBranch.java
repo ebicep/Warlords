@@ -8,6 +8,11 @@ import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
 
 public class FallenSoulsBranch extends AbstractUpgradeBranch<FallenSouls> {
 
+    @Override
+    public void runOnce() {
+        abilityTree.getWarlordsPlayer().getHealth().addAdditiveModifier("PvE", 300);
+    }
+
     public FallenSoulsBranch(AbilityTree abilityTree, FallenSouls ability) {
         super(abilityTree, ability);
 

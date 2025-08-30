@@ -201,7 +201,7 @@ public class TutorialOption implements Option {
 
             private final String[] rangeAttackPrompts = new String[]{
                     "Good job!",
-                    "There are currently 15 unique kits (specializations) in Warlords 2. Each kit has five abilities: your right click ability, and 4 other abilities.",
+                    "There are currently 18 unique kits (specializations) in Warlords 2. Each kit has five abilities: your right click ability, and 4 other abilities.",
                     "You can cast these abilities by selecting the corresponding slots on your hotbar.",
                     "If you have not modified any controls, pressing 2, 3, 4, and 5 should activate these abilities.",
                     "We will now quickly go through the abilities of Pyromancer to demonstrate what abilities can do.",

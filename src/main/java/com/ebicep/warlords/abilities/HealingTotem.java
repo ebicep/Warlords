@@ -7,6 +7,7 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
+import com.ebicep.warlords.effects.circle.DoubleLineEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
@@ -94,8 +95,29 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                             data.amountHealed += warlordsDamageHealingFinalEvent.getValue();
                         });
                     });
+
                     if (data.amountHealed >= 20000) {
                         ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.JUNGLE_HEALING);
+                    }
+
+                    if (pveMasterUpgrade2) {
+                        for (WarlordsEntity enemy : PlayerFilter
+                                .entitiesAround(totemStand, rad, rad, rad)
+                                .aliveEnemiesOf(wp)
+                        ) {
+                            enemy.setDamageResistance(enemy.getSpec().getDamageResistance() - 15);
+                            if (enemy instanceof WarlordsNPC npc) {
+                                npc.setDamageResistance(npc.getSpec().getDamageResistance() - 15);
+                            }
+                            Utils.playGlobalSound(totemStand.getLocation(), Sound.ENTITY_WITHER_DEATH, 0.5f, 1.2f);
+                            enemy.addInstance(InstanceBuilder
+                                    .damage()
+                                    .cause("Void Totem")
+                                    .source(wp)
+                                    .min(1000)
+                                    .max(1500)
+                            );
+                        }
                     }
                 },
                 cooldownManager -> {
@@ -134,6 +156,7 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                                 data.amountHealed += warlordsDamageHealingFinalEvent.getValue();
                             });
                         });
+
                         if (pveMasterUpgrade) {
                             PlayerFilter.entitiesAround(totemStand, rad, rad, rad).aliveEnemiesOf(wp).forEach(enemy -> {
                                 enemy.addSpeedModifier(wp, "Totem Slowness", -50, 20);
@@ -159,6 +182,38 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                                          }
                                      });
                             });
+                        }
+
+                        if (pveMasterUpgrade2) {
+                            new CircleEffect(
+                                    wp.getGame(),
+                                    wp.getTeam(),
+                                    totemStand.getLocation().clone().add(0, 1.5, 0),
+                                    4,
+                                    new CircumferenceEffect(Particle.PORTAL, Particle.PORTAL).particlesPerCircumference(1),
+                                    new DoubleLineEffect(Particle.WITCH)
+                            ).playEffects();
+                            Utils.playGlobalSound(totemStand.getLocation(), Sound.ENTITY_ELDER_GUARDIAN_CURSE, 1f, 0.6f);
+
+                            for (WarlordsEntity enemy : PlayerFilter
+                                    .entitiesAround(totemStand, rad, rad, rad)
+                                    .aliveEnemiesOf(wp)
+                            ) {
+                                Utils.addKnockback("Totem Master", totemStand.getLocation(), enemy, 1, 0.05);
+                            }
+
+                            for (WarlordsEntity enemy : PlayerFilter
+                                    .entitiesAround(totemStand, 4, 4, 4)
+                                    .aliveEnemiesOf(wp)
+                            ) {
+                                enemy.addInstance(InstanceBuilder
+                                        .damage()
+                                        .cause("Void Totem")
+                                        .min(400)
+                                        .max(600)
+                                        .source(wp)
+                                );
+                            }
                         }
                     }
                 })
@@ -186,45 +241,6 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                         });
                     }, false, secondaryAbility -> !wp.getCooldownManager().hasCooldown(healingTotemCooldown) || wp.isDead()
             );
-        }
-        if (pveMasterUpgrade2) {
-            PlayerFilter.playingGame(wp.getGame()).aliveTeammatesOfExcludingSelf(wp).forEach(warlordsEntity -> {
-                EarthlivingWeapon earthlivingWeapon = new EarthlivingWeapon();
-                earthlivingWeapon.init(earthlivingWeapon.getBuilder());
-                warlordsEntity.getCooldownManager()
-                              .addCooldown(new RegularCooldown<>(earthlivingWeapon.getName(),
-                                      null,
-                                      EarthlivingWeapon.EarthlivingData.class,
-                                      new EarthlivingWeapon.EarthlivingData(earthlivingWeapon.getGuaranteedHits()),
-                                      wp,
-                                      CooldownTypes.ABILITY,
-                                      cooldownManager -> {
-                                      },
-                                      tickDuration,
-                                      Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                                          if (ticksElapsed % 4 == 0) {
-                                              if (data.playerOutsideTotem(warlordsEntity, rad)) {
-                                                  return;
-                                              }
-                                              EffectUtils.displayParticle(Particle.HAPPY_VILLAGER, wp.getLocation().add(0, 1.2, 0), 2, 0.3, 0.3, 0.3, 0.1);
-                                          }
-                                      })
-                              ) {
-
-                                  @Override
-                                  public void onEndFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                                      if (!event.getCause().isEmpty()) {
-                                          return;
-                                      }
-                                      if (data.playerOutsideTotem(warlordsEntity, rad)) {
-                                          return;
-                                      }
-                                      WarlordsEntity victim = event.getWarlordsEntity();
-                                      WarlordsEntity attacker = event.getSource();
-                                      earthlivingWeapon.activateEarthliving(victim, attacker, cooldownObject);
-                                  }
-                              });
-            });
         }
     }
 

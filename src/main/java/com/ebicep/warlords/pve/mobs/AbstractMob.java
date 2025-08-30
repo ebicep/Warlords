@@ -25,6 +25,7 @@ import com.ebicep.warlords.pve.items.types.ItemType;
 import com.ebicep.warlords.pve.mobs.flags.DynamicFlags;
 import com.ebicep.warlords.pve.mobs.flags.NoTarget;
 import com.ebicep.warlords.pve.mobs.flags.Unstunnable;
+import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.mobs.tiers.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.PlayerMob;
@@ -316,7 +317,7 @@ public abstract class AbstractMob implements Mob {
         // null checks to handle manual spawns with aspects
         if (this.aspect == null &&
                 ThreadLocalRandom.current().nextDouble() < option.getDifficulty().getAspectChance().apply(option) &&
-                !(this instanceof BossMob || this instanceof PlayerMob)
+                !(this instanceof BossMob || this instanceof PlayerMob || this instanceof BossMinionMob)
         ) {
             this.aspect = Aspect.VALUES[ThreadLocalRandom.current().nextInt(Aspect.VALUES.length)];
         }
