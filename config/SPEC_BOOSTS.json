@@ -262,9 +262,9 @@
         "difficulty": 1,
         "name": "Heroic Intervention",
         "description": "Increase the max damage redirected by {{aqua:Intervene}} by {{damageReduction;}}, the duration by {{ticks}}, and the cast and break range by {{blocks}}.",
-        "interveneCapIncrease": 1000,
+        "interveneCapIncrease": 1100,
         "interveneDurationIncreaseTicks": 20,
-        "interveneCastAndRangeIncrease": 5
+        "interveneCastAndRangeIncrease": 8
       },
       "solitary": {
         "difficulty": 3,
