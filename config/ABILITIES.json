@@ -126,7 +126,7 @@
           }
         },
         "tickDuration": 12,
-        "speedBoost": 180,
+        "speedBoost": 150,
         "radius": 3.5,
         "knockbackMagnitude": 1.25,
         "knockbackMagnitudeFlag": 0.8,
