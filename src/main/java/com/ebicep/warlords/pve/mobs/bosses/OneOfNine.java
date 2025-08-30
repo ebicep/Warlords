@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
+import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
@@ -18,6 +19,7 @@ import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.player.ingame.motionsystem.MotionModifier;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
+import com.ebicep.warlords.pve.mobs.DamagePhaseController;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.OrbitingSwordsManager;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.EchoOfBlades;
@@ -56,6 +58,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
     private Location mapCenter;
     private OrbitingSwordsManager swordManager;
     private OrbitingSwordsManager centerSwordManager;
+    private DamagePhaseController damageController;
     private BossAbilityPhase phaseOne;
     private BossAbilityPhase phaseTwo;
     private BossAbilityPhase phaseThree;
@@ -107,6 +110,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
 
         swordManager = new OrbitingSwordsManager(() -> warlordsNPC.getLocation(), 6, 2, 3, 4, option, warlordsNPC);
         centerSwordManager = new OrbitingSwordsManager(() -> mapCenter, 25, 30, 1, 30, option, warlordsNPC);
+        damageController = new DamagePhaseController(warlordsNPC);
 
         swordManager.spawnSwords(9);
         swordManager.start();
@@ -116,13 +120,43 @@ public class OneOfNine extends AbstractMob implements BossMob {
 
         mapCenter = new Location(warlordsNPC.getWorld(), 112.5, 13, 62.5);
 
+        warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                "Damage Check",
+                null,
+                DamageCheck.class,
+                null,
+                warlordsNPC,
+                CooldownTypes.BUFF,
+                cooldownManager -> {},
+                true
+        ) {
+            @Override
+            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                if (damageController.isInDamageWindow()) {
+                    return currentDamageValue;
+                }
+
+                event.getSource().addInstance(InstanceBuilder
+                        .damage()
+                        .source(warlordsNPC)
+                        .value(currentDamageValue)
+                        .flags(InstanceFlags.RECURSIVE, InstanceFlags.IGNORE_DAMAGE_BOOST)
+                );
+                event.getSource().sendMessage(Component.text("Your divine punishment awaits if you keep giving in to your greed...", NamedTextColor.RED));
+                return currentDamageValue * 0f;
+            }
+        });
+
         new GameRunnable(warlordsNPC.getGame()) {
             @Override
             public void run() {
                 for (WarlordsEntity we : PlayerFilter
-                        .entitiesAround(warlordsNPC, 6, 6, 6)
+                        .entitiesAround(warlordsNPC, 7, 7, 7)
                         .aliveEnemiesOf(warlordsNPC)
                 ) {
+                    if (damageController.isInDamageWindow()) {
+                        return;
+                    }
                     we.addInstance(InstanceBuilder
                             .damage()
                             .min(800)
@@ -357,7 +391,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
                 double angle = 0;
                 @Override
                 public void run() {
-                    angle += Math.toRadians(5); // rotation speed
+                    angle += Math.toRadians(5);
                     Vector dir = new Vector(Math.cos(angle), 0, Math.sin(angle));
                     castDeathRay(mapCenter.clone().add(0, -2, 0), dir, 35, warlordsNPC);
 
@@ -365,7 +399,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
                         this.cancel();
                     }
                 }
-            }.runTaskTimer(60, 1); // every 2 ticks
+            }.runTaskTimer(60, 1);
 
             phaseTransition();
         });
@@ -409,7 +443,6 @@ public class OneOfNine extends AbstractMob implements BossMob {
             Location point = start.clone().add(direction.clone().multiply(i));
             EffectUtils.displayParticle(Particle.END_ROD, point, 5, 0, 0, 0, 0);
 
-            // Damage players in the path
             for (WarlordsEntity enemy : PlayerFilter
                     .entitiesAround(point, 1.5, 1, 1.5)
                     .aliveEnemiesOf(caster)
@@ -472,6 +505,10 @@ public class OneOfNine extends AbstractMob implements BossMob {
             for (int i = 0; i < option.playerCount(); i++) {
                 option.spawnNewMob(new EchoOfBlades(pveOption.getRandomSpawnLocation(warlordsNPC)));
             }
+        }
+
+        if (ticksElapsed % 400 == 0 && ticksElapsed > 0) {
+            damageController.openWindow(10 * 20);
         }
 
         float health = warlordsNPC.getCurrentHealth();

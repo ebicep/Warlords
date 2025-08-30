@@ -2,10 +2,8 @@ package com.ebicep.warlords.pve.mobs;
 
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.warlords.GameRunnable;
-import org.bukkit.Color;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import com.ebicep.warlords.util.warlords.Utils;
+import org.bukkit.*;
 import org.bukkit.entity.Display;
 import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.TextDisplay;
@@ -27,8 +25,8 @@ public class DamagePhaseController {
     private GameRunnable spinTask;     // spins the halo
 
     // Tuning
-    private final double headOffsetY = 2.6; // how high above boss’ feet to show the indicator
-    private final Vector3f haloScale = new Vector3f(5f, 5f, 5f);
+    private final double headOffsetY = 5; // how high above boss’ feet to show the indicator
+    private final Vector3f haloScale = new Vector3f(2f, 2f, 2f);
     private final float spinDegPerTick = 6f;
 
     public DamagePhaseController(WarlordsEntity boss) {
@@ -53,6 +51,10 @@ public class DamagePhaseController {
                 if (++t >= durationTicks) {
                     closeWindow();
                     cancel();
+                }
+
+                if (t % 20 == 0) {
+                    Utils.playGlobalSound(boss.getLocation(), Sound.BLOCK_AMETHYST_BLOCK_HIT, 2, 0.6f);
                 }
             }
         }.runTaskTimer(0, 1);
@@ -81,12 +83,12 @@ public class DamagePhaseController {
         halo = w.spawn(head, ItemDisplay.class, disp -> {
             disp.setBillboard(Display.Billboard.FIXED);
             disp.setInterpolationDuration(0);
-            disp.setItemStack(new ItemStack(Material.AMETHYST_BLOCK));
+            disp.setItemStack(new ItemStack(Material.AMETHYST_CLUSTER));
             disp.setTransformation(new Transformation(
                     new Vector3f(0,0,0),
                     new Quaternionf(),                         // leftRotation (animated yaw)
                     new Vector3f(haloScale),                   // scale up
-                    new Quaternionf().rotateX((float)Math.toRadians(90)) // rightRotation: lay flat
+                    new Quaternionf()
             ));
             disp.setPersistent(true);
         });
@@ -95,8 +97,8 @@ public class DamagePhaseController {
         holo = w.spawn(head, TextDisplay.class, td -> {
             td.setBillboard(Display.Billboard.CENTER);
             td.setSeeThrough(true);
-            td.setBackgroundColor(Color.BLACK); // subtle box
-            td.setText("§e§lVULNERABLE");               // gold bold
+            td.setBackgroundColor(Color.GRAY); // subtle box
+            td.setText("§d§lVULNERABLE");               // gold bold
             td.setLineWidth(120);
         });
     }
