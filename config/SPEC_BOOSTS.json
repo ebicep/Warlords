@@ -255,8 +255,8 @@
         "difficulty": 2,
         "name": "Fervent Force",
         "description": "Reduce the cooldown of {{aqua:Seismic Wave}} and {{aqua:Ground Slam}} by {{ticks;%}}.",
-        "seismicWaveCooldownReductionPercent": 16,
-        "groundSlamCooldownReductionPercent": 16
+        "seismicWaveCooldownReductionPercent": 14,
+        "groundSlamCooldownReductionPercent": 14
       },
       "heroicIntervention": {
         "difficulty": 1,
