@@ -110,10 +110,10 @@
         "difficulty": 4,
         "name": "Ice Block",
         "description": "Increase the duration of {{aqua:Ice Barrier}} by {{ticks}}. {{aqua:Ice Barrier}} can be recasted after {{ticks}}, reducing the duration by {{ticks}} and becoming {{aqua:Ice Block}}. {{aqua:Ice Block}} prevents jumping, tremendously reduces movement speed, but prevents knockback and grants {{damageReduction;%}} damage reduction.",
-        "iceBarrierDurationIncreaseTicks": 50,
+        "iceBarrierDurationIncreaseTicks": 40,
         "iceBlockRecastDelayTicks": 20,
-        "recastDurationDecreaseTicks": 20,
-        "recastDamageReductionPercent": 75,
+        "recastDurationDecreaseTicks": 30,
+        "recastDamageReductionPercent": 80,
         "recastMovementSpeed": 0.4,
         "recastMovementSpeedFlag": 0.3
       },
