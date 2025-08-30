@@ -226,7 +226,7 @@
         "bloodLustDurationReductionTicks": 180,
         "bloodLustEnergyCostReduction": 20,
         "bloodLustHealingPercent": 20,
-        "bloodLustHealingPiercePercent": 20
+        "bloodLustHealingPiercePercent": 25
       },
       "goliath": {
         "difficulty": 2,
