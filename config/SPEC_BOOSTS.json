@@ -330,11 +330,12 @@
       "unstoppableSurge": {
         "difficulty": 3,
         "name": "Unstoppable Surge",
-        "description": "{{aqua:Light Infusion}} heals you for {{heal}} health, increase the speed granted by {{speed;%}} and the duration by {{ticks}}. Heal an additional {{heal}} health if Avenger's Strike was not used during Light Infusion. Gain permanent {{speed;%}} slow resistance and {{damageReduction;%}} knockback resistance.",
+        "description": "{{aqua:Light Infusion}} heals you for {{heal}} health, increase the speed granted by {{speed;%}} and the duration by {{ticks}}. Heal an additional {{heal}} health if Avenger's Strike was not used for {{ticks}} after activating Light Infusion. Gain permanent {{speed;%}} slow resistance and {{damageReduction;%}} knockback resistance.",
         "lightInfusionHealing": 800,
-        "lightInfusionSpeedIncreasePercent": 10,
-        "lightInfusionDurationIncreaseTicks": 20,
+        "lightInfusionSpeedIncreasePercent": 5,
+        "lightInfusionDurationIncreaseTicks": 40,
         "postLightInfusionHealing": 600,
+        "postLightInfusionHealingDelay": 60,
         "slowResistancePercent": 15,
         "knockbackResistancePercent": 20
       },
