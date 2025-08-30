@@ -204,8 +204,8 @@
         "difficulty": 3,
         "name": "Mighty Fists",
         "description": "Increase the wounding inflicted by {{aqua:Wounding Strike}} by {{damage;%}}. Each consecutive strike on a target increases the wounding by an additional {{damage;%}}, up to {{damage;%}}. While {{aqua:Berserk}} is active, {{aqua:Seismic Wave}} and {{aqua:Ground Slam}} inflict {{damage;%}} wounding for {{ticks}}.",
-        "woundingIncreasePercent": 8,
-        "consecutiveStrikeWoundingIncreasePercent": 6,
+        "woundingIncreasePercent": 10,
+        "consecutiveStrikeWoundingIncreasePercent": 5,
         "maxConsecutiveStrikeWoundingIncreasePercent": 60,
         "seismicWaveGroundSlamWoundingPercent": 30,
         "seismicWaveGroundSlamWoundingDurationTicks": 60
