@@ -205,6 +205,10 @@ public class CustomScoreboard {
     private Objective sideBar;
     private Objective health;
 
+    public UUID getUuid() {
+        return uuid;
+    }
+
     public Scoreboard getScoreboard() {
         return scoreboard;
     }

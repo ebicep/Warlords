@@ -135,6 +135,7 @@ public class PlayingStateScoreboardUpdater {
     }
 
     public void updateNames(@Nonnull CustomScoreboard customScoreboard, @Nullable WarlordsEntity warlordsPlayer) {
+        GamePlayer gamePlayer = gamePlayers.get(customScoreboard.getUuid());
         Scoreboard scoreboard = customScoreboard.getScoreboard();
         List<AbstractCooldown<?>> cooldowns;
         if (warlordsPlayer != null) {
@@ -157,7 +158,7 @@ public class PlayingStateScoreboardUpdater {
                 playerTeam = scoreboard.registerNewTeam(((CraftEntity) entity).getHandle().getScoreboardName());
                 playerTeam.addEntity(entity);
             }
-            if (noTeam || name.isUpdateColor()) {
+            if (noTeam || name.isUpdateColor() || (gamePlayer != null && gamePlayer.isUpdateOtherNames())) {
                 playerTeam.color(otherWarlordsPlayer.getTeam().getTeamColor());
             }
 
@@ -196,6 +197,9 @@ public class PlayingStateScoreboardUpdater {
                 playerTeam.suffix(builtSuffix);
             }
         });
+        if (gamePlayer != null) {
+            gamePlayer.setUpdateOtherNames(false);
+        }
     }
 
     private void updateBasedOnGameScoreboards(@Nonnull CustomScoreboard customScoreboard, @Nullable WarlordsPlayer warlordsPlayer) {
@@ -236,6 +240,7 @@ public class PlayingStateScoreboardUpdater {
         private WarlordsPlayer warlordsPlayer;
         private int health;
         private boolean updateHealth = true;
+        private boolean updateOtherNames = true;
 
         GamePlayer(CustomScoreboard customScoreboard, @Nullable WarlordsPlayer warlordsPlayer, int health) {
             this.customScoreboard = customScoreboard;
@@ -274,6 +279,14 @@ public class PlayingStateScoreboardUpdater {
 
         public void setUpdateHealth(boolean updateHealth) {
             this.updateHealth = updateHealth;
+        }
+
+        public boolean isUpdateOtherNames() {
+            return updateOtherNames;
+        }
+
+        public void setUpdateOtherNames(boolean updateOtherNames) {
+            this.updateOtherNames = updateOtherNames;
         }
 
     }
