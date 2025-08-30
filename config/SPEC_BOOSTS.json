@@ -240,9 +240,9 @@
       "vitalityBoost": {
         "difficulty": 1,
         "name": "Vitality Boost",
-        "description": "Gain {{heal}} max health. Receive {{heal;%}} more healing.",
+        "description": "Gain {{heal}} max health. Passively regenerate {{heal}} health per second, stacks with natural regen.",
         "healthIncrease": 600,
-        "healingReceivedIncreasePercent": 10
+        "passiveRegen": 25
       },
       "striker": {
         "difficulty": 1,
