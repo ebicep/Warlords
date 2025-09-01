@@ -1,24 +1,22 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
-import com.ebicep.warlords.abilities.LastStand;
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.util.java.MathUtils;
 
 import java.util.List;
 
 public class VitalityBoost implements SpecBoostManager.SpecBoost<VitalityBoost> {
 
     private int healthIncrease;
-    private float healingReceivedIncreasePercent;
+    private int passiveRegen;
 
     @Override
     public void init() {
         this.healthIncrease = getValue("healthIncrease", int.class);
-        this.healingReceivedIncreasePercent = getValue("healingReceivedIncreasePercent", float.class);
+        this.passiveRegen = getValue("passiveRegen", int.class);
     }
 
     @Override
@@ -28,7 +26,7 @@ public class VitalityBoost implements SpecBoostManager.SpecBoost<VitalityBoost> 
 
     @Override
     public List<Object> getVariables() {
-        return List.of(healthIncrease, healingReceivedIncreasePercent);
+        return List.of(healthIncrease, passiveRegen);
     }
 
     @Override
@@ -55,13 +53,18 @@ public class VitalityBoost implements SpecBoostManager.SpecBoost<VitalityBoost> 
                     CooldownTypes.SPEC_BOOST,
                     cooldownManager -> {
                     },
-                    false
-            ) {
-                @Override
-                public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-                    return currentHealValue * AbstractAbility.convertToMultiplicationDecimal(healingReceivedIncreasePercent);
-                }
-            });
+                    false,
+                    (cooldown, ticksElapsed) -> {
+                        if (ticksElapsed % 20 == 0) {
+                            int healthIncrease = passiveRegen;
+                            warlordsPlayer.setCurrentHealth(MathUtils.clamp(
+                                    warlordsPlayer.getCurrentHealth() + healthIncrease,
+                                    warlordsPlayer.getCurrentHealth(),
+                                    warlordsPlayer.getMaxHealth()
+                            ));
+                        }
+                    }
+            ));
         }
 
     }

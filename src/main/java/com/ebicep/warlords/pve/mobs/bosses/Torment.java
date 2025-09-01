@@ -317,7 +317,7 @@ public class Torment extends AbstractMob implements BossMob {
                     }
                 }
 
-                if (counter % 48 == 0) {
+                if (counter % 64 == 0) {
                     pveOption.spawnNewMob(new CelestialOpus(pveOption.getRandomSpawnLocation(warlordsNPC)));
                 }
 
@@ -346,7 +346,7 @@ public class Torment extends AbstractMob implements BossMob {
                                 .damage()
                                 .cause("Whispers of Tormented Souls")
                                 .source(warlordsNPC)
-                                .value(4000)
+                                .value(3000)
                                 .flag(InstanceFlags.TRUE_DAMAGE, true)
                         );
                         Utils.addKnockback("KB", loc, we, -10, 0.2, true);
@@ -371,8 +371,6 @@ public class Torment extends AbstractMob implements BossMob {
             EffectUtils.playCrownAnimation(warlordsNPC.getLocation(), Particle.SCULK_SOUL);
         }
 
-
-
         if (ticksElapsed % 200 == 0) {
             new FallingBlockWaveEffect(warlordsNPC.getLocation().clone().add(0, 1, 0), 12, 0.7, Material.SOUL_FIRE).play();
             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ITEM_FIRECHARGE_USE, 500, 0.2f);
@@ -390,7 +388,7 @@ public class Torment extends AbstractMob implements BossMob {
             }
         }
 
-        if (ticksElapsed % 400 == 0) {
+        if (ticksElapsed % 600 == 0) {
             new GameRunnable(warlordsNPC.getGame()) {
                 int counter = 0;
 

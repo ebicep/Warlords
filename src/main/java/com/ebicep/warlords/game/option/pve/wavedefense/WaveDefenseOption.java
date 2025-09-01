@@ -518,6 +518,10 @@ public class WaveDefenseOption implements PveOption {
                 difficultyHealthMultiplier = 2;
                 difficultyDamageMultiplier = 1.75f;
             }
+            case BOSS_RUSH -> {
+                difficultyHealthMultiplier = 3f;
+                difficultyDamageMultiplier = 1f;
+            }
             default -> {
                 difficultyHealthMultiplier = 1;
                 difficultyDamageMultiplier = 1;

@@ -109,7 +109,7 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                             if (enemy instanceof WarlordsNPC npc) {
                                 npc.setDamageResistance(npc.getSpec().getDamageResistance() - 15);
                             }
-                            Utils.playGlobalSound(totemStand.getLocation(), Sound.ENTITY_WITHER_DEATH, 2, 1.2f);
+                            Utils.playGlobalSound(totemStand.getLocation(), Sound.ENTITY_WITHER_DEATH, 0.5f, 1.2f);
                             enemy.addInstance(InstanceBuilder
                                     .damage()
                                     .cause("Void Totem")
@@ -193,7 +193,7 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                                     new CircumferenceEffect(Particle.PORTAL, Particle.PORTAL).particlesPerCircumference(1),
                                     new DoubleLineEffect(Particle.WITCH)
                             ).playEffects();
-                            Utils.playGlobalSound(totemStand.getLocation(), Sound.ENTITY_ELDER_GUARDIAN_CURSE, 2f, 0.6f);
+                            Utils.playGlobalSound(totemStand.getLocation(), Sound.ENTITY_ELDER_GUARDIAN_CURSE, 1f, 0.6f);
 
                             for (WarlordsEntity enemy : PlayerFilter
                                     .entitiesAround(totemStand, rad, rad, rad)

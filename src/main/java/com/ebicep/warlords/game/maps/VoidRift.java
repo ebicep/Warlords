@@ -4,6 +4,7 @@ import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.game.option.BasicScoreboardOption;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.SpawnpointOption;
 import com.ebicep.warlords.game.option.cuboid.AbstractCuboidOption;
@@ -16,6 +17,7 @@ import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.waves.RandomSpawnWave;
 import com.ebicep.warlords.game.option.pve.wavedefense.waves.StaticWaveList;
 import com.ebicep.warlords.game.option.respawn.RespawnWaveOption;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
@@ -30,13 +32,13 @@ public class VoidRift extends GameMap {
 
     public VoidRift() {
         super(
-                "Void Rift",
+                "Void Crossfire",
                 6,
                 1,
                 30 * SECOND,
-                "VoidRift",
-                3,
-                GameMode.BOSS_RUSH
+                "VoidCrossfire",
+                1,
+                GameMode.WAVE_DEFENSE
         );
     }
 
@@ -45,14 +47,25 @@ public class VoidRift extends GameMap {
         List<Option> options = category.initMap(this, loc, addons);
 
         options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
-        options.add(LobbyLocationMarker.create(loc.addXYZ(0.5, 68, 0.5), Team.BLUE).asOption());
-        options.add(SpawnpointOption.forTeam(loc.addXYZ(0.5, 68, 0.5), Team.BLUE));
-        options.add(SpawnpointOption.forTeam(loc.addXYZ(0.5, 68, 0.5), Team.RED));
+        options.add(LobbyLocationMarker.create(loc.addXYZ(112.5, 11, 77.5), Team.BLUE).asOption());
+        options.add(LobbyLocationMarker.create(loc.addXYZ(112.5, 11, 77.5), Team.RED).asOption());
 
+        options.add(SpawnpointOption.forTeam(loc.addXYZ(112.5, 11, 77.5), Team.BLUE));
+        options.add(SpawnpointOption.forTeam(loc.addXYZ(104.5, 11, 71.5), Team.RED));
+        options.add(SpawnpointOption.forTeam(loc.addXYZ(97.5, 11, 62.5), Team.RED));
+        options.add(SpawnpointOption.forTeam(loc.addXYZ(104.5, 11, 53.5), Team.RED));
+        options.add(SpawnpointOption.forTeam(loc.addXYZ(112.5, 11, 47.5), Team.RED));
+        options.add(SpawnpointOption.forTeam(loc.addXYZ(120.5, 11, 53.5), Team.RED));
+        options.add(SpawnpointOption.forTeam(loc.addXYZ(129.5, 12, 45.5), Team.RED));
+        options.add(SpawnpointOption.forTeam(loc.addXYZ(95.5, 12, 79.5), Team.RED));
+        options.add(SpawnpointOption.forTeam(loc.addXYZ(129.5, 12, 79.5), Team.RED));
+        options.add(SpawnpointOption.forTeam(loc.addXYZ(95.5, 12, 45.5), Team.RED));
+
+        options.add(new BasicScoreboardOption());
         options.add(new RespawnWaveOption(1, 20, 10));
         options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
         options.add(new CurrencyOnEventOption()
-                .onPerWaveClear(1, 50000)
+                .onPerWaveClear(1, 30000)
                 .startWith(50000)
         );
         options.add(new WaveDefenseOption(Team.RED, new StaticWaveList()
@@ -72,15 +85,21 @@ public class VoidRift extends GameMap {
                         .add(Mob.ZENITH)
                 )
                 .add(6, new RandomSpawnWave(1, 10 * SECOND, Component.text("Boss"))
-                        .add(Mob.CHESSKING)
+                        .add(Mob.MAGMATIC_OOZE)
                 )
                 .add(7, new RandomSpawnWave(1, 10 * SECOND, Component.text("Boss"))
                         .add(Mob.ILLUMINA)
                 )
                 .add(8, new RandomSpawnWave(1, 10 * SECOND, Component.text("Boss"))
+                        .add(Mob.VOID)
+                )
+                .add(9, new RandomSpawnWave(1, 10 * SECOND, Component.text("Boss"))
                         .add(Mob.TORMENT)
-                ),
-                DifficultyIndex.NORMAL
+                )
+
+                ,
+
+                DifficultyIndex.BOSS_RUSH
         ));
         options.add(new ItemOption());
 

@@ -110,10 +110,10 @@
         "difficulty": 4,
         "name": "Ice Block",
         "description": "Increase the duration of {{aqua:Ice Barrier}} by {{ticks}}. {{aqua:Ice Barrier}} can be recasted after {{ticks}}, reducing the duration by {{ticks}} and becoming {{aqua:Ice Block}}. {{aqua:Ice Block}} prevents jumping, tremendously reduces movement speed, but prevents knockback and grants {{damageReduction;%}} damage reduction.",
-        "iceBarrierDurationIncreaseTicks": 50,
+        "iceBarrierDurationIncreaseTicks": 40,
         "iceBlockRecastDelayTicks": 20,
-        "recastDurationDecreaseTicks": 20,
-        "recastDamageReductionPercent": 75,
+        "recastDurationDecreaseTicks": 30,
+        "recastDamageReductionPercent": 80,
         "recastMovementSpeed": 0.4,
         "recastMovementSpeedFlag": 0.3
       },
@@ -155,8 +155,8 @@
         "name": "Clairvoyance",
         "description": "Replace {{aqua:Time Warp}} with {{aqua:Clairvoyance}}. Gain {{energy}} max energy. Reduce the duration of {{aqua:Healing Rain}} by {{ticks}}, but increase the healing by {{heal;%}}.",
         "maxEnergyIncrease": 100,
-        "healingRainDurationDecreaseTicks": 40,
-        "healingRainHealIncreasePercent": 40
+        "healingRainDurationDecreaseTicks": 20,
+        "healingRainHealIncreasePercent": 50
       },
       "downpour": {
         "difficulty": 2,
@@ -204,8 +204,8 @@
         "difficulty": 3,
         "name": "Mighty Fists",
         "description": "Increase the wounding inflicted by {{aqua:Wounding Strike}} by {{damage;%}}. Each consecutive strike on a target increases the wounding by an additional {{damage;%}}, up to {{damage;%}}. While {{aqua:Berserk}} is active, {{aqua:Seismic Wave}} and {{aqua:Ground Slam}} inflict {{damage;%}} wounding for {{ticks}}.",
-        "woundingIncreasePercent": 8,
-        "consecutiveStrikeWoundingIncreasePercent": 6,
+        "woundingIncreasePercent": 10,
+        "consecutiveStrikeWoundingIncreasePercent": 5,
         "maxConsecutiveStrikeWoundingIncreasePercent": 60,
         "seismicWaveGroundSlamWoundingPercent": 30,
         "seismicWaveGroundSlamWoundingDurationTicks": 60
@@ -226,7 +226,7 @@
         "bloodLustDurationReductionTicks": 180,
         "bloodLustEnergyCostReduction": 20,
         "bloodLustHealingPercent": 20,
-        "bloodLustHealingPiercePercent": 20
+        "bloodLustHealingPiercePercent": 25
       },
       "goliath": {
         "difficulty": 2,
@@ -240,9 +240,9 @@
       "vitalityBoost": {
         "difficulty": 1,
         "name": "Vitality Boost",
-        "description": "Gain {{heal}} max health. Receive {{heal;%}} more healing.",
+        "description": "Gain {{heal}} max health. Passively regenerate {{heal}} health per second, stacks with natural regen.",
         "healthIncrease": 600,
-        "healingReceivedIncreasePercent": 10
+        "passiveRegen": 25
       },
       "striker": {
         "difficulty": 1,
@@ -255,16 +255,16 @@
         "difficulty": 2,
         "name": "Fervent Force",
         "description": "Reduce the cooldown of {{aqua:Seismic Wave}} and {{aqua:Ground Slam}} by {{ticks;%}}.",
-        "seismicWaveCooldownReductionPercent": 16,
-        "groundSlamCooldownReductionPercent": 16
+        "seismicWaveCooldownReductionPercent": 14,
+        "groundSlamCooldownReductionPercent": 14
       },
       "heroicIntervention": {
         "difficulty": 1,
         "name": "Heroic Intervention",
         "description": "Increase the max damage redirected by {{aqua:Intervene}} by {{damageReduction;}}, the duration by {{ticks}}, and the cast and break range by {{blocks}}.",
-        "interveneCapIncrease": 1000,
+        "interveneCapIncrease": 1100,
         "interveneDurationIncreaseTicks": 20,
-        "interveneCastAndRangeIncrease": 5
+        "interveneCastAndRangeIncrease": 8
       },
       "solitary": {
         "difficulty": 3,
@@ -330,11 +330,12 @@
       "unstoppableSurge": {
         "difficulty": 3,
         "name": "Unstoppable Surge",
-        "description": "{{aqua:Light Infusion}} heals you for {{heal}} health, increase the speed granted by {{speed;%}} and the duration by {{ticks}}. Heal an additional {{heal}} health if Avenger's Strike was not used during Light Infusion. Gain permanent {{speed;%}} slow resistance and {{damageReduction;%}} knockback resistance.",
+        "description": "{{aqua:Light Infusion}} heals you for {{heal}} health, increase the speed granted by {{speed;%}} and the duration by {{ticks}}. Heal an additional {{heal}} health if Avenger's Strike was not used for {{ticks}} after activating Light Infusion. Gain permanent {{speed;%}} slow resistance and {{damageReduction;%}} knockback resistance.",
         "lightInfusionHealing": 800,
-        "lightInfusionSpeedIncreasePercent": 10,
-        "lightInfusionDurationIncreaseTicks": 20,
+        "lightInfusionSpeedIncreasePercent": 5,
+        "lightInfusionDurationIncreaseTicks": 40,
         "postLightInfusionHealing": 600,
+        "postLightInfusionHealingDelay": 60,
         "slowResistancePercent": 15,
         "knockbackResistancePercent": 20
       },
@@ -438,7 +439,7 @@
       "hammerOfJudgement": {
         "difficulty": 3,
         "name": "Mega Hammer",
-        "description": "Increase the cooldown of {{aqua:Hammer of Light}} by {{ticks}}. Upon cast, enemies within {{blocks}} take {{damage}} damage and will be Consecrated for {{ticks}}. Consecrated enemies cannot be hit by your {{aqua:Consecrate}}.",
+        "description": "Increase the cooldown of {{aqua:Hammer of Light}} by {{ticks}}. Upon cast, enemies within {{blocks}} take {{damage}} damage and will be Consecrated for {{ticks}}. Consecrated enemies cannot be hit by your {{aqua:Consecrate}}. Mega Hammer damage is not affected by flag multiplier.",
         "hammerOfLightCooldownIncreaseTicks": 240,
         "hammerThrowRadius": 6,
         "hammerThrowDamage": {

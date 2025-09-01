@@ -2,6 +2,7 @@ package com.ebicep.warlords.player.general;
 
 import com.ebicep.warlords.abilities.internal.AbilityStats;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.icon.AbilityIcon;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsPlayerClassRightClickEvent;
@@ -307,8 +308,9 @@ public abstract class AbstractPlayerClass {
     public void increaseAllCooldownTimersBy(float amount) {
         for (AbstractAbility ability : abilities) {
             if (ability instanceof WeaponAbilityIcon && ability.getCooldownValue() == 0) {
-                continue;
+                return;
             }
+
             ability.addCurrentCooldown(amount);
         }
     }

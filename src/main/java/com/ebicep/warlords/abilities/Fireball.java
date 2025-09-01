@@ -140,16 +140,23 @@ public class Fireball extends AbstractProjectile<Fireball, Fireball.FireballStat
         WarlordsApplyBurnEffectEvent applyBurnEffectEvent = new WarlordsApplyBurnEffectEvent(hit, shooter, 20);
         Bukkit.getPluginManager().callEvent(applyBurnEffectEvent);
         hit.getCooldownManager().removeCooldownByName("Burn");
-        hit.getCooldownManager().addCooldown(new RegularCooldown<>("Burn", "BRN", Fireball.class, new Fireball(), shooter, CooldownTypes.LOW_LEVEL_DEBUFF, cooldownManager -> {
-        }, 5 * 20, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-            if (ticksLeft % applyBurnEffectEvent.getTickPeriod() == 0) {
-                float healthDamage = hit.getMaxHealth() * 0.005f;
-                healthDamage = DamageCheck.clamp(healthDamage);
-                hit.addInstance(InstanceBuilder.damage().cause("Burn").source(shooter).value(healthDamage).flags(InstanceFlags.DOT));
-            }
-        })
+        hit.getCooldownManager().addCooldown(new RegularCooldown<>(
+                "Burn",
+                "BRN",
+                Fireball.class,
+                new Fireball(),
+                shooter,
+                CooldownTypes.LOW_LEVEL_DEBUFF,
+                cooldownManager -> {},
+                5 * 20,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksLeft % applyBurnEffectEvent.getTickPeriod() == 0) {
+                        float healthDamage = hit.getMaxHealth() * 0.005f;
+                        healthDamage = DamageCheck.clamp(healthDamage);
+                        hit.addInstance(InstanceBuilder.damage().cause("Burn").source(shooter).value(healthDamage).flags(InstanceFlags.DOT));
+                    }
+                })
         ) {
-
             @Override
             public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 return currentDamageValue * 1.15f;

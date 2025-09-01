@@ -74,7 +74,6 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
         playSphereAnimation(wp.getLocation(), bubbleRadius + 2.5, 68, 176, 236);
         // Second Particle Sphere
         new GameRunnable(wp.getGame()) {
-
             @Override
             public void run() {
 //                playSphereAnimation(wp.getLocation(), bubbleRadius + 1, 65, 185, 205);

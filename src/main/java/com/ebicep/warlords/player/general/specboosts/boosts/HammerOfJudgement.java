@@ -109,6 +109,7 @@ public class HammerOfJudgement implements SpecBoostManager.SpecBoost<HammerOfJud
                                             .cause(getStringName())
                                             .source(warlordsEntity)
                                             .value(hammerThrowDamage)
+                                            .flags(InstanceFlags.IGNORE_FLAG_MULTIPLIER)
                                     );
                                     enemy.getCooldownManager().addCooldown(new RegularCooldown<>(
                                             cooldownName,

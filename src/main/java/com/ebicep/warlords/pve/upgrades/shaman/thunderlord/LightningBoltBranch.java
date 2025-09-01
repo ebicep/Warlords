@@ -25,8 +25,9 @@ public class LightningBoltBranch extends AbstractUpgradeBranch<LightningBolt> {
                     @Override
                     public void modifyFloatModifiable(FloatModifiable.FloatModifier modifier, float value) {
                         modifier.setModifier(value / 100);
-                    }
-                            }, ability.getProjectileSpeed().addMultiplicativeModifierAdd("Upgrade Branch", 0), 20f
+                    }},
+
+                    ability.getProjectileSpeed().addMultiplicativeModifierAdd("Upgrade Branch", 0), 20f
                 )
                 .addTo(treeA);
 

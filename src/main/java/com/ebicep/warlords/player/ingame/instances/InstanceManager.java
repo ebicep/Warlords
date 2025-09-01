@@ -350,7 +350,7 @@ public class InstanceManager {
         float previousDamageValue = damageValue;
         // Flag carrier multiplier.
         double flagMultiplier = warlordsEntity.getFlagDamageMultiplier();
-        if (flagMultiplier != 1 && !trueDamage) {
+        if (flagMultiplier != 1 && !trueDamage && !flags.contains(InstanceFlags.IGNORE_FLAG_MULTIPLIER)) {
             damageValue *= (float) flagMultiplier;
             debugMessage.appendTitle(ComponentBuilder
                     .create("Flag Damage Multiplier: ", NamedTextColor.AQUA)

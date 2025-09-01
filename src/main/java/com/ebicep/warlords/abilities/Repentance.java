@@ -67,7 +67,7 @@ public class Repentance extends AbstractAbility implements BlueAbilityIcon, Dura
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "REPE", Repentance.class, new Repentance(), wp, CooldownTypes.ABILITY, cooldownManager -> {
             if (pveMasterUpgrade2) {
                 //TODO message
-                float energyGain = (float) energyGained.get() / 10 / 20;
+                float energyGain = (float) energyGained.get() / 3.3f / 20;
                 wp.getCooldownManager().addCooldown(new RegularCooldown<>("Remembrance", "REME", Repentance.class, new Repentance(), wp, CooldownTypes.BUFF, cooldownManager1 -> {
                 }, 8 * 20
                 ) {
@@ -113,7 +113,7 @@ public class Repentance extends AbstractAbility implements BlueAbilityIcon, Dura
     @Override
     public void runEverySecond(@Nullable WarlordsEntity warlordsEntity) {
         if (pool > 0) {
-            float newPool = pool * .8f - poolDecay;
+            float newPool = pool * (pveMasterUpgrade ? .4f : .8f) - poolDecay;
             pool = Math.max(newPool, 0);
         }
     }
