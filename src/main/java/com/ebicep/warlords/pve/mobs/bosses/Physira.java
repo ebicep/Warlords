@@ -1,28 +1,18 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
-import com.ebicep.warlords.abilities.internal.DamageCheck;
-import com.ebicep.warlords.abilities.internal.PhysiraCheck;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.effects.circle.CircleEffect;
-import com.ebicep.warlords.effects.circle.CircumferenceEffect;
-import com.ebicep.warlords.effects.circle.DoubleLineEffect;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.option.raid.BossAbilityPhase;
 import com.ebicep.warlords.player.general.SpecType;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.WarlordsNPC;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
-import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
-import com.ebicep.warlords.pve.mobs.bosses.bossminions.PhysiraCrystal;
+import com.ebicep.warlords.pve.mobs.bosses.bossminions.NineCrystal;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
-import com.ebicep.warlords.pve.mobs.witherskeleton.CelestialOpus;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -34,12 +24,9 @@ import org.bukkit.entity.ItemDisplay;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -112,7 +99,7 @@ public class Physira extends AbstractMob implements BossMob {
                 double angle = j / 6D * Math.PI * 2;
                 crystalLoc.setX(loc.getX() + Math.sin(angle) * 20);
                 crystalLoc.setZ(loc.getZ() + cos(angle) * 20);
-                PhysiraCrystal crystal = new PhysiraCrystal(crystalLoc, warlordsNPC, SpecType.VALUES[j % 3]);
+                NineCrystal crystal = new NineCrystal(crystalLoc, warlordsNPC, SpecType.VALUES[j % 3]);
                 pylons.add(crystal.getWarlordsNPC());
                 Bukkit.broadcast(Component.text("pylons: " + pylons.get(j)));
                 pveOption.spawnNewMob(crystal, Team.RED);

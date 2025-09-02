@@ -2,7 +2,7 @@ package com.ebicep.warlords.pve.mobs;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.pve.mobs.bosses.Physira;
-import com.ebicep.warlords.pve.mobs.bosses.bossminions.PhysiraCrystal;
+import com.ebicep.warlords.pve.mobs.bosses.bossminions.NineCrystal;
 import com.ebicep.warlords.game.option.towerdefense.mobs.*;
 import com.ebicep.warlords.game.option.towerdefense.towers.*;
 import com.ebicep.warlords.game.option.whackamole.moles.MoleArmorStand;
@@ -577,6 +577,14 @@ public enum Mob {
             Weapons.SOUL_REAVER.getItem()
     )
     ),
+    SOUL_REAVER(EntityType.DROWNED, SoulReaver.class, SoulReaver::new, SoulReaver::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.CELESTIAL_GOLDOR),
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 30, 0, 30),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 30, 0, 30),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 30, 0, 30),
+            Weapons.TIDEBREAKER.getItem()
+    )
+    ),
     MITHRA_EGG_SAC(EntityType.ARMOR_STAND, EggSac.class, EggSac::new, EggSac::new, new Utils.SimpleEntityEquipment(
             EggSac.EGG_SAC_ITEM,
             null,
@@ -585,7 +593,7 @@ public enum Mob {
             null
     )
     ),
-    PHYSIRA_CRYSTAL(EntityType.BREEZE, PhysiraCrystal.class, PhysiraCrystal::new, PhysiraCrystal::new, null),
+    NINE_CRYSTAL(EntityType.BREEZE, NineCrystal.class, NineCrystal::new, NineCrystal::new, null),
     ARACHNO_VENERATUS(EntityType.SPIDER, ArachnoVeneratus.class, ArachnoVeneratus::new, ArachnoVeneratus::new, null),
     CURSED_PSION(EntityType.WITHER_SKELETON, CursedPsion.class, CursedPsion::new, CursedPsion::new, null),
     ENAVURITE(EntityType.ENDERMITE, Enavurite.class, Enavurite::new, Enavurite::new, null),

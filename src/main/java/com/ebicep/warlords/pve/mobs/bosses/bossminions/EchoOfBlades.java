@@ -62,6 +62,7 @@ public class EchoOfBlades extends AbstractMob implements BossMinionMob {
                     .forEach(nine -> {
                         nine.addInstance(InstanceBuilder
                                 .healing()
+                                .cause("Healing")
                                 .source(warlordsNPC)
                                 .value(50)
                         );

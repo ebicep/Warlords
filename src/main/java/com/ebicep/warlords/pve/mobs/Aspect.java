@@ -269,7 +269,7 @@ public enum Aspect {
     SWIFT("Swift", TextColor.color(121, 121, 255)) {
         @Override
         public void apply(WarlordsEntity warlordsEntity) {
-            MotionModifier modifier = new MotionModifierBuilder().setFrom(warlordsEntity).setName("Swift").setModifier(20).setDuration(400000).build();
+            MotionModifier modifier = new MotionModifierBuilder().setFrom(warlordsEntity).setName("Swift").setModifier(40).setDuration(400000).build();
             MotionSystem calculateSpeed = warlordsEntity.getSpeed();
             calculateSpeed.addModifier(modifier);
             warlordsEntity.getCooldownManager().addCooldown(new PermanentCooldown<>(
@@ -333,7 +333,7 @@ public enum Aspect {
                         return;
                     }
                     WarlordsEntity attacker = event.getSource();
-                    float healAmount = currentDamageValue * .2f;
+                    float healAmount = currentDamageValue * .3f;
                     attacker.addInstance(InstanceBuilder
                             .healing()
                             .cause(name)

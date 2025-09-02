@@ -17,16 +17,16 @@ import org.bukkit.Particle;
 
 import javax.annotation.Nonnull;
 
-public class PhysiraCrystal extends AbstractMob implements BossMinionMob {
+public class NineCrystal extends AbstractMob implements BossMinionMob {
 
     private SpecType spec;
     private WarlordsEntity owner;
 
-    public PhysiraCrystal(Location spawnLocation, WarlordsEntity owner, SpecType spec) {
+    public NineCrystal(Location spawnLocation, WarlordsEntity owner, SpecType spec) {
         super(
                 spawnLocation,
                 ChatColor.BOLD + spec.name(),
-                1200,
+                2000,
                 0,
                 0,
                 0,
@@ -36,11 +36,11 @@ public class PhysiraCrystal extends AbstractMob implements BossMinionMob {
         this.spec = spec;
     }
 
-    public PhysiraCrystal(Location spawnLocation) {
+    public NineCrystal(Location spawnLocation) {
         super(
                 spawnLocation,
                 "Pylon",
-                1200,
+                2000,
                 0,
                 0,
                 0,
@@ -48,7 +48,7 @@ public class PhysiraCrystal extends AbstractMob implements BossMinionMob {
         );
     }
 
-    public PhysiraCrystal(
+    public NineCrystal(
             Location spawnLocation,
             String name,
             int maxHealth,
@@ -69,7 +69,7 @@ public class PhysiraCrystal extends AbstractMob implements BossMinionMob {
 
     @Override
     public Mob getMobRegistry() {
-        return Mob.PHYSIRA_CRYSTAL;
+        return Mob.NINE_CRYSTAL;
     }
 
     @Override
