@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
 import com.ebicep.warlords.abilities.internal.DamageCheck;
+import com.ebicep.warlords.abilities.internal.PhysiraCheck;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
@@ -15,16 +16,15 @@ import com.ebicep.warlords.player.general.SpecType;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
-import com.ebicep.warlords.player.ingame.motionsystem.MotionModifier;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.DamagePhaseController;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.OrbitingSwordsManager;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.EchoOfBlades;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.PhysiraCrystal;
-import com.ebicep.warlords.pve.mobs.bosses.bossminions.SoulOfGradient;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -46,7 +46,9 @@ import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.lang.Math.cos;
@@ -139,11 +141,13 @@ public class OneOfNine extends AbstractMob implements BossMob {
                 event.getSource().addInstance(InstanceBuilder
                         .damage()
                         .source(warlordsNPC)
+                        .cause("Greed")
                         .value(currentDamageValue)
                         .flags(InstanceFlags.RECURSIVE, InstanceFlags.IGNORE_DAMAGE_BOOST)
                 );
                 event.getSource().sendMessage(Component.text("Your divine punishment awaits if you keep giving in to your greed...", NamedTextColor.RED));
-                return currentDamageValue * 0f;
+                event.setCancelled(true);
+                return currentDamageValue;
             }
         });
 
@@ -173,103 +177,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
         }.runTaskTimer(0, 10);
 
         phaseOne = new BossAbilityPhase(warlordsNPC, 90, () -> {
-            record Slot(double theta, int startTick, ItemDisplay display) {}
-
-            List<Slot> ring = new ArrayList<>();
-            World world = warlordsNPC.getWorld();
-
-            double radius = 12;
-            int count = 9;
-            int delayBetween = 20;     // ticks between swords appearing
-            int fallDuration = 8;    // ticks to complete the 90° fall (your old value)
-
-            Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.AMBIENT_BASALT_DELTAS_LOOP, 500, 0.7f);
-            Utils.playGlobalSound(warlordsNPC.getLocation(), "arcanist.beaconshadow.activation", 500, 0.7f);
-
-            // Prepare slots with theta and staggered start ticks
-            for (int i = 0; i < count; i++) {
-                double theta = 2 * Math.PI * i / count;
-                int start = i * delayBetween; // sword i starts later
-                ring.add(new Slot(theta, start, null));
-            }
-
-            new GameRunnable(warlordsNPC.getGame()) {
-                int t = 0;
-
-                @Override public void run() {
-                    t++;
-
-                    boolean allDone = true;
-
-                    for (int i = 0; i < ring.size(); i++) {
-                        Slot s = ring.get(i);
-
-                        // Spawn at this sword's start tick
-                        if (s.display == null && t >= s.startTick()) {
-                            double x = mapCenter.getX() + radius * Math.cos(s.theta());
-                            double z = mapCenter.getZ() + radius * Math.sin(s.theta());
-
-                            ItemDisplay d = world.spawn(new Location(world, x, mapCenter.getY() + 2, z), ItemDisplay.class, disp -> {
-                                disp.setItemStack(new ItemStack(Material.NETHERITE_SWORD));
-                                disp.setBillboard(Display.Billboard.FIXED);
-
-                                // Base orientation: face inward + blade upright (adjust +/−90 if your model needs)
-                                Quaternionf faceCenter = new Quaternionf().rotateY((float) (s.theta() + Math.PI));
-                                Quaternionf upright    = new Quaternionf().rotateX((float) Math.toRadians(+90));
-                                Quaternionf baseRight  = new Quaternionf(faceCenter).mul(upright);
-
-                                disp.setTransformation(new Transformation(
-                                        new Vector3f(0, 0, 0),         // leftRotation (animated later)
-                                        baseRight,             // start with identity
-                                        new Vector3f(50f, 50f, 50f),
-                                        new Quaternionf()                      // rightRotation = base orientation
-                                ));
-                            });
-
-                            // store back
-                            ring.set(i, new Slot(s.theta(), s.startTick(), d));
-                        }
-
-                        // If not yet spawned, we're not done
-                        if (ring.get(i).display == null) { allDone = false; continue; }
-
-                        // Animate only after startTick
-                        int localTicks = t - s.startTick();
-                        float p = Math.min(1f, localTicks / (float) fallDuration);
-                        // ease-out
-                        p = (float) Math.sin(p * Math.PI * 0.5f);
-                        float tilt = (float) Math.toRadians(90) * p;
-
-                        // tangent axis = outward × UP (so the sword falls outward)
-                        Vector3f axis = new Vector3f((float) Math.sin(s.theta()), 0f, (float) -Math.cos(s.theta()));
-                        Quaternionf left = new Quaternionf().rotateAxis(+tilt, axis); // flip sign if it still goes inward
-
-                        ItemDisplay d = ring.get(i).display;
-                        Transformation cur = d.getTransformation();
-                        d.setTransformation(new Transformation(
-                                new Vector3f(cur.getTranslation()),
-                                left,
-                                new Vector3f(cur.getScale()),
-                                new Quaternionf(cur.getRightRotation())
-                        ));
-
-                        // finished?
-                        if (p < 1f) allDone = false;
-                    }
-
-                    if (allDone) {
-                        // (optional) remove all or leave them
-                        for (Slot s : ring) {
-                            if (s.display != null) s.display.remove();
-                        }
-                        Utils.playGlobalSound(warlordsNPC.getLocation(), "arcanist.beaconshadow.activation", 500, 0.5f);
-                        swordManager.removeNextSword();
-                        centerSwordManager.removeNextSword();
-                        cancel();
-                    }
-                }
-            }.runTaskTimer(0, 1);
-
+            rainSwordDrop();
             phaseTransition();
         });
 
@@ -277,7 +185,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
             ChatUtils.sendTitleToGamePlayers(
                     warlordsNPC.getGame(),
                     Component.empty(),
-                    Component.text("Destroy the Nine ornaments before the timer runs out!", NamedTextColor.GRAY),
+                    Component.text("Destroy the nine ornaments before the timer runs out!", NamedTextColor.GOLD),
                     20,
                     60,
                     20
@@ -310,7 +218,15 @@ public class OneOfNine extends AbstractMob implements BossMob {
                     if (counter % 20 == 0) {
                         countdown.getAndDecrement();
                         Utils.playGlobalSound(warlordsNPC.getLocation(), "warrior.laststand.activation", 500, 0.5f);
+                        Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.BLOCK_AMETHYST_BLOCK_CHIME, 500, 0.4f);
                     }
+
+                    // floor death ray
+                    double angle = 0;
+                    angle += Math.toRadians(5);
+                    Vector dir = new Vector(Math.cos(angle), 0, Math.sin(angle));
+                    castDeathRay(mapCenter.clone().add(0, -2, 0), dir, 35, warlordsNPC);
+
 
                     if (pylons.isEmpty() && countdown.get() > 0) {
                         EffectUtils.playFirework(
@@ -321,9 +237,6 @@ public class OneOfNine extends AbstractMob implements BossMob {
                                         .withTrail()
                                         .build()
                         );
-
-                        swordManager.removeNextSword();
-                        centerSwordManager.removeNextSword();
 
                         this.cancel();
                     }
@@ -379,29 +292,23 @@ public class OneOfNine extends AbstractMob implements BossMob {
         });
 
         phaseThree = new BossAbilityPhase(warlordsNPC, 50, () -> {
-            ChatUtils.sendTitleToGamePlayers(
-                    warlordsNPC.getGame(),
-                    Component.empty(),
-                    Component.text("The floor is filled with despair...", NamedTextColor.DARK_RED),
-                    20,
-                    60,
-                    20
-            );
             new GameRunnable(warlordsNPC.getGame()) {
-                double angle = 0;
+                int counter = 0;
                 @Override
                 public void run() {
-                    angle += Math.toRadians(5);
-                    Vector dir = new Vector(Math.cos(angle), 0, Math.sin(angle));
-                    castDeathRay(mapCenter.clone().add(0, -2, 0), dir, 35, warlordsNPC);
+                    counter++;
 
-                    if (angle > 90) {
+                    if (counter % 20 == 0) {
+                        for (WarlordsEntity we : PlayerFilter.playingGame(warlordsNPC.getGame())) {
+                            we.addInstance(InstanceBuilder.damage().cause("Valerian Death").source(warlordsNPC).value(500));
+                        }
+                    }
+
+                    if (counter == 400) {
                         this.cancel();
                     }
                 }
-            }.runTaskTimer(60, 1);
-
-            phaseTransition();
+            }.runTaskTimer(60, 0);
         });
 
         phaseFour = new BossAbilityPhase(warlordsNPC, 30, () -> {
@@ -501,11 +408,11 @@ public class OneOfNine extends AbstractMob implements BossMob {
             ).playEffects();
         }
 
-        if (ticksElapsed % 800 == 0 && ticksElapsed > 0) {
-            for (int i = 0; i < option.playerCount(); i++) {
-                option.spawnNewMob(new EchoOfBlades(pveOption.getRandomSpawnLocation(warlordsNPC)));
-            }
-        }
+//        if (ticksElapsed % 800 == 0 && ticksElapsed > 0) {
+//            for (int i = 0; i < option.playerCount(); i++) {
+//                option.spawnNewMob(new EchoOfBlades(pveOption.getRandomSpawnLocation(warlordsNPC)));
+//            }
+//        }
 
         if (ticksElapsed % 400 == 0 && ticksElapsed > 0) {
             damageController.openWindow(10 * 20);
@@ -545,5 +452,106 @@ public class OneOfNine extends AbstractMob implements BossMob {
     @Override
     public Component getDescription() {
         return Component.text("Echoes of the Past", NamedTextColor.DARK_PURPLE);
+    }
+
+    private void rainSwordDrop() {
+        record Slot(double theta, int startTick, ItemDisplay display) {
+        }
+
+        List<Slot> ring = new ArrayList<>();
+        World world = warlordsNPC.getWorld();
+
+        double radius = 12;
+        int count = 9;
+        int delayBetween = 20;     // ticks between swords appearing
+        int fallDuration = 8;    // ticks to complete the 90° fall (your old value)
+
+        Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.AMBIENT_BASALT_DELTAS_LOOP, 500, 0.7f);
+        Utils.playGlobalSound(warlordsNPC.getLocation(), "arcanist.beaconshadow.activation", 500, 0.7f);
+
+        // Prepare slots with theta and staggered start ticks
+        for (int i = 0; i < count; i++) {
+            double theta = 2 * Math.PI * i / count;
+            int start = i * delayBetween; // sword i starts later
+            ring.add(new Slot(theta, start, null));
+        }
+
+        new GameRunnable(warlordsNPC.getGame()) {
+            int t = 0;
+
+            @Override
+            public void run() {
+                t++;
+
+                boolean allDone = true;
+
+                for (int i = 0; i < ring.size(); i++) {
+                    Slot s = ring.get(i);
+
+                    // Spawn at this sword's start tick
+                    if (s.display == null && t >= s.startTick()) {
+                        double x = mapCenter.getX() + radius * cos(s.theta());
+                        double z = mapCenter.getZ() + radius * Math.sin(s.theta());
+
+                        ItemDisplay d = world.spawn(new Location(world, x, mapCenter.getY() + 2, z), ItemDisplay.class, disp -> {
+                            disp.setItemStack(new ItemStack(Material.NETHERITE_SWORD));
+                            disp.setBillboard(Display.Billboard.FIXED);
+
+                            // Base orientation: face inward + blade upright (adjust +/−90 if your model needs)
+                            Quaternionf faceCenter = new Quaternionf().rotateY((float) (s.theta() + Math.PI));
+                            Quaternionf upright = new Quaternionf().rotateX((float) Math.toRadians(+90));
+                            Quaternionf baseRight = new Quaternionf(faceCenter).mul(upright);
+
+                            disp.setTransformation(new Transformation(
+                                    new Vector3f(0, 0, 0),         // leftRotation (animated later)
+                                    baseRight,             // start with identity
+                                    new Vector3f(50f, 50f, 50f),
+                                    new Quaternionf()                      // rightRotation = base orientation
+                            ));
+                        });
+
+                        // store back
+                        ring.set(i, new Slot(s.theta(), s.startTick(), d));
+                    }
+
+                    // If not yet spawned, we're not done
+                    if (ring.get(i).display == null) {
+                        allDone = false;
+                        continue;
+                    }
+
+                    // Animate only after startTick
+                    int localTicks = t - s.startTick();
+                    float p = Math.min(1f, localTicks / (float) fallDuration);
+                    // ease-out
+                    //p = (float) Math.sin(p * Math.PI * 0.5f);
+                    float tilt = (float) Math.toRadians(90) * p;
+
+                    // tangent axis = outward × UP (so the sword falls outward)
+                    Vector3f axis = new Vector3f((float) Math.sin(s.theta()), 0f, (float) -cos(s.theta()));
+                    Quaternionf left = new Quaternionf().rotateAxis(p, axis); // flip sign if it still goes inward
+
+                    ItemDisplay d = ring.get(i).display;
+                    Transformation cur = d.getTransformation();
+                    d.setTransformation(new Transformation(
+                            new Vector3f(cur.getTranslation()),
+                            left,
+                            new Vector3f(cur.getScale()),
+                            new Quaternionf(cur.getRightRotation())
+                    ));
+
+                    if (p < 1f) allDone = false;
+                }
+
+                if (allDone) {
+                    // (optional) remove all or leave them
+                    for (Slot s : ring) {
+                        if (s.display != null) s.display.remove();
+                    }
+                    Utils.playGlobalSound(warlordsNPC.getLocation(), "arcanist.beaconshadow.activation", 500, 0.5f);
+                    cancel();
+                }
+            }
+        }.runTaskTimer(0, 1);
     }
 }

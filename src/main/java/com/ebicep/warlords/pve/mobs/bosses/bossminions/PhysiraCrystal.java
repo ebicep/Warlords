@@ -26,7 +26,7 @@ public class PhysiraCrystal extends AbstractMob implements BossMinionMob {
         super(
                 spawnLocation,
                 ChatColor.BOLD + spec.name(),
-                1000,
+                1200,
                 0,
                 0,
                 0,
@@ -40,7 +40,7 @@ public class PhysiraCrystal extends AbstractMob implements BossMinionMob {
         super(
                 spawnLocation,
                 "Pylon",
-                10000,
+                1200,
                 0,
                 0,
                 0,
@@ -90,9 +90,9 @@ public class PhysiraCrystal extends AbstractMob implements BossMinionMob {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 if (spec == event.getSource().getSpecClass().specType) {
-                    return currentDamageValue * 2;
+                    return currentDamageValue * 4;
                 } else {
-                    return currentDamageValue * 0.25f;
+                    return currentDamageValue * 0.1f;
                 }
             }
         });

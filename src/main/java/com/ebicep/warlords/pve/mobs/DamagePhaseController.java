@@ -18,14 +18,12 @@ public class DamagePhaseController {
 
     private boolean inWindow = false;
 
-    // Visuals
-    private ItemDisplay halo;     // rotating shard/sword ring above head (option A)
-    private TextDisplay holo;     // “VULNERABLE” text (option B)
-    private GameRunnable followTask;   // keeps visuals attached
-    private GameRunnable spinTask;     // spins the halo
+    private ItemDisplay halo;
+    private TextDisplay holo;
+    private GameRunnable followTask;
+    private GameRunnable spinTask;
 
-    // Tuning
-    private final double headOffsetY = 5; // how high above boss’ feet to show the indicator
+    private double headOffsetY = 5;
     private final Vector3f haloScale = new Vector3f(2f, 2f, 2f);
     private final float spinDegPerTick = 6f;
 
@@ -54,7 +52,8 @@ public class DamagePhaseController {
                 }
 
                 if (t % 20 == 0) {
-                    Utils.playGlobalSound(boss.getLocation(), Sound.BLOCK_AMETHYST_BLOCK_HIT, 2, 0.6f);
+                    Utils.playGlobalSound(boss.getLocation(), Sound.BLOCK_AMETHYST_BLOCK_HIT, 500, 0.6f);
+                    Utils.playGlobalSound(boss.getLocation(), Sound.BLOCK_AMETHYST_BLOCK_HIT, 500, 0.6f);
                 }
             }
         }.runTaskTimer(0, 1);
@@ -94,11 +93,11 @@ public class DamagePhaseController {
         });
 
         // OPTION B (optional or in addition): floating text
-        holo = w.spawn(head, TextDisplay.class, td -> {
+        holo = w.spawn(head.clone().add(0, 2, 0), TextDisplay.class, td -> {
             td.setBillboard(Display.Billboard.CENTER);
             td.setSeeThrough(true);
-            td.setBackgroundColor(Color.GRAY); // subtle box
-            td.setText("§d§lVULNERABLE");               // gold bold
+            td.setBackgroundColor(Color.BLACK);
+            td.setText("§d§lVULNERABLE");
             td.setLineWidth(120);
         });
     }
