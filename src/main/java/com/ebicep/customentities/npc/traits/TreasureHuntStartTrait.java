@@ -52,7 +52,7 @@ public class TreasureHuntStartTrait extends WarlordsTrait {
 
     @Override
     public void rightClick(NPCRightClickEvent event) {
-        TreasureHuntMenu.openDifficultyMenu(event.getClicker());
+//        TreasureHuntMenu.openDifficultyMenu(event.getClicker());
         event.getClicker().sendMessage(Component.text("Cryptic Conquest is currently in development, check back later!", NamedTextColor.RED));
     }
 

@@ -128,7 +128,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
         laserBarrageRight = new AbilityLaserBarrage(warlordsNPC.getGame(), mapRight, option.playerCount(), 40, 15, 15, 70, 1, warlordsNPC);
         wallOfBladesAbility = new WallOfBladesAbility(warlordsNPC, warlordsNPC, mapCenter, 40, 3, 400, 0.5);
         arenaCollapseAbility = new ArenaCollapseAbility(warlordsNPC, warlordsNPC, () -> mapCenter, 32, 16, 1, 160, 400, 1, 25, 1);
-        meteorMarkersAbility = new MeteorMarkersAbility(warlordsNPC, warlordsNPC, () -> mapCenter, 35, 4, 40, 6, 2000, 0.5, false, 2, 4, 40, 500);
+        meteorMarkersAbility = new MeteorMarkersAbility(warlordsNPC, warlordsNPC, () -> mapCenter, 38, 6, 60, 6, 2000, 0.5, false, 1, 4, 0, 0);
 
         swordManager.spawnSwords(9);
         swordManager.start();
@@ -359,7 +359,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
                 public void run() {
                     t++;
 
-                    if (t % 200 == 0) {
+                    if (t % 100 == 0) {
                         meteorMarkersAbility.start(warlordsNPC.getGame());
                     }
 

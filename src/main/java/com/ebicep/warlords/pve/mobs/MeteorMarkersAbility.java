@@ -109,7 +109,7 @@ public class MeteorMarkersAbility {
 
                     if (!m.impacted) {
                         drawTelegraphRing(world, m.worldPos, impactRadius, ringStep, t);
-                        world.spawnParticle(Particle.ENCHANTED_HIT, m.worldPos, 1, 0.1, 0.0, 0.1, 0);
+                        world.spawnParticle(Particle.ENCHANTED_HIT, m.worldPos, 2, 0.1, 0.0, 0.1, 0);
                     }
 
                     // Impact moment
@@ -121,7 +121,7 @@ public class MeteorMarkersAbility {
 
                     // Lingering hazard
                     if (m.impacted && m.lingerUntil >= 0 && t <= m.lingerUntil) {
-                        world.spawnParticle(Particle.SMOKE, m.worldPos.clone().add(0, 0.2, 0), 1, 0.15, 0.0, 0.15, 0.01);
+                        world.spawnParticle(Particle.SMOKE, m.worldPos.clone().add(0, 0.2, 0), 3, 0.15, 0.0, 0.15, 0.01);
                         if (lingerDamagePerTick > 0) {
                             for (WarlordsEntity enemy : PlayerFilter
                                     .entitiesAround(m.worldPos, impactRadius, 3, impactRadius)
@@ -174,7 +174,7 @@ public class MeteorMarkersAbility {
         if (w == null) return;
 
         // Sound cue
-        w.playSound(base, Sound.BLOCK_RESPAWN_ANCHOR_SET_SPAWN, 1.0f, 1.0f);
+        w.playSound(base, Sound.BLOCK_RESPAWN_ANCHOR_SET_SPAWN, 500.0f, 0.8f);
 
         for (int i = 0; i < markerCount; i++) {
             // Random point inside circle (polar sampling with sqrt for uniform area)
@@ -200,12 +200,12 @@ public class MeteorMarkersAbility {
 
     private void impact(World w, Location at) {
         // Visuals + SFX
-        w.playSound(at, Sound.ENTITY_GENERIC_EXPLODE, 0.9f, 1.1f);
-        w.spawnParticle(Particle.EXPLOSION, at, 1, 0, 0, 0, 0);
+        w.playSound(at, Sound.ENTITY_GENERIC_EXPLODE, 2, 1.1f);
+        w.spawnParticle(Particle.EXPLOSION, at, 2, 0, 0, 0, 0);
         for (int y = 0; y < columnHeight; y++) {
             Location p = at.clone().add(0, y * 0.5, 0);
-            w.spawnParticle(Particle.CAMPFIRE_COSY_SMOKE, p, 3, 0.15, 0.0, 0.15, 0.01);
-            w.spawnParticle(Particle.LAVA, p, 1, 0.1, 0.1, 0.1, 0.0);
+            w.spawnParticle(Particle.CAMPFIRE_COSY_SMOKE, p, 5, 0.15, 0.0, 0.15, 0.01);
+            w.spawnParticle(Particle.LAVA, p, 5, 0.1, 0.1, 0.1, 0.0);
         }
 
         // Damage + optional knock-up

@@ -488,7 +488,7 @@ public class WaveDefenseOption implements PveOption {
          * The higher the scale is the longer it takes to increase per interval.
          */
         double scale = isEndless ? 1200.0 : 600.0;
-        int playerCount = 6;//playerCount();
+        int playerCount = playerCount();
         // Flag check whether mob is a boss.
         boolean bossFlagCheck = playerCount > 1 && warlordsNPC.getMob() instanceof BossLike;
         // Reduce base scale by 75/100 for each player after 2 or more players in game instance.
