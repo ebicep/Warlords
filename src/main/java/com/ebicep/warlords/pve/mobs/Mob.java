@@ -131,7 +131,7 @@ public enum Mob {
             )
     ),
     SKELETAL_WARLOCK(EntityType.SKELETON, SkeletalWarlock.class, SkeletalWarlock::new, SkeletalWarlock::new, new Utils.SimpleEntityEquipment(
-            new ItemStack(Material.ORANGE_CARPET),
+            ArmorManager.Helmets.GREATER_MAGE_HELMET.itemRed,
             new ItemStack(Material.CHAINMAIL_CHESTPLATE),
             new ItemStack(Material.CHAINMAIL_LEGGINGS),
             new ItemStack(Material.CHAINMAIL_BOOTS),
@@ -1016,23 +1016,37 @@ public enum Mob {
     };
     public static final Mob[] ADVANCED = {
             ILLUMINATION, GOLEM_APPRENTICE, SCRUPULOUS_ZOMBIE, SLIME_GUARD, CELESTIAL_BOW_WIELDER,
-            ZOMBIE_VANGUARD, ADVANCED_WARRIOR_BERSERKER, VOID_ZOMBIE, ZOMBIE_KNIGHT, SLIMY_CHESS,
+            ZOMBIE_VANGUARD, ADVANCED_WARRIOR_BERSERKER, SLIMY_CHESS,
             ZOMBIE_RAIDER, WANDER_WALKER, SKELETAL_ENTROPY, FIRE_SPLITTER, WITCH_DEACON, PIG_ALLEVIATOR
     };
     public static final Mob[] ELITE = {
             CELESTIAL_SWORD_WIELDER, RIFT_WALKER, OVERGROWN_ZOMBIE,
             SKELETAL_PYROMANCER, SKELETAL_ANOMALY, SKELETAL_ARCHER,
-            CREEPY_BOMBER, SKELETAL_MESMER
+            CREEPY_BOMBER, SKELETAL_MESMER, ZOMBIE_KNIGHT, VOID_ZOMBIE
     };
     public static final Mob[] CHAMPION = {
-            NIGHTMARE_ZOMBIE, PIG_PARTICLE, EXTREME_ZEALOT, SMART_SKELETON, SKELETAL_SORCERER, CELESTIAL_OPUS
+            NIGHTMARE_ZOMBIE,
+            PIG_PARTICLE,
+            EXTREME_ZEALOT,
+            SMART_SKELETON,
+            SKELETAL_SORCERER,
+            CELESTIAL_OPUS
     };
     public static final Mob[] BOSS_MINIONS = {
-            BOLTARO_SHADOW, BOLTARO_EXLIED,
-            TORMENTED_SOUL, DEPRESSED_SOUL, FURIOUS_SOUL, VOLTAIC_SOUL, AGONIZED_SOUL,
-            NARMER_ACOLYTE, NARMERS_DEATH_CHARGE,
-            ZENITH_LEGIONNAIRE, SOUL_OF_GRADIENT,
-            MITHRA_EGG_SAC, ARACHNO_VENERATUS, ECHO_OF_BLADES
+            BOLTARO_SHADOW,
+            BOLTARO_EXLIED,
+            TORMENTED_SOUL,
+            DEPRESSED_SOUL,
+            FURIOUS_SOUL,
+            VOLTAIC_SOUL,
+            AGONIZED_SOUL,
+            NARMER_ACOLYTE,
+            NARMERS_DEATH_CHARGE,
+            ZENITH_LEGIONNAIRE,
+            SOUL_OF_GRADIENT,
+            MITHRA_EGG_SAC,
+            ARACHNO_VENERATUS,
+            ECHO_OF_BLADES
     };
     public static final Mob[] BOSSES = {
             BOLTARO,

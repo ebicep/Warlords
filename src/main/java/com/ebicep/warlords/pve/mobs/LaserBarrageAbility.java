@@ -3,7 +3,6 @@ package com.ebicep.warlords.pve.mobs;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
-import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -13,7 +12,7 @@ import org.bukkit.util.Vector;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class AbilityLaserBarrage {
+public class LaserBarrageAbility {
 
     private final Game game;
     private final Location center;
@@ -28,15 +27,17 @@ public class AbilityLaserBarrage {
     private final List<Laser> lasers = new ArrayList<>();
     private GameRunnable loop;
 
-    public AbilityLaserBarrage(Game game,
-                               Location center,
-                               int laserCount,
-                               int trackTicks,
-                               int lockTelegraphTicks,
-                               int fireTicks,
-                               double range,
-                               double step,
-                               WarlordsEntity warlordsEntity) {
+    public LaserBarrageAbility(
+            Game game,
+            Location center,
+            int laserCount,
+            int trackTicks,
+            int lockTelegraphTicks,
+            int fireTicks,
+            double range,
+            double step,
+            WarlordsEntity warlordsEntity
+    ) {
         this.game = game;
         this.center = center.clone();
         this.laserCount = laserCount;

@@ -31,7 +31,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.*;
-import org.bukkit.entity.Breeze;
 import org.bukkit.entity.Display;
 import org.bukkit.entity.ItemDisplay;
 import org.bukkit.event.EventHandler;
@@ -45,7 +44,6 @@ import org.joml.Vector3f;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -61,9 +59,9 @@ public class OneOfNine extends AbstractMob implements BossMob {
     private OrbitingSwordsManager swordManager;
     private OrbitingSwordsManager centerSwordManager;
     private DamagePhaseController damageController;
-    private AbilityLaserBarrage laserBarrageCenter;
-    private AbilityLaserBarrage laserBarrageLeft;
-    private AbilityLaserBarrage laserBarrageRight;
+    private LaserBarrageAbility laserBarrageCenter;
+    private LaserBarrageAbility laserBarrageLeft;
+    private LaserBarrageAbility laserBarrageRight;
     private MeteorMarkersAbility meteorMarkersAbility;
     private ArenaCollapseAbility arenaCollapseAbility;
     private SpinningWallAbility spinningWallAbility;
@@ -125,10 +123,13 @@ public class OneOfNine extends AbstractMob implements BossMob {
 
         swordManager = new OrbitingSwordsManager(() -> warlordsNPC.getLocation(), 6, 2, 3, 4, option, warlordsNPC);
         centerSwordManager = new OrbitingSwordsManager(() -> mapCenter, 25, 30, 1, 30, option, warlordsNPC);
+
         damageController = new DamagePhaseController(warlordsNPC);
-        laserBarrageCenter = new AbilityLaserBarrage(warlordsNPC.getGame(), mapCenter, option.playerCount(), 40, 15, 15, 70, 2, warlordsNPC);
-        laserBarrageLeft = new AbilityLaserBarrage(warlordsNPC.getGame(), mapLeft, option.playerCount(), 40, 15, 15, 70, 2, warlordsNPC);
-        laserBarrageRight = new AbilityLaserBarrage(warlordsNPC.getGame(), mapRight, option.playerCount(), 40, 15, 15, 70, 2, warlordsNPC);
+
+        laserBarrageCenter = new LaserBarrageAbility(warlordsNPC.getGame(), mapCenter, option.playerCount(), 40, 15, 15, 70, 2, warlordsNPC);
+        laserBarrageLeft = new LaserBarrageAbility(warlordsNPC.getGame(), mapLeft, option.playerCount(), 40, 15, 15, 70, 2, warlordsNPC);
+        laserBarrageRight = new LaserBarrageAbility(warlordsNPC.getGame(), mapRight, option.playerCount(), 40, 15, 15, 70, 2, warlordsNPC);
+
         arenaCollapseAbility = new ArenaCollapseAbility(
                 warlordsNPC,
                 warlordsNPC,
@@ -142,6 +143,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
                 25,
                 1)
         ;
+
         meteorMarkersAbility = new MeteorMarkersAbility(
                 warlordsNPC,
                 warlordsNPC,
@@ -158,7 +160,21 @@ public class OneOfNine extends AbstractMob implements BossMob {
                 0,
                 0
         );
-        spinningWallAbility = new SpinningWallAbility(warlordsNPC, warlordsNPC, () -> mapCenter, 38, 1, 1000, 1, 2, true, 2000, 10, Color.GRAY);
+
+        spinningWallAbility = new SpinningWallAbility(
+                warlordsNPC,
+                warlordsNPC,
+                () -> mapCenter,
+                38,
+                1,
+                1000,
+                1,
+                2,
+                true,
+                2000,
+                10,
+                Color.GRAY
+        );
 
         swordManager.spawnSwords(9);
         swordManager.start();
