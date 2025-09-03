@@ -115,7 +115,7 @@ public class AbilityLaserBarrage {
                     } else if (firingPhase) {
                         if (!L.locked) lockTarget(L);
                         drawBeam(L, Particle.SONIC_BOOM, null, 0f); // fire beam
-                        if (t % 5 == 0) {
+                        if (t % 10 == 0) {
                             Utils.playGlobalSound(center, Sound.ENTITY_WARDEN_SONIC_BOOM, 500, 0.7f);
                         }
 

@@ -31,6 +31,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.*;
+import org.bukkit.entity.Breeze;
 import org.bukkit.entity.Display;
 import org.bukkit.entity.ItemDisplay;
 import org.bukkit.event.EventHandler;
@@ -44,6 +45,8 @@ import org.joml.Vector3f;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.lang.Math.cos;
@@ -51,7 +54,7 @@ import static java.lang.Math.cos;
 public class OneOfNine extends AbstractMob implements BossMob {
 
     private Listener listener;
-    List<WarlordsEntity> pylons = new ArrayList<>();
+    List<UUID> pylons = new ArrayList<>();
     private Location mapCenter;
     private Location mapLeft;
     private Location mapRight;
@@ -61,9 +64,9 @@ public class OneOfNine extends AbstractMob implements BossMob {
     private AbilityLaserBarrage laserBarrageCenter;
     private AbilityLaserBarrage laserBarrageLeft;
     private AbilityLaserBarrage laserBarrageRight;
-    private WallOfBladesAbility wallOfBladesAbility;
     private MeteorMarkersAbility meteorMarkersAbility;
     private ArenaCollapseAbility arenaCollapseAbility;
+    private SpinningWallAbility spinningWallAbility;
     private BossAbilityPhase phaseOne;
     private BossAbilityPhase phaseTwo;
     private BossAbilityPhase phaseThree;
@@ -123,12 +126,39 @@ public class OneOfNine extends AbstractMob implements BossMob {
         swordManager = new OrbitingSwordsManager(() -> warlordsNPC.getLocation(), 6, 2, 3, 4, option, warlordsNPC);
         centerSwordManager = new OrbitingSwordsManager(() -> mapCenter, 25, 30, 1, 30, option, warlordsNPC);
         damageController = new DamagePhaseController(warlordsNPC);
-        laserBarrageCenter = new AbilityLaserBarrage(warlordsNPC.getGame(), mapCenter, option.playerCount(), 40, 15, 15, 70, 1, warlordsNPC);
-        laserBarrageLeft = new AbilityLaserBarrage(warlordsNPC.getGame(), mapLeft, option.playerCount(), 40, 15, 15, 70, 1, warlordsNPC);
-        laserBarrageRight = new AbilityLaserBarrage(warlordsNPC.getGame(), mapRight, option.playerCount(), 40, 15, 15, 70, 1, warlordsNPC);
-        wallOfBladesAbility = new WallOfBladesAbility(warlordsNPC, warlordsNPC, mapCenter, 40, 3, 400, 0.5);
-        arenaCollapseAbility = new ArenaCollapseAbility(warlordsNPC, warlordsNPC, () -> mapCenter, 32, 16, 1, 160, 400, 1, 25, 1);
-        meteorMarkersAbility = new MeteorMarkersAbility(warlordsNPC, warlordsNPC, () -> mapCenter, 38, 6, 60, 6, 2000, 0.5, false, 1, 4, 0, 0);
+        laserBarrageCenter = new AbilityLaserBarrage(warlordsNPC.getGame(), mapCenter, option.playerCount(), 40, 15, 15, 70, 2, warlordsNPC);
+        laserBarrageLeft = new AbilityLaserBarrage(warlordsNPC.getGame(), mapLeft, option.playerCount(), 40, 15, 15, 70, 2, warlordsNPC);
+        laserBarrageRight = new AbilityLaserBarrage(warlordsNPC.getGame(), mapRight, option.playerCount(), 40, 15, 15, 70, 2, warlordsNPC);
+        arenaCollapseAbility = new ArenaCollapseAbility(
+                warlordsNPC,
+                warlordsNPC,
+                () -> mapCenter,
+                32,
+                16,
+                1,
+                160,
+                400,
+                1,
+                25,
+                1)
+        ;
+        meteorMarkersAbility = new MeteorMarkersAbility(
+                warlordsNPC,
+                warlordsNPC,
+                () -> mapCenter,
+                32,
+                4 * option.playerCount(),
+                40,
+                6,
+                3000,
+                0.5,
+                false,
+                1,
+                4,
+                0,
+                0
+        );
+        spinningWallAbility = new SpinningWallAbility(warlordsNPC, warlordsNPC, () -> mapCenter, 38, 1, 1000, 1, 2, true, 2000, 10, Color.GRAY);
 
         swordManager.spawnSwords(9);
         swordManager.start();
@@ -151,7 +181,6 @@ public class OneOfNine extends AbstractMob implements BossMob {
                 if (damageController.isInDamageWindow()) {
                     return currentDamageValue * 1.5f;
                 }
-
                 event.getSource().addInstance(InstanceBuilder
                         .damage()
                         .source(warlordsNPC)
@@ -191,6 +220,8 @@ public class OneOfNine extends AbstractMob implements BossMob {
         }.runTaskTimer(0, 10);
 
         phaseOne = new BossAbilityPhase(warlordsNPC, 90, () -> {
+            preventDamagePhase = true;
+            preventMinions = true;
             ChatUtils.sendTitleToGamePlayers(
                     warlordsNPC.getGame(),
                     Component.empty(),
@@ -217,11 +248,15 @@ public class OneOfNine extends AbstractMob implements BossMob {
                     }
 
                     if (counter == 801) {
+                        preventDamagePhase = false;
+                        preventMinions = false;
                         laserBarrageCenter.cancel();
                         this.cancel();
                     }
                 }
-            }.runTaskTimer(60, 0);
+            }.runTaskTimer(0, 0);
+
+            phaseTransition();
         });
 
         phaseTwo = new BossAbilityPhase(warlordsNPC, 70, () -> {
@@ -243,18 +278,17 @@ public class OneOfNine extends AbstractMob implements BossMob {
                 crystalLoc.setX(mapCenter.getX() + Math.sin(angle) * 20);
                 crystalLoc.setZ(mapCenter.getZ() + cos(angle) * 20);
                 NineCrystal crystal = new NineCrystal(crystalLoc, warlordsNPC, SpecType.VALUES[j % 3]);
-                pylons.add(crystal.getWarlordsNPC());
                 pveOption.spawnNewMob(crystal, Team.RED);
+                pylons.add(crystal.getWarlordsNPC().getUuid());
             }
 
             listener = new Listener() {
                 @EventHandler(ignoreCancelled = true)
                 private void onAllyDeath(WarlordsDeathEvent event) {
-                    if (pylons.isEmpty()) {
-                        return;
-                    }
+                    if (pylons.isEmpty()) return;
 
-                    pylons.removeFirst();
+                    pylons.removeIf(p -> p.equals(event.getWarlordsEntity().getUuid()));
+                    Utils.playGlobalSound(mapCenter, Sound.ENTITY_ALLAY_AMBIENT_WITHOUT_ITEM, 500, 1.5f);
                 }
             };
 
@@ -348,16 +382,21 @@ public class OneOfNine extends AbstractMob implements BossMob {
             ChatUtils.sendTitleToGamePlayers(
                     warlordsNPC.getGame(),
                     Component.empty(),
-                    Component.text("Meteors.. OF DEATH", NamedTextColor.GRAY),
+                    Component.text("Spinning Walls.. OF DEATH", NamedTextColor.RED),
                     20,
                     60,
                     20
             );
+
             new GameRunnable(warlordsNPC.getGame()) {
                 int t = 0;
                 @Override
                 public void run() {
                     t++;
+
+                    if (t == 100) {
+                        spinningWallAbility.start(warlordsNPC.getGame());
+                    }
 
                     if (t % 100 == 0) {
                         meteorMarkersAbility.start(warlordsNPC.getGame());
@@ -407,7 +446,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
                         this.cancel();
                     }
                 }
-            }.runTaskTimer(60, 0);
+            }.runTaskTimer(0, 0);
             phaseTransition();
         });
 
@@ -531,13 +570,13 @@ public class OneOfNine extends AbstractMob implements BossMob {
             ).playEffects();
         }
 
-        if (ticksElapsed % 1400 == 0 && ticksElapsed > 0 && !preventMinions) {
+        if (ticksElapsed % 1600 == 0 && ticksElapsed > 0 && !preventMinions) {
             for (int i = 0; i < option.playerCount(); i++) {
                 option.spawnNewMob(new EchoOfBlades(pveOption.getRandomSpawnLocation(warlordsNPC)));
             }
         }
 
-        if (ticksElapsed % 800 == 0 && ticksElapsed > 0 && !preventMinions) {
+        if (ticksElapsed % 1000 == 0 && ticksElapsed > 0 && !preventMinions) {
             for (int i = 0; i < option.playerCount(); i++) {
                 option.spawnNewMob(new SoulReaver(pveOption.getRandomSpawnLocation(warlordsNPC)));
             }

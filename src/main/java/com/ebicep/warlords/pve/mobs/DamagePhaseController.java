@@ -23,7 +23,7 @@ public class DamagePhaseController {
     private GameRunnable followTask;
     private GameRunnable spinTask;
 
-    private double headOffsetY = 3;
+    private double headOffsetY = 4;
     private final Vector3f haloScale = new Vector3f(1.5f, 1.5f, 1.5f);
     private final float spinDegPerTick = 6f;
 

@@ -138,7 +138,6 @@ public class MeteorMarkersAbility {
                     }
                 }
 
-                // End when all meteors have finished lingering (or immediately after impacts if no linger)
                 boolean anyActive = false;
                 for (Marker m : markers) {
                     if (!m.impacted || (m.lingerUntil >= 0 && t <= m.lingerUntil)) {
@@ -179,28 +178,27 @@ public class MeteorMarkersAbility {
         for (int i = 0; i < markerCount; i++) {
             // Random point inside circle (polar sampling with sqrt for uniform area)
             double u = rng.nextDouble();
-            double r = Math.sqrt(u) * (arenaRadius - impactRadius * 0.5); // keep off the very edge
+            double r = Math.sqrt(u) * (arenaRadius - impactRadius * 0.5);
             double a = rng.nextDouble() * Math.PI * 2.0;
 
-            Location pos = worldPosFromPolar(base, r, a, 0); // y offset 0 -> ground level (adjust if needed)
+            Location pos = worldPosFromPolar(base, r, a, 0);
 
             Marker m = new Marker();
             m.r = r;
             m.a = a;
             m.y = 0.0;
             m.worldPos = pos;
-            m.impactAt = telegraphTicks; // all at same time; stagger if you like by adding rng.nextInt(10)
+            m.impactAt = telegraphTicks;
 
             markers.add(m);
 
-            // Initial brighter ring pulse so players notice the spot
             ringFlash(w, pos, impactRadius, 2, Color.fromRGB(255, 120, 80));
         }
     }
 
     private void impact(World w, Location at) {
         // Visuals + SFX
-        w.playSound(at, Sound.ENTITY_GENERIC_EXPLODE, 2, 1.1f);
+        w.playSound(at, Sound.ENTITY_GENERIC_EXPLODE, 2, 0.5f);
         w.spawnParticle(Particle.EXPLOSION, at, 2, 0, 0, 0, 0);
         for (int y = 0; y < columnHeight; y++) {
             Location p = at.clone().add(0, y * 0.5, 0);

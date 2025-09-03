@@ -45,8 +45,8 @@ public class IllusionCrossfire extends GameMap {
         List<Option> options = category.initMap(this, loc, addons);
 
         options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
-        options.add(LobbyLocationMarker.create(loc.addXYZ(112.5, 11, 77.5), Team.BLUE).asOption());
-        options.add(LobbyLocationMarker.create(loc.addXYZ(112.5, 11, 77.5), Team.RED).asOption());
+        options.add(LobbyLocationMarker.create(loc.addXYZ(112.5, 11, 73.5), Team.BLUE).asOption());
+        options.add(LobbyLocationMarker.create(loc.addXYZ(112.5, 11, 73.5), Team.RED).asOption());
 
         options.add(SpawnpointOption.forTeam(loc.addXYZ(112.5, 11, 77.5), Team.BLUE));
         options.add(SpawnpointOption.forTeam(loc.addXYZ(104.5, 11, 71.5), Team.RED));
