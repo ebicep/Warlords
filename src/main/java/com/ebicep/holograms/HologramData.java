@@ -1,5 +1,6 @@
 package com.ebicep.holograms;
 
+import com.ebicep.warlords.util.bukkit.EntitiesUtils;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.Entity;
@@ -168,7 +169,7 @@ public abstract class HologramData {
         private Quaternionf rightRotation = new Quaternionf();
         private Quaternionf leftRotation = new Quaternionf();
         private Display.Billboard billboard = Display.Billboard.CENTER;
-        private Display.Brightness brightness = new Display.Brightness(15, 15);
+        private Display.Brightness brightness = EntitiesUtils.MAX_BRIGHTNESS;
         private float viewRange = DEFAULT_VIEW_RANGE;
         private float width = 0;
         private float height = 0;

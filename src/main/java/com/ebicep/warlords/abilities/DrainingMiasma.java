@@ -124,7 +124,7 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
                                         wp,
                                         CooldownTypes.LOW_LEVEL_DEBUFF,
                                         cooldownManager -> {
-                                            new FallingBlockWaveEffect(miasmaTarget.getLocation(), 3, 1, Material.BIRCH_SAPLING).play();
+                                            FallingBlockWaveEffect.create(miasmaTarget.getLocation(), 3, 6, Material.BIRCH_SAPLING);
                                             for (WarlordsEntity target : PlayerFilter.entitiesAround(miasmaTarget, 6, 6, 6).aliveEnemiesOf(wp)) {
                                                 float healthDamage = miasmaTarget.getMaxHealth() * 0.01f;
                                                 healthDamage = DamageCheck.clamp(healthDamage);

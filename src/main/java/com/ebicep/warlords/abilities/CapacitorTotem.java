@@ -100,7 +100,7 @@ public class CapacitorTotem extends AbstractTotem implements Duration, Damages<C
                 data.timesTotemIncreased++;
                 totemCooldown.setTicksLeft(totemCooldown.getTicksLeft() + 10);
             }
-            new FallingBlockWaveEffect(totemStand.getLocation().add(0, .75, 0), totemRadius, 1.2, Material.OAK_SAPLING).play();
+            FallingBlockWaveEffect.create(totemStand.getLocation().add(0, .75, 0), totemRadius, 5, Material.OAK_SAPLING);
         };
         wp.getCooldownManager().addCooldown(totemCooldown);
     }

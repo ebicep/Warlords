@@ -219,7 +219,7 @@ public class FrostBolt extends AbstractPiercingProjectile<FrostBolt, FrostBolt.F
 
             @Override
             public void run() {
-                new FallingBlockWaveEffect(hit.getLocation(), 3, 1.1, Material.PACKED_ICE).play();
+                FallingBlockWaveEffect.create(hit.getLocation(), 3, 7, Material.PACKED_ICE);
                 for (WarlordsEntity freezeTarget : PlayerFilter.entitiesAround(hit, 3, 3, 3).aliveEnemiesOf(giver)) {
                     Utils.playGlobalSound(freezeTarget.getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 2, 0.7f);
                     Utils.playGlobalSound(freezeTarget.getLocation(), Sound.BLOCK_GLASS_BREAK, 2, 0.1f);

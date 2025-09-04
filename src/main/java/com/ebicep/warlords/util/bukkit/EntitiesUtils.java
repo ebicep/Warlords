@@ -7,7 +7,9 @@ import org.bukkit.entity.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RemoveEntities {
+public class EntitiesUtils {
+
+    public static final Display.Brightness MAX_BRIGHTNESS = new Display.Brightness(15, 15);
 
     public static void doRemove(Game game) {
         // TODO support multiple games in the same world by adding a bounding box to every map

@@ -9,6 +9,7 @@ import com.ebicep.warlords.game.option.towerdefense.towers.TowerRegistry;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsTower;
+import com.ebicep.warlords.util.bukkit.EntitiesUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import org.bukkit.Location;
@@ -176,7 +177,7 @@ public class TowerDefenseUtils {
                 .yaw(startLocation.getYaw());
         Display display = startLocation.getWorld().spawn(startLocation, ItemDisplay.class, d -> {
             d.setItemStack(itemStack);
-            d.setBrightness(new Display.Brightness(15, 15));
+            d.setBrightness(EntitiesUtils.MAX_BRIGHTNESS);
             d.setTransformation(new Transformation(
                     new Vector3f(),
                     new Quaternionf().rotationZ((float) Math.toRadians(-45)),

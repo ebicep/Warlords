@@ -18,9 +18,9 @@ import com.ebicep.warlords.menu.debugmenu.DebugMenuGameOptions;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.bukkit.EntitiesUtils;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
-import com.ebicep.warlords.util.bukkit.RemoveEntities;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -731,7 +731,7 @@ public final class Game implements Runnable, AutoCloseable {
         }
         ChatChannels.sendDebugMessage((CommandIssuer) null, Component.text("Closing Game", NamedTextColor.LIGHT_PURPLE));
         this.closed = true;
-        RemoveEntities.doRemove(this);
+        EntitiesUtils.doRemove(this);
         List<Throwable> exceptions = new ArrayList<>();
         ChatChannels.sendDebugMessage((CommandIssuer) null,
                 Component.text("Closing Game: Tasks = " + gameTasks.size(), NamedTextColor.LIGHT_PURPLE)

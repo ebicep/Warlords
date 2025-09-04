@@ -16,6 +16,7 @@ import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.spiritguard.FallenSoulsBranch;
+import com.ebicep.warlords.util.bukkit.EntitiesUtils;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -23,7 +24,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Display;
 import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -68,7 +68,7 @@ public class FallenSouls extends AbstractPiercingProjectile<FallenSouls, FallenS
         ItemDisplay display = startingLocation.getWorld().spawn(location, ItemDisplay.class, itemDisplay -> {
             itemDisplay.setItemStack(ITEM_STACK);
                     itemDisplay.setTeleportDuration(1);
-                    itemDisplay.setBrightness(new Display.Brightness(15, 15));
+            itemDisplay.setBrightness(EntitiesUtils.MAX_BRIGHTNESS);
                     itemDisplay.setTransformation(new Transformation(new Vector3f(),
                             new AxisAngle4f((float) Math.toRadians(startingLocation.getPitch()), 1, 0, 0),
                             new Vector3f(.75f),
