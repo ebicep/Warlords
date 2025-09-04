@@ -248,7 +248,7 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
 
         private Value.RangedValueCritable spikeDamage = new Value.RangedValueCritable(404, 562, 15, 175);
 
-        private Value.RangedValueCritable earthenRuptureDamage = new Value.RangedValueCritable(548, 695, 15, 150);
+        private Value.RangedValue earthenRuptureDamage = new Value.RangedValue(548, 695);
 
         private List<Value> values = List.of(spikeDamage, earthenRuptureDamage);
 
@@ -262,7 +262,7 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
             this.spikeDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("spikeDamage"), Value.RangedValueCritable.class);
             this.earthenRuptureDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(),
                     builder.getAppendedFieldNameDamage("earthenRuptureDamage"),
-                    Value.RangedValueCritable.class
+                    Value.RangedValue.class
             );
             this.values = List.of(spikeDamage, earthenRuptureDamage);
         }
