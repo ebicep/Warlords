@@ -9,8 +9,35 @@ import org.bukkit.Location;
 
 public class Veilkeeper extends AbstractMob implements BossMob {
 
-    public Veilkeeper(Location spawnLocation, String name, int maxHealth, float walkSpeed, float damageResistance, float minMeleeDamage, float maxMeleeDamage, AbstractAbility... abilities) {
-        super(spawnLocation, name, maxHealth, walkSpeed, damageResistance, minMeleeDamage, maxMeleeDamage, abilities);
+    public Veilkeeper(Location spawnLocation) {
+        super(spawnLocation,
+                "Veilkeeper",
+                350000,
+                0.25f,
+                50,
+                7000,
+                10000
+        );
+    }
+
+    public Veilkeeper(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            float damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(
+                spawnLocation,
+                name,
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage
+        );
     }
 
     @Override

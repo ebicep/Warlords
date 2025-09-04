@@ -174,7 +174,9 @@ public enum SkullID implements Skull {
     //https://minecraft-heads.com/custom-heads/head/56785-wrong-mark
     WRONG_MARK("Mjc1NDgzNjJhMjRjMGZhODQ1M2U0ZDkzZTY4YzU5NjlkZGJkZTU3YmY2NjY2YzAzMTljMWVkMWU4NGQ4OTA2NSJ9fX0="),
     //https://minecraft-heads.com/custom-heads/head/122089-ender-demon
-    ENDER_DEMON("Y2Y4ZTVmZDBmNDVjMTAwMjY5NGU1NTNmNmY2MTA5NmVkMzVjY2VmYTVhNjMwMzM5NGMyODdjNWNmN2NjNDNiOSJ9fX0=")
+    ENDER_DEMON("Y2Y4ZTVmZDBmNDVjMTAwMjY5NGU1NTNmNmY2MTA5NmVkMzVjY2VmYTVhNjMwMzM5NGMyODdjNWNmN2NjNDNiOSJ9fX0="),
+    //https://minecraft-heads.com/custom-heads/head/121814-abyssal-kuudra
+    ABYSSAL_KUUDRA("ODdiOTBmZDIxZjdhZWQ4YTA0Y2NjMDFkMzY4MGY5MjdjYmUwZGJjN2MzOGIxY2ExYjIxN2VhM2Q2NDE2ZTI0NCJ9fX0")
 
     ;
 

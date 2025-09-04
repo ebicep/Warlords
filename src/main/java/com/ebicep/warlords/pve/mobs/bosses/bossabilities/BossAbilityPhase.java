@@ -1,4 +1,4 @@
-package com.ebicep.warlords.game.option.raid;
+package com.ebicep.warlords.pve.mobs.bosses.bossabilities;
 
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 
