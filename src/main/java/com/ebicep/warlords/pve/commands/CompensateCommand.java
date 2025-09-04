@@ -95,7 +95,8 @@ public class CompensateCommand extends BaseCommand {
                         .name(Component.text("Player", NamedTextColor.GREEN))
                         .lore(Component.text(compensatedPlayers.size() == 1 ?
                                              compensatedPlayers.get(0).getName() :
-                                             "All " + compensatedPlayers.size() + " Players", NamedTextColor.AQUA))
+                                             "All " + compensatedPlayers.size() + " Players", NamedTextColor.AQUA
+                        ))
                         .get(),
                 (m, e) -> {
                     try {
@@ -105,7 +106,12 @@ public class CompensateCommand extends BaseCommand {
                                    String playerName = lines.getLine(0);
                                    for (DatabasePlayer databasePlayer : compensatedPlayers) {
                                        if (databasePlayer.getName().equalsIgnoreCase(playerName)) {
-                                           openCompensateMenu(player, compensation, List.of(databasePlayer));
+                                           new BukkitRunnable() {
+                                               @Override
+                                               public void run() {
+                                                   openCompensateMenu(player, compensation, List.of(databasePlayer));
+                                               }
+                                           }.runTaskLater(Warlords.getInstance(), 1);
                                            return null;
                                        }
                                    }
