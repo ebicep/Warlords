@@ -12,6 +12,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
@@ -289,6 +290,7 @@ public class Illumina extends AbstractMob implements BossMob {
                                 .cause("Death Ray")
                                 .source(warlordsNPC)
                                 .value(we.getMaxHealth() * 0.9f)
+                                .flag(InstanceFlags.TRUE_DAMAGE, true)
                         );
                         warlordsNPC.addInstance(InstanceBuilder
                                 .healing()

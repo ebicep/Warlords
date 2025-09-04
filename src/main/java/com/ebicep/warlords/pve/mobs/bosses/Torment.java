@@ -439,12 +439,12 @@ public class Torment extends AbstractMob implements BossMob {
                         Collections.singletonList((cooldown, ticksLeft, ticksElapsed2) -> {
                             if (ticksLeft % 10 == 0) {
                                 EffectUtils.playParticleLinkAnimation(warlordsNPC.getLocation(), we.getLocation(), Particle.DRIPPING_LAVA);
-                                EffectUtils.playSphereAnimation(we.getLocation(), 3, Particle.FLAME, 1);
+                                EffectUtils.playSphereAnimation(we.getLocation(), 7, Particle.FLAME, 1);
                             }
 
                             if (ticksLeft % 5 == 0) {
                                 for (WarlordsEntity ally : PlayerFilter
-                                        .entitiesAround(we, 3.5, 3.5, 3.5)
+                                        .entitiesAround(we, 7, 7, 7)
                                         .aliveTeammatesOfExcludingSelf(we)
                                 ) {
                                     ally.addInstance(InstanceBuilder
