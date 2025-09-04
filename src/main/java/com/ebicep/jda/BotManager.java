@@ -14,6 +14,7 @@ import com.ebicep.warlords.game.option.win.WinAfterTimeoutOption;
 import com.ebicep.warlords.game.state.PlayingState;
 import com.ebicep.warlords.game.state.PreLobbyState;
 import com.ebicep.warlords.party.PartyManager;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.StringUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
@@ -42,54 +43,56 @@ public class BotManager {
     public static int numberOfMessagesSentLast30Sec = 0;
 
     public static void connect() throws LoginException {
-        if (botToken != null) {
-            jda = JDABuilder.createLight(botToken)
-                            .enableIntents(GatewayIntent.GUILD_MEMBERS)
-                            .addEventListeners(new BotListener(), new QueueListener())
-                            .build();
-
-            task = new BukkitRunnable() {
-
-                int counter = 0;
-
-                @Override
-                public void run() {
-                    if (jda.getStatus() != JDA.Status.CONNECTED) {
-                        return;
-                    }
-                    if (counter == 0) {
-                        for (DiscordServer discordServer : DISCORD_SERVERS) {
-                            discordServer.setServer(jda.getGuildById(discordServer.getId()));
-                            if (discordServer.getQueueChannel() == null) {
-                                continue;
-                            }
-                            discordServer.getTextChannelByName(discordServer.getQueueChannel()).ifPresent(textChannel -> {
-                                textChannel.getIterableHistory()
-                                           .takeAsync(1000)
-                                           .thenAccept(textChannel::purgeMessages)
-                                           .thenAccept(unused -> QueueManager.sendQueue());
-                            });
-                        }
-                    }
-                    if (counter % 10 == 0) {
-                        if (QueueManager.sendQueue) {
-                            QueueManager.sendQueue = false;
-                            QueueManager.sendNewQueue();
-                        }
-                    }
-                    if (counter % 30 == 0 && ServerStatusCommand.enabled) {
-                        sendStatusMessage(false);
-                    }
-                    if (counter % 3 == 0) {
-                        if (numberOfMessagesSentLast30Sec > 0) {
-                            numberOfMessagesSentLast30Sec--;
-                        }
-                    }
-
-                    counter++;
-                }
-            }.runTaskTimer(Warlords.getInstance(), 100, 20);
+        if (botToken == null) {
+            ChatUtils.MessageType.DISCORD_BOT.sendMessage("No bot token found, not connecting to discord.");
+            return;
         }
+        jda = JDABuilder.createLight(botToken)
+                        .enableIntents(GatewayIntent.GUILD_MEMBERS)
+                        .addEventListeners(new BotListener(), new QueueListener())
+                        .build();
+
+        task = new BukkitRunnable() {
+
+            int counter = 0;
+
+            @Override
+            public void run() {
+                if (jda.getStatus() != JDA.Status.CONNECTED) {
+                    return;
+                }
+                if (counter == 0) {
+                    for (DiscordServer discordServer : DISCORD_SERVERS) {
+                        discordServer.setServer(jda.getGuildById(discordServer.getId()));
+                        if (discordServer.getQueueChannel() == null) {
+                            continue;
+                        }
+                        discordServer.getTextChannelByName(discordServer.getQueueChannel()).ifPresent(textChannel -> {
+                            textChannel.getIterableHistory()
+                                       .takeAsync(1000)
+                                       .thenAccept(textChannel::purgeMessages)
+                                       .thenAccept(unused -> QueueManager.sendQueue());
+                        });
+                    }
+                }
+                if (counter % 10 == 0) {
+                    if (QueueManager.sendQueue) {
+                        QueueManager.sendQueue = false;
+                        QueueManager.sendNewQueue();
+                    }
+                }
+                if (counter % 30 == 0 && ServerStatusCommand.enabled) {
+                    sendStatusMessage(false);
+                }
+                if (counter % 3 == 0) {
+                    if (numberOfMessagesSentLast30Sec > 0) {
+                        numberOfMessagesSentLast30Sec--;
+                    }
+                }
+
+                counter++;
+            }
+        }.runTaskTimer(Warlords.getInstance(), 100, 20);
     }
 
     public static void sendStatusMessage(boolean onQuit) {

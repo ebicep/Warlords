@@ -424,6 +424,8 @@ public class Warlords extends JavaPlugin {
             } catch (LoginException e) {
                 ChatUtils.MessageType.DISCORD_BOT.sendErrorMessage(e);
             }
+        } else {
+            ChatUtils.MessageType.DISCORD_BOT.sendMessage("No discord servers configured, bot will not start");
         }
 
         PacketUtils.init(this);
