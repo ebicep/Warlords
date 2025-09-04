@@ -67,11 +67,13 @@ public class DeathsDebtBranch extends AbstractUpgradeBranch<DeathsDebt> {
                 "Death Parade",
                 "Death's Debt - Master Upgrade",
                 """
-                        All enemies struck by Death's Debt are afflicted with Soulbinding, max 6. For every enemy Soulbound by Death's Debt, gain 2.5% damage reduction for 5 seconds.
+                        Reduce damage taken by 20%
+                        
+                        All enemies struck by Death's Debt are afflicted with Soulbinding, max 10. For every enemy Soulbound by Death's Debt, gain 2.5% damage reduction for 5 seconds.
                         """,
                 50000,
                 () -> {
-
+                    ability.setDelayedDamageTaken(ability.getDelayedDamageTaken() - 20);
                 }
         );
     }

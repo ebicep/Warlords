@@ -338,9 +338,9 @@ public class WaveDefenseOption implements PveOption {
         Component wavePrefix = Component.text("Wave " + waveCounter, NamedTextColor.YELLOW);
         if (waveCounter >= 101) {
             wavePrefix = Component.text("W ", NamedTextColor.BLACK)
-                                  .append(Component.text("a").decorate(TextDecoration.BOLD, TextDecoration.OBFUSCATED))
+                                  .append(Component.text("a").decorate(TextDecoration.BOLD))
                                   .append(Component.text("v").decorate(TextDecoration.BOLD))
-                                  .append(Component.text("e " + waveCounter).decorate(TextDecoration.BOLD, TextDecoration.OBFUSCATED));
+                                  .append(Component.text("e " + waveCounter).decorate(TextDecoration.BOLD));
         } else if (waveCounter == 100) {
             soundPitch = 0.1f;
             wavePrefix = Component.text("W", NamedTextColor.DARK_RED)
@@ -517,6 +517,10 @@ public class WaveDefenseOption implements PveOption {
             case EXTREME -> {
                 difficultyHealthMultiplier = 2;
                 difficultyDamageMultiplier = 1.75f;
+            }
+            case BOSS_RUSH -> {
+                difficultyHealthMultiplier = 3f;
+                difficultyDamageMultiplier = 1f;
             }
             default -> {
                 difficultyHealthMultiplier = 1;

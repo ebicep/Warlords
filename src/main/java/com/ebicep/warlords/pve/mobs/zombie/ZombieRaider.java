@@ -19,7 +19,7 @@ public class ZombieRaider extends AbstractMob implements AdvancedMob {
                 spawnLocation,
                 "Zombie Raider",
                 9500,
-                0.42f,
+                0.35f,
                 0,
                 650,
                 850

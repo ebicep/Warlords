@@ -53,21 +53,21 @@ public class FuriousSoul extends AbstractMob implements BossMinionMob {
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
         DifficultyIndex difficulty = option.getDifficulty();
-        maxHPPercent = difficulty == DifficultyIndex.EXTREME ? .03f : difficulty == DifficultyIndex.HARD ? .02f : .01f;
+        maxHPPercent = difficulty == DifficultyIndex.EXTREME ? .02f : difficulty == DifficultyIndex.HARD ? .015f : .01f;
     }
 
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
         EffectUtils.playParticleLinkAnimation(self.getLocation(), attacker.getLocation(), 81, 18, 59, 1);
         Utils.playGlobalSound(self.getLocation(), Sound.ENTITY_HOGLIN_CONVERTED_TO_ZOMBIFIED, 0.35f, 2);
-        if (!event.getCause().isEmpty() && !event.getFlags().contains(InstanceFlags.RECURSIVE)) {
+        if (!event.getCause().isEmpty() && !event.getFlags().contains(InstanceFlags.RECURSIVE) && !event.getFlags().contains(InstanceFlags.DOT)) {
             float damage = attacker.getMaxBaseHealth() * maxHPPercent;
             attacker.addInstance(InstanceBuilder
                     .damage()
                     .cause("Outrage")
                     .source(self)
                     .value(damage)
-                    .flags(InstanceFlags.TRUE_DAMAGE, InstanceFlags.RECURSIVE)
+                    .flags(InstanceFlags.TRUE_DAMAGE, InstanceFlags.RECURSIVE, InstanceFlags.IGNORE_DAMAGE_BOOST)
             );
         }
     }

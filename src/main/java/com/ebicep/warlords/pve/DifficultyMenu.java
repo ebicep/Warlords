@@ -49,6 +49,21 @@ public class DifficultyMenu {
                         }
                     }
             );
+//            menu.setItem(
+//                    4,
+//                    3,
+//                    new ItemBuilder(Material.REDSTONE_LAMP)
+//                            .name(Component.text(DifficultyIndex.BOSS_RUSH.getName(), DifficultyIndex.BOSS_RUSH.getDifficultyColor(), TextDecoration.BOLD))
+//                            .lore(DifficultyIndex.BOSS_RUSH.getDescription())
+//                            .get(),
+//                    (m, e) -> {
+//                        GameStartCommand.startGamePvE(player, GameMode.WAVE_DEFENSE, queueEntryBuilder ->
+//                                queueEntryBuilder.setMap(GameMap.VOID_RIFT)
+//                                        .setRequestedGameAddons(GameAddon.PRIVATE_GAME, GameAddon.CUSTOM_GAME)
+//
+//                        );
+//                    }
+//            );
             menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
         }
         menu.openForPlayer(player);

@@ -11,9 +11,9 @@ public class ZombieLancer extends AbstractMob implements BasicMob {
     public ZombieLancer(Location spawnLocation) {
         super(
                 spawnLocation,
-                "Zombie Lancer",
+                "Lancer",
                 2800,
-                0.38f,
+                0.3f,
                 0,
                 200,
                 300

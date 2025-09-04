@@ -20,9 +20,9 @@ public class ZombieVanguard extends AbstractMob implements AdvancedMob {
     public ZombieVanguard(Location spawnLocation) {
         super(
                 spawnLocation,
-                "Zombie Vanguard",
+                "Vanguard",
                 7000,
-                0.4f,
+                0.38f,
                 10,
                 500,
                 700

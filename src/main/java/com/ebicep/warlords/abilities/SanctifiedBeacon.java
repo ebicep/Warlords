@@ -180,6 +180,16 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
                 }
             }
         }
+//        if (ticksElapsed % 10 == 0 && pveMasterUpgrade) {
+//            for (WarlordsEntity ally : PlayerFilter
+//                    .entitiesAround(beacon.getGroundLocation(), rad, rad, rad)
+//                    .aliveEnemiesOf(wp)
+//                    .closestFirst(beacon.getGroundLocation())
+//                    .limit(4)
+//            ) {
+//                Utils.addKnockback("Beacon Knockback", beacon.getGroundLocation(), ally, 5, 0.05f);
+//            }
+//        }
         ArmorStand crystal = beacon.getCrystal();
         int yawIncrease = ticksElapsed % hexIntervalTicks == 0 ? 120 : 10;
         if (ticksElapsed % 2 == 0) {

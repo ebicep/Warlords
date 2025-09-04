@@ -1,4 +1,4 @@
-package com.ebicep.warlords.game.option.raid.bosses;
+package com.ebicep.warlords.pve.mobs.bosses.bossminions;
 
 import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -11,21 +11,22 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 
 import javax.annotation.Nonnull;
 
-public class PhysiraCrystal extends AbstractMob implements BossMinionMob {
+public class NineCrystal extends AbstractMob implements BossMinionMob {
 
     private SpecType spec;
     private WarlordsEntity owner;
 
-    public PhysiraCrystal(Location spawnLocation, WarlordsEntity owner, SpecType spec) {
+    public NineCrystal(Location spawnLocation, WarlordsEntity owner, SpecType spec) {
         super(
                 spawnLocation,
-                owner.getName() + " - " + spec.name(),
-                1000,
+                ChatColor.BOLD + spec.name(),
+                2000,
                 0,
                 0,
                 0,
@@ -35,9 +36,40 @@ public class PhysiraCrystal extends AbstractMob implements BossMinionMob {
         this.spec = spec;
     }
 
+    public NineCrystal(Location spawnLocation) {
+        super(
+                spawnLocation,
+                "Pylon",
+                2000,
+                0,
+                0,
+                0,
+                0
+        );
+    }
+
+    public NineCrystal(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            float damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(spawnLocation,
+                name,
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage
+        );
+    }
+
     @Override
     public Mob getMobRegistry() {
-        return null;
+        return Mob.NINE_CRYSTAL;
     }
 
     @Override
@@ -58,9 +90,9 @@ public class PhysiraCrystal extends AbstractMob implements BossMinionMob {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 if (spec == event.getSource().getSpecClass().specType) {
-                    return currentDamageValue * 2;
+                    return currentDamageValue * 4;
                 } else {
-                    return currentDamageValue * 0.5f;
+                    return currentDamageValue * 0.1f;
                 }
             }
         });
@@ -69,7 +101,7 @@ public class PhysiraCrystal extends AbstractMob implements BossMinionMob {
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
         if (ticksElapsed % 20 == 0) {
-            EffectUtils.playParticleLinkAnimation(warlordsNPC.getLocation(), owner.getLocation(), Particle.CHERRY_LEAVES);
+            EffectUtils.playParticleLinkAnimation(warlordsNPC.getLocation(), new Location(warlordsNPC.getWorld(), 112.5, 13, 62.5), Particle.CHERRY_LEAVES);
         }
     }
 

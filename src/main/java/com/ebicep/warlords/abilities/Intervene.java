@@ -182,7 +182,7 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
                     );
                 }
             };
-            if (pveMasterUpgrade) {
+            if (pveMasterUpgrade2) {
                 wp.addKnockbackModifier(wp, name, -100, interveneCooldown);
                 veneTarget.addKnockbackModifier(wp, name, -100, interveneCooldown);
             }

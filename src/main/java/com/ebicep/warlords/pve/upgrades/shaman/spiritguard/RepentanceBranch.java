@@ -22,29 +22,29 @@ public class RepentanceBranch extends AbstractUpgradeBranch<Repentance> {
                     public void run(float value) {
                         ability.setDamageConvertPercent(damageConvert + value);
                     }
-                }, .5f)
+                }, 1f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgradeDuration(ability)
+                .addUpgradeDuration(ability, 40f)
                 .addTo(treeB);
 
         masterUpgrade = new Upgrade(
                 "Revengeance",
                 "Repentance - Master Upgrade",
-                "Repentance's pool decay per second is reduced by 50% and the energy conversion based on damage taken is increased by 25%.",
+                "Repentance's pool decay per second is reduced by 90% and the energy conversion based on damage taken is increased by 50%.",
                 50000,
                 () -> {
-                    ability.setPoolDecay((int) (ability.getPoolDecay() * 0.5f));
-                    ability.setEnergyConvertPercent(ability.getEnergyConvertPercent() * 1.25f);
+                    ability.setPoolDecay((int) (ability.getPoolDecay() * 0.1f));
+                    ability.setEnergyConvertPercent(ability.getEnergyConvertPercent() * 1.5f);
                 }
         );
         masterUpgrade2 = new Upgrade(
                 "Remembrance",
                 "Repentance - Master Upgrade",
                 """
-                        Repentance can now Overheal. Additionally, after Repentance ends, you gain an EPS buff equivalent to 1 EPS per 10 energy gained during Repentance for 8 seconds.
+                        Repentance can now Overheal. Additionally, after Repentance ends, you gain an EPS buff equivalent to 3 EPS per 10 energy gained during Repentance for 8 seconds.
                         """,
                 50000,
                 () -> {

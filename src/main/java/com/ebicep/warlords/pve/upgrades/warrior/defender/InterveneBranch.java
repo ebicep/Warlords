@@ -33,7 +33,7 @@ public class InterveneBranch extends AbstractUpgradeBranch<Intervene> {
                 "Intervene - Master Upgrade",
                 """
                         +1 Chain Target
-                                                
+                        
                         Remove the damage, cast and break range limit on Intervene, and reduce damage taken by 35%.""",
                 50000,
                 () -> {
@@ -49,7 +49,7 @@ public class InterveneBranch extends AbstractUpgradeBranch<Intervene> {
                 "Intervene - Master Upgrade",
                 """
                         +1 Chain Target
-                                                
+                        
                         Remove the damage, cast and break range limit on Intervene. Additionally, Intervene gives a 25% speed increase as well as knockback immunity.
                         """,
                 50000,

@@ -47,7 +47,7 @@ public class NPCManager {
 //                    createInterceptionNPC();
                     createWaveDefenseNPC();
                     createOnslaughtNPC();
-//                    createTreasureHuntNPC();
+                    createTreasureHuntNPC();
 //                    createBossRushNPC();
                 })
                 .execute();

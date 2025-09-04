@@ -13,7 +13,7 @@ public class CelestialOpus extends AbstractMob implements EliteMob {
                 spawnLocation,
                 "Celestial Opus",
                 9000,
-                0.4f,
+                0.35f,
                 10,
                 800,
                 1000

@@ -103,9 +103,17 @@ public enum DifficultyIndex {
             pveOption -> .05f + pveOption.getWaveCounter() * .002f // 15% at wave 50, 25% at wave 100
     ),
     BOSS_RUSH("Boss Rush",
-            List.of(),
-            NamedTextColor.RED,
-            8,
+            List.of(
+                    Component.text("Fight to the death against all the"),
+                    Component.text("bosses in the game, at this moment."),
+                    Component.empty(),
+                    Component.text("Modifiers:"),
+                    Component.text("+200% Mob Health", NamedTextColor.RED),
+                    Component.empty(),
+                    Component.text("CURRENTLY DOES NOT GIVE REWARDS", NamedTextColor.RED)
+            ),
+            NamedTextColor.AQUA,
+            9,
             1,
             pveOption -> 0f
     ),

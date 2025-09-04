@@ -1,6 +1,8 @@
 package com.ebicep.warlords.pve.mobs;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.pve.mobs.bosses.Physira;
+import com.ebicep.warlords.pve.mobs.bosses.bossminions.NineCrystal;
 import com.ebicep.warlords.game.option.towerdefense.mobs.*;
 import com.ebicep.warlords.game.option.towerdefense.towers.*;
 import com.ebicep.warlords.game.option.whackamole.moles.MoleArmorStand;
@@ -129,7 +131,7 @@ public enum Mob {
             )
     ),
     SKELETAL_WARLOCK(EntityType.SKELETON, SkeletalWarlock.class, SkeletalWarlock::new, SkeletalWarlock::new, new Utils.SimpleEntityEquipment(
-            new ItemStack(Material.ORANGE_CARPET),
+            ArmorManager.Helmets.GREATER_MAGE_HELMET.itemRed,
             new ItemStack(Material.CHAINMAIL_CHESTPLATE),
             new ItemStack(Material.CHAINMAIL_LEGGINGS),
             new ItemStack(Material.CHAINMAIL_BOOTS),
@@ -448,8 +450,34 @@ public enum Mob {
             Weapons.VOID_EDGE.getItem()
     )
     ),
+    PHYSIRA(EntityType.WITHER_SKELETON, Physira.class, Physira::new, Physira::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.SEEK_DOORS),
+            new ItemStack(Material.NETHERITE_CHESTPLATE),
+            new ItemStack(Material.NETHERITE_LEGGINGS),
+            new ItemStack(Material.NETHERITE_BOOTS),
+            Weapons.SOUL_REAVER.getItem()
+    )
+    ),
+    ONE_OF_NINE(EntityType.WITHER_SKELETON, OneOfNine.class, OneOfNine::new, OneOfNine::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.GHOST_PURPLE),
+            new ItemStack(Material.NETHERITE_CHESTPLATE),
+            new ItemStack(Material.NETHERITE_LEGGINGS),
+            new ItemStack(Material.NETHERITE_BOOTS),
+            Weapons.SOUL_REAVER.getItem()
+    )
+    ),
+    VANGUARD(EntityType.WITHER_SKELETON, Vanguard.class, Vanguard::new, Vanguard::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.ENDER_DEMON),
+            new ItemStack(Material.NETHERITE_CHESTPLATE),
+            new ItemStack(Material.NETHERITE_LEGGINGS),
+            new ItemStack(Material.NETHERITE_BOOTS),
+            Weapons.TIDEBREAKER.getItem()
+    )
+    ),
     MAGMATIC_OOZE(EntityType.MAGMA_CUBE, MagmaticOoze.class, MagmaticOoze::new, MagmaticOoze::new, null),
     ENAVURIS(EntityType.ENDERMAN, Enavuris.class, Enavuris::new, Enavuris::new, null),
+
+
 
 
     // Boss minions
@@ -541,6 +569,22 @@ public enum Mob {
             Weapons.TENDERIZER.getItem()
     )
     ),
+    ECHO_OF_BLADES(EntityType.STRAY, EchoOfBlades.class, EchoOfBlades::new, EchoOfBlades::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.WITHER_SOUL),
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 0, 0, 0),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 0, 0, 0),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 0, 0, 0),
+            Weapons.SOUL_REAVER.getItem()
+    )
+    ),
+    SOUL_REAVER(EntityType.DROWNED, SoulReaver.class, SoulReaver::new, SoulReaver::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.CELESTIAL_GOLDOR),
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 30, 0, 30),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 30, 0, 30),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 30, 0, 30),
+            Weapons.TIDEBREAKER.getItem()
+    )
+    ),
     MITHRA_EGG_SAC(EntityType.ARMOR_STAND, EggSac.class, EggSac::new, EggSac::new, new Utils.SimpleEntityEquipment(
             EggSac.EGG_SAC_ITEM,
             null,
@@ -549,6 +593,7 @@ public enum Mob {
             null
     )
     ),
+    NINE_CRYSTAL(EntityType.BREEZE, NineCrystal.class, NineCrystal::new, NineCrystal::new, null),
     ARACHNO_VENERATUS(EntityType.SPIDER, ArachnoVeneratus.class, ArachnoVeneratus::new, ArachnoVeneratus::new, null),
     CURSED_PSION(EntityType.WITHER_SKELETON, CursedPsion.class, CursedPsion::new, CursedPsion::new, null),
     ENAVURITE(EntityType.ENDERMITE, Enavurite.class, Enavurite::new, Enavurite::new, null),
@@ -966,33 +1011,56 @@ public enum Mob {
             ARACHNO_VENARI
     };
     public static final Mob[] INTERMEDIATE = {
-            HOUND, INTERMEDIATE_WARRIOR_BERSERKER, SKELETAL_WARLOCK, PIG_SHAMAN, PIG_ALLEVIATOR,
-            WITCH_DEACON, BLAZING_KINDLE, WANDER_KNIGHTS, ZOMBIE_SWORDSMAN, ZOMBIE_LAMENT
+            HOUND, INTERMEDIATE_WARRIOR_BERSERKER, SKELETAL_WARLOCK, PIG_SHAMAN,
+            BLAZING_KINDLE, WANDER_KNIGHTS, ZOMBIE_SWORDSMAN, ZOMBIE_LAMENT
     };
     public static final Mob[] ADVANCED = {
             ILLUMINATION, GOLEM_APPRENTICE, SCRUPULOUS_ZOMBIE, SLIME_GUARD, CELESTIAL_BOW_WIELDER,
-            ZOMBIE_VANGUARD, ADVANCED_WARRIOR_BERSERKER, VOID_ZOMBIE, ZOMBIE_KNIGHT, SLIMY_CHESS,
-            ZOMBIE_RAIDER, WANDER_WALKER, SKELETAL_ENTROPY, FIRE_SPLITTER
+            ZOMBIE_VANGUARD, ADVANCED_WARRIOR_BERSERKER, SLIMY_CHESS,
+            ZOMBIE_RAIDER, WANDER_WALKER, SKELETAL_ENTROPY, FIRE_SPLITTER, WITCH_DEACON, PIG_ALLEVIATOR
     };
     public static final Mob[] ELITE = {
-            CELESTIAL_SWORD_WIELDER, CELESTIAL_OPUS, RIFT_WALKER, OVERGROWN_ZOMBIE,
-            SKELETAL_PYROMANCER, SKELETAL_ANOMALY, SKELETAL_MESMER, SKELETAL_ARCHER,
-            CREEPY_BOMBER
+            CELESTIAL_SWORD_WIELDER, RIFT_WALKER, OVERGROWN_ZOMBIE,
+            SKELETAL_PYROMANCER, SKELETAL_ANOMALY, SKELETAL_ARCHER,
+            CREEPY_BOMBER, SKELETAL_MESMER, ZOMBIE_KNIGHT, VOID_ZOMBIE
     };
     public static final Mob[] CHAMPION = {
-            NIGHTMARE_ZOMBIE, PIG_PARTICLE, EXTREME_ZEALOT, SMART_SKELETON, SKELETAL_SORCERER
+            NIGHTMARE_ZOMBIE,
+            PIG_PARTICLE,
+            EXTREME_ZEALOT,
+            SMART_SKELETON,
+            SKELETAL_SORCERER,
+            CELESTIAL_OPUS
     };
     public static final Mob[] BOSS_MINIONS = {
-            BOLTARO_SHADOW, BOLTARO_EXLIED,
-            TORMENTED_SOUL, DEPRESSED_SOUL, FURIOUS_SOUL, VOLTAIC_SOUL, AGONIZED_SOUL,
-            NARMER_ACOLYTE, NARMERS_DEATH_CHARGE,
+            BOLTARO_SHADOW,
+            BOLTARO_EXLIED,
+            TORMENTED_SOUL,
+            DEPRESSED_SOUL,
+            FURIOUS_SOUL,
+            VOLTAIC_SOUL,
+            AGONIZED_SOUL,
+            NARMER_ACOLYTE,
+            NARMERS_DEATH_CHARGE,
             ZENITH_LEGIONNAIRE,
             SOUL_OF_GRADIENT,
-            MITHRA_EGG_SAC, ARACHNO_VENERATUS
+            MITHRA_EGG_SAC,
+            ARACHNO_VENERATUS,
+            ECHO_OF_BLADES
     };
     public static final Mob[] BOSSES = {
-            BOLTARO, GHOULCALLER, NARMER, MITHRA, ZENITH,
-            CHESSKING, ILLUMINA, TORMENT, VOID, MAGMATIC_OOZE
+            BOLTARO,
+            GHOULCALLER,
+            NARMER,
+            MITHRA,
+            ZENITH,
+            CHESSKING,
+            ILLUMINA,
+            TORMENT,
+            VOID,
+            MAGMATIC_OOZE,
+            PHYSIRA,
+            ONE_OF_NINE
     };
     public static final Mob[] EVENT_BOSSES = {
             EVENT_BOLTARO, EVENT_NARMER, EVENT_MITHRA, EVENT_ILLUSION_CORE, EVENT_EXILED_CORE, EVENT_CALAMITY_CORE, EVENT_ILLUMINA,

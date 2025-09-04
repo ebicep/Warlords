@@ -69,10 +69,10 @@ public class WarlordsNPC extends WarlordsEntity {
         this.npc.data().set(WARLORDS_ENTITY_METADATA, this);
         this.mob = warlordsMob;
         this.mobHologram = mobHologram;
-        if (warlordsMob != null && warlordsMob.getLevel() > 0) {
+        if (warlordsMob != null && warlordsMob.getInternalLevel() > 0) {
             mobNamePrefix = Component.textOfChildren(
                     Component.text("[", NamedTextColor.GRAY),
-                    Component.text(warlordsMob.getLevel(), warlordsMob.getTextColor()),
+                    warlordsMob.getNamePrefix(),
                     Component.text("] ", NamedTextColor.GRAY)
             );
         }

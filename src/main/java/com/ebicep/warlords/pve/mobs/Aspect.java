@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 
 public enum Aspect {
 
-    ARMOURED("Armoured", TextColor.color(121, 121, 121)) {
+    ARMOURED("Armoured", TextColor.color(161, 161, 161)) {
         @Override
         public void apply(WarlordsEntity warlordsEntity) {
             warlordsEntity.getCooldownManager().addCooldown(new PermanentCooldown<>(
@@ -47,7 +47,16 @@ public enum Aspect {
                     },
                     false,
                     (cooldown, ticksElapsed) -> {
-
+                        if (ticksElapsed % 20 == 0) {
+                            EffectUtils.playCircularShieldAnimationWithInnerCircle(
+                                    warlordsEntity.getLocation(),
+                                    Particle.ASH,
+                                    Particle.CRIMSON_SPORE,
+                                    1, 1,
+                                    3,
+                                    1
+                            );
+                        }
                     }
             ) {
                 @Override
@@ -55,7 +64,7 @@ public enum Aspect {
                     if (Aspect.isNegated(warlordsEntity)) {
                         return currentDamageValue;
                     }
-                    return currentDamageValue * .8f;
+                    return currentDamageValue * .6f;
                 }
             });
         }
@@ -74,7 +83,9 @@ public enum Aspect {
                     },
                     false,
                     (cooldown, ticksElapsed) -> {
-
+                        if (ticksElapsed % 10 == 0) {
+                            EffectUtils.playCrownAnimation(warlordsEntity.getLocation(), Particle.SNOWFLAKE);
+                        }
                     }
             ) {
                 @Override
@@ -82,7 +93,7 @@ public enum Aspect {
                     if (Aspect.isNegated(warlordsEntity)) {
                         return;
                     }
-                    warlordsEntity.addSpeedModifier(warlordsEntity, "Chilling", -20, 40);
+                    warlordsEntity.addSpeedModifier(warlordsEntity, "Chilling", -40, 40);
                 }
             });
         }
@@ -198,7 +209,7 @@ public enum Aspect {
     JUGGERNAUT("Juggernaut", TextColor.color(255, 242, 0)) {
         @Override
         public void apply(WarlordsEntity warlordsEntity) {
-            float additionalHealth = warlordsEntity.getMaxBaseHealth() * .2f;
+            float additionalHealth = warlordsEntity.getMaxBaseHealth() * .5f;
             AtomicReference<FloatModifiable.FloatModifier> modifier = new AtomicReference<>(warlordsEntity.getHealth().addAdditiveModifier(name + " (Base)", additionalHealth));
             warlordsEntity.heal();
             AtomicBoolean hasEffect = new AtomicBoolean(true);
@@ -258,7 +269,7 @@ public enum Aspect {
     SWIFT("Swift", TextColor.color(121, 121, 255)) {
         @Override
         public void apply(WarlordsEntity warlordsEntity) {
-            MotionModifier modifier = new MotionModifierBuilder().setFrom(warlordsEntity).setName("Swift").setModifier(20).setDuration(400000).build();
+            MotionModifier modifier = new MotionModifierBuilder().setFrom(warlordsEntity).setName("Swift").setModifier(40).setDuration(400000).build();
             MotionSystem calculateSpeed = warlordsEntity.getSpeed();
             calculateSpeed.addModifier(modifier);
             warlordsEntity.getCooldownManager().addCooldown(new PermanentCooldown<>(
@@ -322,7 +333,7 @@ public enum Aspect {
                         return;
                     }
                     WarlordsEntity attacker = event.getSource();
-                    float healAmount = currentDamageValue * .2f;
+                    float healAmount = currentDamageValue * .3f;
                     attacker.addInstance(InstanceBuilder
                             .healing()
                             .cause(name)

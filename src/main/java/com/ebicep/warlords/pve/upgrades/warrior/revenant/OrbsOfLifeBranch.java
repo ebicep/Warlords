@@ -41,8 +41,8 @@ public class OrbsOfLifeBranch extends AbstractUpgradeBranch<OrbsOfLife> {
                         Double orbs healing increase over time, and orbs last twice as long.
                         
                         +30% Healing
-                        Orbs of Life can now Overheal.
-                        Upon reactivation, orbs will now retain its healing increase.
+                        
+                        Orbs of Life can now Overheal. Upon reactivation, orbs will now retain its healing increase.
                         """,
                 50000,
                 () -> {

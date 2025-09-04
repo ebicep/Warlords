@@ -3,6 +3,7 @@ package com.ebicep.customentities.npc.traits;
 import com.ebicep.customentities.npc.WarlordsTrait;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.GameMode;
+import com.ebicep.warlords.game.option.pve.treasurehunt.TreasureHuntMenu;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.trait.HologramTrait;

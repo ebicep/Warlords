@@ -22,7 +22,7 @@ public class ZombieSwordsman extends AbstractMob implements IntermediateMob {
                 spawnLocation,
                 "Swordsman",
                 4000,
-                0.38f,
+                0.32f,
                 10,
                 300,
                 500

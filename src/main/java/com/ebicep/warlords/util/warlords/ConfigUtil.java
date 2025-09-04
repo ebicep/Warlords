@@ -71,17 +71,17 @@ public class ConfigUtil {
 
     public static void readBotConfig(Warlords instance) {
         try {
-            YamlConfiguration config = YamlConfiguration.loadConfiguration(new File(instance.getDataFolder(), "bot.yml"));
-            for (String key : config.getKeys(false)) {
-                BotManager.DiscordServer discordServer = new BotManager.DiscordServer(
-                        key,
-                        config.getString(key + ".id"),
-                        config.getString(key + ".statusChannel"),
-                        config.getString(key + ".queueChannel")
-                );
-                BotManager.DISCORD_SERVERS.add(discordServer);
-                ChatUtils.MessageType.DISCORD_BOT.sendMessage("Added server " + key + " = " + discordServer.getId() + ", " + discordServer.getStatusChannel() + ", " + discordServer.getQueueChannel());
-            }
+//            YamlConfiguration config = YamlConfiguration.loadConfiguration(new File(instance.getDataFolder(), "bot.yml"));
+//            for (String key : config.getKeys(false)) {
+//                BotManager.DiscordServer discordServer = new BotManager.DiscordServer(
+//                        key,
+//                        config.getString(key + ".id"),
+//                        config.getString(key + ".statusChannel"),
+//                        config.getString(key + ".queueChannel")
+//                );
+//                BotManager.DISCORD_SERVERS.add(discordServer);
+//                ChatUtils.MessageType.DISCORD_BOT.sendMessage("Added server " + key + " = " + discordServer.getId() + ", " + discordServer.getStatusChannel() + ", " + discordServer.getQueueChannel());
+//            }
             /*
             server1
                 id

@@ -21,7 +21,7 @@ public class FireSplitter extends AbstractMob implements AdvancedMob {
                 spawnLocation,
                 "Fire Splitter",
                 8000,
-                0.38f,
+                0.32f,
                 10,
                 600,
                 900

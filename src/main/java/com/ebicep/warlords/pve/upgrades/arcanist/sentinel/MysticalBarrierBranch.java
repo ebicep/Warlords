@@ -28,7 +28,7 @@ public class MysticalBarrierBranch extends AbstractUpgradeBranch<MysticalBarrier
                         +3s Duration
                         +20% Additional Cooldown Reduction
                         
-                        Draw aggro from nearby mobs when acticvating Mystical Barrier. Increase max shield health by 3000 and increase amount of shield granted for each damage instance by 80.
+                        Draw aggro from nearby mobs when activating Mystical Barrier. Increase max shield health by 3000 and increase amount of shield granted for each damage instance by 80.
                         """,
                 50000,
                 () -> {

@@ -128,7 +128,7 @@ public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<
                             }
                             List<Soulbinding.SoulbindingData> soulbindingData = soulbindings.stream().map(soulbinding -> soulbinding.activeSoulbinding(wp)).toList();
                             float damageReduction = 1;
-                            for (int i = 0; i < enemies.size() && i < 6; i++) {
+                            for (int i = 0; i < enemies.size() && i < 10; i++) {
                                 WarlordsEntity enemy = enemies.get(i);
                                 soulbindingData.forEach(soulbinding -> soulbinding.bindPlayer(wp, enemy));
                                 damageReduction -= .025f;
@@ -137,10 +137,14 @@ public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<
                             wp.getCooldownManager().addCooldown(new RegularCooldown<>("Death Parade", "PARADE", DeathsDebt.class, null, wp, CooldownTypes.BUFF, cooldownManager -> {
                             }, 5 * 20
                             ) {
-
                                 @Override
                                 public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                                     return currentDamageValue * finalDamageReduction;
+                                }
+
+                                @Override
+                                public float addEnergyPerHit(WarlordsEntity we, float energyPerHit) {
+                                    return energyPerHit + 30;
                                 }
                             });
                         }

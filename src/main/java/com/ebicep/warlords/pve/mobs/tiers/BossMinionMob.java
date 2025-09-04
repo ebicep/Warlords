@@ -2,8 +2,10 @@ package com.ebicep.warlords.pve.mobs.tiers;
 
 import com.ebicep.warlords.pve.mobs.flags.BossLike;
 import com.ebicep.warlords.pve.mobs.flags.Unexecutable;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 
 public interface BossMinionMob extends Mob, Unexecutable, BossLike {
 
@@ -28,13 +30,13 @@ public interface BossMinionMob extends Mob, Unexecutable, BossLike {
     }
 
     @Override
-    default int getLevel() {
+    default int getInternalLevel() {
         return 6;
     }
 
     @Override
-    default TextColor getTextColor() {
-        return NamedTextColor.RED;
+    default Component getNamePrefix() {
+        return Component.text("BOSS MINION", NamedTextColor.RED);
     }
 
 }

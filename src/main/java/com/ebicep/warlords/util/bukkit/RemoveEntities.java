@@ -17,7 +17,7 @@ public class RemoveEntities {
                 .getEntities()
                 .stream()
                 .filter(entity -> !(entity instanceof Player))
-                .filter(entity -> !(entity instanceof ItemDisplay))
+                //.filter(entity -> !(entity instanceof ItemDisplay))
                 .toList();
         collect.forEach(Entity::remove);
     }

@@ -22,9 +22,9 @@ public class GolemApprentice extends AbstractMob implements AdvancedMob {
     public GolemApprentice(Location spawnLocation) {
         super(
                 spawnLocation,
-                "Golem Apprentice",
+                "Apprentice",
                 5000,
-                0.4f,
+                0.32f,
                 20,
                 400,
                 600

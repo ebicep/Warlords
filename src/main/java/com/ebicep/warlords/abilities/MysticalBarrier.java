@@ -103,16 +103,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), Sound.ITEM_ARMOR_EQUIP_DIAMOND, 2, 0.4f);
         Utils.playGlobalSound(wp.getLocation(), "arcanist.mysticalbarrier.activation", 2, 1);
-        if (wp.isInPve()) {
-            for (WarlordsEntity npc : PlayerFilter
-                    .entitiesAround(wp, 15, 15 ,15)
-                    .aliveEnemiesOf(wp)
-            ) {
-                if (npc instanceof WarlordsNPC) {
-                    ((WarlordsNPC) npc).getMob().setTarget(wp);
-                }
-            }
-        }
+
         if (pveMasterUpgrade2) {
             giveBarrier(wp, wp);
             for (WarlordsEntity target : PlayerFilter
@@ -181,7 +172,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                     if (ticksElapsed % 2 != 0) {
                         return;
                     }
-                    if (isSelf && wp.isInPve()) {
+                    if (isSelf && pveMasterUpgrade  && ticksElapsed % 10 == 0) {
                         for (WarlordsEntity npc : PlayerFilter
                                 .entitiesAround(wp, 15, 15 ,15)
                         ) {

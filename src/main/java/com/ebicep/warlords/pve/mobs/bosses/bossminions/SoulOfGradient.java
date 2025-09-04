@@ -30,7 +30,7 @@ public class SoulOfGradient extends AbstractMob implements BossMinionMob {
     public SoulOfGradient(Location spawnLocation) {
         super(spawnLocation,
                 "Soul of Gradient",
-                14000,
+                13000,
                 0.15f,
                 0,
                 2000,
