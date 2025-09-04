@@ -18,6 +18,7 @@ import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.general.settings.CooldownDisplaySettings;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.bukkit.EntitiesUtils;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.packets.PacketUtils;
 import com.ebicep.warlords.util.bukkit.packets.wrappers.WrapperPlayServerEntityMetadata;
@@ -316,7 +317,7 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
                         d.setItemStack(ability.getAbilityIcon());
                         d.setItemDisplayTransform(ItemDisplay.ItemDisplayTransform.GUI);
                         d.setTeleportDuration(3);
-                        d.setBrightness(new Display.Brightness(15, 15));
+                        d.setBrightness(EntitiesUtils.MAX_BRIGHTNESS);
                         d.setBillboard(Display.Billboard.VERTICAL);
                         d.setViewRange(.4f);
                     }
@@ -336,7 +337,7 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
                         d.setShadowed(false);
                         d.text(Component.empty());
                         d.setTeleportDuration(3);
-                        d.setBrightness(new Display.Brightness(15, 15));
+                        d.setBrightness(EntitiesUtils.MAX_BRIGHTNESS);
                         d.setBillboard(Display.Billboard.VERTICAL);
                         d.setViewRange(.4f);
                     }

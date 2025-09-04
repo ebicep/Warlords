@@ -543,12 +543,12 @@ public class OneOfNine extends AbstractMob implements BossMob {
     }
 
     public void phaseTransition() {
-        new FallingBlockWaveEffect(
+        FallingBlockWaveEffect.create(
                 mapCenter.clone().add(0, 1, 0),
                 20,
-                0.9,
+                7,
                 Material.SOUL_FIRE
-        ).play();
+        );
 
         Utils.playGlobalSound(mapCenter, Sound.ENTITY_WITHER_DEATH, 0.5f, 0.2f);
         EffectUtils.playFirework(warlordsNPC.getLocation(), FireworkEffect.builder()

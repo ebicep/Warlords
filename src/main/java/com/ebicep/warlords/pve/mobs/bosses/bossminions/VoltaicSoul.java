@@ -93,6 +93,6 @@ public class VoltaicSoul extends AbstractMob implements BossMinionMob {
                                 .value(damage)
                         );
                     });
-        new FallingBlockWaveEffect(warlordsNPC.getLocation().add(0, .75, 0), 9, 1.4, Material.OAK_SAPLING).play();
+        FallingBlockWaveEffect.create(warlordsNPC.getLocation().add(0, .75, 0), 9, 3, Material.OAK_SAPLING);
     }
 }

@@ -76,7 +76,7 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), Sound.BLOCK_GLASS_BREAK, 2, 0.1f);
         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_BLAZE_DEATH, 2, 0.7f);
-        new FallingBlockWaveEffect(wp.getLocation(), vitalityRange, 1, Material.BIRCH_SAPLING).play();
+        FallingBlockWaveEffect.create(wp.getLocation(), vitalityRange, 6, Material.BIRCH_SAPLING);
         wp.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(healingValues.liquorHealing));
         for (WarlordsEntity teammate : PlayerFilter.entitiesAround(wp, vitalityRange, vitalityRange, vitalityRange).aliveTeammatesOfExcludingSelf(wp)) {
             teammate.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(healingValues.liquorHealing));

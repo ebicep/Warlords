@@ -81,7 +81,7 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                 cooldownManager -> {
                     Utils.playGlobalSound(totemStand.getLocation(), Sound.ENTITY_BLAZE_DEATH, 1.2f, 0.7f);
                     Utils.playGlobalSound(totemStand.getLocation(), "shaman.heal.impact", 2, 1);
-                    new FallingBlockWaveEffect(totemStand.getLocation().clone().add(0, 1, 0), 3, 0.8, Material.SPRUCE_SAPLING).play();
+                    FallingBlockWaveEffect.create(totemStand.getLocation().clone().add(0, 1, 0), 3, 8, Material.SPRUCE_SAPLING);
                     List<WarlordsEntity> toHeal = PlayerFilter.entitiesAround(totemStand, rad, rad, rad).aliveTeammatesOf(wp).toList();
                     toHeal.forEach((nearPlayer) -> {
                         stats.playersHealed++;
@@ -222,7 +222,7 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
         if (inPve) {
             addSecondaryAbility(5, () -> {
                         Utils.playGlobalSound(totemStand.getLocation(), "paladin.hammeroflight.impact", 1.5f, 0.2f);
-                        new FallingBlockWaveEffect(totemStand.getLocation().add(0, 1, 0), 7, 2, Material.SPRUCE_SAPLING).play();
+                FallingBlockWaveEffect.create(totemStand.getLocation().add(0, 1, 0), 7, 2, Material.SPRUCE_SAPLING);
                         PlayerFilter.entitiesAround(totemStand.getLocation(), rad, rad, rad).aliveEnemiesOf(wp).forEach((p) -> {
                             stats.playersCrippled++;
                             wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" Your Healing Totem has crippled ", NamedTextColor.GRAY))

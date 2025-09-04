@@ -19,12 +19,9 @@ import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
-import com.ebicep.warlords.pve.mobs.bosses.bossminions.NarmersDeathCharge;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.SoulOfGradient;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.mobs.witherskeleton.CelestialOpus;
-import com.ebicep.warlords.pve.mobs.zombie.ZombieLament;
-import com.ebicep.warlords.pve.mobs.zombie.ZombieLancer;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -33,8 +30,10 @@ import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
-import org.bukkit.*;
-import org.bukkit.entity.Boss;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -372,7 +371,7 @@ public class Torment extends AbstractMob implements BossMob {
         }
 
         if (ticksElapsed % 200 == 0) {
-            new FallingBlockWaveEffect(warlordsNPC.getLocation().clone().add(0, 1, 0), 12, 0.7, Material.SOUL_FIRE).play();
+            FallingBlockWaveEffect.create(warlordsNPC.getLocation().clone().add(0, 1, 0), 12, 4, Material.SOUL_FIRE);
             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ITEM_FIRECHARGE_USE, 500, 0.2f);
             for (WarlordsEntity we : PlayerFilter
                     .entitiesAround(warlordsNPC, 12, 12, 12)

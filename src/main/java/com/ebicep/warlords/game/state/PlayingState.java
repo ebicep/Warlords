@@ -22,7 +22,7 @@ import com.ebicep.warlords.player.ingame.PlayerStatisticsSecond;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.sr.SRCalculator;
-import com.ebicep.warlords.util.bukkit.RemoveEntities;
+import com.ebicep.warlords.util.bukkit.EntitiesUtils;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -75,7 +75,7 @@ public class PlayingState implements State, TimerDebugAble {
         this.game.setAcceptsSpectators(true);
         this.game.setAcceptsPlayers(false);
         this.resetTimer();
-        RemoveEntities.doRemove(this.game);
+        EntitiesUtils.doRemove(this.game);
         ChatUtils.MessageType.GAME_DEBUG.sendMessage("Adding game options");
 
         List<Map.Entry<OfflinePlayer, Team>> players = game.offlinePlayersWithoutSpectators().toList();

@@ -129,7 +129,7 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
     private List<WarlordsEntity> kbHealEnergy(@Nonnull WarlordsEntity wp) {
         wp.addEnergy(wp, name, energyRestore);
         Utils.playGlobalSound(wp.getLocation(), "shaman.lightningrod.activation", 2, 1);
-        new FallingBlockWaveEffect(wp.getLocation(), knockbackRadius, 1, Material.ORANGE_TULIP).play();
+        FallingBlockWaveEffect.create(wp.getLocation(), knockbackRadius, 6, Material.ORANGE_TULIP);
         wp.getWorld().spigot().strikeLightningEffect(wp.getLocation(), true);
         wp.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(wp.getMaxHealth() * (healingValues.healthRestore.getMultiplicativePercent())));
         List<WarlordsEntity> hit = PlayerFilter.entitiesAround(wp, knockbackRadius, knockbackRadius, knockbackRadius).aliveEnemiesOf(wp).toList();

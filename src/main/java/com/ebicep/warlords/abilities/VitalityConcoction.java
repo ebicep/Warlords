@@ -54,7 +54,7 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
         Utils.playGlobalSound(wp.getLocation(), Sound.BLOCK_GLASS_BREAK, 2, 0.1f);
         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_BLAZE_DEATH, 2, 0.7f);
         wp.setFlagPickCooldown(1);
-        new FallingBlockWaveEffect(wp.getLocation(), 4, 1, Material.BIRCH_SAPLING).play();
+        FallingBlockWaveEffect.create(wp.getLocation(), 4, 6, Material.BIRCH_SAPLING);
         List<FloatModifiable.FloatModifier> modifiers = new ArrayList<>();
         if (pveMasterUpgrade2) {
             wp.doOnStaticAbility(ImpalingStrike.class, impalingStrike -> {

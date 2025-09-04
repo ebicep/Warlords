@@ -125,7 +125,7 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
 
                             @Override
                             public void run() {
-                                new FallingBlockWaveEffect(targetLocation.add(0, 1, 0), 4, 0.9, Material.DIRT).play();
+                                FallingBlockWaveEffect.create(targetLocation.add(0, 1, 0), 4, 7, Material.DIRT);
                                 for (WarlordsEntity wave : PlayerFilter.entitiesAround(targetLocation, 6, 6, 6).aliveEnemiesOf(wp)) {
                                     wave.addInstance(InstanceBuilder.damage().cause("Earthen Rupture").source(wp).value(damageValues.spikeDamage));
                                     wave.addSpeedModifier(wp, "Spike Slow", -35, 20);

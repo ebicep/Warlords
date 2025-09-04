@@ -91,12 +91,12 @@ public class BlazingKindle extends AbstractMob implements IntermediateMob {
             Location loc = wp.getLocation();
             EffectUtils.playSphereAnimation(loc, kindleRadius, Particle.FLAME, 1);
             Utils.playGlobalSound(loc, "mage.inferno.activation", 2, 0.2f);
-            new FallingBlockWaveEffect(
+            FallingBlockWaveEffect.create(
                     loc,
                     kindleRadius,
-                    1.2,
+                    5,
                     Material.FIRE
-            ).play();
+            );
 
             for (WarlordsEntity target : PlayerFilter
                     .entitiesAround(wp, kindleRadius, kindleRadius, kindleRadius)

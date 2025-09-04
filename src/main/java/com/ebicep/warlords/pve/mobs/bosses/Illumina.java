@@ -323,7 +323,7 @@ public class Illumina extends AbstractMob implements BossMob {
             Location loc = wp.getLocation();
 
             Utils.playGlobalSound(loc, Sound.BLOCK_GRASS_BREAK, 500, 0.4f);
-            new FallingBlockWaveEffect(loc.add(0, 1, 0), 7, 1.2, Material.OAK_LEAVES).play();
+            FallingBlockWaveEffect.create(loc.add(0, 1, 0), 7, 5, Material.OAK_LEAVES);
             for (WarlordsEntity we : PlayerFilterGeneric
                     .entitiesAround(wp, 7, 7, 7)
                     .aliveEnemiesOf(wp)
