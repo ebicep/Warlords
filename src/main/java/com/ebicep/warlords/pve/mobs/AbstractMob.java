@@ -49,7 +49,6 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
-import org.bukkit.block.spawner.SpawnerEntry;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.entity.Entity;
@@ -60,10 +59,7 @@ import org.bukkit.inventory.EntityEquipment;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -150,6 +146,11 @@ public abstract class AbstractMob implements Mob {
 
 
     public WarlordsNPC toNPC(Game game, Team team, Consumer<WarlordsNPC> modifyStats) {
+        String name = this.name;
+        if (name == null || name.isEmpty()) {
+            name = UUID.randomUUID().toString();
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage(new Throwable("Mob name is null or empty!"));
+        }
         EntityType entityType = getMobRegistry().entityType;
         this.npc = NPCManager.NPC_REGISTRY.createNPC(entityType, name);
 

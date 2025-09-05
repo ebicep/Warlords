@@ -2,8 +2,6 @@ package com.ebicep.warlords.database.repositories.config;
 
 import org.bson.Document;
 
-import java.util.List;
-
 public class AbilitiesConfig implements ConfigManager.Config {
 
     public Document abilitiesConfig;
@@ -19,16 +17,9 @@ public class AbilitiesConfig implements ConfigManager.Config {
         this.abilitiesConfig = doc;
     }
 
-    public <T> T getValue(List<String> namespaces, String key, Class<T> fieldType) {
-        return ConfigUtils.getValue(abilitiesConfig, namespaces, key, fieldType);
-    }
-
-    public <T> T getValue(List<String> namespaces, String key, Class<T> fieldType, T defaultValue) {
-        return ConfigUtils.getValue(abilitiesConfig, namespaces, key, fieldType, defaultValue);
-    }
-
-    public <T> List<T> getListValue(List<String> namespaces, String key, Class<T> itemType) {
-        return ConfigUtils.getListValue(abilitiesConfig, namespaces, key, itemType);
+    @Override
+    public Document getConfigDocument() {
+        return this.abilitiesConfig;
     }
 
 }

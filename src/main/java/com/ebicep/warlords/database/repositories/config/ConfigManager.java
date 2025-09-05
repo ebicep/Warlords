@@ -17,8 +17,9 @@ public class ConfigManager {
     public static final SpecBoostConfig SPEC_BOOST_CONFIG = new SpecBoostConfig();
     public static final SpecializationsConfig SPECIALIZATIONS_CONFIG = new SpecializationsConfig();
     public static final GameConfig GAME_CONFIG = new GameConfig();
-    public static final Config[] CONFIGS = {ABILITIES_CONFIG, SPEC_BOOST_CONFIG, SPECIALIZATIONS_CONFIG, GAME_CONFIG};
-    private static final String COLLECTION_NAME = "Config";
+    public static final MobsConfig MOBS_CONFIG = new MobsConfig();
+    public static final Config[] CONFIGS = {ABILITIES_CONFIG, SPEC_BOOST_CONFIG, SPECIALIZATIONS_CONFIG, GAME_CONFIG, MOBS_CONFIG};
+    public static final String COLLECTION_NAME = "Config";
 
     public static void loadConfigs(MongoDatabase warlordsDatabase) {
         ChatUtils.MessageType.CONFIG.sendMessage("Loading config from database...");
@@ -89,6 +90,32 @@ public class ConfigManager {
         String getName();
 
         void load(Document doc);
+
+        default <T> T getValue(List<String> namespaces, String key, Class<T> fieldType) {
+            return ConfigUtils.getValue(getConfigDocument(), namespaces, key, fieldType);
+        }
+
+        Document getConfigDocument();
+
+        default <T> T getValue(List<String> namespaces, String key, Class<T> fieldType, T defaultValue) {
+            return ConfigUtils.getValue(getConfigDocument(), namespaces, key, fieldType, defaultValue);
+        }
+
+        default <T> T getValue(List<String> namespaces, String key, Class<T> fieldType, boolean optionalField) {
+            return ConfigUtils.getValue(getConfigDocument(), namespaces, key, fieldType, optionalField);
+        }
+
+        default <T> T getValue(List<String> namespaces, String key, Class<T> fieldType, T defaultValue, boolean optionalField) {
+            return ConfigUtils.getValue(getConfigDocument(), namespaces, key, fieldType, defaultValue, optionalField);
+        }
+
+        default <T> List<T> getListValue(List<String> namespaces, String key, Class<T> itemType) {
+            return ConfigUtils.getListValue(getConfigDocument(), namespaces, key, itemType);
+        }
+
+        default <T> List<T> getListValue(List<String> namespaces, String key, Class<T> itemType, boolean optionalField) {
+            return ConfigUtils.getListValue(getConfigDocument(), namespaces, key, itemType, optionalField);
+        }
 
     }
 

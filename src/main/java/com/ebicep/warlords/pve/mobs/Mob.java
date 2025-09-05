@@ -1,8 +1,5 @@
 package com.ebicep.warlords.pve.mobs;
 
-import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.pve.mobs.bosses.Physira;
-import com.ebicep.warlords.pve.mobs.bosses.bossminions.NineCrystal;
 import com.ebicep.warlords.game.option.towerdefense.mobs.*;
 import com.ebicep.warlords.game.option.towerdefense.towers.*;
 import com.ebicep.warlords.game.option.whackamole.moles.MoleArmorStand;
@@ -48,15 +45,10 @@ import com.ebicep.warlords.pve.mobs.zombie.berserkzombie.AdvancedWarriorBerserke
 import com.ebicep.warlords.pve.mobs.zombie.berserkzombie.BasicWarriorBerserker;
 import com.ebicep.warlords.pve.mobs.zombie.berserkzombie.IntermediateWarriorBerserker;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.pve.VanillaHeads;
 import com.ebicep.warlords.util.warlords.Utils;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.mojang.datafixers.util.Function7;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
@@ -67,16 +59,9 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public enum Mob {
 
@@ -1135,45 +1120,6 @@ public enum Mob {
         put(EntityType.WITHER, SkullUtils.getSkullFrom(VanillaHeads.WITHER));
         put(EntityType.GIANT, new ItemStack(Material.ZOMBIE_HEAD));
     }};
-
-    public static void validateMobConfig() {
-        List<Mob> missingMob = new ArrayList<>();
-        for (Mob mob : VALUES) {
-            if (mob.name == null) {
-                missingMob.add(mob);
-            }
-        }
-        if (missingMob.isEmpty()) {
-            return;
-        }
-        ChatUtils.MessageType.WARLORDS.sendErrorMessage("Missing Mobs: " + missingMob.stream().map(mob -> mob.name).collect(Collectors.joining(", ")));
-        ChatUtils.MessageType.WARLORDS.sendMessage("Automatically adding mobs to config...");
-        try {
-            File file = new File(Warlords.getInstance().getDataFolder(), "mobs.json");
-            JsonObject mobJson = JsonParser.parseReader(new FileReader(file)).getAsJsonObject();
-            missingMob.forEach(value -> {
-                JsonObject mobObject = new JsonObject();
-                AbstractMob mob = value.createMobLegacy.apply(null);
-                mobObject.addProperty("name", value.name = mob.getName());
-                mobObject.addProperty("max_health", value.maxHealth = mob.getMaxHealth());
-                mobObject.addProperty("walk_speed", value.walkSpeed = mob.getWalkSpeed());
-                mobObject.addProperty("damage_resistance", value.damageResistance = mob.getPlayerClass().getDamageResistance());
-                mobObject.addProperty("min_melee_damage", value.minMeleeDamage = mob.getMinMeleeDamage());
-                mobObject.addProperty("max_melee_damage", value.maxMeleeDamage = mob.getMaxMeleeDamage());
-                mobJson.add(value.name(), mobObject);
-                ChatUtils.MessageType.WARLORDS.sendMessage("Automatically added " + value.name() + " to config...");
-            });
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            FileWriter writer = new FileWriter(new File(Warlords.getInstance().getDataFolder(), "mobs.json"));
-            gson.toJson(mobJson, writer);
-            writer.flush();
-            writer.close();
-            ChatUtils.MessageType.WARLORDS.sendMessage("Successfully added missing mobs to mobs.json!");
-        } catch (IOException e) {
-            ChatUtils.MessageType.WARLORDS.sendErrorMessage("Problem writing to mobs.json");
-            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
-        }
-    }
 
     public final EntityType entityType;
     public final Class<?> mobClass;
