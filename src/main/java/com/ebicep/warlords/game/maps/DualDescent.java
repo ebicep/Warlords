@@ -41,11 +41,11 @@ public class DualDescent extends GameMap {
         List<Option> options = category.initMap(this, loc, addons);
 
         options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
-        options.add(LobbyLocationMarker.create(loc.addXYZ(0.5, 33, 0.5), Team.BLUE).asOption());
-        options.add(LobbyLocationMarker.create(loc.addXYZ(0.5, 33, 0.5), Team.RED).asOption());
+        options.add(LobbyLocationMarker.create(loc.addXYZ(255, 42, 255), Team.BLUE).asOption());
+        options.add(LobbyLocationMarker.create(loc.addXYZ(255, 42, 255), Team.RED).asOption());
 
-        options.add(SpawnpointOption.forTeam(loc.addXYZ(0.5, 33, 0.5), Team.BLUE));
-        options.add(SpawnpointOption.forTeam(loc.addXYZ(0.5, 33, 0.5), Team.RED));
+        options.add(SpawnpointOption.forTeam(loc.addXYZ(255, 42, 255), Team.BLUE));
+        options.add(SpawnpointOption.forTeam(loc.addXYZ(255, 42, 255), Team.RED));
 
         options.add(new BoundingBoxOption(new Location(loc.getWorld(), 0, 32, 0), new Location(loc.getWorld(), 511, 255, 511)));
         options.add(DungeonRoomMarker.create(
@@ -143,8 +143,41 @@ public class DualDescent extends GameMap {
                 RoomType.DEAD_END,
                 false,
                 false,
+                true,
+                false
+        ).asOption());
+
+        options.add(DungeonRoomMarker.create(
+                loc.getWorld(),
+                -64, -48, -79,
+                -49, -33, -64,
+                RoomType.DEAD_END,
+                true,
+                false,
+                false,
+                false
+        ).asOption());
+
+        options.add(DungeonRoomMarker.create(
+                loc.getWorld(),
+                -96, -48, -79,
+                -81, -33, -64,
+                RoomType.DEAD_END,
+                false,
+                false,
                 false,
                 true
+        ).asOption());
+
+        options.add(DungeonRoomMarker.create(
+                loc.getWorld(),
+                -126, -48, -79,
+                -111, -33, -64,
+                RoomType.DEAD_END,
+                false,
+                true,
+                false,
+                false
         ).asOption());
 
         options.add(DungeonRoomMarker.create(
@@ -158,9 +191,53 @@ public class DualDescent extends GameMap {
                 true
         ).asOption());
 
+        options.add(DungeonRoomMarker.create(
+                loc.getWorld(),
+                32, -48, -113,
+                47, -33, -98,
+                RoomType.NORMAL,
+                false,
+                true,
+                true,
+                true
+        ).asOption());
+
+        options.add(DungeonRoomMarker.create(
+                loc.getWorld(),
+                32, -48, -145,
+                47, -33, -130,
+                RoomType.NORMAL,
+                true,
+                false,
+                true,
+                true
+        ).asOption());
+
+        options.add(DungeonRoomMarker.create(
+                loc.getWorld(),
+                -64, -48, -48,
+                -49, -33, -33,
+                RoomType.NORMAL,
+                true,
+                true,
+                false,
+                false
+        ).asOption());
+
+        options.add(DungeonRoomMarker.create(
+                loc.getWorld(),
+                32, -48, -177,
+                47, -33, -162,
+                RoomType.NORMAL,
+                true,
+                true,
+                false,
+                true
+        ).asOption());
+
         options.add(new GraveOption());
         options.add(new BasicScoreboardOption());
-        options.add(new TreasureHuntOption(70));
+        options.add(new TreasureHuntOption(200));
 
         return options;
     }
