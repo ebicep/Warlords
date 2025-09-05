@@ -61,8 +61,7 @@ public enum TreasureHuntIndex {
                     Component.text("Max players: ", NamedTextColor.GRAY)
                             .append(Component.text("4-8", NamedTextColor.YELLOW)),
                     Component.empty(),
-                    Component.text("Entry Requirements:", NamedTextColor.GRAY),
-                    Component.text("- All players must have a ", NamedTextColor.GRAY)
+                    Component.text("All players must have a ", NamedTextColor.GRAY)
                             .append(Component.text("Legendary ", NamedTextColor.GOLD)),
                     Component.text("Weapon", NamedTextColor.GOLD)
                             .append(Component.text(" or higher equipped.", NamedTextColor.GRAY)),

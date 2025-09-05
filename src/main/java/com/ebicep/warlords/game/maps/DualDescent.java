@@ -47,7 +47,7 @@ public class DualDescent extends GameMap {
         options.add(SpawnpointOption.forTeam(loc.addXYZ(0.5, 33, 0.5), Team.BLUE));
         options.add(SpawnpointOption.forTeam(loc.addXYZ(0.5, 33, 0.5), Team.RED));
 
-        options.add(new BoundingBoxOption(new Location(loc.getWorld(), 0, 32, 0), new Location(loc.getWorld(), 255, 128, 255)));
+        options.add(new BoundingBoxOption(new Location(loc.getWorld(), 0, 32, 0), new Location(loc.getWorld(), 511, 255, 511)));
         options.add(DungeonRoomMarker.create(
                 loc.getWorld(),
                 32, -48, -48,
@@ -136,9 +136,31 @@ public class DualDescent extends GameMap {
                 false
         ).asOption());
 
+        options.add(DungeonRoomMarker.create(
+                loc.getWorld(),
+                -17, -48, -79,
+                -32, -33, -64,
+                RoomType.DEAD_END,
+                false,
+                false,
+                false,
+                true
+        ).asOption());
+
+        options.add(DungeonRoomMarker.create(
+                loc.getWorld(),
+                32, -48, -81,
+                47, -33, -66,
+                RoomType.NORMAL,
+                true,
+                true,
+                true,
+                true
+        ).asOption());
+
         options.add(new GraveOption());
         options.add(new BasicScoreboardOption());
-        options.add(new TreasureHuntOption(20));
+        options.add(new TreasureHuntOption(70));
 
         return options;
     }
