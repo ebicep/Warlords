@@ -2387,6 +2387,7 @@
         "projectileDamageReduction": 40,
         "maxHealing": 1200,
         "maxDamageReduction": 21,
+        "damageReductionActive": 5,
         "healingValues": {
           "bubbleBaseHealing": {
             "value": 200
