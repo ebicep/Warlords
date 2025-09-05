@@ -1,0 +1,1386 @@
+{
+  "_id": {
+    "$oid": "68ba1d97404419454ff78788"
+  },
+  "type": "MOBS",
+  "data": {
+    "pve": {
+      "ZOMBIE_LANCER": {
+        "name": "Zombie Lancer",
+        "max_health": 2800,
+        "walk_speed": 0.38,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 200.0,
+        "max_melee_damage": 300.0
+      },
+      "BASIC_WARRIOR_BERSERKER": {
+        "name": "Warrior Berserker",
+        "max_health": 2800,
+        "walk_speed": 0.38,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 200.0,
+        "max_melee_damage": 300.0
+      },
+      "SKELETAL_MAGE": {
+        "name": "Skeletal Mage",
+        "max_health": 1600,
+        "walk_speed": 0.05,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 0.0,
+        "max_melee_damage": 0.0
+      },
+      "PIG_DISCIPLE": {
+        "name": "Pig Disciple",
+        "max_health": 2800,
+        "walk_speed": 0.42,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 250.0,
+        "max_melee_damage": 350.0
+      },
+      "SLIMY_ANOMALY": {
+        "name": "Slimy Anomaly",
+        "max_health": 3000,
+        "walk_speed": 0.2,
+        "damage_resistance": 20.0,
+        "min_melee_damage": 0.0,
+        "max_melee_damage": 0.0
+      },
+      "ARACHNO_VENARI": {
+        "name": "Arachno Venari",
+        "max_health": 2200,
+        "walk_speed": 0.45,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 300.0,
+        "max_melee_damage": 450.0
+      },
+      "HOUND": {
+        "name": "Hound",
+        "max_health": 900,
+        "walk_speed": 0.5,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 600.0,
+        "max_melee_damage": 800.0
+      },
+      "INTERMEDIATE_WARRIOR_BERSERKER": {
+        "name": "Warrior Berserker",
+        "max_health": 4000,
+        "walk_speed": 0.494,
+        "damage_resistance": 10.0,
+        "min_melee_damage": 300.0,
+        "max_melee_damage": 500.0
+      },
+      "SKELETAL_WARLOCK": {
+        "name": "Skeletal Warlock",
+        "max_health": 2200,
+        "walk_speed": 0.05,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 0.0,
+        "max_melee_damage": 0.0
+      },
+      "PIG_SHAMAN": {
+        "name": "Pig Shaman",
+        "max_health": 4000,
+        "walk_speed": 0.25,
+        "damage_resistance": 10.0,
+        "min_melee_damage": 200.0,
+        "max_melee_damage": 300.0
+      },
+      "PIG_ALLEVIATOR": {
+        "name": "Pig Alleviator",
+        "max_health": 6000,
+        "walk_speed": 0.2,
+        "damage_resistance": 10.0,
+        "min_melee_damage": 300.0,
+        "max_melee_damage": 400.0
+      },
+      "WITCH_DEACON": {
+        "name": "Witch Deacon",
+        "max_health": 3500,
+        "walk_speed": 0.05,
+        "damage_resistance": 10.0,
+        "min_melee_damage": 0.0,
+        "max_melee_damage": 0.0
+      },
+      "BLAZING_KINDLE": {
+        "name": "Blazing Kindle",
+        "max_health": 4000,
+        "walk_speed": 0.0,
+        "damage_resistance": 10.0,
+        "min_melee_damage": 100.0,
+        "max_melee_damage": 200.0
+      },
+      "WANDER_KNIGHTS": {
+        "name": "Wander Knights",
+        "max_health": 5000,
+        "walk_speed": 0.335,
+        "damage_resistance": 10.0,
+        "min_melee_damage": 200.0,
+        "max_melee_damage": 300.0
+      },
+      "ZOMBIE_SWORDSMAN": {
+        "name": "Zombie Swordsman",
+        "max_health": 4000,
+        "walk_speed": 0.38,
+        "damage_resistance": 10.0,
+        "min_melee_damage": 300.0,
+        "max_melee_damage": 500.0
+      },
+      "ZOMBIE_LAMENT": {
+        "name": "Zombie Lament",
+        "max_health": 3500,
+        "walk_speed": 0.38,
+        "damage_resistance": 10.0,
+        "min_melee_damage": 300.0,
+        "max_melee_damage": 500.0
+      },
+      "ILLUMINATION": {
+        "name": "Illumination",
+        "max_health": 4000,
+        "walk_speed": 0.15,
+        "damage_resistance": 20.0,
+        "min_melee_damage": 0.0,
+        "max_melee_damage": 0.0
+      },
+      "GOLEM_APPRENTICE": {
+        "name": "Golem Apprentice",
+        "max_health": 5000,
+        "walk_speed": 0.4,
+        "damage_resistance": 20.0,
+        "min_melee_damage": 400.0,
+        "max_melee_damage": 600.0
+      },
+      "SCRUPULOUS_ZOMBIE": {
+        "name": "Scrupulous Zombie",
+        "max_health": 8000,
+        "walk_speed": 0.28,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 1200.0,
+        "max_melee_damage": 1600.0
+      },
+      "SLIME_GUARD": {
+        "name": "Slime Guard",
+        "max_health": 6000,
+        "walk_speed": 0.39,
+        "damage_resistance": 10.0,
+        "min_melee_damage": 500.0,
+        "max_melee_damage": 700.0
+      },
+      "CELESTIAL_BOW_WIELDER": {
+        "name": "Celestial Bow Wielder",
+        "max_health": 8000,
+        "walk_speed": 0.25,
+        "damage_resistance": 10.0,
+        "min_melee_damage": 600.0,
+        "max_melee_damage": 900.0
+      },
+      "ZOMBIE_VANGUARD": {
+        "name": "Zombie Vanguard",
+        "max_health": 7000,
+        "walk_speed": 0.4,
+        "damage_resistance": 10.0,
+        "min_melee_damage": 500.0,
+        "max_melee_damage": 700.0
+      },
+      "ADVANCED_WARRIOR_BERSERKER": {
+        "name": "Warrior Berserker",
+        "max_health": 7000,
+        "walk_speed": 0.43,
+        "damage_resistance": 20.0,
+        "min_melee_damage": 450.0,
+        "max_melee_damage": 600.0
+      },
+      "VOID_ZOMBIE": {
+        "name": "Zombie Singularity",
+        "max_health": 11000,
+        "walk_speed": 0.1,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 1500.0,
+        "max_melee_damage": 2000.0
+      },
+      "ZOMBIE_KNIGHT": {
+        "name": "Zombie Knight",
+        "max_health": 7000,
+        "walk_speed": 0.3,
+        "damage_resistance": 10.0,
+        "min_melee_damage": 1000.0,
+        "max_melee_damage": 1300.0
+      },
+      "SLIMY_CHESS": {
+        "name": "Slimy Chess",
+        "max_health": 10000,
+        "walk_speed": 0.1,
+        "damage_resistance": 30.0,
+        "min_melee_damage": 0.0,
+        "max_melee_damage": 0.0
+      },
+      "ZOMBIE_RAIDER": {
+        "name": "Zombie Raider",
+        "max_health": 9500,
+        "walk_speed": 0.42,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 650.0,
+        "max_melee_damage": 850.0
+      },
+      "WANDER_WALKER": {
+        "name": "Zombie Raider",
+        "max_health": 8500,
+        "walk_speed": 0.31,
+        "damage_resistance": 20.0,
+        "min_melee_damage": 600.0,
+        "max_melee_damage": 750.0
+      },
+      "SKELETAL_ENTROPY": {
+        "name": "Skeletal Entropy",
+        "max_health": 3000,
+        "walk_speed": 0.05,
+        "damage_resistance": 10.0,
+        "min_melee_damage": 0.0,
+        "max_melee_damage": 0.0
+      },
+      "FIRE_SPLITTER": {
+        "name": "Fire Splitter",
+        "max_health": 8000,
+        "walk_speed": 0.38,
+        "damage_resistance": 10.0,
+        "min_melee_damage": 600.0,
+        "max_melee_damage": 900.0
+      },
+      "CELESTIAL_SWORD_WIELDER": {
+        "name": "Celestial Sword Wielder",
+        "max_health": 8000,
+        "walk_speed": 0.25,
+        "damage_resistance": 10.0,
+        "min_melee_damage": 600.0,
+        "max_melee_damage": 900.0
+      },
+      "CELESTIAL_OPUS": {
+        "name": "Celestial Opus",
+        "max_health": 9000,
+        "walk_speed": 0.4,
+        "damage_resistance": 10.0,
+        "min_melee_damage": 800.0,
+        "max_melee_damage": 1000.0
+      },
+      "RIFT_WALKER": {
+        "name": "Rift Walker",
+        "max_health": 9000,
+        "walk_speed": 0.33,
+        "damage_resistance": 10.0,
+        "min_melee_damage": 800.0,
+        "max_melee_damage": 1000.0
+      },
+      "OVERGROWN_ZOMBIE": {
+        "name": "Overgrown Zombie",
+        "max_health": 12000,
+        "walk_speed": 0.42,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 700.0,
+        "max_melee_damage": 900.0
+      },
+      "SKELETAL_PYROMANCER": {
+        "name": "Skeletal Pyromancer",
+        "max_health": 5000,
+        "walk_speed": 0.05,
+        "damage_resistance": 20.0,
+        "min_melee_damage": 0.0,
+        "max_melee_damage": 0.0
+      },
+      "SKELETAL_ANOMALY": {
+        "name": "Skeletal Anomaly",
+        "max_health": 10000,
+        "walk_speed": 0.42,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 500.0,
+        "max_melee_damage": 700.0
+      },
+      "SKELETAL_MESMER": {
+        "name": "Skeletal Mesmer",
+        "max_health": 5500,
+        "walk_speed": 0.05,
+        "damage_resistance": 10.0,
+        "min_melee_damage": 0.0,
+        "max_melee_damage": 0.0
+      },
+      "CREEPY_BOMBER": {
+        "name": "Creepy Bomber",
+        "max_health": 1000,
+        "walk_speed": 0.5,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 0.0,
+        "max_melee_damage": 0.0
+      },
+      "SKELETAL_ARCHER": {
+        "name": "Skeletal Archer",
+        "max_health": 5000,
+        "walk_speed": 0.0,
+        "damage_resistance": 10.0,
+        "min_melee_damage": 0.0,
+        "max_melee_damage": 0.0
+      },
+      "NIGHTMARE_ZOMBIE": {
+        "name": "Nightmare Zombie",
+        "max_health": 1600,
+        "walk_speed": 0.6,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 1200.0,
+        "max_melee_damage": 1600.0
+      },
+      "PIG_PARTICLE": {
+        "name": "Pig Particle",
+        "max_health": 8000,
+        "walk_speed": 0.2,
+        "damage_resistance": 10.0,
+        "min_melee_damage": 450.0,
+        "max_melee_damage": 600.0
+      },
+      "EXTREME_ZEALOT": {
+        "name": "Extreme Zealot",
+        "max_health": 6000,
+        "walk_speed": 0.45,
+        "damage_resistance": 20.0,
+        "min_melee_damage": 500.0,
+        "max_melee_damage": 750.0
+      },
+      "SMART_SKELETON": {
+        "name": "Smart Skeleton",
+        "max_health": 8000,
+        "walk_speed": 0.25,
+        "damage_resistance": 10.0,
+        "min_melee_damage": 600.0,
+        "max_melee_damage": 900.0
+      },
+      "SKELETAL_SORCERER": {
+        "name": "Skeletal Sorcerer",
+        "max_health": 8000,
+        "walk_speed": 0.3,
+        "damage_resistance": 10.0,
+        "min_melee_damage": 800.0,
+        "max_melee_damage": 1000.0
+      },
+      "BOLTARO": {
+        "name": "Boltaro",
+        "max_health": 12500,
+        "walk_speed": 0.475,
+        "damage_resistance": 20.0,
+        "min_melee_damage": 350.0,
+        "max_melee_damage": 500.0
+      },
+      "GHOULCALLER": {
+        "name": "Ghoulcaller",
+        "max_health": 16000,
+        "walk_speed": 0.42,
+        "damage_resistance": 5.0,
+        "min_melee_damage": 277.0,
+        "max_melee_damage": 416.0
+      },
+      "NARMER": {
+        "name": "Narmer",
+        "max_health": 16000,
+        "walk_speed": 0.16,
+        "damage_resistance": 20.0,
+        "min_melee_damage": 1600.0,
+        "max_melee_damage": 2000.0
+      },
+      "MITHRA": {
+        "name": "Mithra",
+        "max_health": 20000,
+        "walk_speed": 0.28,
+        "damage_resistance": 20.0,
+        "min_melee_damage": 1200.0,
+        "max_melee_damage": 1600.0
+      },
+      "ZENITH": {
+        "name": "Zenith",
+        "max_health": 26000,
+        "walk_speed": 0.36,
+        "damage_resistance": 25.0,
+        "min_melee_damage": 1800.0,
+        "max_melee_damage": 2500.0
+      },
+      "CHESSKING": {
+        "name": "Chessking",
+        "max_health": 50000,
+        "walk_speed": 0.3,
+        "damage_resistance": 30.0,
+        "min_melee_damage": 0.0,
+        "max_melee_damage": 0.0
+      },
+      "ILLUMINA": {
+        "name": "Illumina",
+        "max_health": 90000,
+        "walk_speed": 0.33,
+        "damage_resistance": 25.0,
+        "min_melee_damage": 2000.0,
+        "max_melee_damage": 3000.0
+      },
+      "TORMENT": {
+        "name": "Torment",
+        "max_health": 135000,
+        "walk_speed": 0.39,
+        "damage_resistance": 20.0,
+        "min_melee_damage": 1600.0,
+        "max_melee_damage": 2000.0
+      },
+      "VOID": {
+        "name": "Void",
+        "max_health": 100000,
+        "walk_speed": 0.24,
+        "damage_resistance": 20.0,
+        "min_melee_damage": 3000.0,
+        "max_melee_damage": 4000.0
+      },
+      "MAGMATIC_OOZE": {
+        "name": "Magmatic Ooze",
+        "max_health": 70000,
+        "walk_speed": 0.25,
+        "damage_resistance": 30.0,
+        "min_melee_damage": 100.0,
+        "max_melee_damage": 200.0
+      },
+      "ENAVURIS": {
+        "name": "Enavuris",
+        "max_health": 95000,
+        "walk_speed": 0.475,
+        "damage_resistance": 20.0,
+        "min_melee_damage": 745.0,
+        "max_melee_damage": 985.0
+      },
+      "BOLTARO_SHADOW": {
+        "name": "Shadow Boltaro",
+        "max_health": 6000,
+        "walk_speed": 0.42,
+        "damage_resistance": 10.0,
+        "min_melee_damage": 200.0,
+        "max_melee_damage": 400.0
+      },
+      "BOLTARO_EXLIED": {
+        "name": "Exiled Apostate",
+        "max_health": 4000,
+        "walk_speed": 0.3,
+        "damage_resistance": 5.0,
+        "min_melee_damage": 200.0,
+        "max_melee_damage": 250.0
+      },
+      "TORMENTED_SOUL": {
+        "name": "Tormented Soul",
+        "max_health": 2000,
+        "walk_speed": 0.38,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 214.0,
+        "max_melee_damage": 338.0
+      },
+      "DEPRESSED_SOUL": {
+        "name": "Depressed Soul",
+        "max_health": 2500,
+        "walk_speed": 0.32,
+        "damage_resistance": 5.0,
+        "min_melee_damage": 300.0,
+        "max_melee_damage": 400.0
+      },
+      "FURIOUS_SOUL": {
+        "name": "Furious Soul",
+        "max_health": 1500,
+        "walk_speed": 0.45,
+        "damage_resistance": 3.0,
+        "min_melee_damage": 500.0,
+        "max_melee_damage": 600.0
+      },
+      "VOLTAIC_SOUL": {
+        "name": "Voltaic Soul",
+        "max_health": 3000,
+        "walk_speed": 0.43,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 350.0,
+        "max_melee_damage": 450.0
+      },
+      "AGONIZED_SOUL": {
+        "name": "Agonized Soul",
+        "max_health": 2000,
+        "walk_speed": 0.38,
+        "damage_resistance": 5.0,
+        "min_melee_damage": 200.0,
+        "max_melee_damage": 300.0
+      },
+      "NARMER_ACOLYTE": {
+        "name": "Acolyte of Narmer",
+        "max_health": 5000,
+        "walk_speed": 0.35,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 540.0,
+        "max_melee_damage": 765.0
+      },
+      "NARMERS_DEATH_CHARGE": {
+        "name": "Narmer\u0027s Death Charge",
+        "max_health": 2000,
+        "walk_speed": 0.0,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 0.0,
+        "max_melee_damage": 0.0
+      },
+      "ZENITH_LEGIONNAIRE": {
+        "name": "Zenith Legionnaire",
+        "max_health": 4400,
+        "walk_speed": 0.32,
+        "damage_resistance": 10.0,
+        "min_melee_damage": 1000.0,
+        "max_melee_damage": 1500.0
+      },
+      "SOUL_OF_GRADIENT": {
+        "name": "Soul of Gradient",
+        "max_health": 25000,
+        "walk_speed": 0.15,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 2000.0,
+        "max_melee_damage": 2500.0
+      },
+      "MITHRA_EGG_SAC": {
+        "name": "Egg Sac",
+        "max_health": 10000,
+        "walk_speed": 0.0,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 0.0,
+        "max_melee_damage": 0.0
+      },
+      "ARACHNO_VENERATUS": {
+        "name": "Arachno Veneratus",
+        "max_health": 3000,
+        "walk_speed": 0.45,
+        "damage_resistance": 5.0,
+        "min_melee_damage": 350.0,
+        "max_melee_damage": 500.0
+      },
+      "CURSED_PSION": {
+        "name": "Cursed Psion",
+        "max_health": 11500,
+        "walk_speed": 0.38,
+        "damage_resistance": 15.0,
+        "min_melee_damage": 525.0,
+        "max_melee_damage": 725.0
+      },
+      "ENAVURITE": {
+        "name": "Enavurite",
+        "max_health": 10525,
+        "walk_speed": 0.24,
+        "damage_resistance": 5.0,
+        "min_melee_damage": 550.0,
+        "max_melee_damage": 775.0
+      },
+      "VANISHING_ENAVURITE": {
+        "name": "Vanishing Enavurite",
+        "max_health": 12525,
+        "walk_speed": 0.24,
+        "damage_resistance": 5.0,
+        "min_melee_damage": 550.0,
+        "max_melee_damage": 775.0
+      },
+      "EVENT_BOLTARO": {
+        "name": "Boltaro",
+        "max_health": 12500,
+        "walk_speed": 0.475,
+        "damage_resistance": 20.0,
+        "min_melee_damage": 350.0,
+        "max_melee_damage": 500.0
+      },
+      "EVENT_BOLTARO_SHADOW": {
+        "name": "Shadow Boltaro",
+        "max_health": 6000,
+        "walk_speed": 0.42,
+        "damage_resistance": 10.0,
+        "min_melee_damage": 200.0,
+        "max_melee_damage": 400.0
+      },
+      "EVENT_NARMER": {
+        "name": "Narmer",
+        "max_health": 16000,
+        "walk_speed": 0.0,
+        "damage_resistance": 20.0,
+        "min_melee_damage": 1600.0,
+        "max_melee_damage": 2000.0
+      },
+      "EVENT_NARMER_ACOLYTE": {
+        "name": "Acolyte of Narmer",
+        "max_health": 5000,
+        "walk_speed": 0.35,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 540.0,
+        "max_melee_damage": 765.0
+      },
+      "EVENT_NARMER_DJER": {
+        "name": "Djer",
+        "max_health": 9000,
+        "walk_speed": 0.32,
+        "damage_resistance": 10.0,
+        "min_melee_damage": 1100.0,
+        "max_melee_damage": 1310.0
+      },
+      "EVENT_NARMER_DJET": {
+        "name": "Djet",
+        "max_health": 9000,
+        "walk_speed": 0.32,
+        "damage_resistance": 10.0,
+        "min_melee_damage": 930.0,
+        "max_melee_damage": 1210.0
+      },
+      "EVENT_MITHRA": {
+        "name": "Mithra",
+        "max_health": 20000,
+        "walk_speed": 0.28,
+        "damage_resistance": 20.0,
+        "min_melee_damage": 1200.0,
+        "max_melee_damage": 1600.0
+      },
+      "EVENT_MITHRA_FORSAKEN_FROST": {
+        "name": "Forsaken Respite",
+        "max_health": 2700,
+        "walk_speed": 0.45,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 300.0,
+        "max_melee_damage": 450.0
+      },
+      "EVENT_MITHRA_FORSAKEN_FOLIAGE": {
+        "name": "Forsaken Respite",
+        "max_health": 2700,
+        "walk_speed": 0.45,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 300.0,
+        "max_melee_damage": 450.0
+      },
+      "EVENT_MITHRA_FORSAKEN_SHRIEKER": {
+        "name": "Forsaken Respite",
+        "max_health": 2700,
+        "walk_speed": 0.45,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 300.0,
+        "max_melee_damage": 450.0
+      },
+      "EVENT_MITHRA_FORSAKEN_RESPITE": {
+        "name": "Forsaken Respite",
+        "max_health": 2700,
+        "walk_speed": 0.45,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 300.0,
+        "max_melee_damage": 450.0
+      },
+      "EVENT_MITHRA_FORSAKEN_CRUOR": {
+        "name": "Forsaken Respite",
+        "max_health": 2700,
+        "walk_speed": 0.45,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 300.0,
+        "max_melee_damage": 450.0
+      },
+      "EVENT_MITHRA_FORSAKEN_DEGRADER": {
+        "name": "Forsaken Respite",
+        "max_health": 2700,
+        "walk_speed": 0.45,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 300.0,
+        "max_melee_damage": 450.0
+      },
+      "EVENT_MITHRA_FORSAKEN_APPARITION": {
+        "name": "Forsaken Apparition",
+        "max_health": 2700,
+        "walk_speed": 0.45,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 300.0,
+        "max_melee_damage": 450.0
+      },
+      "EVENT_MITHRA_POISONOUS_SPIDER": {
+        "name": "Poisonous Spider",
+        "max_health": 4000,
+        "walk_speed": 0.55,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 750.0,
+        "max_melee_damage": 850.0
+      },
+      "EVENT_MITHRA_EGG_SAC": {
+        "name": "Egg Sac",
+        "max_health": 10000,
+        "walk_speed": 0.0,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 0.0,
+        "max_melee_damage": 0.0
+      },
+      "EVENT_ILLUSION_CORE": {
+        "name": "Illusion Core",
+        "max_health": 200000,
+        "walk_speed": 0.0,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 0.0,
+        "max_melee_damage": 0.0
+      },
+      "EVENT_EXILED_CORE": {
+        "name": "Exiled Core",
+        "max_health": 400000,
+        "walk_speed": 0.0,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 0.0,
+        "max_melee_damage": 0.0
+      },
+      "EVENT_CALAMITY_CORE": {
+        "name": "Exiled Core",
+        "max_health": 300000,
+        "walk_speed": 0.0,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 0.0,
+        "max_melee_damage": 0.0
+      },
+      "EVENT_ILLUMINA": {
+        "name": "Illumina",
+        "max_health": 525000,
+        "walk_speed": 0.33,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 950.0,
+        "max_melee_damage": 1350.0
+      },
+      "EVENT_APOLLO": {
+        "name": "Apollo",
+        "max_health": 20000,
+        "walk_speed": 0.0,
+        "damage_resistance": 10.0,
+        "min_melee_damage": 450.0,
+        "max_melee_damage": 600.0
+      },
+      "EVENT_ARES": {
+        "name": "Ares",
+        "max_health": 25500,
+        "walk_speed": 0.4,
+        "damage_resistance": 20.0,
+        "min_melee_damage": 680.0,
+        "max_melee_damage": 740.0
+      },
+      "EVENT_PROMETHEUS": {
+        "name": "Prometheus",
+        "max_health": 30000,
+        "walk_speed": 0.33,
+        "damage_resistance": 10.0,
+        "min_melee_damage": 730.0,
+        "max_melee_damage": 870.0
+      },
+      "EVENT_ATHENA": {
+        "name": "Athena",
+        "max_health": 35000,
+        "walk_speed": 0.33,
+        "damage_resistance": 20.0,
+        "min_melee_damage": 820.0,
+        "max_melee_damage": 930.0
+      },
+      "EVENT_CRONUS": {
+        "name": "Cronus",
+        "max_health": 42500,
+        "walk_speed": 0.2,
+        "damage_resistance": 25.0,
+        "min_melee_damage": 920.0,
+        "max_melee_damage": 1000.0
+      },
+      "EVENT_ZEUS": {
+        "name": "Zeus",
+        "max_health": 250000,
+        "walk_speed": 0.33,
+        "damage_resistance": 30.0,
+        "min_melee_damage": 825.0,
+        "max_melee_damage": 946.0
+      },
+      "EVENT_POSEIDON": {
+        "name": "Poseidon",
+        "max_health": 225000,
+        "walk_speed": 0.33,
+        "damage_resistance": 25.0,
+        "min_melee_damage": 725.0,
+        "max_melee_damage": 846.0
+      },
+      "EVENT_HADES": {
+        "name": "Hades",
+        "max_health": 185000,
+        "walk_speed": 0.33,
+        "damage_resistance": 25.0,
+        "min_melee_damage": 524.0,
+        "max_melee_damage": 607.0
+      },
+      "EVENT_TERAS_MINOTAUR": {
+        "name": "Teras Minotaur",
+        "max_health": 2800,
+        "walk_speed": 0.38,
+        "damage_resistance": 10.0,
+        "min_melee_damage": 400.0,
+        "max_melee_damage": 600.0
+      },
+      "EVENT_TERAS_CYCLOPS": {
+        "name": "Teras Cyclops",
+        "max_health": 3500,
+        "walk_speed": 0.4,
+        "damage_resistance": 10.0,
+        "min_melee_damage": 550.0,
+        "max_melee_damage": 650.0
+      },
+      "EVENT_TERAS_SIREN": {
+        "name": "Teras Siren",
+        "max_health": 4100,
+        "walk_speed": 0.6,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 250.0,
+        "max_melee_damage": 350.0
+      },
+      "EVENT_TERAS_DRYAD": {
+        "name": "Teras Dryad",
+        "max_health": 3600,
+        "walk_speed": 0.25,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 350.0,
+        "max_melee_damage": 450.0
+      },
+      "EVENT_UNPUBLISHED_GRIMOIRE": {
+        "name": "Unpublished Grimoire",
+        "max_health": 3500,
+        "walk_speed": 0.38,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 375.0,
+        "max_melee_damage": 575.0
+      },
+      "EVENT_EMBELLISHED_GRIMOIRE": {
+        "name": "Embellished Grimoire",
+        "max_health": 5000,
+        "walk_speed": 0.38,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 550.0,
+        "max_melee_damage": 685.0
+      },
+      "EVENT_SCRIPTED_GRIMOIRE": {
+        "name": "Scripted Grimoire",
+        "max_health": 6500,
+        "walk_speed": 0.21,
+        "damage_resistance": 10.0,
+        "min_melee_damage": 150.0,
+        "max_melee_damage": 250.0
+      },
+      "EVENT_ROUGE_GRIMOIRE": {
+        "name": "Rouge Grimoire",
+        "max_health": 12000,
+        "walk_speed": 0.21,
+        "damage_resistance": 5.0,
+        "min_melee_damage": 350.0,
+        "max_melee_damage": 500.0
+      },
+      "EVENT_VIOLETTE_GRIMOIRE": {
+        "name": "Violette Grimoire",
+        "max_health": 12000,
+        "walk_speed": 0.38,
+        "damage_resistance": 5.0,
+        "min_melee_damage": 350.0,
+        "max_melee_damage": 500.0
+      },
+      "EVENT_BLEUE_GRIMOIRE": {
+        "name": "Rouge Grimoire",
+        "max_health": 12000,
+        "walk_speed": 0.38,
+        "damage_resistance": 5.0,
+        "min_melee_damage": 350.0,
+        "max_melee_damage": 500.0
+      },
+      "EVENT_ORANGE_GRIMOIRE": {
+        "name": "Orange Grimoire",
+        "max_health": 12000,
+        "walk_speed": 0.38,
+        "damage_resistance": 5.0,
+        "min_melee_damage": 350.0,
+        "max_melee_damage": 500.0
+      },
+      "EVENT_NECRONOMICON_GRIMOIRE": {
+        "name": "Necronomicon Grimoire",
+        "max_health": 10000,
+        "walk_speed": 0.0,
+        "damage_resistance": 10.0,
+        "min_melee_damage": 0.0,
+        "max_melee_damage": 0.0
+      },
+      "EVENT_THE_ARCHIVIST": {
+        "name": "The Archivist",
+        "max_health": 125000,
+        "walk_speed": 0.24,
+        "damage_resistance": 25.0,
+        "min_melee_damage": 0.0,
+        "max_melee_damage": 0.0
+      },
+      "EVENT_INQUISITEUR_EWA": {
+        "name": "Inquisiteur-EWA",
+        "max_health": 540000,
+        "walk_speed": 0.38,
+        "damage_resistance": 15.0,
+        "min_melee_damage": 0.0,
+        "max_melee_damage": 0.0
+      },
+      "EVENT_INQUISITEUR_EGA": {
+        "name": "Inquisiteur-EGA",
+        "max_health": 515000,
+        "walk_speed": 0.38,
+        "damage_resistance": 15.0,
+        "min_melee_damage": 0.0,
+        "max_melee_damage": 0.0
+      },
+      "EVENT_INQUISITEUR_VPA": {
+        "name": "Inquisiteur-VPA",
+        "max_health": 480000,
+        "walk_speed": 0.38,
+        "damage_resistance": 10.0,
+        "min_melee_damage": 0.0,
+        "max_melee_damage": 0.0
+      },
+      "TEST_DUMMY": {
+        "name": "TestDummy",
+        "max_health": 1000000,
+        "walk_speed": 0.2,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 0.0,
+        "max_melee_damage": 0.0
+      },
+      "CRYOPOD": {
+        "name": "Cryopod",
+        "max_health": 20000,
+        "walk_speed": 0.0,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 0.0,
+        "max_melee_damage": 0.0
+      },
+      "DECOY": {
+        "name": "Decoy",
+        "max_health": 5000,
+        "walk_speed": 0.0,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 0.0,
+        "max_melee_damage": 0.0
+      },
+      "ANIMUS": {
+        "name": "Animus",
+        "max_health": 5000,
+        "walk_speed": 0.0,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 0.0,
+        "max_melee_damage": 0.0
+      },
+      "TD_ZOMBIE": {
+        "name": "Zombie",
+        "max_health": 1000,
+        "walk_speed": 0.3,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 100.0,
+        "max_melee_damage": 100.0
+      },
+      "TD_SKELETON": {
+        "name": "Skeleton",
+        "max_health": 500,
+        "walk_speed": 0.25,
+        "damage_resistance": 10.0,
+        "min_melee_damage": 200.0,
+        "max_melee_damage": 200.0
+      },
+      "TD_TOWER_AVENGER": {
+        "name": "Avenger",
+        "max_health": 1000,
+        "walk_speed": 0.3,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 100.0,
+        "max_melee_damage": 100.0
+      },
+      "TD_TOWER_PROTECTOR": {
+        "name": "Protector",
+        "max_health": 1500,
+        "walk_speed": 0.3,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 50.0,
+        "max_melee_damage": 50.0
+      },
+      "TD_TOWER_DEFENDER": {
+        "name": "Defender",
+        "max_health": 2000,
+        "walk_speed": 0.3,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 25.0,
+        "max_melee_damage": 25.0
+      },
+      "TD_TOWER_REVENANT": {
+        "name": "Revenant",
+        "max_health": 250,
+        "walk_speed": 0.3,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 25.0,
+        "max_melee_damage": 25.0
+      },
+      "TD_TOWER_SPIRITGUARD": {
+        "name": "Spritguard",
+        "max_health": 1000,
+        "walk_speed": 0.3,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 100.0,
+        "max_melee_damage": 100.0
+      },
+      "TD_TOWER_EARTHWARDEN": {
+        "name": "Earthwarden",
+        "max_health": 2000,
+        "walk_speed": 0.3,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 250.0,
+        "max_melee_damage": 250.0
+      },
+      "TD_TOWER_ASSASSIN": {
+        "name": "Assassin",
+        "max_health": 1000,
+        "walk_speed": 0.3,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 200.0,
+        "max_melee_damage": 200.0
+      },
+      "WHACK_A_MOLE_ARMOR_STAND": {
+        "name": "",
+        "max_health": 100,
+        "walk_speed": 0.0,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 0.0,
+        "max_melee_damage": 0.0
+      },
+      "TD_ZOMBIE_BABY": {
+        "name": "Zombie",
+        "max_health": 35,
+        "walk_speed": 0.5,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 100.0,
+        "max_melee_damage": 100.0
+      },
+      "TD_ZOMBIE_VILLAGER": {
+        "name": "Zombie Villager",
+        "max_health": 50,
+        "walk_speed": 0.3,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 100.0,
+        "max_melee_damage": 100.0
+      },
+      "TD_HUSK": {
+        "name": "Husk",
+        "max_health": 150,
+        "walk_speed": 0.3,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 100.0,
+        "max_melee_damage": 100.0
+      },
+      "TD_STRAY": {
+        "name": "Stray",
+        "max_health": 150,
+        "walk_speed": 0.3,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 100.0,
+        "max_melee_damage": 100.0
+      },
+      "TD_SPIDER": {
+        "name": "Spider",
+        "max_health": 80,
+        "walk_speed": 0.5,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 100.0,
+        "max_melee_damage": 100.0
+      },
+      "TD_CAVE_SPIDER": {
+        "name": "Cave Spider",
+        "max_health": 60,
+        "walk_speed": 0.5,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 100.0,
+        "max_melee_damage": 100.0
+      },
+      "TD_SILVERFISH": {
+        "name": "Silverfish",
+        "max_health": 25,
+        "walk_speed": 0.4,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 100.0,
+        "max_melee_damage": 100.0
+      },
+      "TD_ENDERMITE": {
+        "name": "Endermite",
+        "max_health": 50,
+        "walk_speed": 0.4,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 100.0,
+        "max_melee_damage": 100.0
+      },
+      "TD_WITCH": {
+        "name": "Witch",
+        "max_health": 400,
+        "walk_speed": 0.3,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 100.0,
+        "max_melee_damage": 100.0
+      },
+      "TD_ENDERMAN": {
+        "name": "Enderman",
+        "max_health": 600,
+        "walk_speed": 0.3,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 100.0,
+        "max_melee_damage": 100.0
+      },
+      "TD_WITHER_SKELETON": {
+        "name": "Wither Skeleton",
+        "max_health": 1000,
+        "walk_speed": 0.4,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 100.0,
+        "max_melee_damage": 100.0
+      },
+      "TD_GHAST": {
+        "name": "Ghast",
+        "max_health": 1000,
+        "walk_speed": 0.3,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 100.0,
+        "max_melee_damage": 100.0
+      },
+      "TD_BLAZE": {
+        "name": "Blaze",
+        "max_health": 400,
+        "walk_speed": 0.3,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 100.0,
+        "max_melee_damage": 100.0
+      },
+      "TD_PIGLIN": {
+        "name": "Piglin",
+        "max_health": 200,
+        "walk_speed": 0.4,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 100.0,
+        "max_melee_damage": 100.0
+      },
+      "TD_ZOMBIFIED_PIGLIN": {
+        "name": "Zombified Piglin",
+        "max_health": 200,
+        "walk_speed": 0.4,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 100.0,
+        "max_melee_damage": 100.0
+      },
+      "TD_PIGLIN_BRUTE": {
+        "name": "Piglin Brute",
+        "max_health": 800,
+        "walk_speed": 0.4,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 100.0,
+        "max_melee_damage": 100.0
+      },
+      "TD_HOGLIN": {
+        "name": "Hoglin",
+        "max_health": 600,
+        "walk_speed": 0.4,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 100.0,
+        "max_melee_damage": 100.0
+      },
+      "TD_ZOGLIN": {
+        "name": "Zoglin",
+        "max_health": 600,
+        "walk_speed": 0.4,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 100.0,
+        "max_melee_damage": 100.0
+      },
+      "TD_EVOKER": {
+        "name": "Evoker",
+        "max_health": 1500,
+        "walk_speed": 0.3,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 100.0,
+        "max_melee_damage": 100.0
+      },
+      "TD_VINDICATOR": {
+        "name": "Vindicator",
+        "max_health": 1000,
+        "walk_speed": 0.5,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 100.0,
+        "max_melee_damage": 100.0
+      },
+      "TD_PILLAGER": {
+        "name": "Pillager",
+        "max_health": 400,
+        "walk_speed": 0.4,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 100.0,
+        "max_melee_damage": 100.0
+      },
+      "TD_RAVAGER": {
+        "name": "Ravager",
+        "max_health": 1200,
+        "walk_speed": 0.4,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 100.0,
+        "max_melee_damage": 100.0
+      },
+      "TD_ILLUSIONER": {
+        "name": "Illusioner",
+        "max_health": 1000,
+        "walk_speed": 0.3,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 100.0,
+        "max_melee_damage": 100.0
+      },
+      "TD_VEX": {
+        "name": "Vex",
+        "max_health": 100,
+        "walk_speed": 0.5,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 100.0,
+        "max_melee_damage": 100.0
+      },
+      "TD_CREEPER": {
+        "name": "Creeper",
+        "max_health": 1000,
+        "walk_speed": 0.3,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 100.0,
+        "max_melee_damage": 100.0
+      },
+      "TD_CREEPER_CHARGED": {
+        "name": "Creeper",
+        "max_health": 1000,
+        "walk_speed": 0.3,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 100.0,
+        "max_melee_damage": 100.0
+      },
+      "TD_SLIME": {
+        "name": "Slime",
+        "max_health": 2500,
+        "walk_speed": 0.2,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 100.0,
+        "max_melee_damage": 100.0
+      },
+      "TD_MAGMA_CUBE": {
+        "name": "Magma Cube",
+        "max_health": 4000,
+        "walk_speed": 0.2,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 100.0,
+        "max_melee_damage": 100.0
+      },
+      "TD_PHANTOM": {
+        "name": "Phantom",
+        "max_health": 200,
+        "walk_speed": 0.4,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 100.0,
+        "max_melee_damage": 100.0
+      },
+      "TD_DROWNED": {
+        "name": "Drowned",
+        "max_health": 1200,
+        "walk_speed": 0.3,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 100.0,
+        "max_melee_damage": 100.0
+      },
+      "TD_GUARDIAN": {
+        "name": "Guardian",
+        "max_health": 800,
+        "walk_speed": 0.2,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 100.0,
+        "max_melee_damage": 100.0
+      },
+      "TD_ELDER_GUARDIAN": {
+        "name": "Elder Guardian",
+        "max_health": 6000,
+        "walk_speed": 0.2,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 100.0,
+        "max_melee_damage": 100.0
+      },
+      "TD_WARDEN": {
+        "name": "Warden",
+        "max_health": 8000,
+        "walk_speed": 0.3,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 100.0,
+        "max_melee_damage": 100.0
+      },
+      "TD_ENDER_DRAGON": {
+        "name": "Ender Dragon",
+        "max_health": 8000,
+        "walk_speed": 0.3,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 100.0,
+        "max_melee_damage": 100.0
+      },
+      "TD_WITHER": {
+        "name": "Wither",
+        "max_health": 10000,
+        "walk_speed": 0.3,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 100.0,
+        "max_melee_damage": 100.0
+      },
+      "TD_GIANT": {
+        "name": "Giant",
+        "max_health": 12000,
+        "walk_speed": 0.3,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 100.0,
+        "max_melee_damage": 100.0
+      },
+      "TRICKSTER_DUMMY": {
+        "name": "Decoy",
+        "max_health": 5000,
+        "walk_speed": 0.0,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 0.0,
+        "max_melee_damage": 0.0
+      },
+      "PHYSIRA": {
+        "name": "Physira",
+        "max_health": 10000,
+        "walk_speed": 0.0,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 3000.0,
+        "max_melee_damage": 4000.0
+      },
+      "ONE_OF_NINE": {
+        "name": "One of Nine",
+        "max_health": 250000,
+        "walk_speed": 0.2,
+        "damage_resistance": 40.0,
+        "min_melee_damage": 3000.0,
+        "max_melee_damage": 5000.0
+      },
+      "VANGUARD": {
+        "name": "Vanguard",
+        "max_health": 200000,
+        "walk_speed": 0.25,
+        "damage_resistance": 20.0,
+        "min_melee_damage": 5000.0,
+        "max_melee_damage": 8000.0
+      },
+      "ECHO_OF_BLADES": {
+        "name": "Echo of Blades",
+        "max_health": 7500,
+        "walk_speed": 0.25,
+        "damage_resistance": 10.0,
+        "min_melee_damage": 1200.0,
+        "max_melee_damage": 1500.0
+      },
+      "SOUL_REAVER": {
+        "name": "Soul Reaver",
+        "max_health": 6000,
+        "walk_speed": 0.3,
+        "damage_resistance": 10.0,
+        "min_melee_damage": 600.0,
+        "max_melee_damage": 800.0
+      },
+      "NINE_CRYSTAL": {
+        "name": "Pylon",
+        "max_health": 2000,
+        "walk_speed": 0.0,
+        "damage_resistance": 0.0,
+        "min_melee_damage": 0.0,
+        "max_melee_damage": 0.0
+      }
+    }
+  }
+}

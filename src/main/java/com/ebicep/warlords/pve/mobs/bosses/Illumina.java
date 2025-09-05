@@ -12,6 +12,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
@@ -289,6 +290,7 @@ public class Illumina extends AbstractMob implements BossMob {
                                 .cause("Death Ray")
                                 .source(warlordsNPC)
                                 .value(we.getMaxHealth() * 0.9f)
+                                .flag(InstanceFlags.TRUE_DAMAGE, true)
                         );
                         warlordsNPC.addInstance(InstanceBuilder
                                 .healing()
@@ -323,7 +325,7 @@ public class Illumina extends AbstractMob implements BossMob {
             Location loc = wp.getLocation();
 
             Utils.playGlobalSound(loc, Sound.BLOCK_GRASS_BREAK, 500, 0.4f);
-            new FallingBlockWaveEffect(loc.add(0, 1, 0), 7, 1.2, Material.OAK_LEAVES).play();
+            FallingBlockWaveEffect.create(loc.add(0, 1, 0), 7, 5, Material.OAK_LEAVES);
             for (WarlordsEntity we : PlayerFilterGeneric
                     .entitiesAround(wp, 7, 7, 7)
                     .aliveEnemiesOf(wp)

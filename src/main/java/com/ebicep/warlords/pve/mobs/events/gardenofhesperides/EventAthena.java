@@ -170,7 +170,7 @@ public class EventAthena extends AbstractMob implements BossMob, LesserGod {
                         stand.remove();
                         EffectUtils.strikeLightning(wp.getLocation(), false, 2);
                         Utils.playGlobalSound(wp.getLocation(), "warrior.groundslam.activation", 2, 1);
-                        new FallingBlockWaveEffect(wp.getLocation().add(0, 1.1, 0), radius, 1, Material.COARSE_DIRT).play();
+                        FallingBlockWaveEffect.create(wp.getLocation().add(0, 1.1, 0), radius, 6, Material.COARSE_DIRT);
                         PlayerFilter.entitiesAround(wp, radius, radius, radius)
                                     .aliveEnemiesOf(wp)
                                     .forEach(warlordsEntity -> {

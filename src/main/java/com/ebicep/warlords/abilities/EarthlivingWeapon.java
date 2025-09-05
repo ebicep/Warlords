@@ -179,7 +179,7 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
     private void energyPulseOnHit(WarlordsEntity giver, WarlordsEntity target) {
         target.getCooldownManager().addRegularCooldown("Earthliving PvE", "", EarthlivingWeapon.class, null, giver, CooldownTypes.LOW_LEVEL_DEBUFF, cooldownManager -> {
                     Utils.playGlobalSound(target.getLocation(), "shaman.earthlivingweapon.impact", 2, 1.2f);
-                    new FallingBlockWaveEffect(target.getLocation(), 6, 1, Material.BIRCH_SAPLING).play();
+            FallingBlockWaveEffect.create(target.getLocation(), 6, 6, Material.BIRCH_SAPLING);
                     for (WarlordsEntity ally : PlayerFilter.entitiesAround(target, 10, 10, 10).aliveTeammatesOf(giver).closestFirst(target)) {
                         float missingHealth = (ally.getMaxHealth() - ally.getCurrentHealth()) * 0.1f;
                         if (missingHealth <= 0) {

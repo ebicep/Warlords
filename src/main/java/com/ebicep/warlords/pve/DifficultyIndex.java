@@ -56,11 +56,7 @@ public enum DifficultyIndex {
                     Component.text("+50% Mob Health", NamedTextColor.RED),
                     Component.text("+50% Mob Damage", NamedTextColor.RED),
                     Component.empty(),
-                    Component.text("Hard scaling, Illusion, Exiled and", NamedTextColor.RED),
-                    Component.text("Void monsters appear much sooner and", NamedTextColor.RED),
-                    Component.text("at a higher rate.", NamedTextColor.RED),
-                    Component.empty(),
-                    Component.text("Respawns are longer.", NamedTextColor.RED)
+                    Component.text("Respawns are longer and rare mobs appear sooner.", NamedTextColor.RED)
             ),
             NamedTextColor.GOLD,
             25,
@@ -74,14 +70,11 @@ public enum DifficultyIndex {
                     Component.text("abilities."),
                     Component.empty(),
                     Component.text("Modifiers:"),
-                    Component.text("+100% Mob Health", NamedTextColor.RED),
+                    Component.text("+75% Mob Health", NamedTextColor.RED),
                     Component.text("+75% Mob Damage", NamedTextColor.RED),
                     Component.empty(),
-                    Component.text("Extreme Exiled and", NamedTextColor.RED),
-                    Component.text("Void monsters appear much sooner and", NamedTextColor.RED),
-                    Component.text("at a higher rate.", NamedTextColor.RED),
-                    Component.empty(),
-                    Component.text("Respawns are extremely long.", NamedTextColor.RED)
+                    Component.text("Respawns are extremely long and rare much", NamedTextColor.RED),
+                    Component.text("appear much sooner.", NamedTextColor.RED)
             ),
             NamedTextColor.DARK_RED,
             25,

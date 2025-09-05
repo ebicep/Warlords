@@ -17,7 +17,6 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayerDisguised;
 import com.ebicep.warlords.pve.mobs.*;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
-import com.ebicep.warlords.util.warlords.ConfigUtil;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -26,10 +25,8 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Comparator;
@@ -262,19 +259,7 @@ public class MobCommand extends BaseCommand {
 
     @Subcommand("reloadconfig")
     public void reloadConfig(CommandIssuer issuer) {
-        ChatChannels.sendDebugMessage(issuer, Component.text("Reloading mob values", NamedTextColor.GREEN));
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                try {
-                    ConfigUtil.readMobConfig(Warlords.getInstance());
-                    ChatChannels.sendDebugMessage(issuer, Component.text("Reloaded mob values", NamedTextColor.GREEN));
-                } catch (FileNotFoundException e) {
-                    ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
-                    ChatChannels.sendDebugMessage(issuer, Component.text("There was an error reloading mob values - " + e.getMessage(), NamedTextColor.RED));
-                }
-            }
-        }.runTaskAsynchronously(Warlords.getInstance());
+        ChatChannels.sendDebugMessage(issuer, Component.text("Use /database reloadconfig", NamedTextColor.RED));
     }
 
     @Subcommand("printvalues")

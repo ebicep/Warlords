@@ -3,6 +3,7 @@ package com.ebicep.warlords.effects;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.util.bukkit.EntitiesUtils;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.Pair;
@@ -500,7 +501,7 @@ public class EffectUtils {
                     false,
                     display -> {
                         display.setItemStack(item);
-                        display.setBrightness(new Display.Brightness(15, 15));
+                        display.setBrightness(EntitiesUtils.MAX_BRIGHTNESS);
                         display.setTransformation(new Transformation(
                                 new Vector3f(0f, 0f, 0f),
                                 new AxisAngle4f((float) Math.toRadians(-pitch), 0, 0, 1),

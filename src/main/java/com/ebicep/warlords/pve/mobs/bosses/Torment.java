@@ -9,7 +9,7 @@ import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.pve.mobs.bosses.bossabilities.BossAbilityPhase;
+import com.ebicep.warlords.game.option.raid.BossAbilityPhase;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -30,7 +30,10 @@ import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
-import org.bukkit.*;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -368,7 +371,7 @@ public class Torment extends AbstractMob implements BossMob {
         }
 
         if (ticksElapsed % 200 == 0) {
-            new FallingBlockWaveEffect(warlordsNPC.getLocation().clone().add(0, 1, 0), 12, 0.7, Material.SOUL_FIRE).play();
+            FallingBlockWaveEffect.create(warlordsNPC.getLocation().clone().add(0, 1, 0), 12, 4, Material.SOUL_FIRE);
             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ITEM_FIRECHARGE_USE, 500, 0.2f);
             for (WarlordsEntity we : PlayerFilter
                     .entitiesAround(warlordsNPC, 12, 12, 12)
@@ -435,12 +438,12 @@ public class Torment extends AbstractMob implements BossMob {
                         Collections.singletonList((cooldown, ticksLeft, ticksElapsed2) -> {
                             if (ticksLeft % 10 == 0) {
                                 EffectUtils.playParticleLinkAnimation(warlordsNPC.getLocation(), we.getLocation(), Particle.DRIPPING_LAVA);
-                                EffectUtils.playSphereAnimation(we.getLocation(), 3, Particle.FLAME, 1);
+                                EffectUtils.playSphereAnimation(we.getLocation(), 7, Particle.FLAME, 1);
                             }
 
                             if (ticksLeft % 5 == 0) {
                                 for (WarlordsEntity ally : PlayerFilter
-                                        .entitiesAround(we, 3.5, 3.5, 3.5)
+                                        .entitiesAround(we, 7, 7, 7)
                                         .aliveTeammatesOfExcludingSelf(we)
                                 ) {
                                     ally.addInstance(InstanceBuilder
