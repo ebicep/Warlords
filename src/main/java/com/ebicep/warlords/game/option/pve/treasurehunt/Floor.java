@@ -67,7 +67,7 @@ public class Floor {
             var newGeneratedHallway = generateHallwayWithRoom(
                     maxWidth,
                     maxLength,
-                    () -> rooms.stream().filter(r -> r.getRoomType() == RoomType.NORMAL),
+                    () -> rooms.stream().filter(r -> r.getRoomConnections().size() == 2),
                     () -> rooms.stream().filter(r -> r.getRoomType() == RoomType.TREASURE),
                     random,
                     placedRooms::stream,

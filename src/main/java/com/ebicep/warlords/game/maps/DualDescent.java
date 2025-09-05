@@ -22,9 +22,9 @@ import java.util.List;
 
 import static com.ebicep.warlords.util.warlords.GameRunnable.SECOND;
 
-public class TreasureHunt extends GameMap {
+public class DualDescent extends GameMap {
 
-    public TreasureHunt() {
+    public DualDescent() {
         super(
                 "Dual Descent",
                 2,
