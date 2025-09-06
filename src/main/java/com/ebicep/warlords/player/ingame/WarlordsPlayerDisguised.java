@@ -98,13 +98,16 @@ public class WarlordsPlayerDisguised extends WarlordsPlayer {
     }
 
     @Override
-    public void die(@Nullable WarlordsEntity attacker, WarlordsDeathEvent.DeathInfoBuilder deathInfoBuilder) {
-        super.die(attacker, deathInfoBuilder);
-        Warlords.removePlayer2(uuid);
-        game.getPlayers().put(uuid, null);
-        if (entity instanceof Player player) {
-            DisguiseAPI.undisguiseToAll(player);
+    public boolean die(@Nullable WarlordsEntity attacker, WarlordsDeathEvent.DeathInfoBuilder deathInfoBuilder) {
+        boolean dead = super.die(attacker, deathInfoBuilder);
+        if (dead) {
+            Warlords.removePlayer2(uuid);
+            game.getPlayers().put(uuid, null);
+            if (entity instanceof Player player) {
+                DisguiseAPI.undisguiseToAll(player);
+            }
         }
+        return dead;
     }
 
 }

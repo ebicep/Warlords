@@ -305,13 +305,13 @@ public abstract class WarlordsEntity {
         return cooldownManager;
     }
 
-    public void die(@Nullable WarlordsEntity attacker, WarlordsDeathEvent.DeathInfoBuilder deathInfoBuilder) {
+    public boolean die(@Nullable WarlordsEntity attacker, WarlordsDeathEvent.DeathInfoBuilder deathInfoBuilder) {
         WarlordsDeathEvent.DeathInfo deathInfo = deathInfoBuilder.createDeathInfo();
         WarlordsDeathEvent deathEvent = new WarlordsDeathEvent(this, attacker, deathInfo);
         Bukkit.getPluginManager().callEvent(deathEvent);
         boolean cancelDeath = deathEvent.isForceCancel() || (deathEvent.isCancelled() && !deathInfo.forced());
         if (cancelDeath && currentHealth > 0) {
-            return;
+            return false;
         }
 
         dead = true;
@@ -379,6 +379,8 @@ public abstract class WarlordsEntity {
         hitBy.clear();
         regenTickTimer = 0;
         heal();
+
+        return true;
     }
 
     @Nonnull
