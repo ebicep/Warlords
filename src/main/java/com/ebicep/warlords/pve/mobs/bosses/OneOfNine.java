@@ -66,6 +66,8 @@ public class OneOfNine extends AbstractMob implements BossMob {
     private MeteorMarkersAbility meteorMarkersAbility;
     private ArenaCollapseAbility arenaCollapseAbility;
     private SpinningWallAbility spinningWallAbility;
+    private GiantLaserAbility giantLaserAbility;
+    private ChasingOrbsAbility chasingOrbsAbility;
     private BossAbilityPhase phaseOne;
     private BossAbilityPhase phaseTwo;
     private BossAbilityPhase phaseThree;
@@ -138,12 +140,12 @@ public class OneOfNine extends AbstractMob implements BossMob {
                 32,
                 16,
                 1,
-                160,
+                100,
                 400,
                 1,
                 25,
-                1)
-        ;
+                1
+        );
 
         meteorMarkersAbility = new MeteorMarkersAbility(
                 warlordsNPC,
@@ -177,6 +179,22 @@ public class OneOfNine extends AbstractMob implements BossMob {
                 Color.GRAY
         );
 
+        giantLaserAbility = new GiantLaserAbility(
+                warlordsNPC,
+                warlordsNPC,
+                () -> warlordsNPC.getEyeLocation(),
+                50,
+                15,
+                70,
+                2,
+                2,
+                1000,
+                false,
+                3
+        );
+
+        chasingOrbsAbility = new ChasingOrbsAbility(warlordsNPC, warlordsNPC, option.playerCount(), 100, 0.3, 3, 2500, 1.5);
+
         swordManager.spawnSwords(9);
         swordManager.start();
 
@@ -196,7 +214,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 if (damageController.isInDamageWindow()) {
-                    return currentDamageValue * 1.5f;
+                    return currentDamageValue * 1.2f;
                 }
                 event.getSource().addInstance(InstanceBuilder
                         .damage()
@@ -467,7 +485,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
             phaseTransition();
         });
 
-        phaseFive = new BossAbilityPhase(warlordsNPC, 10, () -> {
+        phaseFive = new BossAbilityPhase(warlordsNPC, 15, () -> {
             preventMinions = true;
             arenaCollapseAbility.start(warlordsNPC.getGame());
             Utils.playGlobalSound(mapCenter, Sound.ENTITY_ALLAY_AMBIENT_WITHOUT_ITEM, 500, 0.3f);
@@ -588,15 +606,25 @@ public class OneOfNine extends AbstractMob implements BossMob {
         }
 
         if (ticksElapsed % 1600 == 0 && ticksElapsed > 0 && !preventMinions) {
+            Utils.playGlobalSound(mapCenter, Sound.ENTITY_ALLAY_AMBIENT_WITHOUT_ITEM, 500, 1.5f);
             for (int i = 0; i < option.playerCount(); i++) {
                 option.spawnNewMob(new EchoOfBlades(pveOption.getRandomSpawnLocation(warlordsNPC)));
             }
         }
 
-        if (ticksElapsed % 1000 == 0 && ticksElapsed > 0 && !preventMinions) {
+        if (ticksElapsed % 900 == 0 && ticksElapsed > 0 && !preventMinions) {
+            Utils.playGlobalSound(mapCenter, Sound.ENTITY_ALLAY_AMBIENT_WITHOUT_ITEM, 500, 0.3f);
             for (int i = 0; i < option.playerCount(); i++) {
                 option.spawnNewMob(new SoulReaver(pveOption.getRandomSpawnLocation(warlordsNPC)));
             }
+        }
+
+        if (ticksElapsed % 280 == 0 && ticksElapsed > 0 && !preventMinions) {
+            giantLaserAbility.start(warlordsNPC.getGame());
+        }
+
+        if (ticksElapsed % 535 == 0 && ticksElapsed > 0 && !preventMinions) {
+            chasingOrbsAbility.start(warlordsNPC.getGame());
         }
 
         if (ticksElapsed % 600 == 0 && ticksElapsed > 0 && !preventDamagePhase) {
@@ -653,8 +681,8 @@ public class OneOfNine extends AbstractMob implements BossMob {
 
         double radius = 12;
         int count = 9;
-        int delayBetween = 20;     // ticks between swords appearing
-        int fallDuration = 8;    // ticks to complete the 90° fall (your old value)
+        int delayBetween = 5;     // ticks between swords appearing
+        int fallDuration = 6;    // ticks to complete the 90° fall (your old value)
 
         Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.AMBIENT_BASALT_DELTAS_LOOP, 500, 0.7f);
         Utils.playGlobalSound(warlordsNPC.getLocation(), "arcanist.beaconshadow.activation", 500, 0.7f);

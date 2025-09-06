@@ -145,7 +145,7 @@ public interface FloatModifiableFilter {
 
         @Override
         public String getName() {
-            return "Base";
+            return "Max Base Health";
         }
 
         @Override

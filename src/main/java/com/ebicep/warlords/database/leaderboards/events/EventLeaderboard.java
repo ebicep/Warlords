@@ -3,6 +3,7 @@ package com.ebicep.warlords.database.leaderboards.events;
 import com.ebicep.holograms.Hologram;
 import com.ebicep.holograms.HologramDataText;
 import com.ebicep.holograms.HologramManager;
+import com.ebicep.holograms.VisibilityType;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.PlayerLeaderboardInfo;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboard;
@@ -121,7 +122,7 @@ public class EventLeaderboard {
                     int page = playerInfo.getPage();
                     return pageHologramData.get(page);
                 }
-        ).build();
+        ).setVisibility(VisibilityType.ALL).build();
         List<DatabasePlayer> databasePlayers = getSortedPlayers();
         Hologram playerPosition = new Hologram.Builder(
                 "eventPlayerPosition" + subTitle,

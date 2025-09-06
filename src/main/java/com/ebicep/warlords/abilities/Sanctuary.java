@@ -150,10 +150,11 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
                                 ) {
                                     EffectUtils.strikeLightning(resTarget.getLocation(), true);
                                     EffectUtils.playCrownAnimation(resTarget.getLocation(), Particle.CHERRY_LEAVES);
+                                    float damage = warlordsEntity instanceof Player ? warlordsEntity.getMaxHealth() * 2 : warlordsEntity.getMaxHealth() * 0.1f;
                                     resTarget.addInstance(InstanceBuilder.damage()
                                             .ability(Sanctuary.this)
                                             .source(warlordsEntity)
-                                            .value(warlordsEntity.getMaxHealth() * 2)
+                                            .value(damage)
                                             .flag(InstanceFlags.TRUE_DAMAGE, true));
                                 }
                             }

@@ -22,6 +22,8 @@ import com.ebicep.warlords.pve.mobs.bosses.bossabilities.BossAbilityPhase;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.SoulOfGradient;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.mobs.witherskeleton.CelestialOpus;
+import com.ebicep.warlords.pve.mobs.zombie.NightmareZombie;
+import com.ebicep.warlords.pve.mobs.zombie.RiftWalker;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -250,6 +252,7 @@ public class Torment extends AbstractMob implements BossMob {
                     if (counter % 80 == 0) {
                         for (int i = 0; i < pveOption.playerCount(); i++) {
                             pveOption.spawnNewMob(new CelestialOpus(pveOption.getRandomSpawnLocation(warlordsNPC)));
+                            pveOption.spawnNewMob(new RiftWalker(pveOption.getRandomSpawnLocation(warlordsNPC)));
                         }
                     }
 
@@ -300,7 +303,7 @@ public class Torment extends AbstractMob implements BossMob {
                         warlordsNPC.getGame(),
                         warlordsNPC.getTeam(),
                         loc.clone().add(0, 1.5, 0),
-                        8,
+                        10,
                         new CircumferenceEffect(Particle.WITCH, Particle.PORTAL).particlesPerCircumference(1.5),
                         new DoubleLineEffect(Particle.WITCH)
                 ).playEffects();
@@ -322,7 +325,7 @@ public class Torment extends AbstractMob implements BossMob {
 
                 if (counter % 5 == 0) {
                     for (WarlordsEntity we : PlayerFilter
-                            .entitiesAround(loc, 8, 8, 8)
+                            .entitiesAround(loc, 10, 10, 10)
                             .aliveEnemiesOf(warlordsNPC)
                     ) {
                         we.addInstance(InstanceBuilder
