@@ -90,7 +90,7 @@ public class InstanceManager {
 //            abstractCooldown.damageDoBeforeVariableSetFromSelf(event);
 //        }
         for (AbstractCooldown<?> abstractCooldown : event.getSource().getCooldownManager().getCooldownsDistinct()) {
-            abstractCooldown.applyModifiers(Modifier.BEFORE_VARIABLE_SET_ATTACKER, m -> m.apply(event));
+            abstractCooldown.applyModifiers(Modifier.DAMAGE_BEFORE_VARIABLE_SET_ATTACKER, m -> m.apply(event));
         }
 
         WarlordsEntity warlordsEntity = event.getWarlordsEntity();
@@ -139,7 +139,7 @@ public class InstanceManager {
                 .create(1)
                 .prefix(ComponentBuilder.create("Source Cooldowns", NamedTextColor.DARK_GREEN)));
         for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
-            abstractCooldown.applyModifiers(Modifier.BEFORE_ANY_REDUCTION_ATTACKER, m -> m.apply(event));
+            abstractCooldown.applyModifiers(Modifier.DAMAGE_BEFORE_ANY_REDUCTION_ATTACKER, m -> m.apply(event));
             debugMessage.append(InstanceDebugHoverable.LevelBuilder
                     .create(2)
                     .prefix(abstractCooldown));
@@ -148,12 +148,12 @@ public class InstanceManager {
         debugMessage.appendTitle("Crit Modifiers", NamedTextColor.AQUA);
         if (critChance.getBaseValue() > 0 && !flags.contains(InstanceFlags.IGNORE_CRIT_MODIFIERS)) {
             for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
-                abstractCooldown.applyModifiers(Modifier.CRIT_CHANCE_ATTACKER, m -> m.apply(event, critChance));
-                abstractCooldown.applyModifiers(Modifier.CRIT_MULTIPLIER_ATTACKER, m -> m.apply(event, critMultiplier));
+                abstractCooldown.applyModifiers(Modifier.DAMAGE_CRIT_CHANCE_ATTACKER, m -> m.apply(event, critChance));
+                abstractCooldown.applyModifiers(Modifier.DAMAGE_CRIT_MULTIPLIER_ATTACKER, m -> m.apply(event, critMultiplier));
             }
             for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
-                abstractCooldown.applyModifiers(Modifier.CRIT_CHANCE_ATTACKER, m -> m.apply(event, critChance));
-                abstractCooldown.applyModifiers(Modifier.CRIT_MULTIPLIER_ATTACKER, m -> m.apply(event, critMultiplier));
+                abstractCooldown.applyModifiers(Modifier.DAMAGE_CRIT_CHANCE_ATTACKER, m -> m.apply(event, critChance));
+                abstractCooldown.applyModifiers(Modifier.DAMAGE_CRIT_MULTIPLIER_ATTACKER, m -> m.apply(event, critMultiplier));
             }
         }
         critChance.refresh();
@@ -183,7 +183,7 @@ public class InstanceManager {
         }
         final float damageHealValueBeforeAllReduction = damageValue.getCalculatedValue();
         for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
-            abstractCooldown.applyModifiers(Modifier.POST_CRIT_CALCULATION_ATTACKER, m -> m.apply(
+            abstractCooldown.applyModifiers(Modifier.DAMAGE_POST_CRIT_CALCULATION_ATTACKER, m -> m.apply(
                             event,
                             damageHealValueBeforeAllReduction,
                             isCrit,
@@ -405,7 +405,7 @@ public class InstanceManager {
             );
             float finalCalculatedDamageValue = calculatedDamageValue;
             for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
-                abstractCooldown.applyModifiers(Modifier.ON_INTERVENE_ATTACKER, m -> m.apply(event, finalCalculatedDamageValue));
+                abstractCooldown.applyModifiers(Modifier.DAMAGE_ON_INTERVENE_ATTACKER, m -> m.apply(event, finalCalculatedDamageValue));
                 debugMessage.append(InstanceDebugHoverable.LevelBuilder
                         .create(2)
                         .prefix(abstractCooldown)
@@ -567,7 +567,7 @@ public class InstanceManager {
                 );
 
                 for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
-                    abstractCooldown.applyModifiers(Modifier.ON_SHIELD_SELF, m -> m.apply(event, damageHealValueBeforeShieldReduction, isCrit));
+                    abstractCooldown.applyModifiers(Modifier.DAMAGE_ON_SHIELD_SELF, m -> m.apply(event, damageHealValueBeforeShieldReduction, isCrit));
                     debugMessage.append(InstanceDebugHoverable.LevelBuilder
                             .create(3)
                             .prefix(abstractCooldown)
@@ -579,7 +579,7 @@ public class InstanceManager {
                         .prefix(ComponentBuilder.create("Attackers Cooldowns", NamedTextColor.DARK_GREEN))
                 );
                 for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
-                    abstractCooldown.applyModifiers(Modifier.ON_SHIELD_ATTACKER, m -> m.apply(event, damageHealValueBeforeShieldReduction, isCrit));
+                    abstractCooldown.applyModifiers(Modifier.DAMAGE_ON_SHIELD_ATTACKER, m -> m.apply(event, damageHealValueBeforeShieldReduction, isCrit));
 //                    abstractCooldown.onShieldFromAttacker(event, damageValue, isCrit);
                     debugMessage.append(InstanceDebugHoverable.LevelBuilder
                             .create(3)
@@ -632,12 +632,12 @@ public class InstanceManager {
                 //debugMessage.append("\n").append(ChatColor.AQUA).append("On Damage");
                 //appendDebugMessage(debugMessage, 1, ChatColor.DARK_GREEN, "Target Cooldowns");
                 for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
-                    abstractCooldown.applyModifiers(Modifier.ON_DAMAGE_SELF, m -> m.apply(event, finalDamageValue, isCrit));
+                    abstractCooldown.applyModifiers(Modifier.DAMAGE_ON_DAMAGE_SELF, m -> m.apply(event, finalDamageValue, isCrit));
                 }
 
                 //appendDebugMessage(debugMessage, 1, ChatColor.DARK_GREEN, "Attackers Cooldowns");
                 for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
-                    abstractCooldown.applyModifiers(Modifier.ON_DAMAGE_ATTACKER, m -> m.apply(event, finalDamageValue, isCrit));
+                    abstractCooldown.applyModifiers(Modifier.DAMAGE_ON_DAMAGE_ATTACKER, m -> m.apply(event, finalDamageValue, isCrit));
                 }
                 //}
 
@@ -745,7 +745,7 @@ public class InstanceManager {
 
         float finalDamageValue = damageValue.getCalculatedValue();
         for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
-            abstractCooldown.applyModifiers(Modifier.ON_END_ATTACKER, m -> m.apply(event, finalDamageValue, isCrit));
+            abstractCooldown.applyModifiers(Modifier.DAMAGE_ON_END_ATTACKER, m -> m.apply(event, finalDamageValue, isCrit));
 //            abstractCooldown.onEndFromAttacker(event, damageValue, isCrit);
 //            List<DamageInstance> extraDamageInstances = abstractCooldown.getExtraDamageInstances();
 //            if (extraDamageInstances != null) {

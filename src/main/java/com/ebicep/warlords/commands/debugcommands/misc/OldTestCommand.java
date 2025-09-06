@@ -142,11 +142,11 @@ public class OldTestCommand implements CommandExecutor {
                         (event, currentDamageValue) -> currentDamageValue.addMultiplicativeModifierMult("TEST", 2)
                 );
                 cooldown.addModifier(
-                        Modifier.CRIT_CHANCE_ATTACKER,
+                        Modifier.DAMAGE_CRIT_CHANCE_ATTACKER,
                         (event, currentDamageValue) -> currentDamageValue.addAdditiveModifier("TEST", 20)
                 );
                 cooldown.addModifier(
-                        Modifier.CRIT_MULTIPLIER_ATTACKER,
+                        Modifier.DAMAGE_CRIT_MULTIPLIER_ATTACKER,
                         (event, currentDamageValue) -> currentDamageValue.addAdditiveModifier("TEST", 100)
                 );
                 warlordsEntity.getCooldownManager().addCooldown(cooldown);

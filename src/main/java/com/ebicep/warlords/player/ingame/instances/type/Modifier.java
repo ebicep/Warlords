@@ -6,152 +6,220 @@ import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 @SuppressWarnings("InstantiationOfUtilityClass")
 public class Modifier<T> {
 
-    public static final Modifier<BeforeVariableSetFromAttacker> BEFORE_VARIABLE_SET_ATTACKER = new Modifier<>();
-    public static final Modifier<BeforeReductionFromAttacker> BEFORE_ANY_REDUCTION_ATTACKER = new Modifier<>();
-    public static final Modifier<AddCritChanceFromAttacker> CRIT_CHANCE_ATTACKER = new Modifier<>();
-    public static final Modifier<AddCritMultiplierFromAttacker> CRIT_MULTIPLIER_ATTACKER = new Modifier<>();
-    public static final Modifier<PostCritCalculationFromAttacker> POST_CRIT_CALCULATION_ATTACKER = new Modifier<>();
-    public static final Modifier<ModifyDamageBeforeInterveneFromSelf> DAMAGE_BEFORE_INTERVENE_SELF = new Modifier<>();
-    public static final Modifier<ModifyDamageBeforeInterveneFromAttacker> DAMAGE_BEFORE_INTERVENE_ATTACKER = new Modifier<>();
-    public static final Modifier<OnInterveneFromAttacker> ON_INTERVENE_ATTACKER = new Modifier<>();
-    public static final Modifier<ModifyDamageAfterInterveneFromSelf> DAMAGE_AFTER_INTERVENE_SELF = new Modifier<>();
-    public static final Modifier<ModifyDamageAfterInterveneFromAttacker> DAMAGE_AFTER_INTERVENE_ATTACKER = new Modifier<>();
-    public static final Modifier<OnShieldFromSelf> ON_SHIELD_SELF = new Modifier<>();
-    public static final Modifier<OnShieldFromAttacker> ON_SHIELD_ATTACKER = new Modifier<>();
-    public static final Modifier<ModifyDamageAfterAllFromSelf> DAMAGE_AFTER_ALL_SELF = new Modifier<>();
-    public static final Modifier<OnDamageFromSelf> ON_DAMAGE_SELF = new Modifier<>();
-    public static final Modifier<OnDamageFromAttacker> ON_DAMAGE_ATTACKER = new Modifier<>();
-    public static final Modifier<OnDeathFromEnemies> ON_DEATH_ENEMIES = new Modifier<>();
-    public static final Modifier<OnEndFromSelf> ON_END_SELF = new Modifier<>();
-    public static final Modifier<OnEndFromAttacker> ON_END_ATTACKER = new Modifier<>();
+    // Damage Modifiers
+    public static final Modifier<DamageBeforeVariableSetFromAttacker> DAMAGE_BEFORE_VARIABLE_SET_ATTACKER = new Modifier<>();
+    public static final Modifier<DamageBeforeReductionFromAttacker> DAMAGE_BEFORE_ANY_REDUCTION_ATTACKER = new Modifier<>();
+    public static final Modifier<DamageAddCritChanceFromAttacker> DAMAGE_CRIT_CHANCE_ATTACKER = new Modifier<>();
+    public static final Modifier<DamageAddCritMultiplierFromAttacker> DAMAGE_CRIT_MULTIPLIER_ATTACKER = new Modifier<>();
+    public static final Modifier<DamagePostCritCalculationFromAttacker> DAMAGE_POST_CRIT_CALCULATION_ATTACKER = new Modifier<>();
+    public static final Modifier<DamageModifyBeforeInterveneFromSelf> DAMAGE_BEFORE_INTERVENE_SELF = new Modifier<>();
+    public static final Modifier<DamageModifyBeforeInterveneFromAttacker> DAMAGE_BEFORE_INTERVENE_ATTACKER = new Modifier<>();
+    public static final Modifier<DamageOnInterveneFromAttacker> DAMAGE_ON_INTERVENE_ATTACKER = new Modifier<>();
+    public static final Modifier<DamageModifyAfterInterveneFromSelf> DAMAGE_AFTER_INTERVENE_SELF = new Modifier<>();
+    public static final Modifier<DamageModifyAfterInterveneFromAttacker> DAMAGE_AFTER_INTERVENE_ATTACKER = new Modifier<>();
+    public static final Modifier<DamageOnShieldFromSelf> DAMAGE_ON_SHIELD_SELF = new Modifier<>();
+    public static final Modifier<DamageOnShieldFromAttacker> DAMAGE_ON_SHIELD_ATTACKER = new Modifier<>();
+    public static final Modifier<DamageModifyAfterAllFromSelf> DAMAGE_AFTER_ALL_SELF = new Modifier<>();
+    public static final Modifier<DamageOnDamageFromSelf> DAMAGE_ON_DAMAGE_SELF = new Modifier<>();
+    public static final Modifier<DamageOnDamageFromAttacker> DAMAGE_ON_DAMAGE_ATTACKER = new Modifier<>();
+    public static final Modifier<DamageOnDeathFromEnemies> DAMAGE_ON_DEATH_ENEMIES = new Modifier<>();
+    public static final Modifier<DamageOnEndFromSelf> DAMAGE_ON_END_SELF = new Modifier<>();
+    public static final Modifier<DamageOnEndFromAttacker> DAMAGE_ON_END_ATTACKER = new Modifier<>();
+    // Healing Modifiers
+    public static final Modifier<HealingBeforeVariableSetFromSelf> HEALING_BEFORE_VARIABLE_SET_SELF = new Modifier<>();
+    public static final Modifier<HealingBeforeVariableSetFromAttacker> HEALING_BEFORE_VARIABLE_SET_ATTACKER = new Modifier<>();
+    public static final Modifier<HealingModifyFromSelf> HEALING_MODIFY_SELF = new Modifier<>();
+    public static final Modifier<HealingModifyFromAttacker> HEALING_MODIFY_ATTACKER = new Modifier<>();
+    public static final Modifier<HealingOnHealFromSelf> HEALING_ON_HEAL_SELF = new Modifier<>();
+    public static final Modifier<HealingOnHealFromAttacker> HEALING_ON_HEAL_ATTACKER = new Modifier<>();
+    // Energy Modifiers
+    public static final Modifier<EnergyGainPerTick> ENERGY_GAIN_PER_TICK = new Modifier<>();
+    public static final Modifier<EnergyGainPerHit> ENERGY_GAIN_PER_HIT = new Modifier<>();
+
 
     private Modifier() {
 
     }
 
     @FunctionalInterface
-    public interface BeforeVariableSetFromAttacker {
+    public interface DamageBeforeVariableSetFromAttacker {
 
         void apply(WarlordsDamageHealingEvent event);
 
     }
 
     @FunctionalInterface
-    public interface BeforeReductionFromAttacker {
+    public interface DamageBeforeReductionFromAttacker {
 
         void apply(WarlordsDamageHealingEvent event);
 
     }
 
     @FunctionalInterface
-    public interface AddCritChanceFromAttacker {
+    public interface DamageAddCritChanceFromAttacker {
 
         void apply(WarlordsDamageHealingEvent event, FloatModifiable currentCritChance);
 
     }
 
     @FunctionalInterface
-    public interface AddCritMultiplierFromAttacker {
+    public interface DamageAddCritMultiplierFromAttacker {
 
         void apply(WarlordsDamageHealingEvent event, FloatModifiable currentCritMultiplier);
 
     }
 
     @FunctionalInterface
-    public interface PostCritCalculationFromAttacker {
+    public interface DamagePostCritCalculationFromAttacker {
 
         void apply(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit, float critChance, float critMultiplier);
 
     }
 
     @FunctionalInterface
-    public interface ModifyDamageBeforeInterveneFromSelf {
+    public interface DamageModifyBeforeInterveneFromSelf {
 
         void apply(WarlordsDamageHealingEvent event, FloatModifiable currentDamageValue);
 
     }
 
     @FunctionalInterface
-    public interface ModifyDamageBeforeInterveneFromAttacker {
+    public interface DamageModifyBeforeInterveneFromAttacker {
 
         void apply(WarlordsDamageHealingEvent event, FloatModifiable currentDamageValue);
 
     }
 
     @FunctionalInterface
-    public interface OnInterveneFromAttacker {
+    public interface DamageOnInterveneFromAttacker {
 
         void apply(WarlordsDamageHealingEvent event, float currentDamageValue);
 
     }
 
     @FunctionalInterface
-    public interface ModifyDamageAfterInterveneFromSelf {
+    public interface DamageModifyAfterInterveneFromSelf {
 
         void apply(WarlordsDamageHealingEvent event, FloatModifiable currentDamageValue);
 
     }
 
     @FunctionalInterface
-    public interface ModifyDamageAfterInterveneFromAttacker {
+    public interface DamageModifyAfterInterveneFromAttacker {
 
         void apply(WarlordsDamageHealingEvent event, FloatModifiable currentDamageValue);
 
     }
 
     @FunctionalInterface
-    public interface OnShieldFromSelf {
+    public interface DamageOnShieldFromSelf {
 
         void apply(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit);
 
     }
 
     @FunctionalInterface
-    public interface OnShieldFromAttacker {
+    public interface DamageOnShieldFromAttacker {
 
         void apply(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit);
 
     }
 
     @FunctionalInterface
-    public interface ModifyDamageAfterAllFromSelf {
+    public interface DamageModifyAfterAllFromSelf {
 
         void apply(WarlordsDamageHealingEvent event, FloatModifiable currentDamageValue, boolean isCrit);
 
     }
 
     @FunctionalInterface
-    public interface OnDamageFromSelf {
+    public interface DamageOnDamageFromSelf {
 
         void apply(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit);
 
     }
 
     @FunctionalInterface
-    public interface OnDamageFromAttacker {
+    public interface DamageOnDamageFromAttacker {
 
         void apply(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit);
 
     }
 
     @FunctionalInterface
-    public interface OnDeathFromEnemies {
+    public interface DamageOnDeathFromEnemies {
 
         void apply(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit, boolean isKiller);
 
     }
 
     @FunctionalInterface
-    public interface OnEndFromSelf {
+    public interface DamageOnEndFromSelf {
 
         void apply(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit);
 
     }
 
     @FunctionalInterface
-    public interface OnEndFromAttacker {
+    public interface DamageOnEndFromAttacker {
 
         void apply(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit);
+
+    }
+
+    @FunctionalInterface
+    public interface HealingBeforeVariableSetFromSelf {
+
+        void apply(WarlordsDamageHealingEvent event);
+
+    }
+
+    @FunctionalInterface
+    public interface HealingBeforeVariableSetFromAttacker {
+
+        void apply(WarlordsDamageHealingEvent event);
+
+    }
+
+    @FunctionalInterface
+    public interface HealingModifyFromSelf {
+
+        void apply(WarlordsDamageHealingEvent event, FloatModifiable currentHealValue);
+
+    }
+
+    @FunctionalInterface
+    public interface HealingModifyFromAttacker {
+
+        void apply(WarlordsDamageHealingEvent event, FloatModifiable currentHealValue);
+
+    }
+
+    @FunctionalInterface
+    public interface HealingOnHealFromSelf {
+
+        void apply(WarlordsDamageHealingEvent event, float currentHealValue, boolean isCrit);
+
+    }
+
+    @FunctionalInterface
+    public interface HealingOnHealFromAttacker {
+
+        void apply(WarlordsDamageHealingEvent event, float currentHealValue, boolean isCrit);
+
+    }
+
+    @FunctionalInterface
+    public interface EnergyGainPerTick {
+
+        void apply(FloatModifiable energyGainPerTick);
+
+    }
+
+    @FunctionalInterface
+    public interface EnergyGainPerHit {
+
+        void apply(FloatModifiable energyPerHit);
 
     }
 
