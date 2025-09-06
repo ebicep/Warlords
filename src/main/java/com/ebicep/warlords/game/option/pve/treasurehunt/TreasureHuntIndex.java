@@ -16,9 +16,6 @@ public enum TreasureHuntIndex {
                     Component.text("Max players: ", NamedTextColor.GRAY)
                             .append(Component.text("2", NamedTextColor.YELLOW)),
                     Component.empty(),
-                    Component.text("Entry Requirements:", NamedTextColor.GRAY),
-                    Component.text("- None ", NamedTextColor.GRAY),
-                    Component.empty(),
                     Component.text("Traverse the hidden rooms as a duo", NamedTextColor.GRAY),
                     Component.text("to find the secrets from the last floor.", NamedTextColor.GRAY)
             ),
@@ -37,8 +34,7 @@ public enum TreasureHuntIndex {
                     Component.text("Max players: ", NamedTextColor.GRAY)
                             .append(Component.text("2-4", NamedTextColor.YELLOW)),
                     Component.empty(),
-                    Component.text("Entry Requirements:", NamedTextColor.GRAY),
-                    Component.text("- All players must have an ", NamedTextColor.GRAY)
+                    Component.text("All players must have an ", NamedTextColor.GRAY)
                             .append(Component.text("Epic ", NamedTextColor.DARK_PURPLE)),
                     Component.text("Weapon", NamedTextColor.DARK_PURPLE)
                             .append(Component.text(" or higher equipped.", NamedTextColor.GRAY)),
@@ -72,8 +68,8 @@ public enum TreasureHuntIndex {
                     Component.text("legendary artifacts from ages past.")
             ),
             NamedTextColor.RED,
-            2,
             4,
+            8,
             -1,
             10,
             Set.of(RoomSize.S_32X32X32, RoomSize.S_32X64X32)

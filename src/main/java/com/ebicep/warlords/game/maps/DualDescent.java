@@ -41,13 +41,13 @@ public class DualDescent extends GameMap {
         List<Option> options = category.initMap(this, loc, addons);
 
         options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
-        options.add(LobbyLocationMarker.create(loc.addXYZ(255, 42, 255), Team.BLUE).asOption());
-        options.add(LobbyLocationMarker.create(loc.addXYZ(255, 42, 255), Team.RED).asOption());
+        options.add(LobbyLocationMarker.create(loc.addXYZ(512, 42, 512), Team.BLUE).asOption());
+        options.add(LobbyLocationMarker.create(loc.addXYZ(512, 42, 512), Team.RED).asOption());
 
-        options.add(SpawnpointOption.forTeam(loc.addXYZ(255, 42, 255), Team.BLUE));
-        options.add(SpawnpointOption.forTeam(loc.addXYZ(255, 42, 255), Team.RED));
+        options.add(SpawnpointOption.forTeam(loc.addXYZ(512, 42, 512), Team.BLUE));
+        options.add(SpawnpointOption.forTeam(loc.addXYZ(512, 42, 512), Team.RED));
 
-        options.add(new BoundingBoxOption(new Location(loc.getWorld(), 0, 32, 0), new Location(loc.getWorld(), 511, 255, 511)));
+        options.add(new BoundingBoxOption(new Location(loc.getWorld(), 0, 32, 0), new Location(loc.getWorld(), 1024, 255, 1024)));
         options.add(DungeonRoomMarker.create(
                 loc.getWorld(),
                 32, -48, -48,
@@ -235,9 +235,42 @@ public class DualDescent extends GameMap {
                 true
         ).asOption());
 
+        options.add(DungeonRoomMarker.create(
+                loc.getWorld(),
+                -96, -48, -48,
+                -81, -33, -33,
+                RoomType.NORMAL,
+                true,
+                false,
+                false,
+                true
+        ).asOption());
+
+        options.add(DungeonRoomMarker.create(
+                loc.getWorld(),
+                64, -48, -48,
+                79, -33, -33,
+                RoomType.TRAP,
+                true,
+                false,
+                true,
+                false
+        ).asOption());
+
+        options.add(DungeonRoomMarker.create(
+                loc.getWorld(),
+                96, -48, -48,
+                111, -33, -33,
+                RoomType.TRAP,
+                false,
+                true,
+                false,
+                true
+        ).asOption());
+
         options.add(new GraveOption());
         options.add(new BasicScoreboardOption());
-        options.add(new TreasureHuntOption(200));
+        options.add(new TreasureHuntOption(100, 5));
 
         return options;
     }

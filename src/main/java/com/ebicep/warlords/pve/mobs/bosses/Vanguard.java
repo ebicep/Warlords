@@ -14,7 +14,7 @@ public class Vanguard extends AbstractMob implements BossMob {
     public Vanguard(Location spawnLocation) {
         super(spawnLocation,
                 "Vanguard",
-                200000,
+                500000,
                 0.25f,
                 20,
                 5000,
