@@ -1,10 +1,14 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.abilities.internal.DamagePowerup;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.mongodb.client.MongoCollection;
@@ -119,7 +123,33 @@ public class OldTestCommand implements CommandExecutor {
         if (commandSender instanceof Player player) {
             WarlordsEntity warlordsEntity = Warlords.getPlayer(player);
             if (warlordsEntity != null) {
-                warlordsEntity.getHealth().addAdditiveModifier("TEST", 100, 100);
+//                warlordsEntity.getHealth().addAdditiveModifier("TEST", 100, 100);
+                RegularCooldown<DamagePowerup> cooldown = new RegularCooldown<>(
+                        "Damage",
+                        "DMG",
+                        DamagePowerup.class,
+                        DamagePowerup.DAMAGE_POWERUP,
+                        warlordsEntity,
+                        CooldownTypes.BUFF,
+                        cooldownManager -> {
+                        },
+                        cooldownManager -> {
+                        },
+                        100
+                );
+                cooldown.addModifier(
+                        Modifier.DAMAGE_AFTER_INTERVENE_ATTACKER,
+                        (event, currentDamageValue) -> currentDamageValue.addMultiplicativeModifierMult("TEST", 2)
+                );
+                cooldown.addModifier(
+                        Modifier.CRIT_CHANCE_ATTACKER,
+                        (event, currentDamageValue) -> currentDamageValue.addAdditiveModifier("TEST", 20)
+                );
+                cooldown.addModifier(
+                        Modifier.CRIT_MULTIPLIER_ATTACKER,
+                        (event, currentDamageValue) -> currentDamageValue.addAdditiveModifier("TEST", 100)
+                );
+                warlordsEntity.getCooldownManager().addCooldown(cooldown);
             }
 //            List<Mob> mobs = Arrays.stream(Mob.VALUES).collect(Collectors.toList());
 //            for (Mob mob : Mob.BASIC) {

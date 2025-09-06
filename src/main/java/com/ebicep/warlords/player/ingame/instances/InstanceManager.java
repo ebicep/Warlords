@@ -24,11 +24,14 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.type.CustomInstanceFlags;
 import com.ebicep.warlords.player.ingame.instances.type.DamageInstance;
 import com.ebicep.warlords.player.ingame.instances.type.HealingInstance;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiableFilter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -87,11 +90,7 @@ public class InstanceManager {
 //            abstractCooldown.damageDoBeforeVariableSetFromSelf(event);
 //        }
         for (AbstractCooldown<?> abstractCooldown : event.getSource().getCooldownManager().getCooldownsDistinct()) {
-            abstractCooldown.damageDoBeforeVariableSetFromAttacker(event);
-            List<DamageInstance> extraDamageInstances = abstractCooldown.getExtraDamageInstances();
-            if (extraDamageInstances != null) {
-                extraDamageInstances.forEach(e -> e.damageDoBeforeVariableSetFromAttacker(event));
-            }
+            abstractCooldown.applyModifiers(Modifier.BEFORE_VARIABLE_SET_ATTACKER, m -> m.apply(event));
         }
 
         WarlordsEntity warlordsEntity = event.getWarlordsEntity();
@@ -100,8 +99,8 @@ public class InstanceManager {
         String cause = event.getCause();
         float min = event.getMin();
         float max = event.getMax();
-        float critChance = event.getCritChance();
-        float critMultiplier = event.getCritMultiplier();
+        FloatModifiable critChance = new FloatModifiable(event.getCritChance());
+        FloatModifiable critMultiplier = new FloatModifiable(event.getCritMultiplier());
         boolean isMeleeHit = cause.isEmpty();
         boolean isFallDamage = cause.equals("Fall");
         EnumSet<InstanceFlags> flags = event.getFlags();
@@ -140,135 +139,64 @@ public class InstanceManager {
                 .create(1)
                 .prefix(ComponentBuilder.create("Source Cooldowns", NamedTextColor.DARK_GREEN)));
         for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
-            abstractCooldown.doBeforeReductionFromAttacker(event);
-            List<DamageInstance> extraDamageInstances = abstractCooldown.getExtraDamageInstances();
-            if (extraDamageInstances != null) {
-                extraDamageInstances.forEach(e -> e.doBeforeReductionFromAttacker(event));
-            }
+            abstractCooldown.applyModifiers(Modifier.BEFORE_ANY_REDUCTION_ATTACKER, m -> m.apply(event));
             debugMessage.append(InstanceDebugHoverable.LevelBuilder
                     .create(2)
                     .prefix(abstractCooldown));
         }
 
         debugMessage.appendTitle("Crit Modifiers", NamedTextColor.AQUA);
+        if (critChance.getBaseValue() > 0 && !flags.contains(InstanceFlags.IGNORE_CRIT_MODIFIERS)) {
+            for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
+                abstractCooldown.applyModifiers(Modifier.CRIT_CHANCE_ATTACKER, m -> m.apply(event, critChance));
+                abstractCooldown.applyModifiers(Modifier.CRIT_MULTIPLIER_ATTACKER, m -> m.apply(event, critMultiplier));
+            }
+            for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
+                abstractCooldown.applyModifiers(Modifier.CRIT_CHANCE_ATTACKER, m -> m.apply(event, critChance));
+                abstractCooldown.applyModifiers(Modifier.CRIT_MULTIPLIER_ATTACKER, m -> m.apply(event, critMultiplier));
+            }
+        }
+        critChance.refresh();
+        critMultiplier.refresh();
         debugMessage.append(InstanceDebugHoverable.LevelBuilder
                 .create(1)
-                .prefix(ComponentBuilder.create("Source Cooldowns", NamedTextColor.DARK_GREEN)));
-        if (critChance > 0 && !flags.contains(InstanceFlags.IGNORE_CRIT_MODIFIERS)) {
-            float previousCC = critChance;
-            float previousCM = critMultiplier;
-            for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
-                // TODO CLEAN THIS GARBGE
-                List<DamageInstance> extraDamageInstances = abstractCooldown.getExtraDamageInstances();
-                critChance = abstractCooldown.addCritChanceFromAttacker(event, critChance);
-                critMultiplier = abstractCooldown.addCritMultiplierFromAttacker(event, critMultiplier);
-                if (previousCC != critChance) {
-                    debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                            .create(2)
-                            .prefix(ComponentBuilder.create("Crit Chance: ", NamedTextColor.GREEN))
-                            .value(previousCC, critChance, abstractCooldown)
-                    );
-                }
-                if (previousCM != critMultiplier) {
-                    debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                            .create(2)
-                            .prefix(ComponentBuilder.create("Crit Multiplier: ", NamedTextColor.GREEN))
-                            .value(previousCM, critMultiplier, abstractCooldown)
-                    );
-                }
-                previousCC = critChance;
-                previousCM = critMultiplier;
-                if (extraDamageInstances != null) {
-                    for (DamageInstance damageInstance : extraDamageInstances) {
-                        critChance = damageInstance.addCritChanceFromAttacker(event, critChance);
-                        critMultiplier = damageInstance.addCritMultiplierFromAttacker(event, critMultiplier);
-                        if (previousCC != critChance) {
-                            debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                                    .create(2)
-                                    .prefix(ComponentBuilder.create("Crit Chance: ", NamedTextColor.GREEN))
-                                    .value(previousCC, critChance, abstractCooldown)
-                            );
-                        }
-                        if (previousCM != critMultiplier) {
-                            debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                                    .create(2)
-                                    .prefix(ComponentBuilder.create("Crit Multiplier: ", NamedTextColor.GREEN))
-                                    .value(previousCM, critMultiplier, abstractCooldown)
-                            );
-                        }
-                        previousCC = critChance;
-                        previousCM = critMultiplier;
-                    }
-                }
-            }
-            for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
-                List<DamageInstance> extraDamageInstances = abstractCooldown.getExtraDamageInstances();
-                critChance = abstractCooldown.setCritChanceFromAttacker(event, critChance);
-                critMultiplier = abstractCooldown.setCritMultiplierFromAttacker(event, critMultiplier);
-                if (previousCC != critChance) {
-                    debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                            .create(2)
-                            .prefix(ComponentBuilder.create("Crit Chance: ", NamedTextColor.GREEN))
-                            .value(previousCC, critChance, abstractCooldown)
-                    );
-                }
-                if (previousCM != critMultiplier) {
-                    debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                            .create(2)
-                            .prefix(ComponentBuilder.create("Crit Multiplier: ", NamedTextColor.GREEN))
-                            .value(previousCM, critMultiplier, abstractCooldown)
-                    );
-                }
-                previousCC = critChance;
-                previousCM = critMultiplier;
-                if (extraDamageInstances != null) {
-                    for (DamageInstance e : extraDamageInstances) {
-                        critChance = e.setCritChanceFromAttacker(event, critChance);
-                        critMultiplier = e.setCritMultiplierFromAttacker(event, critMultiplier);
-                        if (previousCC != critChance) {
-                            debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                                    .create(2)
-                                    .prefix(ComponentBuilder.create("Crit Chance: ", NamedTextColor.GREEN))
-                                    .value(previousCC, critChance, abstractCooldown)
-                            );
-                        }
-                        if (previousCM != critMultiplier) {
-                            debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                                    .create(2)
-                                    .prefix(ComponentBuilder.create("Crit Multiplier: ", NamedTextColor.GREEN))
-                                    .value(previousCM, critMultiplier, abstractCooldown)
-                            );
-                        }
-                        previousCC = critChance;
-                        previousCM = critMultiplier;
-                    }
-                }
-            }
-        }
-        //crit
-        float damageValue = (int) ((Math.random() * (max - min)) + min);
-        double crit = ThreadLocalRandom.current().nextDouble(100);
-        boolean isCrit;
-        if (critChance > 0 && crit <= critChance && source.isCanCrit()) {
-            isCrit = true;
-            damageValue *= critMultiplier / 100f;
+                .prefix(ComponentBuilder.create("Crit Chance: ", NamedTextColor.GREEN))
+                .value(critChance));
+        debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                .create(1)
+                .prefix(ComponentBuilder.create("Crit Multiplier: ", NamedTextColor.GREEN))
+                .value(critMultiplier));
+        final FloatModifiable damageValue = new FloatModifiable((float) ((Math.random() * (max - min)) + min));
+        FloatModifiableFilter.InstancePierce pierceFilter;
+        if (ignoreDamageReduction) {
+            pierceFilter = new FloatModifiableFilter.InstancePierce();
+            damageValue.addFilter(pierceFilter);
         } else {
-            isCrit = false;
+            pierceFilter = null;
         }
+        double crit = ThreadLocalRandom.current().nextDouble(100);
+        float calculatedCritChance = critChance.getCalculatedValue();
+        float calculatedCritMultiplier = critMultiplier.getCalculatedValue();
+        boolean isCrit = calculatedCritChance > 0 && crit <= calculatedCritChance && source.isCanCrit();
+        if (isCrit) {
+            damageValue.addMultiplicativeModifierMult("Crit Multiplier", calculatedCritMultiplier / 100f);
+        }
+        final float damageHealValueBeforeAllReduction = damageValue.getCalculatedValue();
         for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
-            abstractCooldown.onPostCritCalculationFromAttacker(event, damageValue, isCrit, critChance, critMultiplier);
-            List<DamageInstance> extraDamageInstances = abstractCooldown.getExtraDamageInstances();
-            if (extraDamageInstances != null) {
-                for (DamageInstance damageInstance : extraDamageInstances) {
-                    damageInstance.onPostCritCalculationFromAttacker(event, damageValue, isCrit, critChance, critMultiplier);
-                }
-            }
+            abstractCooldown.applyModifiers(Modifier.POST_CRIT_CALCULATION_ATTACKER, m -> m.apply(
+                            event,
+                            damageHealValueBeforeAllReduction,
+                            isCrit,
+                            calculatedCritChance,
+                            calculatedCritMultiplier
+                    )
+            );
         }
         debugMessage.appendTitle("Calculated Damage", NamedTextColor.AQUA);
         debugMessage.append(InstanceDebugHoverable.LevelBuilder
                 .create(1)
                 .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.GREEN))
-                .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(damageValue), NamedTextColor.GOLD))
+                .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(damageHealValueBeforeAllReduction), NamedTextColor.GOLD))
         );
         debugMessage.append(InstanceDebugHoverable.LevelBuilder
                 .create(1)
@@ -276,9 +204,9 @@ public class InstanceManager {
                 .value(ComponentBuilder.create("" + isCrit, NamedTextColor.GOLD))
         );
 
-        final float damageHealValueBeforeAllReduction = damageValue;
         if (!flags.contains(InstanceFlags.IGNORE_SELF_RES) && !trueDamage) {
-            warlordsEntity.addAbsorbed(Math.max(0, damageValue - (damageValue *= 1 - warlordsEntity.getSpec().getDamageResistance() / 100f)));
+            damageValue.addMultiplicativeModifierAdd("Spec Damage Resistance", -warlordsEntity.getSpec().getDamageResistance() / 100f);
+//            warlordsEntity.addAbsorbed(Math.max(0, damageValue - (damageValue *= 1 - warlordsEntity.getSpec().getDamageResistance() / 100f))); TODO
             debugMessage.appendTitle(ComponentBuilder
                     .create("Spec Damage Reduction: ", NamedTextColor.AQUA)
                     .text(NumberFormat.formatOptionalHundredths(warlordsEntity.getSpec().getDamageResistance()), NamedTextColor.BLUE)
@@ -287,7 +215,7 @@ public class InstanceManager {
             debugMessage.append(InstanceDebugHoverable.LevelBuilder
                     .create(1)
                     .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.GREEN))
-                    .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(damageValue), NamedTextColor.GOLD))
+                    .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(damageHealValueBeforeAllReduction), NamedTextColor.GOLD))
             );
         }
 
@@ -315,9 +243,9 @@ public class InstanceManager {
                 }
             } else {
                 // Fall Damage
-                sendTookDamageMessage(warlordsEntity, debugMessage, damageValue, "fall damage");
+                sendTookDamageMessage(warlordsEntity, debugMessage, damageHealValueBeforeAllReduction, "fall damage");
                 warlordsEntity.resetRegenTimer();
-                if (warlordsEntity.getCurrentHealth() - damageValue <= 0) {
+                if (warlordsEntity.getCurrentHealth() - damageHealValueBeforeAllReduction <= 0) {
                     warlordsEntity.die(
                             source,
                             WarlordsDeathEvent.DeathInfoBuilder
@@ -331,7 +259,7 @@ public class InstanceManager {
                                     ))
                     );
                 } else {
-                    warlordsEntity.setCurrentHealth(warlordsEntity.getCurrentHealth() - damageValue);
+                    warlordsEntity.setCurrentHealth(warlordsEntity.getCurrentHealth() - damageHealValueBeforeAllReduction);
                     warlordsEntity.playHurtAnimation(source);
                 }
 
@@ -340,123 +268,41 @@ public class InstanceManager {
                         .filterCooldownClassAndMapToObjectsOfClass(OrderOfEviscerate.OrderOfEviscerateData.class)
                         .toList()
                 ) {
-                    orderOfEviscerate.addAndCheckDamageThreshold(damageValue, source);
+                    orderOfEviscerate.addAndCheckDamageThreshold(damageHealValueBeforeAllReduction, source);
                 }
             }
 
             warlordsEntity.cancelHealingPowerUp();
             return Optional.empty();
         }
-        float previousDamageValue = damageValue;
         // Flag carrier multiplier.
         double flagMultiplier = warlordsEntity.getFlagDamageMultiplier();
         if (flagMultiplier != 1 && !trueDamage && !flags.contains(InstanceFlags.IGNORE_FLAG_MULTIPLIER)) {
-            damageValue *= (float) flagMultiplier;
+            damageValue.addMultiplicativeModifierMult("Flag Carrier Multiplier", (float) flagMultiplier);
             debugMessage.appendTitle(ComponentBuilder
                     .create("Flag Damage Multiplier: ", NamedTextColor.AQUA)
                     .text(NumberFormat.formatOptionalHundredths(flagMultiplier), NamedTextColor.BLUE)
                     .build()
             );
-            debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                    .create(1)
-                    .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.GREEN))
-                    .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(damageValue), NamedTextColor.GOLD))
-            );
-            previousDamageValue = damageValue;
         }
         // Reduction before Intervene.
         if (!trueDamage) {
             debugMessage.appendTitle("Before Intervene", NamedTextColor.AQUA);
-            debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                    .create(1)
-                    .prefix(ComponentBuilder.create("Target Cooldowns", NamedTextColor.DARK_GREEN))
-            );
             for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
-                float newDamageValue = abstractCooldown.modifyDamageBeforeInterveneFromSelf(event, damageValue);
-                if (newDamageValue < damageValue && ignoreDamageReduction) { // pierce ignores victim dmg reduction
-                    continue;
-                }
-                damageValue = newDamageValue;
-                if (previousDamageValue != damageValue) {
-                    if (previousDamageValue > damageValue) {
-                        abstractCooldown.getFrom().addAbsorbed(previousDamageValue - damageValue);
-                    }
-                    debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                            .create(2)
-                            .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.GREEN))
-                            .value(previousDamageValue, damageValue, abstractCooldown)
-                    );
-                }
-                previousDamageValue = damageValue;
-                List<DamageInstance> extraDamageInstances = abstractCooldown.getExtraDamageInstances();
-                if (extraDamageInstances != null) {
-                    for (DamageInstance damageInstance : extraDamageInstances) {
-                        newDamageValue = damageInstance.modifyDamageBeforeInterveneFromSelf(event, newDamageValue);
-                    }
-                }
-                if (newDamageValue < damageValue && ignoreDamageReduction) { // pierce ignores victim dmg reduction
-                    continue;
-                }
-                damageValue = newDamageValue;
-                if (previousDamageValue != damageValue) {
-                    if (previousDamageValue > damageValue) {
-                        abstractCooldown.getFrom().addAbsorbed(previousDamageValue - damageValue);
-                    }
-                    debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                            .create(2)
-                            .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.GREEN))
-                            .value(previousDamageValue, damageValue, abstractCooldown)
-                    );
-                }
-                previousDamageValue = damageValue;
+                abstractCooldown.applyModifiers(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, m -> m.apply(event, damageValue));
             }
-
-            debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                    .create(1)
-                    .prefix(ComponentBuilder.create("Source Cooldowns", NamedTextColor.DARK_GREEN))
-            );
             for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
-                float newDamageValue = abstractCooldown.modifyDamageBeforeInterveneFromAttacker(event, damageValue);
-                if (newDamageValue > damageValue && noDamageBoost) { // no damage boost ignores attacker dmg increase
-                    continue;
-                }
-                damageValue = newDamageValue;
-                if (previousDamageValue != damageValue) {
-                    if (previousDamageValue > damageValue) {
-                        abstractCooldown.getFrom().addAbsorbed(previousDamageValue - damageValue);
-                    }
-                    debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                            .create(2)
-                            .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.GREEN))
-                            .value(previousDamageValue, damageValue, abstractCooldown)
-                    );
-                }
-                previousDamageValue = damageValue;
-                List<DamageInstance> extraDamageInstances = abstractCooldown.getExtraDamageInstances();
-                if (extraDamageInstances != null) {
-                    for (DamageInstance damageInstance : extraDamageInstances) {
-                        newDamageValue = damageInstance.modifyDamageBeforeInterveneFromAttacker(event, newDamageValue);
-                    }
-                }
-                if (newDamageValue > damageValue && noDamageBoost) { // no damage boost ignores attacker dmg increase
-                    continue;
-                }
-                damageValue = newDamageValue;
-                if (previousDamageValue != damageValue) {
-                    if (previousDamageValue > damageValue) {
-                        abstractCooldown.getFrom().addAbsorbed(previousDamageValue - damageValue);
-                    }
-                    debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                            .create(2)
-                            .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.GREEN))
-                            .value(previousDamageValue, damageValue, abstractCooldown)
-                    );
-                }
+                abstractCooldown.applyModifiers(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, m -> m.apply(event, damageValue));
             }
             //debugMessage.append(Component.newline()).append(Component.text("In Hammer", NamedTextColor.RED));
         }
 
-        final float damageHealValueBeforeInterveneReduction = damageValue;
+        damageValue.refresh();
+        debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                .create(1)
+                .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.GREEN))
+                .value(damageValue));
+        final float damageHealValueBeforeInterveneReduction = damageValue.getCalculatedValue();
         // Intervene
         Optional<LinkedCooldown> optionalInterveneCooldown = new CooldownFilter<>(warlordsEntity, LinkedCooldown.class)
                 .filterCooldownClass(Intervene.InterveneData.class)
@@ -478,25 +324,26 @@ public class InstanceManager {
             WarlordsEntity intervenedBy = optionalInterveneCooldown.get().getFrom();
             intervenedBy.resetRegenTimer();
             // Break Intervene if above damage threshold
-            if (preDamagePrevented + damageValue > maxDamagePrevented) {
+            float calculatedDamageValue = damageValue.getCalculatedValue();
+            if (preDamagePrevented + calculatedDamageValue > maxDamagePrevented) {
                 optionalInterveneCooldown.get().setTicksLeft(0);
                 //extra overVeneDamage to target
-                float overVeneDamage = preDamagePrevented + damageValue - maxDamagePrevented;
+                float overVeneDamage = preDamagePrevented + calculatedDamageValue - maxDamagePrevented;
                 //remaining vene prevent damage
                 float leftOverPrevented = maxDamagePrevented - preDamagePrevented;
                 data.addDamagePrevented(leftOverPrevented);
                 intervenedBy.addAbsorbed(leftOverPrevented * (1 - data.getIntervene().getDamageReduction() / 100f));
-                damageValue = leftOverPrevented * (data.getIntervene().getDamageReduction() / 100f);
+                calculatedDamageValue = leftOverPrevented * (data.getIntervene().getDamageReduction() / 100f);
                 debugMessage.append(InstanceDebugHoverable.LevelBuilder
                         .create(1)
                         .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.GREEN))
-                        .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(damageValue), NamedTextColor.GOLD))
+                        .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(calculatedDamageValue), NamedTextColor.GOLD))
                 );
                 intervenedBy.addInstance(InstanceBuilder
                         .damage()
                         .cause("Intervene")
                         .source(source)
-                        .value(damageValue)
+                        .value(calculatedDamageValue)
                         .showAsCrit(isCrit)
                         .flags(InstanceFlags.TRUE_DAMAGE)
                 );
@@ -509,19 +356,19 @@ public class InstanceManager {
                         .flags(InstanceFlags.TRUE_DAMAGE)
                 ).ifPresent(finalEvent::set);
             } else {
-                damageValue *= data.getIntervene().getDamageReduction() / 100f;
+                calculatedDamageValue *= data.getIntervene().getDamageReduction() / 100f;
                 debugMessage.append(InstanceDebugHoverable.LevelBuilder
                         .create(1)
                         .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.GREEN))
-                        .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(damageValue), NamedTextColor.GOLD))
+                        .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(calculatedDamageValue), NamedTextColor.GOLD))
                 );
                 data.addDamagePrevented(damageHealValueBeforeInterveneReduction);
-                intervenedBy.addAbsorbed(damageHealValueBeforeInterveneReduction - damageValue);
+                intervenedBy.addAbsorbed(damageHealValueBeforeInterveneReduction - calculatedDamageValue);
                 intervenedBy.addInstance(InstanceBuilder
                         .damage()
                         .cause("Intervene")
                         .source(source)
-                        .value(damageValue)
+                        .value(calculatedDamageValue)
                         .showAsCrit(isCrit)
                 );
                 finalEvent.set(new WarlordsDamageHealingFinalEvent(
@@ -536,8 +383,8 @@ public class InstanceManager {
                         damageHealValueBeforeInterveneReduction,
                         0,
                         0,
-                        critChance,
-                        critMultiplier,
+                        calculatedCritChance,
+                        calculatedCritMultiplier,
                         isCrit,
                         true,
                         WarlordsDamageHealingFinalEvent.FinalEventFlag.INTERVENED
@@ -556,14 +403,9 @@ public class InstanceManager {
                     .create(1)
                     .prefix(ComponentBuilder.create("Intervene From Attacker", NamedTextColor.GREEN))
             );
+            float finalCalculatedDamageValue = calculatedDamageValue;
             for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
-                abstractCooldown.onInterveneFromAttacker(event, damageValue);
-                List<DamageInstance> extraDamageInstances = abstractCooldown.getExtraDamageInstances();
-                if (extraDamageInstances != null) {
-                    for (DamageInstance damageInstance : extraDamageInstances) {
-                        damageInstance.onInterveneFromAttacker(event, damageValue);
-                    }
-                }
+                abstractCooldown.applyModifiers(Modifier.ON_INTERVENE_ATTACKER, m -> m.apply(event, finalCalculatedDamageValue));
                 debugMessage.append(InstanceDebugHoverable.LevelBuilder
                         .create(2)
                         .prefix(abstractCooldown)
@@ -575,85 +417,23 @@ public class InstanceManager {
                 // Damage Reduction
                 // Example: .8 = 20% reduction.
                 debugMessage.appendTitle("After Intervene", NamedTextColor.AQUA);
-                debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                        .create(1)
-                        .prefix(ComponentBuilder.create("Target Cooldowns", NamedTextColor.DARK_GREEN))
-                );
                 for (AbstractCooldown<?> abstractCooldown : CooldownUtils.getPrioritizedCooldowns(selfCooldownsDistinct,
                         "modifyDamageAfterInterveneFromSelf",
                         WarlordsDamageHealingEvent.class,
                         float.class
                 )) {
-                    float newDamageValue = abstractCooldown.modifyDamageAfterInterveneFromSelf(event, damageValue);
-                    if (newDamageValue < damageValue && ignoreDamageReduction) { // pierce ignores victim dmg reduction
-                        continue;
-                    }
-                    damageValue = newDamageValue;
-                    if (previousDamageValue != damageValue) {
-                        if (previousDamageValue > damageValue) {
-                            abstractCooldown.getFrom().addAbsorbed(previousDamageValue - damageValue);
-                        }
-                        debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                                .create(2)
-                                .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.GREEN))
-                                .value(previousDamageValue, damageValue, abstractCooldown)
-                        );
-                    }
-                    previousDamageValue = damageValue;
-                    List<DamageInstance> extraDamageInstances = abstractCooldown.getExtraDamageInstances();
-                    if (extraDamageInstances != null) {
-                        for (DamageInstance damageInstance : extraDamageInstances) {
-                            newDamageValue = damageInstance.modifyDamageAfterInterveneFromSelf(event, newDamageValue);
-                        }
-                    }
-                    if (newDamageValue < damageValue && ignoreDamageReduction) { // pierce ignores victim dmg reduction
-                        continue;
-                    }
-                    damageValue = newDamageValue;
-                    if (previousDamageValue != damageValue) {
-                        if (previousDamageValue > damageValue) {
-                            abstractCooldown.getFrom().addAbsorbed(previousDamageValue - damageValue);
-                        }
-                        debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                                .create(2)
-                                .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.GREEN))
-                                .value(previousDamageValue, damageValue, abstractCooldown)
-                        );
-                    }
-                    previousDamageValue = damageValue;
+                    abstractCooldown.applyModifiers(Modifier.DAMAGE_AFTER_INTERVENE_SELF, m -> m.apply(event, damageValue));
                 }
-
-                debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                        .create(1)
-                        .prefix(ComponentBuilder.create("Source Cooldowns", NamedTextColor.DARK_GREEN))
-                );
                 for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
-                    float newDamageValue = abstractCooldown.modifyDamageAfterInterveneFromAttacker(event, damageValue);
-                    List<DamageInstance> extraDamageInstances = abstractCooldown.getExtraDamageInstances();
-                    if (extraDamageInstances != null) {
-                        for (DamageInstance damageInstance : extraDamageInstances) {
-                            newDamageValue = damageInstance.modifyDamageAfterInterveneFromAttacker(event, newDamageValue);
-                        }
-                    }
-                    if (newDamageValue > damageValue && noDamageBoost) { // no damage boost ignores attacker dmg increase
-                        continue;
-                    }
-                    damageValue = newDamageValue;
-                    if (previousDamageValue != damageValue) {
-                        if (previousDamageValue > damageValue) {
-                            abstractCooldown.getFrom().addAbsorbed(previousDamageValue - damageValue);
-                        }
-                        debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                                .create(2)
-                                .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.GREEN))
-                                .value(previousDamageValue, damageValue, abstractCooldown)
-                        );
-                    }
-                    previousDamageValue = damageValue;
+                    abstractCooldown.applyModifiers(Modifier.DAMAGE_AFTER_INTERVENE_ATTACKER, m -> m.apply(event, damageValue));
                 }
             }
 
-            final float damageHealValueBeforeShieldReduction = damageValue;
+            debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                    .create(1)
+                    .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.GREEN))
+                    .value(damageValue));
+            final float damageHealValueBeforeShieldReduction = damageValue.getCalculatedValue();
             // Arcane Shield
             Optional<RegularCooldown> shieldCooldown = new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
                     .filterCooldownClass(Shield.class)
@@ -674,7 +454,7 @@ public class InstanceManager {
                         .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(preShieldHealth), NamedTextColor.GOLD))
                 );
                 //adding dmg to shield
-                shield.addShieldHealth(-damageValue);
+                shield.addShieldHealth(-damageHealValueBeforeShieldReduction);
                 debugMessage.append(InstanceDebugHoverable.LevelBuilder
                         .create(1)
                         .prefix(ComponentBuilder.create("Post Health: ", NamedTextColor.GREEN))
@@ -713,7 +493,7 @@ public class InstanceManager {
                             )
                     );
                 } else {
-                    cooldown.getFrom().addAbsorbed(Math.abs(damageValue));
+                    cooldown.getFrom().addAbsorbed(Math.abs(damageHealValueBeforeShieldReduction));
 
                     Shield.updateAbsorption(warlordsEntity);
 
@@ -787,13 +567,7 @@ public class InstanceManager {
                 );
 
                 for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
-                    abstractCooldown.onShieldFromSelf(event, damageValue, isCrit);
-                    List<DamageInstance> extraDamageInstances = abstractCooldown.getExtraDamageInstances();
-                    if (extraDamageInstances != null) {
-                        for (DamageInstance damageInstance : extraDamageInstances) {
-                            damageInstance.onShieldFromSelf(event, damageValue, isCrit);
-                        }
-                    }
+                    abstractCooldown.applyModifiers(Modifier.ON_SHIELD_SELF, m -> m.apply(event, damageHealValueBeforeShieldReduction, isCrit));
                     debugMessage.append(InstanceDebugHoverable.LevelBuilder
                             .create(3)
                             .prefix(abstractCooldown)
@@ -805,6 +579,7 @@ public class InstanceManager {
                         .prefix(ComponentBuilder.create("Attackers Cooldowns", NamedTextColor.DARK_GREEN))
                 );
                 for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
+                    abstractCooldown.applyModifiers(Modifier.ON_SHIELD_ATTACKER, m -> m.apply(event, damageHealValueBeforeShieldReduction, isCrit));
 //                    abstractCooldown.onShieldFromAttacker(event, damageValue, isCrit);
                     debugMessage.append(InstanceDebugHoverable.LevelBuilder
                             .create(3)
@@ -828,9 +603,9 @@ public class InstanceManager {
                         damageHealValueBeforeAllReduction,
                         damageHealValueBeforeInterveneReduction,
                         damageHealValueBeforeShieldReduction,
-                        damageValue,
-                        critChance,
-                        critMultiplier,
+                        damageHealValueBeforeShieldReduction,
+                        calculatedCritChance,
+                        calculatedCritMultiplier,
                         isCrit,
                         true,
                         WarlordsDamageHealingFinalEvent.FinalEventFlag.SHIELDED,
@@ -838,40 +613,8 @@ public class InstanceManager {
                 ));
             } else {
                 debugMessage.appendTitle("Modify Damage After All", NamedTextColor.AQUA);
-                debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                        .create(1)
-                        .prefix(ComponentBuilder.create("Target Cooldowns", NamedTextColor.DARK_GREEN))
-                );
                 for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
-                    damageValue = abstractCooldown.modifyDamageAfterAllFromSelf(event, damageValue, isCrit);
-                    if (previousDamageValue != damageValue) {
-                        if (previousDamageValue > damageValue) {
-                            abstractCooldown.getFrom().addAbsorbed(previousDamageValue - damageValue);
-                        }
-                        debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                                .create(2)
-                                .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.GREEN))
-                                .value(previousDamageValue, damageValue, abstractCooldown)
-                        );
-                    }
-                    previousDamageValue = damageValue;
-                    List<DamageInstance> extraDamageInstances = abstractCooldown.getExtraDamageInstances();
-                    if (extraDamageInstances != null) {
-                        for (DamageInstance damageInstance : extraDamageInstances) {
-                            damageValue = damageInstance.modifyDamageAfterAllFromSelf(event, damageValue, isCrit);
-                        }
-                    }
-                    if (previousDamageValue != damageValue) {
-                        if (previousDamageValue > damageValue) {
-                            abstractCooldown.getFrom().addAbsorbed(previousDamageValue - damageValue);
-                        }
-                        debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                                .create(2)
-                                .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.GREEN))
-                                .value(previousDamageValue, damageValue, abstractCooldown)
-                        );
-                    }
-                    previousDamageValue = damageValue;
+                    abstractCooldown.applyModifiers(Modifier.DAMAGE_AFTER_ALL_SELF, m -> m.apply(event, damageValue, isCrit));
                 }
 
                 boolean debt = warlordsEntity.getCooldownManager().hasCooldownFromName("Spirits' Respite");
@@ -879,43 +622,29 @@ public class InstanceManager {
                 warlordsEntity.getHitBy().put(source, 10);
                 warlordsEntity.cancelHealingPowerUp();
 
-                float finalDamageValue = damageValue;
+                float finalDamageValue = damageValue.getCalculatedValue();
                 warlordsEntity.doOnStaticAbility(SoulShackle.class, soulShackle -> soulShackle.addToShacklePool(finalDamageValue));
                 warlordsEntity.doOnStaticAbility(Repentance.class, repentance -> repentance.addToPool(finalDamageValue));
 
                 if (!flags.contains(InstanceFlags.NO_MESSAGE)) {
-                    sendDamageMessage(warlordsEntity, debugMessage, source, warlordsEntity, cause, damageValue, isCrit, isMeleeHit, flags);
+                    sendDamageMessage(warlordsEntity, debugMessage, source, warlordsEntity, cause, finalDamageValue, isCrit, isMeleeHit, flags);
                 }
                 //debugMessage.append("\n").append(ChatColor.AQUA).append("On Damage");
                 //appendDebugMessage(debugMessage, 1, ChatColor.DARK_GREEN, "Target Cooldowns");
                 for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
-                    abstractCooldown.onDamageFromSelf(event, damageValue, isCrit);
-                    List<DamageInstance> extraDamageInstances = abstractCooldown.getExtraDamageInstances();
-                    if (extraDamageInstances != null) {
-                        for (DamageInstance damageInstance : extraDamageInstances) {
-                            damageInstance.onDamageFromSelf(event, damageValue, isCrit);
-                        }
-                    }
-                    //appendDebugMessage(debugMessage, 2, abstractCooldown);
+                    abstractCooldown.applyModifiers(Modifier.ON_DAMAGE_SELF, m -> m.apply(event, finalDamageValue, isCrit));
                 }
 
                 //appendDebugMessage(debugMessage, 1, ChatColor.DARK_GREEN, "Attackers Cooldowns");
                 for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
-                    abstractCooldown.onDamageFromAttacker(event, damageValue, isCrit);
-                    List<DamageInstance> extraDamageInstances = abstractCooldown.getExtraDamageInstances();
-                    if (extraDamageInstances != null) {
-                        for (DamageInstance damageInstance : extraDamageInstances) {
-                            damageInstance.onDamageFromAttacker(event, damageValue, isCrit);
-                        }
-                    }
-                    //appendDebugMessage(debugMessage, 2, abstractCooldown);
+                    abstractCooldown.applyModifiers(Modifier.ON_DAMAGE_ATTACKER, m -> m.apply(event, finalDamageValue, isCrit));
                 }
                 //}
 
                 warlordsEntity.resetRegenTimer();
                 warlordsEntity.updateHealth();
 
-                float cappedDamage = Math.min(damageValue, warlordsEntity.getCurrentHealth() - (flags.contains(InstanceFlags.CANT_KILL) ? 1 : 0));
+                float cappedDamage = Math.min(finalDamageValue, warlordsEntity.getCurrentHealth() - (flags.contains(InstanceFlags.CANT_KILL) ? 1 : 0));
                 source.addDamage(cappedDamage, FlagHolder.isPlayerHolderFlag(warlordsEntity));
                 warlordsEntity.addDamageTaken(cappedDamage);
                 warlordsEntity.playHurtAnimation(source);
@@ -925,7 +654,7 @@ public class InstanceManager {
                 // The player died.
                 float newHealth = warlordsEntity.getCurrentHealth();
                 if (!debt && warlordsEntity.isTakeDamage()) {
-                    newHealth = Math.min(warlordsEntity.getCurrentHealth() - damageValue, warlordsEntity.getMaxHealth());
+                    newHealth = Math.min(warlordsEntity.getCurrentHealth() - finalDamageValue, warlordsEntity.getMaxHealth());
                 }
                 warlordsEntity.setCurrentHealth(newHealth);
                 if (newHealth <= 0) {
@@ -983,7 +712,7 @@ public class InstanceManager {
                                     })
                     );
                 } else {
-                    if (!flags.contains(InstanceFlags.NO_HIT_SOUND) && warlordsEntity != source && damageValue != 0) {
+                    if (!flags.contains(InstanceFlags.NO_HIT_SOUND) && warlordsEntity != source && finalDamageValue != 0) {
                         warlordsEntity.playHitSound(source);
                     }
                 }
@@ -998,9 +727,9 @@ public class InstanceManager {
                         damageHealValueBeforeAllReduction,
                         damageHealValueBeforeInterveneReduction,
                         damageHealValueBeforeShieldReduction,
-                        damageValue,
-                        critChance,
-                        critMultiplier,
+                        finalDamageValue,
+                        calculatedCritChance,
+                        calculatedCritMultiplier,
                         isCrit,
                         true,
                         WarlordsDamageHealingFinalEvent.FinalEventFlag.REGULAR
@@ -1014,14 +743,16 @@ public class InstanceManager {
 //            abstractCooldown.onEndFromSelf(event, damageValue, isCrit);
 //        }
 
+        float finalDamageValue = damageValue.getCalculatedValue();
         for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
-            abstractCooldown.onEndFromAttacker(event, damageValue, isCrit);
-            List<DamageInstance> extraDamageInstances = abstractCooldown.getExtraDamageInstances();
-            if (extraDamageInstances != null) {
-                for (DamageInstance damageInstance : extraDamageInstances) {
-                    damageInstance.onEndFromAttacker(event, damageValue, isCrit);
-                }
-            }
+            abstractCooldown.applyModifiers(Modifier.ON_END_ATTACKER, m -> m.apply(event, finalDamageValue, isCrit));
+//            abstractCooldown.onEndFromAttacker(event, damageValue, isCrit);
+//            List<DamageInstance> extraDamageInstances = abstractCooldown.getExtraDamageInstances();
+//            if (extraDamageInstances != null) {
+//                for (DamageInstance damageInstance : extraDamageInstances) {
+//                    damageInstance.onEndFromAttacker(event, damageValue, isCrit);
+//                }
+//            }
         }
 
         return Optional.ofNullable(finalEvent.get());

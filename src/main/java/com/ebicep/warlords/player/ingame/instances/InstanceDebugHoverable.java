@@ -6,6 +6,7 @@ import com.ebicep.warlords.player.ingame.instances.type.DamageInstance;
 import com.ebicep.warlords.player.ingame.instances.type.HealingInstance;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.java.NumberFormat;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -95,11 +96,13 @@ public class InstanceDebugHoverable {
         }
 
         private final int level;
+        private final String frontSpacing;
         private TextComponent prefix = Component.empty();
         private TextComponent value = Component.empty();
 
         public LevelBuilder(int level) {
             this.level = level;
+            this.frontSpacing = " ".repeat(Math.max(0, level == 1 ? 1 : level * 2));
         }
 
         public LevelBuilder prefix(ComponentBuilder componentBuilder) {
@@ -156,9 +159,20 @@ public class InstanceDebugHoverable {
             return this;
         }
 
+        public LevelBuilder value(FloatModifiable floatModifiable) {
+            ComponentBuilder builder = ComponentBuilder.create("", NamedTextColor.GOLD);
+            List<Component> debugInfo = floatModifiable.getDebugInfo();
+            TextComponent spacer = Component.text(frontSpacing + " ".repeat(Math.max(0, (level + 1) * 2)));
+            for (Component component : debugInfo) {
+                builder.append(Component.newline()).append(spacer).append(component);
+            }
+            this.value = builder.build();
+            return this;
+        }
+
         public TextComponent build() {
             return Component.textOfChildren(
-                    Component.text(" ".repeat(Math.max(0, level == 1 ? 1 : level * 2)) + " - ", NamedTextColor.GRAY),
+                    Component.text(frontSpacing + " - ", NamedTextColor.GRAY),
                     prefix,
                     value
             );

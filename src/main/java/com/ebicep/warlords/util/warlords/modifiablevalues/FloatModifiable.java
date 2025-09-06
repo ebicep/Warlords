@@ -238,9 +238,14 @@ public class FloatModifiable {
     public List<Component> getDebugInfo() {
         List<Component> components = new ArrayList<>();
         FloatModifiableFilter base = filters.get("Base");
-        components.add(getDebugInfo("Calculated", getCalculatedValue()));
         if (getCalculatedValue() != baseValue) {
-            components.add(getDebugInfo("Base", baseValue));
+            components.add(Component.textOfChildren(
+                    getDebugInfo("Base", baseValue),
+                    Component.text(" -> ", NamedTextColor.GRAY),
+                    getDebugInfo("Calculated", getCalculatedValue())
+            ));
+        } else {
+            components.add(getDebugInfo("Calculated", getCalculatedValue()));
         }
         if (!overridingModifiers.isEmpty()) {
             components.add(getDebugInfo("Overriding", overridingModifiers.get(0).getModifier()));
