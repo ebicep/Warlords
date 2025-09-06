@@ -6,5 +6,6 @@ public enum RoomType {
     NORMAL,
     TREASURE,
     TRAP,
+    DEAD_END,
     END,
 }

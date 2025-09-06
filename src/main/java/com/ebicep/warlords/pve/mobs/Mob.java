@@ -451,6 +451,14 @@ public enum Mob {
             Weapons.SOUL_REAVER.getItem()
     )
     ),
+    ORBYZ(EntityType.STRAY, Orbyz.class, Orbyz::new, Orbyz::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.ABYSSAL_KUUDRA),
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 20, 20, 120),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 20, 20, 120),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 20, 20, 120),
+            Weapons.FROSTBITE.getItem()
+    )
+    ),
     VANGUARD(EntityType.WITHER_SKELETON, Vanguard.class, Vanguard::new, Vanguard::new, new Utils.SimpleEntityEquipment(
             SkullUtils.getSkullFrom(SkullID.ENDER_DEMON),
             new ItemStack(Material.NETHERITE_CHESTPLATE),
@@ -584,15 +592,6 @@ public enum Mob {
     ENAVURITE(EntityType.ENDERMITE, Enavurite.class, Enavurite::new, Enavurite::new, null),
     VANISHING_ENAVURITE(EntityType.ENDERMITE, VanishingEnavurite.class, VanishingEnavurite::new, VanishingEnavurite::new, null),
 
-
-    // Raid Boss
-//    PHYSIRA(Physira.class, Physira::new, Physira::new, new Utils.SimpleEntityEquipment(
-//            SkullUtils.getSkullFrom(SkullID.GRADIENT_SOUL),
-//            new ItemStack(Material.NETHERITE_CHESTPLATE),
-//            new ItemStack(Material.NETHERITE_LEGGINGS),
-//            new ItemStack(Material.NETHERITE_BOOTS),
-//            Weapons.VIRIDIAN_BLADE.getItem()
-//    )),
 
     //EVENTS
     EVENT_BOLTARO(EntityType.ZOMBIE, EventBoltaro.class, EventBoltaro::new, EventBoltaro::new, new Utils.SimpleEntityEquipment(
@@ -1045,7 +1044,8 @@ public enum Mob {
             VOID,
             MAGMATIC_OOZE,
             PHYSIRA,
-            ONE_OF_NINE
+            ONE_OF_NINE,
+            ORBYZ
     };
     public static final Mob[] EVENT_BOSSES = {
             EVENT_BOLTARO, EVENT_NARMER, EVENT_MITHRA, EVENT_ILLUSION_CORE, EVENT_EXILED_CORE, EVENT_CALAMITY_CORE, EVENT_ILLUMINA,

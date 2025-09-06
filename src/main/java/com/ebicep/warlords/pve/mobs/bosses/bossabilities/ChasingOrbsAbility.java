@@ -1,23 +1,19 @@
-package com.ebicep.warlords.pve.mobs;
+package com.ebicep.warlords.pve.mobs.bosses.bossabilities;
 
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
-import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.entity.Display;
 import org.bukkit.entity.ItemDisplay;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Transformation;
 import org.bukkit.util.Vector;
-import org.checkerframework.checker.guieffect.qual.UIType;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 

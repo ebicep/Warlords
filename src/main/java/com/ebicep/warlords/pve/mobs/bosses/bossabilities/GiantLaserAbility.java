@@ -1,4 +1,4 @@
-package com.ebicep.warlords.pve.mobs;
+package com.ebicep.warlords.pve.mobs.bosses.bossabilities;
 
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -8,12 +8,9 @@ import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
-import org.bukkit.entity.Player;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.function.Supplier;
 
 public class GiantLaserAbility {

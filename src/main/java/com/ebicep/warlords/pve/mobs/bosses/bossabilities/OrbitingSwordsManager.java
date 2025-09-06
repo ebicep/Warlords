@@ -1,4 +1,4 @@
-package com.ebicep.warlords.pve.mobs;
+package com.ebicep.warlords.pve.mobs.bosses.bossabilities;
 
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;

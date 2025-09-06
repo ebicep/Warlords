@@ -4,7 +4,7 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.game.option.raid.BossAbilityPhase;
+import com.ebicep.warlords.pve.mobs.bosses.bossabilities.BossAbilityPhase;
 import com.ebicep.warlords.player.general.SpecType;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
