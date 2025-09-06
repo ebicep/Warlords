@@ -112,10 +112,6 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
                     .aliveTeammatesOfExcludingSelf(wp)
             ) {
                 EffectUtils.playParticleLinkAnimation(wp.getLocation(), we.getLocation(), Particle.SCULK_SOUL);
-                cooldown.getCooldownObject().setDamageResistance(40);
-                cooldown.getCooldownObject().setSpeedBoost(75);
-                cooldown.getCooldownObject().setTickDuration(cooldown.getCooldownObject().getTickDuration() * 2);
-                we.getCooldownManager().addCooldown(cooldown);
                 we.addInstance(InstanceBuilder
                         .healing()
                         .ability(this)

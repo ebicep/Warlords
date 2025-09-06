@@ -469,7 +469,7 @@ public class WaveDefenseOption implements PveOption {
                 });
             });
             int waveDelay = currentWave.getDelay();
-            return fastWave.get() ? waveDelay / 2 : waveDelay;
+            return fastWave.get() ? waveDelay / 4 : waveDelay;
         }
         return 0;
     }
