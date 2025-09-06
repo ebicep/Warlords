@@ -12,6 +12,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
@@ -59,16 +60,6 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
             new LocationUtils.LocationXYZ(91, 16, 81),
             new LocationUtils.LocationXYZ(128, 16, 85),
     };
-
-    private static void attachPrisonWalls(Block block, BlockFace... blockFace) {
-        if (block.getBlockData() instanceof MultipleFacing multipleFacing) {
-            for (BlockFace face : blockFace) {
-                multipleFacing.setFace(face, true);
-            }
-            block.setBlockData(multipleFacing);
-        }
-    }
-
     private final Map<LocationUtils.LocationBlockHolder, Material> cageBlocks = new HashMap<>();
     @Nullable
     private CustomBat leashHolder = null;
@@ -242,6 +233,15 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
         return blocks;
     }
 
+    private static void attachPrisonWalls(Block block, BlockFace... blockFace) {
+        if (block.getBlockData() instanceof MultipleFacing multipleFacing) {
+            for (BlockFace face : blockFace) {
+                multipleFacing.setFace(face, true);
+            }
+            block.setBlockData(multipleFacing);
+        }
+    }
+
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
         if (leashHolder == null || !leashHolder.valid) {
@@ -258,6 +258,15 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
     }
 
     @Override
+    public void cleanup(PveOption pveOption) {
+        super.cleanup(pveOption);
+        if (leashHolder != null) {
+            leashHolder.remove(net.minecraft.world.entity.Entity.RemovalReason.DISCARDED);
+        }
+        cageBlocks.forEach((locationBlockHolder, material) -> locationBlockHolder.getBlock().setType(material));
+    }
+
+    @Override
     public void setTarget(WarlordsEntity target) {
         super.setTarget(target);
         onTargetSwap(target.getEntity());
@@ -267,15 +276,6 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
     public void setTarget(LivingEntity target) {
         super.setTarget(target);
         onTargetSwap(target);
-    }
-
-    @Override
-    public void cleanup(PveOption pveOption) {
-        super.cleanup(pveOption);
-        if (leashHolder != null) {
-            leashHolder.remove(net.minecraft.world.entity.Entity.RemovalReason.DISCARDED);
-        }
-        cageBlocks.forEach((locationBlockHolder, material) -> locationBlockHolder.getBlock().setType(material));
     }
 
     private void onTargetSwap(Entity target) {
@@ -291,10 +291,85 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
     public static class EnderStones extends AbstractProjectile<EnderStones, EnderStones.EnderStonesStats> implements PvEAbility, Damages<EnderStones.DamageValues> {
 
         private final int radius = 3;
+        private final DamageValues damageValues = new DamageValues();
+        private final EnderStonesStats stats = new EnderStonesStats();
         private PveOption pveOption;
 
         public EnderStones() {
             super(AbstractAbilityBuilder.create("enavurisEnderStones").pve().startFullCooldown());
+        }
+
+        @Override
+        protected boolean onActivateInternal(@Nonnull WarlordsEntity shooter) {
+            new GameRunnable(shooter.getGame()) {
+                int fired = 0;
+
+                @Override
+                public void run() {
+                    fire(shooter, shooter.getEyeLocation());
+                    if (++fired >= 3) {
+                        cancel();
+                    }
+                }
+            }.runTaskTimer(0, 10);
+            return true;
+        }
+
+        @Override
+        protected void onSpawn(@Nonnull InternalProjectile projectile) {
+            super.onSpawn(projectile);
+            Location spawn = projectile.getCurrentLocation().clone().add(0, -.5, 0);
+            DragonFireball dragonFireball = projectile.getWorld().spawn(spawn, DragonFireball.class);
+            ArmorStand armorStand = Utils.spawnArmorStand(spawn.clone(), stand -> {
+                        stand.setMarker(true);
+                        stand.addPassenger(dragonFireball);
+                    }
+            );
+            projectile.addTask(new InternalProjectileTask() {
+                @Override
+                public void run(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile) {
+                    armorStand.teleport(projectile.getCurrentLocation().clone().add(0, -.5, 0),
+                            PlayerTeleportEvent.TeleportCause.PLUGIN,
+                            TeleportFlag.EntityState.RETAIN_PASSENGERS
+                    );
+                }
+
+                @Override
+                public void onDestroy(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile) {
+                    armorStand.teleport(projectile.getCurrentLocation().clone().add(0, -.5, 0),
+                            PlayerTeleportEvent.TeleportCause.PLUGIN,
+                            TeleportFlag.EntityState.RETAIN_PASSENGERS
+                    );
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            armorStand.remove();
+                            dragonFireball.remove();
+                        }
+                    }.runTaskLater(Warlords.getInstance(), 3); // without delay, appears to remove before hitting player/ground
+
+                }
+            });
+        }
+
+        @Nullable
+        @Override
+        protected String getActivationSound() {
+            NamespacedKey key = Registry.SOUNDS.getKey(Sound.ENTITY_ENDER_DRAGON_SHOOT);
+            if (key == null) {
+                return "";
+            }
+            return key.getKey();
+        }
+
+        @Override
+        protected float getSoundVolume() {
+            return 1;
+        }
+
+        @Override
+        protected float getSoundPitch() {
+            return 1;
         }
 
         @Override
@@ -384,78 +459,6 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
             return playersHit;
         }
 
-        @Override
-        protected boolean onActivateInternal(@Nonnull WarlordsEntity shooter) {
-            new GameRunnable(shooter.getGame()) {
-                int fired = 0;
-
-                @Override
-                public void run() {
-                    fire(shooter, shooter.getEyeLocation());
-                    if (++fired >= 3) {
-                        cancel();
-                    }
-                }
-            }.runTaskTimer(0, 10);
-            return true;
-        }
-
-        @Override
-        protected void onSpawn(@Nonnull InternalProjectile projectile) {
-            super.onSpawn(projectile);
-            Location spawn = projectile.getCurrentLocation().clone().add(0, -.5, 0);
-            DragonFireball dragonFireball = projectile.getWorld().spawn(spawn, DragonFireball.class);
-            ArmorStand armorStand = Utils.spawnArmorStand(spawn.clone(), stand -> {
-                stand.setMarker(true);
-                stand.addPassenger(dragonFireball);
-            });
-            projectile.addTask(new InternalProjectileTask() {
-                @Override
-                public void run(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile) {
-                    armorStand.teleport(projectile.getCurrentLocation().clone().add(0, -.5, 0),
-                            PlayerTeleportEvent.TeleportCause.PLUGIN,
-                            TeleportFlag.EntityState.RETAIN_PASSENGERS
-                    );
-                }
-
-                @Override
-                public void onDestroy(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile) {
-                    armorStand.teleport(projectile.getCurrentLocation().clone().add(0, -.5, 0),
-                            PlayerTeleportEvent.TeleportCause.PLUGIN,
-                            TeleportFlag.EntityState.RETAIN_PASSENGERS
-                    );
-                    new BukkitRunnable() {
-                        @Override
-                        public void run() {
-                            armorStand.remove();
-                            dragonFireball.remove();
-                        }
-                    }.runTaskLater(Warlords.getInstance(), 3); // without delay, appears to remove before hitting player/ground
-
-                }
-            });
-        }
-
-        @Nullable
-        @Override
-        protected String getActivationSound() {
-            NamespacedKey key = Registry.SOUNDS.getKey(Sound.ENTITY_ENDER_DRAGON_SHOOT);
-            if (key == null) {
-                return "";
-            }
-            return key.getKey();
-        }
-
-        @Override
-        protected float getSoundVolume() {
-            return 1;
-        }
-
-        @Override
-        protected float getSoundPitch() {
-            return 1;
-        }
-
         @org.jetbrains.annotations.Nullable
         @Override
         public PveOption getPveOption() {
@@ -467,11 +470,14 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
             this.pveOption = pveOption;
         }
 
-        private final DamageValues damageValues = new DamageValues();
-
         @Override
         public DamageValues getDamageValues() {
             return damageValues;
+        }
+
+        @Override
+        public EnderStonesStats getAbilityStats() {
+            return stats;
         }
 
         public static class DamageValues implements Value.ValueHolder {
@@ -479,18 +485,12 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
             private final Value.RangedValue enderStonesDamage = new Value.RangedValue(500, 600);
 
             private final List<Value> values = List.of(enderStonesDamage);
+
             @Override
             public List<Value> getValues() {
                 return values;
             }
 
-        }
-
-        private final EnderStonesStats stats = new EnderStonesStats();
-
-        @Override
-        public EnderStonesStats getAbilityStats() {
-            return stats;
         }
 
         public static class EnderStonesStats extends AbstractPiercingProjectileStats<EnderStones, EnderStonesStats> {
@@ -504,7 +504,9 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
             public EnderStonesStats create() {
                 return new EnderStonesStats();
             }
+
         }
+
     }
 
     public static class Imprisonment extends AbstractPveAbility {
@@ -551,8 +553,9 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
             imprisonedPlayer.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS, 10 * 20, 1, false, false, false));
 
             BlockDisplay blockDisplay = wp.getWorld().spawn(new LocationBuilder(cageLocation).left(3).addY(2), BlockDisplay.class, display -> {
-                display.setBlock(Material.END_PORTAL.createBlockData());
-            });
+                        display.setBlock(Material.END_PORTAL.createBlockData());
+                    }
+            );
 
             blockDisplays.add(blockDisplay);
 
@@ -634,11 +637,19 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
                     })
             ) {
                 @Override
-                public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-                    if (currentDebuff.get() == Debuff.WOUND) {
-                        return currentHealValue * .75f;
-                    }
-                    return currentHealValue;
+                protected Listener getListener() {
+                    return new Listener() {
+                        @EventHandler
+                        public void onAbilityActivate(WarlordsAbilityActivateEvent.Pre event) {
+                            if (!Objects.equals(event.getWarlordsEntity(), target) || event.getSlot() != 0 || currentDebuff.get() != Debuff.SILENCE) {
+                                return;
+                            }
+                            event.setCancelled(true);
+                            Player player = event.getPlayer();
+                            player.sendMessage(Component.text("You have been silenced!", NamedTextColor.RED));
+                            player.playSound(player.getLocation(), "notreadyalert", 1, 1);
+                        }
+                    };
                 }
 
                 @Override
@@ -663,23 +674,12 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
                             .value(healValue)
                     );
                 }
-
-                @Override
-                protected Listener getListener() {
-                    return new Listener() {
-                        @EventHandler
-                        public void onAbilityActivate(WarlordsAbilityActivateEvent.Pre event) {
-                            if (!Objects.equals(event.getWarlordsEntity(), target) || event.getSlot() != 0 || currentDebuff.get() != Debuff.SILENCE) {
-                                return;
-                            }
-                            event.setCancelled(true);
-                            Player player = event.getPlayer();
-                            player.sendMessage(Component.text("You have been silenced!", NamedTextColor.RED));
-                            player.playSound(player.getLocation(), "notreadyalert", 1, 1);
+            }.addModifier(Modifier.HEALING_MODIFY_SELF, (event, currentHealValue) -> {
+                        if (currentDebuff.get() == Debuff.WOUND) {
+                            currentHealValue.addMultiplicativeModifierMult(name, 0.75f);
                         }
-                    };
-                }
-            });
+                    }
+            ));
         }
 
         private enum Debuff {
@@ -691,6 +691,7 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
                 return VALUES[ThreadLocalRandom.current().nextInt(VALUES.length)];
             }
         }
+
     }
 
 

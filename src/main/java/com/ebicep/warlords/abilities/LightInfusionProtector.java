@@ -8,6 +8,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownUtils;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.paladin.protector.LightInfusionBranchProtector;
@@ -67,18 +68,22 @@ public class LightInfusionProtector extends AbstractLightInfusion {
             wp.addKnockbackModifier(wp, "Ornament of Light", -50, ornamentOfLightCooldown);
             wp.getCooldownManager().addCooldown(ornamentOfLightCooldown);
         } else if (pveMasterUpgrade2) {
-            wp.getCooldownManager().addCooldown(new RegularCooldown<>("Chiron Light", "CHIRON", LightInfusionProtector.class, null, wp, CooldownTypes.BUFF, cooldownManager -> {
-            }, tickDuration
-            ) {
-
-                @Override
-                public float modifyHealingFromAttacker(WarlordsDamageHealingEvent event, float currentHealValue) {
-                    if (event.getCause().equals("Protector's Strike")) {
-                        return currentHealValue * 1.25f;
+            wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                    "Chiron Light",
+                    "CHIRON",
+                    LightInfusionProtector.class,
+                    null,
+                    wp,
+                    CooldownTypes.BUFF,
+                    cooldownManager -> {
+                    },
+                    tickDuration
+            ).addModifier(Modifier.HEALING_MODIFY_ATTACKER, (event, currentHealValue) -> {
+                        if (event.getCause().equals("Protector's Strike")) {
+                            currentHealValue.addMultiplicativeModifierMult("Chiron Light", 1.25f);
+                        }
                     }
-                    return currentHealValue;
-                }
-            });
+            ));
             for (WarlordsEntity infusionTarget : PlayerFilter.entitiesAround(wp, 5, 5, 5).aliveTeammatesOfExcludingSelf(wp)) {
                 playCastEffect(infusionTarget);
                 infusionTarget.getSpeed().removeNegativeModifiers();

@@ -1,10 +1,10 @@
 package com.ebicep.warlords.pve.items.types.specialitems.buckler.delta;
 
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
@@ -49,23 +49,19 @@ public class ShieldOfSnatching extends SpecialDeltaBuckler implements CraftsInto
 
                 },
                 false
-        ) {
-            @Override
-            public float modifyHealingFromAttacker(WarlordsDamageHealingEvent event, float currentHealValue) {
-                return currentHealValue * (1 + playersBelowThreshold() * 0.08f);
-            }
-
-            private long playersBelowThreshold() {
-                return warlordsPlayer.getGame()
-                                     .warlordsPlayers()
-                                     .filter(p -> p.getCurrentHealth() / p.getMaxHealth() < 0.75)
-                                     .count();
-            }
-        });
+        ).addModifier(Modifier.HEALING_MODIFY_ATTACKER, (event, currentHealValue) -> {
+                    long playersBelowThreshold = warlordsPlayer.getGame()
+                                                               .warlordsPlayers()
+                                                               .filter(p -> p.getCurrentHealth() / p.getMaxHealth() < 0.75)
+                                                               .count();
+                    currentHealValue.addMultiplicativeModifierMult(getName(), (1 + playersBelowThreshold * 0.08f));
+                }
+        ));
     }
 
     @Override
     public AbstractItem getCraftsInto(Set<BasicStatPool> statPool) {
         return new ChakramOfBlades(statPool);
     }
+
 }

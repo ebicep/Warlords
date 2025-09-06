@@ -17,6 +17,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
@@ -132,11 +133,10 @@ public class SiegeOption implements Option {
                 return currentDamageValue * 1.15f;
             }
 
-            @Override
-            public float modifyHealingFromAttacker(WarlordsDamageHealingEvent event, float currentHealValue) {
-                return currentHealValue * .75f;
-            }
-        });
+        }.addModifier(Modifier.HEALING_MODIFY_ATTACKER, (event, currentHealValue) -> {
+                    currentHealValue.addMultiplicativeModifierMult("Siege", 0.75f);
+                }
+        ));
         for (AbstractAbility ability : player.getAbilities()) {
             if (ability instanceof GuardianBeam guardianBeam) {
                 guardianBeam.getShieldValues().replaceAll(integer -> (int) (integer * .9f));

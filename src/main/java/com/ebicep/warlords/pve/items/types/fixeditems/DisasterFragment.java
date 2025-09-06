@@ -13,6 +13,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractFixedItem;
@@ -154,12 +155,10 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                                         );
                                     }
                                 })
-                        ) {
-                            @Override
-                            public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-                                return currentHealValue * .2f;
-                            }
-                        });
+                        ).addModifier(Modifier.HEALING_MODIFY_SELF, (e, currentHealValue) -> {
+                                    currentHealValue.addMultiplicativeModifierMult("Disaster Fragment - Bleed", 0.2f);
+                                }
+                        ));
                     }
                     case "Leech" -> {
                         AtomicReference<Float> totalHealingDone = new AtomicReference<>((float) 0);

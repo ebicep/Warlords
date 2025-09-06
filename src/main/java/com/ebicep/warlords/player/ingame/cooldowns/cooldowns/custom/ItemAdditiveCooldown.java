@@ -8,6 +8,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.mobs.Aspect;
 
@@ -23,15 +24,16 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
                 .filterCooldownName("Item Additive")
                 .findAny()
                 .ifPresentOrElse(permanentCooldown -> {
-                    ItemAdditiveCooldown itemAdditiveCooldown = (ItemAdditiveCooldown) permanentCooldown;
-                    consumer.accept(itemAdditiveCooldown);
-                    warlordsEntity.addKnockbackModifier(warlordsEntity, "Item Additive", -itemAdditiveCooldown.kbMultiplier, itemAdditiveCooldown);
-                }, () -> {
-                    ItemAdditiveCooldown itemAdditiveCooldown = new ItemAdditiveCooldown(warlordsEntity);
-                    consumer.accept(itemAdditiveCooldown);
-                    warlordsEntity.addKnockbackModifier(warlordsEntity, "Item Additive", -itemAdditiveCooldown.kbMultiplier, itemAdditiveCooldown);
-                    warlordsEntity.getCooldownManager().addCooldown(itemAdditiveCooldown);
-                });
+                            ItemAdditiveCooldown itemAdditiveCooldown = (ItemAdditiveCooldown) permanentCooldown;
+                            consumer.accept(itemAdditiveCooldown);
+                            warlordsEntity.addKnockbackModifier(warlordsEntity, "Item Additive", -itemAdditiveCooldown.kbMultiplier, itemAdditiveCooldown);
+                        }, () -> {
+                            ItemAdditiveCooldown itemAdditiveCooldown = new ItemAdditiveCooldown(warlordsEntity);
+                            consumer.accept(itemAdditiveCooldown);
+                            warlordsEntity.addKnockbackModifier(warlordsEntity, "Item Additive", -itemAdditiveCooldown.kbMultiplier, itemAdditiveCooldown);
+                            warlordsEntity.getCooldownManager().addCooldown(itemAdditiveCooldown);
+                        }
+                );
     }
 
     private final Map<Aspect, AspectModifier> aspectModifiers = new HashMap<>();
@@ -55,35 +57,10 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
                 },
                 false
         );
-    }
-
-    public void addDamageBoost(float damageBoost) {
-        this.damageMultiplier += damageBoost / 100f;
-    }
-
-    public void addHealBoost(float healBoost) {
-        this.healMultiplier += healBoost / 100f;
-    }
-
-    public void addKBRes(float kbRes) {
-        this.kbMultiplier += kbRes / 2; //dividing more than 100 because reducing kb reduces too much
-    }
-
-    public void addThorns(float thorns, int maxThornsDamage) {
-        this.thorns += thorns / 100;
-        this.maxThornsDamage = Math.max(this.maxThornsDamage, maxThornsDamage);
-    }
-
-    public void addCritChance(float additionalCritChance) {
-        this.additionalCritChance += additionalCritChance;
-    }
-
-    public void addCritMultiplier(float additionalCritMultiplier) {
-        this.additionalCritMultiplier += additionalCritMultiplier;
-    }
-
-    public void addAspectModifier(Aspect aspect, AspectModifier aspectModifier) {
-        aspectModifiers.put(aspect, aspectModifier);
+        this.addModifier(Modifier.HEALING_MODIFY_ATTACKER, (event, currentHealValue) -> {
+                    currentHealValue.addMultiplicativeModifierMult(name, healMultiplier);
+                }
+        );
     }
 
     @Override
@@ -166,9 +143,33 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
         }
     }
 
-    @Override
-    public float modifyHealingFromAttacker(WarlordsDamageHealingEvent event, float currentHealValue) {
-        return currentHealValue * healMultiplier;
+    public void addDamageBoost(float damageBoost) {
+        this.damageMultiplier += damageBoost / 100f;
+    }
+
+    public void addHealBoost(float healBoost) {
+        this.healMultiplier += healBoost / 100f;
+    }
+
+    public void addKBRes(float kbRes) {
+        this.kbMultiplier += kbRes / 2; //dividing more than 100 because reducing kb reduces too much
+    }
+
+    public void addThorns(float thorns, int maxThornsDamage) {
+        this.thorns += thorns / 100;
+        this.maxThornsDamage = Math.max(this.maxThornsDamage, maxThornsDamage);
+    }
+
+    public void addCritChance(float additionalCritChance) {
+        this.additionalCritChance += additionalCritChance;
+    }
+
+    public void addCritMultiplier(float additionalCritMultiplier) {
+        this.additionalCritMultiplier += additionalCritMultiplier;
+    }
+
+    public void addAspectModifier(Aspect aspect, AspectModifier aspectModifier) {
+        aspectModifiers.put(aspect, aspectModifier);
     }
 
     /**
@@ -178,4 +179,5 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
      */
     public record AspectModifier(float damageMultiplier, int effectNegationTicks, float damageReductionMultiplier) {
     }
+
 }

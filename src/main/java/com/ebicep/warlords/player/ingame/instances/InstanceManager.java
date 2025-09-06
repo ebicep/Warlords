@@ -852,6 +852,10 @@ public class InstanceManager {
             }
         }
 
+        debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                .create(1)
+                .prefix(ComponentBuilder.create("Heal Value: ", NamedTextColor.GREEN))
+                .value(healValue));
         float healValueAfterModify = healValue.getCalculatedValue();
         if (warlordsEntity == source || warlordsEntity.isTeammate(source)) {
             float maxHealth = warlordsEntity.getHealth().getCalculatedValue();

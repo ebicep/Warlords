@@ -66,7 +66,7 @@ public abstract class AbstractEnergySeer<T extends AbstractEnergySeer.EnergySeer
         wp.addEnergy(wp, name, energyRestore);
 
         T data = getDataObject();
-        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+        RegularCooldown<T> cd = new RegularCooldown<>(
                 name,
                 "SEER",
                 getDataClass(),
@@ -140,22 +140,20 @@ public abstract class AbstractEnergySeer<T extends AbstractEnergySeer.EnergySeer
             }
 
             @Override
-            public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-                if (inPve && AbstractEnergySeer.this instanceof EnergySeerLuminary energySeerLuminary) {
-                    return currentHealValue * convertToMultiplicationDecimal(energySeerLuminary.getHealingIncrease());
-
-                }
-                return currentHealValue;
-            }
-
-            @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 if (inPve && AbstractEnergySeer.this instanceof EnergySeerConjurer energySeerConjurer) {
                     return currentDamageValue * convertToMultiplicationDecimal(energySeerConjurer.getDamageIncrease());
                 }
                 return currentDamageValue;
             }
-        });
+        };
+        if (inPve && AbstractEnergySeer.this instanceof EnergySeerLuminary energySeerLuminary) {
+            cd.addModifier(Modifier.HEALING_MODIFY_SELF, (event, currentHealValue) -> {
+                        currentHealValue.addMultiplicativeModifierMult(name, convertToMultiplicationDecimal(energySeerLuminary.getHealingIncrease()));
+                    }
+            );
+        }
+        wp.getCooldownManager().addCooldown(cd);
         return true;
     }
 

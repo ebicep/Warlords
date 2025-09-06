@@ -11,6 +11,7 @@ import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -152,21 +153,20 @@ public class TycheProsperity implements FieldEffect {
                 cooldownManager -> {
                 },
                 false
-        ) {
-            @Override
-            public float modifyHealingFromAttacker(WarlordsDamageHealingEvent event, float currentHealValue) {
-                return currentHealValue * 1.05f;
-            }
-        });
+        ).addModifier(Modifier.HEALING_MODIFY_ATTACKER, (event, currentHealValue) -> {
+                    currentHealValue.addMultiplicativeModifierMult(getName(), 1.05f);
+                }
+        ));
     }
 
     private void arcanistBonus(WarlordsEntity warlordsEntity) {
         warlordsEntity.getAbilities().forEach(ability -> {
             Value.applyDamageHealing(ability, value -> {
-                if (value instanceof Value.RangedValueCritable rangedValueCritable) {
-                    rangedValueCritable.critChance().addAdditiveModifier(getName(), 10);
-                }
-            });
+                        if (value instanceof Value.RangedValueCritable rangedValueCritable) {
+                            rangedValueCritable.critChance().addAdditiveModifier(getName(), 10);
+                        }
+                    }
+            );
         });
         warlordsEntity.getCooldownManager().addCooldown(new PermanentCooldown<>(
                 getName(),

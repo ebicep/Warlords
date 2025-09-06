@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public abstract class AbstractCooldown<T> implements DamageInstance, HealingInstance, PlayerNameInstance, SpecDamageReductionInstance, DebugInstance {
+public abstract class AbstractCooldown<T> implements DamageInstance, PlayerNameInstance, SpecDamageReductionInstance, DebugInstance {
 
     public static List<AbstractCooldown<?>> COOLDOWNS_WITH_LISTENERS = new ArrayList<>();
     protected String name;
@@ -29,7 +29,6 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
     protected boolean removeOnDeath;
     private final Listener activeListener;
     private List<DamageInstance> extraDamageInstances = null;
-    private List<HealingInstance> extraHealingInstances = null;
     private List<CooldownFlag> flags = new ArrayList<>();
 
     private final Map<Modifier<?>, List<Object>> modifiers = new HashMap<>();
@@ -145,11 +144,6 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
         return extraDamageInstances;
     }
 
-    @Override
-    public @Nullable List<HealingInstance> getExtraHealingInstances() {
-        return extraHealingInstances;
-    }
-
     public void expire(CooldownManager cooldownManager) {
         cooldownManager.markForRemoval(this);
         getOnRemove().accept(cooldownManager);
@@ -232,13 +226,6 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
             extraDamageInstances = new ArrayList<>();
         }
         extraDamageInstances.add(extraDamageInstance);
-    }
-
-    public void addExtraHealingInstance(HealingInstance extraHealingInstance) {
-        if (extraHealingInstances == null) {
-            extraHealingInstances = new ArrayList<>();
-        }
-        extraHealingInstances.add(extraHealingInstance);
     }
 
     public Listener getActiveListener() {
