@@ -10,7 +10,7 @@ public class FallenSoulsBranch extends AbstractUpgradeBranch<FallenSouls> {
 
     @Override
     public void runOnce() {
-        abilityTree.getWarlordsPlayer().getHealth().addAdditiveModifier("PvE", 300);
+        abilityTree.getWarlordsPlayer().getHealth().addAdditiveModifier("PvE (Base)", 300);
     }
 
     public FallenSoulsBranch(AbilityTree abilityTree, FallenSouls ability) {

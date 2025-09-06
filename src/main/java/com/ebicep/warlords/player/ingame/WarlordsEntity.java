@@ -116,7 +116,7 @@ public abstract class WarlordsEntity {
     protected FloatModifiable energy;
     protected FloatModifiable energyPerSec;
     protected FloatModifiable energyPerHit;
-    protected FloatModifiableFilter maxBaseHealthFilter = new FloatModifiableFilter.BaseFilter();
+    protected FloatModifiableFilter maxBaseHealthFilter = new FloatModifiableFilter.HealthFilter();
     private final List<Float> recordDamage = new ArrayList<>();
     private final PlayerStatisticsMinute minuteStats = new PlayerStatisticsMinute();
     private final PlayerStatisticsSecond secondStats = new PlayerStatisticsSecond();

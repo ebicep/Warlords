@@ -1,10 +1,11 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.items.ItemTier;
-import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
@@ -12,13 +13,10 @@ import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.BlockDisplay;
 import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
@@ -119,11 +117,10 @@ public class OldTestCommand implements CommandExecutor {
         }
         int level = 20;
         if (commandSender instanceof Player player) {
-            BlockDisplay spawned = player.getWorld().spawn(new LocationBuilder(player.getLocation()).lookRight().pitch(0), BlockDisplay.class, false, blockDisplay -> {
-                        blockDisplay.setBlock(Material.ORANGE_TULIP.createBlockData());
-                    }
-            );
-            spawned.setVelocity(new Vector(0, 5, 0));
+            WarlordsEntity warlordsEntity = Warlords.getPlayer(player);
+            if (warlordsEntity != null) {
+                warlordsEntity.getHealth().addAdditiveModifier("TEST", 100, 100);
+            }
 //            List<Mob> mobs = Arrays.stream(Mob.VALUES).collect(Collectors.toList());
 //            for (Mob mob : Mob.BASIC) {
 //                mobs.remove(mob);
