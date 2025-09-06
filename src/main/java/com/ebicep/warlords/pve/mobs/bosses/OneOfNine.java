@@ -185,11 +185,11 @@ public class OneOfNine extends AbstractMob implements BossMob {
                 50,
                 15,
                 70,
-                2,
+                1.2,
                 2,
                 1000,
                 false,
-                3
+                2
         );
 
         chasingOrbsAbility = new ChasingOrbsAbility(warlordsNPC, warlordsNPC, option.playerCount(), 100, 0.3, 3, 2500, 1.5);
