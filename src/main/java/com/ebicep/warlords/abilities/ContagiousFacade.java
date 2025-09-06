@@ -10,6 +10,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.conjurer.ContagiousFacadeBranch;
@@ -176,6 +177,17 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                 .build();
     }
 
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new ContagiousFacadeBranch(abilityTree, this);
+    }
+
+    @Override
+    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
+        damageAbsorption.tick();
+        super.runEveryTick(warlordsEntity);
+    }
+
     private void reactivate(@Nonnull WarlordsEntity wp) {
         wp.addSpeedModifier(wp, name, speedIncrease, speedIncreaseDuration);
         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_EVOKER_PREPARE_ATTACK, 2, 2);
@@ -203,32 +215,19 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
             stats.totalHexesInflicted++;
         }
         if (pveMasterUpgrade) {
-            wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "FACADE", ContagiousFacade.class, null, wp, CooldownTypes.ABILITY, cooldownManager -> {
-            }, 20 * 5
-            ) {
-
-                @Override
-                public float addEnergyGainPerTick(float energyGainPerTick) {
-                    return energyGainPerTick + 0.5f;
-                }
-            });
+            wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                    name,
+                    "FACADE",
+                    ContagiousFacade.class,
+                    null,
+                    wp,
+                    CooldownTypes.ABILITY,
+                    cooldownManager -> {
+                    },
+                    20 * 5
+            ).addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> energyGainPerTick.addAdditiveModifier(name, 0.5f)));
         }
         stats.timesReactivated++;
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new ContagiousFacadeBranch(abilityTree, this);
-    }
-
-    @Override
-    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
-        damageAbsorption.tick();
-        super.runEveryTick(warlordsEntity);
-    }
-
-    public void setReactivateAbility(boolean reactivateAbility) {
-        this.reactivateAbility = reactivateAbility;
     }
 
     @Override
@@ -244,6 +243,10 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
     @Override
     public ContagiousFacadeStats getAbilityStats() {
         return stats;
+    }
+
+    public void setReactivateAbility(boolean reactivateAbility) {
+        this.reactivateAbility = reactivateAbility;
     }
 
     public FloatModifiable getDamageAbsorption() {

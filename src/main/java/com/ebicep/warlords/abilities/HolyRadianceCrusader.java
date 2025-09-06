@@ -6,6 +6,7 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.paladin.crusader.HolyRadianceBranchCrusader;
@@ -68,7 +69,7 @@ public class HolyRadianceCrusader extends AbstractHolyRadiance implements Heals<
             }
             markTarget.addSpeedModifier(wp, "Crusader Mark Speed", markSpeed, 20 * markDuration);
             markTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
-                    name,
+                    "Crusader's Mark",
                     "CRUS MARK",
                     HolyRadianceCrusader.class,
                     null,
@@ -87,13 +88,7 @@ public class HolyRadianceCrusader extends AbstractHolyRadiance implements Heals<
                             EffectUtils.playCylinderAnimation(markTarget.getLocation(), 1, 255, 170, 0, 8, 3, .3);
                         }
                     })
-            ) {
-
-                @Override
-                public float addEnergyGainPerTick(float energyGainPerTick) {
-                    return energyGainPerTick + energyPerSecond / 20f;
-                }
-            });
+            ).addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> energyGainPerTick.addAdditiveModifier("Crusader's Mark", energyPerSecond / 20f)));
             wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" Your ", NamedTextColor.GRAY))
                                                           .append(Component.text("Crusader's Mark", NamedTextColor.YELLOW))
                                                           .append(Component.text(" marked " + markTarget.getName() + "!", NamedTextColor.GRAY)));

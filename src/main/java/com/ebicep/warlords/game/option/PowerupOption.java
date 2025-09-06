@@ -10,6 +10,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -327,12 +328,7 @@ public class PowerupOption implements Option {
                             we.sendMessage(getWornOffMessage());
                         },
                         getTickDuration()
-                ) {
-                    @Override
-                    public float addEnergyGainPerTick(float energyGainPerTick) {
-                        return energyGainPerTick + .5f;
-                    }
-                });
+                ).addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> energyGainPerTick.addAdditiveModifier("Energy Powerup", 0.5f)));
                 we.sendMessage(Component.text("You activated the ", NamedTextColor.GOLD)
                                         .append(Component.text("ENERGY", NamedTextColor.GOLD, TextDecoration.BOLD))
                                         .append(Component.text(" powerup! "))

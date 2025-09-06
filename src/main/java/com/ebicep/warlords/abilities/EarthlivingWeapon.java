@@ -12,6 +12,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.type.CustomInstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.earthwarden.EarthlivingWeaponBranch;
@@ -61,13 +62,21 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "shaman.earthlivingweapon.activation", 2, 1);
-        wp.getCooldownManager()
-          .addCooldown(new RegularCooldown<>(name, "EARTH", EarthlivingData.class, new EarthlivingData(guaranteedHits), wp, CooldownTypes.ABILITY, cooldownManager -> {
-        }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-            if (ticksElapsed % 4 == 0) {
-                EffectUtils.displayParticle(Particle.HAPPY_VILLAGER, wp.getLocation().add(0, 1.2, 0), 2, 0.3, 0.3, 0.3, 0.1);
-            }
-        })
+        RegularCooldown<EarthlivingData> earthlivingCooldown = new RegularCooldown<>(
+                name,
+                "EARTH",
+                EarthlivingData.class,
+                new EarthlivingData(guaranteedHits),
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                },
+                tickDuration,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed % 4 == 0) {
+                        EffectUtils.displayParticle(Particle.HAPPY_VILLAGER, wp.getLocation().add(0, 1.2, 0), 2, 0.3, 0.3, 0.3, 0.1);
+                    }
+                })
         ) {
 
             @Override
@@ -80,11 +89,11 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
                 activateEarthliving(victim, attacker, cooldownObject);
             }
 
-            @Override
-            public float addEnergyPerHit(WarlordsEntity we, float energyPerHit) {
-                return energyPerHit + 10f;
-            }
-        });
+        };
+        if (pveMasterUpgrade2) {
+            earthlivingCooldown.addModifier(Modifier.ENERGY_GAIN_PER_HIT, energyGainPerTick -> energyGainPerTick.addAdditiveModifier(name, 10f));
+        }
+        wp.getCooldownManager().addCooldown(earthlivingCooldown);
         return true;
     }
 

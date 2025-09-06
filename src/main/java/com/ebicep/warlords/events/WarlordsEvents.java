@@ -31,6 +31,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.player.ingame.motionsystem.speed.BaseToWalkingSpeedValueModifier;
 import com.ebicep.warlords.pve.mobs.flags.Unsilencable;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
@@ -39,6 +40,7 @@ import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
@@ -389,11 +391,12 @@ public class WarlordsEvents implements Listener {
             }
         }
         if (finalEvent.isPresent()) {
-            float energyPerHit = wpAttacker.getEnergyPerHit().getCalculatedValue();
+            final FloatModifiable energyPerHit = new FloatModifiable(wpAttacker.getEnergyPerHit().getCalculatedValue());
             for (AbstractCooldown<?> abstractCooldown : wpAttacker.getCooldownManager().getCooldownsDistinct()) {
-                energyPerHit = abstractCooldown.addEnergyPerHit(wpAttacker, energyPerHit);
+                abstractCooldown.applyModifiers(Modifier.ENERGY_GAIN_PER_HIT, m -> m.apply(energyPerHit));
             }
-            wpAttacker.addEnergy(wpAttacker, null, energyPerHit);
+            energyPerHit.refresh();
+            wpAttacker.addEnergy(wpAttacker, null, energyPerHit.getCalculatedValue());
             wpAttacker.getMinuteStats().addMeleeHits();
         }
         wpVictim.updateHealth();

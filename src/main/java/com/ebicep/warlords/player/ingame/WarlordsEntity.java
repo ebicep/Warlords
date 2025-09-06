@@ -34,6 +34,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceManager;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.player.ingame.motionsystem.MotionModifier;
 import com.ebicep.warlords.player.ingame.motionsystem.MotionModifierBuilder;
 import com.ebicep.warlords.player.ingame.motionsystem.MotionSystem;
@@ -1290,17 +1291,13 @@ public abstract class WarlordsEntity {
         // Energy
         if (getCurrentEnergy() < getMaxEnergy()) {
             // Standard energy value per second.
-            float energyGainPerTick = getEnergyPerSec().getCalculatedValue() / 20;
-
+            final FloatModifiable energyGainPerTick = new FloatModifiable(getEnergyPerSec().getCalculatedValue() / 20);
             for (AbstractCooldown<?> abstractCooldown : getCooldownManager().getCooldownsDistinct()) {
-                energyGainPerTick = abstractCooldown.addEnergyGainPerTick(energyGainPerTick);
+                abstractCooldown.applyModifiers(Modifier.ENERGY_GAIN_PER_TICK, m -> m.apply(energyGainPerTick));
             }
-            for (AbstractCooldown<?> abstractCooldown : getCooldownManager().getCooldownsDistinct()) {
-                energyGainPerTick = abstractCooldown.multiplyEnergyGainPerTick(energyGainPerTick);
-            }
-
+            energyGainPerTick.refresh();
             // Setting energy gain to the value after all ability instance multipliers have been applied.
-            float newEnergy = getCurrentEnergy() + energyGainPerTick;
+            float newEnergy = getCurrentEnergy() + energyGainPerTick.getCalculatedValue();
             if (newEnergy > getMaxEnergy()) {
                 newEnergy = getMaxEnergy();
             }

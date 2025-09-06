@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public abstract class AbstractCooldown<T> implements DamageInstance, HealingInstance, EnergyInstance, PlayerNameInstance, SpecDamageReductionInstance, DebugInstance {
+public abstract class AbstractCooldown<T> implements DamageInstance, HealingInstance, PlayerNameInstance, SpecDamageReductionInstance, DebugInstance {
 
     public static List<AbstractCooldown<?>> COOLDOWNS_WITH_LISTENERS = new ArrayList<>();
     protected String name;
@@ -34,8 +34,9 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
 
     private final Map<Modifier<?>, List<Object>> modifiers = new HashMap<>();
 
-    public <R> void addModifier(Modifier<R> modifier, R value) {
+    public <R> AbstractCooldown<T> addModifier(Modifier<R> modifier, R value) {
         modifiers.computeIfAbsent(modifier, k -> new ArrayList<>()).add(value);
+        return this;
     }
 
 //    @SuppressWarnings("unchecked")

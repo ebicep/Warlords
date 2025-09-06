@@ -11,6 +11,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.paladin.avenger.AvengersWrathBranch;
@@ -50,30 +51,25 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
     }
 
     @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Burst with incredible holy power, causing your Avenger's Strikes to hit up to ")
-                                               .text(maxTargets, NamedTextColor.BLUE)
-                                               .text(" additional enemies that are within ")
-                                               .blocks(hitRadius)
-                                               .text(" of your target. Your energy per second is increased by ")
-                                               .energy(energyPerSecond, "")
-                                               .text(" for the duration of the effect. Lasts ")
-                                               .durationTicks(tickDuration)
-                                               .text(".")
-                                               .build();
-    }
-
-    @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "paladin.avengerswrath.activation", 2, 1);
         wp.getCooldownManager().removeCooldown(AvengersWrathData.class, false);
         AvengersWrathData data = new AvengersWrathData();
-        wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "WRATH", AvengersWrathData.class, data, wp, CooldownTypes.ABILITY, cooldownManager -> {
-        }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-            if (ticksElapsed % 4 == 0) {
-                EffectUtils.displayParticle(Particle.EFFECT, wp.getLocation().add(0, 1.2, 0), 6, 0.3F, 0.1F, 0.3F, 0.2F);
-            }
-        })
+        RegularCooldown<AvengersWrathData> wrathCooldown = new RegularCooldown<>(
+                name,
+                "WRATH",
+                AvengersWrathData.class,
+                data,
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                },
+                tickDuration,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed % 4 == 0) {
+                        EffectUtils.displayParticle(Particle.EFFECT, wp.getLocation().add(0, 1.2, 0), 6, 0.3F, 0.1F, 0.3F, 0.2F);
+                    }
+                })
         ) {
 
             @Override
@@ -115,13 +111,24 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
                     data.targetsKilledDuringWrath++;
                 }
             }
-
-            @Override
-            public float addEnergyGainPerTick(float energyGainPerTick) {
-                return energyGainPerTick + energyPerSecond / 20f;
-            }
-        });
+        };
+        wrathCooldown.addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> energyGainPerTick.addAdditiveModifier(name, energyPerSecond / 20f));
+        wp.getCooldownManager().addCooldown(wrathCooldown);
         return true;
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Burst with incredible holy power, causing your Avenger's Strikes to hit up to ")
+                                               .text(maxTargets, NamedTextColor.BLUE)
+                                               .text(" additional enemies that are within ")
+                                               .blocks(hitRadius)
+                                               .text(" of your target. Your energy per second is increased by ")
+                                               .energy(energyPerSecond, "")
+                                               .text(" for the duration of the effect. Lasts ")
+                                               .durationTicks(tickDuration)
+                                               .text(".")
+                                               .build();
     }
 
     @Override

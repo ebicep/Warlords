@@ -10,6 +10,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.spiritguard.RepentanceBranch;
@@ -47,38 +48,37 @@ public class Repentance extends AbstractAbility implements BlueAbilityIcon, Dura
     }
 
     @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Taking damage empowers your damaging abilities and melee hits, restoring health and energy based on ")
-                                               .percent(10, NamedTextColor.RED)
-                                               .text(" + ")
-                                               .percent(damageConvertPercent, NamedTextColor.RED)
-                                               .text(" of the damage you've recently took. Lasts ")
-                                               .durationTicks(tickDuration)
-                                               .text(".")
-                                               .build();
-    }
-
-    @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "paladin.barrieroflight.impact", 2, 1.35f);
         EffectUtils.playCylinderAnimation(wp.getLocation(), 1, 255, 255, 255);
         pool += 2000;
         AtomicDouble energyGained = new AtomicDouble();
-        wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "REPE", Repentance.class, new Repentance(), wp, CooldownTypes.ABILITY, cooldownManager -> {
-            if (pveMasterUpgrade2) {
-                //TODO message
-                float energyGain = (float) energyGained.get() / 3.3f / 20;
-                wp.getCooldownManager().addCooldown(new RegularCooldown<>("Remembrance", "REME", Repentance.class, new Repentance(), wp, CooldownTypes.BUFF, cooldownManager1 -> {
-                }, 8 * 20
-                ) {
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                name,
+                "REPE",
+                Repentance.class,
+                new Repentance(),
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                    if (pveMasterUpgrade2) {
+                        //TODO message
+                        float energyGain = (float) energyGained.get() / 3.3f / 20;
+                        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                "Remembrance",
+                                "REME",
+                                Repentance.class,
+                                new Repentance(),
+                                wp,
+                                CooldownTypes.BUFF,
+                                cooldownManager1 -> {
 
-                    @Override
-                    public float addEnergyGainPerTick(float energyGainPerTick) {
-                        return energyGainPerTick + energyGain;
+                                },
+                                8 * 20
+                        ).addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> energyGainPerTick.addAdditiveModifier("Remembrance", energyGain)));
                     }
-                });
-            }
-        }, tickDuration
+                },
+                tickDuration
         ) {
 
             @Override
@@ -103,6 +103,18 @@ public class Repentance extends AbstractAbility implements BlueAbilityIcon, Dura
             }
         });
         return true;
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Taking damage empowers your damaging abilities and melee hits, restoring health and energy based on ")
+                                               .percent(10, NamedTextColor.RED)
+                                               .text(" + ")
+                                               .percent(damageConvertPercent, NamedTextColor.RED)
+                                               .text(" of the damage you've recently took. Lasts ")
+                                               .durationTicks(tickDuration)
+                                               .text(".")
+                                               .build();
     }
 
     @Override

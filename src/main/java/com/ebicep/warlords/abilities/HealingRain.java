@@ -16,6 +16,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.aquamancer.HealingRainBranch;
@@ -170,7 +171,8 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
                                 heal(wp, cloudTeammate, "Rain Cloud");
                                 CooldownManager cloudTeammateCooldownManager = cloudTeammate.getCooldownManager();
                                 cloudTeammateCooldownManager.removeCooldownByName("Nimbus");
-                                cloudTeammateCooldownManager.addCooldown(new RegularCooldown<>("Nimbus",
+                                cloudTeammateCooldownManager.addCooldown(new RegularCooldown<>(
+                                        "Nimbus",
                                         null,
                                         HealingRain.class,
                                         null,
@@ -179,13 +181,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
                                         cooldownManager -> {
                                         },
                                         10
-                                ) {
-
-                                    @Override
-                                    public float addEnergyGainPerTick(float energyGainPerTick) {
-                                        return energyGainPerTick + .25f;
-                                    }
-                                });
+                                ).addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> energyGainPerTick.addAdditiveModifier("Nimbus", 0.25f)));
                             }
                         } else {
                             for (WarlordsEntity teammateInRain : teammatesInRain) {

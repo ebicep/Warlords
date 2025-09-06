@@ -7,6 +7,7 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCounter;
@@ -143,7 +144,7 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
                                 modifiers.add(ability.getEnergyCost().addMultiplicativeModifierAdd("Divine", energyCostReduction));
                             }
                         }
-                        player.getCooldownManager().addCooldown(new RegularCooldown<>(
+                        RegularCooldown<LegendaryDivine> divineCooldown = new RegularCooldown<>(
                                 "Divine Ability",
                                 "DIVINE",
                                 LegendaryDivine.class,
@@ -162,12 +163,9 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
                             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
                                 return currentDamageValue * (1 + ABILITY_DAMAGE_BOOST / 100f);
                             }
-
-                            @Override
-                            public float addEnergyGainPerTick(float energyGainPerTick) {
-                                return energyGainPerTick + 2.5f;
-                            }
-                        });
+                        };
+                        divineCooldown.addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> energyGainPerTick.addAdditiveModifier("Divine Ability", 2.5f));
+                        player.getCooldownManager().addCooldown(divineCooldown);
                         passiveCooldown = 40 * GameRunnable.SECOND;
                     }
                 } else {

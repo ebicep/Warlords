@@ -7,6 +7,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
@@ -82,7 +83,7 @@ public class LegendaryFulcrum extends AbstractLegendaryWeapon implements GardenO
                 tickCounter = (int) (COOLDOWN + COOLDOWN_PER_UPGRADE * getTitleLevel()) * 20;
                 float shieldHealth = player.getMaxBaseHealth() * (SHIELD_PERCENT + SHIELD_PERCENT_PER_UPGRADE * getTitleLevel()) / 100;
                 Shield shield = new Shield(getTitleName(), shieldHealth);
-                player.getCooldownManager().addCooldown(new RegularCooldown<>(
+                RegularCooldown<Shield> fulcrumCooldown = new RegularCooldown<>(
                         getTitleName(),
                         null,
                         Shield.class,
@@ -93,11 +94,6 @@ public class LegendaryFulcrum extends AbstractLegendaryWeapon implements GardenO
                         },
                         200
                 ) {
-                    @Override
-                    public float addEnergyGainPerTick(float energyGainPerTick) {
-                        return energyGainPerTick + (EPS_BOOST / 20f);
-                    }
-
                     @Override
                     public void onShieldFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                         event.getWarlordsEntity().getCooldownManager().queueUpdatePlayerNames();
@@ -110,7 +106,9 @@ public class LegendaryFulcrum extends AbstractLegendaryWeapon implements GardenO
                                 we -> we.isTeammate(player)
                         );
                     }
-                });
+                };
+                fulcrumCooldown.addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> energyGainPerTick.addAdditiveModifier(getTitleName(), EPS_BOOST / 20f));
+                player.getCooldownManager().addCooldown(fulcrumCooldown);
             }
         });
     }

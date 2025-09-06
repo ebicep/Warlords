@@ -7,6 +7,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.paladin.avenger.HolyRadianceBranchAvenger;
@@ -73,24 +74,6 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance implements Heals<H
         return Collections.emptyList();
     }
 
-    @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder
-                .create("Radiate with holy energy, healing yourself and all nearby allies for ")
-                .heal(healingValues.radianceHealing)
-                .text(" health.")
-                .emptyLine()
-                .text("You may look at an enemy to inflict them with ")
-                .text("MARK", NamedTextColor.DARK_RED)
-                .text(" for ")
-                .durationSeconds(markDuration)
-                .text(", causing them to lose ")
-                .energy(energyDrainPerSecond)
-                .text(" per second.")
-                .maxRange(markRadius)
-                .build();
-    }
-
     private void aoeMark(WarlordsEntity giver, WarlordsEntity target) {
         RadianceData radianceData = new RadianceData();
         target.getCooldownManager().removeCooldownByName("Strike Priority");
@@ -134,6 +117,24 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance implements Heals<H
         });
     }
 
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder
+                .create("Radiate with holy energy, healing yourself and all nearby allies for ")
+                .heal(healingValues.radianceHealing)
+                .text(" health.")
+                .emptyLine()
+                .text("You may look at an enemy to inflict them with ")
+                .text("MARK", NamedTextColor.DARK_RED)
+                .text(" for ")
+                .durationSeconds(markDuration)
+                .text(", causing them to lose ")
+                .energy(energyDrainPerSecond)
+                .text(" per second.")
+                .maxRange(markRadius)
+                .build();
+    }
+
     private void mark(WarlordsEntity wp, WarlordsEntity markTarget) {
         wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" Your ", NamedTextColor.GRAY))
                                                       .append(Component.text("Avenger's Mark", NamedTextColor.YELLOW))
@@ -158,13 +159,7 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance implements Heals<H
                         EffectUtils.playCylinderAnimation(markTarget.getLocation(), 1, 250, 25, 25, 8, 6, .3);
                     }
                 })
-        ) {
-
-            @Override
-            public float addEnergyGainPerTick(float energyGainPerTick) {
-                return energyGainPerTick - energyDrainPerSecond / 20f;
-            }
-        });
+        ).addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> energyGainPerTick.addAdditiveModifier("Avenger's Mark", -energyDrainPerSecond / 20f)));
     }
 
     @Override
