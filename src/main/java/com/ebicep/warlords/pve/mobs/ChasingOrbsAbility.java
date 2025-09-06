@@ -79,7 +79,7 @@ public class ChasingOrbsAbility {
 
             WarlordsEntity target = targets.get(rng.nextInt(targets.size()));
 
-            Location spawnLoc = caster.getLocation().clone().add(0, 5, 0);
+            Location spawnLoc = caster.getLocation().clone().add(0, 6, 0);
             EffectUtils.playFirework(spawnLoc, FireworkEffect.builder()
                     .withColor(Color.WHITE)
                     .with(FireworkEffect.Type.BALL_LARGE)
@@ -96,7 +96,7 @@ public class ChasingOrbsAbility {
                 d.setTransformation(new Transformation(
                         new Vector3f(0, 0, 0),
                         new Quaternionf(),
-                        new Vector3f(2.5f, 2.5f, 2.5f),
+                        new Vector3f(2f, 2f, 2f),
                         new Quaternionf()
                 ));
             });
@@ -104,7 +104,7 @@ public class ChasingOrbsAbility {
             Orb orb = new Orb(display, target, spawnLoc, 0);
             orbs.add(orb);
 
-            Utils.playGlobalSound(spawnLoc, Sound.ENTITY_ENDERMITE_AMBIENT, 10, 0.6f);
+            Utils.playGlobalSound(spawnLoc, Sound.ENTITY_ENDER_EYE_LAUNCH, 10, 0.5f);
             Utils.playGlobalSound(spawnLoc, Sound.BLOCK_AMETHYST_BLOCK_BREAK, 10, 0.5f);
         }
 
@@ -156,6 +156,7 @@ public class ChasingOrbsAbility {
 
         w.spawnParticle(Particle.EXPLOSION, at, 1, 0, 0, 0, 0);
         Utils.playGlobalSound(at, Sound.ENTITY_GENERIC_EXPLODE, 2, 0.6f);
+        Utils.playGlobalSound(at, Sound.ENTITY_ENDER_EYE_DEATH, 10, 0.5f);
 
         // Damage + knockback
         for (WarlordsEntity enemy : PlayerFilter

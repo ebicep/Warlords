@@ -192,7 +192,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
                 2
         );
 
-        chasingOrbsAbility = new ChasingOrbsAbility(warlordsNPC, warlordsNPC, option.playerCount(), 100, 0.3, 3, 2500, 1.5);
+        chasingOrbsAbility = new ChasingOrbsAbility(warlordsNPC, warlordsNPC, option.playerCount(), 100, 0.32, 3, 2500, 1.5);
 
         swordManager.spawnSwords(9);
         swordManager.start();
