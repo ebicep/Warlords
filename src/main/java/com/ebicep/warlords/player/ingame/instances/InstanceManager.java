@@ -23,7 +23,6 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.LinkedCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.type.CustomInstanceFlags;
 import com.ebicep.warlords.player.ingame.instances.type.DamageInstance;
-import com.ebicep.warlords.player.ingame.instances.type.HealingInstance;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -786,30 +785,18 @@ public class InstanceManager {
         List<AbstractCooldown<?>> attackersCooldownsDistinct = source.getCooldownManager().getCooldownsDistinct();
 
         for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
-            abstractCooldown.healingDoBeforeVariableSetFromSelf(event);
-            List<HealingInstance> extraHealingInstances = abstractCooldown.getExtraHealingInstances();
-            if (extraHealingInstances != null) {
-                for (HealingInstance healingInstance : extraHealingInstances) {
-                    healingInstance.healingDoBeforeVariableSetFromSelf(event);
-                }
-            }
+            abstractCooldown.applyModifiers(Modifier.HEALING_BEFORE_VARIABLE_SET_SELF, m -> m.apply(event));
         }
         for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
-            abstractCooldown.healingDoBeforeVariableSetFromAttacker(event);
-            List<HealingInstance> extraHealingInstances = abstractCooldown.getExtraHealingInstances();
-            if (extraHealingInstances != null) {
-                for (HealingInstance healingInstance : extraHealingInstances) {
-                    healingInstance.healingDoBeforeVariableSetFromAttacker(event);
-                }
-            }
+            abstractCooldown.applyModifiers(Modifier.HEALING_BEFORE_VARIABLE_SET_ATTACKER, m -> m.apply(event));
         }
 
         AbstractAbility ability = event.getAbility();
         String cause = event.getCause();
         float min = event.getMin();
         float max = event.getMax();
-        float critChance = event.getCritChance();
-        float critMultiplier = event.getCritMultiplier();
+        FloatModifiable critChance = new FloatModifiable(event.getCritChance());
+        FloatModifiable critMultiplier = new FloatModifiable(event.getCritMultiplier());
         EnumSet<InstanceFlags> flags = event.getFlags();
         boolean isLastStandFromShield = flags.contains(InstanceFlags.LAST_STAND_FROM_SHIELD);
         boolean pierce = flags.contains(InstanceFlags.PIERCE);
@@ -826,20 +813,28 @@ public class InstanceManager {
 
         float initialHealth = warlordsEntity.getCurrentHealth();
         // Critical Hits
-        float healValue = (int) ((Math.random() * (max - min)) + min);
-        double crit = ThreadLocalRandom.current().nextDouble(100);
-        boolean isCrit = false;
-
-        if (crit <= critChance && source.isCanCrit()) {
-            isCrit = true;
-            healValue *= critMultiplier / 100f;
+        final FloatModifiable healValue = new FloatModifiable((float) ((Math.random() * (max - min)) + min));
+        FloatModifiableFilter.InstancePierce pierceFilter;
+        if (pierce) {
+            pierceFilter = new FloatModifiableFilter.InstancePierce();
+            healValue.addFilter(pierceFilter);
+        } else {
+            pierceFilter = null;
         }
+        double crit = ThreadLocalRandom.current().nextDouble(100);
+        float calculatedCritChance = critChance.getCalculatedValue();
+        float calculatedCritMultiplier = critMultiplier.getCalculatedValue();
+        boolean isCrit = calculatedCritChance > 0 && crit <= calculatedCritChance && source.isCanCrit();
+        if (isCrit) {
+            healValue.addMultiplicativeModifierMult("Crit Multiplier", calculatedCritMultiplier / 100f);
+        }
+        final float healValueBeforeReduction = healValue.getCalculatedValue();
 
         debugMessage.appendTitle("Calculated Heal", NamedTextColor.AQUA);
         debugMessage.append(InstanceDebugHoverable.LevelBuilder
                 .create(1)
                 .prefix(ComponentBuilder.create("Heal Value: ", NamedTextColor.GREEN))
-                .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(healValue), NamedTextColor.GOLD))
+                .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(healValueBeforeReduction), NamedTextColor.GOLD))
         );
         debugMessage.append(InstanceDebugHoverable.LevelBuilder
                 .create(1)
@@ -847,76 +842,17 @@ public class InstanceManager {
                 .value(ComponentBuilder.create("" + isCrit, NamedTextColor.GOLD))
         );
 
-        final float healValueBeforeReduction = healValue;
-        float previousHealValue = healValue;
-
         debugMessage.appendTitle("Before Heal", NamedTextColor.AQUA);
-        debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                .create(1)
-                .prefix(ComponentBuilder.create("Target Cooldowns", NamedTextColor.DARK_GREEN))
-        );
         if (!trueHealing) {
             for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
-                float newHealValue = abstractCooldown.modifyHealingFromSelf(event, healValue);
-                if (newHealValue < healValue && pierce) { // pierce ignores victim healing reduction
-                    continue;
-                }
-                healValue = newHealValue;
-                if (previousHealValue != healValue) {
-                    debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                            .create(2)
-                            .prefix(ComponentBuilder.create("Heal Value: ", NamedTextColor.GREEN))
-                            .value(previousHealValue, healValue, abstractCooldown)
-                    );
-                }
-                previousHealValue = healValue;
-                List<HealingInstance> extraHealingInstances = abstractCooldown.getExtraHealingInstances();
-                if (extraHealingInstances != null) {
-                    for (HealingInstance healingInstance : extraHealingInstances) {
-                        newHealValue = healingInstance.modifyHealingFromSelf(event, newHealValue);
-                    }
-                }
-                if (newHealValue < healValue && pierce) { // pierce ignores victim healing reduction
-                    continue;
-                }
-                healValue = newHealValue;
-                if (previousHealValue != healValue) {
-                    debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                            .create(2)
-                            .prefix(ComponentBuilder.create("Heal Value: ", NamedTextColor.GREEN))
-                            .value(previousHealValue, healValue, abstractCooldown)
-                    );
-                }
-                previousHealValue = healValue;
+                abstractCooldown.applyModifiers(Modifier.HEALING_MODIFY_SELF, m -> m.apply(event, healValue));
             }
-            debugMessage.appendTitle("Attackers Cooldowns", NamedTextColor.AQUA);
             for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
-                healValue = abstractCooldown.modifyHealingFromAttacker(event, healValue);
-                if (previousHealValue != healValue) {
-                    debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                            .create(2)
-                            .prefix(ComponentBuilder.create("Heal Value: ", NamedTextColor.GREEN))
-                            .value(previousHealValue, healValue, abstractCooldown)
-                    );
-                }
-                previousHealValue = healValue;
-                List<HealingInstance> extraHealingInstances = abstractCooldown.getExtraHealingInstances();
-                if (extraHealingInstances != null) {
-                    for (HealingInstance healingInstance : extraHealingInstances) {
-                        healValue = healingInstance.modifyHealingFromAttacker(event, healValue);
-                    }
-                }
-                if (previousHealValue != healValue) {
-                    debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                            .create(2)
-                            .prefix(ComponentBuilder.create("Heal Value: ", NamedTextColor.GREEN))
-                            .value(previousHealValue, healValue, abstractCooldown)
-                    );
-                }
-                previousHealValue = healValue;
+                abstractCooldown.applyModifiers(Modifier.HEALING_MODIFY_ATTACKER, m -> m.apply(event, healValue));
             }
         }
 
+        float healValueAfterModify = healValue.getCalculatedValue();
         if (warlordsEntity == source || warlordsEntity.isTeammate(source)) {
             float maxHealth = warlordsEntity.getHealth().getCalculatedValue();
             boolean overhealSelf = warlordsEntity == source && flags.contains(InstanceFlags.CAN_OVERHEAL_SELF);
@@ -924,31 +860,32 @@ public class InstanceManager {
             if (overhealSelf || overhealOthers) {
                 maxHealth *= 1.1f;
             }
-            if (warlordsEntity.getCurrentHealth() + healValue > maxHealth) {
-                healValue = maxHealth - warlordsEntity.getCurrentHealth();
+            if (warlordsEntity.getCurrentHealth() + healValueAfterModify > maxHealth) {
+                healValueAfterModify = maxHealth - warlordsEntity.getCurrentHealth();
             }
 
-            if (healValue <= 0) {
+            if (healValueAfterModify <= 0) {
                 return Optional.empty();
             }
 
-            boolean isOverheal = maxHealth > warlordsEntity.getMaxHealth() && healValue + warlordsEntity.getCurrentHealth() > warlordsEntity.getMaxBaseHealth();
+            boolean isOverheal = maxHealth > warlordsEntity.getMaxHealth() && healValueAfterModify + warlordsEntity.getCurrentHealth() > warlordsEntity.getMaxBaseHealth();
             if (warlordsEntity == source) {
-                sendHealingMessage(warlordsEntity, debugMessage, healValue, cause, isCrit, isLastStandFromShield, isOverheal);
+                sendHealingMessage(warlordsEntity, debugMessage, healValueAfterModify, cause, isCrit, isLastStandFromShield, isOverheal);
             } else {
-                sendHealingMessage(warlordsEntity, debugMessage, source, warlordsEntity, healValue, cause, isCrit, isLastStandFromShield, isOverheal);
+                sendHealingMessage(warlordsEntity, debugMessage, source, warlordsEntity, healValueAfterModify, cause, isCrit, isLastStandFromShield, isOverheal);
             }
 
+            float finalHealValueAfterModify = healValueAfterModify;
             for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
-                abstractCooldown.onHealFromSelf(event, healValue, isCrit);
+                abstractCooldown.applyModifiers(Modifier.HEALING_ON_HEAL_SELF, m -> m.apply(event, finalHealValueAfterModify, isCrit));
             }
             for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
-                abstractCooldown.onHealFromAttacker(event, healValue, isCrit);
+                abstractCooldown.applyModifiers(Modifier.HEALING_ON_HEAL_ATTACKER, m -> m.apply(event, finalHealValueAfterModify, isCrit));
             }
 
-            float cappedHealValue = Math.min(healValue, maxHealth - warlordsEntity.getCurrentHealth());
+            float cappedHealValue = Math.min(finalHealValueAfterModify, maxHealth - warlordsEntity.getCurrentHealth());
             source.addHealing(cappedHealValue, FlagHolder.isPlayerHolderFlag(warlordsEntity));
-            warlordsEntity.setCurrentHealth(warlordsEntity.getCurrentHealth() + healValue);
+            warlordsEntity.setCurrentHealth(warlordsEntity.getCurrentHealth() + finalHealValueAfterModify);
 
             if (!flags.contains(InstanceFlags.NO_HIT_SOUND)) {
                 warlordsEntity.playHitSound(source);
@@ -966,9 +903,9 @@ public class InstanceManager {
                 healValueBeforeReduction,
                 healValueBeforeReduction,
                 healValueBeforeReduction,
-                healValue,
-                critChance,
-                critMultiplier,
+                healValueAfterModify,
+                calculatedCritChance,
+                calculatedCritMultiplier,
                 isCrit,
                 false,
                 WarlordsDamageHealingFinalEvent.FinalEventFlag.REGULAR
