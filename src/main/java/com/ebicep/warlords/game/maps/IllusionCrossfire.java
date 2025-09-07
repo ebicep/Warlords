@@ -70,40 +70,37 @@ public class IllusionCrossfire extends GameMap {
                 .onPerWaveClear(5, 1000)
         );
         options.add(new WaveDefenseOption(Team.RED, new StaticWaveList()
-                .add(1, new RandomSpawnWave(1, 10 * SECOND, Component.text("Boss"))
-                        .add(Mob.ORBYZ)
+                .add(1, new RandomSpawnWave(10, 10 * SECOND, null)
+                        // basic
+                        .add(0.8, Mob.ZOMBIE_LANCER)
+                        .add(0.1, Mob.ZOMBIE_LAMENT)
+                        .add(0.1, Mob.SKELETAL_MAGE)
+                        .add(0, Mob.PIG_DISCIPLE)
+                        .add(0.06, Mob.SLIMY_ANOMALY)
+                        .add(0.06, Mob.ARACHNO_VENARI)
+                        // elite
+                        .add(0.15, Mob.ZOMBIE_SWORDSMAN)
+                        .add(0, Mob.SKELETAL_WARLOCK)
+                        .add(0, Mob.PIG_SHAMAN)
+                        .add(0.01, Mob.ILLUMINATION)
+                        .add(0.01, Mob.GOLEM_APPRENTICE)
+                        .add(0, Mob.WITCH_DEACON)
+                        // envoy
+                        .add(0, Mob.ZOMBIE_VANGUARD)
+                        .add(0, Mob.SKELETAL_ENTROPY)
+                        .add(0, Mob.PIG_ALLEVIATOR)
+                        // void
+                        .add(0, Mob.VOID_ZOMBIE)
+                        .add(0, Mob.SKELETAL_MESMER)
+                        // exiled
+                        .add(0, Mob.ZOMBIE_KNIGHT)
+                        .add(0, Mob.SCRUPULOUS_ZOMBIE)
+                        .add(0, Mob.SKELETAL_SORCERER)
+                        .add(0, Mob.FIRE_SPLITTER)
+                        .add(0, Mob.RIFT_WALKER)
+                        // forgotten
+                        .add(0, Mob.NIGHTMARE_ZOMBIE)
                 )
-//                .add(1, new RandomSpawnWave(10, 10 * SECOND, null)
-//                        // basic
-//                        .add(0.8, Mob.ZOMBIE_LANCER)
-//                        .add(0.1, Mob.ZOMBIE_LAMENT)
-//                        .add(0.1, Mob.SKELETAL_MAGE)
-//                        .add(0, Mob.PIG_DISCIPLE)
-//                        .add(0.06, Mob.SLIMY_ANOMALY)
-//                        .add(0.06, Mob.ARACHNO_VENARI)
-//                        // elite
-//                        .add(0.15, Mob.ZOMBIE_SWORDSMAN)
-//                        .add(0, Mob.SKELETAL_WARLOCK)
-//                        .add(0, Mob.PIG_SHAMAN)
-//                        .add(0.01, Mob.ILLUMINATION)
-//                        .add(0.01, Mob.GOLEM_APPRENTICE)
-//                        .add(0, Mob.WITCH_DEACON)
-//                        // envoy
-//                        .add(0, Mob.ZOMBIE_VANGUARD)
-//                        .add(0, Mob.SKELETAL_ENTROPY)
-//                        .add(0, Mob.PIG_ALLEVIATOR)
-//                        // void
-//                        .add(0, Mob.VOID_ZOMBIE)
-//                        .add(0, Mob.SKELETAL_MESMER)
-//                        // exiled
-//                        .add(0, Mob.ZOMBIE_KNIGHT)
-//                        .add(0, Mob.SCRUPULOUS_ZOMBIE)
-//                        .add(0, Mob.SKELETAL_SORCERER)
-//                        .add(0, Mob.FIRE_SPLITTER)
-//                        .add(0, Mob.RIFT_WALKER)
-//                        // forgotten
-//                        .add(0, Mob.NIGHTMARE_ZOMBIE)
-//                )
                 .add(5, new RandomSpawnWave(10, 10 * SECOND, null)
                                 //basic
                                 .add(0.8, Mob.ZOMBIE_LANCER)
