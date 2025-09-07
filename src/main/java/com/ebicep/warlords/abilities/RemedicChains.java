@@ -171,7 +171,7 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
 
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return (currentDamageValue + damageValues.getBonusDamage().getValue()) * (pveMasterUpgrade2 ? 1.1f : 1);
+                return (currentDamageValue + damageValues.getBonusDamage().getValue()) * (pveMasterUpgrade2 ? 1.15f : 1);
             }
         };
         wp.getCooldownManager().removeCooldown(RemedicChains.class, false);

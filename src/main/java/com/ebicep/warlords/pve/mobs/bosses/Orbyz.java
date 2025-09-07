@@ -1,21 +1,55 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
+import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.effects.FallingBlockWaveEffect;
+import com.ebicep.warlords.effects.circle.CircleEffect;
+import com.ebicep.warlords.effects.circle.CircumferenceEffect;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
-import com.ebicep.warlords.pve.mobs.bosses.bossabilities.FrostSpikesAbility;
+import com.ebicep.warlords.pve.mobs.bosses.bossabilities.*;
 import com.ebicep.warlords.pve.mobs.Mob;
+import com.ebicep.warlords.pve.mobs.bosses.bossminions.FrostVeil;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
+import com.ebicep.warlords.util.chat.ChatUtils;
+import com.ebicep.warlords.util.warlords.GameRunnable;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
+import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
+import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
-import org.bukkit.Location;
-import org.bukkit.Particle;
+import org.bukkit.*;
+import org.bukkit.inventory.ItemStack;
+
+import javax.annotation.Nonnull;
+import java.util.Collections;
 
 public class Orbyz extends AbstractMob implements BossMob {
 
     private Location mapCenter;
-    private FrostSpikesAbility frostSpikesAbility;
+    private RotatingRadialLasersAbility rotatingRadialLasersAbility;
+    private ConvergingShockwavesAbility convergingShockwavesAbility;
+    private HeavenlySpearAbility heavenlySpearAbilityOne;
+    private HeavenlySpearAbility heavenlySpearAbilityTwo;
+    private SummoningCirclesAbility summoningCirclesAbility;
+    private MarkedForDeathAbility markedForDeathAbility;
+    private EmpoweringRelicsAbility empoweringRelicsAbility;
+    private BossAbilityPhase phaseOne;
+    private BossAbilityPhase phaseTwo;
+    private BossAbilityPhase phaseThree;
+    private BossAbilityPhase phaseFour;
+    private BossAbilityPhase phaseFive;
+
+    private boolean preventMarkForDeath = false;
+    private boolean preventRelic = false;
 
     public Orbyz(Location spawnLocation) {
         super(
@@ -53,42 +87,298 @@ public class Orbyz extends AbstractMob implements BossMob {
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
 
-        mapCenter = new Location(warlordsNPC.getWorld(), 112.5, 13, 62.5);
+        Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_ZOMBIE_VILLAGER_CURE, 500, 0.5f);
+        EffectUtils.playFirework(warlordsNPC.getLocation(), FireworkEffect.builder()
+                .withColor(Color.AQUA)
+                .with(FireworkEffect.Type.BALL_LARGE)
+                .withTrail()
+                .build());
+        FallingBlockWaveEffect.create(
+                warlordsNPC.getLocation(),
+                15,
+                12,
+                Material.PACKED_ICE
+        );
 
-        frostSpikesAbility = new FrostSpikesAbility(
+        new GameRunnable(warlordsNPC.getGame()) {
+            @Override
+            public void run() {
+                for (WarlordsEntity we : PlayerFilter
+                        .entitiesAround(warlordsNPC, 7, 7, 7)
+                        .aliveEnemiesOf(warlordsNPC)
+                ) {
+                    if (!we.getCooldownManager().hasCooldown(DamageCheck.class)) {
+                        return;
+                    }
+                    we.addInstance(InstanceBuilder
+                            .damage()
+                            .min(800)
+                            .max(1200)
+                            .source(warlordsNPC)
+                            .cause("Blizzard")
+                            .flag(InstanceFlags.TRUE_DAMAGE, true)
+                    );
+                }
+
+                if (warlordsNPC.isDead()) {
+                    this.cancel();
+                }
+            }
+        }.runTaskTimer(0, 10);
+
+        mapCenter = new Location(warlordsNPC.getWorld(), 112.5, 11, 62.5);
+
+        rotatingRadialLasersAbility = new RotatingRadialLasersAbility(warlordsNPC, () -> mapCenter, 6, 45, 1, 80, 240, 1.2, 2, 1000, 2, 1, Color.AQUA, Color.RED);
+        convergingShockwavesAbility = new ConvergingShockwavesAbility(warlordsNPC, () -> mapCenter, 38, 10, 60, 20, 0.3, 1.5, 1, 1000, 2, 1, Color.PURPLE, Color.BLUE);
+        heavenlySpearAbilityOne = new HeavenlySpearAbility(warlordsNPC, () -> mapCenter, 6 * option.playerCount(), 35, 30, 6, 4000, 60, 35, 2.5);
+        heavenlySpearAbilityTwo = new HeavenlySpearAbility(warlordsNPC, () -> mapCenter, 6 * option.playerCount(), 32, 18, 6, 4000, 20, 35, 2.5);
+        summoningCirclesAbility = new SummoningCirclesAbility(warlordsNPC, () -> mapCenter, option.playerCount(), 32, 200, 5, 5, option);
+
+        markedForDeathAbility = new MarkedForDeathAbility(
                 warlordsNPC,
+                3,
+                80,
+                30,
+                5,
+                8000,
+                1,
+                2
+        );
+
+        empoweringRelicsAbility = new EmpoweringRelicsAbility(
                 warlordsNPC,
                 () -> mapCenter,
-                FrostSpikesAbility.Pattern.RING,
-                FrostSpikesAbility.EruptMode.SEQUENTIAL,
-                20,
-                8,
-                40,
-                20,
-                2.2,
-                480,
-                0.5,
-                3.5,
-                0.35,
-                false,
+                1,
+                32,
+                6,
                 true,
-                0.35
+                1.5,
+                300,
+                6,
+                1,
+                2,
+                null,
+                1,
+                1.5f,
+                1,
+                warlordsEntity -> {
+                    warlordsEntity.getCooldownManager().addCooldown(new RegularCooldown<>(
+                            "Empowering Relic",
+                            "RELIC",
+                            DamageCheck.class,
+                            DamageCheck.DAMAGE_CHECK,
+                            warlordsEntity,
+                            CooldownTypes.ABILITY,
+                            cooldownManager -> {
+                            },
+                            15 * 20,
+                            Collections.singletonList((cooldown, ticksLeft, ticksElapsed2) -> {
+                                if (ticksElapsed2 % 5 == 0) {
+                                    new CircleEffect(
+                                            warlordsEntity.getGame(),
+                                            warlordsEntity.getTeam(),
+                                            warlordsEntity.getLocation().clone().add(0, 0.25, 0),
+                                            6,
+                                            new CircumferenceEffect(Particle.FIREWORK, Particle.FIREWORK).particlesPerCircumference(1.2)
+                                    ).playEffects();
+                                }
+                            })
+                    ));
+                },
+                warlordsEntity -> {
+                    warlordsEntity.getCooldownManager().removeCooldown(DamageCheck.class, false);
+                }
         );
+
+        warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                "Damage Check",
+                null,
+                DamageCheck.class,
+                DamageCheck.DAMAGE_CHECK,
+                warlordsNPC,
+                CooldownTypes.BUFF,
+                cooldownManager -> {},
+                true
+        ) {
+            @Override
+            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                if (empoweringRelicsAbility.hasBuff(event.getSource())) {
+                    return currentDamageValue;
+                }
+                return currentDamageValue * 0.1f;
+            }
+        });
+
+        phaseOne = new BossAbilityPhase(warlordsNPC, 80, () -> {
+            ChatUtils.sendTitleToGamePlayers(
+                    warlordsNPC.getGame(),
+                    Component.empty(),
+                    Component.text("Little puppets running in circles...", NamedTextColor.AQUA),
+                    20,
+                    60,
+                    20
+            );
+            Utils.playGlobalSound(mapCenter, Sound.ENTITY_ALLAY_AMBIENT_WITHOUT_ITEM, 500, 0.3f);
+            rotatingRadialLasersAbility.start(warlordsNPC.getGame());
+        });
+
+        phaseTwo = new BossAbilityPhase(warlordsNPC, 60, () -> {
+            ChatUtils.sendTitleToGamePlayers(
+                    warlordsNPC.getGame(),
+                    Component.empty(),
+                    Component.text("Seems as if the floor is quite icy...", NamedTextColor.AQUA),
+                    20,
+                    60,
+                    20
+            );
+            convergingShockwavesAbility.start(warlordsNPC.getGame());
+        });
+
+        phaseThree = new BossAbilityPhase(warlordsNPC, 40, () -> {
+            preventRelic = true;
+            preventMarkForDeath = true;
+            ChatUtils.sendTitleToGamePlayers(
+                    warlordsNPC.getGame(),
+                    Component.empty(),
+                    Component.text("You hear distant howls in the sky about to rain down...", NamedTextColor.AQUA),
+                    20,
+                    60,
+                    20
+            );
+            new GameRunnable(warlordsNPC.getGame()) {
+                int t = 0;
+                @Override
+                public void run() {
+                    t++;
+                    if (t % 60 == 0) {
+                        heavenlySpearAbilityOne.start(warlordsNPC.getGame());
+                    }
+
+                    if (t == 601) {
+                        preventRelic = false;
+                        preventMarkForDeath = false;
+                        this.cancel();
+                    }
+                }
+            }.runTaskTimer(0, 0);
+        });
+
+        phaseFour = new BossAbilityPhase(warlordsNPC, 25, () -> {
+            Utils.playGlobalSound(mapCenter, Sound.ENTITY_ALLAY_AMBIENT_WITHOUT_ITEM, 500, 0.3f);
+            rotatingRadialLasersAbility.start(warlordsNPC.getGame());
+        });
+
+        phaseFive = new BossAbilityPhase(warlordsNPC, 15, () -> {
+            preventRelic = true;
+            preventMarkForDeath = true;
+            ChatUtils.sendTitleToGamePlayers(
+                    warlordsNPC.getGame(),
+                    Component.empty(),
+                    Component.text("As you near the end... once more...", NamedTextColor.AQUA),
+                    20,
+                    60,
+                    20
+            );
+            Utils.playGlobalSound(mapCenter, Sound.ENTITY_ALLAY_AMBIENT_WITHOUT_ITEM, 500, 0.3f);
+            new GameRunnable(warlordsNPC.getGame()) {
+                int t = 0;
+                @Override
+                public void run() {
+                    t++;
+                    if (t % 25 == 0) {
+                        heavenlySpearAbilityTwo.start(warlordsNPC.getGame());
+                    }
+
+                    if (t == 501) {
+                        preventRelic = false;
+                        preventMarkForDeath = false;
+                        this.cancel();
+                    }
+                }
+            }.runTaskTimer(20, 0);
+        });
+
     }
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
         if (ticksElapsed % 20 == 0) {
             EffectUtils.playCrownAnimation(warlordsNPC.getLocation(), Particle.SNOWFLAKE);
+            for (WarlordsEntity enemy : PlayerFilter
+                    .entitiesAround(warlordsNPC, 6, 6, 6)
+                    .aliveEnemiesOf(warlordsNPC)
+            ) {
+                enemy.addSpeedModifier(warlordsNPC, "Permanent Orbyz", -60, 2 * 20);
+            }
+
+            EffectUtils.playCircularShieldAnimation(warlordsNPC.getLocation(), Particle.END_ROD, 6, 1, 5);
         }
 
-        if (ticksElapsed % 40 == 0) {
-            EffectUtils.playCircularShieldAnimation(warlordsNPC.getLocation(), Particle.END_ROD, 6, 2, 3);
+        if (ticksElapsed % 260 == 0 && ticksElapsed > 0) {
+            Location loc = warlordsNPC.getLocation();
+            Utils.playGlobalSound(loc, Sound.BLOCK_GLASS_BREAK, 500, 0.4f);
+            FallingBlockWaveEffect.create(loc.add(0, 1, 0), 7, 6, Material.PACKED_ICE);
+            for (WarlordsEntity we : PlayerFilterGeneric
+                    .entitiesAround(warlordsNPC, 7, 7, 7)
+                    .aliveEnemiesOf(warlordsNPC)
+            ) {
+                Utils.addKnockback(name, loc, we, -2, 0.3);
+                we.addSpeedModifier(warlordsNPC, "Orbyz Slowness", -70, 30);
+                we.addInstance(InstanceBuilder
+                        .damage()
+                        .cause("Blizzard Impendus")
+                        .source(warlordsNPC)
+                        .value(1200)
+                );
+            }
         }
 
-        if (ticksElapsed % 200 == 0) {
-            frostSpikesAbility.start(warlordsNPC.getGame());
+        if (ticksElapsed % 825 == 0) {
+            for (int i = 0; i < option.playerCount(); i++) {
+                option.spawnNewMob(new FrostVeil(option.getRandomSpawnLocation(warlordsNPC)));
+            }
         }
+
+        if (ticksElapsed % 1000 == 0 && ticksElapsed > 0) {
+            summoningCirclesAbility.start(warlordsNPC.getGame());
+        }
+
+        if (ticksElapsed % 320 == 0 && !preventMarkForDeath) {
+            markedForDeathAbility.start(warlordsNPC.getGame());
+        }
+
+        if (ticksElapsed % 600 == 0 && ticksElapsed > 0 && !preventRelic) {
+            empoweringRelicsAbility.start(warlordsNPC.getGame());
+        }
+
+        float health = warlordsNPC.getCurrentHealth();
+        phaseOne.initialize(health);
+        phaseTwo.initialize(health);
+        phaseThree.initialize(health);
+        phaseFour.initialize(health);
+        phaseFive.initialize(health);
+    }
+
+    @Override
+    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
+        Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.BLOCK_AMETHYST_BLOCK_HIT, 500, 0.3f);
+    }
+
+    @Override
+    public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
+        Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_ZOMBIE_VILLAGER_CURE, 500, 2f);
+        EffectUtils.strikeLightning(warlordsNPC.getLocation(), false);
+        EffectUtils.playFirework(warlordsNPC.getLocation(), FireworkEffect.builder()
+                .withColor(Color.AQUA)
+                .with(FireworkEffect.Type.BALL_LARGE)
+                .withTrail()
+                .build());
+        FallingBlockWaveEffect.create(
+                warlordsNPC.getLocation(),
+                15,
+                12,
+                Material.PACKED_ICE
+        );
     }
 
     @Override
@@ -103,6 +393,6 @@ public class Orbyz extends AbstractMob implements BossMob {
 
     @Override
     public Component getDescription() {
-        return Component.text("Frozen in Time", NamedTextColor.WHITE);
+        return Component.text("Once Frozen in Time", NamedTextColor.WHITE);
     }
 }

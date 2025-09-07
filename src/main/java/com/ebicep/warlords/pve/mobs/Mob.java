@@ -578,6 +578,14 @@ public enum Mob {
             Weapons.TIDEBREAKER.getItem()
     )
     ),
+    FROST_VEIL(EntityType.WITHER_SKELETON, FrostVeil.class, FrostVeil::new, FrostVeil::new, new Utils.SimpleEntityEquipment(
+            new ItemStack(Material.PACKED_ICE),
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 30, 30, 120),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 30, 30, 120),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 30, 30, 120),
+            Weapons.FROSTBITE.getItem()
+    )
+    ),
     MITHRA_EGG_SAC(EntityType.ARMOR_STAND, EggSac.class, EggSac::new, EggSac::new, new Utils.SimpleEntityEquipment(
             EggSac.EGG_SAC_ITEM,
             null,
