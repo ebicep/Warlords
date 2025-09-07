@@ -1102,10 +1102,10 @@
         "name": "Parry",
         "cooldown": 9,
         "energyCost": 0,
-        "blockTickDuration": 30,
+        "blockTickDuration": 26,
         "knockbackTickDuration": 50,
         "damageReduction": 10,
-        "damageReductionTickDuration": 80,
+        "damageReductionTickDuration": 60,
         "knockbackMagnitude": 1.25
       },
       "poisonousHex": {
