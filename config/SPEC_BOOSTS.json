@@ -242,7 +242,7 @@
         "name": "Vitality Boost",
         "description": "Gain {{heal}} max health. Passively regenerate {{heal}} health per second, stacks with natural regen.",
         "healthIncrease": 600,
-        "passiveRegen": 25
+        "passiveRegen": 30
       },
       "striker": {
         "difficulty": 1,
