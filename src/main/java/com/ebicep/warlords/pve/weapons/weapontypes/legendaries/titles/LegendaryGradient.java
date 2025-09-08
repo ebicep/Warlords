@@ -19,8 +19,12 @@ import java.util.UUID;
 
 public class LegendaryGradient extends AbstractLegendaryWeapon implements PassiveCounter {
 
-    private static final int REGEN_TICK_INTERVAL = 100;
+    private static final int REGEN_TICK_INTERVAL = 40;
     private static final float REGEN_TICK_INTERVAL_DECREASE_PER_UPGRADE = 8;
+    private static final float REGEN_PER_INTERVAL = 2f;
+    private static final float REGEN_PER_INTERVAL_UPGRADE = 0.75f;
+    private static final float HEALTH_THRESHOLD = 10;
+    private static final float HEALTH_THRESHOLD_UPGRADE = 5;
 
     @Transient
     private int tickCountdown = 0;
@@ -39,7 +43,7 @@ public class LegendaryGradient extends AbstractLegendaryWeapon implements Passiv
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
         super.applyToWarlordsPlayer(player, pveOption);
-        int interval = (int) (REGEN_TICK_INTERVAL - REGEN_TICK_INTERVAL_DECREASE_PER_UPGRADE * getTitleLevel());
+        int interval = REGEN_TICK_INTERVAL;
         this.tickCountdown = interval;
         new GameRunnable(player.getGame()) {
 
@@ -52,7 +56,13 @@ public class LegendaryGradient extends AbstractLegendaryWeapon implements Passiv
                 tickCountdown--;
                 if (tickCountdown <= 0) {
                     tickCountdown = interval;
-                    float healValue = player.getMaxHealth() * .085f;
+                    float healValue = player.getMaxHealth() * ((REGEN_PER_INTERVAL + REGEN_PER_INTERVAL_UPGRADE * getTitleLevel()) / 100f);
+                    float lowHealthThreshold = player.getMaxHealth() * ((HEALTH_THRESHOLD + HEALTH_THRESHOLD_UPGRADE * getTitleLevel()) / 100f);
+                    if (player.getCurrentHealth() < lowHealthThreshold) {
+                        healValue *= 2;
+                        tickCountdown = 20;
+                    }
+
                     player.addInstance(InstanceBuilder
                             .healing()
                             .cause("Gradient")
@@ -61,14 +71,16 @@ public class LegendaryGradient extends AbstractLegendaryWeapon implements Passiv
                     );
                 }
             }
-        }.runTaskTimer(0, 0);
+        }.runTaskTimer(0, 1);
     }
 
     @Override
     public TextComponent getPassiveEffect() {
-        return Component.text("Perpetually regenerate 8.5% of your health every ", NamedTextColor.GRAY)
-                        .append(formatTitleUpgrade((REGEN_TICK_INTERVAL - REGEN_TICK_INTERVAL_DECREASE_PER_UPGRADE * getTitleLevel()) / 20))
-                        .append(Component.text(" seconds."));
+        return Component.text("Perpetually regenerate ", NamedTextColor.GRAY)
+                        .append(formatTitleUpgrade(REGEN_PER_INTERVAL + REGEN_PER_INTERVAL_UPGRADE * getTitleLevel(), "%"))
+                        .append(Component.text(" of your max health every 2 seconds. When you are below ", NamedTextColor.GRAY))
+                        .append(formatTitleUpgrade((HEALTH_THRESHOLD + HEALTH_THRESHOLD_UPGRADE * getTitleLevel()), "%"))
+                        .append(Component.text(" health, the healing will be doubled and interval will be every second.", NamedTextColor.GRAY));
     }
 
     @Override
@@ -129,8 +141,8 @@ public class LegendaryGradient extends AbstractLegendaryWeapon implements Passiv
     @Override
     public List<Pair<Component, Component>> getPassiveEffectUpgrade() {
         return Collections.singletonList(new Pair<>(
-                formatTitleUpgrade((REGEN_TICK_INTERVAL - REGEN_TICK_INTERVAL_DECREASE_PER_UPGRADE * getTitleLevel()) / 20),
-                formatTitleUpgrade((REGEN_TICK_INTERVAL - REGEN_TICK_INTERVAL_DECREASE_PER_UPGRADE * getTitleLevelUpgraded()) / 20)
+                formatTitleUpgrade(HEALTH_THRESHOLD - HEALTH_THRESHOLD_UPGRADE * getTitleLevel(), "%"),
+                formatTitleUpgrade((REGEN_PER_INTERVAL - REGEN_PER_INTERVAL_UPGRADE * getTitleLevelUpgraded()), "%")
         ));
     }
 

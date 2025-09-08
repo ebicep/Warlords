@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
 import com.ebicep.warlords.game.option.pve.PveOption;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
@@ -60,20 +61,26 @@ public class LegendaryValiant extends AbstractLegendaryWeapon implements EventTi
         ) {
             @Override
             public float multiplyEnergyGainPerTick(float energyGainPerTick) {
-                if (player.getCurrentHealth() / player.getMaxHealth() * 100 < HP_CHECK + HP_CHECK_INCREASE_PER_UPGRADE * getTitleLevel()) {
+                if (player.getCurrentHealth() == player.getMaxHealth()) {
                     return energyGainPerTick * (1 + (EPS_INCREASE + EPS_INCREASE_PER_UPGRADE * getTitleLevel()) / 100f);
                 }
                 return energyGainPerTick;
+            }
+
+            @Override
+            public float addEnergyPerHit(WarlordsEntity we, float energyPerHit) {
+                if (player.getCurrentHealth() == player.getMaxHealth()) {
+                    return energyPerHit * (1 + (EPS_INCREASE + EPS_INCREASE_PER_UPGRADE * getTitleLevel()) / 100f);
+                }
+                return energyPerHit;
             }
         });
     }
 
     @Override
     public TextComponent getPassiveEffect() {
-        Component hpTitleUpgrade = formatTitleUpgrade(HP_CHECK + HP_CHECK_INCREASE_PER_UPGRADE * getTitleLevel(), "%");
-        return Component.text("While your health is below ", NamedTextColor.GRAY)
-                        .append(hpTitleUpgrade)
-                        .append(Component.text(", your EPS is increased by "))
+        return Component.text("While you are at max health", NamedTextColor.GRAY)
+                        .append(Component.text(", your EPS and EPH are increased by "))
                         .append(formatTitleUpgrade(EPS_INCREASE + EPS_INCREASE_PER_UPGRADE * getTitleLevel(), "%"))
                         .append(Component.text("."));
     }
@@ -125,10 +132,7 @@ public class LegendaryValiant extends AbstractLegendaryWeapon implements EventTi
 
     @Override
     public List<Pair<Component, Component>> getPassiveEffectUpgrade() {
-        return Arrays.asList(new Pair<>(
-                        formatTitleUpgrade(HP_CHECK + HP_CHECK_INCREASE_PER_UPGRADE * getTitleLevel(), "%"),
-                        formatTitleUpgrade(HP_CHECK + HP_CHECK_INCREASE_PER_UPGRADE * getTitleLevelUpgraded(), "%")
-                ),
+        return Arrays.asList(
                 new Pair<>(
                         formatTitleUpgrade(EPS_INCREASE + EPS_INCREASE_PER_UPGRADE * getTitleLevel(), "%"),
                         formatTitleUpgrade(EPS_INCREASE + EPS_INCREASE_PER_UPGRADE * getTitleLevelUpgraded(), "%")

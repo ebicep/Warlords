@@ -110,7 +110,7 @@ public class Torment extends AbstractMob implements BossMob {
                             event.getSource().getLocation(),
                             Particle.SCULK_SOUL
                     );
-                    return currentDamageValue * 0.25f;
+                    return currentDamageValue * 0.4f;
                 }
             }
         });

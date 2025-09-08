@@ -5,6 +5,7 @@ import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.BasicScoreboardOption;
+import com.ebicep.warlords.game.option.DummySpawnOption;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.SpawnpointOption;
 import com.ebicep.warlords.game.option.cuboid.AbstractCuboidOption;
@@ -17,7 +18,6 @@ import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.waves.RandomSpawnWave;
 import com.ebicep.warlords.game.option.pve.wavedefense.waves.StaticWaveList;
 import com.ebicep.warlords.game.option.respawn.RespawnWaveOption;
-import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
@@ -28,17 +28,17 @@ import java.util.List;
 
 import static com.ebicep.warlords.util.warlords.GameRunnable.SECOND;
 
-public class VoidRift extends GameMap {
+public class PvePractice extends GameMap {
 
-    public VoidRift() {
+    public PvePractice() {
         super(
                 "Void Crossfire",
-                6,
+                10,
                 1,
                 30 * SECOND,
                 "VoidCrossfire",
                 1,
-                GameMode.WAVE_DEFENSE
+                GameMode.PVE_DEBUG
         );
     }
 
@@ -49,6 +49,11 @@ public class VoidRift extends GameMap {
         options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
         options.add(LobbyLocationMarker.create(loc.addXYZ(112.5, 11, 77.5), Team.BLUE).asOption());
         options.add(LobbyLocationMarker.create(loc.addXYZ(112.5, 11, 77.5), Team.RED).asOption());
+
+        options.add(new DummySpawnOption(loc.addXYZ(104.5, 11, 53.5), Team.RED));
+        options.add(new DummySpawnOption(loc.addXYZ(129.5, 12, 45.5), Team.RED));
+        options.add(new DummySpawnOption(loc.addXYZ(97.5, 11, 62.5), Team.RED));
+        options.add(new DummySpawnOption(loc.addXYZ(95.5, 12, 45.5), Team.RED));
 
         options.add(SpawnpointOption.forTeam(loc.addXYZ(112.5, 11, 77.5), Team.BLUE));
         options.add(SpawnpointOption.forTeam(loc.addXYZ(104.5, 11, 71.5), Team.RED));
@@ -65,41 +70,16 @@ public class VoidRift extends GameMap {
         options.add(new RespawnWaveOption(1, 20, 10));
         options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
         options.add(new CurrencyOnEventOption()
-                .onPerWaveClear(1, 30000)
-                .startWith(50000)
+                .onPerWaveClear(1, 3000000)
+                .startWith(5000000)
         );
         options.add(new WaveDefenseOption(Team.RED, new StaticWaveList()
-                .add(1, new RandomSpawnWave(1, 10 * SECOND, Component.text("Boss"))
-                        .add(Mob.BOLTARO)
+                .add(1, new RandomSpawnWave(1, 10 * SECOND, null)
+                        .add(Mob.WITCH_DEACON)
                 )
-                .add(2, new RandomSpawnWave(1, 10 * SECOND, Component.text("Boss"))
-                        .add(Mob.GHOULCALLER)
-                )
-                .add(3, new RandomSpawnWave(1, 10 * SECOND, Component.text("Boss"))
-                        .add(Mob.NARMER)
-                )
-                .add(4, new RandomSpawnWave(1, 10 * SECOND, Component.text("Boss"))
-                        .add(Mob.MITHRA)
-                )
-                .add(5, new RandomSpawnWave(1, 10 * SECOND, Component.text("Boss"))
-                        .add(Mob.ZENITH)
-                )
-                .add(6, new RandomSpawnWave(1, 10 * SECOND, Component.text("Boss"))
-                        .add(Mob.MAGMATIC_OOZE)
-                )
-                .add(7, new RandomSpawnWave(1, 10 * SECOND, Component.text("Boss"))
-                        .add(Mob.ILLUMINA)
-                )
-                .add(8, new RandomSpawnWave(1, 10 * SECOND, Component.text("Boss"))
-                        .add(Mob.VOID)
-                )
-                .add(9, new RandomSpawnWave(1, 10 * SECOND, Component.text("Boss"))
-                        .add(Mob.TORMENT)
-                )
-
                 ,
 
-                DifficultyIndex.BOSS_RUSH
+                DifficultyIndex.NORMAL
         ));
         options.add(new ItemOption());
 

@@ -104,10 +104,10 @@ public class Orbyz extends AbstractMob implements BossMob {
             @Override
             public void run() {
                 for (WarlordsEntity we : PlayerFilter
-                        .entitiesAround(warlordsNPC, 7, 7, 7)
+                        .entitiesAround(warlordsNPC, 6, 6, 6)
                         .aliveEnemiesOf(warlordsNPC)
                 ) {
-                    if (!we.getCooldownManager().hasCooldown(DamageCheck.class)) {
+                    if (!we.getCooldownManager().hasCooldownFromName("Empowering Relic")) {
                         return;
                     }
                     we.addInstance(InstanceBuilder
@@ -130,9 +130,9 @@ public class Orbyz extends AbstractMob implements BossMob {
 
         rotatingRadialLasersAbility = new RotatingRadialLasersAbility(warlordsNPC, () -> mapCenter, 6, 45, 1, 80, 240, 1.2, 2, 1000, 2, 1, Color.AQUA, Color.RED);
         convergingShockwavesAbility = new ConvergingShockwavesAbility(warlordsNPC, () -> mapCenter, 38, 10, 60, 20, 0.3, 1.5, 1, 1000, 2, 1, Color.PURPLE, Color.BLUE);
-        heavenlySpearAbilityOne = new HeavenlySpearAbility(warlordsNPC, () -> mapCenter, 6 * option.playerCount(), 35, 30, 6, 4000, 60, 35, 2.5);
-        heavenlySpearAbilityTwo = new HeavenlySpearAbility(warlordsNPC, () -> mapCenter, 6 * option.playerCount(), 32, 18, 6, 4000, 20, 35, 2.5);
-        summoningCirclesAbility = new SummoningCirclesAbility(warlordsNPC, () -> mapCenter, option.playerCount(), 32, 200, 5, 5, option);
+        heavenlySpearAbilityOne = new HeavenlySpearAbility(warlordsNPC, () -> mapCenter, 6 * option.playerCount(), 35, 30, 4, 4000, 60, 35, 2.5);
+        heavenlySpearAbilityTwo = new HeavenlySpearAbility(warlordsNPC, () -> mapCenter, 6 * option.playerCount(), 32, 20, 4, 4000, 25, 35, 2.5);
+        summoningCirclesAbility = new SummoningCirclesAbility(warlordsNPC, () -> mapCenter, 2, 32, 300, 5, 5, option);
 
         markedForDeathAbility = new MarkedForDeathAbility(
                 warlordsNPC,
@@ -162,6 +162,14 @@ public class Orbyz extends AbstractMob implements BossMob {
                 1.5f,
                 1,
                 warlordsEntity -> {
+                    ChatUtils.sendTitleToGamePlayers(
+                            warlordsNPC.getGame(),
+                            Component.empty(),
+                            Component.text(warlordsEntity.getName() + " has picked up the empowering relic! Use it against the boss!", NamedTextColor.GOLD),
+                            20,
+                            60,
+                            20
+                    );
                     warlordsEntity.getCooldownManager().addCooldown(new RegularCooldown<>(
                             "Empowering Relic",
                             "RELIC",
@@ -173,7 +181,7 @@ public class Orbyz extends AbstractMob implements BossMob {
                             },
                             15 * 20,
                             Collections.singletonList((cooldown, ticksLeft, ticksElapsed2) -> {
-                                if (ticksElapsed2 % 5 == 0) {
+                                if (ticksElapsed2 % 3 == 0) {
                                     new CircleEffect(
                                             warlordsEntity.getGame(),
                                             warlordsEntity.getTeam(),
@@ -181,6 +189,22 @@ public class Orbyz extends AbstractMob implements BossMob {
                                             6,
                                             new CircumferenceEffect(Particle.FIREWORK, Particle.FIREWORK).particlesPerCircumference(1.2)
                                     ).playEffects();
+                                    for (WarlordsEntity ally : PlayerFilter
+                                            .entitiesAround(warlordsEntity, 6, 6, 6)
+                                            .aliveTeammatesOfExcludingSelf(warlordsEntity)
+                                    ) {
+                                        ally.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                                "Empowering Allies",
+                                                "RELIC BUFF",
+                                                DamageCheck.class,
+                                                DamageCheck.DAMAGE_CHECK,
+                                                warlordsEntity,
+                                                CooldownTypes.ABILITY,
+                                                cooldownManager -> {
+                                                },
+                                                4
+                                        ));
+                                    }
                                 }
                             })
                     ));
@@ -202,10 +226,10 @@ public class Orbyz extends AbstractMob implements BossMob {
         ) {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (empoweringRelicsAbility.hasBuff(event.getSource())) {
-                    return currentDamageValue;
+                if (event.getSource().getCooldownManager().hasCooldown(DamageCheck.class)) {
+                    return currentDamageValue * 1.25f;
                 }
-                return currentDamageValue * 0.1f;
+                return currentDamageValue * 0.25f;
             }
         });
 
@@ -339,11 +363,11 @@ public class Orbyz extends AbstractMob implements BossMob {
             }
         }
 
-        if (ticksElapsed % 1000 == 0 && ticksElapsed > 0) {
+        if (ticksElapsed % 1600 == 0 && ticksElapsed > 0) {
             summoningCirclesAbility.start(warlordsNPC.getGame());
         }
 
-        if (ticksElapsed % 320 == 0 && !preventMarkForDeath) {
+        if (ticksElapsed % 360 == 0 && !preventMarkForDeath) {
             markedForDeathAbility.start(warlordsNPC.getGame());
         }
 

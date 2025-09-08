@@ -45,11 +45,13 @@ public class WoundingStrikeBranchDefender extends AbstractUpgradeBranch<Wounding
                 "Shredding Strike",
                 "Wounding Strike - Master Upgrade",
                 """
+                        -10 Energy cost
+                        
                         Wounding Strike now hits up to 3 enemies. Striking an enemy draws their aggro towards yourself and they will deal 15% less damage for 4 seconds. Additionally, if Last Stand is active, each Strike will increase the duration by 0.5 seconds (max 2.5s).
                         """,
                 50000,
                 () -> {
-
+                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -10);
                 }
         );
     }

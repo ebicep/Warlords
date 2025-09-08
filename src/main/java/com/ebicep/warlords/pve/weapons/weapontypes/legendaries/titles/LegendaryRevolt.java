@@ -23,8 +23,8 @@ public class LegendaryRevolt extends AbstractLegendaryWeapon implements LibraryA
 
     private static final int RADIUS = 10;
     private static final int RADIUS_PER_UPGRADE = 1;
-    private static final int RESISTANCE_SHRED = 3;
-    private static final float RESISTANCE_SHRED_PER_UPGRADE = .5f;
+    private static final int RESISTANCE_SHRED = 5;
+    private static final float RESISTANCE_SHRED_PER_UPGRADE = 1.5f;
 
     public LegendaryRevolt() {
     }
@@ -87,7 +87,7 @@ public class LegendaryRevolt extends AbstractLegendaryWeapon implements LibraryA
 
     @Override
     protected float getHealthBonusValue() {
-        return 400;
+        return 600;
     }
 
     @Override

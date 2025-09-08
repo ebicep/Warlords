@@ -23,7 +23,7 @@ import java.util.*;
 public class LegendaryJuggernaut extends AbstractLegendaryWeapon implements EventTitle {
 
     public static final int BOOST = 10;
-    public static final float BOOST_INCREASE_PER_UPGRADE = 1.25f;
+    public static final float BOOST_INCREASE_PER_UPGRADE = 1f;
     public static final List<Integer> KILL_MILESTONES = Arrays.asList(100, 200, 400, 800, 1600);
 
     public LegendaryJuggernaut() {

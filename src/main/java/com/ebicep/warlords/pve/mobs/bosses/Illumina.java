@@ -208,11 +208,12 @@ public class Illumina extends AbstractMob implements BossMob {
                 .playingGame(getWarlordsNPC().getGame())
                 .aliveEnemiesOf(warlordsNPC)
         ) {
-            we.getEntity().showTitle(Title.title(
+            ChatUtils.sendTitleToGamePlayers(
+                    warlordsNPC.getGame(),
                     Component.empty(),
                     Component.text("Keep attacking Illumina to stop the draining!", NamedTextColor.RED),
-                    Title.Times.times(Ticks.duration(10), Ticks.duration(35), Ticks.duration(0))
-            ));
+                    10, 35, 0
+            );
 
             Utils.addKnockback(name, warlordsNPC.getLocation(), we, -4, 0.35);
             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_WITHER_SPAWN, 500, 0.3f);
