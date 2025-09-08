@@ -242,7 +242,7 @@
         "name": "Vitality Boost",
         "description": "Gain {{heal}} max health. Passively regenerate {{heal}} health per second, stacks with natural regen.",
         "healthIncrease": 600,
-        "passiveRegen": 25
+        "passiveRegen": 30
       },
       "striker": {
         "difficulty": 1,
@@ -371,7 +371,7 @@
         "name": "Parry",
         "description": "Replace {{aqua:Consecrate}} with {{aqua:Parry}}, which has {{blue}} charges. Increase the energy granted by {{aqua:Crusader's Strike}} by {{energy}}.",
         "maxAbilityCharges": 2,
-        "crusaderStrikeEnergyIncrease": 4
+        "crusaderStrikeEnergyIncrease": 6
       },
       "vigorousInfusion": {
         "difficulty": 1,

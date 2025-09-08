@@ -497,7 +497,7 @@
       },
       "flameBreath": {
         "name": "Flame Breath",
-        "cooldown": 7,
+        "cooldown": 8,
         "energyCost": 30,
         "maxAnimationTime": 12,
         "maxAnimationEffects": 4,
@@ -505,8 +505,8 @@
         "velocity": 1.1,
         "damageValues": {
           "flameBreathDamage": {
-            "min": 501,
-            "max": 678,
+            "min": 557,
+            "max": 753,
             "critChance": 25,
             "critMultiplier": 185
           }
@@ -1102,10 +1102,10 @@
         "name": "Parry",
         "cooldown": 9,
         "energyCost": 0,
-        "blockTickDuration": 30,
+        "blockTickDuration": 26,
         "knockbackTickDuration": 50,
         "damageReduction": 10,
-        "damageReductionTickDuration": 80,
+        "damageReductionTickDuration": 60,
         "knockbackMagnitude": 1.25
       },
       "poisonousHex": {
