@@ -710,6 +710,7 @@ public class EndState implements State, TimerDebugAble {
 
             Map<Spendable, Long> syntheticPouch = playerPveRewards.getSyntheticPouch();
             Map<Spendable, Long> aspirantPouch = playerPveRewards.getAspirantPouch();
+            Map<Spendable, Long> ascendantPouch = playerPveRewards.getAscendantPouch();
             if (!syntheticPouch.isEmpty() || !aspirantPouch.isEmpty()) {
                 if (gotAnyDrops) {
                     ChatUtils.sendCenteredMessage(player, Component.empty());
@@ -725,6 +726,12 @@ public class EndState implements State, TimerDebugAble {
                     ChatUtils.sendCenteredMessage(player,
                             Component.text("Aspirant Pouch", NamedTextColor.AQUA)
                                      .hoverEvent(HoverEvent.showText(getPouchSummary(aspirantPouch)))
+                    );
+                }
+                if (!ascendantPouch.isEmpty()) {
+                    ChatUtils.sendCenteredMessage(player,
+                            Component.text("Ascendant Pouch", NamedTextColor.RED)
+                                    .hoverEvent(HoverEvent.showText(getPouchSummary(ascendantPouch)))
                     );
                 }
             }

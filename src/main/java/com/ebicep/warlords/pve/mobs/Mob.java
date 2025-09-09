@@ -23,6 +23,7 @@ import com.ebicep.warlords.pve.mobs.events.pharaohsrevenge.EventDjet;
 import com.ebicep.warlords.pve.mobs.events.pharaohsrevenge.EventNarmer;
 import com.ebicep.warlords.pve.mobs.events.pharaohsrevenge.EventNarmerAcolyte;
 import com.ebicep.warlords.pve.mobs.events.spidersburrow.*;
+import com.ebicep.warlords.pve.mobs.husk.SandstriderWraith;
 import com.ebicep.warlords.pve.mobs.irongolem.GolemApprentice;
 import com.ebicep.warlords.pve.mobs.magmacube.Illumination;
 import com.ebicep.warlords.pve.mobs.pigzombie.PigAlleviator;
@@ -39,6 +40,7 @@ import com.ebicep.warlords.pve.mobs.slime.SlimyChess;
 import com.ebicep.warlords.pve.mobs.spider.ArachnoVenari;
 import com.ebicep.warlords.pve.mobs.witch.WitchDeacon;
 import com.ebicep.warlords.pve.mobs.witherskeleton.CelestialOpus;
+import com.ebicep.warlords.pve.mobs.witherskeleton.ObsidianSentinel;
 import com.ebicep.warlords.pve.mobs.wolf.Hound;
 import com.ebicep.warlords.pve.mobs.zombie.*;
 import com.ebicep.warlords.pve.mobs.zombie.berserkzombie.AdvancedWarriorBerserker;
@@ -366,6 +368,26 @@ public enum Mob {
             Utils.applyColorTo(Material.LEATHER_BOOTS, 255, 255, 255),
             Weapons.SILVER_PHANTASM_SWORD_4.getItem()
     )
+    ),
+    OBSIDIAN_SENTINEL(EntityType.WITHER_SKELETON, ObsidianSentinel.class, ObsidianSentinel::new, ObsidianSentinel::new,
+            new Utils.SimpleEntityEquipment(
+                    // Add this to SkullID and point it to: https://minecraft-heads.com/custom-heads/head/118928-blackstone-golem
+                    SkullUtils.getSkullFrom(SkullID.OBSIDIAN_SENTINEL),
+                    Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 20, 15, 30), // deep obsidian tint
+                    Utils.applyColorTo(Material.LEATHER_LEGGINGS, 20, 15, 30),
+                    Utils.applyColorTo(Material.LEATHER_BOOTS, 20, 15, 30),
+                    new ItemStack(Material.NETHERITE_SWORD)
+            )
+    ),
+    SANDSTRIDER_WRAITH(EntityType.HUSK, SandstriderWraith.class, SandstriderWraith::new, SandstriderWraith::new,
+            new Utils.SimpleEntityEquipment(
+                    // Add this to SkullID with the mummy texture
+                    SkullUtils.getSkullFrom(SkullID.MUMMY),
+                    Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 194, 178, 128), // sand beige
+                    Utils.applyColorTo(Material.LEATHER_LEGGINGS, 194, 178, 128),
+                    Utils.applyColorTo(Material.LEATHER_BOOTS, 120, 90, 50), // dune brown
+                    new ItemStack(Material.GOLDEN_HOE) // curved khopesh look
+            )
     ),
 
 
@@ -1007,14 +1029,24 @@ public enum Mob {
             BLAZING_KINDLE, WANDER_KNIGHTS, ZOMBIE_SWORDSMAN, ZOMBIE_LAMENT
     };
     public static final Mob[] ADVANCED = {
-            ILLUMINATION, GOLEM_APPRENTICE, SCRUPULOUS_ZOMBIE, SLIME_GUARD, CELESTIAL_BOW_WIELDER,
-            ZOMBIE_VANGUARD, ADVANCED_WARRIOR_BERSERKER, SLIMY_CHESS,
-            ZOMBIE_RAIDER, WANDER_WALKER, SKELETAL_ENTROPY, FIRE_SPLITTER, WITCH_DEACON, PIG_ALLEVIATOR
+            ILLUMINATION, GOLEM_APPRENTICE, SCRUPULOUS_ZOMBIE, CELESTIAL_BOW_WIELDER,
+            ZOMBIE_VANGUARD, ADVANCED_WARRIOR_BERSERKER,
+            ZOMBIE_RAIDER, SKELETAL_ENTROPY, WITCH_DEACON, PIG_ALLEVIATOR
     };
     public static final Mob[] ELITE = {
-            CELESTIAL_SWORD_WIELDER, RIFT_WALKER, OVERGROWN_ZOMBIE,
-            SKELETAL_PYROMANCER, SKELETAL_ANOMALY, SKELETAL_ARCHER,
-            CREEPY_BOMBER, SKELETAL_MESMER, ZOMBIE_KNIGHT, VOID_ZOMBIE
+            CELESTIAL_SWORD_WIELDER,
+            RIFT_WALKER,
+            OVERGROWN_ZOMBIE,
+            SKELETAL_PYROMANCER,
+            SKELETAL_ANOMALY,
+            SKELETAL_ARCHER,
+            CREEPY_BOMBER,
+            SKELETAL_MESMER,
+            ZOMBIE_KNIGHT,
+            VOID_ZOMBIE,
+            WANDER_WALKER,
+            SLIME_GUARD,
+            FIRE_SPLITTER
     };
     public static final Mob[] CHAMPION = {
             NIGHTMARE_ZOMBIE,
@@ -1022,7 +1054,10 @@ public enum Mob {
             EXTREME_ZEALOT,
             SMART_SKELETON,
             SKELETAL_SORCERER,
-            CELESTIAL_OPUS
+            CELESTIAL_OPUS,
+            OBSIDIAN_SENTINEL,
+            SANDSTRIDER_WRAITH,
+            SLIMY_CHESS
     };
     public static final Mob[] BOSS_MINIONS = {
             BOLTARO_SHADOW,

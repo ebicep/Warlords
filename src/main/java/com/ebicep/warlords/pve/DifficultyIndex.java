@@ -92,7 +92,7 @@ public enum DifficultyIndex {
             ),
             NamedTextColor.RED,
             Integer.MAX_VALUE,
-            1.25f,
+            1.3f,
             pveOption -> .05f + pveOption.getWaveCounter() * .002f // 15% at wave 50, 25% at wave 100
     ),
     BOSS_RUSH("Boss Rush",

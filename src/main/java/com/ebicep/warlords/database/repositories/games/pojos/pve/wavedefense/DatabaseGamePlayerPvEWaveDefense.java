@@ -6,16 +6,17 @@ import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.option.pve.rewards.PlayerPveRewards;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.Spendable;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.UUID;
+import java.util.*;
 
 public class DatabaseGamePlayerPvEWaveDefense extends DatabaseGamePlayerPvEBase implements MostDamageInWave {
 
     @Field("most_damage_in_wave")
     private long mostDamageInWave;
+    @Field("ascendant_pouch")
+    private Map<Spendable, Long> ascendantPouch = new HashMap<>();
 
     public DatabaseGamePlayerPvEWaveDefense() {
     }
@@ -30,10 +31,15 @@ public class DatabaseGamePlayerPvEWaveDefense extends DatabaseGamePlayerPvEBase 
         if (!values.isEmpty()) {
             this.mostDamageInWave = Collections.max(values);
         }
+        this.ascendantPouch = playerPveRewards.getAscendantPouch();
     }
 
     @Override
     public long getMostDamageInWave() {
         return mostDamageInWave;
+    }
+
+    public Map<Spendable, Long> getAscendantPouch() {
+        return ascendantPouch;
     }
 }

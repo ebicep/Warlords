@@ -81,7 +81,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
         super(
                 spawnLocation,
                 "One of Nine",
-                250000,
+                200000,
                 0.2f,
                 40,
                 3000,

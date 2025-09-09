@@ -31,7 +31,6 @@ public class LegendaryAnchor extends AbstractLegendaryWeapon implements PassiveC
     public static final int KB_RESIST_PER_STACK_PERCENT = 10;
 
     public static final int BASE_MAX_STACKS = 10;
-    public static final int MAX_STACKS_INC_PER_LEVEL = 1;
 
     public static final int HEAL_PER_STACK_PERCENT = 3;
 
@@ -158,7 +157,7 @@ public class LegendaryAnchor extends AbstractLegendaryWeapon implements PassiveC
     }
 
     private int getMaxStacksAtLevel(int level) {
-        return BASE_MAX_STACKS + MAX_STACKS_INC_PER_LEVEL * level;
+        return BASE_MAX_STACKS;
     }
 
     private int getMaxStacks() {
@@ -174,11 +173,21 @@ public class LegendaryAnchor extends AbstractLegendaryWeapon implements PassiveC
         return LegendaryTitles.ANCHOR;
     }
 
-    @Override protected float getMeleeDamageMinValue() { return 90; }
-    @Override protected float getMeleeDamageMaxValue() { return 120; }
-    @Override protected float getCritChanceValue()     { return 15; }
-    @Override protected float getCritMultiplierValue() { return 130; }
-    @Override protected float getHealthBonusValue()    { return 1200; }
+    @Override
+    protected float getMeleeDamageMinValue() { return 90; }
+
+    @Override
+    protected float getMeleeDamageMaxValue() { return 120; }
+
+    @Override
+    protected float getCritChanceValue() { return 15; }
+
+    @Override
+    protected float getCritMultiplierValue() { return 130; }
+
+    @Override
+    protected float getHealthBonusValue() { return 1200; }
+
 
     @Override
     public int getCounter() {

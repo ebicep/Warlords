@@ -27,6 +27,7 @@ public class PouchReward extends AbstractReward {
     public enum PouchType {
         SYNTHETIC("Synthetic Pouch"),
         ASPIRANT("Aspirant Pouch"),
+        ASCENDANT("Ascendant Pouch"),
 
         ;
 

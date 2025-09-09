@@ -176,7 +176,11 @@ public enum SkullID implements Skull {
     //https://minecraft-heads.com/custom-heads/head/122089-ender-demon
     ENDER_DEMON("Y2Y4ZTVmZDBmNDVjMTAwMjY5NGU1NTNmNmY2MTA5NmVkMzVjY2VmYTVhNjMwMzM5NGMyODdjNWNmN2NjNDNiOSJ9fX0="),
     //https://minecraft-heads.com/custom-heads/head/121814-abyssal-kuudra
-    ABYSSAL_KUUDRA("ODdiOTBmZDIxZjdhZWQ4YTA0Y2NjMDFkMzY4MGY5MjdjYmUwZGJjN2MzOGIxY2ExYjIxN2VhM2Q2NDE2ZTI0NCJ9fX0")
+    ABYSSAL_KUUDRA("ODdiOTBmZDIxZjdhZWQ4YTA0Y2NjMDFkMzY4MGY5MjdjYmUwZGJjN2MzOGIxY2ExYjIxN2VhM2Q2NDE2ZTI0NCJ9fX0"),
+    //https://minecraft-heads.com/custom-heads/head/118928-blackstone-golem
+    OBSIDIAN_SENTINEL("NzgwN2ZiMTk5ZjQyYjc5NWNjOWZmYzExODdkNGI1YjU0MmE4ZmEzNmQ4NTkwODQ2MWZhNWNkZTc4MzIwY2QxZiJ9fX0="),
+    //https://minecraft-heads.com/custom-heads/head/19520-mummy
+    MUMMY("ZjQ3OWYwMDdiZWVhZjU2YWZkNWI4YWUxNjc4ZTJlMDliZGZlOTIwMzA0NTc0Njk1ZWFiZjE5MGE1NTJhODg0YSJ9fX0=")
 
     ;
 

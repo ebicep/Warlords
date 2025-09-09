@@ -32,11 +32,14 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.DifficultyIndex;
+import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.commands.MobCommand;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.flags.BossLike;
+import com.ebicep.warlords.pve.rewards.RewardInventory;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.java.RandomCollection;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.citizensnpcs.api.ai.EntityTarget;
 import net.citizensnpcs.api.ai.event.NavigationBeginEvent;
@@ -88,6 +91,7 @@ public class WaveDefenseOption implements PveOption {
     private BukkitTask spawner;
     private boolean pauseMobSpawn = false;
     private int currentDelay = 0;
+    private HashMap<UUID, HashMap<Spendable, Long>> playerAscendantPouch = new HashMap<>();
 
     public WaveDefenseOption(Team team, WaveList waves, DifficultyIndex difficulty) {
         this(team, waves, difficulty, difficulty.getMaxWaves());
@@ -337,10 +341,10 @@ public class WaveDefenseOption implements PveOption {
         float soundPitch = 0.8f;
         Component wavePrefix = Component.text("Wave " + waveCounter, NamedTextColor.YELLOW);
         if (waveCounter >= 101) {
-            wavePrefix = Component.text("W ", NamedTextColor.BLACK)
-                                  .append(Component.text("a").decorate(TextDecoration.BOLD))
-                                  .append(Component.text("v").decorate(TextDecoration.BOLD))
-                                  .append(Component.text("e " + waveCounter).decorate(TextDecoration.BOLD));
+            soundPitch = 0.1f;
+            wavePrefix = Component.text("W", NamedTextColor.WHITE)
+                    .append(Component.text("a").decorate(TextDecoration.BOLD, TextDecoration.OBFUSCATED))
+                    .append(Component.text("ve " + waveCounter).decorate(TextDecoration.BOLD));
         } else if (waveCounter == 100) {
             soundPitch = 0.1f;
             wavePrefix = Component.text("W", NamedTextColor.DARK_RED)
@@ -579,6 +583,15 @@ public class WaveDefenseOption implements PveOption {
                                 wp.getAbilityTree().setMaxMasterUpgrades(wp.getAbilityTree().getMaxMasterUpgrades() + 1);
                                 wp.sendMessage(Component.text("+1 Master Upgrade", NamedTextColor.RED, TextDecoration.BOLD));
                             });
+                            case 101, 111 -> game.warlordsPlayers().forEach(wp -> {
+                                wp.playSound(wp.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 0.1f);
+                                addRewardToPlayerPouch(
+                                        wp.getUuid(),
+                                        WaveDefenseRewards.ASCENDANT_POUCH_LOOT_POOL,
+                                        playerAscendantPouch,
+                                        Component.text("Ascendant Pouch", NamedTextColor.RED)
+                                );
+                            });
                         }
                     }
                 }
@@ -644,6 +657,38 @@ public class WaveDefenseOption implements PveOption {
         game.addNPC(mob.toNPC(game, team, this::modifyStats));
         mobs.put(mob, new MobData(ticksElapsed.get()));
         Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, mob));
+    }
+
+    private void addRewardToPlayerPouch(
+            UUID uuid,
+            RandomCollection<Pair<Spendable, Long>> pouchLootPool,
+            HashMap<UUID, HashMap<Spendable, Long>> playerPouch,
+            Component pouchName
+    ) {
+        Pair<Spendable, Long> reward = pouchLootPool.next();
+        if (reward != null) {
+            Spendable spendable = reward.getA();
+            Long amount = reward.getB();
+            playerPouch.computeIfAbsent(uuid, k -> new HashMap<>())
+                    .merge(spendable, amount, Long::sum);
+            Component rewardString = Component.text(" +", spendable.getTextColor()).append(spendable.getCostColoredName(amount));
+            RewardInventory.sendRewardMessage(uuid,
+                    pouchName.append(Component.text(":")).append(rewardString)
+            );
+            Player player = Bukkit.getPlayer(uuid);
+            if (player != null) {
+                player.showTitle(Title.title(
+                        pouchName.append(Component.text(":")),
+                        rewardString,
+                        Title.Times.times(Ticks.duration(20), Ticks.duration(30), Ticks.duration(20))
+
+                ));
+            }
+        }
+    }
+
+    public HashMap<UUID, HashMap<Spendable, Long>> getPlayerAscendantPouch() {
+        return playerAscendantPouch;
     }
 
     @Override

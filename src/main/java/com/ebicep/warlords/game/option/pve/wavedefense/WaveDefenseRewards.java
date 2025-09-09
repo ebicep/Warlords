@@ -5,8 +5,12 @@ import com.ebicep.warlords.events.player.ingame.pve.WarlordsLegendFragmentGainEv
 import com.ebicep.warlords.game.option.pve.rewards.CoinGainOption;
 import com.ebicep.warlords.game.option.pve.rewards.PveRewards;
 import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.DifficultyIndex;
+import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
+import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.java.RandomCollection;
 import org.bukkit.Bukkit;
 
 import java.util.LinkedHashMap;
@@ -15,8 +19,20 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class WaveDefenseRewards extends PveRewards<WaveDefenseOption> {
 
+    public static final RandomCollection<Pair<Spendable, Long>> ASCENDANT_POUCH_LOOT_POOL = new RandomCollection<Pair<Spendable, Long>>()
+            .add(35, new Pair<>(Currencies.ASCENDANT_SHARD, 1L))
+            .add(35, new Pair<>(Currencies.LIMIT_BREAKER, 1L))
+            .add(10, new Pair<>(Currencies.ASCENDANT_STAR_PIECE, 1L))
+            .add(20, new Pair<>(Currencies.LEGEND_FRAGMENTS, 2000L));
+
     public WaveDefenseRewards(WaveDefenseOption pveOption) {
         super(pveOption);
+    }
+
+    @Override
+    public void storeRewards() {
+        super.storeRewards();
+        storePouchRewards();
     }
 
     @Override
@@ -82,4 +98,7 @@ public class WaveDefenseRewards extends PveRewards<WaveDefenseOption> {
                  });
     }
 
+    private void storePouchRewards() {
+        pveOption.getPlayerAscendantPouch().forEach((uuid, spendableLongHashMap) -> getPlayerRewards(uuid).setAscendantPouch(spendableLongHashMap));
+    }
 }

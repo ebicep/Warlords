@@ -33,7 +33,7 @@ public interface AdvancedMob extends Mob {
 
     @Override
     default Component getNamePrefix() {
-        return Component.text("ADV", NamedTextColor.LIGHT_PURPLE);
+        return Component.text("ADV", NamedTextColor.DARK_GREEN);
     }
 
 }
