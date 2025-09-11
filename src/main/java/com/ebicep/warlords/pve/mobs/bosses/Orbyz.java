@@ -39,6 +39,7 @@ public class Orbyz extends AbstractMob implements BossMob {
     private ConvergingShockwavesAbility convergingShockwavesAbility;
     private HeavenlySpearAbility heavenlySpearAbilityOne;
     private HeavenlySpearAbility heavenlySpearAbilityTwo;
+    private HeavenlySpearAbility heavenlySpearAbilityInterval;
     private SummoningCirclesAbility summoningCirclesAbility;
     private MarkedForDeathAbility markedForDeathAbility;
     private EmpoweringRelicsAbility empoweringRelicsAbility;
@@ -47,6 +48,7 @@ public class Orbyz extends AbstractMob implements BossMob {
     private BossAbilityPhase phaseThree;
     private BossAbilityPhase phaseFour;
     private BossAbilityPhase phaseFive;
+    private BossAbilityPhase phaseSix;
 
     private boolean preventMarkForDeath = false;
     private boolean preventRelic = false;
@@ -56,10 +58,10 @@ public class Orbyz extends AbstractMob implements BossMob {
                 spawnLocation,
                 "Orbyz",
                 250000,
-                0.15f,
+                0.3f,
                 20,
-                5000,
-                7000
+                1000,
+                2000
         );
     }
 
@@ -130,8 +132,9 @@ public class Orbyz extends AbstractMob implements BossMob {
 
         rotatingRadialLasersAbility = new RotatingRadialLasersAbility(warlordsNPC, () -> mapCenter, 6, 45, 1, 80, 240, 1.2, 2, 1000, 2, 1, Color.AQUA, Color.RED);
         convergingShockwavesAbility = new ConvergingShockwavesAbility(warlordsNPC, () -> mapCenter, 38, 10, 60, 20, 0.3, 1.5, 1, 1000, 2, 1, Color.PURPLE, Color.BLUE);
-        heavenlySpearAbilityOne = new HeavenlySpearAbility(warlordsNPC, () -> mapCenter, 6 * option.playerCount(), 35, 30, 4, 4000, 60, 35, 2.5);
-        heavenlySpearAbilityTwo = new HeavenlySpearAbility(warlordsNPC, () -> mapCenter, 6 * option.playerCount(), 32, 20, 4, 4000, 25, 35, 2.5);
+        heavenlySpearAbilityOne = new HeavenlySpearAbility(warlordsNPC, () -> mapCenter, 6 * option.playerCount(), 38, 30, 5, 4000, 60, 35, 2.5, Material.PACKED_ICE);
+        heavenlySpearAbilityTwo = new HeavenlySpearAbility(warlordsNPC, () -> mapCenter, 8 * option.playerCount(), 38, 20, 5, 4000, 30, 35, 2.5, Material.PACKED_ICE);
+        heavenlySpearAbilityInterval = new HeavenlySpearAbility(warlordsNPC, () -> mapCenter, option.playerCount(), 36, 50, 8, 5000, 400, 35, 3.5, Material.SNOW_BLOCK);
         summoningCirclesAbility = new SummoningCirclesAbility(warlordsNPC, () -> mapCenter, 2, 32, 300, 5, 5, option);
 
         markedForDeathAbility = new MarkedForDeathAbility(
@@ -150,7 +153,7 @@ public class Orbyz extends AbstractMob implements BossMob {
                 () -> mapCenter,
                 1,
                 32,
-                6,
+                4,
                 true,
                 1.5,
                 300,
@@ -228,7 +231,7 @@ public class Orbyz extends AbstractMob implements BossMob {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 if (event.getSource().getCooldownManager().hasCooldownFromName("Empowering Allies")) {
-                    return currentDamageValue * 1.25f;
+                    return currentDamageValue * 1.1f;
                 }
                 return currentDamageValue * 0.1f;
             }
@@ -259,7 +262,12 @@ public class Orbyz extends AbstractMob implements BossMob {
             convergingShockwavesAbility.start(warlordsNPC.getGame());
         });
 
-        phaseThree = new BossAbilityPhase(warlordsNPC, 40, () -> {
+        phaseThree = new BossAbilityPhase(warlordsNPC, 50, () -> {
+            Utils.playGlobalSound(mapCenter, Sound.ENTITY_ALLAY_AMBIENT_WITHOUT_ITEM, 500, 0.3f);
+            rotatingRadialLasersAbility.start(warlordsNPC.getGame());
+        });
+
+        phaseFour = new BossAbilityPhase(warlordsNPC, 40, () -> {
             preventRelic = true;
             preventMarkForDeath = true;
             ChatUtils.sendTitleToGamePlayers(
@@ -288,12 +296,12 @@ public class Orbyz extends AbstractMob implements BossMob {
             }.runTaskTimer(0, 0);
         });
 
-        phaseFour = new BossAbilityPhase(warlordsNPC, 25, () -> {
+        phaseFive = new BossAbilityPhase(warlordsNPC, 25, () -> {
             Utils.playGlobalSound(mapCenter, Sound.ENTITY_ALLAY_AMBIENT_WITHOUT_ITEM, 500, 0.3f);
             rotatingRadialLasersAbility.start(warlordsNPC.getGame());
         });
 
-        phaseFive = new BossAbilityPhase(warlordsNPC, 15, () -> {
+        phaseSix = new BossAbilityPhase(warlordsNPC, 15, () -> {
             preventRelic = true;
             preventMarkForDeath = true;
             ChatUtils.sendTitleToGamePlayers(
@@ -368,8 +376,12 @@ public class Orbyz extends AbstractMob implements BossMob {
             summoningCirclesAbility.start(warlordsNPC.getGame());
         }
 
-        if (ticksElapsed % 360 == 0 && ticksElapsed > 0 && !preventMarkForDeath) {
+        if (ticksElapsed % 380 == 0 && ticksElapsed > 0 && !preventMarkForDeath) {
             markedForDeathAbility.start(warlordsNPC.getGame());
+        }
+
+        if (ticksElapsed % 470 == 0 && ticksElapsed > 0 && !preventMarkForDeath) {
+            heavenlySpearAbilityInterval.start(warlordsNPC.getGame());
         }
 
         if (ticksElapsed % 600 == 0 && ticksElapsed > 0 && !preventRelic) {
@@ -382,6 +394,7 @@ public class Orbyz extends AbstractMob implements BossMob {
         phaseThree.initialize(health);
         phaseFour.initialize(health);
         phaseFive.initialize(health);
+        phaseSix.initialize(health);
     }
 
     @Override

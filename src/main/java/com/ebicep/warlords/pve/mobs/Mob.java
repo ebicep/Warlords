@@ -481,6 +481,14 @@ public enum Mob {
             Weapons.FROSTBITE.getItem()
     )
     ),
+    VEILKEEPER(EntityType.STRAY, Veilkeeper.class, Veilkeeper::new, Veilkeeper::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.MUMMY),
+            new ItemStack(Material.NETHERITE_CHESTPLATE),
+            new ItemStack(Material.NETHERITE_LEGGINGS),
+            new ItemStack(Material.NETHERITE_BOOTS),
+            Weapons.FELFLAME_BLADE.getItem()
+    )
+    ),
     VANGUARD(EntityType.WITHER_SKELETON, Vanguard.class, Vanguard::new, Vanguard::new, new Utils.SimpleEntityEquipment(
             SkullUtils.getSkullFrom(SkullID.ENDER_DEMON),
             new ItemStack(Material.NETHERITE_CHESTPLATE),
@@ -1088,7 +1096,8 @@ public enum Mob {
             MAGMATIC_OOZE,
             PHYSIRA,
             ONE_OF_NINE,
-            ORBYZ
+            ORBYZ,
+            VEILKEEPER
     };
     public static final Mob[] EVENT_BOSSES = {
             EVENT_BOLTARO, EVENT_NARMER, EVENT_MITHRA, EVENT_ILLUSION_CORE, EVENT_EXILED_CORE, EVENT_CALAMITY_CORE, EVENT_ILLUMINA,

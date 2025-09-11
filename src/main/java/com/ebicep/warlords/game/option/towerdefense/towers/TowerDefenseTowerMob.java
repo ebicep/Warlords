@@ -20,7 +20,6 @@ import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.npc.NPC;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -86,7 +85,7 @@ public abstract class TowerDefenseTowerMob extends AbstractMob implements Mob {
                 minMeleeDamage,
                 maxMeleeDamage,
                 meleeCritChance,
-                meleeCritMutiplier,
+                meleeCritMultiplier,
                 this,
                 playerClass,
                 new MobHologram.TextDisplayHologram(.2f) {

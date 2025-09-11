@@ -13,12 +13,13 @@ import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.AdvancedVoidShred;
 import com.ebicep.warlords.pve.mobs.tiers.AdvancedMob;
+import com.ebicep.warlords.pve.mobs.tiers.EliteMob;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
 
 import javax.annotation.Nonnull;
 
-public class VoidZombie extends AbstractMob implements AdvancedMob {
+public class VoidZombie extends AbstractMob implements EliteMob {
 
     private static final int voidRadius = 4;
 

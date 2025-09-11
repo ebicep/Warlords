@@ -40,7 +40,8 @@ public class HeavenlySpearAbility {
     private final double impactDamage;     // damage on impact
     private final int persistTicks;        // how long spears stay
     private final double spearHeight;      // visual spear height
-    private final double spearThickness;   // visual spear thickness
+    private final double spearThickness; // visual spear thickness
+    private final Material spearMaterial;
     private final Random rng = new Random();
 
     private final List<BlockDisplay> spears = new ArrayList<>();
@@ -57,7 +58,8 @@ public class HeavenlySpearAbility {
             double impactDamage,
             int persistTicks,
             double spearHeight,
-            double spearThickness
+            double spearThickness,
+            Material spearMaterial
     ) {
         this.source = source;
         this.centerSupplier = centerSupplier;
@@ -69,6 +71,7 @@ public class HeavenlySpearAbility {
         this.persistTicks = Math.max(1, persistTicks);
         this.spearHeight = spearHeight;
         this.spearThickness = spearThickness;
+        this.spearMaterial = spearMaterial;
     }
 
     /* ================= Public API ================= */
@@ -197,7 +200,7 @@ public class HeavenlySpearAbility {
 
         // Spawn spear display
         BlockDisplay spear = w.spawn(loc, BlockDisplay.class, d -> {
-            d.setBlock(Material.PACKED_ICE.createBlockData());
+            d.setBlock(spearMaterial.createBlockData());
             d.setBillboard(Display.Billboard.FIXED);
             d.setTransformation(new Transformation(
                     new Vector3f(0, 0, 0),

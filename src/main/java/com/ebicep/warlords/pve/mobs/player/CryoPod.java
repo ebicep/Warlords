@@ -4,12 +4,13 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
+import com.ebicep.warlords.pve.mobs.flags.NoTargetAbilities;
 import com.ebicep.warlords.pve.mobs.tiers.PlayerMob;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.citizensnpcs.trait.ArmorStandTrait;
 import org.bukkit.Location;
 
-public class CryoPod extends AbstractMob implements PlayerMob {
+public class CryoPod extends AbstractMob implements PlayerMob, NoTargetAbilities {
 
     public CryoPod(Location spawnLocation) {
         this(spawnLocation, "Cryopod", 20000, 0, 0, 0, 0);

@@ -186,14 +186,14 @@ public class OneOfNine extends AbstractMob implements BossMob {
                 50,
                 15,
                 70,
-                1.2,
+                1.3,
                 2,
                 1000,
                 false,
                 2
         );
 
-        chasingOrbsAbility = new ChasingOrbsAbility(warlordsNPC, warlordsNPC, option.playerCount(), 100, 0.32, 3, 2500, 1.5);
+        chasingOrbsAbility = new ChasingOrbsAbility(warlordsNPC, warlordsNPC, option.playerCount(), 100, 0.32, 4, 3000, 1.5);
 
         swordManager.spawnSwords(9);
         swordManager.start();
@@ -614,7 +614,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
             }
         }
 
-        if (ticksElapsed % 900 == 0 && ticksElapsed > 0 && !preventMinions) {
+        if (ticksElapsed % 950 == 0 && ticksElapsed > 0 && !preventMinions) {
             Utils.playGlobalSound(mapCenter, Sound.ENTITY_ALLAY_AMBIENT_WITHOUT_ITEM, 500, 0.3f);
             for (int i = 0; i < option.playerCount(); i++) {
                 option.spawnNewMob(new SoulReaver(pveOption.getRandomSpawnLocation(warlordsNPC)));
@@ -631,6 +631,9 @@ public class OneOfNine extends AbstractMob implements BossMob {
 
         if (ticksElapsed % 400 == 0 && ticksElapsed > 0 && !preventDamagePhase) {
             damageController.openWindow(10 * 20);
+            PlayerFilter.playingGame(warlordsNPC.getGame())
+                    .warlordPlayersFirst()
+                    .forEach(we -> we.sendMessage(Component.text("One of Nine is marked vulnerable!", NamedTextColor.LIGHT_PURPLE)));
         }
 
         float health = warlordsNPC.getCurrentHealth();

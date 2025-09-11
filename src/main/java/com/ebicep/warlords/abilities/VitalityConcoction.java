@@ -112,6 +112,47 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
                     .aliveTeammatesOfExcludingSelf(wp)
             ) {
                 EffectUtils.playParticleLinkAnimation(wp.getLocation(), we.getLocation(), Particle.SCULK_SOUL);
+                wp.getCooldownManager().removeDebuffCooldowns();
+                wp.addSpeedModifier(wp, name, (float) speedBoost / 2, tickDuration * 2);
+                we.getCooldownManager().addCooldown(new RegularCooldown<>(
+                        name,
+                        "STIM ALLIES",
+                        VitalityConcoction.class,
+                        null,
+                        wp,
+                        CooldownTypes.ABILITY,
+                        cooldownManager -> {
+                        },
+                        cooldownManager -> {
+                            modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
+                        },
+                        tickDuration * 2,
+                        Collections.singletonList((cooldown2, ticksLeft, ticksElapsed) -> {
+                            if (ticksElapsed % 3 == 0) {
+                                PlayerFilter.entitiesAround(we, leechRadius, leechRadius, leechRadius)
+                                        .aliveEnemiesOf(we)
+                                        .excluding(leeched)
+                                        .forEach(warlordsEntity -> {
+                                            leeched.add(warlordsEntity);
+                                            Leech.giveLeechCooldown(Leech.LeechInstance
+                                                    .create(we, warlordsEntity)
+                                                    .withImpalingStrike()
+                                            );
+                                        });
+                            }
+                        })
+                ) {
+
+                    @Override
+                    protected Listener getListener() {
+                        return CooldownUtils.getPartialDebuffImmunityListener(we);
+                    }
+
+                    @Override
+                    public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                        return currentDamageValue * convertToDivisionDecimal(damageResistance / 2f);
+                    }
+                });
                 we.addInstance(InstanceBuilder
                         .healing()
                         .ability(this)

@@ -26,7 +26,7 @@ public class LegendaryEnhanced extends AbstractLegendaryWeapon {
 
     private static final int TICKS_TO_ADD = 40;
     private static final int TICKS_TO_ADD_PER_UPGRADE = 10;
-    private static final List<String> EFFECTED_ABILITIES = Arrays.asList("BRN", "WND", "BLEED", "CRIP", "SILENCE", "LCH", "AVE MARK");
+    private static final List<String> EFFECTED_ABILITIES = Arrays.asList("BRN", "WND", "BLEED", "CRIP", "SILENCE", "LCH", "AVE MARK", "CHAINS", "CHAIN CRIT");
 
     public LegendaryEnhanced() {
     }

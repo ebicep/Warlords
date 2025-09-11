@@ -33,7 +33,6 @@ public class DamagePhaseController {
 
     /* ---------- Public API ---------- */
 
-    /** Opens a damage window for 'durationTicks' (e.g., 20*12 = 12s). */
     public void openWindow(int durationTicks) {
         if (inWindow) return;
         inWindow = true;
@@ -59,7 +58,6 @@ public class DamagePhaseController {
         }.runTaskTimer(0, 1);
     }
 
-    /** Manually closes the window and cleans up. */
     public void closeWindow() {
         if (!inWindow) return;
         inWindow = false;
@@ -92,7 +90,6 @@ public class DamagePhaseController {
             disp.setPersistent(true);
         });
 
-        // OPTION B (optional or in addition): floating text
         holo = w.spawn(head.clone().add(0, 2, 0), TextDisplay.class, td -> {
             td.setBillboard(Display.Billboard.CENTER);
             td.setSeeThrough(true);

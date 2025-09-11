@@ -87,7 +87,7 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
                         this.cancel();
                     }
                 }
-            }.runTaskTimer(0, 40);
+            }.runTaskTimer(40, 40);
         } else if (pveMasterUpgrade2) {
             giveCallOfThunderEffect(wp, hit);
         }

@@ -6,6 +6,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.AdvancedMob;
+import com.ebicep.warlords.pve.mobs.tiers.EliteMob;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
@@ -14,7 +15,7 @@ import org.bukkit.Sound;
 
 import javax.annotation.Nonnull;
 
-public class FireSplitter extends AbstractMob implements AdvancedMob {
+public class FireSplitter extends AbstractMob implements EliteMob {
 
     public FireSplitter(Location spawnLocation) {
         super(

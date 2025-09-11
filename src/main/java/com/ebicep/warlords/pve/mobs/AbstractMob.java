@@ -72,7 +72,7 @@ public abstract class AbstractMob implements Mob {
     protected final float minMeleeDamage;
     protected final float maxMeleeDamage;
     protected final float meleeCritChance;
-    protected final float meleeCritMutiplier;
+    protected final float meleeCritMultiplier;
     protected Location spawnLocation;
     protected NPC npc;
     protected EntityEquipment equipment;
@@ -132,7 +132,7 @@ public abstract class AbstractMob implements Mob {
         this.minMeleeDamage = minMeleeDamage;
         this.maxMeleeDamage = maxMeleeDamage;
         this.meleeCritChance = meleeCritChance;
-        this.meleeCritMutiplier = meleeCritMultiplier;
+        this.meleeCritMultiplier = meleeCritMultiplier;
         this.playerClass = new MobPlayerClass(name, maxHealth, damageResistance, abilities);
     }
 
@@ -222,7 +222,7 @@ public abstract class AbstractMob implements Mob {
                 minMeleeDamage,
                 maxMeleeDamage,
                 meleeCritChance,
-                meleeCritMutiplier,
+                meleeCritMultiplier,
                 this,
                 playerClass,
                 new MobHologram.TextDisplayHologram(.5f) {
