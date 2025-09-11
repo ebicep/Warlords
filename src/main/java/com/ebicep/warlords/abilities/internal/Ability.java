@@ -247,7 +247,7 @@ public class Ability<T extends AbstractAbility> {
         }
         for (Specializations spec : Specializations.VALUES) {
             Ability<?>[] abilities = new Ability[5];
-            List<AbstractAbility> abstractAbilities = spec.create(ConfigManager.DEFAULT_NAMESPACES).getAbilities();
+            List<AbstractAbility> abstractAbilities = spec.create(ConfigManager.PVE_NAMESPACES).getAbilities();
             for (int i = 0; i < abstractAbilities.size(); i++) {
                 AbstractAbility ability = abstractAbilities.get(i);
                 Ability<?> abilityRegistry = getAbility(ability.getClass());
