@@ -36,6 +36,11 @@ public enum LegendaryTitles {
     EVERLASTING("Everlasting", LegendaryEverlasting.class, LegendaryEverlasting::new, LegendaryEverlasting::new, Material.BLUE_STAINED_GLASS_PANE),
     CHAOTIC("Chaotic", LegendaryChaotic.class, LegendaryChaotic::new, LegendaryChaotic::new, Material.BROWN_STAINED_GLASS_PANE),
     REVOLT("Revolt", LegendaryRevolt.class, LegendaryRevolt::new, LegendaryRevolt::new, Material.GREEN_STAINED_GLASS_PANE),
+    HUNTSMAN("Huntsman", LegendaryHuntsman.class, LegendaryHuntsman::new, LegendaryHuntsman::new, Material.RED_STAINED_GLASS_PANE),
+    MOMENTUM("Momentum", LegendaryMomentum.class, LegendaryMomentum::new, LegendaryMomentum::new, Material.BLACK_STAINED_GLASS_PANE),
+    AEGIS("Aegis", LegendaryAegis.class, LegendaryAegis::new, LegendaryAegis::new, Material.WHITE_STAINED_GLASS_PANE),
+    ORACLE("Oracle", LegendaryOracle.class, LegendaryOracle::new, LegendaryOracle::new, Material.ORANGE_STAINED_GLASS_PANE),
+    ANCHOR("Anchor", LegendaryAnchor.class, LegendaryAnchor::new, LegendaryAnchor::new, Material.MAGENTA_STAINED_GLASS_PANE),
 
     ;
 

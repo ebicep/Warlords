@@ -330,7 +330,7 @@ public class IllusionCrossfire extends GameMap {
                 .add(40, new RandomSpawnWave(1, 10 * SECOND, Component.text("Boss"))
                         .add(Mob.MITHRA)
                 )
-                .add(41, new RandomSpawnWave(35, 10 * SECOND, null)
+                .add(41, new RandomSpawnWave(30, 10 * SECOND, null)
                         //basic
                         //.add(0, Mobs.ZOMBIE_LANCER)
                         .add(0.3, Mob.ZOMBIE_LAMENT)
@@ -361,7 +361,7 @@ public class IllusionCrossfire extends GameMap {
                         // forgotten
                         .add(0.02, Mob.NIGHTMARE_ZOMBIE)
                 )
-                .add(45, new RandomSpawnWave(35, 10 * SECOND, null)
+                .add(45, new RandomSpawnWave(30, 10 * SECOND, null)
                         //basic
                         //.add(0, Mobs.ZOMBIE_LANCER)
                         .add(0.2, Mob.ZOMBIE_LAMENT)
@@ -395,7 +395,7 @@ public class IllusionCrossfire extends GameMap {
                 .add(50, new RandomSpawnWave(1, 10 * SECOND, Component.text("Boss"))
                         .add(Mob.ZENITH)
                 )
-                .add(51, new RandomSpawnWave(35, 5 * SECOND, null)
+                .add(51, new RandomSpawnWave(30, 5 * SECOND, null)
                         //basic
                         //.add(0, Mobs.ZOMBIE_LANCER)
                         //.add(0, Mobs.ZOMBIE_LAMENT)
@@ -431,7 +431,7 @@ public class IllusionCrossfire extends GameMap {
                         .add(0.01, Mob.CELESTIAL_OPUS)
                         .add(0.001, Mob.CREEPY_BOMBER)
                 )
-                .add(55, new RandomSpawnWave(35, 5 * SECOND, null)
+                .add(55, new RandomSpawnWave(30, 5 * SECOND, null)
                         //basic
                         //.add(0, Mobs.ZOMBIE_LANCER)
                         //.add(0, Mobs.ZOMBIE_LAMENT)
@@ -471,7 +471,7 @@ public class IllusionCrossfire extends GameMap {
                 .add(60, new RandomSpawnWave(1, 10 * SECOND, Component.text("Boss"))
                         .add(Mob.MAGMATIC_OOZE)
                 )
-                .add(61, new RandomSpawnWave(40, 5 * SECOND, null)
+                .add(61, new RandomSpawnWave(35, 5 * SECOND, null)
                         //basic
                         //.add(0, Mobs.ZOMBIE_LANCER)
                         //.add(0, Mobs.ZOMBIE_LAMENT)
@@ -509,7 +509,7 @@ public class IllusionCrossfire extends GameMap {
                         .add(0.01, Mob.CELESTIAL_OPUS)
                         .add(0.001, Mob.CREEPY_BOMBER)
                 )
-                .add(65, new RandomSpawnWave(40, 5 * SECOND, null)
+                .add(65, new RandomSpawnWave(35, 5 * SECOND, null)
                         //basic
                         //.add(0, Mobs.ZOMBIE_LANCER)
                         //.add(0, Mobs.ZOMBIE_LAMENT)
@@ -550,7 +550,7 @@ public class IllusionCrossfire extends GameMap {
                 .add(70, new RandomSpawnWave(1, 10 * SECOND, Component.text("Boss"))
                         .add(Mob.ILLUMINA)
                 )
-                .add(71, new RandomSpawnWave(45, 5 * SECOND, null)
+                .add(71, new RandomSpawnWave(40, 5 * SECOND, null)
                         //basic
                         //.add(0, Mobs.ZOMBIE_LANCER)
                         //.add(0, Mobs.ZOMBIE_LAMENT)
@@ -588,7 +588,7 @@ public class IllusionCrossfire extends GameMap {
                         .add(0.01, Mob.CELESTIAL_OPUS)
                         .add(0.002, Mob.CREEPY_BOMBER)
                 )
-                .add(75, new RandomSpawnWave(45, 5 * SECOND, null)
+                .add(75, new RandomSpawnWave(40, 5 * SECOND, null)
                         //basic
                         //.add(0, Mobs.ZOMBIE_LANCER)
                         //.add(0, Mobs.ZOMBIE_LAMENT)
@@ -629,7 +629,7 @@ public class IllusionCrossfire extends GameMap {
                 .add(80, new RandomSpawnWave(1, 10 * SECOND, Component.text("Boss"))
                         .add(Mob.VOID)
                 )
-                .add(81, new RandomSpawnWave(50, 5 * SECOND, null)
+                .add(81, new RandomSpawnWave(45, 5 * SECOND, null)
                         //basic
                         //.add(0, Mobs.ZOMBIE_LANCER)
                         //.add(0, Mobs.ZOMBIE_LAMENT)
@@ -668,7 +668,7 @@ public class IllusionCrossfire extends GameMap {
                         .add(0.01, Mob.CELESTIAL_OPUS)
                         .add(0.003, Mob.CREEPY_BOMBER)
                 )
-                .add(85, new RandomSpawnWave(50, 5 * SECOND, null)
+                .add(85, new RandomSpawnWave(45, 5 * SECOND, null)
                         //basic
                         //.add(0, Mobs.ZOMBIE_LANCER)
                         //.add(0, Mobs.ZOMBIE_LAMENT)
@@ -710,7 +710,7 @@ public class IllusionCrossfire extends GameMap {
                 .add(90, new RandomSpawnWave(1, 10 * SECOND, Component.text("Boss"))
                         .add(Mob.TORMENT)
                 )
-                .add(91, new RandomSpawnWave(50, 5 * SECOND, null)
+                .add(91, new RandomSpawnWave(45, 5 * SECOND, null)
                         //basic
                         //.add(0, Mobs.ZOMBIE_LANCER)
                         //.add(0, Mobs.ZOMBIE_LAMENT)
@@ -749,7 +749,7 @@ public class IllusionCrossfire extends GameMap {
                         .add(0.01, Mob.CELESTIAL_OPUS)
                         .add(0.004, Mob.CREEPY_BOMBER)
                 )
-                .add(95, new RandomSpawnWave(50, 5 * SECOND, null)
+                .add(95, new RandomSpawnWave(45, 5 * SECOND, null)
                         //basic
                         //.add(0, Mobs.ZOMBIE_LANCER)
                         //.add(0, Mobs.ZOMBIE_LAMENT)
@@ -791,7 +791,7 @@ public class IllusionCrossfire extends GameMap {
                 .add(100, new RandomSpawnWave(1, 10 * SECOND, Component.text("Boss"))
                         .add(Mob.ONE_OF_NINE)
                 )
-                .add(101, new RandomSpawnWave(55, 5 * SECOND, null)
+                .add(101, new RandomSpawnWave(50, 5 * SECOND, null)
                         //basic
                         //.add(0, Mobs.ZOMBIE_LANCER)
                         //.add(0, Mobs.ZOMBIE_LAMENT)
@@ -804,7 +804,7 @@ public class IllusionCrossfire extends GameMap {
                         //.add(0, Mobs.SKELETAL_WARLOCK)
                         //.add(0, Mobs.PIG_SHAMAN)
                         .add(0.1, Mob.ILLUMINATION)
-                        .add(0.35, Mob.GOLEM_APPRENTICE)
+                        .add(0.25, Mob.GOLEM_APPRENTICE)
                         .add(0.1, Mob.WITCH_DEACON)
                         //envoy
                         //.add(0, Mobs.ZOMBIE_VANGUARD)
@@ -823,7 +823,7 @@ public class IllusionCrossfire extends GameMap {
                         //.add(0, Mobs.EXILED_ZOMBIE_LAVA)
                         .add(0.25, Mob.RIFT_WALKER)
                         // forgotten
-                        .add(0.05, Mob.NIGHTMARE_ZOMBIE)
+                        .add(0.04, Mob.NIGHTMARE_ZOMBIE)
                         .add(0.5, Mob.OVERGROWN_ZOMBIE)
                         .add(0.01, Mob.CELESTIAL_BOW_WIELDER)
                         .add(0.01, Mob.CELESTIAL_SWORD_WIELDER)
@@ -832,7 +832,7 @@ public class IllusionCrossfire extends GameMap {
                 .add(110, new RandomSpawnWave(1, 10 * SECOND, Component.text("Boss"))
                         .add(Mob.ORBYZ)
                 )
-                .add(111, new RandomSpawnWave(55, 5 * SECOND, null)
+                .add(111, new RandomSpawnWave(50, 5 * SECOND, null)
                         //basic
                         //.add(0, Mobs.ZOMBIE_LANCER)
                         //.add(0, Mobs.ZOMBIE_LAMENT)

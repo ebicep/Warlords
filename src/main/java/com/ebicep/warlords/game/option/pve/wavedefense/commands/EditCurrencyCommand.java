@@ -12,7 +12,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import java.util.Comparator;
 
 @CommandAlias("currency")
-@CommandPermission("group.administrator")
+@CommandPermission("group.administrator|warlords.game.debug")
 public class EditCurrencyCommand extends BaseCommand {
 
     @Subcommand("add")

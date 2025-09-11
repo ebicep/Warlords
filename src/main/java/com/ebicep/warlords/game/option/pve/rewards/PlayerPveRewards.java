@@ -19,6 +19,7 @@ public class PlayerPveRewards {
     private int blessingsFound = 0;
     private Map<Spendable, Long> syntheticPouch = new HashMap<>();
     private Map<Spendable, Long> aspirantPouch = new HashMap<>();
+    private Map<Spendable, Long> ascendantPouch = new HashMap<>();
 
 
     public List<AbstractWeapon> getWeaponsFound() {
@@ -84,5 +85,13 @@ public class PlayerPveRewards {
 
     public void setAspirantPouch(Map<Spendable, Long> aspirantPouch) {
         this.aspirantPouch = aspirantPouch;
+    }
+
+    public Map<Spendable, Long> getAscendantPouch() {
+        return ascendantPouch;
+    }
+
+    public void setAscendantPouch(Map<Spendable, Long> ascendantPouch) {
+        this.ascendantPouch = ascendantPouch;
     }
 }

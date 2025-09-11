@@ -172,7 +172,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                     if (ticksElapsed % 2 != 0) {
                         return;
                     }
-                    if (isSelf && pveMasterUpgrade  && ticksElapsed % 10 == 0) {
+                    if (isSelf && pveMasterUpgrade  && ticksElapsed % 5 == 0) {
                         for (WarlordsEntity npc : PlayerFilter
                                 .entitiesAround(wp, 15, 15 ,15)
                         ) {

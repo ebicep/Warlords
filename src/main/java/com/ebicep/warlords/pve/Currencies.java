@@ -189,7 +189,8 @@ public enum Currencies implements Spendable {
             COMMON_STAR_PIECE,
             RARE_STAR_PIECE,
             EPIC_STAR_PIECE,
-            LEGENDARY_STAR_PIECE
+            LEGENDARY_STAR_PIECE,
+            ASCENDANT_STAR_PIECE
     );
     public static final Currencies[] VALUES = values();
     public static final HashMap<UUID, PvECoinSummary> CACHED_PLAYER_COIN_STATS = new HashMap<>();

@@ -78,7 +78,7 @@ public class LegendaryChaotic extends AbstractLegendaryWeapon implements Listene
                                .append(formatTitleUpgrade(CRIT_MULTIPLIER + CRIT_MULTIPLIER_PER_UPGRADE * getTitleLevel(), "%"))
                                .text(" crit multiplier. Maximum ")
                                .append(formatTitleUpgrade(MAX_STACKS + MAX_STACKS_PER_UPGRADE * getTitleLevel()))
-                               .text(" stacks. Once an ability crit occurs, all stacks are removed.")
+                               .text(" stacks. Once an ability crit occurs, one stack is removed.")
                                .build();
     }
 
@@ -153,8 +153,7 @@ public class LegendaryChaotic extends AbstractLegendaryWeapon implements Listene
             return;
         }
         if (event.isCrit()) {
-            stacks = 0;
-            return;
+            stacks--;
         }
         if (stacks < MAX_STACKS + MAX_STACKS_PER_UPGRADE * getTitleLevel()) {
             stacks++;

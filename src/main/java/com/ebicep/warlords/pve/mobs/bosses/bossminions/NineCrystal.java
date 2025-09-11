@@ -26,7 +26,7 @@ public class NineCrystal extends AbstractMob implements BossMinionMob {
         super(
                 spawnLocation,
                 ChatColor.BOLD + spec.name(),
-                2000,
+                1900,
                 0,
                 0,
                 0,

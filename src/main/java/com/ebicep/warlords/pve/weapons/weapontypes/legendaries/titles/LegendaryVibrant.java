@@ -32,12 +32,12 @@ import java.util.stream.Collectors;
 
 public class LegendaryVibrant extends AbstractLegendaryWeapon implements GardenOfHesperidesTitle, PassiveCounter {
 
-    public static final int COOLDOWN = 10;
+    public static final int COOLDOWN = 6;
     public static final int NUMBER_OF_ORBS = 3;
     public static final ItemStack ORB_ITEM = new ItemStack(Material.SUNFLOWER);
     public static final float ORB_OFFSET = 1.75f;
 
-    public static final int DAMAGE_TAKEN = 5;
+    public static final int DAMAGE_TAKEN = 10;
     public static final int DAMAGE_TAKEN_PER_UPGRADE = 1;
     public static final int DAMAGE_CAP = 10_000;
     public static final int DAMAGE_CAP_PER_UPGRADE = 2_000;
@@ -101,7 +101,7 @@ public class LegendaryVibrant extends AbstractLegendaryWeapon implements GardenO
 
     @Override
     public TextComponent getPassiveEffect() {
-        return Component.text("Every 10s, " + NUMBER_OF_ORBS + " energy orbs will be produced based on ", NamedTextColor.GRAY)
+        return Component.text("Every 6s, " + NUMBER_OF_ORBS + " energy orbs will be produced based on ", NamedTextColor.GRAY)
                         .append(formatTitleUpgrade(DAMAGE_TAKEN + DAMAGE_TAKEN_PER_UPGRADE * getTitleLevel(), "%"))
                         .append(Component.text(" of the damage taken for the last 10s. A max of " + NumberFormat.addCommas(DAMAGE_CAP) + " damage may be tabulated and a max of "))
                         .append(formatTitleUpgrade(ENERGY_CAP + ENERGY_CAP_PER_UPGRADE * getTitleLevel()))

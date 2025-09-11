@@ -62,13 +62,11 @@ public class FortifyingHexBranch extends AbstractUpgradeBranch<FortifyingHex> {
                 "Augmenting Hex",
                 "Fortifying Hex - Master Upgrade",
                 """
-                        +15 Pierce
-                        
                         Fortifying Hex now explodes on contact, targets hit receive a Weakening Hex stack. Each stack of Weakening Hex on enemies increases damage taken by 5% (max 4 stacks).
                         """,
                 50000,
                 () -> {
-                    ability.setMaxEnemiesHit(ability.getMaxEnemiesHit() + 15);
+
                 }
         );
     }

@@ -68,7 +68,7 @@ public class ChasingOrbsAbility {
         for (int i = 0; i < orbCount; i++) {
             List<WarlordsEntity> targets = PlayerFilter
                     .playingGame(game)
-                    .enemiesOf(caster)
+                    .aliveEnemiesOf(caster)
                     .toList();
 
             if (targets.isEmpty()) continue;
@@ -76,12 +76,6 @@ public class ChasingOrbsAbility {
             WarlordsEntity target = targets.get(rng.nextInt(targets.size()));
 
             Location spawnLoc = caster.getLocation().clone().add(0, 6, 0);
-            EffectUtils.playFirework(spawnLoc, FireworkEffect.builder()
-                    .withColor(Color.WHITE)
-                    .with(FireworkEffect.Type.BALL_LARGE)
-                    .withTrail()
-                    .build());
-
             ItemDisplay display = w.spawn(spawnLoc, ItemDisplay.class, d -> {
                 d.setItemStack(new ItemStack(Material.ENDER_EYE));
                 d.setBillboard(Display.Billboard.CENTER);

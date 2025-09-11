@@ -81,7 +81,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
         super(
                 spawnLocation,
                 "One of Nine",
-                250000,
+                200000,
                 0.2f,
                 40,
                 3000,
@@ -395,6 +395,8 @@ public class OneOfNine extends AbstractMob implements BossMob {
                             );
                         }
 
+                        preventDamagePhase = false;
+                        preventMinions = false;
                         this.cancel();
                     }
 
@@ -504,7 +506,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
                 public void run() {
                     counter++;
 
-                    if (counter % 200 == 0) {
+                    if (counter % 260 == 0) {
                         laserBarrageCenter.start(option.getGame().warlordsPlayers().toList());
                     }
 
@@ -528,7 +530,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
             ) {
                 @Override
                 public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    return currentDamageValue * 0.5f;
+                    return currentDamageValue * 0.7f;
                 }
 
                 @Override
@@ -605,7 +607,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
             ).playEffects();
         }
 
-        if (ticksElapsed % 1600 == 0 && ticksElapsed > 0 && !preventMinions) {
+        if (ticksElapsed % 1800 == 0 && ticksElapsed > 0 && !preventMinions) {
             Utils.playGlobalSound(mapCenter, Sound.ENTITY_ALLAY_AMBIENT_WITHOUT_ITEM, 500, 1.5f);
             for (int i = 0; i < option.playerCount(); i++) {
                 option.spawnNewMob(new EchoOfBlades(pveOption.getRandomSpawnLocation(warlordsNPC)));
@@ -627,7 +629,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
             chasingOrbsAbility.start(warlordsNPC.getGame());
         }
 
-        if (ticksElapsed % 600 == 0 && ticksElapsed > 0 && !preventDamagePhase) {
+        if (ticksElapsed % 400 == 0 && ticksElapsed > 0 && !preventDamagePhase) {
             damageController.openWindow(10 * 20);
         }
 

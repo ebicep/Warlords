@@ -28,7 +28,7 @@ public class LegendaryEgoism extends AbstractLegendaryWeapon implements PassiveC
 
     public static final int DEBUFF_IMMUNITY_DURATION = 5;
     public static final int DEBUFF_IMMUNITY_DURATION_INCREASE_PER_UPGRADE = 1;
-    public static final int HEALTH_RESTORE = 10;
+    public static final int HEALTH_RESTORE = 20;
     public static final int HEALTH_RESTORE_INCREASE_PER_UPGRADE = 3;
 
     @Transient
@@ -69,7 +69,7 @@ public class LegendaryEgoism extends AbstractLegendaryWeapon implements PassiveC
                 if (Instant.now().isBefore(lastActivated.get())) {
                     return;
                 }
-                lastActivated.set(Instant.now().plus(35, ChronoUnit.SECONDS));
+                lastActivated.set(Instant.now().plus(8, ChronoUnit.SECONDS));
                 event.setCancelled(true);
                 player.getCooldownManager().addCooldown(new RegularCooldown<>(
                         getTitleName(),
@@ -82,6 +82,7 @@ public class LegendaryEgoism extends AbstractLegendaryWeapon implements PassiveC
                         },
                         debuffImmunityTickDuration,
                         Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                            player.getSpeed().removeNegativeModifiers();
                         })
                 ) {
                     @Override
@@ -103,11 +104,11 @@ public class LegendaryEgoism extends AbstractLegendaryWeapon implements PassiveC
 
     @Override
     public TextComponent getPassiveEffect() {
-        return Component.text("When you are debuffed, clear the debuffs on you, and become immune to all debuffs for ", NamedTextColor.GRAY)
+        return Component.text("When you are debuffed, clear the debuffs on you, and become immune to all debuffs and slow effects for ", NamedTextColor.GRAY)
                         .append(formatTitleUpgrade(DEBUFF_IMMUNITY_DURATION + DEBUFF_IMMUNITY_DURATION_INCREASE_PER_UPGRADE * getTitleLevel(), "s"))
                         .append(Component.text(" , and restore"))
                         .append(formatTitleUpgrade(HEALTH_RESTORE + HEALTH_RESTORE_INCREASE_PER_UPGRADE * getTitleLevel(), "%"))
-                        .append(Component.text(" of your maximum health. Can be triggered every 35 seconds."));
+                        .append(Component.text(" of your maximum health. Can be triggered every 12 seconds."));
     }
 
     @Override

@@ -30,7 +30,7 @@ public class EchoOfBlades extends AbstractMob implements BossMinionMob {
         super(
                 spawnLocation,
                 "Echo of Blades",
-                7500,
+                7000,
                 0.25f,
                 10,
                 1200,

@@ -110,7 +110,7 @@ public class Torment extends AbstractMob implements BossMob {
                             event.getSource().getLocation(),
                             Particle.SCULK_SOUL
                     );
-                    return currentDamageValue * 0.25f;
+                    return currentDamageValue * 0.4f;
                 }
             }
         });
@@ -205,7 +205,7 @@ public class Torment extends AbstractMob implements BossMob {
                         warlordsNPC.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 400, 0, false));
                     }
 
-                    if (counter % 3 == 0) {
+                    if (counter % 4 == 0) {
                         Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_RAVAGER_ROAR, 500, 0.2f);
                         Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.AMBIENT_CRIMSON_FOREST_MOOD, 500, 1f);
 
@@ -249,10 +249,9 @@ public class Torment extends AbstractMob implements BossMob {
                         }
                     }
 
-                    if (counter % 80 == 0) {
+                    if (counter % 100 == 0) {
                         for (int i = 0; i < pveOption.playerCount(); i++) {
                             pveOption.spawnNewMob(new CelestialOpus(pveOption.getRandomSpawnLocation(warlordsNPC)));
-                            pveOption.spawnNewMob(new RiftWalker(pveOption.getRandomSpawnLocation(warlordsNPC)));
                         }
                     }
 
