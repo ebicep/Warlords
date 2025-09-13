@@ -124,7 +124,7 @@ public class Torment extends AbstractMob implements BossMob {
             suction(loc);
         });
 
-        divinePhase = new BossAbilityPhase(warlordsNPC, 20, () -> {
+        divinePhase = new BossAbilityPhase(warlordsNPC, 25, () -> {
 
             preventMarking = true;
             WarlordsEntity divineProtector = null;
@@ -200,6 +200,11 @@ public class Torment extends AbstractMob implements BossMob {
                 int counter = 0;
                 @Override
                 public void run() {
+                    if (warlordsNPC.isDead()) {
+                        this.cancel();
+                        return;
+                    }
+
                     if (counter == 1) {
                         warlordsNPC.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 400, 0, false));
                         warlordsNPC.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 400, 0, false));
@@ -225,7 +230,6 @@ public class Torment extends AbstractMob implements BossMob {
                                     .cause("Divine Punishment")
                                     .source(warlordsNPC)
                                     .value(1000)
-                                    .flags(InstanceFlags.NO_MESSAGE)
                             );
                             EffectUtils.playParticleLinkAnimation(
                                     we.getLocation(),

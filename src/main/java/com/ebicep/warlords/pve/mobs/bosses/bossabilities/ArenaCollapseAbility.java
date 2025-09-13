@@ -117,14 +117,12 @@ public class ArenaCollapseAbility {
                     Location p = enemy.getLocation(); // WarlordsEntity loc
                     if (p == null || p.getWorld() != w) continue;
 
-                    // Horizontal distance from center
                     double dx = p.getX() - center.getX();
                     double dz = p.getZ() - center.getZ();
                     double distSq = dx*dx + dz*dz;
                     double rSq = currentRadius * currentRadius;
 
                     if (distSq > rSq) {
-                        // Outside safe zone → damage
                         enemy.addInstance(InstanceBuilder
                                 .damage()
                                 .cause("Arena Collapse")

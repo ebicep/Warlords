@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.mobs.bosses.bossabilities;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -186,6 +187,7 @@ public class MarkedForDeathAbility {
                     .cause("Marked for Death")
                     .value((float) strikeDamage)
                     .source(source)
+                    .flag(InstanceFlags.TRUE_DAMAGE, true)
             );
         }
     }

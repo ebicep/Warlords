@@ -152,7 +152,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
                 warlordsNPC,
                 () -> mapCenter,
                 32,
-                4 * option.playerCount(),
+                3 * option.playerCount(),
                 40,
                 6,
                 3000,
@@ -172,7 +172,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
                 1,
                 1000,
                 1,
-                2,
+                3,
                 true,
                 2000,
                 10,
@@ -193,7 +193,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
                 2
         );
 
-        chasingOrbsAbility = new ChasingOrbsAbility(warlordsNPC, warlordsNPC, option.playerCount(), 100, 0.32, 4, 3000, 1.5);
+        chasingOrbsAbility = new ChasingOrbsAbility(warlordsNPC, warlordsNPC, option.playerCount(), 100, 0.32, 4, 5000, 1.5);
 
         swordManager.spawnSwords(9);
         swordManager.start();
@@ -471,7 +471,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
                         laserBarrageRight.start(playerList);
                     }
 
-                    if (counter % 200 == 0) {
+                    if (counter % 240 == 0) {
                         for (int i = 0; i < option.playerCount(); i++) {
                             option.spawnNewMob(new RiftWalker(option.getRandomSpawnLocation(warlordsNPC)));
                         }

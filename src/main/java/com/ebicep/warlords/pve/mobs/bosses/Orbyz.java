@@ -135,7 +135,7 @@ public class Orbyz extends AbstractMob implements BossMob {
         heavenlySpearAbilityOne = new HeavenlySpearAbility(warlordsNPC, () -> mapCenter, 6 * option.playerCount(), 38, 30, 5, 4000, 60, 35, 2.5, Material.PACKED_ICE);
         heavenlySpearAbilityTwo = new HeavenlySpearAbility(warlordsNPC, () -> mapCenter, 8 * option.playerCount(), 38, 20, 5, 4000, 30, 35, 2.5, Material.PACKED_ICE);
         heavenlySpearAbilityInterval = new HeavenlySpearAbility(warlordsNPC, () -> mapCenter, option.playerCount(), 36, 50, 8, 5000, 400, 35, 3.5, Material.SNOW_BLOCK);
-        summoningCirclesAbility = new SummoningCirclesAbility(warlordsNPC, () -> mapCenter, 2, 32, 300, 5, 5, option);
+        summoningCirclesAbility = new SummoningCirclesAbility(warlordsNPC, () -> mapCenter, 2, 28, 300, 5, 5, option);
 
         markedForDeathAbility = new MarkedForDeathAbility(
                 warlordsNPC,

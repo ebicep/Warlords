@@ -81,6 +81,10 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
 
                 @Override
                 public void run() {
+                    if (wp.isDead()) {
+                        this.cancel();
+                    }
+
                     if (bonusActivations++ < 3) {
                         kbHealEnergy(wp);
                     } else {

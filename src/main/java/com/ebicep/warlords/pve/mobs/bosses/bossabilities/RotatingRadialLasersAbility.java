@@ -4,6 +4,7 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import org.bukkit.Color;
@@ -190,6 +191,7 @@ public class RotatingRadialLasersAbility {
                         .cause("Radial Laser")
                         .value((float) dps)
                         .source(source)
+                        .flag(InstanceFlags.TRUE_DAMAGE, true)
                 );
             }
         }

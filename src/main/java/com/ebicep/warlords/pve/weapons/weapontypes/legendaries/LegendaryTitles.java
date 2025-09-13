@@ -41,6 +41,9 @@ public enum LegendaryTitles {
     AEGIS("Aegis", LegendaryAegis.class, LegendaryAegis::new, LegendaryAegis::new, Material.WHITE_STAINED_GLASS_PANE),
     ORACLE("Oracle", LegendaryOracle.class, LegendaryOracle::new, LegendaryOracle::new, Material.ORANGE_STAINED_GLASS_PANE),
     ANCHOR("Anchor", LegendaryAnchor.class, LegendaryAnchor::new, LegendaryAnchor::new, Material.MAGENTA_STAINED_GLASS_PANE),
+    CONDUIT("Conduit", LegendaryConduit.class, LegendaryConduit::new, LegendaryConduit::new, Material.LIGHT_BLUE_STAINED_GLASS_PANE),
+    FLUX("Flux", LegendaryFlux.class, LegendaryFlux::new, LegendaryFlux::new, Material.YELLOW_STAINED_GLASS_PANE),
+    BASTION("Bastion", LegendaryBastion.class, LegendaryBastion::new, LegendaryBastion::new, Material.LIME_STAINED_GLASS_PANE),
 
     ;
 
