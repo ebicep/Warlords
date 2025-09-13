@@ -206,7 +206,7 @@ public class PlayerFilter implements Iterable<WarlordsEntity> {
 
     @Nonnull
     public PlayerFilter aliveTeammatesOfExcludingSelf(@Nonnull WarlordsEntity player) {
-        return filter(wp -> player != wp && player.isTeammateAlive(wp)).filter(we -> we.isTargetableByAbilities(player));
+        return filter(wp -> player != wp && player.isTeammateAlive(wp));
     }
 
     @Nonnull
