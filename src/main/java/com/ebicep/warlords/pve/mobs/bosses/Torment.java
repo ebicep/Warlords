@@ -393,7 +393,7 @@ public class Torment extends AbstractMob implements BossMob {
             }
         }
 
-        if (ticksElapsed % 600 == 0) {
+        if (ticksElapsed % 1200 == 0) {
             new GameRunnable(warlordsNPC.getGame()) {
                 int counter = 0;
 

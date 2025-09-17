@@ -198,6 +198,7 @@ public class OnslaughtOption implements PveOption {
             });
         }
 
+        AtomicInteger rewardMultiplier = new AtomicInteger(1);
         new GameRunnable(game) {
             int counter = 0;
 
@@ -219,12 +220,15 @@ public class OnslaughtOption implements PveOption {
                 if (ticksElapsed.get() % 18000 == 0) {
                     game.warlordsPlayers().forEach(wp -> {
                         wp.playSound(wp.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 0.1f);
-                        addRewardToPlayerPouch(
-                                wp.getUuid(),
-                                OnslaughtRewards.ASPIRANT_POUCH_LOOT_POOL,
-                                playerAspirantPouch,
-                                Component.text("Aspirant Pouch", NamedTextColor.RED)
-                        );
+                        for (int i = 0; i < rewardMultiplier.get(); i++) {
+                            addRewardToPlayerPouch(
+                                    wp.getUuid(),
+                                    OnslaughtRewards.ASPIRANT_POUCH_LOOT_POOL,
+                                    playerAspirantPouch,
+                                    Component.text("Aspirant Pouch", NamedTextColor.RED)
+                            );
+                        }
+                        rewardMultiplier.getAndAdd(1);
                         if (wp.getAbilityTree().getMaxMasterUpgrades() == 5) {
                             return;
                         }

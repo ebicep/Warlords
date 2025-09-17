@@ -37,7 +37,7 @@ public class ShatteringChainsAbility {
 
     // Visuals
     private final Particle.DustOptions telegraphDust = new Particle.DustOptions(Color.fromRGB(255, 0, 0), 1.2f);
-    private final Particle.DustOptions activeDust    = new Particle.DustOptions(Color.fromRGB(230, 230, 255), 1.6f);
+    private final Particle.DustOptions activeDust    = new Particle.DustOptions(Color.fromRGB(0, 0, 0), 2.4f);
 
     // Runtime
     private final List<Chain> chains = new ArrayList<>();
@@ -132,7 +132,6 @@ public class ShatteringChainsAbility {
                 if (active && damagePerHit > 0 && tick - lastDamageTick >= damageInterval) {
                     lastDamageTick = tick;
                     applyDamageBands(c);
-                    // subtle metal clink
                     if ((tick % 10) == 0) {
                         Utils.playGlobalSound(c, Sound.BLOCK_CHAIN_HIT, 200, 0.5f);
                     }

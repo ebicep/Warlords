@@ -2786,6 +2786,33 @@
           }
         }
       },
+      "skeletonEndPoisonousHex": {
+        "name": "Poisonous Hex",
+        "cooldown": 5.5,
+        "energyCost": 60,
+        "maxFullDistance": 40,
+        "hexStacksPerHit": 1,
+        "maxStacks": 3,
+        "tickDuration": 120,
+        "tickDurationDot": 120,
+        "ticksBetweenDot": 40,
+        "maxEnemiesHit": 2,
+        "projectileSpeed": 2.5,
+        "maxDistance": 40,
+        "hitTeammates": false,
+        "damageValues": {
+          "hexDamage": {
+            "min": 263,
+            "max": 356,
+            "critChance": 20,
+            "critMultiplier": 175
+          },
+          "hexDOTDamage": {
+            "min": 25,
+            "max": 35
+          }
+        }
+      },
       "soulOfGradientRemoveTarget": {
         "name": "Remove Target",
         "cooldown": 20,

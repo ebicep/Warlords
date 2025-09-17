@@ -211,12 +211,23 @@ public class LegendaryFlux extends AbstractLegendaryWeapon implements PassiveCou
         return LegendaryTitles.FLUX;
     }
 
-    @Override protected float getMeleeDamageMinValue() { return 140; }
-    @Override protected float getMeleeDamageMaxValue() { return 160; }
-    @Override protected float getCritChanceValue()     { return 20; }
-    @Override protected float getCritMultiplierValue() { return 160; }
-    @Override protected float getHealthBonusValue()    { return 1000; }
-    @Override protected float getSpeedBonusValue()     { return 7; }
+    @Override
+    protected float getMeleeDamageMinValue() { return 150; }
+    @Override
+    protected float getMeleeDamageMaxValue() { return 180; }
+    @Override
+    protected float getCritChanceValue()     { return 20; }
+    @Override
+    protected float getCritMultiplierValue() { return 160; }
+    @Override
+    protected float getHealthBonusValue()    { return 700; }
+    @Override
+    protected float getSpeedBonusValue()     { return 7; }
+
+    @Override
+    public float getSkillCritMultiplierBonus() {
+        return 20;
+    }
 
     @Override
     public int getCounter() {

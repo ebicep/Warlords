@@ -176,12 +176,28 @@ public class LegendaryMomentum extends AbstractLegendaryWeapon implements Passiv
         return LegendaryTitles.MOMENTUM;
     }
 
-    @Override protected float getMeleeDamageMinValue() { return 120; }
-    @Override protected float getMeleeDamageMaxValue() { return 180; }
-    @Override protected float getCritChanceValue()     { return 25; }
-    @Override protected float getCritMultiplierValue() { return 180; }
-    @Override protected float getHealthBonusValue()    { return 800; }
-    @Override protected float getSpeedBonusValue()     { return 20; }
+    @Override
+    protected float getMeleeDamageMinValue() { return 120; }
+    @Override
+    protected float getMeleeDamageMaxValue() { return 180; }
+    @Override
+    protected float getCritChanceValue()     { return 25; }
+    @Override
+    protected float getCritMultiplierValue() { return 180; }
+    @Override
+    protected float getHealthBonusValue()    { return 800; }
+    @Override
+    protected float getSpeedBonusValue()     { return 20; }
+
+    @Override
+    protected float getEnergyPerHitBonusValue() {
+        return 5;
+    }
+
+    @Override
+    public float getSkillCritChanceBonus() {
+        return 5;
+    }
 
     @Override
     public int getCounter() {

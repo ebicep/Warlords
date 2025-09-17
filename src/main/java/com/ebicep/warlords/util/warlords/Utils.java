@@ -479,6 +479,16 @@ public class Utils {
         private ItemStack leggings;
         private ItemStack boots;
         private ItemStack hand;
+        private ItemStack offHand;
+
+        public SimpleEntityEquipment(ItemStack helmet, ItemStack chestplate, ItemStack leggings, ItemStack boots, ItemStack hand, ItemStack offHand) {
+            this.helmet = helmet;
+            this.chestplate = chestplate;
+            this.leggings = leggings;
+            this.boots = boots;
+            this.hand = hand;
+            this.offHand = offHand;
+        }
 
         public SimpleEntityEquipment(ItemStack helmet, ItemStack chestplate, ItemStack leggings, ItemStack boots, ItemStack hand) {
             this.helmet = helmet;
@@ -527,12 +537,12 @@ public class Utils {
 
         @Override
         public @NotNull ItemStack getItemInOffHand() {
-            return null;
+            return offHand;
         }
 
         @Override
         public void setItemInOffHand(@org.jetbrains.annotations.Nullable ItemStack itemStack) {
-
+            this.offHand = itemStack;
         }
 
         @Override

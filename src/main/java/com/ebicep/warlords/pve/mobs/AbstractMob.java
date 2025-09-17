@@ -282,6 +282,7 @@ public abstract class AbstractMob implements Mob {
             return;
         }
         Equipment equipmentTrait = npc.getOrAddTrait(Equipment.class);
+        equipmentTrait.set(Equipment.EquipmentSlot.OFF_HAND, this.equipment.getItemInOffHand());
         equipmentTrait.set(Equipment.EquipmentSlot.HAND, this.equipment.getItemInMainHand());
         equipmentTrait.set(Equipment.EquipmentSlot.HELMET, this.equipment.getHelmet());
         equipmentTrait.set(Equipment.EquipmentSlot.CHESTPLATE, this.equipment.getChestplate());

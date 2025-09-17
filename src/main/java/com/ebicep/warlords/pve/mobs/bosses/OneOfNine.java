@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
+import com.ebicep.warlords.abilities.SoulShackle;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
@@ -124,8 +125,8 @@ public class OneOfNine extends AbstractMob implements BossMob {
         EffectUtils.strikeLightningInCylinder(warlordsNPC.getLocation(), 10, false);
         Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ITEM_GOAT_HORN_SOUND_6, 10, 0.5f);
 
-        swordManager = new OrbitingSwordsManager(() -> warlordsNPC.getLocation(), 6, 2, 3, 4, option, warlordsNPC);
-        centerSwordManager = new OrbitingSwordsManager(() -> mapCenter, 25, 30, 1, 30, option, warlordsNPC);
+        swordManager = new OrbitingSwordsManager(() -> warlordsNPC.getLocation(), 6, 2, 3, 4, option, warlordsNPC, Material.NETHERITE_SWORD);
+        centerSwordManager = new OrbitingSwordsManager(() -> mapCenter, 25, 30, 1, 30, option, warlordsNPC, Material.NETHERITE_SWORD);
 
         damageController = new DamagePhaseController(warlordsNPC);
 
@@ -152,13 +153,13 @@ public class OneOfNine extends AbstractMob implements BossMob {
                 warlordsNPC,
                 () -> mapCenter,
                 32,
-                3 * option.playerCount(),
+                2 * option.playerCount(),
                 40,
                 6,
                 3000,
                 0.5,
                 false,
-                1,
+                1.5,
                 4,
                 0,
                 0
@@ -216,15 +217,15 @@ public class OneOfNine extends AbstractMob implements BossMob {
                 if (damageController.isInDamageWindow()) {
                     return currentDamageValue * 1.2f;
                 }
-                event.getSource().addInstance(InstanceBuilder
-                        .damage()
-                        .source(warlordsNPC)
-                        .cause("Greed")
-                        .value(currentDamageValue)
-                        .flags(InstanceFlags.RECURSIVE, InstanceFlags.IGNORE_DAMAGE_BOOST)
-                );
-                event.getSource().sendMessage(Component.text("Your divine punishment awaits if you keep giving in to your greed...", NamedTextColor.RED));
-                event.setCancelled(true);
+                    event.getSource().addInstance(InstanceBuilder
+                            .damage()
+                            .source(warlordsNPC)
+                            .cause("Greed")
+                            .value(currentDamageValue * (event.getFlags().contains(InstanceFlags.DOT) ? 0.5f : 1))
+                            .flags(InstanceFlags.RECURSIVE, InstanceFlags.IGNORE_DAMAGE_BOOST)
+                    );
+                    event.getSource().sendMessage(Component.text("Your divine punishment awaits if you keep giving in to your greed...", NamedTextColor.RED));
+                    event.setCancelled(true);
                 return currentDamageValue;
             }
         });
@@ -342,7 +343,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
                     }
 
                     // floor death ray
-                    angle += Math.toRadians(5);
+                    angle += Math.toRadians(4);
                     Vector dir = new Vector(Math.cos(angle), 0, Math.sin(angle));
                     castDeathRay(mapCenter.clone().add(0, -2, 0), dir, 35, warlordsNPC);
 
@@ -471,7 +472,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
                         laserBarrageRight.start(playerList);
                     }
 
-                    if (counter % 240 == 0) {
+                    if (counter % 300 == 0) {
                         for (int i = 0; i < option.playerCount(); i++) {
                             option.spawnNewMob(new RiftWalker(option.getRandomSpawnLocation(warlordsNPC)));
                         }
@@ -596,6 +597,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
+        warlordsNPC.getCooldownManager().removeCooldown(SoulShackle.class, false);
         if (ticksElapsed % 20 == 0) {
             EffectUtils.playCrownAnimation(warlordsNPC.getLocation(), Particle.END_ROD);
             new CircleEffect(

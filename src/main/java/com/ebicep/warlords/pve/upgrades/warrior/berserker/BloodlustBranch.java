@@ -48,7 +48,7 @@ public class BloodlustBranch extends AbstractUpgradeBranch<BloodLust> {
                 "Blood Thirsty",
                 "Blood Lust - Master Upgrade",
                 """
-                        While Bloodlust is active, each strike hits again for 20% of the original damage (Additional strikes don't heal with Bloodlust) and enemies affected by BLEED take 30% more damage.
+                        While Bloodlust is active, each strike hits again for 35% of the original damage (Additional strikes don't heal with Bloodlust) and enemies affected by BLEED take 30% more damage.
                         """,
                 50000,
                 () -> {

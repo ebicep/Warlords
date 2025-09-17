@@ -179,7 +179,7 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon implements PassiveC
 
     @Override
     public int getCounter() {
-        return (meleeCounter % 5);
+        return (meleeCounter % 4);
     }
 
     @Override

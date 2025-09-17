@@ -28,7 +28,7 @@ public class LegendaryOracle extends AbstractLegendaryWeapon implements PassiveC
     public static final int MAX_CLARITY_INC_PER_LEVEL = 2;
     public static final int HEAL_PER_STACK_PERCENT = 2;
     public static final float CDR_PER_STACK_SECONDS = 0.25f;
-    public static final float CDR_PER_STACK_INC_PER_LEVEL = 0.02f;
+    public static final float CDR_PER_STACK_INC_PER_LEVEL = 0.05f;
 
     @Transient
     private int clarity = 0;
@@ -168,6 +168,16 @@ public class LegendaryOracle extends AbstractLegendaryWeapon implements PassiveC
     @Override
     protected float getEnergyPerSecondBonusValue() {
         return 7;
+    }
+
+    @Override
+    protected float getSkillCritChanceBonusValue() {
+        return 6;
+    }
+
+    @Override
+    protected float getSkillCritMultiplierBonusValue() {
+        return 8;
     }
 
     @Override

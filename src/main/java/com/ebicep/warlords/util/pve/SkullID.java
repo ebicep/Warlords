@@ -180,7 +180,17 @@ public enum SkullID implements Skull {
     //https://minecraft-heads.com/custom-heads/head/118928-blackstone-golem
     OBSIDIAN_SENTINEL("NzgwN2ZiMTk5ZjQyYjc5NWNjOWZmYzExODdkNGI1YjU0MmE4ZmEzNmQ4NTkwODQ2MWZhNWNkZTc4MzIwY2QxZiJ9fX0="),
     //https://minecraft-heads.com/custom-heads/head/19520-mummy
-    MUMMY("ZjQ3OWYwMDdiZWVhZjU2YWZkNWI4YWUxNjc4ZTJlMDliZGZlOTIwMzA0NTc0Njk1ZWFiZjE5MGE1NTJhODg0YSJ9fX0=")
+    MUMMY("ZjQ3OWYwMDdiZWVhZjU2YWZkNWI4YWUxNjc4ZTJlMDliZGZlOTIwMzA0NTc0Njk1ZWFiZjE5MGE1NTJhODg0YSJ9fX0="),
+    //https://minecraft-heads.com/custom-heads/head/120107-sculk-enderman
+    SCULK_ENDERMAN("NDA3YWRlODJkMmMwNzVlMzg0ODJjNDgwNzA2MTk2M2ZjMjc0OTZiZmQzNzliYjE3ZjRiZTZmNjJjM2FlYmY2MiJ9fX0="),
+    // https://minecraft-heads.com/custom-heads/head/94314-enderman
+    BLOCK_ENDERMAN("NmJhODAxMjg4NmIxYWY3YTVjNDdlZTY4MmIxMjIzZGNmMjZlNDI0MDQ3MzI2Y2Y5N2RmNzRmYTA1NzE4ZjA0In19fQ=="),
+    //https://minecraft-heads.com/custom-heads/head/117324-ender-redstone-lamp
+    END_REDSTONE_LAMP("MmMzNjc4NzNlMjQ5OWVkNjBkYzJjYmM2MGM3ZmQ3MzkyMmVmNGM3ZjcyMTdiMmQ4ZTk2ZDIzMTg0M2RjOTFlYSJ9fX0="),
+    //https://minecraft-heads.com/custom-heads/head/117324-ender-redstone-lamp
+    END_ZOMBIE("NmQxZWMyZGMwNjMzNWRlNzdkNzFlMGM5ZTBhZmM5NTkxNGMzZTM0NGQwNmEwOWY4MGUxN2EwNmRlNjAxNzRmNCJ9fX0="),
+    // https://minecraft-heads.com/custom-heads/head/122326-knight
+    SILVER_KNIGHT("YmEwMmE1MDY1Yjk0MmIxMzY1NjY3OGI5MmZmN2VkMjQ2ZGIwNjNmOTc5N2QyNDU4NDdjZGMzOTVmOTAyMGMzYiJ9fX0=")
 
     ;
 

@@ -57,6 +57,14 @@ public class PoisonousHex extends AbstractPiercingProjectile<PoisonousHex, Poiso
         this.hitboxInflation.setBaseValue(hitboxInflation.getBaseValue() + .4f);
     }
 
+    public PoisonousHex(AbstractAbilityBuilder builder) {
+        super(builder);
+        this.shotsFiredAtATime = 2;
+        this.setMaxAngleOfShots(26);
+        this.forwardTeleportAmount = 1.6f;
+        this.hitboxInflation.setBaseValue(hitboxInflation.getBaseValue() + .4f);
+    }
+
     @Override
     public void updateDescription(Player player) {
         boolean infiniteHit = maxEnemiesHit >= 200;

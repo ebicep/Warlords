@@ -192,6 +192,11 @@ public class LegendaryConduit extends AbstractLegendaryWeapon implements Passive
     protected float getSpeedBonusValue()     { return 6; }
 
     @Override
+    public float getSkillCritMultiplierBonus() {
+        return 10;
+    }
+
+    @Override
     public int getCounter() {
         return 0;
     }

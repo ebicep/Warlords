@@ -26,6 +26,7 @@ public class OrbitingSwordsManager {
     private final Vector3f scale;
     private final PveOption option;
     private final WarlordsEntity entity;
+    private final Material orbitMaterial;
 
     private final List<ItemDisplay> swords = new ArrayList<>();
     private final List<Float> angleOffsets = new ArrayList<>();
@@ -39,7 +40,7 @@ public class OrbitingSwordsManager {
             double height,
             float orbitSpeedDegPerTick,
             float scaleFactor, PveOption option,
-            WarlordsEntity entity
+            WarlordsEntity entity, Material orbitMaterial
     ) {
         this.centerSupplier = centerSupplier;
         this.radius = radius;
@@ -48,6 +49,7 @@ public class OrbitingSwordsManager {
         this.scale = new Vector3f(scaleFactor, scaleFactor, scaleFactor);
         this.option = option;
         this.entity = entity;
+        this.orbitMaterial = orbitMaterial;
     }
 
     public void start() {
@@ -75,7 +77,7 @@ public class OrbitingSwordsManager {
         for (int i = 0; i < count; i++) {
             float offset = i * (360f / count);
             ItemDisplay d = w.spawn(center.clone().add(0, height, 0), ItemDisplay.class, disp -> {
-                disp.setItemStack(new ItemStack(Material.NETHERITE_SWORD));
+                disp.setItemStack(new ItemStack(orbitMaterial));
                 disp.setBillboard(Display.Billboard.FIXED);
                 disp.setInterpolationDuration(0);
                 disp.setTransformation(new Transformation(

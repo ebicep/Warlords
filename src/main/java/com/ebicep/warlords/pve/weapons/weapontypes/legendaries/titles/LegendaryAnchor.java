@@ -25,8 +25,8 @@ public class LegendaryAnchor extends AbstractLegendaryWeapon implements PassiveC
     public static final int STATIONARY_START_TICKS = 20;
     public static final int FORTIFY_GAIN_INTERVAL_TICKS = 10;
 
-    public static final float DR_PER_STACK_PERCENT = 5f;
-    public static final float DR_PER_STACK_INC_PER_LEVEL = 0.9f;
+    public static final float DR_PER_STACK_PERCENT = 4f;
+    public static final float DR_PER_STACK_INC_PER_LEVEL = 0.5f;
 
     public static final int KB_RESIST_PER_STACK_PERCENT = 10;
 
@@ -36,11 +36,16 @@ public class LegendaryAnchor extends AbstractLegendaryWeapon implements PassiveC
 
     public static final double MOVE_EPSILON_SQ = 0.01;
 
-    @Transient private int stacks = 0;
-    @Transient private int stationaryTicks = 0;
-    @Transient private int gainCountdown = FORTIFY_GAIN_INTERVAL_TICKS;
-    @Transient private Location lastLoc = null;
-    @Transient private boolean wasStationary = false;
+    @Transient
+    private int stacks = 0;
+    @Transient
+    private int stationaryTicks = 0;
+    @Transient
+    private int gainCountdown = FORTIFY_GAIN_INTERVAL_TICKS;
+    @Transient
+    private Location lastLoc = null;
+    @Transient
+    private boolean wasStationary = false;
 
     public LegendaryAnchor() {
 
@@ -56,22 +61,17 @@ public class LegendaryAnchor extends AbstractLegendaryWeapon implements PassiveC
                 .append(Component.text("seconds. Fortify stacks grant you ", NamedTextColor.GRAY))
                 .append(formatTitleUpgrade(getDrPerStack(), "%"))
                 .append(Component.text(" damage reduction and " + KB_RESIST_PER_STACK_PERCENT + "%", NamedTextColor.GRAY))
-                .append(Component.text(" knockback resistance per stack, up to ", NamedTextColor.GRAY))
-                .append(formatTitleUpgrade(getMaxStacks()))
+                .append(Component.text(" knockback resistance per stack, up to " + BASE_MAX_STACKS, NamedTextColor.GRAY))
                 .append(Component.text(" stacks. Moving consumes all stacks to heal " + HEAL_PER_STACK_PERCENT + "%", NamedTextColor.GRAY))
                 .append(Component.text(" of your max health per stack.", NamedTextColor.GRAY));
     }
 
     @Override
     public List<Pair<Component, Component>> getPassiveEffectUpgrade() {
-        return Arrays.asList(
+        return List.of(
                 new Pair<>(
                         formatTitleUpgrade(DR_PER_STACK_PERCENT + DR_PER_STACK_INC_PER_LEVEL * getTitleLevel(), "%"),
                         formatTitleUpgrade(DR_PER_STACK_PERCENT + DR_PER_STACK_INC_PER_LEVEL * getTitleLevelUpgraded(), "%")
-                ),
-                new Pair<>(
-                        formatTitleUpgrade(getMaxStacksAtLevel(getTitleLevel())),
-                        formatTitleUpgrade(getMaxStacksAtLevel(getTitleLevelUpgraded()))
                 )
         );
     }
@@ -187,7 +187,6 @@ public class LegendaryAnchor extends AbstractLegendaryWeapon implements PassiveC
 
     @Override
     protected float getHealthBonusValue() { return 1200; }
-
 
     @Override
     public int getCounter() {

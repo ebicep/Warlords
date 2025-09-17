@@ -10,6 +10,7 @@ import com.ebicep.warlords.pve.mobs.bosses.Void;
 import com.ebicep.warlords.pve.mobs.bosses.*;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.*;
 import com.ebicep.warlords.pve.mobs.creeper.CreepyBomber;
+import com.ebicep.warlords.pve.mobs.enderman.EndermanAnomaly;
 import com.ebicep.warlords.pve.mobs.events.baneofimpurities.EventCalamityCore;
 import com.ebicep.warlords.pve.mobs.events.baneofimpurities.EventExiledCore;
 import com.ebicep.warlords.pve.mobs.events.baneofimpurities.EventIllumina;
@@ -371,7 +372,6 @@ public enum Mob {
     ),
     OBSIDIAN_SENTINEL(EntityType.WITHER_SKELETON, ObsidianSentinel.class, ObsidianSentinel::new, ObsidianSentinel::new,
             new Utils.SimpleEntityEquipment(
-                    // Add this to SkullID and point it to: https://minecraft-heads.com/custom-heads/head/118928-blackstone-golem
                     SkullUtils.getSkullFrom(SkullID.OBSIDIAN_SENTINEL),
                     Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 20, 15, 30), // deep obsidian tint
                     Utils.applyColorTo(Material.LEATHER_LEGGINGS, 20, 15, 30),
@@ -381,13 +381,37 @@ public enum Mob {
     ),
     SANDSTRIDER_WRAITH(EntityType.HUSK, SandstriderWraith.class, SandstriderWraith::new, SandstriderWraith::new,
             new Utils.SimpleEntityEquipment(
-                    // Add this to SkullID with the mummy texture
                     SkullUtils.getSkullFrom(SkullID.MUMMY),
-                    Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 194, 178, 128), // sand beige
+                    Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 194, 178, 128),
                     Utils.applyColorTo(Material.LEATHER_LEGGINGS, 194, 178, 128),
-                    Utils.applyColorTo(Material.LEATHER_BOOTS, 120, 90, 50), // dune brown
-                    new ItemStack(Material.GOLDEN_HOE) // curved khopesh look
+                    Utils.applyColorTo(Material.LEATHER_BOOTS, 120, 90, 50),
+                    new ItemStack(Material.GOLDEN_HOE)
             )
+    ),
+    ZOMBIE_END(EntityType.STRAY, ZombieEnd.class, ZombieEnd::new, ZombieEnd::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.BLOCK_ENDERMAN),
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 255, 255),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 255, 255, 255),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 255, 255, 255),
+            Weapons.SOUL_REAVER.getItem()
+    )
+    ),
+    ENDERMAN_ANOMALY(EntityType.ENDERMAN, EndermanAnomaly.class, EndermanAnomaly::new, EndermanAnomaly::new, null),
+    ZOMBIE_WARPED(EntityType.STRAY, ZombieWarped.class, ZombieWarped::new, ZombieWarped::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.SCULK_ENDERMAN),
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 255, 255),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 255, 255, 255),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 255, 255, 255),
+            Weapons.VORPAL_SWORD.getItem()
+    )
+    ),
+    SKELETON_END(EntityType.WITHER_SKELETON, SkeletonEnd.class, SkeletonEnd::new, SkeletonEnd::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.END_REDSTONE_LAMP),
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 255, 255),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 255, 255, 255),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 255, 255, 255),
+            Weapons.FABLED_HEROICS_SCYTHE.getItem()
+    )
     ),
 
 
@@ -481,12 +505,13 @@ public enum Mob {
             Weapons.FROSTBITE.getItem()
     )
     ),
-    VEILKEEPER(EntityType.STRAY, Veilkeeper.class, Veilkeeper::new, Veilkeeper::new, new Utils.SimpleEntityEquipment(
-            SkullUtils.getSkullFrom(SkullID.MUMMY),
+    VEILKEEPER(EntityType.WITHER_SKELETON, Veilkeeper.class, Veilkeeper::new, Veilkeeper::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.SILVER_KNIGHT),
             new ItemStack(Material.NETHERITE_CHESTPLATE),
             new ItemStack(Material.NETHERITE_LEGGINGS),
             new ItemStack(Material.NETHERITE_BOOTS),
-            Weapons.FELFLAME_BLADE.getItem()
+            Weapons.FELFLAME_BLADE.getItem(),
+            new ItemStack(Material.SHIELD)
     )
     ),
     VANGUARD(EntityType.WITHER_SKELETON, Vanguard.class, Vanguard::new, Vanguard::new, new Utils.SimpleEntityEquipment(
@@ -625,6 +650,7 @@ public enum Mob {
     )
     ),
     NINE_CRYSTAL(EntityType.BREEZE, NineCrystal.class, NineCrystal::new, NineCrystal::new, null),
+    SKY_CRYSTAL(EntityType.END_CRYSTAL, SkyCrystal.class, SkyCrystal::new, SkyCrystal::new, null),
     ARACHNO_VENERATUS(EntityType.SPIDER, ArachnoVeneratus.class, ArachnoVeneratus::new, ArachnoVeneratus::new, null),
     CURSED_PSION(EntityType.WITHER_SKELETON, CursedPsion.class, CursedPsion::new, CursedPsion::new, null),
     ENAVURITE(EntityType.ENDERMITE, Enavurite.class, Enavurite::new, Enavurite::new, null),

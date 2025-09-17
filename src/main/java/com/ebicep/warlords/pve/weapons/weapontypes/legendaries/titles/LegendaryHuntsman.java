@@ -214,7 +214,7 @@ public class LegendaryHuntsman extends AbstractLegendaryWeapon implements Passiv
 
     @Override
     protected float getSkillCritChanceBonusValue() {
-        return 5;
+        return 10;
     }
 
     @Override

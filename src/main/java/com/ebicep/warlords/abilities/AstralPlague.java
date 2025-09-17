@@ -67,6 +67,7 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
         } else {
             modifiers = Collections.emptyList();
         }
+        wp.getCooldownManager().removeCooldown(AstralPlague.class, false);
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "ASTRAL", AstralPlague.class, new AstralPlague(), wp, CooldownTypes.ABILITY, cooldownManager -> {
         }, cooldownManager -> {
             modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);

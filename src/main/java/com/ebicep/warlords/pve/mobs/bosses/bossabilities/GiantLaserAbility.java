@@ -177,7 +177,7 @@ public class GiantLaserAbility {
         // Broad-phase query once (AABB around the whole segment)
         double r = len + 1.0;
         for (WarlordsEntity enemy : PlayerFilter
-                .entitiesAround(origin, r, verticalHalf, r)
+                .entitiesAround(origin, r + 0.2, verticalHalf, r + 0.2)
                 .aliveEnemiesOf(caster)
         ) {
             Location p = enemy.getLocation();

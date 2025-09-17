@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
+import com.ebicep.warlords.abilities.SoulShackle;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
@@ -152,7 +153,7 @@ public class Orbyz extends AbstractMob implements BossMob {
                 warlordsNPC,
                 () -> mapCenter,
                 1,
-                32,
+                30,
                 4,
                 true,
                 1.5,
@@ -180,7 +181,7 @@ public class Orbyz extends AbstractMob implements BossMob {
                             DamageCheck.class,
                             DamageCheck.DAMAGE_CHECK,
                             warlordsEntity,
-                            CooldownTypes.ABILITY,
+                            CooldownTypes.BUFF,
                             cooldownManager -> {
                             },
                             15 * 20,
@@ -335,6 +336,7 @@ public class Orbyz extends AbstractMob implements BossMob {
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
+        warlordsNPC.getCooldownManager().removeCooldown(SoulShackle.class, false);
         if (ticksElapsed % 20 == 0) {
             EffectUtils.playCrownAnimation(warlordsNPC.getLocation(), Particle.SNOWFLAKE);
             for (WarlordsEntity enemy : PlayerFilter

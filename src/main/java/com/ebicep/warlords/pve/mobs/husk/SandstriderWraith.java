@@ -5,21 +5,22 @@ import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.pve.mobs.tiers.EliteMob;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 
-public class SandstriderWraith extends AbstractMob implements BossMinionMob {
+public class SandstriderWraith extends AbstractMob implements EliteMob {
 
     public SandstriderWraith(Location spawnLocation) {
         super(
                 spawnLocation,
                 "Sandstrider Wraith",
-                3000,   // max health (skirmisher tier)
-                0.24f,  // walk speed (faster than brute)
-                10,     // damage resistance
-                260,    // min melee damage
-                380     // max melee damage
+                10000,
+                0.32f,
+                10,
+                260,
+                380
         );
     }
 
@@ -30,7 +31,6 @@ public class SandstriderWraith extends AbstractMob implements BossMinionMob {
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
-        // Dusty spawn effect — light sand-colored flash
         EffectUtils.playFirework(warlordsNPC.getLocation(), FireworkEffect.builder()
                 .withColor(Color.fromRGB(210, 195, 140))
                 .with(FireworkEffect.Type.BALL)
