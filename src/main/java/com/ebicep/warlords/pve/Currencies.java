@@ -24,7 +24,7 @@ public enum Currencies implements Spendable {
     SYNTHETIC_SHARD(
             "Synthetic Shard",
             NamedTextColor.WHITE,
-            new ItemStack(Material.GRAY_STAINED_GLASS)
+            new ItemStack(Material.AMETHYST_SHARD)
     ),
     LEGEND_FRAGMENTS(
             "Legend Fragment",

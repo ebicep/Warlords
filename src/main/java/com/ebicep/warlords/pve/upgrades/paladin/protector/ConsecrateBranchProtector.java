@@ -15,7 +15,7 @@ public class ConsecrateBranchProtector extends AbstractConsecrateBranch<Consecra
                 "Consecrate - Master Upgrade",
                 """
                         Transform consecrate into a mobile ring that travels with you, damaging nearby enemies every 1.5s in a 5 block radius.
-                        Every enemy hit will reduce the cooldown of Hammer of Light by 0.1s.
+                        Every enemy hit will reduce the cooldown of Hammer of Light by 0.25s.
                         """,
                 50000,
                 () -> {

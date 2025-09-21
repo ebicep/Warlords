@@ -190,7 +190,15 @@ public enum SkullID implements Skull {
     //https://minecraft-heads.com/custom-heads/head/117324-ender-redstone-lamp
     END_ZOMBIE("NmQxZWMyZGMwNjMzNWRlNzdkNzFlMGM5ZTBhZmM5NTkxNGMzZTM0NGQwNmEwOWY4MGUxN2EwNmRlNjAxNzRmNCJ9fX0="),
     // https://minecraft-heads.com/custom-heads/head/122326-knight
-    SILVER_KNIGHT("YmEwMmE1MDY1Yjk0MmIxMzY1NjY3OGI5MmZmN2VkMjQ2ZGIwNjNmOTc5N2QyNDU4NDdjZGMzOTVmOTAyMGMzYiJ9fX0=")
+    SILVER_KNIGHT("YmEwMmE1MDY1Yjk0MmIxMzY1NjY3OGI5MmZmN2VkMjQ2ZGIwNjNmOTc5N2QyNDU4NDdjZGMzOTVmOTAyMGMzYiJ9fX0="),
+    // https://minecraft-heads.com/custom-heads/head/40499-stone-orb-pink
+    STONE_ORB_PINK("N2UwNTczNDgxOGJiMDI4NjdlNzNjZjhmYjAwM2QzZDY4ZWFhZjJhMmI0YTFkYzJjZTEwZmRlYTk3MmM3YTE3OSJ9fX0="),
+    // https://minecraft-heads.com/custom-heads/head/21359-lantern-pink
+    LANTERN_PINK("ZjM3MTIzZTVkODNjN2RiMmM0ODkxNjYxNmY0YzkyNDM4NDQ0YWI2MjZlMmFmY2RiMzViYTA1ZGQ5NWFlZGQ2NiJ9fX0="),
+    // https://minecraft-heads.com/custom-heads/head/118088-girl-with-pink-scarf
+    LILIUM_HAT("ZjA2ZTJhMjcwMmZiMzM1OWY4YTZiYjA3YmE3Yzk5MzFiOTU2Y2ZjODc1MWUyYzc1ODFhZjhkMmE1MmNiZTY3OSJ9fX0="),
+    // https://minecraft-heads.com/custom-heads/head/119823-pink-metal
+    PINK_METAL("MmM3ZjI4ZTY4MmNkNTA0ZmU0NWI1M2VjNWMyYmNmZGZiMjBjYmJkMTg5M2E5NzRiYThiOTI4ZTMwNGM0NjQxMyJ9fX0=")
 
     ;
 

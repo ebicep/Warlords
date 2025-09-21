@@ -25,9 +25,9 @@ import java.util.List;
 public class Veilkeeper extends AbstractMob implements BossMob {
 
     private Location mapCenter;
-    private OrbitingSwordsManager oribitingItemManager;
-    private OrbitingSwordsManager oribitingItemManagerUp;
-    private OrbitingSwordsManager oribitingItemManagerFloating;
+    private OrbitingItemManager oribitingItemManager;
+    private OrbitingItemManager oribitingItemManagerUp;
+    private OrbitingItemManager oribitingItemManagerFloating;
     private PairedSequenceAbility pairedSequenceAbility;
     private ShatteringChainsAbility fallingShatterChainsOne;
 
@@ -51,9 +51,9 @@ public class Veilkeeper extends AbstractMob implements BossMob {
     public Veilkeeper(Location spawnLocation) {
         super(spawnLocation,
                 "Veilkeeper",
-                10000,
+                350000,
                 0,
-                50,
+                30,
                 1200,
                 2000
         );
@@ -85,9 +85,9 @@ public class Veilkeeper extends AbstractMob implements BossMob {
 
         mapCenter = new Location(warlordsNPC.getWorld(), 112.5, 11, 62.5);
 
-        oribitingItemManager = new OrbitingSwordsManager(() -> warlordsNPC.getLocation(), 4, 1, 6, 2, option, warlordsNPC, Material.CRIMSON_ROOTS);
-        oribitingItemManagerUp = new OrbitingSwordsManager(() -> warlordsNPC.getLocation(), 4, 3, 6, 2, option, warlordsNPC, Material.CRIMSON_ROOTS);
-        oribitingItemManagerFloating = new OrbitingSwordsManager(() -> warlordsNPC.getLocation(), 33, 3, 1, 15, option, warlordsNPC, Material.FROGSPAWN);
+        oribitingItemManager = new OrbitingItemManager(() -> warlordsNPC.getLocation(), 4, 1, 6, 2, option, warlordsNPC, Material.CRIMSON_ROOTS);
+        oribitingItemManagerUp = new OrbitingItemManager(() -> warlordsNPC.getLocation(), 4, 3, 6, 2, option, warlordsNPC, Material.CRIMSON_ROOTS);
+        oribitingItemManagerFloating = new OrbitingItemManager(() -> warlordsNPC.getLocation(), 33, 3, 1, 15, option, warlordsNPC, Material.FROGSPAWN);
 
         oribitingItemManager.spawnSwords(12);
         oribitingItemManagerUp.spawnSwords(12);

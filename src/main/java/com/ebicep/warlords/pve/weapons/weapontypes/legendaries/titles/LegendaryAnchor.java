@@ -25,7 +25,7 @@ public class LegendaryAnchor extends AbstractLegendaryWeapon implements PassiveC
     public static final int STATIONARY_START_TICKS = 20;
     public static final int FORTIFY_GAIN_INTERVAL_TICKS = 10;
 
-    public static final float DR_PER_STACK_PERCENT = 4f;
+    public static final float DR_PER_STACK_PERCENT = 3f;
     public static final float DR_PER_STACK_INC_PER_LEVEL = 0.5f;
 
     public static final int KB_RESIST_PER_STACK_PERCENT = 10;

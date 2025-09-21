@@ -8,6 +8,7 @@ import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
+import net.minecraft.world.item.equipment.ArmorType;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
@@ -15,7 +16,11 @@ import org.bukkit.entity.*;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ArmorMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.inventory.meta.trim.ArmorTrim;
+import org.bukkit.inventory.meta.trim.TrimMaterial;
+import org.bukkit.inventory.meta.trim.TrimPattern;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
@@ -318,6 +323,24 @@ public class Utils {
         LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) itemStack.getItemMeta();
         leatherArmorMeta.setColor(Color.fromRGB(red, green, blue));
         itemStack.setItemMeta(leatherArmorMeta);
+        return itemStack;
+    }
+
+    public static ItemStack applyColorTo(@Nonnull Material armor, int red, int green, int blue, TrimMaterial material, TrimPattern pattern) {
+        ItemStack itemStack = new ItemStack(armor);
+        ArmorMeta armorMeta = (ArmorMeta) itemStack.getItemMeta();
+        armorMeta.setTrim(new ArmorTrim(material, pattern));
+        LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) itemStack.getItemMeta();
+        leatherArmorMeta.setColor(Color.fromRGB(red, green, blue));
+        itemStack.setItemMeta(leatherArmorMeta);
+
+        return itemStack;
+    }
+
+    public static ItemStack applyTrimTo(@Nonnull Material armor, TrimMaterial material, TrimPattern pattern) {
+        ItemStack itemStack = new ItemStack(armor);
+        ArmorMeta armorMeta = (ArmorMeta) itemStack.getItemMeta();
+        armorMeta.setTrim(new ArmorTrim(material, pattern));
         return itemStack;
     }
 

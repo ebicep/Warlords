@@ -88,6 +88,7 @@ public class NarmersDeathCharge extends AbstractMob implements BossMinionMob, No
             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_CREEPER_HURT, 2, 1);
         }
         List<WarlordsEntity> warlordsEntities = PlayerFilter.entitiesAround(warlordsNPC, 2.5, 2, 2.5)
+                                                            .aliveEnemiesOf(warlordsNPC)
                                                             .excluding(warlordsNPC)
                                                             .filter(warlordsEntity -> {
                                                                 if (!(warlordsEntity instanceof WarlordsNPC wNPC)) {

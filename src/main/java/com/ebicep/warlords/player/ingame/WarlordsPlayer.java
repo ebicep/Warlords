@@ -22,6 +22,7 @@ import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
@@ -401,6 +402,14 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
         }
         updateInventory(true);
         queueUpdateTabName();
+    }
+
+    @Override
+    public void runEverySecond() {
+        super.runEverySecond();
+        if (this.getWeapon() instanceof AbstractLegendaryWeapon) {
+            ((AbstractLegendaryWeapon) this.getWeapon()).updateAbilityItem(this, (Player) this.getEntity());
+        }
     }
 
     @Override

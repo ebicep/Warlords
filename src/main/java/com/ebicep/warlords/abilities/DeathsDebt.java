@@ -238,7 +238,7 @@ public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<
         description = AbilityDescriptionBuilder.create("Spirits’ Respite", NamedTextColor.DARK_AQUA)
                                                .text(": Place down a totem that delays ")
                                                .percent(100, AbilityDescriptionBuilder.COLOR_BROWN)
-                                               .text(" of incoming damage towards yourself " + (inPve ? " and takes aggro of nearby mobs" + "." : ".") + "Transforms into ")
+                                               .text(" of incoming damage towards yourself " + (inPve ? " and takes aggro of nearby mobs" + "." : ".") + " Transforms into ")
                                                .text("Death’s Debt ", NamedTextColor.LIGHT_PURPLE)
                                                .text("after ")
                                                .append(formatRange(tickDuration / 20f, (tickDuration / 20f + 2), NamedTextColor.GOLD))

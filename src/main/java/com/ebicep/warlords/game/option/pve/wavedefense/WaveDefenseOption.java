@@ -296,7 +296,7 @@ public class WaveDefenseOption implements PveOption {
         currentWave = waves.getWave(waveCounter, new Random());
         spawnCount = currentWave.getMonsterCount();
         int spawns = spawnCount;
-        spawns *= (int) getSpawnCountMultiplier((int) game.warlordsPlayers().count());
+        spawns *= getSpawnCountMultiplier(playerCount());
 
         for (Map.Entry<Player, Team> entry : iterable(game.onlinePlayers())) {
             if (currentWave.getMessage() != null) {
@@ -389,7 +389,7 @@ public class WaveDefenseOption implements PveOption {
         }
 
         if (currentWave.getMessage() == null) {
-            spawnCount *= getSpawnCountMultiplier((int) game.warlordsPlayers().count());
+            spawnCount *= getSpawnCountMultiplier(playerCount());
         }
 
         int spawnTickPeriod = currentWave.getSpawnTickPeriod();

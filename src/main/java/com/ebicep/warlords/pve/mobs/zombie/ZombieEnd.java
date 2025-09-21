@@ -7,8 +7,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
-import com.ebicep.warlords.pve.mobs.bosses.bossabilities.OrbitingSwordsManager;
-import com.ebicep.warlords.pve.mobs.tiers.AdvancedMob;
+import com.ebicep.warlords.pve.mobs.bosses.bossabilities.OrbitingItemManager;
 import com.ebicep.warlords.pve.mobs.tiers.ChampionMob;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -18,7 +17,7 @@ import javax.annotation.Nonnull;
 
 public class ZombieEnd extends AbstractMob implements ChampionMob {
 
-    private OrbitingSwordsManager orbitingSwordsManager;
+    private OrbitingItemManager orbitingItemManager;
 
     public ZombieEnd(Location spawnLocation) {
         super(
@@ -60,10 +59,10 @@ public class ZombieEnd extends AbstractMob implements ChampionMob {
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
-        orbitingSwordsManager = new OrbitingSwordsManager(() -> warlordsNPC.getLocation(), 3, 2, 1, 1.5f, option, warlordsNPC, Material.END_CRYSTAL);
+        orbitingItemManager = new OrbitingItemManager(() -> warlordsNPC.getLocation(), 3, 2, 1, 1.5f, option, warlordsNPC, Material.END_CRYSTAL);
 
-        orbitingSwordsManager.spawnSwords(3);
-        orbitingSwordsManager.start();
+        orbitingItemManager.spawnSwords(3);
+        orbitingItemManager.start();
 
         EffectUtils.playFirework(
                 warlordsNPC.getLocation(),
@@ -102,6 +101,11 @@ public class ZombieEnd extends AbstractMob implements ChampionMob {
     public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         super.onDeath(killer, deathLocation, option);
         Utils.playGlobalSound(deathLocation, Sound.ENTITY_ENDERMAN_SCREAM, 2, 0.4f);
-        orbitingSwordsManager.stop();
+        orbitingItemManager.stop();
+    }
+
+    @Override
+    public void cleanup(PveOption pveOption) {
+        orbitingItemManager.stop();
     }
 }

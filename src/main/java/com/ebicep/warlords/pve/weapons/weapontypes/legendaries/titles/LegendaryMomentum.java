@@ -195,7 +195,7 @@ public class LegendaryMomentum extends AbstractLegendaryWeapon implements Passiv
     }
 
     @Override
-    public float getSkillCritChanceBonus() {
+    public float getSkillCritChanceBonusValue() {
         return 5;
     }
 

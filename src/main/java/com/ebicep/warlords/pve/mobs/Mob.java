@@ -61,6 +61,8 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.trim.TrimMaterial;
+import org.bukkit.inventory.meta.trim.TrimPattern;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -512,6 +514,15 @@ public enum Mob {
             new ItemStack(Material.NETHERITE_BOOTS),
             Weapons.FELFLAME_BLADE.getItem(),
             new ItemStack(Material.SHIELD)
+    )
+    ),
+    LILIUM(EntityType.WITHER_SKELETON, Lilium.class, Lilium::new, Lilium::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.LILIUM_HAT),
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 192, 203),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 255, 192, 203),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 255, 192, 203),
+            Weapons.SILVER_PHANTASM_SWORD_4.getItem(),
+            Weapons.SILVER_PHANTASM_SWORD_4.getItem()
     )
     ),
     VANGUARD(EntityType.WITHER_SKELETON, Vanguard.class, Vanguard::new, Vanguard::new, new Utils.SimpleEntityEquipment(
@@ -1115,15 +1126,14 @@ public enum Mob {
             NARMER,
             MITHRA,
             ZENITH,
-            CHESSKING,
+            MAGMATIC_OOZE,
             ILLUMINA,
             TORMENT,
             VOID,
-            MAGMATIC_OOZE,
-            PHYSIRA,
             ONE_OF_NINE,
             ORBYZ,
-            VEILKEEPER
+            LILIUM,
+            VEILKEEPER,
     };
     public static final Mob[] EVENT_BOSSES = {
             EVENT_BOLTARO, EVENT_NARMER, EVENT_MITHRA, EVENT_ILLUSION_CORE, EVENT_EXILED_CORE, EVENT_CALAMITY_CORE, EVENT_ILLUMINA,

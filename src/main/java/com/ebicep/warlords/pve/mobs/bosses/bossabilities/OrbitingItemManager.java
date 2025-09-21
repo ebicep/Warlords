@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class OrbitingSwordsManager {
+public class OrbitingItemManager {
 
     private final Supplier<Location> centerSupplier;
     private final double radius, height;
@@ -34,7 +34,7 @@ public class OrbitingSwordsManager {
     private GameRunnable orbitTask;
     private int ticks = 0;
 
-    public OrbitingSwordsManager(
+    public OrbitingItemManager(
             Supplier<Location> centerSupplier,
             double radius,
             double height,

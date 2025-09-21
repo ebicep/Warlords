@@ -225,7 +225,7 @@ public class LegendaryFlux extends AbstractLegendaryWeapon implements PassiveCou
     protected float getSpeedBonusValue()     { return 7; }
 
     @Override
-    public float getSkillCritMultiplierBonus() {
+    public float getSkillCritMultiplierBonusValue() {
         return 20;
     }
 

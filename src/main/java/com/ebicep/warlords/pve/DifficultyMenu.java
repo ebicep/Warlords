@@ -7,6 +7,7 @@ import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -17,7 +18,7 @@ import static com.ebicep.warlords.menu.Menu.MENU_CLOSE;
 public class DifficultyMenu {
 
     public static void openDifficultyMenu(Player player) {
-        Menu menu = new Menu("Difficulty Menu", 9 * 4);
+        Menu menu = new Menu("Difficulty Menu", 9 * 6);
         DifficultyIndex[] index = DifficultyIndex.NON_EVENT;
         for (int i = 0; i < index.length; i++) {
             DifficultyIndex difficulty = index[i];
@@ -49,22 +50,22 @@ public class DifficultyMenu {
                         }
                     }
             );
-//            menu.setItem(
-//                    4,
-//                    3,
-//                    new ItemBuilder(Material.REDSTONE_LAMP)
-//                            .name(Component.text(DifficultyIndex.BOSS_RUSH.getName(), DifficultyIndex.BOSS_RUSH.getDifficultyColor(), TextDecoration.BOLD))
-//                            .lore(DifficultyIndex.BOSS_RUSH.getDescription())
-//                            .get(),
-//                    (m, e) -> {
-//                        GameStartCommand.startGamePvE(player, GameMode.WAVE_DEFENSE, queueEntryBuilder ->
-//                                queueEntryBuilder.setMap(GameMap.VOID_RIFT)
-//                                        .setRequestedGameAddons(GameAddon.PRIVATE_GAME, GameAddon.CUSTOM_GAME)
-//
-//                        );
-//                    }
-//            );
-            menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
+            menu.setItem(
+                    4,
+                    3,
+                    new ItemBuilder(Material.AMETHYST_SHARD)
+                            .name(Component.text("PvE Testing Area", NamedTextColor.GOLD))
+                            .lore(Component.text("Test out your abilities and upgrades in this specialized area.", NamedTextColor.GRAY))
+                            .get(),
+                    (m, e) -> {
+                        GameStartCommand.startGamePvE(player, GameMode.PVE_DEBUG, queueEntryBuilder ->
+                                queueEntryBuilder.setMap(GameMap.PVE_DEBUG)
+                                        .setRequestedGameAddons(GameAddon.PRIVATE_GAME, GameAddon.CUSTOM_GAME)
+
+                        );
+                    }
+            );
+            menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
         }
         menu.openForPlayer(player);
     }

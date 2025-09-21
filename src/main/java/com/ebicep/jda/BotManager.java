@@ -82,7 +82,7 @@ public class BotManager {
                     }
                 }
                 if (counter % 30 == 0 && ServerStatusCommand.enabled) {
-                    //sendStatusMessage(false);
+                    sendStatusMessage(false);
                 }
                 if (counter % 3 == 0) {
                     if (numberOfMessagesSentLast30Sec > 0) {

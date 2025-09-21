@@ -63,7 +63,7 @@ public abstract class GameMap {
     public static final GameMap DUAL_DESCENT = new DualDescent();
     public static final GameMap TUTORIAL_MAP = new Tutorial();
     public static final GameMap VALLEY = new Valley();
-    public static final GameMap VOID_RIFT = new PvePractice();
+    public static final GameMap PVE_DEBUG = new PvePractice();
     public static final GameMap WARSONG = new Warsong();
     public static final GameMap TD_TEST = new TowerDefenseTest();
 
@@ -115,7 +115,7 @@ public abstract class GameMap {
             DUAL_DESCENT,
             TUTORIAL_MAP,
             VALLEY,
-            VOID_RIFT,
+            PVE_DEBUG,
             WARSONG,
             TD_TEST
     };

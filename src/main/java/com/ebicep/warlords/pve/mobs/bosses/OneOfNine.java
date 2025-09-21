@@ -58,8 +58,8 @@ public class OneOfNine extends AbstractMob implements BossMob {
     private Location mapCenter;
     private Location mapLeft;
     private Location mapRight;
-    private OrbitingSwordsManager swordManager;
-    private OrbitingSwordsManager centerSwordManager;
+    private OrbitingItemManager swordManager;
+    private OrbitingItemManager centerSwordManager;
     private DamagePhaseController damageController;
     private LaserBarrageAbility laserBarrageCenter;
     private LaserBarrageAbility laserBarrageLeft;
@@ -125,8 +125,8 @@ public class OneOfNine extends AbstractMob implements BossMob {
         EffectUtils.strikeLightningInCylinder(warlordsNPC.getLocation(), 10, false);
         Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ITEM_GOAT_HORN_SOUND_6, 10, 0.5f);
 
-        swordManager = new OrbitingSwordsManager(() -> warlordsNPC.getLocation(), 6, 2, 3, 4, option, warlordsNPC, Material.NETHERITE_SWORD);
-        centerSwordManager = new OrbitingSwordsManager(() -> mapCenter, 25, 30, 1, 30, option, warlordsNPC, Material.NETHERITE_SWORD);
+        swordManager = new OrbitingItemManager(() -> warlordsNPC.getLocation(), 6, 2, 3, 4, option, warlordsNPC, Material.NETHERITE_SWORD);
+        centerSwordManager = new OrbitingItemManager(() -> mapCenter, 25, 30, 1, 30, option, warlordsNPC, Material.NETHERITE_SWORD);
 
         damageController = new DamagePhaseController(warlordsNPC);
 

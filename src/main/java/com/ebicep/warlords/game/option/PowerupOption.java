@@ -10,6 +10,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -433,6 +434,7 @@ public class PowerupOption implements Option {
                         .cause("Self Damage Powerup")
                         .source(we)
                         .value(5000)
+                        .flags(InstanceFlags.IGNORE_DAMAGE_BOOST, InstanceFlags.IGNORE_SELF_RES)
                 );
             }
 
@@ -450,6 +452,7 @@ public class PowerupOption implements Option {
                         .cause("Self Heal Powerup")
                         .source(we)
                         .value(5000)
+                        .flag(InstanceFlags.IGNORE_DAMAGE_BOOST, true)
                 );
             }
 

@@ -36,7 +36,9 @@ public class IllusionVendorTrait extends WarlordsTrait {
             new SpendableBuyShop(1, MobDrop.ZENITH_STAR, 3, 30),
             new SpendableBuyShop(200, Currencies.LEGEND_FRAGMENTS, 1, 20),
             new SpendableBuyShop(50, Currencies.FAIRY_ESSENCE, 1, 10),
-            new SpendableBuyShop(1, Currencies.RARE_STAR_PIECE, 1, 10)
+            new SpendableBuyShop(1, Currencies.RARE_STAR_PIECE, 1, 10),
+            new SpendableBuyShop(1, Currencies.EPIC_STAR_PIECE, 1, 50),
+            new SpendableBuyShop(500, Currencies.SYNTHETIC_SHARD, 1, 30)
     );
 
     public static void openIllusionVendor(Player player, DatabasePlayer databasePlayer, DatabasePlayer databasePlayerWeekly) {
@@ -47,7 +49,7 @@ public class IllusionVendorTrait extends WarlordsTrait {
         Map<String, Long> weeklyRewardsPurchased = weeklyPveStats.getIllusionVendorRewardsPurchased();
 
         menu.setItem(4, 0,
-                new ItemBuilder(Material.CHEST)
+                new ItemBuilder(Material.AMETHYST_SHARD)
                         .name(Currencies.ILLUSION_SHARD.getCostColoredName(pveStats.getCurrencyValue(Currencies.ILLUSION_SHARD)))
                         .get(),
                 (m, e) -> {

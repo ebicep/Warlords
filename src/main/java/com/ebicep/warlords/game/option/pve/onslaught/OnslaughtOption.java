@@ -72,6 +72,7 @@ public class OnslaughtOption implements PveOption {
     private Location lastLocation;
     private float integrityCounter = 100;
     private float integrityDecayIncrease = 0;
+    private AtomicInteger rewardMultiplier = new AtomicInteger(1);
 
     public OnslaughtOption(Team team, WaveList waves) {
         this.team = team;
@@ -198,7 +199,6 @@ public class OnslaughtOption implements PveOption {
             });
         }
 
-        AtomicInteger rewardMultiplier = new AtomicInteger(1);
         new GameRunnable(game) {
             int counter = 0;
 
@@ -228,13 +228,13 @@ public class OnslaughtOption implements PveOption {
                                     Component.text("Aspirant Pouch", NamedTextColor.RED)
                             );
                         }
-                        rewardMultiplier.getAndAdd(1);
                         if (wp.getAbilityTree().getMaxMasterUpgrades() == 5) {
                             return;
                         }
                         wp.getAbilityTree().setMaxMasterUpgrades(wp.getAbilityTree().getMaxMasterUpgrades() + 1);
                         wp.sendMessage(Component.text("+1 Master Upgrade", NamedTextColor.RED, TextDecoration.BOLD));
                     });
+                    rewardMultiplier.getAndAdd(1);
                 } else if (ticksElapsed.get() % 6000 == 0) {
                     integrityDecayIncrease += 0.1f;
                     game.warlordsPlayers().forEach(wp -> {
@@ -300,7 +300,7 @@ public class OnslaughtOption implements PveOption {
     public float getIntegrityDecay(int playerCount) {
         switch (playerCount) {
             case 1 -> {
-                return 0.4f;
+                return 0.35f;
             }
             case 2 -> {
                 return 0.7f;
@@ -363,7 +363,7 @@ public class OnslaughtOption implements PveOption {
 
     public int getSpawnLimit(int playerCount) {
         return switch (playerCount) {
-            case 1 -> 7;
+            case 1 -> 8;
             case 2 -> 12;
             case 3 -> 15;
             case 4 -> 20;

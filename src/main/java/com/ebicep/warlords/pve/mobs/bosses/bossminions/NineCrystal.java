@@ -90,7 +90,7 @@ public class NineCrystal extends AbstractMob implements BossMinionMob {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 if (spec == event.getSource().getSpecClass().specType) {
-                    return currentDamageValue * 4;
+                    return currentDamageValue * 3;
                 } else {
                     return currentDamageValue * 0.1f;
                 }
