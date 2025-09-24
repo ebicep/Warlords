@@ -33,7 +33,7 @@ import static com.ebicep.warlords.pve.weapons.menu.WeaponManagerMenu.openWeaponE
 public class WeaponTitleMenu {
 
     public static void openWeaponTitleMenu(Player player, DatabasePlayer databasePlayer, AbstractLegendaryWeapon weapon, LegendaryTitles[] titles, int page) {
-        Menu menu = new Menu("Apply Title to Weapon", 9 * 5);
+        Menu menu = new Menu("Apply Title to Weapon", 9 * 6);
 
         for (int i = 0; i < 9 * 5; i++) {
             menu.addItem(
@@ -54,8 +54,8 @@ public class WeaponTitleMenu {
         );
 
         Map<LegendaryTitles, LegendaryWeaponTitleInfo> unlockedTitles = weapon.getTitles();
-        for (int i = 0; i < 3; i++) {
-            int titleIndex = ((page - 1) * 3) + i;
+        for (int i = 0; i < 9; i++) {
+            int titleIndex = ((page - 1) * 9) + i;
             if (titleIndex < titles.length) {
                 LegendaryTitles title = titles[titleIndex];
                 AbstractLegendaryWeapon titledWeapon = title.titleWeapon.apply(weapon);
@@ -82,20 +82,10 @@ public class WeaponTitleMenu {
                         );
                     }
                 }
-                for (int k = 0; k < 3; k++) {
+                for (int k = 0; k < 1; k++) {
                     for (int j = 0; j < 3; j++) {
-                        if (j == 1) {
-                            menu.setItem(
-                                    k + i * 3,
-                                    j + 1,
-                                    null,
-                                    (m, e) -> {
-                                    }
-                            );
-                            continue;
-                        }
                         menu.setItem(
-                                k + i * 3,
+                                k + i,
                                 j + 1,
                                 new ItemBuilder(title.glassPane)
                                         .name(Component.text(" "))
@@ -105,7 +95,7 @@ public class WeaponTitleMenu {
                         );
                     }
                 }
-                menu.setItem((i % 3) * 3 + 1, 2,
+                menu.setItem(i, 2,
                         itemBuilder.get(),
                         (m, e) -> {
                             if (equals) {
@@ -162,7 +152,7 @@ public class WeaponTitleMenu {
         }
 
         if (page - 1 > 0) {
-            menu.setItem(0, 4,
+            menu.setItem(0, 5,
                     new ItemBuilder(Material.ARROW)
                             .name(Component.text("Previous Page", NamedTextColor.GREEN))
                             .lore(Component.text("Page " + (page - 1), NamedTextColor.YELLOW))
@@ -171,7 +161,7 @@ public class WeaponTitleMenu {
             );
         }
         if (titles.length > (page * 3)) {
-            menu.setItem(8, 4,
+            menu.setItem(8, 5,
                     new ItemBuilder(Material.ARROW)
                             .name(Component.text("Next Page", NamedTextColor.GREEN))
                             .lore(Component.text("Page " + (page + 1), NamedTextColor.YELLOW))
@@ -180,8 +170,8 @@ public class WeaponTitleMenu {
             );
         }
 
-        menu.setItem(4, 4, MENU_BACK, (m, e) -> openWeaponEditor(player, databasePlayer, weapon));
-        menu.setItem(5, 4,
+        menu.setItem(4, 5, MENU_BACK, (m, e) -> openWeaponEditor(player, databasePlayer, weapon));
+        menu.setItem(5, 5,
                 new ItemBuilder(Material.OAK_SIGN)
                         .name(Component.text("Search Title", NamedTextColor.GREEN))
                         .get(),

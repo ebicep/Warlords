@@ -518,9 +518,9 @@ public enum Mob {
     ),
     LILIUM(EntityType.WITHER_SKELETON, Lilium.class, Lilium::new, Lilium::new, new Utils.SimpleEntityEquipment(
             SkullUtils.getSkullFrom(SkullID.LILIUM_HAT),
-            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 192, 203),
-            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 255, 192, 203),
-            Utils.applyColorTo(Material.LEATHER_BOOTS, 255, 192, 203),
+            new ItemStack(Material.DIAMOND_CHESTPLATE),
+            new ItemStack(Material.DIAMOND_LEGGINGS),
+            new ItemStack(Material.DIAMOND_BOOTS),
             Weapons.SILVER_PHANTASM_SWORD_4.getItem(),
             Weapons.SILVER_PHANTASM_SWORD_4.getItem()
     )
@@ -662,6 +662,7 @@ public enum Mob {
     ),
     NINE_CRYSTAL(EntityType.BREEZE, NineCrystal.class, NineCrystal::new, NineCrystal::new, null),
     SKY_CRYSTAL(EntityType.END_CRYSTAL, SkyCrystal.class, SkyCrystal::new, SkyCrystal::new, null),
+    LILIATH_ENIGMA(EntityType.EVOKER, SkyCrystal.class, SkyCrystal::new, SkyCrystal::new, null),
     ARACHNO_VENERATUS(EntityType.SPIDER, ArachnoVeneratus.class, ArachnoVeneratus::new, ArachnoVeneratus::new, null),
     CURSED_PSION(EntityType.WITHER_SKELETON, CursedPsion.class, CursedPsion::new, CursedPsion::new, null),
     ENAVURITE(EntityType.ENDERMITE, Enavurite.class, Enavurite::new, Enavurite::new, null),
@@ -1128,12 +1129,13 @@ public enum Mob {
             ZENITH,
             MAGMATIC_OOZE,
             ILLUMINA,
-            TORMENT,
             VOID,
+            TORMENT,
             ONE_OF_NINE,
             ORBYZ,
             LILIUM,
             VEILKEEPER,
+            VANGUARD
     };
     public static final Mob[] EVENT_BOSSES = {
             EVENT_BOLTARO, EVENT_NARMER, EVENT_MITHRA, EVENT_ILLUSION_CORE, EVENT_EXILED_CORE, EVENT_CALAMITY_CORE, EVENT_ILLUMINA,

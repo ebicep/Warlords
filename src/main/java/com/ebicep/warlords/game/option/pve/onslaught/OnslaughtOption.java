@@ -73,6 +73,7 @@ public class OnslaughtOption implements PveOption {
     private float integrityCounter = 100;
     private float integrityDecayIncrease = 0;
     private AtomicInteger rewardMultiplier = new AtomicInteger(1);
+    private AtomicInteger bonusMobs = new AtomicInteger(0);
 
     public OnslaughtOption(Team team, WaveList waves) {
         this.team = team;
@@ -235,6 +236,7 @@ public class OnslaughtOption implements PveOption {
                         wp.sendMessage(Component.text("+1 Master Upgrade", NamedTextColor.RED, TextDecoration.BOLD));
                     });
                     rewardMultiplier.getAndAdd(1);
+                    bonusMobs.getAndAdd(playerCount());
                 } else if (ticksElapsed.get() % 6000 == 0) {
                     integrityDecayIncrease += 0.1f;
                     game.warlordsPlayers().forEach(wp -> {
@@ -260,7 +262,7 @@ public class OnslaughtOption implements PveOption {
                     return;
                 }
 
-                if (spawnCount >= getSpawnLimit(playerCount())) {
+                if (spawnCount >= (getSpawnLimit(playerCount()) + bonusMobs.get())) {
                     return;
                 }
 

@@ -20,7 +20,11 @@ import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.bosses.bossabilities.BossAbilityPhase;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.SoulOfGradient;
+import com.ebicep.warlords.pve.mobs.flags.NoTargetAbilities;
+import com.ebicep.warlords.pve.mobs.flags.Untargetable;
+import com.ebicep.warlords.pve.mobs.player.CryoPod;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
+import com.ebicep.warlords.pve.mobs.tiers.PlayerMob;
 import com.ebicep.warlords.pve.mobs.witherskeleton.CelestialOpus;
 import com.ebicep.warlords.pve.mobs.zombie.NightmareZombie;
 import com.ebicep.warlords.pve.mobs.zombie.RiftWalker;
@@ -131,6 +135,7 @@ public class Torment extends AbstractMob implements BossMob {
             for (WarlordsEntity we : PlayerFilter
                     .playingGame(warlordsNPC.getGame())
                     .aliveEnemiesOf(warlordsNPC)
+                    .filter(we -> !(we instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof NoTargetAbilities))
                     .limit(1)
             ) {
                 divineProtector = we;
@@ -420,7 +425,7 @@ public class Torment extends AbstractMob implements BossMob {
             for (WarlordsEntity we : PlayerFilterGeneric
                     .entitiesAround(warlordsNPC, 100, 100, 100)
                     .aliveEnemiesOf(warlordsNPC)
-                    .leastAliveFirst()
+                    .filter(we -> !(we instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof NoTargetAbilities))
                     .limit(1)
             ) {
                 ChatUtils.sendTitleToGamePlayers(

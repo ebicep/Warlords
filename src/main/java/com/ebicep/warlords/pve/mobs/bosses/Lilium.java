@@ -1,26 +1,48 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
 import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.pve.PveOption;
+import com.ebicep.warlords.player.general.SpecType;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
+import com.ebicep.warlords.pve.mobs.bosses.bossabilities.BossAbilityPhase;
+import com.ebicep.warlords.pve.mobs.bosses.bossabilities.BouquetBarrageAbility;
+import com.ebicep.warlords.pve.mobs.bosses.bossabilities.RoseGardenAbility;
+import com.ebicep.warlords.pve.mobs.bosses.bossminions.LiliathEngima;
+import com.ebicep.warlords.pve.mobs.bosses.bossminions.NineCrystal;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
-import org.bukkit.Effect;
-import org.bukkit.Location;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
+import org.bukkit.*;
+
+import static java.lang.Math.cos;
 
 public class Lilium extends AbstractMob implements BossMob {
 
+    private Location mapCenter;
+
+    private BouquetBarrageAbility bouquetBarrageAbility;
+    private RoseGardenAbility roseGardenAbility;
+
+    private BossAbilityPhase phaseOne;
+    private BossAbilityPhase phaseTwo;
+    private BossAbilityPhase phaseThree;
+    private BossAbilityPhase phaseFour;
+    private BossAbilityPhase phaseFive;
+    private BossAbilityPhase phaseSix;
+    private BossAbilityPhase phaseSeven;
+    private BossAbilityPhase phaseEight;
 
     public Lilium(Location spawnLocation) {
         super(spawnLocation,
                 "Lilium",
-                300000,
+                10000,
                 0.36f,
                 30,
                 1000,
@@ -52,11 +74,86 @@ public class Lilium extends AbstractMob implements BossMob {
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
         Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_ALLAY_DEATH, 500, 0.5f);
+
+        mapCenter = new Location(warlordsNPC.getWorld(), 112.5, 11, 62.5);
+
+        bouquetBarrageAbility = new BouquetBarrageAbility(warlordsNPC, 3, 20, 40, 8, 2000, 3000, true, 40, 20);
+        roseGardenAbility = new RoseGardenAbility(
+                warlordsNPC,
+                () -> mapCenter,
+                8,
+                30,
+                2,
+                6,
+                40,
+                200,
+                200,
+                2000,
+                3000,
+                true,
+                40,
+                30,
+                true,
+                6,
+                2000,
+                3000,
+                true,
+                Material.CRIMSON_FUNGUS,
+                8,
+                false,
+                5,
+                1
+        );
+
+        phaseOne = new BossAbilityPhase(warlordsNPC, 90, () -> {
+            //bouquetBarrageAbility.cast();
+            roseGardenAbility.cast();
+        });
+
+        phaseTwo = new BossAbilityPhase(warlordsNPC, 70, () -> {
+            new GameRunnable(warlordsNPC.getGame()) {
+                int t = 0;
+                @Override
+                public void run() {
+                    Location crystalLoc = mapCenter.add(0, 1,0).clone();
+                    if (t++ < 18) {
+                        double angle = t / 18D * Math.PI * 2;
+                        crystalLoc.setX(mapCenter.getX() + Math.sin(angle) * 25);
+                        crystalLoc.setZ(mapCenter.getZ() + cos(angle) * 25);
+                        LiliathEngima crystal = new LiliathEngima(crystalLoc, warlordsNPC);
+                        pveOption.spawnNewMob(crystal, Team.RED);
+                        Utils.playGlobalSound(warlordsNPC.getLocation(), "warrior.laststand.activation", 500, 0.5f);
+                    }
+
+                    if (t == 18) {
+                        this.cancel();
+                    }
+                }
+            }.runTaskTimer(40, 10);
+
+        });
+
+        phaseThree = new BossAbilityPhase(warlordsNPC, 90, () -> {});
+        phaseFour = new BossAbilityPhase(warlordsNPC, 70, () -> {});
+        phaseFive = new BossAbilityPhase(warlordsNPC, 70, () -> {});
+        phaseSix = new BossAbilityPhase(warlordsNPC, 70, () -> {});
+        phaseSeven = new BossAbilityPhase(warlordsNPC, 70, () -> {});
+        phaseEight = new BossAbilityPhase(warlordsNPC, 70, () -> {});
     }
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
         EffectUtils.playCircularEffectAround(warlordsNPC.getGame(), warlordsNPC.getLocation(), Particle.CHERRY_LEAVES, 1, 1.3, 0.1, 2.2, 8, 1, 4, ticksElapsed);
+
+        float health = warlordsNPC.getCurrentHealth();
+        phaseOne.initialize(health);
+        phaseTwo.initialize(health);
+        phaseThree.initialize(health);
+        phaseFour.initialize(health);
+        phaseFive.initialize(health);
+        phaseSix.initialize(health);
+        phaseSeven.initialize(health);
+        phaseEight.initialize(health);
     }
 
     @Override
