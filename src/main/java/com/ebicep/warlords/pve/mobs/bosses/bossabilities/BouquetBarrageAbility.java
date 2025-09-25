@@ -107,7 +107,7 @@ public class BouquetBarrageAbility {
         }
 
         // Toss SFX
-        source.getLocation().getWorld().playSound(source.getLocation(), tossSfx, 1.0f, 1.2f);
+        source.getLocation().getWorld().playSound(source.getLocation(), tossSfx, 2, 1.2f);
 
         // 3) Telegraph phase with trail + ring, then bloom
         new GameRunnable(source.getGame()) {
@@ -135,7 +135,7 @@ public class BouquetBarrageAbility {
                     // subtle “planting” cue shortly before bloom
                     if (tick == telegraphTicks - 10) {
                         for (Impact impact : impacts) {
-                            impact.loc.getWorld().playSound(impact.loc, plantSfx, 0.9f, 1.2f);
+                            impact.loc.getWorld().playSound(impact.loc, plantSfx, 2, 1.2f);
                         }
                     }
 
@@ -143,10 +143,9 @@ public class BouquetBarrageAbility {
                     return;
                 }
 
-                // 4) Bloom (AoE damage + optional slow)
                 for (Impact impact : impacts) {
                     // SFX + particles
-                    impact.loc.getWorld().playSound(impact.loc, bloomSfx, 0.8f, 1.0f);
+                    impact.loc.getWorld().playSound(impact.loc, bloomSfx, 2, 1.0f);
                     impact.loc.getWorld().spawnParticle(bloomParticleA, impact.loc, 20, 0.4, 0.15, 0.4, 0.0);
                     impact.loc.getWorld().spawnParticle(bloomParticleB, impact.loc, 30, 0.6, 0.3, 0.6, 0.05, bloomBlock);
 
@@ -169,7 +168,6 @@ public class BouquetBarrageAbility {
                             });
                 }
 
-                // finish
                 this.cancel();
             }
         }.runTaskTimer(0, 1);

@@ -1,16 +1,13 @@
 package com.ebicep.warlords.pve.mobs.bosses.bossabilities;
 
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
-import org.bukkit.Color;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
+import org.bukkit.*;
 import org.bukkit.Particle.DustOptions;
-import org.bukkit.Sound;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Display.Billboard;
@@ -80,8 +77,8 @@ public class RoseGardenAbility {
     private final Particle bloomParticleB = Particle.BLOCK_CRUMBLE;
     private final BlockData bloomBlock = Material.PINK_CONCRETE.createBlockData();
 
-    private final Sound plantSfx = Sound.BLOCK_AZALEA_PLACE;
-    private final Sound activateSfx = Sound.BLOCK_AMETHYST_BLOCK_CHIME;
+    private final Sound plantSfx = Sound.BLOCK_CHORUS_FLOWER_GROW;
+    private final Sound activateSfx = Sound.BLOCK_CHORUS_FLOWER_GROW;
     private final Sound tickSfx = Sound.BLOCK_SWEET_BERRY_BUSH_PICK_BERRIES;
     private final Sound bloomSfx = Sound.ENTITY_GENERIC_EXPLODE;
 
@@ -175,7 +172,7 @@ public class RoseGardenAbility {
 
     private void plantNode(Location nodeLoc) {
         // Plant SFX
-        nodeLoc.getWorld().playSound(nodeLoc, plantSfx, 0.9f, 1.2f);
+        nodeLoc.getWorld().playSound(nodeLoc, plantSfx, 3, 0.5f);
 
         new GameRunnable(source.getGame()) {
             int tick = 0;
@@ -199,7 +196,7 @@ public class RoseGardenAbility {
 
                     if (tick >= telegraphTicks) {
                         active = true;
-                        nodeLoc.getWorld().playSound(nodeLoc, activateSfx, 0.9f, 1.1f);
+                        nodeLoc.getWorld().playSound(nodeLoc, activateSfx, 2, 2f);
                         tick = 0; // reuse as period counter for aura
                     } else {
                         tick++;
@@ -215,9 +212,9 @@ public class RoseGardenAbility {
 
                 // Periodic thorn tick
                 if (tick % tickPeriod == 0) {
-                    nodeLoc.getWorld().playSound(nodeLoc, tickSfx, 0.6f, 1.4f);
+                    nodeLoc.getWorld().playSound(nodeLoc, tickSfx, 2, 1.4f);
 
-                    PlayerFilter.entitiesAround(nodeLoc, nodeRadius, 3, nodeRadius)
+                    PlayerFilter.entitiesAround(nodeLoc, nodeRadius, nodeRadius, nodeRadius)
                             .aliveEnemiesOf(source)
                             .forEach(wp -> {
                                 wp.addInstance(InstanceBuilder
@@ -254,11 +251,12 @@ public class RoseGardenAbility {
     }
 
     private void bloomBurst(Location at) {
-        at.getWorld().playSound(at, bloomSfx, 0.8f, 1.0f);
+        at.getWorld().playSound(at, bloomSfx, 2, 0.5f);
         at.getWorld().spawnParticle(bloomParticleA, at, 24, 0.5, 0.2, 0.5, 0.0);
         at.getWorld().spawnParticle(bloomParticleB, at, 40, 0.7, 0.35, 0.7, 0.05, bloomBlock);
+        EffectUtils.playFirework(at, FireworkEffect.builder().withColor(Color.RED).with(FireworkEffect.Type.BALL_LARGE).build());
 
-        PlayerFilter.entitiesAround(at, bloomRadius, 3, bloomRadius)
+        PlayerFilter.entitiesAround(at, bloomRadius, bloomRadius, bloomRadius)
                 .aliveEnemiesOf(source)
                 .forEach(wp -> wp.addInstance(InstanceBuilder
                         .damage()

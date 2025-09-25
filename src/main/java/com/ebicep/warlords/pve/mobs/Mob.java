@@ -525,6 +525,15 @@ public enum Mob {
             Weapons.SILVER_PHANTASM_SWORD_4.getItem()
     )
     ),
+    CENTURION(EntityType.WITHER_SKELETON, Centurion.class, Centurion::new, Centurion::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.ROTTEN_CORPSE),
+            new ItemStack(Material.NETHERITE_CHESTPLATE),
+            new ItemStack(Material.NETHERITE_LEGGINGS),
+            new ItemStack(Material.NETHERITE_BOOTS),
+            Weapons.VOID_TWIG.getItem(),
+            Weapons.VOID_TWIG.getItem()
+    )
+    ),
     VANGUARD(EntityType.WITHER_SKELETON, Vanguard.class, Vanguard::new, Vanguard::new, new Utils.SimpleEntityEquipment(
             SkullUtils.getSkullFrom(SkullID.ENDER_DEMON),
             new ItemStack(Material.NETHERITE_CHESTPLATE),
@@ -1119,7 +1128,9 @@ public enum Mob {
             SOUL_OF_GRADIENT,
             MITHRA_EGG_SAC,
             ARACHNO_VENERATUS,
-            ECHO_OF_BLADES
+            SOUL_REAVER,
+            ECHO_OF_BLADES,
+            FROST_VEIL
     };
     public static final Mob[] BOSSES = {
             BOLTARO,
@@ -1135,6 +1146,7 @@ public enum Mob {
             ORBYZ,
             LILIUM,
             VEILKEEPER,
+            CENTURION,
             VANGUARD
     };
     public static final Mob[] EVENT_BOSSES = {

@@ -8,9 +8,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
-import com.ebicep.warlords.pve.mobs.bosses.bossabilities.BossAbilityPhase;
-import com.ebicep.warlords.pve.mobs.bosses.bossabilities.BouquetBarrageAbility;
-import com.ebicep.warlords.pve.mobs.bosses.bossabilities.RoseGardenAbility;
+import com.ebicep.warlords.pve.mobs.bosses.bossabilities.*;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.LiliathEngima;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.NineCrystal;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
@@ -29,6 +27,8 @@ public class Lilium extends AbstractMob implements BossMob {
 
     private BouquetBarrageAbility bouquetBarrageAbility;
     private RoseGardenAbility roseGardenAbility;
+    private BouquetWaltzAbility bouquetWaltzAbility;
+    private PetalStormAbility petalStormAbility;
 
     private BossAbilityPhase phaseOne;
     private BossAbilityPhase phaseTwo;
@@ -45,8 +45,8 @@ public class Lilium extends AbstractMob implements BossMob {
                 10000,
                 0.36f,
                 30,
-                1000,
-                1500
+                600,
+                900
         );
     }
 
@@ -77,12 +77,12 @@ public class Lilium extends AbstractMob implements BossMob {
 
         mapCenter = new Location(warlordsNPC.getWorld(), 112.5, 11, 62.5);
 
-        bouquetBarrageAbility = new BouquetBarrageAbility(warlordsNPC, 3, 20, 40, 8, 2000, 3000, true, 40, 20);
+        bouquetBarrageAbility = new BouquetBarrageAbility(warlordsNPC, 3, 20, 40, 4, 2000, 3000, true, 40, 20);
         roseGardenAbility = new RoseGardenAbility(
                 warlordsNPC,
                 () -> mapCenter,
                 8,
-                30,
+                22,
                 2,
                 6,
                 40,
@@ -105,9 +105,40 @@ public class Lilium extends AbstractMob implements BossMob {
                 1
         );
 
+        bouquetWaltzAbility = new BouquetWaltzAbility(
+                warlordsNPC,
+                () -> warlordsNPC.getLocation().clone(),
+                () -> warlordsNPC.getLocation().clone().add(warlordsNPC.getLocation().getDirection().multiply(22)),
+                15,
+                2.5,
+                4,
+                true,
+                80,
+                1.2,
+                6.0,
+                0.25,
+                1200,
+                1800,
+                true,
+                30,
+                30,
+                true,
+                0.45
+        );
+
+        petalStormAbility = new PetalStormAbility(
+                warlordsNPC,
+                () -> mapCenter,
+                // pattern / timing
+                8, 8, 30, 25, 12, 22.0, 22.0, 8.0,
+                // impact / damage
+                3.25, 1500f, 2100, true, 40, true, 30, 25,
+                // lanes
+                true, 'X', 5, "ALTERNATING", 1
+        );
+
         phaseOne = new BossAbilityPhase(warlordsNPC, 90, () -> {
-            //bouquetBarrageAbility.cast();
-            roseGardenAbility.cast();
+            petalStormAbility.cast();
         });
 
         phaseTwo = new BossAbilityPhase(warlordsNPC, 70, () -> {
@@ -116,8 +147,8 @@ public class Lilium extends AbstractMob implements BossMob {
                 @Override
                 public void run() {
                     Location crystalLoc = mapCenter.add(0, 1,0).clone();
-                    if (t++ < 18) {
-                        double angle = t / 18D * Math.PI * 2;
+                    if (t++ < 9) {
+                        double angle = t / 9D * Math.PI * 2;
                         crystalLoc.setX(mapCenter.getX() + Math.sin(angle) * 25);
                         crystalLoc.setZ(mapCenter.getZ() + cos(angle) * 25);
                         LiliathEngima crystal = new LiliathEngima(crystalLoc, warlordsNPC);
@@ -125,11 +156,11 @@ public class Lilium extends AbstractMob implements BossMob {
                         Utils.playGlobalSound(warlordsNPC.getLocation(), "warrior.laststand.activation", 500, 0.5f);
                     }
 
-                    if (t == 18) {
+                    if (t == 9) {
                         this.cancel();
                     }
                 }
-            }.runTaskTimer(40, 10);
+            }.runTaskTimer(40, 6);
 
         });
 
@@ -144,6 +175,28 @@ public class Lilium extends AbstractMob implements BossMob {
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
         EffectUtils.playCircularEffectAround(warlordsNPC.getGame(), warlordsNPC.getLocation(), Particle.CHERRY_LEAVES, 1, 1.3, 0.1, 2.2, 8, 1, 4, ticksElapsed);
+
+        if (ticksElapsed % 400 == 0) {
+            roseGardenAbility.cast();
+        }
+
+        if (ticksElapsed % 320 == 0) {
+            bouquetBarrageAbility.cast();
+        }
+
+        if (ticksElapsed % 480 == 0 && ticksElapsed > 0) {
+            new GameRunnable(warlordsNPC.getGame()) {
+                int t = 0;
+                @Override
+                public void run() {
+                    t++;
+                    bouquetWaltzAbility.cast();
+                    if (t == 3) {
+                        this.cancel();
+                    }
+                }
+            }.runTaskTimer(0, 20);
+        }
 
         float health = warlordsNPC.getCurrentHealth();
         phaseOne.initialize(health);
