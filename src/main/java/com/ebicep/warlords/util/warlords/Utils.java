@@ -227,13 +227,21 @@ public class Utils {
 
     public static void resetPlayerMovementStatistics(OfflinePlayer player) {
         player.setStatistic(Statistic.WALK_ONE_CM, 0);
+        player.setStatistic(Statistic.SPRINT_ONE_CM, 0);
+        player.setStatistic(Statistic.CROUCH_ONE_CM, 0);
+        player.getStatistic(Statistic.FLY_ONE_CM);
         player.setStatistic(Statistic.JUMP, 0);
         player.setStatistic(Statistic.FALL_ONE_CM, 0);
         player.setStatistic(Statistic.HORSE_ONE_CM, 0);
     }
 
     public static int getPlayerMovementStatistics(OfflinePlayer player) {
-        int walkStatistic = player.getStatistic(Statistic.WALK_ONE_CM) + (player.getStatistic(Statistic.JUMP) * 200) + player.getStatistic(Statistic.FALL_ONE_CM);
+        int walkStatistic = player.getStatistic(Statistic.CROUCH_ONE_CM)
+                + player.getStatistic(Statistic.SPRINT_ONE_CM)
+                + player.getStatistic(Statistic.WALK_ONE_CM)
+                + (player.getStatistic(Statistic.JUMP) * 200)
+                + player.getStatistic(Statistic.FALL_ONE_CM) +
+                player.getStatistic(Statistic.FLY_ONE_CM);
         int horseStatistic = player.getStatistic(Statistic.HORSE_ONE_CM);
         return walkStatistic + horseStatistic;
     }

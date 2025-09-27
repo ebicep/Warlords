@@ -160,7 +160,7 @@ public class WeaponTitleMenu {
                     (m, e) -> openWeaponTitleMenu(player, databasePlayer, weapon, titles, page - 1)
             );
         }
-        if (titles.length > (page * 3)) {
+        if (titles.length > (page * 9)) {
             menu.setItem(8, 5,
                     new ItemBuilder(Material.ARROW)
                             .name(Component.text("Next Page", NamedTextColor.GREEN))

@@ -7,9 +7,11 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityTargetEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.LinkedCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.pve.mobs.flags.NoTargetAbilities;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.defender.InterveneBranch;
@@ -94,6 +96,7 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
                                                      .aliveTeammatesOfExcludingSelf(wp)
                                                      .requireLineOfSightIntervene(wp, true)
                                                      .lookingAtFirst(wp)
+                                                     .filter(we -> !(we instanceof WarlordsNPC npcTarget && npcTarget.getMob() instanceof NoTargetAbilities))
                                                      .limit(maxTargets)) {
             stats.playersIntervened++;
             if (veneTarget.hasFlag()) {

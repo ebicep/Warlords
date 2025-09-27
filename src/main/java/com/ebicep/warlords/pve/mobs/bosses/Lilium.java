@@ -42,7 +42,7 @@ public class Lilium extends AbstractMob implements BossMob {
     public Lilium(Location spawnLocation) {
         super(spawnLocation,
                 "Lilium",
-                10000,
+                280000,
                 0.36f,
                 30,
                 600,
@@ -129,11 +129,8 @@ public class Lilium extends AbstractMob implements BossMob {
         petalStormAbility = new PetalStormAbility(
                 warlordsNPC,
                 () -> mapCenter,
-                // pattern / timing
                 8, 8, 30, 25, 12, 22.0, 22.0, 8.0,
-                // impact / damage
                 3.25, 1500f, 2100, true, 40, true, 30, 25,
-                // lanes
                 true, 'X', 5, "ALTERNATING", 1
         );
 
@@ -146,7 +143,7 @@ public class Lilium extends AbstractMob implements BossMob {
                 int t = 0;
                 @Override
                 public void run() {
-                    Location crystalLoc = mapCenter.add(0, 1,0).clone();
+                    Location crystalLoc = mapCenter.clone().add(0, 1, 0);
                     if (t++ < 9) {
                         double angle = t / 9D * Math.PI * 2;
                         crystalLoc.setX(mapCenter.getX() + Math.sin(angle) * 25);

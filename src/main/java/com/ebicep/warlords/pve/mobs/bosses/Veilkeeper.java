@@ -51,7 +51,7 @@ public class Veilkeeper extends AbstractMob implements BossMob {
     public Veilkeeper(Location spawnLocation) {
         super(spawnLocation,
                 "Veilkeeper",
-                350000,
+                320000,
                 0,
                 30,
                 1200,

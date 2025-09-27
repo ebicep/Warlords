@@ -24,7 +24,6 @@ import java.util.Random;
 public class ChasingOrbsAbility {
 
     private final WarlordsEntity caster;
-    private final WarlordsNPC bossSource;
 
     private final int orbCount;
     private final int lifetimeTicks;
@@ -32,6 +31,10 @@ public class ChasingOrbsAbility {
     private final double explosionRadius;
     private final double explosionDamage;
     private final double explosionKnockback;
+    private Material material;
+    private float materialScale;
+    private boolean isHealing;
+    private Location startLocation;
 
     private final List<Orb> orbs = new ArrayList<>();
     private GameRunnable loop;
@@ -40,22 +43,28 @@ public class ChasingOrbsAbility {
 
     public ChasingOrbsAbility(
             WarlordsEntity caster,
-            WarlordsNPC bossSource,
             int orbCount,
             int lifetimeTicks,
             double speed,
             double explosionRadius,
             double explosionDamage,
-            double explosionKnockback
+            double explosionKnockback,
+            Material material,
+            float materialScale,
+            boolean isHealing,
+            Location startLocation
     ) {
         this.caster = caster;
-        this.bossSource = bossSource;
         this.orbCount = orbCount;
         this.lifetimeTicks = lifetimeTicks;
         this.speed = speed;
         this.explosionRadius = explosionRadius;
         this.explosionDamage = explosionDamage;
         this.explosionKnockback = explosionKnockback;
+        this.material = material;
+        this.materialScale = materialScale;
+        this.isHealing = isHealing;
+        this.startLocation = startLocation;
     }
 
     public void start(Game game) {
@@ -66,18 +75,26 @@ public class ChasingOrbsAbility {
 
         // Spawn orb displays
         for (int i = 0; i < orbCount; i++) {
-            List<WarlordsEntity> targets = PlayerFilter
-                    .playingGame(game)
-                    .aliveEnemiesOf(caster)
-                    .toList();
+            List<WarlordsEntity> targets;
+            if (isHealing) {
+                targets = PlayerFilter
+                        .playingGame(game)
+                        .aliveTeammatesOf(caster)
+                        .toList();
+            } else {
+                targets = PlayerFilter
+                        .playingGame(game)
+                        .aliveEnemiesOf(caster)
+                        .toList();
+            }
 
             if (targets.isEmpty()) continue;
 
             WarlordsEntity target = targets.get(rng.nextInt(targets.size()));
 
-            Location spawnLoc = caster.getLocation().clone().add(0, 6, 0);
+            Location spawnLoc = startLocation.clone().add(0, 6, 0);
             ItemDisplay display = w.spawn(spawnLoc, ItemDisplay.class, d -> {
-                d.setItemStack(new ItemStack(Material.ENDER_EYE));
+                d.setItemStack(new ItemStack(material));
                 d.setBillboard(Display.Billboard.CENTER);
                 d.setViewRange(48f);
                 d.setShadowRadius(0f);
@@ -86,7 +103,7 @@ public class ChasingOrbsAbility {
                 d.setTransformation(new Transformation(
                         new Vector3f(0, 0, 0),
                         new Quaternionf(),
-                        new Vector3f(2f, 2f, 2f),
+                        new Vector3f(materialScale, materialScale, materialScale),
                         new Quaternionf()
                 ));
             });
@@ -145,23 +162,37 @@ public class ChasingOrbsAbility {
         orbs.remove(orb);
 
         w.spawnParticle(Particle.EXPLOSION, at, 1, 0, 0, 0, 0);
-        Utils.playGlobalSound(at, Sound.ENTITY_GENERIC_EXPLODE, 2, 0.6f);
+        Utils.playGlobalSound(at, isHealing ? Sound.ENTITY_ZOMBIE_VILLAGER_CONVERTED : Sound.ENTITY_GENERIC_EXPLODE, 2, 0.6f);
         Utils.playGlobalSound(at, Sound.ENTITY_ENDER_EYE_DEATH, 10, 0.5f);
 
         // Damage + knockback
-        for (WarlordsEntity enemy : PlayerFilter
-                .entitiesAround(at, explosionRadius, 3, explosionRadius)
-                .aliveEnemiesOf(caster)
-        ) {
-            enemy.addInstance(InstanceBuilder
-                    .damage()
-                    .cause("Seeking Vectors")
-                    .value((float) explosionDamage)
-                    .source(bossSource)
-            );
+        if (isHealing) {
+            for (WarlordsEntity enemy : PlayerFilter
+                    .entitiesAround(at, explosionRadius, 3, explosionRadius)
+                    .aliveTeammatesOf(caster)
+            ) {
+                enemy.addInstance(InstanceBuilder
+                        .healing()
+                        .cause("Seeking Remedy")
+                        .value((float) explosionDamage)
+                        .source(caster)
+                );
+            }
+        } else {
+            for (WarlordsEntity enemy : PlayerFilter
+                    .entitiesAround(at, explosionRadius, 3, explosionRadius)
+                    .aliveEnemiesOf(caster)
+            ) {
+                enemy.addInstance(InstanceBuilder
+                        .damage()
+                        .cause("Seeking Vectors")
+                        .value((float) explosionDamage)
+                        .source(caster)
+                );
 
-            if (explosionKnockback > 0) {
-                Utils.addKnockback("Seeking Vectors", at, enemy, explosionKnockback, 0.3);
+                if (explosionKnockback > 0) {
+                    Utils.addKnockback("Seeking Vectors", at, enemy, explosionKnockback, 0.3);
+                }
             }
         }
     }

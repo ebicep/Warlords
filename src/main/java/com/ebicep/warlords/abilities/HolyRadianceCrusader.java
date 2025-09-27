@@ -4,8 +4,10 @@ import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.pve.mobs.flags.NoTargetAbilities;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.paladin.crusader.HolyRadianceBranchCrusader;
@@ -51,7 +53,13 @@ public class HolyRadianceCrusader extends AbstractHolyRadiance implements Heals<
 
     @Override
     public List<WarlordsEntity> chain(WarlordsEntity wp) {
-        for (WarlordsEntity markTarget : PlayerFilter.entitiesAround(wp, markRadius, markRadius, markRadius).aliveTeammatesOfExcludingSelf(wp).lookingAtFirst(wp).limit(1)) {
+        for (WarlordsEntity markTarget : PlayerFilter
+                .entitiesAround(wp, markRadius, markRadius, markRadius)
+                .aliveTeammatesOfExcludingSelf(wp)
+                .lookingAtFirst(wp)
+                .filter(we -> !(we instanceof WarlordsNPC npcTarget && npcTarget.getMob() instanceof NoTargetAbilities))
+                .limit(1)
+        ) {
             if (!LocationUtils.isLookingAtMark(wp, markTarget) || !LocationUtils.hasLineOfSight(wp, markTarget)) {
                 wp.sendMessage(Component.text("Your mark was out of range or you did not target a player!", NamedTextColor.RED));
                 continue;

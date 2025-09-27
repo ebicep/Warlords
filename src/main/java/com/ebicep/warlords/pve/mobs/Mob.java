@@ -31,10 +31,7 @@ import com.ebicep.warlords.pve.mobs.pigzombie.PigAlleviator;
 import com.ebicep.warlords.pve.mobs.pigzombie.PigDisciple;
 import com.ebicep.warlords.pve.mobs.pigzombie.PigParticle;
 import com.ebicep.warlords.pve.mobs.pigzombie.PigShaman;
-import com.ebicep.warlords.pve.mobs.player.Animus;
-import com.ebicep.warlords.pve.mobs.player.CryoPod;
-import com.ebicep.warlords.pve.mobs.player.Decoy;
-import com.ebicep.warlords.pve.mobs.player.TestDummy;
+import com.ebicep.warlords.pve.mobs.player.*;
 import com.ebicep.warlords.pve.mobs.skeleton.*;
 import com.ebicep.warlords.pve.mobs.slime.SlimyAnomaly;
 import com.ebicep.warlords.pve.mobs.slime.SlimyChess;
@@ -328,6 +325,15 @@ public enum Mob {
             Utils.applyColorTo(Material.LEATHER_LEGGINGS, 226, 226, 226),
             Utils.applyColorTo(Material.LEATHER_BOOTS, 226, 226, 226),
             Weapons.FABLED_HEROICS_SCYTHE.getItem()
+    )
+    ),
+    REQIUEM_GUARDIAN(EntityType.STRAY, RequiemGuardian.class, RequiemGuardian::new, RequiemGuardian::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.PURPLE_KNIGHT),
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 104, 255),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 250, 104, 190),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 250, 104, 190),
+            Weapons.SOUL_REAVER.getItem(),
+            new ItemStack(Material.SHIELD)
     )
     ),
 

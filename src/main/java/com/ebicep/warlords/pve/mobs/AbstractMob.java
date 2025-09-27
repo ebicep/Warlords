@@ -39,6 +39,8 @@ import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Equipment;
+import net.citizensnpcs.api.util.BoundingBox;
+import net.citizensnpcs.api.util.EntityDim;
 import net.citizensnpcs.trait.WolfModifiers;
 import net.citizensnpcs.trait.versioned.BossBarTrait;
 import net.kyori.adventure.text.Component;
@@ -174,7 +176,9 @@ public abstract class AbstractMob implements Mob {
 //            defaultParameters.useNewPathfinder(true);
         }
         switch (entityType) {
-            case SLIME, MAGMA_CUBE -> npc.getNavigator().getDefaultParameters().straightLineTargetingDistance(100);
+            case SLIME, MAGMA_CUBE -> {
+                npc.getNavigator().getDefaultParameters().straightLineTargetingDistance(100);
+            }
             case WOLF -> this.npc.getOrAddTrait(WolfModifiers.class).setAngry(true);
             case PLAYER -> {
                 npc.getNavigator().getDefaultParameters().straightLineTargetingDistance(100);
@@ -196,7 +200,6 @@ public abstract class AbstractMob implements Mob {
         if (npc.getEntity() instanceof Player player) {
             player.setNoDamageTicks(0);
         }
-
 //
 //        if (getMobRegistry().entityType == EntityType.SLIME) {
 //            this.npc.setUseMinecraftAI(true); //TODO
@@ -263,7 +266,7 @@ public abstract class AbstractMob implements Mob {
     }
 
     public double getDefaultAttackRange() {
-        return 2;
+        return 1.5;
     }
 
     public void giveGoals() {

@@ -19,14 +19,6 @@ import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.function.Supplier;
 
-/**
- * Lilium — Bouquet Waltz
- *
- * Lilium dashes along a bezier-like arc from start -> end, dropping mini-bouquets at intervals.
- * Each bouquet emits an expanding petal ring that hits enemies once (damage + optional slow/knockback).
- *
- * Constructor-only config (CrystalConduitsAbility style).
- */
 public class BouquetWaltzAbility {
 
     // ---- Context ----

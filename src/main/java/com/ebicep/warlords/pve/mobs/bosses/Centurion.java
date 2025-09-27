@@ -10,7 +10,7 @@ public class Centurion extends AbstractMob implements BossMob {
     public Centurion(Location spawnLocation) {
         super(spawnLocation,
                 "Centurion",
-                400000,
+                350000,
                 0.3f,
                 30,
                 1000,

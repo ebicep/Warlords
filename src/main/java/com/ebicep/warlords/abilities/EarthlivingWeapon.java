@@ -7,11 +7,13 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.type.CustomInstanceFlags;
+import com.ebicep.warlords.pve.mobs.flags.NoTargetAbilities;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.earthwarden.EarthlivingWeaponBranch;
@@ -144,6 +146,7 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
                 List<WarlordsEntity> healedPlayers = PlayerFilter.entitiesAround(attacker, 6, 6, 6)
                                                                  .aliveTeammatesOfExcludingSelf(attacker)
                                                                  .limit(maxAllies)
+                                                                 .filter(we -> !(we instanceof WarlordsNPC npcTarget && npcTarget.getMob() instanceof NoTargetAbilities))
                                                                  .toList();
                 attacker.addInstance(InstanceBuilder
                         .healing()

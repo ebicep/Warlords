@@ -38,7 +38,6 @@ import com.ebicep.warlords.player.ingame.motionsystem.MotionModifier;
 import com.ebicep.warlords.player.ingame.motionsystem.MotionModifierBuilder;
 import com.ebicep.warlords.player.ingame.motionsystem.MotionSystem;
 import com.ebicep.warlords.player.ingame.motionsystem.speed.BaseToWalkingSpeedValueModifier;
-import com.ebicep.warlords.pve.mobs.flags.NoTargetAbilities;
 import com.ebicep.warlords.pve.mobs.player.TestDummy;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.TeleportUtils;

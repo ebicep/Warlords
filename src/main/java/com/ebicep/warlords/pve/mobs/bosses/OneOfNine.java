@@ -194,7 +194,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
                 2
         );
 
-        chasingOrbsAbility = new ChasingOrbsAbility(warlordsNPC, warlordsNPC, option.playerCount(), 100, 0.32, 4, 5000, 1.5);
+        chasingOrbsAbility = new ChasingOrbsAbility(warlordsNPC, option.playerCount(), 100, 0.32, 4, 5000, 1.5, Material.ENDER_EYE, 2f, false, warlordsNPC.getLocation());
 
         swordManager.spawnSwords(9);
         swordManager.start();
@@ -217,15 +217,15 @@ public class OneOfNine extends AbstractMob implements BossMob {
                 if (damageController.isInDamageWindow()) {
                     return currentDamageValue * 1.2f;
                 }
-                    event.getSource().addInstance(InstanceBuilder
-                            .damage()
-                            .source(warlordsNPC)
-                            .cause("Greed")
-                            .value(currentDamageValue * (event.getFlags().contains(InstanceFlags.DOT) ? 0.5f : 1))
-                            .flags(InstanceFlags.RECURSIVE, InstanceFlags.IGNORE_DAMAGE_BOOST)
-                    );
-                    event.getSource().sendMessage(Component.text("Your divine punishment awaits if you keep giving in to your greed...", NamedTextColor.RED));
-                    event.setCancelled(true);
+                event.getSource().addInstance(InstanceBuilder
+                        .damage()
+                        .source(warlordsNPC)
+                        .cause("Greed")
+                        .value(currentDamageValue * (event.getFlags().contains(InstanceFlags.DOT) ? 0.5f : 1))
+                        .flags(InstanceFlags.RECURSIVE, InstanceFlags.IGNORE_DAMAGE_BOOST)
+                );
+                event.getSource().sendMessage(Component.text("Your divine punishment awaits if you keep giving in to your greed...", NamedTextColor.RED));
+                event.setCancelled(true);
                 return currentDamageValue;
             }
         });

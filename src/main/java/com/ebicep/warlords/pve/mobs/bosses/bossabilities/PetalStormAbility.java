@@ -21,21 +21,11 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Supplier;
 
-/**
- * Lilium — Petal Storm (with Lane Mode)
- *
- * Rains telegraphed petals over a rectangular arena in waves.
- * Lane Mode snaps impacts to evenly spaced lanes along X or Z for bullet-hell patterns.
- *
- * Constructor-only configuration (CrystalConduitsAbility style).
- */
 public class PetalStormAbility {
 
-    // --- Context ---
     private final WarlordsNPC source;
     private final Supplier<Location> centerSupplier;
 
-    // --- Pattern / timing ---
     private final int waves;
     private final int petalsPerWave;
     private final int ticksBetweenWaves;
@@ -45,7 +35,6 @@ public class PetalStormAbility {
     private final double areaHalfSizeZ;
     private final double fallHeight;
 
-    // --- Impact / damage ---
     private final double impactRadius;
     private final float damageMin;
     private final float damageMax;
@@ -55,14 +44,13 @@ public class PetalStormAbility {
     private final int slowTicks;
     private final int slowPercent;
 
-    // --- Lane Mode ---
     private final boolean laneMode;       // enable/disable lane logic
     private final char laneAxis;          // 'X' or 'Z'
     private final int laneCount;          // >= 2
     private final String lanePattern;     // "SEQUENTIAL" | "ALTERNATING" | "RANDOM"
     private final int laneShiftPerWave;   // shift pattern each wave (can be negative)
 
-    // --- Visuals / SFX ---
+    // visuals
     private final Particle telegraphParticle = Particle.DUST;
     private final DustOptions telegraphDust = new DustOptions(Color.fromRGB(255, 105, 180), 1.05f);
     private final Particle fallTrail = Particle.SPORE_BLOSSOM_AIR;
@@ -78,7 +66,6 @@ public class PetalStormAbility {
     public PetalStormAbility(
             @Nonnull WarlordsNPC source,
             @Nonnull Supplier<Location> centerSupplier,
-            // pattern / timing
             int waves,
             int petalsPerWave,
             int ticksBetweenWaves,
@@ -87,7 +74,6 @@ public class PetalStormAbility {
             double areaHalfSizeX,
             double areaHalfSizeZ,
             double fallHeight,
-            // impact / damage
             double impactRadius,
             float damageMin,
             float damageMax,
@@ -96,7 +82,6 @@ public class PetalStormAbility {
             boolean applySlow,
             int slowTicks,
             int slowPercent,
-            // lane mode
             boolean laneMode,
             char laneAxis,
             int laneCount,
@@ -105,8 +90,6 @@ public class PetalStormAbility {
     ) {
         this.source = source;
         this.centerSupplier = centerSupplier;
-
-        // pattern / timing
         this.waves = Math.max(1, waves);
         this.petalsPerWave = Math.max(1, petalsPerWave);
         this.ticksBetweenWaves = Math.max(1, ticksBetweenWaves);
@@ -115,8 +98,6 @@ public class PetalStormAbility {
         this.areaHalfSizeX = Math.max(1.0, areaHalfSizeX);
         this.areaHalfSizeZ = Math.max(1.0, areaHalfSizeZ);
         this.fallHeight = Math.max(2.0, fallHeight);
-
-        // impact / damage
         this.impactRadius = Math.max(0.5, impactRadius);
         this.damageMin = Math.max(0f, damageMin);
         this.damageMax = Math.max(this.damageMin, damageMax);
@@ -125,8 +106,6 @@ public class PetalStormAbility {
         this.applySlow = applySlow;
         this.slowTicks = Math.max(0, slowTicks);
         this.slowPercent = Math.min(Math.max(slowPercent, 0), 100);
-
-        // lane mode
         this.laneMode = laneMode;
         this.laneAxis = (laneAxis == 'Z' || laneAxis == 'z') ? 'Z' : 'X';
         this.laneCount = Math.max(2, laneCount);
@@ -135,7 +114,6 @@ public class PetalStormAbility {
         this.laneShiftPerWave = laneShiftPerWave;
     }
 
-    /** Triggers the whole storm sequence (waves looped with delays). */
     public void cast() {
         final Location center = groundSnap(centerSupplier.get().clone());
         if (center.getWorld() == null) return;
@@ -165,7 +143,6 @@ public class PetalStormAbility {
         }.runTaskTimer(0, 1);
     }
 
-    // Spawns one wave with multiple petals (telegraph -> fall -> impact)
     private void spawnWave(Location waveCenter, int waveIndex) {
         List<Location> targets = laneMode
                 ? laneTargets(waveCenter, waveIndex)
@@ -225,11 +202,6 @@ public class PetalStormAbility {
         return list;
     }
 
-    /**
-     * Lane targets: evenly spaced coordinates along the chosen axis.
-     * Lanes cover the full width: [-halfSize, +halfSize], centers at equal intervals.
-     * Pattern controls the order lanes are filled inside a wave.
-     */
     private List<Location> laneTargets(Location center, int waveIndex) {
         final double half = (laneAxis == 'X') ? areaHalfSizeX : areaHalfSizeZ;
         final double laneStep = (laneCount <= 1) ? 0.0 : (2 * half) / (laneCount - 1);
@@ -280,13 +252,10 @@ public class PetalStormAbility {
 
         switch (p) {
             case "RANDOM":
-                // Fisher–Yates via Collections.shuffle
                 java.util.Collections.shuffle(lanes, rng);
                 break;
 
             case "ALTERNATING":
-                // Center-out order, works for even & odd n:
-                // sort by distance to center, tie-break by lower index
                 final double centerIdx = (n - 1) / 2.0;
                 lanes.sort((a, b) -> {
                     double da = Math.abs(a - centerIdx);
