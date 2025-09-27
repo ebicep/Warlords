@@ -50,7 +50,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
             .add(1, 7);
     public static final HashMap<DifficultyIndex, Mob> DIFFICULTY_SPAWNS = new HashMap<>() {{
         put(DifficultyIndex.EASY, Mob.ZOMBIE_LANCER);
-        put(DifficultyIndex.NORMAL, Mob.ZOMBIE_LAMENT);
+        put(DifficultyIndex.NORMAL, Mob.REQIUEM_GUARDIAN);
         put(DifficultyIndex.HARD, Mob.REQIUEM_GUARDIAN);
         put(DifficultyIndex.EXTREME, Mob.REQIUEM_GUARDIAN);
         put(DifficultyIndex.ENDLESS, Mob.REQIUEM_GUARDIAN);
@@ -230,8 +230,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
     public TextComponent getPassiveEffect() {
         return Component.text("Every ", NamedTextColor.GRAY)
                         .append(formatTitleUpgrade(COOLDOWN + COOLDOWN_INCREASE_PER_UPGRADE * getTitleLevel(), "s"))
-                        .append(Component.text(" summon a random assortment of mobs to fight for you for 90 seconds. " +
-                                "Shift for 1 second to remove all summoned mobs."));
+                        .append(Component.text(" summon a random assortment of mobs to fight for you for 90 seconds. Shift for 1 second to remove all summoned mobs."));
     }
 
     @Override

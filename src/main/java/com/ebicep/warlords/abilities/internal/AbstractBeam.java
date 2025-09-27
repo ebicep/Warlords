@@ -22,7 +22,7 @@ public abstract class AbstractBeam<T extends AbstractPiercingProjectile<T, R>, R
 
     public AbstractBeam(AbstractAbilityBuilder builder) {
         super(builder);
-        this.hitboxInflation.setBaseValue(hitboxInflation.getBaseValue() + .6f);
+        this.hitboxInflation.setBaseValue(hitboxInflation.getBaseValue() + .75f);
     }
 
     @Override
@@ -56,7 +56,7 @@ public abstract class AbstractBeam<T extends AbstractPiercingProjectile<T, R>, R
 
     @Override
     protected Location modifyProjectileStartingLocation(WarlordsEntity shooter, Location startingLocation) {
-        return new LocationBuilder(startingLocation).backward(.5f);
+        return new LocationBuilder(startingLocation).backward(.3f);
     }
 
     public abstract ItemStack getBeamItem();

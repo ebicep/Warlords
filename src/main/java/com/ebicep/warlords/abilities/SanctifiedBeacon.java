@@ -185,6 +185,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
                         nearBy.getSpeed().removeModifier(name);
                         nearBy.addSpeedModifier(wp, name, -30, 9999);
                         if (!(nearBy instanceof WarlordsNPC npc && npc instanceof BossLike)) {
+                            nearBy.getCooldownManager().removeCooldownByName("Shadow Garden");
                             nearBy.getCooldownManager()
                                     .addCooldown(new PermanentCooldown<>(
                                             "Shadow Garden",
