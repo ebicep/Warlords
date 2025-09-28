@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.mobs.bosses.bossabilities;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -147,6 +148,7 @@ public class LaserBarrageAbility {
                                         .cause("Death Ray")
                                         .value(1000)
                                         .source(warlordsEntity)
+                                        .flags(InstanceFlags.TRUE_DAMAGE)
                                 );
                             }
                         }

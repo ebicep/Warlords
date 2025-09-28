@@ -296,7 +296,7 @@ public class OnslaughtOption implements PveOption {
                 return randomSpawnLocation != null ? randomSpawnLocation : lastLocation;
             }
 
-        }.runTaskTimer(10 * GameRunnable.SECOND, 6);
+        }.runTaskTimer(10 * GameRunnable.SECOND, 4);
     }
 
     public float getIntegrityDecay(int playerCount) {
@@ -371,6 +371,8 @@ public class OnslaughtOption implements PveOption {
             case 4 -> 20;
             case 5 -> 25;
             case 6 -> 30;
+            case 7 -> 35;
+            case 8 -> 40;
             default -> spawnLimit;
         };
     }
@@ -392,8 +394,8 @@ public class OnslaughtOption implements PveOption {
         double modifier = (game.getState().getTicksElapsed() / 1000f) / modifiedScale + 1;
 
         // Multiply health & min/max melee damage by waveCounter + 1 ^ base damage.
-        int minMeleeDamage = (int) Math.pow(warlordsNPC.getMinMeleeDamage(), modifier);
-        int maxMeleeDamage = (int) Math.pow(warlordsNPC.getMaxMeleeDamage(), modifier);
+        int minMeleeDamage = (int) Math.pow(warlordsNPC.getMinMeleeDamage(), modifier * 0.9);
+        int maxMeleeDamage = (int) Math.pow(warlordsNPC.getMaxMeleeDamage(), modifier * 0.9);
         float health = (float) Math.pow(warlordsNPC.getMaxBaseHealth(), modifier);
         // Increase boss health by 25% for each player in game instance.
         float bossMultiplier = 1 + (0.25f * playerCount);

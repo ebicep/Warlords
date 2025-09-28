@@ -242,11 +242,11 @@ public class OneOfNine extends AbstractMob implements BossMob {
                     }
                     we.addInstance(InstanceBuilder
                             .damage()
-                            .min(800)
-                            .max(1200)
+                            .min(1000)
+                            .max(1500)
                             .source(warlordsNPC)
                             .cause("Reaving Blades")
-                            .flag(InstanceFlags.TRUE_DAMAGE, true)
+                            .flags(InstanceFlags.TRUE_DAMAGE, InstanceFlags.PIERCE)
                     );
                 }
                 if (warlordsNPC.isDead()) {
