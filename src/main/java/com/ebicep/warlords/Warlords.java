@@ -43,6 +43,7 @@ import com.ebicep.warlords.util.warlords.ConfigUtil;
 import com.onarandombox.MultiverseCore.MultiverseCore;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.event.EventBus;
 import net.luckperms.api.event.user.UserDataRecalculateEvent;
@@ -78,7 +79,7 @@ public class Warlords extends JavaPlugin {
     public static final AtomicBoolean SENT_FIFTEEN_MINUTE_REMINDER = new AtomicBoolean(false);
     private static final ConcurrentHashMap<UUID, WarlordsEntity> PLAYERS = new ConcurrentHashMap<>();
     public static String VERSION = "";
-    public static NamedTextColor VERSION_COLOR = NamedTextColor.BLUE;
+    public static TextColor VERSION_COLOR = TextColor.color(51, 171, 249);
     public static String serverIP;
     public static boolean hologramsEnabled = true;
     public static boolean citizensEnabled;
