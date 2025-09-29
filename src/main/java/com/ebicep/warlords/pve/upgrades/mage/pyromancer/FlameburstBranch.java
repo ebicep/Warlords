@@ -58,6 +58,8 @@ public class FlameburstBranch extends AbstractUpgradeBranch<FlameBurst> {
                 50000,
                 () -> {
                     ability.getSplashRadius().addAdditiveModifier("Master Upgrade Branch", -2);
+                    ability.getHitBoxRadius().setBaseValue(ability.getSplashRadius().getCalculatedValue()/2);
+                    ability.getMaxDistance().addAdditiveModifier("Master Upgrade Branch", -132);
                 }
         );
     }
