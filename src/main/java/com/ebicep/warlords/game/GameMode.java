@@ -817,7 +817,7 @@ public enum GameMode {
     }
 
     public static boolean isPvE(GameMode mode) {
-        return mode == WAVE_DEFENSE || mode == EVENT_WAVE_DEFENSE || mode == ONSLAUGHT || mode == TREASURE_HUNT || mode == TOWER_DEFENSE || mode == WHACK_A_MOLE;
+        return mode == WAVE_DEFENSE || mode == EVENT_WAVE_DEFENSE || mode == ONSLAUGHT || mode == TREASURE_HUNT || mode == TOWER_DEFENSE || mode == WHACK_A_MOLE || mode == PVE_DEBUG;
     }
 
     public final String name;

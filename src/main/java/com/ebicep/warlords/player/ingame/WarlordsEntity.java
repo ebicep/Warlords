@@ -138,6 +138,8 @@ public abstract class WarlordsEntity {
     private int flagDropCooldown = 0;
     private int flagPickCooldown = 0;
     private int hitCooldown = 20;
+    private int pveHitCooldown = 13;
+    private int pveHitRange = 3;
     private int currency;
     private int blocksTravelledCM = 0;
     private boolean noEnergyConsumption;
@@ -1772,10 +1774,6 @@ public abstract class WarlordsEntity {
         return ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "baseMeleeCooldown", int.class);
     }
 
-//    public boolean isTargetableByAbilities(WarlordsEntity we) {
-//        return !(we instanceof NoTargetAbilities);
-//    }
-
     public abstract ItemStack getHead();
 
     @Nullable
@@ -1793,4 +1791,19 @@ public abstract class WarlordsEntity {
     @Nullable
     public abstract ItemStack getWeaponItem();
 
+    public int getPveHitCooldown() {
+        return pveHitCooldown;
+    }
+
+    public void setPveHitCooldown(int pveHitCooldown) {
+        this.pveHitCooldown = pveHitCooldown;
+    }
+
+    public int getPveHitRange() {
+        return pveHitRange;
+    }
+
+    public void setPveHitRange(int pveHitRange) {
+        this.pveHitRange = pveHitRange;
+    }
 }
