@@ -169,27 +169,23 @@ public class FlameBurst extends AbstractPiercingProjectile<FlameBurst, FlameBurs
             projectile.getSpeed().multiply(acceleration);
             return;
         }
-        if (ticksLived % 2 == 0) {
-            projectile.getSpeed().multiply(acceleration);
+        if (ticksLived == 0) {
+            projectile.getSpeed().multiply(1.7);
         }
         //TODO bezier curve
-        if (ticksLived > 30) {
+        if (ticksLived > 36) {
             return;
         }
-        if (ticksLived > 26) {
-            projectile.getSpeed().rotateAroundAxis(vector, .07);
-        } else if (ticksLived > 22) {
-            projectile.getSpeed().rotateAroundAxis(vector, .225);
-        } else if (ticksLived > 18) {
-            projectile.getSpeed().rotateAroundAxis(vector, .22);
-        } else if (ticksLived > 15) {
+        if (ticksLived > 33) {
+            projectile.getSpeed().rotateAroundAxis(vector, .33);
+        } else if (ticksLived > 29) {
+            projectile.getSpeed().rotateAroundAxis(vector, .47);
+        } else if (ticksLived > 9) {
+            projectile.getSpeed().rotateAroundAxis(vector, .2);
+        } else if (ticksLived > 5) {
+            projectile.getSpeed().rotateAroundAxis(vector, .45);
+        } else if (ticksLived > 2) {
             projectile.getSpeed().rotateAroundAxis(vector, .25);
-        } else if (ticksLived > 13) {
-            projectile.getSpeed().rotateAroundAxis(vector, .3);
-        } else if (ticksLived > 8) {
-            projectile.getSpeed().rotateAroundAxis(vector, .17);
-        } else if (ticksLived == 8) {
-            projectile.getSpeed().rotateAroundAxis(vector, .15);
         }
     }
 
@@ -200,7 +196,7 @@ public class FlameBurst extends AbstractPiercingProjectile<FlameBurst, FlameBurs
 
     @Override
     protected boolean shouldEndProjectileOnHit(@Nonnull InternalProjectile projectile, Block block) {
-        return true;
+        return !pveMasterUpgrade2;
     }
 
     @Override
