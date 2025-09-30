@@ -47,12 +47,11 @@ public class IncendiaryCurseBranch extends AbstractUpgradeBranch<IncendiaryCurse
                 """
                         +30% Damage
                         
-                        Increase the block radius by 3. Additionally, every enemy stunned gives 20 energy (Max 200).
+                        Increase the block radius by 3. Additionally, every enemy stunned gives 10 energy (Max 200).
                         """,
                 50000,
                 () -> {
                     ability.getHitBoxRadius().addAdditiveModifier("Master Upgrade", 3);
-                    ability.setBlindDurationInTicks(ability.getBlindDurationInTicks() + 40);
 
                     Value.RangedValueCritable damage = ability.getDamageValues().getCurseDamage();
                     damage.min().addMultiplicativeModifierAdd("PvE", .3f);
