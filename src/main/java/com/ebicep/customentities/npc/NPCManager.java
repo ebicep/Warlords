@@ -162,6 +162,7 @@ public class NPCManager {
                     createMasterworksFairNPC();
                     createWeaponsManagerNPC();
                     createLegendaryWeaponNPC();
+                    createAscendantWeaponNPC();
                     createSupplyDropFairNPC();
                     createBountyMenuNPC();
                     createStarPieceSynthesizerNPC();
@@ -229,6 +230,21 @@ public class NPCManager {
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
         npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), -14.5, 145, 220.5, -180, 0));
+
+    }
+
+    public static void createAscendantWeaponNPC() {
+        registerTrait(AscendantWeaponTrait.class, "AscendantWeaponTrait");
+
+        NPC npc = NPC_REGISTRY.createNPC(EntityType.PLAYER, "ascendant-weapon");
+        npc.getOrAddTrait(SkinTrait.class).setSkinName("Plikie");
+        npc.addTrait(AscendantWeaponTrait.class);
+        LookClose lookClose = npc.getOrAddTrait(LookClose.class);
+        lookClose.setPerPlayer(true);
+        lookClose.toggle();
+
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
+        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 67.5, 93, 212.5, -180, 0));
 
     }
 
@@ -345,6 +361,7 @@ public class NPCManager {
 
         npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), -21.5, 88, 183.5, 90, 0));
     }
+
 
     public static void createAscendantVendorNPC() {
         registerTrait(AscendantVendorTrait.class, "AscendantVendorTrait");
