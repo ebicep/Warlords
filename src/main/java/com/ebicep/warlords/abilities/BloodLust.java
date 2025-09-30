@@ -85,6 +85,15 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
+                    if (pveMasterUpgrade) {
+                        float missingHealth = wp.getMaxHealth() - wp.getCurrentHealth();
+                        wp.addInstance(InstanceBuilder
+                                .healing()
+                                .cause("Lust Healing")
+                                .source(wp)
+                                .value(missingHealth * 0.2f)
+                        );
+                    }
                 },
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
@@ -126,7 +135,7 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
                                     .damage()
                                     .cause("Blood Thirsty")
                                     .source(wp)
-                                    .value(value * 0.35f)
+                                    .value(value * 0.4f)
                                     .showAsCrit(event.isCrit())
                                     .flags(InstanceFlags.RECURSIVE, InstanceFlags.NO_LUST_HEALING, InstanceFlags.IGNORE_DAMAGE_BOOST)
                                     .customFlags(new CustomInstanceFlags.FinalEventInstanceFlag(event))
@@ -164,11 +173,15 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 float damageMultiplier = 1;
                 CooldownManager cooldownManager = event.getWarlordsEntity().getCooldownManager();
-                if (pveMasterUpgrade) {
-                    if (cooldownManager.hasCooldown(WoundingCooldown.WoundingData.class)) {
-                        damageMultiplier += 0.3f;
+                if (pveMasterUpgrade && (cooldownManager.hasCooldown(WoundingCooldown.WoundingData.class) || cooldownManager.hasCooldownFromName("Bleed"))) {
+                    for (AbstractAbility ability : wp.getAbilities()) {
+                        if (ability instanceof Berserk) {
+                            continue;
+                        }
+                        ability.subtractCurrentCooldown(0.15f);
                     }
-                } else if (pveMasterUpgrade2) {
+                }
+                if (pveMasterUpgrade2) {
                     if (cooldownManager.hasCooldownFromName("Bleed")) {
                         damageMultiplier += 0.3f;
                     }

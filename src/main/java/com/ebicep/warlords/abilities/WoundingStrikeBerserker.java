@@ -139,7 +139,6 @@ public class WoundingStrikeBerserker extends AbstractStrike<WoundingStrikeBerser
                }
            })
            ) {
-
                @Override
                public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
                    return currentHealValue * .2f;

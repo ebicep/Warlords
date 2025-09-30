@@ -25,7 +25,7 @@ public class WoundingStrikeBranchBerserker extends AbstractUpgradeBranch<Woundin
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgradeEnergy(ability, 2.5f)
+                .addUpgradeEnergy(ability, 5f)
                 .addUpgrade(new UpgradeTypes.HealingUpgradeType() {
 
                     @Override
@@ -45,13 +45,15 @@ public class WoundingStrikeBranchBerserker extends AbstractUpgradeBranch<Woundin
                 "Lacerating Strike",
                 "Wounding Strike - Master Upgrade",
                 """
+                        -5 Energy cost
                         +50% Damage
                         
                         Wounding Strike now applies BLEED instead of wounding.
 
-                        BLEED: Enemies afflicted take 100% more damage from Wounding Strike while Blood Lust is active. Bleeding enemies have healing reduced by 80% and lose 0.5% of their max health per second.""",
+                        BLEED: Enemies afflicted take 100% more damage from Wounding Strike while Blood Lust is active. Bleeding enemies have their healing reduced by 80% and lose 0.5% of their max health per second.""",
                 50000,
                 () -> {
+                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -5);
                     Value.RangedValueCritable damage = ability.getDamageValues().getStrikeDamage();
                     damage.min().addMultiplicativeModifierAdd("Master Upgrade Branch", .5f);
                     damage.max().addMultiplicativeModifierAdd("Master Upgrade Branch", .5f);
@@ -61,13 +63,13 @@ public class WoundingStrikeBranchBerserker extends AbstractUpgradeBranch<Woundin
                 "Lustful Strike",
                 "Wounding Strike - Master Upgrade",
                 """
-                        -20 Energy cost
+                        -10 Energy cost
                         
                         Wounding Strike now hits up to 3 enemies. Strikes deal 25% more damage while Blood Lust is active, additionally Blood lust healing is reduced by 25%.
                         """,
                 50000,
                 () -> {
-                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -20);
+                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -10);
                     abilityTree.getWarlordsPlayer().doOnStaticAbility(BloodLust.class, bloodLust -> {
                         bloodLust.setDamageConvertPercent(bloodLust.getDamageConvertPercent() - 25);
                     });
