@@ -189,6 +189,7 @@ public class WarlordsNewHotbarMenu {
                                 itemBuilder.addLore(Component
                                         .text(spec.name, (databasePlayer.getLastSpec() == spec ? NamedTextColor.GREEN : NamedTextColor.GRAY))
                                         .append(ExperienceManager.getLevelStringBracket(level))
+                                        .append(ExperienceManager.getPrestigeLevelString(player.getUniqueId(), spec))
                                 );
                                 itemBuilder.addLore(ExperienceManager.getProgressStringWithPrestige(experience, level + 1, prestige));
                                 itemBuilder.addLore(Component.empty());
