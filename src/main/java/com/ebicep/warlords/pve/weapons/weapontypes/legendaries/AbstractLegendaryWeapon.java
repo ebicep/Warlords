@@ -115,16 +115,16 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
 
     @Override
     public List<Component> getUpgradeLore() {
-        float minDamageUpgradeDiff = getMeleeDamageMinValue() < 0 ? 0 : getMeleeDamageMinValue() * getUpgradeMultiplier() - getMeleeDamageMinValue();
+        float minDamageUpgradeDiff = getMeleeDamageMinValue() < 0 ? 0 : (getMeleeDamageMinValue() * (1 + getUpgradeMultiplier() / 100f)) - getMeleeDamageMinValue();
         List<Component> upgradeLore = new ArrayList<>(Arrays.asList(
                 Component.text("Damage: ", NamedTextColor.GRAY)
                          .append(Component.text(formatOptionalTenths(getMeleeDamageMin()), NamedTextColor.RED))
                          .append(Component.text(" - "))
                          .append(Component.text(formatOptionalTenths(getMeleeDamageMax()), NamedTextColor.RED))
                          .append(GREEN_ARROW)
-                         .append(Component.text(formatOptionalTenths(getMeleeDamageMin() * (getMeleeDamageMin() > 0 ?
-                                                                                            getUpgradeMultiplier() :
-                                                                                            getUpgradeMultiplierNegative())), NamedTextColor.RED
+                         .append(Component.text(formatOptionalTenths(getMeleeDamageMin() * AbstractAbility.convertToMultiplicationDecimal((getMeleeDamageMin() > 0 ?
+                                 getUpgradeMultiplier() :
+                                 getUpgradeMultiplierNegative()))), NamedTextColor.RED
                          ))
                          .append(Component.text(" - "))
                          .append(Component.text(formatOptionalTenths(getMeleeDamageMax() + minDamageUpgradeDiff), NamedTextColor.RED)),
@@ -140,31 +140,31 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
                 Component.text("Health: ", NamedTextColor.GRAY)
                          .append(Component.text(format(getHealthBonus()), NamedTextColor.GREEN))
                          .append(GREEN_ARROW)
-                         .append(Component.text(format(getHealthBonus() * (getHealthBonus() > 0 ?
-                                                                           getUpgradeMultiplier() :
-                                                                           getUpgradeMultiplierNegative())), NamedTextColor.GREEN
+                         .append(Component.text(format(getHealthBonus() * AbstractAbility.convertToMultiplicationDecimal((getHealthBonus() > 0 ?
+                                 getUpgradeMultiplier() :
+                                 getUpgradeMultiplierNegative()))), NamedTextColor.GREEN
                          )),
                 Component.text("Speed: ", NamedTextColor.GRAY)
                          .append(Component.text(format(getSpeedBonus()) + "%", NamedTextColor.GREEN))
                          .append(GREEN_ARROW)
-                         .append(Component.text(format(getSpeedBonus() * getUpgradeMultiplier()) + "%", NamedTextColor.GREEN))
+                         .append(Component.text(format(getSpeedBonus() * AbstractAbility.convertToMultiplicationDecimal(getUpgradeMultiplier())) + "%", NamedTextColor.GREEN))
         ));
         if (getEnergyPerSecondBonus() != 0) {
             upgradeLore.add(Component.text("Energy per Second: ", NamedTextColor.GRAY)
                                      .append(Component.text(format(getEnergyPerSecondBonus()), NamedTextColor.GREEN))
                                      .append(GREEN_ARROW)
-                                     .append(Component.text(format(getEnergyPerSecondBonus() * (getEnergyPerSecondBonus() > 0 ?
-                                                                                                getUpgradeMultiplier() :
-                                                                                                getUpgradeMultiplierNegative())), NamedTextColor.GREEN
+                                     .append(Component.text(format(getEnergyPerSecondBonus() * AbstractAbility.convertToMultiplicationDecimal((getEnergyPerSecondBonus() > 0 ?
+                                             getUpgradeMultiplier() :
+                                             getUpgradeMultiplierNegative()))), NamedTextColor.GREEN
                                      )));
         }
         if (getEnergyPerHitBonus() != 0) {
             upgradeLore.add(Component.text("Energy per Hit: ", NamedTextColor.GRAY)
                                      .append(Component.text(format(getEnergyPerHitBonus()), NamedTextColor.GREEN))
                                      .append(GREEN_ARROW)
-                                     .append(Component.text(format(getEnergyPerHitBonus() * (getEnergyPerHitBonus() > 0 ?
-                                                                                             getUpgradeMultiplier() :
-                                                                                             getUpgradeMultiplierNegative())), NamedTextColor.GREEN
+                                     .append(Component.text(format(getEnergyPerHitBonus() * AbstractAbility.convertToMultiplicationDecimal((getEnergyPerHitBonus() > 0 ?
+                                             getUpgradeMultiplier() :
+                                             getUpgradeMultiplierNegative()))), NamedTextColor.GREEN
                                      )));
         }
 
@@ -177,18 +177,18 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
             upgradeLore.add(Component.text("Skill Crit Chance: ", NamedTextColor.GRAY)
                                      .append(Component.text(format(getSkillCritChanceBonus()), NamedTextColor.GREEN))
                                      .append(GREEN_ARROW)
-                                     .append(Component.text(format(getSkillCritChanceBonus() * (getSkillCritChanceBonus() > 0 ?
-                                                                                                getUpgradeMultiplier() :
-                                                                                                getUpgradeMultiplierNegative())), NamedTextColor.GREEN
+                                     .append(Component.text(format(getSkillCritChanceBonus() * AbstractAbility.convertToMultiplicationDecimal((getSkillCritChanceBonus() > 0 ?
+                                             getUpgradeMultiplier() :
+                                             getUpgradeMultiplierNegative()))), NamedTextColor.GREEN
                                      )));
         }
         if (getSkillCritMultiplierBonus() != 0) {
             upgradeLore.add(Component.text("Skill Crit Multiplier: ", NamedTextColor.GRAY)
                                      .append(Component.text(format(getSkillCritMultiplierBonus()), NamedTextColor.GREEN))
                                      .append(GREEN_ARROW)
-                                     .append(Component.text(format(getSkillCritMultiplierBonus() * (getSkillCritMultiplierBonus() > 0 ?
-                                                                                                    getUpgradeMultiplier() :
-                                                                                                    getUpgradeMultiplierNegative())), NamedTextColor.GREEN
+                                     .append(Component.text(format(getSkillCritMultiplierBonus() * AbstractAbility.convertToMultiplicationDecimal((getSkillCritMultiplierBonus() > 0 ?
+                                             getUpgradeMultiplier() :
+                                             getUpgradeMultiplierNegative()))), NamedTextColor.GREEN
                                      )));
         }
 
@@ -248,29 +248,10 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
 
     }
 
-    public float getSpeedBonus() {
-        float speedBonus = getSpeedBonusValue();
-        speedBonus *= Math.pow(speedBonus > 0 ? getUpgradeMultiplier() : getUpgradeMultiplierNegative(), upgradeLevel);
-        if (getStarPieceStat() == WeaponStats.SPEED_BONUS) {
-            speedBonus *= getStarPieceBonusMultiplicativeValue();
-        }
-        return speedBonus;
-    }
-
     @Override
     public void cleanup() {
         this.warlordsPlayer = null;
         this.pveOption = null;
-    }
-
-    @Override
-    public float getHealthBonus() {
-        float healthBonus = getHealthBonusValue();
-        healthBonus *= Math.pow(healthBonus > 0 ? getUpgradeMultiplier() : getUpgradeMultiplierNegative(), upgradeLevel);
-        if (getStarPieceStat() == WeaponStats.HEALTH_BONUS) {
-            healthBonus *= getStarPieceBonusMultiplicativeValue();
-        }
-        return healthBonus;
     }
 
     @Override
@@ -281,16 +262,6 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
     @Override
     public int getMeleeDamageRange() {
         return 0;
-    }
-
-    @Override
-    public float getMeleeDamageMin() {
-        float meleeDamageMin = getMeleeDamageMinValue();
-        meleeDamageMin *= Math.pow(meleeDamageMin > 0 ? getUpgradeMultiplier() : getUpgradeMultiplierNegative(), upgradeLevel);
-        if (getStarPieceStat() == WeaponStats.MELEE_DAMAGE) {
-            meleeDamageMin *= getStarPieceBonusMultiplicativeValue();
-        }
-        return meleeDamageMin;
     }
 
     @Override
@@ -494,10 +465,33 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         return this.titles.computeIfAbsent(getTitle(), t -> new LegendaryWeaponTitleInfo()).getStarPiece().starPieceBonusValue;
     }
 
+    @Override
+    public float getHealthBonus() {
+        float healthBonus = getHealthBonusValue();
+        if (healthBonus > 0) {
+            healthBonus *= AbstractAbility.convertToMultiplicationDecimal(getUpgradeMultiplier() * upgradeLevel);
+        }
+        if (getStarPieceStat() == WeaponStats.HEALTH_BONUS) {
+            healthBonus *= getStarPieceBonusMultiplicativeValue();
+        }
+        return healthBonus;
+    }
+
+    public float getSpeedBonus() {
+        float speedBonus = getSpeedBonusValue();
+        if (speedBonus > 0) {
+            speedBonus *= AbstractAbility.convertToMultiplicationDecimal(getUpgradeMultiplier() * upgradeLevel);
+        }
+        if (getStarPieceStat() == WeaponStats.SPEED_BONUS) {
+            speedBonus *= getStarPieceBonusMultiplicativeValue();
+        }
+        return speedBonus;
+    }
+
     public float getEnergyPerSecondBonus() {
         float energyPerSecondBonus = getEnergyPerSecondBonusValue();
         if (energyPerSecondBonus > 0) {
-            energyPerSecondBonus *= Math.pow(getUpgradeMultiplier(), upgradeLevel);
+            energyPerSecondBonus *= AbstractAbility.convertToMultiplicationDecimal(getUpgradeMultiplier() * upgradeLevel);
         }
         if (getStarPieceStat() == WeaponStats.ENERGY_PER_SECOND_BONUS) {
             energyPerSecondBonus *= getStarPieceBonusMultiplicativeValue();
@@ -508,7 +502,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
     public float getEnergyPerHitBonus() {
         float energyPerHitBonus = getEnergyPerHitBonusValue();
         if (energyPerHitBonus > 0) {
-            energyPerHitBonus *= Math.pow(getUpgradeMultiplier(), upgradeLevel);
+            energyPerHitBonus *= AbstractAbility.convertToMultiplicationDecimal(getUpgradeMultiplier() * upgradeLevel);
         }
         if (getStarPieceStat() == WeaponStats.ENERGY_PER_HIT_BONUS) {
             energyPerHitBonus *= getStarPieceBonusMultiplicativeValue();
@@ -518,7 +512,9 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
 
     public float getSkillCritChanceBonus() {
         float skillCritChanceBonus = getSkillCritChanceBonusValue();
-        skillCritChanceBonus *= Math.pow(skillCritChanceBonus > 0 ? getUpgradeMultiplier() : getUpgradeMultiplierNegative(), upgradeLevel);
+        if (skillCritChanceBonus > 0) {
+            skillCritChanceBonus *= AbstractAbility.convertToMultiplicationDecimal(getUpgradeMultiplier() * upgradeLevel);
+        }
         if (getStarPieceStat() == WeaponStats.SKILL_CRIT_CHANCE_BONUS) {
             skillCritChanceBonus *= getStarPieceBonusMultiplicativeValue();
         }
@@ -527,11 +523,25 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
 
     public float getSkillCritMultiplierBonus() {
         float skillCritMultiplierBonus = getSkillCritMultiplierBonusValue();
-        skillCritMultiplierBonus *= Math.pow(skillCritMultiplierBonus > 0 ? getUpgradeMultiplier() : getUpgradeMultiplierNegative(), upgradeLevel);
+        if (skillCritMultiplierBonus > 0) {
+            skillCritMultiplierBonus *= AbstractAbility.convertToMultiplicationDecimal(getUpgradeMultiplier() * upgradeLevel);
+        }
         if (getStarPieceStat() == WeaponStats.SKILL_CRIT_MULTIPLIER_BONUS) {
             skillCritMultiplierBonus *= getStarPieceBonusMultiplicativeValue();
         }
         return skillCritMultiplierBonus;
+    }
+
+    @Override
+    public float getMeleeDamageMin() {
+        float meleeDamageMin = getMeleeDamageMinValue();
+        if (meleeDamageMin > 0) {
+            meleeDamageMin *= AbstractAbility.convertToMultiplicationDecimal(getUpgradeMultiplier() * upgradeLevel);
+        }
+        if (getStarPieceStat() == WeaponStats.MELEE_DAMAGE) {
+            meleeDamageMin *= getStarPieceBonusMultiplicativeValue();
+        }
+        return meleeDamageMin;
     }
 
     @Override

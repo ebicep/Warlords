@@ -19,7 +19,7 @@ public interface Upgradeable {
     void upgrade();
 
     default float getUpgradeMultiplier() {
-        return 1.1f;
+        return 10f;
     }
 
     default float getUpgradeMultiplierNegative() {
