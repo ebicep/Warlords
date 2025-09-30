@@ -116,7 +116,7 @@ public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementSt
                 .emptyLine()
                 .text("Every strike reduces the cooldown of Order of Eviscerate by ")
                 .durationSeconds(orderCooldownReduction)
-                .text(". Every")
+                .text(". Every ")
                 .text(strikeCritInterval, NamedTextColor.BLUE)
                 .text("th strike is a guaranteed critical strike. Critical strikes temporarily increase your movement speed by ")
                 .percent(speedOnCrit, NamedTextColor.WHITE)
