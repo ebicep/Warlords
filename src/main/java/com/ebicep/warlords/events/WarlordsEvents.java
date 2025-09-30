@@ -62,6 +62,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.RayTraceResult;
 
 import java.time.Instant;
 import java.util.*;
@@ -339,6 +340,7 @@ public class WarlordsEvents implements Listener {
         Entity attacker = e.getDamager();
         WarlordsEntity wpAttacker = Warlords.getPlayer(attacker);
         WarlordsEntity wpVictim = Warlords.getPlayer(e.getEntity());
+
         e.setCancelled(true);
         if (wpAttacker == null || wpVictim == null || !wpAttacker.isEnemyAlive(wpVictim) || wpAttacker.getGame().isFrozen()) {
             return;
@@ -347,7 +349,7 @@ public class WarlordsEvents implements Listener {
             return;
         }
 
-        wpAttacker.setHitCooldown(wpAttacker.getBaseHitCooldownValue());
+        wpAttacker.setHitCooldown(wpAttacker.isInPve() ? wpAttacker.getPveHitCooldown() : wpAttacker.getBaseHitCooldownValue());
         Optional<WarlordsDamageHealingFinalEvent> finalEvent = Optional.empty();
 
         if (wpAttacker instanceof WarlordsNPC warlordsNPC) {

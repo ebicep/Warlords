@@ -11,8 +11,8 @@ public enum MobDrop implements Spendable {
 
     ZENITH_STAR(
             "Zenith Star",
-            NamedTextColor.WHITE,
-            new ItemStack(Material.NETHER_STAR)
+            TextColor.color(210, 210, 210),
+            new ItemStack(Material.WIND_CHARGE)
     ),
 
     ;
