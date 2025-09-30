@@ -110,17 +110,16 @@ public class Orbyz extends AbstractMob implements BossMob {
                         .entitiesAround(warlordsNPC, 6, 6, 6)
                         .aliveEnemiesOf(warlordsNPC)
                 ) {
-                    if (!we.getCooldownManager().hasCooldownFromName("Empowering Relic")) {
-                        return;
+                    if (we.getCooldownManager().hasCooldownFromName("Empowering Relic")) {
+                        we.addInstance(InstanceBuilder
+                                .damage()
+                                .min(800)
+                                .max(1200)
+                                .source(warlordsNPC)
+                                .cause("Blizzard")
+                                .flag(InstanceFlags.TRUE_DAMAGE, true)
+                        );
                     }
-                    we.addInstance(InstanceBuilder
-                            .damage()
-                            .min(800)
-                            .max(1200)
-                            .source(warlordsNPC)
-                            .cause("Blizzard")
-                            .flag(InstanceFlags.TRUE_DAMAGE, true)
-                    );
                 }
 
                 if (warlordsNPC.isDead()) {
@@ -135,7 +134,7 @@ public class Orbyz extends AbstractMob implements BossMob {
         convergingShockwavesAbility = new ConvergingShockwavesAbility(warlordsNPC, () -> mapCenter, 38, 10, 60, 20, 0.3, 1.5, 1, 1000, 2, 1, Color.PURPLE, Color.BLUE);
         heavenlySpearAbilityOne = new HeavenlySpearAbility(warlordsNPC, () -> mapCenter, 6 * option.playerCount(), 38, 30, 5, 4000, 60, 35, 2.5, Material.PACKED_ICE);
         heavenlySpearAbilityTwo = new HeavenlySpearAbility(warlordsNPC, () -> mapCenter, 8 * option.playerCount(), 38, 20, 5, 4000, 30, 35, 2.5, Material.PACKED_ICE);
-        heavenlySpearAbilityInterval = new HeavenlySpearAbility(warlordsNPC, () -> mapCenter, option.playerCount(), 36, 50, 8, 5000, 400, 35, 3.5, Material.SNOW_BLOCK);
+        heavenlySpearAbilityInterval = new HeavenlySpearAbility(warlordsNPC, () -> mapCenter, 2 + option.playerCount(), 36, 50, 8, 5000, 400, 35, 3.5, Material.SNOW_BLOCK);
         summoningCirclesAbility = new SummoningCirclesAbility(warlordsNPC, () -> mapCenter, 2, 28, 300, 5, 5, option);
 
         markedForDeathAbility = new MarkedForDeathAbility(
@@ -319,7 +318,7 @@ public class Orbyz extends AbstractMob implements BossMob {
                 @Override
                 public void run() {
                     t++;
-                    if (t % 25 == 0) {
+                    if (t % 20 == 0) {
                         heavenlySpearAbilityTwo.start(warlordsNPC.getGame());
                     }
 
@@ -378,7 +377,7 @@ public class Orbyz extends AbstractMob implements BossMob {
             summoningCirclesAbility.start(warlordsNPC.getGame());
         }
 
-        if (ticksElapsed % 380 == 0 && ticksElapsed > 0 && !preventMarkForDeath) {
+        if (ticksElapsed % 430 == 0 && ticksElapsed > 0 && !preventMarkForDeath) {
             markedForDeathAbility.start(warlordsNPC.getGame());
         }
 

@@ -196,7 +196,6 @@ public class HeavenlySpearAbility {
                     .cause("Heavenly Spear")
                     .value((float) impactDamage)
                     .source(source)
-                    .flags(InstanceFlags.TRUE_DAMAGE)
             );
         }
 
