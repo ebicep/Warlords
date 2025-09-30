@@ -163,13 +163,12 @@ public class NPCManager {
                     createWeaponsManagerNPC();
                     createLegendaryWeaponNPC();
                     createSupplyDropFairNPC();
-//                    createQuestMenuNPC();
                     createBountyMenuNPC();
                     createStarPieceSynthesizerNPC();
 //                    createMysteriousTokenNPC();
-//                    createItemMichaelNPC();
                     createItemEnyaNPC();
                     createIllusionVendorNPC();
+                    createPrestigeVendorNPC();
                 })
                 .execute();
     }
@@ -343,45 +342,18 @@ public class NPCManager {
         npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), -9.5, 74, 97.5, -180, 0));
     }
 
-    public static void createItemMichaelNPC() {
-        registerTrait(ItemMichaelTrait.class, "ItemMichaelTrait");
+    public static void createPrestigeVendorNPC() {
+        registerTrait(PrestigeVendorTrait.class, "PrestigeVendorTrait");
 
-        NPC npc = NPC_REGISTRY.createNPC(EntityType.VILLAGER, "item-michael");
-        npc.getOrAddTrait(VillagerProfession.class).setProfession(Villager.Profession.TOOLSMITH);
-        npc.addTrait(ItemMichaelTrait.class);
-        npc.getOrAddTrait(LookClose.class)
-           .toggle();
-
-        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
-
-        Location location = new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), -2528, 50, 770, 125, 0);
-        npc.spawn(location);
-
-        HologramDataText hologramDataText = new HologramDataText.Builder<>(ComponentBuilder.create(
-                "Mysterious Michael",
-                NamedTextColor.GREEN
-        ).build()).setBillboard(Display.Billboard.CENTER).build();
-        HologramManager.addHologram(new Hologram.Builder(
-                        "mysteriousMichael",
-                        location.clone().add(0, 2.1, 0),
-                        player -> hologramDataText
-                ).setVisibility(VisibilityType.ALL).build()
-        );
-    }
-
-    public static void createQuestMenuNPC() {
-        registerTrait(QuestMenuTrait.class, "QuestMenuTrait");
-
-        NPC npc = NPC_REGISTRY.createNPC(EntityType.VILLAGER, "quest-menu");
-        npc.getOrAddTrait(VillagerProfession.class).setProfession(Villager.Profession.LIBRARIAN);
-        npc.addTrait(QuestMenuTrait.class);
-        HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
-//        hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK");
-        hologramTrait.setLine(0, ChatColor.AQUA + "Quest Lord");
+        NPC npc = NPC_REGISTRY.createNPC(EntityType.CREAKING, "prestige-vendor");
+        npc.addTrait(PrestigeVendorTrait.class);
+        LookClose lookClose = npc.getOrAddTrait(LookClose.class);
+        lookClose.setPerPlayer(true);
+        lookClose.toggle();
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
-        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), -2574.5, 50, 758.5, -90, 0));
 
+        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), -21.5, 88, 183.5, 90, 0));
     }
 
     public static void destroyNPCs() {
