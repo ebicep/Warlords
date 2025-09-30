@@ -47,7 +47,7 @@ public class IncendiaryCurseBranch extends AbstractUpgradeBranch<IncendiaryCurse
                 """
                         +30% Damage
                         
-                        Increase the block radius by 3. Additionally, every enemy stunned gives 20 energy (Max 200).
+                        Increase the block radius by 3. Additionally, every enemy stunned gives 10 energy (Max 200).
                         """,
                 50000,
                 () -> {
