@@ -23,8 +23,8 @@ public class LegendaryIncendiary extends AbstractLegendaryWeapon implements Even
 
     public static final int CRIT_CHANCE_BOOST = 15;
     public static final float CRIT_CHANCE_BOOST_INCREASE_PER_UPGRADE = 1f;
-    public static final int EPH_PERCENT_INCREASE = 50;
-    public static final float EPH_PERCENT_INCREASE_PER_UPGRADE = 10f;
+    public static final int EPH_PERCENT_INCREASE = 25;
+    public static final float EPH_PERCENT_INCREASE_PER_UPGRADE = 5f;
 
 
     public LegendaryIncendiary() {
