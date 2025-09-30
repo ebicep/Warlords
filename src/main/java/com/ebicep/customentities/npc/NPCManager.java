@@ -169,6 +169,7 @@ public class NPCManager {
                     createItemEnyaNPC();
                     createIllusionVendorNPC();
                     createPrestigeVendorNPC();
+                    createAscendantVendorNPC();
                 })
                 .execute();
     }
@@ -313,19 +314,8 @@ public class NPCManager {
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
 
-        Location location = new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 64, 81, 154.5, 90, 0);
+        Location location = new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 28.5, 93, 208.5, 90, 0);
         npc.spawn(location);
-
-        HologramDataText hologramDataText = new HologramDataText.Builder<>(ComponentBuilder.create(
-                "Ethical Enya",
-                NamedTextColor.GREEN
-        ).build()).setBillboard(Display.Billboard.CENTER).build();
-        HologramManager.addHologram(new Hologram.Builder(
-                        "ethicalEnya",
-                        location.clone().add(0, 2.1, 0),
-                        player -> hologramDataText
-                ).setVisibility(VisibilityType.ALL).build()
-        );
     }
 
     public static void createIllusionVendorNPC() {
@@ -354,6 +344,24 @@ public class NPCManager {
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
 
         npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), -21.5, 88, 183.5, 90, 0));
+    }
+
+    public static void createAscendantVendorNPC() {
+        registerTrait(AscendantVendorTrait.class, "AscendantVendorTrait");
+
+        NPC npc = NPC_REGISTRY.createNPC(EntityType.PLAYER, "ascendant-vendor");
+        npc.getOrAddTrait(SkinTrait.class).setTexture(
+                "ewogICJ0aW1lc3RhbXAiIDogMTc1OTI0OTUxMTgwOSwKICAicHJvZmlsZUlkIiA6ICJmODJmMTUyNWE3Zjk0M2RjOTIyYzM1MWZhZTJjZmFmMyIsCiAgInByb2ZpbGVOYW1lIiA6ICJ3aWVzeiIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS9iMDRlYmExZTI1NjFlMGYxMzdmOGM2Mzg4OTdhYWQ2ZGE3NDYyYzg3MDI4YzRmMmZmYWU3Mzg5NDE3ODM5NmFhIiwKICAgICAgIm1ldGFkYXRhIiA6IHsKICAgICAgICAibW9kZWwiIDogInNsaW0iCiAgICAgIH0KICAgIH0KICB9Cn0=",
+                "k20/9mBe5vNBTQj2vuwWx3Q5TW1y1EtKK504S+dUnpBNTe8U7Fu40uy6O0DAM7ZiOcSkpsxxtRPPj6j9nxTPzLKEPgu26qp+9kHX3NWTBDBNsnPUdW1p9VwyfuXRucHLMqKJTRaXqhjABKQtLmFMNVW6cea5dbdCD+rGa3U6NQdlj0GEu1nff92d2Eh3LxmZEIhdgoxVlbFIEKOAziOv9kuSIZpok46ntnIEomz7+btI43spA8nVCgjomjl6/eOiBg9/fGOFGEx8bdSMnHeC/Ck1JUMsO6STu5OurM3RmLdkKL3JCXt2LkCBggiXW900Ik24JRtxp/AUule0TLhu4rFRwDfWgxPCoLEfPAye2fQMxeYU7URxwAjiARyi4q4QChuPavWMXi6zpOCzMRTrAl4zM8+aaSzZIaKLT6M2rdO2kVU8jrv6PcjLRkxxmPQm2hi6nwwfbS92yWqD4a/SpBlVtNHZGudyX8sCnG2jFkDrpPX0DD15QjT4Fjex+T4nhPq8FDt/NHfcAFYfLvPapiG0ZRbZInFu+/yXzXzgGkutttrRzHmWEQw7sjkpQHOqu09yWBI6Q2TvHCfoKMZBni69Epl7jk1Mnnun4VO/skQysc3LwLIvb026giq7iP7ikljhZXIP38Ka0Z5NWIXC8KYzjHmq4MUCkCAjsF94qLQ="
+        );
+        npc.addTrait(AscendantVendorTrait.class);
+        LookClose lookClose = npc.getOrAddTrait(LookClose.class);
+        lookClose.setPerPlayer(true);
+        lookClose.toggle();
+
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
+
+        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 20.5, 93, 208.5, -90, 0));
     }
 
     public static void destroyNPCs() {

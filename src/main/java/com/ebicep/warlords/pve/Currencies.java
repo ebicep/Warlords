@@ -186,10 +186,15 @@ public enum Currencies implements Spendable {
             TextColor.color(100, 149, 237),
             new ItemStack(Material.HEART_OF_THE_SEA)
     ),
-    ETHERUM_CRYSTAL(
-            "Etherum Crystal",
+    ETHEREUM_CRYSTAL(
+            "Ethereum Crystal",
             TextColor.color(165, 113, 64),
             new ItemStack(Material.FLOW_ARMOR_TRIM_SMITHING_TEMPLATE)
+    ),
+    ASCENDANT_SCROLL(
+            "Ascendant Scroll",
+            TextColor.color(170, 20, 40),
+            new ItemStack(Material.NETHERITE_UPGRADE_SMITHING_TEMPLATE)
     ),
     CRYPTIC_CONQUEST_KEY(
             "Cryptic Conquest Key",
