@@ -64,7 +64,7 @@ public class LightInfusionBranchAvenger extends AbstractUpgradeBranch<LightInfus
                         """,
                 50000,
                 () -> {
-                    ability.setTickDuration(ability.getTickDuration() + 200);
+                    ability.setTickDuration(ability.getTickDuration() + 40);
                 }
         );
     }
