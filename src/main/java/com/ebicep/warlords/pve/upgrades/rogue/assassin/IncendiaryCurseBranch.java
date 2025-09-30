@@ -52,7 +52,6 @@ public class IncendiaryCurseBranch extends AbstractUpgradeBranch<IncendiaryCurse
                 50000,
                 () -> {
                     ability.getHitBoxRadius().addAdditiveModifier("Master Upgrade", 3);
-                    ability.setBlindDurationInTicks(ability.getBlindDurationInTicks() + 40);
 
                     Value.RangedValueCritable damage = ability.getDamageValues().getCurseDamage();
                     damage.min().addMultiplicativeModifierAdd("PvE", .3f);
