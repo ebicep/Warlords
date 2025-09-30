@@ -49,6 +49,7 @@ import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.SpendableBuyShop;
 import com.ebicep.warlords.pve.gameevents.libraryarchives.PlayerCodex;
 import com.ebicep.warlords.pve.items.types.fixeditems.FixedItems;
+import com.ebicep.warlords.pve.mobs.MobDrop;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ComponentUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
@@ -964,6 +965,7 @@ public enum GameEvents {
                 add(new SpendableBuyShop(3, Currencies.LEGEND_FRAGMENTS, -1, 3_000));
                 add(new SpendableBuyShop(3, Currencies.SKILL_BOOST_MODIFIER, 3, 75_000));
                 add(new SpendableBuyShop(1, Currencies.LIMIT_BREAKER, 1, 500_000));
+                add(new SpendableBuyShop(1, MobDrop.ZENITH_STAR, 3, 500_000));
             }}
     ) {
         @Override
