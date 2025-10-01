@@ -70,7 +70,14 @@ public class SeismicWaveBerserker extends AbstractSeismicWave implements Damages
     protected void onHit(@Nonnull WarlordsEntity wp, UUID abilityUUID, int i, WarlordsEntity waveTarget) {
         float multiplier = 1;
         if (pveMasterUpgrade) {
-            multiplier = (1.5f / 15f) * Math.min(i + 1, 15) + 1;
+            multiplier = (2 / 15f) * Math.min(i + 1, 15) + 1;
+            WoundingCooldown.addWoundingCooldown(
+                    waveTarget,
+                    name,
+                    wp,
+                    50,
+                    4 * 20
+            );
         }
         if (pveMasterUpgrade2) {
             for (AbstractAbility ability : wp.getAbilities()) {

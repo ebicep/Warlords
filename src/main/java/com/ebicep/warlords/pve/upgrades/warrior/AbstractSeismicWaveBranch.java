@@ -19,13 +19,13 @@ public abstract class AbstractSeismicWaveBranch extends AbstractUpgradeBranch<Ab
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgradeCooldown(ability, 0.0375f)
+                .addUpgradeCooldown(ability, 0.05f)
                 .addTo(treeB);
 
         masterUpgrade = new Upgrade(
                 "Seismic Smash",
                 "Seismic Wave - Master Upgrade",
-                "Increase the size of Seismic Wave by 150% and deal increased damage the further away the enemy is. (Max 1.5x at 15 blocks).",
+                "Increase the size of Seismic Wave by 150% and deal increased damage the further away the enemy is. (Max 2x at 15 blocks). Additionally, all hit targets get wounded.",
                 50000,
                 () -> {
 

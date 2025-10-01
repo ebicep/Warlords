@@ -24,10 +24,10 @@ import java.util.*;
 
 public class LegendaryChaotic extends AbstractLegendaryWeapon implements Listener, LibraryArchivesTitle {
 
-    private static final int CRIT_CHANCE = 5;
+    private static final int CRIT_CHANCE = 3;
     //    private static final float CRIT_CHANCE_PER_UPGRADE = 1;
-    private static final int CRIT_MULTIPLIER = 8;
-    private static final float CRIT_MULTIPLIER_PER_UPGRADE = 1.25f;
+    private static final int CRIT_MULTIPLIER = 5;
+    private static final float CRIT_MULTIPLIER_PER_UPGRADE = 1f;
     private static final int MAX_STACKS = 5;
     private static final float MAX_STACKS_PER_UPGRADE = 1;
 
@@ -108,7 +108,7 @@ public class LegendaryChaotic extends AbstractLegendaryWeapon implements Listene
 
     @Override
     protected float getSkillCritMultiplierBonusValue() {
-        return 25;
+        return 20;
     }
 
     @Override
@@ -151,7 +151,7 @@ public class LegendaryChaotic extends AbstractLegendaryWeapon implements Listene
         if (event.getInstanceFlags().contains(InstanceFlags.RECURSIVE)) {
             return;
         }
-        if (event.isCrit()) {
+        if (event.isCrit() && stacks > 0) {
             stacks--;
             return;
         }

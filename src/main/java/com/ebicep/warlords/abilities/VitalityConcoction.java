@@ -112,8 +112,8 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
                     .aliveTeammatesOfExcludingSelf(wp)
             ) {
                 EffectUtils.playParticleLinkAnimation(wp.getLocation(), we.getLocation(), Particle.SCULK_SOUL);
-                wp.getCooldownManager().removeDebuffCooldowns();
-                wp.addSpeedModifier(wp, name, (float) speedBoost / 2, tickDuration * 2);
+                we.getCooldownManager().removeDebuffCooldowns();
+                we.addSpeedModifier(wp, name + " Allies", (float) speedBoost / 2, tickDuration * 2);
                 we.getCooldownManager().addCooldown(new RegularCooldown<>(
                         name,
                         "STIM ALLIES",
