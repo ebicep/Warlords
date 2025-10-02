@@ -264,7 +264,7 @@ public enum GameMode {
         }
     },
     DUEL(
-            "[WIP] Duel",
+            "Duel",
             "DUEL",
             new ItemStack(Material.DIAMOND_SWORD),
             DatabaseGameDuel::new,
@@ -289,42 +289,6 @@ public enum GameMode {
                     Component.text("GO!", NamedTextColor.GREEN)
             ));
 
-            options.add(new WeaponOption());
-            options.add(new ApplySpecBoostsOption(addons.contains(GameAddon.RANDOM_SPEC_BOOST)));
-            options.add(new HorseOption());
-            options.add(new PlayerCooldownDisplayOption());
-
-            return options;
-        }
-    },
-    SIMULATION_TRIAL(
-            "[WIP] Simulation Trial",
-            "SIMS",
-            null,
-            null,
-            null,
-            Integer.MAX_VALUE,
-            true,
-            ConfigManager.PVE_NAMESPACES
-    ) {
-        @Override
-        public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
-            List<Option> options = super.initMap(map, loc, addons);
-
-            Component base = Component.text("", NamedTextColor.YELLOW, TextDecoration.BOLD);
-            options.add(TextOption.Type.CHAT_CENTERED.create(
-                    Component.text("Simulation Trial", NamedTextColor.WHITE, TextDecoration.BOLD),
-                    Component.empty(),
-                    base.append(Component.text("The goal is to either defend your flag holder as long")),
-                    base.append(Component.text("as possible or return the flag as soon as possible.")),
-                    Component.empty()
-            ));
-            options.add(TextOption.Type.TITLE.create(
-                    10,
-                    Component.text("GO!", NamedTextColor.GREEN),
-                    Component.text("Let the trials begin!", NamedTextColor.YELLOW)
-            ));
-            options.add(new NoRespawnIfOfflineOption());
             options.add(new WeaponOption());
             options.add(new ApplySpecBoostsOption(addons.contains(GameAddon.RANDOM_SPEC_BOOST)));
             options.add(new HorseOption());
@@ -554,7 +518,6 @@ public enum GameMode {
             options.add(CompassOption.flagOption());
             options.add(new FlagOption());
             options.add(new WeaponOption());
-//            options.add(new ApplySpecBoostsOption());
             options.add(new HorseOption());
             options.add(new PlayerCooldownDisplayOption());
             options.add(new ApplySpecBoostsOption(addons.contains(GameAddon.RANDOM_SPEC_BOOST)));

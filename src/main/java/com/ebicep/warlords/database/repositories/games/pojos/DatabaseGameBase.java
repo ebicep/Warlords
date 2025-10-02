@@ -101,7 +101,7 @@ public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
             //check for private + untracked gamemodes
             if (game.getAddons().contains(GameAddon.PRIVATE_GAME)) {
                 switch (game.getGameMode()) {
-                    case DUEL, DEBUG, SIMULATION_TRIAL -> updatePlayerStats = false;
+                    case DUEL, DEBUG -> updatePlayerStats = false;
                 }
             }
 
