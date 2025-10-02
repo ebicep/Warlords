@@ -3,7 +3,6 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
@@ -13,7 +12,6 @@ import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +28,7 @@ public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementSt
     private int damageIncrease;
     private int damageIncreaseHealthThreshold;
     private float orderCooldownReduction;
+    private float maxHealthDamageMultiplier = 1;
 
     public JudgementStrike() {
         super(AbstractAbilityBuilder.create("judgementStrike").pvp());
@@ -62,7 +61,7 @@ public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementSt
                 attacksDone = 0;
                 critChance = 100;
             }
-            damageValues.strikeDamage.rawDamage().setBaseValue(pveMasterUpgrade ? (float)getMaxHpDamage(nearPlayer.getMaxHealth()) : 0);
+            damageValues.strikeDamage.rawDamage().setBaseValue(pveMasterUpgrade ? MaxHealthDamage.getMaxHealthDamage(nearPlayer, maxHealthDamageMultiplier) : 0);
             float damageMultiplier = convertToMultiplicationDecimal(
                     (nearPlayer.getCurrentHealth() / nearPlayer.getMaxBaseHealth()) < damageIncreaseHealthThreshold / 100f
                     ? damageIncrease
@@ -97,9 +96,9 @@ public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementSt
         }
         return currentDamageValue+ event.getRawDamage();
     }
-    public double getMaxHpDamage(double maxHp) {
-        return 1800 * Math.log(1 + maxHp / 6500.0);
-    }
+//    public double getMaxHpDamage(double maxHp) {
+//        return 1800 * Math.log(1 + maxHp / 6500.0);
+//    }
     @Override
     public DamageValues getDamageValues() {
         return damageValues;

@@ -57,7 +57,7 @@ public class AvengersStrike extends AbstractStrike<AvengersStrike, AvengersStrik
                 if (mob.getInternalLevel() <= 3) {
                     multiplier += 0.4f;
                 } else if (mob.getInternalLevel() >= 4) {
-                    healthDamage = nearPlayer.getMaxHealth() * 0.01f;
+                    healthDamage = MaxHealthDamage.getMaxHealthDamage(nearPlayer, 0.1f);
                 }
             } else if (pveMasterUpgrade2) {
                 int enemiesNearBy = Math.toIntExact(PlayerFilter.entitiesAround(wp, 10, 10, 10).aliveEnemiesOf(wp).stream().count());
@@ -68,7 +68,7 @@ public class AvengersStrike extends AbstractStrike<AvengersStrike, AvengersStrik
                 }
             }
         }
-        healthDamage = DamageCheck.clamp(healthDamage);
+       // healthDamage = DamageCheck.clamp(healthDamage);
         nearPlayer.addInstance(InstanceBuilder
                 .damage()
                 .ability(this)
@@ -81,7 +81,7 @@ public class AvengersStrike extends AbstractStrike<AvengersStrike, AvengersStrik
                 for (WarlordsEntity we : PlayerFilter.entitiesAround(nearPlayer, 4, 4, 4).aliveEnemiesOf(wp).closestFirst(nearPlayer).excluding(nearPlayer).limit(2)) {
                     float damage = finalEvent.getValue() * 0.75f;
                     if (we instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob().getInternalLevel() >= 4) {
-                        damage = DamageCheck.clamp(we.getMaxHealth());
+                        damage = DamageCheck.clamp(we.getMaxHealth());//TODO what is damage check for?
                     }
                     we.addInstance(InstanceBuilder.damage().ability(this).source(wp).value(damage).showAsCrit(finalEvent.isCrit()).flags(InstanceFlags.TRUE_DAMAGE));
                     Bukkit.getPluginManager().callEvent(new WarlordsStrikeEvent(wp, this, we));

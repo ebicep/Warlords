@@ -2,7 +2,8 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractTimeWarp;
-import com.ebicep.warlords.abilities.internal.DamageCheck;
+//import com.ebicep.warlords.abilities.internal.DamageCheck;
+import com.ebicep.warlords.abilities.internal.MaxHealthDamage;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
@@ -19,7 +20,6 @@ import com.ebicep.warlords.pve.upgrades.mage.pyromancer.TimeWarpBranchPyromancer
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.kyori.adventure.text.Component;
 import net.minecraft.sounds.SoundSource;
 import org.bukkit.*;
 
@@ -66,15 +66,16 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
                     if (pveMasterUpgrade2) {
                         float cooldownReduction = 0;
                         for (WarlordsEntity enemy : PlayerFilter.entitiesAround(wp, 12, 12, 12).aliveEnemiesOf(wp).toList()) {
-                            float healthDamage = enemy.getMaxBaseHealth() * .075f;
+                            float healthDamage = MaxHealthDamage.getMaxHealthDamage(enemy, .75f);
                             if (enemy instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof BossLike) {
-                                healthDamage = DamageCheck.clamp(healthDamage);
+                                //healthDamage = DamageCheck.clamp(healthDamage);
                             }
                             Optional<WarlordsDamageHealingFinalEvent> finalEventOptional = enemy.addInstance(InstanceBuilder
                                     .damage()
                                     .cause("Accursed Leap")
                                     .source(wp)
-                                    .value(healthDamage)
+                                    .rawDamage(healthDamage)
+                                   // .value(healthDamage)
                             );
                             if (finalEventOptional.isPresent()) {
                                 if (finalEventOptional.get().isDead()) {

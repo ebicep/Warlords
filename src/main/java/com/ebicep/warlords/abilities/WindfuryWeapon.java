@@ -113,15 +113,16 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
                     @Override
                     public void run() {
                         Utils.playGlobalSound(victim.getLocation(), "shaman.windfuryweapon.impact", 2, 1);
-                        float healthDamage = victim.getMaxHealth() * 0.01f;
-                        healthDamage = DamageCheck.clamp(healthDamage);
+                        float healthDamage = MaxHealthDamage.getMaxHealthDamage(victim, 0.5f);
+                       // healthDamage = DamageCheck.clamp(healthDamage);
                         victim.addInstance(InstanceBuilder.damage()
                                                           .ability(WindfuryWeapon.this)
                                                           .source(attacker)
-                                                          .min(minDamage * (weaponDamage / 100f) + (pveMasterUpgrade ? healthDamage : 0))
-                                                          .max(maxDamage * (weaponDamage / 100f) + (pveMasterUpgrade ? healthDamage : 0))
+                                                          .min(minDamage * (weaponDamage / 100f))// + (pveMasterUpgrade ? healthDamage : 0))
+                                                          .max(maxDamage * (weaponDamage / 100f))// + (pveMasterUpgrade ? healthDamage : 0))
                                                           .critChance(25)
-                                                          .critMultiplier(200));
+                                                          .critMultiplier(200)
+                                                          .rawDamage(pveMasterUpgrade ? healthDamage : 0));
                         if (pveMasterUpgrade) {
                             victim.setDamageResistance(victim.getSpec().getDamageResistance() - 2);
                             if (victim instanceof WarlordsNPC npc) {

@@ -228,12 +228,12 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
                         CooldownTypes.ABILITY,
                         cooldownManager -> {
                             if (enemy.isAlive()) {
-                                float healthDamage = enemy.getMaxHealth() * .10f;
+                                float healthDamage = MaxHealthDamage.getMaxHealthDamage(enemy, 1.0f);
                                 if (enemy instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof BossLike) {
-                                    healthDamage = DamageCheck.clamp(healthDamage);
+                                    healthDamage = healthDamage/10; //DamageCheck.clamp(healthDamage);
                                 }
-                                float damage = 2000 + healthDamage;
-                                enemy.addInstance(InstanceBuilder.damage().cause("Vengeful Army").source(wp).value(damage));
+                                float damage = 2000;
+                                enemy.addInstance(InstanceBuilder.damage().cause("Vengeful Army").source(wp).value(damage).rawDamage(healthDamage));
                             } else {
                                 new CooldownFilter<>(wp, PersistentCooldown.class).filterCooldownClass(OrbsOfLife.class).forEach(persistentCooldown -> {
                                     OrbsOfLife.spawnOrbs(wp, enemy, "Vengeful Army", persistentCooldown);
@@ -297,8 +297,8 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
                                                               .value(warlordsEntity.getMaxHealth() * (getMaxHealthDamage() / 100f)));
                     if (isPveMasterUpgrade() && ticksElapsed % 40 == 0) {
                         PlayerFilter.entitiesAround(warlordsEntity, 6, 6, 6).aliveEnemiesOf(warlordsEntity).forEach(enemy -> {
-                            float healthDamage = enemy.getMaxHealth() * .02f;
-                            healthDamage = DamageCheck.clamp(healthDamage);
+                            float healthDamage = MaxHealthDamage.getMaxHealthDamage(enemy, 0.2f);
+                        //    healthDamage = DamageCheck.clamp(healthDamage);
                             enemy.addInstance(InstanceBuilder.damage()
                                                              .ability(UndyingArmy.this)
                                                              .source(warlordsEntity)

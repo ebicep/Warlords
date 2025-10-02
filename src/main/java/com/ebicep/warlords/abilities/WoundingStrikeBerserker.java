@@ -133,9 +133,9 @@ public class WoundingStrikeBerserker extends AbstractStrike<WoundingStrikeBerser
            .addCooldown(new RegularCooldown<>("Bleed", "BLEED", WoundingStrikeBerserker.class, null, giver, CooldownTypes.LOW_LEVEL_DEBUFF, cooldownManager -> {
            }, woundingTickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                if (ticksLeft % 20 == 0) {
-                   float healthDamage = hit.getMaxHealth() * 0.005f;
-                   healthDamage = DamageCheck.clamp(healthDamage);
-                   hit.addInstance(InstanceBuilder.damage().cause("Bleed").source(giver).value(healthDamage).flags(InstanceFlags.DOT));
+                   float healthDamage = MaxHealthDamage.getMaxHealthDamage(hit, 0.5f);
+                  // healthDamage = DamageCheck.clamp(healthDamage);
+                   hit.addInstance(InstanceBuilder.damage().cause("Bleed").source(giver).rawDamage(healthDamage).flags(InstanceFlags.DOT));
                }
            })
            ) {

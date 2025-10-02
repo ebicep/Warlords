@@ -281,13 +281,14 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
     private void strikeInRain(WarlordsEntity giver, WarlordsEntity hit) {
         for (WarlordsEntity strikeTarget : PlayerFilter.entitiesAround(hit, 2, 3, 2).aliveEnemiesOf(giver)) {
             strikeTarget.getWorld().spigot().strikeLightningEffect(strikeTarget.getLocation(), true);
-            float healthDamage = strikeTarget.getMaxHealth() * 0.01f;
-            healthDamage = DamageCheck.clamp(healthDamage);
+            float healthDamage = MaxHealthDamage.getMaxHealthDamage(strikeTarget, 0.1f);
+         //   healthDamage = DamageCheck.clamp(healthDamage);
             strikeTarget.addInstance(InstanceBuilder.damage()
                                                     .ability(this)
                                                     .source(giver)
-                                                    .min(damageValues.rainStrikeDamage.getMinValue() + healthDamage)
-                                                    .max(damageValues.rainStrikeDamage.getMaxValue() + healthDamage));
+                                                    .min(damageValues.rainStrikeDamage.getMinValue())
+                                                    .max(damageValues.rainStrikeDamage.getMaxValue())
+                                                    .rawDamage(healthDamage));
         }
     }
 

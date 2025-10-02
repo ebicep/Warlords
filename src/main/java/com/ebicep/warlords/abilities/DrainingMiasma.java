@@ -34,7 +34,7 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
 
     private final DrainingMiasmaStats stats = new DrainingMiasmaStats();
     private final DamageValues damageValues = new DamageValues();
-    private float maxHealthDamage = 3;
+    private float maxHealthDamage = 0.3f;
     private int tickDuration = 100;
     private int leechTickDuration = 5;
     private int radius = 8;
@@ -105,13 +105,14 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
                                         new Particle.DustOptions(Color.fromRGB(30, 200, 30), 1)
                                 );
                             }
-                            float healthDamage = miasmaTarget.getMaxHealth() * maxHealthDamage / 100f;
-                            healthDamage = DamageCheck.clamp(healthDamage);
+                            float healthDamage = MaxHealthDamage.getMaxHealthDamage(miasmaTarget, maxHealthDamage);
+                        //    healthDamage = DamageCheck.clamp(healthDamage);
                             miasmaTarget.addInstance(InstanceBuilder
                                     .damage()
                                     .ability(this)
                                     .source(wp)
-                                    .value(damageValues.miasmaDamage.getValue() + healthDamage)
+                                    .value(damageValues.miasmaDamage.getValue())
+                                    .rawDamage(healthDamage)
                                     .flags(InstanceFlags.DOT));
                         })
                 ));
@@ -126,12 +127,13 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
                                         cooldownManager -> {
                                             FallingBlockWaveEffect.create(miasmaTarget.getLocation(), 3, 6, Material.BIRCH_SAPLING);
                                             for (WarlordsEntity target : PlayerFilter.entitiesAround(miasmaTarget, 6, 6, 6).aliveEnemiesOf(wp)) {
-                                                float healthDamage = miasmaTarget.getMaxHealth() * 0.01f;
-                                                healthDamage = DamageCheck.clamp(healthDamage);
+                                                float healthDamage = MaxHealthDamage.getMaxHealthDamage(miasmaTarget, maxHealthDamage);
+                                             //   healthDamage = DamageCheck.clamp(healthDamage);
                                                 target.addInstance(InstanceBuilder.damage()
                                                                                   .ability(this)
                                                                                   .source(wp)
-                                                                                  .value(damageValues.miasmaDamage.getValue() + healthDamage)
+                                                                                  .value(damageValues.miasmaDamage.getValue())
+                                                                                  .rawDamage(healthDamage)
                                                                                   .flags(InstanceFlags.DOT));
                                             }
                                         },
