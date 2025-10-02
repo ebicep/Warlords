@@ -47,6 +47,8 @@ public class InstanceDebugHoverable {
         grayBar();
         namedValue("Crit Multiplier", event.getCritMultiplier());
         grayDash();
+        namedValue("Max HP Damage", event.getRawDamage());
+        grayDash();
         namedValue("Flags", "" + event.getFlags());
     }
 

@@ -109,7 +109,7 @@ public interface Value {
 
     }
 
-    final class RangedValueCritable extends RangedValue {
+    class RangedValueCritable extends RangedValue {
 
         private final FloatModifiable critChance;
         private final FloatModifiable critMultiplier;
@@ -141,6 +141,27 @@ public interface Value {
             return critMultiplier.getCalculatedValue();
         }
 
+    }
+
+    final class RangedValueCritableRaw extends RangedValueCritable{
+
+        private final FloatModifiable rawDamage;
+
+        public RangedValueCritableRaw(float min, float max, float critChance, float critMultiplier, float rawDamage){
+            super(min, max, critChance, critMultiplier);
+            this.rawDamage = new FloatModifiable(rawDamage);
+        }
+        @Override
+        public List<FloatModifiable> getAllValues() {
+            return List.of(min(), max(), critChance(), critMultiplier(), rawDamage);
+        }
+
+        public FloatModifiable rawDamage() {
+            return rawDamage;
+        }
+        public float getRawDamageValue() {
+            return rawDamage.getCalculatedValue();
+        }
     }
 
     record SetValue(FloatModifiable value) implements Value {

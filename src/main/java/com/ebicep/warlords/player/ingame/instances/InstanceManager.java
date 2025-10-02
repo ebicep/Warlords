@@ -102,6 +102,7 @@ public class InstanceManager {
         float max = event.getMax();
         float critChance = event.getCritChance();
         float critMultiplier = event.getCritMultiplier();
+        float rawDamage = event.getRawDamage();
         boolean isMeleeHit = cause.isEmpty();
         boolean isFallDamage = cause.equals("Fall");
         EnumSet<InstanceFlags> flags = event.getFlags();
@@ -453,6 +454,20 @@ public class InstanceManager {
                     );
                 }
             }
+            //add raw damage after all multipliers
+            if (rawDamage != 0){
+                damageValue += rawDamage;
+                debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                        .create(2)
+                        .prefix(ComponentBuilder.create("Max HP Damage: ", NamedTextColor.GREEN))
+                        .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(damageValue), NamedTextColor.GOLD))
+                );
+            } else {
+                debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                        .create(1)
+                        .prefix(ComponentBuilder.create("flag not set", NamedTextColor.GREEN))
+                );
+            }
             //debugMessage.append(Component.newline()).append(Component.text("In Hammer", NamedTextColor.RED));
         }
 
@@ -538,6 +553,7 @@ public class InstanceManager {
                         0,
                         critChance,
                         critMultiplier,
+                        rawDamage,
                         isCrit,
                         true,
                         WarlordsDamageHealingFinalEvent.FinalEventFlag.INTERVENED
@@ -706,6 +722,7 @@ public class InstanceManager {
                                     newDamage,
                                     isCrit ? 100 : 0,
                                     100,
+                                    0f,
                                     true,
                                     EnumSet.of(InstanceFlags.TRUE_DAMAGE, InstanceFlags.IGNORE_CRIT_MODIFIERS),
                             newCustomFlags,
@@ -823,7 +840,8 @@ public class InstanceManager {
                         flags,
                         warlordsEntity,
                         source,
-                        ability, cause,
+                        ability,
+                        cause,
                         initialHealth,
                         damageHealValueBeforeAllReduction,
                         damageHealValueBeforeInterveneReduction,
@@ -831,6 +849,7 @@ public class InstanceManager {
                         damageValue,
                         critChance,
                         critMultiplier,
+                        0f,
                         isCrit,
                         true,
                         WarlordsDamageHealingFinalEvent.FinalEventFlag.SHIELDED,
@@ -1001,6 +1020,7 @@ public class InstanceManager {
                         damageValue,
                         critChance,
                         critMultiplier,
+                        0f,
                         isCrit,
                         true,
                         WarlordsDamageHealingFinalEvent.FinalEventFlag.REGULAR
@@ -1238,6 +1258,7 @@ public class InstanceManager {
                 healValue,
                 critChance,
                 critMultiplier,
+                0f,
                 isCrit,
                 false,
                 WarlordsDamageHealingFinalEvent.FinalEventFlag.REGULAR

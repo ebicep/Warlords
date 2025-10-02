@@ -47,6 +47,7 @@ public class InstanceBuilder {
     private float max;
     private float critChance = 0;
     private float critMultiplier = 100;
+    private float rawDamage = 0;
     private EnumSet<InstanceFlags> flags = EnumSet.noneOf(InstanceFlags.class);
     private List<CustomInstanceFlags> customFlags = Collections.emptyList();
 
@@ -73,6 +74,7 @@ public class InstanceBuilder {
                 ", max=" + max +
                 ", critChance=" + critChance +
                 ", critMultiplier=" + critMultiplier +
+                ", rawDamage=" + rawDamage +
                 ", flags=" + flags +
                 ", customFlags=" + customFlags +
                 ", uuid=" + uuid +
@@ -110,6 +112,7 @@ public class InstanceBuilder {
         this.max = event.getMax();
         this.critChance = event.getCritChance();
         this.critMultiplier = event.getCritMultiplier();
+        this.rawDamage = event.getRawDamage();
         return this;
     }
 
@@ -152,6 +155,11 @@ public class InstanceBuilder {
 
     public InstanceBuilder critMultiplier(float critMultiplier) {
         this.critMultiplier = critMultiplier;
+        return this;
+    }
+    //adds damage after damage and crit modifiers before reductions
+    public InstanceBuilder rawDamage(float rawDamage) {
+        this.rawDamage = rawDamage;
         return this;
     }
 
@@ -227,6 +235,7 @@ public class InstanceBuilder {
                 max,
                 critChance,
                 critMultiplier,
+                rawDamage,
                 flags,
                 customFlags,
                 debugMessages,

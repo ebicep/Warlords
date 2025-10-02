@@ -2,6 +2,8 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
@@ -60,7 +62,7 @@ public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementSt
                 attacksDone = 0;
                 critChance = 100;
             }
-            float extraDamage = pveMasterUpgrade ? DamageCheck.clamp(nearPlayer.getMaxHealth() * 0.01f) : 0;
+            damageValues.strikeDamage.rawDamage().setBaseValue(pveMasterUpgrade ? (float)getMaxHpDamage(nearPlayer.getMaxHealth()) : 0);
             float damageMultiplier = convertToMultiplicationDecimal(
                     (nearPlayer.getCurrentHealth() / nearPlayer.getMaxBaseHealth()) < damageIncreaseHealthThreshold / 100f
                     ? damageIncrease
@@ -69,10 +71,11 @@ public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementSt
             nearPlayer.addInstance(InstanceBuilder.damage()
                                                   .ability(this)
                                                   .source(wp)
-                                                  .min((damageValues.strikeDamage.getMinValue() + extraDamage) * damageMultiplier)
-                                                  .max((damageValues.strikeDamage.getMaxValue() + extraDamage) * damageMultiplier)
+                                                  .min((damageValues.strikeDamage.getMinValue()) * damageMultiplier)
+                                                  .max((damageValues.strikeDamage.getMaxValue()) * damageMultiplier)
                                                   .critChance(critChance)
                                                   .critMultiplier(damageValues.strikeDamage.getCritMultiplierValue())
+                                                  .rawDamage(damageValues.strikeDamage.getRawDamageValue())
             ).ifPresent(finalEvent -> {
                 if (finalEvent.isCrit()) {
                     wp.addSpeedModifier(wp, "Judgement Speed", speedOnCrit, speedOnCritDuration * 20);
@@ -88,6 +91,15 @@ public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementSt
         return true;
     }
 
+    public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+        if (pveMasterUpgrade){
+            return currentDamageValue + event.getRawDamage();
+        }
+        return currentDamageValue+ event.getRawDamage();
+    }
+    public double getMaxHpDamage(double maxHp) {
+        return 1800 * Math.log(1 + maxHp / 6500.0);
+    }
     @Override
     public DamageValues getDamageValues() {
         return damageValues;
@@ -165,7 +177,7 @@ public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementSt
 
     public static class DamageValues implements Value.ValueHolder {
 
-        private Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(326, 441, 20, 185);
+        private Value.RangedValueCritableRaw strikeDamage = new Value.RangedValueCritableRaw(326, 441, 20, 185, 0);
 
         private List<Value> values = List.of(strikeDamage);
 
@@ -176,8 +188,16 @@ public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementSt
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.strikeDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("strikeDamage"), Value.RangedValueCritable.class);
-            this.values = List.of(strikeDamage);
+            Value.RangedValueCritable base = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("strikeDamage"), Value.RangedValueCritable.class);
+
+            this.strikeDamage = new Value.RangedValueCritableRaw(
+                    base.getMinValue(),
+                    base.getMaxValue(),
+                    base.getCritChanceValue(),
+                    base.getCritMultiplierValue(),
+                    ((Value.RangedValueCritableRaw) strikeDamage).getRawDamageValue()
+                    );
+        this.values = List.of(strikeDamage);
         }
 
         public Value.RangedValueCritable getStrikeDamage() {

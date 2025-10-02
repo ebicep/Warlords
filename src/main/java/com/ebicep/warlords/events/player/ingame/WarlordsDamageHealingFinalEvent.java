@@ -32,6 +32,7 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsEntityEvent
     private final float value;
     private final float critChance;
     private final float critMultiplier;
+    private final float rawDamage;
     private final boolean isCrit;
     private final boolean hasFlag;
     private final boolean isDead;
@@ -59,6 +60,7 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsEntityEvent
             float value,
             float critChance,
             float critMultiplier,
+            float rawDamage,
             boolean isCrit,
             boolean isDamageInstance,
             FinalEventFlag finalEventFlag
@@ -77,6 +79,7 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsEntityEvent
                 value,
                 critChance,
                 critMultiplier,
+                rawDamage,
                 isCrit,
                 isDamageInstance,
                 finalEventFlag,
@@ -98,6 +101,7 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsEntityEvent
             float value,
             float critChance,
             float critMultiplier,
+            float rawDamage,
             boolean isCrit,
             boolean isDamageInstance,
             FinalEventFlag finalEventFlag,
@@ -127,6 +131,7 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsEntityEvent
         this.value = value;
         this.critChance = critChance;
         this.critMultiplier = critMultiplier;
+        this.rawDamage = rawDamage;
         this.isCrit = isCrit;
         this.hasFlag = player.hasFlag();
         this.isDead = isDamageInstance && player.isDead();
@@ -158,6 +163,7 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsEntityEvent
                 ", value=" + value +
                 ", critChance=" + critChance +
                 ", critMultiplier=" + critMultiplier +
+                ", rawDamage=" + rawDamage +
                 ", isCrit=" + isCrit +
                 ", hasFlag=" + hasFlag +
                 ", isDead=" + isDead +
@@ -222,6 +228,10 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsEntityEvent
 
     public float getCritMultiplier() {
         return critMultiplier;
+    }
+
+    public float getRawDamage() {
+        return rawDamage;
     }
 
     public boolean isCrit() {

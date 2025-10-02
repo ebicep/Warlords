@@ -36,6 +36,7 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
     private float max;
     private float critChance;
     private float critMultiplier;
+    private float rawDamage = 0;
     private final EnumSet<InstanceFlags> flags;
     private final List<CustomInstanceFlags> customFlags;
     private List<TextComponent> debugMessages;
@@ -51,12 +52,13 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
             float max,
             float critChance,
             float critMultiplier,
+            float rawDamage,
             boolean instanceTypeDamage,
             EnumSet<InstanceFlags> flags,
             List<CustomInstanceFlags> customFlags,
             List<TextComponent> debugMessages
     ) {
-        this(player, source, cause, min, max, critChance, critMultiplier, instanceTypeDamage, flags, customFlags, debugMessages, null);
+        this(player, source, cause, min, max, critChance, critMultiplier, rawDamage, instanceTypeDamage, flags, customFlags, debugMessages, null);
     }
 
     public WarlordsDamageHealingEvent(
@@ -67,6 +69,7 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
             float max,
             float critChance,
             float critMultiplier,
+            float rawDamage,
             boolean instanceTypeDamage,
             EnumSet<InstanceFlags> flags,
             List<CustomInstanceFlags> customFlags,
@@ -80,6 +83,7 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
         this.max = max;
         this.critChance = critChance;
         this.critMultiplier = critMultiplier;
+        this.rawDamage = rawDamage;
         this.instanceType = instanceTypeDamage ? InstanceBuilder.InstanceType.DAMAGE : InstanceBuilder.InstanceType.HEALING;
         this.flags = flags;
         this.customFlags = customFlags;
@@ -97,6 +101,7 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
             float max,
             float critChance,
             float critMultiplier,
+            float rawDamage,
             EnumSet<InstanceFlags> flags,
             List<CustomInstanceFlags> customFlags,
             List<TextComponent> debugMessages,
@@ -112,6 +117,7 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
         this.max = max;
         this.critChance = critChance;
         this.critMultiplier = critMultiplier;
+        this.rawDamage = rawDamage;
         this.customFlags = customFlags;
         this.debugMessages = debugMessages;
         this.uuid = uuid;
@@ -184,6 +190,14 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
         this.critMultiplier = critMultiplier;
     }
 
+    public float getRawDamage() {
+        return rawDamage;
+    }
+
+    public void setRawDamage(float rawDamage) {
+        this.rawDamage = rawDamage;
+         }
+
     public boolean isDamageInstance() {
         return instanceType == InstanceBuilder.InstanceType.DAMAGE;
     }
@@ -239,6 +253,7 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
                 ", max=" + max +
                 ", critChance=" + critChance +
                 ", critMultiplier=" + critMultiplier +
+                ", rawDamage=" + rawDamage +
                 ", isDamageInstance=" + instanceType +
                 ", cancelled=" + cancelled +
                 '}';
