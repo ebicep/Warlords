@@ -108,9 +108,6 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
     @Override
     public void upgrade() {
         this.upgradeLevel++;
-        if (this.upgradeLevel == 5) {
-            this.ascendant = true;
-        }
     }
 
     @Override
@@ -388,7 +385,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
 
     @Override
     public TextColor getTextColor() {
-        return isAscendant() ? Currencies.ASCENDANT_SHARD.textColor : NamedTextColor.GOLD;
+        return NamedTextColor.GOLD;
     }
 
     public String getTitleName() {

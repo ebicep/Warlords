@@ -319,11 +319,8 @@ public class NPCManager {
     public static void createItemEnyaNPC() {
         registerTrait(ItemEnyaTrait.class, "ItemEnyaTrait");
 
-        NPC npc = NPC_REGISTRY.createNPC(EntityType.BLAZE, "item-enya");
-        npc.data().set("swim", false);
+        NPC npc = NPC_REGISTRY.createNPC(EntityType.VILLAGER, "item-enya");
         npc.addTrait(ItemEnyaTrait.class);
-        npc.getOrAddTrait(Gravity.class)
-           .setHasGravity(false);
         LookClose lookClose = npc.getOrAddTrait(LookClose.class);
         lookClose.setPerPlayer(true);
         lookClose.toggle();
