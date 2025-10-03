@@ -36,7 +36,7 @@ public class DifficultyMenu {
                             case 0 -> GameMap.ILLUSION_APERTURE;
                             case 1 -> GameMap.ILLUSION_RIFT;
                             case 2 -> GameMap.ILLUSION_VALLEY;
-                            case 3 -> GameMap.ILLUSION_BASIN;
+                            case 3 -> GameMap.ILLUSION_VALLEY2;
                             case 4 -> GameMap.ILLUSION_CROSSFIRE;
                             default -> null;
                         };
