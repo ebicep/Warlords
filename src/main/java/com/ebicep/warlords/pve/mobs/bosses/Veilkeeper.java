@@ -177,7 +177,7 @@ public class Veilkeeper extends AbstractMob implements BossMob {
                 warlordsNPC,
                 () -> mapCenter,
                 List.of(230, 190, 150, 110, 60),
-                List.of(24.0, 24.0, 24.0, 24.0, 24.0),
+                List.of(32.0, 32.0, 32.0, 32.0, 32.0),
                 Material.GILDED_BLACKSTONE,
                 true,
                 2,
