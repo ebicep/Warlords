@@ -49,7 +49,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
             .add(1, 6)
             .add(1, 7);
     public static final HashMap<DifficultyIndex, Mob> DIFFICULTY_SPAWNS = new HashMap<>() {{
-        put(DifficultyIndex.EASY, Mob.ZOMBIE_LANCER);
+        put(DifficultyIndex.EASY, Mob.REQIUEM_GUARDIAN);
         put(DifficultyIndex.NORMAL, Mob.REQIUEM_GUARDIAN);
         put(DifficultyIndex.HARD, Mob.REQIUEM_GUARDIAN);
         put(DifficultyIndex.EXTREME, Mob.REQIUEM_GUARDIAN);
