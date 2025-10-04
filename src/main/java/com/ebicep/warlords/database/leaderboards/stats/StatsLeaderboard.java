@@ -36,7 +36,7 @@ public class StatsLeaderboard {
             .create("Loading...", NamedTextColor.GRAY)
             .build()
     )
-            .setBillboard(Display.Billboard.FIXED)
+            .setBillboard(Display.Billboard.VERTICAL)
             .build();
     private final String title;
     private final Location location;

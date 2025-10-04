@@ -14,7 +14,7 @@ public interface MultiPvEEventLibraryArchivesGrimoiresGraveyardStats extends Mul
 
     @Override
     default long getFastestGameFinished() {
-        return getStat(PvEEventLibraryArchivesGrimoiresGraveyardStats::getFastestGameFinished, Math::min, Long.MAX_VALUE);
+        return getStat(PvEEventLibraryArchivesGrimoiresGraveyardStats::getFastestGameFinished, (a, b) -> a == 0 ? b : b == 0 ? a : Math.min(a, b), Long.MAX_VALUE);
     }
 
 }

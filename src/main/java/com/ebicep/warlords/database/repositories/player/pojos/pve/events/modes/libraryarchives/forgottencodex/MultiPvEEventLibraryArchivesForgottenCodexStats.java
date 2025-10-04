@@ -14,7 +14,7 @@ public interface MultiPvEEventLibraryArchivesForgottenCodexStats extends MultiPv
 
     @Override
     default long getFastestGameFinished() {
-        return getStat(PvEEventLibraryArchivesForgottenCodexStats::getFastestGameFinished, Math::min, Long.MAX_VALUE);
+        return getStat(PvEEventLibraryArchivesForgottenCodexStats::getFastestGameFinished, (a, b) -> a == 0 ? b : b == 0 ? a : Math.min(a, b), Long.MAX_VALUE);
     }
 }
         

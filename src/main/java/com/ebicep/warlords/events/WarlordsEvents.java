@@ -9,6 +9,8 @@ import com.ebicep.warlords.abilities.internal.AbstractTimeWarp;
 import com.ebicep.warlords.commands.debugcommands.misc.AdminCommand;
 import com.ebicep.warlords.commands.debugcommands.misc.MuteCommand;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.leaderboards.events.EventsLeaderboardManager;
+import com.ebicep.warlords.database.leaderboards.guilds.GuildLeaderboardManager;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
@@ -62,7 +64,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.RayTraceResult;
 
 import java.time.Instant;
 import java.util.*;
@@ -254,6 +255,8 @@ public class WarlordsEvents implements Listener {
                                 @Override
                                 public void run() {
                                     StatsLeaderboardManager.setLeaderboardHologramVisibility(player);
+                                    EventsLeaderboardManager.resetVisibility(player);
+                                    GuildLeaderboardManager.resetVisibility(player);
                                     DatabaseGameBase.setGameHologramVisibility(player);
                                 }
                             }.runTaskLater(Warlords.getInstance(), 20);

@@ -1,10 +1,10 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
-import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.gardenofhesperides.DatabasePlayerPvEEventGardenOfHesperidesDifficultyStats;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.mongodb.client.MongoCollection;
@@ -117,10 +117,19 @@ public class OldTestCommand implements CommandExecutor {
         }
         int level = 20;
         if (commandSender instanceof Player player) {
-            WarlordsEntity warlordsEntity = Warlords.getPlayer(player);
-            if (warlordsEntity != null) {
-                warlordsEntity.getHealth().addAdditiveModifier("TEST", 100, 100);
-            }
+            DatabaseManager.getPlayer(player.getUniqueId(), d -> {
+                        d.getPveStats()
+                         .getEventStats()
+                         .getGardenOfHesperidesEventStats()
+                         .getOrDefault(DatabaseGameEvent.currentGameEvent.getStartDateSecond(), new DatabasePlayerPvEEventGardenOfHesperidesDifficultyStats())
+                         .getTartarusStats()
+                         .getFastestGameFinished();
+                    }
+            );
+//            WarlordsEntity warlordsEntity = Warlords.getPlayer(player);
+//            if (warlordsEntity != null) {
+//                warlordsEntity.getHealth().addAdditiveModifier("TEST", 100, 100);
+//            }
 //            List<Mob> mobs = Arrays.stream(Mob.VALUES).collect(Collectors.toList());
 //            for (Mob mob : Mob.BASIC) {
 //                mobs.remove(mob);
