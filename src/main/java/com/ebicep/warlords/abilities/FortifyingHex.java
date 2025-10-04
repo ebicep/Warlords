@@ -187,7 +187,9 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
             if (weakeningHexCooldown.isPresent()) {
                 RegularCooldown regularCooldown = weakeningHexCooldown.get();
                 WeakeningHex weakeningHex = (WeakeningHex) regularCooldown.getCooldownObject();
-                weakeningHex.setStacks(weakeningHex.getStacks() + 1);
+                if (weakeningHex.getStacks() < 4) {
+                    weakeningHex.setStacks(weakeningHex.getStacks() + 1);
+                }
                 regularCooldown.setTicksLeft(tickDuration);
             } else {
                 hit.getCooldownManager().addCooldown(new RegularCooldown<>(
