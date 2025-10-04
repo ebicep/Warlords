@@ -10,6 +10,7 @@ import com.ebicep.warlords.pve.bountysystem.Bounty;
 import com.ebicep.warlords.pve.bountysystem.costs.EventCost;
 import com.ebicep.warlords.pve.bountysystem.rewards.events.GardenOfHesperides2;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksDuringGame;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.events.gardenofhesperides.EventHades;
 import com.ebicep.warlords.pve.mobs.events.gardenofhesperides.EventPoseidon;
 import com.ebicep.warlords.pve.mobs.events.gardenofhesperides.EventZeus;

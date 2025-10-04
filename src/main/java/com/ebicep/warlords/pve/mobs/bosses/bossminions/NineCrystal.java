@@ -11,6 +11,9 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -20,19 +23,17 @@ import javax.annotation.Nonnull;
 public class NineCrystal extends AbstractMob implements BossMinionMob {
 
     private SpecType spec;
-    private WarlordsEntity owner;
 
-    public NineCrystal(Location spawnLocation, WarlordsEntity owner, SpecType spec) {
+    public NineCrystal(Location spawnLocation, SpecType spec) {
         super(
                 spawnLocation,
-                ChatColor.BOLD + spec.name(),
+                LegacyComponentSerializer.legacySection().serialize(Component.text(spec.name(), spec.getTextColor())),
                 2500,
                 0,
                 0,
                 0,
                 0
         );
-        this.owner = owner;
         this.spec = spec;
     }
 
