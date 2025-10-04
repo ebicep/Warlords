@@ -9,6 +9,8 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.title.Title;
+import net.minecraft.world.entity.player.Player;
 import org.bukkit.*;
 import org.bukkit.util.Vector;
 
@@ -90,7 +92,7 @@ public class MarkedForDeathAbility {
             public void run() {
                 t++;
 
-                // Telegraph phase: follow targets, draw overhead marker, update last-known ground
+                // follow targets, draw overhead marker, update last-known ground
                 if (t <= telegraphTicks) {
                     for (Mark m : marks) {
                         if (m.target == null) continue;
@@ -98,16 +100,18 @@ public class MarkedForDeathAbility {
                         head.getWorld().spawnParticle(Particle.DUST, head, 2, 0.02, 0.02, 0.02, 0.0, markerDust);
                         // trailing spark
                         head.getWorld().spawnParticle(Particle.END_ROD, head, 1, 0, 0, 0, 0.0);
-                        m.target.sendMessage(Component.text("You have been marked for death!", NamedTextColor.RED));
-
                         // keep last-known ground pos fresh
+                        if (t == 1) {
+                            m.target.getEntity().showTitle(Title.title(Component.empty(), Component.text("You have been marked for death!", NamedTextColor.RED)));
+                        }
                         m.lastKnown = lastKnownGround(m.target);
                     }
 
                     if (t == 1) {
-                        // global “you’ve been marked” cue
+                        // global cue
                         Utils.playGlobalSound(source.getLocation(), Sound.ENTITY_WITHER_DEATH, 3, 1.2f);
                     }
+
                     if (t == telegraphTicks) {
                         // lock moment
                         for (Mark m : marks) {
@@ -123,9 +127,6 @@ public class MarkedForDeathAbility {
                     for (Mark m : marks) {
                         drawRing(m.lockedAt, strikeRadius, lockDust);
                     }
-                    if (t == telegraphTicks + 1) {
-                        // subtle “charging” loop can be added if you want
-                    }
                     return;
                 }
 
@@ -138,7 +139,6 @@ public class MarkedForDeathAbility {
                     }
                 }
 
-                // Done
                 stop();
                 cancel();
             }

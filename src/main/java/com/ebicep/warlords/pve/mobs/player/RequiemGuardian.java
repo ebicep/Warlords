@@ -1,11 +1,13 @@
 package com.ebicep.warlords.pve.mobs.player;
 
+import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.flags.NoTarget;
 import com.ebicep.warlords.pve.mobs.flags.NoTargetAbilities;
 import com.ebicep.warlords.pve.mobs.tiers.EliteMob;
 import org.bukkit.Location;
+import org.bukkit.entity.Zombie;
 
 public class RequiemGuardian extends AbstractMob implements EliteMob, NoTargetAbilities, NoTarget {
 
@@ -28,5 +30,12 @@ public class RequiemGuardian extends AbstractMob implements EliteMob, NoTargetAb
     @Override
     public Mob getMobRegistry() {
         return Mob.REQIUEM_GUARDIAN;
+    }
+
+    @Override
+    public void onSpawn(PveOption option) {
+        if (warlordsNPC.getEntity() instanceof Zombie zombie) {
+            zombie.setBaby(true);
+        }
     }
 }

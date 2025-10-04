@@ -327,7 +327,7 @@ public enum Mob {
             Weapons.FABLED_HEROICS_SCYTHE.getItem()
     )
     ),
-    REQIUEM_GUARDIAN(EntityType.STRAY, RequiemGuardian.class, RequiemGuardian::new, RequiemGuardian::new, new Utils.SimpleEntityEquipment(
+    REQIUEM_GUARDIAN(EntityType.ZOMBIE, RequiemGuardian.class, RequiemGuardian::new, RequiemGuardian::new, new Utils.SimpleEntityEquipment(
             SkullUtils.getSkullFrom(SkullID.PURPLE_KNIGHT),
             Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 104, 255),
             Utils.applyColorTo(Material.LEATHER_LEGGINGS, 250, 104, 190),
@@ -513,6 +513,15 @@ public enum Mob {
             Weapons.FROSTBITE.getItem()
     )
     ),
+    LILIUM(EntityType.BOGGED, Lilium.class, Lilium::new, Lilium::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.LILIUM_HAT),
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 220, 20, 120),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 220, 20, 120),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 220, 20, 120),
+            Weapons.SILVER_PHANTASM_SWORD_4.getItem(),
+            Weapons.SILVER_PHANTASM_SWORD_4.getItem()
+    )
+    ),
     VEILKEEPER(EntityType.WITHER_SKELETON, Veilkeeper.class, Veilkeeper::new, Veilkeeper::new, new Utils.SimpleEntityEquipment(
             SkullUtils.getSkullFrom(SkullID.SILVER_KNIGHT),
             new ItemStack(Material.NETHERITE_CHESTPLATE),
@@ -520,15 +529,6 @@ public enum Mob {
             new ItemStack(Material.NETHERITE_BOOTS),
             Weapons.FELFLAME_BLADE.getItem(),
             new ItemStack(Material.SHIELD)
-    )
-    ),
-    LILIUM(EntityType.WITHER_SKELETON, Lilium.class, Lilium::new, Lilium::new, new Utils.SimpleEntityEquipment(
-            SkullUtils.getSkullFrom(SkullID.LILIUM_HAT),
-            new ItemStack(Material.DIAMOND_CHESTPLATE),
-            new ItemStack(Material.DIAMOND_LEGGINGS),
-            new ItemStack(Material.DIAMOND_BOOTS),
-            Weapons.SILVER_PHANTASM_SWORD_4.getItem(),
-            Weapons.SILVER_PHANTASM_SWORD_4.getItem()
     )
     ),
     CENTURION(EntityType.WITHER_SKELETON, Centurion.class, Centurion::new, Centurion::new, new Utils.SimpleEntityEquipment(

@@ -143,7 +143,8 @@ public class EmpoweringRelicsAbility {
             ItemDisplay disp = w.spawn(at.clone().add(0, 2, 0), ItemDisplay.class, d -> {
                 d.setItemStack(new ItemStack(Material.GOLDEN_APPLE));
                 d.setBillboard(Display.Billboard.FIXED);
-                d.setViewRange(32f);
+                d.setGlowing(true);
+                d.setViewRange(48f);
                 d.setShadowRadius(0f);
                 d.setInterpolationDuration(1);
                 d.setTransformation(new Transformation(

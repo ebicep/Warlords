@@ -11,9 +11,11 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.berserker.BerserkBranch;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
@@ -30,6 +32,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Duration, AbilityStats<Berserk, Berserk.BerserkStats> {
 
@@ -63,6 +66,7 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
     }
 
     private float absorbedDamage = 0;
+    private int cooldown = 0;
 
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
@@ -136,12 +140,29 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
         };
         wp.getCooldownManager().addCooldown(berserkCooldown);
         if (pveMasterUpgrade2) {
+            new GameRunnable(wp.getGame()) {
+                @Override
+                public void run() {
+                    cooldown--;
+                    if (!wp.getCooldownManager().hasCooldown(berserkCooldown)) {
+                        this.cancel();
+                    }
+                }
+            }.runTaskTimer(0, 20);
             addSecondaryAbility(1, () -> {
+
+                if (cooldown > 0) {
+                    wp.sendMessage(Component.text("This ability is still on cooldown!", NamedTextColor.RED));
+                    return;
+                }
+
                 float finalValue = Math.min(20000, absorbedDamage);
                 wp.addEnergy(wp, "Berserk Master Upgrade", finalValue * 0.005f);
+
                 FallingBlockWaveEffect.create(wp.getLocation().clone().add(0, 1, 0), 10, 10, Material.AMETHYST_CLUSTER);
                         Utils.playGlobalSound(wp.getLocation(), "warrior.mortalstrike.impact", 2, 0.5f);
                 EffectUtils.strikeLightning(wp.getLocation(), false);
+
                 for (WarlordsEntity enemy : PlayerFilter
                         .entitiesAround(wp,10, 10, 10)
                         .aliveEnemiesOf(wp)
@@ -150,9 +171,12 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
                             .damage()
                             .cause("Berserk Unleashed")
                             .source(wp)
-                            .value(finalValue * 0.3f)
+                            .value(finalValue * 0.4f)
+                            .flags(InstanceFlags.IGNORE_DAMAGE_BOOST)
                     );
                 }
+
+                cooldown = 2;
                 absorbedDamage = 0;
             },
                     true,

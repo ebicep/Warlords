@@ -10,27 +10,31 @@ import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.bosses.bossabilities.GiantLaserAbility;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 public class LiliathEngima extends AbstractMob implements BossMinionMob {
 
-    private WarlordsEntity target;
-    private GiantLaserAbility giantLaserAbility;
+    private List<WarlordsEntity> targets;
+    Random rand = new Random();
 
-    public LiliathEngima(Location spawnLocation, WarlordsEntity target) {
+    public LiliathEngima(Location spawnLocation, List<WarlordsEntity> targets) {
         super(
                 spawnLocation,
-                ChatColor.BOLD + target.getName(),
+                ChatColor.BOLD + (targets.get(new Random().nextInt(targets.size())).getName()),
                 3000,
                 0,
                 0,
                 0,
                 0
         );
-        this.target = target;
+        this.targets = targets;
     }
 
     public LiliathEngima(
@@ -55,19 +59,7 @@ public class LiliathEngima extends AbstractMob implements BossMinionMob {
 
     @Override
     public void onSpawn(PveOption option) {
-        giantLaserAbility = new GiantLaserAbility(
-                warlordsNPC,
-                warlordsNPC,
-                () -> warlordsNPC.getEyeLocation(),
-                50,
-                15,
-                70,
-                1.3,
-                2,
-                1000,
-                false,
-                2
-        );
+
     }
 
     @Override
@@ -77,17 +69,15 @@ public class LiliathEngima extends AbstractMob implements BossMinionMob {
 
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-        if (event.getSource() != target) {
+        WarlordsEntity target = targets.get(rand.nextInt(targets.size()));
+        Bukkit.broadcast(Component.text("target: " + target.getName()));
+        if (event.getSource() == target) {
             event.setCancelled(true);
         }
     }
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-        Random rand = new Random();
-        int t = Math.max(200, rand.nextInt(400));
-        if (ticksElapsed % t == 0 && ticksElapsed > 0) {
-            giantLaserAbility.start(warlordsNPC.getGame());
-        }
+
     }
 }

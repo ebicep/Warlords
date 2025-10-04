@@ -194,7 +194,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
                 2
         );
 
-        chasingOrbsAbility = new ChasingOrbsAbility(warlordsNPC, option.playerCount(), 100, 0.32, 4, 5000, 1.5, Material.ENDER_EYE, 2f, false, warlordsNPC.getLocation());
+        chasingOrbsAbility = new ChasingOrbsAbility(warlordsNPC, option.playerCount(), 100, 0.32, 4, 5000, 1.5, Material.ENDER_EYE, 2f, false, mapCenter);
 
         swordManager.spawnSwords(9);
         swordManager.start();
@@ -313,7 +313,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
                 double angle = j / 9D * Math.PI * 2;
                 crystalLoc.setX(mapCenter.getX() + Math.sin(angle) * 20);
                 crystalLoc.setZ(mapCenter.getZ() + cos(angle) * 20);
-                NineCrystal crystal = new NineCrystal(crystalLoc, warlordsNPC, SpecType.VALUES[j % 3]);
+                NineCrystal crystal = new NineCrystal(crystalLoc, SpecType.VALUES[j % 3]);
                 pveOption.spawnNewMob(crystal, Team.RED);
                 pylons.add(crystal.getWarlordsNPC().getUuid());
             }

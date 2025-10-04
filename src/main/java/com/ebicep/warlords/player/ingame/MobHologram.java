@@ -6,6 +6,10 @@ import org.bukkit.Location;
 import org.bukkit.entity.Display;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.TextDisplay;
+import org.bukkit.entity.Zombie;
+import org.bukkit.util.Transformation;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -100,6 +104,7 @@ public abstract class MobHologram {
         protected void update(@Nonnull Entity entity) {
             Location location = entity.getLocation().clone();
             location.add(0, entity.getHeight() + 0.275, 0);
+            float displaySize = (entity instanceof Zombie zombie && zombie.isBaby()) ? 0.5f : 1;
             for (CustomHologramLine customHologramLine : customHologramLines) {
                 Entity lineEntity = customHologramLine.getEntity();
                 if (lineEntity == null || !lineEntity.isValid()) {
@@ -110,6 +115,12 @@ public abstract class MobHologram {
                         display.setSeeThrough(false);
                         display.setTeleportDuration(3); // SMOOTH TELEPORTATION
                         display.setViewRange(viewRange);
+                        display.setTransformation(new Transformation(
+                                new Vector3f(0, 0, 0),
+                                new Quaternionf(),
+                                new Vector3f(displaySize, displaySize, displaySize),
+                                new Quaternionf()
+                        ));
                     });
                     customHologramLine.setEntity(textDisplay);
                 } else if (customHologramLine.getEntity() instanceof TextDisplay textDisplay) {

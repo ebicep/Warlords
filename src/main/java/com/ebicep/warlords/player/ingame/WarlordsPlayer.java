@@ -407,8 +407,8 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
     @Override
     public void runEverySecond() {
         super.runEverySecond();
-        if (this.getWeapon() instanceof AbstractLegendaryWeapon) {
-            ((AbstractLegendaryWeapon) this.getWeapon()).updateAbilityItem(this, (Player) this.getEntity());
+        if (this.getWeapon() instanceof AbstractLegendaryWeapon && this.getEntity() instanceof Player player) {
+            ((AbstractLegendaryWeapon) this.getWeapon()).updateAbilityItem(this, player);
         }
     }
 

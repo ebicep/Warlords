@@ -133,7 +133,7 @@ public class Orbyz extends AbstractMob implements BossMob {
         rotatingRadialLasersAbility = new RotatingRadialLasersAbility(warlordsNPC, () -> mapCenter, 6, 45, 1, 80, 240, 1.2, 2, 1000, 2, 1, Color.AQUA, Color.RED);
         convergingShockwavesAbility = new ConvergingShockwavesAbility(warlordsNPC, () -> mapCenter, 38, 10, 60, 20, 0.3, 1.5, 1, 1000, 2, 1, Color.PURPLE, Color.BLUE);
         heavenlySpearAbilityOne = new HeavenlySpearAbility(warlordsNPC, () -> mapCenter, 6 * option.playerCount(), 38, 30, 5, 4000, 60, 35, 2.5, Material.PACKED_ICE);
-        heavenlySpearAbilityTwo = new HeavenlySpearAbility(warlordsNPC, () -> mapCenter, 8 * option.playerCount(), 38, 20, 5, 4000, 30, 35, 2.5, Material.PACKED_ICE);
+        heavenlySpearAbilityTwo = new HeavenlySpearAbility(warlordsNPC, () -> mapCenter, 10 * option.playerCount(), 38, 20, 5, 4000, 20, 35, 2.5, Material.PACKED_ICE);
         heavenlySpearAbilityInterval = new HeavenlySpearAbility(warlordsNPC, () -> mapCenter, 2 + option.playerCount(), 36, 50, 8, 5000, 400, 35, 3.5, Material.SNOW_BLOCK);
         summoningCirclesAbility = new SummoningCirclesAbility(warlordsNPC, () -> mapCenter, 2, 28, 300, 5, 5, option);
 
@@ -318,11 +318,11 @@ public class Orbyz extends AbstractMob implements BossMob {
                 @Override
                 public void run() {
                     t++;
-                    if (t % 20 == 0) {
+                    if (t % 15 == 0) {
                         heavenlySpearAbilityTwo.start(warlordsNPC.getGame());
                     }
 
-                    if (t == 501) {
+                    if (t == 451) {
                         preventRelic = false;
                         preventMarkForDeath = false;
                         this.cancel();
@@ -348,7 +348,7 @@ public class Orbyz extends AbstractMob implements BossMob {
             EffectUtils.playCircularShieldAnimation(warlordsNPC.getLocation(), Particle.END_ROD, 8, 1, 5);
         }
 
-        if (ticksElapsed % 260 == 0 && ticksElapsed > 0) {
+        if (ticksElapsed % 200 == 0 && ticksElapsed > 0) {
             Location loc = warlordsNPC.getLocation();
             Utils.playGlobalSound(loc, Sound.BLOCK_GLASS_BREAK, 500, 0.4f);
             FallingBlockWaveEffect.create(loc.add(0, 1, 0), 7, 6, Material.PACKED_ICE);
@@ -356,7 +356,7 @@ public class Orbyz extends AbstractMob implements BossMob {
                     .entitiesAround(warlordsNPC, 7, 7, 7)
                     .aliveEnemiesOf(warlordsNPC)
             ) {
-                Utils.addKnockback(name, loc, we, -2, 0.3);
+                Utils.addKnockback(name, loc, we, -3, 0.3);
                 we.addSpeedModifier(warlordsNPC, "Orbyz Slowness", -70, 30);
                 we.addInstance(InstanceBuilder
                         .damage()
