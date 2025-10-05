@@ -1961,7 +1961,7 @@
         "energyCost": 0,
         "hitbox": 5,
         "blindDurationInTicks": 30,
-        "damageIncrease": 100,
+        "damageIncreasePercent": 100,
         "damageIncreaseHealthThreshold": 80,
         "damageValues": {
           "curseDamage": {
@@ -2140,6 +2140,8 @@
         "energyCost": 0,
         "hitbox": 5,
         "blindDurationInTicks": 30,
+        "damageIncreasePercent": 100,
+        "damageIncreaseHealthThreshold": 80,
         "damageValues": {
           "curseDamage": {
             "min": 524,
@@ -2179,6 +2181,7 @@
         "energyCost": 50,
         "tickDuration": 200,
         "radius": 8,
+        "castRadius": 15,
         "damageValues": {
           "rainStrikeDamage": {
             "min": 224,
@@ -3038,6 +3041,7 @@
         "energyCost": 0,
         "tickDuration": 320,
         "radius": 8,
+        "castRadius": 15,
         "damageValues": {
           "rainStrikeDamage": {
             "min": 224,
