@@ -9,6 +9,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.bukkit.packets.PacketUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.Bukkit;
@@ -55,7 +56,7 @@ public abstract class AbstractStrike<T extends AbstractStrike<T, R>, R extends A
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         AtomicBoolean hitPlayer = new AtomicBoolean(false);
-        float radius = hitbox.getCalculatedValue();
+        float radius = hitbox.getCalculatedValue() + PacketUtils.pingCompensationAmount(wp);
         PlayerFilter.entitiesAround(wp, radius, radius, radius)
                     .aliveEnemiesOf(wp)
                     .closestFirst(wp)

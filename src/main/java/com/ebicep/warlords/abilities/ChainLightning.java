@@ -15,6 +15,7 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.thunderlord.ChainLightningBranch;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
+import com.ebicep.warlords.util.bukkit.packets.PacketUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
@@ -74,14 +75,6 @@ public class ChainLightning extends AbstractChain<ChainLightning, ChainLightning
 
     public ChainLightning(AbstractAbilityBuilder builder) {
         super(builder);
-    }
-
-    @Override
-    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
-        damageDecreasePerBounce.tick();
-        damageReductionPerBounce.tick();
-        maxDamageReduction.tick();
-        super.runEveryTick(warlordsEntity);
     }
 
     @Override
@@ -163,6 +156,14 @@ public class ChainLightning extends AbstractChain<ChainLightning, ChainLightning
     }
 
     @Override
+    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
+        damageDecreasePerBounce.tick();
+        damageReductionPerBounce.tick();
+        maxDamageReduction.tick();
+        super.runEveryTick(warlordsEntity);
+    }
+
+    @Override
     public int getTickDuration() {
         return damageReductionTickDuration;
     }
@@ -211,13 +212,13 @@ public class ChainLightning extends AbstractChain<ChainLightning, ChainLightning
             }
         }
         // no else
-        PlayerFilter filter = firstCheck ? PlayerFilter.entitiesAround(checkFrom, radius, 18, radius)
-                                                       .filter(e -> LocationUtils.isLookingAtChain(wp, e) && LocationUtils.hasLineOfSight(wp, e)) : PlayerFilter.entitiesAround(
-                checkFrom,
-                bounceRange,
-                bounceRange,
-                bounceRange
-        ).lookingAtFirst(wp);
+        float rad = radius + PacketUtils.pingCompensationAmount(wp);
+        PlayerFilter filter = firstCheck ?
+                              PlayerFilter
+                                      .entitiesAround(checkFrom, rad, 18, rad)
+                                      .filter(e -> LocationUtils.isLookingAtChain(wp, e) && LocationUtils.hasLineOfSight(wp, e)) :
+                              PlayerFilter.entitiesAround(checkFrom, bounceRange, bounceRange, bounceRange)
+                                          .lookingAtFirst(wp);
         Optional<WarlordsEntity> foundPlayer = filter.closestFirst(wp).aliveEnemiesOf(wp).excluding(playersHit).findFirst();
         if (foundPlayer.isPresent()) {
             WarlordsEntity hit = foundPlayer.get();
