@@ -385,7 +385,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
 
     @Override
     public TextColor getTextColor() {
-        return NamedTextColor.GOLD;
+        return isAscendant() ? TextColor.color(225, 84, 84) : NamedTextColor.GOLD;
     }
 
     public String getTitleName() {
