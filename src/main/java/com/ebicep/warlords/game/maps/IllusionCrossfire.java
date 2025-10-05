@@ -31,7 +31,7 @@ public class IllusionCrossfire extends GameMap {
     public IllusionCrossfire() {
         super(
                 "Illusion Crossfire",
-                6,
+                8,
                 1,
                 120 * SECOND,
                 "IllusionCrossfire",

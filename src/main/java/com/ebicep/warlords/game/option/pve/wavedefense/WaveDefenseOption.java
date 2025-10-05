@@ -486,18 +486,19 @@ public class WaveDefenseOption implements PveOption {
     protected void modifyStats(WarlordsNPC warlordsNPC) {
         warlordsNPC.getMob().onSpawn(WaveDefenseOption.this);
 
+        int playerCount = 8;//playerCount();
         boolean isEndless = difficulty == DifficultyIndex.ENDLESS;
+        boolean isNotSolo = playerCount > 1;
         /*
          * Base scale of 600
          *
          * The higher the scale is the longer it takes to increase per interval.
          */
         double scale = isEndless ? 1200.0 : 600.0;
-        int playerCount = playerCount();
         // Flag check whether mob is a boss.
-        boolean bossFlagCheck = playerCount > 1 && warlordsNPC.getMob() instanceof BossLike;
+        boolean bossFlagCheck = isNotSolo && warlordsNPC.getMob() instanceof BossLike;
         // Reduce base scale by 75/100 for each player after 2 or more players in game instance.
-        double modifiedScale = scale - (playerCount > 1 ? (isEndless ? 100 : 75) * playerCount : 0);
+        double modifiedScale = scale - (isNotSolo ? (isEndless ? 100 : 75) * Math.min(6, playerCount) : 0);
         // Divide scale based on wave count.
         double modifier = waveCounter / modifiedScale + 1;
         // Multiply health & min/max melee damage by waveCounter + 1 ^ base damage.
