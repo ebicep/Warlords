@@ -66,8 +66,7 @@ public class SkyCrystal extends AbstractMob implements BossMinionMob {
 
     @Override
     public void onSpawn(PveOption option) {
-        super.onSpawn(option);
-        holo = warlordsNPC.getWorld().spawn(warlordsNPC.getLocation().clone().add(0, 1, 0), TextDisplay.class, td -> {
+        holo = warlordsNPC.getWorld().spawn(warlordsNPC.getLocation().clone().add(0, 2.1, 0), TextDisplay.class, td -> {
             td.setBillboard(Display.Billboard.CENTER);
             td.setSeeThrough(true);
             td.setBackgroundColor(Color.BLACK);
@@ -79,7 +78,7 @@ public class SkyCrystal extends AbstractMob implements BossMinionMob {
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
         if (!holo.isDead() && holo.getWorld() == warlordsNPC.getWorld()) {
-            holo.teleport(warlordsNPC.getLocation().clone().add(0, 1, 0));
+            holo.teleport(warlordsNPC.getLocation().clone().add(0, 2.1, 0));
         }
     }
 

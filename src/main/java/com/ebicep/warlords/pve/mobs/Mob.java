@@ -540,12 +540,13 @@ public enum Mob {
             Weapons.VOID_TWIG.getItem()
     )
     ),
-    VANGUARD(EntityType.WITHER_SKELETON, Vanguard.class, Vanguard::new, Vanguard::new, new Utils.SimpleEntityEquipment(
-            SkullUtils.getSkullFrom(SkullID.ENDER_DEMON),
+    VANGUARD(EntityType.GIANT, Vanguard.class, Vanguard::new, Vanguard::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.SILVER_KNIGHT),
             new ItemStack(Material.NETHERITE_CHESTPLATE),
             new ItemStack(Material.NETHERITE_LEGGINGS),
             new ItemStack(Material.NETHERITE_BOOTS),
-            Weapons.TIDEBREAKER.getItem()
+            Weapons.FELFLAME_BLADE.getItem(),
+            new ItemStack(Material.SHIELD)
     )
     ),
     MAGMATIC_OOZE(EntityType.MAGMA_CUBE, MagmaticOoze.class, MagmaticOoze::new, MagmaticOoze::new, null),
@@ -665,6 +666,14 @@ public enum Mob {
             Utils.applyColorTo(Material.LEATHER_LEGGINGS, 30, 30, 120),
             Utils.applyColorTo(Material.LEATHER_BOOTS, 30, 30, 120),
             Weapons.FROSTBITE.getItem()
+    )
+    ),
+    CRYSTALLINE_PETAL(EntityType.BOGGED, CrystallinePetal.class, CrystallinePetal::new, CrystallinePetal::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.STONE_ORB_PINK),
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 30, 30, 120),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 30, 30, 120),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 30, 30, 120),
+            Weapons.SILVER_PHANTASM_SWORD_4.getItem()
     )
     ),
     MITHRA_EGG_SAC(EntityType.ARMOR_STAND, EggSac.class, EggSac::new, EggSac::new, new Utils.SimpleEntityEquipment(

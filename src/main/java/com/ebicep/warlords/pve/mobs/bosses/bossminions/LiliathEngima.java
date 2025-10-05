@@ -71,7 +71,7 @@ public class LiliathEngima extends AbstractMob implements BossMinionMob {
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
         WarlordsEntity target = targets.get(rand.nextInt(targets.size()));
         Bukkit.broadcast(Component.text("target: " + target.getName()));
-        if (event.getSource() == target) {
+        if (event.getSource() != target) {
             event.setCancelled(true);
         }
     }

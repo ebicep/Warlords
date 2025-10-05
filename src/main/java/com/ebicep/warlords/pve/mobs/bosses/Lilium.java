@@ -11,9 +11,11 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.bosses.bossabilities.*;
+import com.ebicep.warlords.pve.mobs.bosses.bossminions.CrystallinePetal;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.LiliathEngima;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.NineCrystal;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
@@ -30,10 +32,8 @@ import org.bukkit.block.data.type.Slab;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import javax.annotation.Nonnull;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.lang.Math.cos;
@@ -43,10 +43,12 @@ public class Lilium extends AbstractMob implements BossMob {
     private Location mapCenter;
 
     private OrbitingItemManager oribitingItemManagerFloating;
+    private OrbitingItemManager oribitingItemManager;
 
     private BouquetBarrageAbility bouquetBarrageAbility;
     private RoseGardenAbility roseGardenAbility;
     private PetalStormAbility petalStormAbility;
+    private OrbitalStrikeAbility orbitalStrikeAbility;
 
     private CrystalConduitsAbility conduitsOne;
     private CrystalConduitsAbility conduitsTwo;
@@ -101,10 +103,12 @@ public class Lilium extends AbstractMob implements BossMob {
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
-        Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_ALLAY_DEATH, 500, 0.5f);
+        Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.BLOCK_TRIAL_SPAWNER_AMBIENT_OMINOUS, 500, 0.5f);
 
         mapCenter = new Location(warlordsNPC.getWorld(), 112.5, 11, 62.5);
 
+        oribitingItemManager = new OrbitingItemManager(() -> warlordsNPC.getLocation(), 2, 2.1, 6, 0.5f, option, warlordsNPC, Material.STICK);
+        oribitingItemManager.spawnSwords(15);
         oribitingItemManagerFloating = new OrbitingItemManager(() -> warlordsNPC.getLocation().clone().add(0, 8, 0), 33, 3, 1, 15, option, warlordsNPC, Material.STICK);
 
         bouquetBarrageAbility = new BouquetBarrageAbility(warlordsNPC, 3, 20, 40, 4, 2000, 3000, true, 40, 20);
@@ -112,7 +116,7 @@ public class Lilium extends AbstractMob implements BossMob {
                 warlordsNPC,
                 () -> mapCenter,
                 8,
-                22,
+                24,
                 2,
                 6,
                 40,
@@ -146,12 +150,12 @@ public class Lilium extends AbstractMob implements BossMob {
         platformsController = new SkyPlatformsController(
                 warlordsNPC,
                 () -> mapCenter,
-                List.of(230, 190, 150, 110, 60),
+                List.of(230, 185, 145, 105, 60),
                 List.of(32.0, 32.0, 32.0, 32.0, 32.0),
-                Material.CHERRY_LEAVES,
-                true,
+                Material.STRIPPED_CHERRY_LOG,
+                false,
                 2,
-                40,
+                50,
                 6,
                 true
         );
@@ -159,7 +163,7 @@ public class Lilium extends AbstractMob implements BossMob {
         conduitsOne = new CrystalConduitsAbility(
                 warlordsNPC,
                 () -> warlordsNPC.getLocation(),
-                2,
+                3,
                 18,
                 2,
                 0.05,
@@ -170,7 +174,7 @@ public class Lilium extends AbstractMob implements BossMob {
         conduitsTwo = new CrystalConduitsAbility(
                 warlordsNPC,
                 () -> warlordsNPC.getLocation(),
-                2,
+                3,
                 18,
                 2,
                 0.05,
@@ -181,7 +185,7 @@ public class Lilium extends AbstractMob implements BossMob {
         conduitsThree = new CrystalConduitsAbility(
                 warlordsNPC,
                 () -> warlordsNPC.getLocation(),
-                2,
+                4,
                 18,
                 2,
                 0.05,
@@ -192,7 +196,7 @@ public class Lilium extends AbstractMob implements BossMob {
         conduitsFour = new CrystalConduitsAbility(
                 warlordsNPC,
                 () -> warlordsNPC.getLocation(),
-                2,
+                4,
                 18,
                 2,
                 0.05,
@@ -203,12 +207,34 @@ public class Lilium extends AbstractMob implements BossMob {
         conduitsFive = new CrystalConduitsAbility(
                 warlordsNPC,
                 () -> warlordsNPC.getLocation(),
-                2,
+                5,
                 18,
                 2,
                 0.05,
                 4000,
                 option
+        );
+
+        orbitalStrikeAbility = new OrbitalStrikeAbility(
+                warlordsNPC,
+                () -> {
+                    WarlordsEntity target = PlayerFilter.playingGame(warlordsNPC.getGame())
+                            .aliveEnemiesOf(warlordsNPC)
+                            .limit(3)
+                            .leastAliveFirst()
+                            .findFirstOrNull();
+                    return target != null ? target.getLocation().clone() : mapCenter.clone();
+                },
+                40,
+                60,
+                20,
+                3,
+                150,
+                64, // maxTrace
+                1000, 1500,
+                true,
+                4,
+                5000, 8000
         );
 
         phaseOne = new BossAbilityPhase(warlordsNPC, 90, () -> {
@@ -255,33 +281,7 @@ public class Lilium extends AbstractMob implements BossMob {
                                 cooldownManager -> {},
                                 30 * 20
                         ) {
-                            @Override
-                            public void onHealFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                                event.setCancelled(true);
-                                enemy.addInstance(InstanceBuilder.damage()
-                                        .source(event.getSource())
-                                        .cause(event.getCause())
-                                        .min(event.getMin())
-                                        .max(event.getMax())
-                                        .critChance(event.getCritChance())
-                                        .critMultiplier(event.getCritMultiplier())
-                                        .flags(event.getFlags())
-                                );
-                            }
 
-                            @Override
-                            public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                                event.setCancelled(true);
-                                event.getWarlordsEntity().addInstance(InstanceBuilder.healing()
-                                        .source(enemy)
-                                        .cause(event.getCause())
-                                        .min(event.getMin())
-                                        .max(event.getMax())
-                                        .critChance(event.getCritChance())
-                                        .critMultiplier(event.getCritMultiplier())
-                                        .flags(event.getFlags())
-                                );
-                            }
                         });
                     }
             );
@@ -309,7 +309,7 @@ public class Lilium extends AbstractMob implements BossMob {
                         EffectUtils.strikeLightning(enemy.getLocation(), false);
                     }
 
-                    warlordsNPC.setStunTicks(1000);
+                    warlordsNPC.setStunTicks(99999);
 
                     conduitsOne.setFollowBoss(true);
                     conduitsOne.setFollowLerp(1);
@@ -328,60 +328,70 @@ public class Lilium extends AbstractMob implements BossMob {
                 boolean threeTriggered = false;
                 boolean fourTriggered = false;
                 boolean fiveTriggered = false;
+
+                int t = 0;
                 @Override
                 public void run() {
+                    t++;
+                    // platforms - 1
                     if (conduitsOne.isCompleted() && !oneTriggered) {
-                        platformsController.triggerNextDrop(warlordsNPC.getGame());
-                        new GameRunnable(warlordsNPC.getGame()) {
-                            @Override
-                            public void run() {
-                                conduitsTwo.setFollowBoss(true);
-                                conduitsTwo.start(warlordsNPC.getGame());
-                            }
-                        }.runTaskLater(30);
+                        triggerNextSequence(conduitsTwo);
+                        oneTriggered = true;
+                    } else if (conduitsOne.failed() && !oneTriggered) {
+                        triggerNextSequence(conduitsTwo);
+                        failedSequence();
                         oneTriggered = true;
                     }
+
+                    // platforms - 2
                     if (conduitsTwo.isCompleted() && !twoTriggered) {
-                        platformsController.triggerNextDrop(warlordsNPC.getGame());
-                        new GameRunnable(warlordsNPC.getGame()) {
-                            @Override
-                            public void run() {
-                                conduitsThree.setFollowBoss(true);
-                                conduitsThree.start(warlordsNPC.getGame());
-                            }
-                        }.runTaskLater(30);
+                        triggerNextSequence(conduitsThree);
+                        twoTriggered = true;
+                    } else if (conduitsTwo.failed() && !twoTriggered) {
+                        triggerNextSequence(conduitsThree);
+                        failedSequence();
                         twoTriggered = true;
                     }
+
+                    // platforms - 3
                     if (conduitsThree.isCompleted() && !threeTriggered) {
-                        platformsController.triggerNextDrop(warlordsNPC.getGame());
-                        new GameRunnable(warlordsNPC.getGame()) {
-                            @Override
-                            public void run() {
-                                conduitsFour.setFollowBoss(true);
-                                conduitsFour.start(warlordsNPC.getGame());
-                            }
-                        }.runTaskLater(30);
+                        triggerNextSequence(conduitsFour);
+                        threeTriggered = true;
+                    } else if (conduitsThree.failed() && !threeTriggered) {
+                        triggerNextSequence(conduitsFour);
+                        failedSequence();
                         threeTriggered = true;
                     }
+
+                    // platforms - 4
                     if (conduitsFour.isCompleted() && !fourTriggered) {
-                        platformsController.triggerNextDrop(warlordsNPC.getGame());
-                        new GameRunnable(warlordsNPC.getGame()) {
-                            @Override
-                            public void run() {
-                                conduitsFive.setFollowBoss(true);
-                                conduitsFive.start(warlordsNPC.getGame());
-                            }
-                        }.runTaskLater(30);
+                        triggerNextSequence(conduitsFive);
+                        fourTriggered = true;
+                    } else if (conduitsFour.failed() && !fourTriggered) {
+                        triggerNextSequence(conduitsFive);
+                        failedSequence();
                         fourTriggered = true;
                     }
+
+                    // platforms - end
                     if (conduitsFive.isCompleted() && !fiveTriggered) {
                         platformsController.triggerNextDrop(warlordsNPC.getGame());
                         fiveTriggered = true;
+                    } else if (conduitsFive.failed() && !fiveTriggered) {
+                        platformsController.triggerNextDrop(warlordsNPC.getGame());
+                        failedSequence();
+                        fiveTriggered = true;
                     }
 
+                    if (t % 300 == 0 && t > 0) {
+                        for (int i = 0; i < option.playerCount(); i++) {
+                            option.spawnNewMob(new CrystallinePetal(warlordsNPC.getLocation()));
+                        }
+                    }
+
+                    // teleport back to arena
                     if (warlordsNPC.getLocation().getY() < 45) {
                         oribitingItemManagerFloating.stop();
-
                         platformsController.stop();
 
                         warlordsNPC.teleport(option.getRandomSpawnLocation(warlordsNPC));
@@ -411,9 +421,12 @@ public class Lilium extends AbstractMob implements BossMob {
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-        EffectUtils.playCircularEffectAround(warlordsNPC.getGame(), warlordsNPC.getLocation(), Particle.CHERRY_LEAVES, 1, 1.3, 0.1, 2.2, 8, 1, 4, 20);
+        EffectUtils.playCircularEffectAround(warlordsNPC.getGame(), warlordsNPC.getLocation(), Particle.CHERRY_LEAVES, 1, 1.3, 0.1, 1.7, 8, 1, 4, ticksElapsed);
 
-        if (ticksElapsed % 400 == 0) {
+        if (ticksElapsed % 500 == 0) {
+            Random rand = new Random();
+            roseGardenAbility.setRoseCount(rand.nextInt(10));
+            roseGardenAbility.setRingRadius(rand.nextInt(12,24));
             roseGardenAbility.cast();
         }
 
@@ -421,7 +434,11 @@ public class Lilium extends AbstractMob implements BossMob {
             bouquetBarrageAbility.cast();
         }
 
-        if (ticksElapsed % 480 == 0 && ticksElapsed > 0) {
+        if (ticksElapsed % 600 == 0 && ticksElapsed > 0) {
+            orbitalStrikeAbility.cast();
+        }
+
+        if (ticksElapsed % 480 == 0 && ticksElapsed > 0 && !preventDashing) {
             new GameRunnable(warlordsNPC.getGame()) {
                 int t = 0;
                 @Override
@@ -445,6 +462,14 @@ public class Lilium extends AbstractMob implements BossMob {
         phaseSix.initialize(health);
         phaseSeven.initialize(health);
         phaseEight.initialize(health);
+    }
+
+    @Override
+    public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
+        super.onDeath(killer, deathLocation, option);
+        oribitingItemManager.stop();
+        oribitingItemManagerFloating.stop();
+        platformsController.stop();
     }
 
     private void bladeWaltsAbility(WarlordsNPC warlordsNPC) {
@@ -538,6 +563,52 @@ public class Lilium extends AbstractMob implements BossMob {
             Location p = new Location(center.getWorld(), x, center.getY(), z);
             center.getWorld().spawnParticle(Particle.DUST, p, 1, dust);
         }
+    }
+
+    private void failedSequence() {
+        Location loc = warlordsNPC.getLocation();
+        Utils.playGlobalSound(loc, Sound.ENTITY_ELDER_GUARDIAN_CURSE, 500, 0.5f);
+        EffectUtils.strikeLightningInCylinder(loc, 10, false);
+        EffectUtils.playHelixAnimation(loc, 20, Particle.SONIC_BOOM, 1, 25);
+        PlayerFilter.entitiesAround(warlordsNPC, 28, 28, 28)
+                .aliveEnemiesOf(warlordsNPC)
+                .forEach(enemy -> {
+                    enemy.addInstance(InstanceBuilder.damage()
+                            .cause("Sequence Fail")
+                            .source(warlordsNPC)
+                            .min(3500)
+                            .max(4000)
+                            .flags(InstanceFlags.TRUE_DAMAGE)
+                    );
+
+                    new GameRunnable(warlordsNPC.getGame()) {
+                        @Override
+                        public void run() {
+                            enemy.addInstance(InstanceBuilder.damage()
+                                    .cause("Conduit Curse")
+                                    .source(warlordsNPC)
+                                    .min(200)
+                                    .max(300)
+                                    .flags(InstanceFlags.TRUE_DAMAGE)
+                            );
+                            if (enemy.getLocation().getY() < 45 || conduitsFive.failed() || conduitsFive.isCompleted()) {
+                                this.cancel();
+                            }
+                        }
+                    }.runTaskTimer(20, 20);
+                }
+        );
+    }
+
+    private void triggerNextSequence(CrystalConduitsAbility ability) {
+        platformsController.triggerNextDrop(warlordsNPC.getGame());
+        new GameRunnable(warlordsNPC.getGame()) {
+            @Override
+            public void run() {
+                ability.setFollowBoss(true);
+                ability.start(warlordsNPC.getGame());
+            }
+        }.runTaskLater(30);
     }
 
     private static class MirrorDPSPhaseData {

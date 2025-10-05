@@ -1,7 +1,6 @@
 package com.ebicep.warlords.pve.mobs.bosses.bossabilities;
 
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -41,10 +40,10 @@ public class RoseGardenAbility {
     private final Supplier<Location> centerSupplier;
 
     // ---- Tuning knobs (aura / timing) ----
-    private final int roseCount;
-    private final double ringRadius;
+    private int roseCount;
+    private double ringRadius;
     private final double ringJitter;
-    private final double nodeRadius;
+    private double nodeRadius;
     private final int telegraphTicks;
     private final int lifetimeTicks;
     private final int tickPeriod;
@@ -342,5 +341,17 @@ public class RoseGardenAbility {
         } catch (Throwable ignored) {
             // If anything goes wrong with transformation, fail silently to avoid ticking errors.
         }
+    }
+
+    public void setNodeRadius(double nodeRadius) {
+        this.nodeRadius = nodeRadius;
+    }
+
+    public void setRingRadius(double ringRadius) {
+        this.ringRadius = ringRadius;
+    }
+
+    public void setRoseCount(int roseCount) {
+        this.roseCount = roseCount;
     }
 }
