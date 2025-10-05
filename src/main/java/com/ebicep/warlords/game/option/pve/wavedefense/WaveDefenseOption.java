@@ -486,7 +486,7 @@ public class WaveDefenseOption implements PveOption {
     protected void modifyStats(WarlordsNPC warlordsNPC) {
         warlordsNPC.getMob().onSpawn(WaveDefenseOption.this);
 
-        int playerCount = 8;//playerCount();
+        int playerCount = playerCount();
         boolean isEndless = difficulty == DifficultyIndex.ENDLESS;
         boolean isNotSolo = playerCount > 1;
         /*
