@@ -513,7 +513,7 @@ public enum Mob {
             Weapons.FROSTBITE.getItem()
     )
     ),
-    LILIUM(EntityType.BOGGED, Lilium.class, Lilium::new, Lilium::new, new Utils.SimpleEntityEquipment(
+    LILIUM(EntityType.WITHER_SKELETON, Lilium.class, Lilium::new, Lilium::new, new Utils.SimpleEntityEquipment(
             SkullUtils.getSkullFrom(SkullID.LILIUM_HAT),
             Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 220, 20, 120),
             Utils.applyColorTo(Material.LEATHER_LEGGINGS, 220, 20, 120),

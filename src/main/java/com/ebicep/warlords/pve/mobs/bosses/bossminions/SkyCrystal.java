@@ -13,6 +13,9 @@ import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.entity.Display;
 import org.bukkit.entity.TextDisplay;
+import org.bukkit.util.Transformation;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
 
@@ -24,7 +27,7 @@ public class SkyCrystal extends AbstractMob implements BossMinionMob {
         super(
                 spawnLocation,
                 ChatColor.BOLD + label,
-                3000,
+                4000,
                 0f,
                 20,
                 0,
@@ -36,9 +39,9 @@ public class SkyCrystal extends AbstractMob implements BossMinionMob {
         super(
                 spawnLocation,
                 "Crystal",
-                3000,
+                4000,
                 0,
-                0,
+                20,
                 0,
                 0
         );
@@ -66,19 +69,25 @@ public class SkyCrystal extends AbstractMob implements BossMinionMob {
 
     @Override
     public void onSpawn(PveOption option) {
-        holo = warlordsNPC.getWorld().spawn(warlordsNPC.getLocation().clone().add(0, 2.1, 0), TextDisplay.class, td -> {
+        holo = warlordsNPC.getWorld().spawn(warlordsNPC.getLocation().clone().add(0, 4, 0), TextDisplay.class, td -> {
             td.setBillboard(Display.Billboard.CENTER);
             td.setSeeThrough(true);
             td.setBackgroundColor(Color.BLACK);
             td.setText(ChatColor.RED + warlordsNPC.getName());
             td.setLineWidth(20);
+            td.setTransformation(new Transformation(
+                    new Vector3f(),
+                    new Quaternionf(),
+                    new Vector3f(5, 5, 5),
+                    new Quaternionf()
+            ));
         });
     }
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
         if (!holo.isDead() && holo.getWorld() == warlordsNPC.getWorld()) {
-            holo.teleport(warlordsNPC.getLocation().clone().add(0, 2.1, 0));
+            holo.teleport(warlordsNPC.getLocation().clone().add(0, 4, 0));
         }
     }
 

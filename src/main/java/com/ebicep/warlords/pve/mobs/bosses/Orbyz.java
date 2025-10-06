@@ -132,9 +132,9 @@ public class Orbyz extends AbstractMob implements BossMob {
 
         rotatingRadialLasersAbility = new RotatingRadialLasersAbility(warlordsNPC, () -> mapCenter, 6, 45, 1, 80, 240, 1.2, 2, 1000, 2, 1, Color.AQUA, Color.RED);
         convergingShockwavesAbility = new ConvergingShockwavesAbility(warlordsNPC, () -> mapCenter, 38, 10, 60, 20, 0.3, 1.5, 1, 1000, 2, 1, Color.PURPLE, Color.BLUE);
-        heavenlySpearAbilityOne = new HeavenlySpearAbility(warlordsNPC, () -> mapCenter, 6 * option.playerCount(), 38, 30, 5, 4000, 60, 35, 2.5, Material.PACKED_ICE);
-        heavenlySpearAbilityTwo = new HeavenlySpearAbility(warlordsNPC, () -> mapCenter, 10 * option.playerCount(), 38, 20, 5, 4000, 20, 35, 2.5, Material.PACKED_ICE);
-        heavenlySpearAbilityInterval = new HeavenlySpearAbility(warlordsNPC, () -> mapCenter, 2 + option.playerCount(), 36, 50, 8, 5000, 400, 35, 3.5, Material.SNOW_BLOCK);
+        heavenlySpearAbilityOne = new HeavenlySpearAbility(warlordsNPC, () -> mapCenter, 6 * option.playerCount(), 38, 30, 5, 4000, 60, 35, 2.5, Material.PACKED_ICE, Particle.ITEM_SNOWBALL, Particle.SNOWFLAKE, Sound.ENTITY_ZOMBIE_VILLAGER_CURE, Sound.BLOCK_GLASS_BREAK);
+        heavenlySpearAbilityTwo = new HeavenlySpearAbility(warlordsNPC, () -> mapCenter, 10 * option.playerCount(), 38, 20, 5, 4000, 20, 35, 2.5, Material.PACKED_ICE, Particle.ITEM_SNOWBALL, Particle.SNOWFLAKE, Sound.ENTITY_ZOMBIE_VILLAGER_CURE, Sound.BLOCK_GLASS_BREAK);
+        heavenlySpearAbilityInterval = new HeavenlySpearAbility(warlordsNPC, () -> mapCenter, 2 + option.playerCount(), 36, 50, 8, 5000, 400, 35, 3.5, Material.SNOW_BLOCK, Particle.ITEM_SNOWBALL, Particle.SNOWFLAKE, Sound.ENTITY_ZOMBIE_VILLAGER_CURE, Sound.BLOCK_GLASS_BREAK);
         summoningCirclesAbility = new SummoningCirclesAbility(warlordsNPC, () -> mapCenter, 2, 28, 300, 5, 5, option);
 
         markedForDeathAbility = new MarkedForDeathAbility(

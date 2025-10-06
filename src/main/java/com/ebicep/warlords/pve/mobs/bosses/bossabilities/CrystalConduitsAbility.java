@@ -287,6 +287,8 @@ public class CrystalConduitsAbility {
             case 0 -> "A";
             case 1 -> "B";
             case 2 -> "C";
+            case 3 -> "D";
+            case 4 -> "E";
             default -> "#" + (idx + 1);
         };
     }

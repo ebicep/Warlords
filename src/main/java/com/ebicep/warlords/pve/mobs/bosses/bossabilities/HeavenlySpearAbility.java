@@ -44,6 +44,10 @@ public class HeavenlySpearAbility {
     private final double spearThickness; // visual spear thickness
     private final Material spearMaterial;
     private final Random rng = new Random();
+    private Particle telegraphSfx;
+    private Particle persistentSfx;
+    private Sound impactSoundSfx;
+    private Sound itemRemoveSfx;
 
     private final List<BlockDisplay> spears = new ArrayList<>();
     private GameRunnable loop;
@@ -60,7 +64,7 @@ public class HeavenlySpearAbility {
             int persistTicks,
             double spearHeight,
             double spearThickness,
-            Material spearMaterial
+            Material spearMaterial, Particle telegraphSfx, Particle persistentSfx, Sound impactSoundSfx, Sound itemRemoveSfx
     ) {
         this.source = source;
         this.centerSupplier = centerSupplier;
@@ -73,6 +77,10 @@ public class HeavenlySpearAbility {
         this.spearHeight = spearHeight;
         this.spearThickness = spearThickness;
         this.spearMaterial = spearMaterial;
+        this.telegraphSfx = telegraphSfx;
+        this.persistentSfx = persistentSfx;
+        this.impactSoundSfx = impactSoundSfx;
+        this.itemRemoveSfx = itemRemoveSfx;
     }
 
     /* ================= Public API ================= */
@@ -114,7 +122,7 @@ public class HeavenlySpearAbility {
                                 source.getTeam(),
                                 loc.clone().add(0, 0.1, 0),
                                 impactRadius,
-                                new CircumferenceEffect(Particle.ITEM_SNOWBALL, Particle.ITEM_SNOWBALL).particlesPerCircumference(0.75)
+                                new CircumferenceEffect(telegraphSfx, telegraphSfx).particlesPerCircumference(0.75)
                         ).playEffects();
                         if (t == 1) {
                             Utils.playGlobalSound(centerSupplier.get(), Sound.BLOCK_BEACON_POWER_SELECT, 500, 0.8f);
@@ -129,14 +137,14 @@ public class HeavenlySpearAbility {
                         impactAt(loc);
                         FallingBlockWaveEffect.create(loc, impactRadius, 10, Material.ICE);
                     }
-                    Utils.playGlobalSound(centerSupplier.get(), Sound.ENTITY_ZOMBIE_VILLAGER_CURE, 500, 0.5f);
+                    Utils.playGlobalSound(centerSupplier.get(), impactSoundSfx, 500, 0.5f);
                 }
 
                 // Spears persist
                 if (t > telegraphTicks + 1 && t <= telegraphTicks + persistTicks) {
                     for (BlockDisplay spear : spears) {
                         if (!spear.isValid()) continue;
-                        spear.getWorld().spawnParticle(Particle.SNOWFLAKE, spear.getLocation(), 2, 0.1, 1, 0.1, 0);
+                        spear.getWorld().spawnParticle(persistentSfx, spear.getLocation(), 2, 0.1, 1, 0.1, 0);
                     }
                 }
 
@@ -148,7 +156,7 @@ public class HeavenlySpearAbility {
                             spear.getWorld().spawnParticle(Particle.BLOCK_CRUMBLE,
                                     spear.getLocation(), 10, 0.5, 0.5, 0.5, 0,
                                     Material.ICE.createBlockData());
-                            Utils.playGlobalSound(spear.getLocation(), Sound.BLOCK_GLASS_BREAK, 10, 0.9f);
+                            Utils.playGlobalSound(spear.getLocation(), itemRemoveSfx, 10, 0.9f);
                         }
                     }
                     stop();
