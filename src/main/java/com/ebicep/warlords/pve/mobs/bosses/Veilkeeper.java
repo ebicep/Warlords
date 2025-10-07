@@ -94,7 +94,7 @@ public class Veilkeeper extends AbstractMob implements BossMob {
                 ChatUtils.sendTitleToGamePlayers(
                         warlordsNPC.getGame(),
                         Component.empty(),
-                        Component.text("NOW, OUT OF MY SIGHT!", NamedTextColor.RED),
+                        Component.text("NOW, GET OUT OF MY SIGHT!", NamedTextColor.RED),
                         20, 40, 20
                 );
                 Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_ELDER_GUARDIAN_CURSE, 100, 0.5f);
@@ -108,9 +108,9 @@ public class Veilkeeper extends AbstractMob implements BossMob {
                         .aliveEnemiesOf(warlordsNPC).forEach(enemy -> {
                             EffectUtils.strikeLightning(enemy.getLocation(), false);
                             enemy.addInstance(InstanceBuilder.damage()
-                                    .cause("What Should Not Have Been")
+                                    .cause("Unknown")
                                     .source(warlordsNPC)
-                                    .value(1000)
+                                    .value(500)
                                     .critChance(100)
                                     .critMultiplier(200)
                                     .flags(InstanceFlags.TRUE_DAMAGE)
