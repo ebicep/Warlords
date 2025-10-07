@@ -68,8 +68,8 @@ public class LegendaryMomentum extends AbstractLegendaryWeapon implements Passiv
     public List<Pair<Component, Component>> getPassiveEffectUpgrade() {
         return Arrays.asList(
                 new Pair<>(
-                        formatTitleUpgrade(getGainIntervalSecondsAtLevel(getTitleLevel())),
-                        formatTitleUpgrade(getGainIntervalSecondsAtLevel(getTitleLevelUpgraded()))
+                        formatTitleUpgrade(getGainIntervalSecondsAtLevel(getTitleLevel()), "s"),
+                        formatTitleUpgrade(getGainIntervalSecondsAtLevel(getTitleLevelUpgraded()), "s")
                 ),
                 new Pair<>(
                         formatTitleUpgrade(getMaxStacksAtLevel(getTitleLevel())),

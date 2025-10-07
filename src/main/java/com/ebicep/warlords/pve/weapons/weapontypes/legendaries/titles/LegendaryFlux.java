@@ -73,12 +73,12 @@ public class LegendaryFlux extends AbstractLegendaryWeapon implements PassiveCou
                         formatTitleUpgrade(getEnergyPerFluxAtLevel(getTitleLevelUpgraded()))
                 ),
                 new Pair<>(
-                        formatTitleUpgrade(REGEN_BONUS_PERCENT_BASE + REGEN_BONUS_INC_PER_LEVEL * getTitleLevel()),
-                        formatTitleUpgrade(REGEN_BONUS_PERCENT_BASE + REGEN_BONUS_INC_PER_LEVEL * getTitleLevelUpgraded())
+                        formatTitleUpgrade(REGEN_BONUS_PERCENT_BASE + REGEN_BONUS_INC_PER_LEVEL * getTitleLevel(), "%"),
+                        formatTitleUpgrade(REGEN_BONUS_PERCENT_BASE + REGEN_BONUS_INC_PER_LEVEL * getTitleLevelUpgraded(), "%")
                 ),
                 new Pair<>(
-                        formatTitleUpgrade(CDR_PERCENT_BASE + CDR_PERCENT_INC_PER_LEVEL * getTitleLevel()),
-                        formatTitleUpgrade(CDR_PERCENT_BASE + CDR_PERCENT_INC_PER_LEVEL * getTitleLevelUpgraded())
+                        formatTitleUpgrade(CDR_PERCENT_BASE + CDR_PERCENT_INC_PER_LEVEL * getTitleLevel(), "%"),
+                        formatTitleUpgrade(CDR_PERCENT_BASE + CDR_PERCENT_INC_PER_LEVEL * getTitleLevelUpgraded(), "%")
                 )
         );
     }

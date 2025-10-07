@@ -131,7 +131,7 @@ public class LegendaryJuggernaut extends AbstractLegendaryWeapon implements Even
 
     @Override
     protected float getHealthBonusValue() {
-        return 800;
+        return 500;
     }
 
     @Override

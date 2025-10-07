@@ -57,9 +57,8 @@ public class LegendaryOracle extends AbstractLegendaryWeapon implements PassiveC
                         formatTitleUpgrade(getMaxClarityAtLevel(getTitleLevelUpgraded()))
                 ),
                 new Pair<>(
-                        formatTitleUpgrade(CDR_PER_STACK_SECONDS + CDR_PER_STACK_INC_PER_LEVEL * getTitleLevel()),
-                        formatTitleUpgrade(CDR_PER_STACK_SECONDS + CDR_PER_STACK_INC_PER_LEVEL * getTitleLevelUpgraded()
-                        )
+                        formatTitleUpgrade(CDR_PER_STACK_SECONDS + CDR_PER_STACK_INC_PER_LEVEL * getTitleLevel(), "s"),
+                        formatTitleUpgrade(CDR_PER_STACK_SECONDS + CDR_PER_STACK_INC_PER_LEVEL * getTitleLevelUpgraded(), "s")
                 )
         );
     }

@@ -167,6 +167,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
                         allSpawnedMobs.forEach(mob -> {
                             if (pveOption.getMobs().contains(mob)) {
                                 mob.getWarlordsNPC().die(mob.getWarlordsNPC(), WarlordsDeathEvent.DeathInfoBuilder.create().setForced(true));
+                                pveOption.despawnMob(mob);
                             }
                         });
                         allSpawnedMobs.clear();
@@ -204,6 +205,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
                         spawnedMobs.forEach(mob -> {
                             if (pveOption.getMobs().contains(mob)) {
                                 mob.getWarlordsNPC().die(mob.getWarlordsNPC(), WarlordsDeathEvent.DeathInfoBuilder.create().setForced(true));
+                                pveOption.despawnMob(mob);
                             }
                         });
                         spawnedMobs.clear();
