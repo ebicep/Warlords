@@ -815,9 +815,9 @@ public class IllusionCrossfire extends GameMap {
                         .add(0.02, Mob.SLIMY_CHESS)
                         .add(0.04, Mob.NIGHTMARE_ZOMBIE)
                         .add(0.02, Mob.ZOMBIE_END)
-                        .add(0.05, Mob.SKELETON_END)
+                        .add(0.05, Mob.ANCIENT_DYNASTY)
                         .add(0.1, Mob.ZOMBIE_WARPED)
-                        .add(0.05, Mob.ENDERMAN_ANOMALY)
+                        .add(0.02, Mob.SOVEREIGN_GUARDIAN)
                         .add(0.1, Mob.SANDSTRIDER_WRAITH)
                         .add(0.03, Mob.CELESTIAL_OPUS)
                         .add(0.01, Mob.SKELETAL_SORCERER)
@@ -854,7 +854,7 @@ public class IllusionCrossfire extends GameMap {
                         .add(Mob.TORMENT)
                 )
                 // hard-lock
-                .add(130, new RandomSpawnWave(5, 10 * SECOND, Component.text("Boss"))
+                .add(130, new RandomSpawnWave(1, 10 * SECOND, Component.text("Boss"))
                         .add(Mob.VEILKEEPER)
                 )
                 // pre-caution
