@@ -16,10 +16,10 @@ public class RequiemGuardian extends AbstractMob implements EliteMob, NoTargetAb
                 spawnLocation,
                 "Requiem Guardian",
                 6000,
-                0.4f,
+                0.35f,
                 20,
                 600,
-                900
+                800
         );
     }
 
