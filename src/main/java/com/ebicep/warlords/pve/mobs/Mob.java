@@ -9,6 +9,7 @@ import com.ebicep.warlords.pve.mobs.blaze.BlazingKindle;
 import com.ebicep.warlords.pve.mobs.bosses.Void;
 import com.ebicep.warlords.pve.mobs.bosses.*;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.*;
+import com.ebicep.warlords.pve.mobs.creaking.SovereignGuardian;
 import com.ebicep.warlords.pve.mobs.creeper.CreepyBomber;
 import com.ebicep.warlords.pve.mobs.enderman.EndermanAnomaly;
 import com.ebicep.warlords.pve.mobs.events.baneofimpurities.EventCalamityCore;
@@ -36,6 +37,7 @@ import com.ebicep.warlords.pve.mobs.skeleton.*;
 import com.ebicep.warlords.pve.mobs.slime.SlimyAnomaly;
 import com.ebicep.warlords.pve.mobs.slime.SlimyChess;
 import com.ebicep.warlords.pve.mobs.spider.ArachnoVenari;
+import com.ebicep.warlords.pve.mobs.vindicator.AncientDynasty;
 import com.ebicep.warlords.pve.mobs.witch.WitchDeacon;
 import com.ebicep.warlords.pve.mobs.witherskeleton.CelestialOpus;
 import com.ebicep.warlords.pve.mobs.witherskeleton.ObsidianSentinel;
@@ -336,6 +338,14 @@ public enum Mob {
             new ItemStack(Material.SHIELD)
     )
     ),
+    ANCIENT_DYNASTY(EntityType.VINDICATOR, AncientDynasty.class, AncientDynasty::new, AncientDynasty::new, new Utils.SimpleEntityEquipment(
+            null,
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 255, 255),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 255, 255, 255),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 255, 255, 255),
+            Weapons.NETHERSTEEL_KATANA.getItem()
+    )
+    ),
 
     // Champion
     NIGHTMARE_ZOMBIE(EntityType.ZOMBIE, NightmareZombie.class, NightmareZombie::new, NightmareZombie::new, new Utils.SimpleEntityEquipment(
@@ -378,14 +388,13 @@ public enum Mob {
             Weapons.SILVER_PHANTASM_SWORD_4.getItem()
     )
     ),
-    OBSIDIAN_SENTINEL(EntityType.WITHER_SKELETON, ObsidianSentinel.class, ObsidianSentinel::new, ObsidianSentinel::new,
-            new Utils.SimpleEntityEquipment(
+    OBSIDIAN_SENTINEL(EntityType.WITHER_SKELETON, ObsidianSentinel.class, ObsidianSentinel::new, ObsidianSentinel::new, new Utils.SimpleEntityEquipment(
                     SkullUtils.getSkullFrom(SkullID.OBSIDIAN_SENTINEL),
-                    Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 20, 15, 30), // deep obsidian tint
+                    Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 20, 15, 30),
                     Utils.applyColorTo(Material.LEATHER_LEGGINGS, 20, 15, 30),
                     Utils.applyColorTo(Material.LEATHER_BOOTS, 20, 15, 30),
                     new ItemStack(Material.NETHERITE_SWORD)
-            )
+    )
     ),
     SANDSTRIDER_WRAITH(EntityType.HUSK, SandstriderWraith.class, SandstriderWraith::new, SandstriderWraith::new,
             new Utils.SimpleEntityEquipment(
@@ -421,7 +430,7 @@ public enum Mob {
             Weapons.FABLED_HEROICS_SCYTHE.getItem()
     )
     ),
-
+    SOVEREIGN_GUARDIAN(EntityType.CREAKING, SovereignGuardian.class, SovereignGuardian::new, SovereignGuardian::new, null),
 
     // Boss
     BOLTARO(EntityType.ZOMBIE, Boltaro.class, Boltaro::new, Boltaro::new, new Utils.SimpleEntityEquipment(
@@ -654,9 +663,9 @@ public enum Mob {
     ),
     SOUL_REAVER(EntityType.DROWNED, SoulReaver.class, SoulReaver::new, SoulReaver::new, new Utils.SimpleEntityEquipment(
             SkullUtils.getSkullFrom(SkullID.CELESTIAL_GOLDOR),
-            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 30, 0, 30),
-            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 30, 0, 30),
-            Utils.applyColorTo(Material.LEATHER_BOOTS, 30, 0, 30),
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 200, 200, 200),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 200, 200, 200),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 200, 200, 200),
             Weapons.TIDEBREAKER.getItem()
     )
     ),
