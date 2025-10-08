@@ -15,19 +15,26 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.ChatColor;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.entity.Display;
+import org.bukkit.entity.TextDisplay;
+import org.bukkit.util.Transformation;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
 
 public class NineCrystal extends AbstractMob implements BossMinionMob {
 
     private SpecType spec;
+    private TextDisplay holo;
 
     public NineCrystal(Location spawnLocation, SpecType spec) {
         super(
                 spawnLocation,
-                LegacyComponentSerializer.legacySection().serialize(Component.text(spec.name(), spec.getTextColor())),
+                LegacyComponentSerializer.legacySection().serialize(Component.text(spec.name(), spec.getTextColor(), TextDecoration.BOLD)),
                 2500,
                 0,
                 0,
@@ -75,7 +82,15 @@ public class NineCrystal extends AbstractMob implements BossMinionMob {
 
     @Override
     public void onSpawn(PveOption option) {
-//        warlordsNPC.getEntity().setAI(false);
+        float newHealth;
+        switch (spec) {
+            case DAMAGE -> newHealth = 5000;
+            case HEALER ->  newHealth = 1250;
+            case TANK ->  newHealth = 2500;
+            default -> newHealth = 2000;
+        }
+        warlordsNPC.setMaxHealthAndHeal(newHealth);
+
         warlordsNPC.getCooldownManager().removeCooldown(DamageCheck.class, false);
         warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
                 "Damage Check",
@@ -97,6 +112,20 @@ public class NineCrystal extends AbstractMob implements BossMinionMob {
                 }
             }
         });
+
+        holo = warlordsNPC.getWorld().spawn(warlordsNPC.getLocation().clone().add(0, 3, 0), TextDisplay.class, td -> {
+            td.setBillboard(Display.Billboard.CENTER);
+            td.setSeeThrough(true);
+            td.setBackgroundColor(Color.GRAY);
+            td.setText(LegacyComponentSerializer.legacySection().serialize(Component.text(spec.name(), spec.getTextColor(), TextDecoration.BOLD)));
+            td.setLineWidth(80);
+            td.setTransformation(new Transformation(
+                    new Vector3f(),
+                    new Quaternionf(),
+                    new Vector3f(2f, 2f, 2f),
+                    new Quaternionf()
+            ));
+        });
     }
 
     @Override
@@ -104,30 +133,15 @@ public class NineCrystal extends AbstractMob implements BossMinionMob {
         if (ticksElapsed % 20 == 0) {
             EffectUtils.playParticleLinkAnimation(warlordsNPC.getLocation(), new Location(warlordsNPC.getWorld(), 112.5, 13, 62.5), Particle.CHERRY_LEAVES);
         }
+
+        if (!holo.isDead() && holo.getWorld() == warlordsNPC.getWorld()) {
+            holo.teleport(warlordsNPC.getLocation().clone().add(0, 3, 0));
+        }
     }
 
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
-
-    }
-
-    @Override
-    public double weaponDropRate() {
-        return 0;
-    }
-
-    @Override
-    public int commonWeaponDropChance() {
-        return 0;
-    }
-
-    @Override
-    public int rareWeaponDropChance() {
-        return 0;
-    }
-
-    @Override
-    public int epicWeaponDropChance() {
-        return 0;
+        super.onDeath(killer, deathLocation, option);
+        holo.remove();
     }
 }
