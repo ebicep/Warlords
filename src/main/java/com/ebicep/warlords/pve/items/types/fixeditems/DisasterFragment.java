@@ -1,7 +1,7 @@
 package com.ebicep.warlords.pve.items.types.fixeditems;
 
 import com.ebicep.warlords.abilities.SoulShackle;
-import com.ebicep.warlords.abilities.internal.DamageCheck;
+import com.ebicep.warlords.abilities.internal.MaxHealthDamage;
 import com.ebicep.warlords.abilities.internal.WoundingCooldown;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -112,13 +112,12 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                                 40,
                                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                                     if (ticksLeft % 20 == 0) {
-                                        float healthDamage = victim.getMaxHealth() * 0.005f;
-                                        healthDamage = DamageCheck.clamp(healthDamage);
+                                        float healthDamage = MaxHealthDamage.getMaxHealthDamage(victim, 0.5f);
                                         victim.addInstance(InstanceBuilder
                                                 .damage()
                                                 .cause("Burn")
                                                 .source(attacker)
-                                                .value(healthDamage)
+                                                .rawDamage(healthDamage)
                                         );
                                     }
                                 })
@@ -143,13 +142,12 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                                 40,
                                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                                     if (ticksLeft % 20 == 0) {
-                                        float healthDamage = victim.getMaxHealth() * 0.005f;
-                                        healthDamage = DamageCheck.clamp(healthDamage);
+                                        float healthDamage = MaxHealthDamage.getMaxHealthDamage(victim, 0.5f);
                                         victim.addInstance(InstanceBuilder
                                                 .damage()
                                                 .cause("Bleed")
                                                 .source(attacker)
-                                                .value(healthDamage)
+                                                .rawDamage(healthDamage)
                                                 .flags(InstanceFlags.DOT)
                                         );
                                     }

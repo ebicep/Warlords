@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.mobs;
 
-import com.ebicep.warlords.abilities.internal.DamageCheck;
+import com.ebicep.warlords.abilities.internal.MaxHealthDamage;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -182,13 +182,12 @@ public enum Aspect {
                                     if (Aspect.isNegated(warlordsEntity)) {
                                         return;
                                     }
-                                    float healthDamage = receiver.getMaxHealth() * 0.005f;
-                                    healthDamage = DamageCheck.clamp(healthDamage);
+                                    float healthDamage = MaxHealthDamage.getMaxHealthDamage(receiver, 0.5f);
                                     receiver.addInstance(InstanceBuilder
                                             .damage()
                                             .cause("Burn")
                                             .source(warlordsEntity)
-                                            .value(healthDamage)
+                                            .rawDamage(healthDamage)
                                             .flags(InstanceFlags.RECURSIVE, InstanceFlags.DOT)
                                     );
                                 }

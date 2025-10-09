@@ -3,10 +3,10 @@ package com.ebicep.warlords.abilities.internal;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 
 public class MaxHealthDamage {
-    //this formula will define max hp damage 1800 * ln(1 + maxHp / 6500)
-    //any ability that deals max hp damage should display "Deals x% of Max HP Damage"
+    //MAX HEALTH DAMAGE = 1600 * ln(1 + maxHp / 6500)
+    //any ability that uses max health damage shows "Deals x% of MAX HEALTH DAMAGE"
     private static float calculateMaxHealthDamage(double maxHp) {
-        return (float) (1800 * Math.log(1 + maxHp / 6500.0));
+        return (float) (1600 * Math.log(1 + maxHp / 6500.0));
     }
 
     public static float getMaxHealthDamage(WarlordsEntity entity, float maxHealthDamageMultiplier) {

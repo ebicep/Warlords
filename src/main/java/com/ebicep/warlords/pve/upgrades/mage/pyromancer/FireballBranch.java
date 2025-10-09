@@ -41,7 +41,7 @@ public class FireballBranch extends AbstractUpgradeBranch<Fireball> {
                         
                         Direct-hits apply the BURN status for 5s.
 
-                        BURN: Enemies take 15% more damage from all sources and burn for 0.5% of their max health every second.""",
+                        BURN: Enemies take 15% more damage from all sources and burn for 50% of MAX HEALTH DAMAGE every second.""",
                 50000,
                 () -> {
                     ability.setDirectHitMultiplier(ability.getDirectHitMultiplier() + 50);

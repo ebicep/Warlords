@@ -150,8 +150,11 @@ public class Fireball extends AbstractProjectile<Fireball, Fireball.FireballStat
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksLeft % applyBurnEffectEvent.getTickPeriod() == 0) {
                         float healthDamage = MaxHealthDamage.getMaxHealthDamage(hit, 0.5f);
-                      //  healthDamage = DamageCheck.clamp(healthDamage);
-                        hit.addInstance(InstanceBuilder.damage().cause("Burn").source(shooter).rawDamage(healthDamage).flags(InstanceFlags.DOT));
+                        hit.addInstance(InstanceBuilder
+                                .damage().cause("Burn")
+                                .source(shooter)
+                                .rawDamage(healthDamage)
+                                .flags(InstanceFlags.DOT));
                     }
                 })
         ) {

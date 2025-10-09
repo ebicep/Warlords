@@ -116,7 +116,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
                     if (pveMasterUpgrade) {
-                        for (WarlordsEntity enemyInRain : PlayerFilter.entitiesAround(data.target.getLocation(), radius, radius, radius).aliveEnemiesOf(wp).limit(8)) {
+                        for (WarlordsEntity enemyInRain : PlayerFilter.entitiesAround(data.target.getLocation(), radius, radius, radius).aliveEnemiesOf(wp).limit(10)) {
                             Utils.playGlobalSound(enemyInRain.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 2, 1.8f);
                             EffectUtils.playFirework(enemyInRain.getLocation(), FireworkEffect.builder().withColor(Color.AQUA).with(FireworkEffect.Type.BURST).build());
                             strikeInRain(wp, enemyInRain);
@@ -195,7 +195,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
                     }
                     if (ticksElapsed % 40 == 0) {
                         if (pveMasterUpgrade) {
-                            for (WarlordsEntity enemyInRain : PlayerFilter.entitiesAround(data.target.getLocation(), radius, radius, radius).aliveEnemiesOf(wp).limit(8)) {
+                            for (WarlordsEntity enemyInRain : PlayerFilter.entitiesAround(data.target.getLocation(), radius, radius, radius).aliveEnemiesOf(wp).limit(10)) {
                                 Utils.playGlobalSound(enemyInRain.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 2, 1.8f);
                                 FireWorkEffectPlayer.playFirework(enemyInRain.getLocation(),
                                         FireworkEffect.builder().withColor(Color.AQUA).with(FireworkEffect.Type.BURST).build()
@@ -279,17 +279,14 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
     }
 
     private void strikeInRain(WarlordsEntity giver, WarlordsEntity hit) {
-        for (WarlordsEntity strikeTarget : PlayerFilter.entitiesAround(hit, 2, 3, 2).aliveEnemiesOf(giver)) {
-            strikeTarget.getWorld().spigot().strikeLightningEffect(strikeTarget.getLocation(), true);
-            float healthDamage = MaxHealthDamage.getMaxHealthDamage(strikeTarget, 0.1f);
-         //   healthDamage = DamageCheck.clamp(healthDamage);
-            strikeTarget.addInstance(InstanceBuilder.damage()
-                                                    .ability(this)
-                                                    .source(giver)
-                                                    .min(damageValues.rainStrikeDamage.getMinValue())
-                                                    .max(damageValues.rainStrikeDamage.getMaxValue())
-                                                    .rawDamage(healthDamage));
-        }
+        hit.getWorld().spigot().strikeLightningEffect(hit.getLocation(), true);
+        float healthDamage = MaxHealthDamage.getMaxHealthDamage(hit, 1f);
+        hit.addInstance(InstanceBuilder.damage()
+                .ability(this)
+                .source(giver)
+                .min(damageValues.rainStrikeDamage.getMinValue())
+                .max(damageValues.rainStrikeDamage.getMaxValue())
+                .rawDamage(healthDamage));
     }
 
     private void heal(@Nonnull WarlordsEntity wp, WarlordsEntity teammateInRain, String name) {

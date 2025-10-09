@@ -49,7 +49,7 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
                         +100 Healing on Strike Kill
                         -10 Energy cost
                         
-                        Each strike deals 1% of the target's max health as bonus damage. Additionally, strikes guaranteed crit occurs every 2 hits instead of 4.
+                        Each strike deals 100% of MAX HEALTH DAMAGE as bonus damage. Additionally, strikes guaranteed crit occurs every 2 hits instead of 4.
                         """,
                 50000,
                 () -> {

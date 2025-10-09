@@ -50,7 +50,7 @@ public class WoundingStrikeBranchBerserker extends AbstractUpgradeBranch<Woundin
                         
                         Wounding Strike now applies BLEED instead of wounding.
 
-                        BLEED: Enemies afflicted take 100% more damage from Wounding Strike while Blood Lust is active. Bleeding enemies have their healing reduced by 80% and lose 0.5% of their max health per second.""",
+                        BLEED: Enemies afflicted take 100% more damage from Wounding Strike while Blood Lust is active. Bleeding enemies have their healing reduced by 80% and take 0.5% MAX HEALTH DAMAGE per second.""",
                 50000,
                 () -> {
                     ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -5);

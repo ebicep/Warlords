@@ -57,7 +57,7 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
                         
                         Avenger's Strike hits 2 additional enemies for 75% of the original strike damage.
                         
-                        Deal 40% more damage against level 3 enemies or below and deal 0.5% max health damage against level 4 and 5 enemies.""",
+                        Deal 40% more damage against level 3 enemies or below and deal 50% MAX HEALTH DAMAGE against level 4 and 5 enemies.""",
                 50000,
                 () -> {
                     ability.getHitBoxRadius().addAdditiveModifier("Master Upgrade Branch", 1);

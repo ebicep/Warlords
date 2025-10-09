@@ -104,7 +104,7 @@ public class WindfuryBranch extends AbstractUpgradeBranch<WindfuryWeapon> {
                 "Shredding Fury",
                 "Windfury - Master Upgrade",
                 """
-                        Each hit deals 1% of the target's max health as bonus damage.
+                        Each hit deals 50% of MAX HEALTH DAMAGE as bonus damage.
 
                         Hits on an enemy will permanently reduce their damage reduction by 2% for each additional Windfury proc.""",
                 50000,

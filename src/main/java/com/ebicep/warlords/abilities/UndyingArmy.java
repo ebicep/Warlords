@@ -228,12 +228,17 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
                         CooldownTypes.ABILITY,
                         cooldownManager -> {
                             if (enemy.isAlive()) {
-                                float healthDamage = MaxHealthDamage.getMaxHealthDamage(enemy, 1.0f);
-                                if (enemy instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof BossLike) {
-                                    healthDamage = healthDamage/10; //DamageCheck.clamp(healthDamage);
+                                float healthDamage = MaxHealthDamage.getMaxHealthDamage(enemy, 2.0f);
+                                if (enemy instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof BossLike) {// could add to MaxHealthDamage class for future
+                                    healthDamage = healthDamage/10;
                                 }
                                 float damage = 2000;
-                                enemy.addInstance(InstanceBuilder.damage().cause("Vengeful Army").source(wp).value(damage).rawDamage(healthDamage));
+                                enemy.addInstance(InstanceBuilder
+                                        .damage()
+                                        .cause("Vengeful Army")
+                                        .source(wp)
+                                        .value(damage)
+                                        .rawDamage(healthDamage));
                             } else {
                                 new CooldownFilter<>(wp, PersistentCooldown.class).filterCooldownClass(OrbsOfLife.class).forEach(persistentCooldown -> {
                                     OrbsOfLife.spawnOrbs(wp, enemy, "Vengeful Army", persistentCooldown);
@@ -295,11 +300,10 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
                     warlordsEntity.addInstance(InstanceBuilder.melee()
                                                               .source(warlordsEntity)
                                                               .value(warlordsEntity.getMaxHealth() * (getMaxHealthDamage() / 100f)));
-                    if (isPveMasterUpgrade() && ticksElapsed % 40 == 0) {
+                    if (isPveMasterUpgrade() && ticksElapsed % 40 == 0) { //wtf is isPveMasterUpgrade???
                         PlayerFilter.entitiesAround(warlordsEntity, 6, 6, 6).aliveEnemiesOf(warlordsEntity).forEach(enemy -> {
                             float healthDamage = MaxHealthDamage.getMaxHealthDamage(enemy, 0.2f);
-                        //    healthDamage = DamageCheck.clamp(healthDamage);
-                            enemy.addInstance(InstanceBuilder.damage()
+                            enemy.addInstance(InstanceBuilder.damage() //this does nothing no?
                                                              .ability(UndyingArmy.this)
                                                              .source(warlordsEntity)
                                                              .min(damageValues.relentlessArmy.getMinValue() + healthDamage)

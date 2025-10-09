@@ -28,7 +28,6 @@ public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementSt
     private int damageIncrease;
     private int damageIncreaseHealthThreshold;
     private float orderCooldownReduction;
-    private float maxHealthDamageMultiplier = 1;
 
     public JudgementStrike() {
         super(AbstractAbilityBuilder.create("judgementStrike").pvp());
@@ -61,7 +60,7 @@ public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementSt
                 attacksDone = 0;
                 critChance = 100;
             }
-            damageValues.strikeDamage.rawDamage().setBaseValue(pveMasterUpgrade ? MaxHealthDamage.getMaxHealthDamage(nearPlayer, maxHealthDamageMultiplier) : 0);
+            damageValues.strikeDamage.rawDamage().setBaseValue(pveMasterUpgrade ? MaxHealthDamage.getMaxHealthDamage(nearPlayer, 1f) : 0);
             float damageMultiplier = convertToMultiplicationDecimal(
                     (nearPlayer.getCurrentHealth() / nearPlayer.getMaxBaseHealth()) < damageIncreaseHealthThreshold / 100f
                     ? damageIncrease
@@ -96,9 +95,6 @@ public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementSt
         }
         return currentDamageValue+ event.getRawDamage();
     }
-//    public double getMaxHpDamage(double maxHp) {
-//        return 1800 * Math.log(1 + maxHp / 6500.0);
-//    }
     @Override
     public DamageValues getDamageValues() {
         return damageValues;

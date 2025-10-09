@@ -465,7 +465,7 @@ public class InstanceManager {
             } else {
                 debugMessage.append(InstanceDebugHoverable.LevelBuilder
                         .create(1)
-                        .prefix(ComponentBuilder.create("flag not set", NamedTextColor.GREEN))
+                        .prefix(ComponentBuilder.create("no max hp damage", NamedTextColor.GREEN))
                 );
             }
             //debugMessage.append(Component.newline()).append(Component.text("In Hammer", NamedTextColor.RED));

@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
-import com.ebicep.warlords.abilities.internal.AbstractTimeWarp;
-//import com.ebicep.warlords.abilities.internal.DamageCheck;
-import com.ebicep.warlords.abilities.internal.MaxHealthDamage;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
@@ -67,15 +64,11 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
                         float cooldownReduction = 0;
                         for (WarlordsEntity enemy : PlayerFilter.entitiesAround(wp, 12, 12, 12).aliveEnemiesOf(wp).toList()) {
                             float healthDamage = MaxHealthDamage.getMaxHealthDamage(enemy, .75f);
-                            if (enemy instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof BossLike) {
-                                //healthDamage = DamageCheck.clamp(healthDamage);
-                            }
                             Optional<WarlordsDamageHealingFinalEvent> finalEventOptional = enemy.addInstance(InstanceBuilder
                                     .damage()
                                     .cause("Accursed Leap")
                                     .source(wp)
                                     .rawDamage(healthDamage)
-                                   // .value(healthDamage)
                             );
                             if (finalEventOptional.isPresent()) {
                                 if (finalEventOptional.get().isDead()) {
