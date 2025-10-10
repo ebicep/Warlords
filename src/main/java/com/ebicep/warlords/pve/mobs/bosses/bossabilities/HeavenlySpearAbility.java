@@ -117,15 +117,17 @@ public class HeavenlySpearAbility {
                     for (Location loc : landings) {
                         w.spawnParticle(Particle.DUST, loc.clone().add(0, 0.1, 0), 6, 0.4, 0, 0.4, 0,
                                 new Particle.DustOptions(Color.fromRGB(200, 200, 255), 1.5f));
-                        new CircleEffect(
-                                game,
-                                source.getTeam(),
-                                loc.clone().add(0, 0.1, 0),
-                                impactRadius,
-                                new CircumferenceEffect(telegraphSfx, telegraphSfx).particlesPerCircumference(0.75)
-                        ).playEffects();
+                        if (telegraphSfx != null) {
+                            new CircleEffect(
+                                    game,
+                                    source.getTeam(),
+                                    loc.clone().add(0, 0.1, 0),
+                                    impactRadius,
+                                    new CircumferenceEffect(telegraphSfx, telegraphSfx).particlesPerCircumference(0.75)
+                            ).playEffects();
+                        }
                         if (t == 1) {
-                            Utils.playGlobalSound(centerSupplier.get(), Sound.BLOCK_BEACON_POWER_SELECT, 500, 0.8f);
+                            Utils.playGlobalSound(centerSupplier.get(), Sound.BLOCK_BEACON_POWER_SELECT, 2, 0.8f);
                         }
                     }
                     return;

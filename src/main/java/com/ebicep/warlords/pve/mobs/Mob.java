@@ -679,10 +679,19 @@ public enum Mob {
     ),
     CRYSTALLINE_PETAL(EntityType.BOGGED, CrystallinePetal.class, CrystallinePetal::new, CrystallinePetal::new, new Utils.SimpleEntityEquipment(
             SkullUtils.getSkullFrom(SkullID.STONE_ORB_PINK),
-            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 30, 30, 120),
-            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 30, 30, 120),
-            Utils.applyColorTo(Material.LEATHER_BOOTS, 30, 30, 120),
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 220, 30, 90),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 220, 30, 90),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 220, 30, 90),
             Weapons.SILVER_PHANTASM_SWORD_4.getItem()
+    )
+    ),
+    ECHO_OF_LILIUM(EntityType.BOGGED, EchoOfLilium.class, EchoOfLilium::new, EchoOfLilium::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.LILIUM_HAT),
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 120, 20, 220),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 120, 20, 220),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 220, 20, 220),
+            Weapons.SILVER_PHANTASM_SWORD_4.getItem(),
+            new ItemStack(Material.SHIELD)
     )
     ),
     MITHRA_EGG_SAC(EntityType.ARMOR_STAND, EggSac.class, EggSac::new, EggSac::new, new Utils.SimpleEntityEquipment(
@@ -695,7 +704,8 @@ public enum Mob {
     ),
     NINE_CRYSTAL(EntityType.BREEZE, NineCrystal.class, NineCrystal::new, NineCrystal::new, null),
     SKY_CRYSTAL(EntityType.END_CRYSTAL, SkyCrystal.class, SkyCrystal::new, SkyCrystal::new, null),
-    LILIATH_ENIGMA(EntityType.EVOKER, SkyCrystal.class, SkyCrystal::new, SkyCrystal::new, null),
+    PETAL_CRYSTAL(EntityType.END_CRYSTAL, PetalCrystal.class, PetalCrystal::new, PetalCrystal::new, null),
+    LILIATH_ENIGMA(EntityType.EVOKER, LiliathEngima.class, LiliathEngima::new, LiliathEngima::new, null),
     ARACHNO_VENERATUS(EntityType.SPIDER, ArachnoVeneratus.class, ArachnoVeneratus::new, ArachnoVeneratus::new, null),
     CURSED_PSION(EntityType.WITHER_SKELETON, CursedPsion.class, CursedPsion::new, CursedPsion::new, null),
     ENAVURITE(EntityType.ENDERMITE, Enavurite.class, Enavurite::new, Enavurite::new, null),

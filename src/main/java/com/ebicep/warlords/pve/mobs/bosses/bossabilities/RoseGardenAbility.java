@@ -23,15 +23,10 @@ import java.util.Random;
 import java.util.function.Supplier;
 
 /**
- * Lilium, Queen of Hearts — Rose Garden (with ItemDisplay flowers)
  *
- * Spawns elegant "rose nodes" arranged around a center.
- * Each node:
  *  • Telegraphs briefly (ring of pink petals + visible flower ItemDisplay).
  *  • Becomes active: emits periodic thorn aura (AoE damage + optional slow).
  *  • On expiry (optionally) "blooms" with a burst AoE.
- *
- * All tuning via constructor (CrystalConduitsAbility style).
  */
 public class RoseGardenAbility {
 

@@ -86,7 +86,7 @@ public class SovereignGuardian extends AbstractMob implements ChampionMob {
             summons.forEach(entity -> EffectUtils.playParticleLinkAnimation(
                     warlordsNPC.getLocation(),
                     entity.getLocation(),
-                    Particle.CAMPFIRE_COSY_SMOKE
+                    Particle.FIREWORK
             ));
         }
     }

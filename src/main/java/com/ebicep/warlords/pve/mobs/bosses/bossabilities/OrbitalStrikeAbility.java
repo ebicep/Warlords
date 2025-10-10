@@ -4,9 +4,12 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Color;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
@@ -54,7 +57,7 @@ public class OrbitalStrikeAbility {
     private final Particle beamCore = Particle.END_ROD;
     private final Particle beamShell = Particle.ELECTRIC_SPARK;
     private final Particle impactPop = Particle.CHERRY_LEAVES;
-    private final Sound telegraphSfx = Sound.BLOCK_AMETHYST_CLUSTER_PLACE;
+    private final Sound telegraphSfx = Sound.BLOCK_AMETHYST_CLUSTER_BREAK;
     private final Sound lockSfx = Sound.BLOCK_TRIAL_SPAWNER_ABOUT_TO_SPAWN_ITEM;
     private final Sound tickSfx = Sound.BLOCK_BEACON_AMBIENT;
     private final Sound blastSfx = Sound.ENTITY_GENERIC_EXPLODE;
@@ -124,6 +127,15 @@ public class OrbitalStrikeAbility {
                         lockedImpact.getWorld().playSound(lockedImpact, telegraphSfx, 2, 0.5f);
                     }
 
+                    if (t == 1) {
+                        ChatUtils.sendTitleToGamePlayers(
+                                source.getGame(),
+                                Component.empty(),
+                                Component.text("Orbital strike incoming!", TextColor.color(200, 30, 30)),
+                                20, 30, 20
+                        );
+                    }
+
                     t++;
                     return;
                 }
@@ -174,11 +186,13 @@ public class OrbitalStrikeAbility {
                 // Draw vertical beam (sample along the segment)
                 drawBeamSegment(start, impact);
 
-                // Periodic damage in cylinder
+                if (t % 5 == 0) {
+                    drawRingDust(impact, finalBlastRadius, 40, lockDust);
+                }
+
+                // Periodic damage in the cylinder
                 if (t % tickPeriod == 0) {
                     impact.getWorld().playSound(impact, tickSfx, 2, 1.6f);
-                    drawRingDust(impact, finalBlastRadius, 25, lockDust);
-                    // Height large enough to cover the visible beam column
                     double height = Math.max(4.0, start.getY() - impact.getY() + 1.0);
                     PlayerFilter.entitiesAround(impact, beamRadius, height, beamRadius)
                             .aliveEnemiesOf(source)
@@ -198,7 +212,7 @@ public class OrbitalStrikeAbility {
 
     private void doBlast(Location at) {
         Utils.playGlobalSound(at, blastSfx, 3, 0.5f);
-        Utils.playGlobalSound(at, "arcanist.beacon.impact", 3, 0.5f);
+        Utils.playGlobalSound(at, Sound.ITEM_MACE_SMASH_GROUND, 5, 0.5f);
         at.getWorld().spawnParticle(impactPop, at, 40, .7, .35, .7, 0.05);
         at.getWorld().spawnParticle(Particle.HEART, at, 16, .4, .2, .4, 0.0);
         Utils.spawnFallingBlocks(at, 3, 13, -0.7, 0.3, Material.CHERRY_LEAVES);

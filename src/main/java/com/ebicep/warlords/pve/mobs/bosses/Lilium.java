@@ -11,11 +11,10 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.general.SpecType;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
-import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
@@ -23,8 +22,9 @@ import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.bosses.bossabilities.*;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.CrystallinePetal;
+import com.ebicep.warlords.pve.mobs.bosses.bossminions.EchoOfLilium;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.LiliathEngima;
-import com.ebicep.warlords.pve.mobs.bosses.bossminions.NineCrystal;
+import com.ebicep.warlords.pve.mobs.bosses.bossminions.PetalCrystal;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -44,13 +44,14 @@ import org.bukkit.potion.PotionEffectType;
 
 import javax.annotation.Nonnull;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.lang.Math.cos;
 
 public class Lilium extends AbstractMob implements BossMob {
 
-    private Listener listener;
+    private Listener killSequenceListener;
+    private Listener arenaSequenceListener;
+    private Listener petalCrystalSequenceListener;
     private Location mapCenter;
 
     private OrbitingItemManager oribitingItemManagerFloating;
@@ -73,6 +74,7 @@ public class Lilium extends AbstractMob implements BossMob {
     private SkyPlatformsController platformsController;
 
     private List<UUID> engimas = new ArrayList<>();
+    private List<UUID> crystals = new ArrayList<>();
 
     private BossAbilityPhase phaseOne;
     private BossAbilityPhase phaseTwo;
@@ -119,13 +121,37 @@ public class Lilium extends AbstractMob implements BossMob {
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
+
+        warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                "Damage Check",
+                null,
+                DamageCheck.class,
+                null,
+                warlordsNPC,
+                CooldownTypes.BUFF,
+                cooldownManager -> {},
+                true
+        ) {
+            @Override
+            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                if (crystals.isEmpty()) {
+                    return currentDamageValue;
+                }
+                return currentDamageValue * 0.1f;
+            }
+        });
+
         Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.BLOCK_TRIAL_SPAWNER_AMBIENT_OMINOUS, 500, 0.5f);
-        Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.BLOCK_CONDUIT_ACTIVATE, 500, 0.5f);
+        Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_ELDER_GUARDIAN_CURSE, 500, 0.5f);
+        EffectUtils.playFirework(warlordsNPC.getLocation(), FireworkEffect.builder()
+                .withColor(Color.fromRGB(255, 90, 180))
+                .with(FireworkEffect.Type.BALL_LARGE)
+                .withTrail()
+                .build()
+        );
 
         mapCenter = new Location(warlordsNPC.getWorld(), 112.5, 11, 62.5);
         arenaShift = new ArenaShiftAbility(warlordsNPC.getWorld());
-
-        laserBarrageCenter = new LaserBarrageAbility(warlordsNPC.getGame(), warlordsNPC.getLocation(), option.playerCount(), 60, 30, 30, 70, 2, warlordsNPC);
 
         oribitingItemManager = new OrbitingItemManager(() -> warlordsNPC.getLocation(), 0.5, 0.5, 6, 0.5f, option, warlordsNPC, Material.STICK);
         oribitingItemManager.spawnSwords(6);
@@ -141,10 +167,10 @@ public class Lilium extends AbstractMob implements BossMob {
                 5,
                 4000,
                 8,
-                60,
+                30,
                 2,
                 Material.CHERRY_LEAVES,
-                Particle.HEART,
+                null,
                 Particle.CHERRY_LEAVES,
                 Sound.ENTITY_WARDEN_EMERGE,
                 Sound.BLOCK_ANVIL_BREAK
@@ -175,8 +201,8 @@ public class Lilium extends AbstractMob implements BossMob {
                 Material.CRIMSON_FUNGUS,
                 8,
                 true,
-                3,
-                3
+                1,
+                4
         );
 
         petalStormAbility = new PetalStormAbility(
@@ -191,7 +217,7 @@ public class Lilium extends AbstractMob implements BossMob {
                 warlordsNPC,
                 () -> mapCenter,
                 List.of(230, 185, 145, 100, 55),
-                List.of(32.0, 32.0, 32.0, 32.0, 32.0),
+                List.of(33.0, 33.0, 33.0, 33.0, 33.0),
                 Material.STRIPPED_CHERRY_LOG,
                 false,
                 2,
@@ -278,6 +304,7 @@ public class Lilium extends AbstractMob implements BossMob {
         );
 
         phaseOne = new BossAbilityPhase(warlordsNPC, 90, () -> {
+            crystalProtectionAbility(3);
             petalStormAbility.cast();
         });
 
@@ -286,6 +313,25 @@ public class Lilium extends AbstractMob implements BossMob {
         });
 
         phaseThree = new BossAbilityPhase(warlordsNPC, 70, () -> {
+            preventDashing = true;
+            ChatUtils.sendTitleToGamePlayers(
+                    warlordsNPC.getGame(),
+                    Component.empty(),
+                    Component.text("This blade can inflict a thousand wounds if it has to!", TextColor.color(255, 150, 190)),
+                    20, 60, 20
+            );
+            new GameRunnable(warlordsNPC.getGame()) {
+                int t = 0;
+                @Override
+                public void run() {
+                    t++;
+                    bladeWaltsAbility(warlordsNPC);
+                    if (t == 20) {
+                        this.cancel();
+                        preventDashing = false;
+                    }
+                }
+            }.runTaskTimer(60, 5);
             PlayerFilter.playingGame(warlordsNPC.getGame())
                     .aliveEnemiesOf(warlordsNPC)
                     .forEach(enemy -> {
@@ -308,6 +354,7 @@ public class Lilium extends AbstractMob implements BossMob {
         phaseFour = new BossAbilityPhase(warlordsNPC, 60, () -> {
             preventDashing = true;
             warlordsNPC.teleport(mapCenter.clone().add(0, 40, 0));
+            warlordsNPC.getMob().removeTarget();
             warlordsNPC.setStunTicks(99999);
             warlordsNPC.addKnockbackModifier(warlordsNPC, "KB RES", -100, 99999);
             warlordsNPC.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 60, 60, false));
@@ -432,7 +479,12 @@ public class Lilium extends AbstractMob implements BossMob {
 
         });
 
-        phaseFive = new BossAbilityPhase(warlordsNPC, 90, () -> {
+        phaseFive = new BossAbilityPhase(warlordsNPC, 50, () -> {
+            crystalProtectionAbility(6);
+            petalStormAbility.cast();
+        });
+
+        phaseSix = new BossAbilityPhase(warlordsNPC, 40, () -> {
             preventDashing = true;
             ChatUtils.sendTitleToGamePlayers(
                     warlordsNPC.getGame(),
@@ -468,27 +520,74 @@ public class Lilium extends AbstractMob implements BossMob {
             // tp boss
             arenaShift.teleportBoss(warlordsNPC);
 
+            laserBarrageCenter = new LaserBarrageAbility(
+                    warlordsNPC.getGame(),
+                    warlordsNPC.getLocation(),
+                    option.playerCount(),
+                    60,
+                    30,
+                    30,
+                    70,
+                    2,
+                    warlordsNPC
+            );
+
+            List<UUID> echoes = new ArrayList<>();
             new GameRunnable(game) {
                 int t = 0;
                 @Override
                 public void run() {
                     t++;
 
-                    if (t % 300 == 0) {
+                    if (t % 360 == 0) {
                         laserBarrageCenter.start(arenaOnePlayers);
                         laserBarrageCenter.start(arenaTwoPlayers);
                         laserBarrageCenter.start(arenaThreePlayers);
+                    }
+
+                    if (t == 1) {
+                        Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_WITHER_SPAWN, 500, 0.5f);
+                        arenaSequenceListener = new Listener() {
+                            @EventHandler(ignoreCancelled = true)
+                            private void onAllyDeath(WarlordsDeathEvent event) {
+                                if (echoes.isEmpty()) return;
+
+                                echoes.removeIf(p -> p.equals(event.getWarlordsEntity().getUuid()));
+                                Utils.playGlobalSound(mapCenter, Sound.BLOCK_TRIAL_SPAWNER_ABOUT_TO_SPAWN_ITEM, 500, 0.5f);
+                            }
+                        };
+                        warlordsNPC.getGame().registerEvents(arenaSequenceListener);
+
+                        if (!arenaOnePlayers.isEmpty()) {
+                            AbstractMob echo = new EchoOfLilium(arenaShift.getArenaOne());
+                            option.spawnNewMob(echo);
+                            echoes.add(echo.getWarlordsNPC().getUuid());
+                        }
+                        if (!arenaTwoPlayers.isEmpty()) {
+                            AbstractMob echo = new EchoOfLilium(arenaShift.getArenaTwo());
+                            option.spawnNewMob(echo);
+                            echoes.add(echo.getWarlordsNPC().getUuid());
+                        }
+                        if (!arenaThreePlayers.isEmpty()) {
+                            AbstractMob echo = new EchoOfLilium(arenaShift.getArenaThree());
+                            option.spawnNewMob(echo);
+                            echoes.add(echo.getWarlordsNPC().getUuid());
+                        }
+                    }
+
+                    if (echoes.isEmpty()) {
+                        arenaOnePlayers.forEach(p -> p.teleport(option.getRandomSpawnLocation(p)));
+                        arenaTwoPlayers.forEach(p -> p.teleport(option.getRandomSpawnLocation(p)));
+                        arenaThreePlayers.forEach(p -> p.teleport(option.getRandomSpawnLocation(p)));
+                        warlordsNPC.teleport(option.getRandomSpawnLocation(warlordsNPC));
+                        this.cancel();
                     }
                 }
             }.runTaskTimer(100, 0);
         });
 
-        phaseSix = new BossAbilityPhase(warlordsNPC, 40, () -> {
-
-        });
-
         phaseSeven = new BossAbilityPhase(warlordsNPC, 30, () -> {
-            triggerKillTrapSequence(9);
+            triggerKillTrapSequence(18);
         });
 
         phaseEight = new BossAbilityPhase(warlordsNPC, 20, () -> {
@@ -511,7 +610,7 @@ public class Lilium extends AbstractMob implements BossMob {
                     warlordsNPC.getGame(),
                     Component.text("Chosen Champions:"),
                     Component.text(sb.toString(), NamedTextColor.DARK_AQUA),
-                    20, 40, 20
+                    20, 60, 20
             );
             Utils.playGlobalSound(mapCenter, Sound.ENTITY_ELDER_GUARDIAN_CURSE, 500, 0.5f);
             new GameRunnable(warlordsNPC.getGame()) {
@@ -520,11 +619,12 @@ public class Lilium extends AbstractMob implements BossMob {
                     ChatUtils.sendTitleToGamePlayers(
                             warlordsNPC.getGame(),
                             Component.empty(),
-                            Component.text("Beware, only 4 players at the time may receive protection from 1 champion.", NamedTextColor.DARK_AQUA),
-                            20, 40, 20
+                            Component.text("Only 4 players at the time may receive protection from 1 champion.", NamedTextColor.DARK_AQUA),
+                            20, 60, 20
                     );
+                    Utils.playGlobalSound(mapCenter, Sound.ENTITY_ELDER_GUARDIAN_CURSE, 500, 0.5f);
                 }
-            }.runTaskLater(50);
+            }.runTaskLater(60);
 
             new GameRunnable(warlordsNPC.getGame()) {
                 int t = 0;
@@ -589,13 +689,14 @@ public class Lilium extends AbstractMob implements BossMob {
                         });
                     }
 
-                    if (t % 10 == 0) {
+                    if (t % 13 == 0) {
                         heavenlySpearAbility.start(warlordsNPC.getGame());
                         PlayerFilter.playingGame(warlordsNPC.getGame())
                                 .filter(protectors::contains).forEach(protector -> PlayerFilter
                                         .entitiesAround(protector, 15, 100, 15)
                                         .aliveTeammatesOfExcludingSelf(protector)
                                         .forEach(otherProtector -> {
+                                            protector.sendMessage(Component.text("You cannot be near another champion!", NamedTextColor.RED));
                                             protector.addInstance(InstanceBuilder
                                                     .damage()
                                                     .cause("Champion Disguise")
@@ -603,6 +704,7 @@ public class Lilium extends AbstractMob implements BossMob {
                                                     .value(1500)
                                                     .flags(InstanceFlags.TRUE_DAMAGE)
                                             );
+                                            otherProtector.sendMessage(Component.text("You cannot be near another champion!", NamedTextColor.RED));
                                             otherProtector.addInstance(InstanceBuilder
                                                     .damage()
                                                     .cause("Champion Disguise")
@@ -622,7 +724,7 @@ public class Lilium extends AbstractMob implements BossMob {
                     }
                 }
 
-            }.runTaskTimer(100, 0);
+            }.runTaskTimer(180, 0);
         });
     }
 
@@ -633,7 +735,7 @@ public class Lilium extends AbstractMob implements BossMob {
             EffectUtils.playCrownAnimation(warlordsNPC.getLocation(), Particle.CHERRY_LEAVES);
         }
 
-        if (ticksElapsed % 500 == 0) {
+        if (ticksElapsed % 460 == 0) {
             Random rand = new Random();
             roseGardenAbility.setRoseCount(rand.nextInt(10));
             roseGardenAbility.setRingRadius(rand.nextInt(12,24));
@@ -648,7 +750,29 @@ public class Lilium extends AbstractMob implements BossMob {
             orbitalStrikeAbility.cast();
         }
 
-        if (ticksElapsed % 480 == 0 && ticksElapsed > 0 && !preventDashing) {
+        if (ticksElapsed % 210 == 0) {
+            PlayerFilter.entitiesAround(warlordsNPC, 10, 10, 10)
+                    .aliveEnemiesOf(warlordsNPC)
+                    .forEach(player -> {
+                        Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ITEM_MACE_SMASH_GROUND, 5, 0.7f);
+                        Utils.addKnockback(name, warlordsNPC.getLocation(), player, -1.5, 0.3);
+                        player.addInstance(InstanceBuilder
+                                .damage()
+                                .cause("Echo of Cuts")
+                                .source(warlordsNPC)
+                                .min(1000)
+                                .max(1500)
+                                .flags(InstanceFlags.TRUE_DAMAGE));
+                    });
+        }
+
+        if (ticksElapsed % 900 == 0 && ticksElapsed > 0 && !preventDashing) {
+            for (int i = 0; i < option.playerCount(); i++) {
+                option.spawnNewMob(new CrystallinePetal(warlordsNPC.getLocation()));
+            }
+        }
+
+        if (ticksElapsed % 400 == 0 && ticksElapsed > 0 && !preventDashing) {
             new GameRunnable(warlordsNPC.getGame()) {
                 int t = 0;
                 @Override
@@ -688,9 +812,21 @@ public class Lilium extends AbstractMob implements BossMob {
         oribitingItemManager.stop();
         oribitingItemManagerFloating.stop();
         platformsController.stop();
+
+        Location loc = warlordsNPC.getLocation();
+        for (int i = 0; i < 10; i++) {
+            EffectUtils.strikeLightning(loc, false);
+        }
+        Utils.playGlobalSound(loc, Sound.ENTITY_WITHER_DEATH, 500, 0.5f);
+        EffectUtils.playFirework(loc, FireworkEffect.builder()
+                .withColor(Color.fromRGB(255, 90, 180))
+                .with(FireworkEffect.Type.BALL_LARGE)
+                .withTrail()
+                .build()
+        );
     }
 
-    private void bladeWaltsAbility(WarlordsNPC warlordsNPC) {
+    public static void bladeWaltsAbility(WarlordsNPC warlordsNPC) {
         Set<WarlordsEntity> hit = new HashSet<>();
         LocationBuilder locationBuilder = new LocationBuilder(warlordsNPC.getEyeLocation());
         for (Block ignored : Utils.getTargetBlockInBetween(warlordsNPC.getEyeLocation(), 9)) {
@@ -832,7 +968,7 @@ public class Lilium extends AbstractMob implements BossMob {
                 ability.setFollowBoss(true);
                 ability.start(warlordsNPC.getGame());
             }
-        }.runTaskLater(30);
+        }.runTaskLater(20);
     }
 
     private void triggerKillTrapSequence(double amount) {
@@ -847,36 +983,98 @@ public class Lilium extends AbstractMob implements BossMob {
                     enigmaLoc.setZ(mapCenter.getZ() + cos(angle) * 25);
                     LiliathEngima crystal = new LiliathEngima(enigmaLoc, PlayerFilter.playingGame(warlordsNPC.getGame())
                             .aliveEnemiesOf(warlordsNPC)
+                            .excludingAlliedMobs()
                             .stream().toList()
                     );
 
                     pveOption.spawnNewMob(crystal, Team.RED);
                     engimas.add(crystal.getWarlordsNPC().getUuid());
 
-                    listener = new Listener() {
+                    killSequenceListener = new Listener() {
                         @EventHandler(ignoreCancelled = true)
                         private void onAllyDeath(WarlordsDeathEvent event) {
                             if (engimas.isEmpty()) return;
 
                             engimas.removeIf(p -> p.equals(event.getWarlordsEntity().getUuid()));
-                            Utils.playGlobalSound(mapCenter, Sound.BLOCK_TRIAL_SPAWNER_ABOUT_TO_SPAWN_ITEM, 500, 2f);
+                            Utils.playGlobalSound(mapCenter, Sound.BLOCK_TRIAL_SPAWNER_ABOUT_TO_SPAWN_ITEM, 3, 1f);
                         }
                     };
 
-                    warlordsNPC.getGame().registerEvents(listener);
+                    warlordsNPC.getGame().registerEvents(killSequenceListener);
 
                     Utils.playGlobalSound(warlordsNPC.getLocation(), "warrior.laststand.activation", 500, 0.5f);
                 }
 
-                if (t == 9) {
+                if (t == amount) {
                     this.cancel();
                 }
             }
         }.runTaskTimer(40, 6);
     }
 
-    private void teleportToArena(List<WarlordsEntity> players) {
+    private void crystalProtectionAbility(double amount) {
+        ChatUtils.sendTitleToGamePlayers(
+                warlordsNPC.getGame(),
+                Component.empty(),
+                Component.text("Lilium's Legacy Petals have spawned, destroy them!", TextColor.color(255, 105, 130)),
+                20, 60, 20
+        );
+        new GameRunnable(warlordsNPC.getGame()) {
+            int t = 0;
+            @Override
+            public void run() {
+                Location crystalLoc = mapCenter.clone().add(0, 1, 0);
+                if (t++ < amount) {
+                    double angle = t / amount * Math.PI * 2;
+                    crystalLoc.setX(mapCenter.getX() + Math.sin(angle) * 26);
+                    crystalLoc.setZ(mapCenter.getZ() + cos(angle) * 26);
+                    PetalCrystal crystal = new PetalCrystal(crystalLoc);
 
+                    pveOption.spawnNewMob(crystal, Team.RED);
+                    crystals.add(crystal.getWarlordsNPC().getUuid());
+
+                    petalCrystalSequenceListener = new Listener() {
+                        @EventHandler(ignoreCancelled = true)
+                        private void onAllyDeath(WarlordsDeathEvent event) {
+                            if (crystals.isEmpty()) return;
+
+                            crystals.removeIf(p -> p.equals(event.getWarlordsEntity().getUuid()));
+                            Utils.playGlobalSound(mapCenter, Sound.ENTITY_ELDER_GUARDIAN_CURSE, 2, 2);
+                        }
+                    };
+                    warlordsNPC.getGame().registerEvents(petalCrystalSequenceListener);
+
+                    Utils.playGlobalSound(crystal.getWarlordsNPC().getLocation(), Sound.ENTITY_ELDER_GUARDIAN_CURSE, 10, 0.5f);
+                }
+
+                if (crystals.isEmpty()) {
+                    Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_GHAST_HURT, 500, 0.5f);
+                    petalsDestroyed();
+                    this.cancel();
+                }
+            }
+        }.runTaskTimer(40, 10);
+    }
+
+    private void petalsDestroyed() {
+        ChatUtils.sendTitleToGamePlayers(
+                warlordsNPC.getGame(),
+                Component.empty(),
+                Component.text("YOU MONSTERS!", TextColor.color(255, 0, 0)),
+                20, 40, 20
+        );
+        PlayerFilter.entitiesAround(warlordsNPC, 28, 28, 28)
+                .aliveEnemiesOf(warlordsNPC)
+                .forEach(player -> {
+                    EffectUtils.strikeLightning(player.getLocation(), false);
+                    player.addInstance(InstanceBuilder.damage()
+                            .cause("Petal Despair")
+                            .source(warlordsNPC)
+                            .min(2500)
+                            .max(3500)
+                            .flags(InstanceFlags.TRUE_DAMAGE)
+                    );
+                });
     }
 
     private static class MirrorDPSPhaseData {

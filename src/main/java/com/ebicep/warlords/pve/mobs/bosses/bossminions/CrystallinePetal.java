@@ -1,9 +1,11 @@
 package com.ebicep.warlords.pve.mobs.bosses.bossminions;
 
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
+import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 
@@ -47,5 +49,10 @@ public class CrystallinePetal extends AbstractMob implements BossMinionMob {
     @Override
     public Mob getMobRegistry() {
         return Mob.CRYSTALLINE_PETAL;
+    }
+
+    @Override
+    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
+        Utils.addKnockback(name, attacker.getLocation(), receiver, -1, 0.25);
     }
 }
