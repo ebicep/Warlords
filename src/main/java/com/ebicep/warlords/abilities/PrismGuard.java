@@ -161,16 +161,22 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                             if (pveMasterUpgrade2) {
                                 boolean silenced = enemyInsideBubble.getCooldownManager().hasCooldown(SoulShackle.class);
                                 if (silenced) {
-                                    enemyInsideBubble.getCooldownManager()
-                                            .addCooldown(new RegularCooldown<>(name, "BUBBLE DEBUFF", PrismGuard.class, new PrismGuard(), wp, CooldownTypes.LOW_LEVEL_DEBUFF, cooldownManager -> {
-                                            }, 20
-                                            ) {
-
-                                                @Override
-                                                public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                                    return currentDamageValue * 1.1f;
-                                                }
-                                            });
+                                    enemyInsideBubble.getCooldownManager().removeCooldownByName("Bubble Silence Debuff");
+                                    enemyInsideBubble.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                        "Bubble Silence Debuff",
+                                        "BUBBLE DEBUFF",
+                                        PrismGuard.class,
+                                        null,
+                                        wp,
+                                        CooldownTypes.LOW_LEVEL_DEBUFF,
+                                        cooldownManager -> {},
+                                        6
+                                    ) {
+                                        @Override
+                                        public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                                            return currentDamageValue * 1.1f;
+                                        }
+                                    });
                                 }
                             }
                         }
