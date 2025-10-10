@@ -22,6 +22,10 @@ public interface Upgradeable {
         return 10f;
     }
 
+    default float getEpicUpgradeMultiplier() {
+        return 1.1f;
+    }
+
     default float getUpgradeMultiplierNegative() {
         return 1;
     }
