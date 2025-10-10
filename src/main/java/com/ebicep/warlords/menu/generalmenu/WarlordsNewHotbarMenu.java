@@ -1104,33 +1104,15 @@ public class WarlordsNewHotbarMenu {
                                     ActionBarSettings.openMenu(player, databasePlayer);
                                 }
                         );
-//                        menu.setItem(
-//                                2,
-//                                2,
-//                                databasePlayer.getAdvancedHoverMessages().item,
-//                                (m, e) -> {
-//                                    DatabaseManager.updatePlayer(player.getUniqueId(), dbp -> {
-//                                        dbp.setAdvancedHoverMessages(dbp.getAdvancedHoverMessages() == AdvancedHoverMessages.ON ?
-//                                                AdvancedHoverMessages.OFF :
-//                                                AdvancedHoverMessages.ON);
-//                                        WarlordsEntity we = Warlords.getPlayer(player.getUniqueId());
-//                                        if (we == null) {
-//                                            player.sendMessage(Component.text("Player not found", NamedTextColor.RED));
-//                                        }
-//                                        if (databasePlayer.getAdvancedHoverMessages() == AdvancedHoverMessages.ON) {
-//                                            player.sendMessage(Component.text("Advanced Hover Messages ", NamedTextColor.GREEN)
-//                                                    .append(Component.text("enabled."))
-//                                            );
-//                                            we.setShowDebugMessage(true);
-//                                        } else {
-//                                            player.sendMessage(Component.text("Advanced Hover Messages ", NamedTextColor.GREEN)
-//                                                    .append(Component.text("disabled.", NamedTextColor.GREEN)));
-//                                            we.setShowDebugMessage(false);
-//                                        }
-//                                    });
-//                                    openSettingsMenu(player);
-//                                }
-//                        );
+                        menu.setItem(
+                                2,
+                                2,
+                                databasePlayer.getAdvancedHoverMessages().item,
+                                (m, e) -> {
+                                    player.performCommand("advancedhovermessages");
+                                    openSettingsMenu(player);
+                                }
+                        );
 
                         menu.setItem(3, 4, MENU_BACK, (m, e) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(player));
                         menu.setItem(4, 4, MENU_CLOSE, ACTION_CLOSE_MENU);

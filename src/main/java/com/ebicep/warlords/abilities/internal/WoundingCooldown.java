@@ -31,26 +31,26 @@ public class WoundingCooldown extends RegularCooldown<WoundingCooldown.WoundingD
         new CooldownFilter<>(target, WoundingCooldown.class)
                 .findAny()
                 .ifPresentOrElse(woundingCooldown -> {
-                    WarlordsPlayerWoundedEvent woundedEvent = new WarlordsPlayerWoundedEvent(target, from, name, amount, tickDuration, woundingCooldown);
-                    Bukkit.getPluginManager().callEvent(woundedEvent);
-                    if (woundedEvent.isCancelled()) {
-                        return;
-                    }
-                    woundingCooldown.getCooldownObject().addWoundingInstance(from, name, amount, tickDuration);
-                    woundingCooldown.updateTicksLeft();
-                        }, () -> {
-                    WarlordsPlayerWoundedEvent woundedEvent = new WarlordsPlayerWoundedEvent(target, from, name, amount, tickDuration, null);
-                    Bukkit.getPluginManager().callEvent(woundedEvent);
-                    if (woundedEvent.isCancelled()) {
-                        return;
-                    }
-                            target.sendMessage(
-                                    Component.text("You are ", NamedTextColor.GRAY)
-                                             .append(Component.text("wounded", NamedTextColor.RED))
-                                             .append(Component.text(".", NamedTextColor.GRAY))
-                            );
-                            target.getCooldownManager().addCooldown(new WoundingCooldown(target, name, from, amount, tickDuration));
+                        WarlordsPlayerWoundedEvent woundedEvent = new WarlordsPlayerWoundedEvent(target, from, name, amount, tickDuration, woundingCooldown);
+                        Bukkit.getPluginManager().callEvent(woundedEvent);
+                        if (woundedEvent.isCancelled()) {
+                            return;
                         }
+                        woundingCooldown.getCooldownObject().addWoundingInstance(from, name, amount, tickDuration);
+                        woundingCooldown.updateTicksLeft();
+                    }, () -> {
+                        WarlordsPlayerWoundedEvent woundedEvent = new WarlordsPlayerWoundedEvent(target, from, name, amount, tickDuration, null);
+                        Bukkit.getPluginManager().callEvent(woundedEvent);
+                        if (woundedEvent.isCancelled()) {
+                            return;
+                        }
+                        target.sendMessage(
+                                Component.text("You are ", NamedTextColor.GRAY)
+                                         .append(Component.text("wounded", NamedTextColor.RED))
+                                         .append(Component.text(".", NamedTextColor.GRAY))
+                        );
+                        target.getCooldownManager().addCooldown(new WoundingCooldown(target, name, from, amount, tickDuration));
+                    }
                 );
     }
 

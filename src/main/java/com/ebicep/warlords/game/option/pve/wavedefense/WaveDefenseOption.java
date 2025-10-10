@@ -48,6 +48,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.util.Ticks;
@@ -341,7 +342,12 @@ public class WaveDefenseOption implements PveOption {
     protected Pair<Float, Component> getWaveOpening() {
         float soundPitch = 0.8f;
         Component wavePrefix = Component.text("Wave " + waveCounter, NamedTextColor.YELLOW);
-        if (waveCounter >= 101) {
+        if (waveCounter >= 111) {
+            soundPitch = 0.1f;
+            wavePrefix = Component.text("W", TextColor.color(255, 135, 180))
+                    .append(Component.text("a").decorate(TextDecoration.BOLD, TextDecoration.OBFUSCATED))
+                    .append(Component.text("ve " + waveCounter).decorate(TextDecoration.BOLD));
+        } else if (waveCounter >= 101) {
             soundPitch = 0.1f;
             wavePrefix = Component.text("W", NamedTextColor.WHITE)
                     .append(Component.text("a").decorate(TextDecoration.BOLD, TextDecoration.OBFUSCATED))

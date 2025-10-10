@@ -191,15 +191,23 @@ public class LegendaryBastion extends AbstractLegendaryWeapon implements Passive
         return 150;
     }
     @Override
-    protected float getMeleeDamageMaxValue() { return 180; }
+    protected float getMeleeDamageMaxValue() {
+        return 180;
+    }
     @Override
-    protected float getCritChanceValue()     { return 25; }
+    protected float getCritChanceValue() {
+        return 25;
+    }
     @Override
     protected float getCritMultiplierValue() { return 175; }
     @Override
-    protected float getHealthBonusValue()    { return 1000; }
+    protected float getHealthBonusValue() {
+        return 1000;
+    }
     @Override
-    protected float getSpeedBonusValue()     { return 6; }
+    protected float getSpeedBonusValue() {
+        return 6;
+    }
 
     @Override
     protected float getSkillCritChanceBonusValue() {

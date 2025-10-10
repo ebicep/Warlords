@@ -116,9 +116,17 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
                     if (pveMasterUpgrade) {
-                        for (WarlordsEntity enemyInRain : PlayerFilter.entitiesAround(data.target.getLocation(), radius, radius, radius).aliveEnemiesOf(wp).limit(10)) {
+                        for (WarlordsEntity enemyInRain : PlayerFilter
+                                .entitiesAround(data.target.getLocation(), radius, radius, radius)
+                                .aliveEnemiesOf(wp)
+                                .limit(10)
+                        ) {
                             Utils.playGlobalSound(enemyInRain.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 2, 1.8f);
-                            EffectUtils.playFirework(enemyInRain.getLocation(), FireworkEffect.builder().withColor(Color.AQUA).with(FireworkEffect.Type.BURST).build());
+                            EffectUtils.playFirework(enemyInRain.getLocation(), FireworkEffect.builder()
+                                    .withColor(Color.AQUA)
+                                    .with(FireworkEffect.Type.BURST)
+                                    .build()
+                            );
                             strikeInRain(wp, enemyInRain);
                         }
                     }
@@ -148,7 +156,11 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
                         circleEffect.playEffects();
                     }
                     if (ticksElapsed % 10 == 0) {
-                        List<WarlordsEntity> teammatesInRain = PlayerFilter.entitiesAround(data.target.getLocation(), radius, radius, radius).aliveTeammatesOf(wp).toList();
+                        List<WarlordsEntity> teammatesInRain = PlayerFilter
+                                .entitiesAround(data.target.getLocation(), radius, radius, radius)
+                                .aliveTeammatesOf(wp)
+                                .toList();
+
                         if (pveMasterUpgrade2) {
                             // cloud only give to those in cloud or has been in cloud and is within 40 blocks of player
                             personalCloudList.removeIf(teammate -> teammate.getA().getLocation().distanceSquared(wp.getLocation()) > 40 * 40);
@@ -195,10 +207,16 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
                     }
                     if (ticksElapsed % 40 == 0) {
                         if (pveMasterUpgrade) {
-                            for (WarlordsEntity enemyInRain : PlayerFilter.entitiesAround(data.target.getLocation(), radius, radius, radius).aliveEnemiesOf(wp).limit(10)) {
+                            for (WarlordsEntity enemyInRain : PlayerFilter
+                                    .entitiesAround(data.target.getLocation(), radius, radius, radius)
+                                    .aliveEnemiesOf(wp)
+                                    .limit(10)
+                            ) {
                                 Utils.playGlobalSound(enemyInRain.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 2, 1.8f);
-                                FireWorkEffectPlayer.playFirework(enemyInRain.getLocation(),
-                                        FireworkEffect.builder().withColor(Color.AQUA).with(FireworkEffect.Type.BURST).build()
+                                EffectUtils.playFirework(enemyInRain.getLocation(), FireworkEffect.builder()
+                                                .withColor(Color.AQUA)
+                                                .with(FireworkEffect.Type.BURST)
+                                                .build()
                                 );
                                 strikeInRain(wp, enemyInRain);
                             }
