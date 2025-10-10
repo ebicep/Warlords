@@ -48,7 +48,7 @@ public class EarthenSpikeBranch extends AbstractUpgradeBranch<EarthenSpike> {
                 "Earthen Verdancy",
                 "Earthen Spike - Master Upgrade",
                 """                      
-                        A single Earthen Spike will be sent out hitting 1 enemy but dealing 4x the damage.
+                        Earthen Spike becomes a single-target ability that chains between up to 4 enemies but dealing 4x the damage.
                         
                         Enemies hit are CRIPPLED for 5s, and killed enemies heal the user for 35% of the damage dealt.
                         
