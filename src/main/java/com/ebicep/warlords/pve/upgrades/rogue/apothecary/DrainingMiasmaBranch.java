@@ -27,14 +27,14 @@ public class DrainingMiasmaBranch extends AbstractUpgradeBranch<DrainingMiasma> 
                 "Draining Miasma - Master Upgrade",
                 "Draining Miasma deals 75% less damage but range and duration have been quadrupled." +
                         " Additionally, afflicted enemies will permanently have their damage reduced by 25% and" +
-                        " will explode on death, dealing 1% max health damage to all nearby enemies.",
+                        " will explode on death, dealing 50% MAX HEALTH DAMAGE to all nearby enemies.",
                 50000,
                 () -> {
                     ability.setTickDuration(ability.getTickDuration() * 4);
                     ability.setLeechTickDuration(ability.getLeechTickDuration() * 4);
                     ability.setRadius(ability.getRadius() * 4);
 
-                    ability.setMaxHealthDamage((int) (ability.getMaxHealthDamage() * 0.25f));
+                 //   ability.setMaxHealthDamage((int) (ability.getMaxHealthDamage() * 0.25f));
                     Value.SetValue damage = ability.getDamageValues().getMiasmaDamage();
                     damage.value().addMultiplicativeModifierAdd("Master Upgrade Branch", -.75f);
                 }
@@ -52,7 +52,7 @@ public class DrainingMiasmaBranch extends AbstractUpgradeBranch<DrainingMiasma> 
                     ability.setLeechTickDuration(ability.getLeechTickDuration() * 4);
                     ability.setRadius(ability.getRadius() * 4);
 
-                    ability.setMaxHealthDamage((int) (ability.getMaxHealthDamage() * 0.5f));
+                  //  ability.setMaxHealthDamage((int) (ability.getMaxHealthDamage() * 0.5f));
                     Value.SetValue damage = ability.getDamageValues().getMiasmaDamage();
                     damage.value().addMultiplicativeModifierAdd("Master Upgrade Branch", -.5f);
                 }

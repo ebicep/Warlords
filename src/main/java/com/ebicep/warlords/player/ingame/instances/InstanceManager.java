@@ -276,7 +276,6 @@ public class InstanceManager {
                 .prefix(ComponentBuilder.create("Crit: ", NamedTextColor.GREEN))
                 .value(ComponentBuilder.create("" + isCrit, NamedTextColor.GOLD))
         );
-
         final float damageHealValueBeforeAllReduction = damageValue;
         if (!flags.contains(InstanceFlags.IGNORE_SELF_RES) && !trueDamage) {
             warlordsEntity.addAbsorbed(Math.max(0, damageValue - (damageValue *= 1 - warlordsEntity.getSpec().getDamageResistance() / 100f)));
@@ -456,16 +455,12 @@ public class InstanceManager {
             }
             //add raw damage after all multipliers
             if (rawDamage != 0){
+                rawDamage *= 1 - warlordsEntity.getSpec().getDamageResistance() / 100f;
                 damageValue += rawDamage;
                 debugMessage.append(InstanceDebugHoverable.LevelBuilder
                         .create(2)
                         .prefix(ComponentBuilder.create("Max HP Damage: ", NamedTextColor.GREEN))
                         .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(damageValue), NamedTextColor.GOLD))
-                );
-            } else {
-                debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                        .create(1)
-                        .prefix(ComponentBuilder.create("no max hp damage", NamedTextColor.GREEN))
                 );
             }
             //debugMessage.append(Component.newline()).append(Component.text("In Hammer", NamedTextColor.RED));

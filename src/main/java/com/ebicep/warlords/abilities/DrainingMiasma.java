@@ -34,7 +34,7 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
 
     private final DrainingMiasmaStats stats = new DrainingMiasmaStats();
     private final DamageValues damageValues = new DamageValues();
-    private float maxHealthDamage = 0.3f;
+    private float maxHealthDamage = 3f;
     private int tickDuration = 100;
     private int leechTickDuration = 5;
     private int radius = 8;
@@ -105,15 +105,31 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
                                         new Particle.DustOptions(Color.fromRGB(30, 200, 30), 1)
                                 );
                             }
-                            float healthDamage = MaxHealthDamage.getMaxHealthDamage(miasmaTarget, maxHealthDamage);
-                        //    healthDamage = DamageCheck.clamp(healthDamage);
-                            miasmaTarget.addInstance(InstanceBuilder
-                                    .damage()
-                                    .ability(this)
-                                    .source(wp)
-                                    .value(damageValues.miasmaDamage.getValue())
-                                    .rawDamage(healthDamage)
-                                    .flags(InstanceFlags.DOT));
+                            if (inPve) {
+                                float healthDamage = MaxHealthDamage.getMaxHealthDamage(miasmaTarget, 1.5f);
+                                if (pveMasterUpgrade) {
+                                    healthDamage *= 0.25f;
+                                } else if (pveMasterUpgrade2){
+                                    healthDamage *= 0.5f;
+                                }
+                                miasmaTarget.addInstance(InstanceBuilder
+                                        .damage()
+                                        .ability(this)
+                                        .source(wp)
+                                        .value(damageValues.miasmaDamage.getValue())
+                                        .rawDamage(healthDamage)
+                                        .flags(InstanceFlags.DOT));
+                            } else { //for pvp only
+                                float healthDamage = miasmaTarget.getMaxHealth() * maxHealthDamage / 100f;
+                                healthDamage = DamageCheck.clamp(healthDamage);
+                                miasmaTarget.addInstance(InstanceBuilder
+                                        .damage()
+                                        .ability(this)
+                                        .source(wp)
+                                        .value(damageValues.miasmaDamage.getValue())
+                                        .rawDamage(healthDamage)
+                                        .flags(InstanceFlags.DOT));
+                            }
                         })
                 ));
                 if (pveMasterUpgrade) {
@@ -127,14 +143,14 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
                                         cooldownManager -> {
                                             FallingBlockWaveEffect.create(miasmaTarget.getLocation(), 3, 6, Material.BIRCH_SAPLING);
                                             for (WarlordsEntity target : PlayerFilter.entitiesAround(miasmaTarget, 6, 6, 6).aliveEnemiesOf(wp)) {
-                                                float healthDamage = MaxHealthDamage.getMaxHealthDamage(miasmaTarget, maxHealthDamage);
-                                             //   healthDamage = DamageCheck.clamp(healthDamage);
-                                                target.addInstance(InstanceBuilder.damage()
-                                                                                  .ability(this)
-                                                                                  .source(wp)
-                                                                                  .value(damageValues.miasmaDamage.getValue())
-                                                                                  .rawDamage(healthDamage)
-                                                                                  .flags(InstanceFlags.DOT));
+                                                float healthDamage = MaxHealthDamage.getMaxHealthDamage(miasmaTarget, 0.5f);
+                                                target.addInstance(InstanceBuilder
+                                                        .damage()
+                                                        .ability(this)
+                                                        .source(wp)
+                                                        .value(damageValues.miasmaDamage.getValue())
+                                                        .rawDamage(healthDamage)
+                                                        .flags(InstanceFlags.DOT));
                                             }
                                         },
                                         true
@@ -171,7 +187,13 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
                                                 return;
                                             }
                                             float healing = miasmaTarget.getMaxHealth() * .02f;
-                                            miasmaTarget.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(healing).flags(InstanceFlags.CAN_OVERHEAL_OTHERS));
+                                            miasmaTarget.addInstance(InstanceBuilder
+                                                    .healing()
+                                                    .ability(this)
+                                                    .source(wp)
+                                                    .value(healing)
+                                                    .flags(InstanceFlags.CAN_OVERHEAL_OTHERS)
+                                            );
                                             Overheal.giveOverHeal(wp, miasmaTarget);
                                 })
                                 ) {
@@ -188,11 +210,13 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
 
     @Override
     public void updateDescription(Player player) {
+        String pveDescription = "of MAX HEALTH DAMAGE per second, for ";
+
         description = AbilityDescriptionBuilder.create("Summon a toxin-filled cloud around you, poisoning all enemies inside the area. Poisoned enemies take ")
                                                .damage(damageValues.miasmaDamage)
                                                .text(" + ")
-                                               .percent(maxHealthDamage, NamedTextColor.RED)
-                                               .text(" of their max health as damage per second, for ")
+                                               .percent(isInPve() ? 150f : maxHealthDamage, NamedTextColor.RED)
+                                               .text(isInPve() ? pveDescription : " of their max health as damage per second, for ")
                                                .durationTicks(tickDuration)
                                                .text(". Enemies poisoned by your Draining Miasma are slowed by ")
                                                .percent(slowness, NamedTextColor.WHITE)

@@ -121,7 +121,8 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
                                                           .max(maxDamage * (weaponDamage / 100f))
                                                           .critChance(25)
                                                           .critMultiplier(200)
-                                                          .rawDamage(pveMasterUpgrade ? healthDamage : 0));
+                                                          .rawDamage(pveMasterUpgrade ? healthDamage : 0)
+                        );
                         if (pveMasterUpgrade) {
                             victim.setDamageResistance(victim.getSpec().getDamageResistance() - 2);
                             if (victim instanceof WarlordsNPC npc) {
