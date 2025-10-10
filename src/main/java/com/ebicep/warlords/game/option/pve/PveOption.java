@@ -18,6 +18,7 @@ import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
 import com.ebicep.warlords.game.option.pve.rewards.PveRewards;
 import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.player.general.settings.AdvancedHoverMessages;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -313,6 +314,9 @@ public interface PveOption extends Option {
                     player.updateEntity();
                     player.getSpec().updateCustomStats(warlordsPlayer);
                 });
+                if (databasePlayer.getAdvancedHoverMessages() == AdvancedHoverMessages.ON) {
+                    player.setShowDebugMessage(true);
+                }
             });
             AbilityTree.handleAutoUpgrade(player);
         }

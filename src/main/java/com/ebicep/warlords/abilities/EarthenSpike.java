@@ -14,6 +14,7 @@ import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.earthwarden.EarthenSpikeBranch;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
+import com.ebicep.warlords.util.bukkit.packets.PacketUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -69,7 +70,7 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         List<WarlordsEntity> spiked = new ArrayList<>();
-        float rad = radius.getCalculatedValue();
+        float rad = radius.getCalculatedValue() + PacketUtils.pingCompensationAmount(wp);
         for (WarlordsEntity spikeTarget : PlayerFilter.entitiesAround(wp, rad, rad, rad).aliveEnemiesOf(wp).lookingAtFirst(wp)) {
             if (!LocationUtils.isLookingAt(wp, spikeTarget) || !LocationUtils.hasLineOfSight(wp, spikeTarget)) {
                 continue;
