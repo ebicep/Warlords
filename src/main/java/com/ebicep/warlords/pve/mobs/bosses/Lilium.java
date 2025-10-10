@@ -8,6 +8,7 @@ import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
+import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.SpecType;
@@ -54,6 +55,8 @@ public class Lilium extends AbstractMob implements BossMob {
 
     private OrbitingItemManager oribitingItemManagerFloating;
     private OrbitingItemManager oribitingItemManager;
+    private LaserBarrageAbility laserBarrageCenter;
+    private ArenaShiftAbility arenaShift;
 
     private BouquetBarrageAbility bouquetBarrageAbility;
     private RoseGardenAbility roseGardenAbility;
@@ -120,6 +123,9 @@ public class Lilium extends AbstractMob implements BossMob {
         Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.BLOCK_CONDUIT_ACTIVATE, 500, 0.5f);
 
         mapCenter = new Location(warlordsNPC.getWorld(), 112.5, 11, 62.5);
+        arenaShift = new ArenaShiftAbility(warlordsNPC.getWorld());
+
+        laserBarrageCenter = new LaserBarrageAbility(warlordsNPC.getGame(), warlordsNPC.getLocation(), option.playerCount(), 60, 30, 30, 70, 2, warlordsNPC);
 
         oribitingItemManager = new OrbitingItemManager(() -> warlordsNPC.getLocation(), 0.5, 0.5, 6, 0.5f, option, warlordsNPC, Material.STICK);
         oribitingItemManager.spawnSwords(6);
@@ -426,8 +432,55 @@ public class Lilium extends AbstractMob implements BossMob {
 
         });
 
-        phaseFive = new BossAbilityPhase(warlordsNPC, 50, () -> {
+        phaseFive = new BossAbilityPhase(warlordsNPC, 90, () -> {
+            preventDashing = true;
+            ChatUtils.sendTitleToGamePlayers(
+                    warlordsNPC.getGame(),
+                    Component.empty(),
+                    Component.text("Pathetic, strong as a group... now DIVIDED.", TextColor.color(255, 150, 190)),
+                    20, 60, 20
+            );
 
+            // fetch players in 3 groups
+            int limit = 8 / 3;
+            Game game = warlordsNPC.getGame();
+            List<WarlordsEntity> arenaOnePlayers = PlayerFilter.playingGame(game)
+                    .aliveEnemiesOf(warlordsNPC)
+                    .limit(limit)
+                    .stream().toList();
+            List<WarlordsEntity> arenaTwoPlayers = PlayerFilter.playingGame(game)
+                    .aliveEnemiesOf(warlordsNPC)
+                    .filter(p -> !arenaOnePlayers.equals(p))
+                    .limit(limit)
+                    .stream().toList();
+            List<WarlordsEntity> arenaThreePlayers = PlayerFilter.playingGame(game)
+                    .aliveEnemiesOf(warlordsNPC)
+                    .filter(p -> !arenaOnePlayers.equals(p))
+                    .filter(p -> !arenaTwoPlayers.equals(p))
+                    .limit(limit)
+                    .stream().toList();
+
+            // tp players
+            arenaShift.teleportPlayersToArenaOne(arenaOnePlayers);
+            arenaShift.teleportPlayersToArenaTwo(arenaTwoPlayers);
+            arenaShift.teleportPlayersToArenaThree(arenaThreePlayers);
+
+            // tp boss
+            arenaShift.teleportBoss(warlordsNPC);
+
+            new GameRunnable(game) {
+                int t = 0;
+                @Override
+                public void run() {
+                    t++;
+
+                    if (t % 300 == 0) {
+                        laserBarrageCenter.start(arenaOnePlayers);
+                        laserBarrageCenter.start(arenaTwoPlayers);
+                        laserBarrageCenter.start(arenaThreePlayers);
+                    }
+                }
+            }.runTaskTimer(100, 0);
         });
 
         phaseSix = new BossAbilityPhase(warlordsNPC, 40, () -> {
@@ -819,6 +872,10 @@ public class Lilium extends AbstractMob implements BossMob {
                 }
             }
         }.runTaskTimer(40, 6);
+    }
+
+    private void teleportToArena(List<WarlordsEntity> players) {
+
     }
 
     private static class MirrorDPSPhaseData {
