@@ -15,6 +15,7 @@ public enum InstanceFlags {
     NO_LUST_HEALING,
     APOTH_SELF_HEAL,
     DIRECT_HIT,
+    IGNORE_FERVENT_TITLE,
 
     IGNORE_SELF_RES,
     NO_DISMOUNT,
