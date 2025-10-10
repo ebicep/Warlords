@@ -64,7 +64,7 @@ public class HolyRadianceProtector extends AbstractHolyRadiance implements Heals
                 .entitiesAround(wp, radius, radius, radius)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .lookingAtFirst(wp)
-                .filter(we -> !(we instanceof WarlordsNPC npcTarget && npcTarget.getMob() instanceof NoTargetAbilities))
+                .excludingAlliedMobs()
                 .limit(1)
         ) {
             if (!LocationUtils.isLookingAtMark(wp, markTarget) || !LocationUtils.hasLineOfSight(wp, markTarget)) {

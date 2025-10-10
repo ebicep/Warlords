@@ -175,8 +175,8 @@ public class Lilium extends AbstractMob implements BossMob {
                 Material.CRIMSON_FUNGUS,
                 8,
                 true,
-                5,
-                1
+                3,
+                3
         );
 
         petalStormAbility = new PetalStormAbility(
@@ -442,7 +442,7 @@ public class Lilium extends AbstractMob implements BossMob {
             );
 
             // fetch players in 3 groups
-            int limit = 8 / 3;
+            int limit = Math.max(1, Math.round(option.playerCount() / 3f));
             Game game = warlordsNPC.getGame();
             List<WarlordsEntity> arenaOnePlayers = PlayerFilter.playingGame(game)
                     .aliveEnemiesOf(warlordsNPC)
@@ -450,13 +450,13 @@ public class Lilium extends AbstractMob implements BossMob {
                     .stream().toList();
             List<WarlordsEntity> arenaTwoPlayers = PlayerFilter.playingGame(game)
                     .aliveEnemiesOf(warlordsNPC)
-                    .filter(p -> !arenaOnePlayers.equals(p))
+                    .filter(p -> !arenaOnePlayers.contains(p))
                     .limit(limit)
                     .stream().toList();
             List<WarlordsEntity> arenaThreePlayers = PlayerFilter.playingGame(game)
                     .aliveEnemiesOf(warlordsNPC)
-                    .filter(p -> !arenaOnePlayers.equals(p))
-                    .filter(p -> !arenaTwoPlayers.equals(p))
+                    .filter(p -> !arenaOnePlayers.contains(p))
+                    .filter(p -> !arenaTwoPlayers.contains(p))
                     .limit(limit)
                     .stream().toList();
 
@@ -488,7 +488,7 @@ public class Lilium extends AbstractMob implements BossMob {
         });
 
         phaseSeven = new BossAbilityPhase(warlordsNPC, 30, () -> {
-            triggerKillTrapSequence(18);
+            triggerKillTrapSequence(9);
         });
 
         phaseEight = new BossAbilityPhase(warlordsNPC, 20, () -> {
@@ -610,7 +610,8 @@ public class Lilium extends AbstractMob implements BossMob {
                                                     .value(1500)
                                                     .flags(InstanceFlags.TRUE_DAMAGE)
                                             );
-                                        }));
+                                        })
+                                );
                     }
 
                     if (t == 601) {

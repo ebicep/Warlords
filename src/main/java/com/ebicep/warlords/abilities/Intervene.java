@@ -96,7 +96,7 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
                                                      .aliveTeammatesOfExcludingSelf(wp)
                                                      .requireLineOfSightIntervene(wp, true)
                                                      .lookingAtFirst(wp)
-                                                     .filter(we -> !(we instanceof WarlordsNPC npcTarget && npcTarget.getMob() instanceof NoTargetAbilities))
+                                                     .excludingAlliedMobs()
                                                      .limit(maxTargets)) {
             stats.playersIntervened++;
             if (veneTarget.hasFlag()) {

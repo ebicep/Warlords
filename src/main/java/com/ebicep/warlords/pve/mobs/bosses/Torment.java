@@ -135,7 +135,7 @@ public class Torment extends AbstractMob implements BossMob {
             for (WarlordsEntity we : PlayerFilter
                     .playingGame(warlordsNPC.getGame())
                     .aliveEnemiesOf(warlordsNPC)
-                    .filter(we -> !(we instanceof WarlordsNPC npcTarget && npcTarget.getMob() instanceof NoTargetAbilities))
+                    .excludingAlliedMobs()
                     .limit(1)
             ) {
                 divineProtector = we;
@@ -422,10 +422,10 @@ public class Torment extends AbstractMob implements BossMob {
         }
 
         if (ticksElapsed % 600 == 0 && ticksElapsed > 0 && !preventMarking) {
-            for (WarlordsEntity we : PlayerFilterGeneric
+            for (WarlordsEntity we : PlayerFilter
                     .entitiesAround(warlordsNPC, 100, 100, 100)
                     .aliveEnemiesOf(warlordsNPC)
-                    .filter(we -> !(we instanceof WarlordsNPC npcTarget && npcTarget.getMob() instanceof NoTargetAbilities))
+                    .excludingAlliedMobs()
                     .limit(1)
             ) {
                 ChatUtils.sendTitleToGamePlayers(

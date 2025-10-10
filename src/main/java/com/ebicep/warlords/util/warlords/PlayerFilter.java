@@ -235,6 +235,11 @@ public class PlayerFilter implements Iterable<WarlordsEntity> {
     }
 
     @Nonnull
+    public PlayerFilter excludingAlliedMobs() {
+        return filter(warlordsEntity -> !(warlordsEntity instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof NoTargetAbilities));
+    }
+
+    @Nonnull
     protected PlayerFilter excluding0(@Nonnull Set<WarlordsEntity> exclude) {
         return filter(p -> !exclude.contains(p));
     }
