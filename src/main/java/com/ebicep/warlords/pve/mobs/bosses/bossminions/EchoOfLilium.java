@@ -22,7 +22,7 @@ public class EchoOfLilium extends AbstractMob implements BossMinionMob {
         super(
                 spawnLocation,
                 "Echo of Lilium",
-                50000,
+                15000,
                 0.36f,
                 20,
                 450,

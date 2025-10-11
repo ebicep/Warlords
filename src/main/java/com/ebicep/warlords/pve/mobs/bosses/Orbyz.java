@@ -190,11 +190,11 @@ public class Orbyz extends AbstractMob implements BossMob {
                                             warlordsEntity.getGame(),
                                             warlordsEntity.getTeam(),
                                             warlordsEntity.getLocation().clone().add(0, 0.25, 0),
-                                            7,
+                                            8,
                                             new CircumferenceEffect(Particle.FIREWORK, Particle.FIREWORK).particlesPerCircumference(1.2)
                                     ).playEffects();
                                     for (WarlordsEntity ally : PlayerFilter
-                                            .entitiesAround(warlordsEntity, 7, 7, 7)
+                                            .entitiesAround(warlordsEntity, 8, 8, 8)
                                             .aliveTeammatesOfExcludingSelf(warlordsEntity)
                                     ) {
                                         ally.getCooldownManager().addCooldown(new RegularCooldown<>(
@@ -231,7 +231,7 @@ public class Orbyz extends AbstractMob implements BossMob {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 if (event.getSource().getCooldownManager().hasCooldownFromName("Empowering Allies")) {
-                    return currentDamageValue * 1.1f;
+                    return currentDamageValue * 1.2f;
                 }
                 return currentDamageValue * 0.1f;
             }
@@ -377,7 +377,7 @@ public class Orbyz extends AbstractMob implements BossMob {
             summoningCirclesAbility.start(warlordsNPC.getGame());
         }
 
-        if (ticksElapsed % 430 == 0 && ticksElapsed > 0 && !preventMarkForDeath) {
+        if (ticksElapsed % 630 == 0 && ticksElapsed > 0 && !preventMarkForDeath) {
             markedForDeathAbility.start(warlordsNPC.getGame());
         }
 

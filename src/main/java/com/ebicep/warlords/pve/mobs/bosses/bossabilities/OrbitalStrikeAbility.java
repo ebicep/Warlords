@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.bosses.bossabilities;
 
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
@@ -10,13 +11,8 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
-import org.bukkit.Color;
-import org.bukkit.FluidCollisionMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
+import org.bukkit.*;
 import org.bukkit.Particle.DustOptions;
-import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.util.Vector;
@@ -187,7 +183,7 @@ public class OrbitalStrikeAbility {
                 drawBeamSegment(start, impact);
 
                 if (t % 5 == 0) {
-                    drawRingDust(impact, finalBlastRadius, 40, lockDust);
+                    drawRingDust(impact, finalBlastRadius, 50, lockDust);
                 }
 
                 // Periodic damage in the cylinder
@@ -216,6 +212,12 @@ public class OrbitalStrikeAbility {
         at.getWorld().spawnParticle(impactPop, at, 40, .7, .35, .7, 0.05);
         at.getWorld().spawnParticle(Particle.HEART, at, 16, .4, .2, .4, 0.0);
         Utils.spawnFallingBlocks(at, 3, 13, -0.7, 0.3, Material.CHERRY_LEAVES);
+        EffectUtils.playFirework(at, FireworkEffect.builder()
+                .withColor(Color.WHITE)
+                .with(FireworkEffect.Type.BALL_LARGE)
+                .withTrail()
+                .build()
+        );
         drawRingDust(at, finalBlastRadius, 15, lockDust);
         PlayerFilter.entitiesAround(at, finalBlastRadius, 4, finalBlastRadius)
                 .aliveEnemiesOf(source)

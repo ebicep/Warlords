@@ -40,7 +40,7 @@ public class LiliathEngima extends AbstractMob implements BossMinionMob {
     public LiliathEngima(Location spawnLocation, List<WarlordsEntity> targets) {
         super(
                 spawnLocation,
-                ChatColor.BOLD + (targets.get(new Random().nextInt(targets.size())).getName()),
+                "Liliath Engima",
                 3000,
                 0,
                 0,
@@ -55,7 +55,7 @@ public class LiliathEngima extends AbstractMob implements BossMinionMob {
         super(
                 spawnLocation,
                 "Liliath Engima",
-                4000,
+                3000,
                 0,
                 20,
                 0,
@@ -91,7 +91,7 @@ public class LiliathEngima extends AbstractMob implements BossMinionMob {
             td.setSeeThrough(true);
             td.setBackgroundColor(Color.BLACK);
             td.setText(ChatColor.BOLD + target.getName());
-            td.setLineWidth(80);
+            td.setLineWidth(150);
             td.setTransformation(new Transformation(
                     new Vector3f(),
                     new Quaternionf(),
@@ -112,6 +112,15 @@ public class LiliathEngima extends AbstractMob implements BossMinionMob {
                 warlordsNPC
         );
 
+        // scale health with spec
+        float newHealth =  warlordsNPC.getMaxHealth();
+        switch (target.getSpecClass().specType) {
+            case DAMAGE -> newHealth = warlordsNPC.getMaxHealth();
+            case TANK -> newHealth = warlordsNPC.getMaxHealth() * 0.5f;
+            case HEALER -> newHealth = warlordsNPC.getMaxHealth() * 0.25f;
+        }
+
+        warlordsNPC.setMaxHealthAndHeal(newHealth);
         warlordsNPC.setName(ChatColor.BOLD + target.getName());
     }
 

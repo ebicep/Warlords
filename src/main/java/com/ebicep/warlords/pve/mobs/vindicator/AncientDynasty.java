@@ -12,8 +12,8 @@ public class AncientDynasty extends AbstractMob implements EliteMob {
         super(
                 spawnLocation,
                 "Ancient Dynasty",
-                13000,
-                0.15f,
+                10000,
+                0.4f,
                 20,
                 500,
                 1000

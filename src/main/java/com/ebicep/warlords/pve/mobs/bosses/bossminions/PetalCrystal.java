@@ -13,10 +13,7 @@ import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import org.bukkit.Color;
-import org.bukkit.Location;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
+import org.bukkit.*;
 
 
 import javax.annotation.Nonnull;
@@ -57,7 +54,12 @@ public class PetalCrystal extends AbstractMob implements BossMinionMob {
 
     @Override
     public void onSpawn(PveOption option) {
-
+        EffectUtils.playFirework(warlordsNPC.getLocation(), FireworkEffect.builder()
+                .withColor(Color.fromRGB(255, 90, 180))
+                .with(FireworkEffect.Type.BALL_LARGE)
+                .withTrail()
+                .build()
+        );
     }
 
     @Override

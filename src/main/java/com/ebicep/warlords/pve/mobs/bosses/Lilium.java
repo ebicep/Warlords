@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
+import com.ebicep.warlords.abilities.SoulShackle;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.abilities.internal.PhysiraCheck;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -217,7 +218,7 @@ public class Lilium extends AbstractMob implements BossMob {
                 warlordsNPC,
                 () -> mapCenter,
                 List.of(230, 185, 145, 100, 55),
-                List.of(33.0, 33.0, 33.0, 33.0, 33.0),
+                List.of(34.0, 34.0, 34.0, 34.0, 34.0),
                 Material.STRIPPED_CHERRY_LOG,
                 false,
                 2,
@@ -286,12 +287,12 @@ public class Lilium extends AbstractMob implements BossMob {
                 () -> {
                     WarlordsEntity target = PlayerFilter.playingGame(warlordsNPC.getGame())
                             .aliveEnemiesOf(warlordsNPC)
-                            .limit(3)
+                            .limit(1)
                             .leastAliveFirst()
                             .findFirstOrNull();
                     return target != null ? target.getLocation().clone() : mapCenter.clone();
                 },
-                40,
+                50,
                 60,
                 20,
                 3,
@@ -299,8 +300,8 @@ public class Lilium extends AbstractMob implements BossMob {
                 64, // maxTrace
                 1000, 1500,
                 true,
-                4,
-                5000, 8000
+                7,
+                7000, 10000
         );
 
         phaseOne = new BossAbilityPhase(warlordsNPC, 90, () -> {
@@ -331,7 +332,7 @@ public class Lilium extends AbstractMob implements BossMob {
                         preventDashing = false;
                     }
                 }
-            }.runTaskTimer(60, 5);
+            }.runTaskTimer(60, 6);
             PlayerFilter.playingGame(warlordsNPC.getGame())
                     .aliveEnemiesOf(warlordsNPC)
                     .forEach(enemy -> {
@@ -357,7 +358,7 @@ public class Lilium extends AbstractMob implements BossMob {
             warlordsNPC.getMob().removeTarget();
             warlordsNPC.setStunTicks(99999);
             warlordsNPC.addKnockbackModifier(warlordsNPC, "KB RES", -100, 99999);
-            warlordsNPC.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 60, 60, false));
+            warlordsNPC.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 61, 60, false));
 
             for (WarlordsEntity enemy : PlayerFilter
                     .playingGame(warlordsNPC.getGame())
@@ -376,6 +377,7 @@ public class Lilium extends AbstractMob implements BossMob {
                         EffectUtils.strikeLightning(enemy.getLocation(), false);
                     }
 
+                    warlordsNPC.getMob().removeTarget();
                     conduitsOne.setFollowBoss(true);
                     conduitsOne.setFollowLerp(1);
                     conduitsOne.start(warlordsNPC.getGame());
@@ -494,19 +496,22 @@ public class Lilium extends AbstractMob implements BossMob {
             );
 
             // fetch players in 3 groups
-            int limit = Math.max(1, Math.round(option.playerCount() / 3f));
+            int limit = Math.max(2, Math.round(option.playerCount() / 3f));
             Game game = warlordsNPC.getGame();
             List<WarlordsEntity> arenaOnePlayers = PlayerFilter.playingGame(game)
                     .aliveEnemiesOf(warlordsNPC)
+                    .excludingAlliedMobs()
                     .limit(limit)
                     .stream().toList();
             List<WarlordsEntity> arenaTwoPlayers = PlayerFilter.playingGame(game)
                     .aliveEnemiesOf(warlordsNPC)
+                    .excludingAlliedMobs()
                     .filter(p -> !arenaOnePlayers.contains(p))
                     .limit(limit)
                     .stream().toList();
             List<WarlordsEntity> arenaThreePlayers = PlayerFilter.playingGame(game)
                     .aliveEnemiesOf(warlordsNPC)
+                    .excludingAlliedMobs()
                     .filter(p -> !arenaOnePlayers.contains(p))
                     .filter(p -> !arenaTwoPlayers.contains(p))
                     .limit(limit)
@@ -523,7 +528,7 @@ public class Lilium extends AbstractMob implements BossMob {
             laserBarrageCenter = new LaserBarrageAbility(
                     warlordsNPC.getGame(),
                     warlordsNPC.getLocation(),
-                    option.playerCount(),
+                    1,
                     60,
                     30,
                     30,
@@ -598,6 +603,7 @@ public class Lilium extends AbstractMob implements BossMob {
 
             List<WarlordsEntity> protectors = PlayerFilter.playingGame(warlordsNPC.getGame())
                     .aliveEnemiesOf(warlordsNPC)
+                    .excludingAlliedMobs()
                     .limit(2).stream().toList();
 
             StringBuilder sb = new StringBuilder();
@@ -608,10 +614,15 @@ public class Lilium extends AbstractMob implements BossMob {
 
             ChatUtils.sendTitleToGamePlayers(
                     warlordsNPC.getGame(),
-                    Component.text("Chosen Champions:"),
+                    Component.text("My Chosen Champions:", TextColor.color(255, 150, 190)),
                     Component.text(sb.toString(), NamedTextColor.DARK_AQUA),
                     20, 60, 20
             );
+
+            protectors.forEach(
+                    protector -> protector.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 40 * 20, 0, false))
+            );
+
             Utils.playGlobalSound(mapCenter, Sound.ENTITY_ELDER_GUARDIAN_CURSE, 500, 0.5f);
             new GameRunnable(warlordsNPC.getGame()) {
                 @Override
@@ -634,7 +645,6 @@ public class Lilium extends AbstractMob implements BossMob {
 
                     if (t == 1) {
                         protectors.forEach(player -> {
-                            player.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 30 * 20, 0, false));
                             player.getCooldownManager().addCooldown(new RegularCooldown<>(
                                     "Overlord Raindown",
                                     "OVERLORD RAINDOWN",
@@ -650,13 +660,13 @@ public class Lilium extends AbstractMob implements BossMob {
                                                 player.getGame(),
                                                 player.getTeam(),
                                                 player.getLocation().clone().add(0, 0.25, 0),
-                                                4,
+                                                6,
                                                 new CircumferenceEffect(Particle.CHERRY_LEAVES, Particle.CHERRY_LEAVES).particlesPerCircumference(0.8),
                                                 new DoubleLineEffect(Particle.CHERRY_LEAVES)
                                         ).playEffects();
                                         if (ticksLeft % 2 == 0) {
                                             for (WarlordsEntity ally : PlayerFilter
-                                                    .entitiesAround(player, 4, 100, 4)
+                                                    .entitiesAround(player, 6, 100, 6)
                                                     .aliveTeammatesOfExcludingSelf(player)
                                                     .limit(4)
                                             ) {
@@ -683,7 +693,7 @@ public class Lilium extends AbstractMob implements BossMob {
                             ) {
                                 @Override
                                 public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                    return currentDamageValue * 0;
+                                    return currentDamageValue * 0.1f;
                                 }
                             });
                         });
@@ -730,6 +740,8 @@ public class Lilium extends AbstractMob implements BossMob {
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
+        warlordsNPC.getCooldownManager().removeCooldown(SoulShackle.class, false);
+
         EffectUtils.playCircularEffectAround(warlordsNPC.getGame(), warlordsNPC.getLocation(), Particle.CHERRY_LEAVES, 1, 1.3, 0.1, 1.7, 8, 1, 4, ticksElapsed);
         if (ticksElapsed % 20 == 0) {
             EffectUtils.playCrownAnimation(warlordsNPC.getLocation(), Particle.CHERRY_LEAVES);
@@ -742,7 +754,7 @@ public class Lilium extends AbstractMob implements BossMob {
             roseGardenAbility.cast();
         }
 
-        if (ticksElapsed % 320 == 0) {
+        if (ticksElapsed % 300 == 0) {
             bouquetBarrageAbility.cast();
         }
 
@@ -760,19 +772,19 @@ public class Lilium extends AbstractMob implements BossMob {
                                 .damage()
                                 .cause("Echo of Cuts")
                                 .source(warlordsNPC)
-                                .min(1000)
-                                .max(1500)
+                                .min(2000)
+                                .max(2500)
                                 .flags(InstanceFlags.TRUE_DAMAGE));
                     });
         }
 
         if (ticksElapsed % 900 == 0 && ticksElapsed > 0 && !preventDashing) {
             for (int i = 0; i < option.playerCount(); i++) {
-                option.spawnNewMob(new CrystallinePetal(warlordsNPC.getLocation()));
+                option.spawnNewMob(new CrystallinePetal(option.getRandomSpawnLocation(warlordsNPC)));
             }
         }
 
-        if (ticksElapsed % 400 == 0 && ticksElapsed > 0 && !preventDashing) {
+        if (ticksElapsed % 320 == 0 && ticksElapsed > 0 && !preventDashing) {
             new GameRunnable(warlordsNPC.getGame()) {
                 int t = 0;
                 @Override
@@ -929,8 +941,8 @@ public class Lilium extends AbstractMob implements BossMob {
                     enemy.addInstance(InstanceBuilder.damage()
                             .cause("Sequence Fail")
                             .source(warlordsNPC)
-                            .min(3500)
-                            .max(4000)
+                            .min(4000)
+                            .max(4500)
                             .flags(InstanceFlags.TRUE_DAMAGE)
                     );
 
@@ -940,8 +952,8 @@ public class Lilium extends AbstractMob implements BossMob {
                             enemy.addInstance(InstanceBuilder.damage()
                                     .cause("Conduit Curse")
                                     .source(warlordsNPC)
-                                    .min(200)
-                                    .max(300)
+                                    .min(250)
+                                    .max(350)
                                     .flags(InstanceFlags.TRUE_DAMAGE)
                             );
                             if (enemy.getLocation().getY() < 45 || conduitsFive.failed() || conduitsFive.isCompleted()) {
@@ -962,6 +974,24 @@ public class Lilium extends AbstractMob implements BossMob {
 
     private void triggerNextSequence(CrystalConduitsAbility ability) {
         platformsController.triggerNextDrop(warlordsNPC.getGame());
+
+        // check for players that fell off
+        WarlordsEntity targetAtPlatform = PlayerFilter
+                .playingGame(warlordsNPC.getGame())
+                .filter(p -> p.getLocation().getY() > 45)
+                .excludingAlliedMobs()
+                .findAnyOrNull();
+
+        if (targetAtPlatform != null) {
+            PlayerFilter.playingGame(warlordsNPC.getGame())
+                    .aliveEnemiesOf(warlordsNPC)
+                    .filter(p -> p.getLocation().getY() < 45)
+                    .excludingAlliedMobs()
+                    .forEach(p -> {
+                        p.teleport(targetAtPlatform.getLocation());
+                    });
+        }
+
         new GameRunnable(warlordsNPC.getGame()) {
             @Override
             public void run() {

@@ -22,15 +22,12 @@ import java.util.List;
 
 public class SovereignGuardian extends AbstractMob implements ChampionMob {
 
-    private Listener listener;
-    private List<WarlordsEntity> summons = new ArrayList<>();
-
     public SovereignGuardian(Location spawnLocation) {
         super(
                 spawnLocation,
                 "Sovereign Guardian",
-                13000,
-                0.15f,
+                11000,
+                0.6f,
                 20,
                 500,
                 1000
@@ -58,43 +55,13 @@ public class SovereignGuardian extends AbstractMob implements ChampionMob {
     }
 
     @Override
-    public void onSpawn(PveOption option) {
-        super.onSpawn(option);
-
-        listener = new Listener() {
-            @EventHandler(ignoreCancelled = true)
-            private void onAllyDeath(WarlordsDeathEvent event) {
-                if (summons.isEmpty()) return;
-                summons.removeIf(p -> p.equals(event.getWarlordsEntity()));
-            }
-        };
-
-        warlordsNPC.getGame().registerEvents(listener);
-    }
-
-    @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-        if (ticksElapsed % 300 == 0) {
-            if (summons.size() < 4) {
-                AbstractMob mob = new AncientDynasty(warlordsNPC.getLocation());
-                option.spawnNewMob(mob);
-                summons.add(mob.getWarlordsNPC());
-            }
-        }
 
-        if (ticksElapsed % 20 == 0) {
-            summons.forEach(entity -> EffectUtils.playParticleLinkAnimation(
-                    warlordsNPC.getLocation(),
-                    entity.getLocation(),
-                    Particle.FIREWORK
-            ));
-        }
     }
 
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         super.onDeath(killer, deathLocation, option);
-        summons.clear();
     }
 
     @Override
