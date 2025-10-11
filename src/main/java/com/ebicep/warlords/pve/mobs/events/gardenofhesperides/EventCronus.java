@@ -101,6 +101,7 @@ public class EventCronus extends AbstractMob implements BossMob, LesserGod {
         if (!healthCheck && self.getCurrentHealth() / self.getMaxHealth() < 0.30) {
             healthCheck = true;
             GroundSlamBerserker groundSlamBerserker = new GroundSlamBerserker();
+            groundSlamBerserker.init(AbstractAbilityBuilder.create("groundSlamBerserker"));
             groundSlamBerserker.getHitBoxRadius().setBaseValue(10);
             groundSlamBerserker.getEnergyCost().setBaseValue(0);
             new GameRunnable(self.getGame()) {

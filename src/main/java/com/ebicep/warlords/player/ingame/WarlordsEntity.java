@@ -327,7 +327,9 @@ public abstract class WarlordsEntity {
             runnable.run();
         }
 
-        getLocation(this.deathLocation);
+        if (this.entity != null) {
+            getLocation(this.deathLocation);
+        }
 
         showDeathAnimation();
 
@@ -387,7 +389,10 @@ public abstract class WarlordsEntity {
 
     @Nonnull
     public Location getLocation(@Nonnull Location copyInto) {
-        return this.entity.getLocation(copyInto);
+        if (this.entity != null) {
+            return this.entity.getLocation(copyInto);
+        }
+        return copyInto;
     }
 
     public void showDeathAnimation() {
@@ -441,7 +446,9 @@ public abstract class WarlordsEntity {
     }
 
     public void sendMessage(Component component) {
-        sendMessage(component, false);
+        if (this.entity != null) {
+            sendMessage(component, false);
+        }
     }
 
     public Component getColoredName() {
@@ -464,6 +471,9 @@ public abstract class WarlordsEntity {
     }
 
     public void sendMessage(Component component, boolean isDamageHealMessage) {
+        if (this.entity == null) {
+            return;
+        }
         if (isDamageHealMessage && !showDebugMessage) {
             this.entity.sendMessage(component.hoverEvent(null));
         } else {

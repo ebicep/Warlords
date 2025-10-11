@@ -253,10 +253,6 @@ public class Narmer extends AbstractMob implements BossMob {
                     spawnNarmerAcolyteAbility.setCurrentCooldown(spawnNarmerAcolyteAbility.getCooldownValue());
                     selfAcolytes.remove(dead);
                 }
-
-                if (playerCount >= 3) {
-                    pveOption.spawnNewMob(new NarmersDeathCharge(dead.getLocation()));
-                }
             }
         };
         warlordsNPC.getGame().registerEvents(listener);

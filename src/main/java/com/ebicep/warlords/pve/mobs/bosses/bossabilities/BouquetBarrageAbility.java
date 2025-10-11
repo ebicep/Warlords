@@ -17,47 +17,30 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Lilium, Queen of Hearts — Bouquet Barrage
- *
- * Boss tosses several “bouquets” toward chosen enemies; the bouquets “root” at impact,
- * telegraph with a pink ring for a short delay, then “bloom” in a damaging AoE and
- * optionally apply a slow (thorn flavor).
- *
- * All tuning knobs are provided via the constructor, following your CrystalConduitsAbility style.
- */
 public class BouquetBarrageAbility {
 
-    // ---- Required context ----
     private final WarlordsNPC source;
-
-    // ---- Tuning knobs (constructor-initialized) ----
     private final int bouquetsPerCast;     // number of bouquets per cast
     private final double maxRange;         // max range to pick initial targets from source
     private final int telegraphTicks;      // delay before bloom (ticks)
     private final double bloomRadius;      // AoE radius at impact
     private final float damageMin;         // damage min
     private final float damageMax;         // damage max
-    private final boolean applySlow;       // apply slow (thorn) on hit
-    private final int slowTicks;           // slow duration (ticks)
-    private final int slowAmplifier;       // slow amplifier (if you wire to your own system)
+    private final boolean applySlow;
+    private final int slowTicks;
+    private final int slowAmplifier;
 
-    // ---- Visuals / SFX ----
-    private final Particle trailParticle = Particle.SPORE_BLOSSOM_AIR;
-    private final DustOptions telegraphDust = new DustOptions(Color.fromRGB(255, 105, 180), 1.1f); // hot pink
+    private final Particle trailParticle = Particle.CHERRY_LEAVES;
+    private final DustOptions telegraphDust = new DustOptions(Color.fromRGB(255, 105, 180), 2f); // hot pink
     private final Particle bloomParticleA = Particle.HEART;
     private final Particle bloomParticleB = Particle.BLOCK_CRUMBLE;
     private final BlockData bloomBlock = Material.PINK_CONCRETE.createBlockData();
     private final Sound tossSfx = Sound.ENTITY_ENDER_PEARL_THROW;
     private final Sound plantSfx = Sound.BLOCK_AZALEA_PLACE;
-    private final Sound bloomSfx = Sound.ENTITY_GENERIC_EXPLODE;
+    private final Sound bloomSfx = Sound.BLOCK_BEACON_DEACTIVATE;
 
-    // ---- Toss arc visuals ----
     private final double tossArcMaxY = 1.25; // simple vertical arc height for the particle trail
 
-    /**
-     * Constructor-only configuration, in the same spirit as CrystalConduitsAbility.
-     */
     public BouquetBarrageAbility(
             @Nonnull WarlordsNPC source,
             int bouquetsPerCast,
@@ -82,16 +65,11 @@ public class BouquetBarrageAbility {
         this.slowAmplifier = Math.max(0, slowAmplifier);
     }
 
-    /**
-     * Executes one cast of Bouquet Barrage using the configured parameters.
-     */
     public void cast() {
-        // 1) Choose up to N enemy players in range, closest-first
         List<WarlordsEntity> targets = PlayerFilter
                 .entitiesAround(source, maxRange, maxRange, maxRange)
                 .aliveEnemiesOf(source)
                 .closestFirst(source)
-                .filter(wp -> wp.getLocation().distanceSquared(source.getLocation()) <= maxRange * maxRange)
                 .limit(bouquetsPerCast)
                 .toList();
 
@@ -99,17 +77,14 @@ public class BouquetBarrageAbility {
             return;
         }
 
-        // 2) Compute “impact” locations (ground snapped) for each target
         List<Impact> impacts = new ArrayList<>(targets.size());
         for (WarlordsEntity t : targets) {
             Location impact = groundSnap(t.getLocation().clone());
             impacts.add(new Impact(impact));
         }
 
-        // Toss SFX
-        source.getLocation().getWorld().playSound(source.getLocation(), tossSfx, 2, 1.2f);
+        source.getLocation().getWorld().playSound(source.getLocation(), tossSfx, 2, 0.5f);
 
-        // 3) Telegraph phase with trail + ring, then bloom
         new GameRunnable(source.getGame()) {
             int tick = 0;
 
@@ -126,7 +101,7 @@ public class BouquetBarrageAbility {
                                 (impact.loc.getY() - src.getY()) + Math.sin(progress * Math.PI) * tossArcMaxY,
                                 (impact.loc.getZ() - src.getZ()) * progress
                         );
-                        src.getWorld().spawnParticle(trailParticle, mid, 2, 0.1, 0.1, 0.1, 0.0);
+                        src.getWorld().spawnParticle(trailParticle, mid, 3, 0.05, 0.05, 0.05, 0.0);
 
                         // telegraph ring at impact (pink dust)
                         drawRingDust(impact.loc, bloomRadius, 20, telegraphDust);
@@ -145,11 +120,10 @@ public class BouquetBarrageAbility {
 
                 for (Impact impact : impacts) {
                     // SFX + particles
-                    impact.loc.getWorld().playSound(impact.loc, bloomSfx, 2, 1.0f);
+                    impact.loc.getWorld().playSound(impact.loc, bloomSfx, 2, 0.5f);
                     impact.loc.getWorld().spawnParticle(bloomParticleA, impact.loc, 20, 0.4, 0.15, 0.4, 0.0);
                     impact.loc.getWorld().spawnParticle(bloomParticleB, impact.loc, 30, 0.6, 0.3, 0.6, 0.05, bloomBlock);
 
-                    // AoE: use your PlayerFilter.entitiesAround(Location, x, y, z)
                     PlayerFilter.entitiesAround(impact.loc, bloomRadius, 3, bloomRadius)
                             .aliveEnemiesOf(source)
                             .forEach(wp -> {
@@ -162,7 +136,6 @@ public class BouquetBarrageAbility {
                                 );
 
                                 if (applySlow) {
-                                    // If you use amplifier elsewhere, wire it into your slow system as needed.
                                     wp.addSpeedModifier(source, "Bouquet Thorns", -30, slowTicks);
                                 }
                             });
@@ -173,10 +146,7 @@ public class BouquetBarrageAbility {
         }.runTaskTimer(0, 1);
     }
 
-    // --- helpers ---
-
     private static Location groundSnap(Location loc) {
-        // Snap to nearest solid block below (up to 16 blocks) to place rings nicely
         Location scan = loc.clone();
         for (int i = 0; i < 16; i++) {
             if (scan.getBlock().getType().isSolid()) {
@@ -198,7 +168,7 @@ public class BouquetBarrageAbility {
         }
     }
 
-    // Simple holder for impact locations
+    // holder for impact locations
     private static class Impact {
         final Location loc;
         Impact(Location loc) {

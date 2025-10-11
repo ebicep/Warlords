@@ -146,7 +146,7 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
                 List<WarlordsEntity> healedPlayers = PlayerFilter.entitiesAround(attacker, 6, 6, 6)
                                                                  .aliveTeammatesOfExcludingSelf(attacker)
                                                                  .limit(maxAllies)
-                                                                 .filter(we -> !(we instanceof WarlordsNPC npcTarget && npcTarget.getMob() instanceof NoTargetAbilities))
+                                                                 .excludingAlliedMobs()
                                                                  .toList();
                 attacker.addInstance(InstanceBuilder
                         .healing()

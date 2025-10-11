@@ -29,7 +29,7 @@ public interface WaveDefenseStatsWarlordsClasses extends PvEStatsWarlordsClasses
 
     @Override
     default long getFastestGameFinished() {
-        return getStat(WaveDefenseStats::getFastestGameFinished, Math::min, Long.MAX_VALUE);
+        return getStat(WaveDefenseStats::getFastestGameFinished, (a, b) -> a == 0 ? b : b == 0 ? a : Math.min(a, b), Long.MAX_VALUE);
     }
 
 }

@@ -6,6 +6,7 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCounter;
@@ -108,7 +109,7 @@ public class LegendaryFervent extends AbstractLegendaryWeapon implements Passive
                     return;
                 }
                 if (player.getCooldownManager().hasCooldownFromName("Fervent Ability")) {
-                    if (!event.getCause().contains("Strike")) {
+                    if (!event.getCause().contains("Strike") || event.getFlags().contains(InstanceFlags.IGNORE_FERVENT_TITLE)) {
                         return;
                     }
                     float strikeDamageBoost = 1 + (ABILITY_STRIKE_DAMAGE_BOOST + ABILITY_STRIKE_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel()) / 100f;

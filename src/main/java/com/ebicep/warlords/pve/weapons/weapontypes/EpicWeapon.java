@@ -105,14 +105,14 @@ public class EpicWeapon extends AbstractTierTwoWeapon implements Salvageable, We
     @Override
     public void upgrade() {
         this.upgradeLevel++;
-        this.meleeDamage *= meleeDamage < 0 ? getUpgradeMultiplierNegative() : getUpgradeMultiplier();
-        this.healthBonus *= healthBonus < 0 ? getUpgradeMultiplierNegative() : getUpgradeMultiplier();
-        this.speedBonus *= speedBonus < 0 ? getUpgradeMultiplierNegative() : getUpgradeMultiplier();
+        this.meleeDamage *= meleeDamage < 0 ? getUpgradeMultiplierNegative() : getEpicUpgradeMultiplier();
+        this.healthBonus *= healthBonus < 0 ? getUpgradeMultiplierNegative() : getEpicUpgradeMultiplier();
+        this.speedBonus *= speedBonus < 0 ? getUpgradeMultiplierNegative() : getEpicUpgradeMultiplier();
     }
 
     @Override
     public List<Component> getUpgradeLore() {
-        float upgradedMeleeDamage = meleeDamage * (meleeDamage < 0 ? getUpgradeMultiplierNegative() : getUpgradeMultiplier());
+        float upgradedMeleeDamage = meleeDamage * (meleeDamage < 0 ? getUpgradeMultiplierNegative() : getEpicUpgradeMultiplier());
         return Arrays.asList(
                 Component.text("Damage: ", NamedTextColor.GRAY)
                          .append(Component.text(formatOptionalTenths(meleeDamage), NamedTextColor.RED))
@@ -135,13 +135,13 @@ public class EpicWeapon extends AbstractTierTwoWeapon implements Salvageable, We
                          .append(Component.text(format(healthBonus), NamedTextColor.GREEN))
                          .append(GREEN_ARROW)
                          .append(Component.text(format(healthBonus * (healthBonus > 0 ?
-                                                                      getUpgradeMultiplier() :
+                                 getEpicUpgradeMultiplier() :
                                                                       getUpgradeMultiplierNegative())), NamedTextColor.GREEN)),
                 Component.text("Speed: ", NamedTextColor.GRAY)
                          .append(Component.text(format(speedBonus) + "%", NamedTextColor.GREEN))
                          .append(GREEN_ARROW)
                          .append(Component.text(format(speedBonus * (speedBonus > 0 ?
-                                                                     getUpgradeMultiplier() :
+                                 getEpicUpgradeMultiplier() :
                                                                      getUpgradeMultiplierNegative())) + "%", NamedTextColor.GREEN))
         );
     }

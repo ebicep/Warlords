@@ -6,6 +6,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.PlayerLeaderboardInfo;
 import com.ebicep.warlords.database.leaderboards.events.EventsLeaderboardManager;
+import com.ebicep.warlords.database.leaderboards.guilds.GuildLeaderboardManager;
 import com.ebicep.warlords.database.leaderboards.stats.sections.AbstractStatsLeaderboardGameType;
 import com.ebicep.warlords.database.leaderboards.stats.sections.StatsLeaderboardCategory;
 import com.ebicep.warlords.database.leaderboards.stats.sections.leaderboardgametypes.*;
@@ -231,7 +232,6 @@ public class StatsLeaderboardManager {
                                     });
         }
 
-
         CustomScoreboard.getPlayerScoreboard(player).giveMainLobbyScoreboard();
     }
 
@@ -251,6 +251,8 @@ public class StatsLeaderboardManager {
                 PlayerLeaderboardInfo::getPageRange,
                 (player, playerLeaderboardInfo, integer) -> {
                     playerLeaderboardInfo.setPage(integer);
+                    EventsLeaderboardManager.resetVisibility(player);
+                    GuildLeaderboardManager.resetVisibility(player);
                 }
         );
 

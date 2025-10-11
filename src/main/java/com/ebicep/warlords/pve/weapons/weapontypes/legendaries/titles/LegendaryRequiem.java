@@ -49,8 +49,8 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
             .add(1, 6)
             .add(1, 7);
     public static final HashMap<DifficultyIndex, Mob> DIFFICULTY_SPAWNS = new HashMap<>() {{
-        put(DifficultyIndex.EASY, Mob.REQIUEM_GUARDIAN);
-        put(DifficultyIndex.NORMAL, Mob.REQIUEM_GUARDIAN);
+        put(DifficultyIndex.EASY, Mob.ZOMBIE_LAMENT);
+        put(DifficultyIndex.NORMAL, Mob.ZOMBIE_LAMENT);
         put(DifficultyIndex.HARD, Mob.REQIUEM_GUARDIAN);
         put(DifficultyIndex.EXTREME, Mob.REQIUEM_GUARDIAN);
         put(DifficultyIndex.ENDLESS, Mob.REQIUEM_GUARDIAN);
@@ -167,6 +167,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
                         allSpawnedMobs.forEach(mob -> {
                             if (pveOption.getMobs().contains(mob)) {
                                 mob.getWarlordsNPC().die(mob.getWarlordsNPC(), WarlordsDeathEvent.DeathInfoBuilder.create().setForced(true));
+                                pveOption.despawnMob(mob);
                             }
                         });
                         allSpawnedMobs.clear();
@@ -204,6 +205,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
                         spawnedMobs.forEach(mob -> {
                             if (pveOption.getMobs().contains(mob)) {
                                 mob.getWarlordsNPC().die(mob.getWarlordsNPC(), WarlordsDeathEvent.DeathInfoBuilder.create().setForced(true));
+                                pveOption.despawnMob(mob);
                             }
                         });
                         spawnedMobs.clear();

@@ -22,7 +22,7 @@ public class RefinedI extends AbstractBounty implements TracksOutsideGame, Lifet
         if (!(event.getWeapon() instanceof AbstractLegendaryWeapon weapon)) {
             return;
         }
-        if (weapon.getUpgradeLevel() == 4) {
+        if (weapon.getUpgradeLevel() >= 4) {
             value++;
         }
     }

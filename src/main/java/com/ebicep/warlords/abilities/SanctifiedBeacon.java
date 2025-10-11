@@ -25,6 +25,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Boss;
 import org.bukkit.inventory.ItemStack;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -149,11 +150,16 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
                     nearBy.getCooldownManager().addCooldown(shadowGardenCooldown);
                 } else {
                     nearBy.getCooldownManager().removeCooldownByObject(beacon);
-                    nearBy.getCooldownManager().addCooldown(new RegularCooldown<>(name, null, SanctifiedBeaconData.class, beacon, wp, CooldownTypes.ABILITY, cooldownManager -> {
-                    }, // a little longer to make sure there's no gaps in the effect
-                            6
+                    nearBy.getCooldownManager().addCooldown(new RegularCooldown<>(
+                            name,
+                            null,
+                            SanctifiedBeaconData.class,
+                            beacon,
+                            wp,
+                            CooldownTypes.ABILITY,
+                            cooldownManager -> {},
+                            6 // a little longer to make sure there's no gaps in the effect
                     ) {
-
                         @Override
                         public float setCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
                             return currentCritMultiplier * convertToDivisionDecimal(critMultiplierReducedBy);
@@ -182,35 +188,36 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
                         }
                     });
                     if (pveMasterUpgrade2) {
+                        if (nearBy instanceof WarlordsNPC npc && npc.getMob() instanceof BossLike) {
+                            return;
+                        }
                         nearBy.getSpeed().removeModifier(name);
                         nearBy.addSpeedModifier(wp, name, -30, 9999);
-                        if (!(nearBy instanceof WarlordsNPC npc && npc instanceof BossLike)) {
-                            nearBy.getCooldownManager().removeCooldownByName("Shadow Garden");
-                            nearBy.getCooldownManager()
-                                    .addCooldown(new PermanentCooldown<>(
-                                            "Shadow Garden",
-                                            "GARDEN",
-                                            SanctifiedBeacon.class,
-                                            null,
-                                            wp,
-                                            CooldownTypes.ABILITY,
-                                            cooldownManager -> {}
-                                            , false
-                                    ) {
-                                        @Override
-                                        public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                            return currentDamageValue * 0.7f;
-                                        }
-                                    });
-                        }
+                        nearBy.getCooldownManager().removeCooldownByName("Shadow Garden");
+                        nearBy.getCooldownManager()
+                                .addCooldown(new PermanentCooldown<>(
+                                        "Shadow Garden",
+                                        "GARDEN",
+                                        SanctifiedBeacon.class,
+                                        null,
+                                        wp,
+                                        CooldownTypes.ABILITY,
+                                        cooldownManager -> {},
+                                        false
+                                ) {
+                                    @Override
+                                    public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                                        return currentDamageValue * 0.7f;
+                                    }
+                                });
                     }
                 }
             }
         }
         ArmorStand crystal = beacon.getCrystal();
         Location orbitLocation = crystal.getLocation().clone().add(0, -4, 0);
-        chasingItemDamage = new ChasingOrbsAbility(wp, Math.min(3, wp.getGame().playersCount()), 40, 0.6, 3, 1000, 1.5, Material.AMETHYST_SHARD, 1.5f, false, orbitLocation);
-        chasingItemHealing = new ChasingOrbsAbility(wp, 3, 40, 0.6, 3, 1000, 0, Material.LIME_STAINED_GLASS, 1.2f, true, orbitLocation);
+        chasingItemDamage = new ChasingOrbsAbility(wp, Math.min(3, wp.getGame().playersCount()), 40, 0.6, 3, 1000, 1.5, Material.AMETHYST_SHARD, 0.7f, false, orbitLocation);
+        chasingItemHealing = new ChasingOrbsAbility(wp, 3, 40, 0.6, 3, 1000, 0, Material.LIME_STAINED_GLASS, 0.7f, true, orbitLocation);
         int yawIncrease = ticksElapsed % hexIntervalTicks == 0 ? 120 : 10;
         if (ticksElapsed % 2 == 0) {
             Location crystalLocation = crystal.getLocation();
@@ -233,13 +240,11 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
             EffectUtils.playCircularEffectAround(wp.getGame(), crystal.getLocation(), Particle.TOTEM_OF_UNDYING, 3, 1, 0.15, 4, 1, 4);
             EffectUtils.playCircularEffectAround(wp.getGame(), crystal.getLocation(), Particle.HAPPY_VILLAGER, 1, 1, 0.1, 8, 1, 3);
         }
-        if (pveMasterUpgrade) {
-            if (ticksElapsed > 0) {
-                if (ticksElapsed % 120 == 0) {
-                    chasingItemDamage.start(wp.getGame());
-                } else if (ticksElapsed % 150 == 0) {
-                    chasingItemHealing.start(wp.getGame());
-                }
+        if (ticksElapsed > 0 && pveMasterUpgrade) {
+            if (ticksElapsed % 120 == 0) {
+                chasingItemDamage.start(wp.getGame());
+            } else if (ticksElapsed % 150 == 0) {
+                chasingItemHealing.start(wp.getGame());
             }
         }
     }

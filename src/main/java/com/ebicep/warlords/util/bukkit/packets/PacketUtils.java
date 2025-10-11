@@ -13,10 +13,12 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.SanctifiedBeacon;
 import com.ebicep.warlords.commands.debugcommands.misc.MountCommand;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.packets.wrappers.WrapperPlayClientSteerVehicle;
 import com.ebicep.warlords.util.bukkit.packets.wrappers.WrapperPlayServerEntityEquipment;
+import com.ebicep.warlords.util.chat.ChatChannels;
 import net.minecraft.network.protocol.game.ClientboundAnimatePacket;
 import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
@@ -148,6 +150,27 @@ public class PacketUtils {
                     PacketContainer.fromPacket(new ClientboundAnimatePacket(swinger, ClientboundAnimatePacket.SWING_MAIN_HAND))
             );
         }
+    }
+
+    public static float pingCompensationAmount(WarlordsEntity wp) {
+        if (!ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "pingCompensationEnabled", boolean.class) || !(wp.getEntity() instanceof Player player)) {
+            return 0;
+        }
+        int ping = player.getPing();
+        int minPingStrikeRangeCompensation = ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "pingCompensationMin", int.class);
+        float pingStrikeRangeCompensationDivisor = ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "pingCompensationDivisor", int.class);
+        if (ping > minPingStrikeRangeCompensation) {
+            float increase = Math.max(0, ping / pingStrikeRangeCompensationDivisor);
+            if (ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "pingCompensationLog", boolean.class)) {
+                ChatChannels.sendDebugMessage(player, "Ping: " + player.getPing() +
+                        ", min: " + minPingStrikeRangeCompensation +
+                        ", comp: " + pingStrikeRangeCompensationDivisor +
+                        ", increase: " + increase
+                );
+            }
+            return increase;
+        }
+        return 0;
     }
 
 }

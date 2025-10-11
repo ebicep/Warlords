@@ -81,7 +81,7 @@ public class ChasingOrbsAbility {
                 targets = PlayerFilter
                         .playingGame(game)
                         .aliveTeammatesOf(caster)
-                        .filter(we -> !(we instanceof WarlordsNPC npcTarget && npcTarget.getMob() instanceof NoTargetAbilities))
+                        .excludingAlliedMobs()
                         .leastAliveFirst()
                         .toList();
             } else {

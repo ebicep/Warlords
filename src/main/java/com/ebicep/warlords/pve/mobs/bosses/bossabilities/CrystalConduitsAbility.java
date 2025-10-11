@@ -8,6 +8,7 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.SkyCrystal;
@@ -32,17 +33,16 @@ import java.util.function.Supplier;
  * Sky Phase - Crystal Conduits
  * Spawn N crystals at boss-Y. Boss announces a kill order via titles.
  * Players must kill crystals in the exact sequence. If any is killed out of order:
- *  - deal heavy damage to all enemies of the boss and end.
  * If all are killed in order: success VFX/SFX and end.
  */
 public class CrystalConduitsAbility {
 
-    private final WarlordsEntity source;                   // the boss
-    private final Supplier<Location> centerSupplier;    // () -> boss/arena center (provides Y)
-    private final int crystalCount;                     // usually 3
-    private final double radius;                        // distance from center to place crystals
-    private final double ringStep;                      // particle density for rings/links
-    private final double beaconYOffset;                 // extra y offset for ring drawing (small lift)
+    private final WarlordsEntity source;
+    private final Supplier<Location> centerSupplier; // boss/arena center (provides Y)
+    private final int crystalCount;
+    private final double radius;
+    private final double ringStep;
+    private final double beaconYOffset;
     private final double failDamage;
     private final PveOption option;
 
@@ -59,6 +59,7 @@ public class CrystalConduitsAbility {
     private boolean running = false;
     private Listener listener;
     private boolean completed;
+    private boolean failed;
 
     private boolean followBoss = false;      // off by default
     private double followLerp = 1.0;         // 1.0 = hard teleport; 0.15 = smooth follow
@@ -138,15 +139,28 @@ public class CrystalConduitsAbility {
                 Node expected = nodes.get(expectedNodeIndex);
 
                 if (!hit.equals(expected)) {
-                    // ❌ Wrong crystal -> fail
+                    // fail
                     failAll(center);
+                    failed = true;
+                    nodes.forEach(node -> {
+                        if (node.crystal.getWarlordsNPC().isDead()) {
+                            return;
+                        }
+                        node.crystal.getWarlordsNPC().addInstance(InstanceBuilder
+                                .damage()
+                                .cause("Conduit Massacre")
+                                .value(500000)
+                                .source(source)
+                                .flags(InstanceFlags.TRUE_DAMAGE)
+                        );
+                    });
                     stop();
                 } else {
-                    // ✅ Correct
+                    // correct
                     hit.markDead();
                     expectIndex++;
 
-                    // Small OK cue at that crystal
+                    // Small cue at that crystal
                     World ww = hit.loc.getWorld();
                     if (ww != null) {
                         ww.spawnParticle(Particle.TOTEM_OF_UNDYING, hit.loc, 10, 0.4, 0.4, 0.4, 0.02);
@@ -262,7 +276,7 @@ public class CrystalConduitsAbility {
                 source.getGame(),
                 Component.text("CRYSTAL ORDER", NamedTextColor.RED),
                 Component.text(sb.toString()),
-                20, 80, 20
+                20, 120, 20
         );
         Utils.playGlobalSound(centerSupplier.get(), Sound.ENTITY_ELDER_GUARDIAN_CURSE, 500, 0.5f);
     }
@@ -273,6 +287,8 @@ public class CrystalConduitsAbility {
             case 0 -> "A";
             case 1 -> "B";
             case 2 -> "C";
+            case 3 -> "D";
+            case 4 -> "E";
             default -> "#" + (idx + 1);
         };
     }
@@ -298,7 +314,12 @@ public class CrystalConduitsAbility {
     private void failAll(Location center) {
         World w = center.getWorld();
         Utils.playGlobalSound(center, Sound.ENTITY_WARDEN_AGITATED, 500, 0.5f);
-
+        ChatUtils.sendTitleToGamePlayers(
+                source.getGame(),
+                Component.empty(),
+                Component.text("SEQUENCE FAILED", NamedTextColor.RED),
+                20, 30, 20
+        );
         for (WarlordsEntity enemy : PlayerFilter
                 .entitiesAround(center, radius + 32, 16, radius + 32)
                 .aliveEnemiesOf(source)
@@ -351,6 +372,10 @@ public class CrystalConduitsAbility {
 
     public boolean isCompleted() {
         return completed;
+    }
+
+    public boolean failed() {
+        return failed;
     }
 
     /* ---------------- Data ---------------- */

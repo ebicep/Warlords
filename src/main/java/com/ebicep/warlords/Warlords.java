@@ -515,11 +515,13 @@ public class Warlords extends JavaPlugin {
                             continue;
                         }
                         Entity player = we.getEntity();
-                        List<Location> locations = we.getLocations();
-                        if (we.isDead() && !locations.isEmpty()) {
-                            locations.add(locations.get(locations.size() - 1));
-                        } else {
-                            locations.add(player.getLocation());
+                        if (player != null) { //returned null in bugs - ignore IDE
+                            List<Location> locations = we.getLocations();
+                            if (we.isDead() && !locations.isEmpty()) {
+                                locations.add(locations.get(locations.size() - 1));
+                            } else {
+                                locations.add(player.getLocation());
+                            }
                         }
                     }
                 }

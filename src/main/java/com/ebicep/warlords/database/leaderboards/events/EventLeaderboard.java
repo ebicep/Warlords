@@ -120,7 +120,7 @@ public class EventLeaderboard {
                 p -> {
                     PlayerLeaderboardInfo playerInfo = StatsLeaderboardManager.getPlayerInfo(p);
                     int page = playerInfo.getPage();
-                    return pageHologramData.get(page);
+                    return pageHologramData.get(Math.min(pageHologramData.size() - 1, page));
                 }
         ).setVisibility(VisibilityType.ALL).build();
         List<DatabasePlayer> databasePlayers = getSortedPlayers();
@@ -150,17 +150,19 @@ public class EventLeaderboard {
                                 .text(stringFunction.apply(databasePlayer, eventTime))
                                 .build()
                         )
-                                .setBillboard(Display.Billboard.FIXED)
+                                .setBillboard(Display.Billboard.VERTICAL)
                                 .build();
                     }
                     return StatsLeaderboard.LOADING;
                 }
-        ).build();
-        HologramManager.addHologram(board);
-        HologramManager.addHologram(playerPosition);
+        ).setVisibility(VisibilityType.ALL).build();
         getSortedHolograms().stream().flatMap(Collection::stream).forEach(Hologram::deleteHologram);
         getSortedHolograms().clear();
         getSortedHolograms().add(holograms);
+        holograms.add(board);
+        holograms.add(playerPosition);
+        HologramManager.addHologram(board);
+        HologramManager.addHologram(playerPosition);
     }
 
     public HologramDataText getPageHologramData(int page, String subTitle) {

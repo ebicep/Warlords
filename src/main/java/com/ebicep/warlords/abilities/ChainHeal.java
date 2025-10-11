@@ -16,6 +16,7 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.earthwarden.ChainHealBranch;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
+import com.ebicep.warlords.util.bukkit.packets.PacketUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -46,10 +47,11 @@ public class ChainHeal extends AbstractChain<ChainHeal, ChainHeal.ChainHealStats
     @Override
     protected Set<WarlordsEntity> getEntitiesHitAndActivate(WarlordsEntity wp) {
         Set<WarlordsEntity> hitCounter = new HashSet<>();
+        float rad = radius + PacketUtils.pingCompensationAmount(wp);
         for (WarlordsEntity chainTarget : PlayerFilter
-                .entitiesAround(wp, radius, radius, radius)
+                .entitiesAround(wp, rad, rad, rad)
                 .aliveTeammatesOfExcludingSelf(wp)
-                .filter(we -> !(we instanceof WarlordsNPC npcTarget && npcTarget.getMob() instanceof NoTargetAbilities))
+                .excludingAlliedMobs()
                 .lookingAtFirst(wp)
         ) {
             if (!LocationUtils.isLookingAtChain(wp, chainTarget)) {

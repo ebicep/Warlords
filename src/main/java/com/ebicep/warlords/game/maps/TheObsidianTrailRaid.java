@@ -11,7 +11,7 @@ import com.ebicep.warlords.game.option.SpawnpointOption;
 import com.ebicep.warlords.game.option.cuboid.BoundingBoxOption;
 import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
-import com.ebicep.warlords.game.option.raid.RaidOption;
+import com.ebicep.warlords.game.option.pve.raid.RaidOption;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 
 import java.util.EnumSet;

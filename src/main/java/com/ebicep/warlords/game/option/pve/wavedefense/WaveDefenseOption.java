@@ -48,6 +48,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.util.Ticks;
@@ -341,7 +342,12 @@ public class WaveDefenseOption implements PveOption {
     protected Pair<Float, Component> getWaveOpening() {
         float soundPitch = 0.8f;
         Component wavePrefix = Component.text("Wave " + waveCounter, NamedTextColor.YELLOW);
-        if (waveCounter >= 101) {
+        if (waveCounter >= 111) {
+            soundPitch = 0.1f;
+            wavePrefix = Component.text("W", TextColor.color(255, 135, 180))
+                    .append(Component.text("a").decorate(TextDecoration.BOLD, TextDecoration.OBFUSCATED))
+                    .append(Component.text("ve " + waveCounter).decorate(TextDecoration.BOLD));
+        } else if (waveCounter >= 101) {
             soundPitch = 0.1f;
             wavePrefix = Component.text("W", NamedTextColor.WHITE)
                     .append(Component.text("a").decorate(TextDecoration.BOLD, TextDecoration.OBFUSCATED))
@@ -486,18 +492,19 @@ public class WaveDefenseOption implements PveOption {
     protected void modifyStats(WarlordsNPC warlordsNPC) {
         warlordsNPC.getMob().onSpawn(WaveDefenseOption.this);
 
+        int playerCount = playerCount();
         boolean isEndless = difficulty == DifficultyIndex.ENDLESS;
+        boolean isNotSolo = playerCount > 1;
         /*
          * Base scale of 600
          *
          * The higher the scale is the longer it takes to increase per interval.
          */
         double scale = isEndless ? 1200.0 : 600.0;
-        int playerCount = playerCount();
         // Flag check whether mob is a boss.
-        boolean bossFlagCheck = playerCount > 1 && warlordsNPC.getMob() instanceof BossLike;
+        boolean bossFlagCheck = isNotSolo && warlordsNPC.getMob() instanceof BossLike;
         // Reduce base scale by 75/100 for each player after 2 or more players in game instance.
-        double modifiedScale = scale - (playerCount > 1 ? (isEndless ? 100 : 75) * playerCount : 0);
+        double modifiedScale = scale - (isNotSolo ? (isEndless ? 100 : 75) * Math.min(6, playerCount) : 0);
         // Divide scale based on wave count.
         double modifier = waveCounter / modifiedScale + 1;
         // Multiply health & min/max melee damage by waveCounter + 1 ^ base damage.
@@ -584,7 +591,7 @@ public class WaveDefenseOption implements PveOption {
                                 wp.getAbilityTree().setMaxMasterUpgrades(wp.getAbilityTree().getMaxMasterUpgrades() + 1);
                                 wp.sendMessage(Component.text("+1 Master Upgrade", NamedTextColor.RED, TextDecoration.BOLD));
                             });
-                            case 101, 111 -> game.warlordsPlayers().forEach(wp -> {
+                            case 101, 111, 121 -> game.warlordsPlayers().forEach(wp -> {
                                 wp.playSound(wp.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 0.1f);
                                 addRewardToPlayerPouch(
                                         wp.getUuid(),

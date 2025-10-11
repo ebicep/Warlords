@@ -84,7 +84,7 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
                 WarlordsEntity warlordsEntity = event.getWarlordsEntity();
                 stats.targetsStruckDuringWrath++;
                 data.targetsStruckDuringWrath++;
-                EnumSet<InstanceFlags> flags = EnumSet.of(InstanceFlags.AVENGER_WRATH_STRIKE);
+                EnumSet<InstanceFlags> flags = EnumSet.of(InstanceFlags.AVENGER_WRATH_STRIKE, InstanceFlags.IGNORE_FERVENT_TITLE);
                 if (event.getFlags().contains(InstanceFlags.STRIKE_IN_CONS)) {
                     flags.add(InstanceFlags.STRIKE_IN_CONS);
                 }

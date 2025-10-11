@@ -3,6 +3,7 @@ package com.ebicep.warlords.database.leaderboards.guilds;
 import com.ebicep.holograms.Hologram;
 import com.ebicep.holograms.HologramDataText;
 import com.ebicep.holograms.HologramManager;
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.leaderboards.PlayerLeaderboardInfo;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
@@ -16,8 +17,10 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Display;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -85,6 +88,15 @@ public class GuildLeaderboardManager {
         ).build();
         HologramManager.addHologram(board);
         EVENT_LEADERBOARDS.add(board);
+        Bukkit.getOnlinePlayers().forEach(GuildLeaderboardManager::resetVisibility);
+    }
+
+    public static void resetVisibility(Player player) {
+        if (!Warlords.hologramsEnabled) {
+            return;
+        }
+        StatsLeaderboardManager.validatePlayerHolograms(player);
+        EVENT_LEADERBOARDS.forEach(hologram -> HologramManager.updateHologram(player, hologram));
     }
 
     private static HologramDataText getPagedHologramData(GameEvents event, List<Guild> sortedGuilds, int page) {

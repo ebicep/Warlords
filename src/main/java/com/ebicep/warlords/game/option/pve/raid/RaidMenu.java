@@ -1,4 +1,4 @@
-package com.ebicep.warlords.game.option.raid;
+package com.ebicep.warlords.game.option.pve.raid;
 
 import com.ebicep.warlords.commands.debugcommands.game.GameStartCommand;
 import com.ebicep.warlords.game.GameAddon;

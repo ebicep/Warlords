@@ -13,6 +13,7 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.springframework.data.annotation.Transient;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -140,10 +141,16 @@ public class LegendaryGradient extends AbstractLegendaryWeapon implements Passiv
 
     @Override
     public List<Pair<Component, Component>> getPassiveEffectUpgrade() {
-        return Collections.singletonList(new Pair<>(
-                formatTitleUpgrade(HEALTH_THRESHOLD - HEALTH_THRESHOLD_UPGRADE * getTitleLevel(), "%"),
-                formatTitleUpgrade((REGEN_PER_INTERVAL - REGEN_PER_INTERVAL_UPGRADE * getTitleLevelUpgraded()), "%")
-        ));
+        return Arrays.asList(
+                new Pair<>(
+                        formatTitleUpgrade(HEALTH_THRESHOLD + HEALTH_THRESHOLD_UPGRADE * getTitleLevel(), "%"),
+                        formatTitleUpgrade(HEALTH_THRESHOLD + HEALTH_THRESHOLD_UPGRADE * getTitleLevelUpgraded(), "%")
+                ),
+                new Pair<>(
+                        formatTitleUpgrade(REGEN_PER_INTERVAL + REGEN_PER_INTERVAL_UPGRADE * getTitleLevel(), "%"),
+                        formatTitleUpgrade(REGEN_PER_INTERVAL + REGEN_PER_INTERVAL_UPGRADE * getTitleLevelUpgraded(), "%")
+                )
+        );
     }
 
     @Override

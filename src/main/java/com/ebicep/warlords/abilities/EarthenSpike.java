@@ -14,6 +14,7 @@ import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.earthwarden.EarthenSpikeBranch;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
+import com.ebicep.warlords.util.bukkit.packets.PacketUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -69,7 +70,7 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         List<WarlordsEntity> spiked = new ArrayList<>();
-        float rad = radius.getCalculatedValue();
+        float rad = radius.getCalculatedValue() + PacketUtils.pingCompensationAmount(wp);
         for (WarlordsEntity spikeTarget : PlayerFilter.entitiesAround(wp, rad, rad, rad).aliveEnemiesOf(wp).lookingAtFirst(wp)) {
             if (!LocationUtils.isLookingAt(wp, spikeTarget) || !LocationUtils.hasLineOfSight(wp, spikeTarget)) {
                 continue;
@@ -97,21 +98,27 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
     }
 
     protected void spikeTarget(@Nonnull WarlordsEntity wp, WarlordsEntity spikeTarget) {
-        Location location = wp.getLocation();
+        spikeTarget(wp, spikeTarget, wp, new ArrayList<>());
+    }
+
+    protected void spikeTarget(@Nonnull WarlordsEntity wp, WarlordsEntity spikeTarget, @Nonnull WarlordsEntity startEntity,  List<WarlordsEntity> spiked) {
+        Location startLocation = startEntity.getLocation();
         new ChasingBlockEffect.Builder()
                 .setGame(wp.getGame())
                 .setSpeed(speed)
                 .setDestination(() -> spikeTarget.isDead() ? null : spikeTarget.getLocation())
                 .setOnTick(ticksElapsed -> {
                     if (ticksElapsed % 5 == 1) {
-                        Utils.playGlobalSound(location, REPEATING_SOUND[(ticksElapsed / 5) % 4], 2, 1);
+                        Utils.playGlobalSound(startLocation, REPEATING_SOUND[(ticksElapsed / 5) % 4], 2, 1);
                     }
                 })
                 .setOnDestinationReached(() -> {
                     UUID spikeUUID = UUID.randomUUID();
                     Location targetLocation = spikeTarget.getLocation();
                     if (pveMasterUpgrade2) {
+                        spiked.add(spikeTarget);
                         onSpikeTarget(wp, spikeTarget, spikeUUID);
+                        chainNextSpike(wp, spikeTarget, spiked, radius.getCalculatedValue());
                     } else {
                         for (WarlordsEntity nearSpikeTarget : PlayerFilter
                                 .entitiesAround(targetLocation, spikeHitbox, spikeHitbox, spikeHitbox)
@@ -127,7 +134,11 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
                             public void run() {
                                 FallingBlockWaveEffect.create(targetLocation.add(0, 1, 0), 4, 7, Material.DIRT);
                                 for (WarlordsEntity wave : PlayerFilter.entitiesAround(targetLocation, 6, 6, 6).aliveEnemiesOf(wp)) {
-                                    wave.addInstance(InstanceBuilder.damage().cause("Earthen Rupture").source(wp).value(damageValues.spikeDamage));
+                                    wave.addInstance(InstanceBuilder
+                                            .damage()
+                                            .cause("Earthen Rupture")
+                                            .source(wp)
+                                            .value(damageValues.spikeDamage));
                                     wave.addSpeedModifier(wp, "Spike Slow", -35, 20);
                                 }
                                 Utils.playGlobalSound(targetLocation, Sound.BLOCK_GRAVEL_BREAK, 2, 0.5f);
@@ -160,7 +171,7 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
                 })
                 .setMaxTicks(30)
                 .create()
-                .start(new LocationBuilder(location).y(location.getBlockY()));
+                .start(new LocationBuilder(startLocation).y(startLocation.getBlockY()));
     }
 
     protected void onSpikeTarget(WarlordsEntity caster, WarlordsEntity spikeTarget, UUID uuid) {
@@ -191,23 +202,41 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
             if (finalEvent.isCrit()) {
                 caster.addEnergy(caster, "Earthen Verdancy", 10);
             }
-            if (!finalEvent.isDead()) {
-                return;
+            if (finalEvent.isDead()) {
+                float healing = finalEvent.getValue() * .35f;
+                caster.addInstance(InstanceBuilder
+                        .healing()
+                        .cause("Earthen Verdancy")
+                        .source(caster)
+                        .value(healing)
+                        .showAsCrit(finalEvent.isCrit())
+                );
             }
-            float healing = finalEvent.getValue() * .35f;
-            caster.addInstance(InstanceBuilder
-                    .healing()
-                    .cause("Earthen Verdancy")
-                    .source(caster)
-                    .value(healing)
-                    .showAsCrit(finalEvent.isCrit())
-            );
         });
         if (pveMasterUpgrade2) {
             spikeTarget.getCooldownManager().removeCooldownByName("Earthen Verdancy");
             CripplingStrike.cripple(caster, spikeTarget, "Earthen Verdancy", 5 * 20);
         }
     }
+    // recursive spike chaining
+    private void chainNextSpike(WarlordsEntity caster, WarlordsEntity lastTarget, List<WarlordsEntity> spiked, float radius) {
+        int spikeHits = spiked.size(); // number of spike hits
+        if (spikeHits >= 4) {
+            return;
+        }
+        Optional<WarlordsEntity> nextTarget = PlayerFilter // find next closest target that hasn't been spiked yet
+                .entitiesAround(lastTarget, radius, radius, radius)
+                .aliveEnemiesOf(caster)
+                .excluding(spiked)
+                .closestFirst(lastTarget)
+                .findFirst();
+        if (nextTarget.isEmpty()) {
+            return;
+        }
+        WarlordsEntity newTarget = nextTarget.get();
+        spikeTarget(caster, newTarget, lastTarget, spiked);
+    }
+
 
     @Override
     public DamageValues getDamageValues() {

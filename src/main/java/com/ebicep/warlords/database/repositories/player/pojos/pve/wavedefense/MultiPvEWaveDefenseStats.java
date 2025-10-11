@@ -29,6 +29,6 @@ public interface MultiPvEWaveDefenseStats extends MultiPvEStats<
 
     @Override
     default long getFastestGameFinished() {
-        return getStat(WaveDefenseStats::getFastestGameFinished, Long::max, 0L);
+        return getStat(WaveDefenseStats::getFastestGameFinished, (a, b) -> a == 0 ? b : b == 0 ? a : Math.min(a, b), 0L);
     }
 }
