@@ -29,8 +29,10 @@ public class AscendantVendorTrait extends WarlordsTrait {
     private static final List<SpendableBuyShop> SHOP = List.of(
             new SpendableBuyShop(1, Currencies.ASCENDANT_SCROLL, 1, 25),
             new SpendableBuyShop(1, Currencies.ETHEREUM_CRYSTAL, 3, 5),
-            new SpendableBuyShop(2000, Currencies.SYNTHETIC_SHARD, 1, 10)
-            // TODO: add keys to shop
+            new SpendableBuyShop(2000, Currencies.SYNTHETIC_SHARD, 1, 10),
+            new SpendableBuyShop(1, Currencies.CRYPTIC_CONQUEST_KEY, 1, 10),
+            new SpendableBuyShop(1, Currencies.SOVEREIGN_TOWER_KEY, 1, 10),
+            new SpendableBuyShop(1, Currencies.ITEM_LOCK_SCROLL, 1, 20 )
     );
 
     public AscendantVendorTrait() {

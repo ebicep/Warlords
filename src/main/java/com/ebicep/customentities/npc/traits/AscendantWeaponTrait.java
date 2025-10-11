@@ -2,7 +2,7 @@ package com.ebicep.customentities.npc.traits;
 
 import com.ebicep.customentities.npc.WarlordsTrait;
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.pve.weapons.menu.WeaponLegendaryCraftMenu;
+import com.ebicep.warlords.pve.weapons.menu.WeaponCraftMenu;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.trait.HologramTrait;
 import org.bukkit.ChatColor;
@@ -24,7 +24,7 @@ public class AscendantWeaponTrait extends WarlordsTrait {
     public void rightClick(NPCRightClickEvent event) {
         Player player = event.getClicker();
         DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
-            WeaponLegendaryCraftMenu.openWeaponLegendaryCraftMenu(player, databasePlayer);
+            WeaponCraftMenu.openWeaponLegendaryCraftMenu(player, databasePlayer);
         });
     }
 }

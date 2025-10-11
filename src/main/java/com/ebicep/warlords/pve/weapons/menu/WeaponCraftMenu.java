@@ -25,17 +25,24 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class WeaponLegendaryCraftMenu {
+public class WeaponCraftMenu {
 
-    public static final LinkedHashMap<Currencies, Long> COST = new LinkedHashMap<>() {{
-        put(Currencies.COIN, 600000L);
-        put(Currencies.SYNTHETIC_SHARD, 6000L);
+    public static final LinkedHashMap<Currencies, Long> LEGENDARY_COST = new LinkedHashMap<>() {{
+        put(Currencies.COIN, 600_000L);
+        put(Currencies.SYNTHETIC_SHARD, 6_000L);
     }};
-    public static final List<Component> COST_LORE = PvEUtils.getCostLore(COST, "Craft Cost", true);
+    public static final LinkedHashMap<Currencies, Long> ASCENDANT_COST = new LinkedHashMap<>() {{
+        put(Currencies.COIN, 2_500_000L);
+        put(Currencies.SYNTHETIC_SHARD, 15_000L);
+        put(Currencies.ASCENDANT_SCROLL, 1L);
+        put(Currencies.ETHEREUM_CRYSTAL, 5L);
+    }};
+
+    public static final List<Component> COST_LORE = PvEUtils.getCostLore(LEGENDARY_COST, "Craft Cost", true);
 
     public static void openWeaponLegendaryCraftMenu(Player player, DatabasePlayer databasePlayer) {
         DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
-        for (Map.Entry<Currencies, Long> currenciesLongEntry : COST.entrySet()) {
+        for (Map.Entry<Currencies, Long> currenciesLongEntry : LEGENDARY_COST.entrySet()) {
             if (pveStats.getCurrencyValue(currenciesLongEntry.getKey()) < currenciesLongEntry.getValue()) {
                 player.sendMessage(Component.text("You are not worthy of crafting a legendary weapon yet, bring me 6.000 Synthetic Shards and 600.000 Coins first!", NamedTextColor.RED));
                 return;
@@ -61,7 +68,7 @@ public class WeaponLegendaryCraftMenu {
                             Menu.GO_BACK,
                             (m2, e2) -> {
                                 LegendaryWeapon weapon = new LegendaryWeapon(player.getUniqueId());
-                                COST.forEach(pveStats::subtractCurrency);
+                                LEGENDARY_COST.forEach(pveStats::subtractCurrency);
                                 pveStats.getWeaponInventory().add(weapon);
                                 Location loc = player.getLocation();
                                 playCraftEffects(player, loc);
@@ -75,6 +82,70 @@ public class WeaponLegendaryCraftMenu {
                                 }
                                 DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                                 Bukkit.getPluginManager().callEvent(new LegendaryWeaponCraftEvent(player.getUniqueId(), weapon));
+                                player.closeInventory();
+                            },
+                            (m2, e2) -> openWeaponLegendaryCraftMenu(player, databasePlayer),
+                            (m2) -> {
+                            }
+                    );
+                }
+        );
+
+        menu.fillEmptySlots(
+                new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE)
+                        .name(Component.text(" "))
+                        .get(),
+                (m, e) -> {
+                }
+        );
+
+        menu.setItem(4, 5, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU);
+        menu.openForPlayer(player);
+    }
+
+    public static void openWeaponAscendantCraftMenu(Player player, DatabasePlayer databasePlayer) {
+        DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+        for (Map.Entry<Currencies, Long> currenciesLongEntry : ASCENDANT_COST.entrySet()) {
+            if (pveStats.getCurrencyValue(currenciesLongEntry.getKey()) < currenciesLongEntry.getValue()) {
+                player.sendMessage(Component.text("You are not worthy of crafting an ascendant weapon yet.", NamedTextColor.RED));
+                return;
+            }
+        }
+
+        Menu menu = new Menu("The Vaultkeeper", 9 * 6);
+
+        menu.setItem(4, 2,
+                new ItemBuilder(Material.GUNPOWDER)
+                        .name(Component.text("Craft Ascendant Weapon", NamedTextColor.GREEN))
+                        .lore(COST_LORE)
+                        .get(),
+                (m, e) -> {
+                    List<Component> confirmLore = new ArrayList<>();
+                    confirmLore.add(Component.text("Craft a Legendary Weapon", NamedTextColor.GRAY));
+                    confirmLore.addAll(COST_LORE);
+                    Menu.openConfirmationMenu(
+                            player,
+                            "Craft Ascendant Weapon",
+                            3,
+                            confirmLore,
+                            Menu.GO_BACK,
+                            (m2, e2) -> {
+                                LegendaryWeapon weapon = new LegendaryWeapon(player.getUniqueId());
+                                LEGENDARY_COST.forEach(pveStats::subtractCurrency);
+                                pveStats.getWeaponInventory().add(weapon);
+                                Location loc = player.getLocation();
+                                playCraftEffects(player, loc);
+                                player.sendMessage(Component.text("Crafted Ascendant Weapon: ", NamedTextColor.GRAY).append(weapon.getHoverComponent(false)));
+                                for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                                    onlinePlayer.sendMessage(Permissions.getPrefixWithColor(player, false)
+                                            .append(Component.text(player.getName()))
+                                            .append(Component.text(" crafted ", NamedTextColor.GRAY))
+                                            .append(weapon.getHoverComponent(false))
+                                    );
+                                }
+                                DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                // TODO: make ascendant craft event
+                                //Bukkit.getPluginManager().callEvent(new LegendaryWeaponCraftEvent(player.getUniqueId(), weapon));
                                 player.closeInventory();
                             },
                             (m2, e2) -> openWeaponLegendaryCraftMenu(player, databasePlayer),

@@ -31,8 +31,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class PrestigeVendorTrait extends WarlordsTrait {
 
     private static final List<SpendableBuyShop> SHOP = List.of(
-            new SpendableBuyShop(1, Currencies.CRYPTIC_CONQUEST_KEY, 1, 5),
-            new SpendableBuyShop(1, Currencies.SOVEREIGN_TOWER_KEY, 1, 5),
             new SpendableBuyShop(1, Currencies.ETHEREUM_CRYSTAL, 1, 5),
             new SpendableBuyShop(1, Currencies.ASCENDANT_SHARD, 1, 5)
     );
