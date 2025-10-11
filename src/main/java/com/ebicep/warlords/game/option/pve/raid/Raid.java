@@ -1,4 +1,4 @@
-package com.ebicep.warlords.game.option.raid;
+package com.ebicep.warlords.game.option.pve.raid;
 
 public enum Raid {
 
