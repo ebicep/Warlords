@@ -196,6 +196,11 @@ public enum Currencies implements Spendable {
             TextColor.color(170, 20, 40),
             new ItemStack(Material.NETHERITE_UPGRADE_SMITHING_TEMPLATE)
     ),
+    ITEM_LOCK_SCROLL(
+            "Item Lock Scroll",
+            TextColor.color(190, 80, 40),
+            new ItemStack(Material.MAP)
+    ),
     CRYPTIC_CONQUEST_KEY(
             "Cryptic Conquest Key",
             TextColor.color(199, 31, 137),

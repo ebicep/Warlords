@@ -701,29 +701,7 @@ public class Lilium extends AbstractMob implements BossMob {
 
                     if (t % 13 == 0) {
                         heavenlySpearAbility.start(warlordsNPC.getGame());
-                        PlayerFilter.playingGame(warlordsNPC.getGame())
-                                .filter(protectors::contains).forEach(protector -> PlayerFilter
-                                        .entitiesAround(protector, 15, 100, 15)
-                                        .aliveTeammatesOfExcludingSelf(protector)
-                                        .forEach(otherProtector -> {
-                                            protector.sendMessage(Component.text("You cannot be near another champion!", NamedTextColor.RED));
-                                            protector.addInstance(InstanceBuilder
-                                                    .damage()
-                                                    .cause("Champion Disguise")
-                                                    .source(warlordsNPC)
-                                                    .value(1500)
-                                                    .flags(InstanceFlags.TRUE_DAMAGE)
-                                            );
-                                            otherProtector.sendMessage(Component.text("You cannot be near another champion!", NamedTextColor.RED));
-                                            otherProtector.addInstance(InstanceBuilder
-                                                    .damage()
-                                                    .cause("Champion Disguise")
-                                                    .source(warlordsNPC)
-                                                    .value(1500)
-                                                    .flags(InstanceFlags.TRUE_DAMAGE)
-                                            );
-                                        })
-                                );
+
                     }
 
                     if (t == 601) {

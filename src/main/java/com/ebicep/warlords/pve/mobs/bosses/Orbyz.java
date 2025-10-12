@@ -231,9 +231,9 @@ public class Orbyz extends AbstractMob implements BossMob {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 if (event.getSource().getCooldownManager().hasCooldownFromName("Empowering Allies")) {
-                    return currentDamageValue * 1.2f;
+                    return currentDamageValue * 1.25f;
                 }
-                return currentDamageValue * 0.1f;
+                return currentDamageValue * 0.2f;
             }
         });
 
