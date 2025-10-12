@@ -48,17 +48,17 @@ public class EarthenSpikeBranch extends AbstractUpgradeBranch<EarthenSpike> {
                 "Earthen Verdancy",
                 "Earthen Spike - Master Upgrade",
                 """                      
-                        Earthen Spike becomes a single-target ability that chains between up to 4 enemies but dealing 4x the damage.
+                        Earthen Spike becomes a single-target ability that chains between up to 4 enemies but dealing 3x the damage.
                         
-                        Enemies hit are CRIPPLED for 5s, and killed enemies heal the user for 35% of the damage dealt.
+                        Enemies hit are CRIPPLED for 5s, and killed enemies heal the user for 20% of the damage dealt.
                         
                         Critical spikes will refund the caster with 10 energy.
                         """,
                 50000,
                 () -> {
                     Value.RangedValueCritable damage = ability.getDamageValues().getSpikeDamage();
-                    damage.min().addMultiplicativeModifierAdd("Master Upgrade Branch", 3);
-                    damage.max().addMultiplicativeModifierAdd("Master Upgrade Branch", 3);
+                    damage.min().addMultiplicativeModifierAdd("Master Upgrade Branch", 2);
+                    damage.max().addMultiplicativeModifierAdd("Master Upgrade Branch", 2);
                 }
         );
     }

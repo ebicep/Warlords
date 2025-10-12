@@ -128,7 +128,8 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
                         continue;
                     }
                     nearBy.getCooldownManager().removeCooldownByObject(beacon.getM2Object());
-                    RegularCooldown<Object> shadowGardenCooldown = new RegularCooldown<>("Shadow Garden",
+                    RegularCooldown<Object> shadowGardenCooldown = new RegularCooldown<>(
+                            "Shadow Garden",
                             null,
                             Object.class,
                             beacon.getM2Object(),
@@ -147,6 +148,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
 
                     };
                     nearBy.addKnockbackModifier(wp, "Shadow Garden", -50, shadowGardenCooldown);
+                    nearBy.getCooldownManager().removeCooldownByName("Shadow Garden");
                     nearBy.getCooldownManager().addCooldown(shadowGardenCooldown);
                 } else {
                     nearBy.getCooldownManager().removeCooldownByObject(beacon);

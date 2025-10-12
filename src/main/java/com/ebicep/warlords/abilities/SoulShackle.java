@@ -152,16 +152,21 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
         shackleTarget.addInstance(InstanceBuilder.damage().ability(this).source(wp).value(damageValues.shackleDamage));
         shacklePlayer(wp, shackleTarget, silenceDuration);
         if (pveMasterUpgrade2) {
-            shackleTarget.getCooldownManager()
-                         .addCooldown(new RegularCooldown<>("Oppressive Chains", "OPP", SoulShackle.class, null, wp, CooldownTypes.LOW_LEVEL_DEBUFF, cooldownManager -> {
-                         }, 3 * 20
-                         ) {
-
-                             @Override
-                             public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                 return currentDamageValue * 1.25f;
-                             }
-                         });
+            shackleTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
+                    "Oppressive Chains",
+                    "OPP",
+                    SoulShackle.class,
+                    null,
+                    wp,
+                    CooldownTypes.LOW_LEVEL_DEBUFF,
+                    cooldownManager -> {},
+                    3 * 20
+            ) {
+                 @Override
+                 public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                     return currentDamageValue * 1.25f;
+                 }
+            });
         }
     }
 
