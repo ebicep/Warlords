@@ -182,7 +182,8 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
                                 heal(wp, cloudTeammate, "Rain Cloud");
                                 CooldownManager cloudTeammateCooldownManager = cloudTeammate.getCooldownManager();
                                 cloudTeammateCooldownManager.removeCooldownByName("Nimbus");
-                                cloudTeammateCooldownManager.addCooldown(new RegularCooldown<>("Nimbus",
+                                cloudTeammateCooldownManager.addCooldown(new RegularCooldown<>(
+                                        "Nimbus",
                                         null,
                                         HealingRain.class,
                                         null,
@@ -297,21 +298,17 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
     }
 
     private void strikeInRain(WarlordsEntity giver, WarlordsEntity hit) {
-        for (WarlordsEntity strikeTarget : PlayerFilter
-                .entitiesAround(hit, 2, 3, 2)
-                .aliveEnemiesOf(giver)
-        ) {
-            strikeTarget.getWorld().spigot().strikeLightningEffect(strikeTarget.getLocation(), true);
-            float healthDamage = strikeTarget.getMaxHealth() * 0.01f;
-            healthDamage = DamageCheck.clamp(healthDamage);
-            strikeTarget.addInstance(InstanceBuilder
-                    .damage()
-                    .ability(this)
-                    .source(giver)
-                    .min(damageValues.rainStrikeDamage.getMinValue() + healthDamage)
-                    .max(damageValues.rainStrikeDamage.getMaxValue() + healthDamage)
-            );
-        }
+        EffectUtils.strikeLightning(hit.getLocation(), true);
+        float healthDamage = hit.getMaxHealth() * 0.01f;
+        healthDamage = DamageCheck.clamp(healthDamage);
+        hit.addInstance(InstanceBuilder
+                .damage()
+                .ability(this)
+                .source(giver)
+                .min(damageValues.rainStrikeDamage.getMinValue() + healthDamage)
+                .max(damageValues.rainStrikeDamage.getMaxValue() + healthDamage)
+                .flags(InstanceFlags.IGNORE_DAMAGE_BOOST)
+        );
     }
 
     private void heal(@Nonnull WarlordsEntity wp, WarlordsEntity teammateInRain, String name) {
@@ -370,7 +367,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
 
     public static class DamageValues implements Value.ValueHolder {
 
-        private Value.RangedValue rainStrikeDamage = new Value.RangedValue(224, 377);
+        private Value.RangedValue rainStrikeDamage = new Value.RangedValue(336, 565);
 
         private List<Value> values = List.of(rainStrikeDamage);
 

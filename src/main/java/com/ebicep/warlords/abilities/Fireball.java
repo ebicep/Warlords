@@ -129,8 +129,8 @@ public class Fireball extends AbstractProjectile<Fireball, Fireball.FireballStat
         for (WarlordsEntity nearEntity : PlayerFilter
                 .entitiesAround(hit != null ? hit.getLocation() : currentLocation, radius, radius, radius)
                 .aliveEnemiesOf(shooter)
-                .excluding(projectile.getHit())) {
-
+                .excluding(projectile.getHit())
+        ) {
             getProjectiles(projectile).forEach(p -> p.getHit().add(nearEntity));
             playersHit++;
 

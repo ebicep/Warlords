@@ -55,7 +55,7 @@ public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementSt
     protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull WarlordsEntity nearPlayer) {
         for (int i = 0; i < (pveMasterUpgrade2 ? 2 : 1); i++) {
             if (nearPlayer.isDead()) {
-                return true;
+                continue;
             }
 
             attacksDone++;
@@ -64,7 +64,6 @@ public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementSt
                 attacksDone = 0;
                 critChance = 100;
             }
-            float extraDamage = pveMasterUpgrade ? DamageCheck.clamp(nearPlayer.getMaxHealth() * 0.01f) : 0;
             float damageMultiplier = convertToMultiplicationDecimal(
                     (nearPlayer.getCurrentHealth() / nearPlayer.getMaxBaseHealth()) < damageIncreaseHealthThreshold / 100f
                     ? damageIncrease : 0
@@ -73,8 +72,8 @@ public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementSt
                     .damage()
                     .ability(this)
                     .source(wp)
-                    .min((damageValues.strikeDamage.getMinValue() + extraDamage) * damageMultiplier)
-                    .max((damageValues.strikeDamage.getMaxValue() + extraDamage) * damageMultiplier)
+                    .min(damageValues.strikeDamage.getMinValue() * damageMultiplier)
+                    .max(damageValues.strikeDamage.getMaxValue() * damageMultiplier)
                     .critChance(critChance)
                     .critMultiplier(damageValues.strikeDamage.getCritMultiplierValue())
             ).ifPresent(finalEvent -> {
