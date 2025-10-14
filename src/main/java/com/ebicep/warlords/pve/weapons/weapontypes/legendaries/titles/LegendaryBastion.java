@@ -141,7 +141,7 @@ public class LegendaryBastion extends AbstractLegendaryWeapon implements Passive
                 false
         ) {
             @Override
-            public float modifyDamageAfterInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 if (owner.isDead()) return currentDamageValue;
                 Location ol = owner.getLocation();
                 Location al = ally.getLocation();

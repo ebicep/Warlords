@@ -115,7 +115,7 @@ public class WindfuryBranch extends AbstractUpgradeBranch<WindfuryWeapon> {
                 50000,
                 () -> {
                     abilityTree.getWarlordsPlayer().getCooldownManager().addCooldown(new PermanentCooldown<>(
-                            "Shredding Fury",
+                            "MAX HP DAMAGE (Shredding Fury)",
                             null,
                             WindfuryBranch.class,
                             null,
@@ -125,7 +125,7 @@ public class WindfuryBranch extends AbstractUpgradeBranch<WindfuryWeapon> {
                             false
                     ) {
                         @Override
-                        public float addDamageAfterAllModificationsBeforeShield(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                        public float modifyDamageAfterInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
                             if (event.getCause().equals("Windfury Weapon")) {
                                 return currentDamageValue + DamageCheck.clamp(event.getWarlordsEntity().getMaxHealth() * 0.005f);
                             }

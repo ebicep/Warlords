@@ -213,9 +213,9 @@ public class OneOfNine extends AbstractMob implements BossMob {
                 true
         ) {
             @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+            public float modifyDamageAfterAllFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                 if (damageController.isInDamageWindow()) {
-                    return currentDamageValue * 1.2f;
+                    return currentDamageValue;
                 }
                 // nullify reflected damage
                 if (event.getFlags().contains(InstanceFlags.REFLECTIVE_DAMAGE)) {
@@ -226,7 +226,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
                         .damage()
                         .source(warlordsNPC)
                         .cause("Greed")
-                        .value(currentDamageValue * (event.getFlags().contains(InstanceFlags.DOT) ? 0.1f : 1))
+                        .value(currentDamageValue * (event.getFlags().contains(InstanceFlags.DOT) ? 0.25f : 1))
                         .flags(InstanceFlags.RECURSIVE, InstanceFlags.IGNORE_DAMAGE_BOOST)
                 );
                 event.getSource().sendMessage(Component.text("Your divine punishment awaits if you keep giving in to your greed...", NamedTextColor.RED));

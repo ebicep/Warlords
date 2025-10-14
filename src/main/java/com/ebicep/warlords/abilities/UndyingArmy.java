@@ -199,7 +199,12 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
                             warlordsEntity.heal();
                             data.pop(warlordsEntity);
                             // Sending the message + check if getFrom is self
-                            EffectUtils.playFirework(warlordsEntity.getLocation(), FireworkEffect.builder().withColor(Color.LIME).with(FireworkEffect.Type.BALL).build());
+                            EffectUtils.playFirework(warlordsEntity.getLocation(), FireworkEffect
+                                    .builder()
+                                    .withColor(Color.LIME)
+                                    .with(FireworkEffect.Type.BALL)
+                                    .build()
+                            );
                             EffectUtils.strikeLightning(warlordsEntity.getLocation(), false);
                             //gives 50% of max energy if player is less than half
                             if (warlordsEntity.getCurrentEnergy() < warlordsEntity.getMaxEnergy() / 2) {
@@ -231,11 +236,13 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
                         cooldownManager -> {
                             if (enemy.isAlive()) {
                                 float healthDamage = enemy.getMaxHealth() * .02f;
-                                if (enemy instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof BossLike) {
-                                    healthDamage = DamageCheck.clamp(healthDamage);
-                                }
+                                healthDamage = DamageCheck.clamp(healthDamage);
                                 float damage = 2000 + healthDamage;
-                                enemy.addInstance(InstanceBuilder.damage().cause("Vengeful Army").source(wp).value(damage));
+                                enemy.addInstance(InstanceBuilder
+                                        .damage()
+                                        .cause("Vengeful Army")
+                                        .source(wp).value(damage)
+                                );
                             } else {
                                 new CooldownFilter<>(wp, PersistentCooldown.class).filterCooldownClass(OrbsOfLife.class).forEach(persistentCooldown -> {
                                     OrbsOfLife.spawnOrbs(wp, enemy, "Vengeful Army", persistentCooldown);
