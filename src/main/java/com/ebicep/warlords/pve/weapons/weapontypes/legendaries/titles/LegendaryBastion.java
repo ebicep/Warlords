@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -7,6 +8,8 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCounter;
@@ -16,7 +19,10 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Effect;
 import org.bukkit.Location;
+import org.bukkit.Particle;
+import org.bukkit.World;
 import org.springframework.data.annotation.Transient;
 
 import java.time.Instant;
@@ -24,14 +30,14 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-public class LegendaryBastion extends AbstractLegendaryWeapon implements PassiveCounter {
+public class LegendaryBastion extends AbstractLegendaryWeapon {
 
     public static final int AURA_RADIUS_BLOCKS = 8;
 
-    public static final float ALLY_DR_PERCENT_BASE = 10f;
+    public static final float ALLY_DR_PERCENT_BASE = 20f;
     public static final float ALLY_DR_INC_PER_LEVEL = 2f;
 
-    public static final int REDIRECT_RATIO_PERCENT = 25;
+    public static final int REDIRECT_RATIO_PERCENT = 50;
 
     public static final float REDIRECT_CAP_PERCENT_BASE = 8f;
     public static final float REDIRECT_CAP_INC_PER_LEVEL = 1f;
@@ -115,7 +121,6 @@ public class LegendaryBastion extends AbstractLegendaryWeapon implements Passive
                 Set<UUID> current = new HashSet<>();
                 Location pl = player.getLocation();
                 for (WarlordsEntity ally : teammates) {
-                    if (ally.getLocation().getWorld() != pl.getWorld()) continue;
                     if (ally.getLocation().distanceSquared(pl) <= (AURA_RADIUS_BLOCKS * AURA_RADIUS_BLOCKS)) {
                         current.add(ally.getUuid());
                         if (auraAttached.add(ally.getUuid())) {
@@ -130,8 +135,9 @@ public class LegendaryBastion extends AbstractLegendaryWeapon implements Passive
     }
 
     private void attachAuraToAlly(WarlordsEntity owner, WarlordsEntity ally) {
+        ally.getCooldownManager().removeCooldownByName("Bastion Ally");
         ally.getCooldownManager().addCooldown(new PermanentCooldown<>(
-                "Bastion Aura",
+                "Bastion Ally",
                 null,
                 LegendaryBastion.class,
                 null,
@@ -141,12 +147,15 @@ public class LegendaryBastion extends AbstractLegendaryWeapon implements Passive
                 false
         ) {
             @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+            public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 if (owner.isDead()) return currentDamageValue;
+
                 Location ol = owner.getLocation();
                 Location al = ally.getLocation();
-                if (ol.getWorld() != al.getWorld()) return currentDamageValue;
-                if (al.distanceSquared(ol) > (AURA_RADIUS_BLOCKS * AURA_RADIUS_BLOCKS)) return currentDamageValue;
+
+                if (al.distanceSquared(ol) > (AURA_RADIUS_BLOCKS * AURA_RADIUS_BLOCKS)) {
+                    return currentDamageValue;
+                }
 
                 float dr = getAllyDrPercent() / 100f;
                 float reduced = currentDamageValue * (1f - dr);
@@ -157,12 +166,13 @@ public class LegendaryBastion extends AbstractLegendaryWeapon implements Passive
                     double toRedirect = Math.min(redirectCapRemain, prevented * (REDIRECT_RATIO_PERCENT / 100.0));
                     if (toRedirect > 0) {
                         WarlordsEntity src = event.getSource() != null ? event.getSource() : ally;
-                        owner.addInstance(com.ebicep.warlords.player.ingame.instances.InstanceBuilder
+                        owner.addInstance(InstanceBuilder
                                 .damage()
                                 .cause("Bastion")
                                 .source(src)
                                 .min((float) toRedirect)
                                 .max((float) toRedirect)
+                                .flags(InstanceFlags.RECURSIVE, InstanceFlags.REFLECTIVE_DAMAGE, InstanceFlags.IGNORE_DAMAGE_BOOST)
                         );
                         redirectUsedThisSecond += toRedirect;
                     }
@@ -172,6 +182,7 @@ public class LegendaryBastion extends AbstractLegendaryWeapon implements Passive
             }
         });
     }
+
 
     private float getAllyDrPercent() {
         return ALLY_DR_PERCENT_BASE + ALLY_DR_INC_PER_LEVEL * getTitleLevel();
@@ -190,20 +201,25 @@ public class LegendaryBastion extends AbstractLegendaryWeapon implements Passive
     protected float getMeleeDamageMinValue() {
         return 150;
     }
+
     @Override
     protected float getMeleeDamageMaxValue() {
         return 180;
     }
+
     @Override
     protected float getCritChanceValue() {
         return 25;
     }
+
     @Override
     protected float getCritMultiplierValue() { return 175; }
+
     @Override
     protected float getHealthBonusValue() {
         return 1000;
     }
+
     @Override
     protected float getSpeedBonusValue() {
         return 6;
@@ -217,12 +233,5 @@ public class LegendaryBastion extends AbstractLegendaryWeapon implements Passive
     @Override
     protected float getEnergyPerHitBonusValue() {
         return 4;
-    }
-
-    @Override
-    public int getCounter() {
-        if (redirectCapCached <= 0) return 0;
-        double remaining = Math.max(0.0, redirectCapCached - redirectUsedThisSecond);
-        return (int) Math.ceil((remaining / redirectCapCached) * 100.0);
     }
 }
