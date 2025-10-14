@@ -9,10 +9,10 @@ public interface DamageCheck {
     DamageCheck DAMAGE_CHECK = new DamageCheck() {};
 
     float MINIMUM_DAMAGE = 100;
-    float MAXIMUM_DAMAGE = 10000;
+    float MAXIMUM_DAMAGE = 5000;
 
-    float intervalOne = 5000;
-    float intervalTwo = 7500;
+    float intervalOne = 3000;
+    float intervalTwo = 4000;
 
     static float clamp(float value) {
         if (value > MAXIMUM_DAMAGE) {

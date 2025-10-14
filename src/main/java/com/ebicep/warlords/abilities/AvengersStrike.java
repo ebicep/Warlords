@@ -93,7 +93,7 @@ public class AvengersStrike extends AbstractStrike<AvengersStrike, AvengersStrik
                             .source(wp)
                             .value(damage)
                             .showAsCrit(finalEvent.isCrit())
-                            .flags(InstanceFlags.DUPLICATE_AVENGER_STRIKE)
+                            .flags(InstanceFlags.DUPLICATE_AVENGER_STRIKE, InstanceFlags.IGNORE_DAMAGE_BOOST)
                     );
                     Bukkit.getPluginManager().callEvent(new WarlordsStrikeEvent(wp, this, we));
                 }

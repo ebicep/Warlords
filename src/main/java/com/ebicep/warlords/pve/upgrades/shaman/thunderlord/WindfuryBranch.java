@@ -109,7 +109,7 @@ public class WindfuryBranch extends AbstractUpgradeBranch<WindfuryWeapon> {
                 "Shredding Fury",
                 "Windfury - Master Upgrade",
                 """
-                        Each hit deals 1% of the target's max health as bonus damage.
+                        Each hit deals 0.5% of the target's max health as bonus damage.
 
                         Hits on an enemy will permanently reduce their damage reduction by 2% for each additional Windfury proc.""",
                 50000,
@@ -127,7 +127,7 @@ public class WindfuryBranch extends AbstractUpgradeBranch<WindfuryWeapon> {
                         @Override
                         public float addDamageAfterAllModificationsBeforeShield(WarlordsDamageHealingEvent event, float currentDamageValue) {
                             if (event.getCause().equals("Windfury Weapon")) {
-                                return currentDamageValue + DamageCheck.clamp(event.getWarlordsEntity().getMaxHealth() * 0.01f);
+                                return currentDamageValue + DamageCheck.clamp(event.getWarlordsEntity().getMaxHealth() * 0.005f);
                             }
                             return currentDamageValue;
                         }
