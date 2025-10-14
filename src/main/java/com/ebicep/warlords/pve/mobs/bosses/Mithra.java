@@ -39,7 +39,7 @@ public class Mithra extends AbstractMob implements BossMob {
     private boolean preventBarrage = false;
 
     public Mithra(Location spawnLocation) {
-        this(spawnLocation, "Mithra", 20000, 0.28f, 20, 1200, 1600);
+        this(spawnLocation, "Echo of Mithra", 20000, 0.28f, 20, 1200, 1600);
     }
 
     public Mithra(
@@ -76,7 +76,7 @@ public class Mithra extends AbstractMob implements BossMob {
 
     @Override
     public Component getDescription() {
-        return Component.text("The Envoy Queen of Illusion", NamedTextColor.WHITE);
+        return Component.text("Vessel of the Queen", NamedTextColor.WHITE);
     }
 
     @Override
