@@ -48,7 +48,7 @@ public class NPCManager {
                     createWaveDefenseNPC();
                     createOnslaughtNPC();
                     createTreasureHuntNPC();
-//                    createBossRushNPC();
+                    createAnomalyNPC();
                 })
                 .execute();
 
@@ -139,6 +139,17 @@ public class NPCManager {
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
         npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 20.5, 82, 158.5, 135, 0));
+    }
+
+    private static void createAnomalyNPC() {
+        registerTrait(AnomalyStartTrait.class, "AnomalyStartTrait");
+
+        NPC npc = NPC_REGISTRY.createNPC(EntityType.PLAYER, "anomaly-mode");
+        npc.addTrait(AnomalyStartTrait.class);
+//        npc.getOrAddTrait(SkinTrait.class).setSkinName("Alexred2522");
+
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
+        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 22.5, 82, 155.5, 122, 0));
     }
 
     private static void createBossRushNPC() {
