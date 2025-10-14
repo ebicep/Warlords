@@ -1,15 +1,22 @@
 package com.ebicep.warlords.pve.upgrades.paladin.avenger;
 
 import com.ebicep.warlords.abilities.AvengersStrike;
+import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.player.ingame.motionsystem.MotionModifier;
 import com.ebicep.warlords.player.ingame.motionsystem.MotionModifierBuilder;
 import com.ebicep.warlords.player.ingame.motionsystem.MotionSystem;
 import com.ebicep.warlords.pve.upgrades.*;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles.LegendaryHuntsman;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 
 public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
 
@@ -28,7 +35,7 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgradeDamage(ability.getDamageValues().getStrikeDamage(), 7.5f)
+                .addUpgradeDamage(ability.getDamageValues().getStrikeDamage(), 15f)
                 .addUpgrade(new UpgradeTypes.UpgradeType() {
                     @Override
                     public String getDescription0(String value) {
@@ -55,13 +62,37 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
                         -5 Additional energy cost.
                         +1 Block Radius.
                         
-                        Avenger's Strike hits 2 additional enemies for 75% of the original strike damage.
+                        Avenger's Strike hits 2 additional enemies.
                         
-                        Deal 40% more damage against level 3 enemies or below and deal 0.5% max health damage against level 4 and 5 enemies.""",
+                        Deal 40% more damage against ADVANCED or lower enemies and deal 0.5% max health damage against ELITE or higher enemies.""",
                 50000,
                 () -> {
                     ability.getHitBoxRadius().addAdditiveModifier("Master Upgrade Branch", 1);
                     ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -5);
+
+                    warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                            "Avenger's Slash",
+                            null,
+                            AvengerStrikeBranch.class,
+                            null,
+                            abilityTree.getWarlordsPlayer(),
+                            CooldownTypes.MASTERY,
+                            cm -> {},
+                            false
+                    ) {
+                        @Override
+                        public float addDamageAfterAllModificationsBeforeShield(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                            boolean isAboveElite = event.getWarlordsEntity() instanceof WarlordsNPC npc && npc.getMob().getInternalLevel() >= 4;
+                            boolean isNotDuplicateStrike =
+                                    !event.getFlags().contains(InstanceFlags.AVENGER_WRATH_STRIKE) &&
+                                    !event.getFlags().contains(InstanceFlags.DUPLICATE_AVENGER_STRIKE);
+
+                            if (isAboveElite && event.getCause().equals("Avenger's Strike") && isNotDuplicateStrike) {
+                                return currentDamageValue + DamageCheck.clamp(event.getWarlordsEntity().getMaxHealth() * 0.005f);
+                            }
+                            return currentDamageValue;
+                        }
+                    });
                 }
         );
         masterUpgrade2 = new Upgrade(

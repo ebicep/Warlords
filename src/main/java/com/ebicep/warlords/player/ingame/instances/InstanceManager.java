@@ -653,6 +653,29 @@ public class InstanceManager {
                 }
             }
 
+            // TODO: Fix debug display
+            // adding or multiplying damage after all damage buffs/modifications have been applied.
+            debugMessage.appendTitle("After all Buffs/Modifications", NamedTextColor.AQUA);
+            for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
+                float newDamageValue = abstractCooldown.addDamageAfterAllModificationsBeforeShield(event, damageValue);
+                List<DamageInstance> extraDamageInstances = abstractCooldown.getExtraDamageInstances();
+                if (extraDamageInstances != null) {
+                    for (DamageInstance damageInstance : extraDamageInstances) {
+                        newDamageValue = damageInstance.addDamageAfterAllModificationsBeforeShield(event, newDamageValue);
+                    }
+
+                    if (previousDamageValue > damageValue) {
+                        abstractCooldown.getFrom().addAbsorbed(previousDamageValue - damageValue);
+                    }
+                    debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                            .create(2)
+                            .prefix(ComponentBuilder.create("Raw Damage: ", NamedTextColor.GREEN))
+                            .value(Component.text("MAX HP DAMAGE: " + (damageValue - newDamageValue), NamedTextColor.RED))
+                    );
+                }
+                damageValue = newDamageValue;
+            }
+
             final float damageHealValueBeforeShieldReduction = damageValue;
             // Arcane Shield
             Optional<RegularCooldown> shieldCooldown = new CooldownFilter<>(warlordsEntity, RegularCooldown.class)

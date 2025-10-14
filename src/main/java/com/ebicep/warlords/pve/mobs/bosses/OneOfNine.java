@@ -217,11 +217,16 @@ public class OneOfNine extends AbstractMob implements BossMob {
                 if (damageController.isInDamageWindow()) {
                     return currentDamageValue * 1.2f;
                 }
+                // nullify reflected damage
+                if (event.getFlags().contains(InstanceFlags.REFLECTIVE_DAMAGE)) {
+                    return currentDamageValue * 0f;
+                }
+
                 event.getSource().addInstance(InstanceBuilder
                         .damage()
                         .source(warlordsNPC)
                         .cause("Greed")
-                        .value(currentDamageValue * (event.getFlags().contains(InstanceFlags.DOT) ? 0.5f : 1))
+                        .value(currentDamageValue * (event.getFlags().contains(InstanceFlags.DOT) ? 0.1f : 1))
                         .flags(InstanceFlags.RECURSIVE, InstanceFlags.IGNORE_DAMAGE_BOOST)
                 );
                 event.getSource().sendMessage(Component.text("Your divine punishment awaits if you keep giving in to your greed...", NamedTextColor.RED));

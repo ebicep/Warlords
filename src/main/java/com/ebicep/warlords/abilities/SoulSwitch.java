@@ -128,9 +128,18 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                     pveOption.spawnNewMob(animus, wp.getTeam());
                     addSecondaryAbility(2, () -> {
                                 if (wp.isAlive()) {
-                                    animus.getWarlordsNPC().die(animus.getWarlordsNPC(), WarlordsDeathEvent.DeathInfoBuilder.create().setForced(true));
-                                    for (WarlordsEntity enemy : PlayerFilter.entitiesAround(animus.getWarlordsNPC().getLocation(), 4, 4, 4).aliveEnemiesOf(wp)) {
-                                        enemy.addInstance(InstanceBuilder.damage().cause("Animus").source(wp).min(400).max(600));
+                                    pveOption.despawnMob(animus.getWarlordsNPC().getMob());
+                                    for (WarlordsEntity enemy : PlayerFilter
+                                            .entitiesAround(animus.getWarlordsNPC().getLocation(), 4, 4, 4)
+                                            .aliveEnemiesOf(wp)
+                                    ) {
+                                        enemy.addInstance(InstanceBuilder
+                                                .damage()
+                                                .cause("Animus")
+                                                .source(wp)
+                                                .min(400)
+                                                .max(600)
+                                        );
                                     }
                                 }
                             }, false, secondaryAbility -> animus.getWarlordsNPC().isDead()

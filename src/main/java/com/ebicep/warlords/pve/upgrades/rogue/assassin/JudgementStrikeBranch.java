@@ -1,8 +1,15 @@
 package com.ebicep.warlords.pve.upgrades.rogue.assassin;
 
 import com.ebicep.warlords.abilities.JudgementStrike;
+import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.*;
+import com.ebicep.warlords.pve.upgrades.paladin.avenger.AvengerStrikeBranch;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike> {
@@ -58,6 +65,25 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
                     ability.getHealValues().getStrikeHealing().value().addAdditiveModifier("Master Upgrade Branch", 100);
                     ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -10);
                     ability.setStrikeCritInterval(2);
+
+                    abilityTree.getWarlordsPlayer().getCooldownManager().addCooldown(new PermanentCooldown<>(
+                            "Death Strike",
+                            null,
+                            JudgementStrikeBranch.class,
+                            null,
+                            abilityTree.getWarlordsPlayer(),
+                            CooldownTypes.MASTERY,
+                            cm -> {},
+                            false
+                    ) {
+                        @Override
+                        public float addDamageAfterAllModificationsBeforeShield(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                            if (event.getCause().equals("Judgement Strike")) {
+                                return currentDamageValue + DamageCheck.clamp(event.getWarlordsEntity().getMaxHealth() * 0.01f);
+                            }
+                            return currentDamageValue;
+                        }
+                    });
                 }
         );
         masterUpgrade2 = new Upgrade(

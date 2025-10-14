@@ -98,6 +98,13 @@ public interface DamageInstance extends Instance {
     }
 
     /**
+     * Add damage after all damage buffs/modifications have been applied. (After intervene.)
+     */
+    default float addDamageAfterAllModificationsBeforeShield(WarlordsDamageHealingEvent event, float currentDamageValue) {
+        return currentDamageValue;
+    }
+
+    /**
      * Called after when the player takes shield damage - based on self cooldowns
      */
     default void onShieldFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {

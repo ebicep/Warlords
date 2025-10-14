@@ -119,6 +119,7 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                                                 .cause("Burn")
                                                 .source(attacker)
                                                 .value(healthDamage)
+                                                .flags(InstanceFlags.IGNORE_DAMAGE_BOOST)
                                         );
                                     }
                                 })

@@ -199,16 +199,21 @@ public class FrostBolt extends AbstractPiercingProjectile<FrostBolt, FrostBolt.F
         if (projectile.getHit().isEmpty()) {
             toReduceBy += .15f;
         }
-        hit.getCooldownManager()
-                .addCooldown(new RegularCooldown<>(name, "INCEN", IncendiaryCurse.class, new IncendiaryCurse(), projectile.getShooter(), CooldownTypes.LOW_LEVEL_DEBUFF, cooldownManager -> {
-                }, 3 * 20
-                ) {
-
-                    @Override
-                    public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                        return currentDamageValue * 1.08f;
-                    }
-                });
+        hit.getCooldownManager().addCooldown(new RegularCooldown<>(
+                "Splintered Ice",
+                null,
+                IncendiaryCurse.class,
+                new IncendiaryCurse(),
+                projectile.getShooter(),
+                CooldownTypes.LOW_LEVEL_DEBUFF,
+                cooldownManager -> {},
+                3 * 20
+        ) {
+            @Override
+            public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                return currentDamageValue * 1.08f;
+            }
+        });
         hit(projectile, shooter, toReduceBy, stats.getTargetsHit(), hit);
         hit.addSpeedModifier(shooter, "Splintered Ice", -35, 40);
         EffectUtils.displayParticle(Particle.ITEM_SNOWBALL, hit.getLocation().add(0, 1, 0), 10, .2, .2, .2, 0);

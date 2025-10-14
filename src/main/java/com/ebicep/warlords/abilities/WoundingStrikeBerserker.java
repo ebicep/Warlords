@@ -129,21 +129,34 @@ public class WoundingStrikeBerserker extends AbstractStrike<WoundingStrikeBerser
 
     private void bleedOnHit(WarlordsEntity giver, WarlordsEntity hit) {
         hit.getCooldownManager().removePreviousWounding();
-        hit.getCooldownManager()
-           .addCooldown(new RegularCooldown<>("Bleed", "BLEED", WoundingStrikeBerserker.class, null, giver, CooldownTypes.LOW_LEVEL_DEBUFF, cooldownManager -> {
-           }, woundingTickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-               if (ticksLeft % 20 == 0) {
-                   float healthDamage = hit.getMaxHealth() * 0.005f;
-                   healthDamage = DamageCheck.clamp(healthDamage);
-                   hit.addInstance(InstanceBuilder.damage().cause("Bleed").source(giver).value(healthDamage).flags(InstanceFlags.DOT));
-               }
-           })
-           ) {
-               @Override
-               public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-                   return currentHealValue * .2f;
-               }
-           });
+        hit.getCooldownManager().addCooldown(new RegularCooldown<>(
+                "Bleed",
+                "BLEED",
+                WoundingStrikeBerserker.class,
+                null,
+                giver,
+                CooldownTypes.LOW_LEVEL_DEBUFF,
+                cooldownManager -> {},
+                woundingTickDuration,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksLeft % 20 == 0) {
+                       float healthDamage = hit.getMaxHealth() * 0.005f;
+                       healthDamage = DamageCheck.clamp(healthDamage);
+                       hit.addInstance(InstanceBuilder
+                               .damage()
+                               .cause("Bleed")
+                               .source(giver)
+                               .value(healthDamage)
+                               .flags(InstanceFlags.DOT, InstanceFlags.IGNORE_DAMAGE_BOOST)
+                       );
+                    }
+                })
+        ) {
+           @Override
+           public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
+               return currentHealValue * .2f;
+           }
+        });
     }
 
     public FloatModifiable getWounding() {

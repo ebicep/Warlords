@@ -93,45 +93,59 @@ public class Fireball extends AbstractProjectile<Fireball, Fireball.FireballStat
         EffectUtils.displayParticle(Particle.EXPLOSION, effectLocation, 1, 0, 0, 0, 0.35);
         EffectUtils.displayParticle(Particle.LAVA, effectLocation, 10, 0.5F, 0, 0.5F, 1.5);
         EffectUtils.displayParticle(Particle.CLOUD, effectLocation, 3, 0.3F, 0.3F, 0.3F, 1);
+
         double distanceSquared = startingLocation.distanceSquared(effectLocation);
         float toReduceBy = maxFullDistance * maxFullDistance > distanceSquared ? 1 : (float) (1 - (Math.sqrt(distanceSquared) - maxFullDistance) / 75);
         if (toReduceBy < .2) {
             toReduceBy = .2f;
         }
+
         if (hit != null && !projectile.getHit().contains(hit)) {
+
             getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
             if (hit.onHorse()) {
                 stats.addNumberOfDismounts();
             }
-            hit.addInstance(InstanceBuilder.damage()
-                                           .ability(this)
-                                           .source(shooter)
-                                           .min(damageValues.fireballDamage.getMinValue() * convertToMultiplicationDecimal(directHitMultiplier))
-                                           .max(damageValues.fireballDamage.getMaxValue() * convertToMultiplicationDecimal(directHitMultiplier))
-                                           .crit(damageValues.fireballDamage)
-                                           .flags(InstanceFlags.DIRECT_HIT));
+
+            hit.addInstance(InstanceBuilder
+                    .damage()
+                    .ability(this)
+                    .source(shooter)
+                    .min(damageValues.fireballDamage.getMinValue() * convertToMultiplicationDecimal(directHitMultiplier))
+                    .max(damageValues.fireballDamage.getMaxValue() * convertToMultiplicationDecimal(directHitMultiplier))
+                    .crit(damageValues.fireballDamage)
+                    .flags(InstanceFlags.DIRECT_HIT)
+            );
+
             if (pveMasterUpgrade) {
                 applyBurnEffect(hit, shooter);
             } else if (pveMasterUpgrade2) {
                 applyIgniteEffect(shooter, hit);
             }
         }
+
         int playersHit = 0;
         float radius = splashRadius.getCalculatedValue();
-        for (WarlordsEntity nearEntity : PlayerFilter.entitiesAround(hit != null ? hit.getLocation() : currentLocation, radius, radius, radius)
-                                                     .aliveEnemiesOf(shooter)
-                                                     .excluding(projectile.getHit())) {
+        for (WarlordsEntity nearEntity : PlayerFilter
+                .entitiesAround(hit != null ? hit.getLocation() : currentLocation, radius, radius, radius)
+                .aliveEnemiesOf(shooter)
+                .excluding(projectile.getHit())
+        ) {
             getProjectiles(projectile).forEach(p -> p.getHit().add(nearEntity));
             playersHit++;
+
             if (nearEntity.onHorse()) {
                 stats.addNumberOfDismounts();
             }
-            nearEntity.addInstance(InstanceBuilder.damage()
-                                                  .ability(this)
-                                                  .source(shooter)
-                                                  .min(damageValues.fireballDamage.getMinValue() * toReduceBy)
-                                                  .max(damageValues.fireballDamage.getMaxValue() * toReduceBy)
-                                                  .crit(damageValues.fireballDamage));
+
+            nearEntity.addInstance(InstanceBuilder
+                    .damage()
+                    .ability(this)
+                    .source(shooter)
+                    .min(damageValues.fireballDamage.getMinValue() * toReduceBy)
+                    .max(damageValues.fireballDamage.getMaxValue() * toReduceBy)
+                    .crit(damageValues.fireballDamage)
+            );
         }
         return playersHit;
     }
@@ -153,7 +167,13 @@ public class Fireball extends AbstractProjectile<Fireball, Fireball.FireballStat
                     if (ticksLeft % applyBurnEffectEvent.getTickPeriod() == 0) {
                         float healthDamage = hit.getMaxHealth() * 0.005f;
                         healthDamage = DamageCheck.clamp(healthDamage);
-                        hit.addInstance(InstanceBuilder.damage().cause("Burn").source(shooter).value(healthDamage).flags(InstanceFlags.DOT));
+                        hit.addInstance(InstanceBuilder
+                                .damage()
+                                .cause("Burn")
+                                .source(shooter)
+                                .value(healthDamage)
+                                .flags(InstanceFlags.DOT, InstanceFlags.IGNORE_DAMAGE_BOOST)
+                        );
                     }
                 })
         ) {

@@ -1,7 +1,12 @@
 package com.ebicep.warlords.pve.upgrades.shaman.thunderlord;
 
 import com.ebicep.warlords.abilities.WindfuryWeapon;
+import com.ebicep.warlords.abilities.internal.DamageCheck;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.pve.upgrades.*;
+import com.ebicep.warlords.pve.upgrades.rogue.assassin.JudgementStrikeBranch;
 
 public class WindfuryBranch extends AbstractUpgradeBranch<WindfuryWeapon> {
 
@@ -104,12 +109,29 @@ public class WindfuryBranch extends AbstractUpgradeBranch<WindfuryWeapon> {
                 "Shredding Fury",
                 "Windfury - Master Upgrade",
                 """
-                        Each hit deals 1% of the target's max health as bonus damage.
+                        Each hit deals 0.5% of the target's max health as bonus damage.
 
                         Hits on an enemy will permanently reduce their damage reduction by 2% for each additional Windfury proc.""",
                 50000,
                 () -> {
-
+                    abilityTree.getWarlordsPlayer().getCooldownManager().addCooldown(new PermanentCooldown<>(
+                            "Shredding Fury",
+                            null,
+                            WindfuryBranch.class,
+                            null,
+                            abilityTree.getWarlordsPlayer(),
+                            CooldownTypes.MASTERY,
+                            cm -> {},
+                            false
+                    ) {
+                        @Override
+                        public float addDamageAfterAllModificationsBeforeShield(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                            if (event.getCause().equals("Windfury Weapon")) {
+                                return currentDamageValue + DamageCheck.clamp(event.getWarlordsEntity().getMaxHealth() * 0.005f);
+                            }
+                            return currentDamageValue;
+                        }
+                    });
                 }
         );
         masterUpgrade2 = new Upgrade(
