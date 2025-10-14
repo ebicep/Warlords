@@ -93,7 +93,7 @@ public class LegendaryConduit extends AbstractLegendaryWeapon implements Passive
                 false
         ) {
             @Override
-            public void onHealFromAttacker(WarlordsDamageHealingEvent event, float currentHealingValue, boolean isCrit) {
+            public void onHealFromSelf(WarlordsDamageHealingEvent event, float currentHealingValue, boolean isCrit) {
                 float threshold = player.getMaxHealth() * (HEAL_THRESHOLD_PERCENT / 100f);
                 if (currentHealingValue < threshold) {
                     return;
