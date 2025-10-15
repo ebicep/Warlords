@@ -327,12 +327,13 @@ public class Lilium extends AbstractMob implements BossMob {
                 public void run() {
                     t++;
                     bladeWaltsAbility(warlordsNPC);
+                    dropBouquetNode(warlordsNPC.getLocation());
                     if (t == 20) {
                         this.cancel();
                         preventDashing = false;
                     }
                 }
-            }.runTaskTimer(60, 6);
+            }.runTaskTimer(40, 6);
             PlayerFilter.playingGame(warlordsNPC.getGame())
                     .aliveEnemiesOf(warlordsNPC)
                     .forEach(enemy -> {
