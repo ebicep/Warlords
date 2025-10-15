@@ -12,6 +12,7 @@ public interface DamageCheck {
     float MAXIMUM_DAMAGE = 3000;
 
     static float clamp(float value) {
+        // max cap + 2% effectiveness
         if (value > MAXIMUM_DAMAGE) {
             return MAXIMUM_DAMAGE + (value * 0.02f);
         }
