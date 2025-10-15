@@ -71,7 +71,7 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
                     ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -5);
 
                     warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
-                            "Avenger's Slash",
+                            "MAX HP DAMAGE (Avenger's Slash)",
                             null,
                             AvengerStrikeBranch.class,
                             null,
@@ -81,10 +81,10 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
                             false
                     ) {
                         @Override
-                        public float addDamageAfterAllModificationsBeforeShield(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                        public float modifyDamageAfterInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
                             boolean isAboveElite = event.getWarlordsEntity() instanceof WarlordsNPC npc && npc.getMob().getInternalLevel() >= 4;
                             boolean isNotDuplicateStrike =
-                                    !event.getFlags().contains(InstanceFlags.AVENGER_WRATH_STRIKE) &&
+                                    !event.getFlags().contains(InstanceFlags.AVENGER_WRATH_STRIKE) ||
                                     !event.getFlags().contains(InstanceFlags.DUPLICATE_AVENGER_STRIKE);
 
                             if (isAboveElite && event.getCause().equals("Avenger's Strike") && isNotDuplicateStrike) {

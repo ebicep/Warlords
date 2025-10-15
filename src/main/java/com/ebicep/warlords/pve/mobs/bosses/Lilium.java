@@ -134,7 +134,7 @@ public class Lilium extends AbstractMob implements BossMob {
                 true
         ) {
             @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+            public float modifyDamageAfterAllFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                 if (crystals.isEmpty()) {
                     return currentDamageValue;
                 }
@@ -327,12 +327,13 @@ public class Lilium extends AbstractMob implements BossMob {
                 public void run() {
                     t++;
                     bladeWaltsAbility(warlordsNPC);
+                    dropBouquetNode(warlordsNPC.getLocation());
                     if (t == 20) {
                         this.cancel();
                         preventDashing = false;
                     }
                 }
-            }.runTaskTimer(60, 6);
+            }.runTaskTimer(40, 6);
             PlayerFilter.playingGame(warlordsNPC.getGame())
                     .aliveEnemiesOf(warlordsNPC)
                     .forEach(enemy -> {
@@ -842,8 +843,8 @@ public class Lilium extends AbstractMob implements BossMob {
                                 .damage()
                                 .cause("Waltz")
                                 .source(warlordsNPC)
-                                .min(1200)
-                                .max(1800)
+                                .min(1500)
+                                .max(2500)
                         );
             });
             locationBuilder = locationBuilder.forward(1);
@@ -889,6 +890,7 @@ public class Lilium extends AbstractMob implements BossMob {
                                     .source(warlordsNPC)
                                     .min(800)
                                     .max(1200)
+                                    .flags(InstanceFlags.TRUE_DAMAGE)
                             );
                             Utils.addKnockback("Lilium Knockback", warlordsNPC.getLocation(), wp, -1.15, 0.2);
                         });
@@ -1047,7 +1049,6 @@ public class Lilium extends AbstractMob implements BossMob {
                             if (crystals.isEmpty()) return;
 
                             crystals.removeIf(p -> p.equals(event.getWarlordsEntity().getUuid()));
-                            Utils.playGlobalSound(mapCenter, Sound.ENTITY_ELDER_GUARDIAN_CURSE, 2, 2);
                         }
                     };
                     warlordsNPC.getGame().registerEvents(petalCrystalSequenceListener);

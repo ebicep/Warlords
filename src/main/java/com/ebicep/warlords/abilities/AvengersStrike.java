@@ -86,14 +86,13 @@ public class AvengersStrike extends AbstractStrike<AvengersStrike, AvengersStrik
                         .excluding(nearPlayer)
                         .limit(2)
                 ) {
-                    float damage = finalEvent.getValue();
                     we.addInstance(InstanceBuilder
                             .damage()
                             .ability(this)
                             .source(wp)
-                            .value(damage)
+                            .value(finalEvent.getValue())
                             .showAsCrit(finalEvent.isCrit())
-                            .flags(InstanceFlags.DUPLICATE_AVENGER_STRIKE, InstanceFlags.IGNORE_DAMAGE_BOOST)
+                            .flags(InstanceFlags.DUPLICATE_AVENGER_STRIKE, InstanceFlags.IGNORE_DAMAGE_BOOST, InstanceFlags.IGNORE_FERVENT_TITLE)
                     );
                     Bukkit.getPluginManager().callEvent(new WarlordsStrikeEvent(wp, this, we));
                 }

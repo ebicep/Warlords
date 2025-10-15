@@ -56,6 +56,8 @@ public class PvePractice extends GameMap {
         options.add(new DummySpawnOption(loc.addXYZ(104.5, 11, 53.5), Team.RED));
         options.add(new DummySpawnOption(loc.addXYZ(97.5, 11, 62.5), Team.RED));
         options.add(new DummySpawnOption(loc.addXYZ(95.5, 12, 45.5), Team.RED));
+        options.add(new DummySpawnOption(loc.addXYZ(101.5, 11, 62.5), Team.BLUE));
+        options.add(new DummySpawnOption(loc.addXYZ(87.5, 11, 56.5), Team.BLUE));
 
         options.add(new BasicScoreboardOption());
         options.add(new RespawnWaveOption(1, 20, 10));
@@ -70,7 +72,8 @@ public class PvePractice extends GameMap {
                 )
                 ,
 
-                DifficultyIndex.NORMAL
+                DifficultyIndex.NORMAL,
+                100
         ));
         options.add(new ItemOption());
         options.add(new TartarusOption());

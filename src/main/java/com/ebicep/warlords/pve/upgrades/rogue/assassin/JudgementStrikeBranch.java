@@ -67,7 +67,7 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
                     ability.setStrikeCritInterval(2);
 
                     abilityTree.getWarlordsPlayer().getCooldownManager().addCooldown(new PermanentCooldown<>(
-                            "Death Strike",
+                            "MAX HP DAMAGE (Death Strike)",
                             null,
                             JudgementStrikeBranch.class,
                             null,
@@ -77,7 +77,7 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
                             false
                     ) {
                         @Override
-                        public float addDamageAfterAllModificationsBeforeShield(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                        public float modifyDamageAfterInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
                             if (event.getCause().equals("Judgement Strike")) {
                                 return currentDamageValue + DamageCheck.clamp(event.getWarlordsEntity().getMaxHealth() * 0.01f);
                             }

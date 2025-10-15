@@ -58,7 +58,7 @@ public class Orbyz extends AbstractMob implements BossMob {
         super(
                 spawnLocation,
                 "Orbyz",
-                250000,
+                240000,
                 0.3f,
                 20,
                 1000,
@@ -229,25 +229,16 @@ public class Orbyz extends AbstractMob implements BossMob {
                 true
         ) {
             @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+            public float modifyDamageAfterAllFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                 if (event.getSource().getCooldownManager().hasCooldownFromName("Empowering Allies")) {
-                    return currentDamageValue * 1.25f;
+                    return currentDamageValue * 1.2f;
                 }
-                return currentDamageValue * 0.2f;
+                return currentDamageValue * 0.1f;
             }
         });
 
         phaseOne = new BossAbilityPhase(warlordsNPC, 80, () -> {
-            ChatUtils.sendTitleToGamePlayers(
-                    warlordsNPC.getGame(),
-                    Component.empty(),
-                    Component.text("Little puppets running in circles...", NamedTextColor.AQUA),
-                    20,
-                    60,
-                    20
-            );
-            Utils.playGlobalSound(mapCenter, Sound.ENTITY_ALLAY_AMBIENT_WITHOUT_ITEM, 500, 0.3f);
-            rotatingRadialLasersAbility.start(warlordsNPC.getGame());
+            castRotatingLasers();
         });
 
         phaseTwo = new BossAbilityPhase(warlordsNPC, 60, () -> {
@@ -263,8 +254,7 @@ public class Orbyz extends AbstractMob implements BossMob {
         });
 
         phaseThree = new BossAbilityPhase(warlordsNPC, 50, () -> {
-            Utils.playGlobalSound(mapCenter, Sound.ENTITY_ALLAY_AMBIENT_WITHOUT_ITEM, 500, 0.3f);
-            rotatingRadialLasersAbility.start(warlordsNPC.getGame());
+            castRotatingLasers();
         });
 
         phaseFour = new BossAbilityPhase(warlordsNPC, 40, () -> {
@@ -297,8 +287,7 @@ public class Orbyz extends AbstractMob implements BossMob {
         });
 
         phaseFive = new BossAbilityPhase(warlordsNPC, 25, () -> {
-            Utils.playGlobalSound(mapCenter, Sound.ENTITY_ALLAY_AMBIENT_WITHOUT_ITEM, 500, 0.3f);
-            rotatingRadialLasersAbility.start(warlordsNPC.getGame());
+            castRotatingLasers();
         });
 
         phaseSix = new BossAbilityPhase(warlordsNPC, 15, () -> {
@@ -418,6 +407,19 @@ public class Orbyz extends AbstractMob implements BossMob {
                 12,
                 Material.PACKED_ICE
         );
+    }
+
+    private void castRotatingLasers() {
+        ChatUtils.sendTitleToGamePlayers(
+                warlordsNPC.getGame(),
+                Component.empty(),
+                Component.text("Little puppets running in circles...", NamedTextColor.AQUA),
+                20,
+                60,
+                20
+        );
+        Utils.playGlobalSound(mapCenter, Sound.ENTITY_ALLAY_AMBIENT_WITHOUT_ITEM, 500, 0.3f);
+        rotatingRadialLasersAbility.start(warlordsNPC.getGame());
     }
 
     @Override
