@@ -38,7 +38,8 @@ public class WeaponCraftMenu {
         put(Currencies.ETHEREUM_CRYSTAL, 5L);
     }};
 
-    public static final List<Component> COST_LORE = PvEUtils.getCostLore(LEGENDARY_COST, "Craft Cost", true);
+    public static final List<Component> LEGENDARY_COST_LORE = PvEUtils.getCostLore(LEGENDARY_COST, "Craft Cost", true);
+    public static final List<Component> ASCENDANT_COST_LORE = PvEUtils.getCostLore(ASCENDANT_COST, "Craft Cost", true);
 
     public static void openWeaponLegendaryCraftMenu(Player player, DatabasePlayer databasePlayer) {
         DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
@@ -54,12 +55,12 @@ public class WeaponCraftMenu {
         menu.setItem(4, 2,
                 new ItemBuilder(Material.GUNPOWDER)
                         .name(Component.text("Craft Legendary Weapon", NamedTextColor.GREEN))
-                        .lore(COST_LORE)
+                        .lore(LEGENDARY_COST_LORE)
                         .get(),
                 (m, e) -> {
                     List<Component> confirmLore = new ArrayList<>();
                     confirmLore.add(Component.text("Craft a Legendary Weapon", NamedTextColor.GRAY));
-                    confirmLore.addAll(COST_LORE);
+                    confirmLore.addAll(LEGENDARY_COST_LORE);
                     Menu.openConfirmationMenu(
                             player,
                             "Craft Legendary Weapon",
@@ -117,12 +118,12 @@ public class WeaponCraftMenu {
         menu.setItem(4, 2,
                 new ItemBuilder(Material.GUNPOWDER)
                         .name(Component.text("Craft Ascendant Weapon", NamedTextColor.GREEN))
-                        .lore(COST_LORE)
+                        .lore(ASCENDANT_COST_LORE)
                         .get(),
                 (m, e) -> {
                     List<Component> confirmLore = new ArrayList<>();
                     confirmLore.add(Component.text("Craft a Legendary Weapon", NamedTextColor.GRAY));
-                    confirmLore.addAll(COST_LORE);
+                    confirmLore.addAll(ASCENDANT_COST_LORE);
                     Menu.openConfirmationMenu(
                             player,
                             "Craft Ascendant Weapon",
@@ -131,7 +132,7 @@ public class WeaponCraftMenu {
                             Menu.GO_BACK,
                             (m2, e2) -> {
                                 LegendaryWeapon weapon = new LegendaryWeapon(player.getUniqueId());
-                                LEGENDARY_COST.forEach(pveStats::subtractCurrency);
+                                ASCENDANT_COST.forEach(pveStats::subtractCurrency);
                                 pveStats.getWeaponInventory().add(weapon);
                                 Location loc = player.getLocation();
                                 playCraftEffects(player, loc);

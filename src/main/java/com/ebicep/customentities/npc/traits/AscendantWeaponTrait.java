@@ -24,7 +24,7 @@ public class AscendantWeaponTrait extends WarlordsTrait {
     public void rightClick(NPCRightClickEvent event) {
         Player player = event.getClicker();
         DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
-            WeaponCraftMenu.openWeaponLegendaryCraftMenu(player, databasePlayer);
+            WeaponCraftMenu.openWeaponAscendantCraftMenu(player, databasePlayer);
         });
     }
 }
