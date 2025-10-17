@@ -44,6 +44,7 @@ public enum LegendaryTitles {
     CONDUIT("Conduit", LegendaryConduit.class, LegendaryConduit::new, LegendaryConduit::new, Material.LIGHT_BLUE_STAINED_GLASS_PANE),
     FLUX("Flux", LegendaryFlux.class, LegendaryFlux::new, LegendaryFlux::new, Material.YELLOW_STAINED_GLASS_PANE),
     BASTION("Bastion", LegendaryBastion.class, LegendaryBastion::new, LegendaryBastion::new, Material.ORANGE_STAINED_GLASS_PANE),
+    AFTERSHOCK("Aftershock", LegendaryAftershock.class, LegendaryAftershock::new, LegendaryAftershock::new, Material.MAGENTA_STAINED_GLASS_PANE),
 
     ;
 

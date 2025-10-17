@@ -1,0 +1,196 @@
+package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
+
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.game.option.pve.PveOption;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCounter;
+import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.GameRunnable;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Location;
+import org.springframework.data.annotation.Transient;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+
+public class LegendaryAftershock extends AbstractLegendaryWeapon implements PassiveCounter {
+
+    public static final int RADIUS_BLOCKS = 5;
+    public static final int DURATION_SECONDS = 3;
+    public static final int TICK_INTERVAL_TICKS = 5;
+    public static final float SLOW_PERCENT = 25f;
+
+    public static final float THRESHOLD_PERCENT_BASE = 15f;
+    public static final float THRESHOLD_PERCENT_DEC_PER_LEVEL = 0.5f;
+
+    public static final float ZONE_DAMAGE_PERCENT_BASE = 30f;
+    public static final float ZONE_DAMAGE_INC_PER_LEVEL = 1.5f;
+
+    @Transient private int counter = 0;
+
+    public LegendaryAftershock() {}
+    public LegendaryAftershock(UUID uuid) { super(uuid); }
+    public LegendaryAftershock(AbstractLegendaryWeapon copy) { super(copy); }
+
+    @Override
+    public TextComponent getPassiveEffect() {
+        return Component.text("Dealing burst damage of at least ", NamedTextColor.GRAY)
+                .append(formatTitleUpgrade(getThresholdPercent(), "%"))
+                .append(Component.text(" of the target’s max health creates an Aftershock zone (5 blocks) at the target for 3 seconds. The zone deals ", NamedTextColor.GRAY))
+                .append(formatTitleUpgrade(getZoneDamagePercent(), "%"))
+                .append(Component.text(" of the triggering hit over its duration and slows enemies by 25%.", NamedTextColor.GRAY));
+    }
+
+    @Override
+    public List<Pair<Component, Component>> getPassiveEffectUpgrade() {
+        return Arrays.asList(
+                new Pair<>(
+                        formatTitleUpgrade(getThresholdPercentAtLevel(getTitleLevel()), "%"),
+                        formatTitleUpgrade(getThresholdPercentAtLevel(getTitleLevelUpgraded()), "%")
+                ),
+                new Pair<>(
+                        formatTitleUpgrade(getZoneDamagePercentAtLevel(getTitleLevel()), "%"),
+                        formatTitleUpgrade(getZoneDamagePercentAtLevel(getTitleLevelUpgraded()), "%")
+                )
+        );
+    }
+
+    @Override
+    public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
+        super.applyToWarlordsPlayer(player, pveOption);
+
+        player.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                "Aftershock",
+                null,
+                LegendaryAftershock.class,
+                null,
+                player,
+                CooldownTypes.WEAPON,
+                cm -> {},
+                false
+        ) {
+            @Override
+            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                float targetMax = event.getWarlordsEntity().getMaxHealth();
+                if (targetMax <= 0) {
+                    return currentDamageValue;
+                }
+                float threshold = targetMax * (getThresholdPercent() / 100f);
+                if (currentDamageValue < threshold) {
+                    return currentDamageValue;
+                }
+
+                Location center = event.getWarlordsEntity().getLocation();
+                if (center.getWorld() == null) {
+                    return currentDamageValue;
+                }
+
+                float totalZoneDamage = currentDamageValue * (getZoneDamagePercent() / 100f);
+                spawnAftershockZone(player, center.clone(), totalZoneDamage);
+
+                return currentDamageValue;
+            }
+        });
+    }
+
+    private void spawnAftershockZone(WarlordsPlayer owner, Location center, float totalDamage) {
+        int totalTicks = Math.max(1, (DURATION_SECONDS * 20) / TICK_INTERVAL_TICKS);
+        float damagePerTick = totalDamage / totalTicks;
+
+        new GameRunnable(owner.getGame()) {
+            int ticks = 0;
+
+            @Override
+            public void run() {
+                if (owner.isDead() || center.getWorld() == null) {
+                    this.cancel();
+                    return;
+                }
+
+                PlayerFilter.entitiesAround(center, RADIUS_BLOCKS, RADIUS_BLOCKS, RADIUS_BLOCKS)
+                        .aliveEnemiesOf(owner)
+                        .forEach(enemy -> {
+                            enemy.addInstance(InstanceBuilder
+                                    .damage()
+                                    .cause("Aftershock")
+                                    .source(owner)
+                                    .min(damagePerTick)
+                                    .max(damagePerTick)
+                            );
+                            enemy.addSpeedModifier(owner, "Aftershock", -SLOW_PERCENT, DURATION_SECONDS);
+                        });
+
+                ticks++;
+                if (ticks >= totalTicks) {
+                    this.cancel();
+                }
+            }
+        }.runTaskTimer(0, TICK_INTERVAL_TICKS);
+    }
+
+    private float getThresholdPercentAtLevel(int level) {
+        return Math.max(1f, THRESHOLD_PERCENT_BASE - THRESHOLD_PERCENT_DEC_PER_LEVEL * level);
+    }
+
+    private float getThresholdPercent() {
+        return getThresholdPercentAtLevel(getTitleLevel());
+    }
+
+    private float getZoneDamagePercentAtLevel(int level) {
+        return ZONE_DAMAGE_PERCENT_BASE + ZONE_DAMAGE_INC_PER_LEVEL * level;
+    }
+
+    private float getZoneDamagePercent() {
+        return getZoneDamagePercentAtLevel(getTitleLevel());
+    }
+
+    @Override
+    public LegendaryTitles getTitle() {
+        return LegendaryTitles.AFTERSHOCK;
+    }
+
+    @Override
+    protected float getMeleeDamageMinValue() {
+        return 140;
+    }
+
+    @Override
+    protected float getMeleeDamageMaxValue() {
+        return 160;
+    }
+
+    @Override
+    protected float getCritChanceValue() {
+        return 20;
+    }
+
+    @Override
+    protected float getCritMultiplierValue() {
+        return 160;
+    }
+
+    @Override
+    protected float getHealthBonusValue() {
+        return 1000;
+    }
+
+    @Override
+    protected float getSpeedBonusValue() {
+        return 7;
+    }
+
+    @Override
+    public int getCounter() {
+        return counter;
+    }
+}
