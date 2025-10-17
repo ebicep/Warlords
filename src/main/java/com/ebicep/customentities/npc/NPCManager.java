@@ -152,17 +152,6 @@ public class NPCManager {
         npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 22.5, 82, 155.5, 122, 0));
     }
 
-    private static void createBossRushNPC() {
-        registerTrait(BossRushStartTrait.class, "BossRushStartTrait");
-
-        NPC npc = NPC_REGISTRY.createNPC(EntityType.PLAYER, "boss-rush-mode");
-        npc.addTrait(BossRushStartTrait.class);
-//        npc.getOrAddTrait(SkinTrait.class).setSkinName("Stratfull");
-
-        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
-        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 2.5, 82, 158.5, -135, 0));
-    }
-
     public static void createDatabaseRequiredNPCs() {
         if (!Warlords.citizensEnabled) {
             return;
