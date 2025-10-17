@@ -56,6 +56,7 @@ import static com.ebicep.warlords.menu.Menu.MENU_CLOSE;
 import static com.ebicep.warlords.menu.generalmenu.WarlordsShopMenu.openMainMenu;
 
 public enum GameMode {
+
     LOBBY(
             "MainLobby",
             "MainLobby",
@@ -382,45 +383,6 @@ public enum GameMode {
             return .1f;
         }
     },
-    BOSS_RUSH(
-            "Boss Rush",
-            "PVE",
-            null,//new ItemStack(Material.ZOMBIE_HEAD),
-            null,
-            GamesCollections.PVE,
-            1,
-            true,
-            ConfigManager.PVE_NAMESPACES
-    ) {
-        @Override
-        public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
-            List<Option> options = new ArrayList<>();
-            Component base = Component.text("", NamedTextColor.YELLOW, TextDecoration.BOLD);
-            options.add(TextOption.Type.CHAT_CENTERED.create(
-                    Component.text("Warlords", NamedTextColor.WHITE, TextDecoration.BOLD),
-                    Component.empty(),
-                    base.append(Component.text("Survive against waves of")),
-                    base.append(Component.text("monsters!")),
-                    Component.empty()
-            ));
-            options.add(TextOption.Type.TITLE.create(
-                    10,
-                    Component.text("GO!", NamedTextColor.GREEN),
-                    Component.text("Kill all bosses in order to win!", NamedTextColor.YELLOW)
-            ));
-            options.add(new PreGameItemOption(4, PlayerHotBarItemListener.SELECTION_MENU, (g, p) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(p)));
-            options.add(new RecordTimeElapsedOption());
-            options.add(new WeaponOption(WeaponOption::showPvEWeapon, WeaponOption::showWeaponStats));
-            options.add(new NoRespawnIfOfflineOption());
-            options.add(new WinByAllDeathOption(Team.BLUE));
-            options.add(new DieOnLogoutOption());
-            options.add(new GameFreezeOption());
-            options.add(new BasicScoreboardOption());
-            options.add(new PlayerCooldownDisplayOption());
-
-            return options;
-        }
-    },
     TREASURE_HUNT(
             "Cryptic Conquest",
             "PVE",
@@ -612,44 +574,6 @@ public enum GameMode {
             options.add(new DieOnLogoutOption());
             options.add(new GameFreezeOption());
             options.add(new BountyOption());
-            options.add(new PlayerCooldownDisplayOption());
-
-            return options;
-        }
-    },
-    PAYLOAD(
-            "Payload",
-            "Payload",
-            null,//new ItemStack(Material.ZOMBIE_HEAD),
-            null,
-            null,
-            1,
-            true,
-            ConfigManager.DEFAULT_NAMESPACES
-    ) {
-        @Override
-        public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
-            List<Option> options = new ArrayList<>();
-
-            Component base = Component.text("", NamedTextColor.YELLOW, TextDecoration.BOLD);
-            options.add(TextOption.Type.CHAT_CENTERED.create(
-                    Component.text("Warlords", NamedTextColor.WHITE, TextDecoration.BOLD),
-                    Component.empty(),
-                    base.append(Component.text("Something about payload here!")),
-                    Component.empty()
-            ));
-            options.add(TextOption.Type.TITLE.create(
-                    10,
-                    Component.text("GO!", NamedTextColor.GREEN),
-                    Component.text("Payload!", NamedTextColor.YELLOW)
-            ));
-
-            options.add(new WinAfterTimeoutOption(600, Team.RED));
-            options.add(new GameFreezeOption());
-            options.add(new NoRespawnIfOfflineOption());
-            options.add(new WeaponOption());
-            options.add(new ApplySpecBoostsOption(addons.contains(GameAddon.RANDOM_SPEC_BOOST)));
-            options.add(new HorseOption());
             options.add(new PlayerCooldownDisplayOption());
 
             return options;

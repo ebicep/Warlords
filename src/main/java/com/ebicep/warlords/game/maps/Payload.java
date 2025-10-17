@@ -38,7 +38,7 @@ public class Payload extends GameMap {
                 5 * SECOND,
                 "Payload",
                 3,
-                GameMode.PAYLOAD
+                GameMode.PVE_DEBUG
         );
     }
 
