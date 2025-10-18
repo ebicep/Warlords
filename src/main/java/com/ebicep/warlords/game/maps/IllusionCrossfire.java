@@ -35,7 +35,7 @@ public class IllusionCrossfire extends GameMap {
                 1,
                 120 * SECOND,
                 "IllusionCrossfire",
-                7,
+                3,
                 GameMode.WAVE_DEFENSE
         );
     }
@@ -839,12 +839,42 @@ public class IllusionCrossfire extends GameMap {
                         .add(0.03, Mob.CELESTIAL_OPUS)
                         .add(0.01, Mob.SKELETAL_SORCERER)
                 )
+                .add(130, new RandomSpawnWave(5, 10 * SECOND, Component.text("Boss"))
+                        .add(Mob.BOLTARO)
+                )
+                .add(131, new RandomSpawnWave(5, 10 * SECOND, Component.text("Boss"))
+                        .add(Mob.GHOULCALLER)
+                )
+                .add(132, new RandomSpawnWave(5, 10 * SECOND, Component.text("Boss"))
+                        .add(Mob.NARMER)
+                )
+                .add(133, new RandomSpawnWave(5, 10 * SECOND, Component.text("Boss"))
+                        .add(Mob.MITHRA)
+                )
+                .add(134, new RandomSpawnWave(5, 10 * SECOND, Component.text("Boss"))
+                        .add(Mob.ZENITH)
+                )
+                .add(135, new RandomSpawnWave(5, 10 * SECOND, Component.text("Boss"))
+                        .add(Mob.MAGMATIC_OOZE)
+                )
+                .add(136, new RandomSpawnWave(5, 10 * SECOND, Component.text("Boss"))
+                        .add(Mob.ILLUMINA)
+                )
+                .add(137, new RandomSpawnWave(5, 10 * SECOND, Component.text("Boss"))
+                        .add(Mob.VOID)
+                )
+                .add(138, new RandomSpawnWave(5, 10 * SECOND, Component.text("Boss"))
+                        .add(Mob.TORMENT)
+                )
+                .add(139, new RandomSpawnWave(5, 10 * SECOND, Component.text("Boss"))
+                        .add(Mob.ONE_OF_NINE)
+                )
                 // hard-lock
-                .add(130, new RandomSpawnWave(1, 10 * SECOND, Component.text("Boss"))
+                .add(140, new RandomSpawnWave(1, 10 * SECOND, Component.text("Boss"))
                         .add(Mob.VEILKEEPER)
                 )
                 // pre-caution
-                .add(131, new RandomSpawnWave(500, 5 * SECOND, null)
+                .add(141, new RandomSpawnWave(500, 5 * SECOND, null)
                                 .add(1, Mob.NIGHTMARE_ZOMBIE)
                 )
 
