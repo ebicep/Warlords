@@ -57,7 +57,7 @@ public class LiliathEngima extends AbstractMob implements BossMinionMob {
                 "Liliath Engima",
                 3000,
                 0,
-                20,
+                0,
                 0,
                 0
         );
