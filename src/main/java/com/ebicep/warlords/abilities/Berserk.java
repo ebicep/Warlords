@@ -145,6 +145,7 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
                 public void run() {
                     cooldown--;
                     if (!wp.getCooldownManager().hasCooldown(berserkCooldown)) {
+                        absorbedDamage = 0;
                         this.cancel();
                     }
                 }
@@ -172,7 +173,7 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
                             .cause("Berserk Unleashed")
                             .source(wp)
                             .value(finalValue * 0.4f)
-                            .flags(InstanceFlags.IGNORE_DAMAGE_BOOST)
+                            .flags(InstanceFlags.IGNORE_DAMAGE_BOOST, InstanceFlags.NO_LUST_HEALING)
                     );
                 }
 
