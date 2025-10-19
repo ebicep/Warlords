@@ -1,6 +1,6 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
-import com.ebicep.warlords.abilities.ArcaneShield;
+import com.ebicep.warlords.abilities.internal.AbstractArcaneShield;
 import com.ebicep.warlords.abilities.FreezingBreath;
 import com.ebicep.warlords.abilities.TimeSurge;
 import com.ebicep.warlords.abilities.TimeWarpCryomancer;
@@ -78,7 +78,7 @@ public class BlizzardBreath implements SpecBoostManager.SpecBoost<BlizzardBreath
                 }
             }
             warlordsPlayer.resetAbilityTree();
-            warlordsPlayer.getAbilitiesMatching(ArcaneShield.class).forEach(arcaneShield -> {
+            warlordsPlayer.getAbilitiesMatching(AbstractArcaneShield.class).forEach(arcaneShield -> {
                 arcaneShield.getCooldown().addMultiplicativeModifierAdd("Spec Boost", -productionValuesDecreasePercent / 100.0f);
                 arcaneShield.getEnergyCost().addMultiplicativeModifierAdd("Spec Boost", -productionValuesDecreasePercent / 100.0f);
                 arcaneShield.setShieldPercentage(arcaneShield.getShieldPercentage() * AbstractAbility.convertToDivisionDecimal(productionValuesDecreasePercent));

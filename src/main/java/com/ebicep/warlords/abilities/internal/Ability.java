@@ -19,7 +19,9 @@ import java.util.function.Supplier;
  */
 public class Ability<T extends AbstractAbility> {
 
-    public static final Ability<ArcaneShield> ARCANE_SHIELD = new Ability<>(ArcaneShield.class, ArcaneShield::new);
+    public static final Ability<ArcaneShieldPyromancer> ARCANE_SHIELD_PYROMANCER = new Ability<>(ArcaneShieldPyromancer.class, ArcaneShieldPyromancer::new);
+    public static final Ability<ArcaneShieldCryomancer> ARCANE_SHIELD_CRYOMANCER = new Ability<>(ArcaneShieldCryomancer.class, ArcaneShieldCryomancer::new);
+    public static final Ability<ArcaneShieldAquamancer> ARCANE_SHIELD_AQUAMANCER = new Ability<>(ArcaneShieldAquamancer.class, ArcaneShieldAquamancer::new);
     public static final Ability<AstralPlague> ASTRAL_PLAGUE = new Ability<>(AstralPlague.class, AstralPlague::new);
     public static final Ability<AvengersStrike> AVENGERS_STRIKE = new Ability<>(AvengersStrike.class, AvengersStrike::new);
     public static final Ability<AvengersWrath> AVENGERS_WRATH = new Ability<>(AvengersWrath.class, AvengersWrath::new);
@@ -127,7 +129,9 @@ public class Ability<T extends AbstractAbility> {
     public static final Ability<WoundingStrikeDefender> WOUNDING_STRIKE_DEFENDER = new Ability<>(WoundingStrikeDefender.class, WoundingStrikeDefender::new);
 
     public static final Ability<?>[] VALUES = new Ability[]{
-            ARCANE_SHIELD,
+            ARCANE_SHIELD_PYROMANCER,
+            ARCANE_SHIELD_CRYOMANCER,
+            ARCANE_SHIELD_AQUAMANCER,
             ASTRAL_PLAGUE,
             AVENGERS_STRIKE,
             AVENGERS_WRATH,

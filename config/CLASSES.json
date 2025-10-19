@@ -19,7 +19,7 @@
           "FIREBALL",
           "FLAME_BURST",
           "TIME_WARP_PYROMANCER",
-          "ARCANE_SHIELD",
+          "ARCANE_SHIELD_PYROMANCER",
           "INFERNO"
         ]
       },
@@ -37,7 +37,7 @@
           "FROST_BOLT",
           "FREEZING_BREATH",
           "TIME_WARP_CRYOMANCER",
-          "ARCANE_SHIELD",
+          "ARCANE_SHIELD_CRYOMANCER",
           "ICE_BARRIER"
         ]
       },
@@ -55,7 +55,7 @@
           "WATER_BOLT",
           "WATER_BREATH",
           "TIME_WARP_AQUAMANCER",
-          "ARCANE_SHIELD",
+          "ARCANE_SHIELD_AQUAMANCER",
           "HEALING_RAIN"
         ]
       },
