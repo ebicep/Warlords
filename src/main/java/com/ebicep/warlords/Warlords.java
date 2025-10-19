@@ -78,7 +78,7 @@ public class Warlords extends JavaPlugin {
     public static final AtomicBoolean SENT_FIFTEEN_MINUTE_REMINDER = new AtomicBoolean(false);
     private static final ConcurrentHashMap<UUID, WarlordsEntity> PLAYERS = new ConcurrentHashMap<>();
     public static String VERSION = "";
-    public static NamedTextColor VERSION_COLOR = NamedTextColor.BLUE;
+    public static NamedTextColor VERSION_COLOR = NamedTextColor.RED;
     public static String serverIP;
     public static boolean hologramsEnabled = true;
     public static boolean citizensEnabled;

@@ -1,10 +1,7 @@
 package com.ebicep.warlords.player.general;
 
 import com.ebicep.warlords.abilities.*;
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.AbstractConsecrate;
-import com.ebicep.warlords.abilities.internal.AbstractGroundSlam;
-import com.ebicep.warlords.abilities.internal.AbstractSeismicWave;
+import com.ebicep.warlords.abilities.internal.*;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -76,9 +73,9 @@ public enum SkillBoosts {
                     Component.text("55%", NamedTextColor.RED),
                     Component.text(".")
             ),
-            ArcaneShield.class,
+            AbstractArcaneShield.class,
             abstractAbility -> {
-                if (abstractAbility instanceof ArcaneShield) {
+                if (abstractAbility instanceof AbstractArcaneShield) {
                     abstractAbility.getEnergyCost().addMultiplicativeModifierMult("Skill Boost", 0);
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .45f);
                 }
@@ -145,9 +142,9 @@ public enum SkillBoosts {
                     Component.text("30%", NamedTextColor.RED),
                     Component.text(".")
             ),
-            ArcaneShield.class,
+            AbstractArcaneShield.class,
             abstractAbility -> {
-                if (abstractAbility instanceof ArcaneShield) {
+                if (abstractAbility instanceof AbstractArcaneShield) {
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .7f);
                 }
             }
@@ -226,9 +223,9 @@ public enum SkillBoosts {
                     Component.text("50%", NamedTextColor.RED),
                     Component.text(".")
             ),
-            ArcaneShield.class,
+            AbstractArcaneShield.class,
             abstractAbility -> {
-                if (abstractAbility instanceof ArcaneShield) {
+                if (abstractAbility instanceof AbstractArcaneShield) {
                     abstractAbility.getEnergyCost().addMultiplicativeModifierMult("Skill Boost", 0);
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .5f);
                 }

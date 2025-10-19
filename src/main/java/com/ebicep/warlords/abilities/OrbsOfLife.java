@@ -124,12 +124,33 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
                             }
                             healPlayer(teammateToHeal, wp, orbHeal);
                             Utils.playGlobalSound(teammateToHeal.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.2f, 1);
-                            for (WarlordsEntity nearPlayer : PlayerFilter.entitiesAround(teammateToHeal, healRadius, healRadius, healRadius)
-                                                                         .aliveTeammatesOfExcludingSelf(teammateToHeal)
-                                                                         .leastAliveFirst()
-                                                                         .limit(MAX_ALLIES)) {
+                            for (WarlordsEntity nearPlayer : PlayerFilter
+                                    .entitiesAround(teammateToHeal, healRadius, healRadius, healRadius)
+                                    .aliveTeammatesOfExcludingSelf(teammateToHeal)
+                                    .leastAliveFirst()
+                                    .limit(MAX_ALLIES)
+                            ) {
                                 healPlayer(nearPlayer, wp, orbHeal);
                                 Utils.playGlobalSound(teammateToHeal.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.2f, 1);
+                            }
+                            if (pveMasterUpgrade) {
+                                for (WarlordsEntity nearPlayer : PlayerFilter
+                                        .entitiesAround(teammateToHeal, healRadius, healRadius, healRadius)
+                                        .aliveEnemiesOf(teammateToHeal)
+                                ) {
+                                    Utils.playGlobalSound(nearPlayer.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1, 1);
+                                    EffectUtils.displayParticle(Particle.EXPLOSION, nearPlayer.getLocation(), 1);
+                                    nearPlayer.addInstance(InstanceBuilder
+                                            .damage()
+                                            .cause("Orbs of Eruption")
+                                            .source(wp)
+                                            .min(315)
+                                            .max(423)
+                                            .critChance(15)
+                                            .critMultiplier(150)
+                                            .flags(InstanceFlags.NO_HEALING_ORBS)
+                                    );
+                                }
                             }
                         } else {
                             if (ticksLived > orbTickDuration || (orb.getPlayerToMoveTowards() != null && orb.getPlayerToMoveTowards().isDead())) {
@@ -144,21 +165,13 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
             @Override
             public void doBeforeReductionFromAttacker(WarlordsDamageHealingEvent event) {
                 String ability = event.getCause();
-                if (ability.equals("Vengeful Army") || event.getFlags().contains(InstanceFlags.RECURSIVE)) {
+                if (event.getFlags().contains(InstanceFlags.NO_HEALING_ORBS) || event.getFlags().contains(InstanceFlags.RECURSIVE)) {
                     return;
                 }
                 spawnOrbs(wp, event.getWarlordsEntity(), ability, this);
                 if (ability.equals("Crippling Strike")) {
                     spawnOrbs(wp, event.getWarlordsEntity(), ability, this);
                 }
-            }
-
-            @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (pveMasterUpgrade) {
-                    return currentDamageValue * convertToMultiplicationDecimal(Math.min(30f, 1f * data.spawnedOrbs.size()));
-                }
-                return currentDamageValue;
             }
         };
         wp.getCooldownManager().addCooldown(orbsOfLifeCooldown);

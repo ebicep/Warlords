@@ -40,7 +40,7 @@ public class HealingTotemBranch extends AbstractUpgradeBranch<HealingTotem> {
                 "Void Totem",
                 "Healing Totem - Master Upgrade",
                 """
-                        Enemies are perpetually sucked into your healing totem every second. Enemies within 4 blocks of the Totem take 400-600 damage every second. The totem will explode at the end removing 15% damage resistance and dealing high damage.
+                        Enemies are perpetually sucked into your healing totem every second. Enemies within 4 blocks of the Totem take 500-800 damage every second. The totem will explode at the end removing 15% damage resistance and dealing high damage.
                         """,
                 50000,
                 () -> {

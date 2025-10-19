@@ -110,7 +110,7 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
                     if (event.getCause().isEmpty() || event.getCause().equals("Time Warp")) {
                         return currentCritChance;
                     }
-                    float critBoost = (0.2f * multiplier);
+                    float critBoost = (0.5f * multiplier);
                     return currentCritChance + Math.min(60, critBoost);
                 }
                 return currentCritChance;
@@ -122,7 +122,7 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
                     if (event.getCause().isEmpty() || event.getCause().equals("Time Warp")) {
                         return currentCritMultiplier;
                     }
-                    float critBoost = (0.2f * multiplier);
+                    float critBoost = (0.5f * multiplier);
                     return currentCritMultiplier + Math.min(60, critBoost);
                 }
                 return currentCritMultiplier;

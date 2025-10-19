@@ -50,7 +50,7 @@ public class BerserkBranch extends AbstractUpgradeBranch<Berserk> {
                 """
                         +10% Additional damage increase
 
-                        Gain 0.2% Crit chance and Crit Multiplier for each instance of damage you deal to an enemy while Berserk is active. (Max 60%)""",
+                        Gain 0.5% Crit chance and Crit Multiplier for each instance of damage you deal to an enemy while Berserk is active. (Max 60%)""",
                 50000,
                 () -> {
                     ability.setDamageIncrease(ability.getDamageIncrease() + 10);

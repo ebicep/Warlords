@@ -23,6 +23,7 @@ import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.revenant.UndyingArmyBranch;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
@@ -224,8 +225,12 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
                 break;
             }
         }
+
         if (pveMasterUpgrade2) {
-            for (WarlordsEntity enemy : PlayerFilter.entitiesAround(wp, radius, radius, radius).aliveEnemiesOf(wp)) {
+            for (WarlordsEntity enemy : PlayerFilter
+                    .entitiesAround(wp, radius, radius, radius)
+                    .aliveEnemiesOf(wp)
+            ) {
                 enemy.getCooldownManager().addCooldown(new RegularCooldown<>(
                         "Vengeful Army",
                         null,
@@ -235,13 +240,15 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
                         CooldownTypes.ABILITY,
                         cooldownManager -> {
                             if (enemy.isAlive()) {
-                                float healthDamage = enemy.getMaxHealth() * .02f;
-                                healthDamage = DamageCheck.clamp(healthDamage);
-                                float damage = 2000 + healthDamage;
+                                float healthDamage = DamageCheck.clamp(enemy.getMaxHealth() * .02f);
+                                float damage = 500;
+                                damage *= (tickDuration / 20f);
                                 enemy.addInstance(InstanceBuilder
                                         .damage()
                                         .cause("Vengeful Army")
-                                        .source(wp).value(damage)
+                                        .source(wp)
+                                        .value(damage + healthDamage)
+                                        .flags(InstanceFlags.NO_HEALING_ORBS, InstanceFlags.IGNORE_DAMAGE_BOOST)
                                 );
                             } else {
                                 new CooldownFilter<>(wp, PersistentCooldown.class).filterCooldownClass(OrbsOfLife.class).forEach(persistentCooldown -> {
@@ -249,16 +256,13 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
                                 });
                             }
                         },
-                        10 * 20,
+                        tickDuration,
                         Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                             if (ticksElapsed % 20 != 0) {
                                 return;
                             }
                             // Particles
-                            Location playerLoc = enemy.getLocation();
-                            playerLoc.add(0, 2.1, 0);
-                            Location particleLoc = playerLoc.clone();
-                            EffectUtils.playCylinderAnimation(particleLoc, 10, 113, 13, 12, 10, 1, 1);
+                            EffectUtils.playCylinderAnimation(enemy.getLocation(), 1.1, 113, 13, 12, 10, 1, 1);
                         })
                 ));
             }

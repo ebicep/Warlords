@@ -28,6 +28,7 @@ import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.commands.MobCommand;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.flags.BossLike;
+import com.ebicep.warlords.pve.mobs.tiers.PlayerMob;
 import com.ebicep.warlords.pve.rewards.RewardInventory;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.util.java.Pair;
@@ -102,6 +103,9 @@ public class OnslaughtOption implements PveOption {
 
                 if (we instanceof WarlordsNPC) {
                     AbstractMob mobToRemove = ((WarlordsNPC) we).getMob();
+                    if (mobToRemove instanceof PlayerMob) {
+                        return;
+                    }
                     if (mobs.containsKey(mobToRemove)) {
                         mobToRemove.onDeath(killer, we.getDeathLocation(), OnslaughtOption.this);
                         new GameRunnable(game) {
@@ -111,10 +115,16 @@ public class OnslaughtOption implements PveOption {
                                 if (integrityCounter >= 100) {
                                     integrityCounter = 100;
                                 }
+                                if (spawnCount < 0) {
+                                    spawnCount = 0;
+                                }
                                 spawnCount--;
                                 mobs.remove(mobToRemove);
                                 game.getPlayers().remove(we.getUuid());
                                 Warlords.removePlayer(we.getUuid());
+                                Bukkit.broadcast(Component.text("spawn count: " + spawnCount));
+                                Bukkit.broadcast(Component.text("spawn limit: " + spawnLimit));
+                                Bukkit.broadcast(Component.text("removed mob: " + mobToRemove));
                             }
                         }.runTaskLater(1);
 
@@ -273,6 +283,10 @@ public class OnslaughtOption implements PveOption {
                 }
                 if (lastSpawn != null) {
                     lastSpawn.getLocation(lastLocation);
+                }
+
+                if (lastSpawn instanceof WarlordsNPC npc && npc.getMob() instanceof PlayerMob) {
+                    return;
                 }
 
                 spawnCount++;

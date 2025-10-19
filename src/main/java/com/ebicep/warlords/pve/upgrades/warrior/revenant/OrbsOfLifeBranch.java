@@ -22,27 +22,25 @@ public class OrbsOfLifeBranch extends AbstractUpgradeBranch<OrbsOfLife> {
                 .addTo(treeB);
 
         masterUpgrade = new Upgrade(
-                "Orbs of Relics",
+                "Orbs of Eruption",
                 "Orbs of Life - Master Upgrade",
                 """
-                        Double orbs healing increase over time, and orbs last twice as long.
-                        
-                        For each active orb, increase your damage by 1% (max 30%).""",
+                       -50% Healing
+
+                       Picking up an orb of life will detonate it. Dealing 315-423 damage to nearby enemies.
+                       """,
                 50000,
                 () -> {
-                    ability.setOrbTickDuration(ability.getOrbTickDuration() * 2);
-                    ability.setHealingIncrease(ability.getHealingIncrease() * 2);
+                    ability.getHealValues().getOrbHealing().value().addMultiplicativeModifierAdd("Orbs of Eruption", -.5f);
                 }
         );
         masterUpgrade2 = new Upgrade(
                 "Orbs of Time",
                 "Orbs of Life - Master Upgrade",
                 """
-                        Double orbs healing increase over time, and orbs last twice as long.
-                        
                         +30% Healing
                         
-                        Orbs of Life can now Overheal. Upon reactivation, orbs will now retain its healing increase.
+                        Double orbs healing increase over time, and orbs last twice as long. Orbs of Life can now Overheal. Upon reactivation, orbs will now retain its healing increase.
                         """,
                 50000,
                 () -> {
