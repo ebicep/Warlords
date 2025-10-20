@@ -65,8 +65,7 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
                 .entitiesAround(wp, castRange, castRange, castRange)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .excludingDummy()
-                .warlordPlayersFirst()
-                .closestFirst(wp)
+                .closestWarlordPlayersFirst(wp.getLocation())
                 .limit(alliesAffected)
                 .stream()
                 .collect(Collectors.toSet());
