@@ -60,8 +60,6 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.trim.TrimMaterial;
-import org.bukkit.inventory.meta.trim.TrimPattern;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -329,7 +327,7 @@ public enum Mob {
             Weapons.FABLED_HEROICS_SCYTHE.getItem()
     )
     ),
-    REQIUEM_GUARDIAN(EntityType.ZOMBIE, RequiemGuardian.class, RequiemGuardian::new, RequiemGuardian::new, new Utils.SimpleEntityEquipment(
+    REQUIEM_GUARDIAN(EntityType.ZOMBIE, RequiemGuardian.class, RequiemGuardian::new, RequiemGuardian::new, new Utils.SimpleEntityEquipment(
             SkullUtils.getSkullFrom(SkullID.PURPLE_KNIGHT),
             Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 104, 255),
             Utils.applyColorTo(Material.LEATHER_LEGGINGS, 250, 104, 190),

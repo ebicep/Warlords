@@ -29,7 +29,7 @@ public class RequiemGuardian extends AbstractMob implements EliteMob, NoTargetAb
 
     @Override
     public Mob getMobRegistry() {
-        return Mob.REQIUEM_GUARDIAN;
+        return Mob.REQUIEM_GUARDIAN;
     }
 
     @Override

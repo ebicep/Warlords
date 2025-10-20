@@ -1,41 +1,26 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
-import com.ebicep.warlords.abilities.UndyingArmy;
-import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
-import com.ebicep.warlords.events.player.ingame.pve.WarlordsMobConvertEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Aspect;
 import com.ebicep.warlords.pve.mobs.Mob;
-import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
-import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCounter;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
-import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.java.RandomCollection;
 import com.ebicep.warlords.util.warlords.GameRunnable;
-import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.Particle;
 import org.bukkit.Sound;
-import org.bukkit.entity.Entity;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.springframework.data.annotation.Transient;
 
@@ -51,9 +36,9 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
     public static final HashMap<DifficultyIndex, Mob> DIFFICULTY_SPAWNS = new HashMap<>() {{
         put(DifficultyIndex.EASY, Mob.ZOMBIE_LAMENT);
         put(DifficultyIndex.NORMAL, Mob.ZOMBIE_LAMENT);
-        put(DifficultyIndex.HARD, Mob.REQIUEM_GUARDIAN);
-        put(DifficultyIndex.EXTREME, Mob.REQIUEM_GUARDIAN);
-        put(DifficultyIndex.ENDLESS, Mob.REQIUEM_GUARDIAN);
+        put(DifficultyIndex.HARD, Mob.REQUIEM_GUARDIAN);
+        put(DifficultyIndex.EXTREME, Mob.REQUIEM_GUARDIAN);
+        put(DifficultyIndex.ENDLESS, Mob.REQUIEM_GUARDIAN);
     }};
     public static final ItemStack CHESTPLATE = com.ebicep.warlords.util.warlords.Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 200, 0);
     public static final ItemStack LEGGINGS = com.ebicep.warlords.util.warlords.Utils.applyColorTo(Material.LEATHER_LEGGINGS, 255, 200, 0);
