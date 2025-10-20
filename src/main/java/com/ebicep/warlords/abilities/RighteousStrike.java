@@ -83,7 +83,13 @@ public class RighteousStrike extends AbstractStrike<RighteousStrike, RighteousSt
             if (pveMasterUpgrade) {
                 SoulShackle.shacklePlayer(wp, nearPlayer, 120);
             }
-            for (WarlordsEntity we : PlayerFilter.entitiesAround(nearPlayer, 4, 4, 4).aliveEnemiesOf(wp).closestFirst(nearPlayer).excluding(nearPlayer).limit(4)) {
+            for (WarlordsEntity we : PlayerFilter
+                    .entitiesAround(nearPlayer, 4, 4, 4)
+                    .aliveEnemiesOf(wp)
+                    .closestFirst(nearPlayer)
+                    .excluding(nearPlayer)
+                    .limit(4)
+            ) {
                 targetsStruck++;
                 if (pveMasterUpgrade) {
                     SoulShackle.shacklePlayer(wp, we, 80);

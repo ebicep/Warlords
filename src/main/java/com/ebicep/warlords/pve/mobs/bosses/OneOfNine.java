@@ -194,7 +194,19 @@ public class OneOfNine extends AbstractMob implements BossMob {
                 2
         );
 
-        chasingOrbsAbility = new ChasingOrbsAbility(warlordsNPC, option.playerCount(), 100, 0.32, 4, 5000, 1.5, Material.ENDER_EYE, 2f, false, mapCenter);
+        chasingOrbsAbility = new ChasingOrbsAbility(
+                warlordsNPC,
+                option.playerCount(),
+                100,
+                0.32,
+                4,
+                5000,
+                1.5,
+                Material.ENDER_EYE,
+                2f,
+                false,
+                mapCenter
+        );
 
         swordManager.spawnSwords(9);
         swordManager.start();
@@ -263,6 +275,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
         phaseOne = new BossAbilityPhase(warlordsNPC, 90, () -> {
             preventDamagePhase = true;
             preventMinions = true;
+            damageController.closeWindow();
             ChatUtils.sendTitleToGamePlayers(
                     warlordsNPC.getGame(),
                     Component.empty(),
@@ -303,7 +316,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
         phaseTwo = new BossAbilityPhase(warlordsNPC, 70, () -> {
             preventDamagePhase = true;
             preventMinions = true;
-
+            damageController.closeWindow();
             ChatUtils.sendTitleToGamePlayers(
                     warlordsNPC.getGame(),
                     Component.empty(),
@@ -455,6 +468,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
         phaseFour = new BossAbilityPhase(warlordsNPC, 30, () -> {
             preventMinions = true;
             preventDamagePhase = true;
+            damageController.closeWindow();
             ChatUtils.sendTitleToGamePlayers(
                     warlordsNPC.getGame(),
                     Component.empty(),
@@ -589,7 +603,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
                 .entitiesAround(warlordsNPC, 20, 20, 20)
                 .aliveEnemiesOf(warlordsNPC)
         ) {
-            Utils.addKnockback("One of Nine", warlordsNPC.getLocation(), we, -20, 0.05);
+            Utils.addKnockback("One of Nine", warlordsNPC.getLocation(), we, -20, 0.15);
             we.addInstance(InstanceBuilder
                     .damage()
                     .cause("Command of Nine")

@@ -5,7 +5,21 @@
   "type": "ABILITIES",
   "data": {
     "pvp": {
-      "arcaneShield": {
+      "arcaneShieldPyromancer": {
+        "name": "Arcane Shield",
+        "cooldown": 31,
+        "energyCost": 40,
+        "shieldPercentage": 50,
+        "tickDuration": 120
+      },
+      "arcaneShieldCryomancer": {
+        "name": "Arcane Shield",
+        "cooldown": 31,
+        "energyCost": 40,
+        "shieldPercentage": 50,
+        "tickDuration": 120
+      },
+      "arcaneShieldAquamancer": {
         "name": "Arcane Shield",
         "cooldown": 31,
         "energyCost": 40,

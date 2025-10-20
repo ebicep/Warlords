@@ -193,7 +193,6 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
                 HashSet<AbstractMob> spawnedMobs = new HashSet<>();
                 for (int i = 0; i < spawnAmount; i++) {
                     AbstractMob mob = DIFFICULTY_SPAWNS.getOrDefault(difficulty, Mob.ZOMBIE_LANCER).createMob(player.getLocation());
-                    mob.setAspect(Aspect.getRandomAspect(List.of(Aspect.INFERNAL)));
                     updateMobEquipment(mob, player);
                     allSpawnedMobs.add(mob);
                     spawnedMobs.add(mob);

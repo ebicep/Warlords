@@ -218,7 +218,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
         }
         ArmorStand crystal = beacon.getCrystal();
         Location orbitLocation = crystal.getLocation().clone().add(0, -4, 0);
-        chasingItemDamage = new ChasingOrbsAbility(wp, Math.min(3, wp.getGame().playersCount()), 40, 0.6, 3, 1000, 1.5, Material.AMETHYST_SHARD, 0.7f, false, orbitLocation);
+        chasingItemDamage = new ChasingOrbsAbility(wp, Math.min(3, wp.getGame().playersCount()), 40, 0.6, 3, 2000, 0, Material.AMETHYST_SHARD, 0.7f, false, orbitLocation);
         chasingItemHealing = new ChasingOrbsAbility(wp, 3, 40, 0.6, 3, 1000, 0, Material.LIME_STAINED_GLASS, 0.7f, true, orbitLocation);
         int yawIncrease = ticksElapsed % hexIntervalTicks == 0 ? 120 : 10;
         if (ticksElapsed % 2 == 0) {

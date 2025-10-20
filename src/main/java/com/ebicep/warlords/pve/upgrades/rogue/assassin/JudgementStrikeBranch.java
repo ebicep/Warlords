@@ -90,13 +90,13 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
                 "Judgemental Fury",
                 "Judgement Strike - Master Upgrade",
                 """
-                        +45% Crit multiplier
+                        +30% Crit multiplier
                         
                         Judgement Strike will now hit twice in one use, the second strike is counted as an additional strike for a guaranteed crit.
                         """,
                 50000,
                 () -> {
-                    ability.getDamageValues().getStrikeDamage().critMultiplier().addAdditiveModifier("Master Upgrade Branch", 45);
+                    ability.getDamageValues().getStrikeDamage().critMultiplier().addAdditiveModifier("Master Upgrade Branch", 30);
                 }
         );
     }

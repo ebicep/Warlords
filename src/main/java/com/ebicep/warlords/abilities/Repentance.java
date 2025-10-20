@@ -64,23 +64,36 @@ public class Repentance extends AbstractAbility implements BlueAbilityIcon, Dura
         EffectUtils.playCylinderAnimation(wp.getLocation(), 1, 255, 255, 255);
         pool += 2000;
         AtomicDouble energyGained = new AtomicDouble();
-        wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "REPE", Repentance.class, new Repentance(), wp, CooldownTypes.ABILITY, cooldownManager -> {
-            if (pveMasterUpgrade2) {
-                //TODO message
-                float energyGain = (float) energyGained.get() / 3.3f / 20;
-                wp.getCooldownManager().addCooldown(new RegularCooldown<>("Remembrance", "REME", Repentance.class, new Repentance(), wp, CooldownTypes.BUFF, cooldownManager1 -> {
-                }, 8 * 20
-                ) {
-
-                    @Override
-                    public float addEnergyGainPerTick(float energyGainPerTick) {
-                        return energyGainPerTick + energyGain;
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                name,
+                "REPE",
+                Repentance.class,
+                new Repentance(),
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                    if (pveMasterUpgrade2) {
+                        //TODO message
+                        float energyGain = (float) energyGained.get() / 3.3f / 20;
+                        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                "Remembrance",
+                                "REME",
+                                Repentance.class,
+                                new Repentance(),
+                                wp,
+                                CooldownTypes.BUFF,
+                                cooldownManager1 -> {},
+                                8 * 20
+                        ) {
+                            @Override
+                            public float addEnergyGainPerTick(float energyGainPerTick) {
+                                return energyGainPerTick + energyGain;
+                            }
+                        });
                     }
-                });
-            }
-        }, tickDuration
+                },
+                tickDuration
         ) {
-
             @Override
             public boolean distinct() {
                 return true;
@@ -90,11 +103,13 @@ public class Repentance extends AbstractAbility implements BlueAbilityIcon, Dura
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                 WarlordsEntity attacker = event.getSource();
                 int healthToAdd = (int) (pool * (damageConvertPercent / 100f)) + 10;
-                attacker.addInstance(InstanceBuilder.healing()
-                                                    .ability(Repentance.this)
-                                                    .source(attacker)
-                                                    .value(Math.min(500, healthToAdd))
-                                                    .flag(InstanceFlags.CAN_OVERHEAL_SELF, pveMasterUpgrade2));
+                attacker.addInstance(InstanceBuilder
+                        .healing()
+                        .ability(Repentance.this)
+                        .source(attacker)
+                        .value(Math.min(500, healthToAdd))
+                        .flag(InstanceFlags.CAN_OVERHEAL_SELF, pveMasterUpgrade2)
+                );
                 if (pveMasterUpgrade2) {
                     Overheal.giveOverHeal(wp, wp);
                 }
