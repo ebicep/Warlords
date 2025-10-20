@@ -46,15 +46,22 @@ public class SeismicWaveBerserker extends AbstractSeismicWave implements Damages
                 List<WarlordsEntity> playersHit = new ArrayList<>();
                 for (List<Location> fallingBlockLocation : locations) {
                     for (Location loc : fallingBlockLocation) {
-                        for (WarlordsEntity waveTarget : PlayerFilter.entitiesAroundRectangle(loc, .6, 4, .6).aliveEnemiesOf(wp).excluding(playersHit).closestFirst(wp)) {
+                        for (WarlordsEntity waveTarget : PlayerFilter
+                                .entitiesAroundRectangle(loc, .6, 4, .6)
+                                .aliveEnemiesOf(wp)
+                                .excluding(playersHit)
+                                .closestFirst(wp)
+                        ) {
                             playersHit.add(waveTarget);
-                            waveTarget.addInstance(InstanceBuilder.damage()
-                                                                  .ability(SeismicWaveBerserker.this)
-                                                                  .source(wp)
-                                                                  .min(723)
-                                                                  .max(906)
-                                                                  .crit(damageValues.waveDamage)
-                                                                  .uuid(uuid));
+                            waveTarget.addInstance(InstanceBuilder
+                                    .damage()
+                                    .ability(SeismicWaveBerserker.this)
+                                    .source(wp)
+                                    .min(723)
+                                    .max(906)
+                                    .crit(damageValues.waveDamage)
+                                    .uuid(uuid)
+                            );
                         }
                     }
                 }

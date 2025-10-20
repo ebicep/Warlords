@@ -1,8 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.mage;
 
 import com.ebicep.warlords.abilities.ArcaneShield;
-import com.ebicep.warlords.abilities.ArcaneShieldAquamancer;
-import com.ebicep.warlords.abilities.ArcaneShieldCryomancer;
 import com.ebicep.warlords.pve.upgrades.*;
 
 public class ArcaneShieldBranch extends AbstractUpgradeBranch<ArcaneShield> {
