@@ -15,6 +15,7 @@ import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Sound;
 import org.springframework.data.annotation.Transient;
 
 import java.util.*;
@@ -32,7 +33,7 @@ public class LegendaryFlux extends AbstractLegendaryWeapon implements PassiveCou
     public static final float CDR_PERCENT_BASE = 30f;
     public static final float CDR_PERCENT_INC_PER_LEVEL = 2.5f;
 
-    public static final int BUFF_DURATION_SECONDS = 6;
+    public static final int BUFF_DURATION_SECONDS = 8;
     public static final String CDR_MOD_KEY = "Flux Master";
     private static final String FLUX_BUFF_NAME = "Flux (Buff)";
     private static final int COOLDOWN = 20;
@@ -221,26 +222,32 @@ public class LegendaryFlux extends AbstractLegendaryWeapon implements PassiveCou
     protected float getMeleeDamageMinValue() {
         return 150;
     }
+
     @Override
     protected float getMeleeDamageMaxValue() {
         return 180;
     }
+
     @Override
     protected float getCritChanceValue()     {
         return 20;
     }
+
     @Override
     protected float getCritMultiplierValue() {
         return 160;
     }
+
     @Override
     protected float getHealthBonusValue() {
         return 600;
     }
+
     @Override
     protected float getSpeedBonusValue() {
         return 7;
     }
+
     @Override
     public float getSkillCritMultiplierBonusValue() {
         return 20;
