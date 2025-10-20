@@ -28,10 +28,9 @@ public class LegendaryMomentum extends AbstractLegendaryWeapon implements Passiv
     public static final int BASE_MAX_STACKS = 20;
     public static final int MAX_STACKS_INCREASE_PER_LEVEL = 2;
 
-    public static final int BASE_GAIN_INTERVAL_TICKS = 5;
-    public static final int GAIN_INTERVAL_TICKS_DECREASE_PER_LEVEL = 1;
+    public static final int BASE_GAIN_INTERVAL_TICKS = 10;
 
-    public static final int DECAY_PER_SECOND = 4;
+    public static final int DECAY_PER_SECOND = 5;
     public static final int DECAY_INTERVAL_TICKS = 20 / DECAY_PER_SECOND;
 
     public static final double MOVE_EPSILON_SQ = 0.01;
@@ -55,22 +54,17 @@ public class LegendaryMomentum extends AbstractLegendaryWeapon implements Passiv
 
     @Override
     public TextComponent getPassiveEffect() {
-        return Component.text("While moving, gain 1 Momentum every ", NamedTextColor.GRAY)
-                .append(formatTitleUpgrade(getGainIntervalSeconds(), "s"))
+        return Component.text("While moving, gain 1 Momentum every " + BASE_GAIN_INTERVAL_TICKS / 20f + "s", NamedTextColor.GRAY)
                 .append(Component.text(", up to ", NamedTextColor.GRAY))
                 .append(formatTitleUpgrade(getMaxStacks()))
                 .append(Component.text(" stacks. Each stack grants " + DMG_PER_STACK_PERCENT + "%", NamedTextColor.GRAY))
                 .append(Component.text(" damage and " + DR_PER_STACK_PERCENT + "%", NamedTextColor.GRAY))
-                .append(Component.text(" damage reduction. Lose 4 stacks per second when not moving.", NamedTextColor.GRAY));
+                .append(Component.text(" damage reduction. Lose 5 stacks per second when not moving.", NamedTextColor.GRAY));
     }
 
     @Override
     public List<Pair<Component, Component>> getPassiveEffectUpgrade() {
-        return Arrays.asList(
-                new Pair<>(
-                        formatTitleUpgrade(getGainIntervalSecondsAtLevel(getTitleLevel()), "s"),
-                        formatTitleUpgrade(getGainIntervalSecondsAtLevel(getTitleLevelUpgraded()), "s")
-                ),
+        return List.of(
                 new Pair<>(
                         formatTitleUpgrade(getMaxStacksAtLevel(getTitleLevel())),
                         formatTitleUpgrade(getMaxStacksAtLevel(getTitleLevelUpgraded()))
@@ -148,7 +142,7 @@ public class LegendaryMomentum extends AbstractLegendaryWeapon implements Passiv
     }
 
     private int getGainIntervalTicksAtLevel(int level) {
-        return Math.max(1, BASE_GAIN_INTERVAL_TICKS - GAIN_INTERVAL_TICKS_DECREASE_PER_LEVEL * level);
+        return BASE_GAIN_INTERVAL_TICKS;
     }
 
     private int getGainIntervalTicks() {

@@ -194,7 +194,19 @@ public class OneOfNine extends AbstractMob implements BossMob {
                 2
         );
 
-        chasingOrbsAbility = new ChasingOrbsAbility(warlordsNPC, option.playerCount(), 100, 0.32, 4, 5000, 1.5, Material.ENDER_EYE, 2f, false, mapCenter);
+        chasingOrbsAbility = new ChasingOrbsAbility(
+                warlordsNPC,
+                option.playerCount(),
+                100,
+                0.32,
+                4,
+                5000,
+                1.5,
+                Material.ENDER_EYE,
+                2f,
+                false,
+                mapCenter
+        );
 
         swordManager.spawnSwords(9);
         swordManager.start();
@@ -213,15 +225,20 @@ public class OneOfNine extends AbstractMob implements BossMob {
                 true
         ) {
             @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+            public float modifyDamageAfterAllFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                 if (damageController.isInDamageWindow()) {
-                    return currentDamageValue * 1.2f;
+                    return currentDamageValue;
                 }
+                // nullify reflected damage
+                if (event.getFlags().contains(InstanceFlags.REFLECTIVE_DAMAGE)) {
+                    return currentDamageValue * 0f;
+                }
+
                 event.getSource().addInstance(InstanceBuilder
                         .damage()
                         .source(warlordsNPC)
                         .cause("Greed")
-                        .value(currentDamageValue * (event.getFlags().contains(InstanceFlags.DOT) ? 0.5f : 1))
+                        .value(currentDamageValue * (event.getFlags().contains(InstanceFlags.DOT) ? 0.25f : 1))
                         .flags(InstanceFlags.RECURSIVE, InstanceFlags.IGNORE_DAMAGE_BOOST)
                 );
                 event.getSource().sendMessage(Component.text("Your divine punishment awaits if you keep giving in to your greed...", NamedTextColor.RED));
@@ -258,6 +275,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
         phaseOne = new BossAbilityPhase(warlordsNPC, 90, () -> {
             preventDamagePhase = true;
             preventMinions = true;
+            damageController.closeWindow();
             ChatUtils.sendTitleToGamePlayers(
                     warlordsNPC.getGame(),
                     Component.empty(),
@@ -298,7 +316,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
         phaseTwo = new BossAbilityPhase(warlordsNPC, 70, () -> {
             preventDamagePhase = true;
             preventMinions = true;
-
+            damageController.closeWindow();
             ChatUtils.sendTitleToGamePlayers(
                     warlordsNPC.getGame(),
                     Component.empty(),
@@ -450,6 +468,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
         phaseFour = new BossAbilityPhase(warlordsNPC, 30, () -> {
             preventMinions = true;
             preventDamagePhase = true;
+            damageController.closeWindow();
             ChatUtils.sendTitleToGamePlayers(
                     warlordsNPC.getGame(),
                     Component.empty(),
@@ -584,7 +603,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
                 .entitiesAround(warlordsNPC, 20, 20, 20)
                 .aliveEnemiesOf(warlordsNPC)
         ) {
-            Utils.addKnockback("One of Nine", warlordsNPC.getLocation(), we, -20, 0.05);
+            Utils.addKnockback("One of Nine", warlordsNPC.getLocation(), we, -20, 0.15);
             we.addInstance(InstanceBuilder
                     .damage()
                     .cause("Command of Nine")

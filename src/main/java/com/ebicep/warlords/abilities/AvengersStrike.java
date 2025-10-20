@@ -50,17 +50,18 @@ public class AvengersStrike extends AbstractStrike<AvengersStrike, AvengersStrik
     @Override
     protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull WarlordsEntity nearPlayer) {
         float multiplier = 1;
-        float healthDamage = 0;
         if (nearPlayer instanceof WarlordsNPC warlordsNPC) {
             if (pveMasterUpgrade) {
                 AbstractMob mob = warlordsNPC.getMob();
                 if (mob.getInternalLevel() <= 3) {
                     multiplier += 0.4f;
-                } else if (mob.getInternalLevel() >= 4) {
-                    healthDamage = nearPlayer.getMaxHealth() * 0.01f;
                 }
             } else if (pveMasterUpgrade2) {
-                int enemiesNearBy = Math.toIntExact(PlayerFilter.entitiesAround(wp, 10, 10, 10).aliveEnemiesOf(wp).stream().count());
+                int enemiesNearBy = Math.toIntExact(PlayerFilter
+                        .entitiesAround(wp, 10, 10, 10)
+                        .aliveEnemiesOf(wp)
+                        .stream().count()
+                );
                 if (enemiesNearBy >= 7) {
                     multiplier += 0.25f;
                 } else {
@@ -68,22 +69,31 @@ public class AvengersStrike extends AbstractStrike<AvengersStrike, AvengersStrik
                 }
             }
         }
-        healthDamage = DamageCheck.clamp(healthDamage);
+
         nearPlayer.addInstance(InstanceBuilder
                 .damage()
                 .ability(this)
                 .source(wp)
-                .min((damageValues.strikeDamage.getMinValue() * multiplier) + (pveMasterUpgrade ? healthDamage : 0))
-                .max((damageValues.strikeDamage.getMaxValue() * multiplier) + (pveMasterUpgrade ? healthDamage : 0))
+                .min((damageValues.strikeDamage.getMinValue() * multiplier))
+                .max((damageValues.strikeDamage.getMaxValue() * multiplier))
                 .crit(damageValues.strikeDamage)
         ).ifPresent(finalEvent -> {
             if (pveMasterUpgrade) {
-                for (WarlordsEntity we : PlayerFilter.entitiesAround(nearPlayer, 4, 4, 4).aliveEnemiesOf(wp).closestFirst(nearPlayer).excluding(nearPlayer).limit(2)) {
-                    float damage = finalEvent.getValue() * 0.75f;
-                    if (we instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob().getInternalLevel() >= 4) {
-                        damage = DamageCheck.clamp(we.getMaxHealth());
-                    }
-                    we.addInstance(InstanceBuilder.damage().ability(this).source(wp).value(damage).showAsCrit(finalEvent.isCrit()).flags(InstanceFlags.TRUE_DAMAGE));
+                for (WarlordsEntity we : PlayerFilter
+                        .entitiesAround(nearPlayer, 4, 4, 4)
+                        .aliveEnemiesOf(wp)
+                        .closestFirst(nearPlayer)
+                        .excluding(nearPlayer)
+                        .limit(2)
+                ) {
+                    we.addInstance(InstanceBuilder
+                            .damage()
+                            .ability(this)
+                            .source(wp)
+                            .value(finalEvent.getValue())
+                            .showAsCrit(finalEvent.isCrit())
+                            .flags(InstanceFlags.DUPLICATE_AVENGER_STRIKE, InstanceFlags.IGNORE_DAMAGE_BOOST, InstanceFlags.IGNORE_FERVENT_TITLE)
+                    );
                     Bukkit.getPluginManager().callEvent(new WarlordsStrikeEvent(wp, this, we));
                 }
             }

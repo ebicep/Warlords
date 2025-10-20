@@ -6,10 +6,11 @@ import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.flags.NoTarget;
 import com.ebicep.warlords.pve.mobs.flags.NoTargetAbilities;
 import com.ebicep.warlords.pve.mobs.tiers.EliteMob;
+import com.ebicep.warlords.pve.mobs.tiers.PlayerMob;
 import org.bukkit.Location;
 import org.bukkit.entity.Zombie;
 
-public class RequiemGuardian extends AbstractMob implements EliteMob, NoTargetAbilities, NoTarget {
+public class RequiemGuardian extends AbstractMob implements PlayerMob, NoTargetAbilities, NoTarget {
 
     public RequiemGuardian(Location spawnLocation) {
         super(

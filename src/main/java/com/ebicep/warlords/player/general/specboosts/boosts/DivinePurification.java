@@ -1,6 +1,6 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
-import com.ebicep.warlords.abilities.ArcaneShield;
+import com.ebicep.warlords.abilities.internal.AbstractArcaneShield;
 import com.ebicep.warlords.abilities.WaterBreath;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
@@ -65,7 +65,7 @@ public class DivinePurification implements SpecBoostManager.SpecBoost<DivinePuri
                 waterBreath.getCooldown().addMultiplicativeModifierAdd("Spec Boost", -waterBreathCooldownReductionPercent / 100f);
                 waterBreath.getEnergyCost().addMultiplicativeModifierAdd("Spec Boost", -waterBreathEnergyCostReductionPercent / 100f);
             });
-            warlordsPlayer.getAbilitiesMatching(ArcaneShield.class).forEach(arcaneShield -> {
+            warlordsPlayer.getAbilitiesMatching(AbstractArcaneShield.class).forEach(arcaneShield -> {
                 arcaneShield.getEnergyCost().addOverridingModifier("Spec Boost", arcaneShieldEnergyCost);
             });
         }

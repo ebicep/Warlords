@@ -3,6 +3,9 @@ package com.ebicep.warlords.pve.mobs.bosses;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Location;
 
 public class Centurion extends AbstractMob implements BossMob {
@@ -36,6 +39,16 @@ public class Centurion extends AbstractMob implements BossMob {
                 minMeleeDamage,
                 maxMeleeDamage
         );
+    }
+
+    @Override
+    public TextColor getColor() {
+        return TextColor.color(210, 150, 30);
+    }
+
+    @Override
+    public Component getDescription() {
+        return Component.text("The Nameless Crown", TextColor.color(120, 120, 120));
     }
 
     @Override

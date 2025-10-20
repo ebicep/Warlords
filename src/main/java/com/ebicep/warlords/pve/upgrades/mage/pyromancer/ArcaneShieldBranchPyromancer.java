@@ -1,15 +1,13 @@
-package com.ebicep.warlords.pve.upgrades.mage;
+package com.ebicep.warlords.pve.upgrades.mage.pyromancer;
 
-import com.ebicep.warlords.abilities.ArcaneShield;
-import com.ebicep.warlords.abilities.ArcaneShieldAquamancer;
-import com.ebicep.warlords.abilities.ArcaneShieldCryomancer;
+import com.ebicep.warlords.abilities.ArcaneShieldPyromancer;
 import com.ebicep.warlords.pve.upgrades.*;
 
-public class ArcaneShieldBranch extends AbstractUpgradeBranch<ArcaneShield> {
+public class ArcaneShieldBranchPyromancer extends AbstractUpgradeBranch<ArcaneShieldPyromancer> {
 
     float shieldPercentage = ability.getShieldPercentage();
 
-    public ArcaneShieldBranch(AbilityTree abilityTree, ArcaneShield ability) {
+    public ArcaneShieldBranchPyromancer(AbilityTree abilityTree, ArcaneShieldPyromancer ability) {
         super(abilityTree, ability);
 
         UpgradeTreeBuilder

@@ -1,6 +1,6 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
-import com.ebicep.warlords.abilities.ArcaneShield;
+import com.ebicep.warlords.abilities.internal.AbstractArcaneShield;
 import com.ebicep.warlords.abilities.WaterBolt;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
@@ -63,7 +63,7 @@ public class ArcaneReflection implements SpecBoostManager.SpecBoost<ArcaneReflec
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
-            warlordsPlayer.getAbilitiesMatching(ArcaneShield.class).forEach(arcaneShield -> {
+            warlordsPlayer.getAbilitiesMatching(AbstractArcaneShield.class).forEach(arcaneShield -> {
                 arcaneShield.setTickDuration(arcaneShield.getTickDuration() + arcaneShieldDurationIncreaseTicks);
             });
             warlordsPlayer.getAbilitiesMatching(WaterBolt.class).forEach(waterBolt ->

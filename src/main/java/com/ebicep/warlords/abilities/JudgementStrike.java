@@ -54,31 +54,39 @@ public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementSt
     @Override
     protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull WarlordsEntity nearPlayer) {
         for (int i = 0; i < (pveMasterUpgrade2 ? 2 : 1); i++) {
+            if (nearPlayer.isDead()) {
+                continue;
+            }
+
             attacksDone++;
             float critChance = damageValues.strikeDamage.getCritChanceValue();
             if (attacksDone == strikeCritInterval) {
                 attacksDone = 0;
                 critChance = 100;
             }
-            float extraDamage = pveMasterUpgrade ? DamageCheck.clamp(nearPlayer.getMaxHealth() * 0.01f) : 0;
             float damageMultiplier = convertToMultiplicationDecimal(
                     (nearPlayer.getCurrentHealth() / nearPlayer.getMaxBaseHealth()) < damageIncreaseHealthThreshold / 100f
-                    ? damageIncrease
-                    : 0
+                    ? damageIncrease : 0
             );
-            nearPlayer.addInstance(InstanceBuilder.damage()
-                                                  .ability(this)
-                                                  .source(wp)
-                                                  .min((damageValues.strikeDamage.getMinValue() + extraDamage) * damageMultiplier)
-                                                  .max((damageValues.strikeDamage.getMaxValue() + extraDamage) * damageMultiplier)
-                                                  .critChance(critChance)
-                                                  .critMultiplier(damageValues.strikeDamage.getCritMultiplierValue())
+            nearPlayer.addInstance(InstanceBuilder
+                    .damage()
+                    .ability(this)
+                    .source(wp)
+                    .min(damageValues.strikeDamage.getMinValue() * damageMultiplier)
+                    .max(damageValues.strikeDamage.getMaxValue() * damageMultiplier)
+                    .critChance(critChance)
+                    .critMultiplier(damageValues.strikeDamage.getCritMultiplierValue())
             ).ifPresent(finalEvent -> {
                 if (finalEvent.isCrit()) {
                     wp.addSpeedModifier(wp, "Judgement Speed", speedOnCrit, speedOnCritDuration * 20);
                 }
                 if (healingValues.strikeHealing.getValue() != 0 && finalEvent.isDead()) {
-                    wp.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(healingValues.strikeHealing));
+                    wp.addInstance(InstanceBuilder
+                            .healing()
+                            .ability(this)
+                            .source(wp)
+                            .value(healingValues.strikeHealing)
+                    );
                 }
                 for (AbstractAbility ability : wp.getAbilitiesImplementing(OrderOfEviscerateLike.class)) {
                     ability.subtractCurrentCooldown(orderCooldownReduction);

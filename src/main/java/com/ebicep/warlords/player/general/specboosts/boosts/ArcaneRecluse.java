@@ -1,6 +1,6 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
-import com.ebicep.warlords.abilities.ArcaneShield;
+import com.ebicep.warlords.abilities.internal.AbstractArcaneShield;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 
@@ -44,7 +44,7 @@ public class ArcaneRecluse implements SpecBoostManager.SpecBoost<ArcaneRecluse> 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getHealth().addAdditiveModifier("Spec Boost (Base)", healthIncrease);
-            warlordsPlayer.getAbilitiesMatching(ArcaneShield.class).forEach(arcaneShield -> {
+            warlordsPlayer.getAbilitiesMatching(AbstractArcaneShield.class).forEach(arcaneShield -> {
                 arcaneShield.setTickDuration(arcaneShield.getTickDuration() + shieldTickDurationIncrease);
                 arcaneShield.setShieldPercentage(arcaneShield.getShieldPercentage() + absorptionIncreasePercent);
                 arcaneShield.updateCustomStats(warlordsPlayer);

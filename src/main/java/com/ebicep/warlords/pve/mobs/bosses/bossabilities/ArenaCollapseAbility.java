@@ -17,11 +17,10 @@ import java.util.function.Supplier;
 
 public class ArenaCollapseAbility {
 
-    private final WarlordsEntity caster;       // who owns this ability (faction checks)
-    private final WarlordsNPC warlordsNPC;     // damage source for InstanceBuilder
+    private final WarlordsEntity caster;
+    private final WarlordsNPC warlordsNPC;
     private final Supplier<Location> centerSupplier; // center can be static OR follow an entity via supplier
 
-    // Config
     private final double initialRadius;        // starting safe radius (blocks)
     private final double minRadius;            // stop shrinking at this radius
     private final double shrinkAmount;         // how much radius to remove per shrink

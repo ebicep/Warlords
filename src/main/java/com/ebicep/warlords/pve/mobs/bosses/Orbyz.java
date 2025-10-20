@@ -58,10 +58,10 @@ public class Orbyz extends AbstractMob implements BossMob {
         super(
                 spawnLocation,
                 "Orbyz",
-                250000,
+                240000,
                 0.3f,
-                20,
-                1000,
+                40,
+                1200,
                 2000
         );
     }
@@ -173,7 +173,9 @@ public class Orbyz extends AbstractMob implements BossMob {
                             60,
                             20
                     );
-                    warlordsEntity.sendMessage(Component.text("You may use this relic to make Orbyz vulnerable against your allies' attacks."));
+                    warlordsEntity.sendMessage(Component.text("You may use this relic to make Orbyz vulnerable against your allies' attacks.", NamedTextColor.GOLD));
+                    // relic AoE
+                    int radius = 9;
                     warlordsEntity.getCooldownManager().addCooldown(new RegularCooldown<>(
                             "Empowering Relic",
                             "RELIC",
@@ -190,11 +192,11 @@ public class Orbyz extends AbstractMob implements BossMob {
                                             warlordsEntity.getGame(),
                                             warlordsEntity.getTeam(),
                                             warlordsEntity.getLocation().clone().add(0, 0.25, 0),
-                                            8,
+                                            radius,
                                             new CircumferenceEffect(Particle.FIREWORK, Particle.FIREWORK).particlesPerCircumference(1.2)
                                     ).playEffects();
                                     for (WarlordsEntity ally : PlayerFilter
-                                            .entitiesAround(warlordsEntity, 8, 8, 8)
+                                            .entitiesAround(warlordsEntity, radius, radius, radius)
                                             .aliveTeammatesOfExcludingSelf(warlordsEntity)
                                     ) {
                                         ally.getCooldownManager().addCooldown(new RegularCooldown<>(
@@ -229,7 +231,7 @@ public class Orbyz extends AbstractMob implements BossMob {
                 true
         ) {
             @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+            public float modifyDamageAfterAllFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                 if (event.getSource().getCooldownManager().hasCooldownFromName("Empowering Allies")) {
                     return currentDamageValue * 1.2f;
                 }
@@ -238,16 +240,7 @@ public class Orbyz extends AbstractMob implements BossMob {
         });
 
         phaseOne = new BossAbilityPhase(warlordsNPC, 80, () -> {
-            ChatUtils.sendTitleToGamePlayers(
-                    warlordsNPC.getGame(),
-                    Component.empty(),
-                    Component.text("Little puppets running in circles...", NamedTextColor.AQUA),
-                    20,
-                    60,
-                    20
-            );
-            Utils.playGlobalSound(mapCenter, Sound.ENTITY_ALLAY_AMBIENT_WITHOUT_ITEM, 500, 0.3f);
-            rotatingRadialLasersAbility.start(warlordsNPC.getGame());
+            castRotatingLasers();
         });
 
         phaseTwo = new BossAbilityPhase(warlordsNPC, 60, () -> {
@@ -263,8 +256,7 @@ public class Orbyz extends AbstractMob implements BossMob {
         });
 
         phaseThree = new BossAbilityPhase(warlordsNPC, 50, () -> {
-            Utils.playGlobalSound(mapCenter, Sound.ENTITY_ALLAY_AMBIENT_WITHOUT_ITEM, 500, 0.3f);
-            rotatingRadialLasersAbility.start(warlordsNPC.getGame());
+            castRotatingLasers();
         });
 
         phaseFour = new BossAbilityPhase(warlordsNPC, 40, () -> {
@@ -297,8 +289,7 @@ public class Orbyz extends AbstractMob implements BossMob {
         });
 
         phaseFive = new BossAbilityPhase(warlordsNPC, 25, () -> {
-            Utils.playGlobalSound(mapCenter, Sound.ENTITY_ALLAY_AMBIENT_WITHOUT_ITEM, 500, 0.3f);
-            rotatingRadialLasersAbility.start(warlordsNPC.getGame());
+            castRotatingLasers();
         });
 
         phaseSix = new BossAbilityPhase(warlordsNPC, 15, () -> {
@@ -348,7 +339,7 @@ public class Orbyz extends AbstractMob implements BossMob {
             EffectUtils.playCircularShieldAnimation(warlordsNPC.getLocation(), Particle.END_ROD, 8, 1, 5);
         }
 
-        if (ticksElapsed % 200 == 0 && ticksElapsed > 0) {
+        if (ticksElapsed % 160 == 0 && ticksElapsed > 0) {
             Location loc = warlordsNPC.getLocation();
             Utils.playGlobalSound(loc, Sound.BLOCK_GLASS_BREAK, 500, 0.4f);
             FallingBlockWaveEffect.create(loc.add(0, 1, 0), 7, 6, Material.PACKED_ICE);
@@ -362,7 +353,7 @@ public class Orbyz extends AbstractMob implements BossMob {
                         .damage()
                         .cause("Blizzard Impendus")
                         .source(warlordsNPC)
-                        .value(1200)
+                        .value(3000)
                 );
             }
         }
@@ -385,7 +376,7 @@ public class Orbyz extends AbstractMob implements BossMob {
             heavenlySpearAbilityInterval.start(warlordsNPC.getGame());
         }
 
-        if (ticksElapsed % 600 == 0 && ticksElapsed > 0 && !preventRelic) {
+        if (ticksElapsed % 400 == 0 && ticksElapsed > 0 && !preventRelic) {
             empoweringRelicsAbility.start(warlordsNPC.getGame());
         }
 
@@ -418,6 +409,19 @@ public class Orbyz extends AbstractMob implements BossMob {
                 12,
                 Material.PACKED_ICE
         );
+    }
+
+    private void castRotatingLasers() {
+        ChatUtils.sendTitleToGamePlayers(
+                warlordsNPC.getGame(),
+                Component.empty(),
+                Component.text("Little puppets running in circles...", NamedTextColor.AQUA),
+                20,
+                60,
+                20
+        );
+        Utils.playGlobalSound(mapCenter, Sound.ENTITY_ALLAY_AMBIENT_WITHOUT_ITEM, 500, 0.3f);
+        rotatingRadialLasersAbility.start(warlordsNPC.getGame());
     }
 
     @Override

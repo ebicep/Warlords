@@ -73,7 +73,7 @@ public class RotatingRadialLasersAbility {
         this.step = Math.max(0.2, step);
         this.beamY = beamYOffset;
 
-        this.telegraphDust = new Particle.DustOptions(telegraphColor, 3f);
+        this.telegraphDust = new Particle.DustOptions(telegraphColor, 1.5f);
         this.fireDust = new Particle.DustOptions(fireColor, 4.5f);
     }
 

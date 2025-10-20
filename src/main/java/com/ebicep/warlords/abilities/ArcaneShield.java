@@ -60,15 +60,15 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
                 FloatModifiable.FloatModifier modifier = rightClick.getEnergyCost().addMultiplicativeModifierAdd("Arcane Energy", -.25f);
                 wp.updateItem(rightClick);
                 wp.getCooldownManager()
-                  .addCooldown(new RegularCooldown<>("Arcane Energy", "ARC", ArcaneShield.class, new ArcaneShield(), wp, CooldownTypes.ABILITY, cooldownManager2 -> {
-                      modifier.forceEnd();
-                      wp.updateItem(rightClick);
-                  }, 6 * 20, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                      if (ticksElapsed % 3 == 0) {
-                          EffectUtils.displayParticle(Particle.ELECTRIC_SPARK, wp.getLocation().add(0, 1, 0), 10, .4, .4, .4, 0);
-                      }
-                  })
-                  ));
+                        .addCooldown(new RegularCooldown<>("Arcane Energy", "ARC", ArcaneShield.class, new ArcaneShield(), wp, CooldownTypes.ABILITY, cooldownManager2 -> {
+                            modifier.forceEnd();
+                            wp.updateItem(rightClick);
+                        }, 6 * 20, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                            if (ticksElapsed % 3 == 0) {
+                                EffectUtils.displayParticle(Particle.ELECTRIC_SPARK, wp.getLocation().add(0, 1, 0), 10, .4, .4, .4, 0);
+                            }
+                        })
+                        ));
             }
         }, cooldownManager -> {
             if (shield.isBroken()) {
@@ -161,11 +161,11 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
     @Override
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder.create("Surround yourself with arcane energy, creating a shield that will absorb up to ")
-                                               .percent(shieldPercentage, AbilityDescriptionBuilder.COLOR_BROWN)
-                                               .text(" of your maximum health. Lasts ")
-                                               .durationTicks(tickDuration)
-                                               .text(".")
-                                               .build();
+                .percent(shieldPercentage, AbilityDescriptionBuilder.COLOR_BROWN)
+                .text(" of your maximum health. Lasts ")
+                .durationTicks(tickDuration)
+                .text(".")
+                .build();
     }
 
     public static class WarlordsArcaneShieldBrokenEvent extends AbstractWarlordsEntityEvent {

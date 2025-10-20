@@ -226,7 +226,7 @@ public class PlayingState implements State, TimerDebugAble {
         ChatUtils.MessageType.WARLORDS.sendMessage("Force End = " + (winEvent == null));
         ChatUtils.MessageType.WARLORDS.sendMessage("Player Count = " + game.warlordsPlayers().count());
         ChatUtils.MessageType.WARLORDS.sendMessage("Players = " + game.warlordsPlayers().toList());
-        ChatUtils.MessageType.WARLORDS.sendMessage("Timer = " + timer);
+        ChatUtils.MessageType.WARLORDS.sendMessage("Timer = " + timer / 20 / 60 + "m");
         ChatUtils.MessageType.WARLORDS.sendMessage("Private = " + game.getAddons().contains(GameAddon.PRIVATE_GAME));
         ChatUtils.MessageType.WARLORDS.sendMessage("GameMode = " + game.getGameMode());
         ChatUtils.MessageType.WARLORDS.sendMessage("Map = " + game.getMap());

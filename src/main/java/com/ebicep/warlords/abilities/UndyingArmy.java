@@ -16,12 +16,14 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.flags.BossLike;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.revenant.UndyingArmyBranch;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
@@ -128,10 +130,13 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
             wp.doOnStaticAbility(GroundSlamRevenant.class, ability -> modifiers.add(ability.getCooldown().addMultiplicativeModifierAdd("Relentless Army", -.5f)));
         }
         int numberOfPlayersWithArmy = 0;
-        for (WarlordsEntity teammate : PlayerFilter.entitiesAround(wp, radius, radius, radius)
-                                                   .aliveTeammatesOf(wp)
-                                                   .excludingDummy()
-                                                   .closestWarlordPlayersFirst(wp.getLocation())) {
+        for (WarlordsEntity teammate : PlayerFilter
+                .entitiesAround(wp, radius, radius, radius)
+                .aliveTeammatesOf(wp)
+                .excludingDummy()
+                .excludingAlliedMobs()
+                .closestWarlordPlayersFirst(wp.getLocation())
+        ) {
             data.getPlayersPopped().put(teammate, false);
             boolean isCaster = teammate != wp;
             if (isCaster) {
@@ -195,10 +200,13 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
                             warlordsEntity.heal();
                             data.pop(warlordsEntity);
                             // Sending the message + check if getFrom is self
-                            EffectUtils.playFirework(warlordsEntity.getLocation(), FireworkEffect.builder().withColor(Color.LIME).with(FireworkEffect.Type.BALL).build());
-                            if (warlordsEntity.getEntity() instanceof Player player) {
-                                player.getWorld().spigot().strikeLightningEffect(warlordsEntity.getLocation(), false);
-                            }
+                            EffectUtils.playFirework(warlordsEntity.getLocation(), FireworkEffect
+                                    .builder()
+                                    .withColor(Color.LIME)
+                                    .with(FireworkEffect.Type.BALL)
+                                    .build()
+                            );
+                            EffectUtils.strikeLightning(warlordsEntity.getLocation(), false);
                             //gives 50% of max energy if player is less than half
                             if (warlordsEntity.getCurrentEnergy() < warlordsEntity.getMaxEnergy() / 2) {
                                 warlordsEntity.setCurrentEnergy(warlordsEntity.getMaxEnergy() / 2);
@@ -217,8 +225,12 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
                 break;
             }
         }
+
         if (pveMasterUpgrade2) {
-            for (WarlordsEntity enemy : PlayerFilter.entitiesAround(wp, radius, radius, radius).aliveEnemiesOf(wp)) {
+            for (WarlordsEntity enemy : PlayerFilter
+                    .entitiesAround(wp, radius, radius, radius)
+                    .aliveEnemiesOf(wp)
+            ) {
                 enemy.getCooldownManager().addCooldown(new RegularCooldown<>(
                         "Vengeful Army",
                         null,
@@ -228,28 +240,29 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
                         CooldownTypes.ABILITY,
                         cooldownManager -> {
                             if (enemy.isAlive()) {
-                                float healthDamage = enemy.getMaxHealth() * .10f;
-                                if (enemy instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof BossLike) {
-                                    healthDamage = DamageCheck.clamp(healthDamage);
-                                }
-                                float damage = 2000 + healthDamage;
-                                enemy.addInstance(InstanceBuilder.damage().cause("Vengeful Army").source(wp).value(damage));
+                                float healthDamage = DamageCheck.clamp(enemy.getMaxHealth() * .02f);
+                                float damage = 500;
+                                damage *= (tickDuration / 20f);
+                                enemy.addInstance(InstanceBuilder
+                                        .damage()
+                                        .cause("Vengeful Army")
+                                        .source(wp)
+                                        .value(damage + healthDamage)
+                                        .flags(InstanceFlags.NO_HEALING_ORBS, InstanceFlags.IGNORE_DAMAGE_BOOST)
+                                );
                             } else {
                                 new CooldownFilter<>(wp, PersistentCooldown.class).filterCooldownClass(OrbsOfLife.class).forEach(persistentCooldown -> {
                                     OrbsOfLife.spawnOrbs(wp, enemy, "Vengeful Army", persistentCooldown);
                                 });
                             }
                         },
-                        10 * 20,
+                        tickDuration,
                         Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                             if (ticksElapsed % 20 != 0) {
                                 return;
                             }
                             // Particles
-                            Location playerLoc = enemy.getLocation();
-                            playerLoc.add(0, 2.1, 0);
-                            Location particleLoc = playerLoc.clone();
-                            EffectUtils.playCylinderAnimation(particleLoc, 10, 113, 13, 12, 10, 1, 1);
+                            EffectUtils.playCylinderAnimation(enemy.getLocation(), 1.1, 113, 13, 12, 10, 1, 1);
                         })
                 ));
             }
@@ -264,7 +277,7 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
             // Drops the flag when popped.
             FlagHolder.dropFlagForPlayer(warlordsEntity, false);
             if (warlordsEntity.getEntity() instanceof Player player) {
-                player.getWorld().spigot().strikeLightningEffect(warlordsEntity.getLocation(), false);
+                EffectUtils.strikeLightning(warlordsEntity.getLocation(), false);
                 player.getInventory().setItem(5, BONE);
             }
             int armyDamage = Math.round(warlordsEntity.getMaxHealth() * (getMaxHealthDamage() / 100f));
@@ -299,11 +312,14 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
                         PlayerFilter.entitiesAround(warlordsEntity, 6, 6, 6).aliveEnemiesOf(warlordsEntity).forEach(enemy -> {
                             float healthDamage = enemy.getMaxHealth() * .02f;
                             healthDamage = DamageCheck.clamp(healthDamage);
-                            enemy.addInstance(InstanceBuilder.damage()
-                                                             .ability(UndyingArmy.this)
-                                                             .source(warlordsEntity)
-                                                             .min(damageValues.relentlessArmy.getMinValue() + healthDamage)
-                                                             .max(damageValues.relentlessArmy.getMaxValue() + healthDamage));
+                            enemy.addInstance(InstanceBuilder
+                                    .damage()
+                                    .ability(UndyingArmy.this)
+                                    .source(warlordsEntity)
+                                    .min(damageValues.relentlessArmy.getMinValue() + healthDamage)
+                                    .max(damageValues.relentlessArmy.getMaxValue() + healthDamage)
+                                    .flags(InstanceFlags.IGNORE_DAMAGE_BOOST)
+                            );
                         });
                     }
                 }

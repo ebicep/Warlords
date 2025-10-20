@@ -105,7 +105,6 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                                 .entitiesAround(totemStand, rad, rad, rad)
                                 .aliveEnemiesOf(wp)
                         ) {
-                            enemy.setDamageResistance(enemy.getSpec().getDamageResistance() - 15);
                             if (enemy instanceof WarlordsNPC npc) {
                                 npc.setDamageResistance(npc.getSpec().getDamageResistance() - 15);
                             }
@@ -160,7 +159,6 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                         if (pveMasterUpgrade) {
                             PlayerFilter.entitiesAround(totemStand, rad, rad, rad).aliveEnemiesOf(wp).forEach(enemy -> {
                                 enemy.addSpeedModifier(wp, "Totem Slowness", -50, 20);
-                                enemy.setDamageResistance(enemy.getSpec().getDamageResistance() - 5);
                                 if (enemy instanceof WarlordsNPC npc) {
                                     npc.setDamageResistance(npc.getSpec().getDamageResistance() - 5);
                                 }
@@ -199,7 +197,7 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                                     .entitiesAround(totemStand, rad, rad, rad)
                                     .aliveEnemiesOf(wp)
                             ) {
-                                Utils.addKnockback("Totem Master", totemStand.getLocation(), enemy, 1, 0.05);
+                                Utils.addKnockback("Totem Master", totemStand.getLocation(), enemy, 1.25, 0.08);
                             }
 
                             for (WarlordsEntity enemy : PlayerFilter
@@ -209,8 +207,8 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                                 enemy.addInstance(InstanceBuilder
                                         .damage()
                                         .cause("Void Totem")
-                                        .min(400)
-                                        .max(600)
+                                        .min(500)
+                                        .max(800)
                                         .source(wp)
                                 );
                             }

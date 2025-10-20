@@ -48,7 +48,7 @@ public class Animus extends AbstractMob implements PlayerMob, Untargetable, NoTa
         this(
                 spawnLocation,
                 owner.getName() + "'s Animus",
-                (int) inherited.getMaxHealth(),
+                (int) inherited.getMaxHealth() / 2,
                 owner.getSpeed().getLastValue(),
                 0,
                 150,
@@ -93,6 +93,10 @@ public class Animus extends AbstractMob implements PlayerMob, Untargetable, NoTa
             }
         }
         toDespawn.forEach(option::despawnMob);
+
+        if (warlordsNPC == null || warlordsNPC.isDead()) {
+            return;
+        }
 
         // copy strike stats
         for (JudgementStrike judgementStrike : owner.getAbilitiesMatching(JudgementStrike.class)) {

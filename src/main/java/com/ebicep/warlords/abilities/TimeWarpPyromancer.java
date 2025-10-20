@@ -12,6 +12,7 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.flags.BossLike;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
@@ -67,14 +68,13 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
                         float cooldownReduction = 0;
                         for (WarlordsEntity enemy : PlayerFilter.entitiesAround(wp, 12, 12, 12).aliveEnemiesOf(wp).toList()) {
                             float healthDamage = enemy.getMaxBaseHealth() * .075f;
-                            if (enemy instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof BossLike) {
-                                healthDamage = DamageCheck.clamp(healthDamage);
-                            }
+                            healthDamage = DamageCheck.clamp(healthDamage);
                             Optional<WarlordsDamageHealingFinalEvent> finalEventOptional = enemy.addInstance(InstanceBuilder
                                     .damage()
                                     .cause("Accursed Leap")
                                     .source(wp)
                                     .value(healthDamage)
+                                    .flags(InstanceFlags.IGNORE_DAMAGE_BOOST)
                             );
                             if (finalEventOptional.isPresent()) {
                                 if (finalEventOptional.get().isDead()) {
@@ -162,7 +162,7 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 if (pveMasterUpgrade) {
-                    return currentDamageValue * convertToMultiplicationDecimal(we.getBlocksTravelled() - startingBlocksTravelled);
+                    return currentDamageValue * convertToMultiplicationDecimal(0.75f * (we.getBlocksTravelled() - startingBlocksTravelled));
                 }
                 return currentDamageValue;
             }

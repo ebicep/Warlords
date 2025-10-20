@@ -28,7 +28,7 @@ public class SanctifiedBeaconBranch extends AbstractUpgradeBranch<SanctifiedBeac
                         Sanctified Beacon's radius is doubled.
                         
                         The beacon alternates between sending out 3 seeking projectiles that heal allies for 1000 health,
-                        or damage enemies for the same amount. Additionally, the beacon will grant Merciful Hex stacks twice as fast.
+                        or damage enemies for twice the amount. Additionally, the beacon will grant Merciful Hex stacks twice as fast.
                         """,
                 50000,
                 () -> {
