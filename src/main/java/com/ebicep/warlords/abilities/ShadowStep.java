@@ -140,25 +140,33 @@ public class ShadowStep extends AbstractAbility implements
                 locationBuilder.addY(isSlab ? -0.5 : 0);
                 break;
             }
-            PlayerFilter.entitiesAround(locationBuilder.clone().addY(-1), 2, 2, 2).aliveEnemiesOf(wp).excluding(hit).forEach(warlordsEntity -> {
-                hit.add(warlordsEntity);
-                warlordsEntity.addInstance(InstanceBuilder
-                        .damage()
-                        .cause("Shadow Dash")
-                        .source(wp)
-                        .value(damageValues.shadowStepDamage)
-                        .critChance(guaranteedCrit.getAndDecrement() > 0 ? 100 : damageValues.shadowStepDamage.getCritChanceValue())
-                );
-            });
+            PlayerFilter.entitiesAround(locationBuilder.clone().addY(-1), 2, 2, 2)
+                    .aliveEnemiesOf(wp)
+                    .excluding(hit)
+                    .forEach(warlordsEntity -> {
+                        hit.add(warlordsEntity);
+                        warlordsEntity.addInstance(InstanceBuilder
+                                .damage()
+                                .cause("Shadow Dash")
+                                .source(wp)
+                                .value(damageValues.shadowStepDamage)
+                                .critChance(guaranteedCrit.getAndDecrement() > 0 ? 100 : damageValues.shadowStepDamage.getCritChanceValue()));
+                    });
             locationBuilder = locationBuilder.forward(1);
             EffectUtils.displayParticle(Particle.SMOKE, locationBuilder.clone().addY(-.5), 10, .1, .1, .1, 0);
         }
         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 2, 1.5f);
         wp.teleportLocationOnly(locationBuilder);
-        wp.getCooldownManager().addCooldown(new RegularCooldown<>("Shadow Dash CC", null, ShadowStep.class, new ShadowStep(), wp, CooldownTypes.BUFF, cooldownManager -> {
-        }, 5 * 20
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                "Shadow Dash CC",
+                null,
+                ShadowStep.class,
+                new ShadowStep(),
+                wp,
+                CooldownTypes.BUFF,
+                cooldownManager -> {},
+                5 * 20
         ) {
-
             @Override
             public float addCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
                 return currentCritMultiplier * convertToMultiplicationDecimal(Math.min(2f * hit.size(), 20));
@@ -174,7 +182,10 @@ public class ShadowStep extends AbstractAbility implements
     private void doShadowStep(@Nonnull WarlordsEntity wp, Location playerLoc) {
         List<WarlordsEntity> playersHit = new ArrayList<>();
         AtomicInteger guaranteedCrit = new AtomicInteger(this.guaranteedCrit);
-        for (WarlordsEntity assaultTarget : PlayerFilter.entitiesAround(wp, 5, 5, 5).aliveEnemiesOf(wp)) {
+        for (WarlordsEntity assaultTarget : PlayerFilter
+                .entitiesAround(wp, 5, 5, 5)
+                .aliveEnemiesOf(wp)
+        ) {
             stats.totalTargetsHit++;
             assaultTarget.addInstance(InstanceBuilder
                     .damage()
@@ -200,7 +211,11 @@ public class ShadowStep extends AbstractAbility implements
                 wp.getLocation(playerLoc);
                 boolean hitGround = wp.getEntity().isOnGround() || wp.onHorse();
                 if (hitGround) {
-                    for (WarlordsEntity landingTarget : PlayerFilter.entitiesAround(wp, 5, 5, 5).aliveEnemiesOf(wp).excluding(playersHit)) {
+                    for (WarlordsEntity landingTarget : PlayerFilter
+                            .entitiesAround(wp, 5, 5, 5)
+                            .aliveEnemiesOf(wp)
+                            .excluding(playersHit)
+                    ) {
                         stats.totalTargetsHit++;
                         landingTarget.addInstance(InstanceBuilder
                                 .damage()
