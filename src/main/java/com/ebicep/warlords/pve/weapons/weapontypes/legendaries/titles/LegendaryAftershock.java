@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -17,13 +18,14 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.springframework.data.annotation.Transient;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-public class LegendaryAftershock extends AbstractLegendaryWeapon implements PassiveCounter {
+public class LegendaryAftershock extends AbstractLegendaryWeapon {
 
     public static final int RADIUS_BLOCKS = 5;
     public static final int DURATION_SECONDS = 3;
@@ -36,11 +38,17 @@ public class LegendaryAftershock extends AbstractLegendaryWeapon implements Pass
     public static final float ZONE_DAMAGE_PERCENT_BASE = 30f;
     public static final float ZONE_DAMAGE_INC_PER_LEVEL = 1.5f;
 
-    @Transient private int counter = 0;
+    public LegendaryAftershock() {
 
-    public LegendaryAftershock() {}
-    public LegendaryAftershock(UUID uuid) { super(uuid); }
-    public LegendaryAftershock(AbstractLegendaryWeapon copy) { super(copy); }
+    }
+
+    public LegendaryAftershock(UUID uuid) {
+        super(uuid);
+    }
+
+    public LegendaryAftershock(AbstractLegendaryWeapon copy) {
+        super(copy);
+    }
 
     @Override
     public TextComponent getPassiveEffect() {
@@ -129,6 +137,7 @@ public class LegendaryAftershock extends AbstractLegendaryWeapon implements Pass
                             );
                             enemy.addSpeedModifier(owner, "Aftershock", -SLOW_PERCENT, DURATION_SECONDS);
                         });
+                EffectUtils.drawRing(center, RADIUS_BLOCKS, 2, Particle.FLAME);
 
                 ticks++;
                 if (ticks >= totalTicks) {
@@ -187,10 +196,5 @@ public class LegendaryAftershock extends AbstractLegendaryWeapon implements Pass
     @Override
     protected float getSpeedBonusValue() {
         return 7;
-    }
-
-    @Override
-    public int getCounter() {
-        return counter;
     }
 }
