@@ -70,7 +70,12 @@ public class ProtectorsStrike extends AbstractStrike<ProtectorsStrike, Protector
 
     @Override
     protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull WarlordsEntity nearPlayer) {
-        nearPlayer.addInstance(InstanceBuilder.damage().ability(this).source(wp).value(damageValues.strikeDamage)).ifPresent(warlordsDamageHealingFinalEvent -> {
+        nearPlayer.addInstance(InstanceBuilder
+                .damage()
+                .ability(this)
+                .source(wp)
+                .value(damageValues.strikeDamage))
+                .ifPresent(warlordsDamageHealingFinalEvent -> {
             if (warlordsDamageHealingFinalEvent.getFinalEventFlag() != WarlordsDamageHealingFinalEvent.FinalEventFlag.REGULAR) {
                 return;
             }

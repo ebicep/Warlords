@@ -74,6 +74,7 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
         wp.addSpeedModifier(wp, name, speedBuff, tickDuration);
         wp.getCooldownManager().removeCooldown(Berserk.class, false);
         List<FloatModifiable.FloatModifier> modifiers;
+        absorbedDamage = 0;
         if (pveMasterUpgrade2) {
             modifiers = wp.getAbilities()
                           .stream()
@@ -172,7 +173,7 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
                             .cause("Berserk Unleashed")
                             .source(wp)
                             .value(finalValue * 0.4f)
-                            .flags(InstanceFlags.IGNORE_DAMAGE_BOOST)
+                            .flags(InstanceFlags.IGNORE_DAMAGE_BOOST, InstanceFlags.NO_LUST_HEALING)
                     );
                 }
 

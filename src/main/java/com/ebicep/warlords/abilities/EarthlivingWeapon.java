@@ -145,8 +145,8 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
                 float cc = pveMasterUpgrade2 && !previosulyProcd ? 100 : healingValues.earthlivingHealing.getCritChanceValue();
                 List<WarlordsEntity> healedPlayers = PlayerFilter.entitiesAround(attacker, 6, 6, 6)
                                                                  .aliveTeammatesOfExcludingSelf(attacker)
+                                                                 .warlordPlayersFirst()
                                                                  .limit(maxAllies)
-                                                                 .excludingAlliedMobs()
                                                                  .toList();
                 attacker.addInstance(InstanceBuilder
                         .healing()

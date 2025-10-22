@@ -51,7 +51,7 @@ public class ChainHeal extends AbstractChain<ChainHeal, ChainHeal.ChainHealStats
         for (WarlordsEntity chainTarget : PlayerFilter
                 .entitiesAround(wp, rad, rad, rad)
                 .aliveTeammatesOfExcludingSelf(wp)
-                .excludingAlliedMobs()
+                .warlordPlayersFirst()
                 .lookingAtFirst(wp)
         ) {
             if (!LocationUtils.isLookingAtChain(wp, chainTarget)) {
