@@ -134,7 +134,6 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
                 .entitiesAround(wp, radius, radius, radius)
                 .aliveTeammatesOf(wp)
                 .excludingDummy()
-                .excludingAlliedMobs()
                 .closestWarlordPlayersFirst(wp.getLocation())
         ) {
             data.getPlayersPopped().put(teammate, false);

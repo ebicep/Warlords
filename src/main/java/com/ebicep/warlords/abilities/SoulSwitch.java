@@ -14,6 +14,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.player.ingame.motionsystem.MotionModifier;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.flags.BossLike;
@@ -138,35 +139,27 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                     npc.die(npc, WarlordsDeathEvent.DeathInfoBuilder.create().setForced(true));
 
                     if (pveMasterUpgrade2) {
-                        wp.getCooldownManager().removeCooldown(SoulSwitch.class, false);
+                        EffectUtils.displayParticle(Particle.EXPLOSION, swapTarget.getLocation(), 2);
+                        Utils.playGlobalSound(swapTarget.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 2, 0.8f);
+                        PlayerFilter.entitiesAround(swapLocation, 4, 4, 4)
+                                .aliveEnemiesOf(wp)
+                                .forEach(enemy -> enemy.addInstance(InstanceBuilder
+                                        .damage()
+                                        .cause("Soul Burst")
+                                        .source(wp)
+                                        .min(844)
+                                        .max(1105)
+                                        .flags(InstanceFlags.TRUE_DAMAGE)
+                                ));
                         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                                 "Soul Burst",
-                                "SOUL BURST",
+                                "SOUL",
                                 SoulSwitch.class,
                                 null,
                                 wp,
                                 CooldownTypes.ABILITY,
                                 cooldownManager -> {},
-                                20 * 20
-                        ) {
-
-                            @Override
-                            public float modifyDamageAfterInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                return currentDamageValue;
-                            }
-                        });
-                    }
-
-                    if (pveMasterUpgrade) {
-                        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
-                                "Tricky Switch",
-                                null,
-                                SoulSwitch.class,
-                                null,
-                                wp,
-                                CooldownTypes.ABILITY,
-                                cooldownManager -> {},
-                                10 * 60 * 20,
+                                10 * 20,
                                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
 
                                 })
@@ -180,7 +173,7 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                 }
             }
 
-            if (pveMasterUpgrade2) {
+            if (pveMasterUpgrade) {
                 wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                         "Tricky Switch",
                         "SOUL",
