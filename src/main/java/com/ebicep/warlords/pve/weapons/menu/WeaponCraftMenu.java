@@ -33,7 +33,7 @@ public class WeaponCraftMenu {
     }};
     public static final LinkedHashMap<Currencies, Long> ASCENDANT_COST = new LinkedHashMap<>() {{
         put(Currencies.COIN, 2_500_000L);
-        put(Currencies.SYNTHETIC_SHARD, 15_000L);
+        put(Currencies.SYNTHETIC_SHARD, 25_000L);
         put(Currencies.ASCENDANT_SCROLL, 1L);
         put(Currencies.ETHEREUM_CRYSTAL, 5L);
     }};
@@ -122,7 +122,7 @@ public class WeaponCraftMenu {
                         .get(),
                 (m, e) -> {
                     List<Component> confirmLore = new ArrayList<>();
-                    confirmLore.add(Component.text("Craft a Legendary Weapon", NamedTextColor.GRAY));
+                    confirmLore.add(Component.text("Craft an Ascendant Weapon", NamedTextColor.GRAY));
                     confirmLore.addAll(ASCENDANT_COST_LORE);
                     Menu.openConfirmationMenu(
                             player,
@@ -149,7 +149,7 @@ public class WeaponCraftMenu {
                                 //Bukkit.getPluginManager().callEvent(new LegendaryWeaponCraftEvent(player.getUniqueId(), weapon));
                                 player.closeInventory();
                             },
-                            (m2, e2) -> openWeaponLegendaryCraftMenu(player, databasePlayer),
+                            (m2, e2) -> openWeaponAscendantCraftMenu(player, databasePlayer),
                             (m2) -> {
                             }
                     );

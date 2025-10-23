@@ -198,7 +198,7 @@ public enum Currencies implements Spendable {
     ),
     ITEM_LOCK_SCROLL(
             "Item Lock Scroll",
-            TextColor.color(190, 80, 40),
+            TextColor.color(240, 80, 100),
             new ItemStack(Material.MAP)
     ),
     CRYPTIC_CONQUEST_KEY(
@@ -210,6 +210,11 @@ public enum Currencies implements Spendable {
             "Sovereign Tower Key",
             TextColor.color(71, 81, 158),
             new ItemStack(Material.OMINOUS_TRIAL_KEY)
+    ),
+    ARCHEMEDIAN_FRAGMENT(
+            "Archemedian Fragment",
+            TextColor.color(110, 170, 210),
+            new ItemStack(Material.CALIBRATED_SCULK_SENSOR)
     ),
 
 

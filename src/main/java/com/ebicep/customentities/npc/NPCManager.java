@@ -7,10 +7,12 @@ import com.ebicep.holograms.HologramManager;
 import com.ebicep.holograms.VisibilityType;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.option.pve.ReadyUpOption;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import com.ebicep.warlords.util.warlords.Utils;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.npc.MemoryNPCDataStore;
@@ -21,13 +23,12 @@ import net.citizensnpcs.api.trait.TraitInfo;
 import net.citizensnpcs.api.trait.trait.Equipment;
 import net.citizensnpcs.trait.*;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.entity.Display;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class NPCManager {
 
@@ -49,6 +50,7 @@ public class NPCManager {
                     createOnslaughtNPC();
                     createTreasureHuntNPC();
                     createAnomalyNPC();
+                    createRaidNPC();
                 })
                 .execute();
 
@@ -166,6 +168,7 @@ public class NPCManager {
                     createSupplyDropFairNPC();
                     createBountyMenuNPC();
                     createStarPieceSynthesizerNPC();
+                    createTreasureHuntVendorNPC();
 //                    createMysteriousTokenNPC();
                     createItemEnyaNPC();
                     createIllusionVendorNPC();
@@ -364,10 +367,6 @@ public class NPCManager {
         registerTrait(AscendantVendorTrait.class, "AscendantVendorTrait");
 
         NPC npc = NPC_REGISTRY.createNPC(EntityType.PLAYER, "ascendant-vendor");
-        npc.getOrAddTrait(SkinTrait.class).setTexture(
-                "ewogICJ0aW1lc3RhbXAiIDogMTc1OTI0OTUxMTgwOSwKICAicHJvZmlsZUlkIiA6ICJmODJmMTUyNWE3Zjk0M2RjOTIyYzM1MWZhZTJjZmFmMyIsCiAgInByb2ZpbGVOYW1lIiA6ICJ3aWVzeiIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS9iMDRlYmExZTI1NjFlMGYxMzdmOGM2Mzg4OTdhYWQ2ZGE3NDYyYzg3MDI4YzRmMmZmYWU3Mzg5NDE3ODM5NmFhIiwKICAgICAgIm1ldGFkYXRhIiA6IHsKICAgICAgICAibW9kZWwiIDogInNsaW0iCiAgICAgIH0KICAgIH0KICB9Cn0=",
-                "k20/9mBe5vNBTQj2vuwWx3Q5TW1y1EtKK504S+dUnpBNTe8U7Fu40uy6O0DAM7ZiOcSkpsxxtRPPj6j9nxTPzLKEPgu26qp+9kHX3NWTBDBNsnPUdW1p9VwyfuXRucHLMqKJTRaXqhjABKQtLmFMNVW6cea5dbdCD+rGa3U6NQdlj0GEu1nff92d2Eh3LxmZEIhdgoxVlbFIEKOAziOv9kuSIZpok46ntnIEomz7+btI43spA8nVCgjomjl6/eOiBg9/fGOFGEx8bdSMnHeC/Ck1JUMsO6STu5OurM3RmLdkKL3JCXt2LkCBggiXW900Ik24JRtxp/AUule0TLhu4rFRwDfWgxPCoLEfPAye2fQMxeYU7URxwAjiARyi4q4QChuPavWMXi6zpOCzMRTrAl4zM8+aaSzZIaKLT6M2rdO2kVU8jrv6PcjLRkxxmPQm2hi6nwwfbS92yWqD4a/SpBlVtNHZGudyX8sCnG2jFkDrpPX0DD15QjT4Fjex+T4nhPq8FDt/NHfcAFYfLvPapiG0ZRbZInFu+/yXzXzgGkutttrRzHmWEQw7sjkpQHOqu09yWBI6Q2TvHCfoKMZBni69Epl7jk1Mnnun4VO/skQysc3LwLIvb026giq7iP7ikljhZXIP38Ka0Z5NWIXC8KYzjHmq4MUCkCAjsF94qLQ="
-        );
         npc.addTrait(AscendantVendorTrait.class);
         LookClose lookClose = npc.getOrAddTrait(LookClose.class);
         lookClose.setPerPlayer(true);
@@ -376,6 +375,55 @@ public class NPCManager {
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
 
         npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 20.5, 93, 208.5, -90, 0));
+    }
+
+    public static void createRaidNPC() {
+        registerTrait(RaidStartTrait.class, "RaidStartTrait");
+
+        NPC npc = NPC_REGISTRY.createNPC(EntityType.PLAYER, "raid-start");
+        npc.getOrAddTrait(SkinTrait.class).setSkinPersistent(
+                "archmc-0a4f85b",
+                "Ftv54gQ5wTDf66m2A3OLOLgm27ABCCf6lRlvxvEYAp4E4N8ACPXf85kHufJ8ujIDixZorkr8ZjYWGqbDMvGrw2x8zzI0K07qpcH7A7Cbcet1fSeMNGegsaaI1Dl4GvNllOoyRLcppA9O5YoWBJO7cfCFrbzH9pr8X2114ui2QLHuPIO4uh0UuDbqdhiU48tIdyrOcgHzLyMuCD5Su01x1rkrQ6TY1yl4IM9qfEuAkj6K00urt0cf8NNoxISo57olrCRZm+0WaU8qkkLyIaPiAs929cpcskD0fgDR2Pivy1D+cretD8JJ3TnqpoMgsrFWxhzLsdGBF+esH6EAiWvEXlwrnxzlJfPzKgbQLgooFUSB0UjKxmUqQpGb0qZ5cuLP5JhNx+yz3ruay0Ttg3uvEbDcRcGpgssW3l+kQ/JzD1IH8uMfU6uHDF5by1J2FxAdZfeJjewWMrjDFNAiU4ANhVaOW+19FbaLt+YOePSIOYo72lpy264bP7qG42Lc7TB4j6vjV1AXkRZNNcF7Ir/ko/2b6iWbkzUlG0hd8jWZtm4Asr7va18MZhaxuz3vXP22DO+60AZFYl5+fqp+h8tVyIsaGy1y+R1BV99qPSHO3lgYvMJfYlaYA0x2rGQT6X+xpLm3F+I7dRY3uWezspQXcNnpGZkFb+QOSKalPGmnAjc=",
+                "ewogICJ0aW1lc3RhbXAiIDogMTc2MTE2NDY0NDM4NSwKICAicHJvZmlsZUlkIiA6ICJmZjQ3NzI5YmQwZDI0YWYwOThiMTFjMGE3ZTFiMGVlZiIsCiAgInByb2ZpbGVOYW1lIiA6ICJtYXRzY2FuIiwKICAic2lnbmF0dXJlUmVxdWlyZWQiIDogdHJ1ZSwKICAidGV4dHVyZXMiIDogewogICAgIlNLSU4iIDogewogICAgICAidXJsIiA6ICJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlLzlmNzU3Y2IzNTYwOGRiYjMyMThjYWUxNGE1MTAwM2Y3ZjhhMzdkYzYzMDIyYzJiMGQzOTU1ZmQ5ZjI1YmM0NjIiCiAgICB9CiAgfQp9"
+        );
+        npc.addTrait(RaidStartTrait.class);
+        LookClose lookClose = npc.getOrAddTrait(LookClose.class);
+        lookClose.setPerPlayer(true);
+        lookClose.toggle();
+
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
+
+        Location loc = new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 11.5, 93, 262.5, -180, 0);
+        npc.spawn(loc);
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                Utils.playGlobalSound(loc, Sound.AMBIENT_BASALT_DELTAS_ADDITIONS, 0.3f, 0.5f);
+                EffectUtils.displayParticle(Particle.ASH, loc.clone().add(0, 2, 0), 10, 0.5, 0.2, 0.5, 0.001);
+            }
+        }.runTaskTimer(Warlords.getInstance(), 0, 30);
+    }
+
+    public static void createTreasureHuntVendorNPC() {
+        registerTrait(TreasureHuntVendorTrait.class, "TreasureHuntVendorTrait");
+
+        NPC npc = NPC_REGISTRY.createNPC(EntityType.PLAYER, "treasure-vendor");
+        npc.getOrAddTrait(SkinTrait.class).setSkinPersistent(
+                "Oral Chocolate Coyote",
+                "rsVlglpqxqTzn0QwBD5vJagR2jxugEo8f4eamaoAgdZwKBhEIflOvHzgl/a575TeUML8C8S7cL6xy/eoYJIyBdvK7jQxaukxXRaYVIZeZKtI8iiMMfvyTMzLsCZyuPtATlglXNeaukB3EXztINdBXp3XBTkNAZBVUgPmesZnv+hMAMKQTDuCQDzW6f7yTYtLRb3OfhgzgF5nInTVx+DGhf0vr5z6OcHha4+c16VNf27uLPbhFrx+F6HsCYZs6iEALkJNPuNjff5v5kjMUKIeLy9+sCGOe4BwizxZnNOV9FqBbXkk4ii2qTr+4OI6JtaIXc3xcKOCmhKIctGhv0xHMGWws6xDXbcL7hNIzpZKw6lt1A/FyeH6VtCIDPWqZHoe933x325MZuFOp/pvndZHjAatAXMygCXeTCmBZ+jKzOksPHqKWvSJBnJG7AqirgFP1TuysD005kLG5oChOID247HWtN+Z89LdhasIE5RmYM7P3F8qfxahkAgoIdG1yzGzpV2jaC3qMjrO0sMFiSyaftBjrMMQELwXhrl/dRSrU3fZMNDFszHhiuWLzFPPWXvJB20mmeb9PeRlJ0BYZhZPe1DGKJb5+FKfbSa9E68NtIGRK3qbuFMoVWDZa6s16fdr4CWSCHU40z8gWuVM+4tTNVI7KKFP1MaU0SFr/zhzPE0=",
+                "ewogICJ0aW1lc3RhbXAiIDogMTczMzk2MjY4MDc0OCwKICAicHJvZmlsZUlkIiA6ICJlMjc5NjliODYyNWY0NDg1YjkyNmM5NTBhMDljMWMwMSIsCiAgInByb2ZpbGVOYW1lIiA6ICJNaVp6YVhQIiwKICAic2lnbmF0dXJlUmVxdWlyZWQiIDogdHJ1ZSwKICAidGV4dHVyZXMiIDogewogICAgIlNLSU4iIDogewogICAgICAidXJsIiA6ICJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlL2JmMjk1ZjE3OTc4MjQ1ZDc3MmQ4OTZlZTFmZmZhMWQ2NWEwYWRjNDU2NzJhNmQ1MjA5OTg4OTkxZjVhNTVmNWMiCiAgICB9CiAgfQp9"
+        );
+
+        npc.addTrait(TreasureHuntVendorTrait.class);
+        LookClose lookClose = npc.getOrAddTrait(LookClose.class);
+        lookClose.setPerPlayer(true);
+        lookClose.toggle();
+
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
+
+        Location loc = new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), -15.5, 81, 144.5, 0, 0);
+        npc.spawn(loc);
     }
 
     public static void destroyNPCs() {
