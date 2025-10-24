@@ -89,8 +89,9 @@ public class NineCrystal extends AbstractMob implements BossMinionMob {
             case TANK ->  newHealth = 2500;
             default -> newHealth = 2000;
         }
-        warlordsNPC.setMaxHealthAndHeal(newHealth);
 
+        warlordsNPC.setMaxHealthAndHeal(newHealth);
+        warlordsNPC.addKnockbackModifier(warlordsNPC, "KB RES", -100, 100000);
         warlordsNPC.getCooldownManager().removeCooldown(DamageCheck.class, false);
         warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
                 "Damage Check",
