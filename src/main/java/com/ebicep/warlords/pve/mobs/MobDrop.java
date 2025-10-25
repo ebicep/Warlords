@@ -14,6 +14,11 @@ public enum MobDrop implements Spendable {
             TextColor.color(210, 210, 210),
             new ItemStack(Material.WIND_CHARGE)
     ),
+    AWAKENED_ABILITY_SCROLL(
+            "Awakened Ability Scroll",
+            TextColor.color(120, 170, 100),
+            new ItemStack(Material.FLOWER_BANNER_PATTERN)
+    ),
 
     ;
 
