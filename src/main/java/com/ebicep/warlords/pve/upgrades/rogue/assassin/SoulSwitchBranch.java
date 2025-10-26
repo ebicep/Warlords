@@ -52,7 +52,7 @@ public class SoulSwitchBranch extends AbstractUpgradeBranch<SoulSwitch> {
                 "Soul Burst",
                 "Soul Switch - Master Upgrade",
                 """
-                        While the Animus is active, increase crit chance by 15%. For every Judgment Strike dealt by the Animus, gain 10 energy and self heal for 10% of the damage dealt.
+                        Swapping with an enemy causes it to violently explode. Dealing 844-1105 true damage to nearby enemies. Additionally increase your crit chance by 15% for 10 seconds.
                         """,
                 50000,
                 () -> {

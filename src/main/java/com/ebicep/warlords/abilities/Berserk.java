@@ -73,17 +73,6 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
         Utils.playGlobalSound(wp.getLocation(), "warrior.berserk.activation", 2, 1);
         wp.addSpeedModifier(wp, name, speedBuff, tickDuration);
         wp.getCooldownManager().removeCooldown(Berserk.class, false);
-        List<FloatModifiable.FloatModifier> modifiers;
-        absorbedDamage = 0;
-        if (pveMasterUpgrade2) {
-            modifiers = wp.getAbilities()
-                          .stream()
-                          .filter(ability -> !(ability instanceof Berserk))
-                          .map(ability -> ability.getCooldown().addMultiplicativeModifierMult(name + " Master", 0.8f))
-                          .toList();
-        } else {
-            modifiers = Collections.emptyList();
-        }
         RegularCooldown<Berserk> berserkCooldown = new RegularCooldown<>(
                 name,
                 "BERS",
@@ -94,7 +83,6 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
                 cooldownManager -> {},
                 cooldownManager -> {
                     wp.getSpeed().removeModifier(name);
-                    modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
                 },
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
@@ -151,7 +139,6 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
                 }
             }.runTaskTimer(0, 20);
             addSecondaryAbility(1, () -> {
-
                 if (cooldown > 0) {
                     wp.sendMessage(Component.text("This ability is still on cooldown!", NamedTextColor.RED));
                     return;
@@ -161,7 +148,7 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
                 wp.addEnergy(wp, "Berserk Master Upgrade", finalValue * 0.002f);
 
                 FallingBlockWaveEffect.create(wp.getLocation().clone().add(0, 1, 0), 10, 10, Material.AMETHYST_CLUSTER);
-                        Utils.playGlobalSound(wp.getLocation(), "warrior.mortalstrike.impact", 2, 0.5f);
+                Utils.playGlobalSound(wp.getLocation(), "warrior.mortalstrike.impact", 2, 0.5f);
                 EffectUtils.strikeLightning(wp.getLocation(), false);
 
                 for (WarlordsEntity enemy : PlayerFilter
@@ -184,6 +171,7 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
                     secondaryAbility -> !wp.getCooldownManager().hasCooldown(berserkCooldown)
             );
         }
+
         return true;
     }
 

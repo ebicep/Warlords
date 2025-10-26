@@ -36,14 +36,21 @@ public class ChainLightning extends AbstractChain<ChainLightning, ChainLightning
     public static final ItemStack CHAIN_ITEM = new ItemStack(Material.GRAY_STAINED_GLASS);
 
     public static <T> void giveShockedEffect(WarlordsEntity giver, WarlordsEntity receiver, Class<T> clazz, T object) {
-        receiver.getCooldownManager().addCooldown(new RegularCooldown<>("Aftershock", "SHOCKED", clazz, object, giver, CooldownTypes.LOW_LEVEL_DEBUFF, cooldownManager -> {
-        }, 3 * 20, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-            if (ticksElapsed % 20 == 0) {
-                EffectUtils.displayParticle(Particle.ELECTRIC_SPARK, receiver.getLocation().add(0, 1.2, 0), 5, .25, .25, .25, 0);
-            }
-        })
+        receiver.getCooldownManager().addCooldown(new RegularCooldown<>(
+                "Aftershock",
+                "SHOCKED",
+                clazz,
+                object,
+                giver,
+                CooldownTypes.LOW_LEVEL_DEBUFF,
+                cooldownManager -> {},
+                3 * 20,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed % 20 == 0) {
+                        EffectUtils.displayParticle(Particle.ELECTRIC_SPARK, receiver.getLocation().add(0, 1.2, 0), 5, .25, .25, .25, 0);
+                    }
+                })
         ) {
-
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 return event.getSource().equals(giver) ? currentDamageValue * 1.3f : currentDamageValue;
@@ -108,10 +115,16 @@ public class ChainLightning extends AbstractChain<ChainLightning, ChainLightning
         Utils.playGlobalSound(wp.getLocation(), "shaman.chainlightning.activation", 3, 1);
         wp.playSound(wp.getLocation(), "shaman.chainlightning.impact", 2, 1);
         wp.getCooldownManager().removeCooldown(ChainLightning.class, false);
-        wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "CHAIN", ChainLightning.class, new ChainLightning(), wp, CooldownTypes.BUFF, cooldownManager -> {
-        }, damageReductionTickDuration
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                name,
+                "CHAIN",
+                ChainLightning.class,
+                new ChainLightning(),
+                wp,
+                CooldownTypes.BUFF,
+                cooldownManager -> {},
+                damageReductionTickDuration
         ) {
-
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 return currentDamageValue * convertToDivisionDecimal(Math.min(hitCounter * damageReductionPerBounce.getCalculatedValue(), maxDamageReduction.getCalculatedValue()));

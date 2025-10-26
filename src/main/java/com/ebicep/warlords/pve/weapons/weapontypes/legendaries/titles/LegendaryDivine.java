@@ -156,7 +156,7 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
                                     modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
                                     player.updateItems();
                                 },
-                                8 * 20
+                                10 * 20
                         ) {
                             @Override
                             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
@@ -188,7 +188,7 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
                         .append(formatTitleUpgrade(ABILITY_ENERGY_COST_REDUCTION + ABILITY_ENERGY_COST_REDUCTION_PER_UPGRADE * getTitleLevel(), "%"))
                         .append(Component.text(" energy cost reduction for all abilities, " + ABILITY_DAMAGE_BOOST + "% increased damage, and "))
                         .append(formatTitleUpgrade(ABILITY_EPS + ABILITY_EPS_PER_UPGRADE * getTitleLevel()))
-                        .append(Component.text(" EPS for 8 seconds. Can be triggered every 40 seconds."));
+                        .append(Component.text(" EPS for 10 seconds. Can be triggered every 40 seconds."));
     }
 
     @Override

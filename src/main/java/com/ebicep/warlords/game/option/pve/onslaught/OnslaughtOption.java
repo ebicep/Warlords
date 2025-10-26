@@ -122,9 +122,6 @@ public class OnslaughtOption implements PveOption {
                                 mobs.remove(mobToRemove);
                                 game.getPlayers().remove(we.getUuid());
                                 Warlords.removePlayer(we.getUuid());
-                                Bukkit.broadcast(Component.text("spawn count: " + spawnCount));
-                                Bukkit.broadcast(Component.text("spawn limit: " + spawnLimit));
-                                Bukkit.broadcast(Component.text("removed mob: " + mobToRemove));
                             }
                         }.runTaskLater(1);
 

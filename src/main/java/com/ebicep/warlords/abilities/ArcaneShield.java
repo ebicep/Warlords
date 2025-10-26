@@ -214,7 +214,4 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
     public void setShieldPercentage(float shieldPercentage) {
         this.shieldPercentage = shieldPercentage;
     }
-
-
-
 }
