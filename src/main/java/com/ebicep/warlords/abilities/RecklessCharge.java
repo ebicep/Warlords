@@ -197,7 +197,7 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, H
 
                                        @Override
                                        public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-                                           return currentHealValue * 2;
+                                           return currentHealValue * 1.5f;
                                        }
                                    });
                         new CooldownFilter<>(otherPlayer, RegularCooldown.class).filter(cd -> cd.getCooldownType() != CooldownTypes.LOW_LEVEL_DEBUFF)

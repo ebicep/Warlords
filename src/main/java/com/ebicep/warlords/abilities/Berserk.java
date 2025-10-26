@@ -111,7 +111,7 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
                     if (event.getCause().isEmpty() || event.getCause().equals("Time Warp")) {
                         return currentCritChance;
                     }
-                    float critBoost = (0.5f * multiplier);
+                    float critBoost = (1f * multiplier);
                     return currentCritChance + Math.min(60, critBoost);
                 }
                 return currentCritChance;
@@ -123,7 +123,7 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
                     if (event.getCause().isEmpty() || event.getCause().equals("Time Warp")) {
                         return currentCritMultiplier;
                     }
-                    float critBoost = (0.5f * multiplier);
+                    float critBoost = (1f * multiplier);
                     return currentCritMultiplier + Math.min(60, critBoost);
                 }
                 return currentCritMultiplier;
@@ -157,8 +157,8 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
                     return;
                 }
 
-                float finalValue = Math.min(20000, absorbedDamage);
-                wp.addEnergy(wp, "Berserk Master Upgrade", finalValue * 0.005f);
+                float finalValue = Math.min(50000, absorbedDamage);
+                wp.addEnergy(wp, "Berserk Master Upgrade", finalValue * 0.002f);
 
                 FallingBlockWaveEffect.create(wp.getLocation().clone().add(0, 1, 0), 10, 10, Material.AMETHYST_CLUSTER);
                         Utils.playGlobalSound(wp.getLocation(), "warrior.mortalstrike.impact", 2, 0.5f);
@@ -172,7 +172,7 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
                             .damage()
                             .cause("Berserk Unleashed")
                             .source(wp)
-                            .value(finalValue * 0.4f)
+                            .value(finalValue * 0.15f)
                             .flags(InstanceFlags.IGNORE_DAMAGE_BOOST, InstanceFlags.NO_LUST_HEALING)
                     );
                 }

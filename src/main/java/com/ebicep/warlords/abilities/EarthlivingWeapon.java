@@ -143,7 +143,8 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
                 stats.timesProcd++;
                 Utils.playGlobalSound(victim.getLocation(), "shaman.earthlivingweapon.impact", 2, 1);
                 float cc = pveMasterUpgrade2 && !previosulyProcd ? 100 : healingValues.earthlivingHealing.getCritChanceValue();
-                List<WarlordsEntity> healedPlayers = PlayerFilter.entitiesAround(attacker, 6, 6, 6)
+                double area = inPve ? 8 : 6;
+                List<WarlordsEntity> healedPlayers = PlayerFilter.entitiesAround(attacker, area, area, area)
                                                                  .aliveTeammatesOfExcludingSelf(attacker)
                                                                  .warlordPlayersFirst()
                                                                  .limit(maxAllies)
