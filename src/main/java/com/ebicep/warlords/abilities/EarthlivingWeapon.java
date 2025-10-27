@@ -7,13 +7,11 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.type.CustomInstanceFlags;
-import com.ebicep.warlords.pve.mobs.flags.NoTargetAbilities;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.earthwarden.EarthlivingWeaponBranch;
@@ -40,6 +38,7 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
     private int weaponDamage = 240;
     private int maxHits = 1;
     private int guaranteedHits = 1;
+    private float radius = 6;
 
     public EarthlivingWeapon() {
         super(AbstractAbilityBuilder.create("earthlivingWeapon").pvp());
@@ -143,8 +142,7 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
                 stats.timesProcd++;
                 Utils.playGlobalSound(victim.getLocation(), "shaman.earthlivingweapon.impact", 2, 1);
                 float cc = pveMasterUpgrade2 && !previosulyProcd ? 100 : healingValues.earthlivingHealing.getCritChanceValue();
-                double area = inPve ? 8 : 6;
-                List<WarlordsEntity> healedPlayers = PlayerFilter.entitiesAround(attacker, area, area, area)
+                List<WarlordsEntity> healedPlayers = PlayerFilter.entitiesAround(attacker, radius, radius, radius)
                                                                  .aliveTeammatesOfExcludingSelf(attacker)
                                                                  .warlordPlayersFirst()
                                                                  .limit(maxAllies)
@@ -227,6 +225,14 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
 
     public void setGuaranteedHits(int guaranteedHits) {
         this.guaranteedHits = guaranteedHits;
+    }
+
+    public float getRadius() {
+        return radius;
+    }
+
+    public void setRadius(float radius) {
+        this.radius = radius;
     }
 
     public float getProcChance() {

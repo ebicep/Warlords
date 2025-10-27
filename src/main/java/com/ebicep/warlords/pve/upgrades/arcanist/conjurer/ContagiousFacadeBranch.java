@@ -8,6 +8,10 @@ import javax.annotation.Nonnull;
 
 public class ContagiousFacadeBranch extends AbstractUpgradeBranch<ContagiousFacade> {
 
+    @Override
+    public void runOnce() {
+        ability.setStacksGranted(3);
+    }
     public ContagiousFacadeBranch(AbilityTree abilityTree, ContagiousFacade ability) {
         super(abilityTree, ability);
 

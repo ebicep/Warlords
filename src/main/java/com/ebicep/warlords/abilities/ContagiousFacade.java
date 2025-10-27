@@ -188,7 +188,7 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                                                     .closestFirst(wp)
                                                     .limit(pveMasterUpgrade ? Integer.MAX_VALUE : infectedPlayers)) {
             EffectUtils.playParticleLinkAnimation(wp.getLocation(), hexTarget.getLocation(), 180, 0, 0, 2);
-            for (int i = 0; i < (inPve ? 3 : stacksGranted); i++) {
+            for (int i = 0; i < stacksGranted; i++) {
                 PoisonousHex.givePoisonousHex(wp, hexTarget);
                 EffectUtils.displayParticle(Particle.CRIMSON_SPORE, wp.getLocation(), 20, 0.05, 0.1, 0.05, 0.25);
             }

@@ -5,6 +5,10 @@ import com.ebicep.warlords.pve.upgrades.*;
 
 public class EarthlivingWeaponBranch extends AbstractUpgradeBranch<EarthlivingWeapon> {
 
+    @Override
+    public void runOnce() {
+        ability.setRadius(8);
+    }
     int weaponDamage = ability.getWeaponDamage();
     int maxHits = ability.getMaxHits();
 
