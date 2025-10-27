@@ -47,8 +47,8 @@ public class CompensateCommand extends BaseCommand {
         }
         Menu menu = new Menu("Compensate", 9 * 6);
 
-        int row = 1;
-        int col = 1;
+        int row = 0;
+        int col = 0;
         for (Currencies currency : Currencies.VALUES) {
             menu.setItem(col, row,
                     new ItemBuilder(currency.item)

@@ -206,6 +206,11 @@ public enum Currencies implements Spendable {
             TextColor.color(199, 31, 137),
             new ItemStack(Material.TRIAL_KEY)
     ),
+    ARCHEMEDIAN_FRAGMENT(
+            "Archemedian Fragment",
+            TextColor.color(110, 170, 210),
+            new ItemStack(Material.CALIBRATED_SCULK_SENSOR)
+    ),
     SOVEREIGN_TOWER_KEY(
             "Sovereign Tower Key",
             TextColor.color(71, 81, 158),

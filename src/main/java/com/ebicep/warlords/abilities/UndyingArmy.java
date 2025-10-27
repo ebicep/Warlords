@@ -236,7 +236,7 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
                         UndyingArmy.class,
                         null,
                         wp,
-                        CooldownTypes.ABILITY,
+                        CooldownTypes.LOW_LEVEL_DEBUFF,
                         cooldownManager -> {
                             if (enemy.isAlive()) {
                                 float healthDamage = DamageCheck.clamp(enemy.getMaxHealth() * .02f);

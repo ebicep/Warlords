@@ -21,9 +21,9 @@ public class WaveDefenseRewards extends PveRewards<WaveDefenseOption> {
 
     public static final RandomCollection<Pair<Spendable, Long>> ASCENDANT_POUCH_LOOT_POOL = new RandomCollection<Pair<Spendable, Long>>()
             .add(35, new Pair<>(Currencies.ASCENDANT_SHARD, 1L))
-            .add(35, new Pair<>(Currencies.LIMIT_BREAKER, 1L))
-            .add(10, new Pair<>(Currencies.ASCENDANT_STAR_PIECE, 1L))
-            .add(20, new Pair<>(Currencies.LEGEND_FRAGMENTS, 2000L));
+            .add(35, new Pair<>(Currencies.LEGEND_FRAGMENTS, 2000L))
+            .add(20, new Pair<>(Currencies.LIMIT_BREAKER, 1L))
+            .add(10, new Pair<>(Currencies.ASCENDANT_STAR_PIECE, 1L));
 
     public WaveDefenseRewards(WaveDefenseOption pveOption) {
         super(pveOption);

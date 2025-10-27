@@ -65,7 +65,7 @@ public class LegendaryInanition extends AbstractLegendaryWeapon implements Event
 
     @Override
     public TextComponent getPassiveEffect() {
-        return Component.text("Each debuff on mobs increases your damage to them by ", NamedTextColor.GRAY)
+        return Component.text("Each de-buff on mobs increases your damage to them by ", NamedTextColor.GRAY)
                         .append(formatTitleUpgrade(DEBUFF_DAMAGE_BOOST + DEBUFF_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel(), "%"))
                         .append(Component.text(". Max ", NamedTextColor.GRAY))
                         .append(formatTitleUpgrade(CAP_DEBUFF_DAMAGE_BOOST + CAP_DEBUFF_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel(), "%"))
