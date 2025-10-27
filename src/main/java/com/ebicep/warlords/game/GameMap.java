@@ -66,6 +66,11 @@ public abstract class GameMap {
     public static final GameMap PVE_DEBUG = new PvePractice();
     public static final GameMap WARSONG = new Warsong();
     public static final GameMap TD_TEST = new TowerDefenseTest();
+//    public static final GameMap OPEX_ANOMALY = new OpexAnomaly();
+//    public static final GameMap PLAINS_OF_DUNESTAR = new PlainsOfDunestar();
+//    public static final GameMap WHAT_ONCE_WAS = new WhatOnceWas();
+    public static final GameMap ENDLESS_PARADOX = new EndlessParadox();
+
 
     public static final GameMap[] VALUES = {
             ACROPOLIS,

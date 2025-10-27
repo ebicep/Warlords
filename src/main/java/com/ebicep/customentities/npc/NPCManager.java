@@ -399,7 +399,7 @@ public class NPCManager {
         new BukkitRunnable() {
             @Override
             public void run() {
-                Utils.playGlobalSound(loc, Sound.AMBIENT_BASALT_DELTAS_ADDITIONS, 0.3f, 0.5f);
+                Utils.playGlobalSound(loc, Sound.AMBIENT_CAVE, 0.3f, 0.5f);
                 EffectUtils.displayParticle(Particle.ASH, loc.clone().add(0, 2, 0), 10, 0.5, 0.2, 0.5, 0.001);
             }
         }.runTaskTimer(Warlords.getInstance(), 0, 30);

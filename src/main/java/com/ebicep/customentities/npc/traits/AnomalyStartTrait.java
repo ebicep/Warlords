@@ -3,6 +3,7 @@ package com.ebicep.customentities.npc.traits;
 import com.ebicep.customentities.npc.WarlordsTrait;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.GameMode;
+import com.ebicep.warlords.game.option.pve.anomaly.AnomalyMenu;
 import com.ebicep.warlords.pve.OnslaughtMenu;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
@@ -50,11 +51,11 @@ public class AnomalyStartTrait extends WarlordsTrait {
 
     @Override
     public void rightClick(NPCRightClickEvent event) {
-
+        AnomalyMenu.openAnomalyMenu(event.getClicker());
     }
 
     @Override
     public void leftClick(NPCLeftClickEvent event) {
-
+        AnomalyMenu.openAnomalyMenu(event.getClicker());
     }
 }

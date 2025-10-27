@@ -421,6 +421,44 @@ public enum GameMode {
             return options;
         }
     },
+    ANOMALY(
+            "Anomaly",
+            "PVE",
+            new ItemStack(Material.ZOMBIE_HEAD),
+            null,
+            GamesCollections.PVE,
+            4,
+            true,
+            ConfigManager.PVE_NAMESPACES
+    ) {
+        @Override
+        public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = new ArrayList<>();
+            Component base = Component.text("", NamedTextColor.YELLOW, TextDecoration.BOLD);
+            options.add(TextOption.Type.CHAT_CENTERED.create(
+                    Component.text("Warlords", NamedTextColor.WHITE, TextDecoration.BOLD),
+                    Component.empty(),
+                    base.append(Component.text("Survive against waves of")),
+                    base.append(Component.text("monsters!")),
+                    Component.empty()
+            ));
+            options.add(TextOption.Type.TITLE.create(
+                    10,
+                    Component.text("GO!", NamedTextColor.GREEN),
+                    Component.text("Let the wave defense commence.", NamedTextColor.YELLOW)
+            ));
+            options.add(new PreGameItemOption(4, PlayerHotBarItemListener.SELECTION_MENU, (g, p) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(p)));
+            options.add(new RecordTimeElapsedOption());
+            options.add(new WeaponOption(WeaponOption::showPvEWeapon, WeaponOption::showWeaponStats));
+            options.add(new NoRespawnIfOfflineOption());
+            options.add(new WinByAllDeathOption(Team.BLUE));
+            options.add(new DieOnLogoutOption());
+            options.add(new GameFreezeOption());
+            options.add(new BountyOption());
+            options.add(new PlayerCooldownDisplayOption());
+            return options;
+        }
+    },
     RAID(
             "Raid",
             "RAID",
