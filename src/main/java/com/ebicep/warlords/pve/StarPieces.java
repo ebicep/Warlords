@@ -22,37 +22,33 @@ import java.util.Map;
 public enum StarPieces {
 
     COMMON(Currencies.COMMON_STAR_PIECE,
-            20,
+            10,
             new LinkedHashMap<>()
     ),
     RARE(Currencies.RARE_STAR_PIECE,
-            30,
+            20,
             new LinkedHashMap<>() {{
                 put(Currencies.COMMON_STAR_PIECE, 3L);
                 put(Currencies.COIN, 50_000L);
             }}
     ),
     EPIC(Currencies.EPIC_STAR_PIECE,
-            40,
+            30,
             new LinkedHashMap<>() {{
                 put(Currencies.RARE_STAR_PIECE, 3L);
                 put(Currencies.COIN, 250_000L);
             }}
     ),
     LEGENDARY(Currencies.LEGENDARY_STAR_PIECE,
-            50,
+            40,
             new LinkedHashMap<>() {{
                 put(Currencies.EPIC_STAR_PIECE, 3L);
                 put(Currencies.COIN, 1_000_000L);
             }}
     ),
     ASCENDANT(Currencies.ASCENDANT_STAR_PIECE,
-            60,
+            50,
             new LinkedHashMap<>()
-//            new LinkedHashMap<>() {{
-//                put(Currencies.LEGENDARY_STAR_PIECE, 3L);
-//                put(Currencies.COIN, 2_000_000L);
-//            }}
     );
 
     public static final StarPieces[] VALUES = values();

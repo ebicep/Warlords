@@ -174,6 +174,7 @@ public class NPCManager {
                     createIllusionVendorNPC();
                     createPrestigeVendorNPC();
                     createAscendantVendorNPC();
+                    createWeeklyItemTraderNPC();
                 })
                 .execute();
     }
@@ -424,6 +425,34 @@ public class NPCManager {
 
         Location loc = new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), -15.5, 81, 144.5, 0, 0);
         npc.spawn(loc);
+    }
+
+    public static void createWeeklyItemTraderNPC() {
+        registerTrait(WeeklyItemTraderTrait.class, "WeeklyItemTraderTrait");
+
+        NPC npc = NPC_REGISTRY.createNPC(EntityType.PLAYER, "weekly-item-vendor");
+        npc.getOrAddTrait(SkinTrait.class).setSkinPersistent(
+                "evil",
+                "TLWnAAA8hBVKnVmPG8CsPCqvpwbpSEzejp7+EjHFwZp7nHBlaOLGI0DOn3XApwETtaHKMmuuMRlokpF3YqY1kLxugSr5VqXjCKnA793hye6ANR3jsqHeIAktdpT+zbTxCQ2VHP3VqHGh8G6xyiMYyzk2d6eblxCwnhnZ9bjERE+A8KD/QeL6ufPlpjJaFC/qSSdrMjM/tyW641q9w4rlRCt4UGvyTE9GAt3U/LWKUQLMX4r6cBkG/VNhQpkWyev0vsRsL/19eFQQujJdJa0xUeX0J62cOwd2kc/dzJ/5ZJoim3l1Din8bjzjQfbqfspgU8h5I8v/irUsG5r600/2cqnhYZI8O/ROy+/OkPa5kk9yX5vYu6J3c3i3RIGCiQ8jNbUGrV0rfIoCZhidplsp7V2HzcqNPb3A4fenIKMjlOdb/eSL8AIIgSSccS2GTSDVdCgbL/FXItyvAkUnPCb0tn8kSukiBdqXUaUIo6mjyQ8W6IhDG8H7l5KTznUZwn8gj/ZZ0pCDkrUfFeUKpB+0Drq3AS3lLKbZbDBZPSs3K/WnqmpJ+E2/uTnkQFug69Xy4c1N/7tFPmd81Vcrvz+NUvaPa+kPczbKLRDZXbBB2OzZanFlk6pUL5cRHzDEisWz1pU2OUHUo1TJg0EqkgP5A3U3Vj9CRNYKu4FyZfCuRmw=",
+                "ewogICJ0aW1lc3RhbXAiIDogMTY0NTIzODI0MjA4MSwKICAicHJvZmlsZUlkIiA6ICIxNmFkYTc5YjFjMDk0MjllOWEyOGQ5MjgwZDNjNjE5ZiIsCiAgInByb2ZpbGVOYW1lIiA6ICJMYXp1bGl0ZV9adG9uZSIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS9mOWU4MWNlYmQ2MjBlNjcyZWJjYTRjYjZiNDg4YTIyNjE1YTU2NTlmYjNkZjdhZjU0YjhkMDc4MGZiZWYzMzQ4IiwKICAgICAgIm1ldGFkYXRhIiA6IHsKICAgICAgICAibW9kZWwiIDogInNsaW0iCiAgICAgIH0KICAgIH0KICB9Cn0="
+        );
+
+        npc.addTrait(WeeklyItemTraderTrait.class);
+        LookClose lookClose = npc.getOrAddTrait(LookClose.class);
+        lookClose.setPerPlayer(true);
+        lookClose.toggle();
+
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
+
+        Location loc = new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 65.5, 81, 146.5, 75, 0);
+        npc.spawn(loc);
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                EffectUtils.displayParticle(Particle.SOUL_FIRE_FLAME, loc.clone().add(0, 1.2, 0), 3, 0.5, 0.2, 0.5, 0.001);
+            }
+        }.runTaskTimer(Warlords.getInstance(), 0, 60);
     }
 
     public static void destroyNPCs() {
