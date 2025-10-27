@@ -72,7 +72,7 @@ public class ConsecrateProtector extends AbstractConsecrate implements CanReduce
                             .source(wp)
                             .value(damageValues.consecrateDamage)
                             ).ifPresent(finalEvent -> {
-                        if (timesReduced.get() < 8) {
+                        if (timesReduced.get() < 5) {
                             timesReduced.getAndIncrement();
                             wp.getAbilitiesMatching(HammerOfLight.class).forEach(holy -> holy.subtractCurrentCooldown(.25f));
                         }

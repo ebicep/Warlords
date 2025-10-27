@@ -9,6 +9,11 @@ import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
 
 public abstract class AbstractConsecrateBranch<T extends AbstractConsecrate> extends AbstractUpgradeBranch<T> {
 
+    @Override //lazy fix for m2 cons number of hits
+    public void runOnce() {
+        ability.setTickDuration(ability.getTickDuration() + 1);
+    }
+
     public AbstractConsecrateBranch(AbilityTree abilityTree, T ability) {
         super(abilityTree, ability);
 

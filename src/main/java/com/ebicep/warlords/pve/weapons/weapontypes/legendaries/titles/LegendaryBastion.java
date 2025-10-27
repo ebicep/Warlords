@@ -1,34 +1,25 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
-import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
-import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
-import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCounter;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Effect;
 import org.bukkit.Location;
-import org.bukkit.Particle;
-import org.bukkit.World;
 import org.springframework.data.annotation.Transient;
-
-import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 public class LegendaryBastion extends AbstractLegendaryWeapon {
 
@@ -92,7 +83,7 @@ public class LegendaryBastion extends AbstractLegendaryWeapon {
                 null,
                 player,
                 CooldownTypes.WEAPON,
-                cm -> {},
+                cooldownManager -> {},
                 false
         ));
 
@@ -143,7 +134,7 @@ public class LegendaryBastion extends AbstractLegendaryWeapon {
                 null,
                 ally,
                 CooldownTypes.WEAPON,
-                cm -> {},
+                cooldownManager -> {},
                 false
         ) {
             @Override
@@ -165,11 +156,10 @@ public class LegendaryBastion extends AbstractLegendaryWeapon {
                     double redirectCapRemain = Math.max(0.0, owner.getMaxHealth() * (getRedirectCapPercent() / 100.0) - redirectUsedThisSecond);
                     double toRedirect = Math.min(redirectCapRemain, prevented * (REDIRECT_RATIO_PERCENT / 100.0));
                     if (toRedirect > 0) {
-                        WarlordsEntity src = event.getSource() != null ? event.getSource() : ally;
                         owner.addInstance(InstanceBuilder
                                 .damage()
                                 .cause("Bastion")
-                                .source(src)
+                                .source(ally)
                                 .min((float) toRedirect)
                                 .max((float) toRedirect)
                                 .flags(InstanceFlags.RECURSIVE, InstanceFlags.REFLECTIVE_DAMAGE, InstanceFlags.IGNORE_DAMAGE_BOOST)
@@ -177,7 +167,6 @@ public class LegendaryBastion extends AbstractLegendaryWeapon {
                         redirectUsedThisSecond += toRedirect;
                     }
                 }
-
                 return reduced;
             }
         });
