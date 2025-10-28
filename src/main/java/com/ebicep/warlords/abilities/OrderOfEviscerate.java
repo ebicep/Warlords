@@ -126,7 +126,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                 float damageBonus = vulnerableDamageBonus;
                 if (pveMasterUpgrade && !LocationUtils.isLineOfSightAssassin(event.getWarlordsEntity(), event.getSource())) {
                     stats.numberOfBackstabs++;
-                    damageBonus += 120;
+                    damageBonus += 70;
                 }
                 return currentDamageValue * (1 + damageBonus / 100f);
             }
