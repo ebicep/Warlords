@@ -34,19 +34,20 @@ public class TimeWarpBranchPyromancer extends AbstractUpgradeBranch<TimeWarpPyro
                 50000,
                 () -> {
                     ability.setTickDuration(ability.getTickDuration() * 2);
-
                 }
         );
         masterUpgrade2 = new Upgrade(
                 "Accursed Leap",
                 "Time Warp - Master Upgrade",
                 """
+                        -2s warp duration
+                        
                         After warping back, enemies within 12 blocks will combust dealing 7.5% of their max hp as damage.
-                        The cooldown of Time Warp is reduced by 0.75s for each enemy killed.
+                        The cooldown of Time Warp is reduced by 2s for each enemy killed.
                         """,
                 50000,
                 () -> {
-
+                    ability.setTickDuration(ability.getTickDuration() - 40);
                 }
         );
     }

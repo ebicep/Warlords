@@ -11,8 +11,7 @@ public class FireballBranch extends AbstractUpgradeBranch<Fireball> {
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgradeDamage(ability.getDamageValues().getFireballDamage(), 12.5f, 1, 2, 3)
-                .addUpgradeDamage(ability.getDamageValues().getFireballDamage(), 50f, 4)
+                .addUpgradeDamage(ability.getDamageValues().getFireballDamage(), 15f, 1, 2, 3, 4)
                 .addUpgrade(new UpgradeTypes.UpgradeType() {
                     @Override
                     public String getDescription0(String value) {
@@ -30,7 +29,7 @@ public class FireballBranch extends AbstractUpgradeBranch<Fireball> {
         UpgradeTreeBuilder
                 .create(abilityTree, this)
                 .addUpgradeSplash(ability, 0.5f)
-                .addUpgradeEnergy(ability, 3.75f)
+                .addUpgradeEnergy(ability, 5f)
                 .addTo(treeB);
 
         masterUpgrade = new Upgrade(

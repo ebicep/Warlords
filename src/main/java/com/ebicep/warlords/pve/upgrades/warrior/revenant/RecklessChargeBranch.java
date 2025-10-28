@@ -62,7 +62,7 @@ public class RecklessChargeBranch extends AbstractUpgradeBranch<RecklessCharge> 
                         +80% damage reduction on cast.
                         +3 Block distance.
                         
-                        Additionally, allies you charge through receive 100% more healing for 8 seconds and have their active timers increased by 2 seconds.
+                        Additionally, allies you charge through receive 50% more healing for 8 seconds and have their active timers increased by 2 seconds.
                         """,
                 50000,
                 () -> {

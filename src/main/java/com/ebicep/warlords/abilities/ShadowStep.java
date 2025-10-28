@@ -140,43 +140,46 @@ public class ShadowStep extends AbstractAbility implements
                 locationBuilder.addY(isSlab ? -0.5 : 0);
                 break;
             }
-            PlayerFilter.entitiesAround(locationBuilder.clone().addY(-1), 2, 2, 2)
+            PlayerFilter.entitiesAround(locationBuilder.clone().addY(-1), 3.5, 3.5, 3.5)
                     .aliveEnemiesOf(wp)
                     .excluding(hit)
                     .forEach(warlordsEntity -> {
-                        hit.add(warlordsEntity);
-                        warlordsEntity.addInstance(InstanceBuilder
-                                .damage()
-                                .cause("Shadow Dash")
-                                .source(wp)
-                                .value(damageValues.shadowStepDamage)
-                                .critChance(guaranteedCrit.getAndDecrement() > 0 ? 100 : damageValues.shadowStepDamage.getCritChanceValue()));
-                    });
+                hit.add(warlordsEntity);
+                warlordsEntity.addInstance(InstanceBuilder
+                        .damage()
+                        .cause("Shadow Dash")
+                        .source(wp)
+                        .value(damageValues.shadowStepDamage)
+                        .critChance(guaranteedCrit.getAndDecrement() > 0 ? 100 : damageValues.shadowStepDamage.getCritChanceValue()));
+            });
             locationBuilder = locationBuilder.forward(1);
             EffectUtils.displayParticle(Particle.SMOKE, locationBuilder.clone().addY(-.5), 10, .1, .1, .1, 0);
         }
         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 2, 1.5f);
         wp.teleportLocationOnly(locationBuilder);
-        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
-                "Shadow Dash CC",
-                null,
-                ShadowStep.class,
-                new ShadowStep(),
-                wp,
-                CooldownTypes.BUFF,
-                cooldownManager -> {},
-                5 * 20
-        ) {
-            @Override
-            public float addCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
-                return currentCritMultiplier * convertToMultiplicationDecimal(Math.min(2f * hit.size(), 20));
-            }
+        if (hit.size() != 0) {
+            wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                    "Shadow Dash",
+                    "SHDW",
+                    ShadowStep.class,
+                    new ShadowStep(),
+                    wp,
+                    CooldownTypes.BUFF,
+                    cooldownManager -> {},
+                    5 * 20
+            ) {
 
-            @Override
-            public float addCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
-                return currentCritChance * convertToMultiplicationDecimal(Math.min(2f * hit.size(), 20));
-            }
-        });
+                @Override
+                public float addCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
+                    return currentCritMultiplier + (Math.min(2f * hit.size(), 20));
+                }
+
+                @Override
+                public float addCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
+                    return currentCritChance + (Math.min(2f * hit.size(), 20));
+                }
+            });
+        }
     }
 
     private void doShadowStep(@Nonnull WarlordsEntity wp, Location playerLoc) {
@@ -195,7 +198,9 @@ public class ShadowStep extends AbstractAbility implements
                     .critChance(guaranteedCrit.getAndDecrement() > 0 ? 100 : damageValues.shadowStepDamage.getCritChanceValue())
             );
             Utils.playGlobalSound(playerLoc, "warrior.revenant.orbsoflife", 2, 1.9f);
-            playersHit.add(assaultTarget);
+            if (!pveMasterUpgrade) {
+                playersHit.add(assaultTarget);
+            }
         }
         new GameRunnable(wp.getGame()) {
 
@@ -239,10 +244,6 @@ public class ShadowStep extends AbstractAbility implements
     private void pveMasterOnLand(WarlordsEntity we) {
         we.addSpeedModifier(we, name, 80, 5 * 20);
         we.addKnockbackModifier(we, name, -80, 5 * 20);
-        for (IncendiaryCurse incendiaryCurse : we.getAbilitiesMatching(IncendiaryCurse.class)) {
-            incendiaryCurse.onImpact(we, we.getLocation());
-            break;
-        }
     }
 
     @Override

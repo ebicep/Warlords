@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
@@ -12,6 +13,7 @@ import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.thunderlord.LightningBoltBranch;
 import com.ebicep.warlords.util.bukkit.EntitiesUtils;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
+import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
@@ -30,6 +32,7 @@ import org.joml.Vector3f;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public class LightningBolt extends AbstractPiercingProjectile<LightningBolt, LightningBolt.LightningBoltStats> implements Splash, WeaponAbilityIcon,
@@ -136,9 +139,9 @@ public class LightningBolt extends AbstractPiercingProjectile<LightningBolt, Lig
         float damageMultiplier = 1;
         if (pveMasterUpgrade2) {
             if (playersHit == 1) {
-                damageMultiplier = 1.35f;
+                damageMultiplier = 1.6f;
             } else {
-                damageMultiplier = 1.15f;
+                damageMultiplier = playersHit * 0.15f + 1.6f;
             }
             EffectUtils.displayParticle(Particle.ENCHANTED_HIT, hit.getLocation().add(0, 1.2, 0), 5, .25, .25, .25, 0);
         }
@@ -171,6 +174,7 @@ public class LightningBolt extends AbstractPiercingProjectile<LightningBolt, Lig
             }
             Utils.playGlobalSound(impactLocation, "shaman.lightningbolt.impact", 2, 1);
             hit(hit, wp, projectile);
+
             //reducing chain cooldown
             if (!(wp.isInPve() && projectile.getHit().size() > 2)) {
                 for (ChainLightning chainLightning : wp.getAbilitiesMatching(ChainLightning.class)) {
