@@ -73,7 +73,7 @@ public class PetalCrystal extends AbstractMob implements BossMinionMob {
             PlayerFilter.playingGame(warlordsNPC.getGame())
                     .filter(player -> player.getName().equals("Lilium"))
                     .forEach(lilium -> {
-                        EffectUtils.playParticleLinkAnimation(warlordsNPC.getLocation(), lilium.getLocation(), Particle.HAPPY_VILLAGER, 4);
+                        EffectUtils.playParticleLinkAnimation(warlordsNPC.getLocation(), lilium.getLocation(), Particle.HAPPY_VILLAGER, 1);
                         Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ITEM_AXE_WAX_OFF, 500, 0.5f);
                         lilium.addInstance(InstanceBuilder
                                 .healing()

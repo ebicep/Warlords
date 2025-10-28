@@ -49,13 +49,20 @@ public enum StarPieces {
     ASCENDANT(Currencies.ASCENDANT_STAR_PIECE,
             60,
             new LinkedHashMap<>()
-//            new LinkedHashMap<>() {{
-//                put(Currencies.LEGENDARY_STAR_PIECE, 3L);
-//                put(Currencies.COIN, 2_000_000L);
-//            }}
+    ),
+    VOID(Currencies.VOID_STAR_PIECE,
+            100,
+            new LinkedHashMap<>()
     );
 
-    public static final StarPieces[] VALUES = values();
+    public static final StarPieces[] VALUES = {
+            COMMON,
+            RARE,
+            EPIC,
+            LEGENDARY,
+            ASCENDANT,
+//            VOID
+    };
 
     public static void openStarPieceSynthesizerMenu(Player player) {
         DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {

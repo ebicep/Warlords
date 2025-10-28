@@ -66,6 +66,11 @@ public enum Currencies implements Spendable {
             NamedTextColor.RED,
             new ItemStack(Material.NETHER_STAR)
     ),
+    VOID_STAR_PIECE(
+            "Void Star Piece",
+            TextColor.color(60, 60, 60),
+            new ItemStack(Material.NETHER_STAR)
+    ),
     SUPPLY_DROP_TOKEN(
             "Supply Drop Token",
             NamedTextColor.GOLD,
