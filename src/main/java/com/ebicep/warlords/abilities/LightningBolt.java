@@ -139,9 +139,9 @@ public class LightningBolt extends AbstractPiercingProjectile<LightningBolt, Lig
         float damageMultiplier = 1;
         if (pveMasterUpgrade2) {
             if (playersHit == 1) {
-                damageMultiplier = 1.6f;
+                damageMultiplier = 1.4f;
             } else {
-                damageMultiplier = playersHit * 0.15f + 1.6f;
+                damageMultiplier = playersHit * 0.10f + 1.4f;
             }
             EffectUtils.displayParticle(Particle.ENCHANTED_HIT, hit.getLocation().add(0, 1.2, 0), 5, .25, .25, .25, 0);
         }
