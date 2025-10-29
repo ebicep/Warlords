@@ -144,7 +144,7 @@ public class OrbitalStrikeAbility {
                 // Compute beam start above impact (sky ray up if wanted; simplest: fixed offset)
                 Location beamStart = impact.clone().add(0, skyOffset, 0);
 
-                // Optional: raytrace downward to align to first solid surface precisely
+                // raytrace downward to align to first solid surface precisely
                 Location exactImpact = traceDownToSurface(beamStart, maxTrace);
                 if (exactImpact != null) {
                     // ensure beamStart is above the surface for visuals
@@ -152,7 +152,7 @@ public class OrbitalStrikeAbility {
                     beamStart = exactImpact.clone().add(0, Math.max(2.0, skyOffset), 0);
                 }
 
-                // Fire the beam
+                // fire the beam
                 runBeam(beamStart, impact);
             }
         }.runTaskTimer(0, 1);
@@ -249,14 +249,13 @@ public class OrbitalStrikeAbility {
         impact.getWorld().spawnParticle(Particle.CRIT, impact, 6, .25, .1, .25, 0.0);
     }
 
-    /** Sample target safely; null if world missing. */
     private Location sampleTarget() {
         Location raw = targetSupplier.get();
         if (raw == null || raw.getWorld() == null) return null;
         return raw;
     }
 
-    /** Try to snap target to a usable ground point (or find first solid below). */
+    // Try to snap target to a usable ground point (or find first solid below).
     private Location safeGroundPoint(Location loc) {
         if (loc == null || loc.getWorld() == null) return null;
         return groundSnap(loc.clone());

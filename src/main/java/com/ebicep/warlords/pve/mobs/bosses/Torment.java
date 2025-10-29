@@ -133,7 +133,7 @@ public class Torment extends AbstractMob implements BossMob {
             preventMarking = true;
             WarlordsEntity divineProtector = null;
             for (WarlordsEntity we : PlayerFilter
-                    .playingGame(warlordsNPC.getGame())
+                    .entitiesAround(warlordsNPC, 100, 100, 100)
                     .aliveEnemiesOf(warlordsNPC)
                     .excludingAlliedMobs()
                     .limit(1)
@@ -145,6 +145,7 @@ public class Torment extends AbstractMob implements BossMob {
                         Component.text(we.getName() + " has been marked to give Divine Protection. Keep them alive!", NamedTextColor.GOLD),
                         20, 60, 20
                 );
+                we.sendMessage(Component.text("You have been chosen to give Divine Protection. Stay alive!", NamedTextColor.GOLD));
                 we.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 540, 0, false));
                 we.getCooldownManager().removeCooldown(DamageCheck.class, false);
                 we.getCooldownManager().addCooldown(new RegularCooldown<>(

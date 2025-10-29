@@ -179,17 +179,17 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                         ) {
                             @Override
                             public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                                if (totalHealingDone.get() >= 1000) {
-                                    setTicksLeft(0);
-                                    return;
-                                }
+//                                if (totalHealingDone.get() >= 1000) {
+//                                    setTicksLeft(0);
+//                                    return;
+//                                }
                                 float healingMultiplier;
                                 if (event.getSource() == attacker) {
                                     healingMultiplier = 15;
                                 } else {
                                     healingMultiplier = 25;
                                 }
-                                float healValue = Math.min(500, currentDamageValue * healingMultiplier);
+                                float healValue = Math.min(300, currentDamageValue * healingMultiplier);
                                 event.getSource().addInstance(InstanceBuilder
                                         .healing()
                                         .cause("Leech")

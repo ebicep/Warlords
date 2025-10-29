@@ -80,6 +80,7 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                     Utils.playGlobalSound(wp.getLocation(), "mage.arcaneshield.activation", 2, 0.4f);
                     Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_EVOKER_PREPARE_ATTACK, 2, 2);
                     float shieldHealth = (float) totalAbsorbed.get();
+                    shieldHealth *= pveMasterUpgrade2 ? 2.5 : 1;
                     stats.totalShieldGained += shieldHealth;
                     Shield shield = new Shield(name, shieldHealth);
                     wp.getCooldownManager().addCooldown(new RegularCooldown<>(name + " Shield", "SHIELD", Shield.class, shield, wp, CooldownTypes.ABILITY, cooldownManager1 -> {
@@ -120,9 +121,6 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 float afterValue = currentDamageValue * convertToDivisionDecimal(damageAbsorption.getCalculatedValue());
                 float absorbedAmount = currentDamageValue - afterValue;
-                if (pveMasterUpgrade2 && totalAbsorbed.get() + absorbedAmount >= wp.getMaxHealth()) {
-                    return currentDamageValue;
-                }
                 totalAbsorbed.addAndGet(absorbedAmount);
                 return afterValue;
             }
@@ -203,8 +201,8 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
             stats.totalHexesInflicted++;
         }
         if (pveMasterUpgrade) {
-            wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "FACADE", ContagiousFacade.class, null, wp, CooldownTypes.ABILITY, cooldownManager -> {
-            }, 20 * 5
+            wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "FAC", ContagiousFacade.class, null, wp, CooldownTypes.ABILITY, cooldownManager -> {
+            }, 20 * 8
             ) {
 
                 @Override

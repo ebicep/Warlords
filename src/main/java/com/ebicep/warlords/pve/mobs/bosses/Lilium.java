@@ -288,7 +288,6 @@ public class Lilium extends AbstractMob implements BossMob {
                     WarlordsEntity target = PlayerFilter.playingGame(warlordsNPC.getGame())
                             .aliveEnemiesOf(warlordsNPC)
                             .limit(1)
-                            .leastAliveFirst()
                             .findFirstOrNull();
                     return target != null ? target.getLocation().clone() : mapCenter.clone();
                 },
@@ -334,23 +333,6 @@ public class Lilium extends AbstractMob implements BossMob {
                     }
                 }
             }.runTaskTimer(40, 6);
-            PlayerFilter.playingGame(warlordsNPC.getGame())
-                    .aliveEnemiesOf(warlordsNPC)
-                    .forEach(enemy -> {
-                        enemy.getCooldownManager().addCooldown(new RegularCooldown<>(
-                                "Mirror Effect",
-                                "MIRROR",
-                                MirrorDPSPhaseData.class,
-                                null,
-                                warlordsNPC,
-                                CooldownTypes.FIELD_EFFECT,
-                                cooldownManager -> {},
-                                30 * 20
-                        ) {
-
-                        });
-                    }
-            );
         });
 
         phaseFour = new BossAbilityPhase(warlordsNPC, 60, () -> {
@@ -466,6 +448,7 @@ public class Lilium extends AbstractMob implements BossMob {
                         for (WarlordsEntity player : PlayerFilter
                                 .playingGame(warlordsNPC.getGame())
                                 .aliveEnemiesOf(warlordsNPC)
+                                .excludingAlliedMobs()
                         ) {
                             player.removePotionEffect(PotionEffectType.LEVITATION);
                             player.removePotionEffect(PotionEffectType.SLOW_FALLING);
@@ -497,7 +480,8 @@ public class Lilium extends AbstractMob implements BossMob {
             );
 
             // fetch players in 3 groups
-            int limit = Math.max(2, Math.round(option.playerCount() / 3f));
+            int minLimit = option.playerCount() > 6 ? 3 : 2;
+            int limit = Math.max(minLimit, Math.round(option.playerCount() / 3f));
             Game game = warlordsNPC.getGame();
             List<WarlordsEntity> arenaOnePlayers = PlayerFilter.playingGame(game)
                     .aliveEnemiesOf(warlordsNPC)

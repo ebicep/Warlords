@@ -78,7 +78,7 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
                             );
                             if (finalEventOptional.isPresent()) {
                                 if (finalEventOptional.get().isDead()) {
-                                    cooldownReduction += .75f;
+                                    cooldownReduction += 2f;
                                 }
                             }
                         }
