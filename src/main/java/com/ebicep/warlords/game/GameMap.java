@@ -122,7 +122,8 @@ public abstract class GameMap {
             VALLEY,
             PVE_DEBUG,
             WARSONG,
-            TD_TEST
+            TD_TEST,
+            ENDLESS_PARADOX
     };
 
     public static GameMap getGameMap(String mapName) {

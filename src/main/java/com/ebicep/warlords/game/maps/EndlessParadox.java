@@ -46,7 +46,7 @@ public class EndlessParadox extends GameMap {
         options.add(SpawnpointOption.forTeam(loc.addXYZ(0, 90, 0), Team.BLUE));
         options.add(SpawnpointOption.forTeam(loc.addXYZ(0, 90, 0), Team.RED));
 
-        options.add(new BoundingBoxOption(new Location(loc.getWorld(), 0, 0, 0), new Location(loc.getWorld(), 1024, 255, 1024)));
+        options.add(new BoundingBoxOption(new Location(loc.getWorld(), -512, 0, -512), new Location(loc.getWorld(), 512, 255, 512)));
 
         options.add(new GraveOption());
         options.add(new BasicScoreboardOption());

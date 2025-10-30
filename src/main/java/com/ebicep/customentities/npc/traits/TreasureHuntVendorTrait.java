@@ -29,9 +29,12 @@ import java.util.UUID;
 public class TreasureHuntVendorTrait extends WarlordsTrait {
 
     private static final List<SpendableBuyShop> SHOP = List.of(
+            new SpendableBuyShop(1, Currencies.VOID_STAR_PIECE, 1, 500),
             new SpendableBuyShop(1, MobDrop.AWAKENED_ABILITY_SCROLL, 1, 200),
-            new SpendableBuyShop(1, Currencies.ASCENDANT_STAR_PIECE, 1, 200),
-            new SpendableBuyShop(100, Currencies.LEGEND_FRAGMENTS, -1, 10),
+            new SpendableBuyShop(1, Currencies.ITEM_LOCK_SCROLL, 1, 200),
+            new SpendableBuyShop(1, Currencies.LEGENDARY_STAR_PIECE, 1, 200),
+            new SpendableBuyShop(1, MobDrop.ZENITH_STAR, 1, 100),
+            new SpendableBuyShop(60, Currencies.LEGEND_FRAGMENTS, -1, 10),
             new SpendableBuyShop(100, Currencies.SYNTHETIC_SHARD, -1, 10)
     );
 
@@ -121,7 +124,7 @@ public class TreasureHuntVendorTrait extends WarlordsTrait {
 
     @Override
     public void run() {
-        if (ticksElapsed++ % 100 != 0) {
+        if (ticksElapsed++ % 600 != 0) {
             return;
         }
         HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);

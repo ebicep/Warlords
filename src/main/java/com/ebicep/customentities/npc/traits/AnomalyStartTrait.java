@@ -4,6 +4,7 @@ import com.ebicep.customentities.npc.WarlordsTrait;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.option.pve.anomaly.AnomalyMenu;
+import com.ebicep.warlords.game.option.pve.anomaly.AnomalyOption;
 import com.ebicep.warlords.pve.OnslaughtMenu;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
@@ -45,6 +46,7 @@ public class AnomalyStartTrait extends WarlordsTrait {
             hologramTrait.setLine(1, ChatColor.GRAY.toString() + playerCountInLobby + " in Lobby");
             if (init) {
                 hologramTrait.setLine(2, ChatColor.GREEN + ChatColor.BOLD.toString() + "Anomaly");
+                hologramTrait.setLine(3, ChatColor.GRAY + "CURRENT ANOMALY: " + ChatColor.GOLD + AnomalyOption.getDailyAnomaly().getName());
             }
         }
     }
