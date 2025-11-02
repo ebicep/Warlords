@@ -47,6 +47,17 @@ public class DateUtil {
                 .toInstant();
     }
 
+    public static Instant getNextMonthFirstDay() {
+        return OffsetDateTime
+                .now(ZoneOffset.UTC)
+                .with(TemporalAdjusters.firstDayOfNextMonth())
+                .withHour(10)
+                .withMinute(0)
+                .withSecond(0)
+                .withNano(0)
+                .toInstant();
+    }
+
     public static Instant getResetDateCurrentMonth() {
         return OffsetDateTime
                 .now(ZoneOffset.UTC)
