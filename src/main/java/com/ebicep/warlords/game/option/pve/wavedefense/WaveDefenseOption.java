@@ -505,7 +505,7 @@ public class WaveDefenseOption implements PveOption {
         // Flag check whether mob is a boss.
         boolean bossFlagCheck = isNotSolo && warlordsNPC.getMob() instanceof BossLike;
         // Reduce base scale by 75/100 for each player after 2 or more players in game instance.
-        double modifiedScale = scale - (isNotSolo ? (isEndless ? 100 : 75) * Math.min(7, playerCount) : 0);
+        double modifiedScale = scale - (isNotSolo ? (isEndless ? 100 : 75) * Math.min(6, playerCount) : 0);
         // Divide scale based on wave count.
         double modifier = waveCounter / modifiedScale + 1;
         // Multiply health & min/max melee damage by waveCounter + 1 ^ base damage.
