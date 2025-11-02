@@ -27,10 +27,10 @@ public class SovereignGuardian extends AbstractMob implements ChampionMob {
                 spawnLocation,
                 "Sovereign Guardian",
                 11000,
-                0.6f,
+                0.7f,
                 20,
-                500,
-                1000
+                1200,
+                1600
         );
     }
 

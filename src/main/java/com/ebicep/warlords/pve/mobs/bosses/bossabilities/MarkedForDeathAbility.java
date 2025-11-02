@@ -101,7 +101,7 @@ public class MarkedForDeathAbility {
                         // trailing spark
                         head.getWorld().spawnParticle(Particle.END_ROD, head, 1, 0, 0, 0, 0.0);
                         // keep last-known ground pos fresh
-                        if (t == 1) {
+                        if (t == 1 && m.target.getEntity() instanceof Player) {
                             m.target.getEntity().showTitle(Title.title(Component.empty(), Component.text("You have been marked for death!", NamedTextColor.RED)));
                         }
                         m.lastKnown = lastKnownGround(m.target);

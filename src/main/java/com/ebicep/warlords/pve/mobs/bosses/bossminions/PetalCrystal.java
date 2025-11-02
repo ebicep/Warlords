@@ -24,7 +24,7 @@ public class PetalCrystal extends AbstractMob implements BossMinionMob {
         super(
                 spawnLocation,
                 "Petal Legacy",
-                10000,
+                9000,
                 0,
                 10,
                 0,
@@ -69,7 +69,7 @@ public class PetalCrystal extends AbstractMob implements BossMinionMob {
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-        if (ticksElapsed % 100 == 0) {
+        if (ticksElapsed % 60 == 0) {
             PlayerFilter.playingGame(warlordsNPC.getGame())
                     .filter(player -> player.getName().equals("Lilium"))
                     .forEach(lilium -> {

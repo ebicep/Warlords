@@ -85,6 +85,10 @@ public class Lilium extends AbstractMob implements BossMob {
     private BossAbilityPhase phaseSix;
     private BossAbilityPhase phaseSeven;
     private BossAbilityPhase phaseEight;
+    private BossAbilityPhase phaseNine;
+    private BossAbilityPhase phaseTen;
+
+    private boolean finalPhase = false;
 
     private boolean preventDashing = false;
 
@@ -287,6 +291,7 @@ public class Lilium extends AbstractMob implements BossMob {
                 () -> {
                     WarlordsEntity target = PlayerFilter.playingGame(warlordsNPC.getGame())
                             .aliveEnemiesOf(warlordsNPC)
+                            .excludingAlliedMobs()
                             .limit(1)
                             .findFirstOrNull();
                     return target != null ? target.getLocation().clone() : mapCenter.clone();
@@ -580,7 +585,11 @@ public class Lilium extends AbstractMob implements BossMob {
             triggerKillTrapSequence(18);
         });
 
-        phaseEight = new BossAbilityPhase(warlordsNPC, 20, () -> {
+        phaseEight = new BossAbilityPhase(warlordsNPC, 25, () -> {
+            crystalProtectionAbility(9);
+        });
+
+        phaseNine = new BossAbilityPhase(warlordsNPC, 20, () -> {
             // raining swords + 2 targets become heroes phase
             preventDashing = true;
             warlordsNPC.teleport(mapCenter.clone().add(0, 40, 0));
@@ -686,7 +695,6 @@ public class Lilium extends AbstractMob implements BossMob {
 
                     if (t % 13 == 0) {
                         heavenlySpearAbility.start(warlordsNPC.getGame());
-
                     }
 
                     if (t == 601) {
@@ -698,6 +706,52 @@ public class Lilium extends AbstractMob implements BossMob {
                 }
 
             }.runTaskTimer(180, 0);
+        });
+
+        phaseTen = new BossAbilityPhase(warlordsNPC, 10, () -> {
+            ChatUtils.sendTitleToGamePlayers(
+                    warlordsNPC.getGame(),
+                    Component.text("You are too late. The seal has already been weakened...", TextColor.color(255, 90, 180))
+            );
+//            finalPhase = true;
+//            ChatUtils.sendTitleToGamePlayers(
+//                    warlordsNPC.getGame(),
+//                    Component.text("You are too late. The seal has already been weakened...", TextColor.color(255, 90, 180))
+//            );
+//            Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_ELDER_GUARDIAN_CURSE, 10, 0.5f);
+//            // tp to arena
+//            Location finalArenaLoc = new Location(warlordsNPC.getWorld(), -266.5, 29, 120.5);
+//            option.getGame().warlordsPlayers().forEach(p -> p.teleport(finalArenaLoc));
+//            warlordsNPC.teleport(finalArenaLoc);
+//
+//            // heal to 25%
+//            warlordsNPC.addInstance(InstanceBuilder.healing()
+//                    .cause("Final Phase")
+//                    .source(warlordsNPC)
+//                    .value(warlordsNPC.getMaxHealth() * 0.25f)
+//            );
+//            // buff
+//            warlordsNPC.getSpeed().addBaseModifier(30);
+//            warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
+//                    "Enraged",
+//                    null,
+//                    Lilium.class,
+//                    null,
+//                    warlordsNPC,
+//                    CooldownTypes.BUFF,
+//                    cooldownManager -> {},
+//                    true
+//            ) {
+//                @Override
+//                public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+//                    return currentDamageValue * 0.9f;
+//                }
+//
+//                @Override
+//                public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+//                    return currentDamageValue * 1.5f;
+//                }
+//            });
         });
     }
 
@@ -721,11 +775,17 @@ public class Lilium extends AbstractMob implements BossMob {
             bouquetBarrageAbility.cast();
         }
 
-        if (ticksElapsed % 600 == 0 && ticksElapsed > 0) {
+        if (ticksElapsed % 500 == 0 && ticksElapsed > 0) {
             orbitalStrikeAbility.cast();
         }
 
-        if (ticksElapsed % 210 == 0) {
+        if (ticksElapsed % 190 == 0) {
+            EffectUtils.playFirework(warlordsNPC.getLocation(), FireworkEffect.builder()
+                    .withColor(Color.fromRGB(255, 90, 180))
+                    .with(FireworkEffect.Type.BALL_LARGE)
+                    .withTrail()
+                    .build()
+            );
             PlayerFilter.entitiesAround(warlordsNPC, 10, 10, 10)
                     .aliveEnemiesOf(warlordsNPC)
                     .forEach(player -> {
@@ -735,8 +795,8 @@ public class Lilium extends AbstractMob implements BossMob {
                                 .damage()
                                 .cause("Echo of Cuts")
                                 .source(warlordsNPC)
-                                .min(2000)
-                                .max(2500)
+                                .min(2500)
+                                .max(3500)
                                 .flags(InstanceFlags.TRUE_DAMAGE));
                     });
         }
@@ -747,7 +807,7 @@ public class Lilium extends AbstractMob implements BossMob {
             }
         }
 
-        if (ticksElapsed % 320 == 0 && ticksElapsed > 0 && !preventDashing) {
+        if (ticksElapsed % 290 == 0 && ticksElapsed > 0 && !preventDashing) {
             new GameRunnable(warlordsNPC.getGame()) {
                 int t = 0;
                 @Override
@@ -771,6 +831,8 @@ public class Lilium extends AbstractMob implements BossMob {
         phaseSix.initialize(health);
         phaseSeven.initialize(health);
         phaseEight.initialize(health);
+        phaseNine.initialize(health);
+        phaseTen.initialize(health);
     }
 
     @Override
@@ -799,6 +861,17 @@ public class Lilium extends AbstractMob implements BossMob {
                 .withTrail()
                 .build()
         );
+
+        new GameRunnable(warlordsNPC.getGame()) {
+            @Override
+            public void run() {
+                ChatUtils.sendTitleToGamePlayers(
+                        warlordsNPC.getGame(),
+                        Component.text("The Heart Foundation will only get stronger... We will meet again!", TextColor.color(255, 90, 180))
+                );
+                Utils.playGlobalSound(loc, Sound.ENTITY_WITHER_DEATH, 500, 0.5f);
+            }
+        }.runTaskLater(100);
     }
 
     public static void bladeWaltsAbility(WarlordsNPC warlordsNPC) {
@@ -827,8 +900,8 @@ public class Lilium extends AbstractMob implements BossMob {
                                 .damage()
                                 .cause("Waltz")
                                 .source(warlordsNPC)
-                                .min(1500)
-                                .max(2500)
+                                .min(2000)
+                                .max(3000)
                         );
             });
             locationBuilder = locationBuilder.forward(1);
@@ -872,8 +945,8 @@ public class Lilium extends AbstractMob implements BossMob {
                                     .damage()
                                     .cause("Waltz Bloom")
                                     .source(warlordsNPC)
-                                    .min(800)
-                                    .max(1200)
+                                    .min(1500)
+                                    .max(2000)
                                     .flags(InstanceFlags.TRUE_DAMAGE)
                             );
                             Utils.addKnockback("Lilium Knockback", warlordsNPC.getLocation(), wp, -1.15, 0.2);
