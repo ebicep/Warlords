@@ -69,7 +69,7 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
             public void onFinalDamageHeal(WarlordsDamageHealingFinalEvent event) {
                 WarlordsEntity victim = event.getWarlordsEntity();
                 WarlordsEntity attacker = event.getSource();
-                double chance = event.getCause().equals("Strike") ? .2 : .07;
+                double chance = event.getCause().contains("Strike") ? .2 : .07;
                 if (!Objects.equals(attacker, warlordsPlayer)) {
                     return;
                 }
