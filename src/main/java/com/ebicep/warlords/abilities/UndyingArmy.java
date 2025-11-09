@@ -10,20 +10,17 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsUndyingArmyPopEvent;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
-import com.ebicep.warlords.pve.mobs.flags.BossLike;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.revenant.UndyingArmyBranch;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
-import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
@@ -247,7 +244,7 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
                                         .cause("Vengeful Army")
                                         .source(wp)
                                         .value(damage + healthDamage)
-                                        .flags(InstanceFlags.NO_HEALING_ORBS, InstanceFlags.IGNORE_DAMAGE_BOOST)
+                                        .flags(InstanceFlags.NO_HEALING_ORBS, InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST)
                                 );
                             } else {
                                 new CooldownFilter<>(wp, PersistentCooldown.class).filterCooldownClass(OrbsOfLife.class).forEach(persistentCooldown -> {
@@ -317,7 +314,7 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
                                     .source(warlordsEntity)
                                     .min(damageValues.relentlessArmy.getMinValue() + healthDamage)
                                     .max(damageValues.relentlessArmy.getMaxValue() + healthDamage)
-                                    .flags(InstanceFlags.IGNORE_DAMAGE_BOOST)
+                                    .flags(InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST)
                             );
                         });
                     }

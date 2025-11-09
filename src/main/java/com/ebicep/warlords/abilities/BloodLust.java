@@ -137,7 +137,7 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
                                     .source(wp)
                                     .value(value * 0.4f)
                                     .showAsCrit(event.isCrit())
-                                    .flags(InstanceFlags.RECURSIVE, InstanceFlags.NO_LUST_HEALING, InstanceFlags.IGNORE_DAMAGE_BOOST)
+                                    .flags(InstanceFlags.RECURSIVE, InstanceFlags.NO_LUST_HEALING, InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST, InstanceFlags.IGNORE_TARGET_DAMAGE_BOOST)
                                     .customFlags(new CustomInstanceFlags.FinalEventInstanceFlag(event))
                             );
                         }

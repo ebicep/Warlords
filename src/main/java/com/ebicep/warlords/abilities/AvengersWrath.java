@@ -87,7 +87,7 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
                 EnumSet<InstanceFlags> flags = EnumSet.of(
                         InstanceFlags.AVENGER_WRATH_STRIKE,
                         InstanceFlags.IGNORE_FERVENT_TITLE,
-                        InstanceFlags.IGNORE_DAMAGE_BOOST
+                        InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST
                 );
                 if (event.getFlags().contains(InstanceFlags.STRIKE_IN_CONS)) {
                     flags.add(InstanceFlags.STRIKE_IN_CONS);

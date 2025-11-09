@@ -7,7 +7,6 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
@@ -18,13 +17,10 @@ import com.ebicep.warlords.pve.upgrades.warrior.berserker.BerserkBranch;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Particle;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -32,7 +28,6 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Duration, AbilityStats<Berserk, Berserk.BerserkStats> {
 
@@ -160,7 +155,7 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
                             .cause("Berserk Unleashed")
                             .source(wp)
                             .value(finalValue * 0.15f)
-                            .flags(InstanceFlags.IGNORE_DAMAGE_BOOST, InstanceFlags.NO_LUST_HEALING)
+                            .flags(InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST, InstanceFlags.NO_LUST_HEALING)
                     );
                 }
 

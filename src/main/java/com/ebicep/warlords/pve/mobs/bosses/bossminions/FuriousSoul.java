@@ -67,7 +67,7 @@ public class FuriousSoul extends AbstractMob implements BossMinionMob {
                     .cause("Outrage")
                     .source(self)
                     .value(damage)
-                    .flags(InstanceFlags.TRUE_DAMAGE, InstanceFlags.RECURSIVE, InstanceFlags.IGNORE_DAMAGE_BOOST)
+                    .flags(InstanceFlags.TRUE_DAMAGE, InstanceFlags.RECURSIVE, InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST)
             );
         }
     }
