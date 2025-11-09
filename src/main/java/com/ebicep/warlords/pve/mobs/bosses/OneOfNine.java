@@ -239,7 +239,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
                         .source(warlordsNPC)
                         .cause("Greed")
                         .value(currentDamageValue * (event.getFlags().contains(InstanceFlags.DOT) ? 0.25f : 1))
-                        .flags(InstanceFlags.RECURSIVE, InstanceFlags.IGNORE_DAMAGE_BOOST)
+                        .flags(InstanceFlags.RECURSIVE, InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST)
                 );
                 event.getSource().sendMessage(Component.text("Your divine punishment awaits if you keep giving in to your greed...", NamedTextColor.RED));
                 event.setCancelled(true);
