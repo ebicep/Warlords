@@ -41,9 +41,11 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
     private float maxDamageThreshold = 600;
     private float vulnerableDamageBonus = 20;
     private int speedBuff = 40;
-
     private float orderKillCooldownReduction;
     private float orderAssistCooldownReduction;
+
+    private RegularCooldown<OrderOfEviscerateData> cooldown = null;
+    private int stacks = 0;
 
     public OrderOfEviscerate() {
         super(AbstractAbilityBuilder.create("orderOfEviscerate").pvp());
@@ -161,6 +163,9 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                         @Override
                         public void run() {
                             if (inPve) {
+                                if (stacks < 2) {
+                                    stacks++;
+                                }
                                 int reduction = pveMasterUpgrade ? 12 : 8;
                                 wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
                                         .append(Component.text(" You killed your mark,", NamedTextColor.GRAY))
@@ -174,25 +179,32 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                                 for (OrderOfEviscerate orderOfEviscerate : wp.getAbilitiesMatching(OrderOfEviscerate.class)) {
                                     orderOfEviscerate.subtractCurrentCooldown(reduction);
                                 }
-                                if (pveMasterUpgrade2) {
-                                    wp.getCooldownManager().limitCooldowns(RegularCooldown.class, "Cloaked Engagement", 2);
-                                    wp.getCooldownManager()
-                                      .addCooldown(new RegularCooldown<>("Cloaked Engagement",
-                                              "ENGAGE",
-                                              OrderOfEviscerateData.class,
-                                              null,
-                                              wp,
-                                              CooldownTypes.BUFF,
-                                              cooldownManager -> {
-                                              },
-                                              8 * 20
-                                      ) {
+                                if (pveMasterUpgrade2 && cooldown == null) {
+                                    wp.getCooldownManager().addCooldown(cooldown = new RegularCooldown<>(
+                                            "Cloaked Engagement 1",
+                                            "ENGAGE 1",
+                                            OrderOfEviscerateData.class,
+                                            null,
+                                            wp,
+                                            CooldownTypes.BUFF,
+                                            cooldownManager -> {
+                                            },
+                                            cooldownManager -> {
+                                                cooldown = null;
+                                                stacks = 0;
+                                                },
+                                            8 * 20
+                                    ) {
 
                                           @Override
                                           public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                              return currentDamageValue * 1.4f;
+                                              return currentDamageValue * (1 + 0.4f * stacks);
                                           }
                                       });
+                                } else {
+                                    cooldown.setTicksLeft(8 * 20);
+                                    cooldown.setName("Cloaked Engagement " + stacks);
+                                    cooldown.setNameAbbreviation("ENGAGE " + stacks);
                                 }
                             } else {
                                 wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
