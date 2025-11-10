@@ -1143,10 +1143,6 @@ public class Lilium extends AbstractMob implements BossMob {
                 });
     }
 
-    private static class MirrorDPSPhaseData {
-
-    }
-
     @Override
     public TextColor getColor() {
         return TextColor.color(255, 192, 203);
