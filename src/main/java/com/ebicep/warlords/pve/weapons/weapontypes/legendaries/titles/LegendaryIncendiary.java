@@ -67,7 +67,7 @@ public class LegendaryIncendiary extends AbstractLegendaryWeapon implements Even
             @Override
             public float addCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
                 String ability = event.getCause();
-                if (Utils.isProjectile(ability)) {
+                if (Utils.isProjectile(ability) || ability.equals("Boulder")) {
                     return currentCritChance + critChanceBoost;
                 } else {
                     return currentCritChance;
