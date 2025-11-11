@@ -175,6 +175,7 @@ public class NPCManager {
                     createPrestigeVendorNPC();
                     createAscendantVendorNPC();
                     createWeeklyItemTraderNPC();
+                    createSeasonalVendorNPC();
                 })
                 .execute();
     }
@@ -363,6 +364,19 @@ public class NPCManager {
         npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), -21.5, 88, 183.5, 90, 0));
     }
 
+    public static void createSeasonalVendorNPC() {
+        registerTrait(SeasonalTraderTrait.class, "SeasonalVendorTrait");
+
+        NPC npc = NPC_REGISTRY.createNPC(EntityType.SNOW_GOLEM, "seasonal-vendor");
+        npc.addTrait(SeasonalTraderTrait.class);
+        LookClose lookClose = npc.getOrAddTrait(LookClose.class);
+        lookClose.setPerPlayer(true);
+        lookClose.toggle();
+
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
+
+        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), -3, 81, 135, -45, 0));
+    }
 
     public static void createAscendantVendorNPC() {
         registerTrait(AscendantVendorTrait.class, "AscendantVendorTrait");

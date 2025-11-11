@@ -187,7 +187,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
                 50,
                 15,
                 70,
-                1.3,
+                1.5,
                 2,
                 1000,
                 false,

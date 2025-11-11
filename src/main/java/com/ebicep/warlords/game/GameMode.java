@@ -556,7 +556,6 @@ public enum GameMode {
             options.add(new WeaponOption(WeaponOption::showPvEWeapon, WeaponOption::showWeaponStats));
             options.add(new WinByMaxWaveClearOption());
             options.add(new NoRespawnIfOfflineOption());
-            options.add(new WinByAllDeathOption(Team.BLUE));
             options.add(new DieOnLogoutOption());
             options.add(new GameFreezeOption());
             options.add(new BountyOption());

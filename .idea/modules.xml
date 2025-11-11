@@ -2,10 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/IntellijProjects.Warlords.main.iml" filepath="$PROJECT_DIR$/.idea/modules/IntellijProjects.Warlords.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/IntellijProjects.Warlords.test.iml" filepath="$PROJECT_DIR$/.idea/modules/IntellijProjects.Warlords.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Warlords.main.iml" filepath="$PROJECT_DIR$/.idea/modules/Warlords.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Warlords.test.iml" filepath="$PROJECT_DIR$/.idea/modules/Warlords.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.ebicep.Warlords.main.iml" filepath="$PROJECT_DIR$/.idea/modules/com.ebicep.Warlords.main.iml" />
     </modules>
   </component>
 </project>

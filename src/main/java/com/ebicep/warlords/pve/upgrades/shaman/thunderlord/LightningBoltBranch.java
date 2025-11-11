@@ -55,17 +55,13 @@ public class LightningBoltBranch extends AbstractUpgradeBranch<LightningBolt> {
                 "Lightning Bolt - Master Upgrade",
                 """
                         +10 Energy cost
-                        +1 Block Radius
                         
-                        The first target hit takes 60% more damage, each subsequent enemy hit increases damage by an additional 15%.
+                        The first target hit takes 40% more damage, each subsequent enemy hit increases damage by an additional 10%.
                         """,
                 50000,
                 () -> {
                     ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", 10);
-                    ability.getHitBoxRadius().addAdditiveModifier("Master Upgrade Branch", 1);
                 }
         );
     }
-
-
 }

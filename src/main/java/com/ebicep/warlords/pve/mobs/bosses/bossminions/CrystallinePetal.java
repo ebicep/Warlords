@@ -21,8 +21,8 @@ public class CrystallinePetal extends AbstractMob implements BossMinionMob {
                 3000,
                 0.35f,
                 0,
-                400,
-                800
+                500,
+                1000
         );
     }
 
