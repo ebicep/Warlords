@@ -120,7 +120,7 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                                                 .cause("Burn")
                                                 .source(attacker)
                                                 .value(healthDamage)
-                                                .flags(InstanceFlags.DOT, InstanceFlags.IGNORE_DAMAGE_BOOST)
+                                                .flags(InstanceFlags.DOT, InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST)
                                         );
                                     }
                                 })
@@ -152,7 +152,7 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                                                 .cause("Bleed")
                                                 .source(attacker)
                                                 .value(healthDamage)
-                                                .flags(InstanceFlags.DOT, InstanceFlags.IGNORE_DAMAGE_BOOST)
+                                                .flags(InstanceFlags.DOT, InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST)
                                         );
                                     }
                                 })

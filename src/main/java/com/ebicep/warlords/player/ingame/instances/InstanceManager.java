@@ -110,7 +110,8 @@ public class InstanceManager {
         boolean trueDamage = flags.contains(InstanceFlags.TRUE_DAMAGE);
         boolean pierceDamage = flags.contains(InstanceFlags.PIERCE);
         boolean ignoreDamageReduction = pierceDamage || flags.contains(InstanceFlags.IGNORE_DAMAGE_REDUCTION_ONLY);
-        boolean noDamageBoost = flags.contains(InstanceFlags.IGNORE_DAMAGE_BOOST);
+        boolean noSourceDamageBoost = flags.contains(InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST);
+        boolean noTargetDamageBoost = flags.contains(InstanceFlags.IGNORE_TARGET_DAMAGE_BOOST);
 
         AtomicReference<WarlordsDamageHealingFinalEvent> finalEvent = new AtomicReference<>(null);
         // Spawn Protection / Undying Army / Game State
@@ -373,6 +374,9 @@ public class InstanceManager {
             );
             for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
                 float newDamageValue = abstractCooldown.modifyDamageBeforeInterveneFromSelf(event, damageValue);
+                if (newDamageValue > damageValue && noTargetDamageBoost) { // no target dmg boost ignores victim dmg increase
+                    continue;
+                }
                 if (newDamageValue < damageValue && ignoreDamageReduction) { // pierce ignores victim dmg reduction
                     continue;
                 }
@@ -393,6 +397,9 @@ public class InstanceManager {
                     for (DamageInstance damageInstance : extraDamageInstances) {
                         newDamageValue = damageInstance.modifyDamageBeforeInterveneFromSelf(event, newDamageValue);
                     }
+                }
+                if (newDamageValue > damageValue && noTargetDamageBoost) { // no target dmg boost ignores victim dmg increase
+                    continue;
                 }
                 if (newDamageValue < damageValue && ignoreDamageReduction) { // pierce ignores victim dmg reduction
                     continue;
@@ -417,7 +424,7 @@ public class InstanceManager {
             );
             for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
                 float newDamageValue = abstractCooldown.modifyDamageBeforeInterveneFromAttacker(event, damageValue);
-                if (newDamageValue > damageValue && noDamageBoost) { // no damage boost ignores attacker dmg increase
+                if (newDamageValue > damageValue && noSourceDamageBoost) { // no source damage boost ignores attacker dmg increase
                     continue;
                 }
                 damageValue = newDamageValue;
@@ -438,7 +445,7 @@ public class InstanceManager {
                         newDamageValue = damageInstance.modifyDamageBeforeInterveneFromAttacker(event, newDamageValue);
                     }
                 }
-                if (newDamageValue > damageValue && noDamageBoost) { // no damage boost ignores attacker dmg increase
+                if (newDamageValue > damageValue && noSourceDamageBoost) { // no source damage boost ignores attacker dmg increase
                     continue;
                 }
                 damageValue = newDamageValue;
@@ -606,6 +613,9 @@ public class InstanceManager {
                             newDamageValue = damageInstance.modifyDamageAfterInterveneFromSelf(event, newDamageValue);
                         }
                     }
+                    if (newDamageValue > damageValue && noTargetDamageBoost) { // no target dmg boost ignores victim dmg increase
+                        continue;
+                    }
                     if (newDamageValue < damageValue && ignoreDamageReduction) { // pierce ignores victim dmg reduction
                         continue;
                     }
@@ -635,7 +645,7 @@ public class InstanceManager {
                             newDamageValue = damageInstance.modifyDamageAfterInterveneFromAttacker(event, newDamageValue);
                         }
                     }
-                    if (newDamageValue > damageValue && noDamageBoost) { // no damage boost ignores attacker dmg increase
+                    if (newDamageValue > damageValue && noSourceDamageBoost) { // no source damage boost ignores attacker dmg increase
                         continue;
                     }
                     damageValue = newDamageValue;

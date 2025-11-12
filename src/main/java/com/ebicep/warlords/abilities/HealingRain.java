@@ -5,7 +5,6 @@ import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectPlayer;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.effects.circle.AreaEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
@@ -307,7 +306,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
                 .source(giver)
                 .min(damageValues.rainStrikeDamage.getMinValue() + healthDamage)
                 .max(damageValues.rainStrikeDamage.getMaxValue() + healthDamage)
-                .flags(InstanceFlags.IGNORE_DAMAGE_BOOST)
+                .flags(InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST)
         );
     }
 
