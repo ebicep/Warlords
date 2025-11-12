@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityIcon, Duration, AbilityStats<OrderOfEviscerate, OrderOfEviscerate.OrderOfEviscerateStats>, OrderOfEviscerateLike {
 
@@ -45,7 +46,6 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
     private float orderAssistCooldownReduction;
 
     private RegularCooldown<OrderOfEviscerateData> cooldown = null;
-    private int stacks = 0;
 
     public OrderOfEviscerate() {
         super(AbstractAbilityBuilder.create("orderOfEviscerate").pvp());
@@ -64,6 +64,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
 
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
+        final AtomicInteger stacks = new AtomicInteger(0);
         PlayerFilter.playingGame(wp.getGame())
                     .enemiesOf(wp)
                     .forEach(warlordsEntity -> {
@@ -163,8 +164,8 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                         @Override
                         public void run() {
                             if (inPve) {
-                                if (stacks < 2) {
-                                    stacks++;
+                                if (stacks.get() < 2) {
+                                    stacks.getAndIncrement();
                                 }
                                 int reduction = pveMasterUpgrade ? 12 : 8;
                                 wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
@@ -191,14 +192,14 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                                             },
                                             cooldownManager -> {
                                                 cooldown = null;
-                                                stacks = 0;
+                                                stacks.set(0);
                                                 },
                                             8 * 20
                                     ) {
 
                                           @Override
                                           public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                              return currentDamageValue * (1 + 0.4f * stacks);
+                                              return currentDamageValue * (1 + 0.4f * stacks.get());
                                           }
                                       });
                                 } else {
