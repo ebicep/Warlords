@@ -106,15 +106,43 @@ public class SupplyDropManager {
                     }
             );
             menu.setItem(
+                    4,
+                    3,
+                    new ItemBuilder(Material.IRON_HORSE_ARMOR)
+                            .name(Component.text("Click to call 25 supply drops", NamedTextColor.GREEN))
+                            .lore(
+                                    Component.text("Cost: ", NamedTextColor.GRAY).append(Currencies.SUPPLY_DROP_TOKEN.getCostColoredName(tokens > 25 ? 25 : tokens)),
+                                    Component.text("Balance: ", NamedTextColor.GRAY).append(Currencies.SUPPLY_DROP_TOKEN.getCostColoredName(tokens)),
+                                    Component.empty(),
+                                    Component.textOfChildren(
+                                            Component.text("SHIFT-CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                            Component.text(" to INSTANTLY call 25 supply drops", NamedTextColor.GRAY)
+                                    )
+                            )
+                            .get(),
+                    (m, e) -> {
+                        if (PLAYER_ROLL_COOLDOWN.getOrDefault(player.getUniqueId(), false)) {
+                            player.sendMessage(Component.text("You must wait for your current roll to end to roll again!", NamedTextColor.RED));
+                            return;
+                        }
+                        if (tokens > 0) {
+                            supplyDropRoll(player, Math.min(tokens, 25), e.isShiftClick());
+                        } else {
+                            player.sendMessage(Component.text("You do not have any supply drop tokens to call a supply drop.", NamedTextColor.RED));
+                        }
+                        player.closeInventory();
+                    }
+            );
+            menu.setItem(
                     6,
                     3,
                     new ItemBuilder(Material.DIAMOND_HORSE_ARMOR)
-                            .name(Component.text("Click to call all available supply drops (Max 25)", NamedTextColor.GREEN))
+                            .name(Component.text("Click to call all available supply drops (Max 100)", NamedTextColor.GREEN))
                             .lore(
-                                    Component.text("Cost: ", NamedTextColor.GRAY).append(Currencies.SUPPLY_DROP_TOKEN.getCostColoredName(tokens)),
+                                    Component.text("Cost: ", NamedTextColor.GRAY).append(Currencies.SUPPLY_DROP_TOKEN.getCostColoredName(tokens > 100 ? 100 : tokens)),
                                     Component.text("Balance: ", NamedTextColor.GRAY).append(Currencies.SUPPLY_DROP_TOKEN.getCostColoredName(tokens)),
                                     Component.empty(),
-                                    Component.text("NOTE: Max 25 at a time", NamedTextColor.GRAY),
+                                    Component.text("NOTE: Max 100 at a time", NamedTextColor.GRAY),
                                     Component.empty(),
                                     Component.textOfChildren(
                                             Component.text("SHIFT-CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
@@ -128,7 +156,7 @@ public class SupplyDropManager {
                             return;
                         }
                         if (tokens > 0) {
-                            supplyDropRoll(player, Math.min(tokens, 25), e.isShiftClick());
+                            supplyDropRoll(player, Math.min(tokens, 100), e.isShiftClick());
                         } else {
                             player.sendMessage(Component.text("You do not have any supply drop tokens to call a supply drop.", NamedTextColor.RED));
                         }

@@ -114,7 +114,7 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
                                     .ability(this)
                                     .source(wp)
                                     .value(damageValues.miasmaDamage.getValue() + healthDamage)
-                                    .flags(InstanceFlags.DOT, InstanceFlags.IGNORE_DAMAGE_BOOST));
+                                    .flags(InstanceFlags.DOT, InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST));
                         })
                 ));
                 if (pveMasterUpgrade) {
@@ -137,7 +137,7 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
                                             .ability(this)
                                             .source(wp)
                                             .value(healthDamage)
-                                            .flags(InstanceFlags.DOT, InstanceFlags.IGNORE_DAMAGE_BOOST)
+                                            .flags(InstanceFlags.DOT, InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST)
                                     );
                                 }
                             },

@@ -147,7 +147,7 @@ public class WoundingStrikeBerserker extends AbstractStrike<WoundingStrikeBerser
                                .cause("Bleed")
                                .source(giver)
                                .value(healthDamage)
-                               .flags(InstanceFlags.DOT, InstanceFlags.IGNORE_DAMAGE_BOOST)
+                               .flags(InstanceFlags.DOT, InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST)
                        );
                     }
                 })
