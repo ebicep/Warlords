@@ -27,7 +27,7 @@ public class TreasureHuntMenu {
                     0,
                     new ItemBuilder(Material.CRYING_OBSIDIAN)
                             .name(Component.text("Conditions", NamedTextColor.LIGHT_PURPLE))
-                            .addLore(WordWrap.wrapWithNewline(Component.text("To traverse the hidden hallways safely, you may only have one specialization per player." +
+                            .addLore(WordWrap.wrap(Component.text("To traverse the hidden hallways safely, you may only have one specialization per player." +
                                     " More will result in void instability, reducing your healing and damage done by 90%.", NamedTextColor.GRAY), 150))
                     .get(),
                     ACTION_DO_NOTHING);

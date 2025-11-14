@@ -81,7 +81,7 @@ public class AnomalyMenu {
                 6, 4,
                 new ItemBuilder(Material.DRAGON_BREATH)
                         .name(Component.text("Booster Vials:", NamedTextColor.GRAY)
-                                .append(Component.newline())
+                                .append(Component.empty())
                                 .append(Component.text("No active vials!", NamedTextColor.RED))
                         )
                         .get(),
