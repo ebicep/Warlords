@@ -434,7 +434,7 @@ public class PowerupOption implements Option {
                         .cause("Self Damage Powerup")
                         .source(we)
                         .value(5000)
-                        .flags(InstanceFlags.IGNORE_DAMAGE_BOOST, InstanceFlags.IGNORE_SELF_RES)
+                        .flags(InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST, InstanceFlags.IGNORE_SELF_RES)
                 );
             }
 
@@ -452,7 +452,7 @@ public class PowerupOption implements Option {
                         .cause("Self Heal Powerup")
                         .source(we)
                         .value(5000)
-                        .flag(InstanceFlags.IGNORE_DAMAGE_BOOST, true)
+                        .flag(InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST, true)
                 );
             }
 

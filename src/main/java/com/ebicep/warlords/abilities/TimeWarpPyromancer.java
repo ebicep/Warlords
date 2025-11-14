@@ -8,19 +8,16 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
-import com.ebicep.warlords.pve.mobs.flags.BossLike;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.pyromancer.TimeWarpBranchPyromancer;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.kyori.adventure.text.Component;
 import net.minecraft.sounds.SoundSource;
 import org.bukkit.*;
 
@@ -74,7 +71,7 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
                                     .cause("Accursed Leap")
                                     .source(wp)
                                     .value(healthDamage)
-                                    .flags(InstanceFlags.IGNORE_DAMAGE_BOOST)
+                                    .flags(InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST)
                             );
                             if (finalEventOptional.isPresent()) {
                                 if (finalEventOptional.get().isDead()) {

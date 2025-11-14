@@ -33,6 +33,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityIcon, Duration, AbilityStats<OrderOfEviscerate, OrderOfEviscerate.OrderOfEviscerateStats>, OrderOfEviscerateLike {
 
@@ -41,7 +43,6 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
     private float maxDamageThreshold = 600;
     private float vulnerableDamageBonus = 20;
     private int speedBuff = 40;
-
     private float orderKillCooldownReduction;
     private float orderAssistCooldownReduction;
 
@@ -62,6 +63,8 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
 
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
+        AtomicReference <RegularCooldown<OrderOfEviscerateData>> cooldown = new AtomicReference<>(null);
+        AtomicInteger stacks = new AtomicInteger(0);
         PlayerFilter.playingGame(wp.getGame())
                     .enemiesOf(wp)
                     .forEach(warlordsEntity -> {
@@ -92,7 +95,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                     }
                 },
                 tickDuration,
-                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                Collections.singletonList((orderCooldown,ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 2 == 0) {
                         PlayerFilter.playingGame(wp.getGame())
                                     .enemiesOf(wp)
@@ -161,6 +164,9 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                         @Override
                         public void run() {
                             if (inPve) {
+                                if (stacks.get() < 2) {
+                                    stacks.getAndIncrement();
+                                }
                                 int reduction = pveMasterUpgrade ? 12 : 8;
                                 wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
                                         .append(Component.text(" You killed your mark,", NamedTextColor.GRAY))
@@ -174,25 +180,34 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                                 for (OrderOfEviscerate orderOfEviscerate : wp.getAbilitiesMatching(OrderOfEviscerate.class)) {
                                     orderOfEviscerate.subtractCurrentCooldown(reduction);
                                 }
-                                if (pveMasterUpgrade2) {
-                                    wp.getCooldownManager().limitCooldowns(RegularCooldown.class, "Cloaked Engagement", 2);
-                                    wp.getCooldownManager()
-                                      .addCooldown(new RegularCooldown<>("Cloaked Engagement",
-                                              "ENGAGE",
-                                              OrderOfEviscerateData.class,
-                                              null,
-                                              wp,
-                                              CooldownTypes.BUFF,
-                                              cooldownManager -> {
-                                              },
-                                              8 * 20
-                                      ) {
+                                if (pveMasterUpgrade2 && cooldown.get() == null) {
+                                    RegularCooldown<OrderOfEviscerateData> regularCooldown = new RegularCooldown<>(
+                                            "Cloaked Engagement 1",
+                                            "ENGAGE 1",
+                                            OrderOfEviscerateData.class,
+                                            null,
+                                            wp,
+                                            CooldownTypes.BUFF,
+                                            cooldownManager -> {
+                                            },
+                                            cooldownManager -> {
+                                                cooldown.set(null);
+                                                stacks.set(0);
+                                                },
+                                            8 * 20
+                                    ) {
 
                                           @Override
                                           public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                              return currentDamageValue * 1.4f;
+                                              return currentDamageValue * (1 + 0.4f * stacks.get());
                                           }
-                                      });
+                                      };
+                                    cooldown.set(regularCooldown);
+                                    wp.getCooldownManager().addCooldown(regularCooldown);
+                                } else {
+                                    cooldown.get().setTicksLeft(8 * 20);
+                                    cooldown.get().setName("Cloaked Engagement " + stacks);
+                                    cooldown.get().setNameAbbreviation("ENGAGE " + stacks);
                                 }
                             } else {
                                 wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN

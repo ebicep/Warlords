@@ -162,7 +162,7 @@ public class LegendaryBastion extends AbstractLegendaryWeapon {
                                 .source(ally)
                                 .min((float) toRedirect)
                                 .max((float) toRedirect)
-                                .flags(InstanceFlags.RECURSIVE, InstanceFlags.REFLECTIVE_DAMAGE, InstanceFlags.IGNORE_DAMAGE_BOOST)
+                                .flags(InstanceFlags.RECURSIVE, InstanceFlags.REFLECTIVE_DAMAGE, InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST)
                         );
                         redirectUsedThisSecond += toRedirect;
                     }

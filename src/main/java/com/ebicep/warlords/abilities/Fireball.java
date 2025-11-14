@@ -4,7 +4,6 @@ import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsApplyBurnEffectEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -15,7 +14,6 @@ import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.pyromancer.FireballBranch;
-import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
@@ -172,7 +170,7 @@ public class Fireball extends AbstractProjectile<Fireball, Fireball.FireballStat
                                 .cause("Burn")
                                 .source(shooter)
                                 .value(healthDamage)
-                                .flags(InstanceFlags.DOT, InstanceFlags.IGNORE_DAMAGE_BOOST)
+                                .flags(InstanceFlags.DOT, InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST)
                         );
                     }
                 })
