@@ -6,6 +6,7 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.mobs.flags.NoTargetAbilities;
 import com.ebicep.warlords.pve.mobs.pvp.TricksterDummy;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import org.bukkit.Location;
@@ -231,6 +232,11 @@ public class PlayerFilter implements Iterable<WarlordsEntity> {
     @Nonnull
     public PlayerFilter excludingDummy() {
         return filter(warlordsEntity -> !(warlordsEntity instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof TricksterDummy));
+    }
+
+    @Nonnull
+    public PlayerFilter excludingAlliedMobs() {
+        return filter(warlordsEntity -> !(warlordsEntity instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof NoTargetAbilities));
     }
 
     @Nonnull

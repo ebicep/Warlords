@@ -6,10 +6,11 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.AdvancedMob;
+import com.ebicep.warlords.pve.mobs.tiers.EliteMob;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 
-public class SlimeGuard extends AbstractMob implements AdvancedMob {
+public class SlimeGuard extends AbstractMob implements EliteMob {
 
     public SlimeGuard(Location spawnLocation) {
         super(

@@ -149,7 +149,7 @@ public class NPCManager {
 //        npc.getOrAddTrait(SkinTrait.class).setSkinName("Stratfull");
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
-        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 2.5, 82, 158.5, -135, 0));
+        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), -2.5, 82, 136.5, -45, 0));
     }
 
     public static void createDatabaseRequiredNPCs() {
@@ -170,6 +170,7 @@ public class NPCManager {
 //                    createItemMichaelNPC();
                     createItemEnyaNPC();
                     createIllusionVendorNPC();
+                    createSeasonalVendorNPC();
                 })
                 .execute();
     }
@@ -341,6 +342,20 @@ public class NPCManager {
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
 
         npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), -9.5, 74, 97.5, -180, 0));
+    }
+
+    public static void createSeasonalVendorNPC() {
+        registerTrait(SeasonalTraderTrait.class, "SeasonalVendorTrait");
+
+        NPC npc = NPC_REGISTRY.createNPC(EntityType.SNOW_GOLEM, "seasonal-vendor");
+        npc.addTrait(SeasonalTraderTrait.class);
+        LookClose lookClose = npc.getOrAddTrait(LookClose.class);
+        lookClose.setPerPlayer(true);
+        lookClose.toggle();
+
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
+
+        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), -3, 81, 135, -45, 0));
     }
 
     public static void createItemMichaelNPC() {

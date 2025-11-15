@@ -6,6 +6,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.AdvancedMob;
+import com.ebicep.warlords.pve.mobs.tiers.EliteMob;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
@@ -14,7 +15,7 @@ import org.bukkit.Sound;
 
 import javax.annotation.Nonnull;
 
-public class ScrupulousZombie extends AbstractMob implements AdvancedMob {
+public class ScrupulousZombie extends AbstractMob implements EliteMob {
 
     public ScrupulousZombie(Location spawnLocation) {
         super(
@@ -62,11 +63,6 @@ public class ScrupulousZombie extends AbstractMob implements AdvancedMob {
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         super.onDeath(killer, deathLocation, option);
-        EffectUtils.playFirework(deathLocation, FireworkEffect.builder()
-                                                                       .withColor(Color.WHITE)
-                                                                       .with(FireworkEffect.Type.BURST)
-                                                                       .withTrail()
-                                                                       .build());
         Utils.playGlobalSound(deathLocation, Sound.ENTITY_ZOMBIE_DEATH, 2, 0.4f);
     }
 }

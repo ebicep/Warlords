@@ -5,7 +5,6 @@ import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectPlayer;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.effects.circle.AreaEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
@@ -117,9 +116,17 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
                     if (pveMasterUpgrade) {
-                        for (WarlordsEntity enemyInRain : PlayerFilter.entitiesAround(data.target.getLocation(), radius, radius, radius).aliveEnemiesOf(wp).limit(8)) {
+                        for (WarlordsEntity enemyInRain : PlayerFilter
+                                .entitiesAround(data.target.getLocation(), radius, radius, radius)
+                                .aliveEnemiesOf(wp)
+                                .limit(10)
+                        ) {
                             Utils.playGlobalSound(enemyInRain.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 2, 1.8f);
-                            EffectUtils.playFirework(enemyInRain.getLocation(), FireworkEffect.builder().withColor(Color.AQUA).with(FireworkEffect.Type.BURST).build());
+                            EffectUtils.playFirework(enemyInRain.getLocation(), FireworkEffect.builder()
+                                    .withColor(Color.AQUA)
+                                    .with(FireworkEffect.Type.BURST)
+                                    .build()
+                            );
                             strikeInRain(wp, enemyInRain);
                         }
                     }
@@ -149,7 +156,11 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
                         circleEffect.playEffects();
                     }
                     if (ticksElapsed % 10 == 0) {
-                        List<WarlordsEntity> teammatesInRain = PlayerFilter.entitiesAround(data.target.getLocation(), radius, radius, radius).aliveTeammatesOf(wp).toList();
+                        List<WarlordsEntity> teammatesInRain = PlayerFilter
+                                .entitiesAround(data.target.getLocation(), radius, radius, radius)
+                                .aliveTeammatesOf(wp)
+                                .toList();
+
                         if (pveMasterUpgrade2) {
                             // cloud only give to those in cloud or has been in cloud and is within 40 blocks of player
                             personalCloudList.removeIf(teammate -> teammate.getA().getLocation().distanceSquared(wp.getLocation()) > 40 * 40);
@@ -191,10 +202,16 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
                     }
                     if (ticksElapsed % 40 == 0) {
                         if (pveMasterUpgrade) {
-                            for (WarlordsEntity enemyInRain : PlayerFilter.entitiesAround(data.target.getLocation(), radius, radius, radius).aliveEnemiesOf(wp).limit(8)) {
+                            for (WarlordsEntity enemyInRain : PlayerFilter
+                                    .entitiesAround(data.target.getLocation(), radius, radius, radius)
+                                    .aliveEnemiesOf(wp)
+                                    .limit(8)
+                            ) {
                                 Utils.playGlobalSound(enemyInRain.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 2, 1.8f);
-                                FireWorkEffectPlayer.playFirework(enemyInRain.getLocation(),
-                                        FireworkEffect.builder().withColor(Color.AQUA).with(FireworkEffect.Type.BURST).build()
+                                EffectUtils.playFirework(enemyInRain.getLocation(), FireworkEffect.builder()
+                                                .withColor(Color.AQUA)
+                                                .with(FireworkEffect.Type.BURST)
+                                                .build()
                                 );
                                 strikeInRain(wp, enemyInRain);
                             }
@@ -275,16 +292,17 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
     }
 
     private void strikeInRain(WarlordsEntity giver, WarlordsEntity hit) {
-        for (WarlordsEntity strikeTarget : PlayerFilter.entitiesAround(hit, 2, 3, 2).aliveEnemiesOf(giver)) {
-            strikeTarget.getWorld().spigot().strikeLightningEffect(strikeTarget.getLocation(), true);
-            float healthDamage = strikeTarget.getMaxHealth() * 0.01f;
-            healthDamage = DamageCheck.clamp(healthDamage);
-            strikeTarget.addInstance(InstanceBuilder.damage()
-                                                    .ability(this)
-                                                    .source(giver)
-                                                    .min(damageValues.rainStrikeDamage.getMinValue() + healthDamage)
-                                                    .max(damageValues.rainStrikeDamage.getMaxValue() + healthDamage));
-        }
+        EffectUtils.strikeLightning(hit.getLocation(), true);
+        float healthDamage = hit.getMaxHealth() * 0.01f;
+        healthDamage = DamageCheck.clamp(healthDamage);
+        hit.addInstance(InstanceBuilder
+                .damage()
+                .ability(this)
+                .source(giver)
+                .min(damageValues.rainStrikeDamage.getMinValue() + healthDamage)
+                .max(damageValues.rainStrikeDamage.getMaxValue() + healthDamage)
+                .flags(InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST)
+        );
     }
 
     private void heal(@Nonnull WarlordsEntity wp, WarlordsEntity teammateInRain, String name) {
@@ -343,7 +361,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
 
     public static class DamageValues implements Value.ValueHolder {
 
-        private Value.RangedValue rainStrikeDamage = new Value.RangedValue(224, 377);
+        private Value.RangedValue rainStrikeDamage = new Value.RangedValue(336, 565);
 
         private List<Value> values = List.of(rainStrikeDamage);
 

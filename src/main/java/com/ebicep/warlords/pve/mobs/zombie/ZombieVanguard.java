@@ -69,11 +69,6 @@ public class ZombieVanguard extends AbstractMob implements AdvancedMob {
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         super.onDeath(killer, deathLocation, option);
-        EffectUtils.playFirework(deathLocation, FireworkEffect.builder()
-                                                                       .withColor(Color.WHITE)
-                                                                       .with(FireworkEffect.Type.BURST)
-                                                                       .withTrail()
-                                                                       .build());
         Utils.playGlobalSound(deathLocation, Sound.ENTITY_ZOMBIE_DEATH, 2, 0.4f);
     }
 }

@@ -19,6 +19,10 @@ public interface Upgradeable {
     void upgrade();
 
     default float getUpgradeMultiplier() {
+        return 10f;
+    }
+
+    default float getEpicUpgradeMultiplier() {
         return 1.1f;
     }
 

@@ -68,15 +68,6 @@ public class ZombieLament extends AbstractMob implements IntermediateMob {
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         super.onDeath(killer, deathLocation, option);
-        EffectUtils.playFirework(
-                deathLocation,
-                FireworkEffect.builder()
-                   .withColor(Color.BLUE)
-                   .with(FireworkEffect.Type.BURST)
-                   .withTrail()
-                   .build(),
-                1
-        );
         Utils.playGlobalSound(deathLocation, Sound.ENTITY_ZOMBIE_DEATH, 2, 0.4f);
     }
 }

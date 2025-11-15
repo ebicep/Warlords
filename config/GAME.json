@@ -9,6 +9,10 @@
       "playerMeleeCooldown": 13,
       "regenHealth": 110,
       "maxCompGamePlayerCount": 28,
+      "pingCompensationEnabled": true,
+      "pingCompensationLog": false,
+      "pingCompensationMin": 100,
+      "pingCompensationDivisor": 100,
       "ctf": {
         "spawnDamageTickDuration": 200,
         "spawnDamageBoost": 30,

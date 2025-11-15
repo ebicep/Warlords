@@ -26,7 +26,7 @@ public class TycheProsperity implements FieldEffect {
         put(Classes.MAGE, new ClassBonus(Component.text("+5 EPS / +10% Projectile Speed", NamedTextColor.GRAY), TycheProsperity.this::mageBonus));
         put(Classes.WARRIOR, new ClassBonus(Component.text("+5% Damage / -5% Knockback", NamedTextColor.GRAY), TycheProsperity.this::warriorBonus));
         put(Classes.PALADIN, new ClassBonus(Component.text("+5 EPS / +5% Speed", NamedTextColor.GRAY), TycheProsperity.this::paladinBonus));
-        put(Classes.SHAMAN, new ClassBonus(Component.text("+5% Health / +10% Damage Taken", NamedTextColor.GRAY), TycheProsperity.this::shamanBonus));
+        put(Classes.SHAMAN, new ClassBonus(Component.text("+5% Health / +10% Melee Damage", NamedTextColor.GRAY), TycheProsperity.this::shamanBonus));
         put(Classes.ROGUE, new ClassBonus(Component.text("+10% Cooldown Reduction / +5% Healing", NamedTextColor.GRAY), TycheProsperity.this::rogueBonus));
         put(Classes.ARCANIST, new ClassBonus(Component.text("+10% Crit Chance / -5% Damage Taken", NamedTextColor.GRAY), TycheProsperity.this::arcanistBonus));
     }};

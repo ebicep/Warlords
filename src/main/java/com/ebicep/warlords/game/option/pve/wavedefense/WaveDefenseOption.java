@@ -32,11 +32,16 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.DifficultyIndex;
+import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.commands.MobCommand;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.flags.BossLike;
+import com.ebicep.warlords.pve.mobs.tiers.PlayerMob;
+import com.ebicep.warlords.pve.rewards.RewardInventory;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.java.RandomCollection;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.citizensnpcs.api.ai.EntityTarget;
 import net.citizensnpcs.api.ai.event.NavigationBeginEvent;
@@ -44,6 +49,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.util.Ticks;
@@ -88,6 +94,7 @@ public class WaveDefenseOption implements PveOption {
     private BukkitTask spawner;
     private boolean pauseMobSpawn = false;
     private int currentDelay = 0;
+    private HashMap<UUID, HashMap<Spendable, Long>> playerAscendantPouch = new HashMap<>();
 
     public WaveDefenseOption(Team team, WaveList waves, DifficultyIndex difficulty) {
         this(team, waves, difficulty, difficulty.getMaxWaves());
@@ -291,7 +298,7 @@ public class WaveDefenseOption implements PveOption {
         currentWave = waves.getWave(waveCounter, new Random());
         spawnCount = currentWave.getMonsterCount();
         int spawns = spawnCount;
-        spawns *= (int) getSpawnCountMultiplier((int) game.warlordsPlayers().count());
+        spawns *= getSpawnCountMultiplier(playerCount());
 
         for (Map.Entry<Player, Team> entry : iterable(game.onlinePlayers())) {
             if (currentWave.getMessage() != null) {
@@ -336,11 +343,16 @@ public class WaveDefenseOption implements PveOption {
     protected Pair<Float, Component> getWaveOpening() {
         float soundPitch = 0.8f;
         Component wavePrefix = Component.text("Wave " + waveCounter, NamedTextColor.YELLOW);
-        if (waveCounter >= 101) {
-            wavePrefix = Component.text("W ", NamedTextColor.BLACK)
-                                  .append(Component.text("a").decorate(TextDecoration.BOLD))
-                                  .append(Component.text("v").decorate(TextDecoration.BOLD))
-                                  .append(Component.text("e " + waveCounter).decorate(TextDecoration.BOLD));
+        if (waveCounter >= 111) {
+            soundPitch = 0.1f;
+            wavePrefix = Component.text("W", TextColor.color(255, 135, 180))
+                    .append(Component.text("a").decorate(TextDecoration.BOLD, TextDecoration.OBFUSCATED))
+                    .append(Component.text("ve " + waveCounter).decorate(TextDecoration.BOLD));
+        } else if (waveCounter >= 101) {
+            soundPitch = 0.1f;
+            wavePrefix = Component.text("W", NamedTextColor.WHITE)
+                    .append(Component.text("a").decorate(TextDecoration.BOLD, TextDecoration.OBFUSCATED))
+                    .append(Component.text("ve " + waveCounter).decorate(TextDecoration.BOLD));
         } else if (waveCounter == 100) {
             soundPitch = 0.1f;
             wavePrefix = Component.text("W", NamedTextColor.DARK_RED)
@@ -384,7 +396,7 @@ public class WaveDefenseOption implements PveOption {
         }
 
         if (currentWave.getMessage() == null) {
-            spawnCount *= getSpawnCountMultiplier((int) game.warlordsPlayers().count());
+            spawnCount *= getSpawnCountMultiplier(playerCount());
         }
 
         int spawnTickPeriod = currentWave.getSpawnTickPeriod();
@@ -469,7 +481,7 @@ public class WaveDefenseOption implements PveOption {
                 });
             });
             int waveDelay = currentWave.getDelay();
-            return fastWave.get() ? waveDelay / 2 : waveDelay;
+            return fastWave.get() ? waveDelay / 4 : waveDelay;
         }
         return 0;
     }
@@ -481,18 +493,19 @@ public class WaveDefenseOption implements PveOption {
     protected void modifyStats(WarlordsNPC warlordsNPC) {
         warlordsNPC.getMob().onSpawn(WaveDefenseOption.this);
 
+        int playerCount = playerCount();
         boolean isEndless = difficulty == DifficultyIndex.ENDLESS;
+        boolean isNotSolo = playerCount > 1;
         /*
          * Base scale of 600
          *
          * The higher the scale is the longer it takes to increase per interval.
          */
         double scale = isEndless ? 1200.0 : 600.0;
-        int playerCount = playerCount();
         // Flag check whether mob is a boss.
-        boolean bossFlagCheck = playerCount > 1 && warlordsNPC.getMob() instanceof BossLike;
+        boolean bossFlagCheck = isNotSolo && warlordsNPC.getMob() instanceof BossLike;
         // Reduce base scale by 75/100 for each player after 2 or more players in game instance.
-        double modifiedScale = scale - (playerCount > 1 ? (isEndless ? 100 : 75) * playerCount : 0);
+        double modifiedScale = scale - (isNotSolo ? (isEndless ? 100 : 75) * Math.min(6, playerCount) : 0);
         // Divide scale based on wave count.
         double modifier = waveCounter / modifiedScale + 1;
         // Multiply health & min/max melee damage by waveCounter + 1 ^ base damage.
@@ -501,6 +514,13 @@ public class WaveDefenseOption implements PveOption {
         float health = (float) Math.pow(warlordsNPC.getMaxBaseHealth(), modifier);
         // Increase boss health by 25% for each player in game instance.
         float bossMultiplier = 1 + (0.25f * playerCount);
+
+        if (warlordsNPC.getMob() instanceof PlayerMob) {
+            warlordsNPC.setMaxHealthAndHeal(health);
+            warlordsNPC.setMinMeleeDamage(minMeleeDamage);
+            warlordsNPC.setMaxMeleeDamage(maxMeleeDamage);
+            return;
+        }
 
         // Multiply damage/health by given difficulty.
         float difficultyHealthMultiplier;
@@ -579,6 +599,15 @@ public class WaveDefenseOption implements PveOption {
                                 wp.getAbilityTree().setMaxMasterUpgrades(wp.getAbilityTree().getMaxMasterUpgrades() + 1);
                                 wp.sendMessage(Component.text("+1 Master Upgrade", NamedTextColor.RED, TextDecoration.BOLD));
                             });
+                            case 101, 111, 121 -> game.warlordsPlayers().forEach(wp -> {
+                                wp.playSound(wp.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 0.1f);
+                                addRewardToPlayerPouch(
+                                        wp.getUuid(),
+                                        WaveDefenseRewards.ASCENDANT_POUCH_LOOT_POOL,
+                                        playerAscendantPouch,
+                                        Component.text("Ascendant Pouch", NamedTextColor.RED)
+                                );
+                            });
                         }
                     }
                 }
@@ -644,6 +673,38 @@ public class WaveDefenseOption implements PveOption {
         game.addNPC(mob.toNPC(game, team, this::modifyStats));
         mobs.put(mob, new MobData(ticksElapsed.get()));
         Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, mob));
+    }
+
+    private void addRewardToPlayerPouch(
+            UUID uuid,
+            RandomCollection<Pair<Spendable, Long>> pouchLootPool,
+            HashMap<UUID, HashMap<Spendable, Long>> playerPouch,
+            Component pouchName
+    ) {
+        Pair<Spendable, Long> reward = pouchLootPool.next();
+        if (reward != null) {
+            Spendable spendable = reward.getA();
+            Long amount = reward.getB();
+            playerPouch.computeIfAbsent(uuid, k -> new HashMap<>())
+                    .merge(spendable, amount, Long::sum);
+            Component rewardString = Component.text(" +", spendable.getTextColor()).append(spendable.getCostColoredName(amount));
+            RewardInventory.sendRewardMessage(uuid,
+                    pouchName.append(Component.text(":")).append(rewardString)
+            );
+            Player player = Bukkit.getPlayer(uuid);
+            if (player != null) {
+                player.showTitle(Title.title(
+                        pouchName.append(Component.text(":")),
+                        rewardString,
+                        Title.Times.times(Ticks.duration(20), Ticks.duration(30), Ticks.duration(20))
+
+                ));
+            }
+        }
+    }
+
+    public HashMap<UUID, HashMap<Spendable, Long>> getPlayerAscendantPouch() {
+        return playerAscendantPouch;
     }
 
     @Override

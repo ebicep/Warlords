@@ -15,6 +15,9 @@ public enum InstanceFlags {
     NO_LUST_HEALING,
     APOTH_SELF_HEAL,
     DIRECT_HIT,
+    IGNORE_FERVENT_TITLE,
+    DUPLICATE_AVENGER_STRIKE,
+    NO_HEALING_ORBS,
 
     IGNORE_SELF_RES,
     NO_DISMOUNT,
@@ -24,7 +27,8 @@ public enum InstanceFlags {
     TRUE_DAMAGE, // does exact value damage regardless of shield/vene/reductions/dmg increase
     PIERCE, // ignores shield/vene, and victim dmg reductions
     IGNORE_DAMAGE_REDUCTION_ONLY, // ignores victim dmg reductions
-    IGNORE_DAMAGE_BOOST, // ignores victim dmg increases aka this dmg cant be increased
+    IGNORE_SOURCE_DAMAGE_BOOST, // ignores dmg increases from source aka this dmg cant be increased (e.g. order or evicerate)
+    IGNORE_TARGET_DAMAGE_BOOST, // ignores dmg increases from target aka this dmg cant be increased (e.g. burn)
     IGNORE_CRIT_MODIFIERS,
     IGNORE_FLAG_MULTIPLIER, // ignores flag multiplier
 

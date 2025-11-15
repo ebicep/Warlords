@@ -201,7 +201,7 @@ public class CurrencyOnEventOption implements Option, Listener {
             int currency = perMobKill.getOrDefault(warlordsNPC.getMob().getMobRegistry(), currencyOnKill);
             int playerCount = (int) player.getGame().warlordsPlayers().count();
             if (scaleWithPlayerCount && playerCount > 2) {
-                currency = currencyOnKill - (20 * playerCount);
+                currency = Math.max(100, currencyOnKill - (20 * playerCount));
             }
             player.addCurrency(currency);
         }

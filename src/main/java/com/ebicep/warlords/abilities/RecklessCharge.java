@@ -199,7 +199,7 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, H
                                 },
                                 8 * 20
                         ).addModifier(Modifier.HEALING_MODIFY_SELF, (event, currentHealValue) -> {
-                                    currentHealValue.addMultiplicativeModifierMult(name, 2);
+                                    currentHealValue.addMultiplicativeModifierMult(name, 1.5f);
                                 }
                         ));
                         new CooldownFilter<>(otherPlayer, RegularCooldown.class).filter(cd -> cd.getCooldownType() != CooldownTypes.LOW_LEVEL_DEBUFF)

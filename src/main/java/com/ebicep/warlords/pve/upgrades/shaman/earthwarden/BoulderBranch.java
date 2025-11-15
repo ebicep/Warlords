@@ -27,12 +27,11 @@ public class BoulderBranch extends AbstractUpgradeBranch<Boulder> {
         masterUpgrade = new Upgrade(
                 "Terrestrial Meteor",
                 "Boulder - Master Upgrade",
-                "Boulder throws upwards, deals 4x times the damage and increased hit range at the cost of higher energy cost, cooldown, and reduced knockback.",
+                "Boulder throws upwards, deals 4x times the damage and increased hit range at the cost of higher cooldown and reduced knockback.",
                 50000,
                 () -> {
                     ability.setBoulderSpeed(ability.getBoulderSpeed() * 0.25f);
                     ability.getCooldown().addMultiplicativeModifierMult("Terrestrial Meteor", 2);
-                    ability.getEnergyCost().addMultiplicativeModifierMult("Master Upgrade Branch", 1.5f);
                     Value.RangedValueCritable damage = ability.getDamageValues().getBoulderDamage();
                     damage.min().addMultiplicativeModifierAdd("Master Upgrade Branch", 3);
                     damage.max().addMultiplicativeModifierAdd("Master Upgrade Branch", 3);

@@ -145,6 +145,8 @@ public class DatabasePlayerPvE implements MultiPvEStats<
     private Map<Specializations, List<AutoUpgradeProfile>> autoUpgradeProfiles = new HashMap<>();
     @Field("illusion_vendor_rewards_purchased")
     private Map<String, Long> illusionVendorRewardsPurchased = new HashMap<>();
+    @Field("seasonal_vendor_rewards_purchased")
+    private Map<String, Long> seasonalVendorRewardsPurchased = new HashMap<>();
     //MAGE
     //0=fireball
     //1=flameburst
@@ -539,5 +541,9 @@ public class DatabasePlayerPvE implements MultiPvEStats<
     @Override
     public Collection<TracksAbilityStats> getAllAbilityStats() {
         return List.of(waveDefenseStats, onslaughtStats, eventStats);
+    }
+
+    public Map<String, Long> getSeasonalVendorRewardsPurchased() {
+        return seasonalVendorRewardsPurchased;
     }
 }

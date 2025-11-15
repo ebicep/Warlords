@@ -3,6 +3,7 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -61,7 +62,7 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
 
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
-        List<WarlordsEntity> hit = kbHealEnergy(wp);
+        List<WarlordsEntity> hit = kbHealEnergy(wp, true);
         if (pveMasterUpgrade) {
             damageIncreaseOnUse(wp);
             new GameRunnable(wp.getGame()) {
@@ -70,13 +71,17 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
 
                 @Override
                 public void run() {
+                    if (wp.isDead()) {
+                        this.cancel();
+                    }
+
                     if (bonusActivations++ < 3) {
-                        kbHealEnergy(wp);
+                        kbHealEnergy(wp, false);
                     } else {
                         this.cancel();
                     }
                 }
-            }.runTaskTimer(0, 40);
+            }.runTaskTimer(40, 40);
         } else if (pveMasterUpgrade2) {
             giveCallOfThunderEffect(wp, hit);
         }
@@ -116,12 +121,18 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
         return new LightningRodBranch(abilityTree, this);
     }
 
-    private List<WarlordsEntity> kbHealEnergy(@Nonnull WarlordsEntity wp) {
+    private List<WarlordsEntity> kbHealEnergy(@Nonnull WarlordsEntity wp, boolean shouldHeal) {
         wp.addEnergy(wp, name, energyRestore);
         Utils.playGlobalSound(wp.getLocation(), "shaman.lightningrod.activation", 2, 1);
         FallingBlockWaveEffect.create(wp.getLocation(), knockbackRadius, 6, Material.ORANGE_TULIP);
-        wp.getWorld().spigot().strikeLightningEffect(wp.getLocation(), true);
-        wp.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(wp.getMaxHealth() * (healingValues.healthRestore.getMultiplicativePercent())));
+        EffectUtils.strikeLightning(wp.getLocation(), true);
+        if (shouldHeal) {
+            wp.addInstance(InstanceBuilder.healing()
+                    .ability(this)
+                    .source(wp)
+                    .value(wp.getMaxHealth() * (healingValues.healthRestore.getMultiplicativePercent()))
+            );
+        }
         List<WarlordsEntity> hit = PlayerFilter.entitiesAround(wp, knockbackRadius, knockbackRadius, knockbackRadius).aliveEnemiesOf(wp).toList();
         for (WarlordsEntity enemy : hit) {
             if (pveMasterUpgrade2) {

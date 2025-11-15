@@ -158,7 +158,7 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
                     SoulShackle.class,
                     null,
                     wp,
-                    CooldownTypes.LOW_LEVEL_DEBUFF,
+                    CooldownTypes.MASTERY,
                     cooldownManager -> {
                     },
                     3 * 20

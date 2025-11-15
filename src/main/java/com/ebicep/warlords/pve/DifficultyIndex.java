@@ -16,7 +16,7 @@ public enum DifficultyIndex {
                     Component.text("For those seeking a lighter challenge,"),
                     Component.text("recommended for solo players."),
                     Component.empty(),
-                    Component.text("Modifies:"),
+                    Component.text("Modifiers:"),
                     Component.text("-25% Mob Health", NamedTextColor.GREEN),
                     Component.text("-25% Mob Damage", NamedTextColor.GREEN),
                     Component.text("-25% Mob Spawns", NamedTextColor.GREEN)
@@ -73,7 +73,7 @@ public enum DifficultyIndex {
                     Component.text("+75% Mob Health", NamedTextColor.RED),
                     Component.text("+75% Mob Damage", NamedTextColor.RED),
                     Component.empty(),
-                    Component.text("Respawns are extremely long and rare much", NamedTextColor.RED),
+                    Component.text("Respawns are extremely long and rare mobs", NamedTextColor.RED),
                     Component.text("appear much sooner.", NamedTextColor.RED)
             ),
             NamedTextColor.DARK_RED,
@@ -92,7 +92,7 @@ public enum DifficultyIndex {
             ),
             NamedTextColor.RED,
             Integer.MAX_VALUE,
-            1.25f,
+            1.3f,
             pveOption -> .05f + pveOption.getWaveCounter() * .002f // 15% at wave 50, 25% at wave 100
     ),
     BOSS_RUSH("Boss Rush",

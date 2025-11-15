@@ -67,7 +67,8 @@ public class ImpalingStrike extends AbstractStrike<ImpalingStrike, ImpalingStrik
                                 .damage()
                                 .ability(this)
                                 .source(wp)
-                                .value(damageValues.strikeDamage)
+                                .min(damageValues.strikeDamage.getMinValue() * multiplier)
+                                .max(damageValues.strikeDamage.getMaxValue() * multiplier)
                         );
                     }
             );

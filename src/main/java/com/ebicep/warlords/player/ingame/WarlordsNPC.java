@@ -28,6 +28,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
@@ -69,7 +70,7 @@ public class WarlordsNPC extends WarlordsEntity {
         this.npc.data().set(WARLORDS_ENTITY_METADATA, this);
         this.mob = warlordsMob;
         this.mobHologram = mobHologram;
-        if (warlordsMob != null && warlordsMob.getInternalLevel() > 0) {
+        if (warlordsMob != null && warlordsMob.getInternalLevel() > 1) {
             mobNamePrefix = Component.textOfChildren(
                     Component.text("[", NamedTextColor.GRAY),
                     warlordsMob.getNamePrefix(),
@@ -124,9 +125,12 @@ public class WarlordsNPC extends WarlordsEntity {
     }
 
     @Override
-    public void die(@org.jetbrains.annotations.Nullable WarlordsEntity attacker, WarlordsDeathEvent.DeathInfoBuilder deathInfoBuilder) {
-        super.die(attacker, deathInfoBuilder);
-        cleanup();
+    public boolean die(@Nullable WarlordsEntity attacker, WarlordsDeathEvent.DeathInfoBuilder deathInfoBuilder) {
+        boolean dead = super.die(attacker, deathInfoBuilder);
+        if (dead) {
+            cleanup();
+        }
+        return dead;
     }
 
     @Override
@@ -162,23 +166,6 @@ public class WarlordsNPC extends WarlordsEntity {
     }
 
     @Override
-    public boolean addPotionEffect(PotionEffect potionEffect) {
-        boolean applied = super.addPotionEffect(potionEffect);
-        if (applied) {
-            if (potionEffect.getType() == PotionEffectType.BLINDNESS && mob != null) {
-                setStunTicks(potionEffect.getDuration());
-                mob.removeTarget();
-            }
-        }
-        return applied;
-    }
-
-    @Override
-    public boolean isOnline() {
-        return true;
-    }
-
-    @Override
     public void unstun() {
         mob.toggleStun(false);
         //tick later to prevent collision issues
@@ -207,6 +194,63 @@ public class WarlordsNPC extends WarlordsEntity {
     }
 
     @Override
+    public boolean addPotionEffect(PotionEffect potionEffect) {
+        boolean applied = super.addPotionEffect(potionEffect);
+        if (applied) {
+            if (potionEffect.getType() == PotionEffectType.BLINDNESS && mob != null) {
+                setStunTicks(potionEffect.getDuration());
+                mob.removeTarget();
+            }
+        }
+        return applied;
+    }
+
+    @Override
+    public boolean isOnline() {
+        return true;
+    }
+
+    @Override
+    public void runEveryTick() {
+        // updating entity reference in case it was unloaded
+        Entity updatedEntity = npc.getEntity();
+        if (updatedEntity != null && !Objects.equals(updatedEntity, entity) && updatedEntity instanceof LivingEntity || (isAlive() && entity != null && !entity.isValid())) {
+            this.entity = updatedEntity;
+        }
+        super.runEveryTick();
+        if (stunTicks > 0) {
+            stunTicks--;
+            if (stunTicks == 0) {
+                unstun();
+            }
+        }
+    }
+
+    @Override
+    public void updateHealth() {
+        if (isDead() || entity == null || !entity.isValid()) {
+            return;
+        }
+        mobHologram.update();
+        if (entity instanceof Player player) {
+            double healthDisplayY = player.getEyeHeight() + 0.15;
+            if (playerHealthDisplay == null) {
+                playerHealthDisplay = Utils.spawnArmorStand(getLocation().add(0, healthDisplayY, 0), armorStand -> {
+                            armorStand.setMarker(true);
+                            armorStand.customName(getNameComponent());
+                            armorStand.setCustomNameVisible(true);
+                        }
+                );
+            } else {
+                playerHealthDisplay.customName(Component.text(NumberFormat.addCommaAndRound(this.getCurrentHealth()) + "❤", NamedTextColor.RED));
+                playerHealthDisplay.teleport(entity.getLocation().add(0, healthDisplayY, 0));
+            }
+        } else {
+            entity.customName(Component.text(NumberFormat.addCommaAndRound(this.getCurrentHealth()) + "❤", NamedTextColor.RED));
+        }
+    }
+
+    @Override
     public void updateEntity() {
         if (entity == null) {
             return;
@@ -214,6 +258,11 @@ public class WarlordsNPC extends WarlordsEntity {
         updateHealth();
         entity.setCustomNameVisible(true);
         entity.setMetadata(WarlordsEntity.WARLORDS_ENTITY_METADATA, new FixedMetadataValue(Warlords.getInstance(), this));
+    }
+
+    @Override
+    public void setSpec(Specializations spec) {
+
     }
 
     @Override
@@ -257,52 +306,8 @@ public class WarlordsNPC extends WarlordsEntity {
         return npc.getOrAddTrait(Equipment.class).get(Equipment.EquipmentSlot.HAND);
     }
 
-    @Override
-    public void runEveryTick() {
-        // updating entity reference in case it was unloaded
-        Entity updatedEntity = npc.getEntity();
-        if (updatedEntity != null && !Objects.equals(updatedEntity, entity) && updatedEntity instanceof LivingEntity || (isAlive() && entity != null && !entity.isValid())) {
-            this.entity = updatedEntity;
-        }
-        super.runEveryTick();
-        if (stunTicks > 0) {
-            stunTicks--;
-            if (stunTicks == 0) {
-                unstun();
-            }
-        }
-    }
-
-    @Override
-    public void updateHealth() {
-        if (isDead() || entity == null || !entity.isValid()) {
-            return;
-        }
-        mobHologram.update();
-        if (entity instanceof Player player) {
-            double healthDisplayY = player.getEyeHeight() + 0.15;
-            if (playerHealthDisplay == null) {
-                playerHealthDisplay = Utils.spawnArmorStand(getLocation().add(0, healthDisplayY, 0), armorStand -> {
-                            armorStand.setMarker(true);
-                            armorStand.customName(getNameComponent());
-                            armorStand.setCustomNameVisible(true);
-                        }
-                );
-            } else {
-                playerHealthDisplay.customName(Component.text(NumberFormat.addCommaAndRound(this.getCurrentHealth()) + "❤", NamedTextColor.RED));
-                playerHealthDisplay.teleport(entity.getLocation().add(0, healthDisplayY, 0));
-            }
-        } else {
-            entity.customName(Component.text(NumberFormat.addCommaAndRound(this.getCurrentHealth()) + "❤", NamedTextColor.RED));
-        }
-    }
-
     public AbstractMob getMob() {
         return mob;
-    }
-
-    public int getStunTicks() {
-        return stunTicks;
     }
 
     public void cleanup() {
@@ -323,17 +328,16 @@ public class WarlordsNPC extends WarlordsEntity {
         });
     }
 
+    public int getStunTicks() {
+        return stunTicks;
+    }
+
     public Component getMobNamePrefix() {
         return mobNamePrefix;
     }
 
     public void setNameColor(@Nonnull TextColor nameColor) {
         this.nameColor = nameColor;
-    }
-
-    @Override
-    public void setSpec(Specializations spec) {
-
     }
 
     public float getMinMeleeDamage() {

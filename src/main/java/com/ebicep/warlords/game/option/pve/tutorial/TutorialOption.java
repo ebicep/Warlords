@@ -1,6 +1,6 @@
 package com.ebicep.warlords.game.option.pve.tutorial;
 
-import com.ebicep.warlords.abilities.ArcaneShield;
+import com.ebicep.warlords.abilities.internal.AbstractArcaneShield;
 import com.ebicep.warlords.abilities.AvengersStrike;
 import com.ebicep.warlords.abilities.Fireball;
 import com.ebicep.warlords.abilities.FlameBurst;
@@ -139,7 +139,7 @@ public class TutorialOption implements Option {
                                 }
                             }
                             case 3 -> {
-                                if (ability instanceof ArcaneShield && stageSectionCounter.get() >= 1) {
+                                if (ability instanceof AbstractArcaneShield && stageSectionCounter.get() >= 1) {
                                     event.setCancelled(false);
                                     new GameRunnable(game) {
 

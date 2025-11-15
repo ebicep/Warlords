@@ -97,11 +97,12 @@ public class EventPoseidon extends AbstractMob implements BossMob, God, Unsilenc
                                 .findAny();
                         if (optionalCripplingStrike.isPresent()) {
                             CripplingStrike.CripplingStrikeData data = optionalCripplingStrike.get();
-                            spikeTarget.getCooldownManager().removeCooldown(CripplingStrike.CripplingStrikeData.class, true);
+                            spikeTarget.getCooldownManager().removeCooldownByName("Poseidon Cripple");
                             int newCrippleCounter = Math.min(data.consecutiveStrikeCounter() + 1, 2);
                             CripplingStrike.cripple(caster,
                                     spikeTarget,
-                                    null, name,
+                                    null,
+                                    "Poseidon Cripple",
                                     newCrippleCounter,
                                     2 * 20,
                                     convertToDivisionDecimal(10) - newCrippleCounter * convertToPercent(5)

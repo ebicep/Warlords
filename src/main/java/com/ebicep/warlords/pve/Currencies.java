@@ -24,7 +24,7 @@ public enum Currencies implements Spendable {
     SYNTHETIC_SHARD(
             "Synthetic Shard",
             NamedTextColor.WHITE,
-            new ItemStack(Material.GRAY_STAINED_GLASS)
+            new ItemStack(Material.AMETHYST_SHARD)
     ),
     LEGEND_FRAGMENTS(
             "Legend Fragment",
@@ -64,6 +64,11 @@ public enum Currencies implements Spendable {
     ASCENDANT_STAR_PIECE(
             "Ascendant Star Piece",
             NamedTextColor.RED,
+            new ItemStack(Material.NETHER_STAR)
+    ),
+    VOID_STAR_PIECE(
+            "Void Star Piece",
+            TextColor.color(60, 60, 60),
             new ItemStack(Material.NETHER_STAR)
     ),
     SUPPLY_DROP_TOKEN(
@@ -181,6 +186,41 @@ public enum Currencies implements Spendable {
             TextColor.color(220, 20, 60),
             new ItemStack(Material.ECHO_SHARD)
     ),
+    PRESTIGE_ORB(
+            "Prestige Orb",
+            TextColor.color(100, 149, 237),
+            new ItemStack(Material.HEART_OF_THE_SEA)
+    ),
+    ETHEREUM_CRYSTAL(
+            "Ethereum Crystal",
+            TextColor.color(165, 113, 64),
+            new ItemStack(Material.FLOW_ARMOR_TRIM_SMITHING_TEMPLATE)
+    ),
+    ASCENDANT_SCROLL(
+            "Ascendant Scroll",
+            TextColor.color(170, 20, 40),
+            new ItemStack(Material.NETHERITE_UPGRADE_SMITHING_TEMPLATE)
+    ),
+    ITEM_LOCK_SCROLL(
+            "Item Lock Scroll",
+            TextColor.color(190, 80, 40),
+            new ItemStack(Material.MAP)
+    ),
+    CRYPTIC_CONQUEST_KEY(
+            "Cryptic Conquest Key",
+            TextColor.color(199, 31, 137),
+            new ItemStack(Material.TRIAL_KEY)
+    ),
+    ARCHEMEDIAN_FRAGMENT(
+            "Archemedian Fragment",
+            TextColor.color(110, 170, 210),
+            new ItemStack(Material.CALIBRATED_SCULK_SENSOR)
+    ),
+    SOVEREIGN_TOWER_KEY(
+            "Sovereign Tower Key",
+            TextColor.color(71, 81, 158),
+            new ItemStack(Material.OMINOUS_TRIAL_KEY)
+    ),
 
 
     ;
@@ -189,7 +229,8 @@ public enum Currencies implements Spendable {
             COMMON_STAR_PIECE,
             RARE_STAR_PIECE,
             EPIC_STAR_PIECE,
-            LEGENDARY_STAR_PIECE
+            LEGENDARY_STAR_PIECE,
+            ASCENDANT_STAR_PIECE
     );
     public static final Currencies[] VALUES = values();
     public static final HashMap<UUID, PvECoinSummary> CACHED_PLAYER_COIN_STATS = new HashMap<>();

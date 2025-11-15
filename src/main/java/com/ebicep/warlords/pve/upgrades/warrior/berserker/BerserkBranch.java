@@ -48,12 +48,12 @@ public class BerserkBranch extends AbstractUpgradeBranch<Berserk> {
                 "Maniacal Rage",
                 "Berserk - Master Upgrade",
                 """
-                        +10% Additional damage increase
+                        +20% Additional damage increase
 
-                        Gain 0.2% Crit chance and Crit Multiplier for each instance of damage you deal to an enemy while Berserk is active. (Max 50%)""",
+                        Gain 1% Crit chance and Crit Multiplier for each instance of damage you deal to an enemy while Berserk is active. (Max 60%)""",
                 50000,
                 () -> {
-                    ability.setDamageIncrease(ability.getDamageIncrease() + 10);
+                    ability.setDamageIncrease(ability.getDamageIncrease() + 20);
 
                 }
         );
@@ -61,10 +61,11 @@ public class BerserkBranch extends AbstractUpgradeBranch<Berserk> {
                 "Visceral Rage",
                 "Berserk - Master Upgrade",
                 """
-                        While Berserk is active, cooldowns for abilities (excluding Berserk) will be reduced by 20% and enemies that are affected by BLEED or WOUNDING will take 30% more damage.
+                        While Berserk is active, all damage you deal will stack up (max 50,000 damage). You may recast Berserk to convert all dealt damage into 0.2% energy and unleash a massive shockwave dealing 15% damage. The re-cast has unlimited uses.
                         """,
                 50000,
                 () -> {
+
                 }
         );
     }

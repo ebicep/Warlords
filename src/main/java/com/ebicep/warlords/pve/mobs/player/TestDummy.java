@@ -19,7 +19,7 @@ public class TestDummy extends AbstractMob implements PlayerMob {
         super(
                 spawnLocation,
                 "TestDummy",
-                1_000_000,
+                10_000_000,
                 .2f,
                 0,
                 0,

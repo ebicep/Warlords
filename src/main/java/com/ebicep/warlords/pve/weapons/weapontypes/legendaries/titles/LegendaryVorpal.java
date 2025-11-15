@@ -97,7 +97,7 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon implements PassiveC
                     event.setMin(event.getMin() * meleeDamageBoost);
                     event.setMax(event.getMax() * meleeDamageBoost);
                 }
-                if (meleeCounter % 5 == 0) {
+                if (meleeCounter % 4 == 0) {
                     player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
                     event.setMin(event.getMin() * 7);
                     event.setMax(event.getMax() * 7);
@@ -110,7 +110,7 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon implements PassiveC
     @Override
     public TextComponent getPassiveEffect() {
         return Component.text(
-                                "Every 5th melee hit deals 7x damage, bypassing damage reduction. When any of Windfury, Earthliving, and Soulbinding Weapon are active, increase the player’s melee damage by ",
+                                "Every 4th melee hit deals 7x damage, bypassing damage reduction. When any of Windfury, Earthliving, and Soulbinding Weapon are active, increase the player’s melee damage by ",
                                 NamedTextColor.GRAY
                         )
                         .append(formatTitleUpgrade(MELEE_DAMAGE_BOOST + MELEE_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel(), "%"))
@@ -179,7 +179,7 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon implements PassiveC
 
     @Override
     public int getCounter() {
-        return (meleeCounter % 5);
+        return (meleeCounter % 4);
     }
 
     @Override

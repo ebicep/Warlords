@@ -176,7 +176,7 @@ public class Void extends AbstractMob implements BossMob {
 
         if (warlordsNPC.getCurrentHealth() < (warlordsNPC.getMaxHealth() * 0.1f) && !boltaroPhaseTrigger) {
             boltaroPhaseTrigger = true;
-            for (int i = 0; i < playerCount; i++) {
+            for (int i = 0; i < 3; i++) {
                 option.spawnNewMob(new Boltaro(loc));
             }
         }
@@ -355,7 +355,7 @@ public class Void extends AbstractMob implements BossMob {
                         option.spawnNewMob(new GolemApprentice(spawnLocation));
                     }
 
-                    FireWorkEffectPlayer.playFirework(warlordsNPC.getLocation(), FireworkEffect.builder()
+                    EffectUtils.playFirework(warlordsNPC.getLocation(), FireworkEffect.builder()
                                                                                                .withColor(Color.WHITE)
                                                                                                .with(FireworkEffect.Type.BALL_LARGE)
                                                                                                .build());

@@ -7,6 +7,8 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
+import com.ebicep.warlords.pve.mobs.flags.NoTarget;
+import com.ebicep.warlords.pve.mobs.flags.NoTargetAbilities;
 import com.ebicep.warlords.pve.mobs.flags.Untargetable;
 import com.ebicep.warlords.pve.mobs.tiers.PlayerMob;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -18,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Animus extends AbstractMob implements PlayerMob, Untargetable {
+public class Animus extends AbstractMob implements PlayerMob, Untargetable, NoTarget, NoTargetAbilities {
 
     @Nullable
     private WarlordsEntity owner;
@@ -46,7 +48,7 @@ public class Animus extends AbstractMob implements PlayerMob, Untargetable {
         this(
                 spawnLocation,
                 owner.getName() + "'s Animus",
-                (int) inherited.getMaxHealth(),
+                (int) inherited.getMaxHealth() / 2,
                 owner.getSpeed().getLastValue(),
                 0,
                 150,
@@ -91,6 +93,10 @@ public class Animus extends AbstractMob implements PlayerMob, Untargetable {
             }
         }
         toDespawn.forEach(option::despawnMob);
+
+        if (warlordsNPC == null || warlordsNPC.isDead()) {
+            return;
+        }
 
         // copy strike stats
         for (JudgementStrike judgementStrike : owner.getAbilitiesMatching(JudgementStrike.class)) {

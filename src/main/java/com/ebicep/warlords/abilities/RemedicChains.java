@@ -8,9 +8,11 @@ import com.ebicep.warlords.events.player.ingame.WarlordsAbilityTargetEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.LinkedCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.pve.mobs.flags.NoTargetAbilities;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.apothecary.RemedicChainsBranch;
@@ -63,7 +65,7 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
                 .entitiesAround(wp, castRange, castRange, castRange)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .excludingDummy()
-                .closestFirst(wp)
+                .closestWarlordPlayersFirst(wp.getLocation())
                 .limit(alliesAffected)
                 .stream()
                 .collect(Collectors.toSet());
@@ -171,7 +173,7 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
 
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return (currentDamageValue + damageValues.getBonusDamage().getValue()) * (pveMasterUpgrade2 ? 1.1f : 1);
+                return (currentDamageValue + damageValues.getBonusDamage().getValue()) * (pveMasterUpgrade2 ? 1.15f : 1);
             }
         };
         wp.getCooldownManager().removeCooldown(RemedicChains.class, false);

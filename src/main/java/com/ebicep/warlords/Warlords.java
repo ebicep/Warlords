@@ -78,7 +78,7 @@ public class Warlords extends JavaPlugin {
     public static final AtomicBoolean SENT_FIFTEEN_MINUTE_REMINDER = new AtomicBoolean(false);
     private static final ConcurrentHashMap<UUID, WarlordsEntity> PLAYERS = new ConcurrentHashMap<>();
     public static String VERSION = "";
-    public static NamedTextColor VERSION_COLOR = NamedTextColor.BLUE;
+    public static NamedTextColor VERSION_COLOR = NamedTextColor.RED;
     public static String serverIP;
     public static boolean hologramsEnabled = true;
     public static boolean citizensEnabled;
@@ -514,11 +514,13 @@ public class Warlords extends JavaPlugin {
                             continue;
                         }
                         Entity player = we.getEntity();
-                        List<Location> locations = we.getLocations();
-                        if (we.isDead() && !locations.isEmpty()) {
-                            locations.add(locations.get(locations.size() - 1));
-                        } else {
-                            locations.add(player.getLocation());
+                        if (player != null) { //returned null in bugs - ignore IDE
+                            List<Location> locations = we.getLocations();
+                            if (we.isDead() && !locations.isEmpty()) {
+                                locations.add(locations.get(locations.size() - 1));
+                            } else {
+                                locations.add(player.getLocation());
+                            }
                         }
                     }
                 }

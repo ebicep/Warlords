@@ -189,7 +189,9 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
             if (weakeningHexCooldown.isPresent()) {
                 RegularCooldown regularCooldown = weakeningHexCooldown.get();
                 WeakeningHex weakeningHex = (WeakeningHex) regularCooldown.getCooldownObject();
-                weakeningHex.setStacks(weakeningHex.getStacks() + 1);
+                if (weakeningHex.getStacks() < 4) {
+                    weakeningHex.setStacks(weakeningHex.getStacks() + 1);
+                }
                 regularCooldown.setTicksLeft(tickDuration);
             } else {
                 WeakeningHex data = new WeakeningHex();
@@ -452,7 +454,7 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
         Location startingLocation = projectile.getStartingLocation();
         getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
         List<WarlordsEntity> hits = projectile.getHit();
-        if (hit.isTeammate(wp)) {
+        if (hit.isTeammateAlive(wp)) {
             int teammatesHit = (int) hits.stream().filter(we -> we.isTeammate(wp)).count();
             if (teammatesHit > maxAlliesHit) {
                 return false;

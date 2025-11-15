@@ -14,9 +14,11 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.player.ingame.motionsystem.MotionModifier;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
+import com.ebicep.warlords.pve.mobs.flags.BossLike;
 import com.ebicep.warlords.pve.mobs.flags.DynamicFlags;
 import com.ebicep.warlords.pve.mobs.flags.Unswappable;
 import com.ebicep.warlords.pve.mobs.player.Animus;
@@ -94,11 +96,12 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
             }
             if (swapTarget instanceof WarlordsNPC warlordsNPC) {
                 AbstractMob mob = warlordsNPC.getMob();
-                if (mob instanceof Unswappable || mob.getDynamicFlags().contains(DynamicFlags.UNSWAPPABLE) || mob instanceof BossMob || mob instanceof BossMinionMob) {
+                if (mob instanceof Unswappable || mob.getDynamicFlags().contains(DynamicFlags.UNSWAPPABLE) || mob instanceof BossLike) {
                     wp.sendMessage(Component.text("You cannot Soul Switch with that mob!", NamedTextColor.RED));
                     continue;
                 }
             }
+
             Location swapLocation = swapTarget.getLocation();
             Location ownLocation = wp.getLocation();
             Location start = new Location(wp.getWorld(), ownLocation.getX(), ownLocation.getY(), ownLocation.getZ(), swapLocation.getYaw(), swapLocation.getPitch());
@@ -108,9 +111,13 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
             if (playerSwapEvent.isCancelled()) {
                 return true;
             }
+
+            // effects
             Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 2, 1.5f);
             EffectUtils.playCylinderAnimation(swapLocation, 1.05, Particle.CLOUD, 1);
             EffectUtils.playCylinderAnimation(ownLocation, 1.05, Particle.CLOUD, 1);
+
+            // teleporting
             swapTarget.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, blindnessTicks, 0, true, false));
             swapTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED
                     .append(Component.text(" You've been Soul Swapped by ", NamedTextColor.GRAY))
@@ -122,6 +129,7 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                     .append(Component.text(swapTarget.getName(), NamedTextColor.YELLOW))
                     .append(Component.text("!", NamedTextColor.GRAY)));
             wp.teleport(end);
+
             wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                     "Soul Switch Res",
                     "SWITCH",
@@ -140,133 +148,88 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
             if (swapTarget instanceof WarlordsNPC npc) {
                 PveOption pveOption = wp.getGame().getOption(PveOption.class).stream().findFirst().orElse(null);
                 if (pveOption != null) {
-                    wp.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(healingValues.switchHealing));
-                    wp.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 30, 0, true, false));
-                    pveOption.despawnMob(npc.getMob());
-                    Animus animus = new Animus(ownLocation, wp, swapTarget);
-                    pveOption.spawnNewMob(animus, wp.getTeam());
-                    addSecondaryAbility(2, () -> {
-                                if (wp.isAlive()) {
-                                    animus.getWarlordsNPC().die(animus.getWarlordsNPC(), WarlordsDeathEvent.DeathInfoBuilder.create().setForced(true));
-                                    for (WarlordsEntity enemy : PlayerFilter.entitiesAround(animus.getWarlordsNPC().getLocation(), 4, 4, 4).aliveEnemiesOf(wp)) {
-                                        enemy.addInstance(InstanceBuilder.damage().cause("Animus").source(wp).min(400).max(600));
-                                    }
-                                }
-                            }, false, secondaryAbility -> animus.getWarlordsNPC().isDead()
+                    wp.addInstance(InstanceBuilder
+                            .healing()
+                            .ability(this)
+                            .source(wp)
+                            .value(healingValues.switchHealing)
                     );
-                    if (pveMasterUpgrade) {
-                        wp.getCooldownManager().removeCooldown(SoulSwitch.class, false);
+                    wp.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 30, 0, true, false));
+                    npc.die(npc, WarlordsDeathEvent.DeathInfoBuilder.create().setForced(true));
+
+                    if (pveMasterUpgrade2) {
+                        EffectUtils.displayParticle(Particle.EXPLOSION, swapTarget.getLocation(), 2);
+                        Utils.playGlobalSound(swapTarget.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 2, 0.8f);
+                        PlayerFilter.entitiesAround(swapLocation, 4, 4, 4)
+                                .aliveEnemiesOf(wp)
+                                .forEach(enemy -> enemy.addInstance(InstanceBuilder
+                                        .damage()
+                                        .cause("Soul Burst")
+                                        .source(wp)
+                                        .min(844)
+                                        .max(1105)
+                                        .flags(InstanceFlags.TRUE_DAMAGE)
+                                ));
                         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                                 "Soul Burst",
-                                "SOUL BURST",
+                                "SOUL",
                                 SoulSwitch.class,
                                 null,
                                 wp,
                                 CooldownTypes.ABILITY,
                                 cooldownManager -> {},
-                                20 * 20
-                        ) {
-
-                            @Override
-                            public float modifyDamageAfterInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                if (event.getCause().equals("Judgement Strike")) {
-                                    double speed = animus.getWarlordsNPC()
-                                                         .getSpeed()
-                                                         .getModifiers()
-                                                         .stream()
-                                                         .filter(modifier -> modifier.getModifier() > 0)
-                                                         .mapToDouble(MotionModifier::getModifier)
-                                                         .sum();
-                                    float damageBoost = Math.min(1.1f, (float) (1 + (speed * 0.5f) / 100));
-                                    return currentDamageValue * damageBoost;
-                                }
-                                return currentDamageValue;
-                            }
-                        });
-                    }
-                    if (pveMasterUpgrade2) {
-                        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
-                                "Tricky Switch",
-                                null,
-                                SoulSwitch.class,
-                                null,
-                                wp,
-                                CooldownTypes.ABILITY,
-                                cooldownManager -> {
-                                },
-                                10 * 60 * 20,
+                                10 * 20,
                                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                                    if (animus.getWarlordsNPC().isDead()) {
-                                        cooldown.setTicksLeft(0);
-                                    }
+
                                 })
                         ).addModifier(Modifier.DAMAGE_CRIT_CHANCE_ATTACKER, (event, currentCritChance) -> {
                                     currentCritChance.addAdditiveModifier("Tricky Switch", 15);
                                 }
                         ));
-                        animus.getWarlordsNPC()
-                              .getCooldownManager()
-                              .addCooldown(new PermanentCooldown<>("Tricky Switch", null, SoulSwitch.class, null, wp, CooldownTypes.ABILITY, cooldownManager -> {
-                              }, false
-                              ) {
-
-                                  @Override
-                                  public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                                      if (event.getCause().equals("Judgement Strike")) {
-                                          wp.addEnergy(wp, "Tricky Switch", 10);
-                                          float heal = currentDamageValue * .1f;
-                                          wp.addInstance(InstanceBuilder.healing().cause("Tricky Switch").source(wp).value(heal));
-                                      }
-                                  }
-                              });
                     }
                 }
             }
-            if (pveMasterUpgrade) {
-                wp.getCooldownManager().addCooldown(new RegularCooldown<>("Soul Burst", "SOUL", SoulSwitch.class, null, wp, CooldownTypes.BUFF, cooldownManager -> {
-                }, cooldownManager -> {
-                    wp.removePotionEffect(PotionEffectType.INVISIBILITY);
-                }, 5 * 20, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    if (ticksElapsed % 3 == 0) {
-                        wp.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, ticksLeft, 0, true, false));
-                    }
-                })
-                ) {
 
+            if (pveMasterUpgrade) {
+                wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                        "Tricky Switch",
+                        "SOUL",
+                        SoulSwitch.class,
+                        null,
+                        wp,
+                        CooldownTypes.BUFF,
+                        cooldownManager -> {},
+                        cooldownManager -> wp.removePotionEffect(PotionEffectType.INVISIBILITY),
+                        5 * 20,
+                        Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                            if (ticksElapsed % 3 == 0) {
+                                wp.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, ticksLeft, 0, true, false));
+                            }
+                        })
+                ) {
                     @Override
                     public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                         return currentDamageValue * 0.5f;
                     }
                 });
+
                 PlayerFilter.entitiesAround(swapLocation, 3, 3, 3)
                             .aliveTeammatesOf(wp)
                             .forEach(warlordsEntity -> warlordsEntity.addSpeedModifier(wp, "Shadow Burst", 25, 3 * 20));
+
                 PlayerFilter.entitiesAround(ownLocation, 3, 3, 3)
                             .aliveTeammatesOf(wp)
                             .forEach(warlordsEntity -> warlordsEntity.addSpeedModifier(wp, "Shadow Burst", 25, 3 * 20));
             }
+
             return true;
         }
+
         return false;
     }
 
     @Override
     public void updateDescription(Player player) {
-        if (inPve) {
-            description = AbilityDescriptionBuilder.create("Switch locations with an enemy, stunning them for ")
-                                                   .durationTicks(blindnessTicks)
-                                                   .text(". Upon swapping, gain ")
-                                                   .percent(damageReduction, NamedTextColor.RED)
-                                                   .text(" damage reduction for ")
-                                                   .durationTicks(damageReductionTickDuration)
-                                                   .text(" and self heal for ")
-                                                   .heal(healingValues.switchHealing)
-                                                   .text(" health, go invisible for ")
-                                                   .durationTicks(invisTicks)
-                                                   .text(", and transform the swapped enemy into your own Animus. The Animus will inherit the max HP of the mob swapped and your current movement speed when swapped, no longer has its original stats/abilities, and will use Judgment Strike every 2 seconds based on the current your own Judgment Strike. " + "Enemies cannot target the Animus, and only 1 Animus can exist at a time. " + "For every enemy the Animus defeats, reduce the cooldown of Soul Switch by 1 second.")
-                                                   .maxRange(radius)
-                                                   .build();
-        } else {
             description = AbilityDescriptionBuilder.create("Switch locations with an enemy, blinding them for ")
                                                    .durationTicks(blindnessTicks)
                                                    .text(". Upon swapping, gain ")
@@ -277,7 +240,6 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                                                    .maxRange(radius)
                                                    .text(" Soul Switch has low vertical range.")
                                                    .build();
-        }
     }
 
     @Override

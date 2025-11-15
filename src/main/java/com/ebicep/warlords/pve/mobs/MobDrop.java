@@ -2,7 +2,6 @@ package com.ebicep.warlords.pve.mobs;
 
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.pve.Spendable;
-import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -11,8 +10,15 @@ public enum MobDrop implements Spendable {
 
     ZENITH_STAR(
             "Zenith Star",
-            NamedTextColor.WHITE,
-            new ItemStack(Material.NETHER_STAR)
+            TextColor.color(210, 210, 210),
+            new ItemStack(Material.WIND_CHARGE),
+            false
+    ),
+    AWAKENED_ABILITY_SCROLL(
+            "Awakened Ability Scroll",
+            TextColor.color(120, 170, 100),
+            new ItemStack(Material.FLOWER_BANNER_PATTERN),
+            true
     ),
 
     ;
@@ -22,11 +28,13 @@ public enum MobDrop implements Spendable {
     public final String name;
     public final TextColor textColor;
     public final ItemStack item;
+    private final boolean isHidden;
 
-    MobDrop(String name, TextColor textColor, ItemStack item) {
+    MobDrop(String name, TextColor textColor, ItemStack item, boolean isHidden) {
         this.name = name;
         this.textColor = textColor;
         this.item = item;
+        this.isHidden = isHidden;
     }
 
     @Override
@@ -54,4 +62,7 @@ public enum MobDrop implements Spendable {
         return databasePlayer.getPveStats().getMobDrops(this);
     }
 
+    public boolean isHidden() {
+        return isHidden;
+    }
 }

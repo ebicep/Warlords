@@ -9,7 +9,7 @@ import org.bukkit.World;
 public abstract class AbstractCuboidOption implements Option {
     public static final int MAX_WORLD_SIZE = 30000000;
     public static final int MAX_WORLD_SIZE_MINI = 400;
-    public static final int MAX_WORLD_SIZE_MEGA = 500;
+    public static final int MAX_WORLD_SIZE_MEGA = 800;
 
     private final Location min;
     private final Location max;

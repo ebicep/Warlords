@@ -65,18 +65,10 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
             wp.setFlagPickCooldown(2);
         }
         if (inPve) {
-            for (WarlordsEntity heartTarget : PlayerFilter
-                    .entitiesAround(wp, radius, verticalRadius, radius)
-                    .requireLineOfSight(wp)
-                    .lookingAtFirst(wp)
-            ) {
-                activateAbility(wp, heartTarget);
-                return true;
-            }
             if (targetEnemies) {
                 for (WarlordsEntity heartTarget : PlayerFilter
                         .entitiesAround(wp, radius, verticalRadius, radius)
-                        .excluding(wp)
+                        .aliveEnemiesOf(wp)
                         .requireLineOfSight(wp)
                         .lookingAtFirst(wp)
                 ) {
@@ -84,6 +76,14 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
                     heartTarget.addInstance(InstanceBuilder.damage().cause("Heart to Heart").source(wp).value(1800));
                     return true;
                 }
+            }
+            for (WarlordsEntity heartTarget : PlayerFilter
+                    .entitiesAround(wp, radius, verticalRadius, radius)
+                    .requireLineOfSight(wp)
+                    .lookingAtFirst(wp)
+            ) {
+                activateAbility(wp, heartTarget);
+                return true;
             }
         } else if (targetEnemies) {
             for (WarlordsEntity heartTarget : PlayerFilter

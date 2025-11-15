@@ -19,7 +19,7 @@ public class SoulReaver extends AbstractMob implements BossMinionMob {
         super(
                 spawnLocation,
                 "Soul Reaver",
-                6000,
+                5000,
                 0.3f,
                 10,
                 600,

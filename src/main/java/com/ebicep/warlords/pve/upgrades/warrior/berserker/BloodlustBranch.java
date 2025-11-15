@@ -35,12 +35,12 @@ public class BloodlustBranch extends AbstractUpgradeBranch<BloodLust> {
                 "Sanguineous",
                 "Blood Lust - Master Upgrade",
                 """
-                        +5s Duration
+                        +2s Duration
                         
-                        While Blood Lust is active, increase all damage against bleeding or wounded targets by 30%""",
+                        While Blood Lust is active, each hit against enemies affected by bleed or wounding reduces the cooldown of your non-ultimate skills by 0.15 seconds. When Blood Lust ends heal yourself for 20% of your missing health.""",
                 50000,
                 () -> {
-                    ability.setTickDuration(ability.getTickDuration() + 100);
+                    ability.setTickDuration(ability.getTickDuration() + 40);
 
                 }
         );
@@ -48,7 +48,7 @@ public class BloodlustBranch extends AbstractUpgradeBranch<BloodLust> {
                 "Blood Thirsty",
                 "Blood Lust - Master Upgrade",
                 """
-                        While Bloodlust is active, each strike hits again for 20% of the original damage (Additional strikes don't heal with Bloodlust) and enemies affected by BLEED take 30% more damage.
+                        While Bloodlust is active, each strike hits again for 40% of the original damage (Additional strikes don't heal with Bloodlust) and enemies affected by BLEED take 30% more damage.
                         """,
                 50000,
                 () -> {

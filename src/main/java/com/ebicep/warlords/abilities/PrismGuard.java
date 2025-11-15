@@ -162,16 +162,16 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                             if (pveMasterUpgrade2) {
                                 boolean silenced = enemyInsideBubble.getCooldownManager().hasCooldown(SoulShackle.class);
                                 if (silenced) {
+                                    enemyInsideBubble.getCooldownManager().removeCooldownByName("Bubble Silence Debuff");
                                     enemyInsideBubble.getCooldownManager().addCooldown(new RegularCooldown<>(
-                                            name,
+                                            "Bubble Silence Debuff",
                                             "BUBBLE DEBUFF",
                                             PrismGuard.class,
-                                            new PrismGuard(),
+                                            null,
                                             wp,
                                             CooldownTypes.LOW_LEVEL_DEBUFF,
-                                            cooldownManager -> {
-                                            },
-                                            20
+                                            cooldownManager -> {},
+                                            6
                                     ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (event, currentDamageValue) -> {
                                                 currentDamageValue.addMultiplicativeModifierMult(name, 1.1f);
                                             }

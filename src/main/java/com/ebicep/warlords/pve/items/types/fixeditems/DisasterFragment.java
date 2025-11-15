@@ -70,16 +70,17 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
             public void onFinalDamageHeal(WarlordsDamageHealingFinalEvent event) {
                 WarlordsEntity victim = event.getWarlordsEntity();
                 WarlordsEntity attacker = event.getSource();
+                double chance = event.getCause().contains("Strike") ? .2 : .07;
                 if (!Objects.equals(attacker, warlordsPlayer)) {
                     return;
                 }
                 if (event.isHealingInstance()) {
                     return;
                 }
-                if (!event.getCause().contains("Strike")) {
+                if (event.getInstanceFlags().contains(InstanceFlags.DOT)) {
                     return;
                 }
-                if (ThreadLocalRandom.current().nextDouble() > .2) {
+                if (ThreadLocalRandom.current().nextDouble() > chance) {
                     return;
                 }
                 String debuff = DEBUFFS.next();
@@ -96,7 +97,7 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                                 "Disaster Fragment - Wounding",
                                 attacker,
                                 25,
-                                40
+                                60
                         );
                     }
                     case "Burn" -> {
@@ -110,7 +111,7 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                                 CooldownTypes.LOW_LEVEL_DEBUFF,
                                 cooldownManager -> {
                                 },
-                                40,
+                                60,
                                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                                     if (ticksLeft % 20 == 0) {
                                         float healthDamage = victim.getMaxHealth() * 0.005f;
@@ -120,6 +121,7 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                                                 .cause("Burn")
                                                 .source(attacker)
                                                 .value(healthDamage)
+                                                .flags(InstanceFlags.DOT, InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST)
                                         );
                                     }
                                 })
@@ -139,7 +141,7 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                                 CooldownTypes.LOW_LEVEL_DEBUFF,
                                 cooldownManager -> {
                                 },
-                                40,
+                                60,
                                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                                     if (ticksLeft % 20 == 0) {
                                         float healthDamage = victim.getMaxHealth() * 0.005f;
@@ -149,7 +151,7 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                                                 .cause("Bleed")
                                                 .source(attacker)
                                                 .value(healthDamage)
-                                                .flags(InstanceFlags.DOT)
+                                                .flags(InstanceFlags.DOT, InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST)
                                         );
                                     }
                                 })
@@ -170,21 +172,21 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                                 CooldownTypes.LOW_LEVEL_DEBUFF,
                                 cooldownManager -> {
                                 },
-                                40
+                                60
                         ) {
                             @Override
                             public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                                if (totalHealingDone.get() >= 1000) {
-                                    setTicksLeft(0);
-                                    return;
-                                }
+//                                if (totalHealingDone.get() >= 1000) {
+//                                    setTicksLeft(0);
+//                                    return;
+//                                }
                                 float healingMultiplier;
                                 if (event.getSource() == attacker) {
                                     healingMultiplier = 15;
                                 } else {
                                     healingMultiplier = 25;
                                 }
-                                float healValue = Math.min(500, currentDamageValue * healingMultiplier);
+                                float healValue = Math.min(300, currentDamageValue * healingMultiplier);
                                 event.getSource().addInstance(InstanceBuilder
                                         .healing()
                                         .cause("Leech")
@@ -207,7 +209,7 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                                 CooldownTypes.LOW_LEVEL_DEBUFF,
                                 cooldownManager -> {
                                 },
-                                40,
+                                60,
                                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                                     if (ticksElapsed == 0) {
                                         victim.getEntity().showTitle(Title.title(
@@ -261,7 +263,7 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
     @Override
     public String getEffectDescription() {
         return """
-                Your strikes have 20% chance to give mobs a random debuff below for 2s.
+                Your attacks have a 7% (20% for strike abilities) chance to give mobs a random de-buff below for 3 seconds.
                 
                 25% Wounding
                 15% Burn

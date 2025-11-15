@@ -110,7 +110,7 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
     public void onImpact(@Nonnull WarlordsEntity wp, Location newLoc) {
         Utils.playGlobalSound(newLoc, Sound.ITEM_FLINTANDSTEEL_USE, 2, 0.1f);
         EffectUtils.playFirework(newLoc, FireworkEffect.builder().withColor(Color.ORANGE).withColor(Color.RED).with(FireworkEffect.Type.BURST).build(), 1);
-        EffectUtils.displayParticle(Particle.SMOKE, newLoc, 100, 0.4, 0.05, 0.4, 0.2);
+        EffectUtils.displayParticle(Particle.SMOKE, newLoc, 50, 0.4, 0.05, 0.4, 0.2);
         float hitboxValue = hitbox.getCalculatedValue();
         List<WarlordsEntity> enemies = PlayerFilter.entitiesAround(newLoc, hitboxValue, hitboxValue, hitboxValue).aliveEnemiesOf(wp).toList();
         for (WarlordsEntity nearEntity : enemies) {
@@ -156,7 +156,7 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
             }
         }
         if (pveMasterUpgrade2) {
-            wp.addEnergy(wp, "Unforseen Curse", Math.min(200, enemies.size() * 20));
+            wp.addEnergy(wp, "Unforseen Curse", Math.min(200, enemies.size() * 10));
         }
     }
 

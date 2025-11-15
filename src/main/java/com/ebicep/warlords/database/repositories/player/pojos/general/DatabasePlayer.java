@@ -111,6 +111,8 @@ public class DatabasePlayer implements MultiStatsGeneral, TracksMultiAbilityStat
     private CooldownDisplaySettings cooldownDisplaySettings = new CooldownDisplaySettings();
     @Field("action_bar_settings")
     private ActionBarSettings actionBarSettings = new ActionBarSettings();
+    @Field("advanced_hover_messages")
+    private AdvancedHoverMessages advancedHoverMessages = AdvancedHoverMessages.OFF;
 
     private List<Achievement.AbstractAchievementRecord<?>> achievements = new ArrayList<>();
     private List<UUID> ignored = new ArrayList<>();
@@ -521,6 +523,14 @@ public class DatabasePlayer implements MultiStatsGeneral, TracksMultiAbilityStat
 
     public List<StreamChaptersCommand.GameTime> getGameLogs() {
         return gameLogs;
+    }
+
+    public AdvancedHoverMessages getAdvancedHoverMessages() {
+        return advancedHoverMessages;
+    }
+
+    public void setAdvancedHoverMessages(AdvancedHoverMessages advancedHoverMessages) {
+        this.advancedHoverMessages = advancedHoverMessages;
     }
 
     public enum Patches {

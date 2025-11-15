@@ -2,10 +2,7 @@ package com.ebicep.warlords.game.option.pve.treasurehunt;
 
 import com.ebicep.warlords.util.java.Pair;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -18,6 +15,17 @@ public class Floor {
     private final int length;
     private final boolean isValidPattern;
 
+    private static final int KEEP_OUT = 1; // cells of air around every room/corridor
+    private static final int MAX_FRONTIER = 16;  // cap branching queue size
+    private static final double SPREAD_BIAS = 0.6; // map spread bias
+    private static final double TURN_BIAS = 0.35; // corner bias
+    private static final double JUNCTION_BIAS = 0.65; // junction bias
+    private static final int EDGE_TURN_MARGIN = 4;
+    private static final double TURN_AFTER_STRAIGHT = 0.35; // corner after straight bias
+    private static final double STRAIGHT_AFTER_CORNER = 0.8; // straight after corner bias
+    private static final double TRAP_RATE = 0.04; // % chance for rooms to be trapped
+    private static final int TRAP_MIN_SEP = 6; // how many cells after start
+
     public Floor(List<PlacedRoom> placedRooms, int width, int length, boolean isValidPattern) {
         this.placedRooms = placedRooms;
         this.width = width;
@@ -26,25 +34,51 @@ public class Floor {
     }
 
     public static Floor generate(int maxWidth, int maxLength, List<Room> rooms, Random random, int amountOfRooms) {
+        return generate(maxWidth, maxLength, rooms, random, amountOfRooms, 1);
+    }
+
+    public static Floor generate(int maxWidth, int maxLength, List<Room> rooms, Random random, int amountOfRooms, int treasureCount) {
         var placedRooms = new ArrayList<PlacedRoom>();
         var grouped = rooms.stream().collect(Collectors.groupingBy(Room::getRoomType));
 
         var selectedRoom = grouped.get(RoomType.START).get(random.nextInt(grouped.get(RoomType.START).size()));
         var lastPlacedRoom = new PlacedRoom(
-                random.nextInt(maxWidth - selectedRoom.getWidth()),
-                random.nextInt(maxLength - selectedRoom.getLength()),
+                (maxWidth  - selectedRoom.getWidth())  / 2,
+                (maxLength - selectedRoom.getLength()) / 2,
                 selectedRoom);
 
         placedRooms.add(lastPlacedRoom);
 
+        var seeds = seedStartBranches(
+                maxWidth, maxLength,
+                () -> rooms.stream()
+                        .filter(r -> r.getRoomType() == RoomType.NORMAL)
+                        .filter(r -> r.getRoomConnections().size() >= 2),
+                random,
+                placedRooms,
+                lastPlacedRoom
+        );
+
+        if (seeds.size() != lastPlacedRoom.getRoomConnections().size()) {
+            return new Floor(placedRooms, maxWidth, maxLength, false);
+        }
+
+        var frontierStarts = placedRooms.stream()
+                .filter(r -> hasAnyOpenConnector(r, placedRooms::stream));
+
+        Supplier<Stream<Room>> corridorWithTraps = () -> rooms.stream()
+                .filter(r -> r.getRoomConnections().size() >= 2)
+                .filter(r -> r.getRoomType() == RoomType.NORMAL
+                        || r.getRoomType() == RoomType.TRAP);
+
         var newRooms = generateHallwayWithRoom(
                 maxWidth,
                 maxLength,
-                () -> rooms.stream().filter(r -> r.getRoomType() == RoomType.NORMAL),
+                corridorWithTraps,
                 () -> rooms.stream().filter(r -> r.getRoomType() == RoomType.END),
                 random,
                 placedRooms::stream,
-                placedRooms.stream(),
+                frontierStarts,
                 amountOfRooms
         );
 
@@ -54,35 +88,55 @@ public class Floor {
 
         placedRooms.addAll(newRooms);
 
-        int attempts = 0;
         int generatedTreasureRooms = 0;
+        int attempts = 0;
+        final int maxAttempts = Math.max(30, treasureCount * 30);
 
-        while (generatedTreasureRooms < 1) {
-            attempts++;
-
-            if (attempts > 10) {
+        while (generatedTreasureRooms < treasureCount) {
+            if (++attempts > maxAttempts) {
                 return new Floor(placedRooms, maxWidth, maxLength, false);
             }
+
+            var treasureFrontierList = new ArrayList<>(openFrontier(placedRooms).toList());
+            if (treasureFrontierList.isEmpty()) {
+                return new Floor(placedRooms, maxWidth, maxLength, false);
+            }
+
+            Collections.shuffle(treasureFrontierList, random);
 
             var newGeneratedHallway = generateHallwayWithRoom(
                     maxWidth,
                     maxLength,
-                    () -> rooms.stream().filter(r -> r.getRoomType() == RoomType.NORMAL),
+                    () -> rooms.stream()
+                            .filter(r -> r.getRoomType() == RoomType.NORMAL)
+                            .filter(r -> r.getRoomConnections().size() >= 2),
                     () -> rooms.stream().filter(r -> r.getRoomType() == RoomType.TREASURE),
                     random,
                     placedRooms::stream,
-                    placedRooms.stream(),
+                    treasureFrontierList.stream(),
                     amountOfRooms
             );
 
-            if (newGeneratedHallway == null) {
-                continue;
-            }
+            if (newGeneratedHallway == null) continue;
 
             placedRooms.addAll(newGeneratedHallway);
 
-            generatedTreasureRooms++;
+            boolean endedWithTreasure =
+                    !newGeneratedHallway.isEmpty() &&
+                            newGeneratedHallway.get(newGeneratedHallway.size() - 1).getRoomType() == RoomType.TREASURE;
+
+            if (endedWithTreasure) {
+                generatedTreasureRooms++;
+            }
         }
+
+        sealAtBounds(placedRooms, maxWidth, maxLength);
+        trimAgainstBounds(placedRooms, maxWidth, maxLength);
+        capCorridorEnds(placedRooms);
+        trimUnmatchedConnectors(placedRooms);
+
+        long deadEnds = placedRooms.stream().filter(r -> r.getRoomType() == RoomType.DEAD_END).count();
+        System.out.println("Sealed dead-ends: " + deadEnds);
 
         return new Floor(placedRooms, maxWidth, maxLength, true);
     }
@@ -120,12 +174,35 @@ public class Floor {
                 Stream.of(generatedHallway.get(generatedHallway.size() - 1))
         );
 
+
         if (generatedTreasureRoom == null) {
-            return null;
+            // Cap the last corridor segment as a DEAD_END facing inward
+            int lastIdx = generatedHallway.size() - 1;
+            PlacedRoom last = generatedHallway.get(lastIdx);
+
+            // Build list of existing rooms excluding this last segment
+            var existing = Stream.concat(placedRooms.get(), generatedHallway.stream().limit(lastIdx))
+                    .collect(Collectors.toList());
+
+            // Find the inward (matched) connector; keep that direction for the cap
+            var matched = last.getRoomConnections().stream()
+                    .filter(rc -> hasOpposing(last, rc, existing))
+                    .findFirst();
+
+            if (matched.isPresent()) {
+                var keep = matched.get().getRotation();
+                boolean n=false,e=false,s=false,w=false;
+                if (isNorth(keep)) n=true; else if (isEast(keep)) e=true;
+                else if (isSouth(keep)) s=true; else if (isWest(keep)) w=true;
+
+                Room cap = Room.makeSimpleRoom(last.getWidth(), last.getLength(), RoomType.DEAD_END, n, e, s, w);
+                generatedHallway.set(lastIdx, new PlacedRoom(last.getX(), last.getZ(), cap));
+            }
+            // Return the hallway (now capped) even without an ending room
+            return generatedHallway;
         }
 
         generatedHallway.add(generatedTreasureRoom);
-
         return generatedHallway;
     }
 
@@ -138,18 +215,53 @@ public class Floor {
             Stream<PlacedRoom> startingPoint,
             int hallwayLength
     ) {
-        List<PlacedRoom> lastPlacedRooms = new ArrayList<>();
-        for (int i = 0; i < hallwayLength; i++) {
-            var newRoom =  generateRoom(maxWidth, maxLength, rooms, random, () -> Stream.concat(lastPlacedRooms.stream(), placedRooms.get()), startingPoint);
+        List<PlacedRoom> built = new ArrayList<>();
+        List<PlacedRoom> frontier = startingPoint.collect(Collectors.toCollection(ArrayList::new));
+        if (frontier.isEmpty()) return null;
 
-            if (newRoom == null) {
-                return null;
+        for (int i = 0; i < hallwayLength; i++) {
+            // pick the farthest open end most of the time -> spreads out
+            PlacedRoom pivot;
+            if (random.nextDouble() < SPREAD_BIAS) {
+                var all = Stream.concat(placedRooms.get(), built.stream()).collect(Collectors.toList());
+                double cx = all.stream().mapToDouble(r -> r.getX() + r.getWidth()/2.0).average().orElse(0);
+                double cz = all.stream().mapToDouble(r -> r.getZ() + r.getLength()/2.0).average().orElse(0);
+                pivot = frontier.stream().max(Comparator.comparingDouble(f -> {
+                    double fx = f.getX() + f.getWidth()/2.0;
+                    double fz = f.getZ() + f.getLength()/2.0;
+                    double dx = fx - cx, dz = fz - cz;
+                    return dx*dx + dz*dz;
+                })).orElse(frontier.get(0));
+            } else {
+                pivot = frontier.get(random.nextInt(frontier.size()));
             }
 
-            lastPlacedRooms.add(newRoom);
-            startingPoint = Stream.of(newRoom);
+            var newRoom = generateRoom(
+                    maxWidth, maxLength, rooms, random,
+                    () -> Stream.concat(built.stream(), placedRooms.get()),
+                    Stream.of(pivot)
+            );
+
+            if (newRoom == null) {
+                frontier.remove(pivot);
+                if (frontier.isEmpty()) return built.isEmpty() ? null : built;
+                i--; // try again this step with a different pivot
+                continue;
+            }
+
+            built.add(newRoom);
+            frontier.add(newRoom);
+            int extraOpen = (int) newRoom.getRoomConnections().stream()
+                    .filter(con -> isOpenConnector(newRoom, con, () -> Stream.concat(built.stream(), placedRooms.get())))
+                    .count() - 1; // minus the side we just used
+
+            for (int k = 0; k < Math.max(0, extraOpen); k++) {
+                frontier.add(newRoom); // duplicates = higher chance to pick soon
+            }
+            if (frontier.size() > MAX_FRONTIER) frontier.remove(0);
         }
-        return lastPlacedRooms;
+
+        return built;
     }
 
     private static PlacedRoom generateRoom(
@@ -160,35 +272,233 @@ public class Floor {
             Supplier<Stream<PlacedRoom>> placedRooms,
             Stream<PlacedRoom> startingPoint
     ) {
-        return startingPoint.flatMap(lastPlacedRoom -> lastPlacedRoom.getRoomConnections().stream().flatMap(selectedConnection -> rooms.get()
-                .flatMap(
-                        r -> r.getRoomConnections().stream().map(s -> new Pair<>(r, s))
-                )
-                .filter(
-                        p -> p.getB().getRotation().isOpposite(selectedConnection.getRotation())
-                )
-                .map(p -> new PlacedRoom(
-                        lastPlacedRoom.getX() + selectedConnection.getX() - p.getB().getX() + selectedConnection.getRotation().getX(),
-                        lastPlacedRoom.getZ() + selectedConnection.getZ() - p.getB().getZ() + selectedConnection.getRotation().getZ(),
-                        p.getA()
-                ))))
-                .filter(p ->
-                        p.getX() >= 0 &&
-                        p.getZ() >= 0 &&
-                        p.getX() + p.getWidth() < maxWidth &&
-                        p.getZ() + p.getLength() < maxLength
-                )
-                .filter(p -> placedRooms.get().noneMatch(p::overlaps))
-                .filter(candidate -> placedRooms.get().noneMatch(
-                        candidate::checkHasValidConnections
-                ))
-                .filter(candidate -> placedRooms.get().flatMap(other -> other.getRoomConnections().stream().filter(
-                        con -> candidate.contains(
-                                other.getX() + con.getX() + con.getRotation().getX(),
-                                other.getZ() + con.getZ() + con.getRotation().getZ())
-                        )).count() < 2
-                )
-                .collect(randomElement(random));
+        return startingPoint.flatMap(lastPlacedRoom -> {
+                    final boolean prevStraight = wasPrevStraight(lastPlacedRoom); // capture once
+
+                    return lastPlacedRoom.getRoomConnections().stream()
+                            .filter(con -> isOpenConnector(lastPlacedRoom, con, placedRooms))
+                            .flatMap(selectedConnection -> rooms.get()
+                                    .flatMap(r -> r.getRoomConnections().stream().map(s -> new Pair<>(r, s)))
+                                    .filter(p -> p.getB().getRotation().isOpposite(selectedConnection.getRotation()))
+                                    .filter(p -> {
+                                        boolean straight = isStraightCandidate(p.getA(), p.getB());
+                                        if (!straight) return true; // corners/junctions always okay
+
+                                        int d = distToEdgeForConnector(maxWidth, maxLength, lastPlacedRoom, selectedConnection);
+                                        return d > EDGE_TURN_MARGIN;
+                                    })
+                                    .map(p -> {
+                                        PlacedRoom pr = new PlacedRoom(
+                                                lastPlacedRoom.getX() + selectedConnection.getX() - p.getB().getX() + selectedConnection.getRotation().getX(),
+                                                lastPlacedRoom.getZ() + selectedConnection.getZ() - p.getB().getZ() + selectedConnection.getRotation().getZ(),
+                                                p.getA()
+                                        );
+
+                                        int tx = lastPlacedRoom.getX() + selectedConnection.getX() + selectedConnection.getRotation().getX();
+                                        int tz = lastPlacedRoom.getZ() + selectedConnection.getZ() + selectedConnection.getRotation().getZ();
+                                        int dx = selectedConnection.getRotation().getX(); // direction we stepped
+                                        int dz = selectedConnection.getRotation().getZ();
+
+                                        return new Pair<>(pr, new Pair<>(prevStraight, new int[]{ tx, tz, dx, dz }));
+                                    }));
+                })
+                .filter(pair -> { var p = pair.getA();
+                    return p.getX() >= 0 && p.getZ() >= 0 &&
+                                p.getX() + p.getWidth() <= maxWidth &&
+                                p.getZ() + p.getLength() <= maxLength; })
+                .filter(pair -> placedRooms.get().noneMatch(other -> pair.getA().overlaps(other)))
+                .filter(pair -> placedRooms.get().allMatch(other -> {
+                    var p = pair.getA();
+                    if (connectsTo(p, other)) return true; // only the intended snap may bypass spacing
+
+                    if (isCorridor(p) && isCorridor(other)) {
+                        if (touchAtCorner(p, other)) return true; // allow diagonal corner touch
+                        if (shareEdge(p, other)) return false;
+                    }
+                    return boxDistanceChebyshev(p, other) >= KEEP_OUT;
+                }))
+                .filter(pair -> {
+                    PlacedRoom cand = pair.getA();
+                    var meta = pair.getB();
+                    int[] m = meta.getB();   // {tx, tz, dx, dz}
+                    int tx = m[0], tz = m[1];
+                    int dx = m.length > 2 ? m[2] : 0;
+                    int dz = m.length > 3 ? m[3] : 0;
+
+                    if (isCorridor(cand) && isStraightPiece(cand)) {
+                        int doorX = tx + dx;
+                        int doorZ = tz + dz;
+
+                        int distToEdge =
+                                dx > 0 ? (maxWidth  - 1 - doorX) :
+                                        dx < 0 ? doorX :
+                                                dz > 0 ? (maxLength - 1 - doorZ) :
+                                                        doorZ;
+
+                        if (distToEdge <= 0) return false;
+
+                        return distToEdge >= EDGE_TURN_MARGIN || !(random.nextDouble() < 0.9);
+                    }
+                    return true;
+                })
+                .filter(pair -> {
+                    PlacedRoom cand = pair.getA();
+                    if (cand.getRoomType() != RoomType.TRAP) return true;
+                    if (!isStraightPiece(cand)) return false;
+                    if (random.nextDouble() >= TRAP_RATE) return false;
+
+                    PlacedRoom start = placedRooms.get().findFirst().orElse(null);
+
+                    return start == null || boxDistanceChebyshev(cand, start) >= TRAP_MIN_SEP;
+                })
+                .filter(pair -> {
+                    var cand = pair.getA();
+                    var meta = pair.getB();
+                    int[] t = meta.getB(); // {tx,tz}
+                    int tx = t[0], tz = t[1];
+
+                    if (!cand.contains(tx, tz)) return false; // didn’t actually snap to the pivot
+
+                    long totalTouches = placedRooms.get().flatMap(other ->
+                            other.getRoomConnections().stream().filter(con ->
+                                    cand.contains(
+                                            other.getX() + con.getX() + con.getRotation().getX(),
+                                            other.getZ() + con.getZ() + con.getRotation().getZ()
+                                    )
+                            )
+                    ).count();
+
+                    return totalTouches >= 1; // pivot only
+                })
+                .collect(Collectors.collectingAndThen(Collectors.toList(), list -> {
+                    if (list.isEmpty()) return null;
+
+                    java.util.function.Function<Pair<PlacedRoom,Boolean>, PlacedRoom> R = Pair::getA;
+                    boolean prevStraight = list.stream().anyMatch(p -> p.getB().getA());
+                    var all = list.stream().map(Pair::getA).collect(Collectors.toList());
+                    var junctions = all.stream().filter(pr -> pr.getRoomConnections().size() >= 3).collect(Collectors.toList());
+                    var corners   = all.stream().filter(Floor::isCornerPiece).collect(Collectors.toList());
+                    var straights = all.stream().filter(Floor::isStraightPiece).collect(Collectors.toList());
+
+                    List<PlacedRoom> pool = all;
+
+                    if (!prevStraight && !straights.isEmpty() && random.nextDouble() < STRAIGHT_AFTER_CORNER) {
+                        pool = straights;
+                    }
+                    else if (prevStraight && !corners.isEmpty() && random.nextDouble() < TURN_AFTER_STRAIGHT) {
+                        pool = corners;
+                    }
+                    else if (!junctions.isEmpty() && random.nextDouble() < JUNCTION_BIAS) {
+                        pool = junctions;
+                    }
+                    else if (!corners.isEmpty() && random.nextDouble() < TURN_BIAS) {
+                        pool = corners;
+                    }
+
+                    return pool.stream()
+                            .max(Comparator.comparingDouble(pr ->
+                                    spreadScore(pr, () -> Stream.concat(placedRooms.get(), Stream.empty()))))
+                            .orElse(pool.get(random.nextInt(pool.size())));
+                }));
+    }
+
+    private static List<PlacedRoom> seedStartBranches(
+            int maxWidth,
+            int maxLength,
+            Supplier<Stream<Room>> rooms,
+            Random random,
+            List<PlacedRoom> placedRooms,
+            PlacedRoom start
+    ) {
+        List<PlacedRoom> seeds = new ArrayList<>();
+        Supplier<Stream<PlacedRoom>> placed = placedRooms::stream;
+
+        // Pre-split catalog once for speed
+        List<Room> catalog = rooms.get().toList();
+        List<Room> straights = catalog.stream().filter(Floor::isStraightRoom).toList();
+        List<Room> corners   = catalog.stream()
+                .filter(r -> r.getRoomConnections().size() == 2)
+                .filter(r -> {
+                    var a = r.getRoomConnections().get(0).getRotation();
+                    var b = r.getRoomConnections().get(1).getRotation();
+                    return !a.isOpposite(b);
+                })
+                .toList();
+
+        for (RoomConnection selected : start.getRoomConnections()) {
+
+            // Try 1: STRAIGHT piece outward from start
+            PlacedRoom choice = Stream.concat(
+                            straights.stream(),
+                            Stream.empty()
+                    )
+                    .flatMap(r -> r.getRoomConnections().stream()
+                            .filter(s -> s.getRotation().isOpposite(selected.getRotation()))
+                            .map(s -> new AbstractMap.SimpleEntry<>(r, s)))
+                    .map(p -> new PlacedRoom(
+                            start.getX() + selected.getX() - p.getValue().getX() + selected.getRotation().getX(),
+                            start.getZ() + selected.getZ() - p.getValue().getZ() + selected.getRotation().getZ(),
+                            p.getKey()
+                    ))
+                    .filter(pr -> // bounds
+                            pr.getX() >= 0 && pr.getZ() >= 0 &&
+                                    pr.getX() + pr.getWidth()  <= maxWidth &&
+                                    pr.getZ() + pr.getLength() <= maxLength)
+                    .filter(pr -> // no overlap
+                            placed.get().noneMatch(pr::overlaps) &&
+                                    seeds.stream().noneMatch(pr::overlaps))
+                    .filter(pr -> { // spacing (relax against seeds)
+                        return Stream.concat(placed.get(), seeds.stream()).allMatch(other -> {
+                            if (connectsTo(pr, other)) return true;
+                            if (isCorridor(pr) && isCorridor(other)) {
+                                if (touchAtCorner(pr, other)) return true;
+                                if (shareEdge(pr, other)) return false;
+                            }
+                            return boxDistanceChebyshev(pr, other) >= KEEP_OUT;
+                        });
+                    })
+                    .findAny()
+                    .orElse(null);
+
+            // Try 2: CORNER piece (if straight fails OR straight would drive into edge soon)
+            if (choice == null) {
+                choice = corners.stream()
+                        .flatMap(r -> r.getRoomConnections().stream()
+                                .filter(s -> s.getRotation().isOpposite(selected.getRotation()))
+                                .map(s -> new AbstractMap.SimpleEntry<>(r, s)))
+                        .map(p -> new PlacedRoom(
+                                start.getX() + selected.getX() - p.getValue().getX() + selected.getRotation().getX(),
+                                start.getZ() + selected.getZ() - p.getValue().getZ() + selected.getRotation().getZ(),
+                                p.getKey()
+                        ))
+                        .filter(pr ->
+                                pr.getX() >= 0 && pr.getZ() >= 0 &&
+                                        pr.getX() + pr.getWidth()  <= maxWidth &&
+                                        pr.getZ() + pr.getLength() <= maxLength)
+                        .filter(pr -> placed.get().noneMatch(pr::overlaps) &&
+                                seeds.stream().noneMatch(pr::overlaps))
+                        .filter(pr -> Stream.concat(placed.get(), seeds.stream()).allMatch(other -> {
+                            if (connectsTo(pr, other)) return true;
+                            if (isCorridor(pr) && isCorridor(other)) {
+                                if (touchAtCorner(pr, other)) return true;
+                                if (shareEdge(pr, other)) return false;
+                            }
+                            return boxDistanceChebyshev(pr, other) >= KEEP_OUT;
+                        }))
+                        .findAny()
+                        .orElse(null);
+            }
+
+            if (choice == null) {
+                // cannot fill this side -> stop early; caller will mark gen invalid & retry
+                return seeds;
+            }
+
+            placedRooms.add(choice);
+            seeds.add(choice);
+        }
+
+        return seeds;
     }
 
     // SOUTH = +Z
@@ -199,9 +509,13 @@ public class Floor {
     public static void main(String[] args) {
         var rooms = new ArrayList<Room>();
         int roomSize = 7;
-        rooms.add(makeDemoRoom(roomSize, roomSize, RoomType.START, true, false, false, false));
+        rooms.add(makeDemoRoom(roomSize, roomSize, RoomType.START, true, true, true, true));
+        // T junction
         rooms.add(makeDemoRoom(roomSize, roomSize, RoomType.NORMAL, true, true, true, false));
         rooms.add(makeDemoRoom(roomSize, roomSize, RoomType.NORMAL, false, true, true, true));
+        rooms.add(makeDemoRoom(roomSize, roomSize, RoomType.NORMAL, true, false, true, true));
+        rooms.add(makeDemoRoom(roomSize, roomSize, RoomType.NORMAL, true, true, false, true));
+
         rooms.add(makeDemoRoom(roomSize, roomSize, RoomType.NORMAL, true, true, true, true));
         rooms.add(makeDemoRoom(roomSize, roomSize, RoomType.NORMAL, false, false, true, true));
         rooms.add(makeDemoRoom(roomSize, roomSize, RoomType.NORMAL, true, true, false, false));
@@ -214,7 +528,7 @@ public class Floor {
         var random = new Random();
         Floor floor;
         do {
-            floor = generate(160, 160, rooms, random, 5);
+            floor = generate(160, 160, rooms, random, 40);
             System.out.println("Generation: " + floor.isValidPattern);
         } while (!floor.isValidPattern);
 
@@ -241,8 +555,17 @@ public class Floor {
             }
 
             for (var connection : room.getRoomConnections()) {
-                grid[room.getZ() + connection.getZ()][room.getX() + connection.getX()] = ' ';
+                int cx = room.getX() + connection.getX();
+                int cz = room.getZ() + connection.getZ();
+                grid[cz][cx] = ' ';
+                int bx = cx + connection.getRotation().getX();
+                int bz = cz + connection.getRotation().getZ();
+                if (bz >= 0 && bz < this.length && bx >= 0 && bx < this.width) {
+                    if (grid[bz][bx] == ' ') grid[bz][bx] = '.';
+                }
             }
+
+            drawCorridorInterior(grid, room);
         }
 
         StringBuilder builder = new StringBuilder(length * width + length + 6);
@@ -301,6 +624,325 @@ public class Floor {
                 Collector.Characteristics.CONCURRENT,
                 Collector.Characteristics.UNORDERED
         );
+    }
+
+    private static boolean overlapsWithMargin(PlacedRoom a, PlacedRoom b, int m) {
+        int ax1 = a.getX() - m,                az1 = a.getZ() - m;
+        int ax2 = a.getX() + a.getWidth() - 1 + m;
+        int az2 = a.getZ() + a.getLength() - 1 + m;
+
+        int bx1 = b.getX() - m,                bz1 = b.getZ() - m;
+        int bx2 = b.getX() + b.getWidth() - 1 + m;
+        int bz2 = b.getZ() + b.getLength() - 1 + m;
+
+        return ax1 <= bx2 && ax2 >= bx1 && az1 <= bz2 && az2 >= bz1;
+    }
+
+    // corridors = NORMAL with exactly 2 connectors
+    private static boolean isCorridor(PlacedRoom r) {
+        return r.getRoomConnections().size() == 2 &&
+                (r.getRoomType() == RoomType.NORMAL || r.getRoomType() == RoomType.TRAP);
+    }
+
+    private static void trimUnmatchedConnectors(List<PlacedRoom> placed) {
+        for (int i = 0; i < placed.size(); i++) {
+            PlacedRoom pr = placed.get(i);
+            if (pr.getRoomType() != RoomType.NORMAL) continue;
+            // compute which connectors actually have an opposing neighbor
+            var matched = pr.getRoomConnections().stream().filter(rc -> hasOpposing(pr, rc, placed)).toList();
+            if (matched.size() == pr.getRoomConnections().size()) continue; // already perfect
+            if (matched.isEmpty()) continue; // isolated (rare), leave as-is or remove if you want
+
+            boolean n=false,e=false,s=false,w=false;
+            for (var rc : matched) {
+                var f = rc.getRotation();
+                if (isNorth(f)) n = true; else if (isEast(f)) e = true;
+                else if (isSouth(f)) s = true; else if (isWest(f)) w = true;
+            }
+
+            RoomType type = (matched.size() == 1) ? RoomType.DEAD_END : RoomType.NORMAL;
+            Room replacement = Room.makeSimpleRoom(pr.getWidth(), pr.getLength(), type, n, e, s, w);
+            placed.set(i, new PlacedRoom(pr.getX(), pr.getZ(), replacement));
+        }
+    }
+
+    // Is the given connector on 'room' still unused (no opposing connector already there)?
+    private static boolean isOpenConnector(PlacedRoom room, RoomConnection con, Supplier<Stream<PlacedRoom>> placedRooms) {
+        int tx = room.getX() + con.getX() + con.getRotation().getX();
+        int tz = room.getZ() + con.getZ() + con.getRotation().getZ();
+
+        return placedRooms.get()
+                .filter(other -> other != room)
+                .noneMatch(other ->
+                        other.getRoomConnections().stream().anyMatch(oc ->
+                                tx == other.getX() + oc.getX() + oc.getRotation().getX() &&
+                                        tz == other.getZ() + oc.getZ() + oc.getRotation().getZ()
+                        )
+                );
+    }
+
+    // Does this 2-connector corridor bend (corner) instead of straight?
+    private static boolean isCornerPiece(PlacedRoom pr) {
+        if (!isCorridor(pr)) return false;
+        var a = pr.getRoomConnections().get(0).getRotation();
+        var b = pr.getRoomConnections().get(1).getRotation();
+        return !a.isOpposite(b); // opposite = straight; otherwise = corner
+    }
+
+    // Does 'candidate' connect to 'other' via any of other's connectors?
+    private static boolean connectsTo(PlacedRoom candidate, PlacedRoom other) {
+        return other.getRoomConnections().stream().anyMatch(con ->
+                candidate.contains(
+                        other.getX() + con.getX() + con.getRotation().getX(),
+                        other.getZ() + con.getZ() + con.getRotation().getZ()
+                )
+        );
+    }
+
+    private static int sep1D(int a1,int a2,int b1,int b2){ if(a2<b1) return b1-a2-1; if(b2<a1) return a1-b2-1; return 0; }
+
+    private static int boxDistanceChebyshev(PlacedRoom a, PlacedRoom b){
+        int ax1=a.getX(), ax2=a.getX()+a.getWidth()-1,  az1=a.getZ(), az2=a.getZ()+a.getLength()-1;
+        int bx1=b.getX(), bx2=b.getX()+b.getWidth()-1,  bz1=b.getZ(), bz2=b.getZ()+b.getLength()-1;
+        return Math.max(sep1D(ax1,ax2,bx1,bx2), sep1D(az1,az2,bz1,bz2));
+    }
+
+    private static double spreadScore(PlacedRoom candidate, Supplier<Stream<PlacedRoom>> placedRooms) {
+        var existing = placedRooms.get().collect(Collectors.toList());
+        if (existing.isEmpty()) return 0;
+
+        double cx = existing.stream().mapToDouble(r -> r.getX()+r.getWidth()/2.0).average().orElse(0);
+        double cz = existing.stream().mapToDouble(r -> r.getZ()+r.getLength()/2.0).average().orElse(0);
+        double mx = candidate.getX()+candidate.getWidth()/2.0;
+        double mz = candidate.getZ()+candidate.getLength()/2.0;
+        double dCentroid = Math.hypot(mx - cx, mz - cz);
+
+        double dNearest = existing.stream()
+                .mapToDouble(r -> boxDistanceChebyshev(candidate, r))
+                .min().orElse(0);
+
+        return dCentroid + 2.0 * dNearest;
+    }
+
+    private void drawCorridorInterior(char[][] grid, PlacedRoom room) {
+        if (room.getRoomType() != RoomType.NORMAL || room.getRoomConnections().size() != 2) return;
+
+        var a = room.getRoomConnections().get(0);
+        var b = room.getRoomConnections().get(1);
+
+        int ax = room.getX() + a.getX() - a.getRotation().getX();
+        int az = room.getZ() + a.getZ() - a.getRotation().getZ();
+        int bx = room.getX() + b.getX() - b.getRotation().getX();
+        int bz = room.getZ() + b.getZ() - b.getRotation().getZ();
+
+        // straight hallway
+        if (ax == bx) {
+            for (int z = Math.min(az, bz); z <= Math.max(az, bz); z++) grid[z][ax] = '.';
+            return;
+        }
+        if (az == bz) {
+            for (int x = Math.min(ax, bx); x <= Math.max(ax, bx); x++) grid[az][x] = '.';
+            return;
+        }
+
+        // corner hallway: go via the room center
+        int mx = room.getX() + room.getWidth()  / 2;
+        int mz = room.getZ() + room.getLength() / 2;
+        for (int x = Math.min(ax, mx); x <= Math.max(ax, mx); x++) grid[az][x] = '.';
+        for (int z = Math.min(az, mz); z <= Math.max(az, mz); z++) grid[z][mx] = '.';
+        for (int x = Math.min(mx, bx); x <= Math.max(mx, bx); x++) grid[bz][x] = '.';
+    }
+
+    private static boolean isStraightCandidate(Room candidateRoom, RoomConnection candidateConn) {
+        return candidateRoom.getRoomConnections().stream()
+                .anyMatch(rc -> rc != candidateConn && rc.getRotation().isOpposite(candidateConn.getRotation()));
+    }
+
+    private static boolean hasOpposing(PlacedRoom a, RoomConnection ac, List<PlacedRoom> others) {
+        int tx = a.getX() + ac.getX() + ac.getRotation().getX();
+        int tz = a.getZ() + ac.getZ() + ac.getRotation().getZ();
+        return others.stream()
+                .filter(o -> o != a)
+                .anyMatch(o -> o.getRoomConnections().stream().anyMatch(oc ->
+                        oc.getRotation().isOpposite(ac.getRotation()) &&
+                                tx == o.getX() + oc.getX() + oc.getRotation().getX() &&
+                                tz == o.getZ() + oc.getZ() + oc.getRotation().getZ()
+                ));
+    }
+
+    private static boolean isStraightPiece(PlacedRoom pr) {
+        if (!isCorridor(pr)) return false;
+        var rc = pr.getRoomConnections();
+        return rc.get(0).getRotation().isOpposite(rc.get(1).getRotation());
+    }
+
+    private static Stream<PlacedRoom> openFrontier(List<PlacedRoom> placed) {
+        return placed.stream().filter(r -> hasAnyOpenConnector(r, placed::stream));
+    }
+
+    private static boolean isNorth(RoomFace f){return f==RoomFace.NORTH_EVEN_PARITY||f==RoomFace.NORTH_ODD_PARITY;}
+    private static boolean isEast (RoomFace f){return f==RoomFace.EAST_EVEN_PARITY ||f==RoomFace.EAST_ODD_PARITY;}
+    private static boolean isSouth(RoomFace f){return f==RoomFace.SOUTH_EVEN_PARITY||f==RoomFace.SOUTH_ODD_PARITY;}
+    private static boolean isWest (RoomFace f){return f==RoomFace.WEST_EVEN_PARITY ||f==RoomFace.WEST_ODD_PARITY;}
+
+    private static void capCorridorEnds(List<PlacedRoom> placed) {
+        for (int i = 0; i < placed.size(); i++) {
+            PlacedRoom pr = placed.get(i);
+            if (!isCorridor(pr) || pr.getRoomType() == RoomType.TRAP) continue;
+
+            var a = pr.getRoomConnections().get(0);
+            var b = pr.getRoomConnections().get(1);
+            boolean aMatched = hasOpposing(pr, a, placed);
+            boolean bMatched = hasOpposing(pr, b, placed);
+
+            if ((aMatched && bMatched) || (!aMatched && !bMatched)) continue;
+
+            RoomFace keep = aMatched ? a.getRotation() : b.getRotation();
+            boolean n=false,e=false,s=false,w=false;
+            if (isNorth(keep)) n=true; else if (isEast(keep)) e=true;
+            else if (isSouth(keep)) s=true; else if (isWest(keep)) w=true;
+
+            Room cap = Room.makeSimpleRoom(pr.getWidth(), pr.getLength(), RoomType.DEAD_END, n, e, s, w);
+            placed.set(i, new PlacedRoom(pr.getX(), pr.getZ(), cap));
+        }
+    }
+
+    private static boolean isStraightRoom(Room r) {
+        if (r.getRoomConnections().size() != 2) return false;
+        var a = r.getRoomConnections().get(0).getRotation();
+        var b = r.getRoomConnections().get(1).getRotation();
+        return a.isOpposite(b);
+    }
+
+    private static boolean hasAnyOpenConnector(PlacedRoom r, Supplier<Stream<PlacedRoom>> placed) {
+        return r.getRoomConnections().stream().anyMatch(con -> isOpenConnector(r, con, placed));
+    }
+
+    private static boolean wasPrevStraight(PlacedRoom last) {
+        if (!isCorridor(last)) return false;
+        var rc = last.getRoomConnections();
+        if (rc.size() != 2) return false;
+        return rc.get(0).getRotation().isOpposite(rc.get(1).getRotation());
+    }
+
+    private static boolean overlap1D(int a1, int a2, int b1, int b2) {
+        return a1 <= b2 && b1 <= a2;
+    }
+
+    private static boolean shareEdge(PlacedRoom a, PlacedRoom b) {
+        int ax1=a.getX(), ax2=a.getX()+a.getWidth()-1,  az1=a.getZ(), az2=a.getZ()+a.getLength()-1;
+        int bx1=b.getX(), bx2=b.getX()+b.getWidth()-1,  bz1=b.getZ(), bz2=b.getZ()+b.getLength()-1;
+
+        int sepX = sep1D(ax1, ax2, bx1, bx2); // 0 means boxes are face-adjacent in X
+        int sepZ = sep1D(az1, az2, bz1, bz2); // 0 means face-adjacent in Z
+
+        boolean overlapX = overlap1D(ax1, ax2, bx1, bx2);
+        boolean overlapZ = overlap1D(az1, az2, bz1, bz2);
+
+        // sharing an edge = face-adjacent in one axis AND overlapping in the other
+        return (sepX == 0 && overlapZ) || (sepZ == 0 && overlapX);
+    }
+
+    private static boolean touchAtCorner(PlacedRoom a, PlacedRoom b) {
+        int ax1=a.getX(), ax2=a.getX()+a.getWidth()-1,  az1=a.getZ(), az2=a.getZ()+a.getLength()-1;
+        int bx1=b.getX(), bx2=b.getX()+b.getWidth()-1,  bz1=b.getZ(), bz2=b.getZ()+b.getLength()-1;
+
+        int sepX = sep1D(ax1, ax2, bx1, bx2);
+        int sepZ = sep1D(az1, az2, bz1, bz2);
+
+        boolean overlapX = overlap1D(ax1, ax2, bx1, bx2);
+        boolean overlapZ = overlap1D(az1, az2, bz1, bz2);
+
+        // corner kiss = no overlap on either axis, but zero separation on both (meet at one point)
+        return (sepX == 0 && sepZ == 0 && !overlapX && !overlapZ);
+    }
+
+    private static int distToEdgeForConnector(
+            int maxWidth, int maxLength,
+            PlacedRoom base, RoomConnection con
+    ) {
+        int dirX  = con.getRotation().getX();
+        int dirZ  = con.getRotation().getZ();
+        int doorX = base.getX() + con.getX() + dirX;
+        int doorZ = base.getZ() + con.getZ() + dirZ;
+
+        return (dirX > 0) ? (maxWidth  - 1 - doorX)
+                : (dirX < 0) ? doorX
+                : (dirZ > 0) ? (maxLength - 1 - doorZ)
+                : doorZ;
+    }
+
+    private static void trimAgainstBounds(List<PlacedRoom> placed, int maxW, int maxL) {
+        for (int i = 0; i < placed.size(); i++) {
+            PlacedRoom pr = placed.get(i);
+            if (pr.getRoomType() != RoomType.NORMAL) continue;
+
+            boolean n=false,e=false,s=false,w=false;
+
+            for (var rc : pr.getRoomConnections()) {
+                int tx = pr.getX() + rc.getX() + rc.getRotation().getX();
+                int tz = pr.getZ() + rc.getZ() + rc.getRotation().getZ();
+                if (tx < 0 || tx >= maxW || tz < 0 || tz >= maxL) continue;
+                var f = rc.getRotation();
+                if (isNorth(f)) n = true; else if (isEast(f)) e = true;
+                else if (isSouth(f)) s = true; else if (isWest(f)) w = true;
+            }
+            int keep = (n?1:0)+(e?1:0)+(s?1:0)+(w?1:0);
+            if (keep == pr.getRoomConnections().size()) continue;
+            RoomType type = (keep == 1) ? RoomType.DEAD_END : RoomType.NORMAL;
+            Room repl = Room.makeSimpleRoom(pr.getWidth(), pr.getLength(), type, n,e,s,w);
+            placed.set(i, new PlacedRoom(pr.getX(), pr.getZ(), repl));
+        }
+    }
+
+    private static void sealAtBounds(List<PlacedRoom> placed, int maxWidth, int maxLength) {
+        for (int i = 0; i < placed.size(); i++) {
+            PlacedRoom pr = placed.get(i);
+
+            if (pr.getRoomType() != RoomType.NORMAL) continue;
+            boolean n=false,e=false,s=false,w=false;
+            int kept = 0;
+
+            for (var rc : pr.getRoomConnections()) {
+                int bx = pr.getX() + rc.getX() + rc.getRotation().getX();
+                int bz = pr.getZ() + rc.getZ() + rc.getRotation().getZ();
+                if (bx < 0 || bx >= maxWidth || bz < 0 || bz >= maxLength) {
+                    continue; // drop border-facing socket
+                }
+                var f = rc.getRotation();
+                if (isNorth(f)) n=true; else if (isEast(f)) e=true;
+                else if (isSouth(f)) s=true; else if (isWest(f)) w=true;
+                kept++;
+            }
+
+            if (kept == pr.getRoomConnections().size()) continue; // nothing clipped
+
+            RoomType type;
+            if (kept <= 1) {
+                // 0 or 1 valid sockets -> make it a DEAD_END pointing inward if possible
+                if (kept == 0) {
+                    // try to keep the side that actually connects to a neighbor
+                    var inward = pr.getRoomConnections().stream()
+                            .filter(rc -> hasOpposing(pr, rc, placed))
+                            .findFirst();
+                    if (inward.isPresent()) {
+                        n=e=s=w=false;
+                        var f = inward.get().getRotation();
+                        if (isNorth(f)) n=true; else if (isEast(f)) e=true;
+                        else if (isSouth(f)) s=true; else if (isWest(f)) w=true;
+                    } else {
+                        // isolated oddity; just skip changing this room
+                        continue;
+                    }
+                }
+                type = RoomType.DEAD_END;
+            } else {
+                type = RoomType.NORMAL; // 2 or more kept -> becomes a regular corridor/junction with only in-bounds faces
+            }
+
+            Room replacement = Room.makeSimpleRoom(pr.getWidth(), pr.getLength(), type, n, e, s, w);
+            placed.set(i, new PlacedRoom(pr.getX(), pr.getZ(), replacement));
+        }
     }
 
     public boolean isValidPattern() {

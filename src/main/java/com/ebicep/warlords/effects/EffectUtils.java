@@ -996,4 +996,16 @@ public class EffectUtils {
         playSpiralAnimation(false, wp, playerLoc, maxAnimationEffects, maxAnimationTime, playAdditionalEffects, customParticles, particles);
     }
 
+    public static void drawRing(World w, Location center, double radius, double step) {
+        if (radius <= 0) return;
+        double twoPi = Math.PI * 2.0;
+        // step is arc-length; convert to angle step = step / radius
+        double angStep = Math.max(0.02, step / Math.max(0.1, radius));
+        for (double a = 0; a < twoPi; a += angStep) {
+            double x = center.getX() + Math.cos(a) * radius;
+            double z = center.getZ() + Math.sin(a) * radius;
+            Location p = new Location(w, x, center.getY() + 1, z);
+            EffectUtils.displayParticle(Particle.ASH, p, 1);
+        }
+    }
 }

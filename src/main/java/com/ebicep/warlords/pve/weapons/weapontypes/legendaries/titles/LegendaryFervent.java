@@ -6,6 +6,7 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCounter;
@@ -100,24 +101,6 @@ public class LegendaryFervent extends AbstractLegendaryWeapon implements Passive
         player.getGame().registerEvents(new Listener() {
 
             @EventHandler
-            public void onDamageHealing(WarlordsDamageHealingEvent event) {
-                if (!event.getSource().equals(player)) {
-                    return;
-                }
-                if (event.isHealingInstance()) {
-                    return;
-                }
-                if (player.getCooldownManager().hasCooldownFromName("Fervent Ability")) {
-                    if (!event.getCause().contains("Strike")) {
-                        return;
-                    }
-                    float strikeDamageBoost = 1 + (ABILITY_STRIKE_DAMAGE_BOOST + ABILITY_STRIKE_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel()) / 100f;
-                    event.setMin(event.getMin() * strikeDamageBoost);
-                    event.setMax(event.getMax() * strikeDamageBoost);
-                }
-            }
-
-            @EventHandler
             public void onDamageHealingFinal(WarlordsDamageHealingFinalEvent event) {
                 if (!event.getWarlordsEntity().equals(player)) {
                     return;
@@ -196,7 +179,23 @@ public class LegendaryFervent extends AbstractLegendaryWeapon implements Passive
                                 cooldownManager -> {
                                 },
                                 (ABILITY_DURATION + ABILITY_DURATION_PER_UPGRADE * getTitleLevel()) * 20
-                        ));
+                        ) {
+                            @Override
+                            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                                if (!event.getSource().equals(player)) {
+                                    return currentDamageValue;
+                                }
+                                if (event.isHealingInstance()) {
+                                    return currentDamageValue;
+                                }
+                                if (!event.getCause().contains("Strike") || event.getFlags().contains(InstanceFlags.IGNORE_FERVENT_TITLE)) {
+                                    return currentDamageValue;
+                                }
+
+                                float strikeDamageBoost = 1 + (ABILITY_STRIKE_DAMAGE_BOOST + ABILITY_STRIKE_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel()) / 100f;
+                                return currentDamageValue * strikeDamageBoost;
+                            }
+                        });
                         passiveCooldown = 40 * GameRunnable.SECOND;
                     }
                 } else {

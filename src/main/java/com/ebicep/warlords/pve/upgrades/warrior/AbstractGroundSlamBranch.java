@@ -25,7 +25,7 @@ public class AbstractGroundSlamBranch<T extends AbstractGroundSlam> extends Abst
         masterUpgrade = new Upgrade(
                 "Earthen Tremor",
                 "Ground Slam - Master Upgrade",
-                "Casting Ground Slam will leap you in the air for a short duration. Upon landing, activate a second Ground Slam for 150% of the original damage.",
+                "Casting Ground Slam will leap you in the air for a short duration. Upon landing, activate a second Ground Slam for 200% of the original damage.",
                 50000,
                 () -> {
 

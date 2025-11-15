@@ -67,7 +67,9 @@ public class EventBleueGrimoire extends EventGrimoire {
     @Override
     public Set<Ability<?>> getAbilitiesM1() {
         return Set.of(
-                Ability.ARCANE_SHIELD,
+                Ability.ARCANE_SHIELD_PYROMANCER,
+                Ability.ARCANE_SHIELD_CRYOMANCER,
+                Ability.ARCANE_SHIELD_AQUAMANCER,
                 Ability.BLOOD_LUST,
                 Ability.LIGHTNING_ROD,
                 Ability.CHAIN_HEAL,

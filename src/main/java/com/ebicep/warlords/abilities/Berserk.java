@@ -4,17 +4,23 @@ import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.effects.FallingBlockWaveEffect;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.berserker.BerserkBranch;
+import com.ebicep.warlords.util.warlords.GameRunnable;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -44,23 +50,17 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
         this.damageIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageIncrease"), float.class);
     }
 
+    //TODO remove
+    private float absorbedDamage = 0;
+    private int cooldown = 0;
+
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "warrior.berserk.activation", 2, 1);
         wp.addSpeedModifier(wp, name, speedBuff, tickDuration);
         wp.getCooldownManager().removeCooldown(Berserk.class, false);
-        List<FloatModifiable.FloatModifier> modifiers;
-        if (pveMasterUpgrade2) {
-            modifiers = wp.getAbilities()
-                          .stream()
-                          .filter(ability -> !(ability instanceof Berserk))
-                          .map(ability -> ability.getCooldown().addMultiplicativeModifierMult(name + " Master", 0.8f))
-                          .toList();
-        } else {
-            modifiers = Collections.emptyList();
-        }
         AtomicInteger multiplier = new AtomicInteger();
-        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+        RegularCooldown<Berserk> berserkCooldown = new RegularCooldown<>(
                 name, "BERS",
                 Berserk.class,
                 null,
@@ -70,7 +70,6 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
                 },
                 cooldownManager -> {
                     wp.getSpeed().removeModifier(name);
-                    modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
                 },
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
@@ -78,44 +77,78 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
                         EffectUtils.displayParticle(Particle.ANGRY_VILLAGER, wp.getLocation().add(0, 1.75, 0), 1, 0, 0, 0, 0.1F);
                     }
                 })
-        ).addModifier(Modifier.DAMAGE_CRIT_CHANCE_ATTACKER, (event, currentCritChance) -> {
+        );
+        berserkCooldown.addModifier(Modifier.DAMAGE_CRIT_CHANCE_ATTACKER, (event, currentCritChance) -> {
                     if (pveMasterUpgrade) {
                         if (event.getCause().isEmpty() || event.getCause().equals("Time Warp")) {
                             return;
                         }
-                        float critBoost = (0.2f * multiplier.get());
-                        if (critBoost > 50) {
-                            critBoost = 50;
-                        }
-                        currentCritChance.addAdditiveModifier(name, critBoost);
+                        float critBoost = (1f * multiplier.get());
+                        currentCritChance.addAdditiveModifier(name, Math.min(60, critBoost));
                     }
                 }
-        ).addModifier(Modifier.DAMAGE_CRIT_MULTIPLIER_ATTACKER, (event, currentCritMultiplier) -> {
+        );
+        berserkCooldown.addModifier(Modifier.DAMAGE_CRIT_MULTIPLIER_ATTACKER, (event, currentCritMultiplier) -> {
                     if (pveMasterUpgrade) {
                         if (event.getCause().isEmpty() || event.getCause().equals("Time Warp")) {
                             return;
                         }
-                        float critBoost = (0.2f * multiplier.get());
-                        if (critBoost > 50) {
-                            critBoost = 50;
-                        }
-                        currentCritMultiplier.addAdditiveModifier(name, critBoost);
+                        float critBoost = (1f * multiplier.get());
+                        currentCritMultiplier.addAdditiveModifier(name, Math.min(60, critBoost));
 
                     }
                 }
-        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamgeValue) -> {
+        );
+        berserkCooldown.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamgeValue) -> {
                     stats.hitsDoneAmplified++;
                     multiplier.getAndIncrement();
                     currentDamgeValue.addMultiplicativeModifierAdd(name, damageIncrease / 100);
-                    if (pveMasterUpgrade2) {
-                        CooldownManager cooldownManager = event.getWarlordsEntity().getCooldownManager();
-                        if (cooldownManager.hasCooldownFromName("Bleed") || cooldownManager.hasCooldownFromName("Wounding Strike")) {
-                            currentDamgeValue.addMultiplicativeModifierAdd("Visceral Rage", 0.2f);
-
-                        }
+                }
+        );
+        wp.getCooldownManager().addCooldown(berserkCooldown);
+        if (pveMasterUpgrade2) {
+            new GameRunnable(wp.getGame()) {
+                @Override
+                public void run() {
+                    cooldown--;
+                    if (!wp.getCooldownManager().hasCooldown(berserkCooldown)) {
+                        this.cancel();
                     }
                 }
-        ));
+            }.runTaskTimer(0, 20);
+            addSecondaryAbility(1, () -> {
+                if (cooldown > 0) {
+                    wp.sendMessage(Component.text("This ability is still on cooldown!", NamedTextColor.RED));
+                    return;
+                }
+
+                float finalValue = Math.min(50000, absorbedDamage);
+                wp.addEnergy(wp, "Berserk Master Upgrade", finalValue * 0.002f);
+
+                FallingBlockWaveEffect.create(wp.getLocation().clone().add(0, 1, 0), 10, 10, Material.AMETHYST_CLUSTER);
+                Utils.playGlobalSound(wp.getLocation(), "warrior.mortalstrike.impact", 2, 0.5f);
+                EffectUtils.strikeLightning(wp.getLocation(), false);
+
+                for (WarlordsEntity enemy : PlayerFilter
+                        .entitiesAround(wp,10, 10, 10)
+                        .aliveEnemiesOf(wp)
+                ) {
+                    enemy.addInstance(InstanceBuilder
+                            .damage()
+                            .cause("Berserk Unleashed")
+                            .source(wp)
+                            .value(finalValue * 0.15f)
+                            .flags(InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST, InstanceFlags.NO_LUST_HEALING)
+                    );
+                }
+
+                cooldown = 2;
+                absorbedDamage = 0;
+            },
+                    true,
+                    secondaryAbility -> !wp.getCooldownManager().hasCooldown(berserkCooldown)
+            );
+        }
         return true;
     }
 

@@ -139,6 +139,8 @@ public abstract class WarlordsEntity {
     private int flagDropCooldown = 0;
     private int flagPickCooldown = 0;
     private int hitCooldown = 20;
+    private int pveHitCooldown = 13;
+    private int pveHitRange = 3;
     private int currency;
     private int blocksTravelledCM = 0;
     private boolean noEnergyConsumption;
@@ -306,13 +308,13 @@ public abstract class WarlordsEntity {
         return cooldownManager;
     }
 
-    public void die(@Nullable WarlordsEntity attacker, WarlordsDeathEvent.DeathInfoBuilder deathInfoBuilder) {
+    public boolean die(@Nullable WarlordsEntity attacker, WarlordsDeathEvent.DeathInfoBuilder deathInfoBuilder) {
         WarlordsDeathEvent.DeathInfo deathInfo = deathInfoBuilder.createDeathInfo();
         WarlordsDeathEvent deathEvent = new WarlordsDeathEvent(this, attacker, deathInfo);
         Bukkit.getPluginManager().callEvent(deathEvent);
         boolean cancelDeath = deathEvent.isForceCancel() || (deathEvent.isCancelled() && !deathInfo.forced());
         if (cancelDeath && currentHealth > 0) {
-            return;
+            return false;
         }
 
         dead = true;
@@ -326,7 +328,9 @@ public abstract class WarlordsEntity {
             runnable.run();
         }
 
-        getLocation(this.deathLocation);
+        if (this.entity != null) {
+            getLocation(this.deathLocation);
+        }
 
         showDeathAnimation();
 
@@ -380,11 +384,16 @@ public abstract class WarlordsEntity {
         hitBy.clear();
         regenTickTimer = 0;
         heal();
+
+        return true;
     }
 
     @Nonnull
     public Location getLocation(@Nonnull Location copyInto) {
-        return this.entity.getLocation(copyInto);
+        if (this.entity != null) {
+            return this.entity.getLocation(copyInto);
+        }
+        return copyInto;
     }
 
     public void showDeathAnimation() {
@@ -438,7 +447,9 @@ public abstract class WarlordsEntity {
     }
 
     public void sendMessage(Component component) {
-        sendMessage(component, false);
+        if (this.entity != null) {
+            sendMessage(component, false);
+        }
     }
 
     public Component getColoredName() {
@@ -461,6 +472,9 @@ public abstract class WarlordsEntity {
     }
 
     public void sendMessage(Component component, boolean isDamageHealMessage) {
+        if (this.entity == null) {
+            return;
+        }
         if (isDamageHealMessage && !showDebugMessage) {
             this.entity.sendMessage(component.hoverEvent(null));
         } else {
@@ -1784,4 +1798,19 @@ public abstract class WarlordsEntity {
     @Nullable
     public abstract ItemStack getWeaponItem();
 
+    public int getPveHitCooldown() {
+        return pveHitCooldown;
+    }
+
+    public void setPveHitCooldown(int pveHitCooldown) {
+        this.pveHitCooldown = pveHitCooldown;
+    }
+
+    public int getPveHitRange() {
+        return pveHitRange;
+    }
+
+    public void setPveHitRange(int pveHitRange) {
+        this.pveHitRange = pveHitRange;
+    }
 }

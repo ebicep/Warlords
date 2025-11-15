@@ -23,12 +23,12 @@ public class InfernoBranch extends AbstractUpgradeBranch<Inferno> {
                     public void run(float value) {
                         ability.setCritMultiplierIncrease((int) (critMultiplierIncrease + value));
                     }
-                }, 15f)
+                }, 20f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgradeDuration(ability)
+                .addUpgradeDuration(ability, 40f)
                 .addTo(treeB);
 
         masterUpgrade = new Upgrade(

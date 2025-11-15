@@ -31,7 +31,7 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon implements Passiv
     public static final float EVERY_HP_PERCENT_DECREASE_PER_UPGRADE = .5f;
 
     public static final int REDUCTION_DURATION = 5;
-    public static final int COOLDOWN = 30;
+    public static final int COOLDOWN = 20;
 
     @Transient
     private final AtomicReference<Instant> lastActivated = new AtomicReference<>(Instant.now().minus(COOLDOWN, ChronoUnit.SECONDS));
@@ -58,7 +58,7 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon implements Passiv
                         .append(Component.newline())
                         .append(Component.text("If your health is currently higher than 80% and you will die from the next source of damage, your " +
                                 "health will be set to 5% of your max health and gain 99% damage reduction for 5 seconds. " +
-                                "Can be triggered every 30 seconds."));
+                                "Can be triggered every 20 seconds."));
     }
 
     @Override

@@ -5,7 +5,21 @@
   "type": "ABILITIES",
   "data": {
     "pvp": {
-      "arcaneShield": {
+      "arcaneShieldPyromancer": {
+        "name": "Arcane Shield",
+        "cooldown": 31,
+        "energyCost": 40,
+        "shieldPercentage": 50,
+        "tickDuration": 120
+      },
+      "arcaneShieldCryomancer": {
+        "name": "Arcane Shield",
+        "cooldown": 31,
+        "energyCost": 40,
+        "shieldPercentage": 50,
+        "tickDuration": 120
+      },
+      "arcaneShieldAquamancer": {
         "name": "Arcane Shield",
         "cooldown": 31,
         "energyCost": 40,
@@ -497,7 +511,7 @@
       },
       "flameBreath": {
         "name": "Flame Breath",
-        "cooldown": 7,
+        "cooldown": 8,
         "energyCost": 30,
         "maxAnimationTime": 12,
         "maxAnimationEffects": 4,
@@ -505,8 +519,8 @@
         "velocity": 1.1,
         "damageValues": {
           "flameBreathDamage": {
-            "min": 501,
-            "max": 678,
+            "min": 557,
+            "max": 753,
             "critChance": 25,
             "critMultiplier": 185
           }
@@ -1102,10 +1116,10 @@
         "name": "Parry",
         "cooldown": 9,
         "energyCost": 0,
-        "blockTickDuration": 30,
+        "blockTickDuration": 26,
         "knockbackTickDuration": 50,
         "damageReduction": 10,
-        "damageReductionTickDuration": 80,
+        "damageReductionTickDuration": 60,
         "knockbackMagnitude": 1.25
       },
       "poisonousHex": {
@@ -1961,7 +1975,7 @@
         "energyCost": 0,
         "hitbox": 5,
         "blindDurationInTicks": 30,
-        "damageIncrease": 100,
+        "damageIncreasePercent": 100,
         "damageIncreaseHealthThreshold": 80,
         "damageValues": {
           "curseDamage": {
@@ -2140,6 +2154,8 @@
         "energyCost": 0,
         "hitbox": 5,
         "blindDurationInTicks": 30,
+        "damageIncreasePercent": 100,
+        "damageIncreaseHealthThreshold": 80,
         "damageValues": {
           "curseDamage": {
             "min": 524,
@@ -2179,6 +2195,7 @@
         "energyCost": 50,
         "tickDuration": 200,
         "radius": 8,
+        "castRadius": 15,
         "damageValues": {
           "rainStrikeDamage": {
             "min": 224,
@@ -2786,6 +2803,33 @@
           }
         }
       },
+      "skeletonEndPoisonousHex": {
+        "name": "Poisonous Hex",
+        "cooldown": 5.5,
+        "energyCost": 60,
+        "maxFullDistance": 40,
+        "hexStacksPerHit": 1,
+        "maxStacks": 3,
+        "tickDuration": 120,
+        "tickDurationDot": 120,
+        "ticksBetweenDot": 40,
+        "maxEnemiesHit": 2,
+        "projectileSpeed": 2.5,
+        "maxDistance": 40,
+        "hitTeammates": false,
+        "damageValues": {
+          "hexDamage": {
+            "min": 263,
+            "max": 356,
+            "critChance": 20,
+            "critMultiplier": 175
+          },
+          "hexDOTDamage": {
+            "min": 25,
+            "max": 35
+          }
+        }
+      },
       "soulOfGradientRemoveTarget": {
         "name": "Remove Target",
         "cooldown": 20,
@@ -3011,6 +3055,7 @@
         "energyCost": 0,
         "tickDuration": 320,
         "radius": 8,
+        "castRadius": 15,
         "damageValues": {
           "rainStrikeDamage": {
             "min": 224,

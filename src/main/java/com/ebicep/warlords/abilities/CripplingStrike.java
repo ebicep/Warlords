@@ -107,14 +107,22 @@ public class CripplingStrike extends AbstractStrike<CripplingStrike, CripplingSt
 
     @Override
     protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull WarlordsEntity nearPlayer) {
-        nearPlayer.addInstance(InstanceBuilder.damage().ability(this).source(wp).value(damageValues.strikeDamage))
-                  .ifPresent(finalEvent -> onFinalEvent(wp, nearPlayer, finalEvent));
-        if (pveMasterUpgrade || pveMasterUpgrade2) {
+        nearPlayer.addInstance(InstanceBuilder
+                        .damage()
+                        .ability(this)
+                        .source(wp)
+                        .value(damageValues.strikeDamage)
+                ).ifPresent(finalEvent -> onFinalEvent(wp, nearPlayer, finalEvent)
+        );
+        if (pveMasterUpgrade) {
             additionalHit(4, wp, nearPlayer, warlordsEntity -> {
-                        warlordsEntity.addInstance(InstanceBuilder.damage().ability(this).source(wp).value(damageValues.strikeDamage))
-                                      .ifPresent(event -> onFinalEvent(wp, event.getWarlordsEntity(), event));
-                    }
-            );
+                        warlordsEntity.addInstance(InstanceBuilder
+                                        .damage()
+                                        .ability(this)
+                                        .source(wp)
+                                        .value(damageValues.strikeDamage)
+                        ).ifPresent(event -> onFinalEvent(wp, event.getWarlordsEntity(), event));
+            });
         }
         return true;
     }

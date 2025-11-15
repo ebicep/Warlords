@@ -38,6 +38,10 @@ public class ChatUtils {
         });
     }
 
+    public static void sendTitleToGamePlayers(Game game, Component subTitle) {
+        sendTitleToGamePlayers(game, Component.empty(), subTitle, 20, 60, 20);
+    }
+
     public static void sendTitleToGamePlayers(
             Game game,
             Component title,

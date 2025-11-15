@@ -4,7 +4,7 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.game.option.raid.BossAbilityPhase;
+import com.ebicep.warlords.pve.mobs.bosses.bossabilities.BossAbilityPhase;
 import com.ebicep.warlords.player.general.SpecType;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
@@ -99,7 +99,7 @@ public class Physira extends AbstractMob implements BossMob {
                 double angle = j / 6D * Math.PI * 2;
                 crystalLoc.setX(loc.getX() + Math.sin(angle) * 20);
                 crystalLoc.setZ(loc.getZ() + cos(angle) * 20);
-                NineCrystal crystal = new NineCrystal(crystalLoc, warlordsNPC, SpecType.VALUES[j % 3]);
+                NineCrystal crystal = new NineCrystal(crystalLoc, SpecType.VALUES[j % 3]);
                 pylons.add(crystal.getWarlordsNPC());
                 Bukkit.broadcast(Component.text("pylons: " + pylons.get(j)));
                 pveOption.spawnNewMob(crystal, Team.RED);

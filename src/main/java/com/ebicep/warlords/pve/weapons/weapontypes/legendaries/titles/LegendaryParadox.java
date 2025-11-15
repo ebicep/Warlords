@@ -33,8 +33,8 @@ public class LegendaryParadox extends AbstractLegendaryWeapon implements GardenO
 
     public static final int HP_INTERVAL = 100;
     public static final int HP_INTERVAL_PER_UPGRADE = -10;
-    public static final int DAMAGE_BOOST_MAX = 25;
-    public static final float DAMAGE_BOOST_MAX_PER_UPGRADE = 2.5f;
+    public static final int DAMAGE_BOOST_MAX = 40;
+    public static final float DAMAGE_BOOST_MAX_PER_UPGRADE = 1f;
 
     @Transient
     private int secondCounter = 0;
@@ -51,45 +51,10 @@ public class LegendaryParadox extends AbstractLegendaryWeapon implements GardenO
     }
 
     @Override
-    public TextComponent getPassiveEffect() {
-        return Component.text("For 10s after using a orange rune, creating a shield, using Prism Guard, or healing an ally, gain the PARADOX effect.", NamedTextColor.GRAY)
-                        .append(Component.newline())
-                        .append(Component.newline())
-                        .append(Component.text("PARADOX: Gain 25 energy every 2s and increase damage by 0.25% for every "))
-                        .append(formatTitleUpgrade(HP_INTERVAL + HP_INTERVAL_PER_UPGRADE * getTitleLevel()))
-                        .append(Component.text(" health you possess at the time the effect began. Max of "))
-                        .append(formatTitleUpgrade(DAMAGE_BOOST_MAX + DAMAGE_BOOST_MAX_PER_UPGRADE * getTitleLevel(), "%"))
-                        .append(Component.text(" damage bonus. Effect can occur once every 30s."));
-    }
-
-    @Override
-    public LegendaryTitles getTitle() {
-        return LegendaryTitles.PARADOX;
-    }
-
-    @Override
-    protected float getMeleeDamageMinValue() {
-        return 170;
-    }
-
-    @Override
-    protected float getHealthBonusValue() {
-        return 700;
-    }
-
-    @Override
-    protected float getSpeedBonusValue() {
-        return 7;
-    }
-
-    @Override
-    protected float getEnergyPerHitBonusValue() {
-        return 3;
-    }
-
-    @Override
-    protected float getSkillCritMultiplierBonusValue() {
-        return 15;
+    public LinkedHashMap<Currencies, Long> getCost() {
+        LinkedHashMap<Currencies, Long> baseCost = super.getCost();
+        baseCost.put(Currencies.TITLE_TOKEN_GARDEN_OF_HESPERIDES, 1L);
+        return baseCost;
     }
 
     @Override
@@ -149,10 +114,45 @@ public class LegendaryParadox extends AbstractLegendaryWeapon implements GardenO
     }
 
     @Override
-    public LinkedHashMap<Currencies, Long> getCost() {
-        LinkedHashMap<Currencies, Long> baseCost = super.getCost();
-        baseCost.put(Currencies.TITLE_TOKEN_GARDEN_OF_HESPERIDES, 1L);
-        return baseCost;
+    public TextComponent getPassiveEffect() {
+        return Component.text("For 10s after using a orange rune, creating a shield, using Prism Guard, or healing an ally, gain the PARADOX effect.", NamedTextColor.GRAY)
+                        .append(Component.newline())
+                        .append(Component.newline())
+                        .append(Component.text("PARADOX: Gain 30 energy every 2s and increase damage by 0.4% for every "))
+                        .append(formatTitleUpgrade(HP_INTERVAL + HP_INTERVAL_PER_UPGRADE * getTitleLevel()))
+                        .append(Component.text(" health you possess at the time the effect began. Max of "))
+                        .append(formatTitleUpgrade(DAMAGE_BOOST_MAX + DAMAGE_BOOST_MAX_PER_UPGRADE * getTitleLevel(), "%"))
+                        .append(Component.text(" damage bonus. Effect can occur once every 15s."));
+    }
+
+    @Override
+    public LegendaryTitles getTitle() {
+        return LegendaryTitles.PARADOX;
+    }
+
+    @Override
+    protected float getMeleeDamageMinValue() {
+        return 170;
+    }
+
+    @Override
+    protected float getHealthBonusValue() {
+        return 700;
+    }
+
+    @Override
+    protected float getSpeedBonusValue() {
+        return 7;
+    }
+
+    @Override
+    protected float getEnergyPerHitBonusValue() {
+        return 3;
+    }
+
+    @Override
+    protected float getSkillCritMultiplierBonusValue() {
+        return 15;
     }
 
     @Override
@@ -187,10 +187,10 @@ public class LegendaryParadox extends AbstractLegendaryWeapon implements GardenO
         if (secondCounter != 0) {
             return;
         }
-        secondCounter = 30;
+        secondCounter = 15;
         float damageBoost = 1 + Math.min(
                 (DAMAGE_BOOST_MAX + DAMAGE_BOOST_MAX_PER_UPGRADE * getTitleLevel()) / 100f,
-                player.getCurrentHealth() / (HP_INTERVAL + HP_INTERVAL_PER_UPGRADE * getTitleLevel()) * .0025f
+                player.getCurrentHealth() / (HP_INTERVAL + HP_INTERVAL_PER_UPGRADE * getTitleLevel()) * .004f
         );
         player.getCooldownManager().addCooldown(new RegularCooldown<>(
                 getTitleName(),
@@ -204,7 +204,7 @@ public class LegendaryParadox extends AbstractLegendaryWeapon implements GardenO
                 200,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 40 == 0) {
-                        player.addEnergy(player, getTitleName(), 25);
+                        player.addEnergy(player, getTitleName(), 30);
                     }
                 })
         ) {
@@ -219,5 +219,4 @@ public class LegendaryParadox extends AbstractLegendaryWeapon implements GardenO
     public int getCounter() {
         return secondCounter;
     }
-
 }

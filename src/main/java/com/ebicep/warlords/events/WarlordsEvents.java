@@ -9,6 +9,8 @@ import com.ebicep.warlords.abilities.internal.AbstractTimeWarp;
 import com.ebicep.warlords.commands.debugcommands.misc.AdminCommand;
 import com.ebicep.warlords.commands.debugcommands.misc.MuteCommand;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.leaderboards.events.EventsLeaderboardManager;
+import com.ebicep.warlords.database.leaderboards.guilds.GuildLeaderboardManager;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
@@ -255,6 +257,8 @@ public class WarlordsEvents implements Listener {
                                 @Override
                                 public void run() {
                                     StatsLeaderboardManager.setLeaderboardHologramVisibility(player);
+                                    EventsLeaderboardManager.resetVisibility(player);
+                                    GuildLeaderboardManager.resetVisibility(player);
                                     DatabaseGameBase.setGameHologramVisibility(player);
                                 }
                             }.runTaskLater(Warlords.getInstance(), 20);
@@ -341,6 +345,7 @@ public class WarlordsEvents implements Listener {
         Entity attacker = e.getDamager();
         WarlordsEntity wpAttacker = Warlords.getPlayer(attacker);
         WarlordsEntity wpVictim = Warlords.getPlayer(e.getEntity());
+
         e.setCancelled(true);
         if (wpAttacker == null || wpVictim == null || !wpAttacker.isEnemyAlive(wpVictim) || wpAttacker.getGame().isFrozen()) {
             return;
@@ -349,7 +354,7 @@ public class WarlordsEvents implements Listener {
             return;
         }
 
-        wpAttacker.setHitCooldown(wpAttacker.getBaseHitCooldownValue());
+        wpAttacker.setHitCooldown(wpAttacker.isInPve() ? wpAttacker.getPveHitCooldown() : wpAttacker.getBaseHitCooldownValue());
         Optional<WarlordsDamageHealingFinalEvent> finalEvent = Optional.empty();
 
         if (wpAttacker instanceof WarlordsNPC warlordsNPC) {

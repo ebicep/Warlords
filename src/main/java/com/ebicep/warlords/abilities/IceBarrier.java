@@ -85,7 +85,7 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
                                                     IceBarrier.class,
                                                     new IceBarrier(),
                                                     wp,
-                                                    CooldownTypes.ABILITY,
+                                                    CooldownTypes.LOW_LEVEL_DEBUFF,
                                                     cooldownManager -> {
                                                     },
                                                     ticksLeft

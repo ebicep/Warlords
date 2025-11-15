@@ -22,8 +22,10 @@ import java.util.*;
 
 public class LegendaryJuggernaut extends AbstractLegendaryWeapon implements EventTitle {
 
-    public static final int BOOST = 10;
-    public static final float BOOST_INCREASE_PER_UPGRADE = 1.25f;
+    public static final int DAMAGE_BOOST = 10;
+    public static final float DAMAGE_BOOST_INCREASE_PER_UPGRADE = 1;
+    public static final int HEALTH_BOOST = 5;
+    public static final float HEALTH_BOOST_INCREASE_PER_UPGRADE = 0.5f;
     public static final List<Integer> KILL_MILESTONES = Arrays.asList(100, 200, 400, 800, 1600);
 
     public LegendaryJuggernaut() {
@@ -45,17 +47,11 @@ public class LegendaryJuggernaut extends AbstractLegendaryWeapon implements Even
     }
 
     @Override
-    protected float getMeleeDamageMaxValue() {
-        return 200;
-    }
-
-    @Override
     public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
         super.applyToWarlordsPlayer(player, pveOption);
 
         player.getGame().registerEvents(new Listener() {
             final FloatModifiable.FloatModifier modifier = player.getHealth().addMultiplicativeModifierAdd(getTitleName() + " (Base)", 0);
-
 
             @EventHandler(ignoreCancelled = true)
             public void onDeath(WarlordsDeathEvent event) {
@@ -63,7 +59,7 @@ public class LegendaryJuggernaut extends AbstractLegendaryWeapon implements Even
 
                 if (killer == player) {
                     if (KILL_MILESTONES.contains(player.getMinuteStats().total().getKills())) {
-                        modifier.setModifier(modifier.getModifier() + getCalculatedBoost());
+                        modifier.setModifier(modifier.getModifier() + getCalculatedHealthBoost());
                     }
                 }
             }
@@ -85,7 +81,7 @@ public class LegendaryJuggernaut extends AbstractLegendaryWeapon implements Even
                 for (int i = KILL_MILESTONES.size() - 1; i >= 0; i--) {
                     int killMilestone = KILL_MILESTONES.get(i);
                     if (playerKills >= killMilestone) {
-                        return currentDamageValue * (1 + (getBoost() * (i + 1)) / 100f);
+                        return currentDamageValue * (1 + (getDamageBoost() * (i + 1)) / 100f);
                     }
                 }
                 return currentDamageValue;
@@ -94,19 +90,25 @@ public class LegendaryJuggernaut extends AbstractLegendaryWeapon implements Even
         });
     }
 
-    private float getBoost() {
-        return BOOST + BOOST_INCREASE_PER_UPGRADE * getTitleLevel();
+    private float getDamageBoost() {
+        return DAMAGE_BOOST + DAMAGE_BOOST_INCREASE_PER_UPGRADE * getTitleLevel();
     }
 
-    private float getCalculatedBoost() {
-        return getBoost() / 100f;
+    private float getHealthBoost() {
+        return HEALTH_BOOST + HEALTH_BOOST_INCREASE_PER_UPGRADE * getTitleLevel();
+    }
+
+    private float getCalculatedHealthBoost() {
+        return getHealthBoost() / 100f;
     }
 
     @Override
     public TextComponent getPassiveEffect() {
         return Component.text("Gain a ", NamedTextColor.GRAY)
-                        .append(formatTitleUpgrade(BOOST + BOOST_INCREASE_PER_UPGRADE * getTitleLevel(), "%"))
-                        .append(Component.text(" Damage and Health boost when you hit the following kill milestones:"))
+                        .append(formatTitleUpgrade(getDamageBoost(), "%"))
+                        .append(Component.text(" Damage and "))
+                        .append(formatTitleUpgrade(getHealthBoost(), "%"))
+                        .append(Component.text(" Health boost when you hit the following kill milestones:"))
                         .append(Component.newline())
                         .append(Component.text("100 Kills"))
                         .append(Component.newline())
@@ -130,8 +132,13 @@ public class LegendaryJuggernaut extends AbstractLegendaryWeapon implements Even
     }
 
     @Override
+    protected float getMeleeDamageMaxValue() {
+        return 200;
+    }
+
+    @Override
     protected float getHealthBonusValue() {
-        return 800;
+        return 500;
     }
 
     @Override
@@ -151,9 +158,13 @@ public class LegendaryJuggernaut extends AbstractLegendaryWeapon implements Even
 
     @Override
     public List<Pair<Component, Component>> getPassiveEffectUpgrade() {
-        return Collections.singletonList(new Pair<>(
-                formatTitleUpgrade(BOOST + BOOST_INCREASE_PER_UPGRADE * getTitleLevel(), "%"),
-                formatTitleUpgrade(BOOST + BOOST_INCREASE_PER_UPGRADE * getTitleLevelUpgraded(), "%")
-        ));
+        return Arrays.asList(
+            new Pair<>(
+                    formatTitleUpgrade(DAMAGE_BOOST + DAMAGE_BOOST_INCREASE_PER_UPGRADE * getTitleLevel(), "%"),
+                    formatTitleUpgrade(DAMAGE_BOOST + DAMAGE_BOOST_INCREASE_PER_UPGRADE * getTitleLevelUpgraded(), "%")),
+            new Pair<>(
+                    formatTitleUpgrade(HEALTH_BOOST + HEALTH_BOOST_INCREASE_PER_UPGRADE * getTitleLevel(), "%"),
+                    formatTitleUpgrade(HEALTH_BOOST + HEALTH_BOOST_INCREASE_PER_UPGRADE * getTitleLevelUpgraded(), "%")
+            ));
     }
 }

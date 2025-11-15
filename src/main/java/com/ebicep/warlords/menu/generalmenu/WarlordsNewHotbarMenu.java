@@ -15,11 +15,10 @@ import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.*;
-import com.ebicep.warlords.player.general.settings.ChatSettings;
-import com.ebicep.warlords.player.general.settings.CooldownDisplaySettings;
-import com.ebicep.warlords.player.general.settings.ParticleQuality;
+import com.ebicep.warlords.player.general.settings.*;
 import com.ebicep.warlords.player.general.settings.actionbar.ActionBarSettings;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostMenu;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.Spendable;
@@ -190,6 +189,7 @@ public class WarlordsNewHotbarMenu {
                                 itemBuilder.addLore(Component
                                         .text(spec.name, (databasePlayer.getLastSpec() == spec ? NamedTextColor.GREEN : NamedTextColor.GRAY))
                                         .append(ExperienceManager.getLevelStringBracket(level))
+                                        .append(ExperienceManager.getPrestigeLevelString(player.getUniqueId(), spec))
                                 );
                                 itemBuilder.addLore(ExperienceManager.getProgressStringWithPrestige(experience, level + 1, prestige));
                                 itemBuilder.addLore(Component.empty());
@@ -993,7 +993,8 @@ public class WarlordsNewHotbarMenu {
                                 new ItemBuilder(Material.ZOMBIE_HEAD)
                                         .name(Component.text("Mob Drops", NamedTextColor.GREEN))
                                         .lore(Arrays.stream(MobDrop.VALUES)
-                                                    .map(drop -> drop.getCostColoredName(databasePlayer.getPveStats()
+                                                .filter(drop -> !drop.isHidden())
+                                                .map(drop -> drop.getCostColoredName(databasePlayer.getPveStats()
                                                                                                        .getMobDrops()
                                                                                                        .getOrDefault(drop, 0L)))
                                                     .collect(Collectors.toList()))
@@ -1102,6 +1103,15 @@ public class WarlordsNewHotbarMenu {
                                 ActionBarSettings.ITEM,
                                 (m, e) -> {
                                     ActionBarSettings.openMenu(player, databasePlayer);
+                                }
+                        );
+                        menu.setItem(
+                                2,
+                                2,
+                                databasePlayer.getAdvancedHoverMessages().item,
+                                (m, e) -> {
+                                    player.performCommand("advancedhovermessages");
+                                    openSettingsMenu(player);
                                 }
                         );
 

@@ -49,6 +49,7 @@ import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.SpendableBuyShop;
 import com.ebicep.warlords.pve.gameevents.libraryarchives.PlayerCodex;
 import com.ebicep.warlords.pve.items.types.fixeditems.FixedItems;
+import com.ebicep.warlords.pve.mobs.MobDrop;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ComponentUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
@@ -189,7 +190,7 @@ public enum GameEvents {
             EventLeaderboard lairBoard = new EventLeaderboard(
                     eventStart,
                     "Highest Game Event Points",
-                    new Location(StatsLeaderboardManager.MAIN_LOBBY, 7.5, 86, 172.5),
+                    new Location(StatsLeaderboardManager.MAIN_LOBBY, 7.5, 83, 172.5),
                     (databasePlayer, time) -> databasePlayer
                             .getPveStats()
                             .getEventStats()
@@ -208,7 +209,7 @@ public enum GameEvents {
             EventLeaderboard bonanzaBoard = new EventLeaderboard(
                     eventStart,
                     "Highest Game Event Points",
-                    new Location(StatsLeaderboardManager.MAIN_LOBBY, 2.5, 86, 167.5),
+                    new Location(StatsLeaderboardManager.MAIN_LOBBY, 2.5, 83, 167.5),
                     (databasePlayer, time) -> databasePlayer
                             .getPveStats()
                             .getEventStats()
@@ -227,7 +228,7 @@ public enum GameEvents {
             EventLeaderboard totalBoard = new EventLeaderboard(
                     eventStart,
                     "Event Points",
-                    new Location(StatsLeaderboardManager.MAIN_LOBBY, 18.5, 86, 170.5),
+                    new Location(StatsLeaderboardManager.MAIN_LOBBY, 18.5, 83, 170.5),
                     (databasePlayer, time) -> databasePlayer
                             .getPveStats()
                             .getEventStats()
@@ -437,7 +438,7 @@ public enum GameEvents {
             EventLeaderboard lairBoard = new EventLeaderboard(
                     eventStart,
                     "Highest Game Event Points",
-                    new Location(StatsLeaderboardManager.MAIN_LOBBY, 4.5, 86, 170.5),
+                    new Location(StatsLeaderboardManager.MAIN_LOBBY, 4.5, 83, 170.5),
                     (databasePlayer, time) -> databasePlayer
                             .getPveStats()
                             .getEventStats()
@@ -456,7 +457,7 @@ public enum GameEvents {
             EventLeaderboard totalBoard = new EventLeaderboard(
                     eventStart,
                     "Event Points",
-                    new Location(StatsLeaderboardManager.MAIN_LOBBY, 18.5, 86, 170.5),
+                    new Location(StatsLeaderboardManager.MAIN_LOBBY, 18.5, 83, 170.5),
                     (databasePlayer, time) -> databasePlayer
                             .getPveStats()
                             .getEventStats()
@@ -646,7 +647,7 @@ public enum GameEvents {
             EventLeaderboard spidersDwellingBoard = new EventLeaderboard(
                     eventStart,
                     "Highest Game Event Points",
-                    new Location(StatsLeaderboardManager.MAIN_LOBBY, 4.5, 86, 170.5),
+                    new Location(StatsLeaderboardManager.MAIN_LOBBY, 4.5, 83, 170.5),
                     (databasePlayer, time) -> databasePlayer
                             .getPveStats()
                             .getEventStats()
@@ -665,7 +666,7 @@ public enum GameEvents {
             EventLeaderboard totalBoard = new EventLeaderboard(
                     eventStart,
                     "Event Points",
-                    new Location(StatsLeaderboardManager.MAIN_LOBBY, 18.5, 86, 170.5),
+                    new Location(StatsLeaderboardManager.MAIN_LOBBY, 18.5, 83, 170.5),
                     (databasePlayer, time) -> databasePlayer
                             .getPveStats()
                             .getEventStats()
@@ -843,7 +844,7 @@ public enum GameEvents {
             EventLeaderboard borderlineOfIllusionBoard = new EventLeaderboard(
                     eventStart,
                     "Highest Game Event Points",
-                    new Location(StatsLeaderboardManager.MAIN_LOBBY, 4.5, 86, 170.5),
+                    new Location(StatsLeaderboardManager.MAIN_LOBBY, 4.5, 83, 170.5),
                     (databasePlayer, time) -> databasePlayer
                             .getPveStats()
                             .getEventStats()
@@ -862,7 +863,7 @@ public enum GameEvents {
             EventLeaderboard totalBoard = new EventLeaderboard(
                     eventStart,
                     "Event Points",
-                    new Location(StatsLeaderboardManager.MAIN_LOBBY, 18.5, 86, 170.5),
+                    new Location(StatsLeaderboardManager.MAIN_LOBBY, 18.5, 83, 170.5),
                     (databasePlayer, time) -> databasePlayer
                             .getPveStats()
                             .getEventStats()
@@ -964,6 +965,7 @@ public enum GameEvents {
                 add(new SpendableBuyShop(3, Currencies.LEGEND_FRAGMENTS, -1, 3_000));
                 add(new SpendableBuyShop(3, Currencies.SKILL_BOOST_MODIFIER, 3, 75_000));
                 add(new SpendableBuyShop(1, Currencies.LIMIT_BREAKER, 1, 500_000));
+                add(new SpendableBuyShop(1, MobDrop.ZENITH_STAR, 3, 500_000));
             }}
     ) {
         @Override
@@ -1041,7 +1043,7 @@ public enum GameEvents {
             EventLeaderboard acropolisBoard = new EventLeaderboard(
                     eventStart,
                     "Highest Game Event Points",
-                    new Location(StatsLeaderboardManager.MAIN_LOBBY, 7.5, 86, 172.5),
+                    new Location(StatsLeaderboardManager.MAIN_LOBBY, 7.5, 83, 172.5),
                     (databasePlayer, time) -> databasePlayer
                             .getPveStats()
                             .getEventStats()
@@ -1060,7 +1062,7 @@ public enum GameEvents {
             EventLeaderboard tartarusBoard = new EventLeaderboard(
                     eventStart,
                     "Fastest Win",
-                    new Location(StatsLeaderboardManager.MAIN_LOBBY, 2.5, 86, 167.5),
+                    new Location(StatsLeaderboardManager.MAIN_LOBBY, 2.5, 83, 167.5),
                     (databasePlayer, time) -> -databasePlayer
                             .getPveStats()
                             .getEventStats()
@@ -1086,7 +1088,7 @@ public enum GameEvents {
             EventLeaderboard totalBoard = new EventLeaderboard(
                     eventStart,
                     "Event Points",
-                    new Location(StatsLeaderboardManager.MAIN_LOBBY, 18.5, 86, 170.5),
+                    new Location(StatsLeaderboardManager.MAIN_LOBBY, 18.5, 83, 170.5),
                     (databasePlayer, time) -> databasePlayer
                             .getPveStats()
                             .getEventStats()
@@ -1299,7 +1301,7 @@ public enum GameEvents {
             EventLeaderboard grimoiresGraveyardBoard = new EventLeaderboard(
                     eventStart,
                     "Fastest Win",
-                    new Location(StatsLeaderboardManager.MAIN_LOBBY, 7.5, 86, 172.5),
+                    new Location(StatsLeaderboardManager.MAIN_LOBBY, 7.5, 83, 172.5),
                     (databasePlayer, time) -> -databasePlayer
                             .getPveStats()
                             .getEventStats()
@@ -1325,7 +1327,7 @@ public enum GameEvents {
             EventLeaderboard forgottenCodexBoard = new EventLeaderboard(
                     eventStart,
                     "Fastest Win",
-                    new Location(StatsLeaderboardManager.MAIN_LOBBY, 2.5, 86, 167.5),
+                    new Location(StatsLeaderboardManager.MAIN_LOBBY, 2.5, 83, 167.5),
                     (databasePlayer, time) -> -databasePlayer
                             .getPveStats()
                             .getEventStats()
@@ -1351,7 +1353,7 @@ public enum GameEvents {
             EventLeaderboard totalBoard = new EventLeaderboard(
                     eventStart,
                     "Event Points",
-                    new Location(StatsLeaderboardManager.MAIN_LOBBY, 18.5, 86, 170.5),
+                    new Location(StatsLeaderboardManager.MAIN_LOBBY, 18.5, 83, 170.5),
                     (databasePlayer, time) -> databasePlayer
                             .getPveStats()
                             .getEventStats()

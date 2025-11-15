@@ -9,6 +9,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.AdvancedMob;
+import com.ebicep.warlords.pve.mobs.tiers.ChampionMob;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.trait.SlimeSize;
@@ -18,7 +19,7 @@ import org.bukkit.Particle;
 import javax.annotation.Nonnull;
 import java.util.function.Function;
 
-public class SlimyChess extends AbstractMob implements AdvancedMob {
+public class SlimyChess extends AbstractMob implements ChampionMob {
     public SlimyChess(Location spawnLocation) {
         super(
                 spawnLocation,

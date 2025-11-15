@@ -15,6 +15,7 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.thunderlord.ChainLightningBranch;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
+import com.ebicep.warlords.util.bukkit.packets.PacketUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
@@ -35,14 +36,21 @@ public class ChainLightning extends AbstractChain<ChainLightning, ChainLightning
     public static final ItemStack CHAIN_ITEM = new ItemStack(Material.GRAY_STAINED_GLASS);
 
     public static <T> void giveShockedEffect(WarlordsEntity giver, WarlordsEntity receiver, Class<T> clazz, T object) {
-        receiver.getCooldownManager().addCooldown(new RegularCooldown<>("Aftershock", "SHOCKED", clazz, object, giver, CooldownTypes.LOW_LEVEL_DEBUFF, cooldownManager -> {
-        }, 3 * 20, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-            if (ticksElapsed % 20 == 0) {
-                EffectUtils.displayParticle(Particle.ELECTRIC_SPARK, receiver.getLocation().add(0, 1.2, 0), 5, .25, .25, .25, 0);
-            }
-        })
+        receiver.getCooldownManager().addCooldown(new RegularCooldown<>(
+                "Aftershock",
+                "SHOCKED",
+                clazz,
+                object,
+                giver,
+                CooldownTypes.LOW_LEVEL_DEBUFF,
+                cooldownManager -> {},
+                3 * 20,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed % 20 == 0) {
+                        EffectUtils.displayParticle(Particle.ELECTRIC_SPARK, receiver.getLocation().add(0, 1.2, 0), 5, .25, .25, .25, 0);
+                    }
+                })
         ) {
-
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 return event.getSource().equals(giver) ? currentDamageValue * 1.3f : currentDamageValue;
@@ -77,14 +85,6 @@ public class ChainLightning extends AbstractChain<ChainLightning, ChainLightning
     }
 
     @Override
-    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
-        damageDecreasePerBounce.tick();
-        damageReductionPerBounce.tick();
-        maxDamageReduction.tick();
-        super.runEveryTick(warlordsEntity);
-    }
-
-    @Override
     public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.damageReductionPerBounce = new FloatModifiable(ConfigManager.getAbilityConfigValue(
@@ -115,10 +115,16 @@ public class ChainLightning extends AbstractChain<ChainLightning, ChainLightning
         Utils.playGlobalSound(wp.getLocation(), "shaman.chainlightning.activation", 3, 1);
         wp.playSound(wp.getLocation(), "shaman.chainlightning.impact", 2, 1);
         wp.getCooldownManager().removeCooldown(ChainLightning.class, false);
-        wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "CHAIN", ChainLightning.class, new ChainLightning(), wp, CooldownTypes.BUFF, cooldownManager -> {
-        }, damageReductionTickDuration
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                name,
+                "CHAIN",
+                ChainLightning.class,
+                new ChainLightning(),
+                wp,
+                CooldownTypes.BUFF,
+                cooldownManager -> {},
+                damageReductionTickDuration
         ) {
-
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 return currentDamageValue * convertToDivisionDecimal(Math.min(hitCounter * damageReductionPerBounce.getCalculatedValue(), maxDamageReduction.getCalculatedValue()));
@@ -160,6 +166,14 @@ public class ChainLightning extends AbstractChain<ChainLightning, ChainLightning
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new ChainLightningBranch(abilityTree, this);
+    }
+
+    @Override
+    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
+        damageDecreasePerBounce.tick();
+        damageReductionPerBounce.tick();
+        maxDamageReduction.tick();
+        super.runEveryTick(warlordsEntity);
     }
 
     @Override
@@ -211,13 +225,13 @@ public class ChainLightning extends AbstractChain<ChainLightning, ChainLightning
             }
         }
         // no else
-        PlayerFilter filter = firstCheck ? PlayerFilter.entitiesAround(checkFrom, radius, 18, radius)
-                                                       .filter(e -> LocationUtils.isLookingAtChain(wp, e) && LocationUtils.hasLineOfSight(wp, e)) : PlayerFilter.entitiesAround(
-                checkFrom,
-                bounceRange,
-                bounceRange,
-                bounceRange
-        ).lookingAtFirst(wp);
+        float rad = radius + PacketUtils.pingCompensationAmount(wp);
+        PlayerFilter filter = firstCheck ?
+                              PlayerFilter
+                                      .entitiesAround(checkFrom, rad, 18, rad)
+                                      .filter(e -> LocationUtils.isLookingAtChain(wp, e) && LocationUtils.hasLineOfSight(wp, e)) :
+                              PlayerFilter.entitiesAround(checkFrom, bounceRange, bounceRange, bounceRange)
+                                          .lookingAtFirst(wp);
         Optional<WarlordsEntity> foundPlayer = filter.closestFirst(wp).aliveEnemiesOf(wp).excluding(playersHit).findFirst();
         if (foundPlayer.isPresent()) {
             WarlordsEntity hit = foundPlayer.get();

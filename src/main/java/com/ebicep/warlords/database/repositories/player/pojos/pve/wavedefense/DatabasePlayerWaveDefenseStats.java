@@ -10,7 +10,9 @@ import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.TracksAbilityStats;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.GameMode;
+import com.ebicep.warlords.game.option.pve.onslaught.PouchReward;
 import com.ebicep.warlords.pve.DifficultyIndex;
+import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -18,6 +20,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -54,6 +57,20 @@ public class DatabasePlayerWaveDefenseStats implements MultiPvEWaveDefenseStats,
             int multiplier,
             PlayersCollections playersCollection
     ) {
+        Map<Spendable, Long> ascendantPouch = gamePlayer.getAscendantPouch();
+        if (multiplier > 0) {
+            LinkedHashMap<Spendable, Long> sortedAscendantPouch = new LinkedHashMap<>();
+            ascendantPouch.entrySet()
+                    .stream()
+                    .sorted((o1, o2) -> Long.compare(o2.getValue(), o1.getValue()))
+                    .forEachOrdered(spendableLongEntry -> sortedAscendantPouch.put(spendableLongEntry.getKey(), spendableLongEntry.getValue()));
+            if (!sortedAscendantPouch.isEmpty()) {
+                databasePlayer.getPveStats().getPouchRewards().add(new PouchReward(sortedAscendantPouch, PouchReward.PouchType.ASCENDANT));
+            }
+        } else {
+            ascendantPouch.forEach((spendable, amount) -> spendable.addToPlayer(databasePlayer, amount * multiplier));
+        }
+
         DatabasePlayerPvEWaveDefenseDifficultyStats difficultyStats = getDifficultyStats(databaseGame.getDifficulty());
         if (difficultyStats != null) {
             difficultyStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);

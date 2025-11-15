@@ -26,6 +26,7 @@ public class EnergySeerBranchLuminary extends AbstractUpgradeBranch<EnergySeerLu
                 "Energy Seer - Master Upgrade",
                 """
                         Remove energy loss.
+                        
                         Add an additional 20% healing bonus and triple energy restored.
                         """,
                 50000,
@@ -40,10 +41,11 @@ public class EnergySeerBranchLuminary extends AbstractUpgradeBranch<EnergySeerLu
                 "Energy Seer - Master Upgrade",
                 """
                         Remove energy loss.
+                        
                         +5s duration.
                         +20% Additional Cooldown Reduction
                         
-                        For the duration of Energy Seer reduce the energy cost of Merciful hex by 5. (cannot stack.)
+                        For the duration of Energy Seer reduce the energy cost of Merciful hex by 10. (cannot stack.)
                         """,
                 50000,
                 () -> {

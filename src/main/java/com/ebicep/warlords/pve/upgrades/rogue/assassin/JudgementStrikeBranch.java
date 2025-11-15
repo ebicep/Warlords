@@ -1,8 +1,15 @@
 package com.ebicep.warlords.pve.upgrades.rogue.assassin;
 
 import com.ebicep.warlords.abilities.JudgementStrike;
+import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.*;
+import com.ebicep.warlords.pve.upgrades.paladin.avenger.AvengerStrikeBranch;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike> {
@@ -49,8 +56,7 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
                         +100 Healing on Strike Kill
                         -10 Energy cost
                         
-                        Each strike deals 1% of the target's max health as bonus damage.
-                        Additionally Strikes guaranteed crit occurs every 2 hits instead of 4.
+                        Each strike deals 1% of the target's max health as bonus damage. Additionally, strikes guaranteed crit occurs every 2 hits instead of 4.
                         """,
                 50000,
                 () -> {
@@ -59,19 +65,38 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
                     ability.getHealValues().getStrikeHealing().value().addAdditiveModifier("Master Upgrade Branch", 100);
                     ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -10);
                     ability.setStrikeCritInterval(2);
+
+                    abilityTree.getWarlordsPlayer().getCooldownManager().addCooldown(new PermanentCooldown<>(
+                            "MAX HP DAMAGE (Death Strike)",
+                            null,
+                            JudgementStrikeBranch.class,
+                            null,
+                            abilityTree.getWarlordsPlayer(),
+                            CooldownTypes.MASTERY,
+                            cm -> {},
+                            false
+                    ) {
+                        @Override
+                        public float modifyDamageAfterInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                            if (event.getCause().equals("Judgement Strike")) {
+                                return currentDamageValue + DamageCheck.clamp(event.getWarlordsEntity().getMaxHealth() * 0.01f);
+                            }
+                            return currentDamageValue;
+                        }
+                    });
                 }
         );
         masterUpgrade2 = new Upgrade(
                 "Judgemental Fury",
                 "Judgement Strike - Master Upgrade",
                 """
-                        +45% Crit multiplier
+                        +30% Crit multiplier
                         
                         Judgement Strike will now hit twice in one use, the second strike is counted as an additional strike for a guaranteed crit.
                         """,
                 50000,
                 () -> {
-                    ability.getDamageValues().getStrikeDamage().critMultiplier().addAdditiveModifier("Master Upgrade Branch", 45);
+                    ability.getDamageValues().getStrikeDamage().critMultiplier().addAdditiveModifier("Master Upgrade Branch", 30);
                 }
         );
     }

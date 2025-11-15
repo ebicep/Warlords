@@ -62,11 +62,13 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
         Utils.playGlobalSound(wp.getLocation(), "shaman.earthlivingweapon.activation", 2, 0.65f);
         EffectUtils.playSphereAnimation(wp.getLocation(), 6, Particle.ITEM_SLIME, 1);
         EffectUtils.playFirework(wp.getLocation(), FireworkEffect.builder().withColor(Color.LIME).with(FireworkEffect.Type.BALL_LARGE).build());
+
         if (pveMasterUpgrade) {
             Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_WITHER_SPAWN, 10, 1);
             EffectUtils.playSphereAnimation(wp.getLocation(), radius, Particle.ITEM_SLIME, 1);
             EffectUtils.playFirework(wp.getLocation(), FireworkEffect.builder().withColor(Color.WHITE).with(FireworkEffect.Type.BALL_LARGE).build());
         }
+
         DrainingMiasmaData data = new DrainingMiasmaData();
         for (WarlordsEntity miasmaTarget : PlayerFilter.entitiesAround(wp, getRadius(), getRadius(), getRadius()).isAlive()) {
             stats.targetsHit++;
@@ -112,37 +114,40 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
                                     .ability(this)
                                     .source(wp)
                                     .value(damageValues.miasmaDamage.getValue() + healthDamage)
-                                    .flags(InstanceFlags.DOT));
+                                    .flags(InstanceFlags.DOT, InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST));
                         })
                 ));
                 if (pveMasterUpgrade) {
-                    miasmaTarget.getCooldownManager()
-                                .addCooldown(new PermanentCooldown<>("Liquidizing Miasma",
-                                        "LIQ",
-                                        DrainingMiasmaData.class,
-                                        data,
-                                        wp,
-                                        CooldownTypes.LOW_LEVEL_DEBUFF,
-                                        cooldownManager -> {
-                                            FallingBlockWaveEffect.create(miasmaTarget.getLocation(), 3, 6, Material.BIRCH_SAPLING);
-                                            for (WarlordsEntity target : PlayerFilter.entitiesAround(miasmaTarget, 6, 6, 6).aliveEnemiesOf(wp)) {
-                                                float healthDamage = miasmaTarget.getMaxHealth() * 0.01f;
-                                                healthDamage = DamageCheck.clamp(healthDamage);
-                                                target.addInstance(InstanceBuilder.damage()
-                                                                                  .ability(this)
-                                                                                  .source(wp)
-                                                                                  .value(damageValues.miasmaDamage.getValue() + healthDamage)
-                                                                                  .flags(InstanceFlags.DOT));
-                                            }
-                                        },
-                                        true
+                    miasmaTarget.getCooldownManager().addCooldown(new PermanentCooldown<>("Liquidizing Miasma",
+                            "LIQ",
+                            DrainingMiasmaData.class,
+                            data,
+                            wp,
+                            CooldownTypes.LOW_LEVEL_DEBUFF,
+                            cooldownManager -> {
+                                FallingBlockWaveEffect.create(miasmaTarget.getLocation(), 3, 6, Material.BIRCH_SAPLING);
+                                for (WarlordsEntity target : PlayerFilter
+                                        .entitiesAround(miasmaTarget, 6, 6, 6)
+                                        .aliveEnemiesOf(wp)
                                 ) {
-
-                                    @Override
-                                    public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                        return currentDamageValue * 0.75f;
-                                    }
-                                });
+                                    float healthDamage = miasmaTarget.getMaxHealth() * 0.01f;
+                                    healthDamage = DamageCheck.clamp(healthDamage);
+                                    target.addInstance(InstanceBuilder
+                                            .damage()
+                                            .ability(this)
+                                            .source(wp)
+                                            .value(healthDamage)
+                                            .flags(InstanceFlags.DOT, InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST)
+                                    );
+                                }
+                            },
+                            true
+                    ) {
+                        @Override
+                        public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                            return currentDamageValue * 0.75f;
+                        }
+                    });
                 }
                 Leech.giveLeechCooldown(Leech.LeechInstance
                         .create(wp, miasmaTarget)
@@ -154,30 +159,36 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
                 );
             } else {
                 if (pveMasterUpgrade2) {
-                    miasmaTarget.getCooldownManager()
-                                .addCooldown(new RegularCooldown<>(
-                                        "Toxic Immunity",
-                                        "MIAS",
-                                        DrainingMiasmaData.class,
-                                        data,
-                                        wp,
-                                        CooldownTypes.ABILITY,
-                                        cooldownManager -> {},
-                                        tickDuration,
-                                        Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                                            if (ticksElapsed % 20 != 0) {
-                                                return;
-                                            }
-                                            float healing = miasmaTarget.getMaxHealth() * .02f;
-                                            miasmaTarget.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(healing).flags(InstanceFlags.CAN_OVERHEAL_OTHERS));
-                                            Overheal.giveOverHeal(wp, miasmaTarget);
-                                })
-                                ) {
-                                    @Override
-                                    protected Listener getListener() {
-                                        return CooldownUtils.getFullDebuffImmunityListener(miasmaTarget);
-                                    }
-                                });
+                    miasmaTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
+                        "Toxic Immunity",
+                        "MIAS",
+                        DrainingMiasmaData.class,
+                        data,
+                        wp,
+                        CooldownTypes.ABILITY,
+                        cooldownManager -> {},
+                        tickDuration,
+                        Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                            if (ticksElapsed % 20 != 0) {
+                                return;
+                            }
+
+                            float healing = miasmaTarget.getMaxHealth() * .02f;
+                            miasmaTarget.addInstance(InstanceBuilder
+                                    .healing()
+                                    .ability(this)
+                                    .source(wp)
+                                    .value(healing)
+                                    .flags(InstanceFlags.CAN_OVERHEAL_OTHERS)
+                            );
+                            Overheal.giveOverHeal(wp, miasmaTarget);
+                        })
+                    ) {
+                        @Override
+                        protected Listener getListener() {
+                            return CooldownUtils.getFullDebuffImmunityListener(miasmaTarget);
+                        }
+                    });
                 }
             }
         }

@@ -199,9 +199,10 @@ public class FrostBolt extends AbstractPiercingProjectile<FrostBolt, FrostBolt.F
         if (projectile.getHit().isEmpty()) {
             toReduceBy += .15f;
         }
+        hit.getCooldownManager().limitCooldowns(RegularCooldown.class, IncendiaryCurse.class, 3);
         hit.getCooldownManager().addCooldown(new RegularCooldown<>(
-                name,
-                "INCEN",
+                "Splintered Ice",
+                null,
                 IncendiaryCurse.class,
                 null,
                 projectile.getShooter(),

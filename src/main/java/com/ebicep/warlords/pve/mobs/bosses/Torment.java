@@ -9,7 +9,6 @@ import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.game.option.raid.BossAbilityPhase;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -19,9 +18,16 @@ import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
+import com.ebicep.warlords.pve.mobs.bosses.bossabilities.BossAbilityPhase;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.SoulOfGradient;
+import com.ebicep.warlords.pve.mobs.flags.NoTargetAbilities;
+import com.ebicep.warlords.pve.mobs.flags.Untargetable;
+import com.ebicep.warlords.pve.mobs.player.CryoPod;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
+import com.ebicep.warlords.pve.mobs.tiers.PlayerMob;
 import com.ebicep.warlords.pve.mobs.witherskeleton.CelestialOpus;
+import com.ebicep.warlords.pve.mobs.zombie.NightmareZombie;
+import com.ebicep.warlords.pve.mobs.zombie.RiftWalker;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -99,7 +105,7 @@ public class Torment extends AbstractMob implements BossMob {
                 true
         ) {
             @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+            public float modifyDamageAfterAllFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                 if (event.getSource().getCooldownManager().hasCooldown(DamageCheck.class)) {
                     return currentDamageValue * 3;
                 } else {
@@ -108,7 +114,7 @@ public class Torment extends AbstractMob implements BossMob {
                             event.getSource().getLocation(),
                             Particle.SCULK_SOUL
                     );
-                    return currentDamageValue * 0.25f;
+                    return currentDamageValue * 0.4f;
                 }
             }
         });
@@ -122,13 +128,14 @@ public class Torment extends AbstractMob implements BossMob {
             suction(loc);
         });
 
-        divinePhase = new BossAbilityPhase(warlordsNPC, 20, () -> {
+        divinePhase = new BossAbilityPhase(warlordsNPC, 25, () -> {
 
             preventMarking = true;
             WarlordsEntity divineProtector = null;
             for (WarlordsEntity we : PlayerFilter
-                    .playingGame(warlordsNPC.getGame())
+                    .entitiesAround(warlordsNPC, 100, 100, 100)
                     .aliveEnemiesOf(warlordsNPC)
+                    .excludingAlliedMobs()
                     .limit(1)
             ) {
                 divineProtector = we;
@@ -138,6 +145,7 @@ public class Torment extends AbstractMob implements BossMob {
                         Component.text(we.getName() + " has been marked to give Divine Protection. Keep them alive!", NamedTextColor.GOLD),
                         20, 60, 20
                 );
+                we.sendMessage(Component.text("You have been chosen to give Divine Protection. Stay alive!", NamedTextColor.GOLD));
                 we.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 540, 0, false));
                 we.getCooldownManager().removeCooldown(DamageCheck.class, false);
                 we.getCooldownManager().addCooldown(new RegularCooldown<>(
@@ -198,12 +206,17 @@ public class Torment extends AbstractMob implements BossMob {
                 int counter = 0;
                 @Override
                 public void run() {
+                    if (warlordsNPC.isDead()) {
+                        this.cancel();
+                        return;
+                    }
+
                     if (counter == 1) {
                         warlordsNPC.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 400, 0, false));
                         warlordsNPC.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 400, 0, false));
                     }
 
-                    if (counter % 3 == 0) {
+                    if (counter % 4 == 0) {
                         Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_RAVAGER_ROAR, 500, 0.2f);
                         Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.AMBIENT_CRIMSON_FOREST_MOOD, 500, 1f);
 
@@ -223,7 +236,6 @@ public class Torment extends AbstractMob implements BossMob {
                                     .cause("Divine Punishment")
                                     .source(warlordsNPC)
                                     .value(1000)
-                                    .flags(InstanceFlags.NO_MESSAGE)
                             );
                             EffectUtils.playParticleLinkAnimation(
                                     we.getLocation(),
@@ -247,7 +259,7 @@ public class Torment extends AbstractMob implements BossMob {
                         }
                     }
 
-                    if (counter % 80 == 0) {
+                    if (counter % 100 == 0) {
                         for (int i = 0; i < pveOption.playerCount(); i++) {
                             pveOption.spawnNewMob(new CelestialOpus(pveOption.getRandomSpawnLocation(warlordsNPC)));
                         }
@@ -300,7 +312,7 @@ public class Torment extends AbstractMob implements BossMob {
                         warlordsNPC.getGame(),
                         warlordsNPC.getTeam(),
                         loc.clone().add(0, 1.5, 0),
-                        8,
+                        10,
                         new CircumferenceEffect(Particle.WITCH, Particle.PORTAL).particlesPerCircumference(1.5),
                         new DoubleLineEffect(Particle.WITCH)
                 ).playEffects();
@@ -322,7 +334,7 @@ public class Torment extends AbstractMob implements BossMob {
 
                 if (counter % 5 == 0) {
                     for (WarlordsEntity we : PlayerFilter
-                            .entitiesAround(loc, 8, 8, 8)
+                            .entitiesAround(loc, 10, 10, 10)
                             .aliveEnemiesOf(warlordsNPC)
                     ) {
                         we.addInstance(InstanceBuilder
@@ -387,7 +399,7 @@ public class Torment extends AbstractMob implements BossMob {
             }
         }
 
-        if (ticksElapsed % 600 == 0) {
+        if (ticksElapsed % 1200 == 0) {
             new GameRunnable(warlordsNPC.getGame()) {
                 int counter = 0;
 
@@ -411,10 +423,10 @@ public class Torment extends AbstractMob implements BossMob {
         }
 
         if (ticksElapsed % 600 == 0 && ticksElapsed > 0 && !preventMarking) {
-            for (WarlordsEntity we : PlayerFilterGeneric
+            for (WarlordsEntity we : PlayerFilter
                     .entitiesAround(warlordsNPC, 100, 100, 100)
                     .aliveEnemiesOf(warlordsNPC)
-                    .leastAliveFirst()
+                    .excludingAlliedMobs()
                     .limit(1)
             ) {
                 ChatUtils.sendTitleToGamePlayers(

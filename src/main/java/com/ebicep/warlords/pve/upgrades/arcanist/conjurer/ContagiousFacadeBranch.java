@@ -8,6 +8,10 @@ import javax.annotation.Nonnull;
 
 public class ContagiousFacadeBranch extends AbstractUpgradeBranch<ContagiousFacade> {
 
+    @Override
+    public void runOnce() {
+        ability.setStacksGranted(3);
+    }
     public ContagiousFacadeBranch(AbilityTree abilityTree, ContagiousFacade ability) {
         super(abilityTree, ability);
 
@@ -56,7 +60,7 @@ public class ContagiousFacadeBranch extends AbstractUpgradeBranch<ContagiousFaca
                 """
                         +20% Cooldown Reduction
                         
-                        When reactivating Contagious Facade, increase EPS by 10 for 5 seconds and Poisonous Hex infliction now affects all enemies within the radius.
+                        When reactivating Contagious Facade, increase EPS by 10 for 8 seconds and Poisonous Hex infliction now affects all enemies within the radius.
                         """,
                 50000,
                 () -> {
@@ -68,14 +72,14 @@ public class ContagiousFacadeBranch extends AbstractUpgradeBranch<ContagiousFaca
                 "Contagious Facade - Master Upgrade",
                 """
                         +20% Cooldown Reduction
-                        2.5x Absorb Damage
+                        +20% Absorb Damage
                         
-                        Total damage absorbed is capped at the user's max hp.
+                        2.5x Shield Health
                         """,
                 50000,
                 () -> {
                     ability.getCooldown().addMultiplicativeModifierMult("Polluting Guise", 0.8f);
-                    ability.getDamageAbsorption().addMultiplicativeModifierMult("Master Upgrade Branch", 2.5f);
+                    ability.getDamageAbsorption().addAdditiveModifier("Polluting Guise", 20f);
                 }
         );
     }

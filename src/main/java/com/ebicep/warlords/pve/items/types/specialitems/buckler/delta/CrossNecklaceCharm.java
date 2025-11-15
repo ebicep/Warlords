@@ -51,22 +51,22 @@ public class CrossNecklaceCharm extends SpecialDeltaBuckler implements CraftsInt
                 },
                 false,
                 (cooldown, ticksElapsed) -> {
-                    if (ticksElapsed % 5 == 0) {
+                    if (ticksElapsed % 3 == 0) {
                         PlayerFilter.entitiesAround(warlordsPlayer, 6, 6, 6)
                                     .aliveEnemiesOf(warlordsPlayer)
-                                    .forEach(warlordsEntity -> {
-                                        warlordsEntity.addSpeedModifier(warlordsEntity, getName(), -35, 5);
-                                        warlordsEntity.getCooldownManager().removeCooldownByName(getName() + " Damage");
-                                        warlordsEntity.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                    .forEach(enemy -> {
+                                        enemy.addSpeedModifier(enemy, getName(), -35, 3);
+                                        enemy.getCooldownManager().removeCooldownByName(getName() + " Damage");
+                                        enemy.getCooldownManager().addCooldown(new RegularCooldown<>(
                                                 getName() + " Damage",
                                                 null,
                                                 CrossNecklaceCharm.class,
                                                 null,
-                                                warlordsEntity,
+                                                enemy,
                                                 CooldownTypes.ITEM,
                                                 cooldownManager -> {
                                                 },
-                                                5
+                                                3
                                         ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (event, currentDamageValue) -> {
                                                     currentDamageValue.addMultiplicativeModifierMult(getName() + " Damage", 1.1f);
                                                 }

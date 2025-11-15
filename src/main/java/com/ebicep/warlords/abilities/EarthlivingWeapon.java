@@ -39,6 +39,7 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
     private int weaponDamage = 240;
     private int maxHits = 1;
     private int guaranteedHits = 1;
+    private float radius = 6;
 
     public EarthlivingWeapon() {
         super(AbstractAbilityBuilder.create("earthlivingWeapon").pvp());
@@ -150,8 +151,9 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
                 stats.timesProcd++;
                 Utils.playGlobalSound(victim.getLocation(), "shaman.earthlivingweapon.impact", 2, 1);
                 float cc = pveMasterUpgrade2 && !previosulyProcd ? 100 : healingValues.earthlivingHealing.getCritChanceValue();
-                List<WarlordsEntity> healedPlayers = PlayerFilter.entitiesAround(attacker, 6, 6, 6)
+                List<WarlordsEntity> healedPlayers = PlayerFilter.entitiesAround(attacker, radius, radius, radius)
                                                                  .aliveTeammatesOfExcludingSelf(attacker)
+                                                                 .warlordPlayersFirst()
                                                                  .limit(maxAllies)
                                                                  .toList();
                 attacker.addInstance(InstanceBuilder
@@ -232,6 +234,14 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
 
     public void setGuaranteedHits(int guaranteedHits) {
         this.guaranteedHits = guaranteedHits;
+    }
+
+    public float getRadius() {
+        return radius;
+    }
+
+    public void setRadius(float radius) {
+        this.radius = radius;
     }
 
     public float getProcChance() {

@@ -28,6 +28,7 @@ import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.commands.MobCommand;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.flags.BossLike;
+import com.ebicep.warlords.pve.mobs.tiers.PlayerMob;
 import com.ebicep.warlords.pve.rewards.RewardInventory;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.util.java.Pair;
@@ -72,6 +73,8 @@ public class OnslaughtOption implements PveOption {
     private Location lastLocation;
     private float integrityCounter = 100;
     private float integrityDecayIncrease = 0;
+    private AtomicInteger rewardMultiplier = new AtomicInteger(1);
+    private AtomicInteger bonusMobs = new AtomicInteger(0);
 
     public OnslaughtOption(Team team, WaveList waves) {
         this.team = team;
@@ -100,6 +103,9 @@ public class OnslaughtOption implements PveOption {
 
                 if (we instanceof WarlordsNPC) {
                     AbstractMob mobToRemove = ((WarlordsNPC) we).getMob();
+                    if (mobToRemove instanceof PlayerMob) {
+                        return;
+                    }
                     if (mobs.containsKey(mobToRemove)) {
                         mobToRemove.onDeath(killer, we.getDeathLocation(), OnslaughtOption.this);
                         new GameRunnable(game) {
@@ -108,6 +114,9 @@ public class OnslaughtOption implements PveOption {
                                 integrityCounter += 1;
                                 if (integrityCounter >= 100) {
                                     integrityCounter = 100;
+                                }
+                                if (spawnCount < 0) {
+                                    spawnCount = 0;
                                 }
                                 spawnCount--;
                                 mobs.remove(mobToRemove);
@@ -219,18 +228,22 @@ public class OnslaughtOption implements PveOption {
                 if (ticksElapsed.get() % 18000 == 0) {
                     game.warlordsPlayers().forEach(wp -> {
                         wp.playSound(wp.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 0.1f);
-                        addRewardToPlayerPouch(
-                                wp.getUuid(),
-                                OnslaughtRewards.ASPIRANT_POUCH_LOOT_POOL,
-                                playerAspirantPouch,
-                                Component.text("Aspirant Pouch", NamedTextColor.RED)
-                        );
+                        for (int i = 0; i < rewardMultiplier.get(); i++) {
+                            addRewardToPlayerPouch(
+                                    wp.getUuid(),
+                                    OnslaughtRewards.ASPIRANT_POUCH_LOOT_POOL,
+                                    playerAspirantPouch,
+                                    Component.text("Aspirant Pouch", NamedTextColor.RED)
+                            );
+                        }
                         if (wp.getAbilityTree().getMaxMasterUpgrades() == 5) {
                             return;
                         }
                         wp.getAbilityTree().setMaxMasterUpgrades(wp.getAbilityTree().getMaxMasterUpgrades() + 1);
                         wp.sendMessage(Component.text("+1 Master Upgrade", NamedTextColor.RED, TextDecoration.BOLD));
                     });
+                    rewardMultiplier.getAndAdd(1);
+                    bonusMobs.getAndAdd(playerCount());
                 } else if (ticksElapsed.get() % 6000 == 0) {
                     integrityDecayIncrease += 0.1f;
                     game.warlordsPlayers().forEach(wp -> {
@@ -256,7 +269,7 @@ public class OnslaughtOption implements PveOption {
                     return;
                 }
 
-                if (spawnCount >= getSpawnLimit(playerCount())) {
+                if (spawnCount >= (getSpawnLimit(playerCount()) + bonusMobs.get())) {
                     return;
                 }
 
@@ -267,6 +280,10 @@ public class OnslaughtOption implements PveOption {
                 }
                 if (lastSpawn != null) {
                     lastSpawn.getLocation(lastLocation);
+                }
+
+                if (lastSpawn instanceof WarlordsNPC npc && npc.getMob() instanceof PlayerMob) {
+                    return;
                 }
 
                 spawnCount++;
@@ -290,13 +307,13 @@ public class OnslaughtOption implements PveOption {
                 return randomSpawnLocation != null ? randomSpawnLocation : lastLocation;
             }
 
-        }.runTaskTimer(10 * GameRunnable.SECOND, 6);
+        }.runTaskTimer(10 * GameRunnable.SECOND, 4);
     }
 
     public float getIntegrityDecay(int playerCount) {
         switch (playerCount) {
             case 1 -> {
-                return 0.4f;
+                return 0.35f;
             }
             case 2 -> {
                 return 0.7f;
@@ -341,7 +358,7 @@ public class OnslaughtOption implements PveOption {
             Long amount = reward.getB();
             playerPouch.computeIfAbsent(uuid, k -> new HashMap<>())
                        .merge(spendable, amount, Long::sum);
-            Component rewardString = Component.text("+", spendable.getTextColor()).append(spendable.getCostColoredName(amount));
+            Component rewardString = Component.text(" +", spendable.getTextColor()).append(spendable.getCostColoredName(amount));
             RewardInventory.sendRewardMessage(uuid,
                     pouchName.append(Component.text(":")).append(rewardString)
             );
@@ -359,12 +376,14 @@ public class OnslaughtOption implements PveOption {
 
     public int getSpawnLimit(int playerCount) {
         return switch (playerCount) {
-            case 1 -> 7;
+            case 1 -> 8;
             case 2 -> 12;
             case 3 -> 15;
             case 4 -> 20;
             case 5 -> 25;
             case 6 -> 30;
+            case 7 -> 35;
+            case 8 -> 40;
             default -> spawnLimit;
         };
     }
@@ -386,8 +405,8 @@ public class OnslaughtOption implements PveOption {
         double modifier = (game.getState().getTicksElapsed() / 1000f) / modifiedScale + 1;
 
         // Multiply health & min/max melee damage by waveCounter + 1 ^ base damage.
-        int minMeleeDamage = (int) Math.pow(warlordsNPC.getMinMeleeDamage(), modifier);
-        int maxMeleeDamage = (int) Math.pow(warlordsNPC.getMaxMeleeDamage(), modifier);
+        int minMeleeDamage = (int) Math.pow(warlordsNPC.getMinMeleeDamage(), modifier * 0.9);
+        int maxMeleeDamage = (int) Math.pow(warlordsNPC.getMaxMeleeDamage(), modifier * 0.9);
         float health = (float) Math.pow(warlordsNPC.getMaxBaseHealth(), modifier);
         // Increase boss health by 25% for each player in game instance.
         float bossMultiplier = 1 + (0.25f * playerCount);

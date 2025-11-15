@@ -27,9 +27,15 @@ public class TreasureHuntOption implements PveOption {
     private final int amountOfRooms;
     private boolean conditionMimicsActive = false;
     private int currentFloor = 1;
+    private final int treasureCount;
+
+    public TreasureHuntOption(int amountOfRooms, int treasureCount) {
+        this.amountOfRooms = amountOfRooms;
+        this.treasureCount = treasureCount;
+    }
 
     public TreasureHuntOption(int amountOfRooms) {
-        this.amountOfRooms = amountOfRooms;
+        this(amountOfRooms, 1);
     }
 
     @Override
@@ -56,7 +62,8 @@ public class TreasureHuntOption implements PveOption {
                         boundingBoxOption.getMax().getBlockZ() - boundingBoxOption.getMin().getBlockZ(),
                         dungeonRoomMarkerList.stream().map(DungeonRoomMarker::getRoom).toList(),
                         random,
-                        amountOfRooms
+                        amountOfRooms,
+                        treasureCount
                 );
 
                 if (floor.isValidPattern()) {
@@ -129,5 +136,9 @@ public class TreasureHuntOption implements PveOption {
 
     public void setCurrentFloor(int currentFloor) {
         this.currentFloor = currentFloor;
+    }
+
+    public int getTreasureCount() {
+        return treasureCount;
     }
 }

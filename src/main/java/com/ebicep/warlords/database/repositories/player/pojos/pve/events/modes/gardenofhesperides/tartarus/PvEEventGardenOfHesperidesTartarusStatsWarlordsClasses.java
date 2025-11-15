@@ -14,6 +14,6 @@ public interface PvEEventGardenOfHesperidesTartarusStatsWarlordsClasses extends 
 
     @Override
     default long getFastestGameFinished() {
-        return getStat(PvEEventGardenOfHesperidesTartarusStats::getFastestGameFinished, Long::min, Long.MAX_VALUE);
+        return getStat(PvEEventGardenOfHesperidesTartarusStats::getFastestGameFinished, (a, b) -> a == 0 ? b : b == 0 ? a : Math.min(a, b), Long.MAX_VALUE);
     }
 }

@@ -108,7 +108,8 @@ public class InstanceManager {
         boolean trueDamage = flags.contains(InstanceFlags.TRUE_DAMAGE);
         boolean pierceDamage = flags.contains(InstanceFlags.PIERCE);
         boolean ignoreDamageReduction = pierceDamage || flags.contains(InstanceFlags.IGNORE_DAMAGE_REDUCTION_ONLY);
-        boolean noDamageBoost = flags.contains(InstanceFlags.IGNORE_DAMAGE_BOOST);
+        boolean noSourceDamageBoost = flags.contains(InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST);
+        boolean noTargetDamageBoost = flags.contains(InstanceFlags.IGNORE_TARGET_DAMAGE_BOOST);
 
         AtomicReference<WarlordsDamageHealingFinalEvent> finalEvent = new AtomicReference<>(null);
         // Spawn Protection / Undying Army / Game State

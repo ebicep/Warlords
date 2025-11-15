@@ -122,7 +122,7 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
                 .cause("Thorns")
                 .source(from)
                 .value(thornsDamage)
-                .flags(InstanceFlags.RECURSIVE, InstanceFlags.IGNORE_DAMAGE_BOOST)
+                .flags(InstanceFlags.RECURSIVE, InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST)
         );
     }
 

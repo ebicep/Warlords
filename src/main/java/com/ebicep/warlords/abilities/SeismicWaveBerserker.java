@@ -46,15 +46,22 @@ public class SeismicWaveBerserker extends AbstractSeismicWave implements Damages
                 List<WarlordsEntity> playersHit = new ArrayList<>();
                 for (List<Location> fallingBlockLocation : locations) {
                     for (Location loc : fallingBlockLocation) {
-                        for (WarlordsEntity waveTarget : PlayerFilter.entitiesAroundRectangle(loc, .6, 4, .6).aliveEnemiesOf(wp).excluding(playersHit).closestFirst(wp)) {
+                        for (WarlordsEntity waveTarget : PlayerFilter
+                                .entitiesAroundRectangle(loc, .6, 4, .6)
+                                .aliveEnemiesOf(wp)
+                                .excluding(playersHit)
+                                .closestFirst(wp)
+                        ) {
                             playersHit.add(waveTarget);
-                            waveTarget.addInstance(InstanceBuilder.damage()
-                                                                  .ability(SeismicWaveBerserker.this)
-                                                                  .source(wp)
-                                                                  .min(723)
-                                                                  .max(906)
-                                                                  .crit(damageValues.waveDamage)
-                                                                  .uuid(uuid));
+                            waveTarget.addInstance(InstanceBuilder
+                                    .damage()
+                                    .ability(SeismicWaveBerserker.this)
+                                    .source(wp)
+                                    .min(723)
+                                    .max(906)
+                                    .crit(damageValues.waveDamage)
+                                    .uuid(uuid)
+                            );
                         }
                     }
                 }
@@ -70,7 +77,14 @@ public class SeismicWaveBerserker extends AbstractSeismicWave implements Damages
     protected void onHit(@Nonnull WarlordsEntity wp, UUID abilityUUID, int i, WarlordsEntity waveTarget) {
         float multiplier = 1;
         if (pveMasterUpgrade) {
-            multiplier = (1.5f / 15f) * Math.min(i + 1, 15) + 1;
+            multiplier = (2 / 15f) * Math.min(i + 1, 15) + 1;
+            WoundingCooldown.addWoundingCooldown(
+                    waveTarget,
+                    name,
+                    wp,
+                    50,
+                    4 * 20
+            );
         }
         if (pveMasterUpgrade2) {
             for (AbstractAbility ability : wp.getAbilities()) {

@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class GuardianBeam extends AbstractBeam<GuardianBeam, GuardianBeam.GuardianBeamStats> implements Duration, Damages<GuardianBeam.DamageValues> {
+public class GuardianBeam extends AbstractBeam<GuardianBeam, GuardianBeam.GuardianBeamStats> implements Duration, CanReduceCooldowns, Damages<GuardianBeam.DamageValues> {
 
     public static final ItemStack BEAM_ITEM = new ItemStack(Material.WARPED_SLAB);
     private final GuardianBeamStats stats = new GuardianBeamStats();
@@ -283,6 +283,11 @@ public class GuardianBeam extends AbstractBeam<GuardianBeam, GuardianBeam.Guardi
             return beamDamage;
         }
 
+    }
+
+    @Override
+    public boolean canReduceCooldowns() {
+        return pveMasterUpgrade2;
     }
 
     public static class GuardianBeamStats extends AbstractBeamStats<GuardianBeam, GuardianBeamStats> {

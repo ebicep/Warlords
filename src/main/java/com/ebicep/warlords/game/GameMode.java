@@ -562,6 +562,44 @@ public enum GameMode {
             return options;
         }
     },
+    PVE_DEBUG(
+            "PvE Sandbox",
+            "Pve Sandbox",
+            new ItemStack(Material.RED_SAND),
+            null,
+            null,
+            16,
+            false,
+            ConfigManager.PVE_NAMESPACES
+    ) {
+        @Override
+        public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = new ArrayList<>();
+            Component base = Component.text("", NamedTextColor.YELLOW, TextDecoration.BOLD);
+            options.add(TextOption.Type.CHAT_CENTERED.create(
+                    Component.text("Warlords", NamedTextColor.WHITE, TextDecoration.BOLD),
+                    Component.empty(),
+                    base.append(Component.text("Survive against waves of")),
+                    base.append(Component.text("monsters!")),
+                    Component.empty()
+            ));
+            options.add(TextOption.Type.TITLE.create(
+                    10,
+                    Component.text("GO!", NamedTextColor.GREEN),
+                    Component.text("Let the wave defense commence.", NamedTextColor.YELLOW)
+            ));
+            options.add(new PreGameItemOption(4, PlayerHotBarItemListener.SELECTION_MENU, (g, p) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(p)));
+            options.add(new RecordTimeElapsedOption());
+            options.add(new WeaponOption(WeaponOption::showPvEWeapon, WeaponOption::showWeaponStats));
+            options.add(new WinByMaxWaveClearOption());
+            options.add(new NoRespawnIfOfflineOption());
+            options.add(new DieOnLogoutOption());
+            options.add(new GameFreezeOption());
+            options.add(new BountyOption());
+            options.add(new PlayerCooldownDisplayOption());
+            return options;
+        }
+    },
     TUTORIAL(
             "Tutorial",
             "Tutorial",
@@ -778,7 +816,7 @@ public enum GameMode {
     }
 
     public static boolean isPvE(GameMode mode) {
-        return mode == WAVE_DEFENSE || mode == EVENT_WAVE_DEFENSE || mode == ONSLAUGHT || mode == TREASURE_HUNT || mode == TOWER_DEFENSE || mode == WHACK_A_MOLE;
+        return mode == WAVE_DEFENSE || mode == EVENT_WAVE_DEFENSE || mode == ONSLAUGHT || mode == TREASURE_HUNT || mode == TOWER_DEFENSE || mode == WHACK_A_MOLE || mode == PVE_DEBUG;
     }
 
     public final String name;

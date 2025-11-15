@@ -174,7 +174,33 @@ public enum SkullID implements Skull {
     //https://minecraft-heads.com/custom-heads/head/56785-wrong-mark
     WRONG_MARK("Mjc1NDgzNjJhMjRjMGZhODQ1M2U0ZDkzZTY4YzU5NjlkZGJkZTU3YmY2NjY2YzAzMTljMWVkMWU4NGQ4OTA2NSJ9fX0="),
     //https://minecraft-heads.com/custom-heads/head/122089-ender-demon
-    ENDER_DEMON("Y2Y4ZTVmZDBmNDVjMTAwMjY5NGU1NTNmNmY2MTA5NmVkMzVjY2VmYTVhNjMwMzM5NGMyODdjNWNmN2NjNDNiOSJ9fX0=")
+    ENDER_DEMON("Y2Y4ZTVmZDBmNDVjMTAwMjY5NGU1NTNmNmY2MTA5NmVkMzVjY2VmYTVhNjMwMzM5NGMyODdjNWNmN2NjNDNiOSJ9fX0="),
+    //https://minecraft-heads.com/custom-heads/head/121814-abyssal-kuudra
+    ABYSSAL_KUUDRA("ODdiOTBmZDIxZjdhZWQ4YTA0Y2NjMDFkMzY4MGY5MjdjYmUwZGJjN2MzOGIxY2ExYjIxN2VhM2Q2NDE2ZTI0NCJ9fX0"),
+    //https://minecraft-heads.com/custom-heads/head/118928-blackstone-golem
+    OBSIDIAN_SENTINEL("NzgwN2ZiMTk5ZjQyYjc5NWNjOWZmYzExODdkNGI1YjU0MmE4ZmEzNmQ4NTkwODQ2MWZhNWNkZTc4MzIwY2QxZiJ9fX0="),
+    //https://minecraft-heads.com/custom-heads/head/19520-mummy
+    MUMMY("ZjQ3OWYwMDdiZWVhZjU2YWZkNWI4YWUxNjc4ZTJlMDliZGZlOTIwMzA0NTc0Njk1ZWFiZjE5MGE1NTJhODg0YSJ9fX0="),
+    //https://minecraft-heads.com/custom-heads/head/120107-sculk-enderman
+    SCULK_ENDERMAN("NDA3YWRlODJkMmMwNzVlMzg0ODJjNDgwNzA2MTk2M2ZjMjc0OTZiZmQzNzliYjE3ZjRiZTZmNjJjM2FlYmY2MiJ9fX0="),
+    // https://minecraft-heads.com/custom-heads/head/94314-enderman
+    BLOCK_ENDERMAN("NmJhODAxMjg4NmIxYWY3YTVjNDdlZTY4MmIxMjIzZGNmMjZlNDI0MDQ3MzI2Y2Y5N2RmNzRmYTA1NzE4ZjA0In19fQ=="),
+    //https://minecraft-heads.com/custom-heads/head/117324-ender-redstone-lamp
+    END_REDSTONE_LAMP("MmMzNjc4NzNlMjQ5OWVkNjBkYzJjYmM2MGM3ZmQ3MzkyMmVmNGM3ZjcyMTdiMmQ4ZTk2ZDIzMTg0M2RjOTFlYSJ9fX0="),
+    //https://minecraft-heads.com/custom-heads/head/117324-ender-redstone-lamp
+    END_ZOMBIE("NmQxZWMyZGMwNjMzNWRlNzdkNzFlMGM5ZTBhZmM5NTkxNGMzZTM0NGQwNmEwOWY4MGUxN2EwNmRlNjAxNzRmNCJ9fX0="),
+    // https://minecraft-heads.com/custom-heads/head/122326-knight
+    SILVER_KNIGHT("YmEwMmE1MDY1Yjk0MmIxMzY1NjY3OGI5MmZmN2VkMjQ2ZGIwNjNmOTc5N2QyNDU4NDdjZGMzOTVmOTAyMGMzYiJ9fX0="),
+    // https://minecraft-heads.com/custom-heads/head/40499-stone-orb-pink
+    STONE_ORB_PINK("N2UwNTczNDgxOGJiMDI4NjdlNzNjZjhmYjAwM2QzZDY4ZWFhZjJhMmI0YTFkYzJjZTEwZmRlYTk3MmM3YTE3OSJ9fX0="),
+    // https://minecraft-heads.com/custom-heads/head/21359-lantern-pink
+    LANTERN_PINK("ZjM3MTIzZTVkODNjN2RiMmM0ODkxNjYxNmY0YzkyNDM4NDQ0YWI2MjZlMmFmY2RiMzViYTA1ZGQ5NWFlZGQ2NiJ9fX0="),
+    // https://minecraft-heads.com/custom-heads/head/118088-girl-with-pink-scarf
+    LILIUM_HAT("ZjA2ZTJhMjcwMmZiMzM1OWY4YTZiYjA3YmE3Yzk5MzFiOTU2Y2ZjODc1MWUyYzc1ODFhZjhkMmE1MmNiZTY3OSJ9fX0="),
+    // https://minecraft-heads.com/custom-heads/head/119823-pink-metal
+    PINK_METAL("MmM3ZjI4ZTY4MmNkNTA0ZmU0NWI1M2VjNWMyYmNmZGZiMjBjYmJkMTg5M2E5NzRiYThiOTI4ZTMwNGM0NjQxMyJ9fX0="),
+    // https://minecraft-heads.com/index.php/custom-heads/head/122529-rotten-astronaut
+    ROTTEN_CORPSE("NzVhYTlkYWQ2MTUzOTljNjUzMDE2ODk2NDUxY2VmYmJlMmI3ODI4MDYzZjYzZjA5ZmYwYjhkMjAxZDZhMjE3YiJ9fX0=")
 
     ;
 

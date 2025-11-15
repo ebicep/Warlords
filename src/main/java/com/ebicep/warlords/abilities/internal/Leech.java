@@ -76,14 +76,14 @@ public class Leech {
                             if (!finalEvent.isDamageInstance()) {
                                 return;
                             }
-                            if (inPve && data.totalHealingDone >= 1000) {
-                                setTicksLeft(0);
-                                return;
-                            }
+//                            if (inPve && data.totalHealingDone >= 1000) {
+//                                setTicksLeft(0);
+//                                return;
+//                            }
                             float value = finalEvent.getValueBeforeAllReduction();
                             float healValue = value * AbstractAbility.convertToPercent(leechAmount * data.getStacksCount());
                             if (inPve) {
-                                healValue = Math.min(500, healValue);
+                                healValue = Math.min(300 * data.getStacksCount(), healValue);
                             }
                             finalEvent.getSource().addInstance(InstanceBuilder
                                     .healing()

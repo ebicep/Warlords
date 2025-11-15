@@ -63,12 +63,18 @@ public class ConsecrateProtector extends AbstractConsecrate implements CanReduce
                 circleEffect.playEffects();
             }
             if (ticksElapsed % 30 == 0) {
+                timesReduced.set(0);
                 PlayerFilter.entitiesAround(updatedLocation, radius, 6, radius).aliveEnemiesOf(wp).forEach(enemy -> {
                     getAbilityStats().addPlayersHit();
-                    enemy.addInstance(InstanceBuilder.damage().ability(this).source(wp).value(damageValues.consecrateDamage)).ifPresent(finalEvent -> {
-                        if (timesReduced.get() < 15) {
+                    enemy.addInstance(InstanceBuilder
+                            .damage()
+                            .ability(this)
+                            .source(wp)
+                            .value(damageValues.consecrateDamage)
+                            ).ifPresent(finalEvent -> {
+                        if (timesReduced.get() < 5) {
                             timesReduced.getAndIncrement();
-                            wp.getAbilitiesMatching(HammerOfLight.class).forEach(holy -> holy.subtractCurrentCooldown(.1f));
+                            wp.getAbilitiesMatching(HammerOfLight.class).forEach(holy -> holy.subtractCurrentCooldown(.25f));
                         }
                     });
                 });

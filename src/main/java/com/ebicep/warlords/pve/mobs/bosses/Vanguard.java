@@ -7,6 +7,9 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Location;
 
 public class Vanguard extends AbstractMob implements BossMob {
@@ -14,7 +17,7 @@ public class Vanguard extends AbstractMob implements BossMob {
     public Vanguard(Location spawnLocation) {
         super(spawnLocation,
                 "Vanguard",
-                200000,
+                400000,
                 0.25f,
                 20,
                 5000,
@@ -49,6 +52,7 @@ public class Vanguard extends AbstractMob implements BossMob {
 
     @Override
     public void onSpawn(PveOption option) {
+        super.onSpawn(option);
     }
 
     @Override
@@ -64,5 +68,15 @@ public class Vanguard extends AbstractMob implements BossMob {
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
         super.onDamageTaken(self, attacker, event);
+    }
+
+    @Override
+    public TextColor getColor() {
+        return TextColor.color(210, 150, 30);
+    }
+
+    @Override
+    public Component getDescription() {
+        return Component.text("The Nameless Crown", NamedTextColor.GRAY);
     }
 }

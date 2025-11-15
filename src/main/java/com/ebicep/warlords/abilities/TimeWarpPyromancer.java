@@ -8,11 +8,10 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
-import com.ebicep.warlords.pve.mobs.flags.BossLike;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.pyromancer.TimeWarpBranchPyromancer;
@@ -20,10 +19,7 @@ import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.minecraft.sounds.SoundSource;
-import org.bukkit.Instrument;
-import org.bukkit.Location;
-import org.bukkit.Note;
-import org.bukkit.Particle;
+import org.bukkit.*;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -69,18 +65,17 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
                         float cooldownReduction = 0;
                         for (WarlordsEntity enemy : PlayerFilter.entitiesAround(wp, 12, 12, 12).aliveEnemiesOf(wp).toList()) {
                             float healthDamage = enemy.getMaxBaseHealth() * .075f;
-                            if (enemy instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof BossLike) {
-                                healthDamage = DamageCheck.clamp(healthDamage);
-                            }
+                            healthDamage = DamageCheck.clamp(healthDamage);
                             Optional<WarlordsDamageHealingFinalEvent> finalEventOptional = enemy.addInstance(InstanceBuilder
                                     .damage()
                                     .cause("Accursed Leap")
                                     .source(wp)
                                     .value(healthDamage)
+                                    .flags(InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST)
                             );
                             if (finalEventOptional.isPresent()) {
                                 if (finalEventOptional.get().isDead()) {
-                                    cooldownReduction += .75f;
+                                    cooldownReduction += 2f;
                                 }
                             }
                         }
@@ -164,7 +159,7 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 if (pveMasterUpgrade) {
-                    return currentDamageValue * convertToMultiplicationDecimal(we.getBlocksTravelled() - startingBlocksTravelled);
+                    return currentDamageValue * convertToMultiplicationDecimal(0.75f * (we.getBlocksTravelled() - startingBlocksTravelled));
                 }
                 return currentDamageValue;
             }

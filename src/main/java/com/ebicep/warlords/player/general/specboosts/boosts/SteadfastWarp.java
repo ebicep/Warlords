@@ -1,6 +1,6 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
-import com.ebicep.warlords.abilities.ArcaneShield;
+import com.ebicep.warlords.abilities.internal.AbstractArcaneShield;
 import com.ebicep.warlords.abilities.TimeWarpCryomancer;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
@@ -58,7 +58,7 @@ public class SteadfastWarp implements SpecBoostManager.SpecBoost<SteadfastWarp> 
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getHealth().addAdditiveModifier("Spec Boost (Base)", healthIncrease);
-            warlordsPlayer.getAbilitiesMatching(ArcaneShield.class).forEach(arcaneShield -> {
+            warlordsPlayer.getAbilitiesMatching(AbstractArcaneShield.class).forEach(arcaneShield -> {
                 arcaneShield.setShieldPercentage(arcaneShield.getShieldPercentage() - absorptionDecreasePercent);
             });
             warlordsPlayer.getAbilitiesMatching(TimeWarpCryomancer.class).forEach(timeWarpCryomancer -> {

@@ -80,7 +80,6 @@ public class Repentance extends AbstractAbility implements BlueAbilityIcon, Dura
                 },
                 tickDuration
         ) {
-
             @Override
             public boolean distinct() {
                 return true;
@@ -90,11 +89,13 @@ public class Repentance extends AbstractAbility implements BlueAbilityIcon, Dura
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                 WarlordsEntity attacker = event.getSource();
                 int healthToAdd = (int) (pool * (damageConvertPercent / 100f)) + 10;
-                attacker.addInstance(InstanceBuilder.healing()
-                                                    .ability(Repentance.this)
-                                                    .source(attacker)
-                                                    .value(Math.min(500, healthToAdd))
-                                                    .flag(InstanceFlags.CAN_OVERHEAL_SELF, pveMasterUpgrade2));
+                attacker.addInstance(InstanceBuilder
+                        .healing()
+                        .ability(Repentance.this)
+                        .source(attacker)
+                        .value(Math.min(500, healthToAdd))
+                        .flag(InstanceFlags.CAN_OVERHEAL_SELF, pveMasterUpgrade2)
+                );
                 if (pveMasterUpgrade2) {
                     Overheal.giveOverHeal(wp, wp);
                 }
