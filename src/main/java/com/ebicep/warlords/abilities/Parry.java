@@ -155,7 +155,8 @@ public class Parry extends AbstractAbility implements AbilityStats<Parry, Parry.
                 };
             }
         });
-        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+        final boolean[] parried = {false};
+        RegularCooldown<Parry> parryCooldown = new RegularCooldown<>(
                 name,
                 "PARRY",
                 Parry.class,
@@ -168,26 +169,24 @@ public class Parry extends AbstractAbility implements AbilityStats<Parry, Parry.
                 cooldownManager -> {
                 },
                 knockbackTickDuration
-        ) {
-            boolean parried = false;
-
-            @Override
-            public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (!parried && event.getAbility() instanceof AbstractStrike<?, ?>) {
-                    parried = true;
-                    stats.timesKnockbacked++;
-                    WarlordsEntity victim = event.getWarlordsEntity();
-                    Vector v = wp.getLocation().toVector().subtract(victim.getLocation().toVector()).normalize().multiply(-knockbackMagnitude).setY(0.35);
-                    new GameRunnable(wp.getGame()) {
-                        @Override
-                        public void run() {
-                            victim.setVelocity(name, v, false);
-                        }
-                    }.runTaskLater(1);
-                    setTicksLeft(0);
+        );
+        parryCooldown.addModifier(Modifier.DAMAGE_ON_DAMAGE_ATTACKER, (event, currentDamageValue, isCrit) -> {
+                    if (!parried[0] && event.getAbility() instanceof AbstractStrike<?, ?>) {
+                        parried[0] = true;
+                        stats.timesKnockbacked++;
+                        WarlordsEntity victim = event.getWarlordsEntity();
+                        Vector v = wp.getLocation().toVector().subtract(victim.getLocation().toVector()).normalize().multiply(-knockbackMagnitude).setY(0.35);
+                        new GameRunnable(wp.getGame()) {
+                            @Override
+                            public void run() {
+                                victim.setVelocity(name, v, false);
+                            }
+                        }.runTaskLater(1);
+                        parryCooldown.setTicksLeft(0);
+                    }
                 }
-            }
-        });
+        );
+        wp.getCooldownManager().addCooldown(parryCooldown);
         return true;
     }
 

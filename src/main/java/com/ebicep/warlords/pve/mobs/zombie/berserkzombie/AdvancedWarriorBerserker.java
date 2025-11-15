@@ -4,7 +4,6 @@ import com.ebicep.warlords.abilities.Berserk;
 import com.ebicep.warlords.abilities.BloodLust;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -106,18 +105,16 @@ public class AdvancedWarriorBerserker extends AbstractBerserkZombie implements A
                         );
                     }
                 }
-        ) {
-            @Override
-            public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                WarlordsEntity attacker = event.getSource();
-                attacker.addInstance(InstanceBuilder
-                        .healing()
-                        .cause(name)
-                        .source(attacker)
-                        .value(currentDamageValue * .65f)
-                );
-            }
-        });
+        ).addModifier(Modifier.DAMAGE_ON_DAMAGE_ATTACKER, (event, currentDamageValue, isCrit) -> {
+                    WarlordsEntity attacker = event.getSource();
+                    attacker.addInstance(InstanceBuilder
+                            .healing()
+                            .cause(name)
+                            .source(attacker)
+                            .value(currentDamageValue * .65f)
+                    );
+                }
+        ));
     }
 
 }

@@ -1,7 +1,6 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -120,30 +119,28 @@ public class LegendaryOracle extends AbstractLegendaryWeapon implements PassiveC
                 CooldownTypes.WEAPON,
                 cm -> {},
                 false
-        ) {
-            @Override
-            public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (clarity <= 0) {
-                    return;
-                }
-                int stacks = clarity;
-                clarity = 0;
-
-                float heal = player.getMaxHealth() * (HEAL_PER_STACK_PERCENT / 100f) * stacks;
-                player.addInstance(com.ebicep.warlords.player.ingame.instances.InstanceBuilder
-                        .healing()
-                        .cause("Oracle")
-                        .source(player)
-                        .value(heal)
-                );
-
-                float cdr = (float) (stacks * getCdrPerStackSeconds());
-                player.getAbilitiesMatching(AbstractAbility.class).forEach(a -> a.subtractCurrentCooldown(cdr));
-            }
-        }.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
                     if (currentDamageValue.getCalculatedValue() > 0) {
                         lastDamagedAt = Instant.now();
                     }
+                }
+        ).addModifier(Modifier.DAMAGE_ON_DAMAGE_ATTACKER, (event, currentDamageValue, isCrit) -> {
+                    if (clarity <= 0) {
+                        return;
+                    }
+                    int stacks = clarity;
+                    clarity = 0;
+
+                    float heal = player.getMaxHealth() * (HEAL_PER_STACK_PERCENT / 100f) * stacks;
+                    player.addInstance(com.ebicep.warlords.player.ingame.instances.InstanceBuilder
+                            .healing()
+                            .cause("Oracle")
+                            .source(player)
+                            .value(heal)
+                    );
+
+                    float cdr = (float) (stacks * getCdrPerStackSeconds());
+                    player.getAbilitiesMatching(AbstractAbility.class).forEach(a -> a.subtractCurrentCooldown(cdr));
                 }
         ));
 

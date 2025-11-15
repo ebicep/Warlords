@@ -4,7 +4,6 @@ import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -85,24 +84,23 @@ public class Repentance extends AbstractAbility implements BlueAbilityIcon, Dura
                 return true;
             }
 
-            @Override
-            public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                WarlordsEntity attacker = event.getSource();
-                int healthToAdd = (int) (pool * (damageConvertPercent / 100f)) + 10;
-                attacker.addInstance(InstanceBuilder
-                        .healing()
-                        .ability(Repentance.this)
-                        .source(attacker)
-                        .value(Math.min(500, healthToAdd))
-                        .flag(InstanceFlags.CAN_OVERHEAL_SELF, pveMasterUpgrade2)
-                );
-                if (pveMasterUpgrade2) {
-                    Overheal.giveOverHeal(wp, wp);
+        }.addModifier(Modifier.DAMAGE_ON_DAMAGE_ATTACKER, (event, currentDamageValue, isCrit) -> {
+                    WarlordsEntity attacker = event.getSource();
+                    int healthToAdd = (int) (pool * (damageConvertPercent / 100f)) + 10;
+                    attacker.addInstance(InstanceBuilder
+                            .healing()
+                            .ability(Repentance.this)
+                            .source(attacker)
+                            .value(Math.min(500, healthToAdd))
+                            .flag(InstanceFlags.CAN_OVERHEAL_SELF, pveMasterUpgrade2)
+                    );
+                    if (pveMasterUpgrade2) {
+                        Overheal.giveOverHeal(wp, wp);
+                    }
+                    energyGained.addAndGet(attacker.addEnergy(attacker, name, healthToAdd * (energyConvertPercent / 100f)));
+                    pool *= .5f;
                 }
-                energyGained.addAndGet(attacker.addEnergy(attacker, "Repentance", healthToAdd * (energyConvertPercent / 100f)));
-                pool *= .5f;
-            }
-        });
+        ));
         return true;
     }
 

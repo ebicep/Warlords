@@ -143,7 +143,7 @@ public class LegendaryFulcrum extends AbstractLegendaryWeapon implements GardenO
                             );
                         }
                     };
-                    fulcrumCooldown.addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> energyGainPerTick.addAdditiveModifier(name, EPS_BOOST / 20f));
+            fulcrumCooldown.addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> energyGainPerTick.addAdditiveModifier(getTitleName(), EPS_BOOST / 20f));
                     player.getCooldownManager().addCooldown(fulcrumCooldown);
                 }
         ));

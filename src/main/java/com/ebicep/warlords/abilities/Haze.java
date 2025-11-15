@@ -4,7 +4,6 @@ import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -67,7 +66,7 @@ public class Haze extends AbstractAbility implements OrangeAbilityIcon, Damages<
         wp.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(healingValues.hazeHealing));
         wp.addSpeedModifier(wp, name, speedBuff, tickDuration);
         HazeData data = new HazeData(!FlagHolder.isPlayerHolderFlag(wp));
-        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+        RegularCooldown<HazeData> hazeCooldown = new RegularCooldown<>(
                 name,
                 "HAZE",
                 HazeData.class,
@@ -120,20 +119,21 @@ public class Haze extends AbstractAbility implements OrangeAbilityIcon, Damages<
                                     });
                     }
                 })
-        ) {
-            @Override
-            public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (event.getAbility() instanceof JudgementStrike || event.getCause().isEmpty()) {
-                    setTicksLeft(0);
-                }
-            }
-        }.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+        );
+        hazeCooldown.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
                     if (!data.vanished) {
                         return;
                     }
                     currentDamageValue.addMultiplicativeModifierMult(name, convertToDivisionDecimal(incomingDamageReduction));
                 }
-        ));
+        );
+        hazeCooldown.addModifier(Modifier.DAMAGE_ON_DAMAGE_ATTACKER, (event, currentDamageValue, isCrit) -> {
+                    if (event.getAbility() instanceof JudgementStrike || event.getCause().isEmpty()) {
+                        hazeCooldown.setTicksLeft(0);
+                    }
+                }
+        );
+        wp.getCooldownManager().addCooldown(hazeCooldown);
 
         return true;
     }

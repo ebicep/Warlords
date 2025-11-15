@@ -107,10 +107,6 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                     EffectUtils.displayParticle(Particle.SMOKE, wp.getLocation(), 4, 0.2, 0.2, 0.2, 0.05);
                 })
         ) {
-            @Override
-            public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                data.damageDoneWithOrder += currentDamageValue;
-            }
 
             @Override
             public void onDeathFromEnemies(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit, boolean isKiller) {
@@ -262,6 +258,9 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                         }
                         data.setMarkedPlayer(victim);
                     }
+                }
+        ).addModifier(Modifier.DAMAGE_ON_DAMAGE_ATTACKER, (event, currentDamageValue, isCrit) -> {
+                    data.damageDoneWithOrder += currentDamageValue;
                 }
         ));
 

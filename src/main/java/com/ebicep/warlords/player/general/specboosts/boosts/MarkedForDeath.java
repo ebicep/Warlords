@@ -105,8 +105,8 @@ public class MarkedForDeath implements SpecBoostManager.SpecBoost<MarkedForDeath
                     }
             );
             final int[] ticksIncreased = {0};
-            regularCooldown.addModifier(Modifier.DAMAGE_ON_DAMAGE_SELF, (event, currentDamageValue, isCrit) -> {
-                        if (event.getSource().equals(warlordsEntity) && event.getAbility() instanceof AvengersStrike) {
+            regularCooldown.addModifier(Modifier.DAMAGE_ON_DAMAGE_SELF, (e, currentDamageValue, isCrit) -> {
+                if (e.getSource().equals(warlordsEntity) && e.getAbility() instanceof AvengersStrike) {
                             if (ticksIncreased[0] >= maxStrikeMarkDurationIncreaseTicks) {
                                 return;
                             }

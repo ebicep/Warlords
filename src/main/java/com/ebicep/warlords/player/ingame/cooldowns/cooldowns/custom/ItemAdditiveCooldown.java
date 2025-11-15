@@ -1,6 +1,5 @@
 package com.ebicep.warlords.player.ingame.cooldowns.cooldowns.custom;
 
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
@@ -123,21 +122,20 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
                     );
                 }
         );
-    }
-
-    @Override
-    public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-        if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC) {
-            Aspect aspect = warlordsNPC.getMob().getAspect();
-            if (aspect == null) {
-                return;
-            }
-            AspectModifier aspectModifier = aspectModifiers.get(aspect);
-            if (aspectModifier == null) {
-                return;
-            }
-            Aspect.AspectNegationCooldown.giveAspectNegationCooldown(from, warlordsNPC, aspectModifier.effectNegationTicks);
-        }
+        this.addModifier(Modifier.DAMAGE_ON_DAMAGE_ATTACKER, (event, currentDamageValue, isCrit) -> {
+                    if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC) {
+                        Aspect aspect = warlordsNPC.getMob().getAspect();
+                        if (aspect == null) {
+                            return;
+                        }
+                        AspectModifier aspectModifier = aspectModifiers.get(aspect);
+                        if (aspectModifier == null) {
+                            return;
+                        }
+                        Aspect.AspectNegationCooldown.giveAspectNegationCooldown(from, warlordsNPC, aspectModifier.effectNegationTicks);
+                    }
+                }
+        );
     }
 
     public void addDamageBoost(float damageBoost) {

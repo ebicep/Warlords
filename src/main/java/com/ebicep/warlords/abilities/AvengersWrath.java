@@ -71,63 +71,6 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
                     }
                 })
         ) {
-
-            @Override
-            public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (!event.getCause().equals("Avenger's Strike") || event.getFlags().contains(InstanceFlags.AVENGER_WRATH_STRIKE)) {
-                    return;
-                }
-                WarlordsEntity warlordsEntity = event.getWarlordsEntity();
-                stats.targetsStruckDuringWrath++;
-                data.targetsStruckDuringWrath++;
-                EnumSet<InstanceFlags> flags = EnumSet.of(
-                        InstanceFlags.AVENGER_WRATH_STRIKE,
-                        InstanceFlags.IGNORE_FERVENT_TITLE,
-                        InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST
-                );
-                if (event.getFlags().contains(InstanceFlags.STRIKE_IN_CONS)) {
-                    flags.add(InstanceFlags.STRIKE_IN_CONS);
-                }
-                if (pveMasterUpgrade2) {
-                    warlordsEntity.addInstance(InstanceBuilder
-                            .damage()
-                            .cause("Avenger's Strike")
-                            .source(wp)
-                            .min(event.getMin())
-                            .max(event.getMax())
-                            .critChance(event.getCritChance())
-                            .critMultiplier(event.getCritMultiplier())
-                            .flags(flags)
-                    );
-                    stats.extraTargetsStruck++;
-                    data.extraTargetsStruck++;
-                }
-                for (WarlordsEntity wrathTarget : PlayerFilter
-                        .entitiesAround(warlordsEntity, hitRadius, hitRadius, hitRadius)
-                        .aliveEnemiesOf(wp)
-                        .closestFirst(warlordsEntity)
-                        .excluding(warlordsEntity)
-                        .limit(maxTargets)
-                ) {
-                    stats.extraTargetsStruck++;
-                    stats.targetsStruckDuringWrath++;
-                    data.extraTargetsStruck++;
-                    data.targetsStruckDuringWrath++;
-                    wrathTarget.addInstance(InstanceBuilder
-                            .damage()
-                            .cause("Avenger's Strike")
-                            .source(wp)
-                            .min(event.getMin())
-                            .max(event.getMax())
-                            .critChance(event.getCritChance())
-                            .critMultiplier(event.getCritMultiplier())
-                            .flags(flags)
-                    );
-                    Bukkit.getPluginManager().callEvent(new WarlordsStrikeEvent(wp, AvengersWrath.this, wrathTarget));
-                    wrathTarget.subtractEnergy(name, 10, true);
-                }
-            }
-
             @Override
             public void onDeathFromEnemies(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit, boolean isKiller) {
                 if (isKiller) {
@@ -136,6 +79,61 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
                 }
             }
         };
+        wrathCooldown.addModifier(Modifier.DAMAGE_ON_DAMAGE_ATTACKER, (event, currentDamageValue, isCrit) -> {
+                    if (!event.getCause().equals("Avenger's Strike") || event.getFlags().contains(InstanceFlags.AVENGER_WRATH_STRIKE)) {
+                        return;
+                    }
+                    WarlordsEntity warlordsEntity = event.getWarlordsEntity();
+                    stats.targetsStruckDuringWrath++;
+                    data.targetsStruckDuringWrath++;
+                    EnumSet<InstanceFlags> flags = EnumSet.of(
+                            InstanceFlags.AVENGER_WRATH_STRIKE,
+                            InstanceFlags.IGNORE_FERVENT_TITLE,
+                            InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST
+                    );
+                    if (event.getFlags().contains(InstanceFlags.STRIKE_IN_CONS)) {
+                        flags.add(InstanceFlags.STRIKE_IN_CONS);
+                    }
+                    if (pveMasterUpgrade2) {
+                        warlordsEntity.addInstance(InstanceBuilder
+                                .damage()
+                                .cause("Avenger's Strike")
+                                .source(wp)
+                                .min(event.getMin())
+                                .max(event.getMax())
+                                .critChance(event.getCritChance())
+                                .critMultiplier(event.getCritMultiplier())
+                                .flags(flags)
+                        );
+                        stats.extraTargetsStruck++;
+                        data.extraTargetsStruck++;
+                    }
+                    for (WarlordsEntity wrathTarget : PlayerFilter
+                            .entitiesAround(warlordsEntity, hitRadius, hitRadius, hitRadius)
+                            .aliveEnemiesOf(wp)
+                            .closestFirst(warlordsEntity)
+                            .excluding(warlordsEntity)
+                            .limit(maxTargets)
+                    ) {
+                        stats.extraTargetsStruck++;
+                        stats.targetsStruckDuringWrath++;
+                        data.extraTargetsStruck++;
+                        data.targetsStruckDuringWrath++;
+                        wrathTarget.addInstance(InstanceBuilder
+                                .damage()
+                                .cause("Avenger's Strike")
+                                .source(wp)
+                                .min(event.getMin())
+                                .max(event.getMax())
+                                .critChance(event.getCritChance())
+                                .critMultiplier(event.getCritMultiplier())
+                                .flags(flags)
+                        );
+                        Bukkit.getPluginManager().callEvent(new WarlordsStrikeEvent(wp, AvengersWrath.this, wrathTarget));
+                        wrathTarget.subtractEnergy(name, 10, true);
+                    }
+                }
+        );
         wrathCooldown.addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> energyGainPerTick.addAdditiveModifier(name, energyPerSecond / 20f));
         wp.getCooldownManager().addCooldown(wrathCooldown);
         return true;
