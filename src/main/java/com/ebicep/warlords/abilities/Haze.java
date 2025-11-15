@@ -10,6 +10,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -87,12 +88,10 @@ public class Haze extends AbstractAbility implements OrangeAbilityIcon, Damages<
                                             cooldownManager2 -> {
                                             },
                                             vulnerableTickDuration
-                                    ) {
-                                        @Override
-                                        public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                            return currentDamageValue * convertToMultiplicationDecimal(vulnerableDamageBonus);
-                                        }
-                                    });
+                                    ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (event, currentDamageValue) -> {
+                                                currentDamageValue.addMultiplicativeModifierMult("Vulernable", convertToMultiplicationDecimal(vulnerableDamageBonus));
+                                            }
+                                    ));
                                 });
                 },
                 cooldownManager -> {

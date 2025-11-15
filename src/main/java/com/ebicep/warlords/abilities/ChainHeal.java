@@ -4,7 +4,6 @@ import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -157,35 +156,34 @@ public class ChainHeal extends AbstractChain<ChainHeal, ChainHeal.ChainHealStats
 
     private void critStatsOnHit(WarlordsEntity we) {
         we.getCooldownManager().removeCooldown(ChainHeal.class, false);
-        we.getCooldownManager().addCooldown(new RegularCooldown<>(name, "CHAIN CRIT", ChainHeal.class, new ChainHeal(), we, CooldownTypes.BUFF, cooldownManager -> {
-        }, 8 * 20, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-            if (ticksLeft % 6 == 0) {
-                EffectUtils.displayParticle(Particle.HAPPY_VILLAGER, we.getLocation().add(0, 1.2, 0), 1, 0.5, 0.3, 0.5, 0.01);
-            }
-        })
-        ) {
-
-            @Override
-            public boolean distinct() {
-                return true;
-            }
-
-            @Override
-            public float addCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
-                if (event.getCause().isEmpty() || event.getCause().equals("Time Warp")) {
-                    return currentCritChance;
+        we.getCooldownManager().addCooldown(new RegularCooldown<>(
+                name,
+                "CHAIN CRIT",
+                ChainHeal.class,
+                new ChainHeal(),
+                we,
+                CooldownTypes.BUFF,
+                cooldownManager -> {
+                },
+                8 * 20,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksLeft % 6 == 0) {
+                        EffectUtils.displayParticle(Particle.HAPPY_VILLAGER, we.getLocation().add(0, 1.2, 0), 1, 0.5, 0.3, 0.5, 0.01);
+                    }
+                })
+        ).addModifier(Modifier.DAMAGE_CRIT_CHANCE_ATTACKER, (event, currentCritChance) -> {
+                    if (event.getCause().isEmpty() || event.getCause().equals("Time Warp")) {
+                        return;
+                    }
+                    currentCritChance.addAdditiveModifier(name, 20);
                 }
-                return currentCritChance + 20;
-            }
-
-            @Override
-            public float addCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
-                if (event.getCause().isEmpty() || event.getCause().equals("Time Warp")) {
-                    return currentCritMultiplier;
+        ).addModifier(Modifier.DAMAGE_CRIT_MULTIPLIER_ATTACKER, (event, currentCritMultiplier) -> {
+                    if (event.getCause().isEmpty() || event.getCause().equals("Time Warp")) {
+                        return;
+                    }
+                    currentCritMultiplier.addAdditiveModifier(name, 40);
                 }
-                return currentCritMultiplier + 40;
-            }
-        });
+        ));
     }
 
     public float getCooldownReductionInSeconds() {

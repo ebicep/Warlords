@@ -10,6 +10,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.player.ingame.motionsystem.MotionModifier;
 import com.ebicep.warlords.player.ingame.motionsystem.MotionModifierBuilder;
 import com.ebicep.warlords.player.ingame.motionsystem.MotionSystem;
@@ -58,15 +59,12 @@ public enum Aspect {
                             );
                         }
                     }
-            ) {
-                @Override
-                public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    if (Aspect.isNegated(warlordsEntity)) {
-                        return currentDamageValue;
+            ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (event, currentDamageValue) -> {
+                        if (!Aspect.isNegated(warlordsEntity)) {
+                            currentDamageValue.addMultiplicativeModifierMult("Aspect - Armoured", 0.6f);
+                        }
                     }
-                    return currentDamageValue * .6f;
-                }
-            });
+            ));
         }
     },
     CHILLING("Chilling", TextColor.color(68, 204, 204)) {
@@ -193,15 +191,12 @@ public enum Aspect {
                                     );
                                 }
                             })
-                    ) {
-                        @Override
-                        public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                            if (Aspect.isNegated(warlordsEntity)) {
-                                return currentDamageValue;
+                    ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (e, currentDamageValue2) -> {
+                                if (!Aspect.isNegated(warlordsEntity)) {
+                                    currentDamageValue2.addMultiplicativeModifierMult("Aspect - Burn", 1.2f);
+                                }
                             }
-                            return currentDamageValue * 1.2f;
-                        }
-                    });
+                    ));
                 }
             });
         }

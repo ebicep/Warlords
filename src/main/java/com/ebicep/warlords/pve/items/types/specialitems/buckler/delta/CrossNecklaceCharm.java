@@ -1,11 +1,11 @@
 package com.ebicep.warlords.pve.items.types.specialitems.buckler.delta;
 
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
@@ -67,12 +67,10 @@ public class CrossNecklaceCharm extends SpecialDeltaBuckler implements CraftsInt
                                                 cooldownManager -> {
                                                 },
                                                 5
-                                        ) {
-                                            @Override
-                                            public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                                return currentDamageValue * 1.1f;
-                                            }
-                                        });
+                                        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (event, currentDamageValue) -> {
+                                                    currentDamageValue.addMultiplicativeModifierMult(getName() + " Damage", 1.1f);
+                                                }
+                                        ));
                                     });
                     }
                 }
@@ -83,4 +81,5 @@ public class CrossNecklaceCharm extends SpecialDeltaBuckler implements CraftsInt
     public AbstractItem getCraftsInto(Set<BasicStatPool> statPool) {
         return new BreastplateBuckler(statPool);
     }
+
 }

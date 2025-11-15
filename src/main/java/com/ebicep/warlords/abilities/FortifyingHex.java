@@ -12,6 +12,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.type.CustomInstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.sentinel.FortifyingHexBranch;
@@ -82,7 +83,8 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
 
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                float afterValue = currentDamageValue * convertToDivisionDecimal(data.damageReduction * (event.getWarlordsEntity().hasFlag() ? data.damageReductionFlagMultiplier : 1));
+                float afterValue = currentDamageValue * convertToDivisionDecimal(data.damageReduction * (event.getWarlordsEntity()
+                                                                                                              .hasFlag() ? data.damageReductionFlagMultiplier : 1));
                 fromHex.getAbilityStats().damageReduced += currentDamageValue - afterValue;
                 return afterValue;
             }
@@ -114,8 +116,8 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
     }
 
     @Override
-    public DamageValues getDamageValues() {
-        return damageValues;
+    public FortifyingHexStats getAbilityStats() {
+        return stats;
     }
 
     @Override
@@ -153,17 +155,17 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
         return new FortifyingHexBranch(abilityTree, this);
     }
 
-    @Override
-    public FortifyingHexStats getAbilityStats() {
-        return stats;
-    }
-
     public int getMaxEnemiesHit() {
         return maxEnemiesHit;
     }
 
     public void setMaxEnemiesHit(int maxEnemiesHit) {
         this.maxEnemiesHit = maxEnemiesHit;
+    }
+
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
     }
 
     public int getMaxAlliesHit() {
@@ -190,23 +192,21 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
                 weakeningHex.setStacks(weakeningHex.getStacks() + 1);
                 regularCooldown.setTicksLeft(tickDuration);
             } else {
+                WeakeningHex data = new WeakeningHex();
                 hit.getCooldownManager().addCooldown(new RegularCooldown<>(
                         "Weakening Hex",
                         "WHEX",
                         WeakeningHex.class,
-                        new WeakeningHex(),
+                        data,
                         wp,
                         CooldownTypes.LOW_LEVEL_DEBUFF,
                         cooldownManager -> {
                         },
                         6 * 20
-                ) {
-
-                    @Override
-                    public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                        return currentDamageValue * (1 + 0.05f * cooldownObject.getStacks());
-                    }
-                });
+                ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (event, currentDamageValue) -> {
+                            currentDamageValue.addMultiplicativeModifierMult("Weakening Hex", (1 + 0.05f * data.getStacks()));
+                        }
+                ));
             }
         }
         stats.addPlayersHit();
@@ -248,6 +248,60 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
         }
 
     }
+
+    public static class FortifyingHexData {
+
+        private final float damageReductionFlagMultiplier;
+        private float damageReduction;
+
+        public FortifyingHexData(float damageReduction, float damageReductionFlagMultiplier) {
+            this.damageReduction = damageReduction;
+            this.damageReductionFlagMultiplier = damageReductionFlagMultiplier;
+        }
+
+        public float getDamageReduction() {
+            return damageReduction;
+        }
+
+        public void setDamageReduction(float damageReduction) {
+            this.damageReduction = damageReduction;
+        }
+
+    }
+
+    public static class FortifyingHexStats extends AbstractPiercingProjectileStats<FortifyingHex, FortifyingHexStats> {
+
+        @Field("damage_reduced")
+        private float damageReduced = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.removeIf(abilityStatDisplay -> abilityStatDisplay.name().equals("Direct Hits"));
+            statsDisplay.add(new AbilityStatDisplay("Damage Reduced", damageReduced));
+            return statsDisplay;
+        }
+
+        @Override
+        public FortifyingHexStats merge(FortifyingHexStats other, int multiplier) {
+            FortifyingHexStats stats = super.merge(other, multiplier);
+            stats.damageReduced = this.damageReduced + other.damageReduced * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<FortifyingHexStats> getClazz() {
+            return FortifyingHexStats.class;
+        }
+
+        @Override
+        public FortifyingHexStats create() {
+            return new FortifyingHexStats();
+        }
+
+    }
+
+
 
     @Nonnull
     public static FortifyingHex getFromHex(WarlordsEntity from) {
@@ -427,57 +481,9 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
         return true;
     }
 
-    public static class FortifyingHexData {
 
-        private final float damageReductionFlagMultiplier;
-        private float damageReduction;
 
-        public FortifyingHexData(float damageReduction, float damageReductionFlagMultiplier) {
-            this.damageReduction = damageReduction;
-            this.damageReductionFlagMultiplier = damageReductionFlagMultiplier;
-        }
 
-        public float getDamageReduction() {
-            return damageReduction;
-        }
-
-        public void setDamageReduction(float damageReduction) {
-            this.damageReduction = damageReduction;
-        }
-
-    }
-
-    public static class FortifyingHexStats extends AbstractPiercingProjectileStats<FortifyingHex, FortifyingHexStats> {
-
-        @Field("damage_reduced")
-        private float damageReduced = 0;
-
-        @Override
-        public List<AbilityStatDisplay> getStatsDisplay() {
-            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
-            statsDisplay.removeIf(abilityStatDisplay -> abilityStatDisplay.name().equals("Direct Hits"));
-            statsDisplay.add(new AbilityStatDisplay("Damage Reduced", damageReduced));
-            return statsDisplay;
-        }
-
-        @Override
-        public FortifyingHexStats merge(FortifyingHexStats other, int multiplier) {
-            FortifyingHexStats stats = super.merge(other, multiplier);
-            stats.damageReduced = this.damageReduced + other.damageReduced * multiplier;
-            return stats;
-        }
-
-        @Override
-        public Class<FortifyingHexStats> getClazz() {
-            return FortifyingHexStats.class;
-        }
-
-        @Override
-        public FortifyingHexStats create() {
-            return new FortifyingHexStats();
-        }
-
-    }
 
     public float getDamageReductionFlagMultiplier() {
         return damageReductionFlagMultiplier;

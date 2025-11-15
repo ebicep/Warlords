@@ -12,6 +12,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.type.DamageInstance;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import org.bukkit.event.EventHandler;
 
 import java.util.Collections;
@@ -93,12 +94,11 @@ public class PactOfProtection implements SpecBoostManager.SpecBoost<PactOfProtec
                     Collections.singletonList((cd, ticksLeft, ticksElapsed) -> {
                         cd.setTicksLeft(regularCooldown.getTicksLeft());
                     })
-            ) {
-                @Override
-                public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    return currentDamageValue * AbstractAbility.convertToMultiplicationDecimal(selfDamageIncreasePercent);
-                }
-            };
+            );
+            pactCooldown.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (e, currentDamageValue) -> {
+                        currentDamageValue.addMultiplicativeModifierMult(getStringName(), AbstractAbility.convertToMultiplicationDecimal(selfDamageIncreasePercent));
+                    }
+            );
             Consumer<CooldownManager> oldOnRemoveForce = regularCooldown.getOnRemoveForce();
             regularCooldown.setOnRemoveForce(cooldownManager -> {
                 oldOnRemoveForce.accept(cooldownManager);

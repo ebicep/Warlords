@@ -12,63 +12,6 @@ public interface DamageInstance extends Instance {
         return null;
     }
 
-//    /**
-//     * Calls before variables are declared - based on self cooldowns
-//     */
-//    default void damageDoBeforeVariableSetFromSelf(WarlordsDamageHealingEvent event) {
-//    }
-
-    /**
-     * Calls before variables are declared - based on attackers cooldowns
-     */
-    default void damageDoBeforeVariableSetFromAttacker(WarlordsDamageHealingEvent event) {
-    }
-
-//    /**
-//     * Calls before any reduction - based on self cooldowns
-//     */
-//    default void doBeforeReductionFromSelf(WarlordsDamageHealingEvent event) {
-//
-//    }
-
-    /**
-     * Calls before any reduction - based on attackers cooldowns
-     */
-    default void doBeforeReductionFromAttacker(WarlordsDamageHealingEvent event) {
-
-    }
-
-    /**
-     * If attacker has abilities that increase their crit chance (inferno), numbers should be in the tens place
-     */
-    default float addCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
-        return currentCritChance;
-    }
-
-    default float setCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
-        return currentCritChance;
-    }
-
-    /**
-     * If attacker has abilities that increase their crit multiplier (inferno), numbers should be in the tens place
-     */
-    default float addCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
-        return currentCritMultiplier;
-    }
-
-    default float setCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
-        return currentCritMultiplier;
-    }
-
-    default void onPostCritCalculationFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit, float critChance, float critMultiplier) {
-    }
-
-    /**
-     * If self has abilities that increase/decrease their damage taken (berserk) - before intervene
-     */
-    default float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-        return currentDamageValue;
-    }
 
     /**
      * If attacker has abilities that increase/decrease damage done (berserk) - before intervene

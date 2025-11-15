@@ -14,6 +14,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.player.ingame.motionsystem.MotionModifier;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.flags.DynamicFlags;
@@ -58,6 +59,24 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
     private int decoyMaxTicksLived = 60;
 
     private boolean canSwitchToCarrier = false;
+
+    public SoulSwitch() {
+        super(AbstractAbilityBuilder.create("soulSwitch").pvp());
+    }
+
+    @Override
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.radius = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), float.class));
+        this.radiusFlag = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radiusFlag"), float.class));
+        this.verticalLimit = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("verticalLimit"), float.class);
+        this.verticalLimitFlag = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("verticalLimitFlag"), float.class);
+        this.blindnessTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("blindnessTicks"), int.class);
+        this.decoyMaxTicksLived = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("decoyMaxTicksLived"), int.class);
+        this.invisTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("invisTicks"), int.class);
+        this.damageReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageReduction"), int.class);
+        this.damageReductionTickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageReductionTickDuration"), int.class);
+    }
 
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
@@ -152,12 +171,12 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                             public float modifyDamageAfterInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
                                 if (event.getCause().equals("Judgement Strike")) {
                                     double speed = animus.getWarlordsNPC()
-                                            .getSpeed()
-                                            .getModifiers()
-                                            .stream()
-                                            .filter(modifier -> modifier.getModifier() > 0)
-                                            .mapToDouble(MotionModifier::getModifier)
-                                            .sum();
+                                                         .getSpeed()
+                                                         .getModifiers()
+                                                         .stream()
+                                                         .filter(modifier -> modifier.getModifier() > 0)
+                                                         .mapToDouble(MotionModifier::getModifier)
+                                                         .sum();
                                     float damageBoost = Math.min(1.1f, (float) (1 + (speed * 0.5f) / 100));
                                     return currentDamageValue * damageBoost;
                                 }
@@ -166,19 +185,25 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                         });
                     }
                     if (pveMasterUpgrade2) {
-                        wp.getCooldownManager().addCooldown(new RegularCooldown<>("Tricky Switch", null, SoulSwitch.class, null, wp, CooldownTypes.ABILITY, cooldownManager -> {
-                        }, 10 * 60 * 20, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                            if (animus.getWarlordsNPC().isDead()) {
-                                cooldown.setTicksLeft(0);
-                            }
-                        })
-                        ) {
-
-                            @Override
-                            public float addCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
-                                return currentCritChance + 15;
-                            }
-                        });
+                        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                "Tricky Switch",
+                                null,
+                                SoulSwitch.class,
+                                null,
+                                wp,
+                                CooldownTypes.ABILITY,
+                                cooldownManager -> {
+                                },
+                                10 * 60 * 20,
+                                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                                    if (animus.getWarlordsNPC().isDead()) {
+                                        cooldown.setTicksLeft(0);
+                                    }
+                                })
+                        ).addModifier(Modifier.DAMAGE_CRIT_CHANCE_ATTACKER, (event, currentCritChance) -> {
+                                    currentCritChance.addAdditiveModifier("Tricky Switch", 15);
+                                }
+                        ));
                         animus.getWarlordsNPC()
                               .getCooldownManager()
                               .addCooldown(new PermanentCooldown<>("Tricky Switch", null, SoulSwitch.class, null, wp, CooldownTypes.ABILITY, cooldownManager -> {
@@ -223,44 +248,6 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
             return true;
         }
         return false;
-    }
-
-    public SoulSwitch() {
-        super(AbstractAbilityBuilder.create("soulSwitch").pvp());
-    }
-
-    @Override
-    public void init(AbstractAbilityBuilder builder) {
-        super.init(builder);
-        this.radius = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), float.class));
-        this.radiusFlag = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radiusFlag"), float.class));
-        this.verticalLimit = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("verticalLimit"), float.class);
-        this.verticalLimitFlag = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("verticalLimitFlag"), float.class);
-        this.blindnessTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("blindnessTicks"), int.class);
-        this.decoyMaxTicksLived = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("decoyMaxTicksLived"), int.class);
-        this.invisTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("invisTicks"), int.class);
-        this.damageReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageReduction"), int.class);
-        this.damageReductionTickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageReductionTickDuration"), int.class);
-    }
-
-    public void setCanSwitchToCarrier(boolean canSwitchToCarrier) {
-        this.canSwitchToCarrier = canSwitchToCarrier;
-    }
-
-    public int getDamageReduction() {
-        return damageReduction;
-    }
-
-    public void setDamageReduction(int damageReduction) {
-        this.damageReduction = damageReduction;
-    }
-
-    public float getVerticalLimit() {
-        return verticalLimit;
-    }
-
-    public void setVerticalLimit(float verticalLimit) {
-        this.verticalLimit = verticalLimit;
     }
 
     @Override
@@ -311,6 +298,26 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
     @Override
     public SoulSwitchStats getAbilityStats() {
         return stats;
+    }
+
+    public void setCanSwitchToCarrier(boolean canSwitchToCarrier) {
+        this.canSwitchToCarrier = canSwitchToCarrier;
+    }
+
+    public int getDamageReduction() {
+        return damageReduction;
+    }
+
+    public void setDamageReduction(int damageReduction) {
+        this.damageReduction = damageReduction;
+    }
+
+    public float getVerticalLimit() {
+        return verticalLimit;
+    }
+
+    public void setVerticalLimit(float verticalLimit) {
+        this.verticalLimit = verticalLimit;
     }
 
     public int getBlindnessTicks() {

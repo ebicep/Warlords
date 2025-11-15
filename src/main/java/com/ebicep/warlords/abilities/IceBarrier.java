@@ -9,6 +9,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.cryomancer.IceBarrierBranch;
@@ -78,23 +79,20 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
                                         .filter(enemy -> !enemy.getCooldownManager().hasCooldownFromName("Ice Wall"))
                                         .forEach(enemy -> {
                                             enemy.addSpeedModifier(wp, "Ice Wall", -50, ticksLeft);
-                                            enemy.getCooldownManager()
-                                                 .addCooldown(new RegularCooldown<>("Ice Wall",
-                                                         "WALL",
-                                                         IceBarrier.class,
-                                                         new IceBarrier(),
-                                                         wp,
-                                                         CooldownTypes.ABILITY,
-                                                         cooldownManager -> {
-                                                         },
-                                                         ticksLeft
-                                                 ) {
-
-                                                     @Override
-                                                     public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                                         return currentDamageValue * 1.35f;
-                                                     }
-                                                 });
+                                            enemy.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                                    "Ice Wall",
+                                                    "WALL",
+                                                    IceBarrier.class,
+                                                    new IceBarrier(),
+                                                    wp,
+                                                    CooldownTypes.ABILITY,
+                                                    cooldownManager -> {
+                                                    },
+                                                    ticksLeft
+                                            ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (event, currentDamageValue) -> {
+                                                        currentDamageValue.addMultiplicativeModifierMult("Ice Wall", 1.35f);
+                                                    }
+                                            ));
                                         });
                         }
                     } else {
@@ -122,15 +120,6 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
                     }
                 })
         ) {
-
-            @Override
-            public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (event.getCause().isEmpty() && !Objects.equals(event.getSource(), event.getWarlordsEntity())) {
-                    event.getSource().addSpeedModifier(event.getWarlordsEntity(), "Ice Barrier", -slownessOnMeleeHit, slowDuration * 20);
-                }
-                return currentDamageValue;
-            }
-
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 if (pveMasterUpgrade2) {
@@ -140,6 +129,12 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
             }
 
         };
+        iceBarrierCooldown.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (event, currentDamageValue) -> {
+                    if (event.getCause().isEmpty() && !Objects.equals(event.getSource(), event.getWarlordsEntity())) {
+                        event.getSource().addSpeedModifier(event.getWarlordsEntity(), "Ice Barrier", -slownessOnMeleeHit, slowDuration * 20);
+                    }
+                }
+        );
         wp.getCooldownManager().addCooldown(iceBarrierCooldown);
         if (pveMasterUpgrade) {
             wp.addKnockbackModifier(wp, name, -30, iceBarrierCooldown);

@@ -4,23 +4,23 @@ import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.effects.FallingBlockWaveEffect;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsApplyBurnEffectEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.pyromancer.FireballBranch;
-import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -156,12 +156,10 @@ public class Fireball extends AbstractProjectile<Fireball, Fireball.FireballStat
                         hit.addInstance(InstanceBuilder.damage().cause("Burn").source(shooter).value(healthDamage).flags(InstanceFlags.DOT));
                     }
                 })
-        ) {
-            @Override
-            public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * 1.15f;
-            }
-        });
+        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (event, currentDamageValue) -> {
+                    currentDamageValue.addMultiplicativeModifierMult("Burn", 1.15f);
+                }
+        ));
     }
 
     private void applyIgniteEffect(WarlordsEntity giver, WarlordsEntity hit) {
@@ -173,16 +171,16 @@ public class Fireball extends AbstractProjectile<Fireball, Fireball.FireballStat
                 giver,
                 CooldownTypes.LOW_LEVEL_DEBUFF,
                 cooldownManager -> {
-                        PlayerFilter.entitiesAround(hit, 3, 3, 3)
+                    PlayerFilter.entitiesAround(hit, 3, 3, 3)
                                 .aliveTeammatesOf(hit)
                                 .forEach(warlordsEntity -> {
-                                        warlordsEntity.addInstance(InstanceBuilder
-                                                .damage().cause("Ignite")
-                                                .source(giver)
-                                                .value(damageValues.igniteDamage)
-                                                .flags(InstanceFlags.TRUE_DAMAGE)
-                                        );
-                        });
+                                    warlordsEntity.addInstance(InstanceBuilder
+                                            .damage().cause("Ignite")
+                                            .source(giver)
+                                            .value(damageValues.igniteDamage)
+                                            .flags(InstanceFlags.TRUE_DAMAGE)
+                                    );
+                                });
                 },
                 20
         ));

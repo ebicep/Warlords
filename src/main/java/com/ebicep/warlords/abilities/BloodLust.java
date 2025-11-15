@@ -13,6 +13,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.player.ingame.instances.type.CustomInstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.berserker.BloodlustBranch;
@@ -49,27 +50,6 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
         this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
         this.damageConvertPercent = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageConvertPercent"), int.class);
         this.healReductionPercent = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("healReductionPercent"), float.class);
-    }
-
-    @Override
-    public void updateDescription(Player player) {
-        if (inPve) {
-            description = AbilityDescriptionBuilder.create("You lust for blood, healing yourself for ")
-                                                   .percent(damageConvertPercent, NamedTextColor.GREEN)
-                                                   .text(" of all the damage you deal. All AOE damage done after the first hit reduces the healing to ")
-                                                   .percent(healReductionPercent, NamedTextColor.GREEN)
-                                                   .text(". Lasts ")
-                                                   .durationTicks(tickDuration)
-                                                   .text(".")
-                                                   .build();
-        } else {
-            description = AbilityDescriptionBuilder.create("You lust for blood, healing yourself for ")
-                                                   .percent(damageConvertPercent, NamedTextColor.GREEN)
-                                                   .text(" of all the damage you deal. Lasts ")
-                                                   .durationTicks(tickDuration)
-                                                   .text(".")
-                                                   .build();
-        }
     }
 
     @Override
@@ -160,24 +140,41 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
                 };
             }
 
-            @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                float damageMultiplier = 1;
-                CooldownManager cooldownManager = event.getWarlordsEntity().getCooldownManager();
-                if (pveMasterUpgrade) {
-                    if (cooldownManager.hasCooldown(WoundingCooldown.WoundingData.class)) {
-                        damageMultiplier += 0.3f;
-                    }
-                } else if (pveMasterUpgrade2) {
-                    if (cooldownManager.hasCooldownFromName("Bleed")) {
-                        damageMultiplier += 0.3f;
+        }.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                    CooldownManager cooldownManager = event.getWarlordsEntity().getCooldownManager();
+                    if (pveMasterUpgrade) {
+                        if (cooldownManager.hasCooldown(WoundingCooldown.WoundingData.class)) {
+                            currentDamageValue.addMultiplicativeModifierMult("Sanguineous", 1.3f);
+                        }
+                    } else if (pveMasterUpgrade2) {
+                        if (cooldownManager.hasCooldownFromName("Bleed")) {
+                            currentDamageValue.addMultiplicativeModifierMult("Blood Thirsty", 1.3f);
+                        }
                     }
                 }
-                return currentDamageValue * damageMultiplier;
-            }
-
-        });
+        ));
         return true;
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        if (inPve) {
+            description = AbilityDescriptionBuilder.create("You lust for blood, healing yourself for ")
+                                                   .percent(damageConvertPercent, NamedTextColor.GREEN)
+                                                   .text(" of all the damage you deal. All AOE damage done after the first hit reduces the healing to ")
+                                                   .percent(healReductionPercent, NamedTextColor.GREEN)
+                                                   .text(". Lasts ")
+                                                   .durationTicks(tickDuration)
+                                                   .text(".")
+                                                   .build();
+        } else {
+            description = AbilityDescriptionBuilder.create("You lust for blood, healing yourself for ")
+                                                   .percent(damageConvertPercent, NamedTextColor.GREEN)
+                                                   .text(" of all the damage you deal. Lasts ")
+                                                   .durationTicks(tickDuration)
+                                                   .text(".")
+                                                   .build();
+        }
     }
 
     @Override

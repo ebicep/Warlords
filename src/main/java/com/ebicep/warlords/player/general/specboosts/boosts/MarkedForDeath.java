@@ -13,6 +13,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.type.DamageInstance;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import org.bukkit.event.EventHandler;
 
 import java.util.List;
@@ -101,14 +102,13 @@ public class MarkedForDeath implements SpecBoostManager.SpecBoost<MarkedForDeath
                     .value(100)
             );
             target.addSpeedModifier(warlordsEntity, getStringName(), -avengerMarkSlowPercent, regularCooldown);
+            regularCooldown.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (e, currentDamageValue) -> {
+                        currentDamageValue.addMultiplicativeModifierMult(getStringName(), AbstractAbility.convertToMultiplicationDecimal(avengerMarkIncreaseDamagePercent));
+                    }
+            );
             regularCooldown.addExtraDamageInstance(new DamageInstance() {
 
                 int ticksIncreased = 0;
-
-                @Override
-                public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    return currentDamageValue * AbstractAbility.convertToMultiplicationDecimal(avengerMarkIncreaseDamagePercent);
-                }
 
                 @Override
                 public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {

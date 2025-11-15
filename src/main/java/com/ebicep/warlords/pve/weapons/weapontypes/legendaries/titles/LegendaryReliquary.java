@@ -5,6 +5,7 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
@@ -34,43 +35,6 @@ public class LegendaryReliquary extends AbstractLegendaryWeapon implements Event
 
     public LegendaryReliquary(AbstractLegendaryWeapon legendaryWeapon) {
         super(legendaryWeapon);
-    }
-
-    @Override
-    public LinkedHashMap<Currencies, Long> getCost() {
-        LinkedHashMap<Currencies, Long> baseCost = super.getCost();
-        baseCost.put(Currencies.TITLE_TOKEN_SPIDERS_BURROW, 1L);
-        return baseCost;
-    }
-
-    @Override
-    public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
-        super.applyToWarlordsPlayer(player, pveOption);
-
-        float incomingDamageIncrease = 1 + INCOMING_DAMAGE_INCREASE / 100f;
-        float outgoingDamageIncrease = 1 + (OUTGOING_DAMAGE_INCREASE + OUTGOING_DAMAGE_INCREASE_PER_UPGRADE * getTitleLevel()) / 100f;
-        player.getCooldownManager().addCooldown(new PermanentCooldown<>(
-                "Reliquary",
-                null,
-                LegendaryReliquary.class,
-                null,
-                player,
-                CooldownTypes.WEAPON,
-                cooldownManager -> {
-                },
-                false
-        ) {
-
-            @Override
-            public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * incomingDamageIncrease;
-            }
-
-            @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * outgoingDamageIncrease;
-            }
-        });
     }
 
     @Override
@@ -118,6 +82,40 @@ public class LegendaryReliquary extends AbstractLegendaryWeapon implements Event
     }
 
     @Override
+    public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
+        super.applyToWarlordsPlayer(player, pveOption);
+
+        float incomingDamageIncrease = 1 + INCOMING_DAMAGE_INCREASE / 100f;
+        float outgoingDamageIncrease = 1 + (OUTGOING_DAMAGE_INCREASE + OUTGOING_DAMAGE_INCREASE_PER_UPGRADE * getTitleLevel()) / 100f;
+        player.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                "Reliquary",
+                null,
+                LegendaryReliquary.class,
+                null,
+                player,
+                CooldownTypes.WEAPON,
+                cooldownManager -> {
+                },
+                false
+        ) {
+            @Override
+            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                return currentDamageValue * outgoingDamageIncrease;
+            }
+        }.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (event, currentDamageValue) -> {
+                    currentDamageValue.addMultiplicativeModifierMult("Reliquary", incomingDamageIncrease);
+                }
+        ));
+    }
+
+    @Override
+    public LinkedHashMap<Currencies, Long> getCost() {
+        LinkedHashMap<Currencies, Long> baseCost = super.getCost();
+        baseCost.put(Currencies.TITLE_TOKEN_SPIDERS_BURROW, 1L);
+        return baseCost;
+    }
+
+    @Override
     protected float getMeleeDamageMaxValue() {
         return 190;
     }
@@ -141,5 +139,6 @@ public class LegendaryReliquary extends AbstractLegendaryWeapon implements Event
                 )
         );
     }
+
 }
 

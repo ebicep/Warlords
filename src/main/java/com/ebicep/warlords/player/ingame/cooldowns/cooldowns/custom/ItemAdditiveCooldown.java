@@ -61,16 +61,14 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
                     currentHealValue.addMultiplicativeModifierMult(name, healMultiplier);
                 }
         );
-    }
-
-    @Override
-    public float addCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
-        return currentCritChance + additionalCritChance;
-    }
-
-    @Override
-    public float addCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
-        return currentCritMultiplier + additionalCritMultiplier;
+        this.addModifier(Modifier.DAMAGE_CRIT_CHANCE_ATTACKER, (event, currentCritChance) -> {
+                    currentCritChance.addAdditiveModifier(name, additionalCritChance);
+                }
+        );
+        this.addModifier(Modifier.DAMAGE_CRIT_MULTIPLIER_ATTACKER, (event, currentCritMultiplier) -> {
+                    currentCritMultiplier.addAdditiveModifier(name, additionalCritMultiplier);
+                }
+        );
     }
 
     @Override

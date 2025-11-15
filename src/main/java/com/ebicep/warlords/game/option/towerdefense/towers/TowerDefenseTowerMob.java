@@ -2,7 +2,6 @@ package com.ebicep.warlords.game.option.towerdefense.towers;
 
 import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.towerdefense.towers.trooptype.TDTroopType;
@@ -12,6 +11,7 @@ import com.ebicep.warlords.player.ingame.WarlordsTower;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.instances.type.CustomInstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.CustomAttackStrategy;
 import com.ebicep.warlords.pve.mobs.tiers.Mob;
@@ -20,7 +20,6 @@ import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.npc.NPC;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -33,8 +32,8 @@ import java.util.function.Consumer;
 
 public abstract class TowerDefenseTowerMob extends AbstractMob implements Mob {
 
-    private WarlordsTower spawner;
     protected FloatModifiable armor = new FloatModifiable(0);
+    private WarlordsTower spawner;
     private TDTroopType troopType = TDTroopType.DEFAULT;
 
     public TowerDefenseTowerMob(
@@ -121,34 +120,25 @@ public abstract class TowerDefenseTowerMob extends AbstractMob implements Mob {
                 (cooldown, ticksElapsed) -> {
                     armor.tick();
                 }
-        ) {
-            @Override
-            public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                List<CustomInstanceFlags> customFlags = event.getCustomFlags();
-                for (CustomInstanceFlags customFlag : customFlags) {
-                    if (customFlag instanceof CustomInstanceFlags.Valued valued && valued.flag() == CustomInstanceFlags.Valued.Flag.TD_DEFENDER_ARMOR) {
-                        valued.floatModifiableConsumer().accept(armor);
+        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (event, currentDamageValue) -> {
+                    List<CustomInstanceFlags> customFlags = event.getCustomFlags();
+                    for (CustomInstanceFlags customFlag : customFlags) {
+                        if (customFlag instanceof CustomInstanceFlags.Valued(Consumer<FloatModifiable> floatModifiableConsumer, CustomInstanceFlags.Valued.Flag flag) &&
+                                flag == CustomInstanceFlags.Valued.Flag.TD_DEFENDER_ARMOR
+                        ) {
+                            floatModifiableConsumer.accept(armor);
+                        }
                     }
+                    currentDamageValue.addMultiplicativeModifierMult("Armor", (1 - armor.getCalculatedValue()));
+                    armor.tick();
                 }
-                currentDamageValue *= (1 - armor.getCalculatedValue());
-                armor.tick();
-                return currentDamageValue;
-            }
-        });
+        ));
         return warlordsNPC;
     }
 
     @Override
     public void giveGoals() {
         npc.getDefaultGoalController().addGoal(new NPCTowerDefenseDefenderGoal(this, 3), 2);
-    }
-
-    public void setSpawner(@Nonnull WarlordsTower spawner) {
-        this.spawner = spawner;
-    }
-
-    public WarlordsTower getSpawner() {
-        return spawner;
     }
 
     @Override
@@ -179,6 +169,14 @@ public abstract class TowerDefenseTowerMob extends AbstractMob implements Mob {
     @Override
     public Component getNamePrefix() {
         return Component.text("", NamedTextColor.WHITE);
+    }
+
+    public WarlordsTower getSpawner() {
+        return spawner;
+    }
+
+    public void setSpawner(@Nonnull WarlordsTower spawner) {
+        this.spawner = spawner;
     }
 
     public TDTroopType getTroopType() {

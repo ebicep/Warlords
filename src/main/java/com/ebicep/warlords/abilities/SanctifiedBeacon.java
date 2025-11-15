@@ -11,6 +11,7 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.luminary.SanctifiedBeaconBranch;
@@ -129,42 +130,26 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
                             },
                             // a little longer to make sure there's no gaps in the effect
                             6
-                    ) {
-
-                        @Override
-                        public float setCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
-                            return currentCritMultiplier + 15;
-                        }
-
-                    };
+                    );
+                    shadowGardenCooldown.addModifier(Modifier.DAMAGE_CRIT_MULTIPLIER_ATTACKER, (event, currentCritMultiplier) -> {
+                                currentCritMultiplier.addAdditiveModifier("Shadow Garden", 15);
+                            }
+                    );
                     nearBy.addKnockbackModifier(wp, "Shadow Garden", -15, shadowGardenCooldown);
                     nearBy.getCooldownManager().addCooldown(shadowGardenCooldown);
                 } else {
                     nearBy.getCooldownManager().removeCooldownByObject(beacon);
-                    nearBy.getCooldownManager().addCooldown(new RegularCooldown<>(name, null, SanctifiedBeaconData.class, beacon, wp, CooldownTypes.ABILITY, cooldownManager -> {
-                    }, // a little longer to make sure there's no gaps in the effect
+                    nearBy.getCooldownManager().addCooldown(new RegularCooldown<>(
+                            name,
+                            null,
+                            SanctifiedBeaconData.class,
+                            beacon,
+                            wp,
+                            CooldownTypes.ABILITY,
+                            cooldownManager -> {
+                            }, // a little longer to make sure there's no gaps in the effect
                             6
                     ) {
-
-                        @Override
-                        public float setCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
-                            return currentCritMultiplier * convertToDivisionDecimal(critMultiplierReducedBy);
-                        }
-
-                        @Override
-                        public void onPostCritCalculationFromAttacker(
-                                WarlordsDamageHealingEvent event,
-                                float currentDamageValue,
-                                boolean isCrit,
-                                float critChance,
-                                float critMultiplier
-                        ) {
-                            if (isCrit) {
-                                stats.critsReduced++;
-                                stats.critDamageReduced += currentDamageValue / convertToDivisionDecimal(critMultiplierReducedBy) - currentDamageValue;
-                            }
-                        }
-
                         @Override
                         public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
                             if (wp.isInPve()) {
@@ -172,7 +157,17 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
                             }
                             return currentDamageValue;
                         }
-                    });
+                    }.addModifier(Modifier.DAMAGE_CRIT_MULTIPLIER_ATTACKER, (event, currentCritMultiplier) -> {
+                                currentCritMultiplier.addMultiplicativeModifierMult(name, convertToDivisionDecimal(critMultiplierReducedBy));
+                            }
+                    ).addModifier(Modifier.DAMAGE_POST_CRIT_CALCULATION_ATTACKER, (event, currentDamageValue, isCrit, critChance, critMultiplier) -> {
+                                // TODO contribution
+                                //if (isCrit) {
+                                //                                stats.critsReduced++;
+                                //                                stats.critDamageReduced += currentDamageValue / convertToDivisionDecimal(critMultiplierReducedBy) - currentDamageValue;
+                                //                            }
+                            }
+                    ));
                     if (pveMasterUpgrade) {
                         nearBy.getSpeed().removeModifier(name);
                         nearBy.addSpeedModifier(wp, name, -20, 6);

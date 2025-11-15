@@ -5,11 +5,11 @@ import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.vindicator.SoulShackleBranch;
@@ -152,16 +152,20 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
         shackleTarget.addInstance(InstanceBuilder.damage().ability(this).source(wp).value(damageValues.shackleDamage));
         shacklePlayer(wp, shackleTarget, silenceDuration);
         if (pveMasterUpgrade2) {
-            shackleTarget.getCooldownManager()
-                         .addCooldown(new RegularCooldown<>("Oppressive Chains", "OPP", SoulShackle.class, null, wp, CooldownTypes.LOW_LEVEL_DEBUFF, cooldownManager -> {
-                         }, 3 * 20
-                         ) {
-
-                             @Override
-                             public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                 return currentDamageValue * 1.25f;
-                             }
-                         });
+            shackleTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
+                    "Oppressive Chains",
+                    "OPP",
+                    SoulShackle.class,
+                    null,
+                    wp,
+                    CooldownTypes.LOW_LEVEL_DEBUFF,
+                    cooldownManager -> {
+                    },
+                    3 * 20
+            ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (event, currentDamageValue) -> {
+                        currentDamageValue.addMultiplicativeModifierMult("Oppressive Chains", 1.25f);
+                    }
+            ));
         }
     }
 

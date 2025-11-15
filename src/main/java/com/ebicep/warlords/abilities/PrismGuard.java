@@ -13,6 +13,7 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.vindicator.PrismGuardBranch;
@@ -161,16 +162,20 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                             if (pveMasterUpgrade2) {
                                 boolean silenced = enemyInsideBubble.getCooldownManager().hasCooldown(SoulShackle.class);
                                 if (silenced) {
-                                    enemyInsideBubble.getCooldownManager()
-                                            .addCooldown(new RegularCooldown<>(name, "BUBBLE DEBUFF", PrismGuard.class, new PrismGuard(), wp, CooldownTypes.LOW_LEVEL_DEBUFF, cooldownManager -> {
-                                            }, 20
-                                            ) {
-
-                                                @Override
-                                                public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                                    return currentDamageValue * 1.1f;
-                                                }
-                                            });
+                                    enemyInsideBubble.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                            name,
+                                            "BUBBLE DEBUFF",
+                                            PrismGuard.class,
+                                            new PrismGuard(),
+                                            wp,
+                                            CooldownTypes.LOW_LEVEL_DEBUFF,
+                                            cooldownManager -> {
+                                            },
+                                            20
+                                    ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (event, currentDamageValue) -> {
+                                                currentDamageValue.addMultiplicativeModifierMult(name, 1.1f);
+                                            }
+                                    ));
                                 }
                             }
                         }

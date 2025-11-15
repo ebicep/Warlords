@@ -179,15 +179,12 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, H
                                     cooldownManager -> {
                                     },
                                     getStunTimeInTicks()
-                            ) {
-                                @Override
-                                public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                    if (event.getCause().contains("Strike")) {
-                                        return currentDamageValue * 1.25f;
+                            ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (event, currentDamageValue) -> {
+                                        if (event.getCause().contains("Strike")) {
+                                            currentDamageValue.addMultiplicativeModifierMult("Reckless Rampage", 1.25f);
+                                        }
                                     }
-                                    return currentDamageValue;
-                                }
-                            });
+                            ));
                         }
                     } else if (pveMasterUpgrade2 && otherPlayer.isTeammateAlive(wp)) {
                         otherPlayer.getCooldownManager().addCooldown(new RegularCooldown<>(

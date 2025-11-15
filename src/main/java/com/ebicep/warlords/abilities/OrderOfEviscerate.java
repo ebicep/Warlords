@@ -11,6 +11,7 @@ import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.assassin.OrderOfEviscerateBranch;
@@ -103,21 +104,6 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                     EffectUtils.displayParticle(Particle.SMOKE, wp.getLocation(), 4, 0.2, 0.2, 0.2, 0.05);
                 })
         ) {
-
-            @Override
-            public void doBeforeReductionFromAttacker(WarlordsDamageHealingEvent event) {
-                //mark message here so it displays before damage
-                WarlordsEntity victim = event.getWarlordsEntity();
-                if (victim != wp) {
-                    if (!Objects.equals(data.getMarkedPlayer(), victim)) {
-                        wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" You have ", NamedTextColor.GRAY))
-                                                                      .append(Component.text("marked ", NamedTextColor.YELLOW))
-                                                                      .append(Component.text(victim.getName() + "!", NamedTextColor.GRAY)));
-                    }
-                    data.setMarkedPlayer(victim);
-                }
-            }
-
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 if (!Objects.equals(data.getMarkedPlayer(), event.getWarlordsEntity())) {
@@ -256,7 +242,19 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                 }
                 wp.playSound(wp.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 1, 2);
             }
-        });
+        }.addModifier(Modifier.DAMAGE_BEFORE_ANY_REDUCTION_ATTACKER, event -> {
+                    //mark message here so it displays before damage
+                    WarlordsEntity victim = event.getWarlordsEntity();
+                    if (victim != wp) {
+                        if (!Objects.equals(data.getMarkedPlayer(), victim)) {
+                            wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" You have ", NamedTextColor.GRAY))
+                                                                          .append(Component.text("marked ", NamedTextColor.YELLOW))
+                                                                          .append(Component.text(victim.getName() + "!", NamedTextColor.GRAY)));
+                        }
+                        data.setMarkedPlayer(victim);
+                    }
+                }
+        ));
 
         return true;
     }

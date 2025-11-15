@@ -11,6 +11,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.revenant.OrbsOfLifeBranch;
@@ -140,19 +141,6 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
                     }
                 })
         ) {
-
-            @Override
-            public void doBeforeReductionFromAttacker(WarlordsDamageHealingEvent event) {
-                String ability = event.getCause();
-                if (ability.equals("Vengeful Army") || event.getFlags().contains(InstanceFlags.RECURSIVE)) {
-                    return;
-                }
-                spawnOrbs(wp, event.getWarlordsEntity(), ability, this);
-                if (ability.equals("Crippling Strike")) {
-                    spawnOrbs(wp, event.getWarlordsEntity(), ability, this);
-                }
-            }
-
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 if (pveMasterUpgrade) {
@@ -161,6 +149,17 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
                 return currentDamageValue;
             }
         };
+        orbsOfLifeCooldown.addModifier(Modifier.DAMAGE_BEFORE_ANY_REDUCTION_ATTACKER, event -> {
+            String ability = event.getCause();
+            if (ability.equals("Vengeful Army") || event.getFlags().contains(InstanceFlags.RECURSIVE)) {
+                return;
+            }
+            spawnOrbs(wp, event.getWarlordsEntity(), ability, orbsOfLifeCooldown);
+            if (ability.equals("Crippling Strike")) {
+                spawnOrbs(wp, event.getWarlordsEntity(), ability, orbsOfLifeCooldown);
+            }
+                }
+        );
         wp.getCooldownManager().addCooldown(orbsOfLifeCooldown);
         for (int i = 0; i < initialOrbs; i++) {
             spawnOrbs(wp, wp, "Orbs of Life", orbsOfLifeCooldown);

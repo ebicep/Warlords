@@ -123,12 +123,10 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                                         );
                                     }
                                 })
-                        ) {
-                            @Override
-                            public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                return currentDamageValue * 1.2f;
-                            }
-                        });
+                        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (e, currentDamageValue) -> {
+                                    currentDamageValue.addMultiplicativeModifierMult("Disaster Fragment - Burn", 1.2f);
+                                }
+                        ));
                     }
                     case "Bleed" -> {
                         victim.getCooldownManager().removeCooldownByName("Disaster Fragment - Bleed");

@@ -14,6 +14,7 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.mobs.player.CryoPod;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
@@ -79,23 +80,20 @@ public class TimeWarpCryomancer extends AbstractTimeWarp {
                     int duration = 100;
                     enemy.addSpeedModifier(wp, "Freezing Cold", -80, duration);
                     enemy.getCooldownManager().removeCooldownByName("Freezing Cold");
-                    enemy.getCooldownManager()
-                         .addCooldown(new RegularCooldown<>("Freezing Cold",
-                                 "COLD",
-                                 TimeWarpPyromancerData.class,
-                                 data,
-                                 wp,
-                                 CooldownTypes.ABILITY,
-                                 cooldownManager -> {
-                                 },
-                                 duration
-                         ) {
-
-                             @Override
-                             public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                 return currentDamageValue * 1.15f;
-                             }
-                         });
+                    enemy.getCooldownManager().addCooldown(new RegularCooldown<>(
+                            "Freezing Cold",
+                            "COLD",
+                            TimeWarpPyromancerData.class,
+                            data,
+                            wp,
+                            CooldownTypes.ABILITY,
+                            cooldownManager -> {
+                            },
+                            duration
+                    ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (event, currentDamageValue) -> {
+                                currentDamageValue.addMultiplicativeModifierMult("Freezing Cold", 1.15f);
+                            }
+                    ));
                 });
                 EffectUtils.displayParticle(Particle.SNOWFLAKE, wp.getLocation().add(0, .2, 0), 1700, 15, 0, 15, 0);
             }

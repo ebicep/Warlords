@@ -4,12 +4,12 @@ import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.assassin.ShadowStepBranch;
@@ -155,20 +155,23 @@ public class ShadowStep extends AbstractAbility implements
         }
         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 2, 1.5f);
         wp.teleportLocationOnly(locationBuilder);
-        wp.getCooldownManager().addCooldown(new RegularCooldown<>("Shadow Dash CC", null, ShadowStep.class, new ShadowStep(), wp, CooldownTypes.BUFF, cooldownManager -> {
-        }, 5 * 20
-        ) {
-
-            @Override
-            public float addCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
-                return currentCritMultiplier * convertToMultiplicationDecimal(Math.min(2f * hit.size(), 20));
-            }
-
-            @Override
-            public float addCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
-                return currentCritChance * convertToMultiplicationDecimal(Math.min(2f * hit.size(), 20));
-            }
-        });
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                "Shadow Dash CC",
+                null,
+                ShadowStep.class,
+                new ShadowStep(),
+                wp,
+                CooldownTypes.BUFF,
+                cooldownManager -> {
+                },
+                5 * 20
+        ).addModifier(Modifier.DAMAGE_CRIT_CHANCE_ATTACKER, (event, currentCritChance) -> {
+                    currentCritChance.addMultiplicativeModifierMult("Shadow Dash CC", convertToMultiplicationDecimal(Math.min(2f * hit.size(), 20)));
+                }
+        ).addModifier(Modifier.DAMAGE_CRIT_MULTIPLIER_ATTACKER, (event, currentCritMultiplier) -> {
+                    currentCritMultiplier.addMultiplicativeModifierMult("Shadow Dash CC", convertToMultiplicationDecimal(Math.min(2f * hit.size(), 20)));
+                }
+        ));
     }
 
     private void doShadowStep(@Nonnull WarlordsEntity wp, Location playerLoc) {
