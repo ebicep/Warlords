@@ -64,7 +64,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
 
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
-        AtomicReference <RegularCooldown<OrderOfEviscerateData>> cooldown = new AtomicReference<>(null);
+        AtomicReference<RegularCooldown<OrderOfEviscerateData>> cooldown = new AtomicReference<>(null);
         AtomicInteger stacks = new AtomicInteger(0);
         PlayerFilter.playingGame(wp.getGame())
                     .enemiesOf(wp)
@@ -96,7 +96,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                     }
                 },
                 tickDuration,
-                Collections.singletonList((orderCooldown,ticksLeft, ticksElapsed) -> {
+                Collections.singletonList((orderCooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 2 == 0) {
                         PlayerFilter.playingGame(wp.getGame())
                                     .enemiesOf(wp)
@@ -107,19 +107,6 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                     EffectUtils.displayParticle(Particle.SMOKE, wp.getLocation(), 4, 0.2, 0.2, 0.2, 0.05);
                 })
         ) {
-            @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (!Objects.equals(data.getMarkedPlayer(), event.getWarlordsEntity())) {
-                    return currentDamageValue;
-                }
-                float damageBonus = vulnerableDamageBonus;
-                if (pveMasterUpgrade && !LocationUtils.isLineOfSightAssassin(event.getWarlordsEntity(), event.getSource())) {
-                    stats.numberOfBackstabs++;
-                    damageBonus += 70;
-                }
-                return currentDamageValue * (1 + damageBonus / 100f);
-            }
-
             @Override
             public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                 data.addAndCheckDamageThreshold(currentDamageValue, wp);
@@ -179,15 +166,13 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                                             cooldownManager -> {
                                                 cooldown.set(null);
                                                 stacks.set(0);
-                                                },
+                                            },
                                             8 * 20
-                                    ) {
-
-                                          @Override
-                                          public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                              return currentDamageValue * (1 + 0.4f * stacks.get());
-                                          }
-                                      };
+                                    );
+                                    regularCooldown.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                                                currentDamageValue.addMultiplicativeModifierMult(name, 1 + 0.4f * stacks.get());
+                                            }
+                                    );
                                     cooldown.set(regularCooldown);
                                     wp.getCooldownManager().addCooldown(regularCooldown);
                                 } else {
@@ -257,7 +242,18 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                 }
                 wp.playSound(wp.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 1, 2);
             }
-        }.addModifier(Modifier.DAMAGE_BEFORE_ANY_REDUCTION_ATTACKER, event -> {
+        }.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                    if (!Objects.equals(data.getMarkedPlayer(), event.getWarlordsEntity())) {
+                        return;
+                    }
+                    float damageBonus = vulnerableDamageBonus;
+                    if (pveMasterUpgrade && !LocationUtils.isLineOfSightAssassin(event.getWarlordsEntity(), event.getSource())) {
+                        stats.numberOfBackstabs++;
+                        damageBonus += 70;
+                    }
+                    currentDamageValue.addMultiplicativeModifierMult(name, 1 + damageBonus / 100f);
+                }
+        ).addModifier(Modifier.DAMAGE_BEFORE_ANY_REDUCTION_ATTACKER, event -> {
                     //mark message here so it displays before damage
                     WarlordsEntity victim = event.getWarlordsEntity();
                     if (victim != wp) {

@@ -1,8 +1,8 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
-import com.ebicep.warlords.abilities.internal.AbstractArcaneShield;
 import com.ebicep.warlords.abilities.WaterBolt;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractArcaneShield;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
@@ -14,6 +14,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.event.EventHandler;
 
@@ -83,14 +84,6 @@ public class ArcaneReflection implements SpecBoostManager.SpecBoost<ArcaneReflec
                     false
             ) {
                 @Override
-                public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    if (event.getCause().isEmpty()) {
-                        return currentDamageValue * AbstractAbility.convertToMultiplicationDecimal(meleeDamageIncreasePercent);
-                    }
-                    return currentDamageValue;
-                }
-
-                @Override
                 public void onShieldFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                     if (event.getFlags().contains(InstanceFlags.RECURSIVE)) {
                         return;
@@ -106,7 +99,12 @@ public class ArcaneReflection implements SpecBoostManager.SpecBoost<ArcaneReflec
                     );
                     Utils.playGlobalSound(warlordsPlayer.getLocation(), "warrior.intervene.block", 2, 2);
                 }
-            });
+            }.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                        if (event.getCause().isEmpty()) {
+                            currentDamageValue.addMultiplicativeModifierMult(getStringName(), AbstractAbility.convertToMultiplicationDecimal(meleeDamageIncreasePercent));
+                        }
+                    }
+            ));
         }
 
         @EventHandler(ignoreCancelled = true)

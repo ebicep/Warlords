@@ -13,6 +13,7 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.spider.ArachnoVenari;
@@ -277,6 +278,14 @@ public class EventMithra extends AbstractMob implements BossMob {
         EffectUtils.strikeLightning(deathLocation, false, 2);
     }
 
+    private void groundSlam() {
+        AbstractGroundSlam groundSlam = new GroundSlamBerserker(AbstractAbilityBuilder.create("mithraGroundSlamBerserker").pve().startCooldown(10).startCooldown(5)) {{
+            setTrueDamage(true);
+        }};
+        groundSlam.init(groundSlam.getBuilder());
+        groundSlam.onActivate(warlordsNPC);
+    }
+
     private void enrage() {
         Utils.playGlobalSound(warlordsNPC.getLocation(), "warrior.berserk.activation", 2, .5f);
         warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
@@ -295,12 +304,10 @@ public class EventMithra extends AbstractMob implements BossMob {
                         EffectUtils.displayParticle(Particle.ANGRY_VILLAGER, location, 1, 0, 0, 0, 0.1f);
                     }
                 }
-        ) {
-            @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * 1.15f;
-            }
-        });
+        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                    currentDamageValue.addMultiplicativeModifierMult(name, 1.15f);
+                }
+        ));
         warlordsNPC.setDamageResistance(warlordsNPC.getSpec().getDamageResistance() + 10);
         warlordsNPC.getSpeed().addBaseModifier(5);
     }
@@ -364,14 +371,6 @@ public class EventMithra extends AbstractMob implements BossMob {
                 }
             }
         }.runTaskTimer(40, 5);
-    }
-
-    private void groundSlam() {
-        AbstractGroundSlam groundSlam = new GroundSlamBerserker(AbstractAbilityBuilder.create("mithraGroundSlamBerserker").pve().startCooldown(10).startCooldown(5)) {{
-            setTrueDamage(true);
-        }};
-        groundSlam.init(groundSlam.getBuilder());
-        groundSlam.onActivate(warlordsNPC);
     }
 
 }

@@ -9,6 +9,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.cryomancer.FreezingBreathBranch;
@@ -209,14 +210,11 @@ public class FreezingBreath extends AbstractProjectile<FreezingBreath, FreezingB
                               shooter,
                               CooldownTypes.LOW_LEVEL_DEBUFF,
                               cooldownManager -> {
-                      }, 5 * 20
-                      ) {
-
-                          @Override
-                          public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                              return currentDamageValue * .6f;
-                          }
-                      });
+                              }, 5 * 20
+                      ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                                  currentDamageValue.addMultiplicativeModifierMult(name, 0.6f);
+                              }
+                      ));
         }
         return playersHit;
     }

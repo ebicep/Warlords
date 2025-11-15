@@ -9,6 +9,7 @@ import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.LinkedCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
@@ -135,14 +136,6 @@ public class SuperBrew extends AbstractAbility implements OrangeAbilityIcon, Hit
                 linkedEntities
         ) {
             @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (event.getCause().isEmpty() && event.getSource().equals(target)) {
-                    return currentDamageValue * AbstractAbility.convertToMultiplicationDecimal(meleeDamageIncreasePercent);
-                }
-                return currentDamageValue;
-            }
-
-            @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 if (event.getCause().isEmpty() && event.getWarlordsEntity().equals(target)) {
                     return currentDamageValue * convertToDivisionDecimal(meleeDamageTakenDecreasePercent);
@@ -150,6 +143,12 @@ public class SuperBrew extends AbstractAbility implements OrangeAbilityIcon, Hit
                 return currentDamageValue;
             }
         };
+        superBrewCooldown.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                    if (event.getCause().isEmpty() && event.getSource().equals(target)) {
+                        currentDamageValue.addMultiplicativeModifierMult(name, AbstractAbility.convertToMultiplicationDecimal(meleeDamageIncreasePercent));
+                    }
+                }
+        );
         superBrewCooldown.setRemoveOnDeath(false);
         target.getCooldownManager().addCooldown(superBrewCooldown);
         if (target != wp) {

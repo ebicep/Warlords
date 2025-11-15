@@ -6,6 +6,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCounter;
@@ -49,34 +50,62 @@ public class LegendaryHuntsman extends AbstractLegendaryWeapon implements Passiv
 
     }
 
-    public LegendaryHuntsman(UUID uuid) { super(uuid); }
+    public LegendaryHuntsman(UUID uuid) {
+        super(uuid);
+    }
 
-    public LegendaryHuntsman(AbstractLegendaryWeapon copy) { super(copy); }
+    public LegendaryHuntsman(AbstractLegendaryWeapon copy) {
+        super(copy);
+    }
 
     @Override
     public TextComponent getPassiveEffect() {
         return Component.text("Deal ", NamedTextColor.GRAY)
-                .append(formatTitleUpgrade(getRangedBonusPercent(), "%"))
-                .append(Component.text(" increased damage to enemies 14+ blocks away. Landing a melee hit grants ", NamedTextColor.GRAY))
-                .append(formatTitleUpgrade(getMeleeGuardDrPercent(), "%"))
-                .append(Component.text(" damage reduction for " + MELEE_GUARD_DURATION_SECONDS + "s", NamedTextColor.GRAY))
-                .append(Component.text(" (refreshes). ", NamedTextColor.GRAY))
-                .append(Component.text("Has an " + MELEE_GUARD_ICD_SECONDS + "s", NamedTextColor.GRAY))
-                .append(Component.text(" cooldown.", NamedTextColor.GRAY));
+                        .append(formatTitleUpgrade(getRangedBonusPercent(), "%"))
+                        .append(Component.text(" increased damage to enemies 14+ blocks away. Landing a melee hit grants ", NamedTextColor.GRAY))
+                        .append(formatTitleUpgrade(getMeleeGuardDrPercent(), "%"))
+                        .append(Component.text(" damage reduction for " + MELEE_GUARD_DURATION_SECONDS + "s", NamedTextColor.GRAY))
+                        .append(Component.text(" (refreshes). ", NamedTextColor.GRAY))
+                        .append(Component.text("Has an " + MELEE_GUARD_ICD_SECONDS + "s", NamedTextColor.GRAY))
+                        .append(Component.text(" cooldown.", NamedTextColor.GRAY));
+    }
+
+    private float getRangedBonusPercent() {
+        return RANGED_BONUS_PERCENT + RANGED_BONUS_INC_PER_LEVEL * getTitleLevel();
+    }
+
+    private float getMeleeGuardDrPercent() {
+        return MELEE_GUARD_DR_PERCENT + MELEE_GUARD_DR_INC_PER_LEVEL * getTitleLevel();
     }
 
     @Override
-    public List<Pair<Component, Component>> getPassiveEffectUpgrade() {
-        return Arrays.asList(
-                new Pair<>(
-                        formatTitleUpgrade(RANGED_BONUS_PERCENT + RANGED_BONUS_INC_PER_LEVEL * getTitleLevel(), "%"),
-                        formatTitleUpgrade(RANGED_BONUS_PERCENT + RANGED_BONUS_INC_PER_LEVEL * getTitleLevelUpgraded(), "%")
-                ),
-                new Pair<>(
-                        formatTitleUpgrade(MELEE_GUARD_DR_PERCENT + MELEE_GUARD_DR_INC_PER_LEVEL * getTitleLevel(), "%"),
-                        formatTitleUpgrade(MELEE_GUARD_DR_PERCENT + MELEE_GUARD_DR_INC_PER_LEVEL * getTitleLevelUpgraded(), "%")
-                )
-        );
+    public LegendaryTitles getTitle() {
+        return LegendaryTitles.HUNTSMAN;
+    }
+
+    @Override
+    protected float getMeleeDamageMinValue() {
+        return 140;
+    }
+
+    @Override
+    protected float getHealthBonusValue() {
+        return 400;
+    }
+
+    @Override
+    protected float getSpeedBonusValue() {
+        return 15;
+    }
+
+    @Override
+    protected float getEnergyPerSecondBonusValue() {
+        return 5;
+    }
+
+    @Override
+    protected float getSkillCritChanceBonusValue() {
+        return 10;
     }
 
     @Override
@@ -108,35 +137,18 @@ public class LegendaryHuntsman extends AbstractLegendaryWeapon implements Passiv
                 dr = Math.min(dr, 0.6f);
                 return currentDamageValue * (1f - dr);
             }
+        }.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                    if (isTargetFar(player, event, RANGED_MIN_DISTANCE_BLOCKS)) {
+                        currentDamageValue.addMultiplicativeModifierMult(getTitleName(), (1f + getRangedBonusPercent() / 100f));
+                    }
 
-            @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (isTargetFar(player, event, RANGED_MIN_DISTANCE_BLOCKS)) {
-                    currentDamageValue *= (1f + getRangedBonusPercent() / 100f);
-                }
-
-                if (isMeleeHit(event)) {
-                    Instant now = Instant.now();
-                    if (!now.isBefore(guardNextReadyAt.get())) {
-                        guardActive.set(true);
-                        guardExpireAt.set(now.plus(MELEE_GUARD_DURATION_SECONDS, ChronoUnit.SECONDS));
-                        guardNextReadyAt.set(now.plus(MELEE_GUARD_ICD_SECONDS, ChronoUnit.SECONDS));
-
-                        player.getCooldownManager().addCooldown(new RegularCooldown<>(
-                                "Huntsman Guard",
-                                "HUNT",
-                                LegendaryHuntsman.class,
-                                null,
-                                player,
-                                CooldownTypes.WEAPON,
-                                cm -> guardActive.set(false),
-                                MELEE_GUARD_DURATION_SECONDS * 20
-                        ));
-
-                        player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1.8f);
-                    } else {
-                        if (guardActive.get()) {
+                    if (isMeleeHit(event)) {
+                        Instant now = Instant.now();
+                        if (!now.isBefore(guardNextReadyAt.get())) {
+                            guardActive.set(true);
                             guardExpireAt.set(now.plus(MELEE_GUARD_DURATION_SECONDS, ChronoUnit.SECONDS));
+                            guardNextReadyAt.set(now.plus(MELEE_GUARD_ICD_SECONDS, ChronoUnit.SECONDS));
+
                             player.getCooldownManager().addCooldown(new RegularCooldown<>(
                                     "Huntsman Guard",
                                     "HUNT",
@@ -147,74 +159,80 @@ public class LegendaryHuntsman extends AbstractLegendaryWeapon implements Passiv
                                     cm -> guardActive.set(false),
                                     MELEE_GUARD_DURATION_SECONDS * 20
                             ));
+
+                            player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1.8f);
+                        } else {
+                            if (guardActive.get()) {
+                                guardExpireAt.set(now.plus(MELEE_GUARD_DURATION_SECONDS, ChronoUnit.SECONDS));
+                                player.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                        "Huntsman Guard",
+                                        "HUNT",
+                                        LegendaryHuntsman.class,
+                                        null,
+                                        player,
+                                        CooldownTypes.WEAPON,
+                                        cm -> guardActive.set(false),
+                                        MELEE_GUARD_DURATION_SECONDS * 20
+                                ));
+                            }
                         }
                     }
                 }
-
-                return currentDamageValue;
-            }
-        });
-    }
-
-    private float getRangedBonusPercent() {
-        return RANGED_BONUS_PERCENT + RANGED_BONUS_INC_PER_LEVEL * getTitleLevel();
-    }
-
-    private float getMeleeGuardDrPercent() {
-        return MELEE_GUARD_DR_PERCENT + MELEE_GUARD_DR_INC_PER_LEVEL * getTitleLevel();
-    }
-
-    private boolean isMeleeHit(WarlordsDamageHealingEvent event) {
-        try {
-            if (event.getAbility() == null) return true;
-            String ability = String.valueOf(event.getCause());
-            return ability.equalsIgnoreCase("melee") || ability.equalsIgnoreCase("Melee");
-        } catch (Throwable ignored) {}
-        return false;
+        ));
     }
 
     private boolean isTargetFar(WarlordsPlayer attacker, WarlordsDamageHealingEvent event, int minBlocks) {
         try {
             Location a = attacker.getLocation();
             Location t = event.getWarlordsEntity().getLocation();
-            if (!a.getWorld().equals(t.getWorld())) return false;
+            if (!a.getWorld().equals(t.getWorld())) {
+                return false;
+            }
             return a.distanceSquared(t) >= (minBlocks * minBlocks);
         } catch (Throwable ignored) {
             return false;
         }
     }
 
-    @Override
-    public LegendaryTitles getTitle() {
-        return LegendaryTitles.HUNTSMAN;
+    private boolean isMeleeHit(WarlordsDamageHealingEvent event) {
+        try {
+            if (event.getAbility() == null) {
+                return true;
+            }
+            String ability = String.valueOf(event.getCause());
+            return ability.equalsIgnoreCase("melee") || ability.equalsIgnoreCase("Melee");
+        } catch (Throwable ignored) {
+        }
+        return false;
     }
 
     @Override
-    protected float getMeleeDamageMinValue() { return 140; }
-
-    @Override
-    protected float getMeleeDamageMaxValue() { return 160; }
-
-    @Override
-    protected float getCritChanceValue() { return 20; }
-
-    @Override
-    protected float getCritMultiplierValue() { return 200; }
-
-    @Override
-    protected float getHealthBonusValue() { return 400; }
-
-    @Override
-    protected float getSpeedBonusValue() { return 15; }
-
-    @Override
-    protected float getEnergyPerSecondBonusValue() {
-        return 5;
+    protected float getMeleeDamageMaxValue() {
+        return 160;
     }
 
     @Override
-    protected float getSkillCritChanceBonusValue() {
-        return 10;
+    protected float getCritChanceValue() {
+        return 20;
+    }
+
+    @Override
+    protected float getCritMultiplierValue() {
+        return 200;
+    }
+
+    @Override
+    public List<Pair<Component, Component>> getPassiveEffectUpgrade() {
+        return Arrays.asList(
+                new Pair<>(
+                        formatTitleUpgrade(RANGED_BONUS_PERCENT + RANGED_BONUS_INC_PER_LEVEL * getTitleLevel(), "%"),
+                        formatTitleUpgrade(RANGED_BONUS_PERCENT + RANGED_BONUS_INC_PER_LEVEL * getTitleLevelUpgraded(), "%")
+                ),
+                new Pair<>(
+                        formatTitleUpgrade(MELEE_GUARD_DR_PERCENT + MELEE_GUARD_DR_INC_PER_LEVEL * getTitleLevel(), "%"),
+                        formatTitleUpgrade(MELEE_GUARD_DR_PERCENT + MELEE_GUARD_DR_INC_PER_LEVEL * getTitleLevelUpgraded(), "%")
+                )
+        );
     }
 
     @Override
@@ -222,7 +240,8 @@ public class LegendaryHuntsman extends AbstractLegendaryWeapon implements Passiv
         Instant now = Instant.now();
         int icd = now.isBefore(guardNextReadyAt.get()) ? (int) ChronoUnit.SECONDS.between(now, guardNextReadyAt.get()) : 0;
         int activeLeft = guardActive.get() && now.isBefore(guardExpireAt.get())
-                ? (int) ChronoUnit.SECONDS.between(now, guardExpireAt.get()) : 0;
+                         ? (int) ChronoUnit.SECONDS.between(now, guardExpireAt.get()) : 0;
         return Math.max(icd, activeLeft);
     }
+
 }

@@ -8,7 +8,6 @@ import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsEnergyUseEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
@@ -139,14 +138,13 @@ public abstract class AbstractEnergySeer<T extends AbstractEnergySeer.EnergySeer
                 };
             }
 
-            @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (inPve && AbstractEnergySeer.this instanceof EnergySeerConjurer energySeerConjurer) {
-                    return currentDamageValue * convertToMultiplicationDecimal(energySeerConjurer.getDamageIncrease());
-                }
-                return currentDamageValue;
-            }
         };
+        cd.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                    if (inPve && AbstractEnergySeer.this instanceof EnergySeerConjurer energySeerConjurer) {
+                        currentDamageValue.addMultiplicativeModifierMult(name, convertToMultiplicationDecimal(energySeerConjurer.getDamageIncrease()));
+                    }
+                }
+        );
         if (inPve && AbstractEnergySeer.this instanceof EnergySeerLuminary energySeerLuminary) {
             cd.addModifier(Modifier.HEALING_MODIFY_SELF, (event, currentHealValue) -> {
                         currentHealValue.addMultiplicativeModifierMult(name, convertToMultiplicationDecimal(energySeerLuminary.getHealingIncrease()));

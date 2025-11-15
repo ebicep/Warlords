@@ -69,22 +69,24 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
                     currentCritMultiplier.addAdditiveModifier(name, additionalCritMultiplier);
                 }
         );
-    }
-
-    @Override
-    public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-        if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC) {
-            Aspect aspect = warlordsNPC.getMob().getAspect();
-            if (aspect == null) {
-                return currentDamageValue * damageMultiplier;
-            }
-            AspectModifier aspectModifier = aspectModifiers.get(aspect);
-            if (aspectModifier == null) {
-                return currentDamageValue * damageMultiplier;
-            }
-            return currentDamageValue * (damageMultiplier + aspectModifier.damageMultiplier - 1);
-        }
-        return currentDamageValue * damageMultiplier;
+        this.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                    if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC) {
+                        Aspect aspect = warlordsNPC.getMob().getAspect();
+                        if (aspect == null) {
+                            currentDamageValue.addMultiplicativeModifierMult(name, damageMultiplier);
+                            return;
+                        }
+                        AspectModifier aspectModifier = aspectModifiers.get(aspect);
+                        if (aspectModifier == null) {
+                            currentDamageValue.addMultiplicativeModifierMult(name, damageMultiplier);
+                            return;
+                        }
+                        currentDamageValue.addMultiplicativeModifierMult(name, (damageMultiplier + aspectModifier.damageMultiplier - 1));
+                    } else {
+                        currentDamageValue.addMultiplicativeModifierMult(name, damageMultiplier);
+                    }
+                }
+        );
     }
 
     @Override

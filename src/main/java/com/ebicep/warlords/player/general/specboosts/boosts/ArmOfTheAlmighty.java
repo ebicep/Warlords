@@ -3,7 +3,6 @@ package com.ebicep.warlords.player.general.specboosts.boosts;
 import com.ebicep.warlords.abilities.AvengersStrike;
 import com.ebicep.warlords.abilities.AvengersWrath;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -12,6 +11,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import org.bukkit.event.EventHandler;
 
@@ -71,17 +71,13 @@ public class ArmOfTheAlmighty implements SpecBoostManager.SpecBoost<ArmOfTheAlmi
                     cooldownManager -> {
                     },
                     false
-            ) {
-
-                @Override
-                public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    if (!(event.getAbility() instanceof AvengersStrike) || !warlordsPlayer.getCooldownManager().hasCooldown(AvengersWrath.AvengersWrathData.class)) {
-                        return currentDamageValue;
+            ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                        if (!(event.getAbility() instanceof AvengersStrike) || !warlordsPlayer.getCooldownManager().hasCooldown(AvengersWrath.AvengersWrathData.class)) {
+                            return;
+                        }
+                        currentDamageValue.addMultiplicativeModifierMult(getStringName(), AbstractAbility.convertToMultiplicationDecimal(wrathDamageBoostPercent));
                     }
-                    return currentDamageValue * AbstractAbility.convertToMultiplicationDecimal(wrathDamageBoostPercent);
-                }
-
-            });
+            ));
         }
 
         @EventHandler

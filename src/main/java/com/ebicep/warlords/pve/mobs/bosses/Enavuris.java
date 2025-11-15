@@ -447,12 +447,10 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
                         cooldownManager -> {
                         },
                         3 * 20
-                ) {
-                    @Override
-                    public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                        return currentDamageValue * .75f;
-                    }
-                });
+                ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                            currentDamageValue.addMultiplicativeModifierMult(name, 0.75f);
+                        }
+                ));
             }
 
 
@@ -653,14 +651,6 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
                 }
 
                 @Override
-                public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    if (currentDebuff.get() == Debuff.CRIPPLE) {
-                        return currentDamageValue * .75f;
-                    }
-                    return currentDamageValue;
-                }
-
-                @Override
                 public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                     if (currentDebuff.get() != Debuff.LEECH) {
                         return;
@@ -674,7 +664,12 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
                             .value(healValue)
                     );
                 }
-            }.addModifier(Modifier.HEALING_MODIFY_SELF, (event, currentHealValue) -> {
+            }.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                        if (currentDebuff.get() == Debuff.CRIPPLE) {
+                            currentDamageValue.addMultiplicativeModifierMult(name, 0.75f);
+                        }
+                    }
+            ).addModifier(Modifier.HEALING_MODIFY_SELF, (event, currentHealValue) -> {
                         if (currentDebuff.get() == Debuff.WOUND) {
                             currentHealValue.addMultiplicativeModifierMult(name, 0.75f);
                         }

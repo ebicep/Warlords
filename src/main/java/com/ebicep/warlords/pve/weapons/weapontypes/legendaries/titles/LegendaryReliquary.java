@@ -1,6 +1,5 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -97,13 +96,11 @@ public class LegendaryReliquary extends AbstractLegendaryWeapon implements Event
                 cooldownManager -> {
                 },
                 false
-        ) {
-            @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * outgoingDamageIncrease;
-            }
-        }.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (event, currentDamageValue) -> {
-                    currentDamageValue.addMultiplicativeModifierMult("Reliquary", incomingDamageIncrease);
+        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                    currentDamageValue.addMultiplicativeModifierMult(getTitleName(), outgoingDamageIncrease);
+                }
+        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (event, currentDamageValue) -> {
+            currentDamageValue.addMultiplicativeModifierMult(getTitleName(), incomingDamageIncrease);
                 }
         ));
     }

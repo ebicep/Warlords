@@ -5,7 +5,6 @@ import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -128,9 +127,9 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
         EffectUtils.strikeLightning(wp.getLocation(), true);
         if (shouldHeal) {
             wp.addInstance(InstanceBuilder.healing()
-                    .ability(this)
-                    .source(wp)
-                    .value(wp.getMaxHealth() * (healingValues.healthRestore.getMultiplicativePercent()))
+                                          .ability(this)
+                                          .source(wp)
+                                          .value(wp.getMaxHealth() * (healingValues.healthRestore.getMultiplicativePercent()))
             );
         }
         List<WarlordsEntity> hit = PlayerFilter.entitiesAround(wp, knockbackRadius, knockbackRadius, knockbackRadius).aliveEnemiesOf(wp).toList();
@@ -151,13 +150,10 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
         we.getCooldownManager().removeCooldown(LightningRod.class, false);
         we.getCooldownManager().addCooldown(new RegularCooldown<>(name, "ROD DMG", LightningRod.class, new LightningRod(), we, CooldownTypes.ABILITY, cooldownManager -> {
         }, 12 * 20
-        ) {
-
-            @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * 1.2f;
-            }
-        });
+        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                    currentDamageValue.addMultiplicativeModifierMult(name, 1.2f);
+                }
+        ));
     }
 
     private void giveCallOfThunderEffect(WarlordsEntity from, List<WarlordsEntity> hit) {

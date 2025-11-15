@@ -108,12 +108,11 @@ public class TycheProsperity implements FieldEffect {
                 cooldownManager -> {
                 },
                 false
-        ) {
-            @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * 1.05f;
-            }
-        };
+        );
+        warriorCooldown.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                    currentDamageValue.addMultiplicativeModifierMult(getName(), 1.05f);
+                }
+        );
         warlordsEntity.getCooldownManager().addCooldown(warriorCooldown);
         warlordsEntity.addKnockbackModifier(warlordsEntity, getName(), -5, warriorCooldown);
     }
@@ -130,15 +129,12 @@ public class TycheProsperity implements FieldEffect {
                 cooldownManager -> {
                 },
                 false
-        ) {
-            @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (event.getCause().isEmpty()) {
-                    return currentDamageValue * 1.1f;
+        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                    if (event.getCause().isEmpty()) {
+                        currentDamageValue.addMultiplicativeModifierMult(getName(), 1.1f);
+                    }
                 }
-                return currentDamageValue;
-            }
-        });
+        ));
     }
 
     private void rogueBonus(WarlordsEntity warlordsEntity) {

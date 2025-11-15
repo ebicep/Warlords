@@ -61,6 +61,7 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
         } else {
             modifiers = Collections.emptyList();
         }
+        final Map<WarlordsEntity, Integer> hitCount = new HashMap<>();
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "INFR", Inferno.class, null, wp, CooldownTypes.ABILITY, cooldownManager -> {
         }, cooldownManager -> {
             modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
@@ -73,8 +74,6 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
             }
         })
         ) {
-
-            private final Map<WarlordsEntity, Integer> hitCount = new HashMap<>();
 
             @Override
             protected Listener getListener() {
@@ -95,25 +94,22 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
             }
 
             @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (pveMasterUpgrade) {
-                    WarlordsEntity hit = event.getWarlordsEntity();
-                    int oldHitCount = hitCount.computeIfAbsent(hit, k -> 0);
-                    hitCount.put(hit, oldHitCount + 1);
-                    return currentDamageValue * convertToMultiplicationDecimal(Math.min(50, 5 * oldHitCount));
-                } else if (pveMasterUpgrade2) {
-                    return currentDamageValue * 1.2f;
-                }
-                return currentDamageValue;
-            }
-
-            @Override
             public void onDeathFromEnemies(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit, boolean isKiller) {
                 if (pveMasterUpgrade2 && isKiller) {
                     wp.addEnergy(wp, "Inferno", event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof EventBoltaroShadow ? 10 : 30);
                 }
             }
-        }.addModifier(Modifier.DAMAGE_CRIT_CHANCE_ATTACKER, (event, currentCritChance) -> {
+        }.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+            if (pveMasterUpgrade) {
+                WarlordsEntity hit = event.getWarlordsEntity();
+                int oldHitCount = hitCount.computeIfAbsent(hit, k -> 0);
+                hitCount.put(hit, oldHitCount + 1);
+                currentDamageValue.addMultiplicativeModifierMult(name, convertToMultiplicationDecimal(Math.min(50, 5 * oldHitCount)));
+            } else if (pveMasterUpgrade2) {
+                currentDamageValue.addMultiplicativeModifierMult(name, 1.2f);
+            }
+                }
+        ).addModifier(Modifier.DAMAGE_CRIT_CHANCE_ATTACKER, (event, currentCritChance) -> {
                     if (event.getCause().isEmpty()) {
                         return;
                     }

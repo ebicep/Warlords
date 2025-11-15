@@ -5,7 +5,6 @@ import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
@@ -161,15 +160,13 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
                         }
                     }
                 })
-        ) {
-            @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (pveMasterUpgrade) {
-                    return currentDamageValue * convertToMultiplicationDecimal(Math.min(30f, 1f * data.spawnedOrbs.size()));
+        );
+        orbsOfLifeCooldown.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                    if (pveMasterUpgrade) {
+                        currentDamageValue.addMultiplicativeModifierMult(name, convertToMultiplicationDecimal(Math.min(30f, 1f * data.spawnedOrbs.size())));
+                    }
                 }
-                return currentDamageValue;
-            }
-        };
+        );
         orbsOfLifeCooldown.addModifier(Modifier.DAMAGE_BEFORE_ANY_REDUCTION_ATTACKER, event -> {
                     String ability = event.getCause();
                     if (event.getFlags().contains(InstanceFlags.NO_HEALING_ORBS) || event.getFlags().contains(InstanceFlags.RECURSIVE)) {

@@ -1,12 +1,12 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCounter;
@@ -71,23 +71,33 @@ public class LegendaryFervent extends AbstractLegendaryWeapon implements Passive
     }
 
     @Override
-    public List<Pair<Component, Component>> getPassiveEffectUpgrade() {
-        return Arrays.asList(
-                new Pair<>(
-                        formatTitleUpgrade(ABILITY_STRIKE_DAMAGE_BOOST + ABILITY_STRIKE_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel(), "%"),
-                        formatTitleUpgrade(ABILITY_STRIKE_DAMAGE_BOOST + ABILITY_STRIKE_DAMAGE_BOOST_PER_UPGRADE * getTitleLevelUpgraded(), "%")
-                ),
-                new Pair<>(
-                        formatTitleUpgrade(ABILITY_DURATION + ABILITY_DURATION_PER_UPGRADE * getTitleLevel()),
-                        formatTitleUpgrade(ABILITY_DURATION + ABILITY_DURATION_PER_UPGRADE * getTitleLevelUpgraded()
-                        )
-                )
-        );
+    public LegendaryTitles getTitle() {
+        return LegendaryTitles.FERVENT;
     }
 
     @Override
-    protected float getMeleeDamageMaxValue() {
-        return 190;
+    protected float getMeleeDamageMinValue() {
+        return 170;
+    }
+
+    @Override
+    protected float getHealthBonusValue() {
+        return 800;
+    }
+
+    @Override
+    protected float getSpeedBonusValue() {
+        return 10;
+    }
+
+    @Override
+    protected float getSkillCritChanceBonusValue() {
+        return 5;
+    }
+
+    @Override
+    protected float getSkillCritMultiplierBonusValue() {
+        return 10;
     }
 
     @Override
@@ -127,12 +137,11 @@ public class LegendaryFervent extends AbstractLegendaryWeapon implements Passive
                                     damageBoost.set(0);
                                 },
                                 DURATION * 20
-                        ) {
-                            @Override
-                            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                return currentDamageValue * (1 + damageBoost.get() * DAMAGE_BOOST / 100f);
-                            }
-                        };
+                        );
+                        regularCooldown.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (e, currentDamageValue) -> {
+                                    currentDamageValue.addMultiplicativeModifierMult(getTitleName(), 1 + damageBoost.get() * DAMAGE_BOOST / 100f);
+                                }
+                        );
                         cooldown.set(regularCooldown);
                         player.getCooldownManager().addCooldown(regularCooldown);
                     } else {
@@ -179,23 +188,21 @@ public class LegendaryFervent extends AbstractLegendaryWeapon implements Passive
                                 cooldownManager -> {
                                 },
                                 (ABILITY_DURATION + ABILITY_DURATION_PER_UPGRADE * getTitleLevel()) * 20
-                        ) {
-                            @Override
-                            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                if (!event.getSource().equals(player)) {
-                                    return currentDamageValue;
-                                }
-                                if (event.isHealingInstance()) {
-                                    return currentDamageValue;
-                                }
-                                if (!event.getCause().contains("Strike") || event.getFlags().contains(InstanceFlags.IGNORE_FERVENT_TITLE)) {
-                                    return currentDamageValue;
-                                }
+                        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                                    if (!event.getSource().equals(player)) {
+                                        return;
+                                    }
+                                    if (event.isHealingInstance()) {
+                                        return;
+                                    }
+                                    if (!event.getCause().contains("Strike") || event.getFlags().contains(InstanceFlags.IGNORE_FERVENT_TITLE)) {
+                                        return;
+                                    }
 
-                                float strikeDamageBoost = 1 + (ABILITY_STRIKE_DAMAGE_BOOST + ABILITY_STRIKE_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel()) / 100f;
-                                return currentDamageValue * strikeDamageBoost;
-                            }
-                        });
+                                    float strikeDamageBoost = 1 + (ABILITY_STRIKE_DAMAGE_BOOST + ABILITY_STRIKE_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel()) / 100f;
+                                    currentDamageValue.addMultiplicativeModifierMult(getTitleName(), strikeDamageBoost);
+                                }
+                        ));
                         passiveCooldown = 40 * GameRunnable.SECOND;
                     }
                 } else {
@@ -206,13 +213,8 @@ public class LegendaryFervent extends AbstractLegendaryWeapon implements Passive
     }
 
     @Override
-    public LegendaryTitles getTitle() {
-        return LegendaryTitles.FERVENT;
-    }
-
-    @Override
-    protected float getMeleeDamageMinValue() {
-        return 170;
+    protected float getMeleeDamageMaxValue() {
+        return 190;
     }
 
     @Override
@@ -226,27 +228,23 @@ public class LegendaryFervent extends AbstractLegendaryWeapon implements Passive
     }
 
     @Override
-    protected float getHealthBonusValue() {
-        return 800;
-    }
-
-    @Override
-    protected float getSpeedBonusValue() {
-        return 10;
-    }
-
-    @Override
-    protected float getSkillCritChanceBonusValue() {
-        return 5;
-    }
-
-    @Override
-    protected float getSkillCritMultiplierBonusValue() {
-        return 10;
+    public List<Pair<Component, Component>> getPassiveEffectUpgrade() {
+        return Arrays.asList(
+                new Pair<>(
+                        formatTitleUpgrade(ABILITY_STRIKE_DAMAGE_BOOST + ABILITY_STRIKE_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel(), "%"),
+                        formatTitleUpgrade(ABILITY_STRIKE_DAMAGE_BOOST + ABILITY_STRIKE_DAMAGE_BOOST_PER_UPGRADE * getTitleLevelUpgraded(), "%")
+                ),
+                new Pair<>(
+                        formatTitleUpgrade(ABILITY_DURATION + ABILITY_DURATION_PER_UPGRADE * getTitleLevel()),
+                        formatTitleUpgrade(ABILITY_DURATION + ABILITY_DURATION_PER_UPGRADE * getTitleLevelUpgraded()
+                        )
+                )
+        );
     }
 
     @Override
     public int getCounter() {
         return passiveCooldown / 20;
     }
+
 }

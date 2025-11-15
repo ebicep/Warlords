@@ -7,11 +7,10 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityTargetEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.LinkedCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.pve.mobs.flags.NoTargetAbilities;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.defender.InterveneBranch;
@@ -54,39 +53,6 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
         this.radius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), float.class);
         this.breakRadius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("breakRadius"), float.class);
         this.maxTargets = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxTargets"), int.class);
-    }
-
-    @Override
-    public void updateDescription(Player player) {
-        if (inPve) {
-            description = AbilityDescriptionBuilder.create("Protect up to 2 target allies, reducing the damage they take by ")
-                                                   .percent(100, AbilityDescriptionBuilder.COLOR_BROWN)
-                                                   .text(" and redirecting ")
-                                                   .percent(damageReduction, NamedTextColor.RED)
-                                                   .text(" of the damage they would have taken back to you. You can protect the target for a maximum of ")
-                                                   .text(maxDamagePrevented, AbilityDescriptionBuilder.COLOR_BROWN)
-                                                   .text(" damage. You must remain within ")
-                                                   .blocks(breakRadius)
-                                                   .text(" of each other. For every 100 damage prevented, increase your damage by 1%. Lasts ")
-                                                   .durationTicks(tickDuration)
-                                                   .text(".")
-                                                   .initialRange(radius)
-                                                   .build();
-        } else {
-            description = AbilityDescriptionBuilder.create("Protect the target ally, reducing the damage they take by ")
-                                                   .percent(100, AbilityDescriptionBuilder.COLOR_BROWN)
-                                                   .text(" and redirecting ")
-                                                   .percent(damageReduction, NamedTextColor.RED)
-                                                   .text(" of the damage they would have taken back to you. You can protect the target for a maximum of ")
-                                                   .text(maxDamagePrevented, AbilityDescriptionBuilder.COLOR_BROWN)
-                                                   .text(" damage. You must remain within ")
-                                                   .blocks(breakRadius)
-                                                   .text(" of each other. Lasts ")
-                                                   .durationTicks(tickDuration)
-                                                   .text(".")
-                                                   .initialRange(radius)
-                                                   .build();
-        }
     }
 
     @Override
@@ -196,15 +162,45 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
         if (inPve) {
             wp.getCooldownManager().addCooldown(new RegularCooldown<>(name + " Damage", null, InterveneData.class, null, wp, CooldownTypes.BUFF, cooldownManager -> {
             }, tickDuration
-            ) {
-
-                @Override
-                public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    return (float) (currentDamageValue * (1 + venes.stream().mapToDouble(InterveneData::getDamagePrevented).sum() / 100 * .01));
-                }
-            });
+            ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                        currentDamageValue.addMultiplicativeModifierMult(name, (float) (1 + venes.stream().mapToDouble(InterveneData::getDamagePrevented).sum() / 100 * .01));
+                    }
+            ));
         }
         return !venes.isEmpty();
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        if (inPve) {
+            description = AbilityDescriptionBuilder.create("Protect up to 2 target allies, reducing the damage they take by ")
+                                                   .percent(100, AbilityDescriptionBuilder.COLOR_BROWN)
+                                                   .text(" and redirecting ")
+                                                   .percent(damageReduction, NamedTextColor.RED)
+                                                   .text(" of the damage they would have taken back to you. You can protect the target for a maximum of ")
+                                                   .text(maxDamagePrevented, AbilityDescriptionBuilder.COLOR_BROWN)
+                                                   .text(" damage. You must remain within ")
+                                                   .blocks(breakRadius)
+                                                   .text(" of each other. For every 100 damage prevented, increase your damage by 1%. Lasts ")
+                                                   .durationTicks(tickDuration)
+                                                   .text(".")
+                                                   .initialRange(radius)
+                                                   .build();
+        } else {
+            description = AbilityDescriptionBuilder.create("Protect the target ally, reducing the damage they take by ")
+                                                   .percent(100, AbilityDescriptionBuilder.COLOR_BROWN)
+                                                   .text(" and redirecting ")
+                                                   .percent(damageReduction, NamedTextColor.RED)
+                                                   .text(" of the damage they would have taken back to you. You can protect the target for a maximum of ")
+                                                   .text(maxDamagePrevented, AbilityDescriptionBuilder.COLOR_BROWN)
+                                                   .text(" damage. You must remain within ")
+                                                   .blocks(breakRadius)
+                                                   .text(" of each other. Lasts ")
+                                                   .durationTicks(tickDuration)
+                                                   .text(".")
+                                                   .initialRange(radius)
+                                                   .build();
+        }
     }
 
     @Override

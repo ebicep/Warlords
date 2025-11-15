@@ -362,12 +362,10 @@ public class PowerupOption implements Option {
                             we.sendMessage(getWornOffMessage());
                         },
                         getTickDuration()
-                ) {
-                    @Override
-                    public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                        return currentDamageValue * 1.2f;
-                    }
-                });
+                ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                            currentDamageValue.addMultiplicativeModifierMult("Damage", 1.2f);
+                        }
+                ));
                 we.sendMessage(Component.text("You activated the ", NamedTextColor.GOLD)
                                         .append(Component.text("DAMAGE", NamedTextColor.RED, TextDecoration.BOLD))
                                         .append(Component.text(" powerup! "))

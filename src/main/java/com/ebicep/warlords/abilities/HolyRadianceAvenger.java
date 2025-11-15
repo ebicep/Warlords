@@ -3,7 +3,6 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -139,15 +138,12 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance implements Heals<H
                         EffectUtils.playCylinderAnimation(target.getLocation(), 1, 250, 25, 25, 8, 6, .3);
                     }
                 })
-        ) {
-            @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (pveMasterUpgrade) {
-                    return currentDamageValue * .9f;
+        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                    if (pveMasterUpgrade) {
+                        currentDamageValue.addMultiplicativeModifierMult(name, 0.9f);
+                    }
                 }
-                return currentDamageValue;
-            }
-        }.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (event, currentDamageValue) -> {
                     if (pveMasterUpgrade && event.getCause().equals("Avenger's Strike")) {
                         currentDamageValue.addMultiplicativeModifierMult("Avenger's Mark", 1.4f);
                     }

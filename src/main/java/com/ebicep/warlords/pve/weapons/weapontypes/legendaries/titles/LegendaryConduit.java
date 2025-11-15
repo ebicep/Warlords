@@ -1,7 +1,6 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -157,20 +156,17 @@ public class LegendaryConduit extends AbstractLegendaryWeapon implements Passive
                                     CooldownTypes.WEAPON,
                                     cm -> {},
                                     LINK_DURATION_SECONDS * 20
-                            ) {
-                                @Override
-                                public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                    if (granted.compareAndSet(false, true)) {
-                                        int energy = getEnergyOnPairProc();
-                                        float cdr = (float) getCdrOnPairProcSeconds();
-                                        healer.addEnergy(player, "Conduit Title", energy);
-                                        player.addEnergy(player, "Conduit Title", energy);
-                                        healer.getAbilitiesMatching(AbstractAbility.class).forEach(a -> a.subtractCurrentCooldown(cdr));
-                                        player.getAbilitiesMatching(AbstractAbility.class).forEach(a -> a.subtractCurrentCooldown(cdr));
+                            ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (e, currentDamageValue) -> {
+                                        if (granted.compareAndSet(false, true)) {
+                                            int energy = getEnergyOnPairProc();
+                                            float cdr = (float) getCdrOnPairProcSeconds();
+                                            healer.addEnergy(player, "Conduit Title", energy);
+                                            player.addEnergy(player, "Conduit Title", energy);
+                                            healer.getAbilitiesMatching(AbstractAbility.class).forEach(a -> a.subtractCurrentCooldown(cdr));
+                                            player.getAbilitiesMatching(AbstractAbility.class).forEach(a -> a.subtractCurrentCooldown(cdr));
+                                        }
                                     }
-                                    return currentDamageValue;
-                                }
-                            });
+                            ));
                         }
                     }
                 }

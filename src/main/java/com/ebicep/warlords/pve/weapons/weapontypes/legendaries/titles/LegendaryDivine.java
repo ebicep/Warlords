@@ -1,7 +1,6 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -58,6 +57,55 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
     }
 
     @Override
+    public TextComponent getPassiveEffect() {
+        return Component.text("Gain a " + DAMAGE_BOOST + "% damage boost for " + DURATION + " seconds when you deal damage " + TARGETS_TO_HIT + " times. Maximum 3 stacks.",
+                                NamedTextColor.GRAY
+                        )
+                        .append(Component.newline())
+                        .append(Component.newline())
+                        .append(Component.text("When at max stacks, shift for 1 second to consume all 3 stacks and gain "))
+                        .append(formatTitleUpgrade(ABILITY_ENERGY_COST_REDUCTION + ABILITY_ENERGY_COST_REDUCTION_PER_UPGRADE * getTitleLevel(), "%"))
+                        .append(Component.text(" energy cost reduction for all abilities, " + ABILITY_DAMAGE_BOOST + "% increased damage, and "))
+                        .append(formatTitleUpgrade(ABILITY_EPS + ABILITY_EPS_PER_UPGRADE * getTitleLevel()))
+                        .append(Component.text(" EPS for 10 seconds. Can be triggered every 40 seconds."));
+    }
+
+    @Override
+    public LegendaryTitles getTitle() {
+        return LegendaryTitles.DIVINE;
+    }
+
+    @Override
+    protected float getMeleeDamageMinValue() {
+        return 100;
+    }
+
+    @Override
+    protected float getHealthBonusValue() {
+        return 500;
+    }
+
+    @Override
+    protected float getSpeedBonusValue() {
+        return 7;
+    }
+
+    @Override
+    protected float getEnergyPerSecondBonusValue() {
+        return 3;
+    }
+
+    @Override
+    protected float getEnergyPerHitBonusValue() {
+        return -5;
+    }
+
+    @Override
+    protected float getSkillCritChanceBonusValue() {
+        return 5;
+    }
+
+    @Override
     public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
         super.applyToWarlordsPlayer(player, pveOption);
         this.passiveCooldown = 0;
@@ -98,12 +146,11 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
                                     damageBoost.set(0);
                                 },
                                 DURATION * 20
-                        ) {
-                            @Override
-                            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                return currentDamageValue * (1 + damageBoost.get() * DAMAGE_BOOST / 100f);
-                            }
-                        };
+                        );
+                        regularCooldown.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (e, currentDamageValue) -> {
+                                    currentDamageValue.addMultiplicativeModifierMult(getTitleName(), 1 + damageBoost.get() * DAMAGE_BOOST / 100f);
+                                }
+                        );
                         cooldown.set(regularCooldown);
                         player.getCooldownManager().addCooldown(regularCooldown);
                     } else {
@@ -158,12 +205,11 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
                                     player.updateItems();
                                 },
                                 10 * 20
-                        ) {
-                            @Override
-                            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                return currentDamageValue * (1 + ABILITY_DAMAGE_BOOST / 100f);
-                            }
-                        };
+                        );
+                        divineCooldown.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                                    currentDamageValue.addMultiplicativeModifierMult(getTitleName(), 1 + ABILITY_DAMAGE_BOOST / 100f);
+                                }
+                        );
                         divineCooldown.addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> energyGainPerTick.addAdditiveModifier("Divine Ability", 2.5f));
                         player.getCooldownManager().addCooldown(divineCooldown);
                         passiveCooldown = 40 * GameRunnable.SECOND;
@@ -173,55 +219,6 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
                 }
             }
         }.runTaskTimer(0, 0);
-    }
-
-    @Override
-    public TextComponent getPassiveEffect() {
-        return Component.text("Gain a " + DAMAGE_BOOST + "% damage boost for " + DURATION + " seconds when you deal damage " + TARGETS_TO_HIT + " times. Maximum 3 stacks.",
-                                NamedTextColor.GRAY
-                        )
-                        .append(Component.newline())
-                        .append(Component.newline())
-                        .append(Component.text("When at max stacks, shift for 1 second to consume all 3 stacks and gain "))
-                        .append(formatTitleUpgrade(ABILITY_ENERGY_COST_REDUCTION + ABILITY_ENERGY_COST_REDUCTION_PER_UPGRADE * getTitleLevel(), "%"))
-                        .append(Component.text(" energy cost reduction for all abilities, " + ABILITY_DAMAGE_BOOST + "% increased damage, and "))
-                        .append(formatTitleUpgrade(ABILITY_EPS + ABILITY_EPS_PER_UPGRADE * getTitleLevel()))
-                        .append(Component.text(" EPS for 10 seconds. Can be triggered every 40 seconds."));
-    }
-
-    @Override
-    public LegendaryTitles getTitle() {
-        return LegendaryTitles.DIVINE;
-    }
-
-    @Override
-    protected float getMeleeDamageMinValue() {
-        return 100;
-    }
-
-    @Override
-    protected float getHealthBonusValue() {
-        return 500;
-    }
-
-    @Override
-    protected float getSpeedBonusValue() {
-        return 7;
-    }
-
-    @Override
-    protected float getEnergyPerSecondBonusValue() {
-        return 3;
-    }
-
-    @Override
-    protected float getEnergyPerHitBonusValue() {
-        return -5;
-    }
-
-    @Override
-    protected float getSkillCritChanceBonusValue() {
-        return 5;
     }
 
     @Override
@@ -257,4 +254,5 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
     public int getCounter() {
         return passiveCooldown / 20;
     }
+
 }
