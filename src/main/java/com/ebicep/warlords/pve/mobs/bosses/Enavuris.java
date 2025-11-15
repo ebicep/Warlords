@@ -4,7 +4,6 @@ import com.ebicep.customentities.nms.pve.CustomBat;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -649,25 +648,23 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
                         }
                     };
                 }
-
-                @Override
-                public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                    if (currentDebuff.get() != Debuff.LEECH) {
-                        return;
-                    }
-                    float healingMultiplier = .15f;
-                    float healValue = currentDamageValue * healingMultiplier;
-                    event.getSource().addInstance(InstanceBuilder
-                            .healing()
-                            .cause("Leech")
-                            .source(wp)
-                            .value(healValue)
-                    );
-                }
             }.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
                         if (currentDebuff.get() == Debuff.CRIPPLE) {
                             currentDamageValue.addMultiplicativeModifierMult(name, 0.75f);
                         }
+                    }
+            ).addModifier(Modifier.DAMAGE_ON_DAMAGE_SELF, (event, currentDamageValue, isCrit) -> {
+                        if (currentDebuff.get() != Debuff.LEECH) {
+                            return;
+                        }
+                        float healingMultiplier = .15f;
+                        float healValue = currentDamageValue * healingMultiplier;
+                        event.getSource().addInstance(InstanceBuilder
+                                .healing()
+                                .cause("Leech")
+                                .source(wp)
+                                .value(healValue)
+                        );
                     }
             ).addModifier(Modifier.HEALING_MODIFY_SELF, (event, currentHealValue) -> {
                         if (currentDebuff.get() == Debuff.WOUND) {

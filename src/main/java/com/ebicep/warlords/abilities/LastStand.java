@@ -141,17 +141,15 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
                                                   .showAsCrit(isCrit)
                                                   .flags(InstanceFlags.LAST_STAND_FROM_SHIELD));
                 }
-
-                @Override
-                public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                    wp.addInstance(InstanceBuilder.healing()
-                                                  .ability(LastStand.this)
-                                                  .source(wp)
-                                                  .value(amountPrevented)
-                                                  .showAsCrit(isCrit)
-                    );
-                }
-            }.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+            }.addModifier(Modifier.DAMAGE_ON_DAMAGE_SELF, (event, currentDamageValue, isCrit) -> {
+                        wp.addInstance(InstanceBuilder.healing()
+                                                      .ability(LastStand.this)
+                                                      .source(wp)
+                                                      .value(amountPrevented)
+                                                      .showAsCrit(isCrit)
+                        );
+                    }
+            ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
                         // TODO contribution
 //                        float newCurrentDamageValue = currentDamageValue.getModifiedValue() * convertToDivisionDecimal(teammateDamageReductionPercent);
 //                        float amountPrevented = currentDamageValue.getModifiedValue() - newCurrentDamageValue;

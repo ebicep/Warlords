@@ -4,7 +4,6 @@ import com.ebicep.warlords.abilities.SoulShackle;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.abilities.internal.WoundingCooldown;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -173,30 +172,28 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                                 cooldownManager -> {
                                 },
                                 60
-                        ) {
-                            @Override
-                            public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-//                                if (totalHealingDone.get() >= 1000) {
-//                                    setTicksLeft(0);
-//                                    return;
-//                                }
-                                float healingMultiplier;
-                                if (event.getSource() == attacker) {
-                                    healingMultiplier = 15;
-                                } else {
-                                    healingMultiplier = 25;
+                        ).addModifier(Modifier.DAMAGE_ON_DAMAGE_SELF, (e, currentDamageValue, isCrit) -> {
+                                    // if (totalHealingDone.get() >= 1000) {
+                                    //     setTicksLeft(0);
+                                    //     return;
+                                    // }
+                                    float healingMultiplier;
+                                    if (e.getSource() == attacker) {
+                                        healingMultiplier = 15;
+                                    } else {
+                                        healingMultiplier = 25;
+                                    }
+                                    float healValue = Math.min(300, currentDamageValue * healingMultiplier);
+                                    e.getSource().addInstance(InstanceBuilder
+                                            .healing()
+                                            .cause("Leech")
+                                            .source(attacker)
+                                            .value(healValue)
+                                    ).ifPresent(warlordsDamageHealingFinalEvent -> {
+                                        totalHealingDone.updateAndGet(v -> v + warlordsDamageHealingFinalEvent.getValue());
+                                    });
                                 }
-                                float healValue = Math.min(300, currentDamageValue * healingMultiplier);
-                                event.getSource().addInstance(InstanceBuilder
-                                        .healing()
-                                        .cause("Leech")
-                                        .source(attacker)
-                                        .value(healValue)
-                                ).ifPresent(warlordsDamageHealingFinalEvent -> {
-                                    totalHealingDone.updateAndGet(v -> v + warlordsDamageHealingFinalEvent.getValue());
-                                });
-                            }
-                        });
+                        ));
                     }
                     case "Silence" -> {
                         victim.getCooldownManager().removeCooldownByName("Disaster Fragment - Silence");

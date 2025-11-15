@@ -211,20 +211,18 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                     }
                 };
             }
-
-            @Override
-            public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (event.getFlags().contains(InstanceFlags.DOT)) {
-                    return;
+        }.addModifier(Modifier.DAMAGE_ON_DAMAGE_SELF, (event, currentDamageValue, isCrit) -> {
+                    if (event.getFlags().contains(InstanceFlags.DOT)) {
+                        return;
+                    }
+                    String cause = event.getCause();
+                    if (cause.equals("Hammer of Light") || cause.equals("Sanctuary")) { // TODO
+                        return;
+                    }
+                    damageInstances.getAndIncrement();
+                    stats.timesCooldownsIncreased++;
                 }
-                String cause = event.getCause();
-                if (cause.equals("Hammer of Light") || cause.equals("Sanctuary")) { // TODO
-                    return;
-                }
-                damageInstances.getAndIncrement();
-                stats.timesCooldownsIncreased++;
-            }
-        }.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
                     if (event.getCause().isEmpty()) {
                         stats.meleesReduced++;
                         currentDamageValue.addMultiplicativeModifierMult(name, convertToDivisionDecimal(meleeDamageReduction));

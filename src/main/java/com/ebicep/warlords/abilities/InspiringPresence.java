@@ -5,7 +5,6 @@ import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -82,15 +81,14 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
                         EffectUtils.displayParticle(Particle.EFFECT, location, 2, 0.3, 0.3, 0.3, 0.5);
                     }
                 })
-        ) {
-            @Override
-            public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (pveMasterUpgrade2) {
-                    wp.addEnergy(wp, "Resilient Presence", 15);
-                    teammatesNear.forEach(teammate -> teammate.addEnergy(teammate, "Resilient Presence", 15));
+        );
+        presenceCooldown.addModifier(Modifier.DAMAGE_ON_DAMAGE_SELF, (event, currentDamageValue, isCrit) -> {
+                    if (pveMasterUpgrade2) {
+                        wp.addEnergy(wp, "Resilient Presence", 15);
+                        teammatesNear.forEach(teammate -> teammate.addEnergy(teammate, "Resilient Presence", 15));
+                    }
                 }
-            }
-        };
+        );
         presenceCooldown.addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> {
                     float energy = energyPerSecond / 20f;
                     data.addEnergyGivenFromStrikeAndPresence(energy);

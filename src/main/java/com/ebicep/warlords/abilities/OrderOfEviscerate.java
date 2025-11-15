@@ -108,11 +108,6 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                 })
         ) {
             @Override
-            public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                data.addAndCheckDamageThreshold(currentDamageValue, wp);
-            }
-
-            @Override
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                 data.damageDoneWithOrder += currentDamageValue;
             }
@@ -242,7 +237,10 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                 }
                 wp.playSound(wp.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 1, 2);
             }
-        }.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+        }.addModifier(Modifier.DAMAGE_ON_DAMAGE_SELF, (event, currentDamageValue, isCrit) -> {
+                    data.addAndCheckDamageThreshold(currentDamageValue, wp);
+                }
+        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
                     if (!Objects.equals(data.getMarkedPlayer(), event.getWarlordsEntity())) {
                         return;
                     }

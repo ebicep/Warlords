@@ -48,72 +48,6 @@ public class LegendaryFulcrum extends AbstractLegendaryWeapon implements GardenO
     }
 
     @Override
-    public LinkedHashMap<Currencies, Long> getCost() {
-        LinkedHashMap<Currencies, Long> baseCost = super.getCost();
-        baseCost.put(Currencies.TITLE_TOKEN_GARDEN_OF_HESPERIDES, 1L);
-        return baseCost;
-    }
-
-    @Override
-    public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
-        super.applyToWarlordsPlayer(player, pveOption);
-        this.tickCounter = 0;
-
-        player.getCooldownManager().addCooldown(new PermanentCooldown<>(
-                getTitleName(),
-                null,
-                LegendaryFulcrum.class,
-                null,
-                player,
-                CooldownTypes.WEAPON,
-                cooldownManager -> {
-                },
-                false,
-                (cooldown, ticksElapsed) -> {
-                    if (tickCounter > 0) {
-                        tickCounter--;
-                    }
-                }
-        ) {
-            @Override
-            public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (tickCounter != 0) {
-                    return;
-                }
-                tickCounter = (int) (COOLDOWN + COOLDOWN_PER_UPGRADE * getTitleLevel()) * 20;
-                float shieldHealth = player.getMaxBaseHealth() * (SHIELD_PERCENT + SHIELD_PERCENT_PER_UPGRADE * getTitleLevel()) / 100;
-                Shield shield = new Shield(getTitleName(), shieldHealth);
-                RegularCooldown<Shield> fulcrumCooldown = new RegularCooldown<>(
-                        getTitleName(),
-                        null,
-                        Shield.class,
-                        shield,
-                        player,
-                        CooldownTypes.WEAPON,
-                        cooldownManager -> {
-                        },
-                        200
-                ) {
-                    @Override
-                    public void onShieldFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                        event.getWarlordsEntity().getCooldownManager().queueUpdatePlayerNames();
-                    }
-
-                    @Override
-                    public PlayerNameData addPrefixFromOther() {
-                        return new PlayerNameData(
-                                Component.text((int) (shield.getShieldHealth()), NamedTextColor.YELLOW),
-                                we -> we.isTeammate(player)
-                        );
-                    }
-                };
-                fulcrumCooldown.addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> energyGainPerTick.addAdditiveModifier(getTitleName(), EPS_BOOST / 20f));
-                player.getCooldownManager().addCooldown(fulcrumCooldown);
-            }
-        });
-    }
-
-    @Override
     public TextComponent getPassiveEffect() {
         return ComponentBuilder.create("Taking damage create a shield that absorbs damage based on ", NamedTextColor.GRAY)
                                .append(formatTitleUpgrade(SHIELD_PERCENT + SHIELD_PERCENT_PER_UPGRADE * getTitleLevel(), "%"))
@@ -159,6 +93,70 @@ public class LegendaryFulcrum extends AbstractLegendaryWeapon implements GardenO
     }
 
     @Override
+    public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
+        super.applyToWarlordsPlayer(player, pveOption);
+        this.tickCounter = 0;
+
+        player.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                getTitleName(),
+                null,
+                LegendaryFulcrum.class,
+                null,
+                player,
+                CooldownTypes.WEAPON,
+                cooldownManager -> {
+                },
+                false,
+                (cooldown, ticksElapsed) -> {
+                    if (tickCounter > 0) {
+                        tickCounter--;
+                    }
+                }
+        ).addModifier(Modifier.DAMAGE_ON_DAMAGE_SELF, (event, currentDamageValue, isCrit) -> {
+                    if (tickCounter != 0) {
+                        return;
+                    }
+                    tickCounter = (int) (COOLDOWN + COOLDOWN_PER_UPGRADE * getTitleLevel()) * 20;
+                    float shieldHealth = player.getMaxBaseHealth() * (SHIELD_PERCENT + SHIELD_PERCENT_PER_UPGRADE * getTitleLevel()) / 100;
+                    Shield shield = new Shield(getTitleName(), shieldHealth);
+                    RegularCooldown<Shield> fulcrumCooldown = new RegularCooldown<>(
+                            getTitleName(),
+                            null,
+                            Shield.class,
+                            shield,
+                            player,
+                            CooldownTypes.WEAPON,
+                            cooldownManager -> {
+                            },
+                            200
+                    ) {
+                        @Override
+                        public void onShieldFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                            event.getWarlordsEntity().getCooldownManager().queueUpdatePlayerNames();
+                        }
+
+                        @Override
+                        public PlayerNameData addPrefixFromOther() {
+                            return new PlayerNameData(
+                                    Component.text((int) (shield.getShieldHealth()), NamedTextColor.YELLOW),
+                                    we -> we.isTeammate(player)
+                            );
+                        }
+                    };
+                    fulcrumCooldown.addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> energyGainPerTick.addAdditiveModifier(name, EPS_BOOST / 20f));
+                    player.getCooldownManager().addCooldown(fulcrumCooldown);
+                }
+        ));
+    }
+
+    @Override
+    public LinkedHashMap<Currencies, Long> getCost() {
+        LinkedHashMap<Currencies, Long> baseCost = super.getCost();
+        baseCost.put(Currencies.TITLE_TOKEN_GARDEN_OF_HESPERIDES, 1L);
+        return baseCost;
+    }
+
+    @Override
     protected float getMeleeDamageMaxValue() {
         return 185;
     }
@@ -191,4 +189,5 @@ public class LegendaryFulcrum extends AbstractLegendaryWeapon implements GardenO
     public int getCounter() {
         return tickCounter;
     }
+
 }

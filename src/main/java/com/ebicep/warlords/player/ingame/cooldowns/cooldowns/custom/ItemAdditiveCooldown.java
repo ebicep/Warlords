@@ -101,28 +101,27 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
                     }
                 }
         );
-    }
-
-    @Override
-    public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-        // prevent recursion
-        WarlordsEntity attacker = event.getSource();
-        if (Objects.equals(attacker, from) || event.getFlags().contains(InstanceFlags.RECURSIVE)) {
-            return;
-        }
-        if (thorns <= 0) {
-            return;
-        }
-        float thornsDamage = currentDamageValue * thorns;
-        if (thornsDamage > maxThornsDamage) {
-            thornsDamage = maxThornsDamage;
-        }
-        attacker.addInstance(InstanceBuilder
-                .damage()
-                .cause("Thorns")
-                .source(from)
-                .value(thornsDamage)
-                .flags(InstanceFlags.RECURSIVE, InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST)
+        this.addModifier(Modifier.DAMAGE_ON_DAMAGE_SELF, (event, currentDamageValue, isCrit) -> {
+                    // prevent recursion
+                    WarlordsEntity attacker = event.getSource();
+                    if (Objects.equals(attacker, from) || event.getFlags().contains(InstanceFlags.RECURSIVE)) {
+                        return;
+                    }
+                    if (thorns <= 0) {
+                        return;
+                    }
+                    float thornsDamage = currentDamageValue * thorns;
+                    if (thornsDamage > maxThornsDamage) {
+                        thornsDamage = maxThornsDamage;
+                    }
+                    attacker.addInstance(InstanceBuilder
+                            .damage()
+                            .cause("Thorns")
+                            .source(from)
+                            .value(thornsDamage)
+                            .flags(InstanceFlags.RECURSIVE, InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST)
+                    );
+                }
         );
     }
 

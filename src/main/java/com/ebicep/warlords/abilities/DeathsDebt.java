@@ -6,7 +6,6 @@ import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
@@ -214,13 +213,11 @@ public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<
                         }
                     }
                 })
-        ) {
-
-            @Override
-            public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                data.delayedDamage += currentDamageValue;
-            }
-        };
+        );
+        spiritsRespiteCooldown.addModifier(Modifier.DAMAGE_ON_DAMAGE_SELF, (event, currentDamageValue, isCrit) -> {
+                    data.delayedDamage += currentDamageValue;
+                }
+        );
         wp.getCooldownManager().addCooldown(spiritsRespiteCooldown);
         if (pveMasterUpgrade) {
             wp.addKnockbackModifier(wp, "Spirits Respite", -80, spiritsRespiteCooldown);
