@@ -5,7 +5,6 @@ import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
@@ -254,15 +253,13 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
         ) {
 
             @Override
-            public void onShieldFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                event.getWarlordsEntity().getCooldownManager().queueUpdatePlayerNames();
-            }
-
-            @Override
             public PlayerNameData addPrefixFromOther() {
                 return new PlayerNameData(Component.text((int) (shield.getShieldHealth()), NamedTextColor.YELLOW), we -> we.isTeammate(from));
             }
-        });
+        }.addModifier(Modifier.DAMAGE_ON_SHIELD_ATTACKER, (event, currentDamageValue, isCrit) -> {
+                    event.getWarlordsEntity().getCooldownManager().queueUpdatePlayerNames();
+                }
+        ));
     }
 
     @Override

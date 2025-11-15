@@ -5,7 +5,6 @@ import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -129,19 +128,7 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
                     cooldownManager -> {
                     },
                     allyTickDuration
-            ) {
-
-                @Override
-                public void onShieldFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                    data.addAmountPrevented(amountPrevented);
-                    wp.addInstance(InstanceBuilder.healing()
-                                                  .ability(LastStand.this)
-                                                  .source(wp)
-                                                  .value(amountPrevented)
-                                                  .showAsCrit(isCrit)
-                                                  .flags(InstanceFlags.LAST_STAND_FROM_SHIELD));
-                }
-            }.addModifier(Modifier.DAMAGE_ON_DAMAGE_SELF, (event, currentDamageValue, isCrit) -> {
+            ).addModifier(Modifier.DAMAGE_ON_DAMAGE_SELF, (event, currentDamageValue, isCrit) -> {
                         wp.addInstance(InstanceBuilder.healing()
                                                       .ability(LastStand.this)
                                                       .source(wp)
@@ -155,6 +142,15 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
 //                        float amountPrevented = currentDamageValue.getModifiedValue() - newCurrentDamageValue;
 //                        data.addAmountPrevented(amountPrevented);
                         currentDamageValue.addMultiplicativeModifierMult(name, convertToDivisionDecimal(teammateDamageReductionPercent));
+                    }
+            ).addModifier(Modifier.DAMAGE_ON_SHIELD_ATTACKER, (event, currentDamageValue, isCrit) -> {
+                        data.addAmountPrevented(amountPrevented);
+                        wp.addInstance(InstanceBuilder.healing()
+                                                      .ability(LastStand.this)
+                                                      .source(wp)
+                                                      .value(amountPrevented)
+                                                      .showAsCrit(isCrit)
+                                                      .flags(InstanceFlags.LAST_STAND_FROM_SHIELD));
                     }
             ));
             wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" Your Last Stand is now protecting ", NamedTextColor.GRAY))

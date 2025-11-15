@@ -6,7 +6,6 @@ import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -84,29 +83,37 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                     shieldHealth *= pveMasterUpgrade2 ? 2.5f : 1;
                     stats.totalShieldGained += shieldHealth;
                     Shield shield = new Shield(name, shieldHealth);
-                    wp.getCooldownManager().addCooldown(new RegularCooldown<>(name + " Shield", "SHIELD", Shield.class, shield, wp, CooldownTypes.ABILITY, cooldownManager1 -> {
-                    }, cooldownManager1 -> {
-                    }, shieldTickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                        if (ticksElapsed % 3 == 0) {
-                            Location location = wp.getLocation();
-                            location.add(0, 1.5, 0);
-                            EffectUtils.displayParticle(Particle.CHERRY_LEAVES, location, 2, 0.15, 0.3, 0.15, 0.01);
-                            EffectUtils.displayParticle(Particle.FIREWORK, location, 1, 0.3, 0.3, 0.3, 0.0001);
-                            EffectUtils.displayParticle(Particle.WITCH, location, 1, 0.3, 0.3, 0.3, 0);
-                        }
-                    })
+                    wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                            name + " Shield",
+                            "SHIELD",
+                            Shield.class,
+                            shield,
+                            wp,
+                            CooldownTypes.ABILITY,
+                            cooldownManager1 -> {
+                            },
+                            cooldownManager1 -> {
+                            },
+                            shieldTickDuration,
+                            Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                                if (ticksElapsed % 3 == 0) {
+                                    Location location = wp.getLocation();
+                                    location.add(0, 1.5, 0);
+                                    EffectUtils.displayParticle(Particle.CHERRY_LEAVES, location, 2, 0.15, 0.3, 0.15, 0.01);
+                                    EffectUtils.displayParticle(Particle.FIREWORK, location, 1, 0.3, 0.3, 0.3, 0.0001);
+                                    EffectUtils.displayParticle(Particle.WITCH, location, 1, 0.3, 0.3, 0.3, 0);
+                                }
+                            })
                     ) {
-
-                        @Override
-                        public void onShieldFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                            event.getWarlordsEntity().getCooldownManager().queueUpdatePlayerNames();
-                        }
 
                         @Override
                         public PlayerNameData addPrefixFromOther() {
                             return new PlayerNameData(Component.text((int) (shield.getShieldHealth()), NamedTextColor.YELLOW), we -> we.isTeammate(wp));
                         }
-                    });
+                    }.addModifier(Modifier.DAMAGE_ON_SHIELD_ATTACKER, (event, currentDamageValue, isCrit) -> {
+                                event.getWarlordsEntity().getCooldownManager().queueUpdatePlayerNames();
+                            }
+                    ));
                     wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" Your ", NamedTextColor.GRAY))
                                                                   .append(Component.text(name, NamedTextColor.YELLOW))
                                                                   .append(Component.text(" is now shielding you!", NamedTextColor.GRAY)));

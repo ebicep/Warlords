@@ -4,7 +4,6 @@ import com.ebicep.warlords.abilities.WaterBolt;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.AbstractArcaneShield;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -82,27 +81,25 @@ public class ArcaneReflection implements SpecBoostManager.SpecBoost<ArcaneReflec
                     cooldownManager -> {
                     },
                     false
-            ) {
-                @Override
-                public void onShieldFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                    if (event.getFlags().contains(InstanceFlags.RECURSIVE)) {
-                        return;
-                    }
-                    WarlordsEntity attacker = event.getSource();
-                    attacker.addInstance(InstanceBuilder
-                            .damage()
-                            .cause(getStringName())
-                            .source(from)
-                            .value(currentDamageValue * damageReflectionPercent / 100)
-                            .showAsCrit(isCrit)
-                            .flags(InstanceFlags.RECURSIVE, InstanceFlags.REFLECTIVE_DAMAGE)
-                    );
-                    Utils.playGlobalSound(warlordsPlayer.getLocation(), "warrior.intervene.block", 2, 2);
-                }
-            }.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+            ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
                         if (event.getCause().isEmpty()) {
                             currentDamageValue.addMultiplicativeModifierMult(getStringName(), AbstractAbility.convertToMultiplicationDecimal(meleeDamageIncreasePercent));
                         }
+                    }
+            ).addModifier(Modifier.DAMAGE_ON_SHIELD_ATTACKER, (event, currentDamageValue, isCrit) -> {
+                        if (event.getFlags().contains(InstanceFlags.RECURSIVE)) {
+                            return;
+                        }
+                        WarlordsEntity attacker = event.getSource();
+                        attacker.addInstance(InstanceBuilder
+                                .damage()
+                                .cause(getStringName())
+                                .source(warlordsPlayer)
+                                .value(currentDamageValue * damageReflectionPercent / 100)
+                                .showAsCrit(isCrit)
+                                .flags(InstanceFlags.RECURSIVE, InstanceFlags.REFLECTIVE_DAMAGE)
+                        );
+                        Utils.playGlobalSound(warlordsPlayer.getLocation(), "warrior.intervene.block", 2, 2);
                     }
             ));
         }

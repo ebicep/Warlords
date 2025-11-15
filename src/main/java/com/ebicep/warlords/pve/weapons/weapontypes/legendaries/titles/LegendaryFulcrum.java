@@ -1,7 +1,6 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
 import com.ebicep.warlords.abilities.internal.Shield;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -131,11 +130,6 @@ public class LegendaryFulcrum extends AbstractLegendaryWeapon implements GardenO
                             200
                     ) {
                         @Override
-                        public void onShieldFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                            event.getWarlordsEntity().getCooldownManager().queueUpdatePlayerNames();
-                        }
-
-                        @Override
                         public PlayerNameData addPrefixFromOther() {
                             return new PlayerNameData(
                                     Component.text((int) (shield.getShieldHealth()), NamedTextColor.YELLOW),
@@ -143,6 +137,10 @@ public class LegendaryFulcrum extends AbstractLegendaryWeapon implements GardenO
                             );
                         }
                     };
+            fulcrumCooldown.addModifier(Modifier.DAMAGE_ON_SHIELD_ATTACKER, (event, currentDamageValue, isCrit) -> {
+                        event.getWarlordsEntity().getCooldownManager().queueUpdatePlayerNames();
+                    }
+            );
             fulcrumCooldown.addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> energyGainPerTick.addAdditiveModifier(getTitleName(), EPS_BOOST / 20f));
                     player.getCooldownManager().addCooldown(fulcrumCooldown);
                 }
