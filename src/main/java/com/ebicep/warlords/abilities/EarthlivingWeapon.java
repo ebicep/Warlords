@@ -5,7 +5,6 @@ import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -63,11 +62,12 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "shaman.earthlivingweapon.activation", 2, 1);
+        EarthlivingData data = new EarthlivingData(guaranteedHits);
         RegularCooldown<EarthlivingData> earthlivingCooldown = new RegularCooldown<>(
                 name,
                 "EARTH",
                 EarthlivingData.class,
-                new EarthlivingData(guaranteedHits),
+                data,
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
@@ -78,19 +78,16 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
                         EffectUtils.displayParticle(Particle.HAPPY_VILLAGER, wp.getLocation().add(0, 1.2, 0), 2, 0.3, 0.3, 0.3, 0.1);
                     }
                 })
-        ) {
-
-            @Override
-            public void onEndFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (!event.getCause().isEmpty()) {
-                    return;
+        );
+        earthlivingCooldown.addModifier(Modifier.DAMAGE_ON_END_ATTACKER, (event, currentDamageValue, isCrit) -> {
+                    if (!event.getCause().isEmpty()) {
+                        return;
+                    }
+                    WarlordsEntity victim = event.getWarlordsEntity();
+                    WarlordsEntity attacker = event.getSource();
+                    activateEarthliving(victim, attacker, data);
                 }
-                WarlordsEntity victim = event.getWarlordsEntity();
-                WarlordsEntity attacker = event.getSource();
-                activateEarthliving(victim, attacker, cooldownObject);
-            }
-
-        };
+        );
         if (pveMasterUpgrade2) {
             earthlivingCooldown.addModifier(Modifier.ENERGY_GAIN_PER_HIT, energyGainPerTick -> energyGainPerTick.addAdditiveModifier(name, 10f));
         }
