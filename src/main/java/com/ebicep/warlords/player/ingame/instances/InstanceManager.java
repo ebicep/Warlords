@@ -22,7 +22,6 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownUtils;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.LinkedCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.type.CustomInstanceFlags;
-import com.ebicep.warlords.player.ingame.instances.type.DamageInstance;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -700,13 +699,7 @@ public class InstanceManager {
                                                                                 .toList()
                                         ) {
                                             for (AbstractCooldown<?> abstractCooldown : enemy.getCooldownManager().getCooldownsDistinct()) {
-                                                abstractCooldown.onDeathFromEnemies(event, finalDamageValue, isCrit, enemy == source);
-                                                List<DamageInstance> extraDamageInstances = abstractCooldown.getExtraDamageInstances();
-                                                if (extraDamageInstances != null) {
-                                                    for (DamageInstance damageInstance : extraDamageInstances) {
-                                                        damageInstance.onDeathFromEnemies(event, finalDamageValue, isCrit, enemy == source);
-                                                    }
-                                                }
+                                                abstractCooldown.applyModifiers(Modifier.DAMAGE_ON_DEATH_ENEMIES, m -> m.apply(event, finalDamageValue, isCrit, enemy == source));
                                             }
                                         }
                                     })

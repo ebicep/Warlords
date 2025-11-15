@@ -4,7 +4,6 @@ import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsApplyBurnEffectEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
@@ -93,12 +92,6 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
                 return true;
             }
 
-            @Override
-            public void onDeathFromEnemies(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit, boolean isKiller) {
-                if (pveMasterUpgrade2 && isKiller) {
-                    wp.addEnergy(wp, "Inferno", event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof EventBoltaroShadow ? 10 : 30);
-                }
-            }
         }.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
             if (pveMasterUpgrade) {
                 WarlordsEntity hit = event.getWarlordsEntity();
@@ -127,6 +120,11 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
                     if (pveMasterUpgrade2 && event.getCause().equals("Ignite")) {
                         event.setMinForce(event.getMin() * 2);
                         event.setMaxForce(event.getMax() * 2);
+                    }
+                }
+        ).addModifier(Modifier.DAMAGE_ON_DEATH_ENEMIES, (event, currentDamageValue, isCrit, isKiller) -> {
+                    if (pveMasterUpgrade2 && isKiller) {
+                        wp.addEnergy(wp, "Inferno", event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof EventBoltaroShadow ? 10 : 30);
                     }
                 }
         ));

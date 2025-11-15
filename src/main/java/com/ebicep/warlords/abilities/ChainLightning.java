@@ -5,7 +5,6 @@ import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -51,20 +50,18 @@ public class ChainLightning extends AbstractChain<ChainLightning, ChainLightning
                         EffectUtils.displayParticle(Particle.ELECTRIC_SPARK, receiver.getLocation().add(0, 1.2, 0), 5, .25, .25, .25, 0);
                     }
                 })
-        ) {
-            @Override
-            public void onDeathFromEnemies(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit, boolean isKiller) {
-                if (event.getSource().equals(giver) && isKiller) {
-                    for (AbstractAbility ability : giver.getAbilities()) {
-                        if (ability instanceof OrangeAbilityIcon) {
-                            ability.subtractCurrentCooldown(.5f);
-                        }
-                    }
-                }
-            }
-        }.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
                     if (event.getSource().equals(giver)) {
                         currentDamageValue.addMultiplicativeModifierMult("Aftershock", 1.3f);
+                    }
+                }
+        ).addModifier(Modifier.DAMAGE_ON_DEATH_ENEMIES, (event, currentDamageValue, isCrit, isKiller) -> {
+                    if (event.getSource().equals(giver) && isKiller) {
+                        for (AbstractAbility ability : giver.getAbilities()) {
+                            if (ability instanceof OrangeAbilityIcon) {
+                                ability.subtractCurrentCooldown(.5f);
+                            }
+                        }
                     }
                 }
         ));

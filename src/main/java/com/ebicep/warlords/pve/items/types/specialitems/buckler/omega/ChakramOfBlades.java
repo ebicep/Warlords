@@ -1,10 +1,10 @@
 package com.ebicep.warlords.pve.items.types.specialitems.buckler.omega;
 
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
 
@@ -36,6 +36,7 @@ public class ChakramOfBlades extends SpecialOmegaBuckler implements AppliesToWar
 
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {
+        final int[] kills = {0};
         warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
                 getName(),
                 null,
@@ -47,19 +48,15 @@ public class ChakramOfBlades extends SpecialOmegaBuckler implements AppliesToWar
 
                 },
                 false
-        ) {
-            int kills = 0;
-
-            @Override
-            public void onDeathFromEnemies(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit, boolean isKiller) {
-                if (event.getSource().equals(warlordsPlayer) && isKiller) {
-                    kills++;
-                    if (kills % 7 == 0) {
-                        warlordsPlayer.addEnergy(warlordsPlayer, getName(), 30);
+        ).addModifier(Modifier.DAMAGE_ON_DEATH_ENEMIES, (event, currentDamageValue, isCrit, isKiller) -> {
+                    if (event.getSource().equals(warlordsPlayer) && isKiller) {
+                        kills[0]++;
+                        if (kills[0] % 7 == 0) {
+                            warlordsPlayer.addEnergy(warlordsPlayer, getName(), 30);
+                        }
                     }
                 }
-            }
-        });
+        ));
     }
 
 }

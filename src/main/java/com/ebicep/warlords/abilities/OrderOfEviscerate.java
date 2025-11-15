@@ -6,7 +6,6 @@ import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -77,7 +76,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
             giveCloak(wp, tickDuration);
         }
         OrderOfEviscerateData data = new OrderOfEviscerateData(maxDamageThreshold);
-        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+        RegularCooldown<OrderOfEviscerateData> orderOfEviscerateCooldown = new RegularCooldown<>(
                 "Order of Eviscerate",
                 "ORDER",
                 OrderOfEviscerateData.class,
@@ -106,137 +105,12 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                     }
                     EffectUtils.displayParticle(Particle.SMOKE, wp.getLocation(), 4, 0.2, 0.2, 0.2, 0.05);
                 })
-        ) {
-
-            @Override
-            public void onDeathFromEnemies(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit, boolean isKiller) {
-                if (!Objects.equals(event.getWarlordsEntity(), data.getMarkedPlayer())) {
-                    return;
-                }
-                if (!inPve) {
-                    this.setTicksLeft(0);
-                } else {
-                    removeCloak(wp, false);
-                }
-                if (isKiller) {
-                    stats.numberOfFullResets++;
-                    if (inPve) {
-                        data.mobsKilledWithOrder++;
-                    }
-                    new GameRunnable(wp.getGame()) {
-
-                        @Override
-                        public void run() {
-                            if (inPve) {
-                                if (stacks.get() < 2) {
-                                    stacks.getAndIncrement();
-                                }
-                                int reduction = pveMasterUpgrade ? 12 : 8;
-                                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
-                                        .append(Component.text(" You killed your mark,", NamedTextColor.GRAY))
-                                        .append(Component.text(" your ultimate cooldown has been reduced by " + reduction + " seconds",
-                                                NamedTextColor.YELLOW
-                                        ))
-                                        .append(Component.text("!", NamedTextColor.GRAY)));
-                                for (ShadowStep shadowStep : wp.getAbilitiesMatching(ShadowStep.class)) {
-                                    shadowStep.subtractCurrentCooldown(2);
-                                }
-                                for (OrderOfEviscerate orderOfEviscerate : wp.getAbilitiesMatching(OrderOfEviscerate.class)) {
-                                    orderOfEviscerate.subtractCurrentCooldown(reduction);
-                                }
-                                if (pveMasterUpgrade2 && cooldown.get() == null) {
-                                    RegularCooldown<OrderOfEviscerateData> regularCooldown = new RegularCooldown<>(
-                                            "Cloaked Engagement 1",
-                                            "ENGAGE 1",
-                                            OrderOfEviscerateData.class,
-                                            null,
-                                            wp,
-                                            CooldownTypes.BUFF,
-                                            cooldownManager -> {
-                                            },
-                                            cooldownManager -> {
-                                                cooldown.set(null);
-                                                stacks.set(0);
-                                            },
-                                            8 * 20
-                                    );
-                                    regularCooldown.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
-                                                currentDamageValue.addMultiplicativeModifierMult(name, 1 + 0.4f * stacks.get());
-                                            }
-                                    );
-                                    cooldown.set(regularCooldown);
-                                    wp.getCooldownManager().addCooldown(regularCooldown);
-                                } else {
-                                    cooldown.get().setTicksLeft(8 * 20);
-                                    cooldown.get().setName("Cloaked Engagement " + stacks);
-                                    cooldown.get().setNameAbbreviation("ENGAGE " + stacks);
-                                }
-                            } else {
-                                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
-                                        .append(Component.text(" You killed your mark, ", NamedTextColor.GRAY))
-                                        .append(Component.text(OrderOfEviscerate.this.name, NamedTextColor.YELLOW))
-                                        .append(Component.text("'s cooldown was reduced by ", NamedTextColor.GRAY))
-                                        .append(Component.text(NumberFormat.formatOptionalHundredths(orderKillCooldownReduction), NamedTextColor.GOLD))
-                                        .append(Component.text(" seconds and ", NamedTextColor.GRAY))
-                                        .append(Component.text("Soul Switch", NamedTextColor.YELLOW))
-                                        .append(Component.text("'s cooldown was reset.", NamedTextColor.GRAY))
-                                );
-                                for (OrderOfEviscerate orderOfEviscerate : wp.getAbilitiesMatching(OrderOfEviscerate.class)) {
-                                    orderOfEviscerate.subtractCurrentCooldown(orderKillCooldownReduction);
-                                }
-                                for (SoulSwitch soulSwitch : wp.getAbilitiesMatching(SoulSwitch.class)) {
-                                    soulSwitch.setCurrentCooldown(0);
-                                }
-                                wp.addEnergy(wp, name, energyCost.getBaseValue());
-                            }
-                            wp.getSpec().resetAbilityCD(wp);
-                        }
-                    }.runTaskLater(2);
-                } else {
-                    stats.numberOfHalfResets++;
-                    new GameRunnable(wp.getGame()) {
-
-                        @Override
-                        public void run() {
-                            if (inPve) {
-                                int reduction = pveMasterUpgrade ? 6 : 4;
-                                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
-                                        .append(Component.text(" You assisted in killing your mark,", NamedTextColor.GRAY))
-                                        .append(Component.text(" your ultimate cooldown has been reduced by " + reduction + " seconds",
-                                                NamedTextColor.YELLOW
-                                        ))
-                                        .append(Component.text("!", NamedTextColor.GRAY)));
-                                for (OrderOfEviscerate orderOfEviscerate : wp.getAbilitiesMatching(OrderOfEviscerate.class)) {
-                                    orderOfEviscerate.subtractCurrentCooldown(reduction);
-                                }
-                            } else {
-                                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
-                                        .append(Component.text(" You assisted in killing your mark, ", NamedTextColor.GRAY))
-                                        .append(Component.text(OrderOfEviscerate.this.name, NamedTextColor.YELLOW))
-                                        .append(Component.text("'s cooldown was reduced by ", NamedTextColor.GRAY))
-                                        .append(Component.text(NumberFormat.formatOptionalHundredths(orderAssistCooldownReduction), NamedTextColor.GOLD))
-                                        .append(Component.text(" seconds and ", NamedTextColor.GRAY))
-                                        .append(Component.text("Soul Switch", NamedTextColor.YELLOW))
-                                        .append(Component.text("'s cooldown was reset.", NamedTextColor.GRAY))
-                                );
-                                for (OrderOfEviscerate orderOfEviscerate : wp.getAbilitiesMatching(OrderOfEviscerate.class)) {
-                                    orderOfEviscerate.subtractCurrentCooldown(orderAssistCooldownReduction);
-                                }
-                                for (SoulSwitch soulSwitch : wp.getAbilitiesMatching(SoulSwitch.class)) {
-                                    soulSwitch.setCurrentCooldown(0);
-                                }
-                                wp.addEnergy(wp, name, energyCost.getBaseValue() / 2f);
-                            }
-                            wp.getSpec().resetAbilityCD(wp);
-                        }
-                    }.runTaskLater(2);
-                }
-                wp.playSound(wp.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 1, 2);
-            }
-        }.addModifier(Modifier.DAMAGE_ON_DAMAGE_SELF, (event, currentDamageValue, isCrit) -> {
+        );
+        orderOfEviscerateCooldown.addModifier(Modifier.DAMAGE_ON_DAMAGE_SELF, (event, currentDamageValue, isCrit) -> {
                     data.addAndCheckDamageThreshold(currentDamageValue, wp);
                 }
-        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+        );
+        orderOfEviscerateCooldown.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
                     if (!Objects.equals(data.getMarkedPlayer(), event.getWarlordsEntity())) {
                         return;
                     }
@@ -247,7 +121,8 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                     }
                     currentDamageValue.addMultiplicativeModifierMult(name, 1 + damageBonus / 100f);
                 }
-        ).addModifier(Modifier.DAMAGE_BEFORE_ANY_REDUCTION_ATTACKER, event -> {
+        );
+        orderOfEviscerateCooldown.addModifier(Modifier.DAMAGE_BEFORE_ANY_REDUCTION_ATTACKER, event -> {
                     //mark message here so it displays before damage
                     WarlordsEntity victim = event.getWarlordsEntity();
                     if (victim != wp) {
@@ -259,11 +134,137 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                         data.setMarkedPlayer(victim);
                     }
                 }
-        ).addModifier(Modifier.DAMAGE_ON_DAMAGE_ATTACKER, (event, currentDamageValue, isCrit) -> {
+        );
+        orderOfEviscerateCooldown.addModifier(Modifier.DAMAGE_ON_DAMAGE_ATTACKER, (event, currentDamageValue, isCrit) -> {
                     data.damageDoneWithOrder += currentDamageValue;
                 }
-        ));
+        );
+        orderOfEviscerateCooldown.addModifier(Modifier.DAMAGE_ON_DEATH_ENEMIES, (event, currentDamageValue, isCrit, isKiller) -> {
+                    if (!Objects.equals(event.getWarlordsEntity(), data.getMarkedPlayer())) {
+                        return;
+                    }
+                    if (!inPve) {
+                        orderOfEviscerateCooldown.setTicksLeft(0);
+                    } else {
+                        removeCloak(wp, false);
+                    }
+                    if (isKiller) {
+                        stats.numberOfFullResets++;
+                        if (inPve) {
+                            data.mobsKilledWithOrder++;
+                        }
+                        new GameRunnable(wp.getGame()) {
 
+                            @Override
+                            public void run() {
+                                if (inPve) {
+                                    if (stacks.get() < 2) {
+                                        stacks.getAndIncrement();
+                                    }
+                                    int reduction = pveMasterUpgrade ? 12 : 8;
+                                    wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                                            .append(Component.text(" You killed your mark,", NamedTextColor.GRAY))
+                                            .append(Component.text(" your ultimate cooldown has been reduced by " + reduction + " seconds",
+                                                    NamedTextColor.YELLOW
+                                            ))
+                                            .append(Component.text("!", NamedTextColor.GRAY)));
+                                    for (ShadowStep shadowStep : wp.getAbilitiesMatching(ShadowStep.class)) {
+                                        shadowStep.subtractCurrentCooldown(2);
+                                    }
+                                    for (OrderOfEviscerate orderOfEviscerate : wp.getAbilitiesMatching(OrderOfEviscerate.class)) {
+                                        orderOfEviscerate.subtractCurrentCooldown(reduction);
+                                    }
+                                    if (pveMasterUpgrade2 && cooldown.get() == null) {
+                                        RegularCooldown<OrderOfEviscerateData> regularCooldown = new RegularCooldown<>(
+                                                "Cloaked Engagement 1",
+                                                "ENGAGE 1",
+                                                OrderOfEviscerateData.class,
+                                                null,
+                                                wp,
+                                                CooldownTypes.BUFF,
+                                                cooldownManager -> {
+                                                },
+                                                cooldownManager -> {
+                                                    cooldown.set(null);
+                                                    stacks.set(0);
+                                                },
+                                                8 * 20
+                                        );
+                                        regularCooldown.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                                                    currentDamageValue.addMultiplicativeModifierMult(name, 1 + 0.4f * stacks.get());
+                                                }
+                                        );
+                                        cooldown.set(regularCooldown);
+                                        wp.getCooldownManager().addCooldown(regularCooldown);
+                                    } else {
+                                        cooldown.get().setTicksLeft(8 * 20);
+                                        cooldown.get().setName("Cloaked Engagement " + stacks);
+                                        cooldown.get().setNameAbbreviation("ENGAGE " + stacks);
+                                    }
+                                } else {
+                                    wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                                            .append(Component.text(" You killed your mark, ", NamedTextColor.GRAY))
+                                            .append(Component.text(OrderOfEviscerate.this.name, NamedTextColor.YELLOW))
+                                            .append(Component.text("'s cooldown was reduced by ", NamedTextColor.GRAY))
+                                            .append(Component.text(NumberFormat.formatOptionalHundredths(orderKillCooldownReduction), NamedTextColor.GOLD))
+                                            .append(Component.text(" seconds and ", NamedTextColor.GRAY))
+                                            .append(Component.text("Soul Switch", NamedTextColor.YELLOW))
+                                            .append(Component.text("'s cooldown was reset.", NamedTextColor.GRAY))
+                                    );
+                                    for (OrderOfEviscerate orderOfEviscerate : wp.getAbilitiesMatching(OrderOfEviscerate.class)) {
+                                        orderOfEviscerate.subtractCurrentCooldown(orderKillCooldownReduction);
+                                    }
+                                    for (SoulSwitch soulSwitch : wp.getAbilitiesMatching(SoulSwitch.class)) {
+                                        soulSwitch.setCurrentCooldown(0);
+                                    }
+                                    wp.addEnergy(wp, name, energyCost.getBaseValue());
+                                }
+                                wp.getSpec().resetAbilityCD(wp);
+                            }
+                        }.runTaskLater(2);
+                    } else {
+                        stats.numberOfHalfResets++;
+                        new GameRunnable(wp.getGame()) {
+
+                            @Override
+                            public void run() {
+                                if (inPve) {
+                                    int reduction = pveMasterUpgrade ? 6 : 4;
+                                    wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                                            .append(Component.text(" You assisted in killing your mark,", NamedTextColor.GRAY))
+                                            .append(Component.text(" your ultimate cooldown has been reduced by " + reduction + " seconds",
+                                                    NamedTextColor.YELLOW
+                                            ))
+                                            .append(Component.text("!", NamedTextColor.GRAY)));
+                                    for (OrderOfEviscerate orderOfEviscerate : wp.getAbilitiesMatching(OrderOfEviscerate.class)) {
+                                        orderOfEviscerate.subtractCurrentCooldown(reduction);
+                                    }
+                                } else {
+                                    wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                                            .append(Component.text(" You assisted in killing your mark, ", NamedTextColor.GRAY))
+                                            .append(Component.text(OrderOfEviscerate.this.name, NamedTextColor.YELLOW))
+                                            .append(Component.text("'s cooldown was reduced by ", NamedTextColor.GRAY))
+                                            .append(Component.text(NumberFormat.formatOptionalHundredths(orderAssistCooldownReduction), NamedTextColor.GOLD))
+                                            .append(Component.text(" seconds and ", NamedTextColor.GRAY))
+                                            .append(Component.text("Soul Switch", NamedTextColor.YELLOW))
+                                            .append(Component.text("'s cooldown was reset.", NamedTextColor.GRAY))
+                                    );
+                                    for (OrderOfEviscerate orderOfEviscerate : wp.getAbilitiesMatching(OrderOfEviscerate.class)) {
+                                        orderOfEviscerate.subtractCurrentCooldown(orderAssistCooldownReduction);
+                                    }
+                                    for (SoulSwitch soulSwitch : wp.getAbilitiesMatching(SoulSwitch.class)) {
+                                        soulSwitch.setCurrentCooldown(0);
+                                    }
+                                    wp.addEnergy(wp, name, energyCost.getBaseValue() / 2f);
+                                }
+                                wp.getSpec().resetAbilityCD(wp);
+                            }
+                        }.runTaskLater(2);
+                    }
+                    wp.playSound(wp.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 1, 2);
+                }
+        );
+        wp.getCooldownManager().addCooldown(orderOfEviscerateCooldown);
         return true;
     }
 

@@ -4,7 +4,6 @@ import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsStrikeEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -70,15 +69,7 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
                         EffectUtils.displayParticle(Particle.EFFECT, wp.getLocation().add(0, 1.2, 0), 6, 0.3F, 0.1F, 0.3F, 0.2F);
                     }
                 })
-        ) {
-            @Override
-            public void onDeathFromEnemies(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit, boolean isKiller) {
-                if (isKiller) {
-                    stats.targetsKilledDuringWrath++;
-                    data.targetsKilledDuringWrath++;
-                }
-            }
-        };
+        );
         wrathCooldown.addModifier(Modifier.DAMAGE_ON_DAMAGE_ATTACKER, (event, currentDamageValue, isCrit) -> {
                     if (!event.getCause().equals("Avenger's Strike") || event.getFlags().contains(InstanceFlags.AVENGER_WRATH_STRIKE)) {
                         return;
@@ -131,6 +122,13 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
                         );
                         Bukkit.getPluginManager().callEvent(new WarlordsStrikeEvent(wp, AvengersWrath.this, wrathTarget));
                         wrathTarget.subtractEnergy(name, 10, true);
+                    }
+                }
+        );
+        wrathCooldown.addModifier(Modifier.DAMAGE_ON_DEATH_ENEMIES, (event, currentDamageValue, isCrit, isKiller) -> {
+                    if (isKiller) {
+                        stats.targetsKilledDuringWrath++;
+                        data.targetsKilledDuringWrath++;
                     }
                 }
         );
