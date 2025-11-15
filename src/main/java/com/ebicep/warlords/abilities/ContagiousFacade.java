@@ -116,16 +116,15 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                     EffectUtils.displayParticle(Particle.CRIMSON_SPORE, wp.getLocation(), 1, 0.05, 0.1, 0.05, 0.25);
                     EffectUtils.displayParticle(Particle.CHERRY_LEAVES, wp.getLocation(), 2, 0.15, 0.3, 0.15, 0);
                 })
-        ) {
-
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                float afterValue = currentDamageValue * convertToDivisionDecimal(damageAbsorption.getCalculatedValue());
-                float absorbedAmount = currentDamageValue - afterValue;
-                totalAbsorbed.addAndGet(absorbedAmount);
-                return afterValue;
-            }
-        };
+        );
+        protectiveLayerCooldown.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                    // TODO contribution
+//                    float afterValue = currentDamageValue.getCalculatedValue() * convertToDivisionDecimal(damageAbsorption.getCalculatedValue());
+//                    float absorbedAmount = currentDamageValue.getCalculatedValue() - afterValue;
+//                    totalAbsorbed.addAndGet(absorbedAmount);
+                    currentDamageValue.addMultiplicativeModifierMult(name, convertToDivisionDecimal(damageAbsorption.getCalculatedValue()));
+                }
+        );
         if (pveMasterUpgrade2) {
             wp.addKnockbackModifier(wp, name, -100, protectiveLayerCooldown);
         }

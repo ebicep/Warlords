@@ -12,6 +12,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.sentinel.MysticalBarrierBranch;
@@ -71,6 +72,34 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
     }
 
     @Override
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
+        Utils.playGlobalSound(wp.getLocation(), Sound.ITEM_ARMOR_EQUIP_DIAMOND, 2, 0.4f);
+        Utils.playGlobalSound(wp.getLocation(), "arcanist.mysticalbarrier.activation", 2, 1);
+
+        if (pveMasterUpgrade2) {
+            giveBarrier(wp, wp);
+            for (WarlordsEntity target : PlayerFilter
+                    .entitiesAround(wp, radius, radius, radius)
+                    .aliveTeammatesOfExcludingSelf(wp)
+                    .limit(5)
+            ) {
+                giveBarrier(wp, target);
+            }
+        } else {
+            List<WarlordsEntity> targets = PlayerFilter
+                    .entitiesAround(wp, radius, radius, radius)
+                    .aliveTeammatesOfExcludingSelf(wp)
+                    .requireLineOfSightIntervene(wp, true)
+                    .lookingAtFirst(wp)
+                    .limit(1)
+                    .toList();
+            WarlordsEntity target = wp.hasFlag() || targets.isEmpty() ? wp : targets.getFirst();
+            giveBarrier(wp, target);
+        }
+        return true;
+    }
+
+    @Override
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder
                 .create("Grant the target ally ")
@@ -100,31 +129,8 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
     }
 
     @Override
-    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
-        Utils.playGlobalSound(wp.getLocation(), Sound.ITEM_ARMOR_EQUIP_DIAMOND, 2, 0.4f);
-        Utils.playGlobalSound(wp.getLocation(), "arcanist.mysticalbarrier.activation", 2, 1);
-
-        if (pveMasterUpgrade2) {
-            giveBarrier(wp, wp);
-            for (WarlordsEntity target : PlayerFilter
-                    .entitiesAround(wp, radius, radius, radius)
-                    .aliveTeammatesOfExcludingSelf(wp)
-                    .limit(5)
-            ) {
-                giveBarrier(wp, target);
-            }
-        } else {
-            List<WarlordsEntity> targets = PlayerFilter
-                    .entitiesAround(wp, radius, radius, radius)
-                    .aliveTeammatesOfExcludingSelf(wp)
-                    .requireLineOfSightIntervene(wp, true)
-                    .lookingAtFirst(wp)
-                    .limit(1)
-                    .toList();
-            WarlordsEntity target = wp.hasFlag() || targets.isEmpty() ? wp : targets.getFirst();
-            giveBarrier(wp, target);
-        }
-        return true;
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new MysticalBarrierBranch(abilityTree, this);
     }
 
     private void giveBarrier(@Nonnull WarlordsEntity wp, WarlordsEntity target) {
@@ -172,9 +178,9 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                     if (ticksElapsed % 2 != 0) {
                         return;
                     }
-                    if (isSelf && pveMasterUpgrade  && ticksElapsed % 5 == 0) {
+                    if (isSelf && pveMasterUpgrade && ticksElapsed % 5 == 0) {
                         for (WarlordsEntity npc : PlayerFilter
-                                .entitiesAround(wp, 15, 15 ,15)
+                                .entitiesAround(wp, 15, 15, 15)
                         ) {
                             if (npc instanceof WarlordsNPC) {
                                 ((WarlordsNPC) npc).getMob().setTarget(wp);
@@ -184,28 +190,6 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                     EffectUtils.playCircularEffectAround(target.getGame(), target.getLocation(), Particle.TOTEM_OF_UNDYING, 3, 1, 0.15, 2.2, 8, 1, 4, ticksElapsed);
                 })
         ) {
-
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (event.getCause().isEmpty()) {
-                    stats.meleesReduced++;
-                    return currentDamageValue * convertToDivisionDecimal(meleeDamageReduction);
-                }
-                return currentDamageValue;
-            }
-
-            @Override
-            public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (event.getFlags().contains(InstanceFlags.DOT)) {
-                    return;
-                }
-                String cause = event.getCause();
-                if (cause.equals("Hammer of Light") || cause.equals("Sanctuary")) { // TODO
-                    return;
-                }
-                damageInstances.getAndIncrement();
-                stats.timesCooldownsIncreased++;
-            }
 
             @Override
             protected Listener getListener() {
@@ -227,7 +211,26 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                     }
                 };
             }
-        });
+
+            @Override
+            public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                if (event.getFlags().contains(InstanceFlags.DOT)) {
+                    return;
+                }
+                String cause = event.getCause();
+                if (cause.equals("Hammer of Light") || cause.equals("Sanctuary")) { // TODO
+                    return;
+                }
+                damageInstances.getAndIncrement();
+                stats.timesCooldownsIncreased++;
+            }
+        }.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                    if (event.getCause().isEmpty()) {
+                        stats.meleesReduced++;
+                        currentDamageValue.addMultiplicativeModifierMult(name, convertToDivisionDecimal(meleeDamageReduction));
+                    }
+                }
+        ));
     }
 
     private void giveShield(WarlordsEntity from, @Nonnull WarlordsEntity to, int shieldHealth) {
@@ -262,11 +265,6 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                 return new PlayerNameData(Component.text((int) (shield.getShieldHealth()), NamedTextColor.YELLOW), we -> we.isTeammate(from));
             }
         });
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new MysticalBarrierBranch(abilityTree, this);
     }
 
     @Override

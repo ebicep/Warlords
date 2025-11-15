@@ -3,7 +3,6 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractLightInfusion;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownUtils;
@@ -59,12 +58,11 @@ public class LightInfusionProtector extends AbstractLightInfusion {
                             wp.getCooldownManager().removeDebuffCooldowns();
                         }
                     })
-            ) {
-                @Override
-                public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    return currentDamageValue * 0.1f;
-                }
-            };
+            );
+            ornamentOfLightCooldown.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                        currentDamageValue.addMultiplicativeModifierMult(name, 0.1f);
+                    }
+            );
             wp.addKnockbackModifier(wp, "Ornament of Light", -50, ornamentOfLightCooldown);
             wp.getCooldownManager().addCooldown(ornamentOfLightCooldown);
         } else if (pveMasterUpgrade2) {

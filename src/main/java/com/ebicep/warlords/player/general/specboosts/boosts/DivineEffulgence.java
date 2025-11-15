@@ -2,13 +2,13 @@ package com.ebicep.warlords.player.general.specboosts.boosts;
 
 import com.ebicep.warlords.abilities.HolyRadianceProtector;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.event.EventHandler;
 
@@ -16,6 +16,15 @@ import java.util.List;
 
 public class DivineEffulgence implements SpecBoostManager.SpecBoost<DivineEffulgence> {
 
+    public static boolean isCustomProjectile(String cause) {
+        return cause.equals("Chain Lightning") ||
+                cause.equals("Spirit Link") ||
+                cause.equals("Soulfire Beam") ||
+                cause.equals("Guardian Beam") ||
+                cause.equals("Ray of Light") ||
+                cause.equals("Incendiary Curse") ||
+                cause.equals("Boulder");
+    }
     private float holyRadianceHealingIncreasePercent;
     private float holyRadianceTravelSpeedPercentIncrease;
     private float rangedDamageReductionPercent;
@@ -84,28 +93,14 @@ public class DivineEffulgence implements SpecBoostManager.SpecBoost<DivineEffulg
                     CooldownTypes.SPEC_BOOST,
                     cooldownManager -> {},
                     rangedDamageReductionDurationTicks
-            ) {
-
-                @Override
-                public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    if (Utils.isProjectile(event.getCause()) || isCustomProjectile(event.getCause())) {
-                        return currentDamageValue * AbstractAbility.convertToDivisionDecimal(rangedDamageReductionPercent);
+            ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (e, currentDamageValue) -> {
+                        if (Utils.isProjectile(e.getCause()) || isCustomProjectile(e.getCause())) {
+                            currentDamageValue.addMultiplicativeModifierMult(getStringName(), AbstractAbility.convertToDivisionDecimal(rangedDamageReductionPercent));
+                        }
                     }
-                    return currentDamageValue;
-                }
-            });
+            ));
         }
 
-    }
-
-    public static boolean isCustomProjectile(String cause) {
-        return cause.equals("Chain Lightning") ||
-                cause.equals("Spirit Link") ||
-                cause.equals("Soulfire Beam") ||
-                cause.equals("Guardian Beam") ||
-                cause.equals("Ray of Light") ||
-                cause.equals("Incendiary Curse") ||
-                cause.equals("Boulder");
     }
 
 }

@@ -2,7 +2,6 @@ package com.ebicep.warlords.game.option.pve.wavedefense.events.fieldeffects.effe
 
 import com.ebicep.warlords.abilities.internal.AbstractPiercingProjectile;
 import com.ebicep.warlords.abilities.internal.Value;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.fieldeffects.FieldEffect;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.fieldeffects.FieldEffectOption;
@@ -174,12 +173,10 @@ public class TycheProsperity implements FieldEffect {
                 cooldownManager -> {
                 },
                 false
-        ) {
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * .95f;
-            }
-        });
+        ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                    currentDamageValue.addMultiplicativeModifierMult(getName(), .95f);
+                }
+        ));
     }
 
 }

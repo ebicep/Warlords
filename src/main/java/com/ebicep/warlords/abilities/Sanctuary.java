@@ -5,7 +5,6 @@ import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
@@ -14,10 +13,10 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.sentinel.SanctuaryBranch;
-import com.ebicep.warlords.util.java.Priority;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
@@ -152,10 +151,10 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
                                     EffectUtils.playCrownAnimation(resTarget.getLocation(), Particle.CHERRY_LEAVES);
                                     float damage = warlordsEntity.getEntity() instanceof Player ? warlordsEntity.getMaxHealth() * 2 : warlordsEntity.getMaxHealth() * 0.1f;
                                     resTarget.addInstance(InstanceBuilder.damage()
-                                            .ability(Sanctuary.this)
-                                            .source(warlordsEntity)
-                                            .value(damage)
-                                            .flag(InstanceFlags.TRUE_DAMAGE, true));
+                                                                         .ability(Sanctuary.this)
+                                                                         .source(warlordsEntity)
+                                                                         .value(damage)
+                                                                         .flag(InstanceFlags.TRUE_DAMAGE, true));
                                 }
                             }
                             if (warlordsEntity.equals(wp)) {
@@ -181,22 +180,22 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
                     };
                 }
 
-                @Override
-                @Priority(-10)
-                public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    int hexStacks = (int) new CooldownFilter<>(event.getWarlordsEntity(), RegularCooldown.class)
-                            .filterCooldownFrom(wp)
-                            .filterCooldownClass(FortifyingHex.FortifyingHexData.class)
-                            .stream()
-                            .count();
-                    if (hexStacks < FortifyingHex.getFromHex(wp).getMaxStacks()) {
-                        return currentDamageValue;
+            }.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                        int hexStacks = (int) new CooldownFilter<>(event.getWarlordsEntity(), RegularCooldown.class)
+                                .filterCooldownFrom(wp)
+                                .filterCooldownClass(FortifyingHex.FortifyingHexData.class)
+                                .stream()
+                                .count();
+                        if (hexStacks < FortifyingHex.getFromHex(wp).getMaxStacks()) {
+                            return;
+                        }
+                        // TODO contribution + -10 priority
+//                        float currentDamage = currentDamageValue.getModifiedValue();
+//                        float afterValue = (float) (currentDamage * Math.pow(convertToDivisionDecimal(additionalDamageReduction), 3));
+//                        stats.damageReduced += currentDamage - afterValue;
+                        currentDamageValue.addMultiplicativeModifierMult(name, (float) Math.pow(convertToDivisionDecimal(additionalDamageReduction), 3));
                     }
-                    float afterValue = (float) (currentDamageValue * Math.pow(convertToDivisionDecimal(additionalDamageReduction), 3));
-                    stats.damageReduced += currentDamageValue - afterValue;
-                    return afterValue;
-                }
-            });
+            ));
         });
         return true;
     }

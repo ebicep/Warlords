@@ -145,12 +145,11 @@ public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<
                                     cooldownManager -> {
                                     },
                                     5 * 20
-                            ) {
-                                @Override
-                                public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                    return currentDamageValue * finalDamageReduction;
-                                }
-                            };
+                            );
+                            deathParadeCooldown.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                                        currentDamageValue.addMultiplicativeModifierMult(name, finalDamageReduction);
+                                    }
+                            );
                             deathParadeCooldown.addModifier(Modifier.ENERGY_GAIN_PER_HIT, energyGainPerTick -> energyGainPerTick.addAdditiveModifier("Death Parade", 30));
                             wp.getCooldownManager().addCooldown(deathParadeCooldown);
                         }

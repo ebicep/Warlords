@@ -3,7 +3,6 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractTimeWarp;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
@@ -114,17 +113,24 @@ public class TimeWarpCryomancer extends AbstractTimeWarp {
                     wp.getEntity().teleport(warpLocation);
                     if (pveMasterUpgrade) {
                         wp.getCooldownManager()
-                          .addCooldown(new RegularCooldown<>("Frostbite Leap", "WARP RES", TimeWarpPyromancerData.class, data, wp, CooldownTypes.ABILITY, cooldownManager2 -> {
-                          }, cooldownManager2 -> {
-                          }, 5 * 20, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                          })
-                          ) {
-
-                              @Override
-                              public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                  return currentDamageValue * .2f;
-                              }
-                          });
+                          .addCooldown(new RegularCooldown<>(
+                                  "Frostbite Leap",
+                                  "WARP RES",
+                                  TimeWarpPyromancerData.class,
+                                  data,
+                                  wp,
+                                  CooldownTypes.ABILITY,
+                                  cooldownManager2 -> {
+                                  },
+                                  cooldownManager2 -> {
+                                  },
+                                  5 * 20,
+                                  Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                                  })
+                          ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                                      currentDamageValue.addMultiplicativeModifierMult(name, .2f);
+                                  }
+                          ));
                     }
                 },
                 cooldownManager -> {

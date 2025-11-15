@@ -1,6 +1,5 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -117,16 +116,14 @@ public class LegendaryMomentum extends AbstractLegendaryWeapon implements Passiv
                 CooldownTypes.WEAPON,
                 cm -> {},
                 false
-        ) {
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                float dr = (stacks * DR_PER_STACK_PERCENT) / 100f;
-                dr = Math.min(dr, 0.6f);
-                return currentDamageValue * (1f - dr);
-            }
-        }.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
                     float mul = 1f + (stacks * DMG_PER_STACK_PERCENT) / 100f;
                     currentDamageValue.addMultiplicativeModifierMult(getTitleName(), mul);
+                }
+        ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+            float dr = (stacks * DR_PER_STACK_PERCENT) / 100f;
+            dr = Math.min(dr, 0.6f);
+            currentDamageValue.addMultiplicativeModifierMult(getTitleName(), (1f - dr));
                 }
         ));
 
@@ -200,8 +197,8 @@ public class LegendaryMomentum extends AbstractLegendaryWeapon implements Passiv
         return 180;
     }
 
-    private double getGainIntervalSeconds() {
-        return getGainIntervalSecondsAtLevel(getTitleLevel());
+    private int getGainIntervalTicksAtLevel(int level) {
+        return BASE_GAIN_INTERVAL_TICKS;
     }
 
     @Override
@@ -209,12 +206,12 @@ public class LegendaryMomentum extends AbstractLegendaryWeapon implements Passiv
         return stacks;
     }
 
-    private double getGainIntervalSecondsAtLevel(int level) {
-        return getGainIntervalTicksAtLevel(level) / 20.0;
+    private double getGainIntervalSeconds() {
+        return getGainIntervalSecondsAtLevel(getTitleLevel());
     }
 
-    private int getGainIntervalTicksAtLevel(int level) {
-        return BASE_GAIN_INTERVAL_TICKS;
+    private double getGainIntervalSecondsAtLevel(int level) {
+        return getGainIntervalTicksAtLevel(level) / 20.0;
     }
 
 }

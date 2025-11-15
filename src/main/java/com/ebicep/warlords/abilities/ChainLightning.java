@@ -11,6 +11,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.thunderlord.ChainLightningBranch;
@@ -52,11 +53,6 @@ public class ChainLightning extends AbstractChain<ChainLightning, ChainLightning
                 })
         ) {
             @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return event.getSource().equals(giver) ? currentDamageValue * 1.3f : currentDamageValue;
-            }
-
-            @Override
             public void onDeathFromEnemies(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit, boolean isKiller) {
                 if (event.getSource().equals(giver) && isKiller) {
                     for (AbstractAbility ability : giver.getAbilities()) {
@@ -66,7 +62,12 @@ public class ChainLightning extends AbstractChain<ChainLightning, ChainLightning
                     }
                 }
             }
-        });
+        }.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                    if (event.getSource().equals(giver)) {
+                        currentDamageValue.addMultiplicativeModifierMult("Aftershock", 1.3f);
+                    }
+                }
+        ));
     }
 
     private final ChainLightningStats stats = new ChainLightningStats();
@@ -124,12 +125,12 @@ public class ChainLightning extends AbstractChain<ChainLightning, ChainLightning
                 CooldownTypes.BUFF,
                 cooldownManager -> {},
                 damageReductionTickDuration
-        ) {
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * convertToDivisionDecimal(Math.min(hitCounter * damageReductionPerBounce.getCalculatedValue(), maxDamageReduction.getCalculatedValue()));
-            }
-        });
+        ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                    currentDamageValue.addMultiplicativeModifierMult(name,
+                            convertToDivisionDecimal(Math.min(hitCounter * damageReductionPerBounce.getCalculatedValue(), maxDamageReduction.getCalculatedValue()))
+                    );
+                }
+        ));
     }
 
     @Override

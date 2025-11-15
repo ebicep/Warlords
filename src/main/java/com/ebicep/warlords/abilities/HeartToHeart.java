@@ -4,12 +4,12 @@ import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsPlayerHeartToHeartEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.vindicator.HeartToHeartBranch;
@@ -125,6 +125,11 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
                                                .build();
     }
 
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new HeartToHeartBranch(abilityTree, this);
+    }
+
     private void activateAbility(WarlordsEntity wp, WarlordsEntity heartTarget) {
         float maxDistance = getHitBoxRadius().getCalculatedValue();
         if (wp.hasFlag()) {
@@ -167,15 +172,20 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
                         double distanceTravelled = playerLoc.distance(wp.getLocation());
                         float damageMultiplier = (float) (1 - distanceTravelled * .03);
                         wp.getCooldownManager()
-                          .addCooldown(new RegularCooldown<>("Heart in Hearts", "HEART", HeartToHeart.class, new HeartToHeart(), wp, CooldownTypes.BUFF, cooldownManager -> {
-                          }, 6 * 20
-                          ) {
-
-                              @Override
-                              public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                  return currentDamageValue * damageMultiplier;
-                              }
-                          });
+                          .addCooldown(new RegularCooldown<>(
+                                  "Heart in Hearts",
+                                  "HEART",
+                                  HeartToHeart.class,
+                                  new HeartToHeart(),
+                                  wp,
+                                  CooldownTypes.BUFF,
+                                  cooldownManager -> {
+                                  },
+                                  6 * 20
+                          ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                                      currentDamageValue.addMultiplicativeModifierMult(name, damageMultiplier);
+                                  }
+                          ));
                     }
                     this.cancel();
                 }
@@ -228,11 +238,6 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
     }
 
     @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new HeartToHeartBranch(abilityTree, this);
-    }
-
-    @Override
     public FloatModifiable getHitBoxRadius() {
         return radius;
     }
@@ -243,10 +248,6 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
 
     public void setFlagDistance(float flagDistance) {
         this.flagDistance = flagDistance;
-    }
-
-    public void setTargetEnemies(boolean targetEnemies) {
-        this.targetEnemies = targetEnemies;
     }
 
     @Override
@@ -262,6 +263,10 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
     @Override
     public HeartToHeartStats getAbilityStats() {
         return stats;
+    }
+
+    public void setTargetEnemies(boolean targetEnemies) {
+        this.targetEnemies = targetEnemies;
     }
 
     public static class DamageValues implements Value.ValueHolder {

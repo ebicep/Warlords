@@ -5,7 +5,6 @@ import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityTargetEvent;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.LinkedCooldown;
@@ -129,12 +128,6 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
                 }
             }), veneTarget
             ) {
-
-                @Override
-                public void onInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    event.getWarlordsEntity().getCooldownManager().queueUpdatePlayerNames();
-                }
-
                 @Override
                 public PlayerNameData addPrefixFromOther() {
                     return new PlayerNameData(Component.text((int) (data.getMaxDamagePrevented() - data.getDamagePrevented()), NamedTextColor.GOLD), we -> we.isTeammate(wp));
@@ -151,6 +144,10 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
                     );
                 }
             };
+            interveneCooldown.addModifier(Modifier.DAMAGE_ON_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                        event.getWarlordsEntity().getCooldownManager().queueUpdatePlayerNames();
+                    }
+            );
             if (pveMasterUpgrade2) {
                 wp.addKnockbackModifier(wp, name, -100, interveneCooldown);
                 veneTarget.addKnockbackModifier(wp, name, -100, interveneCooldown);

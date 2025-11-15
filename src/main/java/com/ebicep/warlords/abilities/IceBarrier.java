@@ -4,7 +4,6 @@ import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -119,20 +118,18 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
                         }
                     }
                 })
-        ) {
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (pveMasterUpgrade2) {
-                    return currentDamageValue;
-                }
-                return currentDamageValue * getDamageReduction();
-            }
-
-        };
+        );
         iceBarrierCooldown.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (event, currentDamageValue) -> {
                     if (event.getCause().isEmpty() && !Objects.equals(event.getSource(), event.getWarlordsEntity())) {
                         event.getSource().addSpeedModifier(event.getWarlordsEntity(), "Ice Barrier", -slownessOnMeleeHit, slowDuration * 20);
                     }
+                }
+        );
+        iceBarrierCooldown.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                    if (pveMasterUpgrade2) {
+                        return;
+                    }
+                    currentDamageValue.addMultiplicativeModifierMult(name, getDamageReduction());
                 }
         );
         wp.getCooldownManager().addCooldown(iceBarrierCooldown);

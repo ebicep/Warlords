@@ -240,29 +240,26 @@ public class OneOfNine extends AbstractMob implements BossMob {
                 CooldownTypes.BUFF,
                 cooldownManager -> {},
                 true
-        ) {
-            @Override
-            public float modifyDamageAfterAllFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (damageController.isInDamageWindow()) {
-                    return currentDamageValue;
-                }
-                // nullify reflected damage
-                if (event.getFlags().contains(InstanceFlags.REFLECTIVE_DAMAGE)) {
-                    return currentDamageValue * 0f;
-                }
-
+        ).addModifier(Modifier.DAMAGE_AFTER_ALL_SELF, (event, currentDamageValue, isCrit) -> {
+                    if (damageController.isInDamageWindow()) {
+                        return;
+                    }
+                    // nullify reflected damage
+                    if (event.getFlags().contains(InstanceFlags.REFLECTIVE_DAMAGE)) {
+                        currentDamageValue.addOverridingModifier(name, 0f);
+                    } else {
                 event.getSource().addInstance(InstanceBuilder
                         .damage()
                         .source(warlordsNPC)
                         .cause("Greed")
-                        .value(currentDamageValue * (event.getFlags().contains(InstanceFlags.DOT) ? 0.25f : 1))
+                        .value(currentDamageValue.getCalculatedValue() * (event.getFlags().contains(InstanceFlags.DOT) ? 0.25f : 1))
                         .flags(InstanceFlags.RECURSIVE, InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST)
                 );
                 event.getSource().sendMessage(Component.text("Your divine punishment awaits if you keep giving in to your greed...", NamedTextColor.RED));
                 event.setCancelled(true);
-                return currentDamageValue;
             }
-        });
+                }
+        ));
 
         new GameRunnable(warlordsNPC.getGame()) {
             @Override
@@ -575,12 +572,10 @@ public class OneOfNine extends AbstractMob implements BossMob {
                     CooldownTypes.BUFF,
                     cooldownManager -> {},
                     true
-            ) {
-                @Override
-                public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    return currentDamageValue * 0.7f;
-                }
-            }.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+            ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                        currentDamageValue.addMultiplicativeModifierMult(name, 0.7f);
+                    }
+            ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
                         currentDamageValue.addMultiplicativeModifierMult(name, 1.5f);
                     }
             ));

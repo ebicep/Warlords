@@ -5,14 +5,13 @@ import com.ebicep.warlords.abilities.InspiringPresence;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.events.game.WarlordsFlagUpdatedEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.flags.PlayerFlagLocation;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.player.ingame.instances.type.DamageInstance;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.player.ingame.motionsystem.MotionModifierBuilder;
 import org.bukkit.event.EventHandler;
 
@@ -88,14 +87,10 @@ public class RallyingPresence implements SpecBoostManager.SpecBoost<RallyingPres
             if (!cooldown.getCooldownClass().equals(InspiringPresence.InspiringPresenceData.class) || !cooldown.getFrom().equals(warlordsEntity)) {
                 return;
             }
-            regularCooldown.addExtraDamageInstance(new DamageInstance() {
-
-                @Override
-                public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    return currentDamageValue * AbstractAbility.convertToDivisionDecimal(inspiringPresenceDamageReductionPercent);
-                }
-
-            });
+            regularCooldown.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (e, currentDamageValue) -> {
+                        currentDamageValue.addMultiplicativeModifierMult(getStringName(), AbstractAbility.convertToDivisionDecimal(inspiringPresenceDamageReductionPercent));
+                    }
+            );
         }
 
         @EventHandler

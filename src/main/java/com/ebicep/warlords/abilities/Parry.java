@@ -9,6 +9,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -115,11 +116,12 @@ public class Parry extends AbstractAbility implements AbilityStats<Parry, Parry.
                                                 parryDamageReductionCooldown.setTicksLeft(damageReductionTickDuration);
                                             }
                                         }, () -> {
-                                            wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                    ParryDamageReduction data = new ParryDamageReduction(damageReductionTickDuration);
+                                    RegularCooldown<ParryDamageReduction> parryCooldown = new RegularCooldown<>(
                                                     "Parry Damage Reduction",
                                                     "REDUC",
                                                     ParryDamageReduction.class,
-                                                    new ParryDamageReduction(damageReductionTickDuration),
+                                            data,
                                                     wp,
                                                     CooldownTypes.ABILITY,
                                                     cooldownManager -> {
@@ -132,11 +134,6 @@ public class Parry extends AbstractAbility implements AbilityStats<Parry, Parry.
                                                         instances.removeIf(integer -> integer <= 0);
                                                     })
                                             ) {
-                                                @Override
-                                                public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                                    return currentDamageValue * convertToDivisionDecimal(cooldownObject.instances.size() * damageReduction);
-                                                }
-
                                                 @Nonnull
                                                 @Override
                                                 public Component getDebugMessage() {
@@ -146,7 +143,12 @@ public class Parry extends AbstractAbility implements AbilityStats<Parry, Parry.
                                                             NamedTextColor.YELLOW
                                                     );
                                                 }
-                                            });
+                                    };
+                                    parryCooldown.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (e, currentDamageValue) -> {
+                                                currentDamageValue.addMultiplicativeModifierMult(name, convertToDivisionDecimal(data.instances.size() * damageReduction));
+                                            }
+                                    );
+                                    wp.getCooldownManager().addCooldown(parryCooldown);
                                         }
                                 );
                     }

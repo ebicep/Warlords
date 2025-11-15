@@ -121,22 +121,19 @@ public class Haze extends AbstractAbility implements OrangeAbilityIcon, Damages<
                     }
                 })
         ) {
-
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (!data.vanished) {
-                    return currentDamageValue;
-                }
-                return currentDamageValue * convertToDivisionDecimal(incomingDamageReduction);
-            }
-
             @Override
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                 if (event.getAbility() instanceof JudgementStrike || event.getCause().isEmpty()) {
                     setTicksLeft(0);
                 }
             }
-        });
+        }.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                    if (!data.vanished) {
+                        return;
+                    }
+                    currentDamageValue.addMultiplicativeModifierMult(name, convertToDivisionDecimal(incomingDamageReduction));
+                }
+        ));
 
         return true;
     }

@@ -4,7 +4,6 @@ import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -114,15 +113,20 @@ public class ShadowStep extends AbstractAbility implements
     }
 
     private void doShadowDash(@Nonnull WarlordsEntity wp) {
-        wp.getCooldownManager().addCooldown(new RegularCooldown<>("Shadow Dash Damage Res", null, ShadowStep.class, new ShadowStep(), wp, CooldownTypes.BUFF, cooldownManager -> {
-        }, 2
-        ) {
-
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * .25f;
-            }
-        });
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                "Shadow Dash Damage Res",
+                null,
+                ShadowStep.class,
+                new ShadowStep(),
+                wp,
+                CooldownTypes.BUFF,
+                cooldownManager -> {
+                },
+                2
+        ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                    currentDamageValue.addMultiplicativeModifierMult(name, .25f);
+                }
+        ));
         Set<WarlordsEntity> hit = new HashSet<>();
         AtomicInteger guaranteedCrit = new AtomicInteger(this.guaranteedCrit);
         LocationBuilder locationBuilder = new LocationBuilder(wp.getEyeLocation());

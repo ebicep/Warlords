@@ -121,23 +121,7 @@ public class LegendaryHuntsman extends AbstractLegendaryWeapon implements Passiv
                 CooldownTypes.WEAPON,
                 cm -> {},
                 false
-        ) {
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (!guardActive.get()) {
-                    return currentDamageValue;
-                }
-
-                if (Instant.now().isAfter(guardExpireAt.get())) {
-                    guardActive.set(false);
-                    return currentDamageValue;
-                }
-
-                float dr = getMeleeGuardDrPercent() / 100f;
-                dr = Math.min(dr, 0.6f);
-                return currentDamageValue * (1f - dr);
-            }
-        }.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
                     if (isTargetFar(player, event, RANGED_MIN_DISTANCE_BLOCKS)) {
                         currentDamageValue.addMultiplicativeModifierMult(getTitleName(), (1f + getRangedBonusPercent() / 100f));
                     }
@@ -177,6 +161,20 @@ public class LegendaryHuntsman extends AbstractLegendaryWeapon implements Passiv
                             }
                         }
                     }
+                }
+        ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                    if (!guardActive.get()) {
+                        return;
+                    }
+
+                    if (Instant.now().isAfter(guardExpireAt.get())) {
+                        guardActive.set(false);
+                        return;
+                    }
+
+                    float dr = getMeleeGuardDrPercent() / 100f;
+                    dr = Math.min(dr, 0.6f);
+                    currentDamageValue.addMultiplicativeModifierMult(getTitleName(), (1f - dr));
                 }
         ));
     }

@@ -12,6 +12,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.player.ingame.motionsystem.MotionModifier;
 import com.ebicep.warlords.player.ingame.motionsystem.MotionModifierBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
@@ -61,25 +62,27 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
         MotionModifier shreddingFurySpeed = new MotionModifierBuilder().setFrom(wp).setName("Shredding Fury").setModifier(0).setDuration(Integer.MAX_VALUE).build();
         wp.addSpeedModifier(shreddingFurySpeed);
         AtomicInteger procs = new AtomicInteger(0);
-        wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "FURY", WindfuryWeapon.class, null, wp, CooldownTypes.ABILITY, cooldownManager -> {
-        }, cooldownManager -> {
-            shreddingFurySpeed.setTicksLeft(0);
-        }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-            if (ticksElapsed % 4 == 0) {
-                EffectUtils.displayParticle(Particle.CRIT, wp.getLocation().add(0, 1.2, 0), 3, 0.2, 0, 0.2, 0.1);
-            }
-        })
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                name,
+                "FURY",
+                WindfuryWeapon.class,
+                null,
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                },
+                cooldownManager -> {
+                    shreddingFurySpeed.setTicksLeft(0);
+                },
+                tickDuration,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed % 4 == 0) {
+                        EffectUtils.displayParticle(Particle.CRIT, wp.getLocation().add(0, 1.2, 0), 3, 0.2, 0, 0.2, 0.1);
+                    }
+                })
         ) {
 
             private int guaranteedHitsLeft = guaranteedHits;
-
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (pveMasterUpgrade2) {
-                    return currentDamageValue * (100 - Math.min(15, procs.get() * 2.5f)) / 100f;
-                }
-                return currentDamageValue;
-            }
 
             @Override
             public void onEndFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
@@ -136,7 +139,12 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
                     shreddingFurySpeed.setModifier(shreddingFurySpeed.getModifier() + 2.5f);
                 }
             }
-        });
+        }.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                    if (pveMasterUpgrade2) {
+                        currentDamageValue.addMultiplicativeModifierMult(name, (100 - Math.min(15, procs.get() * 2.5f)) / 100f);
+                    }
+                }
+        ));
         return true;
     }
 
@@ -158,14 +166,6 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
                                                .build();
     }
 
-    public int getGuaranteedHits() {
-        return guaranteedHits;
-    }
-
-    public void setGuaranteedHits(int guaranteedHits) {
-        this.guaranteedHits = guaranteedHits;
-    }
-
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new WindfuryBranch(abilityTree, this);
@@ -184,6 +184,14 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
     @Override
     public WindfuryWeaponStats getAbilityStats() {
         return stats;
+    }
+
+    public int getGuaranteedHits() {
+        return guaranteedHits;
+    }
+
+    public void setGuaranteedHits(int guaranteedHits) {
+        this.guaranteedHits = guaranteedHits;
     }
 
     public float getProcChance() {

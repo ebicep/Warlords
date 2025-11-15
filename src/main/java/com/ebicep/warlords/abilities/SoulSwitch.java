@@ -4,26 +4,20 @@ import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsPlayerSwapEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
-import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
-import com.ebicep.warlords.player.ingame.motionsystem.MotionModifier;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.flags.BossLike;
 import com.ebicep.warlords.pve.mobs.flags.DynamicFlags;
 import com.ebicep.warlords.pve.mobs.flags.Unswappable;
-import com.ebicep.warlords.pve.mobs.player.Animus;
-import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
-import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.assassin.SoulSwitchBranch;
@@ -139,12 +133,10 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                     CooldownTypes.BUFF,
                     cooldownManager -> {},
                     damageReductionTickDuration
-            ) {
-                @Override
-                public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    return currentDamageValue * convertToDivisionDecimal(damageReduction);
-                }
-            });
+            ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                        currentDamageValue.addMultiplicativeModifierMult(name, convertToDivisionDecimal(damageReduction));
+                    }
+            ));
             if (swapTarget instanceof WarlordsNPC npc) {
                 PveOption pveOption = wp.getGame().getOption(PveOption.class).stream().findFirst().orElse(null);
                 if (pveOption != null) {
@@ -161,15 +153,15 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                         EffectUtils.displayParticle(Particle.EXPLOSION, swapTarget.getLocation(), 2);
                         Utils.playGlobalSound(swapTarget.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 2, 0.8f);
                         PlayerFilter.entitiesAround(swapLocation, 4, 4, 4)
-                                .aliveEnemiesOf(wp)
-                                .forEach(enemy -> enemy.addInstance(InstanceBuilder
-                                        .damage()
-                                        .cause("Soul Burst")
-                                        .source(wp)
-                                        .min(844)
-                                        .max(1105)
-                                        .flags(InstanceFlags.TRUE_DAMAGE)
-                                ));
+                                    .aliveEnemiesOf(wp)
+                                    .forEach(enemy -> enemy.addInstance(InstanceBuilder
+                                            .damage()
+                                            .cause("Soul Burst")
+                                            .source(wp)
+                                            .min(844)
+                                            .max(1105)
+                                            .flags(InstanceFlags.TRUE_DAMAGE)
+                                    ));
                         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                                 "Soul Burst",
                                 "SOUL",
@@ -206,12 +198,10 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                                 wp.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, ticksLeft, 0, true, false));
                             }
                         })
-                ) {
-                    @Override
-                    public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                        return currentDamageValue * 0.5f;
-                    }
-                });
+                ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                            currentDamageValue.addMultiplicativeModifierMult(name, 0.5f);
+                        }
+                ));
 
                 PlayerFilter.entitiesAround(swapLocation, 3, 3, 3)
                             .aliveTeammatesOf(wp)
@@ -230,16 +220,16 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
 
     @Override
     public void updateDescription(Player player) {
-            description = AbilityDescriptionBuilder.create("Switch locations with an enemy, blinding them for ")
-                                                   .durationTicks(blindnessTicks)
-                                                   .text(". Upon swapping, gain ")
-                                                   .percent(damageReduction, NamedTextColor.RED)
-                                                   .text(" damage reduction for ")
-                                                   .durationTicks(damageReductionTickDuration)
-                                                   .text(".")
-                                                   .maxRange(radius)
-                                                   .text(" Soul Switch has low vertical range.")
-                                                   .build();
+        description = AbilityDescriptionBuilder.create("Switch locations with an enemy, blinding them for ")
+                                               .durationTicks(blindnessTicks)
+                                               .text(". Upon swapping, gain ")
+                                               .percent(damageReduction, NamedTextColor.RED)
+                                               .text(" damage reduction for ")
+                                               .durationTicks(damageReductionTickDuration)
+                                               .text(".")
+                                               .maxRange(radius)
+                                               .text(" Soul Switch has low vertical range.")
+                                               .build();
     }
 
     @Override

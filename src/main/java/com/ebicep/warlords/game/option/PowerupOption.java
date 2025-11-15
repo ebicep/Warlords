@@ -2,7 +2,6 @@ package com.ebicep.warlords.game.option;
 
 import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.marker.DebugLocationMarker;
 import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
@@ -93,32 +92,34 @@ public class PowerupOption implements Option {
     @Override
     public void register(@Nonnull Game game) {
         game.registerGameMarker(DebugLocationMarker.class, DebugLocationMarker.create(
-                () -> type.getDebugMaterial(),
-                this::getClass,
-                () -> Component.text(this.getClass().getSimpleName() + ": " + this.type.name()),
-                this::getLocation,
-                () -> Arrays.asList(
-                        Component.text("Type: " + this.getType()),
-                        Component.text("Current Cooldown: " + this.getCurrentCooldown()),
-                        Component.text("Cooldown: " + this.getCooldown()),
-                        Component.text("Entity: " + this.getEntity()),
-                        Component.text("Randomized: " + this.isRandomPowerup())
+                        () -> type.getDebugMaterial(),
+                        this::getClass,
+                        () -> Component.text(this.getClass().getSimpleName() + ": " + this.type.name()),
+                        this::getLocation,
+                        () -> Arrays.asList(
+                                Component.text("Type: " + this.getType()),
+                                Component.text("Current Cooldown: " + this.getCurrentCooldown()),
+                                Component.text("Cooldown: " + this.getCooldown()),
+                                Component.text("Entity: " + this.getEntity()),
+                                Component.text("Randomized: " + this.isRandomPowerup())
+                        )
                 )
-        ));
+        );
         game.registerGameMarker(TimerSkipAbleMarker.class, new TimerSkipAbleMarker() {
-            @Override
-            public int getDelay() {
-                return currentCooldown * 20;
-            }
+                    @Override
+                    public int getDelay() {
+                        return currentCooldown * 20;
+                    }
 
-            @Override
-            public void skipTimer(int delayInTicks) {
-                currentCooldown = Math.max(currentCooldown - delayInTicks / 20, 0);
-                if (currentCooldown == 0) {
-                    spawn();
+                    @Override
+                    public void skipTimer(int delayInTicks) {
+                        currentCooldown = Math.max(currentCooldown - delayInTicks / 20, 0);
+                        if (currentCooldown == 0) {
+                            spawn();
+                        }
+                    }
                 }
-            }
-        });
+        );
     }
 
     @Override
@@ -164,20 +165,16 @@ public class PowerupOption implements Option {
         }.runTaskTimer(0, 0);
     }
 
-    private void spawnTimerDisplay() {
-        timerDisplay = location.getWorld().spawn(location, TextDisplay.class, textDisplay -> {
-            textDisplay.setTransformation(new Transformation(
-                    new Vector3f(0, -.5f, 0),
-                    new AxisAngle4f(),
-                    new Vector3f(4, 4, 4),
-                    new AxisAngle4f()
-            ));
-            textDisplay.setBillboard(Display.Billboard.CENTER);
-            textDisplay.setAlignment(TextDisplay.TextAlignment.CENTER);
-            textDisplay.setViewRange(.2f);
-            textDisplay.setSeeThrough(true);
-            textDisplay.setBackgroundColor(Color.fromARGB(0, 0, 0, 0));
-        });
+    private void spawn() {
+        if (entity != null) {
+            return;
+        }
+        entity = Utils.spawnArmorStand(location.clone().add(0, -1.5, 0), armorStand -> {
+                    armorStand.setCustomNameVisible(true);
+                    type.setNameAndItem(this, armorStand);
+                }
+        );
+        Utils.playGlobalSound(location, "ctf.powerup.spawn", 2, 1);
     }
 
     private void remove() {
@@ -218,15 +215,21 @@ public class PowerupOption implements Option {
         return randomPowerup;
     }
 
-    private void spawn() {
-        if (entity != null) {
-            return;
-        }
-        entity = Utils.spawnArmorStand(location.clone().add(0, -1.5, 0), armorStand -> {
-            armorStand.setCustomNameVisible(true);
-            type.setNameAndItem(this, armorStand);
-        });
-        Utils.playGlobalSound(location, "ctf.powerup.spawn", 2, 1);
+    private void spawnTimerDisplay() {
+        timerDisplay = location.getWorld().spawn(location, TextDisplay.class, textDisplay -> {
+                    textDisplay.setTransformation(new Transformation(
+                            new Vector3f(0, -.5f, 0),
+                            new AxisAngle4f(),
+                            new Vector3f(4, 4, 4),
+                            new AxisAngle4f()
+                    ));
+                    textDisplay.setBillboard(Display.Billboard.CENTER);
+                    textDisplay.setAlignment(TextDisplay.TextAlignment.CENTER);
+                    textDisplay.setViewRange(.2f);
+                    textDisplay.setSeeThrough(true);
+                    textDisplay.setBackgroundColor(Color.fromARGB(0, 0, 0, 0));
+                }
+        );
     }
 
     public enum PowerUp {
@@ -488,12 +491,10 @@ public class PowerupOption implements Option {
                                 );
                             }
                         })
-                ) {
-                    @Override
-                    public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                        return currentDamageValue * 1.1f;
-                    }
-                });
+                ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                            currentDamageValue.addMultiplicativeModifierMult(name, 1.1f);
+                        }
+                ));
                 we.sendMessage(Component.text("You activated the ", NamedTextColor.GOLD)
                                         .append(Component.text(name, textColor, TextDecoration.BOLD))
                                         .append(Component.text(" powerup! Lasts for "))
@@ -563,4 +564,5 @@ public class PowerupOption implements Option {
         public abstract void setNameAndItem(PowerupOption option, ArmorStand armorStand);
 
     }
+
 }

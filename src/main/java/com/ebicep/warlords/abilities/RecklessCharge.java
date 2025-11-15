@@ -4,7 +4,6 @@ import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
@@ -75,13 +74,10 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, H
                       cooldownManager -> {
                       },
                       2 * 20
-              ) {
-
-                  @Override
-                  public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                      return currentDamageValue * 0.2f;
-                  }
-              });
+              ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                          currentDamageValue.addMultiplicativeModifierMult(name, 0.2f);
+                      }
+              ));
         }
         Location location = wp.getLocation();
         boolean horizontal = Math.abs(location.getPitch()) < 50;

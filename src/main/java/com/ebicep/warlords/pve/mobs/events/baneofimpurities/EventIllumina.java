@@ -5,13 +5,13 @@ import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
@@ -119,13 +119,11 @@ public class EventIllumina extends AbstractMob implements BossMob {
                 cooldownManager -> {
                 },
                 true
-        ) {
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                damageToDeal.set((int) (damageToDeal.get() - currentDamageValue));
-                return currentDamageValue;
-            }
-        };
+        );
+        permanentCooldown.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                    damageToDeal.set((int) (damageToDeal.get() - currentDamageValue.getCalculatedValue()));
+                }
+        );
         warlordsNPC.addKnockbackModifier(warlordsNPC, "KB RES", -100, permanentCooldown);
         warlordsNPC.getCooldownManager().addCooldown(permanentCooldown);
     }

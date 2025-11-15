@@ -6,13 +6,13 @@ import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownUtils;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.vindicator.VindicateBranch;
@@ -31,45 +31,6 @@ import java.util.List;
 import java.util.Objects;
 
 public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Duration, AbilityStats<Vindicate, Vindicate.VindicateStats> {
-
-    public static <T> void giveVindicateCooldown(WarlordsEntity from, WarlordsEntity target, Class<T> cooldownClass, T cooldownObject, int tickDuration) {
-        // remove other instances of vindicate buff to override
-        target.getCooldownManager().removeCooldownByName("Vindicate");
-        boolean vindPveMaster2 = cooldownClass.equals(Vindicate.class) && from.getAbilitiesMatching(Vindicate.class).stream().anyMatch(t -> t.pveMasterUpgrade2);
-        RegularCooldown<T> vindiateCooldown = new RegularCooldown<>(
-                "Vindicate", "VIND",
-                cooldownClass,
-                cooldownObject,
-                from,
-                CooldownTypes.BUFF,
-                cooldownManager -> {
-                },
-                tickDuration
-        ) {
-
-            @Override
-            protected Listener getListener() {
-                if (target.isInPve()) {
-                    return CooldownUtils.getDebuffImmunityListener(CooldownUtils.DebuffImmunity.getFullImmunity(target));
-                }
-
-                return CooldownUtils.getPartialDebuffImmunityListener(target);
-            }
-
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (vindPveMaster2) {
-                    return currentDamageValue * .85f;
-                }
-                return currentDamageValue;
-            }
-        };
-        target.addKnockbackModifier(from, "Vindicate", -getKnockbackResistance(), vindiateCooldown);
-        target.getCooldownManager().addCooldown(vindiateCooldown);
-        if (vindPveMaster2) {
-            EffectUtils.playParticleLinkAnimation(from.getLocation(), target.getLocation(), Particle.FALLING_HONEY, 1, 1, -1);
-        }
-    }
 
     private final VindicateStats stats = new VindicateStats();
     private int radius = 8;
@@ -124,33 +85,75 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
                 cooldownManager -> {
                 },
                 damageReductionTickDuration
-        ) {
-
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                WarlordsEntity hit = event.getWarlordsEntity();
-                WarlordsEntity attacker = event.getSource();
-                if (pveMasterUpgrade && !Objects.equals(attacker, hit)) {
-                    Utils.addKnockback(name, wp.getLocation(), attacker, -1, 0.15);
-                    attacker.addInstance(InstanceBuilder
-                            .damage()
-                            .cause(name)
-                            .source(hit)
-                            .value(currentDamageValue * .75f)
-                            .flags(InstanceFlags.IGNORE_SELF_RES, InstanceFlags.RECURSIVE, InstanceFlags.REFLECTIVE_DAMAGE)
-                    );
-                    return currentDamageValue * .1f;
-                } else {
-                    return currentDamageValue * getCalculatedVindicateDamageReduction();
+        ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                    WarlordsEntity hit = event.getWarlordsEntity();
+                    WarlordsEntity attacker = event.getSource();
+                    if (pveMasterUpgrade && !Objects.equals(attacker, hit)) {
+                        Utils.addKnockback(name, wp.getLocation(), attacker, -1, 0.15);
+                        attacker.addInstance(InstanceBuilder
+                                .damage()
+                                .cause(name)
+                                .source(hit)
+                                .value(currentDamageValue.getCalculatedValue() * .75f)
+                                .flags(InstanceFlags.IGNORE_SELF_RES, InstanceFlags.RECURSIVE, InstanceFlags.REFLECTIVE_DAMAGE)
+                        );
+                        currentDamageValue.addMultiplicativeModifierMult(name, .1f);
+                    } else {
+                        currentDamageValue.addMultiplicativeModifierMult(name, getCalculatedVindicateDamageReduction());
+                    }
                 }
-            }
-        });
+        ));
         if (pveMasterUpgrade2) {
             for (WarlordsEntity vindicateTarget : PlayerFilter.entitiesAround(wp, radius, radius, radius).aliveEnemiesOf(wp)) {
                 SoulShackle.shacklePlayer(wp, vindicateTarget, 10 * 20);
             }
         }
         return true;
+    }
+
+    public static <T> void giveVindicateCooldown(WarlordsEntity from, WarlordsEntity target, Class<T> cooldownClass, T cooldownObject, int tickDuration) {
+        // remove other instances of vindicate buff to override
+        target.getCooldownManager().removeCooldownByName("Vindicate");
+        boolean vindPveMaster2 = cooldownClass.equals(Vindicate.class) && from.getAbilitiesMatching(Vindicate.class).stream().anyMatch(t -> t.pveMasterUpgrade2);
+        RegularCooldown<T> vindiateCooldown = new RegularCooldown<>(
+                "Vindicate", "VIND",
+                cooldownClass,
+                cooldownObject,
+                from,
+                CooldownTypes.BUFF,
+                cooldownManager -> {
+                },
+                tickDuration
+        ) {
+
+            @Override
+            protected Listener getListener() {
+                if (target.isInPve()) {
+                    return CooldownUtils.getDebuffImmunityListener(CooldownUtils.DebuffImmunity.getFullImmunity(target));
+                }
+
+                return CooldownUtils.getPartialDebuffImmunityListener(target);
+            }
+        };
+        vindiateCooldown.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                    if (vindPveMaster2) {
+                        currentDamageValue.addMultiplicativeModifierMult("Vindicate", .85f);
+                    }
+                }
+        );
+        target.addKnockbackModifier(from, "Vindicate", -getKnockbackResistance(), vindiateCooldown);
+        target.getCooldownManager().addCooldown(vindiateCooldown);
+        if (vindPveMaster2) {
+            EffectUtils.playParticleLinkAnimation(from.getLocation(), target.getLocation(), Particle.FALLING_HONEY, 1, 1, -1);
+        }
+    }
+
+    public float getCalculatedVindicateDamageReduction() {
+        return (100 - vindicateDamageReduction) / 100f;
+    }
+
+    private static int getKnockbackResistance() {
+        return ConfigManager.getAbilityConfigValue(ConfigManager.DEFAULT_NAMESPACES, "vindicate.knockbackResistance", int.class);
     }
 
     @Override
@@ -175,14 +178,6 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new VindicateBranch(abilityTree, this);
-    }
-
-    private static int getKnockbackResistance() {
-        return ConfigManager.getAbilityConfigValue(ConfigManager.DEFAULT_NAMESPACES, "vindicate.knockbackResistance", int.class);
-    }
-
-    public float getCalculatedVindicateDamageReduction() {
-        return (100 - vindicateDamageReduction) / 100f;
     }
 
     @Override

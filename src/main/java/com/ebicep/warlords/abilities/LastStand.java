@@ -12,6 +12,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.defender.LastStandBranch;
@@ -102,16 +103,15 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
                         }
                     }
                 })
-        ) {
-
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                float afterValue = currentDamageValue * convertToDivisionDecimal(selfDamageReductionPercent);
-                data.addAmountPrevented(currentDamageValue - afterValue);
-                return afterValue;
-            }
-
-        };
+        );
+        lastStandCooldown.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                    // TODO contribution
+//                    float afterValue = currentDamageValue.getModifiedValue() * convertToDivisionDecimal(selfDamageReductionPercent);
+//                    float absorbedAmount = currentDamageValue.getModifiedValue() - afterValue;
+//                    data.addAmountPrevented(absorbedAmount);
+                    currentDamageValue.addMultiplicativeModifierMult(name, convertToDivisionDecimal(selfDamageReductionPercent));
+                }
+        );
         if (pveMasterUpgrade) {
             wp.addKnockbackModifier(wp, name, -50, lastStandCooldown);
         }
@@ -119,19 +119,17 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
         for (WarlordsEntity standTarget : PlayerFilter.entitiesAround(wp, radius, radius, radius).aliveTeammatesOf(wp).excluding(wp)) {
             stats.targetsLastStanded++;
             EffectUtils.playParticleLinkAnimation(wp.getLocation(), standTarget.getLocation(), Particle.HAPPY_VILLAGER);
-            standTarget.getCooldownManager().addCooldown(new RegularCooldown<>(name, "LAST", LastStandData.class, data, wp, CooldownTypes.ABILITY, cooldownManager -> {
-            }, allyTickDuration
+            float amountPrevented = 0;
+            standTarget.getCooldownManager().addCooldown(new RegularCooldown<>(name,
+                    "LAST",
+                    LastStandData.class,
+                    data,
+                    wp,
+                    CooldownTypes.ABILITY,
+                    cooldownManager -> {
+                    },
+                    allyTickDuration
             ) {
-
-                float amountPrevented = 0;
-
-                @Override
-                public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    float newCurrentDamageValue = currentDamageValue * convertToDivisionDecimal(teammateDamageReductionPercent);
-                    amountPrevented = currentDamageValue - newCurrentDamageValue;
-                    data.addAmountPrevented(amountPrevented);
-                    return newCurrentDamageValue;
-                }
 
                 @Override
                 public void onShieldFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
@@ -153,7 +151,14 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
                                                   .showAsCrit(isCrit)
                     );
                 }
-            });
+            }.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                        // TODO contribution
+//                        float newCurrentDamageValue = currentDamageValue.getModifiedValue() * convertToDivisionDecimal(teammateDamageReductionPercent);
+//                        float amountPrevented = currentDamageValue.getModifiedValue() - newCurrentDamageValue;
+//                        data.addAmountPrevented(amountPrevented);
+                        currentDamageValue.addMultiplicativeModifierMult(name, convertToDivisionDecimal(teammateDamageReductionPercent));
+                    }
+            ));
             wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" Your Last Stand is now protecting ", NamedTextColor.GRAY))
                                                           .append(Component.text(standTarget.getName(), NamedTextColor.YELLOW))
                                                           .append(Component.text("!", NamedTextColor.GRAY)));

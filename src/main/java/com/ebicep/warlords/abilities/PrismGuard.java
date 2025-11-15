@@ -134,15 +134,14 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                                     cm -> {
                                     },
                                     tickDuration
-                            ) {
-
-                                @Override
-                                public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                    float afterReduction = currentDamageValue * convertToDivisionDecimal(damageReduction);
-                                    data.totalDamageReduced += currentDamageValue - afterReduction;
-                                    return afterReduction;
-                                }
-                            });
+                            ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                                        // TODO contribution
+//                                        float afterReduction = currentDamageValue.getModifiedValue() * convertToDivisionDecimal(damageReduction);
+//                                        float reducedAmount = currentDamageValue.getModifiedValue() - afterReduction;
+//                                        data.totalDamageReduced += reducedAmount;
+                                        currentDamageValue.addMultiplicativeModifierMult(name, convertToDivisionDecimal(damageReduction));
+                                    }
+                            ));
                         }
                     }
                 },
@@ -195,25 +194,17 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                                     cooldownManager -> {
                                     },
                                     4
-                            ) {
-
-                                @Override
-                                public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                    float afterReduction;
-                                    if (Utils.isProjectile(event.getCause())) {
-                                        if (isInsideBubble.contains(event.getSource())) {
-                                            afterReduction = currentDamageValue;
-                                        } else {
-                                            stats.timesProjectilesReduced++;
-                                            afterReduction = currentDamageValue * (100 - projectileDamageReduction) / 100f;
+                            ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                                        if (Utils.isProjectile(event.getCause())) {
+                                            if (!isInsideBubble.contains(event.getSource())) {
+                                                stats.timesProjectilesReduced++;
+                                                currentDamageValue.addMultiplicativeModifierMult(name, (100 - projectileDamageReduction) / 100f);
+                                            }
                                         }
-                                    } else {
-                                        afterReduction = currentDamageValue;
+                                        // TODO contribution
+//                                        data.totalDamageReduced += currentDamage - afterReduction;
                                     }
-                                    data.totalDamageReduced += currentDamageValue - afterReduction;
-                                    return afterReduction;
-                                }
-                            });
+                            ));
                         }
                     }
                     if (ticksElapsed % 10 == 0) {
@@ -251,25 +242,25 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                     }
                 };
             }
-
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                int totalReduction = damageReductionActive;
-                data.hitsTaken++;
-                if (Utils.isProjectile(event.getCause())) {
-                    if (!isInsideBubble.contains(event.getSource())) {
-                        stats.timesProjectilesReduced++;
-                        totalReduction += projectileDamageReduction;
-                    }
-                }
-                if (pveMasterUpgrade) {
-                    totalReduction += 10;
-                }
-                float afterReduction = currentDamageValue * (100 - totalReduction) / 100f;
-                data.totalDamageReduced += currentDamageValue - afterReduction;
-                return afterReduction;
-            }
         };
+        prismGuardCooldown.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                    int totalReduction = damageReductionActive;
+                    data.hitsTaken++;
+                    if (Utils.isProjectile(event.getCause())) {
+                        if (!isInsideBubble.contains(event.getSource())) {
+                            stats.timesProjectilesReduced++;
+                            totalReduction += projectileDamageReduction;
+                        }
+                    }
+                    if (pveMasterUpgrade) {
+                        totalReduction += 10;
+                    }
+                    // TODO contribution
+//                    float afterReduction = currentDamage * (100 - totalReduction) / 100f;
+//                    data.totalDamageReduced += currentDamage - afterReduction;
+                    currentDamageValue.addMultiplicativeModifierMult(name, (100 - totalReduction) / 100f);
+                }
+        );
         if (pveMasterUpgrade) {
             wp.addKnockbackModifier(wp, name, -100, prismGuardCooldown);
         }

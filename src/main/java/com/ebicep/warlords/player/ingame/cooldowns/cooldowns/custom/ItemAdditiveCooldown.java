@@ -87,22 +87,20 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
                     }
                 }
         );
-    }
-
-    @Override
-    public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-        if (event.getSource() instanceof WarlordsNPC warlordsNPC) {
-            Aspect aspect = warlordsNPC.getMob().getAspect();
-            if (aspect == null) {
-                return currentDamageValue;
-            }
-            AspectModifier aspectModifier = aspectModifiers.get(aspect);
-            if (aspectModifier == null) {
-                return currentDamageValue;
-            }
-            return currentDamageValue * (aspectModifier.damageReductionMultiplier);
-        }
-        return currentDamageValue;
+        this.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                    if (event.getSource() instanceof WarlordsNPC warlordsNPC) {
+                        Aspect aspect = warlordsNPC.getMob().getAspect();
+                        if (aspect == null) {
+                            return;
+                        }
+                        AspectModifier aspectModifier = aspectModifiers.get(aspect);
+                        if (aspectModifier == null) {
+                            return;
+                        }
+                        currentDamageValue.addMultiplicativeModifierMult(name, (aspectModifier.damageReductionMultiplier));
+                    }
+                }
+        );
     }
 
     @Override

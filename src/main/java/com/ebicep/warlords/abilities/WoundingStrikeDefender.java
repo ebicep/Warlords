@@ -2,7 +2,6 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
@@ -130,13 +129,11 @@ public class WoundingStrikeDefender extends AbstractStrike<WoundingStrikeDefende
                 5 * 20,
                 Collections.emptyList(),
                 teammates
-        ) {
-
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * 0.7f;
-            }
-        };
+        );
+        linkedCooldown.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                    currentDamageValue.addMultiplicativeModifierMult(name, .7f);
+                }
+        );
         we.getCooldownManager().removeCooldownByName(name + " Resistance");
         we.getCooldownManager().addCooldown(linkedCooldown);
         for (WarlordsEntity teammate : teammates) {
