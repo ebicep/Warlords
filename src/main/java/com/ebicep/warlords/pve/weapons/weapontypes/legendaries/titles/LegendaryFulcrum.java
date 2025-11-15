@@ -137,8 +137,8 @@ public class LegendaryFulcrum extends AbstractLegendaryWeapon implements GardenO
                             );
                         }
                     };
-            fulcrumCooldown.addModifier(Modifier.DAMAGE_ON_SHIELD_ATTACKER, (event, currentDamageValue, isCrit) -> {
-                        event.getWarlordsEntity().getCooldownManager().queueUpdatePlayerNames();
+            fulcrumCooldown.addModifier(Modifier.DAMAGE_ON_SHIELD_ATTACKER, (e, currentDamageValue2, isCrit2) -> {
+                        e.getWarlordsEntity().getCooldownManager().queueUpdatePlayerNames();
                     }
             );
             fulcrumCooldown.addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> energyGainPerTick.addAdditiveModifier(getTitleName(), EPS_BOOST / 20f));
