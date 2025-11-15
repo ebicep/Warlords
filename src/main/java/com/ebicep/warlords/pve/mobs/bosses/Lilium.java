@@ -289,10 +289,10 @@ public class Lilium extends AbstractMob implements BossMob {
         orbitalStrikeAbility = new OrbitalStrikeAbility(
                 warlordsNPC,
                 () -> {
-                    WarlordsEntity target = PlayerFilter.playingGame(warlordsNPC.getGame())
+                    WarlordsEntity target = PlayerFilter.entitiesAround(warlordsNPC, 50, 50, 50)
                             .aliveEnemiesOf(warlordsNPC)
+                            .closestFirst(warlordsNPC)
                             .excludingAlliedMobs()
-                            .limit(1)
                             .findFirstOrNull();
                     return target != null ? target.getLocation().clone() : mapCenter.clone();
                 },
