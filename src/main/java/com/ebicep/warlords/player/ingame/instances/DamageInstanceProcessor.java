@@ -28,9 +28,6 @@ import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
-import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiableFilter;
-import com.ebicep.warlords.util.warlords.modifiablevalues.filters.InstancePierce;
-import com.ebicep.warlords.util.warlords.modifiablevalues.filters.MultiFilter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -45,6 +42,7 @@ import org.bukkit.entity.Player;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
 public class DamageInstanceProcessor {
 
@@ -80,7 +78,6 @@ public class DamageInstanceProcessor {
     private final boolean ignoreDamageReduction;
     private final boolean noSourceDamageBoost;
     private final boolean noTargetDamageBoost;
-    private MultiFilter filter = null;
     // State tracking
     private final float initialHealth;
     private final List<AbstractCooldown<?>> selfCooldownsDistinct;
@@ -130,7 +127,6 @@ public class DamageInstanceProcessor {
         }
 
         setupDebugMessages();
-        applyFilters();
         applyBeforeReductionModifiers();
         calculateCriticals();
 
@@ -196,25 +192,21 @@ public class DamageInstanceProcessor {
         }
     }
 
-    private void applyFilters() {
-        List<FloatModifiableFilter> filters = new ArrayList<>();
-        if (ignoreDamageReduction) {
-            filters.add(new InstancePierce());
-        }
-        if (noSourceDamageBoost) {
-
-        }
-        if (noTargetDamageBoost) {
-
-        }
-        filter = new MultiFilter(filters);
-        damageValue.addFilter(filter);
-    }
-
     private void calculateCriticals() {
         debugMessage.appendTitle("Crit Modifiers", NamedTextColor.AQUA);
 
-        if (critChance.getBaseValue() > 0 && !flags.contains(InstanceFlags.IGNORE_CRIT_MODIFIERS)) {
+        if (critChance.getBaseValue() > 0) {
+            if (flags.contains(InstanceFlags.IGNORE_CRIT_MODIFIERS)) {
+                Consumer<FloatModifiable.FloatModifier> disableModifier = InstanceFlags.IGNORE_CRIT_MODIFIERS.createDisabledReason();
+                critChance.addModifierListener(
+                        disableModifier,
+                        FloatModifiable.ModifierType.ADDITIVE, FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
+                );
+                critMultiplier.addModifierListener(
+                        disableModifier,
+                        FloatModifiable.ModifierType.ADDITIVE, FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
+                );
+            }
             for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
                 abstractCooldown.applyModifiers(
                         Modifier.DAMAGE_CRIT_CHANCE_ATTACKER,
@@ -281,18 +273,12 @@ public class DamageInstanceProcessor {
     }
 
     private void applySpecDamageResistance() {
-        if (!flags.contains(InstanceFlags.IGNORE_SELF_RES) && !trueDamage) {
-            damageValue.addMultiplicativeModifierAdd("Spec Damage Resistance", -warlordsEntity.getSpec().getDamageResistance() / 100f);
-            debugMessage.appendTitle(ComponentBuilder
-                    .create("Spec Damage Reduction: ", NamedTextColor.AQUA)
-                    .text(NumberFormat.formatOptionalHundredths(warlordsEntity.getSpec().getDamageResistance()), NamedTextColor.BLUE)
-                    .build()
-            );
-            debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                    .create(1)
-                    .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.GREEN))
-                    .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(damageHealValueBeforeAllReduction), NamedTextColor.GOLD))
-            );
+        FloatModifiable.FloatModifier modifier = damageValue.addMultiplicativeModifierAdd("Spec Damage Resistance", -warlordsEntity.getSpec().getDamageResistance() / 100f);
+        if (flags.contains(InstanceFlags.IGNORE_SELF_RES)) {
+            modifier.addDisabledReason(InstanceFlags.IGNORE_SELF_RES.name());
+        }
+        if (trueDamage) {
+            modifier.addDisabledReason(InstanceFlags.TRUE_DAMAGE.name());
         }
     }
 
@@ -377,29 +363,57 @@ public class DamageInstanceProcessor {
 
     private void applyFlagMultiplier() {
         double flagMultiplier = warlordsEntity.getFlagDamageMultiplier();
-        if (flagMultiplier != 1 && !trueDamage && !flags.contains(InstanceFlags.IGNORE_FLAG_MULTIPLIER)) {
-            damageValue.addMultiplicativeModifierMult("Flag Carrier Multiplier", (float) flagMultiplier);
-            debugMessage.appendTitle(ComponentBuilder
-                    .create("Flag Damage Multiplier: ", NamedTextColor.AQUA)
-                    .text(NumberFormat.formatOptionalHundredths(flagMultiplier), NamedTextColor.BLUE)
-                    .build()
-            );
+        if (flagMultiplier == 1) {
+            return;
         }
+        FloatModifiable.FloatModifier modifier = damageValue.addMultiplicativeModifierMult("Flag Carrier Multiplier", (float) flagMultiplier);
+        if (trueDamage) {
+            modifier.addDisabledReason(InstanceFlags.TRUE_DAMAGE.name());
+        }
+        if (flags.contains(InstanceFlags.IGNORE_FLAG_MULTIPLIER)) {
+            modifier.addDisabledReason(InstanceFlags.IGNORE_FLAG_MULTIPLIER.name());
+        }
+        debugMessage.appendTitle(ComponentBuilder
+                .create("Flag Damage Multiplier: ", NamedTextColor.AQUA)
+                .text(NumberFormat.formatOptionalHundredths(flagMultiplier), NamedTextColor.BLUE)
+                .build()
+        );
     }
 
     private void applyBeforeInterveneModifiers() {
-        if (trueDamage) {
-            return;
-        }
-
         debugMessage.appendTitle("Before Intervene", NamedTextColor.AQUA);
 
+        if (trueDamage) {
+            damageValue.addModifierListener(
+                    InstanceFlags.TRUE_DAMAGE.createDisabledReason(),
+                    FloatModifiable.ModifierType.ADDITIVE, FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
+            );
+        }
+        // target / self modifiers
+        if (ignoreDamageReduction) {
+            toggleNegativeBoosts(pierceDamage ? InstanceFlags.PIERCE : InstanceFlags.IGNORE_DAMAGE_REDUCTION_ONLY, true);
+        }
+        if (noTargetDamageBoost) {
+            togglePositiveBoosts(InstanceFlags.IGNORE_TARGET_DAMAGE_BOOST, true);
+        }
         for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
             abstractCooldown.applyModifiers(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, m -> m.apply(event, damageValue));
         }
-
+        if (ignoreDamageReduction) {
+            toggleNegativeBoosts(pierceDamage ? InstanceFlags.PIERCE : InstanceFlags.IGNORE_DAMAGE_REDUCTION_ONLY, false);
+        }
+        if (noTargetDamageBoost) {
+            togglePositiveBoosts(InstanceFlags.IGNORE_TARGET_DAMAGE_BOOST, false);
+        }
+        // source / attacker modifiers
+        if (noSourceDamageBoost) {
+            togglePositiveBoosts(InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST, true);
+        }
         for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
             abstractCooldown.applyModifiers(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, m -> m.apply(event, damageValue));
+        }
+        if (noSourceDamageBoost) {
+            togglePositiveBoosts(InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST, false);
         }
 
         damageValue.refresh();
@@ -409,6 +423,50 @@ public class DamageInstanceProcessor {
                 .value(damageValue));
 
         damageHealValueBeforeInterveneReduction = damageValue.getCalculatedValue();
+    }
+
+    private void toggleNegativeBoosts(InstanceFlags f, boolean addListener) {
+        if (addListener) {
+            damageValue.addModifierListener(
+                    f.ignoreNegativeAdditive,
+                    FloatModifiable.ModifierType.ADDITIVE, FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE
+            );
+            damageValue.addModifierListener(
+                    f.ignoreNegativeMultiplicative,
+                    FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
+            );
+        } else {
+            damageValue.removeModifierListener(
+                    f.ignoreNegativeAdditive,
+                    FloatModifiable.ModifierType.ADDITIVE, FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE
+            );
+            damageValue.removeModifierListener(
+                    f.ignoreNegativeMultiplicative,
+                    FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
+            );
+        }
+    }
+
+    private void togglePositiveBoosts(InstanceFlags f, boolean addListener) {
+        if (addListener) {
+            damageValue.addModifierListener(
+                    f.ignorePositiveAdditive,
+                    FloatModifiable.ModifierType.ADDITIVE, FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE
+            );
+            damageValue.addModifierListener(
+                    f.ignorePositiveMultiplicative,
+                    FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
+            );
+        } else {
+            damageValue.removeModifierListener(
+                    f.ignorePositiveAdditive,
+                    FloatModifiable.ModifierType.ADDITIVE, FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE
+            );
+            damageValue.removeModifierListener(
+                    f.ignorePositiveMultiplicative,
+                    FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
+            );
+        }
     }
 
     private boolean handleIntervene() {
@@ -564,18 +622,39 @@ public class DamageInstanceProcessor {
     }
 
     private void applyAfterInterveneModifiers() {
-        if (trueDamage) {
-            return;
-        }
-
         debugMessage.appendTitle("After Intervene", NamedTextColor.AQUA);
 
+        if (trueDamage) {
+            damageValue.addModifierListener(
+                    InstanceFlags.TRUE_DAMAGE.createDisabledReason(),
+                    FloatModifiable.ModifierType.ADDITIVE, FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
+            );
+        }
+        // target / self modifiers
+        if (ignoreDamageReduction) {
+            toggleNegativeBoosts(pierceDamage ? InstanceFlags.PIERCE : InstanceFlags.IGNORE_DAMAGE_REDUCTION_ONLY, true);
+        }
+        if (noTargetDamageBoost) {
+            togglePositiveBoosts(InstanceFlags.IGNORE_TARGET_DAMAGE_BOOST, true);
+        }
         for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
             abstractCooldown.applyModifiers(Modifier.DAMAGE_AFTER_INTERVENE_SELF, m -> m.apply(event, damageValue));
         }
-
+        if (ignoreDamageReduction) {
+            toggleNegativeBoosts(pierceDamage ? InstanceFlags.PIERCE : InstanceFlags.IGNORE_DAMAGE_REDUCTION_ONLY, false);
+        }
+        if (noTargetDamageBoost) {
+            togglePositiveBoosts(InstanceFlags.IGNORE_TARGET_DAMAGE_BOOST, false);
+        }
+        // source / attacker modifiers
+        if (noSourceDamageBoost) {
+            togglePositiveBoosts(InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST, true);
+        }
         for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
             abstractCooldown.applyModifiers(Modifier.DAMAGE_AFTER_INTERVENE_ATTACKER, m -> m.apply(event, damageValue));
+        }
+        if (noSourceDamageBoost) {
+            togglePositiveBoosts(InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST, false);
         }
 
         debugMessage.append(InstanceDebugHoverable.LevelBuilder
@@ -772,16 +851,22 @@ public class DamageInstanceProcessor {
         }
 
         boolean debt = warlordsEntity.getCooldownManager().hasCooldownFromName("Spirits' Respite");
+        debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                .create(1)
+                .prefix(ComponentBuilder.create("Debt: ", NamedTextColor.DARK_GREEN))
+                .value(ComponentBuilder.create("" + debt, NamedTextColor.GOLD))
+        );
         warlordsEntity.getHitBy().put(source, 10);
         warlordsEntity.cancelHealingPowerUp();
 
         float finalDamageValue = damageValue.getCalculatedValue();
+        debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                .create(1)
+                .prefix(ComponentBuilder.create("Final Damage Value: ", NamedTextColor.GREEN))
+                .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(finalDamageValue), NamedTextColor.GOLD))
+        );
 
         updateAbilityPools(finalDamageValue);
-
-        if (!flags.contains(InstanceFlags.NO_MESSAGE)) {
-            sendDamageMessage(finalDamageValue);
-        }
 
         applyOnDamageModifiers(finalDamageValue);
 
@@ -791,6 +876,15 @@ public class DamageInstanceProcessor {
         float cappedDamage = Math.min(finalDamageValue,
                 warlordsEntity.getCurrentHealth() - (flags.contains(InstanceFlags.CANT_KILL) ? 1 : 0)
         );
+        debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                .create(1)
+                .prefix(ComponentBuilder.create("Capped Damage Value: ", NamedTextColor.GREEN))
+                .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(cappedDamage), NamedTextColor.GOLD))
+        );
+
+        if (!flags.contains(InstanceFlags.NO_MESSAGE)) {
+            sendDamageMessage(finalDamageValue);
+        }
 
         source.addDamage(cappedDamage, FlagHolder.isPlayerHolderFlag(warlordsEntity));
         warlordsEntity.addDamageTaken(cappedDamage);
@@ -801,6 +895,11 @@ public class DamageInstanceProcessor {
         }
 
         float newHealth = calculateNewHealth(debt, finalDamageValue);
+        debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                .create(1)
+                .prefix(ComponentBuilder.create("New Health: ", NamedTextColor.GREEN))
+                .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(newHealth), NamedTextColor.GOLD))
+        );
         warlordsEntity.setCurrentHealth(newHealth);
 
         if (newHealth <= 0) {

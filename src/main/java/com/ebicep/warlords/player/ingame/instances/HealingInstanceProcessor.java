@@ -94,6 +94,7 @@ public class HealingInstanceProcessor {
         }
 
         setupDebugMessages();
+        applyBeforeReductionModifiers();
         calculateCriticalHealing();
         applyHealingModifiers();
 
@@ -136,6 +137,29 @@ public class HealingInstanceProcessor {
     private void setupDebugMessages() {
         debugMessage.appendTitle("Post Event", NamedTextColor.AQUA);
         debugMessage.appendEvent(event);
+    }
+
+    private void applyBeforeReductionModifiers() {
+        debugMessage.appendTitle("Before Reduction", NamedTextColor.AQUA);
+        debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                .create(1)
+                .prefix(ComponentBuilder.create("Target Cooldowns", NamedTextColor.DARK_GREEN)));
+
+        for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
+            debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                    .create(2)
+                    .prefix(abstractCooldown));
+        }
+
+        debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                .create(1)
+                .prefix(ComponentBuilder.create("Source Cooldowns", NamedTextColor.DARK_GREEN)));
+
+        for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
+            debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                    .create(2)
+                    .prefix(abstractCooldown));
+        }
     }
 
     private void calculateCriticalHealing() {
@@ -183,13 +207,21 @@ public class HealingInstanceProcessor {
         debugMessage.appendTitle("Before Heal", NamedTextColor.AQUA);
 
         if (trueHealing) {
-            return;
+            healValue.addModifierListener(
+                    InstanceFlags.TRUE_HEALING.createDisabledReason(),
+                    FloatModifiable.ModifierType.ADDITIVE, FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
+            );
         }
-
+        // source / self modifiers
+        if (pierce) { // ignore healing reduction
+            toggleNegativeBoosts(InstanceFlags.PIERCE, true);
+        }
         for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
             abstractCooldown.applyModifiers(Modifier.HEALING_MODIFY_SELF, m -> m.apply(event, healValue));
         }
-
+        if (pierce) { // ignore healing reduction
+            toggleNegativeBoosts(InstanceFlags.PIERCE, false);
+        }
         for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
             abstractCooldown.applyModifiers(Modifier.HEALING_MODIFY_ATTACKER, m -> m.apply(event, healValue));
         }
@@ -198,6 +230,50 @@ public class HealingInstanceProcessor {
                 .create(1)
                 .prefix(ComponentBuilder.create("Heal Value: ", NamedTextColor.GREEN))
                 .value(healValue));
+    }
+
+    private void toggleNegativeBoosts(InstanceFlags f, boolean addListener) {
+        if (addListener) {
+            healValue.addModifierListener(
+                    f.ignoreNegativeAdditive,
+                    FloatModifiable.ModifierType.ADDITIVE, FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE
+            );
+            healValue.addModifierListener(
+                    f.ignoreNegativeMultiplicative,
+                    FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
+            );
+        } else {
+            healValue.removeModifierListener(
+                    f.ignoreNegativeAdditive,
+                    FloatModifiable.ModifierType.ADDITIVE, FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE
+            );
+            healValue.removeModifierListener(
+                    f.ignoreNegativeMultiplicative,
+                    FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
+            );
+        }
+    }
+
+    private void togglePositiveBoosts(InstanceFlags f, boolean addListener) {
+        if (addListener) {
+            healValue.addModifierListener(
+                    f.ignorePositiveAdditive,
+                    FloatModifiable.ModifierType.ADDITIVE, FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE
+            );
+            healValue.addModifierListener(
+                    f.ignorePositiveMultiplicative,
+                    FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
+            );
+        } else {
+            healValue.removeModifierListener(
+                    f.ignorePositiveAdditive,
+                    FloatModifiable.ModifierType.ADDITIVE, FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE
+            );
+            healValue.removeModifierListener(
+                    f.ignorePositiveMultiplicative,
+                    FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
+            );
+        }
     }
 
     private boolean isValidHealingTarget() {
