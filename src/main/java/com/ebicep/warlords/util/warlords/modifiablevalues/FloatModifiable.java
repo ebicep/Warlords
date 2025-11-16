@@ -1,13 +1,12 @@
 package com.ebicep.warlords.util.warlords.modifiablevalues;
 
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
+import com.ebicep.warlords.util.warlords.modifiablevalues.filters.BaseFilter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class FloatModifiable {
@@ -17,42 +16,15 @@ public class FloatModifiable {
     private final List<FloatModifier> multiplicativeModifiersAdditive = new ArrayList<>(); // these modifiers are added together
     private final List<FloatModifier> multiplicativeModifiersMultiplicative = new ArrayList<>(); // these modifiers are multiplied together
     private final Map<String, FloatModifiableFilter> filters = new HashMap<>() {{
-        put("Base", new FloatModifiableFilter.BaseFilter());
+        put("Base", new BaseFilter());
     }};
     private final Map<String, Runnable> onRefresh = new HashMap<>();
+    private final Map<ModifierType, Set<Consumer<FloatModifier>>> onAddModifier = new EnumMap<>(ModifierType.class);
     private float baseValue;
 
     public FloatModifiable(float baseValue) {
         this.baseValue = baseValue;
         refresh();
-    }
-
-    public void tick() {
-        boolean dirty = false;
-        dirty |= tickModifiers(overridingModifiers);
-        dirty |= tickModifiers(additiveModifiers);
-        dirty |= tickModifiers(multiplicativeModifiersAdditive);
-        dirty |= tickModifiers(multiplicativeModifiersMultiplicative);
-        if (dirty) {
-            refresh();
-        }
-    }
-
-    private boolean tickModifiers(List<FloatModifier> modifiers) {
-        boolean hasChanges = false;
-
-        for (int i = modifiers.size() - 1; i >= 0; i--) {
-            FloatModifier modifier = modifiers.get(i);
-
-            if (modifier.tick()) {
-                modifiers.remove(i);
-                hasChanges = true;
-            } else if (modifier.isDirty()) {
-                hasChanges = true;
-            }
-        }
-
-        return hasChanges;
     }
 
     public void refresh() {
@@ -97,11 +69,40 @@ public class FloatModifiable {
     private float calculateAdditiveSum(FloatModifiableFilter filter) {
         float sum = 0f;
         for (FloatModifier modifier : additiveModifiers) {
+            if (modifier.isDisabled()) {
+                continue;
+            }
             if (filter.additiveFilter(modifier)) {
                 sum += modifier.getModifier();
             }
         }
         return sum;
+    }
+
+    private float calculateMultiplicativeAdditive(FloatModifiableFilter filter) {
+        float sum = 0f;
+        for (FloatModifier modifier : multiplicativeModifiersAdditive) {
+            if (modifier.isDisabled()) {
+                continue;
+            }
+            if (filter.multiplicativeAdditiveFilter(modifier)) {
+                sum += modifier.getModifier();
+            }
+        }
+        return 1f + sum;
+    }
+
+    private float calculateMultiplicativeMultiplicative(FloatModifiableFilter filter) {
+        float product = 1f;
+        for (FloatModifier modifier : multiplicativeModifiersMultiplicative) {
+            if (modifier.isDisabled()) {
+                continue;
+            }
+            if (filter.multiplicativeMultiplicativeFilter(modifier)) {
+                product *= modifier.getModifier();
+            }
+        }
+        return product;
     }
 
     public FloatModifiable(FloatModifiable floatModifiable) {
@@ -127,26 +128,33 @@ public class FloatModifiable {
         this.onRefresh.putAll(floatModifiable.onRefresh);
     }
 
-    private float calculateMultiplicativeAdditive(FloatModifiableFilter filter) {
-        float sum = 0f;
-        for (FloatModifier modifier : multiplicativeModifiersAdditive) {
-            if (filter.multiplicativeAdditiveFilter(modifier)) {
-                sum += modifier.getModifier();
-            }
+    public void tick() {
+        boolean dirty = false;
+        dirty |= tickModifiers(overridingModifiers);
+        dirty |= tickModifiers(additiveModifiers);
+        dirty |= tickModifiers(multiplicativeModifiersAdditive);
+        dirty |= tickModifiers(multiplicativeModifiersMultiplicative);
+        if (dirty) {
+            refresh();
         }
-        return 1f + sum;
     }
 
-    private float calculateMultiplicativeMultiplicative(FloatModifiableFilter filter) {
-        float product = 1f;
-        for (FloatModifier modifier : multiplicativeModifiersMultiplicative) {
-            if (filter.multiplicativeMultiplicativeFilter(modifier)) {
-                product *= modifier.getModifier();
+    private boolean tickModifiers(List<FloatModifier> modifiers) {
+        boolean hasChanges = false;
+
+        for (int i = modifiers.size() - 1; i >= 0; i--) {
+            FloatModifier modifier = modifiers.get(i);
+
+            if (modifier.tick()) {
+                modifiers.remove(i);
+                hasChanges = true;
+            } else if (modifier.isDirty()) {
+                hasChanges = true;
             }
         }
-        return product;
-    }
 
+        return hasChanges;
+    }
 
     public void removeModifier(String log) {
         overridingModifiers.removeIf(floatModifier -> floatModifier.getLog().equals(log));
@@ -266,16 +274,16 @@ public class FloatModifiable {
         return components;
     }
 
+    public float getCalculatedValue() {
+        return filters.get("Base").getCachedValue();
+    }
+
     private Component getDebugInfo(String name, float value) {
         return ComponentBuilder.create()
                                .text(name, NamedTextColor.DARK_GREEN)
                                .text(": ", NamedTextColor.GRAY)
                                .text(value, NamedTextColor.GOLD)
                                .build();
-    }
-
-    public float getCalculatedValue() {
-        return filters.get("Base").getCachedValue();
     }
 
     private List<Component> getDebugInfo(List<FloatModifier> modifiers) {
@@ -301,9 +309,21 @@ public class FloatModifiable {
         onRefresh.put(source, runnable);
     }
 
+    public void addModifierListener(ModifierType modifierType, Consumer<FloatModifier> consumer) {
+        onAddModifier.computeIfAbsent(modifierType, k -> new HashSet<>(2)).add(consumer);
+    }
+
+    public enum ModifierType {
+        OVERRIDING,
+        ADDITIVE,
+        MULTIPLICATIVE_ADDITIVE,
+        MULTIPLICATIVE_MULTIPLICATIVE
+    }
+
     public static class FloatModifier {
 
         private final String log;
+        private final Set<String> disabledReasons = new HashSet<>(2);
         private float modifier;
         private int ticksLeft;
         private boolean dirty = false;
@@ -362,6 +382,14 @@ public class FloatModifiable {
             boolean d = dirty;
             dirty = false;
             return d;
+        }
+
+        public boolean isDisabled() {
+            return !disabledReasons.isEmpty();
+        }
+
+        public Set<String> getDisabledReasons() {
+            return disabledReasons;
         }
 
     }

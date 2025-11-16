@@ -29,6 +29,8 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiableFilter;
+import com.ebicep.warlords.util.warlords.modifiablevalues.filters.InstancePierce;
+import com.ebicep.warlords.util.warlords.modifiablevalues.filters.MultiFilter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -78,6 +80,7 @@ public class DamageInstanceProcessor {
     private final boolean ignoreDamageReduction;
     private final boolean noSourceDamageBoost;
     private final boolean noTargetDamageBoost;
+    private MultiFilter filter = null;
     // State tracking
     private final float initialHealth;
     private final List<AbstractCooldown<?>> selfCooldownsDistinct;
@@ -127,6 +130,7 @@ public class DamageInstanceProcessor {
         }
 
         setupDebugMessages();
+        applyFilters();
         applyBeforeReductionModifiers();
         calculateCriticals();
 
@@ -192,13 +196,34 @@ public class DamageInstanceProcessor {
         }
     }
 
+    private void applyFilters() {
+        List<FloatModifiableFilter> filters = new ArrayList<>();
+        if (ignoreDamageReduction) {
+            filters.add(new InstancePierce());
+        }
+        if (noSourceDamageBoost) {
+
+        }
+        if (noTargetDamageBoost) {
+
+        }
+        filter = new MultiFilter(filters);
+        damageValue.addFilter(filter);
+    }
+
     private void calculateCriticals() {
         debugMessage.appendTitle("Crit Modifiers", NamedTextColor.AQUA);
 
         if (critChance.getBaseValue() > 0 && !flags.contains(InstanceFlags.IGNORE_CRIT_MODIFIERS)) {
             for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
-                abstractCooldown.applyModifiers(Modifier.DAMAGE_CRIT_CHANCE_ATTACKER, m -> m.apply(event, critChance));
-                abstractCooldown.applyModifiers(Modifier.DAMAGE_CRIT_MULTIPLIER_ATTACKER, m -> m.apply(event, critMultiplier));
+                abstractCooldown.applyModifiers(
+                        Modifier.DAMAGE_CRIT_CHANCE_ATTACKER,
+                        m -> m.apply(event, critChance)
+                );
+                abstractCooldown.applyModifiers(
+                        Modifier.DAMAGE_CRIT_MULTIPLIER_ATTACKER,
+                        m -> m.apply(event, critMultiplier)
+                );
             }
         }
 
@@ -214,15 +239,7 @@ public class DamageInstanceProcessor {
                 .prefix(ComponentBuilder.create("Crit Multiplier: ", NamedTextColor.GREEN))
                 .value(critMultiplier));
 
-        setupDamageValue();
         applyCriticalHit();
-    }
-
-    private void setupDamageValue() {
-        if (ignoreDamageReduction) {
-            FloatModifiableFilter.InstancePierce pierceFilter = new FloatModifiableFilter.InstancePierce();
-            damageValue.addFilter(pierceFilter);
-        }
     }
 
     private void applyCriticalHit() {

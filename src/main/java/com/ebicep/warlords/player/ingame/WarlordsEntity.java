@@ -48,6 +48,7 @@ import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.StringUtils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiableFilter;
+import com.ebicep.warlords.util.warlords.modifiablevalues.filters.HealthFilter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -117,7 +118,7 @@ public abstract class WarlordsEntity {
     protected FloatModifiable energy;
     protected FloatModifiable energyPerSec;
     protected FloatModifiable energyPerHit;
-    protected FloatModifiableFilter maxBaseHealthFilter = new FloatModifiableFilter.HealthFilter();
+    protected FloatModifiableFilter maxBaseHealthFilter = new HealthFilter();
     private final List<Float> recordDamage = new ArrayList<>();
     private final PlayerStatisticsMinute minuteStats = new PlayerStatisticsMinute();
     private final PlayerStatisticsSecond secondStats = new PlayerStatisticsSecond();

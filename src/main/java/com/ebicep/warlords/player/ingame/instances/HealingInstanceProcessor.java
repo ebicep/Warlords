@@ -13,7 +13,7 @@ import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
-import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiableFilter;
+import com.ebicep.warlords.util.warlords.modifiablevalues.filters.InstancePierce;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -149,7 +149,7 @@ public class HealingInstanceProcessor {
 
     private void setupPierceFilter() {
         if (pierce) {
-            FloatModifiableFilter.InstancePierce pierceFilter = new FloatModifiableFilter.InstancePierce();
+            InstancePierce pierceFilter = new InstancePierce();
             healValue.addFilter(pierceFilter);
         }
     }
