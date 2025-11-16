@@ -63,7 +63,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
 
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
-        AtomicReference <RegularCooldown<OrderOfEviscerateData>> cooldown = new AtomicReference<>(null);
+        AtomicReference<RegularCooldown<OrderOfEviscerateData>> cooldown = new AtomicReference<>(null);
         AtomicInteger stacks = new AtomicInteger(0);
         PlayerFilter.playingGame(wp.getGame())
                     .enemiesOf(wp)
@@ -180,35 +180,37 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                                 for (OrderOfEviscerate orderOfEviscerate : wp.getAbilitiesMatching(OrderOfEviscerate.class)) {
                                     orderOfEviscerate.subtractCurrentCooldown(reduction);
                                 }
-                                if (pveMasterUpgrade2 && cooldown.get() == null) {
-                                    RegularCooldown<OrderOfEviscerateData> regularCooldown = new RegularCooldown<>(
-                                            "Cloaked Engagement 1",
-                                            "ENGAGE 1",
-                                            OrderOfEviscerateData.class,
-                                            null,
-                                            wp,
-                                            CooldownTypes.BUFF,
-                                            cooldownManager -> {
-                                            },
-                                            cooldownManager -> {
-                                                cooldown.set(null);
-                                                stacks.set(0);
+                                if (pveMasterUpgrade2) {
+                                    if (cooldown.get() == null) {
+                                        RegularCooldown<OrderOfEviscerateData> regularCooldown = new RegularCooldown<>(
+                                                "Cloaked Engagement 1",
+                                                "ENGAGE 1",
+                                                OrderOfEviscerateData.class,
+                                                null,
+                                                wp,
+                                                CooldownTypes.BUFF,
+                                                cooldownManager -> {
                                                 },
-                                            8 * 20
-                                    ) {
-
-                                          @Override
-                                          public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                              return currentDamageValue * (1 + 0.4f * stacks.get());
-                                          }
-                                      };
-                                    cooldown.set(regularCooldown);
-                                    wp.getCooldownManager().addCooldown(regularCooldown);
-                                } else {
-                                    cooldown.get().setTicksLeft(8 * 20);
-                                    cooldown.get().setName("Cloaked Engagement " + stacks);
-                                    cooldown.get().setNameAbbreviation("ENGAGE " + stacks);
+                                                cooldownManager -> {
+                                                    cooldown.set(null);
+                                                    stacks.set(0);
+                                                },
+                                                8 * 20
+                                        ) {
+                                            @Override
+                                            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                                                return currentDamageValue * (1 + 0.4f * stacks.get());
+                                            }
+                                        };
+                                        cooldown.set(regularCooldown);
+                                        wp.getCooldownManager().addCooldown(regularCooldown);
+                                    } else {
+                                        cooldown.get().setTicksLeft(8 * 20);
+                                        cooldown.get().setName("Cloaked Engagement " + stacks);
+                                        cooldown.get().setNameAbbreviation("ENGAGE " + stacks);
+                                    }
                                 }
+
                             } else {
                                 wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
                                         .append(Component.text(" You killed your mark, ", NamedTextColor.GRAY))
