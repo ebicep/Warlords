@@ -61,8 +61,11 @@ public class Clairvoyance extends AbstractAbility implements PurpleAbilityIcon, 
 
                 })
         ).addModifier(Modifier.HEALING_MODIFY_ATTACKER, (event, currentHealValue) -> {
-                    // TODO contribution stats.healingIncreased += currentHealValue * healingIncreasePercent / 100f;
-                    currentHealValue.addMultiplicativeModifierMult(name, convertToMultiplicationDecimal(healingIncreasePercent));
+            currentHealValue.addMultiplicativeModifierMult(
+                    name,
+                    convertToMultiplicationDecimal(healingIncreasePercent),
+                    contribution -> stats.healingIncreased += Math.abs(contribution)
+            );
                 }
         ));
         return true;

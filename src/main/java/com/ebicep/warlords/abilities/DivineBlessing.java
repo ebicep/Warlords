@@ -130,8 +130,11 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                                                 },
                                                 21
                                         ).addModifier(Modifier.HEALING_MODIFY_SELF, (event, currentHealValue) -> {
-                                                    // TODO contribution stats.healingIncreased += newValue - currentHealValue;
-                                                    currentHealValue.addMultiplicativeModifierMult(name, convertToMultiplicationDecimal(hexHealingBonus));
+                                            currentHealValue.addMultiplicativeModifierMult(
+                                                    name,
+                                                    convertToMultiplicationDecimal(hexHealingBonus),
+                                                    contribution -> stats.healingIncreased += Math.abs(contribution)
+                                            );
                                                 }
                                         ));
                                     });
@@ -156,9 +159,12 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                 };
             }
         }.addModifier(Modifier.HEALING_MODIFY_SELF, (event, currentHealValue) -> {
-                    // TODO contribution stats.healingIncreased += newValue - currentHealValue;
                     if (new CooldownFilter<>(wp, RegularCooldown.class).filterCooldownFrom(wp).filterCooldownClass(MercifulHex.class).stream().count() >= maxStacks) {
-                        currentHealValue.addMultiplicativeModifierMult(name, convertToMultiplicationDecimal(hexHealingBonus));
+                        currentHealValue.addMultiplicativeModifierMult(
+                                name,
+                                convertToMultiplicationDecimal(hexHealingBonus),
+                                contribution -> stats.healingIncreased += Math.abs(contribution)
+                        );
                     }
                 }
         ));

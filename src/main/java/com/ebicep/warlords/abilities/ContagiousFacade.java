@@ -125,11 +125,11 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                 })
         );
         protectiveLayerCooldown.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
-                    // TODO contribution
-//                    float afterValue = currentDamageValue.getCalculatedValue() * convertToDivisionDecimal(damageAbsorption.getCalculatedValue());
-//                    float absorbedAmount = currentDamageValue.getCalculatedValue() - afterValue;
-//                    totalAbsorbed.addAndGet(absorbedAmount);
-                    currentDamageValue.addMultiplicativeModifierMult(name, convertToDivisionDecimal(damageAbsorption.getCalculatedValue()));
+            currentDamageValue.addMultiplicativeModifierMult(
+                    name,
+                    convertToDivisionDecimal(damageAbsorption.getCalculatedValue()),
+                    contribution -> totalAbsorbed.addAndGet(Math.abs(contribution))
+            );
                 }
         );
         if (pveMasterUpgrade2) {

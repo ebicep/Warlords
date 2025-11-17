@@ -74,6 +74,7 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
                 stats.hexesProlonged++;
             });
             boolean isSelf = wp == teammate;
+            int maxStacks = FortifyingHex.getFromHex(wp).getMaxStacks();
             teammate.getCooldownManager().addCooldown(new RegularCooldown<>(
                     name,
                     isSelf ? "SANCTUARY" : null,
@@ -135,7 +136,7 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
                                     .filterCooldownClass(FortifyingHex.FortifyingHexData.class)
                                     .stream()
                                     .count();
-                            if (hexStacks < FortifyingHex.getFromHex(wp).getMaxStacks()) {
+                            if (hexStacks < maxStacks) {
                                 return;
                             }
                             resurrected.add(warlordsEntity);
@@ -186,14 +187,14 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
                                 .filterCooldownClass(FortifyingHex.FortifyingHexData.class)
                                 .stream()
                                 .count();
-                        if (hexStacks < FortifyingHex.getFromHex(wp).getMaxStacks()) {
+                if (hexStacks < maxStacks) {
                             return;
                         }
-                        // TODO contribution + -10 priority
-//                        float currentDamage = currentDamageValue.getModifiedValue();
-//                        float afterValue = (float) (currentDamage * Math.pow(convertToDivisionDecimal(additionalDamageReduction), 3));
-//                        stats.damageReduced += currentDamage - afterValue;
-                        currentDamageValue.addMultiplicativeModifierMult(name, (float) Math.pow(convertToDivisionDecimal(additionalDamageReduction), 3));
+                currentDamageValue.addMultiplicativeModifierAdd(
+                        name,
+                        -additionalDamageReduction * maxStacks / 100f,
+                        contribution -> stats.damageReduced += Math.abs(contribution)
+                );
                     }
             ));
         });

@@ -62,11 +62,15 @@ public class CripplingStrike extends AbstractStrike<CripplingStrike, CripplingSt
                 return new PlayerNameData(Component.text("CRIP", NamedTextColor.RED), we -> we == from || (we.isTeammate(target) && we.getSpecClass().specType == SpecType.HEALER));
             }
         }.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
-                    // TODO contribution
-//                    if (cripplingStrike != null) {
-//                        cripplingStrike.stats.damageReduced += currentDamageValue - afterValue;
-//                    }
-                    currentDamageValue.addMultiplicativeModifierMult(name, crippleAmount);
+            currentDamageValue.addMultiplicativeModifierMult(
+                    name,
+                    crippleAmount,
+                    contribution -> {
+                        if (cripplingStrike != null) {
+                            cripplingStrike.stats.damageReduced += Math.abs(contribution);
+                        }
+                    }
+            );
                 }
         ));
         if (cripplingStrike != null) {

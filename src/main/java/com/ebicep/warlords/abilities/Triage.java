@@ -93,8 +93,11 @@ public class Triage extends AbstractAbility implements PurpleAbilityIcon, Listen
                 bonusHealingDurationTicks
         ).addModifier(Modifier.HEALING_MODIFY_ATTACKER, (event, currentHealValue) -> {
                     if (event.getWarlordsEntity() == lastFlagCarrier) {
-                        // TODO contribution stats.healingIncreased += currentHealValue * targetBonusHealing / 100f;
-                        currentHealValue.addMultiplicativeModifierMult(name, convertToMultiplicationDecimal(targetBonusHealing));
+                        currentHealValue.addMultiplicativeModifierMult(
+                                name,
+                                convertToMultiplicationDecimal(targetBonusHealing),
+                                contribution -> stats.healingIncreased += Math.abs(contribution)
+                        );
                     }
                 }
         ));

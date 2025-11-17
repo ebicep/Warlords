@@ -68,7 +68,7 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
         int duration = fromHex.getTickDuration();
         to.getCooldownManager().limitCooldowns(RegularCooldown.class, FortifyingHexData.class, maxStacks);
         FortifyingHexData data = new FortifyingHexData(fromHex.getDamageReduction().getCalculatedValue(), fromHex.getDamageReductionFlagMultiplier());
-        to.getCooldownManager().addCooldown(new RegularCooldown<>(
+        RegularCooldown<FortifyingHexData> cd = new RegularCooldown<>(
                 hexName,
                 "FHEX",
                 FortifyingHexData.class,
@@ -91,17 +91,16 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
             public TextColor customActionBarColor() {
                 return NamedTextColor.YELLOW;
             }
-        }.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
-                    //TODO contribution
-//                    float afterValue = currentDamageValue.getModifiedValue() * convertToDivisionDecimal(data.damageReduction * (event.getWarlordsEntity()
-//                                                                                                                                     .hasFlag() ? data.damageReductionFlagMultiplier : 1));
-//                    float absorbedAmount = currentDamageValue.getModifiedValue() - afterValue;
-//                    fromHex.getAbilityStats().damageReduced += absorbedAmount;
-                    currentDamageValue.addMultiplicativeModifierMult(hexName,
-                            convertToDivisionDecimal(data.damageReduction * (event.getWarlordsEntity().hasFlag() ? data.damageReductionFlagMultiplier : 1))
+        };
+        cd.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+            currentDamageValue.addMultiplicativeModifierAdd(
+                    hexName + " " + Integer.toHexString(cd.hashCode()),
+                    -data.damageReduction * (event.getWarlordsEntity().hasFlag() ? data.damageReductionFlagMultiplier : 1) / 100f,
+                    contribution -> fromHex.getAbilityStats().damageReduced += Math.abs(contribution)
                     );
                 }
-        ));
+        );
+        to.getCooldownManager().addCooldown(cd);
         from.playSound(from.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
         if (from != to) {
             from.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN

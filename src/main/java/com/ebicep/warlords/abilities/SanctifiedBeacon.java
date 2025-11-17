@@ -147,6 +147,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
                     nearBy.getCooldownManager().addCooldown(shadowGardenCooldown);
                 } else {
                     nearBy.getCooldownManager().removeCooldownByObject(beacon);
+                    boolean[] crit = {false};
                     nearBy.getCooldownManager().addCooldown(new RegularCooldown<>(
                             name,
                             null,
@@ -156,20 +157,26 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
                             CooldownTypes.ABILITY,
                             cooldownManager -> {},
                             6 // a little longer to make sure there's no gaps in the effect
-                    ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
-                                if (wp.isInPve()) {
-                                    currentDamageValue.addMultiplicativeModifierMult(name, convertToDivisionDecimal(damageReductionPve));
-                                }
-                            }
-                    ).addModifier(Modifier.DAMAGE_CRIT_MULTIPLIER_ATTACKER, (event, currentCritMultiplier) -> {
-                                currentCritMultiplier.addMultiplicativeModifierMult(name, convertToDivisionDecimal(critMultiplierReducedBy));
-                            }
                     ).addModifier(Modifier.DAMAGE_POST_CRIT_CALCULATION_ATTACKER, (event, currentDamageValue, isCrit, critChance, critMultiplier) -> {
-                                // TODO contribution
-                                //if (isCrit) {
-                                //                                stats.critsReduced++;
-                                //                                stats.critDamageReduced += currentDamageValue / convertToDivisionDecimal(critMultiplierReducedBy) - currentDamageValue;
-                                //                            }
+                        crit[0] = isCrit;
+                        if (isCrit) {
+                            stats.critsReduced++;
+                        }
+                            }
+                    ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                                if (crit[0]) { // TODO unscuff
+                                    currentDamageValue.addMultiplicativeModifierAdd(
+                                            name,
+                                            -critMultiplierReducedBy / 100f,
+                                            contribution -> stats.critDamageReduced += Math.abs(contribution)
+                                    );
+                                }
+                                if (wp.isInPve()) {
+                                    currentDamageValue.addMultiplicativeModifierMult(
+                                            name,
+                                            convertToDivisionDecimal(damageReductionPve)
+                                    );
+                                }
                             }
                     ));
                     if (pveMasterUpgrade2) {

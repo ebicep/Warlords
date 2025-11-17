@@ -241,7 +241,7 @@ public class DamageInstanceProcessor {
         isCrit = calculatedCritChance > 0 && crit <= calculatedCritChance && source.isCanCrit();
 
         if (isCrit) {
-            damageValue.addMultiplicativeModifierMult("Crit Multiplier", calculatedCritMultiplier / 100f);
+            damageValue.addMultiplicativeModifierAdd("Crit Multiplier", calculatedCritMultiplier / 100f - 1);
         }
 
         damageHealValueBeforeAllReduction = damageValue.getCalculatedValue();
@@ -520,6 +520,8 @@ public class DamageInstanceProcessor {
         float maxDamagePrevented = data.getMaxDamagePrevented();
         float preDamagePrevented = data.getDamagePrevented();
 
+        damageValue.callContributionCallbacks();
+
         if (preDamagePrevented + calculatedDamageValue > maxDamagePrevented) {
             handleInterveneBreak(interveneCooldown, data, intervenedBy, calculatedDamageValue, maxDamagePrevented, preDamagePrevented);
         } else {
@@ -657,6 +659,7 @@ public class DamageInstanceProcessor {
             togglePositiveBoosts(InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST, false);
         }
 
+        damageValue.refresh();
         debugMessage.append(InstanceDebugHoverable.LevelBuilder
                 .create(1)
                 .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.GREEN))
@@ -709,6 +712,8 @@ public class DamageInstanceProcessor {
         if (shield.getShieldHealth() <= 0) {
             cooldown.setTicksLeft(0);
         }
+
+        damageValue.callContributionCallbacks();
 
         if (shield.isBroken()) {
             handleBrokenShield(shield, cooldown, preShieldHealth);
@@ -849,6 +854,14 @@ public class DamageInstanceProcessor {
         for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
             abstractCooldown.applyModifiers(Modifier.DAMAGE_AFTER_ALL_SELF, m -> m.apply(event, damageValue, isCrit));
         }
+
+        damageValue.refresh();
+        debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                .create(1)
+                .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.GREEN))
+                .value(damageValue));
+
+        damageValue.callContributionCallbacks();
 
         boolean debt = warlordsEntity.getCooldownManager().hasCooldownFromName("Spirits' Respite");
         debugMessage.append(InstanceDebugHoverable.LevelBuilder

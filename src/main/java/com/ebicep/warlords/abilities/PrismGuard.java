@@ -135,11 +135,11 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                                     },
                                     tickDuration
                             ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
-                                        // TODO contribution
-//                                        float afterReduction = currentDamageValue.getModifiedValue() * convertToDivisionDecimal(damageReduction);
-//                                        float reducedAmount = currentDamageValue.getModifiedValue() - afterReduction;
-//                                        data.totalDamageReduced += reducedAmount;
-                                        currentDamageValue.addMultiplicativeModifierMult(name, convertToDivisionDecimal(damageReduction));
+                                currentDamageValue.addMultiplicativeModifierMult(
+                                        name,
+                                        convertToDivisionDecimal(damageReduction),
+                                        contribution -> data.totalDamageReduced += Math.abs(contribution)
+                                );
                                     }
                             ));
                         }
@@ -198,11 +198,13 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                                         if (Utils.isProjectile(event.getCause())) {
                                             if (!isInsideBubble.contains(event.getSource())) {
                                                 stats.timesProjectilesReduced++;
-                                                currentDamageValue.addMultiplicativeModifierMult(name, (100 - projectileDamageReduction) / 100f);
+                                                currentDamageValue.addMultiplicativeModifierMult(
+                                                        name,
+                                                        (100 - projectileDamageReduction) / 100f,
+                                                        contribution -> data.totalDamageReduced += Math.abs(contribution)
+                                                );
                                             }
                                         }
-                                        // TODO contribution
-//                                        data.totalDamageReduced += currentDamage - afterReduction;
                                     }
                             ));
                         }
@@ -255,10 +257,11 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                     if (pveMasterUpgrade) {
                         totalReduction += 10;
                     }
-                    // TODO contribution
-//                    float afterReduction = currentDamage * (100 - totalReduction) / 100f;
-//                    data.totalDamageReduced += currentDamage - afterReduction;
-                    currentDamageValue.addMultiplicativeModifierMult(name, (100 - totalReduction) / 100f);
+            currentDamageValue.addMultiplicativeModifierMult(
+                    name,
+                    (100 - totalReduction) / 100f,
+                    contribution -> data.totalDamageReduced += Math.abs(contribution)
+            );
                 }
         );
         if (pveMasterUpgrade) {

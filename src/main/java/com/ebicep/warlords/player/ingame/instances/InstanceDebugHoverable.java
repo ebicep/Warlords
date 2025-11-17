@@ -135,7 +135,7 @@ public class InstanceDebugHoverable {
         public LevelBuilder value(FloatModifiable floatModifiable) {
             ComponentBuilder builder = ComponentBuilder.create("", NamedTextColor.GOLD);
             List<Component> debugInfo = floatModifiable.getDebugInfo();
-            TextComponent spacer = Component.text(frontSpacing + " ".repeat(Math.max(0, (level + 1) * 2)));
+            TextComponent spacer = Component.text(frontSpacing + " ".repeat(Math.max(0, (level + 2) * 2)));
             for (Component component : debugInfo) {
                 builder.append(Component.newline()).append(spacer).append(component);
             }

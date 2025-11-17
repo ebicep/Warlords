@@ -104,11 +104,12 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
                 })
         );
         lastStandCooldown.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
-                    // TODO contribution
-//                    float afterValue = currentDamageValue.getModifiedValue() * convertToDivisionDecimal(selfDamageReductionPercent);
-//                    float absorbedAmount = currentDamageValue.getModifiedValue() - afterValue;
-//                    data.addAmountPrevented(absorbedAmount);
-                    currentDamageValue.addMultiplicativeModifierMult(name, convertToDivisionDecimal(selfDamageReductionPercent));
+            currentDamageValue.addMultiplicativeModifierMult(
+                    name,
+                    convertToDivisionDecimal(selfDamageReductionPercent),
+                    contribution -> data.addAmountPrevented(Math.abs(contribution))
+            );
+
                 }
         );
         if (pveMasterUpgrade) {
@@ -137,11 +138,11 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
                         );
                     }
             ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
-                        // TODO contribution
-//                        float newCurrentDamageValue = currentDamageValue.getModifiedValue() * convertToDivisionDecimal(teammateDamageReductionPercent);
-//                        float amountPrevented = currentDamageValue.getModifiedValue() - newCurrentDamageValue;
-//                        data.addAmountPrevented(amountPrevented);
-                        currentDamageValue.addMultiplicativeModifierMult(name, convertToDivisionDecimal(teammateDamageReductionPercent));
+                currentDamageValue.addMultiplicativeModifierMult(
+                        name,
+                        convertToDivisionDecimal(teammateDamageReductionPercent),
+                        contribution -> data.addAmountPrevented(Math.abs(contribution))
+                );
                     }
             ).addModifier(Modifier.DAMAGE_ON_SHIELD_ATTACKER, (event, currentDamageValue, isCrit) -> {
                         data.addAmountPrevented(amountPrevented);
