@@ -41,7 +41,6 @@ import org.bukkit.entity.Player;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 public class DamageInstanceProcessor {
@@ -82,7 +81,7 @@ public class DamageInstanceProcessor {
     private final float initialHealth;
     private final List<AbstractCooldown<?>> selfCooldownsDistinct;
     private final List<AbstractCooldown<?>> attackersCooldownsDistinct;
-    private final AtomicReference<WarlordsDamageHealingFinalEvent> finalEvent;
+    private WarlordsDamageHealingFinalEvent finalEvent;
     // Calculated values
     private float damageHealValueBeforeAllReduction;
     private float damageHealValueBeforeInterveneReduction;
@@ -115,7 +114,7 @@ public class DamageInstanceProcessor {
         this.initialHealth = warlordsEntity.getCurrentHealth();
         this.selfCooldownsDistinct = warlordsEntity.getCooldownManager().getCooldownsDistinct();
         this.attackersCooldownsDistinct = source.getCooldownManager().getCooldownsDistinct();
-        this.finalEvent = new AtomicReference<>(null);
+        this.finalEvent = null;
         this.damageValue = new FloatModifiable((float) ((Math.random() * (max - min)) + min));
     }
 
@@ -129,6 +128,7 @@ public class DamageInstanceProcessor {
         setupDebugMessages();
         applyBeforeReductionModifiers();
         calculateCriticals();
+        applySpecDamageResistance();
 
         if (handleSelfInflictedDamage()) {
             return Optional.empty();
@@ -138,19 +138,19 @@ public class DamageInstanceProcessor {
         applyBeforeInterveneModifiers();
 
         if (handleIntervene()) {
-            return Optional.ofNullable(finalEvent.get());
+            return Optional.ofNullable(finalEvent);
         }
 
         applyAfterInterveneModifiers();
 
         if (handleShield()) {
-            return Optional.ofNullable(finalEvent.get());
+            return Optional.ofNullable(finalEvent);
         }
 
         applyFinalDamage();
         applyEndModifiers();
 
-        return Optional.ofNullable(finalEvent.get());
+        return Optional.ofNullable(finalEvent);
     }
 
     private void applyPreEventModifiers() {
@@ -268,8 +268,6 @@ public class DamageInstanceProcessor {
                 .prefix(ComponentBuilder.create("Crit: ", NamedTextColor.GREEN))
                 .value(ComponentBuilder.create("" + isCrit, NamedTextColor.GOLD))
         );
-
-        applySpecDamageResistance();
     }
 
     private void applySpecDamageResistance() {
@@ -531,6 +529,92 @@ public class DamageInstanceProcessor {
         playInterveneEffects(intervenedBy, calculatedDamageValue);
     }
 
+    private void applyFinalDamage() {
+        debugMessage.appendTitle("Modify Damage After All", NamedTextColor.AQUA);
+
+        for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
+            abstractCooldown.applyModifiers(Modifier.DAMAGE_AFTER_ALL_SELF, m -> m.apply(event, damageValue, isCrit));
+        }
+
+        damageValue.refresh();
+        debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                .create(1)
+                .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.GREEN))
+                .value(damageValue));
+
+        damageValue.callContributionCallbacks();
+
+        boolean debt = warlordsEntity.getCooldownManager().hasCooldownFromName("Spirits' Respite");
+        debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                .create(1)
+                .prefix(ComponentBuilder.create("Debt: ", NamedTextColor.DARK_GREEN))
+                .value(ComponentBuilder.create("" + debt, NamedTextColor.GOLD))
+        );
+        warlordsEntity.getHitBy().put(source, 10);
+        warlordsEntity.cancelHealingPowerUp();
+
+        float finalDamageValue = damageValue.getCalculatedValue();
+        debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                .create(1)
+                .prefix(ComponentBuilder.create("Final Damage Value: ", NamedTextColor.GREEN))
+                .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(finalDamageValue), NamedTextColor.GOLD))
+        );
+
+        updateAbilityPools(finalDamageValue);
+
+        applyOnDamageModifiers(finalDamageValue);
+
+        float cappedDamage = Math.min(finalDamageValue,
+                warlordsEntity.getCurrentHealth() - (flags.contains(InstanceFlags.CANT_KILL) ? 1 : 0)
+        );
+        debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                .create(1)
+                .prefix(ComponentBuilder.create("Capped Damage Value: ", NamedTextColor.GREEN))
+                .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(cappedDamage), NamedTextColor.GOLD))
+        );
+
+        if (!flags.contains(InstanceFlags.NO_MESSAGE)) {
+            sendDamageMessage(finalDamageValue);
+        }
+
+        source.addDamage(cappedDamage, FlagHolder.isPlayerHolderFlag(warlordsEntity));
+        warlordsEntity.addDamageTaken(cappedDamage);
+        warlordsEntity.playHurtAnimation(source);
+        warlordsEntity.resetRegenTimer();
+        warlordsEntity.updateHealth();
+
+        if (source.isNoEnergyConsumption()) {
+            source.getRecordDamage().add(cappedDamage);
+        }
+
+        float newHealth = calculateNewHealth(debt, finalDamageValue);
+        debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                .create(1)
+                .prefix(ComponentBuilder.create("New Health: ", NamedTextColor.GREEN))
+                .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(newHealth), NamedTextColor.GOLD))
+        );
+        warlordsEntity.setCurrentHealth(newHealth);
+
+        if (newHealth <= 0) {
+            handleDeath(finalDamageValue);
+        } else {
+            if (!flags.contains(InstanceFlags.NO_HIT_SOUND) && warlordsEntity != source && finalDamageValue != 0) {
+                warlordsEntity.playHitSound(source);
+            }
+        }
+
+        finalEvent = new WarlordsDamageHealingFinalEvent(
+                event, flags, warlordsEntity, source, ability, cause,
+                initialHealth, damageHealValueBeforeAllReduction,
+                damageHealValueBeforeInterveneReduction, damageHealValueBeforeShieldReduction,
+                finalDamageValue, calculatedCritChance, calculatedCritMultiplier,
+                isCrit, true, WarlordsDamageHealingFinalEvent.FinalEventFlag.REGULAR
+        );
+
+        warlordsEntity.getSecondStats().addDamageHealingEventAsSelf(finalEvent);
+        source.getSecondStats().addDamageHealingEventAsAttacker(finalEvent);
+    }
+
     private void handleInterveneBreak(
             LinkedCooldown<Intervene.InterveneData> interveneCooldown, Intervene.InterveneData data,
             WarlordsEntity intervenedBy, float calculatedDamageValue,
@@ -566,39 +650,7 @@ public class DamageInstanceProcessor {
                 .value(overVeneDamage)
                 .showAsCrit(isCrit)
                 .flags(InstanceFlags.TRUE_DAMAGE)
-        ).ifPresent(finalEvent::set);
-    }
-
-    private void handleInterveneHold(
-            LinkedCooldown<Intervene.InterveneData> interveneCooldown, Intervene.InterveneData data,
-            WarlordsEntity intervenedBy, float calculatedDamageValue
-    ) {
-        float reducedDamage = calculatedDamageValue * (data.getIntervene().getDamageReduction() / 100f);
-
-        debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                .create(1)
-                .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.GREEN))
-                .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(reducedDamage), NamedTextColor.GOLD))
-        );
-
-        data.addDamagePrevented(damageHealValueBeforeInterveneReduction);
-        intervenedBy.addAbsorbed(damageHealValueBeforeInterveneReduction - reducedDamage);
-
-        intervenedBy.addInstance(InstanceBuilder
-                .damage()
-                .cause("Intervene")
-                .source(source)
-                .value(reducedDamage)
-                .showAsCrit(isCrit)
-        );
-
-        finalEvent.set(new WarlordsDamageHealingFinalEvent(
-                event, flags, warlordsEntity, source, ability, cause,
-                initialHealth, damageHealValueBeforeAllReduction,
-                damageHealValueBeforeInterveneReduction, 0, 0,
-                calculatedCritChance, calculatedCritMultiplier, isCrit, true,
-                WarlordsDamageHealingFinalEvent.FinalEventFlag.INTERVENED
-        ));
+        ).ifPresent(e -> finalEvent = e);
     }
 
     private void playInterveneEffects(WarlordsEntity intervenedBy, float calculatedDamageValue) {
@@ -722,6 +774,38 @@ public class DamageInstanceProcessor {
         }
     }
 
+    private void handleInterveneHold(
+            LinkedCooldown<Intervene.InterveneData> interveneCooldown, Intervene.InterveneData data,
+            WarlordsEntity intervenedBy, float calculatedDamageValue
+    ) {
+        float reducedDamage = calculatedDamageValue * (data.getIntervene().getDamageReduction() / 100f);
+
+        debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                .create(1)
+                .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.GREEN))
+                .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(reducedDamage), NamedTextColor.GOLD))
+        );
+
+        data.addDamagePrevented(damageHealValueBeforeInterveneReduction);
+        intervenedBy.addAbsorbed(damageHealValueBeforeInterveneReduction - reducedDamage);
+
+        intervenedBy.addInstance(InstanceBuilder
+                .damage()
+                .cause("Intervene")
+                .source(source)
+                .value(reducedDamage)
+                .showAsCrit(isCrit)
+        );
+
+        finalEvent = new WarlordsDamageHealingFinalEvent(
+                event, flags, warlordsEntity, source, ability, cause,
+                initialHealth, damageHealValueBeforeAllReduction,
+                damageHealValueBeforeInterveneReduction, 0, 0,
+                calculatedCritChance, calculatedCritMultiplier, isCrit, true,
+                WarlordsDamageHealingFinalEvent.FinalEventFlag.INTERVENED
+        );
+    }
+
     private void handleBrokenShield(Shield shield, RegularCooldown<Shield> cooldown, float preShieldHealth) {
         cooldown.getFrom().addAbsorbed(preShieldHealth);
         float newDamage = -shield.getShieldHealth();
@@ -736,36 +820,15 @@ public class DamageInstanceProcessor {
                            () -> newCustomFlags.add(new CustomInstanceFlags.InstanceShieldsInstanceFlag(new ArrayList<>(List.of(shield))))
                    );
 
-        finalEvent.set(addDamageInstance(new InstanceDebugHoverable(), new WarlordsDamageHealingEvent(
+        finalEvent = addDamageInstance(
+                new InstanceDebugHoverable(),
+                new WarlordsDamageHealingEvent(
                         warlordsEntity, source, cause, newDamage, newDamage,
                         isCrit ? 100 : 0, 100, true,
                         EnumSet.of(InstanceFlags.TRUE_DAMAGE, InstanceFlags.IGNORE_CRIT_MODIFIERS),
                         newCustomFlags, debugMessages
                 )
-        ).orElse(null));
-    }
-
-    private void handleActiveShield(Shield shield, RegularCooldown<Shield> cooldown) {
-        cooldown.getFrom().addAbsorbed(Math.abs(damageHealValueBeforeShieldReduction));
-        Shield.updateAbsorption(warlordsEntity);
-
-        sendShieldMessages(shield);
-        applyShieldModifiers();
-
-        warlordsEntity.playHurtAnimation(source);
-
-        if (!flags.contains(InstanceFlags.NO_HIT_SOUND)) {
-            warlordsEntity.playHitSound(source);
-        }
-
-        finalEvent.set(new WarlordsDamageHealingFinalEvent(
-                event, flags, warlordsEntity, source, ability, cause,
-                initialHealth, damageHealValueBeforeAllReduction,
-                damageHealValueBeforeInterveneReduction, damageHealValueBeforeShieldReduction,
-                damageHealValueBeforeShieldReduction, calculatedCritChance, calculatedCritMultiplier,
-                isCrit, true, WarlordsDamageHealingFinalEvent.FinalEventFlag.SHIELDED,
-                new ArrayList<>(List.of(new CustomInstanceFlags.InstanceShieldsInstanceFlag(List.of(shield))))
-        ));
+        ).orElse(null);
     }
 
     private void sendShieldMessages(Shield shield) {
@@ -848,91 +911,27 @@ public class DamageInstanceProcessor {
         }
     }
 
-    private void applyFinalDamage() {
-        debugMessage.appendTitle("Modify Damage After All", NamedTextColor.AQUA);
+    private void handleActiveShield(Shield shield, RegularCooldown<Shield> cooldown) {
+        cooldown.getFrom().addAbsorbed(Math.abs(damageHealValueBeforeShieldReduction));
+        Shield.updateAbsorption(warlordsEntity);
 
-        for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
-            abstractCooldown.applyModifiers(Modifier.DAMAGE_AFTER_ALL_SELF, m -> m.apply(event, damageValue, isCrit));
-        }
+        sendShieldMessages(shield);
+        applyShieldModifiers();
 
-        damageValue.refresh();
-        debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                .create(1)
-                .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.GREEN))
-                .value(damageValue));
-
-        damageValue.callContributionCallbacks();
-
-        boolean debt = warlordsEntity.getCooldownManager().hasCooldownFromName("Spirits' Respite");
-        debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                .create(1)
-                .prefix(ComponentBuilder.create("Debt: ", NamedTextColor.DARK_GREEN))
-                .value(ComponentBuilder.create("" + debt, NamedTextColor.GOLD))
-        );
-        warlordsEntity.getHitBy().put(source, 10);
-        warlordsEntity.cancelHealingPowerUp();
-
-        float finalDamageValue = damageValue.getCalculatedValue();
-        debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                .create(1)
-                .prefix(ComponentBuilder.create("Final Damage Value: ", NamedTextColor.GREEN))
-                .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(finalDamageValue), NamedTextColor.GOLD))
-        );
-
-        updateAbilityPools(finalDamageValue);
-
-        applyOnDamageModifiers(finalDamageValue);
-
-        warlordsEntity.resetRegenTimer();
-        warlordsEntity.updateHealth();
-
-        float cappedDamage = Math.min(finalDamageValue,
-                warlordsEntity.getCurrentHealth() - (flags.contains(InstanceFlags.CANT_KILL) ? 1 : 0)
-        );
-        debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                .create(1)
-                .prefix(ComponentBuilder.create("Capped Damage Value: ", NamedTextColor.GREEN))
-                .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(cappedDamage), NamedTextColor.GOLD))
-        );
-
-        if (!flags.contains(InstanceFlags.NO_MESSAGE)) {
-            sendDamageMessage(finalDamageValue);
-        }
-
-        source.addDamage(cappedDamage, FlagHolder.isPlayerHolderFlag(warlordsEntity));
-        warlordsEntity.addDamageTaken(cappedDamage);
         warlordsEntity.playHurtAnimation(source);
 
-        if (source.isNoEnergyConsumption()) {
-            source.getRecordDamage().add(cappedDamage);
+        if (!flags.contains(InstanceFlags.NO_HIT_SOUND)) {
+            warlordsEntity.playHitSound(source);
         }
 
-        float newHealth = calculateNewHealth(debt, finalDamageValue);
-        debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                .create(1)
-                .prefix(ComponentBuilder.create("New Health: ", NamedTextColor.GREEN))
-                .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(newHealth), NamedTextColor.GOLD))
-        );
-        warlordsEntity.setCurrentHealth(newHealth);
-
-        if (newHealth <= 0) {
-            handleDeath(finalDamageValue);
-        } else {
-            if (!flags.contains(InstanceFlags.NO_HIT_SOUND) && warlordsEntity != source && finalDamageValue != 0) {
-                warlordsEntity.playHitSound(source);
-            }
-        }
-
-        finalEvent.set(new WarlordsDamageHealingFinalEvent(
+        finalEvent = new WarlordsDamageHealingFinalEvent(
                 event, flags, warlordsEntity, source, ability, cause,
                 initialHealth, damageHealValueBeforeAllReduction,
                 damageHealValueBeforeInterveneReduction, damageHealValueBeforeShieldReduction,
-                finalDamageValue, calculatedCritChance, calculatedCritMultiplier,
-                isCrit, true, WarlordsDamageHealingFinalEvent.FinalEventFlag.REGULAR
-        ));
-
-        warlordsEntity.getSecondStats().addDamageHealingEventAsSelf(finalEvent.get());
-        source.getSecondStats().addDamageHealingEventAsAttacker(finalEvent.get());
+                damageHealValueBeforeShieldReduction, calculatedCritChance, calculatedCritMultiplier,
+                isCrit, true, WarlordsDamageHealingFinalEvent.FinalEventFlag.SHIELDED,
+                new ArrayList<>(List.of(new CustomInstanceFlags.InstanceShieldsInstanceFlag(List.of(shield))))
+        );
     }
 
     private void updateAbilityPools(float finalDamageValue) {

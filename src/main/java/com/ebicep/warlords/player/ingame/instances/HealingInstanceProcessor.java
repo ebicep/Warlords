@@ -57,6 +57,7 @@ public class HealingInstanceProcessor {
     private final float initialHealth;
     private final List<AbstractCooldown<?>> selfCooldownsDistinct;
     private final List<AbstractCooldown<?>> attackersCooldownsDistinct;
+    private WarlordsDamageHealingFinalEvent finalEvent;
     // Calculated values
     private float healValueBeforeReduction;
     private float healValueAfterModify;
@@ -82,6 +83,7 @@ public class HealingInstanceProcessor {
         this.initialHealth = warlordsEntity.getCurrentHealth();
         this.selfCooldownsDistinct = warlordsEntity.getCooldownManager().getCooldownsDistinct();
         this.attackersCooldownsDistinct = source.getCooldownManager().getCooldownsDistinct();
+        this.finalEvent = null;
         this.healValue = new FloatModifiable((float) ((Math.random() * (max - min)) + min));
     }
 
@@ -94,10 +96,8 @@ public class HealingInstanceProcessor {
 
         setupDebugMessages();
         applyBeforeReductionModifiers();
-        calculateCriticalHealing();
+        calculateCriticals();
         applyHealingModifiers();
-
-        healValueAfterModify = healValue.getCalculatedValue();
 
         if (!isValidHealingTarget()) {
             return Optional.empty();
@@ -109,14 +109,243 @@ public class HealingInstanceProcessor {
             return Optional.empty();
         }
 
-        sendHealingMessages(cappedHealValue);
+        applyFinalHealing(cappedHealValue);
+
+        return Optional.ofNullable(finalEvent);
+    }
+
+    private void applyFinalHealing(float cappedHealValue) {
+        healValue.callContributionCallbacks();
+
         applyOnHealModifiers(cappedHealValue);
-        applyHealingToEntity(cappedHealValue);
 
-        WarlordsDamageHealingFinalEvent finalEvent = createFinalEvent();
-        updateStatistics(finalEvent);
+        if (!flags.contains(InstanceFlags.NO_MESSAGE)) {
+            boolean isOverHeal = isOverHealing(cappedHealValue);
+            if (warlordsEntity == source) {
+                sendSelfHealingMessage(cappedHealValue, isOverHeal);
+            } else {
+                sendHealingOthersMessage(cappedHealValue, isOverHeal);
+            }
+        }
 
-        return Optional.of(finalEvent);
+        float maxHealth = calculateMaxHealth();
+        float actualHealing = Math.min(cappedHealValue, maxHealth - warlordsEntity.getCurrentHealth());
+        source.addHealing(actualHealing, FlagHolder.isPlayerHolderFlag(warlordsEntity));
+        warlordsEntity.setCurrentHealth(warlordsEntity.getCurrentHealth() + cappedHealValue);
+        warlordsEntity.updateHealth();
+
+        if (!flags.contains(InstanceFlags.NO_HIT_SOUND)) {
+            warlordsEntity.playHitSound(source);
+        }
+
+        finalEvent = new WarlordsDamageHealingFinalEvent(
+                event, flags, warlordsEntity, source, ability, cause,
+                initialHealth, healValueBeforeReduction,
+                healValueBeforeReduction, healValueBeforeReduction, healValueAfterModify,
+                calculatedCritChance, calculatedCritMultiplier, isCrit, false,
+                WarlordsDamageHealingFinalEvent.FinalEventFlag.REGULAR
+        );
+
+        warlordsEntity.getSecondStats().addDamageHealingEventAsSelf(finalEvent);
+        source.getSecondStats().addDamageHealingEventAsAttacker(finalEvent);
+    }
+
+    private boolean isOverHealing(float healAmount) {
+        float maxHealth = calculateMaxHealth();
+        float newHealth = healAmount + warlordsEntity.getCurrentHealth();
+
+        return maxHealth > warlordsEntity.getMaxHealth() &&
+                newHealth > warlordsEntity.getMaxBaseHealth();
+    }
+
+    /**
+     * Sends healing message for self-healing
+     */
+    private void sendSelfHealingMessage(float healValue, boolean isOverHeal) {
+        TextComponent.Builder message = buildHealingMessage(healValue);
+
+        TextComponent.Builder ownFeed = Component
+                .text()
+                .append(WarlordsEntity.GIVE_ARROW_GREEN)
+                .append(buildSelfHealText())
+                .append(message);
+
+        sendMessageBasedOnMode(warlordsEntity, ownFeed.build());
+    }
+
+    /**
+     * Sends healing message for healing others
+     */
+    private void sendHealingOthersMessage(float healValue, boolean isOverHeal) {
+        TextComponent.Builder healInfo = buildHealingMessage(healValue);
+
+        // Send message to healer (source)
+        TextComponent.Builder senderFeed = Component
+                .text()
+                .append(WarlordsEntity.GIVE_ARROW_GREEN)
+                .append(buildHealerText(isOverHeal))
+                .append(healInfo);
+
+        sendMessageBasedOnMode(source, senderFeed.build(), true);
+
+        // Send message to target (warlordsEntity)
+        TextComponent.Builder receiverFeed = Component
+                .text()
+                .append(WarlordsEntity.RECEIVE_ARROW_GREEN)
+                .append(buildReceiverText(isOverHeal))
+                .append(healInfo);
+
+        sendMessageBasedOnMode(warlordsEntity, receiverFeed.build(), true);
+    }
+
+    private void applyOnHealModifiers(float cappedHealValue) {
+        for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
+            abstractCooldown.applyModifiers(Modifier.HEALING_ON_HEAL_SELF,
+                    m -> m.apply(event, cappedHealValue, isCrit)
+            );
+        }
+
+        for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
+            abstractCooldown.applyModifiers(Modifier.HEALING_ON_HEAL_ATTACKER,
+                    m -> m.apply(event, cappedHealValue, isCrit)
+            );
+        }
+    }
+
+    private float calculateMaxHealth() {
+        float maxHealth = warlordsEntity.getHealth().getCalculatedValue();
+
+        if (canOverheal()) {
+            maxHealth *= 1.1f;
+        }
+
+        return maxHealth;
+    }
+
+    /**
+     * Builds the healing amount portion of the message
+     */
+    private TextComponent.Builder buildHealingMessage(float healValue) {
+        TextComponent.Builder secondHalf = Component.text().color(NamedTextColor.GRAY);
+        TextComponent.Builder healBuilder = Component.text().color(NamedTextColor.GREEN);
+
+        if (isCrit) {
+            healBuilder.decorate(TextDecoration.BOLD);
+        }
+
+        healBuilder.append(Component.text(Math.round(healValue)));
+        healBuilder.append(Component.text(isCrit ? "!" : ""));
+
+        if (isLastStandFromShield) {
+            healBuilder.append(Component.text(" Absorbed!"));
+        }
+
+        secondHalf.append(healBuilder);
+        secondHalf.append(Component.text(" health."));
+
+        return secondHalf;
+    }
+
+    /**
+     * Builds the text for self-healing message
+     */
+    private TextComponent.Builder buildSelfHealText() {
+        TextComponent.Builder hitBuilder = Component.text(" Your " + cause, NamedTextColor.GRAY).toBuilder();
+
+        if (isCrit) {
+            hitBuilder.append(Component.text(" critically"));
+        }
+
+        hitBuilder.append(Component.text(" healed you for "));
+
+        return hitBuilder;
+    }
+
+    /**
+     * Sends message to player based on their chat healing mode settings
+     */
+    private void sendMessageBasedOnMode(WarlordsEntity entity, Component message) {
+        sendMessageBasedOnMode(entity, message, false);
+    }
+
+    /**
+     * Builds the text for the healer's message when healing others
+     */
+    private TextComponent.Builder buildHealerText(boolean isOverHeal) {
+        TextComponent.Builder hitBuilder = Component.text(" Your " + cause, NamedTextColor.GRAY).toBuilder();
+
+        if (isCrit) {
+            hitBuilder.append(Component.text(" critically"));
+        }
+
+        if (isOverHeal) {
+            hitBuilder.append(Component.text(" overhealed " + warlordsEntity.getName() + " for "));
+        } else {
+            hitBuilder.append(Component.text(" healed " + warlordsEntity.getName() + " for "));
+        }
+
+        return hitBuilder;
+    }
+
+    /**
+     * Sends message to player based on their chat healing mode settings
+     *
+     * @param actionBar whether to send as action bar message
+     */
+    private void sendMessageBasedOnMode(WarlordsEntity entity, Component message, boolean actionBar) {
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(
+                entity.getUuid(),
+                entity instanceof WarlordsPlayer && entity.getEntity() instanceof Player
+        );
+
+        Component finalMessage = message.hoverEvent(HoverEvent.showText(debugMessage.getDebugMessage()));
+
+        switch (databasePlayer.getChatHealingMode()) {
+            case ALL -> {
+                if (actionBar) {
+                    entity.sendMessage(finalMessage, true);
+                } else {
+                    entity.sendMessage(finalMessage);
+                }
+            }
+            case CRITS_ONLY -> {
+                if (isCrit) {
+                    if (actionBar) {
+                        entity.sendMessage(finalMessage, true);
+                    } else {
+                        entity.sendMessage(finalMessage);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Builds the text for the receiver's message when being healed by others
+     */
+    private TextComponent.Builder buildReceiverText(boolean isOverHeal) {
+        TextComponent.Builder hitBuilder = Component.text(" " + source.getName() + "'s " + cause, NamedTextColor.GRAY).toBuilder();
+
+        if (isCrit) {
+            hitBuilder.append(Component.text(" critically"));
+        }
+
+        if (isOverHeal) {
+            hitBuilder.append(Component.text(" overhealed you for "));
+        } else {
+            hitBuilder.append(Component.text(" healed you for "));
+        }
+
+        return hitBuilder;
+    }
+
+    private boolean canOverheal() {
+        boolean overhealSelf = warlordsEntity == source && flags.contains(InstanceFlags.CAN_OVERHEAL_SELF);
+        boolean overhealOthers = warlordsEntity != source &&
+                warlordsEntity.isTeammate(source) &&
+                flags.contains(InstanceFlags.CAN_OVERHEAL_OTHERS);
+
+        return overhealSelf || overhealOthers;
     }
 
     private void applyPreEventModifiers() {
@@ -161,15 +390,23 @@ public class HealingInstanceProcessor {
         }
     }
 
-    private void calculateCriticalHealing() {
-        calculateCritical();
+    private void calculateCriticals() {
+        critChance.refresh();
+        critMultiplier.refresh();
 
-        healValueBeforeReduction = healValue.getCalculatedValue();
+        debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                .create(1)
+                .prefix(ComponentBuilder.create("Crit Chance: ", NamedTextColor.GREEN))
+                .value(critChance));
+        debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                .create(1)
+                .prefix(ComponentBuilder.create("Crit Multiplier: ", NamedTextColor.GREEN))
+                .value(critMultiplier));
 
-        logCalculatedHeal();
+        applyCriticalHit();
     }
 
-    private void calculateCritical() {
+    private void applyCriticalHit() {
         double crit = ThreadLocalRandom.current().nextDouble(100);
         calculatedCritChance = critChance.getCalculatedValue();
         calculatedCritMultiplier = critMultiplier.getCalculatedValue();
@@ -178,9 +415,9 @@ public class HealingInstanceProcessor {
         if (isCrit) {
             healValue.addMultiplicativeModifierMult("Crit Multiplier", calculatedCritMultiplier / 100f);
         }
-    }
 
-    private void logCalculatedHeal() {
+        healValueBeforeReduction = healValue.getCalculatedValue();
+
         debugMessage.appendTitle("Calculated Heal", NamedTextColor.AQUA);
         debugMessage.append(InstanceDebugHoverable.LevelBuilder
                 .create(1)
@@ -217,10 +454,13 @@ public class HealingInstanceProcessor {
             abstractCooldown.applyModifiers(Modifier.HEALING_MODIFY_ATTACKER, m -> m.apply(event, healValue));
         }
 
+        healValue.refresh();
         debugMessage.append(InstanceDebugHoverable.LevelBuilder
                 .create(1)
                 .prefix(ComponentBuilder.create("Heal Value: ", NamedTextColor.GREEN))
                 .value(healValue));
+
+        healValueAfterModify = healValue.getCalculatedValue();
     }
 
     private void toggleNegativeBoosts(InstanceFlags f, boolean addListener) {
@@ -280,252 +520,6 @@ public class HealingInstanceProcessor {
         }
 
         return healValueAfterModify;
-    }
-
-    private float calculateMaxHealth() {
-        float maxHealth = warlordsEntity.getHealth().getCalculatedValue();
-
-        if (canOverheal()) {
-            maxHealth *= 1.1f;
-        }
-
-        return maxHealth;
-    }
-
-    private boolean canOverheal() {
-        boolean overhealSelf = warlordsEntity == source && flags.contains(InstanceFlags.CAN_OVERHEAL_SELF);
-        boolean overhealOthers = warlordsEntity != source &&
-                warlordsEntity.isTeammate(source) &&
-                flags.contains(InstanceFlags.CAN_OVERHEAL_OTHERS);
-
-        return overhealSelf || overhealOthers;
-    }
-
-    private void sendHealingMessages(float cappedHealValue) {
-        boolean isOverheal = isOverhealing(cappedHealValue);
-
-        if (warlordsEntity == source) {
-            sendSelfHealingMessage(cappedHealValue, isOverheal);
-        } else {
-            sendHealingOthersMessage(cappedHealValue, isOverheal);
-        }
-    }
-
-    private boolean isOverhealing(float healAmount) {
-        float maxHealth = calculateMaxHealth();
-        float newHealth = healAmount + warlordsEntity.getCurrentHealth();
-
-        return maxHealth > warlordsEntity.getMaxHealth() &&
-                newHealth > warlordsEntity.getMaxBaseHealth();
-    }
-
-    private void applyOnHealModifiers(float cappedHealValue) {
-        for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
-            abstractCooldown.applyModifiers(Modifier.HEALING_ON_HEAL_SELF,
-                    m -> m.apply(event, cappedHealValue, isCrit)
-            );
-        }
-
-        for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
-            abstractCooldown.applyModifiers(Modifier.HEALING_ON_HEAL_ATTACKER,
-                    m -> m.apply(event, cappedHealValue, isCrit)
-            );
-        }
-    }
-
-    private void applyHealingToEntity(float cappedHealValue) {
-        float maxHealth = calculateMaxHealth();
-        float actualHealing = Math.min(cappedHealValue, maxHealth - warlordsEntity.getCurrentHealth());
-
-        source.addHealing(actualHealing, FlagHolder.isPlayerHolderFlag(warlordsEntity));
-        warlordsEntity.setCurrentHealth(warlordsEntity.getCurrentHealth() + cappedHealValue);
-
-        if (!flags.contains(InstanceFlags.NO_HIT_SOUND)) {
-            warlordsEntity.playHitSound(source);
-        }
-    }
-
-    private WarlordsDamageHealingFinalEvent createFinalEvent() {
-        return new WarlordsDamageHealingFinalEvent(
-                event,
-                flags,
-                warlordsEntity,
-                source,
-                ability,
-                cause,
-                initialHealth,
-                healValueBeforeReduction,
-                healValueBeforeReduction,
-                healValueBeforeReduction,
-                healValueAfterModify,
-                calculatedCritChance,
-                calculatedCritMultiplier,
-                isCrit,
-                false,
-                WarlordsDamageHealingFinalEvent.FinalEventFlag.REGULAR
-        );
-    }
-
-    private void updateStatistics(WarlordsDamageHealingFinalEvent finalEvent) {
-        warlordsEntity.getSecondStats().addDamageHealingEventAsSelf(finalEvent);
-        source.getSecondStats().addDamageHealingEventAsAttacker(finalEvent);
-    }
-
-    /**
-     * Sends healing message for self-healing
-     */
-    private void sendSelfHealingMessage(float healValue, boolean isOverHeal) {
-        TextComponent.Builder message = buildHealingMessage(healValue);
-
-        TextComponent.Builder ownFeed = Component
-                .text()
-                .append(WarlordsEntity.GIVE_ARROW_GREEN)
-                .append(buildSelfHealText())
-                .append(message);
-
-        sendMessageBasedOnMode(warlordsEntity, ownFeed.build());
-    }
-
-    /**
-     * Sends healing message for healing others
-     */
-    private void sendHealingOthersMessage(float healValue, boolean isOverHeal) {
-        TextComponent.Builder healInfo = buildHealingMessage(healValue);
-
-        // Send message to healer (source)
-        TextComponent.Builder senderFeed = Component
-                .text()
-                .append(WarlordsEntity.GIVE_ARROW_GREEN)
-                .append(buildHealerText(isOverHeal))
-                .append(healInfo);
-
-        sendMessageBasedOnMode(source, senderFeed.build(), true);
-
-        // Send message to target (warlordsEntity)
-        TextComponent.Builder receiverFeed = Component
-                .text()
-                .append(WarlordsEntity.RECEIVE_ARROW_GREEN)
-                .append(buildReceiverText(isOverHeal))
-                .append(healInfo);
-
-        sendMessageBasedOnMode(warlordsEntity, receiverFeed.build(), true);
-    }
-
-    /**
-     * Builds the healing amount portion of the message
-     */
-    private TextComponent.Builder buildHealingMessage(float healValue) {
-        TextComponent.Builder secondHalf = Component.text().color(NamedTextColor.GRAY);
-        TextComponent.Builder healBuilder = Component.text().color(NamedTextColor.GREEN);
-
-        if (isCrit) {
-            healBuilder.decorate(TextDecoration.BOLD);
-        }
-
-        healBuilder.append(Component.text(Math.round(healValue)));
-        healBuilder.append(Component.text(isCrit ? "!" : ""));
-
-        if (isLastStandFromShield) {
-            healBuilder.append(Component.text(" Absorbed!"));
-        }
-
-        secondHalf.append(healBuilder);
-        secondHalf.append(Component.text(" health."));
-
-        return secondHalf;
-    }
-
-    /**
-     * Builds the text for self-healing message
-     */
-    private TextComponent.Builder buildSelfHealText() {
-        TextComponent.Builder hitBuilder = Component.text(" Your " + cause, NamedTextColor.GRAY).toBuilder();
-
-        if (isCrit) {
-            hitBuilder.append(Component.text(" critically"));
-        }
-
-        hitBuilder.append(Component.text(" healed you for "));
-
-        return hitBuilder;
-    }
-
-    /**
-     * Builds the text for the healer's message when healing others
-     */
-    private TextComponent.Builder buildHealerText(boolean isOverHeal) {
-        TextComponent.Builder hitBuilder = Component.text(" Your " + cause, NamedTextColor.GRAY).toBuilder();
-
-        if (isCrit) {
-            hitBuilder.append(Component.text(" critically"));
-        }
-
-        if (isOverHeal) {
-            hitBuilder.append(Component.text(" overhealed " + warlordsEntity.getName() + " for "));
-        } else {
-            hitBuilder.append(Component.text(" healed " + warlordsEntity.getName() + " for "));
-        }
-
-        return hitBuilder;
-    }
-
-    /**
-     * Builds the text for the receiver's message when being healed by others
-     */
-    private TextComponent.Builder buildReceiverText(boolean isOverHeal) {
-        TextComponent.Builder hitBuilder = Component.text(" " + source.getName() + "'s " + cause, NamedTextColor.GRAY).toBuilder();
-
-        if (isCrit) {
-            hitBuilder.append(Component.text(" critically"));
-        }
-
-        if (isOverHeal) {
-            hitBuilder.append(Component.text(" overhealed you for "));
-        } else {
-            hitBuilder.append(Component.text(" healed you for "));
-        }
-
-        return hitBuilder;
-    }
-
-    /**
-     * Sends message to player based on their chat healing mode settings
-     */
-    private void sendMessageBasedOnMode(WarlordsEntity entity, Component message) {
-        sendMessageBasedOnMode(entity, message, false);
-    }
-
-    /**
-     * Sends message to player based on their chat healing mode settings
-     *
-     * @param actionBar whether to send as action bar message
-     */
-    private void sendMessageBasedOnMode(WarlordsEntity entity, Component message, boolean actionBar) {
-        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(
-                entity.getUuid(),
-                entity instanceof WarlordsPlayer && entity.getEntity() instanceof Player
-        );
-
-        Component finalMessage = message.hoverEvent(HoverEvent.showText(debugMessage.getDebugMessage()));
-
-        switch (databasePlayer.getChatHealingMode()) {
-            case ALL -> {
-                if (actionBar) {
-                    entity.sendMessage(finalMessage, true);
-                } else {
-                    entity.sendMessage(finalMessage);
-                }
-            }
-            case CRITS_ONLY -> {
-                if (isCrit) {
-                    if (actionBar) {
-                        entity.sendMessage(finalMessage, true);
-                    } else {
-                        entity.sendMessage(finalMessage);
-                    }
-                }
-            }
-        }
     }
 
 }
