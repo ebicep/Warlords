@@ -9,6 +9,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.paladin.crusader.InspiringPresenceBranch;
@@ -86,7 +87,6 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
             }
         })
         ) {
-
             @Override
             public float addEnergyGainPerTick(float energyGainPerTick) {
                 data.addEnergyGivenFromStrikeAndPresence(energyPerSecond / 20d);
@@ -95,9 +95,11 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
 
             @Override
             public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                boolean isReflectionDamage = event.getFlags().add(InstanceFlags.REFLECTIVE_DAMAGE);
+                int energyAmount = isReflectionDamage ? 15 : 8;
                 if (pveMasterUpgrade2) {
-                    wp.addEnergy(wp, "Resilient Presence", 15);
-                    teammatesNear.forEach(teammate -> teammate.addEnergy(teammate, "Resilient Presence", 15));
+                    wp.addEnergy(wp, "Resilient Presence", energyAmount);
+                    teammatesNear.forEach(teammate -> teammate.addEnergy(teammate, "Resilient Presence", energyAmount));
                 }
             }
         });

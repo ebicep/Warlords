@@ -68,12 +68,20 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
         Utils.playGlobalSound(wp.getLocation(), "paladin.avengerswrath.activation", 2, 1);
         wp.getCooldownManager().removeCooldown(AvengersWrathData.class, false);
         AvengersWrathData data = new AvengersWrathData();
-        wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "WRATH", AvengersWrathData.class, data, wp, CooldownTypes.ABILITY, cooldownManager -> {
-        }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-            if (ticksElapsed % 4 == 0) {
-                EffectUtils.displayParticle(Particle.EFFECT, wp.getLocation().add(0, 1.2, 0), 6, 0.3F, 0.1F, 0.3F, 0.2F);
-            }
-        })
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                name,
+                "WRATH",
+                AvengersWrathData.class,
+                data,
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {},
+                tickDuration,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed % 4 == 0) {
+                        EffectUtils.displayParticle(Particle.EFFECT, wp.getLocation().add(0, 1.2, 0), 6, 0.3F, 0.1F, 0.3F, 0.2F);
+                    }
+                })
         ) {
 
             @Override
