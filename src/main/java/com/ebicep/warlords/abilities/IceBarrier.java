@@ -17,10 +17,7 @@ import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -65,7 +62,7 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
                 },
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    if (ticksElapsed % 5 != 0) {
+                    if (ticksElapsed % 10 != 0) {
                         return;
                     }
                     if (pveMasterUpgrade2) {
@@ -106,9 +103,6 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
                             EffectUtils.playHelixAnimation(particleLoc.add(0, -1.25, 0), 6, Particle.FIREWORK, 1, 8);
                             for (WarlordsEntity we : PlayerFilter.entitiesAround(wp, 6, 6, 6).aliveEnemiesOf(wp).closestFirst(wp)) {
                                 we.setDamageResistance(we.getSpec().getDamageResistance() - 1);
-                                if (we instanceof WarlordsNPC npc) {
-                                    npc.setDamageResistance(npc.getSpec().getDamageResistance() - 1);
-                                }
                                 we.addSpeedModifier(wp, "Ice Barrier Slowness", -75, 20);
                             }
                         }

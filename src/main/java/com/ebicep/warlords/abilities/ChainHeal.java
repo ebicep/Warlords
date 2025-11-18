@@ -7,11 +7,9 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityTargetEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
-import com.ebicep.warlords.pve.mobs.flags.NoTargetAbilities;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.earthwarden.ChainHealBranch;
@@ -184,7 +182,7 @@ public class ChainHeal extends AbstractChain<ChainHeal, ChainHeal.ChainHealStats
                 if (event.getCause().isEmpty() || event.getCause().equals("Time Warp")) {
                     return currentCritChance;
                 }
-                return currentCritChance + 20;
+                return currentCritChance + 10;
             }
 
             @Override
@@ -192,7 +190,7 @@ public class ChainHeal extends AbstractChain<ChainHeal, ChainHeal.ChainHealStats
                 if (event.getCause().isEmpty() || event.getCause().equals("Time Warp")) {
                     return currentCritMultiplier;
                 }
-                return currentCritMultiplier + 40;
+                return currentCritMultiplier + 20;
             }
         });
     }

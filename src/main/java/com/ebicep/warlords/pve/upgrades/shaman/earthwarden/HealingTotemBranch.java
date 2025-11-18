@@ -28,7 +28,7 @@ public class HealingTotemBranch extends AbstractUpgradeBranch<HealingTotem> {
                 """
                         Double the duration of Healing Totem and reduce the decremental healing by 15%.
 
-                        All enemies within the radius of Healing Totem are perpetually slowed and crippled, reducing their movement speed and damage dealt by 50%. Additionally, reduce their passive damage resistance by 5% for each second they are in range of your Healing Totem.""",
+                        All enemies within the radius of Healing Totem are perpetually slowed and crippled, reducing their movement speed and damage dealt by 50%. Additionally, reduce their passive damage resistance by 2% for each second they are in range of your Healing Totem.""",
                 50000,
                 () -> {
                     ability.setHealingIncrement(ability.getHealingIncrement() - 15);

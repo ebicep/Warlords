@@ -13,10 +13,7 @@ import com.ebicep.warlords.player.ingame.motionsystem.MotionModifier;
 import com.ebicep.warlords.player.ingame.motionsystem.MotionModifierBuilder;
 import com.ebicep.warlords.player.ingame.motionsystem.MotionSystem;
 import com.ebicep.warlords.pve.upgrades.*;
-import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles.LegendaryHuntsman;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
-import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 
 public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
 
@@ -100,15 +97,15 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
                 "Avenger's Strike - Master Upgrade",
                 """
                         +1 Block Radius.
+                        +30 additional energy cost.
                         
-                        Strike crit chance is increased by 15%.
+                        Strike damage is increased by 50%, and crit chance is increased by 15%.
                         
-                        If there are at least 7 enemies within 10 blocks, strike damage is increased by 25% and movement speed is increased by 20%.
-                        
-                        If there are fewer, strike damage is further increased by 50%.
+                        If there are at fewer than 7 enemies within 10 blocks, strike damage is increased by an additional 50% and movement speed is increased by 20%.
                         """,
                 50000,
                 () -> {
+                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", 30);
                     ability.getHitBoxRadius().addAdditiveModifier("Master Upgrade Branch", 1);
                     ability.getDamageValues().getStrikeDamage().critChance().addAdditiveModifier("Master Upgrade Branch", 15);
                     MotionSystem calculateSpeed = warlordsPlayer.getSpeed();

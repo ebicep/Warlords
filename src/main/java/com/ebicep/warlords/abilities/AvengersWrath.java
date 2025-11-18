@@ -114,6 +114,9 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
                     stats.extraTargetsStruck++;
                     data.extraTargetsStruck++;
                 }
+                if (event.getFlags().contains(InstanceFlags.DUPLICATE_AVENGER_STRIKE)) {
+                    return;
+                }
                 for (WarlordsEntity wrathTarget : PlayerFilter
                         .entitiesAround(warlordsEntity, hitRadius, hitRadius, hitRadius)
                         .aliveEnemiesOf(wp)
@@ -135,6 +138,20 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
                             .critMultiplier(event.getCritMultiplier())
                             .flags(flags)
                     );
+                    if (pveMasterUpgrade2) {
+                        warlordsEntity.addInstance(InstanceBuilder
+                                .damage()
+                                .cause("Avenger's Strike")
+                                .source(wp)
+                                .min(event.getMin())
+                                .max(event.getMax())
+                                .critChance(event.getCritChance())
+                                .critMultiplier(event.getCritMultiplier())
+                                .flags(flags)
+                        );
+                        stats.extraTargetsStruck++;
+                        data.extraTargetsStruck++;
+                    }
                     Bukkit.getPluginManager().callEvent(new WarlordsStrikeEvent(wp, AvengersWrath.this, wrathTarget));
                     wrathTarget.subtractEnergy(name, 10, true);
                 }
