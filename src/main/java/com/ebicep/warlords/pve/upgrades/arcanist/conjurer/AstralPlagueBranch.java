@@ -26,8 +26,7 @@ public class AstralPlagueBranch extends AbstractUpgradeBranch<AstralPlague> {
                 "Astral Plague - Master Upgrade",
                 """
                         +5s Duration
-                        
-                        For the duration of Astral Plague, increase Crit Multiplier by 60%.
+                        For the duration of Astral Plague, increase damage from Poisonous Hex stacks by an additional 400%.
                         """,
                 50000,
                 () -> {
@@ -38,7 +37,7 @@ public class AstralPlagueBranch extends AbstractUpgradeBranch<AstralPlague> {
                 "Crimson Catastrophe",
                 "Astral Plague - Master Upgrade",
                 """
-                        For the duration of Astral Plague, reduce the cooldown of Soulfire Beam by 40% and increase the damage by 70%.
+                        For the duration of Astral Plague, if the first target hit by Soulfire Beam has max stacks reduce the cooldown of Soulfire Beam by 50%.
                         """,
                 50000,
                 () -> {

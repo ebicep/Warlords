@@ -18,6 +18,7 @@ public enum InstanceFlags {
     IGNORE_FERVENT_TITLE,
     DUPLICATE_AVENGER_STRIKE,
     NO_HEALING_ORBS,
+    FIRST_HIT,
 
     IGNORE_SELF_RES,
     NO_DISMOUNT,
