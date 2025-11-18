@@ -8,6 +8,7 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
@@ -84,8 +85,10 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
         );
         presenceCooldown.addModifier(Modifier.DAMAGE_ON_DAMAGE_SELF, (event, currentDamageValue, isCrit) -> {
                     if (pveMasterUpgrade2) {
-                        wp.addEnergy(wp, "Resilient Presence", 15);
-                        teammatesNear.forEach(teammate -> teammate.addEnergy(teammate, "Resilient Presence", 15));
+                        boolean isReflectionDamage = event.getFlags().add(InstanceFlags.REFLECTIVE_DAMAGE);
+                        int energyAmount = isReflectionDamage ? 15 : 8;
+                        wp.addEnergy(wp, "Resilient Presence", energyAmount);
+                        teammatesNear.forEach(teammate -> teammate.addEnergy(teammate, "Resilient Presence", energyAmount));
                     }
                 }
         );

@@ -174,7 +174,8 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                                     for (OrderOfEviscerate orderOfEviscerate : wp.getAbilitiesMatching(OrderOfEviscerate.class)) {
                                         orderOfEviscerate.subtractCurrentCooldown(reduction);
                                     }
-                                    if (pveMasterUpgrade2 && cooldown.get() == null) {
+                                    if (pveMasterUpgrade2) {
+                                    if (cooldown.get() == null) {
                                         RegularCooldown<OrderOfEviscerateData> regularCooldown = new RegularCooldown<>(
                                                 "Cloaked Engagement 1",
                                                 "ENGAGE 1",
@@ -199,8 +200,9 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                                     } else {
                                         cooldown.get().setTicksLeft(8 * 20);
                                         cooldown.get().setName("Cloaked Engagement " + stacks);
-                                        cooldown.get().setNameAbbreviation("ENGAGE " + stacks);
-                                    }
+                                        cooldown.get().setNameAbbreviation("ENGAGE " + stacks);}
+                                }
+
                                 } else {
                                     wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
                                             .append(Component.text(" You killed your mark, ", NamedTextColor.GRAY))

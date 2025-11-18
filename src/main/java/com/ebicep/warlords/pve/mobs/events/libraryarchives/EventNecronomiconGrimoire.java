@@ -173,7 +173,7 @@ public class EventNecronomiconGrimoire extends AbstractMob implements BossMinion
                 .damage()
                 .cause("Smite")
                 .source(warlordsNPC)
-                .value(targetWarlordsEntity.getMaxHealth() + 1)
+                .value(targetWarlordsEntity.getMaxHealth() * 0.95f)
                 .flags(InstanceFlags.TRUE_DAMAGE)
         ).ifPresent(event -> {
             if (!event.isDead()) {
