@@ -58,7 +58,7 @@ public class LegendaryFervent extends AbstractLegendaryWeapon implements Passive
     @Override
     public TextComponent getPassiveEffect() {
         return Component.text("Gain a " + DAMAGE_BOOST + "% damage boost for " + DURATION + " seconds when you lose " + NumberFormat.addCommas(DAMAGE_TO_TAKE) +
-                                        " health (Post damage reduction). Maximum 3 stacks.",
+                                        " health (Pre damage reduction). Maximum 3 stacks.",
                                 NamedTextColor.GRAY
                         )
                         .append(Component.newline())
@@ -108,7 +108,7 @@ public class LegendaryFervent extends AbstractLegendaryWeapon implements Passive
                 if (event.isHealingInstance()) {
                     return;
                 }
-                if (damageTaken.addAndGet(event.getValue()) >= DAMAGE_TO_TAKE) {
+                if (damageTaken.addAndGet(event.getValueBeforeAllReduction()) >= DAMAGE_TO_TAKE) {
                     damageTaken.set(0);
                     damageBoost.set(Math.min(MAX_STACKS, damageBoost.get() + 1));
 
