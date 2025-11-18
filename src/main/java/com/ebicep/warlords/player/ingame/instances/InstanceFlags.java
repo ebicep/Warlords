@@ -2,6 +2,7 @@ package com.ebicep.warlords.player.ingame.instances;
 
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
+import java.util.EnumSet;
 import java.util.function.Consumer;
 
 public enum InstanceFlags {
@@ -48,6 +49,9 @@ public enum InstanceFlags {
     AURA_OF_RESTORATION_SOOTHING_ELIXIR,
 
     ;
+
+    public static final EnumSet<InstanceFlags> NO_FLAGS = EnumSet.noneOf(InstanceFlags.class);
+    public static final EnumSet<InstanceFlags> TRUE_DAMAGE_IGNORE_CRIT = EnumSet.of(InstanceFlags.TRUE_DAMAGE, InstanceFlags.IGNORE_CRIT_MODIFIERS);
 
     public final Consumer<FloatModifiable.FloatModifier> ignorePositiveAdditive = floatModifier -> {
         if (floatModifier.getModifier() > 0) {

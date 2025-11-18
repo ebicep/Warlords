@@ -8,7 +8,6 @@ import net.kyori.adventure.text.format.NamedTextColor;
 
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 public class FloatModifiable {
 
@@ -25,7 +24,7 @@ public class FloatModifiable {
     public FloatModifiable(float baseValue) {
         this.baseValue = baseValue;
         this.filters.put("Base", new BaseFilter());
-        this.marginalContributions.put("Base", new HashMap<>());
+        this.marginalContributions.put("Base", new HashMap<>(4));
         refresh();
     }
 
@@ -44,7 +43,9 @@ public class FloatModifiable {
     private void processOverridingModifiers() {
         marginalContributions.values().forEach(Map::clear);
 
-        filters.forEach((filterName, filter) -> {
+        for (Map.Entry<String, FloatModifiableFilter> entry : filters.entrySet()) {
+            String filterName = entry.getKey();
+            FloatModifiableFilter filter = entry.getValue();
             Map<String, Float> filterContributions = marginalContributions.computeIfAbsent(filterName, k -> new HashMap<>());
             for (FloatModifier modifier : overridingModifiers) {
                 if (filter.overridingFilter(modifier)) {
@@ -55,7 +56,7 @@ public class FloatModifiable {
                     break;
                 }
             }
-        });
+        }
 
         if (!onRefresh.isEmpty()) {
             onRefresh.values().forEach(Runnable::run);
@@ -63,7 +64,9 @@ public class FloatModifiable {
     }
 
     private void processNormalModifiers() {
-        filters.forEach((filterName, filter) -> {
+        for (Map.Entry<String, FloatModifiableFilter> entry : filters.entrySet()) {
+            String filterName = entry.getKey();
+            FloatModifiableFilter filter = entry.getValue();
             float additiveSum = calculateAdditiveSum(filter);
             float multiplicativeAdditiveProduct = calculateMultiplicativeAdditive(filter);
             float multiplicativeMultiplicativeProduct = calculateMultiplicativeMultiplicative(filter);
@@ -125,7 +128,7 @@ public class FloatModifiable {
 
                 filterContributions.put(modifier.getLog(), finalValue - valueWithout);
             }
-        });
+        }
     }
 
     private float calculateAdditiveSum(FloatModifiableFilter filter) {
@@ -385,16 +388,19 @@ public class FloatModifiable {
 
     private List<Component> getDebugInfo(List<FloatModifier> modifiers) {
         Map<String, Float> contributions = marginalContributions.getOrDefault("Base", Collections.emptyMap());
-        return modifiers.stream()
-                        .map(floatModifier -> ComponentBuilder
-                                .create()
-                                .text(" - ", NamedTextColor.WHITE)
-                                .append(floatModifier.getDebugInfo())
-                                .text(" (", NamedTextColor.GRAY)
-                                .text(NumberFormat.formatOptionalHundredths(contributions.getOrDefault(floatModifier.getLog(), 0f)), NamedTextColor.GOLD)
-                                .text(")", NamedTextColor.GRAY)
-                                .build())
-                        .collect(Collectors.toList());
+        List<Component> result = new ArrayList<>(modifiers.size());
+        for (FloatModifier floatModifier : modifiers) {
+            result.add(ComponentBuilder
+                    .create()
+                    .text(" - ", NamedTextColor.WHITE)
+                    .append(floatModifier.getDebugInfo())
+                    .text(" (", NamedTextColor.GRAY)
+                    .text(NumberFormat.formatOptionalHundredths(contributions.getOrDefault(floatModifier.getLog(), 0f)), NamedTextColor.GOLD)
+                    .text(")", NamedTextColor.GRAY)
+                    .build()
+            );
+        }
+        return result;
     }
 
     public void clearModifiers() {

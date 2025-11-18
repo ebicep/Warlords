@@ -853,23 +853,28 @@ public class DamageInstanceProcessor {
         cooldown.getFrom().addAbsorbed(preShieldHealth);
         float newDamage = -shield.getShieldHealth();
 
-        List<CustomInstanceFlags> newCustomFlags = new ArrayList<>(customFlags);
-        customFlags.stream()
-                   .filter(CustomInstanceFlags.InstanceShieldsInstanceFlag.class::isInstance)
-                   .map(CustomInstanceFlags.InstanceShieldsInstanceFlag.class::cast)
-                   .findAny()
-                   .ifPresentOrElse(
-                           customInstanceFlags -> customInstanceFlags.shields().add(shield),
-                           () -> newCustomFlags.add(new CustomInstanceFlags.InstanceShieldsInstanceFlag(new ArrayList<>(List.of(shield))))
-                   );
+        CustomInstanceFlags.InstanceShieldsInstanceFlag flag = null;
+        for (CustomInstanceFlags f : customFlags) {
+            if (f instanceof CustomInstanceFlags.InstanceShieldsInstanceFlag instanceFlag) {
+                flag = instanceFlag;
+                break;
+            }
+        }
+        if (flag != null) {
+            flag.shields().add(shield);
+        } else {
+            List<Shield> shieldList = new ArrayList<>(1);
+            shieldList.add(shield);
+            customFlags.add(new CustomInstanceFlags.InstanceShieldsInstanceFlag(shieldList));
+        }
 
         finalEvent = addDamageInstance(
                 new InstanceDebugHoverable(),
                 new WarlordsDamageHealingEvent(
                         warlordsEntity, source, cause, newDamage, newDamage,
                         isCrit ? 100 : 0, 100, true,
-                        EnumSet.of(InstanceFlags.TRUE_DAMAGE, InstanceFlags.IGNORE_CRIT_MODIFIERS),
-                        newCustomFlags, debugMessages
+                        InstanceFlags.TRUE_DAMAGE_IGNORE_CRIT,
+                        customFlags, debugMessages
                 )
         ).orElse(null);
     }
@@ -967,13 +972,17 @@ public class DamageInstanceProcessor {
             warlordsEntity.playHitSound(source);
         }
 
+        List<Shield> shieldList = new ArrayList<>(1);
+        shieldList.add(shield);
+        ArrayList<CustomInstanceFlags> customInstanceFlags = new ArrayList<>(1);
+        customInstanceFlags.add(new CustomInstanceFlags.InstanceShieldsInstanceFlag(shieldList));
         finalEvent = new WarlordsDamageHealingFinalEvent(
                 event, flags, warlordsEntity, source, ability, cause,
                 initialHealth, damageHealValueBeforeAllReduction,
                 damageHealValueBeforeInterveneReduction, damageHealValueBeforeShieldReduction,
                 damageHealValueBeforeShieldReduction, calculatedCritChance, calculatedCritMultiplier,
                 isCrit, true, WarlordsDamageHealingFinalEvent.FinalEventFlag.SHIELDED,
-                new ArrayList<>(List.of(new CustomInstanceFlags.InstanceShieldsInstanceFlag(List.of(shield))))
+                customInstanceFlags
         );
     }
 

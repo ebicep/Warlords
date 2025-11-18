@@ -345,12 +345,11 @@ public class HealingInstanceProcessor {
     }
 
     private boolean canOverheal() {
-        boolean overhealSelf = warlordsEntity == source && flags.contains(InstanceFlags.CAN_OVERHEAL_SELF);
-        boolean overhealOthers = warlordsEntity != source &&
-                warlordsEntity.isTeammate(source) &&
-                flags.contains(InstanceFlags.CAN_OVERHEAL_OTHERS);
-
-        return overhealSelf || overhealOthers;
+        return warlordsEntity == source && flags.contains(InstanceFlags.CAN_OVERHEAL_SELF) // self
+                ||
+                warlordsEntity != source && // others
+                        warlordsEntity.isTeammate(source) &&
+                        flags.contains(InstanceFlags.CAN_OVERHEAL_OTHERS);
     }
 
     private void applyPreEventModifiers() {
