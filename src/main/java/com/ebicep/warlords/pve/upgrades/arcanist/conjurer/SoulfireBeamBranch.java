@@ -7,6 +7,9 @@ import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SoulfireBeamBranch extends AbstractUpgradeBranch<SoulfireBeam> {
 
     @Override
@@ -14,6 +17,7 @@ public class SoulfireBeamBranch extends AbstractUpgradeBranch<SoulfireBeam> {
         Value.RangedValueCritable hexDamage = ability.getDamageValues().getBeamDamage();
         hexDamage.min().addMultiplicativeModifierAdd("PvE", .3f);
         hexDamage.max().addMultiplicativeModifierAdd("PvE", .3f);
+        ability.getDamageValues().setDamageMultipliers(new ArrayList<>(List.of(1.0f, 1.25f, 1.5f, 2.0f, 3f, 4f)));
     }
 
     public SoulfireBeamBranch(AbilityTree abilityTree, SoulfireBeam ability) {
@@ -27,34 +31,33 @@ public class SoulfireBeamBranch extends AbstractUpgradeBranch<SoulfireBeam> {
         UpgradeTreeBuilder
                 .create(abilityTree, this)
                 .addUpgradeDamage(ability.getDamageValues().getBeamDamage(), 7.5f)
-                .addUpgradeHitBox(ability, 2f, 4)
                 .addTo(treeB);
 
         masterUpgrade = new Upgrade(
                 "Eradicating Beam",
                 "Soulfire Beam - Master Upgrade",
                 """
-                        Increase the damage multiplier on the first 8 max stack targets by 500%.
+                        Triple the damage multiplier based on hex stacks.
                         """,
                 50000,
                 () -> {
+                    ability.getDamageValues().getDamageMultipliers().replaceAll(aFloat -> (aFloat - 1) * 3 + 1);
                 }
         );
         masterUpgrade2 = new Upgrade(
                 "Volatile Beam",
                 "Soulfire Beam - Master Upgrade",
                 """
-                        +3 Additional Block Radius
+                        +1 Additional Block Radius
                         +15 Block range
                         
-                        Soulfire Beam fires two additional beams, additionally double the damage increase based on hex stacks.
+                        Soulfire Beam fires two additional beams.
                         """,
                 50000,
                 () -> {
-                    ability.getHitBoxRadius().addAdditiveModifier("Master Upgrade Branch", 3);
+                    ability.getHitBoxRadius().addAdditiveModifier("Master Upgrade Branch", 1);
                     ability.getMaxDistance().addAdditiveModifier("Master Upgrade Branch", 15);
                     ability.setShotsFiredAtATime(3);
-                    ability.getDamageValues().getDamageMultipliers().replaceAll(aFloat -> aFloat * 2);
                 }
         );
     }
