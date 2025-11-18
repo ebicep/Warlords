@@ -57,15 +57,15 @@ public class AvengersStrike extends AbstractStrike<AvengersStrike, AvengersStrik
                     multiplier += 0.4f;
                 }
             } else if (pveMasterUpgrade2) {
-                int enemiesNearBy = Math.toIntExact(PlayerFilter
+                int enemiesNearby = Math.toIntExact(PlayerFilter
                         .entitiesAround(wp, 10, 10, 10)
                         .aliveEnemiesOf(wp)
                         .stream().count()
                 );
-                if (enemiesNearBy >= 7) {
-                    multiplier += 0.25f;
-                } else {
+                if (enemiesNearby >= 7) {
                     multiplier += 0.5f;
+                } else {
+                    multiplier += 1f;
                 }
             }
         }

@@ -30,7 +30,7 @@ public class ChainHealBranch extends AbstractUpgradeBranch<ChainHeal> {
                         +5 Blocks cast and bounce range.
                         +1 Ally hit
                         
-                        Increase the Crit Chance by 20% and Crit Multiplier by 40% of all healed allies for 8 seconds.""",
+                        Increase the Crit Chance by 10% and Crit Multiplier by 20% of all healed allies for 8 seconds.""",
                 50000,
                 () -> {
                     ability.setBounceRange(ability.getBounceRange() + 5);
