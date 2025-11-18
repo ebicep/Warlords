@@ -12,6 +12,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 public class Arachnophobia implements FieldEffect {
+
     @Override
     public String getName() {
         return "Arachnophobia";
@@ -40,12 +41,14 @@ public class Arachnophobia implements FieldEffect {
                         return;
                     }
                     if (event.getCause().contains("Strike")) {
-                        event.setMin(event.getMin() * 3);
-                        event.setMax(event.getMax() * 3);
+                        event.applyToMinMax(floatModifiable ->
+                                floatModifiable.addMultiplicativeModifierMult(getName(), 3)
+                        );
                     }
                 } else if (event.isHealingInstance()) {
-                    event.setMin(event.getMin() * 1.15f);
-                    event.setMax(event.getMax() * 1.15f);
+                    event.applyToMinMax(floatModifiable ->
+                            floatModifiable.addMultiplicativeModifierMult(getName(), 1.15f)
+                    );
                 }
             }
 

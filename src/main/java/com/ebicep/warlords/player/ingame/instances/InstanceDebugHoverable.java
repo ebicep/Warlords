@@ -37,14 +37,22 @@ public class InstanceDebugHoverable {
         namedValue("Source", event.getSource().getName());
         grayBar();
         namedValue("Ability", event.getCause());
-        grayDash();
-        namedValue("Min", event.getMin());
-        grayBar();
-        namedValue("Max", event.getMax());
-        grayBar();
-        namedValue("Crit Chance", event.getCritChance());
-        grayBar();
-        namedValue("Crit Multiplier", event.getCritMultiplier());
+        append(InstanceDebugHoverable.LevelBuilder
+                .create(1)
+                .prefix(ComponentBuilder.create("Min: ", NamedTextColor.LIGHT_PURPLE))
+                .value(event.getMin()));
+        append(InstanceDebugHoverable.LevelBuilder
+                .create(1)
+                .prefix(ComponentBuilder.create("Max: ", NamedTextColor.LIGHT_PURPLE))
+                .value(event.getMax()));
+        append(InstanceDebugHoverable.LevelBuilder
+                .create(1)
+                .prefix(ComponentBuilder.create("Crit Chance: ", NamedTextColor.LIGHT_PURPLE))
+                .value(event.getCritChance()));
+        append(InstanceDebugHoverable.LevelBuilder
+                .create(1)
+                .prefix(ComponentBuilder.create("Crit Multiplier: ", NamedTextColor.LIGHT_PURPLE))
+                .value(event.getCritMultiplier()));
         grayDash();
         namedValue("Flags", "" + event.getFlags());
     }
@@ -134,9 +142,13 @@ public class InstanceDebugHoverable {
 
         public LevelBuilder value(FloatModifiable floatModifiable) {
             ComponentBuilder builder = ComponentBuilder.create("", NamedTextColor.GOLD);
-            List<Component> debugInfo = floatModifiable.getDebugInfo();
             TextComponent spacer = Component.text(frontSpacing + " ".repeat(Math.max(0, (level + 2) * 2)));
-            for (Component component : debugInfo) {
+            List<Component> debugInfo = floatModifiable.getDebugInfo();
+            if (!debugInfo.isEmpty()) {
+                builder.append(debugInfo.getFirst());
+            }
+            for (int i = 1; i < debugInfo.size(); i++) {
+                Component component = debugInfo.get(i);
                 builder.append(Component.newline()).append(spacer).append(component);
             }
             this.value = builder.build();

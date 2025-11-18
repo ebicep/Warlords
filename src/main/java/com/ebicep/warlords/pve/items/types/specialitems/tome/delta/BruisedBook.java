@@ -54,10 +54,10 @@ public class BruisedBook extends SpecialDeltaTome implements CraftsInto {
                 false
         ).addModifier(Modifier.HEALING_BEFORE_VARIABLE_SET_ATTACKER, event -> {
                     if (!event.getWarlordsEntity().equals(warlordsPlayer)) {
-                        if (ThreadLocalRandom.current().nextDouble() < .6) {
-                            event.setMin(event.getMax());
+                        if (ThreadLocalRandom.current().nextDouble() <= .6) {
+                            event.getMin().setBaseValue(event.getMax().getCalculatedValue());
                         } else {
-                            event.setMax(event.getMin());
+                            event.getMax().setBaseValue(event.getMin().getCalculatedValue());
                         }
                     }
                 }

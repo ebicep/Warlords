@@ -5,6 +5,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.player.ingame.instances.type.CustomInstanceFlags;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
@@ -14,6 +15,7 @@ import javax.annotation.Nullable;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 /**
  *
@@ -27,20 +29,19 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
     }
 
     private final InstanceBuilder.InstanceType instanceType;
-
-    private WarlordsEntity source;
-    @Nullable
-    private AbstractAbility ability;
-    private String cause;
-    private float min;
-    private float max;
-    private float critChance;
-    private float critMultiplier;
     private final EnumSet<InstanceFlags> flags;
     private final List<CustomInstanceFlags> customFlags;
-    private List<TextComponent> debugMessages;
     @Nullable
     private final UUID uuid;
+    private WarlordsEntity source;
+    @Nullable
+    private final AbstractAbility ability;
+    private final String cause;
+    private final FloatModifiable min;
+    private final FloatModifiable max;
+    private final FloatModifiable critChance;
+    private final FloatModifiable critMultiplier;
+    private final List<TextComponent> debugMessages;
     private boolean cancelled;
 
     public WarlordsDamageHealingEvent(
@@ -56,35 +57,11 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
             List<CustomInstanceFlags> customFlags,
             List<TextComponent> debugMessages
     ) {
-        this(player, source, cause, min, max, critChance, critMultiplier, instanceTypeDamage, flags, customFlags, debugMessages, null);
-    }
-
-    public WarlordsDamageHealingEvent(
-            WarlordsEntity player,
-            WarlordsEntity source,
-            String cause,
-            float min,
-            float max,
-            float critChance,
-            float critMultiplier,
-            boolean instanceTypeDamage,
-            EnumSet<InstanceFlags> flags,
-            List<CustomInstanceFlags> customFlags,
-            List<TextComponent> debugMessages,
-            @Nullable UUID uuid
-    ) {
-        super(player);
-        this.source = source;
-        this.cause = cause;
-        this.min = min;
-        this.max = max;
-        this.critChance = critChance;
-        this.critMultiplier = critMultiplier;
-        this.instanceType = instanceTypeDamage ? InstanceBuilder.InstanceType.DAMAGE : InstanceBuilder.InstanceType.HEALING;
-        this.flags = flags;
-        this.customFlags = customFlags;
-        this.debugMessages = debugMessages;
-        this.uuid = uuid;
+        this(instanceTypeDamage ? InstanceBuilder.InstanceType.DAMAGE : InstanceBuilder.InstanceType.HEALING,
+                player, source, null, cause,
+                min, max, critChance, critMultiplier,
+                flags, customFlags, debugMessages, null
+        );
     }
 
     public WarlordsDamageHealingEvent(
@@ -108,109 +85,34 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
         this.ability = ability;
         this.cause = cause;
         this.flags = flags;
-        this.min = min;
-        this.max = max;
-        this.critChance = critChance;
-        this.critMultiplier = critMultiplier;
+        this.min = new FloatModifiable(min);
+        this.max = new FloatModifiable(max);
+        this.critChance = new FloatModifiable(critChance);
+        this.critMultiplier = new FloatModifiable(critMultiplier);
         this.customFlags = customFlags;
         this.debugMessages = debugMessages;
         this.uuid = uuid;
     }
 
-    public WarlordsEntity getSource() {
-        return source;
-    }
-
-    public void setSource(WarlordsEntity source) {
-        this.source = source;
-    }
-
-    @Nullable
-    public AbstractAbility getAbility() {
-        return ability;
-    }
-
-    public String getCause() {
-        return cause;
-    }
-
-    public void setCause(String cause) {
-        this.cause = cause;
-    }
-
-    public float getMin() {
-        return min;
-    }
-
-    public void setMin(float min) {
-        if (flags.contains(InstanceFlags.TRUE_DAMAGE)) {
-            return;
-        }
-        this.min = min;
-    }
-
-    public void setMinForce(float min) {
-        this.min = min;
-    }
-
-    public float getMax() {
-        return max;
-    }
-
-    public void setMax(float max) {
-        if (flags.contains(InstanceFlags.TRUE_DAMAGE)) {
-            return;
-        }
-        this.max = max;
-    }
-
-    public void setMaxForce(float max) {
-        this.max = max;
-    }
-
-    public float getCritChance() {
-        return critChance;
-    }
-
-    public void setCritChance(float critChance) {
-        this.critChance = critChance;
-    }
-
-    public float getCritMultiplier() {
-        return critMultiplier;
-    }
-
-    public void setCritMultiplier(float critMultiplier) {
-        this.critMultiplier = critMultiplier;
-    }
-
-    public boolean isDamageInstance() {
-        return instanceType == InstanceBuilder.InstanceType.DAMAGE;
-    }
-
-    public boolean isHealingInstance() {
-        return instanceType == InstanceBuilder.InstanceType.HEALING;
-    }
-
-    public InstanceBuilder.InstanceType getInstanceType() {
-        return instanceType;
-    }
-
-    public EnumSet<InstanceFlags> getFlags() {
-        return flags;
-    }
-
-    public List<CustomInstanceFlags> getCustomFlags() {
-        return customFlags;
-    }
-
-    public List<TextComponent> getDebugMessages() {
-        return debugMessages;
-    }
-
-    @Nullable
-    public UUID getUUID() {
-        return uuid;
+    public WarlordsDamageHealingEvent(
+            WarlordsEntity player,
+            WarlordsEntity source,
+            String cause,
+            float min,
+            float max,
+            float critChance,
+            float critMultiplier,
+            boolean instanceTypeDamage,
+            EnumSet<InstanceFlags> flags,
+            List<CustomInstanceFlags> customFlags,
+            List<TextComponent> debugMessages,
+            @Nullable UUID uuid
+    ) {
+        this(instanceTypeDamage ? InstanceBuilder.InstanceType.DAMAGE : InstanceBuilder.InstanceType.HEALING,
+                player, source, null, cause,
+                min, max, critChance, critMultiplier,
+                flags, customFlags, debugMessages, uuid
+        );
     }
 
     @Override
@@ -242,6 +144,73 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
                 ", isDamageInstance=" + instanceType +
                 ", cancelled=" + cancelled +
                 '}';
+    }
+
+    public WarlordsEntity getSource() {
+        return source;
+    }
+
+    public void setSource(WarlordsEntity source) {
+        this.source = source;
+    }
+
+    @Nullable
+    public AbstractAbility getAbility() {
+        return ability;
+    }
+
+    public String getCause() {
+        return cause;
+    }
+
+    public void applyToMinMax(Consumer<FloatModifiable> consumer) {
+        consumer.accept(min);
+        consumer.accept(max);
+    }
+
+    public FloatModifiable getMin() {
+        return min;
+    }
+
+    public FloatModifiable getMax() {
+        return max;
+    }
+
+    public FloatModifiable getCritChance() {
+        return critChance;
+    }
+
+    public FloatModifiable getCritMultiplier() {
+        return critMultiplier;
+    }
+
+    public boolean isDamageInstance() {
+        return instanceType == InstanceBuilder.InstanceType.DAMAGE;
+    }
+
+    public boolean isHealingInstance() {
+        return instanceType == InstanceBuilder.InstanceType.HEALING;
+    }
+
+    public InstanceBuilder.InstanceType getInstanceType() {
+        return instanceType;
+    }
+
+    public EnumSet<InstanceFlags> getFlags() {
+        return flags;
+    }
+
+    public List<CustomInstanceFlags> getCustomFlags() {
+        return customFlags;
+    }
+
+    public List<TextComponent> getDebugMessages() {
+        return debugMessages;
+    }
+
+    @Nullable
+    public UUID getUUID() {
+        return uuid;
     }
 
 }

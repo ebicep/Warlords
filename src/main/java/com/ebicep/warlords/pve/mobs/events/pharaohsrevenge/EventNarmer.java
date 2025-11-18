@@ -77,6 +77,21 @@ public class EventNarmer extends AbstractMob implements BossMob {
     }
 
     @Override
+    public Mob getMobRegistry() {
+        return Mob.EVENT_NARMER;
+    }
+
+    @Override
+    public Component getDescription() {
+        return Component.text("Unifier of Worlds", NamedTextColor.YELLOW);
+    }
+
+    @Override
+    public TextColor getColor() {
+        return NamedTextColor.RED;
+    }
+
+    @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
 
@@ -145,8 +160,9 @@ public class EventNarmer extends AbstractMob implements BossMob {
             @EventHandler
             public void onDamageHealEvent(WarlordsDamageHealingEvent event) {
                 if (event.getSource().equals(warlordsNPC)) {
-                    event.setMin(event.getMin() * hpDamageIncrease);
-                    event.setMax(event.getMax() * hpDamageIncrease);
+                    event.applyToMinMax(floatModifiable ->
+                            floatModifiable.addMultiplicativeModifierMult(name, hpDamageIncrease)
+                    );
                 } else if (event.getWarlordsEntity().equals(warlordsNPC)) {
                     Location loc = warlordsNPC.getLocation();
                     if (!ancestors.isEmpty()) {
@@ -300,7 +316,8 @@ public class EventNarmer extends AbstractMob implements BossMob {
                                                                        .withColor(Color.WHITE)
                                                                        .with(FireworkEffect.Type.STAR)
                                                                        .withTrail()
-                                                                       .build());
+                                                                       .build()
+        );
 
         if (timesMegaEarthQuakeActivated >= 2) {
             ChallengeAchievements.checkForAchievement(killer, ChallengeAchievements.NEAR_DEATH_EXPERIENCE);
@@ -311,24 +328,10 @@ public class EventNarmer extends AbstractMob implements BossMob {
         }
     }
 
-    @Override
-    public TextColor getColor() {
-        return NamedTextColor.RED;
-    }
-
-    @Override
-    public Mob getMobRegistry() {
-        return Mob.EVENT_NARMER;
-    }
-
-    @Override
-    public Component getDescription() {
-        return Component.text("Unifier of Worlds", NamedTextColor.YELLOW);
-    }
-
     private static class GroundShred extends AbstractPveAbility implements Damages<GroundShred.DamageValues> {
 
         private final int earthQuakeRadius = 12;
+        private final DamageValues damageValues = new DamageValues();
 
         public GroundShred() {
             super(AbstractAbilityBuilder.create("narmerEventGroundShred").pve());
@@ -356,8 +359,6 @@ public class EventNarmer extends AbstractMob implements BossMob {
             return true;
         }
 
-        private final DamageValues damageValues = new DamageValues();
-
         @Override
         public DamageValues getDamageValues() {
             return damageValues;
@@ -376,4 +377,5 @@ public class EventNarmer extends AbstractMob implements BossMob {
         }
 
     }
+
 }

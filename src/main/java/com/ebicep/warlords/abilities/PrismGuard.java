@@ -238,8 +238,9 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                             return;
                         }
                         if (event.getCause().isEmpty()) {
-                            event.setMin(event.getMin() * .75f);
-                            event.setMax(event.getMax() * .75f);
+                            event.applyToMinMax(floatModifiable ->
+                                    floatModifiable.addMultiplicativeModifierMult(name, .75f)
+                            );
                         }
                     }
                 };

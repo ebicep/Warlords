@@ -54,9 +54,9 @@ public class ScrollOfUncertainty extends SpecialDeltaTome implements CraftsInto 
         ).addModifier(Modifier.DAMAGE_BEFORE_VARIABLE_SET_ATTACKER, event -> {
                     if (!event.getWarlordsEntity().equals(warlordsPlayer)) {
                         if (ThreadLocalRandom.current().nextDouble() <= .6) {
-                            event.setMin(event.getMax());
+                            event.getMin().setBaseValue(event.getMax().getCalculatedValue());
                         } else {
-                            event.setMax(event.getMin());
+                            event.getMax().setBaseValue(event.getMin().getCalculatedValue());
                         }
                     }
                 }

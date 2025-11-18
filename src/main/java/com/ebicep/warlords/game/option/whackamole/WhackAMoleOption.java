@@ -32,6 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class WhackAMoleOption implements PveOption, Listener {
+
     private static final Mob[] MOLES = {
             Mob.WHACK_A_MOLE_ARMOR_STAND
     };
@@ -46,26 +47,18 @@ public class WhackAMoleOption implements PveOption, Listener {
         this.holes.addAll(holes);
     }
 
-    private void resetHole(Hole hole) {
-        hole.init(game);
-        Mob mob = MOLES[(int) (ThreadLocalRandom.current().nextDouble() * MOLES.length)];
-        AbstractMob abstractMob = mob.createMob(hole.getBottomLocation());
-        game.addNPC(abstractMob.toNPC(game, Team.RED, warlordsNPC -> warlordsNPC.getMob().onSpawn(this)));
-        hole.setMob(abstractMob);
-        this.mobs.put(abstractMob, new WhackAMoleMobData(ticksElapsed, hole));
-    }
-
     @Override
     public void register(@Nonnull Game game) {
         this.game = game;
         game.registerEvents(this);
         game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(10, "score") {
-            @Nonnull
-            @Override
-            public List<Component> computeLines(@Nullable WarlordsPlayer player) {
-                return Collections.singletonList(Component.text("Score: ").append(Component.text(score, NamedTextColor.GREEN)));
-            }
-        });
+                    @Nonnull
+                    @Override
+                    public List<Component> computeLines(@Nullable WarlordsPlayer player) {
+                        return Collections.singletonList(Component.text("Score: ").append(Component.text(score, NamedTextColor.GREEN)));
+                    }
+                }
+        );
     }
 
     @Override
@@ -85,6 +78,15 @@ public class WhackAMoleOption implements PveOption, Listener {
                 }
             }
         }.runTaskTimer(0, 0);
+    }
+
+    private void resetHole(Hole hole) {
+        hole.init(game);
+        Mob mob = MOLES[(int) (ThreadLocalRandom.current().nextDouble() * MOLES.length)];
+        AbstractMob abstractMob = mob.createMob(hole.getBottomLocation());
+        game.addNPC(abstractMob.toNPC(game, Team.RED, warlordsNPC -> warlordsNPC.getMob().onSpawn(this)));
+        hole.setMob(abstractMob);
+        this.mobs.put(abstractMob, new WhackAMoleMobData(ticksElapsed, hole));
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -131,10 +133,26 @@ public class WhackAMoleOption implements PveOption, Listener {
             event.setCancelled(true);
             return;
         }
-        event.setMin(100);
-        event.setMax(100);
-        event.setCritChance(0);
-        event.setCritMultiplier(100);
+        event.applyToMinMax(floatModifiable ->
+                floatModifiable.addOverridingModifier("WackAMole", 100)
+        );
+        event.getCritChance().addOverridingModifier("WackAMole", 0);
+        event.getCritMultiplier().addOverridingModifier("WackAMole", 100);
+    }
+
+    public static class WhackAMoleMobData extends MobData {
+
+        private final Hole hole;
+
+        public WhackAMoleMobData(int spawnTick, Hole hole) {
+            super(spawnTick);
+            this.hole = hole;
+        }
+
+        public Hole getHole() {
+            return hole;
+        }
+
     }
 
     @Override
@@ -181,17 +199,6 @@ public class WhackAMoleOption implements PveOption, Listener {
         return null;
     }
 
-    public static class WhackAMoleMobData extends MobData {
 
-        private final Hole hole;
 
-        public WhackAMoleMobData(int spawnTick, Hole hole) {
-            super(spawnTick);
-            this.hole = hole;
-        }
-
-        public Hole getHole() {
-            return hole;
-        }
-    }
 }

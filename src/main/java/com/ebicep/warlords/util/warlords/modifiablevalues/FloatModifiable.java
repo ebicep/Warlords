@@ -45,10 +45,16 @@ public class FloatModifiable {
         marginalContributions.values().forEach(Map::clear);
 
         filters.forEach((filterName, filter) -> {
-            overridingModifiers.stream()
-                               .filter(filter::overridingFilter)
-                               .findFirst()
-                               .ifPresent(modifier -> filter.setCachedValue(modifier.getModifier()));
+            Map<String, Float> filterContributions = marginalContributions.computeIfAbsent(filterName, k -> new HashMap<>());
+            for (FloatModifier modifier : overridingModifiers) {
+                if (filter.overridingFilter(modifier)) {
+//                    float overriddenValue = filter.getCachedValue();
+                    float newValue = modifier.getModifier();
+                    filter.setCachedValue(modifier.getModifier());
+                    filterContributions.put(modifier.getLog(), newValue);
+                    break;
+                }
+            }
         });
 
         if (!onRefresh.isEmpty()) {
@@ -373,7 +379,7 @@ public class FloatModifiable {
         return ComponentBuilder.create()
                                .text(name, NamedTextColor.DARK_GREEN)
                                .text(": ", NamedTextColor.GRAY)
-                               .text(value, NamedTextColor.GOLD)
+                               .text(NumberFormat.formatOptionalHundredths(value), NamedTextColor.GOLD)
                                .build();
     }
 
@@ -385,7 +391,7 @@ public class FloatModifiable {
                                 .text(" - ", NamedTextColor.WHITE)
                                 .append(floatModifier.getDebugInfo())
                                 .text(" (", NamedTextColor.GRAY)
-                                .text(NumberFormat.formatOptionalHundredths(contributions.get(floatModifier.getLog())), NamedTextColor.GOLD)
+                                .text(NumberFormat.formatOptionalHundredths(contributions.getOrDefault(floatModifier.getLog(), 0f)), NamedTextColor.GOLD)
                                 .text(")", NamedTextColor.GRAY)
                                 .build())
                         .collect(Collectors.toList());

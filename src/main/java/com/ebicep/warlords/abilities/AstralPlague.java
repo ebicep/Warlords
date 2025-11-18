@@ -105,7 +105,7 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
                         if (!(event.getAbility() instanceof SoulfireBeam soulfireBeam)) {
                             return;
                         }
-                        event.setCritChance(100);
+                        event.getCritChance().addOverridingModifier(name, 100);
                         PoisonousHex fromHex = PoisonousHex.getFromHex(wp);
                         if (new CooldownFilter<>(victim, RegularCooldown.class).filterCooldownClass(PoisonousHex.class).stream().count() < fromHex.getMaxStacks()) {
                             return;

@@ -117,7 +117,7 @@ public class BurstChain implements SpecBoostManager.SpecBoost<BurstChain> {
                 return;
             }
             flameBurstHit.put(event.getUUID(), (hitCount == null ? 0 : hitCount) + 1);
-            event.setCritChance(100);
+            event.getCritChance().addOverridingModifier(getStringName(), 100);
         }
 
     }

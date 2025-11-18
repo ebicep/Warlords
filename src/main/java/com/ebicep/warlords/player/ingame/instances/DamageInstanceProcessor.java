@@ -61,8 +61,8 @@ public class DamageInstanceProcessor {
     private final AbstractAbility ability;
     private final String cause;
     // Damage values
-    private final float min;
-    private final float max;
+    private final FloatModifiable min;
+    private final FloatModifiable max;
     private final FloatModifiable critChance;
     private final FloatModifiable critMultiplier;
     private final FloatModifiable damageValue;
@@ -98,9 +98,11 @@ public class DamageInstanceProcessor {
         this.ability = event.getAbility();
         this.cause = event.getCause();
         this.min = event.getMin();
+        this.min.refresh();
         this.max = event.getMax();
-        this.critChance = new FloatModifiable(event.getCritChance());
-        this.critMultiplier = new FloatModifiable(event.getCritMultiplier());
+        this.max.refresh();
+        this.critChance = event.getCritChance();
+        this.critMultiplier = event.getCritMultiplier();
         this.isMeleeHit = cause.isEmpty();
         this.isFallDamage = cause.equals("Fall");
         this.flags = event.getFlags();
@@ -115,11 +117,14 @@ public class DamageInstanceProcessor {
         this.selfCooldownsDistinct = warlordsEntity.getCooldownManager().getCooldownsDistinct();
         this.attackersCooldownsDistinct = source.getCooldownManager().getCooldownsDistinct();
         this.finalEvent = null;
-        this.damageValue = new FloatModifiable((float) ((Math.random() * (max - min)) + min));
+        this.damageValue = new FloatModifiable(0);
     }
 
     public Optional<WarlordsDamageHealingFinalEvent> process() {
         applyPreEventModifiers();
+        this.min.refresh();
+        this.max.refresh();
+        this.damageValue.setBaseValue((float) (ThreadLocalRandom.current().nextDouble(min.getCalculatedValue(), max.getCalculatedValue())));
 
         if (!validateEntityState()) {
             return Optional.empty();
@@ -164,7 +169,7 @@ public class DamageInstanceProcessor {
     }
 
     private void setupDebugMessages() {
-        debugMessage.appendTitle("Post Event", NamedTextColor.AQUA);
+        debugMessage.appendTitle("Initial", NamedTextColor.AQUA);
         debugMessage.appendEvent(event);
     }
 
@@ -195,6 +200,9 @@ public class DamageInstanceProcessor {
     private void calculateCriticals() {
         debugMessage.appendTitle("Crit Modifiers", NamedTextColor.AQUA);
 
+        float previousCritChance = critChance.getCalculatedValue();
+        float previousCritMultiplier = critMultiplier.getCalculatedValue();
+
         if (critChance.getBaseValue() > 0) {
             if (flags.contains(InstanceFlags.IGNORE_CRIT_MODIFIERS)) {
                 Consumer<FloatModifiable.FloatModifier> disableModifier = InstanceFlags.IGNORE_CRIT_MODIFIERS.createDisabledReason();
@@ -222,14 +230,28 @@ public class DamageInstanceProcessor {
         critChance.refresh();
         critMultiplier.refresh();
 
-        debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                .create(1)
-                .prefix(ComponentBuilder.create("Crit Chance: ", NamedTextColor.GREEN))
-                .value(critChance));
-        debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                .create(1)
-                .prefix(ComponentBuilder.create("Crit Multiplier: ", NamedTextColor.GREEN))
-                .value(critMultiplier));
+        if (previousCritChance != critChance.getCalculatedValue()) {
+            debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                    .create(1)
+                    .prefix(ComponentBuilder.create("Crit Chance: ", NamedTextColor.LIGHT_PURPLE))
+                    .value(critChance));
+        } else {
+            debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                    .create(1)
+                    .prefix(ComponentBuilder.create("Crit Chance: ", NamedTextColor.LIGHT_PURPLE))
+                    .value(ComponentBuilder.create("No Change", NamedTextColor.WHITE)));
+        }
+        if (previousCritMultiplier != critMultiplier.getCalculatedValue()) {
+            debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                    .create(1)
+                    .prefix(ComponentBuilder.create("Crit Multiplier: ", NamedTextColor.LIGHT_PURPLE))
+                    .value(critMultiplier));
+        } else {
+            debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                    .create(1)
+                    .prefix(ComponentBuilder.create("Crit Multiplier: ", NamedTextColor.LIGHT_PURPLE))
+                    .value(ComponentBuilder.create("No Change", NamedTextColor.WHITE)));
+        }
 
         applyCriticalHit();
     }
@@ -260,12 +282,12 @@ public class DamageInstanceProcessor {
         debugMessage.appendTitle("Calculated Damage", NamedTextColor.AQUA);
         debugMessage.append(InstanceDebugHoverable.LevelBuilder
                 .create(1)
-                .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.GREEN))
+                .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.LIGHT_PURPLE))
                 .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(damageHealValueBeforeAllReduction), NamedTextColor.GOLD))
         );
         debugMessage.append(InstanceDebugHoverable.LevelBuilder
                 .create(1)
-                .prefix(ComponentBuilder.create("Crit: ", NamedTextColor.GREEN))
+                .prefix(ComponentBuilder.create("Crit: ", NamedTextColor.LIGHT_PURPLE))
                 .value(ComponentBuilder.create("" + isCrit, NamedTextColor.GOLD))
         );
     }
@@ -296,13 +318,13 @@ public class DamageInstanceProcessor {
     }
 
     private void handleMeleeDamage() {
-        sendTookDamageMessage(min, "melee damage");
+        sendTookDamageMessage(min.getCalculatedValue(), "melee damage");
         warlordsEntity.resetRegenTimer();
 
-        if (warlordsEntity.getCurrentHealth() - min <= 0) {
-            warlordsEntity.die(source, createDeathInfo(min, "melee damage"));
+        if (warlordsEntity.getCurrentHealth() - min.getCalculatedValue() <= 0) {
+            warlordsEntity.die(source, createDeathInfo(min.getCalculatedValue(), "melee damage"));
         } else {
-            warlordsEntity.setCurrentHealth(warlordsEntity.getCurrentHealth() - min);
+            warlordsEntity.setCurrentHealth(warlordsEntity.getCurrentHealth() - min.getCalculatedValue());
             warlordsEntity.playHurtAnimation(source);
         }
     }
@@ -312,7 +334,7 @@ public class DamageInstanceProcessor {
         warlordsEntity.resetRegenTimer();
 
         if (warlordsEntity.getCurrentHealth() - damageHealValueBeforeAllReduction <= 0) {
-            warlordsEntity.die(source, createDeathInfo(min, "fall damage"));
+            warlordsEntity.die(source, createDeathInfo(min.getCalculatedValue(), "fall damage"));
         } else {
             warlordsEntity.setCurrentHealth(warlordsEntity.getCurrentHealth() - damageHealValueBeforeAllReduction);
             warlordsEntity.playHurtAnimation(source);
@@ -415,10 +437,17 @@ public class DamageInstanceProcessor {
         }
 
         damageValue.refresh();
-        debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                .create(1)
-                .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.GREEN))
-                .value(damageValue));
+        if (damageHealValueBeforeAllReduction != damageValue.getCalculatedValue()) {
+            debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                    .create(1)
+                    .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.LIGHT_PURPLE))
+                    .value(damageValue));
+        } else {
+            debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                    .create(1)
+                    .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.LIGHT_PURPLE))
+                    .value(ComponentBuilder.create("No Change", NamedTextColor.WHITE)));
+        }
 
         damageHealValueBeforeInterveneReduction = damageValue.getCalculatedValue();
     }
@@ -537,17 +566,24 @@ public class DamageInstanceProcessor {
         }
 
         damageValue.refresh();
-        debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                .create(1)
-                .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.GREEN))
-                .value(damageValue));
+        if (damageHealValueBeforeShieldReduction != damageValue.getCalculatedValue()) {
+            debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                    .create(1)
+                    .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.LIGHT_PURPLE))
+                    .value(damageValue));
+        } else {
+            debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                    .create(1)
+                    .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.LIGHT_PURPLE))
+                    .value(ComponentBuilder.create("No Change", NamedTextColor.WHITE)));
+        }
 
         damageValue.callContributionCallbacks();
 
         boolean debt = warlordsEntity.getCooldownManager().hasCooldownFromName("Spirits' Respite");
         debugMessage.append(InstanceDebugHoverable.LevelBuilder
                 .create(1)
-                .prefix(ComponentBuilder.create("Debt: ", NamedTextColor.DARK_GREEN))
+                .prefix(ComponentBuilder.create("Debt: ", NamedTextColor.LIGHT_PURPLE))
                 .value(ComponentBuilder.create("" + debt, NamedTextColor.GOLD))
         );
         warlordsEntity.getHitBy().put(source, 10);
@@ -556,7 +592,7 @@ public class DamageInstanceProcessor {
         float finalDamageValue = damageValue.getCalculatedValue();
         debugMessage.append(InstanceDebugHoverable.LevelBuilder
                 .create(1)
-                .prefix(ComponentBuilder.create("Final Damage Value: ", NamedTextColor.GREEN))
+                .prefix(ComponentBuilder.create("Final Damage Value: ", NamedTextColor.LIGHT_PURPLE))
                 .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(finalDamageValue), NamedTextColor.GOLD))
         );
 
@@ -569,7 +605,7 @@ public class DamageInstanceProcessor {
         );
         debugMessage.append(InstanceDebugHoverable.LevelBuilder
                 .create(1)
-                .prefix(ComponentBuilder.create("Capped Damage Value: ", NamedTextColor.GREEN))
+                .prefix(ComponentBuilder.create("Capped Damage Value: ", NamedTextColor.LIGHT_PURPLE))
                 .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(cappedDamage), NamedTextColor.GOLD))
         );
 
@@ -590,7 +626,7 @@ public class DamageInstanceProcessor {
         float newHealth = calculateNewHealth(debt, finalDamageValue);
         debugMessage.append(InstanceDebugHoverable.LevelBuilder
                 .create(1)
-                .prefix(ComponentBuilder.create("New Health: ", NamedTextColor.GREEN))
+                .prefix(ComponentBuilder.create("New Health: ", NamedTextColor.LIGHT_PURPLE))
                 .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(newHealth), NamedTextColor.GOLD))
         );
         warlordsEntity.setCurrentHealth(newHealth);
@@ -630,7 +666,7 @@ public class DamageInstanceProcessor {
         float reducedDamage = leftOverPrevented * (data.getIntervene().getDamageReduction() / 100f);
         debugMessage.append(InstanceDebugHoverable.LevelBuilder
                 .create(1)
-                .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.GREEN))
+                .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.LIGHT_PURPLE))
                 .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(reducedDamage), NamedTextColor.GOLD))
         );
 
@@ -663,7 +699,7 @@ public class DamageInstanceProcessor {
 
         debugMessage.append(InstanceDebugHoverable.LevelBuilder
                 .create(1)
-                .prefix(ComponentBuilder.create("Intervene From Attacker", NamedTextColor.GREEN))
+                .prefix(ComponentBuilder.create("Intervene From Attacker", NamedTextColor.LIGHT_PURPLE))
         );
 
         for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
@@ -712,10 +748,17 @@ public class DamageInstanceProcessor {
         }
 
         damageValue.refresh();
-        debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                .create(1)
-                .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.GREEN))
-                .value(damageValue));
+        if (damageHealValueBeforeInterveneReduction != damageValue.getCalculatedValue()) {
+            debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                    .create(1)
+                    .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.LIGHT_PURPLE))
+                    .value(damageValue));
+        } else {
+            debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                    .create(1)
+                    .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.LIGHT_PURPLE))
+                    .value(ComponentBuilder.create("No Change", NamedTextColor.WHITE)));
+        }
 
         damageHealValueBeforeShieldReduction = damageValue.getCalculatedValue();
     }
@@ -750,14 +793,14 @@ public class DamageInstanceProcessor {
         float preShieldHealth = shield.getShieldHealth();
         debugMessage.append(InstanceDebugHoverable.LevelBuilder
                 .create(1)
-                .prefix(ComponentBuilder.create("Pre Health: ", NamedTextColor.GREEN))
+                .prefix(ComponentBuilder.create("Pre Health: ", NamedTextColor.LIGHT_PURPLE))
                 .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(preShieldHealth), NamedTextColor.GOLD))
         );
 
         shield.addShieldHealth(-damageHealValueBeforeShieldReduction);
         debugMessage.append(InstanceDebugHoverable.LevelBuilder
                 .create(1)
-                .prefix(ComponentBuilder.create("Post Health: ", NamedTextColor.GREEN))
+                .prefix(ComponentBuilder.create("Post Health: ", NamedTextColor.LIGHT_PURPLE))
                 .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(shield.getShieldHealth()), NamedTextColor.GOLD))
         );
 
@@ -782,7 +825,7 @@ public class DamageInstanceProcessor {
 
         debugMessage.append(InstanceDebugHoverable.LevelBuilder
                 .create(1)
-                .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.GREEN))
+                .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.LIGHT_PURPLE))
                 .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(reducedDamage), NamedTextColor.GOLD))
         );
 

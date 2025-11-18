@@ -158,10 +158,6 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
                         return;
                     }
                     data.bindPlayer(wpAttacker, wpVictim);
-                    if (pveMasterUpgrade2 && event.getCause().equals("Ignite")) {
-                        event.setMinForce(event.getMin() * 2);
-                        event.setMaxForce(event.getMax() * 2);
-                    }
                 }
         );
         wp.getCooldownManager().addCooldown(soulBindingCooldown);

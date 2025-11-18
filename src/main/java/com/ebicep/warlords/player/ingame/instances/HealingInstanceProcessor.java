@@ -43,8 +43,8 @@ public class HealingInstanceProcessor {
     private final AbstractAbility ability;
     private final String cause;
     // Healing values
-    private final float min;
-    private final float max;
+    private final FloatModifiable min;
+    private final FloatModifiable max;
     private final FloatModifiable critChance;
     private final FloatModifiable critMultiplier;
     private final FloatModifiable healValue;
@@ -73,9 +73,11 @@ public class HealingInstanceProcessor {
         this.ability = event.getAbility();
         this.cause = event.getCause();
         this.min = event.getMin();
+        this.min.refresh();
         this.max = event.getMax();
-        this.critChance = new FloatModifiable(event.getCritChance());
-        this.critMultiplier = new FloatModifiable(event.getCritMultiplier());
+        this.max.refresh();
+        this.critChance = event.getCritChance();
+        this.critMultiplier = event.getCritMultiplier();
         this.flags = event.getFlags();
         this.isLastStandFromShield = flags.contains(InstanceFlags.LAST_STAND_FROM_SHIELD);
         this.pierce = flags.contains(InstanceFlags.PIERCE);
@@ -84,11 +86,14 @@ public class HealingInstanceProcessor {
         this.selfCooldownsDistinct = warlordsEntity.getCooldownManager().getCooldownsDistinct();
         this.attackersCooldownsDistinct = source.getCooldownManager().getCooldownsDistinct();
         this.finalEvent = null;
-        this.healValue = new FloatModifiable((float) ((Math.random() * (max - min)) + min));
+        this.healValue = new FloatModifiable(0);
     }
 
     public Optional<WarlordsDamageHealingFinalEvent> process() {
         applyPreEventModifiers();
+        this.min.refresh();
+        this.max.refresh();
+        this.healValue.setBaseValue((float) (ThreadLocalRandom.current().nextDouble(min.getCalculatedValue(), max.getCalculatedValue())));
 
         if (!validateEntityState()) {
             return Optional.empty();
@@ -363,7 +368,7 @@ public class HealingInstanceProcessor {
     }
 
     private void setupDebugMessages() {
-        debugMessage.appendTitle("Post Event", NamedTextColor.AQUA);
+        debugMessage.appendTitle("Initial", NamedTextColor.AQUA);
         debugMessage.appendEvent(event);
     }
 
@@ -396,39 +401,14 @@ public class HealingInstanceProcessor {
 
         debugMessage.append(InstanceDebugHoverable.LevelBuilder
                 .create(1)
-                .prefix(ComponentBuilder.create("Crit Chance: ", NamedTextColor.GREEN))
+                .prefix(ComponentBuilder.create("Crit Chance: ", NamedTextColor.LIGHT_PURPLE))
                 .value(critChance));
         debugMessage.append(InstanceDebugHoverable.LevelBuilder
                 .create(1)
-                .prefix(ComponentBuilder.create("Crit Multiplier: ", NamedTextColor.GREEN))
+                .prefix(ComponentBuilder.create("Crit Multiplier: ", NamedTextColor.LIGHT_PURPLE))
                 .value(critMultiplier));
 
         applyCriticalHit();
-    }
-
-    private void applyCriticalHit() {
-        double crit = ThreadLocalRandom.current().nextDouble(100);
-        calculatedCritChance = critChance.getCalculatedValue();
-        calculatedCritMultiplier = critMultiplier.getCalculatedValue();
-        isCrit = calculatedCritChance > 0 && crit <= calculatedCritChance && source.isCanCrit();
-
-        if (isCrit) {
-            healValue.addMultiplicativeModifierMult("Crit Multiplier", calculatedCritMultiplier / 100f);
-        }
-
-        healValueBeforeReduction = healValue.getCalculatedValue();
-
-        debugMessage.appendTitle("Calculated Heal", NamedTextColor.AQUA);
-        debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                .create(1)
-                .prefix(ComponentBuilder.create("Heal Value: ", NamedTextColor.GREEN))
-                .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(healValueBeforeReduction), NamedTextColor.GOLD))
-        );
-        debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                .create(1)
-                .prefix(ComponentBuilder.create("Crit: ", NamedTextColor.GREEN))
-                .value(ComponentBuilder.create("" + isCrit, NamedTextColor.GOLD))
-        );
     }
 
     private void applyHealingModifiers() {
@@ -457,10 +437,35 @@ public class HealingInstanceProcessor {
         healValue.refresh();
         debugMessage.append(InstanceDebugHoverable.LevelBuilder
                 .create(1)
-                .prefix(ComponentBuilder.create("Heal Value: ", NamedTextColor.GREEN))
+                .prefix(ComponentBuilder.create("Heal Value: ", NamedTextColor.LIGHT_PURPLE))
                 .value(healValue));
 
         healValueAfterModify = healValue.getCalculatedValue();
+    }
+
+    private void applyCriticalHit() {
+        double crit = ThreadLocalRandom.current().nextDouble(100);
+        calculatedCritChance = critChance.getCalculatedValue();
+        calculatedCritMultiplier = critMultiplier.getCalculatedValue();
+        isCrit = calculatedCritChance > 0 && crit <= calculatedCritChance && source.isCanCrit();
+
+        if (isCrit) {
+            healValue.addMultiplicativeModifierMult("Crit Multiplier", calculatedCritMultiplier / 100f);
+        }
+
+        healValueBeforeReduction = healValue.getCalculatedValue();
+
+        debugMessage.appendTitle("Calculated Heal", NamedTextColor.AQUA);
+        debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                .create(1)
+                .prefix(ComponentBuilder.create("Heal Value: ", NamedTextColor.LIGHT_PURPLE))
+                .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(healValueBeforeReduction), NamedTextColor.GOLD))
+        );
+        debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                .create(1)
+                .prefix(ComponentBuilder.create("Crit: ", NamedTextColor.LIGHT_PURPLE))
+                .value(ComponentBuilder.create("" + isCrit, NamedTextColor.GOLD))
+        );
     }
 
     private void toggleNegativeBoosts(InstanceFlags f, boolean addListener) {

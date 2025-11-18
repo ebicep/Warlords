@@ -118,8 +118,8 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
                 }
         ).addModifier(Modifier.DAMAGE_BEFORE_VARIABLE_SET_ATTACKER, event -> {
                     if (pveMasterUpgrade2 && event.getCause().equals("Ignite")) {
-                        event.setMinForce(event.getMin() * 2);
-                        event.setMaxForce(event.getMax() * 2);
+                        event.getMin().setBaseValue(event.getMin().getBaseValue() * 2);
+                        event.getMax().setBaseValue(event.getMax().getBaseValue() * 2);
                     }
                 }
         ).addModifier(Modifier.DAMAGE_ON_DEATH_ENEMIES, (event, currentDamageValue, isCrit, isKiller) -> {

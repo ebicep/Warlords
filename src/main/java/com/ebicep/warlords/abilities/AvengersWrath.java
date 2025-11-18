@@ -90,10 +90,7 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
                                 .damage()
                                 .cause("Avenger's Strike")
                                 .source(wp)
-                                .min(event.getMin())
-                                .max(event.getMax())
-                                .critChance(event.getCritChance())
-                                .critMultiplier(event.getCritMultiplier())
+                                .value(event)
                                 .flags(flags)
                         );
                         stats.extraTargetsStruck++;
@@ -114,10 +111,7 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
                                 .damage()
                                 .cause("Avenger's Strike")
                                 .source(wp)
-                                .min(event.getMin())
-                                .max(event.getMax())
-                                .critChance(event.getCritChance())
-                                .critMultiplier(event.getCritMultiplier())
+                                .value(event)
                                 .flags(flags)
                         );
                         Bukkit.getPluginManager().callEvent(new WarlordsStrikeEvent(wp, AvengersWrath.this, wrathTarget));

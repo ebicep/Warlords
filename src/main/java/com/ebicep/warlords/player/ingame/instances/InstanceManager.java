@@ -23,8 +23,6 @@ public class InstanceManager {
                 debugHoverable.append(InstanceDebugHoverable.LevelBuilder.create(1).value(debugMessage));
             }
         }
-        debugHoverable.appendTitle("Pre Event", NamedTextColor.AQUA);
-        debugHoverable.appendEvent(event);
         if (event.getWarlordsEntity().getCurrentHealth() <= 0) {
             return Optional.empty();
         }
