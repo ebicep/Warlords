@@ -5,12 +5,12 @@ import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
@@ -92,21 +92,19 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
                                     });
                     }
                 })
-        ) {
-            @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (!event.getCause().equals(getStrikeName()) || event.getFlags().contains(InstanceFlags.STRIKE_IN_CONS)) {
-                    return currentDamageValue;
+        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                    if (!event.getCause().equals(getStrikeName()) || event.getFlags().contains(InstanceFlags.STRIKE_IN_CONS)) {
+                        return;
+                    }
+                    boolean insideCons = location.distanceSquared(event.getWarlordsEntity().getLocation()) < radius * radius;
+                    if (!insideCons) {
+                        return;
+                    }
+                    event.getFlags().add(InstanceFlags.STRIKE_IN_CONS);
+                    addStrikesBoosted();
+                    currentDamageValue.addMultiplicativeModifierMult(name, convertToMultiplicationDecimal(strikeDamageBoost));
                 }
-                boolean insideCons = location.distanceSquared(event.getWarlordsEntity().getLocation()) < radius * radius;
-                if (!insideCons) {
-                    return currentDamageValue;
-                }
-                event.getFlags().add(InstanceFlags.STRIKE_IN_CONS);
-                addStrikesBoosted();
-                return currentDamageValue * convertToMultiplicationDecimal(strikeDamageBoost);
-            }
-        });
+        ));
 
         return true;
     }

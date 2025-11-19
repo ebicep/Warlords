@@ -1,10 +1,10 @@
 package com.ebicep.warlords.game.option.towerdefense.mobs;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BasicMob;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -66,12 +66,10 @@ public class TDZombifiedPiglin extends TowerDefenseMob implements BasicMob {
                 11 * 20,
                 Collections.singletonList((cooldown, ticksLeft, cdTicksElapsed) -> {
                 })
-        ) {
-            @Override
-            public float modifyDamageAfterInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * 1.3f;
-            }
-        });
+        ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                    currentDamageValue.addMultiplicativeModifierMult("Group Bonus", 1.3f);
+                }
+        ));
     }
 
     @Override

@@ -123,8 +123,8 @@ public class CodexCollector implements FieldEffect {
                     return;
                 }
                 if (event.getCause().isEmpty()) {
-                    event.setCritChance(event.getCritChance() + 5);
-                    event.setCritMultiplier(event.getCritMultiplier() + 10);
+                    event.getCritChance().addAdditiveModifier(getName(), 5);
+                    event.getCritMultiplier().addAdditiveModifier(getName(), 10);
                 }
             }
 

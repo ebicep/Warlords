@@ -6,13 +6,13 @@ import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.spiritguard.DeathsDebtBranch;
@@ -134,19 +134,23 @@ public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<
                                 damageReduction -= .025f;
                             }
                             float finalDamageReduction = damageReduction;
-                            wp.getCooldownManager().addCooldown(new RegularCooldown<>("Death Parade", "PARADE", DeathsDebt.class, null, wp, CooldownTypes.BUFF, cooldownManager -> {
-                            }, 5 * 20
-                            ) {
-                                @Override
-                                public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                    return currentDamageValue * finalDamageReduction;
-                                }
-
-                                @Override
-                                public float addEnergyPerHit(WarlordsEntity we, float energyPerHit) {
-                                    return energyPerHit + 30;
-                                }
-                            });
+                            RegularCooldown<DeathsDebt> deathParadeCooldown = new RegularCooldown<>(
+                                    "Death Parade",
+                                    "PARADE",
+                                    DeathsDebt.class,
+                                    null,
+                                    wp,
+                                    CooldownTypes.BUFF,
+                                    cooldownManager -> {
+                                    },
+                                    5 * 20
+                            );
+                            deathParadeCooldown.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                                        currentDamageValue.addMultiplicativeModifierMult(name, finalDamageReduction);
+                                    }
+                            );
+                            deathParadeCooldown.addModifier(Modifier.ENERGY_GAIN_PER_HIT, energyGainPerTick -> energyGainPerTick.addAdditiveModifier("Death Parade", 30));
+                            wp.getCooldownManager().addCooldown(deathParadeCooldown);
                         }
                         if (over5000DamageInstances.get() >= 5) {
                             ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.RETRIBUTION_OF_THE_DEAD);
@@ -209,13 +213,11 @@ public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<
                         }
                     }
                 })
-        ) {
-
-            @Override
-            public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                data.delayedDamage += currentDamageValue;
-            }
-        };
+        );
+        spiritsRespiteCooldown.addModifier(Modifier.DAMAGE_ON_DAMAGE_SELF, (event, currentDamageValue, isCrit) -> {
+                    data.delayedDamage += currentDamageValue;
+                }
+        );
         wp.getCooldownManager().addCooldown(spiritsRespiteCooldown);
         if (pveMasterUpgrade) {
             wp.addKnockbackModifier(wp, "Spirits Respite", -80, spiritsRespiteCooldown);

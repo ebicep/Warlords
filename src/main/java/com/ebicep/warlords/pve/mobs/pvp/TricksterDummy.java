@@ -10,11 +10,13 @@ import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.PlayerMob;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -107,11 +109,12 @@ public class TricksterDummy extends AbstractMob implements PlayerMob {
                             return;
                         }
                         WarlordsEntity attacker = event.getSource();
-                        float energyPerHit = attacker.getEnergyPerHit().getCalculatedValue();
+                        final FloatModifiable energyPerHit = new FloatModifiable(attacker.getEnergyPerHit().getCalculatedValue());
                         for (AbstractCooldown<?> abstractCooldown : attacker.getCooldownManager().getCooldownsDistinct()) {
-                            energyPerHit = abstractCooldown.addEnergyPerHit(attacker, energyPerHit);
+                            abstractCooldown.applyModifiers(Modifier.ENERGY_GAIN_PER_HIT, m -> m.apply(energyPerHit));
                         }
-                        attacker.addEnergy(attacker, null, -energyPerHit);
+                        energyPerHit.refresh();
+                        attacker.addEnergy(attacker, null, -energyPerHit.getCalculatedValue());
 
                         attacker.addInstance(InstanceBuilder
                                 .damage()

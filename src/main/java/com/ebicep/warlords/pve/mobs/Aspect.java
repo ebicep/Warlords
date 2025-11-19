@@ -10,6 +10,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.player.ingame.motionsystem.MotionModifier;
 import com.ebicep.warlords.player.ingame.motionsystem.MotionModifierBuilder;
 import com.ebicep.warlords.player.ingame.motionsystem.MotionSystem;
@@ -58,15 +59,12 @@ public enum Aspect {
                             );
                         }
                     }
-            ) {
-                @Override
-                public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    if (Aspect.isNegated(warlordsEntity)) {
-                        return currentDamageValue;
+            ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (event, currentDamageValue) -> {
+                        if (!Aspect.isNegated(warlordsEntity)) {
+                            currentDamageValue.addMultiplicativeModifierMult("Aspect - Armoured", 0.6f);
+                        }
                     }
-                    return currentDamageValue * .6f;
-                }
-            });
+            ));
         }
     },
     CHILLING("Chilling", TextColor.color(68, 204, 204)) {
@@ -87,15 +85,13 @@ public enum Aspect {
                             EffectUtils.playCrownAnimation(warlordsEntity.getLocation(), Particle.SNOWFLAKE);
                         }
                     }
-            ) {
-                @Override
-                public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                    if (Aspect.isNegated(warlordsEntity)) {
-                        return;
+            ).addModifier(Modifier.DAMAGE_ON_DAMAGE_ATTACKER, (event, currentDamageValue, isCrit) -> {
+                        if (Aspect.isNegated(warlordsEntity)) {
+                            return;
+                        }
+                        warlordsEntity.addSpeedModifier(warlordsEntity, name, -40, 40);
                     }
-                    warlordsEntity.addSpeedModifier(warlordsEntity, "Chilling", -40, 40);
-                }
-            });
+            ));
         }
     },
     EVASIVE("Evasive", TextColor.color(242, 242, 242)) {
@@ -156,54 +152,49 @@ public enum Aspect {
                     (cooldown, ticksElapsed) -> {
 
                     }
-            ) {
-                @Override
-                public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                    if (Aspect.isNegated(warlordsEntity)) {
-                        return;
-                    }
-                    if (event.getFlags().contains(InstanceFlags.RECURSIVE)) {
-                        return;
-                    }
-                    WarlordsEntity receiver = event.getWarlordsEntity();
-                    receiver.getCooldownManager().removeCooldownByName("Aspect - Burn");
-                    receiver.getCooldownManager().addCooldown(new RegularCooldown<>(
-                            "Aspect - Burn",
-                            "BRN",
-                            Aspect.class,
-                            null,
-                            warlordsEntity,
-                            CooldownTypes.LOW_LEVEL_DEBUFF,
-                            cooldownManager -> {
-                            },
-                            40,
-                            Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                                if (ticksLeft % 20 == 0) {
-                                    if (Aspect.isNegated(warlordsEntity)) {
-                                        return;
-                                    }
-                                    float healthDamage = receiver.getMaxHealth() * 0.005f;
-                                    healthDamage = DamageCheck.clamp(healthDamage);
-                                    receiver.addInstance(InstanceBuilder
-                                            .damage()
-                                            .cause("Burn")
-                                            .source(warlordsEntity)
-                                            .value(healthDamage)
-                                            .flags(InstanceFlags.RECURSIVE, InstanceFlags.DOT)
-                                    );
-                                }
-                            })
-                    ) {
-                        @Override
-                        public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                            if (Aspect.isNegated(warlordsEntity)) {
-                                return currentDamageValue;
-                            }
-                            return currentDamageValue * 1.2f;
+            ).addModifier(Modifier.DAMAGE_ON_DAMAGE_ATTACKER, (event, currentDamageValue, isCrit) -> {
+                        if (Aspect.isNegated(warlordsEntity)) {
+                            return;
                         }
-                    });
-                }
-            });
+                        if (event.getFlags().contains(InstanceFlags.RECURSIVE)) {
+                            return;
+                        }
+                        WarlordsEntity receiver = event.getWarlordsEntity();
+                        receiver.getCooldownManager().removeCooldownByName("Aspect - Burn");
+                        receiver.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                "Aspect - Burn",
+                                "BRN",
+                                Aspect.class,
+                                null,
+                                warlordsEntity,
+                                CooldownTypes.LOW_LEVEL_DEBUFF,
+                                cooldownManager -> {
+                                },
+                                40,
+                                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                                    if (ticksLeft % 20 == 0) {
+                                        if (Aspect.isNegated(warlordsEntity)) {
+                                            return;
+                                        }
+                                        float healthDamage = receiver.getMaxHealth() * 0.005f;
+                                        healthDamage = DamageCheck.clamp(healthDamage);
+                                        receiver.addInstance(InstanceBuilder
+                                                .damage()
+                                                .cause("Burn")
+                                                .source(warlordsEntity)
+                                                .value(healthDamage)
+                                                .flags(InstanceFlags.RECURSIVE, InstanceFlags.DOT)
+                                        );
+                                    }
+                                })
+                        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (e, currentDamageValue2) -> {
+                                    if (!Aspect.isNegated(warlordsEntity)) {
+                                        currentDamageValue2.addMultiplicativeModifierMult("Aspect - Burn", 1.2f);
+                                    }
+                                }
+                        ));
+                    }
+            ));
         }
     },
     JUGGERNAUT("Juggernaut", TextColor.color(255, 242, 0)) {
@@ -326,22 +317,20 @@ public enum Aspect {
                             );
                         }
                     }
-            ) {
-                @Override
-                public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                    if (Aspect.isNegated(warlordsEntity)) {
-                        return;
+            ).addModifier(Modifier.DAMAGE_ON_DAMAGE_ATTACKER, (event, currentDamageValue, isCrit) -> {
+                        if (Aspect.isNegated(warlordsEntity)) {
+                            return;
+                        }
+                        WarlordsEntity attacker = event.getSource();
+                        float healAmount = currentDamageValue * .3f;
+                        attacker.addInstance(InstanceBuilder
+                                .healing()
+                                .cause(name)
+                                .source(attacker)
+                                .value(healAmount)
+                        );
                     }
-                    WarlordsEntity attacker = event.getSource();
-                    float healAmount = currentDamageValue * .3f;
-                    attacker.addInstance(InstanceBuilder
-                            .healing()
-                            .cause(name)
-                            .source(attacker)
-                            .value(healAmount)
-                    );
-                }
-            });
+            ));
         }
     },
 

@@ -37,7 +37,9 @@ public class InstanceBuilder {
     public static InstanceBuilder healing() {
         return new InstanceBuilder(InstanceType.HEALING);
     }
+
     private final InstanceType instanceType;
+    private EnumSet<InstanceFlags> flags = InstanceFlags.NO_FLAGS;
     private WarlordsEntity target;
     private WarlordsEntity source;
     @Nullable
@@ -47,13 +49,12 @@ public class InstanceBuilder {
     private float max;
     private float critChance = 0;
     private float critMultiplier = 100;
-    private EnumSet<InstanceFlags> flags = EnumSet.noneOf(InstanceFlags.class);
-    private List<CustomInstanceFlags> customFlags = Collections.emptyList();
 
     public InstanceBuilder cause(String cause) {
         this.cause = cause;
         return this;
     }
+    private List<CustomInstanceFlags> customFlags = Collections.emptyList();
     @Nullable
     private UUID uuid = null;
 
@@ -106,10 +107,14 @@ public class InstanceBuilder {
     }
 
     public InstanceBuilder value(WarlordsDamageHealingEvent event) {
-        this.min = event.getMin();
-        this.max = event.getMax();
-        this.critChance = event.getCritChance();
-        this.critMultiplier = event.getCritMultiplier();
+        event.getMin().refresh();
+        event.getMax().refresh();
+        event.getCritChance().refresh();
+        event.getCritMultiplier().refresh();
+        this.min = event.getMin().getCalculatedValue();
+        this.max = event.getMax().getCalculatedValue();
+        this.critChance = event.getCritChance().getCalculatedValue();
+        this.critMultiplier = event.getCritMultiplier().getCalculatedValue();
         return this;
     }
 

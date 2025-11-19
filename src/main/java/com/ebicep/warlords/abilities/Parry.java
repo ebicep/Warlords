@@ -9,6 +9,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -115,11 +116,12 @@ public class Parry extends AbstractAbility implements AbilityStats<Parry, Parry.
                                                 parryDamageReductionCooldown.setTicksLeft(damageReductionTickDuration);
                                             }
                                         }, () -> {
-                                            wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                    ParryDamageReduction data = new ParryDamageReduction(damageReductionTickDuration);
+                                    RegularCooldown<ParryDamageReduction> parryCooldown = new RegularCooldown<>(
                                                     "Parry Damage Reduction",
                                                     "REDUC",
                                                     ParryDamageReduction.class,
-                                                    new ParryDamageReduction(damageReductionTickDuration),
+                                            data,
                                                     wp,
                                                     CooldownTypes.ABILITY,
                                                     cooldownManager -> {
@@ -132,11 +134,6 @@ public class Parry extends AbstractAbility implements AbilityStats<Parry, Parry.
                                                         instances.removeIf(integer -> integer <= 0);
                                                     })
                                             ) {
-                                                @Override
-                                                public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                                    return currentDamageValue * convertToDivisionDecimal(cooldownObject.instances.size() * damageReduction);
-                                                }
-
                                                 @Nonnull
                                                 @Override
                                                 public Component getDebugMessage() {
@@ -146,14 +143,20 @@ public class Parry extends AbstractAbility implements AbilityStats<Parry, Parry.
                                                             NamedTextColor.YELLOW
                                                     );
                                                 }
-                                            });
+                                    };
+                                    parryCooldown.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (e, currentDamageValue) -> {
+                                                currentDamageValue.addMultiplicativeModifierMult(name, convertToDivisionDecimal(data.instances.size() * damageReduction));
+                                            }
+                                    );
+                                    wp.getCooldownManager().addCooldown(parryCooldown);
                                         }
                                 );
                     }
                 };
             }
         });
-        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+        final boolean[] parried = {false};
+        RegularCooldown<Parry> parryCooldown = new RegularCooldown<>(
                 name,
                 "PARRY",
                 Parry.class,
@@ -166,26 +169,24 @@ public class Parry extends AbstractAbility implements AbilityStats<Parry, Parry.
                 cooldownManager -> {
                 },
                 knockbackTickDuration
-        ) {
-            boolean parried = false;
-
-            @Override
-            public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (!parried && event.getAbility() instanceof AbstractStrike<?, ?>) {
-                    parried = true;
-                    stats.timesKnockbacked++;
-                    WarlordsEntity victim = event.getWarlordsEntity();
-                    Vector v = wp.getLocation().toVector().subtract(victim.getLocation().toVector()).normalize().multiply(-knockbackMagnitude).setY(0.35);
-                    new GameRunnable(wp.getGame()) {
-                        @Override
-                        public void run() {
-                            victim.setVelocity(name, v, false);
-                        }
-                    }.runTaskLater(1);
-                    setTicksLeft(0);
+        );
+        parryCooldown.addModifier(Modifier.DAMAGE_ON_DAMAGE_ATTACKER, (event, currentDamageValue, isCrit) -> {
+                    if (!parried[0] && event.getAbility() instanceof AbstractStrike<?, ?>) {
+                        parried[0] = true;
+                        stats.timesKnockbacked++;
+                        WarlordsEntity victim = event.getWarlordsEntity();
+                        Vector v = wp.getLocation().toVector().subtract(victim.getLocation().toVector()).normalize().multiply(-knockbackMagnitude).setY(0.35);
+                        new GameRunnable(wp.getGame()) {
+                            @Override
+                            public void run() {
+                                victim.setVelocity(name, v, false);
+                            }
+                        }.runTaskLater(1);
+                        parryCooldown.setTicksLeft(0);
+                    }
                 }
-            }
-        });
+        );
+        wp.getCooldownManager().addCooldown(parryCooldown);
         return true;
     }
 

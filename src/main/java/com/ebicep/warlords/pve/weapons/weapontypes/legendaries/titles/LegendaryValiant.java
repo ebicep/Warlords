@@ -5,6 +5,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
@@ -34,47 +35,6 @@ public class LegendaryValiant extends AbstractLegendaryWeapon implements EventTi
 
     public LegendaryValiant(AbstractLegendaryWeapon legendaryWeapon) {
         super(legendaryWeapon);
-    }
-
-    @Override
-    public LinkedHashMap<Currencies, Long> getCost() {
-        LinkedHashMap<Currencies, Long> baseCost = super.getCost();
-        baseCost.put(Currencies.TITLE_TOKEN_PHARAOHS_REVENGE, 1L);
-        return baseCost;
-    }
-
-    @Override
-    public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
-        super.applyToWarlordsPlayer(player, pveOption);
-
-        player.getCooldownManager().addCooldown(new PermanentCooldown<>(
-                "Valiant",
-                null,
-                LegendaryValiant.class,
-                null,
-                player,
-                CooldownTypes.WEAPON,
-                cooldownManager -> {
-
-                },
-                false
-        ) {
-            @Override
-            public float multiplyEnergyGainPerTick(float energyGainPerTick) {
-                if (player.getCurrentHealth() == player.getMaxHealth()) {
-                    return energyGainPerTick * (1 + (EPS_INCREASE + EPS_INCREASE_PER_UPGRADE * getTitleLevel()) / 100f);
-                }
-                return energyGainPerTick;
-            }
-
-            @Override
-            public float addEnergyPerHit(WarlordsEntity we, float energyPerHit) {
-                if (player.getCurrentHealth() == player.getMaxHealth()) {
-                    return energyPerHit * (1 + (EPS_INCREASE + EPS_INCREASE_PER_UPGRADE * getTitleLevel()) / 100f);
-                }
-                return energyPerHit;
-            }
-        });
     }
 
     @Override
@@ -116,6 +76,41 @@ public class LegendaryValiant extends AbstractLegendaryWeapon implements EventTi
     }
 
     @Override
+    public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
+        super.applyToWarlordsPlayer(player, pveOption);
+
+        player.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                "Valiant",
+                null,
+                LegendaryValiant.class,
+                null,
+                player,
+                CooldownTypes.WEAPON,
+                cooldownManager -> {
+
+                },
+                false
+        ).addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> {
+                    if (player.getCurrentHealth() == player.getMaxHealth()) {
+                        energyGainPerTick.addMultiplicativeModifierMult(getTitleName(), (1 + (EPS_INCREASE + EPS_INCREASE_PER_UPGRADE * getTitleLevel()) / 100f));
+                    }
+                }
+        ).addModifier(Modifier.ENERGY_GAIN_PER_HIT, energyGainPerHit -> {
+                    if (player.getCurrentHealth() == player.getMaxHealth()) {
+                        energyGainPerHit.addMultiplicativeModifierMult(getTitleName(), (1 + (EPS_INCREASE + EPS_INCREASE_PER_UPGRADE * getTitleLevel()) / 100f));
+                    }
+                }
+        ));
+    }
+
+    @Override
+    public LinkedHashMap<Currencies, Long> getCost() {
+        LinkedHashMap<Currencies, Long> baseCost = super.getCost();
+        baseCost.put(Currencies.TITLE_TOKEN_PHARAOHS_REVENGE, 1L);
+        return baseCost;
+    }
+
+    @Override
     protected float getMeleeDamageMaxValue() {
         return 180;
     }
@@ -139,4 +134,5 @@ public class LegendaryValiant extends AbstractLegendaryWeapon implements EventTi
                 )
         );
     }
+
 }

@@ -2,19 +2,18 @@ package com.ebicep.warlords.pve.mobs.bosses.bossminions;
 
 import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.SpecType;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -85,8 +84,8 @@ public class NineCrystal extends AbstractMob implements BossMinionMob {
         float newHealth;
         switch (spec) {
             case DAMAGE -> newHealth = 5000;
-            case HEALER ->  newHealth = 1250;
-            case TANK ->  newHealth = 2500;
+            case HEALER -> newHealth = 1250;
+            case TANK -> newHealth = 2500;
             default -> newHealth = 2000;
         }
 
@@ -103,30 +102,29 @@ public class NineCrystal extends AbstractMob implements BossMinionMob {
                 cooldownManager -> {
                 },
                 true
-        ) {
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (spec == event.getSource().getSpecClass().specType) {
-                    return currentDamageValue * 3;
-                } else {
-                    return currentDamageValue * 0.1f;
+        ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                    if (spec == event.getSource().getSpecClass().specType) {
+                        currentDamageValue.addMultiplicativeModifierMult(name, 3);
+                    } else {
+                        currentDamageValue.addMultiplicativeModifierMult(name, 0.1f);
+                    }
                 }
-            }
-        });
+        ));
 
         holo = warlordsNPC.getWorld().spawn(warlordsNPC.getLocation().clone().add(0, 3, 0), TextDisplay.class, td -> {
-            td.setBillboard(Display.Billboard.CENTER);
-            td.setSeeThrough(true);
-            td.setBackgroundColor(Color.GRAY);
-            td.setText(LegacyComponentSerializer.legacySection().serialize(Component.text(spec.name(), spec.getTextColor(), TextDecoration.BOLD)));
-            td.setLineWidth(80);
-            td.setTransformation(new Transformation(
-                    new Vector3f(),
-                    new Quaternionf(),
-                    new Vector3f(2f, 2f, 2f),
-                    new Quaternionf()
-            ));
-        });
+                    td.setBillboard(Display.Billboard.CENTER);
+                    td.setSeeThrough(true);
+                    td.setBackgroundColor(Color.GRAY);
+                    td.setText(LegacyComponentSerializer.legacySection().serialize(Component.text(spec.name(), spec.getTextColor(), TextDecoration.BOLD)));
+                    td.setLineWidth(80);
+                    td.setTransformation(new Transformation(
+                            new Vector3f(),
+                            new Quaternionf(),
+                            new Vector3f(2f, 2f, 2f),
+                            new Quaternionf()
+                    ));
+                }
+        );
     }
 
     @Override
@@ -145,4 +143,5 @@ public class NineCrystal extends AbstractMob implements BossMinionMob {
         super.onDeath(killer, deathLocation, option);
         holo.remove();
     }
+
 }

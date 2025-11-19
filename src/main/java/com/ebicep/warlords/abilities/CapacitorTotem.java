@@ -4,11 +4,11 @@ import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.thunderlord.CapacitorTotemBranch;
@@ -68,16 +68,14 @@ public class CapacitorTotem extends AbstractTotem implements Duration, Damages<C
                 }
             }
         })
-        ) {
-
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (!pveMasterUpgrade2) {
-                    return currentDamageValue;
+        );
+        totemCooldown.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                    if (!pveMasterUpgrade2) {
+                        return;
+                    }
+                    currentDamageValue.addMultiplicativeModifierMult(name, Math.max(.85f, 1 - (data.playersHit * .01f)));
                 }
-                return currentDamageValue * Math.max(.85f, 1 - (data.playersHit * .01f));
-            }
-        };
+        );
         data.pulseDamage = () -> {
             double totemRadius = data.radius;
             PlayerFilter.entitiesAround(totemStand.getLocation(), totemRadius, totemRadius, totemRadius).aliveEnemiesOf(wp).forEach(warlordsPlayer -> {

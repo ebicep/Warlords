@@ -1,5 +1,10 @@
 package com.ebicep.warlords.player.ingame.instances;
 
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
+
+import java.util.EnumSet;
+import java.util.function.Consumer;
+
 public enum InstanceFlags {
 
     STRIKE_IN_CONS,
@@ -43,5 +48,38 @@ public enum InstanceFlags {
     // spec boost
     HAMMER_OF_JUDGEMENT_CONS,
     AURA_OF_RESTORATION_SOOTHING_ELIXIR,
+
+    ;
+
+    public static final EnumSet<InstanceFlags> NO_FLAGS = EnumSet.noneOf(InstanceFlags.class);
+    public static final EnumSet<InstanceFlags> TRUE_DAMAGE_IGNORE_CRIT = EnumSet.of(InstanceFlags.TRUE_DAMAGE, InstanceFlags.IGNORE_CRIT_MODIFIERS);
+
+    public final Consumer<FloatModifiable.FloatModifier> ignorePositiveAdditive = floatModifier -> {
+        if (floatModifier.getModifier() > 0) {
+            floatModifier.addDisabledReason(name());
+        }
+    };
+
+    public final Consumer<FloatModifiable.FloatModifier> ignorePositiveMultiplicative = floatModifier -> {
+        if (floatModifier.getModifier() > 1) {
+            floatModifier.addDisabledReason(name());
+        }
+    };
+
+    public final Consumer<FloatModifiable.FloatModifier> ignoreNegativeAdditive = floatModifier -> {
+        if (floatModifier.getModifier() < 0) {
+            floatModifier.addDisabledReason(name());
+        }
+    };
+
+    public final Consumer<FloatModifiable.FloatModifier> ignoreNegativeMultiplicative = floatModifier -> {
+        if (floatModifier.getModifier() < 1) {
+            floatModifier.addDisabledReason(name());
+        }
+    };
+
+    public Consumer<FloatModifiable.FloatModifier> createDisabledReason() {
+        return floatModifier -> floatModifier.addDisabledReason(name());
+    }
 
 }

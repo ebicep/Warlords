@@ -1,10 +1,10 @@
 package com.ebicep.warlords.pve.items.types.specialitems.tome.delta;
 
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
@@ -51,24 +51,23 @@ public class FirewaterAlmanac extends SpecialDeltaTome implements CraftsInto {
 
                 },
                 false
-        ) {
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                int targeted = pveOption.getMobs()
-                                        .stream()
-                                        .mapToInt(mob -> {
-                                            Entity target = mob.getTarget();
-                                            return target != null && target.getUniqueId().equals(warlordsPlayer.getUuid()) ? 1 : 0;
-                                        })
-                                        .sum();
-                targeted = Math.min(10, targeted);
-                return currentDamageValue * (1 - (targeted * 0.01f));
-            }
-        });
+        ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                    int targeted = pveOption.getMobs()
+                                            .stream()
+                                            .mapToInt(mob -> {
+                                                Entity target = mob.getTarget();
+                                                return target != null && target.getUniqueId().equals(warlordsPlayer.getUuid()) ? 1 : 0;
+                                            })
+                                            .sum();
+                    targeted = Math.min(10, targeted);
+                    currentDamageValue.addMultiplicativeModifierMult(getName(), (1 - (targeted * 0.01f)));
+                }
+        ));
     }
 
     @Override
     public AbstractItem getCraftsInto(Set<BasicStatPool> statPool) {
         return new FlemingAlmanac(statPool);
     }
+
 }

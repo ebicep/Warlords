@@ -4,11 +4,11 @@ import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.cryomancer.FreezingBreathBranch;
@@ -214,14 +214,11 @@ public class FreezingBreath extends AbstractProjectile<FreezingBreath, FreezingB
                               shooter,
                               CooldownTypes.LOW_LEVEL_DEBUFF,
                               cooldownManager -> {
-                      }, 5 * 20
-                      ) {
-
-                          @Override
-                          public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                              return currentDamageValue * .6f;
-                          }
-                      });
+                              }, 5 * 20
+                      ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                                  currentDamageValue.addMultiplicativeModifierMult(name, 0.6f);
+                              }
+                      ));
         }
         return playersHit;
     }
@@ -230,13 +227,10 @@ public class FreezingBreath extends AbstractProjectile<FreezingBreath, FreezingB
         we.getCooldownManager().removeCooldown(FreezingBreath.class, false);
         we.getCooldownManager().addCooldown(new RegularCooldown<>(name, "FRZ RES", FreezingBreath.class, new FreezingBreath(), we, CooldownTypes.BUFF, cooldownManager -> {
         }, 4 * 20
-        ) {
-
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * (1 - (0.05f * counter));
-            }
-        });
+        ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                    currentDamageValue.addMultiplicativeModifierMult(name, (1 - (0.05f * counter)));
+                }
+        ));
     }
 
     @Override

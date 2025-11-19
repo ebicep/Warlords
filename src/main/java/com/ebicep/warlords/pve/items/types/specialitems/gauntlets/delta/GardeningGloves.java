@@ -1,10 +1,10 @@
 package com.ebicep.warlords.pve.items.types.specialitems.gauntlets.delta;
 
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
@@ -37,25 +37,12 @@ public class GardeningGloves extends SpecialDeltaGauntlet implements AppliesToWa
 
                 },
                 false
-        ) {
-            @Override
-            public float modifyHealingFromAttacker(WarlordsDamageHealingEvent event, float currentHealValue) {
-                if (ThreadLocalRandom.current().nextDouble() <= .15) {
-                    return currentHealValue * 1.3f;
+        ).addModifier(Modifier.HEALING_MODIFY_ATTACKER, (event, currentHealValue) -> {
+                    if (ThreadLocalRandom.current().nextDouble() <= .15) {
+                        currentHealValue.addMultiplicativeModifierMult(getName(), 1.3f);
+                    }
                 }
-                return currentHealValue;
-            }
-        });
-    }
-
-    @Override
-    public String getName() {
-        return "Gardening Gloves";
-    }
-
-    @Override
-    public String getBonus() {
-        return "15% chance to heal +30% more health when healing any ally.";
+        ));
     }
 
     @Override
@@ -64,7 +51,18 @@ public class GardeningGloves extends SpecialDeltaGauntlet implements AppliesToWa
     }
 
     @Override
+    public String getBonus() {
+        return "15% chance to heal +30% more health when healing any ally.";
+    }
+
+    @Override
+    public String getName() {
+        return "Gardening Gloves";
+    }
+
+    @Override
     public AbstractItem getCraftsInto(Set<BasicStatPool> statPool) {
         return new NaturesClaws(statPool);
     }
+
 }

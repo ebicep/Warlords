@@ -8,13 +8,13 @@ import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.type.CustomInstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.earthwarden.HealingTotemBranch;
@@ -171,14 +171,11 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                                              wp,
                                              CooldownTypes.LOW_LEVEL_DEBUFF,
                                              cooldownManager -> {
-                                     }, 20
-                                     ) {
-
-                                         @Override
-                                         public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                             return currentDamageValue * .5f;
-                                         }
-                                     });
+                                             }, 20
+                                     ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                                                 currentDamageValue.addMultiplicativeModifierMult(name, 0.5f);
+                                             }
+                                     ));
                             });
                         }
 
@@ -228,14 +225,11 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                                                                           .append(Component.text("!", NamedTextColor.GRAY)));
                             p.getCooldownManager()
                              .addCooldown(new RegularCooldown<>("Totem Crippling", "CRIP", HealingTotemData.class, data, wp, CooldownTypes.LOW_LEVEL_DEBUFF, cooldownManager -> {
-                            }, crippleDuration * 20
-                            ) {
-
-                                @Override
-                                public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                    return currentDamageValue * .75f;
-                                }
-                            });
+                             }, crippleDuration * 20
+                             ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                                         currentDamageValue.addMultiplicativeModifierMult(name, 0.75f);
+                                     }
+                             ));
                         });
                     }, false, secondaryAbility -> !wp.getCooldownManager().hasCooldown(healingTotemCooldown) || wp.isDead()
             );

@@ -3,11 +3,11 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
@@ -60,15 +60,14 @@ public class Clairvoyance extends AbstractAbility implements PurpleAbilityIcon, 
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
 
                 })
-        ) {
-
-            @Override
-            public float modifyHealingFromAttacker(WarlordsDamageHealingEvent event, float currentHealValue) {
-                stats.healingIncreased += currentHealValue * healingIncreasePercent / 100f;
-                return currentHealValue * convertToMultiplicationDecimal(healingIncreasePercent);
-            }
-
-        });
+        ).addModifier(Modifier.HEALING_MODIFY_ATTACKER, (event, currentHealValue) -> {
+            currentHealValue.addMultiplicativeModifierMult(
+                    name,
+                    convertToMultiplicationDecimal(healingIncreasePercent),
+                    contribution -> stats.healingIncreased += Math.abs(contribution)
+            );
+                }
+        ));
         return true;
     }
 

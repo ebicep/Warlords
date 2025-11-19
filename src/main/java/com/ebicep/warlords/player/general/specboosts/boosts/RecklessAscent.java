@@ -1,20 +1,19 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
 import com.ebicep.warlords.abilities.RecklessCharge;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 
 import java.util.List;
-
-import static com.ebicep.warlords.abilities.internal.AbstractAbility.convertToDivisionDecimal;
 
 public class RecklessAscent implements SpecBoostManager.SpecBoost<RecklessAscent> {
 
@@ -107,12 +106,10 @@ public class RecklessAscent implements SpecBoostManager.SpecBoost<RecklessAscent
                         CooldownTypes.SPEC_BOOST,
                         cooldownManager -> {},
                         damageReductionDurationTicks
-                ) {
-                    @Override
-                    public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                        return currentDamageValue * convertToDivisionDecimal(damageReductionPercent);
-                    }
-                });
+                ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (e, currentDamageValue) -> {
+                            currentDamageValue.addMultiplicativeModifierMult(getStringName(), AbstractAbility.convertToDivisionDecimal(damageReductionPercent));
+                        }
+                ));
             }
         }
 

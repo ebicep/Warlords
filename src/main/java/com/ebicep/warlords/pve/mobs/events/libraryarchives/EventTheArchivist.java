@@ -113,7 +113,7 @@ public class EventTheArchivist extends AbstractMob implements BossMob, Unsilenca
 
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-        event.setCritChance(event.getCritChance() - 25);
+        event.getCritChance().addAdditiveModifier(name, -25);
     }
 
 }

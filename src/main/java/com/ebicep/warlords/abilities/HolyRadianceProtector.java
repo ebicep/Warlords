@@ -3,12 +3,12 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.mobs.flags.NoTargetAbilities;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
@@ -128,13 +128,10 @@ public class HolyRadianceProtector extends AbstractHolyRadiance implements Heals
                         }
                     }
                 })
-        ) {
-
-            @Override
-            public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-                return currentHealValue * convertToMultiplicationDecimal(markBonusHealing);
-            }
-        });
+        ).addModifier(Modifier.HEALING_MODIFY_SELF, (event, currentHealValue) -> {
+                    currentHealValue.addMultiplicativeModifierMult(name, convertToMultiplicationDecimal(markBonusHealing));
+                }
+        ));
     }
 
     @Override

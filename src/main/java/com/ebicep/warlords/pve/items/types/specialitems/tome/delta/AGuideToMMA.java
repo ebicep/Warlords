@@ -1,11 +1,11 @@
 package com.ebicep.warlords.pve.items.types.specialitems.tome.delta;
 
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
@@ -25,8 +25,8 @@ public class AGuideToMMA extends SpecialDeltaTome implements CraftsInto {
     }
 
     @Override
-    public String getName() {
-        return "Don't Tap Out: A Guide to MMA";
+    public String getDescription() {
+        return "Dana White approved!";
     }
 
     @Override
@@ -35,10 +35,9 @@ public class AGuideToMMA extends SpecialDeltaTome implements CraftsInto {
     }
 
     @Override
-    public String getDescription() {
-        return "Dana White approved!";
+    public String getName() {
+        return "Don't Tap Out: A Guide to MMA";
     }
-
 
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {
@@ -53,19 +52,17 @@ public class AGuideToMMA extends SpecialDeltaTome implements CraftsInto {
 
                 },
                 false
-        ) {
-            @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof BossLike) {
-                    return currentDamageValue * 1.15f;
+        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                    if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof BossLike) {
+                        currentDamageValue.addMultiplicativeModifierMult(getName(), 1.15f);
+                    }
                 }
-                return currentDamageValue;
-            }
-        });
+        ));
     }
 
     @Override
     public AbstractItem getCraftsInto(Set<BasicStatPool> statPool) {
         return new ScrollOfScripts(statPool);
     }
+
 }

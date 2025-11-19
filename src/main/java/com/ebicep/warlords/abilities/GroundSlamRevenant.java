@@ -5,10 +5,10 @@ import com.ebicep.warlords.abilities.internal.AbstractGroundSlam;
 import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.revenant.GroundSlamBranchRevenant;
@@ -30,25 +30,29 @@ public class GroundSlamRevenant extends AbstractGroundSlam implements Damages<Gr
     }
 
     @Override
-    protected void onSecondSlamHit(WarlordsEntity wp, Set<WarlordsEntity> playersHit) {
-        if (pveMasterUpgrade2) {
-            float healingBoost = 1 + Math.min(5, playersHit.size()) * .05f;
-            wp.getCooldownManager()
-              .addCooldown(new RegularCooldown<>("Reverberation", "REVERB", GroundSlamRevenant.class, new GroundSlamRevenant(), wp, CooldownTypes.BUFF, cooldownManager -> {
-              }, 5 * 20
-              ) {
-
-                  @Override
-                  public float modifyHealingFromAttacker(WarlordsDamageHealingEvent event, float currentHealValue) {
-                      return currentHealValue * healingBoost;
-                  }
-              });
-        }
+    public Value.RangedValueCritable getSlamDamage() {
+        return damageValues.slamDamage;
     }
 
     @Override
-    public Value.RangedValueCritable getSlamDamage() {
-        return damageValues.slamDamage;
+    protected void onSecondSlamHit(WarlordsEntity wp, Set<WarlordsEntity> playersHit) {
+        if (pveMasterUpgrade2) {
+            float healingBoost = 1 + Math.min(5, playersHit.size()) * .05f;
+            wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                    "Reverberation",
+                    "REVERB",
+                    GroundSlamRevenant.class,
+                    new GroundSlamRevenant(),
+                    wp,
+                    CooldownTypes.BUFF,
+                    cooldownManager -> {
+                    },
+                    5 * 20
+            ).addModifier(Modifier.HEALING_MODIFY_ATTACKER, (event, currentHealValue) -> {
+                        currentHealValue.addMultiplicativeModifierMult(name, healingBoost);
+                    }
+            ));
+        }
     }
 
     @Override
