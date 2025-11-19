@@ -40,7 +40,7 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
     private final AstralPlagueStats stats = new AstralPlagueStats();
     private int tickDuration = 240;
     private int hexTickDurationIncrease = 40;
-    private int hexDamageIncrease= 5;
+    private int hexDamageIncrease = 5;
 
     public AstralPlague() {
         super(AbstractAbilityBuilder.create("astralPlague").pvp());
