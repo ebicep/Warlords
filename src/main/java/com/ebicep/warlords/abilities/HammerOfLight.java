@@ -16,6 +16,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.*;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.paladin.protector.HammerOfLightBranch;
@@ -287,7 +288,7 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                         pulseHeal(wp, 60, 3.5, data);
                         pulseHeal(wp, 80, 4.5, data);
                     }
-            Bukkit.getPluginManager().callEvent(new WarlordsHammerToCrownEvent(wp, hammerOfLightCooldown));
+                    Bukkit.getPluginManager().callEvent(new WarlordsHammerToCrownEvent(wp, hammerOfLightCooldown));
                 }, false, secondaryAbility -> !wp.getCooldownManager().hasCooldown(hammerOfLightCooldown) || wp.isDead()
         );
         return true;
@@ -327,6 +328,40 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
         hammerRadius.tick();
         crownRadius.tick();
         super.runEveryTick(warlordsEntity);
+    }
+
+    public ArmorStand spawnHammer(Location location) {
+        Location newLocation = location.clone();
+        for (int i = 0; i < 10; i++) {
+            if (newLocation.getWorld().getBlockAt(newLocation.clone().add(0, -1, 0)).getType() == Material.AIR) {
+                newLocation.add(0, -1, 0);
+            }
+        }
+        newLocation.add(0, -1, 0);
+        return Utils.spawnArmorStand(newLocation.clone().add(.25, 1.9, -.25), armorStand -> {
+                    armorStand.setRightArmPose(new EulerAngle(20.25, 0, 0));
+                    armorStand.getEquipment().setItemInMainHand(new ItemStack(Material.STRING));
+                    armorStand.setMarker(true);
+                }
+        );
+    }
+
+    private static void giveHammerOfDisillusionEffect(WarlordsEntity hammerTarget, @Nonnull WarlordsEntity wp) {
+        hammerTarget.getCooldownManager().removeCooldownByName("Hammer of Disillusion");
+        hammerTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
+                "Hammer of Disillusion",
+                null,
+                HammerOfLight.class,
+                null,
+                wp,
+                CooldownTypes.LOW_LEVEL_DEBUFF,
+                cooldownManager -> {
+                },
+                20
+        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (event, currentDamageValue) -> {
+                    currentDamageValue.addMultiplicativeModifierMult("Hammer of Disillusion", 1.15f);
+                }
+        ));
     }
 
     private void pulseHeal(WarlordsEntity wp, int delay, double radiusMultiplier, HammerOfLightData hammerOfLightData) {
@@ -375,49 +410,6 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
         }.runTaskLater(delay);
     }
 
-    public float getCrownBonusHealing() {
-        return crownBonusHealing;
-    }
-
-    public ArmorStand spawnHammer(Location location) {
-        Location newLocation = location.clone();
-        for (int i = 0; i < 10; i++) {
-            if (newLocation.getWorld().getBlockAt(newLocation.clone().add(0, -1, 0)).getType() == Material.AIR) {
-                newLocation.add(0, -1, 0);
-            }
-        }
-        newLocation.add(0, -1, 0);
-        return Utils.spawnArmorStand(newLocation.clone().add(.25, 1.9, -.25), armorStand -> {
-                    armorStand.setRightArmPose(new EulerAngle(20.25, 0, 0));
-                    armorStand.getEquipment().setItemInMainHand(new ItemStack(Material.STRING));
-                    armorStand.setMarker(true);
-                }
-        );
-    }
-
-    private static void giveHammerOfDisillusionEffect(WarlordsEntity hammerTarget, @Nonnull WarlordsEntity wp) {
-        hammerTarget.getCooldownManager().removeCooldownByName("Hammer of Disillusion");
-        hammerTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
-                "Hammer of Disillusion",
-                null,
-                HammerOfLight.class,
-                null,
-                wp,
-                CooldownTypes.LOW_LEVEL_DEBUFF,
-                cooldownManager -> {},
-                20
-        ) {
-            @Override
-            public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * 1.15f;
-            }
-        });
-    }
-
-    public void setCrownBonusHealing(float crownBonusHealing) {
-        this.crownBonusHealing = crownBonusHealing;
-    }
-
     @Override
     public DamageValues getDamageValues() {
         return damageValues;
@@ -441,6 +433,14 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
     @Override
     public HammerOfLightStats getAbilityStats() {
         return stats;
+    }
+
+    public float getCrownBonusHealing() {
+        return crownBonusHealing;
+    }
+
+    public void setCrownBonusHealing(float crownBonusHealing) {
+        this.crownBonusHealing = crownBonusHealing;
     }
 
     public FloatModifiable getCrownRadius() {

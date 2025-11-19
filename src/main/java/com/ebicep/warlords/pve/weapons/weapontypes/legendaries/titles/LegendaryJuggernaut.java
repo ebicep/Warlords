@@ -1,12 +1,12 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
@@ -18,7 +18,10 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.UUID;
 
 public class LegendaryJuggernaut extends AbstractLegendaryWeapon implements EventTitle {
 
@@ -37,69 +40,6 @@ public class LegendaryJuggernaut extends AbstractLegendaryWeapon implements Even
 
     public LegendaryJuggernaut(AbstractLegendaryWeapon legendaryWeapon) {
         super(legendaryWeapon);
-    }
-
-    @Override
-    public LinkedHashMap<Currencies, Long> getCost() {
-        LinkedHashMap<Currencies, Long> baseCost = super.getCost();
-        baseCost.put(Currencies.TITLE_TOKEN_JUGGERNAUT, 1L);
-        return baseCost;
-    }
-
-    @Override
-    public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
-        super.applyToWarlordsPlayer(player, pveOption);
-
-        player.getGame().registerEvents(new Listener() {
-            final FloatModifiable.FloatModifier modifier = player.getHealth().addMultiplicativeModifierAdd(getTitleName() + " (Base)", 0);
-
-            @EventHandler(ignoreCancelled = true)
-            public void onDeath(WarlordsDeathEvent event) {
-                WarlordsEntity killer = event.getKiller();
-
-                if (killer == player) {
-                    if (KILL_MILESTONES.contains(player.getMinuteStats().total().getKills())) {
-                        modifier.setModifier(modifier.getModifier() + getCalculatedHealthBoost());
-                    }
-                }
-            }
-        });
-        player.getCooldownManager().addCooldown(new PermanentCooldown<>(
-                "Juggernaut",
-                null,
-                LegendaryJuggernaut.class,
-                null,
-                player,
-                CooldownTypes.WEAPON,
-                cooldownManager -> {
-                },
-                false
-        ) {
-            @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                int playerKills = player.getMinuteStats().total().getKills();
-                for (int i = KILL_MILESTONES.size() - 1; i >= 0; i--) {
-                    int killMilestone = KILL_MILESTONES.get(i);
-                    if (playerKills >= killMilestone) {
-                        return currentDamageValue * (1 + (getDamageBoost() * (i + 1)) / 100f);
-                    }
-                }
-                return currentDamageValue;
-            }
-
-        });
-    }
-
-    private float getDamageBoost() {
-        return DAMAGE_BOOST + DAMAGE_BOOST_INCREASE_PER_UPGRADE * getTitleLevel();
-    }
-
-    private float getHealthBoost() {
-        return HEALTH_BOOST + HEALTH_BOOST_INCREASE_PER_UPGRADE * getTitleLevel();
-    }
-
-    private float getCalculatedHealthBoost() {
-        return getHealthBoost() / 100f;
     }
 
     @Override
@@ -132,11 +72,6 @@ public class LegendaryJuggernaut extends AbstractLegendaryWeapon implements Even
     }
 
     @Override
-    protected float getMeleeDamageMaxValue() {
-        return 200;
-    }
-
-    @Override
     protected float getHealthBonusValue() {
         return 500;
     }
@@ -144,6 +79,59 @@ public class LegendaryJuggernaut extends AbstractLegendaryWeapon implements Even
     @Override
     protected float getSpeedBonusValue() {
         return 5;
+    }
+
+    @Override
+    public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
+        super.applyToWarlordsPlayer(player, pveOption);
+
+        player.getGame().registerEvents(new Listener() {
+            final FloatModifiable.FloatModifier modifier = player.getHealth().addMultiplicativeModifierAdd(getTitleName() + " (Base)", 0);
+
+            @EventHandler(ignoreCancelled = true)
+            public void onDeath(WarlordsDeathEvent event) {
+                WarlordsEntity killer = event.getKiller();
+
+                if (killer == player) {
+                    if (KILL_MILESTONES.contains(player.getMinuteStats().total().getKills())) {
+                        modifier.setModifier(modifier.getModifier() + getCalculatedHealthBoost());
+                    }
+                }
+            }
+        });
+        player.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                "Juggernaut",
+                null,
+                LegendaryJuggernaut.class,
+                null,
+                player,
+                CooldownTypes.WEAPON,
+                cooldownManager -> {
+                },
+                false
+        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                    int playerKills = player.getMinuteStats().total().getKills();
+                    for (int i = KILL_MILESTONES.size() - 1; i >= 0; i--) {
+                        int killMilestone = KILL_MILESTONES.get(i);
+                        if (playerKills >= killMilestone) {
+                            currentDamageValue.addMultiplicativeModifierMult(getTitleName(), 1 + (getDamageBoost() * (i + 1)) / 100f);
+                            return;
+                        }
+                    }
+                }
+        ));
+    }
+
+    @Override
+    public LinkedHashMap<Currencies, Long> getCost() {
+        LinkedHashMap<Currencies, Long> baseCost = super.getCost();
+        baseCost.put(Currencies.TITLE_TOKEN_JUGGERNAUT, 1L);
+        return baseCost;
+    }
+
+    @Override
+    protected float getMeleeDamageMaxValue() {
+        return 200;
     }
 
     @Override
@@ -159,12 +147,27 @@ public class LegendaryJuggernaut extends AbstractLegendaryWeapon implements Even
     @Override
     public List<Pair<Component, Component>> getPassiveEffectUpgrade() {
         return Arrays.asList(
-            new Pair<>(
-                    formatTitleUpgrade(DAMAGE_BOOST + DAMAGE_BOOST_INCREASE_PER_UPGRADE * getTitleLevel(), "%"),
-                    formatTitleUpgrade(DAMAGE_BOOST + DAMAGE_BOOST_INCREASE_PER_UPGRADE * getTitleLevelUpgraded(), "%")),
-            new Pair<>(
-                    formatTitleUpgrade(HEALTH_BOOST + HEALTH_BOOST_INCREASE_PER_UPGRADE * getTitleLevel(), "%"),
-                    formatTitleUpgrade(HEALTH_BOOST + HEALTH_BOOST_INCREASE_PER_UPGRADE * getTitleLevelUpgraded(), "%")
-            ));
+                new Pair<>(
+                        formatTitleUpgrade(DAMAGE_BOOST + DAMAGE_BOOST_INCREASE_PER_UPGRADE * getTitleLevel(), "%"),
+                        formatTitleUpgrade(DAMAGE_BOOST + DAMAGE_BOOST_INCREASE_PER_UPGRADE * getTitleLevelUpgraded(), "%")
+                ),
+                new Pair<>(
+                        formatTitleUpgrade(HEALTH_BOOST + HEALTH_BOOST_INCREASE_PER_UPGRADE * getTitleLevel(), "%"),
+                        formatTitleUpgrade(HEALTH_BOOST + HEALTH_BOOST_INCREASE_PER_UPGRADE * getTitleLevelUpgraded(), "%")
+                )
+        );
     }
+
+    private float getCalculatedHealthBoost() {
+        return getHealthBoost() / 100f;
+    }
+
+    private float getDamageBoost() {
+        return DAMAGE_BOOST + DAMAGE_BOOST_INCREASE_PER_UPGRADE * getTitleLevel();
+    }
+
+    private float getHealthBoost() {
+        return HEALTH_BOOST + HEALTH_BOOST_INCREASE_PER_UPGRADE * getTitleLevel();
+    }
+
 }

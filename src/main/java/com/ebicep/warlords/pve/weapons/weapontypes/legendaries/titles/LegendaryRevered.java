@@ -1,12 +1,12 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityTargetEvent;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
@@ -40,34 +40,6 @@ public class LegendaryRevered extends AbstractLegendaryWeapon implements EventTi
 
     public LegendaryRevered(AbstractLegendaryWeapon legendaryWeapon) {
         super(legendaryWeapon);
-    }
-
-    @Override
-    public LinkedHashMap<Currencies, Long> getCost() {
-        LinkedHashMap<Currencies, Long> baseCost = super.getCost();
-        baseCost.put(Currencies.TITLE_TOKEN_PHARAOHS_REVENGE, 1L);
-        return baseCost;
-    }
-
-    @Override
-    public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
-        super.applyToWarlordsPlayer(player, pveOption);
-
-        player.getGame().registerEvents(new Listener() {
-            @EventHandler
-            public void onBlueAbilityTarget(WarlordsAbilityTargetEvent event) {
-                if (!event.getWarlordsEntity().equals(player)) {
-                    return;
-                }
-                if (!EFFECTED_ABILITIES.contains(event.getAbilityName())) {
-                    return;
-                }
-                resetSelfCooldown(player);
-                for (WarlordsEntity target : event.getTargets()) {
-                    resetTeammateCooldown(player, target);
-                }
-            }
-        });
     }
 
     @Override
@@ -118,6 +90,34 @@ public class LegendaryRevered extends AbstractLegendaryWeapon implements EventTi
     }
 
     @Override
+    public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
+        super.applyToWarlordsPlayer(player, pveOption);
+
+        player.getGame().registerEvents(new Listener() {
+            @EventHandler
+            public void onBlueAbilityTarget(WarlordsAbilityTargetEvent event) {
+                if (!event.getWarlordsEntity().equals(player)) {
+                    return;
+                }
+                if (!EFFECTED_ABILITIES.contains(event.getAbilityName())) {
+                    return;
+                }
+                resetSelfCooldown(player);
+                for (WarlordsEntity target : event.getTargets()) {
+                    resetTeammateCooldown(player, target);
+                }
+            }
+        });
+    }
+
+    @Override
+    public LinkedHashMap<Currencies, Long> getCost() {
+        LinkedHashMap<Currencies, Long> baseCost = super.getCost();
+        baseCost.put(Currencies.TITLE_TOKEN_PHARAOHS_REVENGE, 1L);
+        return baseCost;
+    }
+
+    @Override
     protected float getMeleeDamageMaxValue() {
         return 200;
     }
@@ -157,7 +157,7 @@ public class LegendaryRevered extends AbstractLegendaryWeapon implements EventTi
     }
 
     private RegularCooldown<LegendaryRevered> generateCooldown(WarlordsPlayer from) {
-        return new RegularCooldown<>(
+        RegularCooldown<LegendaryRevered> cooldown = new RegularCooldown<>(
                 COOLDOWN_NAME,
                 "REV",
                 LegendaryRevered.class,
@@ -168,11 +168,12 @@ public class LegendaryRevered extends AbstractLegendaryWeapon implements EventTi
 
                 },
                 (int) ((DURATION + DURATION_INCREASE_PER_UPGRADE * getTitleLevel()) * 20)
-        ) {
-            @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * (1 + (DAMAGE_INCREASE + DAMAGE_INCREASE_PER_UPGRADE * getTitleLevel()) / 100f);
-            }
-        };
+        );
+        cooldown.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                    currentDamageValue.addMultiplicativeModifierMult(getTitleName(), 1 + (DAMAGE_INCREASE + DAMAGE_INCREASE_PER_UPGRADE * getTitleLevel()) / 100f);
+                }
+        );
+        return cooldown;
     }
+
 }

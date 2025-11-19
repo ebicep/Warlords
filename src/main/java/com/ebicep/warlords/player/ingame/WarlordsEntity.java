@@ -34,6 +34,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceManager;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.player.ingame.motionsystem.MotionModifier;
 import com.ebicep.warlords.player.ingame.motionsystem.MotionModifierBuilder;
 import com.ebicep.warlords.player.ingame.motionsystem.MotionSystem;
@@ -47,6 +48,7 @@ import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.StringUtils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiableFilter;
+import com.ebicep.warlords.util.warlords.modifiablevalues.filters.HealthFilter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -116,7 +118,7 @@ public abstract class WarlordsEntity {
     protected FloatModifiable energy;
     protected FloatModifiable energyPerSec;
     protected FloatModifiable energyPerHit;
-    protected FloatModifiableFilter maxBaseHealthFilter = new FloatModifiableFilter.HealthFilter();
+    protected FloatModifiableFilter maxBaseHealthFilter = new HealthFilter();
     private final List<Float> recordDamage = new ArrayList<>();
     private final PlayerStatisticsMinute minuteStats = new PlayerStatisticsMinute();
     private final PlayerStatisticsSecond secondStats = new PlayerStatisticsSecond();
@@ -1304,17 +1306,13 @@ public abstract class WarlordsEntity {
         // Energy
         if (getCurrentEnergy() < getMaxEnergy()) {
             // Standard energy value per second.
-            float energyGainPerTick = getEnergyPerSec().getCalculatedValue() / 20;
-
+            final FloatModifiable energyGainPerTick = new FloatModifiable(getEnergyPerSec().getCalculatedValue() / 20);
             for (AbstractCooldown<?> abstractCooldown : getCooldownManager().getCooldownsDistinct()) {
-                energyGainPerTick = abstractCooldown.addEnergyGainPerTick(energyGainPerTick);
+                abstractCooldown.applyModifiers(Modifier.ENERGY_GAIN_PER_TICK, m -> m.apply(energyGainPerTick));
             }
-            for (AbstractCooldown<?> abstractCooldown : getCooldownManager().getCooldownsDistinct()) {
-                energyGainPerTick = abstractCooldown.multiplyEnergyGainPerTick(energyGainPerTick);
-            }
-
+            energyGainPerTick.refresh();
             // Setting energy gain to the value after all ability instance multipliers have been applied.
-            float newEnergy = getCurrentEnergy() + energyGainPerTick;
+            float newEnergy = getCurrentEnergy() + energyGainPerTick.getCalculatedValue();
             if (newEnergy > getMaxEnergy()) {
                 newEnergy = getMaxEnergy();
             }

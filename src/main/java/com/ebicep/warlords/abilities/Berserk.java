@@ -9,6 +9,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
@@ -28,6 +29,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Duration, AbilityStats<Berserk, Berserk.BerserkStats> {
 
@@ -48,18 +50,7 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
         this.damageIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageIncrease"), float.class);
     }
 
-    @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("You go into a berserker rage, increasing your damage by ")
-                                               .percent(damageIncrease, NamedTextColor.RED)
-                                               .text(" and movement speed by ")
-                                               .percent(speedBuff, NamedTextColor.WHITE)
-                                               .text(". Lasts ")
-                                               .durationTicks(tickDuration)
-                                               .text(".")
-                                               .build();
-    }
-
+    //TODO remove
     private float absorbedDamage = 0;
     private int cooldown = 0;
 
@@ -68,14 +59,15 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
         Utils.playGlobalSound(wp.getLocation(), "warrior.berserk.activation", 2, 1);
         wp.addSpeedModifier(wp, name, speedBuff, tickDuration);
         wp.getCooldownManager().removeCooldown(Berserk.class, false);
+        AtomicInteger multiplier = new AtomicInteger();
         RegularCooldown<Berserk> berserkCooldown = new RegularCooldown<>(
-                name,
-                "BERS",
+                name, "BERS",
                 Berserk.class,
                 null,
                 wp,
                 CooldownTypes.ABILITY,
-                cooldownManager -> {},
+                cooldownManager -> {
+                },
                 cooldownManager -> {
                     wp.getSpeed().removeModifier(name);
                 },
@@ -85,43 +77,34 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
                         EffectUtils.displayParticle(Particle.ANGRY_VILLAGER, wp.getLocation().add(0, 1.75, 0), 1, 0, 0, 0, 0.1F);
                     }
                 })
-        ) {
-            int multiplier = 0;
-
-            @Override
-            public float addCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
-                if (pveMasterUpgrade) {
-                    if (event.getCause().isEmpty() || event.getCause().equals("Time Warp")) {
-                        return currentCritChance;
+        );
+        berserkCooldown.addModifier(Modifier.DAMAGE_CRIT_CHANCE_ATTACKER, (event, currentCritChance) -> {
+                    if (pveMasterUpgrade) {
+                        if (event.getCause().isEmpty() || event.getCause().equals("Time Warp")) {
+                            return;
+                        }
+                        float critBoost = (1f * multiplier.get());
+                        currentCritChance.addAdditiveModifier(name, Math.min(60, critBoost));
                     }
-                    float critBoost = (1f * multiplier);
-                    return currentCritChance + Math.min(60, critBoost);
                 }
-                return currentCritChance;
-            }
+        );
+        berserkCooldown.addModifier(Modifier.DAMAGE_CRIT_MULTIPLIER_ATTACKER, (event, currentCritMultiplier) -> {
+                    if (pveMasterUpgrade) {
+                        if (event.getCause().isEmpty() || event.getCause().equals("Time Warp")) {
+                            return;
+                        }
+                        float critBoost = (1f * multiplier.get());
+                        currentCritMultiplier.addAdditiveModifier(name, Math.min(60, critBoost));
 
-            @Override
-            public float addCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
-                if (pveMasterUpgrade) {
-                    if (event.getCause().isEmpty() || event.getCause().equals("Time Warp")) {
-                        return currentCritMultiplier;
                     }
-                    float critBoost = (1f * multiplier);
-                    return currentCritMultiplier + Math.min(60, critBoost);
                 }
-                return currentCritMultiplier;
-            }
-
-            @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                stats.hitsDoneAmplified++;
-                multiplier++;
-
-                float damage = currentDamageValue * convertToMultiplicationDecimal(damageIncrease);
-                absorbedDamage += damage;
-                return damage;
-            }
-        };
+        );
+        berserkCooldown.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamgeValue) -> {
+                    stats.hitsDoneAmplified++;
+                    multiplier.getAndIncrement();
+                    currentDamgeValue.addMultiplicativeModifierAdd(name, damageIncrease / 100);
+                }
+        );
         wp.getCooldownManager().addCooldown(berserkCooldown);
         if (pveMasterUpgrade2) {
             new GameRunnable(wp.getGame()) {
@@ -166,8 +149,19 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
                     secondaryAbility -> !wp.getCooldownManager().hasCooldown(berserkCooldown)
             );
         }
-
         return true;
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("You go into a berserker rage, increasing your damage by ")
+                                               .percent(damageIncrease, NamedTextColor.RED)
+                                               .text(" and movement speed by ")
+                                               .percent(speedBuff, NamedTextColor.WHITE)
+                                               .text(". Lasts ")
+                                               .durationTicks(tickDuration)
+                                               .text(".")
+                                               .build();
     }
 
     @Override

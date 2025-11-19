@@ -1,6 +1,5 @@
 package com.ebicep.warlords.game.maps;
 
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.*;
 import com.ebicep.warlords.game.option.*;
 import com.ebicep.warlords.game.option.cuboid.AbstractCuboidOption;
@@ -24,6 +23,7 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
@@ -194,12 +194,13 @@ public class Acropolis extends GameMap {
             public void register(@Nonnull Game game) {
                 super.register(game);
                 game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(SCOREBOARD_PRIORITY - 2, "wave") {
-                    @Nonnull
-                    @Override
-                    public List<Component> computeLines(@Nullable WarlordsPlayer player) {
-                        return Collections.singletonList(Component.text("Event: ").append(Component.text(getMapName(), NamedTextColor.GREEN)));
-                    }
-                });
+                            @Nonnull
+                            @Override
+                            public List<Component> computeLines(@Nullable WarlordsPlayer player) {
+                                return Collections.singletonList(Component.text("Event: ").append(Component.text(getMapName(), NamedTextColor.GREEN)));
+                            }
+                        }
+                );
             }
 
             @Override
@@ -232,12 +233,10 @@ public class Acropolis extends GameMap {
 
                         },
                         false
-                ) {
-                    @Override
-                    public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                        return currentDamageValue * damageMultiplier;
-                    }
-                });
+                ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                            currentDamageValue.addMultiplicativeModifierMult("Scaling", damageMultiplier);
+                        }
+                ));
             }
         });
         options.add(new ItemOption());
@@ -289,12 +288,13 @@ public class Acropolis extends GameMap {
         );
         options.add(new CoinGainOption()
                 .clearMobCoinValueAndSet("Greek Gods Killed", new LinkedHashMap<>() {{
-                    put("Apollo", 100L);
-                    put("Ares", 100L);
-                    put("Prometheus", 100L);
-                    put("Athena", 100L);
-                    put("Cronus", 100L);
-                }})
+                            put("Apollo", 100L);
+                            put("Ares", 100L);
+                            put("Prometheus", 100L);
+                            put("Athena", 100L);
+                            put("Cronus", 100L);
+                        }}
+                )
                 .playerCoinPerXSec(150, 10)
                 .guildCoinInsigniaConvertBonus(1000)
                 .guildCoinPerXSec(1, 1)

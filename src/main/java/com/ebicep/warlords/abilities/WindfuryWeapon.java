@@ -4,7 +4,6 @@ import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -12,6 +11,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.player.ingame.motionsystem.MotionModifier;
 import com.ebicep.warlords.player.ingame.motionsystem.MotionModifierBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
@@ -61,82 +61,85 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
         MotionModifier shreddingFurySpeed = new MotionModifierBuilder().setFrom(wp).setName("Shredding Fury").setModifier(0).setDuration(Integer.MAX_VALUE).build();
         wp.addSpeedModifier(shreddingFurySpeed);
         AtomicInteger procs = new AtomicInteger(0);
-        wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "FURY", WindfuryWeapon.class, null, wp, CooldownTypes.ABILITY, cooldownManager -> {
-        }, cooldownManager -> {
-            shreddingFurySpeed.setTicksLeft(0);
-        }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-            if (ticksElapsed % 4 == 0) {
-                EffectUtils.displayParticle(Particle.CRIT, wp.getLocation().add(0, 1.2, 0), 3, 0.2, 0, 0.2, 0.1);
-            }
-        })
-        ) {
+        final int[] guaranteedHitsLeft = {guaranteedHits};
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                name,
+                "FURY",
+                WindfuryWeapon.class,
+                null,
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                },
+                cooldownManager -> {
+                    shreddingFurySpeed.setTicksLeft(0);
+                },
+                tickDuration,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed % 4 == 0) {
+                        EffectUtils.displayParticle(Particle.CRIT, wp.getLocation().add(0, 1.2, 0), 3, 0.2, 0, 0.2, 0.1);
+                    }
+                })
+        ).addModifier(Modifier.DAMAGE_ON_END_ATTACKER, (event, currentDamageValue, isCrit) -> {
+                    if (!event.getCause().isEmpty() || event.getFlags().contains(InstanceFlags.RECURSIVE)) {
+                        return;
+                    }
+                    WarlordsEntity victim = event.getWarlordsEntity();
+                    WarlordsEntity attacker = event.getSource();
+                    double windfuryActivate = ThreadLocalRandom.current().nextDouble(100);
+                    if (guaranteedHitsLeft[0] > 0) {
+                        guaranteedHitsLeft[0]--;
+                        windfuryActivate = 0;
+                    }
+                    if (!(windfuryActivate < procChance)) {
+                        return;
+                    }
+                    procs.incrementAndGet();
+                    stats.timesProcd++;
+                    new GameRunnable(victim.getGame()) {
 
-            private int guaranteedHitsLeft = guaranteedHits;
+                        final float minDamage = wp instanceof WarlordsPlayer warlordsPlayer && warlordsPlayer.getWeapon() != null ?
+                                                warlordsPlayer.getWeapon().getMeleeDamageMin() :
+                                                132;
 
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (pveMasterUpgrade2) {
-                    return currentDamageValue * (100 - Math.min(15, procs.get() * 2.5f)) / 100f;
-                }
-                return currentDamageValue;
-            }
+                        final float maxDamage = wp instanceof WarlordsPlayer warlordsPlayer && warlordsPlayer.getWeapon() != null ?
+                                                warlordsPlayer.getWeapon().getMeleeDamageMax() :
+                                                179;
 
-            @Override
-            public void onEndFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (!event.getCause().isEmpty() || event.getFlags().contains(InstanceFlags.RECURSIVE)) {
-                    return;
-                }
-                WarlordsEntity victim = event.getWarlordsEntity();
-                WarlordsEntity attacker = event.getSource();
-                double windfuryActivate = ThreadLocalRandom.current().nextDouble(100);
-                if (guaranteedHitsLeft > 0) {
-                    guaranteedHitsLeft--;
-                    windfuryActivate = 0;
-                }
-                if (!(windfuryActivate < procChance)) {
-                    return;
-                }
-                procs.incrementAndGet();
-                stats.timesProcd++;
-                new GameRunnable(victim.getGame()) {
+                        int counter = 0;
 
-                    final float minDamage = wp instanceof WarlordsPlayer warlordsPlayer && warlordsPlayer.getWeapon() != null ?
-                                            warlordsPlayer.getWeapon().getMeleeDamageMin() :
-                                            132;
-
-                    final float maxDamage = wp instanceof WarlordsPlayer warlordsPlayer && warlordsPlayer.getWeapon() != null ?
-                                            warlordsPlayer.getWeapon().getMeleeDamageMax() :
-                                            179;
-
-                    int counter = 0;
-
-                    @Override
-                    public void run() {
-                        Utils.playGlobalSound(victim.getLocation(), "shaman.windfuryweapon.impact", 2, 1);
-                        victim.addInstance(InstanceBuilder.damage()
-                                                          .ability(WindfuryWeapon.this)
-                                                          .source(attacker)
-                                                          .min(minDamage * (weaponDamage / 100f))
-                                                          .max(maxDamage * (weaponDamage / 100f))
-                                                          .critChance(25)
-                                                          .critMultiplier(200));
-                        if (pveMasterUpgrade) {
-                            victim.setDamageResistance(victim.getSpec().getDamageResistance() - 2);
-                            if (victim instanceof WarlordsNPC npc) {
-                                npc.setDamageResistance(npc.getSpec().getDamageResistance() - 2);
+                        @Override
+                        public void run() {
+                            Utils.playGlobalSound(victim.getLocation(), "shaman.windfuryweapon.impact", 2, 1);
+                            victim.addInstance(InstanceBuilder.damage()
+                                                              .ability(WindfuryWeapon.this)
+                                                              .source(attacker)
+                                                              .min(minDamage * (weaponDamage / 100f))
+                                                              .max(maxDamage * (weaponDamage / 100f))
+                                                              .critChance(25)
+                                                              .critMultiplier(200));
+                            if (pveMasterUpgrade) {
+                                victim.setDamageResistance(victim.getSpec().getDamageResistance() - 2);
+                                if (victim instanceof WarlordsNPC npc) {
+                                    npc.setDamageResistance(npc.getSpec().getDamageResistance() - 2);
+                                }
+                            }
+                            counter++;
+                            if (counter == maxHits) {
+                                this.cancel();
                             }
                         }
-                        counter++;
-                        if (counter == maxHits) {
-                            this.cancel();
-                        }
+                    }.runTaskTimer(3, 3);
+                    if (pveMasterUpgrade2 && procs.get() <= 10) {
+                        shreddingFurySpeed.setModifier(shreddingFurySpeed.getModifier() + 2.5f);
                     }
-                }.runTaskTimer(3, 3);
-                if (pveMasterUpgrade2 && procs.get() <= 10) {
-                    shreddingFurySpeed.setModifier(shreddingFurySpeed.getModifier() + 2.5f);
                 }
-            }
-        });
+        ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                    if (pveMasterUpgrade2) {
+                        currentDamageValue.addMultiplicativeModifierMult(name, (100 - Math.min(15, procs.get() * 2.5f)) / 100f);
+                    }
+                }
+        ));
         return true;
     }
 
@@ -158,14 +161,6 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
                                                .build();
     }
 
-    public int getGuaranteedHits() {
-        return guaranteedHits;
-    }
-
-    public void setGuaranteedHits(int guaranteedHits) {
-        this.guaranteedHits = guaranteedHits;
-    }
-
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new WindfuryBranch(abilityTree, this);
@@ -184,6 +179,14 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
     @Override
     public WindfuryWeaponStats getAbilityStats() {
         return stats;
+    }
+
+    public int getGuaranteedHits() {
+        return guaranteedHits;
+    }
+
+    public void setGuaranteedHits(int guaranteedHits) {
+        this.guaranteedHits = guaranteedHits;
     }
 
     public float getProcChance() {

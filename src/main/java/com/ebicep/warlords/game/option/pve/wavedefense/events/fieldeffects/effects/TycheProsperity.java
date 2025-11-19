@@ -2,7 +2,6 @@ package com.ebicep.warlords.game.option.pve.wavedefense.events.fieldeffects.effe
 
 import com.ebicep.warlords.abilities.internal.AbstractPiercingProjectile;
 import com.ebicep.warlords.abilities.internal.Value;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.fieldeffects.FieldEffect;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.fieldeffects.FieldEffectOption;
@@ -11,6 +10,7 @@ import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -107,12 +107,11 @@ public class TycheProsperity implements FieldEffect {
                 cooldownManager -> {
                 },
                 false
-        ) {
-            @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * 1.05f;
-            }
-        };
+        );
+        warriorCooldown.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                    currentDamageValue.addMultiplicativeModifierMult(getName(), 1.05f);
+                }
+        );
         warlordsEntity.getCooldownManager().addCooldown(warriorCooldown);
         warlordsEntity.addKnockbackModifier(warlordsEntity, getName(), -5, warriorCooldown);
     }
@@ -129,15 +128,12 @@ public class TycheProsperity implements FieldEffect {
                 cooldownManager -> {
                 },
                 false
-        ) {
-            @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (event.getCause().isEmpty()) {
-                    return currentDamageValue * 1.1f;
+        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                    if (event.getCause().isEmpty()) {
+                        currentDamageValue.addMultiplicativeModifierMult(getName(), 1.1f);
+                    }
                 }
-                return currentDamageValue;
-            }
-        });
+        ));
     }
 
     private void rogueBonus(WarlordsEntity warlordsEntity) {
@@ -152,21 +148,20 @@ public class TycheProsperity implements FieldEffect {
                 cooldownManager -> {
                 },
                 false
-        ) {
-            @Override
-            public float modifyHealingFromAttacker(WarlordsDamageHealingEvent event, float currentHealValue) {
-                return currentHealValue * 1.05f;
-            }
-        });
+        ).addModifier(Modifier.HEALING_MODIFY_ATTACKER, (event, currentHealValue) -> {
+                    currentHealValue.addMultiplicativeModifierMult(getName(), 1.05f);
+                }
+        ));
     }
 
     private void arcanistBonus(WarlordsEntity warlordsEntity) {
         warlordsEntity.getAbilities().forEach(ability -> {
             Value.applyDamageHealing(ability, value -> {
-                if (value instanceof Value.RangedValueCritable rangedValueCritable) {
-                    rangedValueCritable.critChance().addAdditiveModifier(getName(), 10);
-                }
-            });
+                        if (value instanceof Value.RangedValueCritable rangedValueCritable) {
+                            rangedValueCritable.critChance().addAdditiveModifier(getName(), 10);
+                        }
+                    }
+            );
         });
         warlordsEntity.getCooldownManager().addCooldown(new PermanentCooldown<>(
                 getName(),
@@ -178,12 +173,10 @@ public class TycheProsperity implements FieldEffect {
                 cooldownManager -> {
                 },
                 false
-        ) {
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * .95f;
-            }
-        });
+        ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                    currentDamageValue.addMultiplicativeModifierMult(getName(), .95f);
+                }
+        ));
     }
 
 }

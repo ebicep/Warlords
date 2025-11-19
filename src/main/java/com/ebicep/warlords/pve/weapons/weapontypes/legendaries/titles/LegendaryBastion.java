@@ -1,6 +1,5 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -8,6 +7,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.util.java.Pair;
@@ -18,6 +18,7 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.springframework.data.annotation.Transient;
+
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -46,30 +47,59 @@ public class LegendaryBastion extends AbstractLegendaryWeapon {
 
     }
 
-    public LegendaryBastion(java.util.UUID uuid) { super(uuid); }
-    public LegendaryBastion(AbstractLegendaryWeapon copy) { super(copy); }
+    public LegendaryBastion(java.util.UUID uuid) {
+        super(uuid);
+    }
+
+    public LegendaryBastion(AbstractLegendaryWeapon copy) {
+        super(copy);
+    }
 
     @Override
     public TextComponent getPassiveEffect() {
         return Component.text("Create a Bastion aura of " + AURA_RADIUS_BLOCKS + " blocks around you, allies inside take ", NamedTextColor.GRAY)
-                .append(formatTitleUpgrade(getAllyDrPercent(), "%"))
-                .append(Component.text(" less damage. " + REDIRECT_RATIO_PERCENT + "% of damage prevented by the aura is redirected to you, up to ", NamedTextColor.GRAY))
-                .append(formatTitleUpgrade(getRedirectCapPercent(), "%"))
-                .append(Component.text(" of your max health per second.", NamedTextColor.GRAY));
+                        .append(formatTitleUpgrade(getAllyDrPercent(), "%"))
+                        .append(Component.text(" less damage. " + REDIRECT_RATIO_PERCENT + "% of damage prevented by the aura is redirected to you, up to ", NamedTextColor.GRAY))
+                        .append(formatTitleUpgrade(getRedirectCapPercent(), "%"))
+                        .append(Component.text(" of your max health per second.", NamedTextColor.GRAY));
+    }
+
+    private float getAllyDrPercent() {
+        return ALLY_DR_PERCENT_BASE + ALLY_DR_INC_PER_LEVEL * getTitleLevel();
+    }
+
+    private float getRedirectCapPercent() {
+        return REDIRECT_CAP_PERCENT_BASE + REDIRECT_CAP_INC_PER_LEVEL * getTitleLevel();
     }
 
     @Override
-    public java.util.List<Pair<Component, Component>> getPassiveEffectUpgrade() {
-        return Arrays.asList(
-                new Pair<>(
-                        formatTitleUpgrade(ALLY_DR_PERCENT_BASE + ALLY_DR_INC_PER_LEVEL * getTitleLevel(), "%"),
-                        formatTitleUpgrade(ALLY_DR_PERCENT_BASE + ALLY_DR_INC_PER_LEVEL * getTitleLevelUpgraded(), "%")
-                ),
-                new Pair<>(
-                        formatTitleUpgrade(REDIRECT_CAP_PERCENT_BASE + REDIRECT_CAP_INC_PER_LEVEL * getTitleLevel(), "%"),
-                        formatTitleUpgrade(REDIRECT_CAP_PERCENT_BASE + REDIRECT_CAP_INC_PER_LEVEL * getTitleLevelUpgraded(), "%")
-                )
-        );
+    public LegendaryTitles getTitle() {
+        return LegendaryTitles.BASTION;
+    }
+
+    @Override
+    protected float getMeleeDamageMinValue() {
+        return 150;
+    }
+
+    @Override
+    protected float getHealthBonusValue() {
+        return 1000;
+    }
+
+    @Override
+    protected float getSpeedBonusValue() {
+        return 6;
+    }
+
+    @Override
+    protected float getEnergyPerHitBonusValue() {
+        return 4;
+    }
+
+    @Override
+    protected float getSkillCritChanceBonusValue() {
+        return 4;
     }
 
     @Override
@@ -106,8 +136,8 @@ public class LegendaryBastion extends AbstractLegendaryWeapon {
                 }
 
                 List<WarlordsEntity> teammates = PlayerFilter.playingGame(player.getGame()).stream()
-                        .filter(wp -> wp != player && wp.isTeammate(player) && !wp.isDead())
-                        .toList();
+                                                             .filter(wp -> wp != player && wp.isTeammate(player) && !wp.isDead())
+                                                             .toList();
 
                 Set<UUID> current = new HashSet<>();
                 Location pl = player.getLocation();
@@ -136,59 +166,40 @@ public class LegendaryBastion extends AbstractLegendaryWeapon {
                 CooldownTypes.WEAPON,
                 cooldownManager -> {},
                 false
-        ) {
-            @Override
-            public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (owner.isDead()) return currentDamageValue;
-
-                Location ol = owner.getLocation();
-                Location al = ally.getLocation();
-
-                if (al.distanceSquared(ol) > (AURA_RADIUS_BLOCKS * AURA_RADIUS_BLOCKS)) {
-                    return currentDamageValue;
-                }
-
-                float dr = getAllyDrPercent() / 100f;
-                float reduced = currentDamageValue * (1f - dr);
-                float prevented = currentDamageValue - reduced;
-
-                if (prevented > 0) {
-                    double redirectCapRemain = Math.max(0.0, owner.getMaxHealth() * (getRedirectCapPercent() / 100.0) - redirectUsedThisSecond);
-                    double toRedirect = Math.min(redirectCapRemain, prevented * (REDIRECT_RATIO_PERCENT / 100.0));
-                    if (toRedirect > 0) {
-                        owner.addInstance(InstanceBuilder
-                                .damage()
-                                .cause("Bastion")
-                                .source(ally)
-                                .min((float) toRedirect)
-                                .max((float) toRedirect)
-                                .flags(InstanceFlags.RECURSIVE, InstanceFlags.REFLECTIVE_DAMAGE, InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST)
-                        );
-                        redirectUsedThisSecond += toRedirect;
-                    }
-                }
-                return reduced;
+        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (event, currentDamageValue) -> {
+            if (owner.isDead()) {
+                return;
             }
-        });
-    }
 
+            Location ol = owner.getLocation();
+            Location al = ally.getLocation();
 
-    private float getAllyDrPercent() {
-        return ALLY_DR_PERCENT_BASE + ALLY_DR_INC_PER_LEVEL * getTitleLevel();
-    }
+            if (al.distanceSquared(ol) > (AURA_RADIUS_BLOCKS * AURA_RADIUS_BLOCKS)) {
+                return;
+            }
 
-    private float getRedirectCapPercent() {
-        return REDIRECT_CAP_PERCENT_BASE + REDIRECT_CAP_INC_PER_LEVEL * getTitleLevel();
-    }
+            float dr = getAllyDrPercent() / 100f;
+            float reduced = currentDamageValue.getCalculatedValue() * (1f - dr);
+            float prevented = currentDamageValue.getCalculatedValue() - reduced;
 
-    @Override
-    public LegendaryTitles getTitle() {
-        return LegendaryTitles.BASTION;
-    }
-
-    @Override
-    protected float getMeleeDamageMinValue() {
-        return 150;
+            if (prevented > 0) {
+                double redirectCapRemain = Math.max(0.0, owner.getMaxHealth() * (getRedirectCapPercent() / 100.0) - redirectUsedThisSecond);
+                double toRedirect = Math.min(redirectCapRemain, prevented * (REDIRECT_RATIO_PERCENT / 100.0));
+                if (toRedirect > 0) {
+                    owner.addInstance(InstanceBuilder
+                            .damage()
+                            .cause("Bastion")
+                            .source(ally)
+                            .min((float) toRedirect)
+                            .max((float) toRedirect)
+                            .flags(InstanceFlags.RECURSIVE, InstanceFlags.REFLECTIVE_DAMAGE, InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST)
+                    );
+                    redirectUsedThisSecond += toRedirect;
+                }
+            }
+            currentDamageValue.addMultiplicativeModifierMult(getTitleName(), 1f - dr);
+                }
+        ));
     }
 
     @Override
@@ -202,25 +213,22 @@ public class LegendaryBastion extends AbstractLegendaryWeapon {
     }
 
     @Override
-    protected float getCritMultiplierValue() { return 175; }
-
-    @Override
-    protected float getHealthBonusValue() {
-        return 1000;
+    protected float getCritMultiplierValue() {
+        return 175;
     }
 
     @Override
-    protected float getSpeedBonusValue() {
-        return 6;
+    public java.util.List<Pair<Component, Component>> getPassiveEffectUpgrade() {
+        return Arrays.asList(
+                new Pair<>(
+                        formatTitleUpgrade(ALLY_DR_PERCENT_BASE + ALLY_DR_INC_PER_LEVEL * getTitleLevel(), "%"),
+                        formatTitleUpgrade(ALLY_DR_PERCENT_BASE + ALLY_DR_INC_PER_LEVEL * getTitleLevelUpgraded(), "%")
+                ),
+                new Pair<>(
+                        formatTitleUpgrade(REDIRECT_CAP_PERCENT_BASE + REDIRECT_CAP_INC_PER_LEVEL * getTitleLevel(), "%"),
+                        formatTitleUpgrade(REDIRECT_CAP_PERCENT_BASE + REDIRECT_CAP_INC_PER_LEVEL * getTitleLevelUpgraded(), "%")
+                )
+        );
     }
 
-    @Override
-    protected float getSkillCritChanceBonusValue() {
-        return 4;
-    }
-
-    @Override
-    protected float getEnergyPerHitBonusValue() {
-        return 4;
-    }
 }

@@ -1,12 +1,12 @@
 package com.ebicep.warlords.pve.items.types.fixeditems;
 
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractFixedItem;
@@ -32,6 +32,11 @@ public class ShawlOfMithra extends AbstractFixedItem implements FixedItemApplies
     }
 
     @Override
+    protected ItemStack getItemStack() {
+        return Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 200, 200, 200);
+    }
+
+    @Override
     public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {
         warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
                 getName(),
@@ -43,19 +48,15 @@ public class ShawlOfMithra extends AbstractFixedItem implements FixedItemApplies
                 cooldownManager -> {
                 },
                 true
-        ) {
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                WarlordsEntity attacker = event.getSource();
-                if (attacker instanceof WarlordsNPC warlordsNPC) {
-                    if (warlordsNPC.getMob().getInternalLevel() < 2) {
-                        return currentDamageValue * 0.9f;
+        ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                    WarlordsEntity attacker = event.getSource();
+                    if (attacker instanceof WarlordsNPC warlordsNPC) {
+                        if (warlordsNPC.getMob().getInternalLevel() < 2) {
+                            currentDamageValue.addMultiplicativeModifierMult(getName(), 0.9f);
+                        }
                     }
                 }
-                return currentDamageValue;
-            }
-
-        });
+        ));
     }
 
     @Override
@@ -79,11 +80,6 @@ public class ShawlOfMithra extends AbstractFixedItem implements FixedItemApplies
     }
 
     @Override
-    protected ItemStack getItemStack() {
-        return Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 200, 200, 200);
-    }
-
-    @Override
     public String getEffect() {
         return "Queenly Majesty";
     }
@@ -92,4 +88,5 @@ public class ShawlOfMithra extends AbstractFixedItem implements FixedItemApplies
     public String getEffectDescription() {
         return "Take 10% less damage from all mobs below 2*.";
     }
+
 }

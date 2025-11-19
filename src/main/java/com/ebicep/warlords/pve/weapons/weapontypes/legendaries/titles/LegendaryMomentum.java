@@ -1,10 +1,10 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCounter;
@@ -16,7 +16,6 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.springframework.data.annotation.Transient;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -48,28 +47,60 @@ public class LegendaryMomentum extends AbstractLegendaryWeapon implements Passiv
 
     }
 
-    public LegendaryMomentum(UUID uuid) { super(uuid); }
+    public LegendaryMomentum(UUID uuid) {
+        super(uuid);
+    }
 
-    public LegendaryMomentum(AbstractLegendaryWeapon copy) { super(copy); }
+    public LegendaryMomentum(AbstractLegendaryWeapon copy) {
+        super(copy);
+    }
 
     @Override
     public TextComponent getPassiveEffect() {
         return Component.text("While moving, gain 1 Momentum every " + BASE_GAIN_INTERVAL_TICKS / 20f + "s", NamedTextColor.GRAY)
-                .append(Component.text(", up to ", NamedTextColor.GRAY))
-                .append(formatTitleUpgrade(getMaxStacks()))
-                .append(Component.text(" stacks. Each stack grants " + DMG_PER_STACK_PERCENT + "%", NamedTextColor.GRAY))
-                .append(Component.text(" damage and " + DR_PER_STACK_PERCENT + "%", NamedTextColor.GRAY))
-                .append(Component.text(" damage reduction. Lose 5 stacks per second when not moving.", NamedTextColor.GRAY));
+                        .append(Component.text(", up to ", NamedTextColor.GRAY))
+                        .append(formatTitleUpgrade(getMaxStacks()))
+                        .append(Component.text(" stacks. Each stack grants " + DMG_PER_STACK_PERCENT + "%", NamedTextColor.GRAY))
+                        .append(Component.text(" damage and " + DR_PER_STACK_PERCENT + "%", NamedTextColor.GRAY))
+                        .append(Component.text(" damage reduction. Lose 5 stacks per second when not moving.", NamedTextColor.GRAY));
+    }
+
+    private int getMaxStacks() {
+        return getMaxStacksAtLevel(getTitleLevel());
+    }
+
+    private int getMaxStacksAtLevel(int level) {
+        return BASE_MAX_STACKS + MAX_STACKS_INCREASE_PER_LEVEL * level;
     }
 
     @Override
-    public List<Pair<Component, Component>> getPassiveEffectUpgrade() {
-        return List.of(
-                new Pair<>(
-                        formatTitleUpgrade(getMaxStacksAtLevel(getTitleLevel())),
-                        formatTitleUpgrade(getMaxStacksAtLevel(getTitleLevelUpgraded()))
-                )
-        );
+    public LegendaryTitles getTitle() {
+        return LegendaryTitles.MOMENTUM;
+    }
+
+    @Override
+    protected float getMeleeDamageMinValue() {
+        return 120;
+    }
+
+    @Override
+    protected float getHealthBonusValue() {
+        return 600;
+    }
+
+    @Override
+    protected float getSpeedBonusValue() {
+        return 20;
+    }
+
+    @Override
+    protected float getEnergyPerHitBonusValue() {
+        return 5;
+    }
+
+    @Override
+    public float getSkillCritChanceBonusValue() {
+        return 5;
     }
 
     @Override
@@ -85,20 +116,16 @@ public class LegendaryMomentum extends AbstractLegendaryWeapon implements Passiv
                 CooldownTypes.WEAPON,
                 cm -> {},
                 false
-        ) {
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                float dr = (stacks * DR_PER_STACK_PERCENT) / 100f;
-                dr = Math.min(dr, 0.6f);
-                return currentDamageValue * (1f - dr);
-            }
-
-            @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                float mul = 1f + (stacks * DMG_PER_STACK_PERCENT) / 100f;
-                return currentDamageValue * mul;
-            }
-        });
+        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                    float mul = 1f + (stacks * DMG_PER_STACK_PERCENT) / 100f;
+                    currentDamageValue.addMultiplicativeModifierMult(getTitleName(), mul);
+                }
+        ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+            float dr = (stacks * DR_PER_STACK_PERCENT) / 100f;
+            dr = Math.min(dr, 0.6f);
+            currentDamageValue.addMultiplicativeModifierMult(getTitleName(), (1f - dr));
+                }
+        ));
 
         new GameRunnable(player.getGame()) {
             @Override
@@ -141,38 +168,18 @@ public class LegendaryMomentum extends AbstractLegendaryWeapon implements Passiv
         }.runTaskTimer(0, 1);
     }
 
-    private int getGainIntervalTicksAtLevel(int level) {
-        return BASE_GAIN_INTERVAL_TICKS;
-    }
-
     private int getGainIntervalTicks() {
         return getGainIntervalTicksAtLevel(getTitleLevel());
     }
 
-    private double getGainIntervalSecondsAtLevel(int level) {
-        return getGainIntervalTicksAtLevel(level) / 20.0;
-    }
-
-    private double getGainIntervalSeconds() {
-        return getGainIntervalSecondsAtLevel(getTitleLevel());
-    }
-
-    private int getMaxStacksAtLevel(int level) {
-        return BASE_MAX_STACKS + MAX_STACKS_INCREASE_PER_LEVEL * level;
-    }
-
-    private int getMaxStacks() {
-        return getMaxStacksAtLevel(getTitleLevel());
-    }
-
     @Override
-    public LegendaryTitles getTitle() {
-        return LegendaryTitles.MOMENTUM;
-    }
-
-    @Override
-    protected float getMeleeDamageMinValue() {
-        return 120;
+    public List<Pair<Component, Component>> getPassiveEffectUpgrade() {
+        return List.of(
+                new Pair<>(
+                        formatTitleUpgrade(getMaxStacksAtLevel(getTitleLevel())),
+                        formatTitleUpgrade(getMaxStacksAtLevel(getTitleLevelUpgraded()))
+                )
+        );
     }
 
     @Override
@@ -189,27 +196,22 @@ public class LegendaryMomentum extends AbstractLegendaryWeapon implements Passiv
     protected float getCritMultiplierValue() {
         return 180;
     }
-    @Override
-    protected float getHealthBonusValue() {
-        return 600;
-    }
-    @Override
-    protected float getSpeedBonusValue() {
-        return 20;
-    }
 
-    @Override
-    protected float getEnergyPerHitBonusValue() {
-        return 5;
-    }
-
-    @Override
-    public float getSkillCritChanceBonusValue() {
-        return 5;
+    private int getGainIntervalTicksAtLevel(int level) {
+        return BASE_GAIN_INTERVAL_TICKS;
     }
 
     @Override
     public int getCounter() {
         return stacks;
     }
+
+    private double getGainIntervalSeconds() {
+        return getGainIntervalSecondsAtLevel(getTitleLevel());
+    }
+
+    private double getGainIntervalSecondsAtLevel(int level) {
+        return getGainIntervalTicksAtLevel(level) / 20.0;
+    }
+
 }

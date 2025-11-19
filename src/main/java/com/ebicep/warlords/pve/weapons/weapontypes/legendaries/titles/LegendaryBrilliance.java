@@ -1,10 +1,10 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
@@ -50,65 +50,6 @@ public class LegendaryBrilliance extends AbstractLegendaryWeapon implements Pass
     }
 
     @Override
-    public LinkedHashMap<Currencies, Long> getCost() {
-        LinkedHashMap<Currencies, Long> baseCost = super.getCost();
-        baseCost.put(Currencies.TITLE_TOKEN_SPIDERS_BURROW, 1L);
-        return baseCost;
-    }
-
-    @Override
-    public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
-        super.applyToWarlordsPlayer(player, pveOption);
-
-        float healBoost = 1 + (HEALING_BOOST + HEALING_BOOST_PER_UPGRADE * getTitleLevel()) / 100f;
-        float healthThreshold = (HEALTH_THRESHOLD + HEALTH_THRESHOLD_PER_UPGRADE * getTitleLevel()) / 100f;
-        // using runnable not on dmg event bc player can have <30% hp without taking dmg after cooldown is refreshed
-        new GameRunnable(player.getGame()) {
-
-            @Override
-            public void run() {
-                if (Instant.now().isBefore(lastActivated.get())) {
-                    return;
-                }
-                if (player.getCurrentHealth() < player.getMaxHealth() * healthThreshold) {
-                    giveHealingBoostCooldown();
-                }
-            }
-
-            private void giveHealingBoostCooldown() {
-                lastActivated.set(Instant.now().plus(COOLDOWN, ChronoUnit.SECONDS));
-                player.getCooldownManager().addCooldown(new RegularCooldown<>(
-                        "Brilliance",
-                        "BRILL",
-                        LegendaryBrilliance.class,
-                        null,
-                        player,
-                        CooldownTypes.WEAPON,
-                        cooldownManager -> {
-                        },
-                        200
-                ) {
-
-                    // incoming healing
-                    @Override
-                    public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-                        return currentHealValue * 1.4f;
-                    }
-
-                    // outgoing healing
-                    @Override
-                    public float modifyHealingFromAttacker(WarlordsDamageHealingEvent event, float currentHealValue) {
-                        return currentHealValue * healBoost;
-                    }
-                });
-                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
-            }
-
-        }.runTaskTimer(200, 20);
-    }
-
-
-    @Override
     public TextComponent getPassiveEffect() {
         float threshold = HEALTH_THRESHOLD + HEALTH_THRESHOLD_PER_UPGRADE * getTitleLevel();
         float outgoingHealingBoost = HEALING_BOOST + HEALING_BOOST_PER_UPGRADE * getTitleLevel();
@@ -151,6 +92,57 @@ public class LegendaryBrilliance extends AbstractLegendaryWeapon implements Pass
     }
 
     @Override
+    public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
+        super.applyToWarlordsPlayer(player, pveOption);
+
+        float healBoost = 1 + (HEALING_BOOST + HEALING_BOOST_PER_UPGRADE * getTitleLevel()) / 100f;
+        float healthThreshold = (HEALTH_THRESHOLD + HEALTH_THRESHOLD_PER_UPGRADE * getTitleLevel()) / 100f;
+        // using runnable not on dmg event bc player can have <30% hp without taking dmg after cooldown is refreshed
+        new GameRunnable(player.getGame()) {
+
+            @Override
+            public void run() {
+                if (Instant.now().isBefore(lastActivated.get())) {
+                    return;
+                }
+                if (player.getCurrentHealth() < player.getMaxHealth() * healthThreshold) {
+                    giveHealingBoostCooldown();
+                }
+            }
+
+            private void giveHealingBoostCooldown() {
+                lastActivated.set(Instant.now().plus(COOLDOWN, ChronoUnit.SECONDS));
+                player.getCooldownManager().addCooldown(new RegularCooldown<>(
+                        getTitleName(),
+                        "BRILL",
+                        LegendaryBrilliance.class,
+                        null,
+                        player,
+                        CooldownTypes.WEAPON,
+                        cooldownManager -> {
+                        },
+                        200
+                ).addModifier(Modifier.HEALING_MODIFY_SELF, (event, currentHealValue) -> {
+                            currentHealValue.addMultiplicativeModifierMult(getTitleName(), 1.4f);
+                        }
+                ).addModifier(Modifier.HEALING_MODIFY_ATTACKER, (event, currentHealValue) -> {
+                            currentHealValue.addMultiplicativeModifierMult(getTitleName(), healBoost);
+                        }
+                ));
+                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
+            }
+
+        }.runTaskTimer(200, 20);
+    }
+
+    @Override
+    public LinkedHashMap<Currencies, Long> getCost() {
+        LinkedHashMap<Currencies, Long> baseCost = super.getCost();
+        baseCost.put(Currencies.TITLE_TOKEN_SPIDERS_BURROW, 1L);
+        return baseCost;
+    }
+
+    @Override
     protected float getMeleeDamageMaxValue() {
         return 200;
     }
@@ -185,4 +177,5 @@ public class LegendaryBrilliance extends AbstractLegendaryWeapon implements Pass
         }
         return 0;
     }
+
 }

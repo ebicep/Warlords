@@ -5,11 +5,11 @@ import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.thunderlord.LightningRodBranch;
@@ -60,18 +60,6 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
     }
 
     @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Call down an energizing bolt of lightning upon yourself, restoring ")
-                                               .percent(healingValues.healthRestore.getValue(), NamedTextColor.GREEN)
-                                               .text(" health and ")
-                                               .energy(energyRestore)
-                                               .text(" and knocking all nearby enemies in a ")
-                                               .blocks(knockbackRadius)
-                                               .text(" radius back.")
-                                               .build();
-    }
-
-    @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         List<WarlordsEntity> hit = kbHealEnergy(wp, true);
         if (pveMasterUpgrade) {
@@ -115,20 +103,21 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
         return true;
     }
 
-    public float getHorizontalTotemProcRange() {
-        return horizontalTotemProcRange;
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Call down an energizing bolt of lightning upon yourself, restoring ")
+                                               .percent(healingValues.healthRestore.getValue(), NamedTextColor.GREEN)
+                                               .text(" health and ")
+                                               .energy(energyRestore)
+                                               .text(" and knocking all nearby enemies in a ")
+                                               .blocks(knockbackRadius)
+                                               .text(" radius back.")
+                                               .build();
     }
 
-    public void setHorizontalTotemProcRange(float horizontalTotemProcRange) {
-        this.horizontalTotemProcRange = horizontalTotemProcRange;
-    }
-
-    public float getVerticalTotemProcRange() {
-        return verticalTotemProcRange;
-    }
-
-    public void setVerticalTotemProcRange(float verticalTotemProcRange) {
-        this.verticalTotemProcRange = verticalTotemProcRange;
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new LightningRodBranch(abilityTree, this);
     }
 
     private List<WarlordsEntity> kbHealEnergy(@Nonnull WarlordsEntity wp, boolean shouldHeal) {
@@ -138,9 +127,9 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
         EffectUtils.strikeLightning(wp.getLocation(), true);
         if (shouldHeal) {
             wp.addInstance(InstanceBuilder.healing()
-                    .ability(this)
-                    .source(wp)
-                    .value(wp.getMaxHealth() * (healingValues.healthRestore.getMultiplicativePercent()))
+                                          .ability(this)
+                                          .source(wp)
+                                          .value(wp.getMaxHealth() * (healingValues.healthRestore.getMultiplicativePercent()))
             );
         }
         List<WarlordsEntity> hit = PlayerFilter.entitiesAround(wp, knockbackRadius, knockbackRadius, knockbackRadius).aliveEnemiesOf(wp).toList();
@@ -161,21 +150,10 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
         we.getCooldownManager().removeCooldown(LightningRod.class, false);
         we.getCooldownManager().addCooldown(new RegularCooldown<>(name, "ROD DMG", LightningRod.class, new LightningRod(), we, CooldownTypes.ABILITY, cooldownManager -> {
         }, 12 * 20
-        ) {
-
-            @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * 1.2f;
-            }
-        });
-    }
-
-    public void setMagnitude(float magnitude) {
-        this.magnitude = magnitude;
-    }
-
-    public void setY(float y) {
-        this.y = y;
+        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                    currentDamageValue.addMultiplicativeModifierMult(name, 1.2f);
+                }
+        ));
     }
 
     private void giveCallOfThunderEffect(WarlordsEntity from, List<WarlordsEntity> hit) {
@@ -189,22 +167,21 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
         } else {
             modifiers = Collections.emptyList();
         }
-        from.getCooldownManager().addCooldown(new RegularCooldown<>("Call of Thunder Buff", "THUN", LightningRod.class, null, from, CooldownTypes.BUFF, cooldownManager -> {
-        }, cooldownManager -> {
-            modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
-        }, 10 * 20
-        ) {
+        from.getCooldownManager().addCooldown(new RegularCooldown<>(
+                "Call of Thunder Buff",
+                "THUN",
+                LightningRod.class,
+                null,
+                from,
+                CooldownTypes.BUFF,
 
-            @Override
-            public float addEnergyGainPerTick(float energyGainPerTick) {
-                return energyGainPerTick + 15 / 20f;
-            }
-        });
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new LightningRodBranch(abilityTree, this);
+                cooldownManager -> {
+                },
+                cooldownManager -> {
+                    modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
+                },
+                10 * 20
+        ).addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> energyGainPerTick.addAdditiveModifier("Call of Thunder", 15 / 20f)));
     }
 
     @Override
@@ -215,6 +192,30 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
     @Override
     public LightningRodStats getAbilityStats() {
         return stats;
+    }
+
+    public float getHorizontalTotemProcRange() {
+        return horizontalTotemProcRange;
+    }
+
+    public void setHorizontalTotemProcRange(float horizontalTotemProcRange) {
+        this.horizontalTotemProcRange = horizontalTotemProcRange;
+    }
+
+    public float getVerticalTotemProcRange() {
+        return verticalTotemProcRange;
+    }
+
+    public void setVerticalTotemProcRange(float verticalTotemProcRange) {
+        this.verticalTotemProcRange = verticalTotemProcRange;
+    }
+
+    public void setMagnitude(float magnitude) {
+        this.magnitude = magnitude;
+    }
+
+    public void setY(float y) {
+        this.y = y;
     }
 
     public int getEnergyRestore() {

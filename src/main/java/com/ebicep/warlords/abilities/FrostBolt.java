@@ -5,12 +5,12 @@ import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.cryomancer.FrostboltBranch;
@@ -204,17 +204,16 @@ public class FrostBolt extends AbstractPiercingProjectile<FrostBolt, FrostBolt.F
                 "Splintered Ice",
                 null,
                 IncendiaryCurse.class,
-                new IncendiaryCurse(),
+                null,
                 projectile.getShooter(),
                 CooldownTypes.LOW_LEVEL_DEBUFF,
-                cooldownManager -> {},
+                cooldownManager -> {
+                },
                 3 * 20
-        ) {
-            @Override
-            public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * 1.08f;
-            }
-        });
+        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (event, currentDamageValue) -> {
+                    currentDamageValue.addMultiplicativeModifierMult(name, 1.08f);
+                }
+        ));
         hit(projectile, shooter, toReduceBy, stats.getTargetsHit(), hit);
         hit.addSpeedModifier(shooter, "Splintered Ice", -35, 40);
         EffectUtils.displayParticle(Particle.ITEM_SNOWBALL, hit.getLocation().add(0, 1, 0), 10, .2, .2, .2, 0);

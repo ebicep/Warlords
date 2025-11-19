@@ -4,12 +4,11 @@ import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.effects.FireWorkEffectPlayer;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.assassin.ShadowStepBranch;
@@ -114,15 +113,20 @@ public class ShadowStep extends AbstractAbility implements
     }
 
     private void doShadowDash(@Nonnull WarlordsEntity wp) {
-        wp.getCooldownManager().addCooldown(new RegularCooldown<>("Shadow Dash Damage Res", null, ShadowStep.class, new ShadowStep(), wp, CooldownTypes.BUFF, cooldownManager -> {
-        }, 2
-        ) {
-
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * .25f;
-            }
-        });
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                "Shadow Dash Damage Res",
+                null,
+                ShadowStep.class,
+                new ShadowStep(),
+                wp,
+                CooldownTypes.BUFF,
+                cooldownManager -> {
+                },
+                2
+        ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                    currentDamageValue.addMultiplicativeModifierMult(name, .25f);
+                }
+        ));
         Set<WarlordsEntity> hit = new HashSet<>();
         AtomicInteger guaranteedCrit = new AtomicInteger(this.guaranteedCrit);
         LocationBuilder locationBuilder = new LocationBuilder(wp.getEyeLocation());
@@ -141,23 +145,23 @@ public class ShadowStep extends AbstractAbility implements
                 break;
             }
             PlayerFilter.entitiesAround(locationBuilder.clone().addY(-1), 3.5, 3.5, 3.5)
-                    .aliveEnemiesOf(wp)
-                    .excluding(hit)
-                    .forEach(warlordsEntity -> {
-                hit.add(warlordsEntity);
-                warlordsEntity.addInstance(InstanceBuilder
-                        .damage()
-                        .cause("Shadow Dash")
-                        .source(wp)
-                        .value(damageValues.shadowStepDamage)
-                        .critChance(guaranteedCrit.getAndDecrement() > 0 ? 100 : damageValues.shadowStepDamage.getCritChanceValue()));
-            });
+                        .aliveEnemiesOf(wp)
+                        .excluding(hit)
+                        .forEach(warlordsEntity -> {
+                            hit.add(warlordsEntity);
+                            warlordsEntity.addInstance(InstanceBuilder
+                                    .damage()
+                                    .cause("Shadow Dash")
+                                    .source(wp)
+                                    .value(damageValues.shadowStepDamage)
+                                    .critChance(guaranteedCrit.getAndDecrement() > 0 ? 100 : damageValues.shadowStepDamage.getCritChanceValue()));
+                        });
             locationBuilder = locationBuilder.forward(1);
             EffectUtils.displayParticle(Particle.SMOKE, locationBuilder.clone().addY(-.5), 10, .1, .1, .1, 0);
         }
         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 2, 1.5f);
         wp.teleportLocationOnly(locationBuilder);
-        if (hit.size() != 0) {
+        if (!hit.isEmpty()) {
             wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                     "Shadow Dash",
                     "SHDW",
@@ -167,18 +171,13 @@ public class ShadowStep extends AbstractAbility implements
                     CooldownTypes.BUFF,
                     cooldownManager -> {},
                     5 * 20
-            ) {
-
-                @Override
-                public float addCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
-                    return currentCritMultiplier + (Math.min(2f * hit.size(), 20));
-                }
-
-                @Override
-                public float addCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
-                    return currentCritChance + (Math.min(2f * hit.size(), 20));
-                }
-            });
+            ).addModifier(Modifier.DAMAGE_CRIT_CHANCE_ATTACKER, (event, currentCritChance) -> {
+                        currentCritChance.addMultiplicativeModifierMult("Shadow Dash CC", convertToMultiplicationDecimal(Math.min(2f * hit.size(), 20)));
+                    }
+            ).addModifier(Modifier.DAMAGE_CRIT_MULTIPLIER_ATTACKER, (event, currentCritMultiplier) -> {
+                currentCritMultiplier.addMultiplicativeModifierMult("Shadow Dash CC", convertToMultiplicationDecimal(Math.min(2f * hit.size(), 20)));
+                    }
+            ));
         }
     }
 

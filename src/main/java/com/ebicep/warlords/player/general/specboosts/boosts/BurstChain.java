@@ -10,6 +10,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import org.bukkit.event.EventHandler;
 
 import java.util.*;
@@ -85,24 +86,22 @@ public class BurstChain implements SpecBoostManager.SpecBoost<BurstChain> {
                     cooldownManager -> {
                     },
                     false
-            ) {
-
-                @Override
-                public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    WarlordsEntity victim = event.getWarlordsEntity();
-                    if (victim.getCooldownManager()
-                              .getCooldowns()
-                              .stream()
-                              .map(AbstractCooldown::getName)
-                              .noneMatch(damageReductionAbilities::contains)
-                    ) {
-                        boolean hasInferno = warlordsPlayer.getCooldownManager().hasCooldown(Inferno.class);
-                        return currentDamageValue * AbstractAbility.convertToMultiplicationDecimal(hasInferno ? infernoDamageIncreasePercent : damageIncreasePercent);
+            ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                        WarlordsEntity victim = event.getWarlordsEntity();
+                        if (victim.getCooldownManager()
+                                  .getCooldowns()
+                                  .stream()
+                                  .map(AbstractCooldown::getName)
+                                  .noneMatch(damageReductionAbilities::contains)
+                        ) {
+                            boolean hasInferno = warlordsPlayer.getCooldownManager().hasCooldown(Inferno.class);
+                            currentDamageValue.addMultiplicativeModifierMult(getStringName(),
+                                    AbstractAbility.convertToMultiplicationDecimal(hasInferno ? infernoDamageIncreasePercent :
+                                                                                   damageIncreasePercent)
+                            );
+                        }
                     }
-                    return currentDamageValue;
-                }
-
-            });
+            ));
         }
 
         @EventHandler(ignoreCancelled = true)
@@ -118,7 +117,7 @@ public class BurstChain implements SpecBoostManager.SpecBoost<BurstChain> {
                 return;
             }
             flameBurstHit.put(event.getUUID(), (hitCount == null ? 0 : hitCount) + 1);
-            event.setCritChance(100);
+            event.getCritChance().addOverridingModifier(getStringName(), 100);
         }
 
     }

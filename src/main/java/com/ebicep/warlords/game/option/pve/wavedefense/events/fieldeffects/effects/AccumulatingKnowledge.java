@@ -1,6 +1,5 @@
 package com.ebicep.warlords.game.option.pve.wavedefense.events.fieldeffects.effects;
 
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.fieldeffects.FieldEffect;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.fieldeffects.FieldEffectOption;
 import com.ebicep.warlords.player.ingame.PlayerStatisticsMinute;
@@ -8,6 +7,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class AccumulatingKnowledge implements FieldEffect {
+
     @Override
     public String getName() {
         return "Accumulating Knowledge";
@@ -65,19 +66,15 @@ public class AccumulatingKnowledge implements FieldEffect {
                     multiplier.set(newMultiplier);
                     player.getHealth().addMultiplicativeModifierAdd(getName() + " (Base)", Math.min(multiplier.get(), 25) / 100f);
                 }
-        ) {
-
-            @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                int buff = Math.min(multiplier.get(), 25);
-                return currentDamageValue * (1 + buff / 100f);
-            }
-
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                int buff = Math.min(multiplier.get(), 15);
-                return currentDamageValue * (1 - buff / 100f);
-            }
-        });
+        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                    int buff = Math.min(multiplier.get(), 25);
+                    currentDamageValue.addMultiplicativeModifierMult(getName(), 1 - buff / 100f);
+                }
+        ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+            int buff = Math.min(multiplier.get(), 15);
+            currentDamageValue.addMultiplicativeModifierMult(getName(), (1 - buff / 100f));
+                }
+        ));
     }
+
 }

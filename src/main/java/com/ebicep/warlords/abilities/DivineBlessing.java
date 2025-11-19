@@ -5,7 +5,6 @@ import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
@@ -13,6 +12,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.luminary.DivineBlessingBranch;
@@ -119,19 +119,24 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                                             Vindicate.giveVindicateCooldown(wp, teammate, DivineBlessing.class, new DivineBlessing(), tickDuration);
                                         }
                                         teammate.getCooldownManager().removeCooldownByObject(data);
-                                        teammate.getCooldownManager()
-                                                .addCooldown(new RegularCooldown<>(name, null, DivineBlessingData.class, data, wp, CooldownTypes.ABILITY, cooldownManager -> {
-                                                }, 21
-                                                ) {
-
-                                                    @Override
-                                                    public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-                                                        float newValue = currentHealValue * convertToMultiplicationDecimal(hexHealingBonus);
-                                                        stats.healingIncreased += newValue - currentHealValue;
-                                                        return newValue;
-                                                    }
-
-                                                });
+                                        teammate.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                                name,
+                                                "DIV",
+                                                DivineBlessingData.class,
+                                                data,
+                                                wp,
+                                                CooldownTypes.ABILITY,
+                                                cooldownManager -> {
+                                                },
+                                                21
+                                        ).addModifier(Modifier.HEALING_MODIFY_SELF, (event, currentHealValue) -> {
+                                            currentHealValue.addMultiplicativeModifierMult(
+                                                    name,
+                                                    convertToMultiplicationDecimal(hexHealingBonus),
+                                                    contribution -> stats.healingIncreased += Math.abs(contribution)
+                                            );
+                                                }
+                                        ));
                                     });
                     }
                 })
@@ -153,23 +158,16 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                     }
                 };
             }
-
-            @Override
-            public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-                if (hasMaxStacks()) {
-                    float newValue = currentHealValue * convertToMultiplicationDecimal(hexHealingBonus);
-                    stats.healingIncreased += newValue - currentHealValue;
-                    return newValue;
-                } else {
-                    return currentHealValue;
+        }.addModifier(Modifier.HEALING_MODIFY_SELF, (event, currentHealValue) -> {
+                    if (new CooldownFilter<>(wp, RegularCooldown.class).filterCooldownFrom(wp).filterCooldownClass(MercifulHex.class).stream().count() >= maxStacks) {
+                        currentHealValue.addMultiplicativeModifierMult(
+                                name,
+                                convertToMultiplicationDecimal(hexHealingBonus),
+                                contribution -> stats.healingIncreased += Math.abs(contribution)
+                        );
+                    }
                 }
-            }
-
-            public boolean hasMaxStacks() {
-                return new CooldownFilter<>(wp, RegularCooldown.class).filterCooldownFrom(wp).filterCooldownClass(MercifulHex.class).stream().count() >= maxStacks;
-            }
-
-        });
+        ));
         PlayerFilter.playingGame(game).teammatesOf(wp).forEach(enemy -> {
             new CooldownFilter<>(enemy, RegularCooldown.class).filterCooldownClass(MercifulHex.class).filterCooldownFrom(wp).forEach(cd -> {
                 cd.setTicksLeft(cd.getTicksLeft() + hexTickDurationIncrease);
@@ -253,6 +251,10 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
         this.hexHealingBonus = hexHealingBonus;
     }
 
+    public int getPostHealthTickDelay() {
+        return postHealthTickDelay;
+    }
+
     public static class HealingValues implements Value.ValueHolder {
 
         private Value.SetValue divineBlessingPostHeal = new Value.SetValue(800);
@@ -273,10 +275,6 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
             this.values = List.of(divineBlessingPostHeal);
         }
 
-    }
-
-    public int getPostHealthTickDelay() {
-        return postHealthTickDelay;
     }
 
     public static class DivineBlessingData {

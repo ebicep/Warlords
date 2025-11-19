@@ -1,10 +1,10 @@
 package com.ebicep.warlords.pve.items.types.specialitems.tome.delta;
 
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
@@ -52,22 +52,21 @@ public class BruisedBook extends SpecialDeltaTome implements CraftsInto {
 
                 },
                 false
-        ) {
-            @Override
-            public void healingDoBeforeVariableSetFromAttacker(WarlordsDamageHealingEvent event) {
-                if (!event.getWarlordsEntity().equals(warlordsPlayer)) {
-                    if (ThreadLocalRandom.current().nextDouble() < .6) {
-                        event.setMin(event.getMax());
-                    } else {
-                        event.setMax(event.getMin());
+        ).addModifier(Modifier.HEALING_BEFORE_VARIABLE_SET_ATTACKER, event -> {
+                    if (!event.getWarlordsEntity().equals(warlordsPlayer)) {
+                        if (ThreadLocalRandom.current().nextDouble() <= .6) {
+                            event.getMin().setBaseValue(event.getMax().getCalculatedValue());
+                        } else {
+                            event.getMax().setBaseValue(event.getMin().getCalculatedValue());
+                        }
                     }
                 }
-            }
-        });
+        ));
     }
 
     @Override
     public AbstractItem getCraftsInto(Set<BasicStatPool> statPool) {
         return new MysticksManualVol23H(statPool);
     }
+
 }

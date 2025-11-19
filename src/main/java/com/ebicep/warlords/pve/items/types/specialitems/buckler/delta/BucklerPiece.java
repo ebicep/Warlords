@@ -1,12 +1,12 @@
 package com.ebicep.warlords.pve.items.types.specialitems.buckler.delta;
 
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
@@ -51,25 +51,22 @@ public class BucklerPiece extends SpecialDeltaBuckler implements CraftsInto {
                 cooldownManager -> {
                 },
                 false
-        ) {
-
-            @Override
-            public void onHealFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                float damageAmount = currentDamageValue * .1f;
-                PlayerFilter.entitiesAround(event.getWarlordsEntity(), 3, 3, 3)
-                            .aliveEnemiesOf(warlordsPlayer)
-                            .forEach(warlordsEntity -> {
-                                warlordsEntity.addInstance(InstanceBuilder
-                                        .damage()
-                                        .cause(BucklerPiece.this.getName())
-                                        .source(warlordsPlayer)
-                                        .value(damageAmount)
-                                        .showAsCrit(isCrit)
-                                        .flags(InstanceFlags.RECURSIVE)
-                                );
-                            });
-            }
-        });
+        ).addModifier(Modifier.HEALING_ON_HEAL_ATTACKER, (event, currentHealValue, isCrit) -> {
+                    float damageAmount = currentHealValue * .1f;
+                    PlayerFilter.entitiesAround(event.getWarlordsEntity(), 3, 3, 3)
+                                .aliveEnemiesOf(warlordsPlayer)
+                                .forEach(warlordsEntity -> {
+                                    warlordsEntity.addInstance(InstanceBuilder
+                                            .damage()
+                                            .cause(BucklerPiece.this.getName())
+                                            .source(warlordsPlayer)
+                                            .value(damageAmount)
+                                            .showAsCrit(isCrit)
+                                            .flags(InstanceFlags.RECURSIVE)
+                                    );
+                                });
+                }
+        ));
     }
 
 
@@ -77,4 +74,5 @@ public class BucklerPiece extends SpecialDeltaBuckler implements CraftsInto {
     public AbstractItem getCraftsInto(Set<BasicStatPool> statPool) {
         return new ElementalShield(statPool);
     }
+
 }

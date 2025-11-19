@@ -5,11 +5,11 @@ import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.paladin.crusader.InspiringPresenceBranch;
@@ -54,55 +54,51 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
     }
 
     @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Your presence on the battlefield inspires your allies within ")
-                                               .blocks(radius)
-                                               .text(", granting them ")
-                                               .energy(energyPerSecond)
-                                               .text(" per second and ")
-                                               .percent(speedBuff, NamedTextColor.WHITE)
-                                               .text(" extra movement speed for ")
-                                               .durationTicks(tickDuration)
-                                               .text(".")
-                                               .build();
-    }
-
-    @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "paladin.inspiringpresence.activation", 2, 1);
         wp.addSpeedModifier(wp, name, speedBuff, tickDuration);
         float rad = radius.getCalculatedValue();
         List<WarlordsEntity> teammatesNear = PlayerFilter.entitiesAround(wp, rad, rad, rad).aliveTeammatesOfExcludingSelf(wp).toList();
         InspiringPresenceData data = new InspiringPresenceData();
-        wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "PRES", InspiringPresenceData.class, data, wp, CooldownTypes.ABILITY, cooldownManager -> {
-        }, cooldownManager -> {
-            wp.getSpeed().removeModifier(name);
-            ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.PORTABLE_ENERGIZER);
-        }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-            if (ticksElapsed % 4 == 0) {
-                Location location = wp.getLocation();
-                location.add(0, 1.5, 0);
-                EffectUtils.displayParticle(Particle.SMOKE, location, 1, 0.3, 0.3, 0.3, 0.02);
-                EffectUtils.displayParticle(Particle.EFFECT, location, 2, 0.3, 0.3, 0.3, 0.5);
-            }
-        })
-        ) {
-            @Override
-            public float addEnergyGainPerTick(float energyGainPerTick) {
-                data.addEnergyGivenFromStrikeAndPresence(energyPerSecond / 20d);
-                return energyGainPerTick + energyPerSecond / 20f;
-            }
-
-            @Override
-            public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                boolean isReflectionDamage = event.getFlags().add(InstanceFlags.REFLECTIVE_DAMAGE);
-                int energyAmount = isReflectionDamage ? 15 : 8;
-                if (pveMasterUpgrade2) {
-                    wp.addEnergy(wp, "Resilient Presence", energyAmount);
-                    teammatesNear.forEach(teammate -> teammate.addEnergy(teammate, "Resilient Presence", energyAmount));
+        RegularCooldown<InspiringPresenceData> presenceCooldown = new RegularCooldown<>(
+                name,
+                "PRES",
+                InspiringPresenceData.class,
+                data,
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                },
+                cooldownManager -> {
+                    wp.getSpeed().removeModifier(name);
+                    ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.PORTABLE_ENERGIZER);
+                },
+                tickDuration,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed % 4 == 0) {
+                        Location location = wp.getLocation();
+                        location.add(0, 1.5, 0);
+                        EffectUtils.displayParticle(Particle.SMOKE, location, 1, 0.3, 0.3, 0.3, 0.02);
+                        EffectUtils.displayParticle(Particle.EFFECT, location, 2, 0.3, 0.3, 0.3, 0.5);
+                    }
+                })
+        );
+        presenceCooldown.addModifier(Modifier.DAMAGE_ON_DAMAGE_SELF, (event, currentDamageValue, isCrit) -> {
+                    if (pveMasterUpgrade2) {
+                        boolean isReflectionDamage = event.getFlags().add(InstanceFlags.REFLECTIVE_DAMAGE);
+                        int energyAmount = isReflectionDamage ? 15 : 8;
+                        wp.addEnergy(wp, "Resilient Presence", energyAmount);
+                        teammatesNear.forEach(teammate -> teammate.addEnergy(teammate, "Resilient Presence", energyAmount));
+                    }
                 }
-            }
-        });
+        );
+        presenceCooldown.addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> {
+                    float energy = energyPerSecond / 20f;
+                    data.addEnergyGivenFromStrikeAndPresence(energy);
+                    energyGainPerTick.addAdditiveModifier(name, energy);
+                }
+        );
+        wp.getCooldownManager().addCooldown(presenceCooldown);
         if (pveMasterUpgrade) {
             resetCooldowns(wp);
         }
@@ -125,33 +121,55 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
             } else {
                 modifiers = Collections.emptyList();
             }
-            presenceTarget.getCooldownManager().addCooldown(new RegularCooldown<>(name, "PRES", InspiringPresenceData.class, data, wp, CooldownTypes.ABILITY, cooldownManager -> {
-            }, cooldownManager -> {
-                presenceTarget.getSpeed().removeModifier(name);
-                modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
-            }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-            })
-            ) {
-
-                @Override
-                public float addEnergyGainPerTick(float energyGainPerTick) {
-                    data.addEnergyGivenFromStrikeAndPresence(energyPerSecond / 20d);
-                    return energyGainPerTick + energyPerSecond / 20f;
-                }
-            });
+            presenceTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
+                    name,
+                    "PRES",
+                    InspiringPresenceData.class,
+                    data,
+                    wp,
+                    CooldownTypes.ABILITY,
+                    cooldownManager -> {
+                    },
+                    cooldownManager -> {
+                        presenceTarget.getSpeed().removeModifier(name);
+                        modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
+                    },
+                    tickDuration,
+                    Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    })
+            ).addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> {
+                        float energy = energyPerSecond / 20f;
+                        data.addEnergyGivenFromStrikeAndPresence(energy);
+                        energyGainPerTick.addAdditiveModifier(name, energy);
+                    }
+            ));
         }
         return true;
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Your presence on the battlefield inspires your allies within ")
+                                               .blocks(radius)
+                                               .text(", granting them ")
+                                               .energy(energyPerSecond)
+                                               .text(" per second and ")
+                                               .percent(speedBuff, NamedTextColor.WHITE)
+                                               .text(" extra movement speed for ")
+                                               .durationTicks(tickDuration)
+                                               .text(".")
+                                               .build();
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new InspiringPresenceBranch(abilityTree, this);
     }
 
     private void resetCooldowns(WarlordsEntity we) {
         for (AbstractAbility ability : we.getAbilities()) {
             ability.subtractCurrentCooldown(15);
         }
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new InspiringPresenceBranch(abilityTree, this);
     }
 
     @Override

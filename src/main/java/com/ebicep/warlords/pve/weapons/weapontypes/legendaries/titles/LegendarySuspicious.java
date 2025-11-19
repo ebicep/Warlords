@@ -1,12 +1,12 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.util.java.Pair;
@@ -58,6 +58,48 @@ public class LegendarySuspicious extends AbstractLegendaryWeapon {
     }
 
     @Override
+    public TextComponent getPassiveEffect() {
+        return Component.text("Play an among us sound and gain ", NamedTextColor.GRAY)
+                        .append(formatTitleUpgrade(ENERGY_GAIN + ENERGY_GAIN_PER_UPGRADE * getTitleLevel()))
+                        .append(Component.text(" energy when you land a melee crit."));
+    }
+
+    @Override
+    public LegendaryTitles getTitle() {
+        return LegendaryTitles.SUSPICIOUS;
+    }
+
+    @Override
+    protected float getMeleeDamageMinValue() {
+        return 180;
+    }
+
+    @Override
+    protected float getHealthBonusValue() {
+        return 500;
+    }
+
+    @Override
+    protected float getSpeedBonusValue() {
+        return 8;
+    }
+
+    @Override
+    protected float getEnergyPerHitBonusValue() {
+        return 3;
+    }
+
+    @Override
+    protected float getSkillCritChanceBonusValue() {
+        return 5;
+    }
+
+    @Override
+    protected float getSkillCritMultiplierBonusValue() {
+        return 15;
+    }
+
+    @Override
     public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
         super.applyToWarlordsPlayer(player, pveOption);
         player.getCooldownManager().addCooldown(new PermanentCooldown<>(
@@ -71,15 +113,12 @@ public class LegendarySuspicious extends AbstractLegendaryWeapon {
 
                 },
                 false
-        ) {
-            @Override
-            public float setCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
-                if (event.getCause().isEmpty()) {
-                    return 50;
+        ).addModifier(Modifier.DAMAGE_CRIT_CHANCE_ATTACKER, (event, currentCritChance) -> {
+                    if (event.getCause().isEmpty()) {
+                        currentCritChance.addOverridingModifier("Suspicious Weapon", 50);
+                    }
                 }
-                return currentCritChance;
-            }
-        });
+        ));
         player.getGame().registerEvents(new Listener() {
             BukkitTask sound;
 
@@ -123,48 +162,6 @@ public class LegendarySuspicious extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public TextComponent getPassiveEffect() {
-        return Component.text("Play an among us sound and gain ", NamedTextColor.GRAY)
-                        .append(formatTitleUpgrade(ENERGY_GAIN + ENERGY_GAIN_PER_UPGRADE * getTitleLevel()))
-                        .append(Component.text(" energy when you land a melee crit."));
-    }
-
-    @Override
-    public LegendaryTitles getTitle() {
-        return LegendaryTitles.SUSPICIOUS;
-    }
-
-    @Override
-    protected float getMeleeDamageMinValue() {
-        return 180;
-    }
-
-    @Override
-    protected float getHealthBonusValue() {
-        return 500;
-    }
-
-    @Override
-    protected float getSpeedBonusValue() {
-        return 8;
-    }
-
-    @Override
-    protected float getEnergyPerHitBonusValue() {
-        return 3;
-    }
-
-    @Override
-    protected float getSkillCritChanceBonusValue() {
-        return 5;
-    }
-
-    @Override
-    protected float getSkillCritMultiplierBonusValue() {
-        return 15;
-    }
-
-    @Override
     protected float getMeleeDamageMaxValue() {
         return 200;
     }
@@ -186,4 +183,5 @@ public class LegendarySuspicious extends AbstractLegendaryWeapon {
                 formatTitleUpgrade(ENERGY_GAIN + ENERGY_GAIN_PER_UPGRADE * getTitleLevelUpgraded())
         ));
     }
+
 }

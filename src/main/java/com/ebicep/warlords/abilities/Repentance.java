@@ -4,12 +4,12 @@ import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.spiritguard.RepentanceBranch;
@@ -47,18 +47,6 @@ public class Repentance extends AbstractAbility implements BlueAbilityIcon, Dura
     }
 
     @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Taking damage empowers your damaging abilities and melee hits, restoring health and energy based on ")
-                                               .percent(10, NamedTextColor.RED)
-                                               .text(" + ")
-                                               .percent(damageConvertPercent, NamedTextColor.RED)
-                                               .text(" of the damage you've recently took. Lasts ")
-                                               .durationTicks(tickDuration)
-                                               .text(".")
-                                               .build();
-    }
-
-    @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "paladin.barrieroflight.impact", 2, 1.35f);
         EffectUtils.playCylinderAnimation(wp.getLocation(), 1, 255, 255, 255);
@@ -82,14 +70,11 @@ public class Repentance extends AbstractAbility implements BlueAbilityIcon, Dura
                                 new Repentance(),
                                 wp,
                                 CooldownTypes.BUFF,
-                                cooldownManager1 -> {},
+                                cooldownManager1 -> {
+
+                                },
                                 8 * 20
-                        ) {
-                            @Override
-                            public float addEnergyGainPerTick(float energyGainPerTick) {
-                                return energyGainPerTick + energyGain;
-                            }
-                        });
+                        ).addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> energyGainPerTick.addAdditiveModifier("Remembrance", energyGain)));
                     }
                 },
                 tickDuration
@@ -99,25 +84,36 @@ public class Repentance extends AbstractAbility implements BlueAbilityIcon, Dura
                 return true;
             }
 
-            @Override
-            public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                WarlordsEntity attacker = event.getSource();
-                int healthToAdd = (int) (pool * (damageConvertPercent / 100f)) + 10;
-                attacker.addInstance(InstanceBuilder
-                        .healing()
-                        .ability(Repentance.this)
-                        .source(attacker)
-                        .value(Math.min(500, healthToAdd))
-                        .flag(InstanceFlags.CAN_OVERHEAL_SELF, pveMasterUpgrade2)
-                );
-                if (pveMasterUpgrade2) {
-                    Overheal.giveOverHeal(wp, wp);
+        }.addModifier(Modifier.DAMAGE_ON_DAMAGE_ATTACKER, (event, currentDamageValue, isCrit) -> {
+                    WarlordsEntity attacker = event.getSource();
+                    int healthToAdd = (int) (pool * (damageConvertPercent / 100f)) + 10;
+                    attacker.addInstance(InstanceBuilder
+                            .healing()
+                            .ability(Repentance.this)
+                            .source(attacker)
+                            .value(Math.min(500, healthToAdd))
+                            .flag(InstanceFlags.CAN_OVERHEAL_SELF, pveMasterUpgrade2)
+                    );
+                    if (pveMasterUpgrade2) {
+                        Overheal.giveOverHeal(wp, wp);
+                    }
+                    energyGained.addAndGet(attacker.addEnergy(attacker, name, healthToAdd * (energyConvertPercent / 100f)));
+                    pool *= .5f;
                 }
-                energyGained.addAndGet(attacker.addEnergy(attacker, "Repentance", healthToAdd * (energyConvertPercent / 100f)));
-                pool *= .5f;
-            }
-        });
+        ));
         return true;
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Taking damage empowers your damaging abilities and melee hits, restoring health and energy based on ")
+                                               .percent(10, NamedTextColor.RED)
+                                               .text(" + ")
+                                               .percent(damageConvertPercent, NamedTextColor.RED)
+                                               .text(" of the damage you've recently took. Lasts ")
+                                               .durationTicks(tickDuration)
+                                               .text(".")
+                                               .build();
     }
 
     @Override

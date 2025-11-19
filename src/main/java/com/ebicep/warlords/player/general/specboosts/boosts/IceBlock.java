@@ -3,7 +3,6 @@ package com.ebicep.warlords.player.general.specboosts.boosts;
 import com.ebicep.warlords.abilities.IceBarrier;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsPlayerHorseEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -11,6 +10,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.player.ingame.motionsystem.MotionModifierBuilder;
 import com.ebicep.warlords.player.ingame.motionsystem.speed.OverrideValueModifier;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
@@ -172,12 +172,11 @@ public class IceBlock implements SpecBoostManager.SpecBoost<IceBlock> {
                                     }
                                 };
                             }
-
-                            @Override
-                            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                return currentDamageValue * AbstractAbility.convertToDivisionDecimal(recastDamageReductionPercent);
-                            }
                         };
+                        cd.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (e, currentDamageValue) -> {
+                                    currentDamageValue.addMultiplicativeModifierMult(getStringName(), AbstractAbility.convertToDivisionDecimal(recastDamageReductionPercent));
+                                }
+                        );
                         blockCooldown.set(cd);
                         warlordsEntity.getCooldownManager().removeCooldown(regularCooldown);
                         warlordsEntity.addKnockbackModifier(warlordsEntity, getStringName(), -100, cd);

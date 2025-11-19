@@ -13,6 +13,7 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.vindicator.PrismGuardBranch;
@@ -133,15 +134,14 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                                     cm -> {
                                     },
                                     tickDuration
-                            ) {
-
-                                @Override
-                                public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                    float afterReduction = currentDamageValue * convertToDivisionDecimal(damageReduction);
-                                    data.totalDamageReduced += currentDamageValue - afterReduction;
-                                    return afterReduction;
-                                }
-                            });
+                            ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                                currentDamageValue.addMultiplicativeModifierMult(
+                                        name,
+                                        convertToDivisionDecimal(damageReduction),
+                                        contribution -> data.totalDamageReduced += Math.abs(contribution)
+                                );
+                                    }
+                            ));
                         }
                     }
                 },
@@ -163,20 +163,18 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                                 if (silenced) {
                                     enemyInsideBubble.getCooldownManager().removeCooldownByName("Bubble Silence Debuff");
                                     enemyInsideBubble.getCooldownManager().addCooldown(new RegularCooldown<>(
-                                        "Bubble Silence Debuff",
-                                        "BUBBLE DEBUFF",
-                                        PrismGuard.class,
-                                        null,
-                                        wp,
-                                        CooldownTypes.LOW_LEVEL_DEBUFF,
-                                        cooldownManager -> {},
-                                        6
-                                    ) {
-                                        @Override
-                                        public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                            return currentDamageValue * 1.1f;
-                                        }
-                                    });
+                                            "Bubble Silence Debuff",
+                                            "BUBBLE DEBUFF",
+                                            PrismGuard.class,
+                                            null,
+                                            wp,
+                                            CooldownTypes.LOW_LEVEL_DEBUFF,
+                                            cooldownManager -> {},
+                                            6
+                                    ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (event, currentDamageValue) -> {
+                                                currentDamageValue.addMultiplicativeModifierMult(name, 1.1f);
+                                            }
+                                    ));
                                 }
                             }
                         }
@@ -196,25 +194,19 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                                     cooldownManager -> {
                                     },
                                     4
-                            ) {
-
-                                @Override
-                                public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                    float afterReduction;
-                                    if (Utils.isProjectile(event.getCause())) {
-                                        if (isInsideBubble.contains(event.getSource())) {
-                                            afterReduction = currentDamageValue;
-                                        } else {
-                                            stats.timesProjectilesReduced++;
-                                            afterReduction = currentDamageValue * (100 - projectileDamageReduction) / 100f;
+                            ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                                        if (Utils.isProjectile(event.getCause())) {
+                                            if (!isInsideBubble.contains(event.getSource())) {
+                                                stats.timesProjectilesReduced++;
+                                                currentDamageValue.addMultiplicativeModifierMult(
+                                                        name,
+                                                        (100 - projectileDamageReduction) / 100f,
+                                                        contribution -> data.totalDamageReduced += Math.abs(contribution)
+                                                );
+                                            }
                                         }
-                                    } else {
-                                        afterReduction = currentDamageValue;
                                     }
-                                    data.totalDamageReduced += currentDamageValue - afterReduction;
-                                    return afterReduction;
-                                }
-                            });
+                            ));
                         }
                     }
                     if (ticksElapsed % 10 == 0) {
@@ -246,31 +238,33 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                             return;
                         }
                         if (event.getCause().isEmpty()) {
-                            event.setMin(event.getMin() * .75f);
-                            event.setMax(event.getMax() * .75f);
+                            event.applyToMinMax(floatModifiable ->
+                                    floatModifiable.addMultiplicativeModifierMult(name, .75f)
+                            );
                         }
                     }
                 };
             }
-
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                int totalReduction = damageReductionActive;
-                data.hitsTaken++;
-                if (Utils.isProjectile(event.getCause())) {
-                    if (!isInsideBubble.contains(event.getSource())) {
-                        stats.timesProjectilesReduced++;
-                        totalReduction += projectileDamageReduction;
-                    }
-                }
-                if (pveMasterUpgrade) {
-                    totalReduction += 10;
-                }
-                float afterReduction = currentDamageValue * (100 - totalReduction) / 100f;
-                data.totalDamageReduced += currentDamageValue - afterReduction;
-                return afterReduction;
-            }
         };
+        prismGuardCooldown.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                    int totalReduction = damageReductionActive;
+                    data.hitsTaken++;
+                    if (Utils.isProjectile(event.getCause())) {
+                        if (!isInsideBubble.contains(event.getSource())) {
+                            stats.timesProjectilesReduced++;
+                            totalReduction += projectileDamageReduction;
+                        }
+                    }
+                    if (pveMasterUpgrade) {
+                        totalReduction += 10;
+                    }
+            currentDamageValue.addMultiplicativeModifierMult(
+                    name,
+                    (100 - totalReduction) / 100f,
+                    contribution -> data.totalDamageReduced += Math.abs(contribution)
+            );
+                }
+        );
         if (pveMasterUpgrade) {
             wp.addKnockbackModifier(wp, name, -100, prismGuardCooldown);
         }

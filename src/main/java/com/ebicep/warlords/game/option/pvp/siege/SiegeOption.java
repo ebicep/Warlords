@@ -2,7 +2,6 @@ package com.ebicep.warlords.game.option.pvp.siege;
 
 import com.ebicep.warlords.abilities.GuardianBeam;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
@@ -17,6 +16,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
@@ -40,42 +40,40 @@ public class SiegeOption implements Option {
         this.location = location;
     }
 
-    public SiegeOption addPayloadStart(Team team, Location location) {
-        teamPayloadStart.put(team, location);
-        return this;
-    }
-
     @Override
     public void register(@Nonnull Game game) {
         this.game = game;
         state = new SiegeWaitState(this);
         game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(10, "state-time") {
-            @Nonnull
-            @Override
-            public List<Component> computeLines(@Nullable WarlordsPlayer player) {
-                return Collections.singletonList(state.getSidebarComponent(stateTicksElapsed));
-            }
-        });
-        game.registerGameMarker(TimerSkipAbleMarker.class, new TimerSkipAbleMarker() {
-            @Override
-            public int getDelay() {
-                return 0;
-            }
-
-            @Override
-            public void skipTimer(int delayInTicks) {
-                if (state == null || !(state instanceof TimerSkipAbleMarker timerSkipAbleMarker)) {
-                    return;
+                    @Nonnull
+                    @Override
+                    public List<Component> computeLines(@Nullable WarlordsPlayer player) {
+                        return Collections.singletonList(state.getSidebarComponent(stateTicksElapsed));
+                    }
                 }
-                timerSkipAbleMarker.skipTimer(delayInTicks);
-            }
-        });
+        );
+        game.registerGameMarker(TimerSkipAbleMarker.class, new TimerSkipAbleMarker() {
+                    @Override
+                    public int getDelay() {
+                        return 0;
+                    }
+
+                    @Override
+                    public void skipTimer(int delayInTicks) {
+                        if (state == null || !(state instanceof TimerSkipAbleMarker timerSkipAbleMarker)) {
+                            return;
+                        }
+                        timerSkipAbleMarker.skipTimer(delayInTicks);
+                    }
+                }
+        );
         game.registerGameMarker(TimerResetAbleMarker.class, () -> {
-            if (state == null || !(state instanceof TimerResetAbleMarker timerSkipAbleMarker)) {
-                return;
-            }
-            timerSkipAbleMarker.reset();
-        });
+                    if (state == null || !(state instanceof TimerResetAbleMarker timerSkipAbleMarker)) {
+                        return;
+                    }
+                    timerSkipAbleMarker.reset();
+                }
+        );
     }
 
     @Override
@@ -126,17 +124,13 @@ public class SiegeOption implements Option {
                 cooldownManager -> {
                 },
                 false
-        ) {
-            @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * 1.15f;
-            }
-
-            @Override
-            public float modifyHealingFromAttacker(WarlordsDamageHealingEvent event, float currentHealValue) {
-                return currentHealValue * .75f;
-            }
-        });
+        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                    currentDamageValue.addMultiplicativeModifierMult("Siege", 1.15f);
+                }
+        ).addModifier(Modifier.HEALING_MODIFY_ATTACKER, (event, currentHealValue) -> {
+                    currentHealValue.addMultiplicativeModifierMult("Siege", 0.75f);
+                }
+        ));
         for (AbstractAbility ability : player.getAbilities()) {
             if (ability instanceof GuardianBeam guardianBeam) {
                 guardianBeam.getShieldValues().replaceAll(integer -> (int) (integer * .9f));
@@ -150,6 +144,11 @@ public class SiegeOption implements Option {
             return;
         }
         state.updateInventory(warlordsPlayer, player);
+    }
+
+    public SiegeOption addPayloadStart(Team team, Location location) {
+        teamPayloadStart.put(team, location);
+        return this;
     }
 
     public Map<Team, Location> getTeamPayloadStart() {
@@ -175,4 +174,5 @@ public class SiegeOption implements Option {
     public int getTotalTicksElapsed() {
         return totalTicksElapsed;
     }
+
 }

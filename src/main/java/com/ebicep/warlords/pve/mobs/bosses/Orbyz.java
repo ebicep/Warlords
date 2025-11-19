@@ -14,9 +14,10 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
-import com.ebicep.warlords.pve.mobs.bosses.bossabilities.*;
 import com.ebicep.warlords.pve.mobs.Mob;
+import com.ebicep.warlords.pve.mobs.bosses.bossabilities.*;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.FrostVeil;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -28,7 +29,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.*;
-import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
@@ -229,15 +229,14 @@ public class Orbyz extends AbstractMob implements BossMob {
                 CooldownTypes.BUFF,
                 cooldownManager -> {},
                 true
-        ) {
-            @Override
-            public float modifyDamageAfterAllFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (event.getSource().getCooldownManager().hasCooldownFromName("Empowering Allies")) {
-                    return currentDamageValue * 1.2f;
+        ).addModifier(Modifier.DAMAGE_AFTER_ALL_SELF, (event, currentDamageValue, isCrit) -> {
+                    if (event.getSource().getCooldownManager().hasCooldownFromName("Empowering Allies")) {
+                        currentDamageValue.addMultiplicativeModifierMult(name, 1.2f);
+                    } else {
+                        currentDamageValue.addMultiplicativeModifierMult(name, 0.1f);
+                    }
                 }
-                return currentDamageValue * 0.1f;
-            }
-        });
+        ));
 
         phaseOne = new BossAbilityPhase(warlordsNPC, 80, () -> {
             castRotatingLasers();

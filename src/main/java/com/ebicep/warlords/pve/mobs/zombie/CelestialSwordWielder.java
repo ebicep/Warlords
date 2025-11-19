@@ -1,10 +1,10 @@
 package com.ebicep.warlords.pve.mobs.zombie;
 
 import com.ebicep.warlords.abilities.internal.DamageCheck;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.EliteMob;
@@ -63,16 +63,12 @@ public class CelestialSwordWielder extends AbstractMob implements EliteMob {
                 cooldownManager -> {
                 },
                 true
-        ) {
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (Utils.isProjectile(event.getCause())) {
-                    return currentDamageValue * 0.1f;
+        ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                    if (Utils.isProjectile(event.getCause())) {
+                        currentDamageValue.addMultiplicativeModifierMult(name, 0.1f);
+                    }
                 }
-
-                return currentDamageValue;
-            }
-        });
+        ));
     }
 
 }

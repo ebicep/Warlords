@@ -1,13 +1,12 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
-import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCounter;
@@ -44,47 +43,64 @@ public class LegendaryAegis extends AbstractLegendaryWeapon implements PassiveCo
 
     public static final int BARRIER_TIMEOUT_SECONDS = 10;
     public static final int PULSE_INTERNAL_COOLDOWN_SECONDS = 8;
-
-    @Transient
-    private float barrierPool = 0f;
     @Transient
     private final AtomicReference<Instant> barrierExpireAt = new AtomicReference<>(Instant.EPOCH);
     @Transient
     private final AtomicReference<Instant> pulseReadyAt = new AtomicReference<>(Instant.EPOCH);
+    @Transient
+    private float barrierPool = 0f;
 
     public LegendaryAegis() {
 
     }
 
-    public LegendaryAegis(UUID uuid) { super(uuid); }
+    public LegendaryAegis(UUID uuid) {
+        super(uuid);
+    }
 
-    public LegendaryAegis(AbstractLegendaryWeapon copy) { super(copy); }
+    public LegendaryAegis(AbstractLegendaryWeapon copy) {
+        super(copy);
+    }
 
     @Override
     public TextComponent getPassiveEffect() {
         return Component.text("Convert ", NamedTextColor.GRAY)
-                .append(formatTitleUpgrade(getOverhealConvertPercent(), "%"))
-                .append(Component.text(" of overhealing into a Barrier (absorbs damage) up to ", NamedTextColor.GRAY))
-                .append(formatTitleUpgrade(getBarrierCapPercent(), "%"))
-                .append(Component.text(" of your max health. While the Barrier persists, deal " + DMG_BONUS_WHILE_BARRIER_PERCENT + "%", NamedTextColor.GRAY))
-                .append(Component.text(" more damage. When the Barrier breaks or expires, heal nearby allies for ", NamedTextColor.GRAY))
-                .append(Component.text(PULSE_HEAL_ALLIES_PERCENT + "%")
-                .append(Component.text(" of your max health and slow enemies by " + PULSE_SLOW_PERCENT + "%", NamedTextColor.GRAY))
-                .append(Component.text(" for 2s. Has a cooldown of " + PULSE_INTERNAL_COOLDOWN_SECONDS + " seconds.", NamedTextColor.GRAY)));
+                        .append(formatTitleUpgrade(getOverhealConvertPercent(), "%"))
+                        .append(Component.text(" of overhealing into a Barrier (absorbs damage) up to ", NamedTextColor.GRAY))
+                        .append(formatTitleUpgrade(getBarrierCapPercent(), "%"))
+                        .append(Component.text(" of your max health. While the Barrier persists, deal " + DMG_BONUS_WHILE_BARRIER_PERCENT + "%", NamedTextColor.GRAY))
+                        .append(Component.text(" more damage. When the Barrier breaks or expires, heal nearby allies for ", NamedTextColor.GRAY))
+                        .append(Component.text(PULSE_HEAL_ALLIES_PERCENT + "%")
+                                         .append(Component.text(" of your max health and slow enemies by " + PULSE_SLOW_PERCENT + "%", NamedTextColor.GRAY))
+                                         .append(Component.text(" for 2s. Has a cooldown of " + PULSE_INTERNAL_COOLDOWN_SECONDS + " seconds.", NamedTextColor.GRAY)));
+    }
+
+    private float getOverhealConvertPercent() {
+        return OVERHEAL_CONVERT_PERCENT + OVERHEAL_CONVERT_INC_PER_LEVEL * getTitleLevel();
+    }
+
+    private float getBarrierCapPercent() {
+        return BARRIER_CAP_PERCENT + BARRIER_CAP_INC_PER_LEVEL * getTitleLevel();
     }
 
     @Override
-    public List<Pair<Component, Component>> getPassiveEffectUpgrade() {
-        return Arrays.asList(
-                new Pair<>(
-                        formatTitleUpgrade(OVERHEAL_CONVERT_PERCENT + OVERHEAL_CONVERT_INC_PER_LEVEL * getTitleLevel(), "%"),
-                        formatTitleUpgrade(OVERHEAL_CONVERT_PERCENT + OVERHEAL_CONVERT_INC_PER_LEVEL * getTitleLevelUpgraded(), "%")
-                ),
-                new Pair<>(
-                        formatTitleUpgrade(BARRIER_CAP_PERCENT + BARRIER_CAP_INC_PER_LEVEL * getTitleLevel(), "%"),
-                        formatTitleUpgrade(BARRIER_CAP_PERCENT + BARRIER_CAP_INC_PER_LEVEL * getTitleLevelUpgraded(), "%")
-                )
-        );
+    public LegendaryTitles getTitle() {
+        return LegendaryTitles.AEGIS;
+    }
+
+    @Override
+    protected float getMeleeDamageMinValue() {
+        return 135;
+    }
+
+    @Override
+    protected float getHealthBonusValue() {
+        return 1100;
+    }
+
+    @Override
+    protected float getSpeedBonusValue() {
+        return 5;
     }
 
     @Override
@@ -100,48 +116,38 @@ public class LegendaryAegis extends AbstractLegendaryWeapon implements PassiveCo
                 CooldownTypes.WEAPON,
                 cm -> {},
                 false
-        ) {
-            @Override
-            public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-                // replace with actual Shield class
-                float max = player.getMaxHealth();
-                float cur = player.getCurrentHealth();
-                float potential = cur + currentHealValue;
-                if (potential > max) {
-                    float overheal = potential - max;
-                    float gained = overheal * (getOverhealConvertPercent() / 100f);
-                    float cap = max * (getBarrierCapPercent() / 100f);
-                    barrierPool = Math.min(cap, barrierPool + gained);
-                    barrierExpireAt.set(Instant.now().plus(BARRIER_TIMEOUT_SECONDS, ChronoUnit.SECONDS));
-                    player.playSound(player.getLocation(), Sound.ITEM_SHIELD_BLOCK, 2, 1.4f);
+        ).addModifier(Modifier.HEALING_MODIFY_SELF, (event, currentHealValue) -> {
+                    // replace with actual Shield class
+                    float max = player.getMaxHealth();
+                    float cur = player.getCurrentHealth();
+                    float potential = cur + currentHealValue.getCalculatedValue();
+                    if (potential > max) {
+                        float overheal = potential - max;
+                        float gained = overheal * (getOverhealConvertPercent() / 100f);
+                        float cap = max * (getBarrierCapPercent() / 100f);
+                        barrierPool = Math.min(cap, barrierPool + gained);
+                        barrierExpireAt.set(Instant.now().plus(BARRIER_TIMEOUT_SECONDS, ChronoUnit.SECONDS));
+                        player.playSound(player.getLocation(), Sound.ITEM_SHIELD_BLOCK, 2, 1.4f);
+                    }
                 }
-                return currentHealValue;
+        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+            if (barrierActive()) {
+                currentDamageValue.addMultiplicativeModifierMult(getTitleName(), 1f + DMG_BONUS_WHILE_BARRIER_PERCENT / 100f);
             }
-
-            @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (barrierActive()) {
-                    currentDamageValue *= (1f + DMG_BONUS_WHILE_BARRIER_PERCENT / 100f);
                 }
-                return currentDamageValue;
-            }
-
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (!barrierActive()) {
-                    return currentDamageValue;
+        ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                    if (!barrierActive()) {
+                        return;
+                    }
+                    // replace with actual Shield class
+                    float absorb = Math.min(barrierPool, currentDamageValue.getCalculatedValue());
+                    barrierPool -= absorb;
+                    if (barrierPool <= 0f) {
+                        tryTriggerPulse(player);
+                    }
+                    currentDamageValue.addAdditiveModifier(getTitleName(), -absorb);
                 }
-                // replace with actual Shield class
-                float absorb = Math.min(barrierPool, currentDamageValue);
-                barrierPool -= absorb;
-                float leftover = currentDamageValue - absorb;
-                if (barrierPool <= 0f) {
-                    tryTriggerPulse(player);
-                }
-                return leftover;
-            }
-        });
-
+        ));
         new GameRunnable(player.getGame()) {
             @Override
             public void run() {
@@ -193,36 +199,34 @@ public class LegendaryAegis extends AbstractLegendaryWeapon implements PassiveCo
         player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 2, 1.6f);
     }
 
-    private float getOverhealConvertPercent() {
-        return OVERHEAL_CONVERT_PERCENT + OVERHEAL_CONVERT_INC_PER_LEVEL * getTitleLevel();
-    }
-
-    private float getBarrierCapPercent() {
-        return BARRIER_CAP_PERCENT + BARRIER_CAP_INC_PER_LEVEL * getTitleLevel();
+    @Override
+    protected float getMeleeDamageMaxValue() {
+        return 150;
     }
 
     @Override
-    public LegendaryTitles getTitle() {
-        return LegendaryTitles.AEGIS;
+    protected float getCritChanceValue() {
+        return 35;
     }
 
     @Override
-    protected float getMeleeDamageMinValue() { return 135; }
+    protected float getCritMultiplierValue() {
+        return 150;
+    }
 
     @Override
-    protected float getMeleeDamageMaxValue() { return 150; }
-
-    @Override
-    protected float getCritChanceValue() { return 35; }
-
-    @Override
-    protected float getCritMultiplierValue() { return 150; }
-
-    @Override
-    protected float getHealthBonusValue() { return 1100; }
-
-    @Override
-    protected float getSpeedBonusValue() { return 5; }
+    public List<Pair<Component, Component>> getPassiveEffectUpgrade() {
+        return Arrays.asList(
+                new Pair<>(
+                        formatTitleUpgrade(OVERHEAL_CONVERT_PERCENT + OVERHEAL_CONVERT_INC_PER_LEVEL * getTitleLevel(), "%"),
+                        formatTitleUpgrade(OVERHEAL_CONVERT_PERCENT + OVERHEAL_CONVERT_INC_PER_LEVEL * getTitleLevelUpgraded(), "%")
+                ),
+                new Pair<>(
+                        formatTitleUpgrade(BARRIER_CAP_PERCENT + BARRIER_CAP_INC_PER_LEVEL * getTitleLevel(), "%"),
+                        formatTitleUpgrade(BARRIER_CAP_PERCENT + BARRIER_CAP_INC_PER_LEVEL * getTitleLevelUpgraded(), "%")
+                )
+        );
+    }
 
     @Override
     public int getCounter() {
@@ -233,4 +237,5 @@ public class LegendaryAegis extends AbstractLegendaryWeapon implements PassiveCo
         Instant now = Instant.now();
         return now.isBefore(pulseReadyAt.get()) ? (int) ChronoUnit.SECONDS.between(now, pulseReadyAt.get()) : 0;
     }
+
 }

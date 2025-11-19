@@ -1,10 +1,10 @@
 package com.ebicep.warlords.pve.mobs.events.gardenofhesperides;
 
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
@@ -55,15 +55,13 @@ public class EventTerasCyclops extends AbstractMob implements BossMinionMob, Ter
                 cooldownManager -> {
                 },
                 false
-        ) {
-            @Override
-            public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (event.getCause().isEmpty()) {
-                    WarlordsEntity victim = event.getWarlordsEntity();
-                    Utils.addKnockback(name, victim.getLocation(), victim, 1, 0.7f);
+        ).addModifier(Modifier.DAMAGE_ON_DAMAGE_ATTACKER, (event, currentDamageValue, isCrit) -> {
+                    if (event.getCause().isEmpty()) {
+                        WarlordsEntity victim = event.getWarlordsEntity();
+                        Utils.addKnockback(name, victim.getLocation(), victim, 1, 0.7f);
+                    }
                 }
-            }
-        });
+        ));
     }
 
 }
