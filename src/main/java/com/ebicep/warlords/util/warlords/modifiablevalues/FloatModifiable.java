@@ -496,7 +496,7 @@ public class FloatModifiable {
 //                    .decorate(TextDecoration.STRIKETHROUGH, isDisabled())
                     .text(log, isDisabled() ? NamedTextColor.RED : NamedTextColor.GREEN)
                     .text(": ", NamedTextColor.GRAY)
-                    .text(modifier, NamedTextColor.YELLOW)
+                    .text(NumberFormat.formatOptionalHundredths(modifier), NamedTextColor.YELLOW)
                     .text(" (" + (ticksLeft == -1 ? "INF" : ticksLeft) + ")", NamedTextColor.DARK_GRAY);
             if (isDisabled()) {
                 builder.text(" [" + String.join(", ", disabledReasons) + "]", NamedTextColor.RED);
