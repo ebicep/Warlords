@@ -124,7 +124,9 @@ public class DamageInstanceProcessor {
         applyPreEventModifiers();
         this.min.refresh();
         this.max.refresh();
-        this.damageValue.setBaseValue((float) (ThreadLocalRandom.current().nextDouble(min.getCalculatedValue(), max.getCalculatedValue())));
+        float maxVal = max.getCalculatedValue();
+        float minVal = min.getCalculatedValue();
+        this.damageValue.setBaseValue(ThreadLocalRandom.current().nextFloat() * (maxVal - minVal) + minVal);
 
         if (!validateEntityState()) {
             return Optional.empty();

@@ -50,7 +50,6 @@ public enum InstanceFlags {
 
     ;
 
-    public static final EnumSet<InstanceFlags> NO_FLAGS = EnumSet.noneOf(InstanceFlags.class);
     public static final EnumSet<InstanceFlags> TRUE_DAMAGE_IGNORE_CRIT = EnumSet.of(InstanceFlags.TRUE_DAMAGE, InstanceFlags.IGNORE_CRIT_MODIFIERS);
 
     public final Consumer<FloatModifiable.FloatModifier> ignorePositiveAdditive = floatModifier -> {

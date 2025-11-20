@@ -93,7 +93,10 @@ public class HealingInstanceProcessor {
         applyPreEventModifiers();
         this.min.refresh();
         this.max.refresh();
-        this.healValue.setBaseValue((float) (ThreadLocalRandom.current().nextDouble(min.getCalculatedValue(), max.getCalculatedValue())));
+        float maxVal = max.getCalculatedValue();
+        float minVal = min.getCalculatedValue();
+        this.healValue.setBaseValue(ThreadLocalRandom.current().nextFloat() * (maxVal - minVal) + minVal);
+
 
         if (!validateEntityState()) {
             return Optional.empty();
