@@ -39,7 +39,7 @@ public class InstanceBuilder {
     }
 
     private final InstanceType instanceType;
-    private EnumSet<InstanceFlags> flags = InstanceFlags.NO_FLAGS;
+    private EnumSet<InstanceFlags> flags = EnumSet.noneOf(InstanceFlags.class);
     private WarlordsEntity target;
     private WarlordsEntity source;
     @Nullable
