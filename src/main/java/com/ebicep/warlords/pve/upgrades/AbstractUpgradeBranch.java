@@ -35,7 +35,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.time.Instant;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.ebicep.warlords.menu.Menu.*;
 
@@ -112,68 +111,67 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                 }
         );
         if (hasSecondMaster) {
-            DatabaseManager.getPlayer(warlordsPlayer.getUuid(), databasePlayer -> {
-                DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
-                Ability<?> abilityRegistry = Ability.getAbility(ability.getClass());
-                Set<Ability<?>> alternativeMasteriesUnlockedAbilities = pveStats.getAlternativeMasteriesUnlockedAbilities();
-                Map<Specializations, Map<Integer, Instant>> alternativeMasteriesUnlocked = pveStats.getAlternativeMasteriesUnlocked();
-                int upgradeBranchIndex = abilityTree.getUpgradeBranches().indexOf(this);
-                boolean unlocked = alternativeMasteriesUnlockedAbilities.contains(abilityRegistry);
-                ItemBuilder masterBranchItem = masterBranchItem(masterUpgrade2, !unlocked);
-                if (!unlocked) {
-                    masterBranchItem.name(
-                            masterBranchItem.getName()
-                                            .append(Component.text(" [LOCKED]", NamedTextColor.RED, TextDecoration.BOLD))
-                    );
-                    masterBranchItem.addLore(PvEUtils.getCostLore(ALTERNATIVE_MASTERY_COST, true));
-                }
-                menu.setItem(
-                        5,
-                        0,
-                        masterBranchItem.get(),
-                        (m, e) -> {
-                            if (!unlocked) {
-                                for (Map.Entry<Spendable, Long> spendableIntegerEntry : ALTERNATIVE_MASTERY_COST.entrySet()) {
-                                    Spendable spendable = spendableIntegerEntry.getKey();
-                                    Long cost = spendableIntegerEntry.getValue();
-                                    if (spendable.getFromPlayer(databasePlayer) < cost) {
-                                        warlordsPlayer.sendMessage(Component.text("You need ", NamedTextColor.RED)
-                                                                            .append(spendable.getCostColoredName(cost))
-                                                                            .append(Component.text(" to permanently unlock this master upgrade.", NamedTextColor.RED))
-                                        );
-                                        warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
-                                        return;
-                                    }
-                                }
-                                Menu.openConfirmationMenu(player,
-                                        "Confirm Purchase",
-                                        3,
-                                        Component.text("Permanently Unlock Mastery", NamedTextColor.GREEN),
-                                        PvEUtils.getCostLore(ALTERNATIVE_MASTERY_COST, true),
-                                        Component.text("Go Back", NamedTextColor.RED),
-                                        Collections.emptyList(),
-                                        (m2, e2) -> {
-                                            ALTERNATIVE_MASTERY_COST.forEach((spendable, aLong) -> spendable.subtractFromPlayer(databasePlayer, aLong));
-                                            alternativeMasteriesUnlocked.putIfAbsent(warlordsPlayer.getSpecClass(), new HashMap<>());
-                                            alternativeMasteriesUnlocked.get(warlordsPlayer.getSpecClass()).put(upgradeBranchIndex, Instant.now());
-                                            alternativeMasteriesUnlockedAbilities.add(abilityRegistry);
-                                            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                                            openUpgradeBranchMenu();
-                                        },
-                                        (m2, e2) -> openUpgradeBranchMenu(),
-                                        (m2) -> {
-                                        }
-                                );
-                                return;
-                            }
-                            if (e.isLeftClick()) {
-                                purchaseMasterUpgrade(warlordsPlayer, masterUpgrade2, false);
-                            } else if (!masterUpgrade2.isUnlocked()) {
-                                onAutoUpgrade(AutoUpgradeProfile.AutoUpgradeEntry.UpgradeType.MASTER2, 0);
-                            }
-                        }
+            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(warlordsPlayer.getUuid());
+            DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+            Ability<?> abilityRegistry = Ability.getAbility(ability.getClass());
+            Set<Ability<?>> alternativeMasteriesUnlockedAbilities = pveStats.getAlternativeMasteriesUnlockedAbilities();
+            Map<Specializations, Map<Integer, Instant>> alternativeMasteriesUnlocked = pveStats.getAlternativeMasteriesUnlocked();
+            int upgradeBranchIndex = abilityTree.getUpgradeBranches().indexOf(this);
+            boolean unlocked = alternativeMasteriesUnlockedAbilities.contains(abilityRegistry);
+            ItemBuilder masterBranchItem = masterBranchItem(masterUpgrade2, !unlocked);
+            if (!unlocked) {
+                masterBranchItem.name(
+                        masterBranchItem.getName()
+                                        .append(Component.text(" [LOCKED]", NamedTextColor.RED, TextDecoration.BOLD))
                 );
-            });
+                masterBranchItem.addLore(PvEUtils.getCostLore(ALTERNATIVE_MASTERY_COST, true));
+            }
+            menu.setItem(
+                    5,
+                    0,
+                    masterBranchItem.get(),
+                    (m, e) -> {
+                        if (!unlocked) {
+                            for (Map.Entry<Spendable, Long> spendableIntegerEntry : ALTERNATIVE_MASTERY_COST.entrySet()) {
+                                Spendable spendable = spendableIntegerEntry.getKey();
+                                Long cost = spendableIntegerEntry.getValue();
+                                if (spendable.getFromPlayer(databasePlayer) < cost) {
+                                    warlordsPlayer.sendMessage(Component.text("You need ", NamedTextColor.RED)
+                                                                        .append(spendable.getCostColoredName(cost))
+                                                                        .append(Component.text(" to permanently unlock this master upgrade.", NamedTextColor.RED))
+                                    );
+                                    warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
+                                    return;
+                                }
+                            }
+                            Menu.openConfirmationMenu(player,
+                                    "Confirm Purchase",
+                                    3,
+                                    Component.text("Permanently Unlock Mastery", NamedTextColor.GREEN),
+                                    PvEUtils.getCostLore(ALTERNATIVE_MASTERY_COST, true),
+                                    Component.text("Go Back", NamedTextColor.RED),
+                                    Collections.emptyList(),
+                                    (m2, e2) -> {
+                                        ALTERNATIVE_MASTERY_COST.forEach((spendable, aLong) -> spendable.subtractFromPlayer(databasePlayer, aLong));
+                                        alternativeMasteriesUnlocked.putIfAbsent(warlordsPlayer.getSpecClass(), new HashMap<>());
+                                        alternativeMasteriesUnlocked.get(warlordsPlayer.getSpecClass()).put(upgradeBranchIndex, Instant.now());
+                                        alternativeMasteriesUnlockedAbilities.add(abilityRegistry);
+                                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                        openUpgradeBranchMenu();
+                                    },
+                                    (m2, e2) -> openUpgradeBranchMenu(),
+                                    (m2) -> {
+                                    }
+                            );
+                            return;
+                        }
+                        if (e.isLeftClick()) {
+                            purchaseMasterUpgrade(warlordsPlayer, masterUpgrade2, false);
+                        } else if (!masterUpgrade2.isUnlocked()) {
+                            onAutoUpgrade(AutoUpgradeProfile.AutoUpgradeEntry.UpgradeType.MASTER2, 0);
+                        }
+                    }
+            );
         }
 
 
@@ -206,11 +204,9 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
         boolean isMasterUpgrade2 = masterUpgrade2.equals(upgrade);
         if (!force) {
             if (isMasterUpgrade2) {
-                AtomicBoolean unlocked = new AtomicBoolean(false);
-                DatabaseManager.getPlayer(player.getUuid(),
-                        databasePlayer -> unlocked.set(databasePlayer.getPveStats().getAlternativeMasteriesUnlockedAbilities().contains(Ability.getAbility(ability.getClass())))
-                );
-                if (!unlocked.get()) {
+                DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player.getUuid());
+                boolean unlocked = databasePlayer.getPveStats().getAlternativeMasteriesUnlockedAbilities().contains(Ability.getAbility(ability.getClass()));
+                if (!unlocked) {
                     player.sendMessage(Component.text("You have not unlocked this alternative mastery yet!", NamedTextColor.RED));
                     return;
                 }
@@ -357,9 +353,8 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
             autoUpgradeProfile.addEntry(branchIndex, upgradeIndex, upgradeType);
             openUpgradeBranchMenu();
         }
-        DatabaseManager.updatePlayer(player.getUuid(), databasePlayer -> {
-
-        });
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player.getUuid());
+        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
     }
 
     private void addBranchToMenu(Menu menu, List<Upgrade> tree, int x, int y) {
@@ -611,4 +606,5 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
     public Upgrade getMasterUpgrade2() {
         return masterUpgrade2;
     }
+
 }

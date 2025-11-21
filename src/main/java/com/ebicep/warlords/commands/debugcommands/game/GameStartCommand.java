@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.debugcommands.misc.AdminCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameManager;
 import com.ebicep.warlords.game.GameMap;
@@ -91,19 +92,17 @@ public class GameStartCommand {
 
         if (GameMode.isPvE(entryBuilder.getGameMode())) {
             if (people.size() == 1 && !Permissions.isAdmin(player)) {
-                DatabaseManager.getPlayer(people.getFirst().getUniqueId(), databasePlayer -> {
-                            if (databasePlayer.getPlays() <= 10 && !databasePlayer.getPveStats().isCompletedTutorial()) {
-                                entryBuilder
-                                        .setGameMode(GameMode.TUTORIAL)
-                                        .setMap(GameMap.TUTORIAL_MAP)
-                                        .setOnResult((result, game) -> {
-                                            if (game == null) {
-                                                people.get(0).sendMessage(Component.text("Unable to find a valid tutorial map. Report this.", NamedTextColor.RED));
-                                            }
-                                        });
-                            }
-                        }
-                );
+                DatabasePlayer databasePlayer = DatabaseManager.getPlayer(people.getFirst().getUniqueId());
+                if (databasePlayer.getPlays() <= 10 && !databasePlayer.getPveStats().isCompletedTutorial()) {
+                    entryBuilder
+                            .setGameMode(GameMode.TUTORIAL)
+                            .setMap(GameMap.TUTORIAL_MAP)
+                            .setOnResult((result, game) -> {
+                                if (game == null) {
+                                    people.getFirst().sendMessage(Component.text("Unable to find a valid tutorial map. Report this.", NamedTextColor.RED));
+                                }
+                            });
+                }
             }
         }
 
@@ -238,4 +237,5 @@ public class GameStartCommand {
                 }))
         );
     }
+
 }

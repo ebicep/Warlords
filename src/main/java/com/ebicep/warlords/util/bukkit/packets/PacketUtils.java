@@ -14,6 +14,7 @@ import com.ebicep.warlords.abilities.SanctifiedBeacon;
 import com.ebicep.warlords.commands.debugcommands.misc.MountCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.packets.wrappers.WrapperPlayClientSteerVehicle;
@@ -47,12 +48,11 @@ public class PacketUtils {
                         if (event.getPacketType() == PacketType.Play.Server.WORLD_PARTICLES) {
                             Player player = event.getPlayer();
                             if (Warlords.hasPlayer(player)) {
-                                DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
-                                    int particleReduction = databasePlayer.getParticleQuality().particleReduction;
-                                    if (counter++ % particleReduction == 0) {
-                                        event.setCancelled(true);
-                                    }
-                                });
+                                DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+                                int particleReduction = databasePlayer.getParticleQuality().particleReduction;
+                                if (counter++ % particleReduction == 0) {
+                                    event.setCancelled(true);
+                                }
                             }
                         }
                     }

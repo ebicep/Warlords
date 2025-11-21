@@ -6,6 +6,7 @@ import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.HelpEntry;
 import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.pve.weapons.weapontypes.CommonWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.EpicWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.RareWeapon;
@@ -33,14 +34,14 @@ public class WeaponCommand extends BaseCommand {
     }
 
     public static void giveWeapon(Player player, AbstractWeapon abstractWeapon) {
-        DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
-            databasePlayer.getPveStats().getWeaponInventory().add(abstractWeapon);
-            ChatChannels.playerSendMessage(player, ChatChannels.DEBUG, Component.text("Spawned weapon: ", NamedTextColor.GRAY)
-                                                                                .append(abstractWeapon.getName()
-                                                                                                      .hoverEvent(abstractWeapon.generateItemStack(false)
-                                                                                                                                .asHoverEvent()))
-            );
-        });
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+        databasePlayer.getPveStats().getWeaponInventory().add(abstractWeapon);
+        ChatChannels.playerSendMessage(player, ChatChannels.DEBUG, Component.text("Spawned weapon: ", NamedTextColor.GRAY)
+                                                                            .append(abstractWeapon.getName()
+                                                                                                  .hoverEvent(abstractWeapon.generateItemStack(false)
+                                                                                                                            .asHoverEvent()))
+        );
+        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
     }
 
     @Subcommand("common")
@@ -88,23 +89,23 @@ public class WeaponCommand extends BaseCommand {
     @Subcommand("clear")
     @Description("Clears your weapon inventory")
     public void clear(Player player) {
-        DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
-            databasePlayer.getPveStats().getWeaponInventory().clear();
-            ChatChannels.playerSendMessage(player, ChatChannels.DEBUG, Component.text("Cleared weapon inventory.", NamedTextColor.GRAY));
-        });
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+        databasePlayer.getPveStats().getWeaponInventory().clear();
+        ChatChannels.playerSendMessage(player, ChatChannels.DEBUG, Component.text("Cleared weapon inventory.", NamedTextColor.GRAY));
+        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
     }
 
     @Subcommand("list")
     @Description("Lists all your weapons")
     public void list(Player player) {
-        DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
-            List<AbstractWeapon> weaponInventory = databasePlayer.getPveStats().getWeaponInventory();
-            for (int i = 0; i < weaponInventory.size(); i++) {
-                AbstractWeapon weapon = weaponInventory.get(i);
-                player.sendMessage(Component.text((i + 1) + ". ", NamedTextColor.GOLD)
-                                            .append(weapon.getHoverComponent(false)));
-            }
-        });
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+        List<AbstractWeapon> weaponInventory = databasePlayer.getPveStats().getWeaponInventory();
+        for (int i = 0; i < weaponInventory.size(); i++) {
+            AbstractWeapon weapon = weaponInventory.get(i);
+            player.sendMessage(Component.text((i + 1) + ". ", NamedTextColor.GOLD)
+                                        .append(weapon.getHoverComponent(false)));
+        }
+        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
     }
 
     @HelpCommand

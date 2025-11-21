@@ -10,6 +10,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.masterworksfair.pojos.MasterworksFair;
 import com.ebicep.warlords.database.repositories.masterworksfair.pojos.MasterworksFairPlayerEntry;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.general.FutureMessage;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.pve.Spendable;
@@ -140,10 +141,11 @@ public class MasterworksFairCommand extends BaseCommand {
                                 playerFairResults.forEach((uuid, masterworksFairEntries) -> {
                                     Warlords.newChain()
                                             .asyncFirst(() -> DatabaseManager.playerService.findByUUID(uuid))
-                                            .syncLast(databasePlayer -> {
-                                                if (databasePlayer == null) {
+                                            .syncLast(optionalDatabasePlayer -> {
+                                                if (optionalDatabasePlayer.isEmpty()) {
                                                     return;
                                                 }
+                                                DatabasePlayer databasePlayer = optionalDatabasePlayer.get();
                                                 DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
                                                 if (pveStats == null) {
                                                     return;
@@ -172,13 +174,14 @@ public class MasterworksFairCommand extends BaseCommand {
                                                 }
                                                 if (resent) {
                                                     databasePlayer.addFutureMessage(FutureMessage.create(Arrays.asList(
-                                                            Component.text("------------------------------------------------", NamedTextColor.GOLD),
-                                                            Component.text("Hey! We noticed you didn't get all your previous Masterworks",
-                                                                    NamedTextColor.GREEN
-                                                            ),
-                                                            Component.text("Fair rewards, so we've given them to you!", NamedTextColor.GREEN),
-                                                            Component.text("------------------------------------------------", NamedTextColor.GOLD)
-                                                    ), true));
+                                                                    Component.text("------------------------------------------------", NamedTextColor.GOLD),
+                                                                    Component.text("Hey! We noticed you didn't get all your previous Masterworks",
+                                                                            NamedTextColor.GREEN
+                                                                    ),
+                                                                    Component.text("Fair rewards, so we've given them to you!", NamedTextColor.GREEN),
+                                                                    Component.text("------------------------------------------------", NamedTextColor.GOLD)
+                                                            ), true
+                                                    ));
                                                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                                                 }
                                             })

@@ -27,10 +27,6 @@ import java.util.UUID;
 
 public class SeasonalTraderTrait extends WarlordsTrait {
 
-    public SeasonalTraderTrait() {
-        super("SeasonalTraderTrait");
-    }
-
     private static final List<SpendableBuyShopDistinct> SHOP = List.of(
             new SpendableBuyShopDistinct(1, MobDrop.ZENITH_STAR, 5, 10, Currencies.ASCENDANT_SHARD),
             new SpendableBuyShopDistinct(4000, Currencies.SYNTHETIC_SHARD, 2, 20, Currencies.ASCENDANT_SHARD),
@@ -89,8 +85,8 @@ public class SeasonalTraderTrait extends WarlordsTrait {
                     (m, e) -> {
                         if (pveStats.getCurrencyValue(reward.currency()) < rewardPrice) {
                             player.sendMessage(Component.text("You need ", NamedTextColor.RED)
-                                    .append(reward.currency().getCostColoredName(rewardPrice))
-                                    .append(Component.text(" to purchase this item!"))
+                                                        .append(reward.currency().getCostColoredName(rewardPrice))
+                                                        .append(Component.text(" to purchase this item!"))
                             );
                             player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
                             return;
@@ -107,10 +103,10 @@ public class SeasonalTraderTrait extends WarlordsTrait {
                         rewardsPurchased.merge(mapName, 1L, Long::sum);
 
                         player.sendMessage(Component.text("Purchased ", NamedTextColor.GREEN)
-                                .append(rewardSpendable.getCostColoredName(rewardAmount))
-                                .append(Component.text(" for "))
-                                .append(reward.currency().getCostColoredName(rewardPrice))
-                                .append(Component.text("!")));
+                                                    .append(rewardSpendable.getCostColoredName(rewardAmount))
+                                                    .append(Component.text(" for "))
+                                                    .append(reward.currency().getCostColoredName(rewardPrice))
+                                                    .append(Component.text("!")));
                         player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2f);
                         openSeasonalVendor(player, databasePlayer, databasePlayerMonthly);
 
@@ -129,13 +125,17 @@ public class SeasonalTraderTrait extends WarlordsTrait {
         menu.openForPlayer(player);
     }
 
+    int ticksElapsed = 0;
+
+    public SeasonalTraderTrait() {
+        super("SeasonalTraderTrait");
+    }
+
     @Override
     public void onAttach() {
         HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
         hologramTrait.setLine(0, ChatColor.GOLD + "Allegedly a Snowman");
     }
-
-    int ticksElapsed = 0;
 
     @Override
     public void run() {
@@ -158,10 +158,9 @@ public class SeasonalTraderTrait extends WarlordsTrait {
     public void rightClick(NPCRightClickEvent event) {
         Player player = event.getClicker();
         UUID uuid = player.getUniqueId();
-        DatabaseManager.getPlayer(uuid, databasePlayer -> {
-            DatabaseManager.getPlayer(uuid, PlayersCollections.MONTHLY, databasePlayerMonthly -> {
-                openSeasonalVendor(player, databasePlayer, databasePlayerMonthly);
-            });
-        });
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid);
+        DatabasePlayer databasePlayerMonthly = DatabaseManager.getPlayer(uuid, PlayersCollections.MONTHLY);
+        openSeasonalVendor(player, databasePlayer, databasePlayerMonthly);
     }
+
 }

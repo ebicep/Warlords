@@ -4,6 +4,7 @@ import co.aikar.commands.CommandIssuer;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.debugcommands.misc.SeeAllChatsCommand;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.guilds.*;
 import com.ebicep.warlords.guilds.logs.AbstractGuildLog;
@@ -262,11 +263,10 @@ public enum ChatChannels {
             SeeAllChatsCommand.addPlayerSeeAllChats(viewers);
             for (Audience audience : viewers) {
                 if (audience instanceof Player p) {
-                    DatabaseManager.getPlayer(p.getUniqueId(), databasePlayer -> {
-                        if (!databasePlayer.getIgnored().contains(player.getUniqueId())) {
-                            audience.sendMessage(component);
-                        }
-                    }, () -> audience.sendMessage(component));
+                    DatabasePlayer databasePlayer = DatabaseManager.getPlayer(p);
+                    if (!databasePlayer.getIgnored().contains(player.getUniqueId())) {
+                        audience.sendMessage(component);
+                    }
                 } else {
                     audience.sendMessage(component);
                 }

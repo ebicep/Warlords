@@ -3,6 +3,7 @@ package com.ebicep.jda;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.miscellaneouscommands.DiscordCommand;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.party.Party;
 import com.ebicep.warlords.party.PartyManager;
@@ -63,28 +64,28 @@ public class BotListener extends ListenerAdapter implements Listener {
             Long key = Long.parseLong(message.getContentRaw());
             if (DiscordCommand.playerLinkKeys.containsValue(key)) {
                 UUID uuid = DiscordCommand.playerLinkKeys.getKey(key);
-                DatabaseManager.updatePlayer(uuid, databasePlayer -> {
-                    Long id = event.getAuthor().getIdLong();
-                    databasePlayer.setDiscordID(id);
-                    event.getPrivateChannel()
-                         .sendMessage("You linked **" + Bukkit.getOfflinePlayer(uuid).getName() + "** to your discord account (" + id + ").")
-                         .queue();
-                    Player player = Bukkit.getOfflinePlayer(uuid).getPlayer();
-                    if (player != null) {
-                        player.sendMessage(Component.text(
-                                "Your account was linked to the discord account " + event.getAuthor().getAsTag() + " (" + id + ").",
-                                NamedTextColor.GREEN
-                        ));
-                    }
+                DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid);
+                Long id = event.getAuthor().getIdLong();
+                databasePlayer.setDiscordID(id);
+                event.getPrivateChannel()
+                     .sendMessage("You linked **" + Bukkit.getOfflinePlayer(uuid).getName() + "** to your discord account (" + id + ").")
+                     .queue();
+                Player player = Bukkit.getOfflinePlayer(uuid).getPlayer();
+                if (player != null) {
+                    player.sendMessage(Component.text(
+                            "Your account was linked to the discord account " + event.getAuthor().getAsTag() + " (" + id + ").",
+                            NamedTextColor.GREEN
+                    ));
+                }
 
-                    BotManager.sendDebugMessage(
-                            new EmbedBuilder()
-                                    .setColor(3066993)
-                                    .setTitle("Player Linked - " + id)
-                                    .setDescription("UUID: " + uuid + "\n" + "IGN: " + databasePlayer.getName() + "\n" + "KEY: " + key)
-                                    .build()
-                    );
-                });
+                BotManager.sendDebugMessage(
+                        new EmbedBuilder()
+                                .setColor(3066993)
+                                .setTitle("Player Linked - " + id)
+                                .setDescription("UUID: " + uuid + "\n" + "IGN: " + databasePlayer.getName() + "\n" + "KEY: " + key)
+                                .build()
+                );
+                DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
             }
         } catch (Exception e) {
             ChatUtils.MessageType.DISCORD_BOT.sendErrorMessage(e);
@@ -190,102 +191,103 @@ public class BotListener extends ListenerAdapter implements Listener {
                         .split("\n");
                 try {
                     Bukkit.getScheduler().callSyncMethod(Warlords.getInstance(), () -> {
-                        for (String player : players) {
-                            String name = player.substring(0, player.indexOf('-'));
-                            String spec = player.substring(player.indexOf('-') + 1);
-                            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayerIfCached(name);
-                            if (offlinePlayer == null) {
-                                continue;
-                            }
-                            Player targetPlayer = offlinePlayer.getPlayer();
-                            UUID uuid = offlinePlayer.getUniqueId();
-                            Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(uuid);
-                            if (resetMenu.get()) {
-                                if (partyPlayerPair != null) {
-                                    partyPlayerPair.getA().getRegularGamesMenu().reset();
-                                }
-                                resetMenu.set(false);
-                            }
-                            //includes offline players
-                            if (isBlueTeam) {
-                                PlayerSettings.getPlayerSettings(uuid).setWantedTeam(Team.BLUE);
-                            } else if (isRedTeam) {
-                                PlayerSettings.getPlayerSettings(uuid).setWantedTeam(Team.RED);
-                            }
-                            if (!spec.isEmpty()) {
-                                PlayerSettings.getPlayerSettings(uuid).setSelectedSpec(Specializations.getSpecFromName(spec));
-                                DatabaseManager.updatePlayer(uuid, databasePlayer -> {
-                                    databasePlayer.setLastSpec(Specializations.getSpecFromName(spec));
-                                });
-                                if (!isExperimental) {
-                                    if (partyPlayerPair != null) {
-                                        partyPlayerPair.getA()
-                                                       .getRegularGamesMenu()
-                                                       .addPlayer(isBlueTeam ? Team.BLUE : Team.RED, uuid, Specializations.getSpecFromName(spec));
+                                for (String player : players) {
+                                    String name = player.substring(0, player.indexOf('-'));
+                                    String spec = player.substring(player.indexOf('-') + 1);
+                                    OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayerIfCached(name);
+                                    if (offlinePlayer == null) {
+                                        continue;
                                     }
-                                }
-                            } else {
-                                if (!isExperimental) {
-                                    if (partyPlayerPair != null) {
-                                        partyPlayerPair.getA()
-                                                       .getRegularGamesMenu()
-                                                       .addPlayer(isBlueTeam ? Team.BLUE : Team.RED, uuid, Specializations.PYROMANCER);
+                                    Player targetPlayer = offlinePlayer.getPlayer();
+                                    UUID uuid = offlinePlayer.getUniqueId();
+                                    Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(uuid);
+                                    if (resetMenu.get()) {
+                                        if (partyPlayerPair != null) {
+                                            partyPlayerPair.getA().getRegularGamesMenu().reset();
+                                        }
+                                        resetMenu.set(false);
                                     }
-                                }
-                            }
-                            if (!isExperimental) {
-                                if (partyPlayerPair != null && targetPlayer != null) {
-                                    targetPlayer.getInventory().setItem(7,
-                                            new ItemBuilder((isBlueTeam ? Team.BLUE : Team.RED).getWool())
-                                                    .name(Component.text("Team Builder", NamedTextColor.GREEN))
-                                                    .get()
-                                    );
+                                    //includes offline players
+                                    if (isBlueTeam) {
+                                        PlayerSettings.getPlayerSettings(uuid).setWantedTeam(Team.BLUE);
+                                    } else if (isRedTeam) {
+                                        PlayerSettings.getPlayerSettings(uuid).setWantedTeam(Team.RED);
+                                    }
+                                    if (!spec.isEmpty()) {
+                                        PlayerSettings.getPlayerSettings(uuid).setSelectedSpec(Specializations.getSpecFromName(spec));
+                                        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid);
+                                        databasePlayer.setLastSpec(Specializations.getSpecFromName(spec));
+                                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                        if (!isExperimental) {
+                                            if (partyPlayerPair != null) {
+                                                partyPlayerPair.getA()
+                                                               .getRegularGamesMenu()
+                                                               .addPlayer(isBlueTeam ? Team.BLUE : Team.RED, uuid, Specializations.getSpecFromName(spec));
+                                            }
+                                        }
+                                    } else {
+                                        if (!isExperimental) {
+                                            if (partyPlayerPair != null) {
+                                                partyPlayerPair.getA()
+                                                               .getRegularGamesMenu()
+                                                               .addPlayer(isBlueTeam ? Team.BLUE : Team.RED, uuid, Specializations.PYROMANCER);
+                                            }
+                                        }
+                                    }
+                                    if (!isExperimental) {
+                                        if (partyPlayerPair != null && targetPlayer != null) {
+                                            targetPlayer.getInventory().setItem(7,
+                                                    new ItemBuilder((isBlueTeam ? Team.BLUE : Team.RED).getWool())
+                                                            .name(Component.text("Team Builder", NamedTextColor.GREEN))
+                                                            .get()
+                                            );
 
+                                        }
+                                    }
+                                    //only send messages to online
+                                    if (targetPlayer != null) {
+                                        targetPlayer.sendMessage(Component.text("---------------------------------------", NamedTextColor.DARK_BLUE));
+                                        if (isBlueTeam) {
+                                            targetPlayer.sendMessage(Component.text("You were automatically put into the ", NamedTextColor.GREEN)
+                                                                              .append(Component.text("BLUE", NamedTextColor.BLUE, TextDecoration.BOLD))
+                                                                              .append(Component.text(" team!", NamedTextColor.GREEN)));
+                                        } else if (isRedTeam) {
+                                            targetPlayer.sendMessage(Component.text("You were automatically put into the ", NamedTextColor.GREEN)
+                                                                              .append(Component.text("RED", NamedTextColor.RED, TextDecoration.BOLD))
+                                                                              .append(Component.text(" team!", NamedTextColor.GREEN)));
+                                        }
+                                        if (!spec.isEmpty()) {
+                                            TextComponent subtitle = isBlueTeam ? Component.text("BLUE", NamedTextColor.BLUE, TextDecoration.BOLD)
+                                                                                : isRedTeam ? Component.text("RED", NamedTextColor.RED, TextDecoration.BOLD)
+                                                                                            : Component.empty();
+                                            targetPlayer.showTitle(Title.title(
+                                                    Component.text(spec, NamedTextColor.GREEN),
+                                                    subtitle,
+                                                    Title.Times.times(Ticks.duration(0), Ticks.duration(100), Ticks.duration(40))
+                                            ));
+                                            targetPlayer.sendMessage(Component.text("Your spec was automatically changed to ", NamedTextColor.GREEN)
+                                                                              .append(getSpecComponent(spec))
+                                                                              .append(Component.text("!", NamedTextColor.GREEN)));
+                                        }
+                                        targetPlayer.sendMessage("");
+                                        targetPlayer.sendMessage(Component.text("Blue Team", NamedTextColor.DARK_BLUE).append(Component.text(" - ", NamedTextColor.DARK_GRAY)));
+                                        blueTeam.forEach(s -> {
+                                            targetPlayer.sendMessage(Component.text(s.name, s.name.contains(name) ? NamedTextColor.AQUA : NamedTextColor.BLUE)
+                                                                              .append(Component.text(" - ", NamedTextColor.GRAY))
+                                                                              .append(getSpecComponent(s.spec)));
+                                        });
+                                        targetPlayer.sendMessage(Component.text("Red Team", NamedTextColor.DARK_RED).append(Component.text(" - ", NamedTextColor.DARK_GRAY)));
+                                        redTeam.forEach(s -> {
+                                            targetPlayer.sendMessage(Component.text(s.name, s.name.contains(name) ? NamedTextColor.AQUA : NamedTextColor.RED)
+                                                                              .append(Component.text(" - ", NamedTextColor.GRAY))
+                                                                              .append(getSpecComponent(s.spec)));
+                                        });
+                                        targetPlayer.sendMessage(Component.text("---------------------------------------", NamedTextColor.DARK_BLUE));
+                                    }
                                 }
+                                return null;
                             }
-                            //only send messages to online
-                            if (targetPlayer != null) {
-                                targetPlayer.sendMessage(Component.text("---------------------------------------", NamedTextColor.DARK_BLUE));
-                                if (isBlueTeam) {
-                                    targetPlayer.sendMessage(Component.text("You were automatically put into the ", NamedTextColor.GREEN)
-                                                                      .append(Component.text("BLUE", NamedTextColor.BLUE, TextDecoration.BOLD))
-                                                                      .append(Component.text(" team!", NamedTextColor.GREEN)));
-                                } else if (isRedTeam) {
-                                    targetPlayer.sendMessage(Component.text("You were automatically put into the ", NamedTextColor.GREEN)
-                                                                      .append(Component.text("RED", NamedTextColor.RED, TextDecoration.BOLD))
-                                                                      .append(Component.text(" team!", NamedTextColor.GREEN)));
-                                }
-                                if (!spec.isEmpty()) {
-                                    TextComponent subtitle = isBlueTeam ? Component.text("BLUE", NamedTextColor.BLUE, TextDecoration.BOLD)
-                                                                        : isRedTeam ? Component.text("RED", NamedTextColor.RED, TextDecoration.BOLD)
-                                                                                    : Component.empty();
-                                    targetPlayer.showTitle(Title.title(
-                                            Component.text(spec, NamedTextColor.GREEN),
-                                            subtitle,
-                                            Title.Times.times(Ticks.duration(0), Ticks.duration(100), Ticks.duration(40))
-                                    ));
-                                    targetPlayer.sendMessage(Component.text("Your spec was automatically changed to ", NamedTextColor.GREEN)
-                                                                      .append(getSpecComponent(spec))
-                                                                      .append(Component.text("!", NamedTextColor.GREEN)));
-                                }
-                                targetPlayer.sendMessage("");
-                                targetPlayer.sendMessage(Component.text("Blue Team", NamedTextColor.DARK_BLUE).append(Component.text(" - ", NamedTextColor.DARK_GRAY)));
-                                blueTeam.forEach(s -> {
-                                    targetPlayer.sendMessage(Component.text(s.name, s.name.contains(name) ? NamedTextColor.AQUA : NamedTextColor.BLUE)
-                                                                      .append(Component.text(" - ", NamedTextColor.GRAY))
-                                                                      .append(getSpecComponent(s.spec)));
-                                });
-                                targetPlayer.sendMessage(Component.text("Red Team", NamedTextColor.DARK_RED).append(Component.text(" - ", NamedTextColor.DARK_GRAY)));
-                                redTeam.forEach(s -> {
-                                    targetPlayer.sendMessage(Component.text(s.name, s.name.contains(name) ? NamedTextColor.AQUA : NamedTextColor.RED)
-                                                                      .append(Component.text(" - ", NamedTextColor.GRAY))
-                                                                      .append(getSpecComponent(s.spec)));
-                                });
-                                targetPlayer.sendMessage(Component.text("---------------------------------------", NamedTextColor.DARK_BLUE));
-                            }
-                        }
-                        return null;
-                    }).get();
+                    ).get();
                 } catch (InterruptedException | ExecutionException e) {
                     ChatUtils.MessageType.DISCORD_BOT.sendErrorMessage(e);
                 }
@@ -299,13 +301,13 @@ public class BotListener extends ListenerAdapter implements Listener {
         }
     }
 
-    private record TeamBalance(String name, String spec) {
-
-    }
-
     public static Component getSpecComponent(String spec) {
         Specializations specFromName = Specializations.getSpecFromName(spec.trim());
         return Component.text(spec, specFromName.specType.getTextColor());
+    }
+
+    private record TeamBalance(String name, String spec) {
+
     }
 
 }

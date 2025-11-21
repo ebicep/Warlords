@@ -1,6 +1,7 @@
 package com.ebicep.warlords.game.option.pve.onslaught;
 
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsLegendFragmentGainEvent;
 import com.ebicep.warlords.game.option.pve.rewards.CoinGainOption;
 import com.ebicep.warlords.game.option.pve.rewards.PveRewards;
@@ -74,16 +75,15 @@ public class OnslaughtRewards extends PveRewards<OnslaughtOption> {
                      }
                      UUID uuid = warlordsPlayer.getUuid();
                      Specializations currentSpec = warlordsPlayer.getSpecClass();
-                     DatabaseManager.getPlayer(uuid, databasePlayer -> {
-                         AtomicLong legendFragmentGain = new AtomicLong();
-                         legendFragmentGain.set(minutesElapsed);
-                         //warlordsPlayer.sendMessage("Legend Fragment Gain: " + legendFragmentGain.get());
-                         addExtraFragmentGain(minutesElapsed, currentSpec, databasePlayer, legendFragmentGain);
-                         Bukkit.getPluginManager()
-                               .callEvent(new WarlordsLegendFragmentGainEvent(warlordsPlayer, legendFragmentGain, pveOption, minutesElapsed));
-                         //warlordsPlayer.sendMessage("Legend Fragment Gain After Guild: " + legendFragmentGain.get());
-                         getPlayerRewards(uuid).setLegendFragmentGain(legendFragmentGain.get());
-                     });
+                     DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid);
+                     AtomicLong legendFragmentGain = new AtomicLong();
+                     legendFragmentGain.set(minutesElapsed);
+                     //warlordsPlayer.sendMessage("Legend Fragment Gain: " + legendFragmentGain.get());
+                     addExtraFragmentGain(minutesElapsed, currentSpec, databasePlayer, legendFragmentGain);
+                     Bukkit.getPluginManager()
+                           .callEvent(new WarlordsLegendFragmentGainEvent(warlordsPlayer, legendFragmentGain, pveOption, minutesElapsed));
+                     //warlordsPlayer.sendMessage("Legend Fragment Gain After Guild: " + legendFragmentGain.get());
+                     getPlayerRewards(uuid).setLegendFragmentGain(legendFragmentGain.get());
                  });
 
     }

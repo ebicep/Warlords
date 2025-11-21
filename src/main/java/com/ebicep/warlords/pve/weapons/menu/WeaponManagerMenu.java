@@ -51,14 +51,13 @@ public class WeaponManagerMenu {
 
     public static void openWeaponInventoryFromExternal(Player player, boolean fromNPC) {
         UUID uuid = player.getUniqueId();
-        DatabaseManager.getPlayer(uuid, databasePlayer -> {
-            PLAYER_MENU_SETTINGS.putIfAbsent(uuid, new PlayerWeaponMenuSettings(databasePlayer));
-            PlayerWeaponMenuSettings menuSettings = PLAYER_MENU_SETTINGS.get(uuid);
-            menuSettings.setOpenedFromNPC(fromNPC);
-            menuSettings.sort(PlayerSettings.getPlayerSettings(uuid).getSelectedSpec());
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+        PLAYER_MENU_SETTINGS.putIfAbsent(uuid, new PlayerWeaponMenuSettings(databasePlayer));
+        PlayerWeaponMenuSettings menuSettings = PLAYER_MENU_SETTINGS.get(uuid);
+        menuSettings.setOpenedFromNPC(fromNPC);
+        menuSettings.sort(PlayerSettings.getPlayerSettings(uuid).getSelectedSpec());
 
-            openWeaponInventoryFromInternal(player, databasePlayer);
-        });
+        openWeaponInventoryFromInternal(player, databasePlayer);
     }
 
     public static void openWeaponInventoryFromInternal(Player player, DatabasePlayer databasePlayer) {
@@ -129,7 +128,8 @@ public class WeaponManagerMenu {
                                         Component.text("to salvage all weapons below ", NamedTextColor.GRAY),
                                         Component.text(menuSettings.getWeaponScoreSalvage() + "% ", NamedTextColor.GREEN),
                                         Component.text("weapon score, excluding bound weapons.", NamedTextColor.GRAY)
-                                ), 160))
+                                ), 160
+                        ))
                         .addLore(Component.empty())
                         .addLore(WordWrap.wrap(
                                 Component.textOfChildren(
@@ -139,13 +139,15 @@ public class WeaponManagerMenu {
                                         Component.text("weapons below ", NamedTextColor.GRAY),
                                         Component.text(menuSettings.getWeaponScoreSalvage() + "% ", NamedTextColor.GREEN),
                                         Component.text("weapon score, excluding bound weapons.", NamedTextColor.GRAY)
-                                ), 160))
+                                ), 160
+                        ))
                         .addLore(Component.empty())
                         .addLore(WordWrap.wrap(
                                 Component.textOfChildren(
                                         Component.text("SHIFT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
                                         Component.text("to change the weapon score filter amount.", NamedTextColor.GRAY)
-                                ), 160))
+                                ), 160
+                        ))
                         .addLore(Component.empty())
                         .addLore(Component.text("This feature is for Patreons only!", NamedTextColor.LIGHT_PURPLE))
                         .get(),
@@ -659,7 +661,8 @@ public class WeaponManagerMenu {
                     return 0;
                 }
             }
-        }),
+        }
+        ),
 
         ;
 
@@ -701,6 +704,7 @@ public class WeaponManagerMenu {
     }
 
     static class PlayerWeaponMenuSettings {
+
         private boolean openedFromNPC = false;
         private int page = 1;
         private List<AbstractWeapon> weaponInventory = new ArrayList<>();

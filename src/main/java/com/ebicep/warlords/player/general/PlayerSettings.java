@@ -1,6 +1,7 @@
 package com.ebicep.warlords.player.general;
 
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import org.bukkit.entity.Player;
@@ -16,40 +17,6 @@ import static com.ebicep.warlords.player.general.Weapons.FELFLAME_BLADE;
 public class PlayerSettings {
 
     public static final HashMap<UUID, PlayerSettings> PLAYER_SETTINGS = new HashMap<>();
-
-    private final UUID uuid;
-    private final HashMap<Specializations, SkillBoosts> classesSkillBoosts = new HashMap<>() {{
-        for (Specializations value : Specializations.VALUES) {
-            put(value, value.skillBoosts.get(0));
-        }
-    }};
-    private final HashMap<Specializations, Weapons> weaponSkins = new HashMap<>() {{
-        for (Specializations value : Specializations.VALUES) {
-            put(value, FELFLAME_BLADE);
-        }
-    }};
-    private Specializations selectedSpec = Specializations.PYROMANCER;
-    /**
-     * Preferred team in the upcoming warlords game
-     */
-    private transient Team wantedTeam = null;
-
-    private ArmorManager.Helmets mageHelmet = SIMPLE_MAGE_HELMET;
-    private ArmorManager.Helmets warriorHelmet = SIMPLE_WARRIOR_HELMET;
-    private ArmorManager.Helmets paladinHelmet = SIMPLE_PALADIN_HELMET;
-    private ArmorManager.Helmets shamanHelmet = SIMPLE_SHAMAN_HELMET;
-    private ArmorManager.Helmets rogueHelmet = SIMPLE_ROGUE_HELMET;
-    private ArmorManager.Helmets arcanistHelmet = SIMPLE_ARCANIST_HELMET;
-    private ArmorManager.ArmorSets mageArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE;
-    private ArmorManager.ArmorSets warriorArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE;
-    private ArmorManager.ArmorSets paladinArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE;
-    private ArmorManager.ArmorSets shamanArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE;
-    private ArmorManager.ArmorSets rogueArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE;
-    private ArmorManager.ArmorSets arcanistArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE;
-
-    public PlayerSettings(UUID uuid) {
-        this.uuid = uuid;
-    }
 
     @Nonnull
     public static PlayerSettings getPlayerSettings(@Nonnull Player player) {
@@ -68,6 +35,38 @@ public class PlayerSettings {
         } else {
             return PLAYER_SETTINGS.getOrDefault(uuid, new PlayerSettings(uuid));
         }
+    }
+    private final UUID uuid;
+    private final HashMap<Specializations, SkillBoosts> classesSkillBoosts = new HashMap<>() {{
+        for (Specializations value : Specializations.VALUES) {
+            put(value, value.skillBoosts.get(0));
+        }
+    }};
+    private final HashMap<Specializations, Weapons> weaponSkins = new HashMap<>() {{
+        for (Specializations value : Specializations.VALUES) {
+            put(value, FELFLAME_BLADE);
+        }
+    }};
+    private Specializations selectedSpec = Specializations.PYROMANCER;
+    /**
+     * Preferred team in the upcoming warlords game
+     */
+    private transient Team wantedTeam = null;
+    private ArmorManager.Helmets mageHelmet = SIMPLE_MAGE_HELMET;
+    private ArmorManager.Helmets warriorHelmet = SIMPLE_WARRIOR_HELMET;
+    private ArmorManager.Helmets paladinHelmet = SIMPLE_PALADIN_HELMET;
+    private ArmorManager.Helmets shamanHelmet = SIMPLE_SHAMAN_HELMET;
+    private ArmorManager.Helmets rogueHelmet = SIMPLE_ROGUE_HELMET;
+    private ArmorManager.Helmets arcanistHelmet = SIMPLE_ARCANIST_HELMET;
+    private ArmorManager.ArmorSets mageArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE;
+    private ArmorManager.ArmorSets warriorArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE;
+    private ArmorManager.ArmorSets paladinArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE;
+    private ArmorManager.ArmorSets shamanArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE;
+    private ArmorManager.ArmorSets rogueArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE;
+    private ArmorManager.ArmorSets arcanistArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE;
+
+    public PlayerSettings(UUID uuid) {
+        this.uuid = uuid;
     }
 
     public SkillBoosts getSkillBoostForClass() {
@@ -194,7 +193,9 @@ public class PlayerSettings {
             case ROGUE -> this.rogueHelmet = helmet;
             case ARCANIST -> this.arcanistHelmet = helmet;
         }
-        DatabaseManager.updatePlayer(uuid, databasePlayer -> databasePlayer.getClass(classes).setHelmet(helmet));
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid);
+        databasePlayer.getClass(classes).setHelmet(helmet);
+        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
     }
 
     public void setArmor(Classes classes, ArmorManager.ArmorSets armor) {
@@ -206,7 +207,9 @@ public class PlayerSettings {
             case ROGUE -> this.rogueArmor = armor;
             case ARCANIST -> this.arcanistArmor = armor;
         }
-        DatabaseManager.updatePlayer(uuid, databasePlayer -> databasePlayer.getClass(classes).setArmor(armor));
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid);
+        databasePlayer.getClass(classes).setArmor(armor);
+        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
     }
 
 }

@@ -14,8 +14,10 @@ import com.ebicep.warlords.commands.debugcommands.misc.AdminCommand;
 import com.ebicep.warlords.commands.debugcommands.misc.OldTestCommand;
 import com.ebicep.warlords.commands.miscellaneouscommands.StreamChaptersCommand;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.DatabaseUpdater;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.GeneralEvents;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.game.*;
@@ -72,6 +74,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static com.ebicep.warlords.util.java.JavaUtils.iterable;
 
 public class Warlords extends JavaPlugin {
+
     public static final HashMap<UUID, Location> SPAWN_POINTS = new HashMap<>();
     public static final AtomicBoolean SENT_HOUR_REMINDER = new AtomicBoolean(false);
     public static final AtomicBoolean SENT_HALF_HOUR_REMINDER = new AtomicBoolean(false);
@@ -246,7 +249,7 @@ public class Warlords extends JavaPlugin {
         if (DatabaseManager.enabled) {
             //updates all queues, locks main thread to ensure update is complete before disabling
             try {
-                DatabaseManager.updateQueue();
+                DatabaseUpdater.updatePlayersBlocking(DatabaseManager.playerService);
             } catch (Exception e) {
                 ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
             }
@@ -496,7 +499,8 @@ public class Warlords extends JavaPlugin {
                                     .filter(Objects::nonNull)
                                     .forEach(p -> {
                                         if (Objects.equals(p.getSpectatorTarget(), player)) {
-                                            DatabaseManager.getPlayer(p.getUniqueId(), databasePlayer -> p.sendActionBar(we.getActionBar(databasePlayer)));
+                                            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+                                            p.sendActionBar(we.getActionBar(databasePlayer));
                                         } else {
                                             p.sendActionBar(Component.empty());
                                         }

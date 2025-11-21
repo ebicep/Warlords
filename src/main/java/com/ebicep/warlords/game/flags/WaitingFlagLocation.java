@@ -1,6 +1,7 @@
 package com.ebicep.warlords.game.flags;
 
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.game.WarlordsFlagUpdatedEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
@@ -20,27 +21,13 @@ import java.util.List;
 
 public class WaitingFlagLocation extends AbstractLocationBasedFlagLocation {
 
-    private int ticksUntilSpawn;
     private final WarlordsEntity scorer;
+    private int ticksUntilSpawn;
 
     public WaitingFlagLocation(Location location, WarlordsEntity scorer) {
         super(location);
         this.ticksUntilSpawn = 15 * 20;
         this.scorer = scorer;
-    }
-
-    public int getTicksUntilSpawn() {
-        return ticksUntilSpawn;
-    }
-
-    @Deprecated
-    public boolean wasWinner() {
-        return scorer != null;
-    }
-
-    @Nullable
-    public WarlordsEntity getScorer() {
-        return scorer;
     }
 
     @Override
@@ -69,7 +56,8 @@ public class WaitingFlagLocation extends AbstractLocationBasedFlagLocation {
         WarlordsEntity player = getScorer();
         if (player != null) {
             player.addFlagCap();
-            game.forEachOnlinePlayer((p, t) -> DatabaseManager.getPlayer(p.getUniqueId(), databasePlayer -> {
+            game.forEachOnlinePlayer((p, t) -> {
+                DatabasePlayer databasePlayer = DatabaseManager.getPlayer(p);
                 boolean sameTeam = t == eventTeam;
                 Component coloredName = player.getColoredName();
                 Component flagMessage = Component.text("", NamedTextColor.YELLOW)
@@ -106,7 +94,22 @@ public class WaitingFlagLocation extends AbstractLocationBasedFlagLocation {
                         p.playSound(player.getLocation(), "ctf.enemyflagcaptured", 500, 1);
                     }
                 }
-            }));
+            });
         }
     }
+
+    @Nullable
+    public WarlordsEntity getScorer() {
+        return scorer;
+    }
+
+    public int getTicksUntilSpawn() {
+        return ticksUntilSpawn;
+    }
+
+    @Deprecated
+    public boolean wasWinner() {
+        return scorer != null;
+    }
+
 }

@@ -2,6 +2,7 @@ package com.ebicep.warlords.game.option.pvp;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.WeaponDisplayMarker;
@@ -50,12 +51,10 @@ public class ApplySkillBoostOption implements Option {
     @Override
     public void onWarlordsEntityCreated(@Nonnull WarlordsEntity wp) {
         if (wp instanceof WarlordsPlayer warlordsPlayer) {
-            DatabaseManager.getPlayer(wp.getUuid(), databasePlayer -> {
-                        Specializations specClass = wp.getSpecClass();
-                        SkillBoosts skillBoost = databasePlayer.getSpec(specClass).getSkillBoost();
-                        playerSkillBoosts.put(wp, skillBoost == null ? specClass.skillBoosts.getFirst() : skillBoost);
-                    }
-            );
+            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(wp.getUuid());
+            Specializations specClass = wp.getSpecClass();
+            SkillBoosts skillBoost = databasePlayer.getSpec(specClass).getSkillBoost();
+            playerSkillBoosts.put(wp, skillBoost == null ? specClass.skillBoosts.getFirst() : skillBoost);
             if (wp.getEntity() instanceof Player player) {
                 applySkillBoost(warlordsPlayer, player);
             } else {

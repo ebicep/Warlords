@@ -5,6 +5,7 @@ import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.Description;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.player.general.settings.ParticleQuality;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -16,10 +17,10 @@ public class ParticleQualityCommand extends BaseCommand {
     @Default
     @Description("Sets your particle quality")
     public void particleQuality(Player player, ParticleQuality particleQuality) {
-        DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
-            databasePlayer.setParticleQuality(particleQuality);
-            player.sendMessage(Component.text("Particle Quality set to " + particleQuality, NamedTextColor.GREEN));
-        });
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+        databasePlayer.setParticleQuality(particleQuality);
+        player.sendMessage(Component.text("Particle Quality set to " + particleQuality, NamedTextColor.GREEN));
+        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
     }
 
 }

@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.query.UpdateDefinition;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -27,7 +28,7 @@ public interface CustomPlayerRepository {
 
     DatabasePlayer findOne(Query query, PlayersCollections collection);
 
-    DatabasePlayer findByUUID(UUID uuid, PlayersCollections collection);
+    Optional<DatabasePlayer> findByUUID(UUID uuid, PlayersCollections collection);
 
     List<DatabasePlayer> findAll(PlayersCollections collection);
 

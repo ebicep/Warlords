@@ -5,6 +5,7 @@ import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
@@ -128,12 +129,13 @@ public class WarlordsShopMenu {
                         player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(weaponSkin))
                                 .name(Component.text("Weapon Skin Preview", NamedTextColor.GREEN))
                                 .noLore()
-                                .get());
+                                .get()
+                        );
 
                         openClassMenu(player, selectedGroup);
-                        DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
-                            databasePlayer.setLastSpec(spec);
-                        });
+                        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+                        databasePlayer.setLastSpec(spec);
+                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                     }
             );
         }
@@ -172,7 +174,9 @@ public class WarlordsShopMenu {
                         PlayerSettings.getPlayerSettings(player.getUniqueId()).setSkillBoostForSpec(selectedSpec, skillBoost);
                         openSkillBoostMenu(player, selectedSpec, menuSupplier);
 
-                        DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> databasePlayer.getSpec(selectedSpec).setSkillBoost(skillBoost));
+                        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+                        databasePlayer.getSpec(selectedSpec).setSkillBoost(skillBoost);
+                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                     }
             );
         }
@@ -265,9 +269,12 @@ public class WarlordsShopMenu {
                                                                                                                    .getItem()))
                                     .name(Component.text("Weapon Skin Preview", NamedTextColor.GREEN))
                                     .noLore()
-                                    .get());
+                                    .get()
+                            );
 
-                            DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> databasePlayer.getSpec(selectedSpec).setWeapon(weapon));
+                            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+                            databasePlayer.getSpec(selectedSpec).setWeapon(weapon);
+                            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                         } else {
                             player.sendMessage(Component.text("This weapon skin has not been unlocked yet!", NamedTextColor.RED));
                         }
@@ -418,69 +425,67 @@ public class WarlordsShopMenu {
     }
 
     public static void openSettingsMenu(Player player) {
-        DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
-            Menu menu = new Menu("Settings", 9 * 4);
-            menu.setItem(
-                    1,
-                    1,
-                    WarlordsNewHotbarMenu.SettingsMenu.MENU_SETTINGS_PARTICLE_QUALITY,
-                    (m, e) -> openParticleQualityMenu(player)
-            );
-            menu.setItem(
-                    3,
-                    1,
-                    databasePlayer.getHotkeyMode().item,
-                    (m, e) -> {
-                        player.performCommand("hotkeymode");
-                        openSettingsMenu(player);
-                    }
-            );
-            menu.setItem(
-                    5,
-                    1,
-                    databasePlayer.getFlagMessageMode().item,
-                    (m, e) -> {
-                        player.performCommand("flagmessagemode");
-                        openSettingsMenu(player);
-                    }
-            );
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+        Menu menu = new Menu("Settings", 9 * 4);
+        menu.setItem(
+                1,
+                1,
+                WarlordsNewHotbarMenu.SettingsMenu.MENU_SETTINGS_PARTICLE_QUALITY,
+                (m, e) -> openParticleQualityMenu(player)
+        );
+        menu.setItem(
+                3,
+                1,
+                databasePlayer.getHotkeyMode().item,
+                (m, e) -> {
+                    player.performCommand("hotkeymode");
+                    openSettingsMenu(player);
+                }
+        );
+        menu.setItem(
+                5,
+                1,
+                databasePlayer.getFlagMessageMode().item,
+                (m, e) -> {
+                    player.performCommand("flagmessagemode");
+                    openSettingsMenu(player);
+                }
+        );
 
-            menu.setItem(4, 3, MENU_BACK_PREGAME, (m, e) -> openMainMenu(player));
-            menu.openForPlayer(player);
-        });
+        menu.setItem(4, 3, MENU_BACK_PREGAME, (m, e) -> openMainMenu(player));
+        menu.openForPlayer(player);
     }
 
     public static void openParticleQualityMenu(Player player) {
-        DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
-            ParticleQuality selectedParticleQuality = databasePlayer.getParticleQuality();
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+        ParticleQuality selectedParticleQuality = databasePlayer.getParticleQuality();
 
-            Menu menu = new Menu("Particle Quality", 9 * 4);
+        Menu menu = new Menu("Particle Quality", 9 * 4);
 
-            ParticleQuality[] particleQualities = ParticleQuality.values();
-            for (int i = 0; i < particleQualities.length; i++) {
-                ParticleQuality particleQuality = particleQualities[i];
+        ParticleQuality[] particleQualities = ParticleQuality.values();
+        for (int i = 0; i < particleQualities.length; i++) {
+            ParticleQuality particleQuality = particleQualities[i];
 
-                menu.setItem(
-                        i + 3,
-                        1,
-                        new ItemBuilder(particleQuality.item)
-                                .lore(WordWrap.wrap(particleQuality.description, 160))
-                                .addLore(
-                                        Component.empty(),
-                                        selectedParticleQuality == particleQuality ? Component.text("SELECTED", NamedTextColor.GREEN) : Component.text("Click to select",
-                                                NamedTextColor.YELLOW
-                                        )
-                                )
-                                .get(),
-                        (m, e) -> {
-                            Bukkit.getServer().dispatchCommand(player, "pq " + particleQuality.name());
-                            openParticleQualityMenu(player);
-                        }
-                );
-            }
-            menu.setItem(4, 3, MENU_BACK_PREGAME, (m, e) -> openMainMenu(player));
-            menu.openForPlayer(player);
-        });
+            menu.setItem(
+                    i + 3,
+                    1,
+                    new ItemBuilder(particleQuality.item)
+                            .lore(WordWrap.wrap(particleQuality.description, 160))
+                            .addLore(
+                                    Component.empty(),
+                                    selectedParticleQuality == particleQuality ? Component.text("SELECTED", NamedTextColor.GREEN) : Component.text("Click to select",
+                                            NamedTextColor.YELLOW
+                                    )
+                            )
+                            .get(),
+                    (m, e) -> {
+                        Bukkit.getServer().dispatchCommand(player, "pq " + particleQuality.name());
+                        openParticleQualityMenu(player);
+                    }
+            );
+        }
+        menu.setItem(4, 3, MENU_BACK_PREGAME, (m, e) -> openMainMenu(player));
+        menu.openForPlayer(player);
     }
 
     public static void openTeamMenu(Player player) {
@@ -593,4 +598,5 @@ public class WarlordsShopMenu {
 
         menu.openForPlayer(player);
     }
+
 }
