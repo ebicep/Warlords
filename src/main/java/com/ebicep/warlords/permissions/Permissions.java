@@ -12,6 +12,7 @@ import net.luckperms.api.event.user.UserDataRecalculateEvent;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.node.Node;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.List;
 import java.util.UUID;
@@ -36,20 +37,23 @@ public enum Permissions {
     public static final Permissions[] VALUES = values();
 
     public static void listenToNewPatreons(UserDataRecalculateEvent event) {
-        User user = event.getUser();
-        List<String> permissions = user.getNodes()
-                                       .stream()
-                                       .map(Node::getKey)
-                                       .collect(Collectors.toList());
-        permissions.remove("group.default");
-        for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
-            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(user.getUniqueId(), activeCollection);
-            databasePlayer.setPermissions(permissions);
-            Warlords.newChain()
-                    .sync(CustomScoreboard::updateLobbyPlayerNames)
-                    .execute();
-            DatabaseManager.queueUpdatePlayerAsync(databasePlayer, activeCollection);
-        }
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                User user = event.getUser();
+                List<String> permissions = user.getNodes()
+                                               .stream()
+                                               .map(Node::getKey)
+                                               .collect(Collectors.toList());
+                permissions.remove("group.default");
+                for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
+                    DatabasePlayer databasePlayer = DatabaseManager.getPlayer(user.getUniqueId(), activeCollection);
+                    databasePlayer.setPermissions(permissions);
+                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer, activeCollection);
+                }
+                CustomScoreboard.updateLobbyPlayerNames();
+            }
+        }.runTaskLater(Warlords.getInstance(), 60);
     }
 
     public static Component getPrefixWithColor(Player player, boolean includeName) {

@@ -83,13 +83,11 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     public Optional<DatabasePlayer> findByUUID(UUID uuid, PlayersCollections collection) {
-        ConcurrentHashMap<UUID, DatabasePlayer> concurrentHashMap = DatabaseManager.CACHED_PLAYERS.get(collection);
-        if (concurrentHashMap.containsKey(uuid)) {
-            return Optional.of(concurrentHashMap.get(uuid));
-        }
-        Optional<DatabasePlayer> databasePlayer = playerRepository.findByUUID(uuid, collection);
-        databasePlayer.ifPresent(p -> concurrentHashMap.put(uuid, p));
-        return databasePlayer;
+        ConcurrentHashMap<UUID, DatabasePlayer> cache = DatabaseManager.CACHED_PLAYERS.get(collection);
+        DatabasePlayer player = cache.computeIfAbsent(uuid,
+                key -> playerRepository.findByUUID(key, collection).orElse(null)
+        );
+        return Optional.ofNullable(player);
     }
 
     @Override

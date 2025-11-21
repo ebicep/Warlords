@@ -164,6 +164,7 @@ public class DatabaseManager {
         if (!enabled) {
             return;
         }
+        long start = System.nanoTime();
         Optional<DatabasePlayer> optional = DatabaseManager.playerService.findByUUID(uuid, collections);
         DatabasePlayer databasePlayer = optional.orElseGet(() -> new DatabasePlayer(uuid, Bukkit.getOfflinePlayer(uuid).getName()));
         databasePlayer.loadInCollection(collections);
@@ -174,10 +175,11 @@ public class DatabaseManager {
                         callback.accept(databasePlayer);
                     }).execute();
         }
-        ChatUtils.MessageType.PLAYER_SERVICE.sendMessage("Loaded Player " + uuid + " in " + collections);
         if (optional.isEmpty()) {
             CACHED_PLAYERS.get(collections).put(uuid, databasePlayer);
         }
+        long end = System.nanoTime();
+        ChatUtils.MessageType.PLAYER_SERVICE.sendMessage("Loaded Player " + uuid + " in " + collections + " in " + (end - start) / 1000000 + "ms");
     }
 
     private static void loadPlayerInfo(UUID uuid, DatabasePlayer databasePlayer) {
