@@ -11,7 +11,6 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.CompassTargetMarker;
-import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Specializations;
@@ -176,10 +175,6 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
 
         updatePlayerReference(player.getPlayer());
         updateEntity();
-
-        if (player.getPlayer() != null && Permissions.isAdmin(player.getPlayer())) {
-            this.setShowDebugMessage(true);
-        }
     }
 
     @Override

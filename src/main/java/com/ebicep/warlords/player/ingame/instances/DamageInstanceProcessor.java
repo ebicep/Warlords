@@ -911,7 +911,7 @@ public class DamageInstanceProcessor {
 
         switch (databasePlayer.getChatHealingMode()) {
             case ALL -> {
-                if (entity.isShowDebugMessage()) {
+                if (entity.isShowDebugMessages()) {
                     entity.sendMessage(message.hoverEvent(HoverEvent.showText(debugMessage.getDebugMessage())));
                 } else {
                     entity.sendMessage(message);
@@ -919,7 +919,7 @@ public class DamageInstanceProcessor {
             }
             case CRITS_ONLY -> {
                 if (isCrit) {
-                    if (entity.isShowDebugMessage()) {
+                    if (entity.isShowDebugMessages()) {
                         entity.sendMessage(message.hoverEvent(HoverEvent.showText(debugMessage.getDebugMessage())));
                     } else {
                         entity.sendMessage(message);

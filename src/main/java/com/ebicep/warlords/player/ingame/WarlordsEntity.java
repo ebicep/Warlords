@@ -28,6 +28,7 @@ import com.ebicep.warlords.player.general.AbstractPlayerClass;
 import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.MinuteStats;
 import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.player.general.settings.AdvancedHoverMessages;
 import com.ebicep.warlords.player.general.settings.ChatSettings;
 import com.ebicep.warlords.player.general.settings.actionbar.ActionBarSettings;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
@@ -153,7 +154,6 @@ public abstract class WarlordsEntity {
     private FlagInfo carriedFlag = null;
     private boolean active = true;
     private boolean isInPve = false;
-    private boolean showDebugMessage = false;
     private float bonusAggroWeight = 0;
     @NotNull
     private Component previousActionBar = Component.empty();
@@ -476,7 +476,7 @@ public abstract class WarlordsEntity {
         if (this.entity == null) {
             return;
         }
-        if (isDamageHealMessage && !showDebugMessage) {
+        if (isDamageHealMessage && !isShowDebugMessages()) {
             this.entity.sendMessage(component.hoverEvent(null));
         } else {
             this.entity.sendMessage(component);
@@ -494,6 +494,10 @@ public abstract class WarlordsEntity {
                     }
                 });
         }
+    }
+
+    public boolean isShowDebugMessages() {
+        return cachedDatabasePlayer.getAdvancedHoverMessages() == AdvancedHoverMessages.OFF;
     }
 
     public String getName() {
@@ -1582,7 +1586,7 @@ public abstract class WarlordsEntity {
                 }
             }
         }
-        if (showDebugMessage) {
+        if (isShowDebugMessages()) {
             if (addedAny) {
                 actionBarMessage.append(Component.text("  "));
             }
@@ -1758,14 +1762,6 @@ public abstract class WarlordsEntity {
 
     public void setFallDistance(float amount) {
         this.getEntity().setFallDistance(amount);
-    }
-
-    public boolean isShowDebugMessage() {
-        return showDebugMessage;
-    }
-
-    public void setShowDebugMessage(boolean showDebugMessage) {
-        this.showDebugMessage = showDebugMessage;
     }
 
     public float getBonusAggroWeight() {

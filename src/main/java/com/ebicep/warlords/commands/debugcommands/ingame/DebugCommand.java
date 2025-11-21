@@ -244,18 +244,6 @@ public class DebugCommand extends BaseCommand {
                                           .append(Component.text(" took " + amount + " damage!", NamedTextColor.GREEN)));
     }
 
-    @Subcommand("debugmessage")
-    @CommandCompletion("@warlordsplayers")
-    @Description("Toggle debug messages for a player or sender if there is no target")
-    public void damage(CommandIssuer issuer, @Values("@enabledisable") String option, @Optional WarlordsPlayer target) {
-        boolean enable = option.equals("enable");
-        target.setShowDebugMessage(enable);
-
-        sendDebugMessage(issuer, Component.empty()
-                                          .append(target.getColoredName())
-                                          .append(Component.text(" will " + (!enable ? "no longer see" : "start seeing") + " debug messages!", NamedTextColor.GREEN)));
-    }
-
     @Subcommand("resetspec")
     @CommandCompletion("@warlordsplayers")
     @Description("Resets player spec to their spec again")
