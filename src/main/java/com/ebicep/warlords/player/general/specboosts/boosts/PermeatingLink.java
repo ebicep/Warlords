@@ -63,7 +63,7 @@ public class PermeatingLink implements SpecBoostManager.SpecBoost<PermeatingLink
                     CooldownTypes.SPEC_BOOST,
                     cooldownManager -> {},
                     false
-            ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+            ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                         if (event.getCause().isEmpty()) {
                             currentDamageValue.addMultiplicativeModifierMult(getStringName(), AbstractAbility.convertToMultiplicationDecimal(meleeDamageIncreasePercent));
                             return;

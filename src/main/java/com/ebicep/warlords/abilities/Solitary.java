@@ -64,7 +64,7 @@ public class Solitary extends AbstractAbility implements OrangeAbilityIcon, Dura
                 cooldownManager -> {
                 },
                 tickDuration
-        ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                     currentDamageValue.addMultiplicativeModifierMult(name, convertToDivisionDecimal(damageReduction));
                 }
         ));

@@ -87,7 +87,7 @@ public class DimensionalWarp implements SpecBoostManager.SpecBoost<DimensionalWa
             }
             cooldown.getFlags().add(CooldownFlag.CANNOT_BE_REDUCED_VIND);
             warlordsEntity.addSpeedModifier(warlordsEntity, getStringName(), speedIncrease, cooldown);
-            cooldown.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (e, currentDamageValue) -> {
+            cooldown.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
                         currentDamageValue.addMultiplicativeModifierMult(getStringName(), AbstractAbility.convertToMultiplicationDecimal(damageIncrease));
                     }
             );

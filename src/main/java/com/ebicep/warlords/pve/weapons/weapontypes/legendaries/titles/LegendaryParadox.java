@@ -139,7 +139,7 @@ public class LegendaryParadox extends AbstractLegendaryWeapon implements GardenO
                 };
             }
 
-        }.addModifier(Modifier.HEALING_ON_HEAL_ATTACKER, (event, currentHealValue, isCrit) -> {
+        }.addModifier(Modifier.ON_OUTGOING_HEALING, (event, currentHealValue, isCrit) -> {
                     if (!event.getWarlordsEntity().equals(player)) {
                         giveParadoxCooldown(player);
                     }
@@ -206,7 +206,7 @@ public class LegendaryParadox extends AbstractLegendaryWeapon implements GardenO
                         player.addEnergy(player, getTitleName(), 30);
                     }
                 })
-        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     currentDamageValue.addMultiplicativeModifierMult(getTitleName(), damageBoost);
                 }
         ));

@@ -94,7 +94,7 @@ public class LegendaryIncendiary extends AbstractLegendaryWeapon implements Even
                 cooldownManager -> {
                 },
                 false
-        ).addModifier(Modifier.DAMAGE_CRIT_CHANCE_ATTACKER, (event, currentCritChance) -> {
+        ).addModifier(Modifier.MODIFY_OUTGOING_CRIT_CHANCE, (event, currentCritChance) -> {
                     String ability = event.getCause();
                     if (Utils.isProjectile(ability) || ability.equals("Boulder")) {
                         currentCritChance.addAdditiveModifier(getTitleName(), critChanceBoost);

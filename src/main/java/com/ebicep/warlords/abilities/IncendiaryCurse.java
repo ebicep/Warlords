@@ -147,7 +147,7 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
                         cooldownManager -> {
                         },
                         5 * 20
-                ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (event, currentDamageValue) -> {
+                ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                             currentDamageValue.addMultiplicativeModifierMult(name, 1.3f);
                         }
                 ));

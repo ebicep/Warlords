@@ -62,7 +62,7 @@ public class ArcaneShieldAquamancer extends AbstractArcaneShield {
             public PlayerNameData addPrefixFromOther() {
                 return new PlayerNameData(Component.text((int) (shield.getShieldHealth()), NamedTextColor.YELLOW), we -> we.isTeammate(wp));
             }
-        }.addModifier(Modifier.DAMAGE_ON_SHIELD_ATTACKER, (event, currentDamageValue, isCrit) -> {
+        }.addModifier(Modifier.ON_OUTGOING_SHIELD_DAMAGE, (event, currentDamageValue, isCrit) -> {
                     event.getWarlordsEntity().getCooldownManager().queueUpdatePlayerNames();
                 }
         ));

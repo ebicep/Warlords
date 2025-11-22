@@ -73,7 +73,7 @@ public class HolyNova implements SpecBoostManager.SpecBoost<HolyNova> {
             if (!(cooldown.getCooldownObject() instanceof DivineBlessing.DivineBlessingData data) || !cooldown.getFrom().equals(warlordsEntity)) {
                 return;
             }
-            cooldown.addModifier(Modifier.HEALING_MODIFY_ATTACKER, (e, currentHealValue) -> {
+            cooldown.addModifier(Modifier.MODIFY_OUTGOING_HEALING, (e, currentHealValue) -> {
                         if (e.getCause().equals("Divine Blessing") &&
                                 e.getWarlordsEntity().getLocation().distanceSquared(warlordsEntity.getLocation()) > divineBlessingFarRangeBlocks * divineBlessingFarRangeBlocks
                         ) {

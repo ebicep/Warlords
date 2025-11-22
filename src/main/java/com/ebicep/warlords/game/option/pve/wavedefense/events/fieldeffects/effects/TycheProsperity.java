@@ -108,7 +108,7 @@ public class TycheProsperity implements FieldEffect {
                 },
                 false
         );
-        warriorCooldown.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+        warriorCooldown.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     currentDamageValue.addMultiplicativeModifierMult(getName(), 1.05f);
                 }
         );
@@ -128,7 +128,7 @@ public class TycheProsperity implements FieldEffect {
                 cooldownManager -> {
                 },
                 false
-        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     if (event.getCause().isEmpty()) {
                         currentDamageValue.addMultiplicativeModifierMult(getName(), 1.1f);
                     }
@@ -148,7 +148,7 @@ public class TycheProsperity implements FieldEffect {
                 cooldownManager -> {
                 },
                 false
-        ).addModifier(Modifier.HEALING_MODIFY_ATTACKER, (event, currentHealValue) -> {
+        ).addModifier(Modifier.MODIFY_OUTGOING_HEALING, (event, currentHealValue) -> {
                     currentHealValue.addMultiplicativeModifierMult(getName(), 1.05f);
                 }
         ));
@@ -173,7 +173,7 @@ public class TycheProsperity implements FieldEffect {
                 cooldownManager -> {
                 },
                 false
-        ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                     currentDamageValue.addMultiplicativeModifierMult(getName(), .95f);
                 }
         ));

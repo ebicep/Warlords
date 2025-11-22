@@ -181,7 +181,7 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
                     };
                 }
 
-            }.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+            }.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                         int hexStacks = (int) new CooldownFilter<>(event.getWarlordsEntity(), RegularCooldown.class)
                                 .filterCooldownFrom(wp)
                                 .filterCooldownClass(FortifyingHex.FortifyingHexData.class)

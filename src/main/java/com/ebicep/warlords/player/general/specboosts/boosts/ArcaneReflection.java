@@ -81,12 +81,12 @@ public class ArcaneReflection implements SpecBoostManager.SpecBoost<ArcaneReflec
                     cooldownManager -> {
                     },
                     false
-            ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+            ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                         if (event.getCause().isEmpty()) {
                             currentDamageValue.addMultiplicativeModifierMult(getStringName(), AbstractAbility.convertToMultiplicationDecimal(meleeDamageIncreasePercent));
                         }
                     }
-            ).addModifier(Modifier.DAMAGE_ON_SHIELD_ATTACKER, (event, currentDamageValue, isCrit) -> {
+            ).addModifier(Modifier.ON_OUTGOING_SHIELD_DAMAGE, (event, currentDamageValue, isCrit) -> {
                         if (event.getFlags().contains(InstanceFlags.RECURSIVE)) {
                             return;
                         }

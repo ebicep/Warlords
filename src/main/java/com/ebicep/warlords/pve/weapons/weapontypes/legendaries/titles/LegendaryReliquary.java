@@ -96,10 +96,10 @@ public class LegendaryReliquary extends AbstractLegendaryWeapon implements Event
                 cooldownManager -> {
                 },
                 false
-        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     currentDamageValue.addMultiplicativeModifierMult(getTitleName(), outgoingDamageIncrease);
                 }
-        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
             currentDamageValue.addMultiplicativeModifierMult(getTitleName(), incomingDamageIncrease);
                 }
         ));

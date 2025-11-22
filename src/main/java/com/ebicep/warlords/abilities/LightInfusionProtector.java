@@ -59,7 +59,7 @@ public class LightInfusionProtector extends AbstractLightInfusion {
                         }
                     })
             );
-            ornamentOfLightCooldown.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+            ornamentOfLightCooldown.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                         currentDamageValue.addMultiplicativeModifierMult(name, 0.1f);
                     }
             );
@@ -76,7 +76,7 @@ public class LightInfusionProtector extends AbstractLightInfusion {
                     cooldownManager -> {
                     },
                     tickDuration
-            ).addModifier(Modifier.HEALING_MODIFY_ATTACKER, (event, currentHealValue) -> {
+            ).addModifier(Modifier.MODIFY_OUTGOING_HEALING, (event, currentHealValue) -> {
                         if (event.getCause().equals("Protector's Strike")) {
                             currentHealValue.addMultiplicativeModifierMult("Chiron Light", 1.25f);
                         }

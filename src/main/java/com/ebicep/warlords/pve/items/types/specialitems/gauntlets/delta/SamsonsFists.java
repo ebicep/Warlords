@@ -36,7 +36,7 @@ public class SamsonsFists extends SpecialDeltaGauntlet implements AppliesToWarlo
 
                 },
                 false
-        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     if (event.getCause().isEmpty()) {
                         currentDamageValue.addMultiplicativeModifierMult(getName(), 1.4f);
                     }

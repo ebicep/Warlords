@@ -67,7 +67,7 @@ public class CrossNecklaceCharm extends SpecialDeltaBuckler implements CraftsInt
                                                 cooldownManager -> {
                                                 },
                                                 3
-                                        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (event, currentDamageValue) -> {
+                                        ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                                                     currentDamageValue.addMultiplicativeModifierMult(getName() + " Damage", 1.1f);
                                                 }
                                         ));

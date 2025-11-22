@@ -73,7 +73,7 @@ public class IntermediateWarriorBerserker extends AbstractBerserkZombie implemen
                         EffectUtils.displayParticle(Particle.ANGRY_VILLAGER, warlordsNPC.getLocation().add(0, 1.75, 0), 1, 0, 0, 0, 0.1);
                     }
                 }
-        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     currentDamageValue.addMultiplicativeModifierMult("Berserk", 1.2f);
                 }
         ));

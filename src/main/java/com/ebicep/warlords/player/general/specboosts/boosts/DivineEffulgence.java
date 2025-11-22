@@ -93,7 +93,7 @@ public class DivineEffulgence implements SpecBoostManager.SpecBoost<DivineEffulg
                     CooldownTypes.SPEC_BOOST,
                     cooldownManager -> {},
                     rangedDamageReductionDurationTicks
-            ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (e, currentDamageValue) -> {
+            ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (e, currentDamageValue) -> {
                         if (Utils.isProjectile(e.getCause()) || isCustomProjectile(e.getCause())) {
                             currentDamageValue.addMultiplicativeModifierMult(getStringName(), AbstractAbility.convertToDivisionDecimal(rangedDamageReductionPercent));
                         }

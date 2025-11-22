@@ -91,7 +91,7 @@ public class LegendaryVibrant extends AbstractLegendaryWeapon implements GardenO
                         generateOrbs(player, (float) damageTaken.getAndSet(0));
                     }
                 }
-        ).addModifier(Modifier.DAMAGE_ON_DAMAGE_SELF, (event, currentDamageValue, isCrit) -> {
+        ).addModifier(Modifier.ON_INCOMING_DAMAGE, (event, currentDamageValue, isCrit) -> {
                     damageTaken.addAndGet(currentDamageValue);
                 }
         ));

@@ -110,7 +110,7 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                         public PlayerNameData addPrefixFromOther() {
                             return new PlayerNameData(Component.text((int) (shield.getShieldHealth()), NamedTextColor.YELLOW), we -> we.isTeammate(wp));
                         }
-                    }.addModifier(Modifier.DAMAGE_ON_SHIELD_ATTACKER, (event, currentDamageValue, isCrit) -> {
+                    }.addModifier(Modifier.ON_OUTGOING_SHIELD_DAMAGE, (event, currentDamageValue, isCrit) -> {
                                 event.getWarlordsEntity().getCooldownManager().queueUpdatePlayerNames();
                             }
                     ));
@@ -124,7 +124,7 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                     EffectUtils.displayParticle(Particle.CHERRY_LEAVES, wp.getLocation(), 2, 0.15, 0.3, 0.15, 0);
                 })
         );
-        protectiveLayerCooldown.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+        protectiveLayerCooldown.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
             currentDamageValue.addMultiplicativeModifierMult(
                     name,
                     convertToDivisionDecimal(damageAbsorption.getCalculatedValue()),

@@ -162,7 +162,7 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
                     cooldownManager -> {
                     },
                     3 * 20
-            ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (event, currentDamageValue) -> {
+            ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                         currentDamageValue.addMultiplicativeModifierMult("Oppressive Chains", 1.25f);
                     }
             ));

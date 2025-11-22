@@ -174,14 +174,14 @@ public class LegendaryChaotic extends AbstractLegendaryWeapon implements Listene
                     },
                     5 * 20
             );
-            cooldown.addModifier(Modifier.DAMAGE_CRIT_CHANCE_ATTACKER, (e, currentCritChance) -> {
+            cooldown.addModifier(Modifier.MODIFY_OUTGOING_CRIT_CHANCE, (e, currentCritChance) -> {
                         if (!abilityNames.contains(e.getCause())) {
                             return;
                         }
                         currentCritChance.addAdditiveModifier(getTitleName(), CRIT_CHANCE * stacks);
                     }
             );
-            cooldown.addModifier(Modifier.DAMAGE_CRIT_MULTIPLIER_ATTACKER, (e, currentCritMultiplier) -> {
+            cooldown.addModifier(Modifier.MODIFY_OUTGOING_CRIT_MULTIPLIER, (e, currentCritMultiplier) -> {
                         if (!abilityNames.contains(e.getCause())) {
                             return;
                         }

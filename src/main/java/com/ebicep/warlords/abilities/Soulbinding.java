@@ -148,7 +148,7 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
                 );
             }
         };
-        soulBindingCooldown.addModifier(Modifier.DAMAGE_BEFORE_VARIABLE_SET_ATTACKER, event -> {
+        soulBindingCooldown.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_VARIABLE_SET, event -> {
                     WarlordsEntity wpAttacker = event.getSource();
                     WarlordsEntity wpVictim = event.getWarlordsEntity();
                     if (!event.getCause().isEmpty() || wpAttacker == wpVictim) {

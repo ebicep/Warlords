@@ -4,12 +4,10 @@ import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
-import com.ebicep.warlords.pve.mobs.flags.NoTargetAbilities;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.paladin.protector.HolyRadianceBranchProtector;
@@ -128,7 +126,7 @@ public class HolyRadianceProtector extends AbstractHolyRadiance implements Heals
                         }
                     }
                 })
-        ).addModifier(Modifier.HEALING_MODIFY_SELF, (event, currentHealValue) -> {
+        ).addModifier(Modifier.MODIFY_INCOMING_HEALING, (event, currentHealValue) -> {
                     currentHealValue.addMultiplicativeModifierMult(name, convertToMultiplicationDecimal(markBonusHealing));
                 }
         ));

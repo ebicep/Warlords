@@ -87,7 +87,7 @@ public class ElectromagneticChains implements SpecBoostManager.SpecBoost<Electro
                     CooldownTypes.HIGH_LEVEL_DEBUFF,
                     cooldownManager -> {},
                     chainLightningDurationTicks
-            ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (e, currentDamageValue) -> {
+            ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
                         currentDamageValue.addMultiplicativeModifierMult(getStringName(), AbstractAbility.convertToDivisionDecimal(chainLightningDamageReductionPercent));
                     }
             ));

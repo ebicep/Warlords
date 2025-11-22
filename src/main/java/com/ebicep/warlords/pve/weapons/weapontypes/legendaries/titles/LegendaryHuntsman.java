@@ -121,7 +121,7 @@ public class LegendaryHuntsman extends AbstractLegendaryWeapon implements Passiv
                 CooldownTypes.WEAPON,
                 cm -> {},
                 false
-        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     if (isTargetFar(player, event, RANGED_MIN_DISTANCE_BLOCKS)) {
                         currentDamageValue.addMultiplicativeModifierMult(getTitleName(), (1f + getRangedBonusPercent() / 100f));
                     }
@@ -162,7 +162,7 @@ public class LegendaryHuntsman extends AbstractLegendaryWeapon implements Passiv
                         }
                     }
                 }
-        ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                     if (!guardActive.get()) {
                         return;
                     }

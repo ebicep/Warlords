@@ -113,7 +113,7 @@ public class LegendarySuspicious extends AbstractLegendaryWeapon {
 
                 },
                 false
-        ).addModifier(Modifier.DAMAGE_CRIT_CHANCE_ATTACKER, (event, currentCritChance) -> {
+        ).addModifier(Modifier.MODIFY_OUTGOING_CRIT_CHANCE, (event, currentCritChance) -> {
                     if (event.getCause().isEmpty()) {
                         currentCritChance.addOverridingModifier("Suspicious Weapon", 50);
                     }

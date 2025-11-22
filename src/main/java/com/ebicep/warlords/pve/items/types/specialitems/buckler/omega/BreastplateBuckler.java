@@ -56,7 +56,7 @@ public class BreastplateBuckler extends SpecialOmegaBuckler implements AppliesTo
                         repeatedAttacks.entrySet().removeIf(warlordsEntityIntegerEntry -> !pveOption.getMobs().contains(warlordsEntityIntegerEntry.getKey()));
                     }
                 }
-        ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                     if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC) {
                         AbstractMob mob = warlordsNPC.getMob();
                         float damageReduction = Math.max(1 - (repeatedAttacks.getOrDefault(mob, 0) * 0.02f), 0.8f);

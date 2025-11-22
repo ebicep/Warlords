@@ -85,7 +85,7 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
                 cooldownManager -> {
                 },
                 damageReductionTickDuration
-        ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                     WarlordsEntity hit = event.getWarlordsEntity();
                     WarlordsEntity attacker = event.getSource();
                     if (pveMasterUpgrade && !Objects.equals(attacker, hit)) {
@@ -135,7 +135,7 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
                 return CooldownUtils.getPartialDebuffImmunityListener(target);
             }
         };
-        vindiateCooldown.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+        vindiateCooldown.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                     if (vindPveMaster2) {
                         currentDamageValue.addMultiplicativeModifierMult("Vindicate", .85f);
                     }

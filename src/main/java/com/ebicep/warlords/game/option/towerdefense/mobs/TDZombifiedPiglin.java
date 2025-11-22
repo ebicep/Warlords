@@ -66,7 +66,7 @@ public class TDZombifiedPiglin extends TowerDefenseMob implements BasicMob {
                 11 * 20,
                 Collections.singletonList((cooldown, ticksLeft, cdTicksElapsed) -> {
                 })
-        ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                     currentDamageValue.addMultiplicativeModifierMult("Group Bonus", 1.3f);
                 }
         ));

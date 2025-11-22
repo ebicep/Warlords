@@ -102,7 +102,7 @@ public class NineCrystal extends AbstractMob implements BossMinionMob {
                 cooldownManager -> {
                 },
                 true
-        ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                     if (spec == event.getSource().getSpecClass().specType) {
                         currentDamageValue.addMultiplicativeModifierMult(name, 3);
                     } else {

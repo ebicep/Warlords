@@ -87,7 +87,7 @@ public class RallyingPresence implements SpecBoostManager.SpecBoost<RallyingPres
             if (!cooldown.getCooldownClass().equals(InspiringPresence.InspiringPresenceData.class) || !cooldown.getFrom().equals(warlordsEntity)) {
                 return;
             }
-            regularCooldown.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (e, currentDamageValue) -> {
+            regularCooldown.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (e, currentDamageValue) -> {
                         currentDamageValue.addMultiplicativeModifierMult(getStringName(), AbstractAbility.convertToDivisionDecimal(inspiringPresenceDamageReductionPercent));
                     }
             );

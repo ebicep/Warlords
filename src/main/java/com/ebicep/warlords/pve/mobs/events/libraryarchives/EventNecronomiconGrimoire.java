@@ -95,7 +95,7 @@ public class EventNecronomiconGrimoire extends AbstractMob implements BossMinion
                 cooldownManager -> {
                 },
                 false
-        ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                     if (currentDamageValue.getCalculatedValue() > warlordsNPC.getMaxHealth() * .1) {
                         currentDamageValue.addMultiplicativeModifierMult("Damage Reduction", 0.3f);
                     }

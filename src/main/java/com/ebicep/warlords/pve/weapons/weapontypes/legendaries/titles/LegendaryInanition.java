@@ -86,7 +86,7 @@ public class LegendaryInanition extends AbstractLegendaryWeapon implements Event
                 cooldownManager -> {
                 },
                 false
-        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     int debuffs = event.getWarlordsEntity().getCooldownManager().getDebuffCooldowns(true).size();
                     float damageBoost = 1 + Math.min(debuffs * debuffDamageBoost, maxDebuffDamageBoost);
                     currentDamageValue.addMultiplicativeModifierMult(getTitleName(), damageBoost);

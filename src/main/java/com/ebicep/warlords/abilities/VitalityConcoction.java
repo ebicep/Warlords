@@ -100,7 +100,7 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
             }
 
         };
-        cooldown.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+        cooldown.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                     currentDamageValue.addMultiplicativeModifierMult(name, convertToDivisionDecimal(damageResistance));
                 }
         );
@@ -148,7 +148,7 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
                         return CooldownUtils.getPartialDebuffImmunityListener(we);
                     }
 
-                }.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                }.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                             currentDamageValue.addMultiplicativeModifierMult(name, convertToDivisionDecimal(damageResistance / 2f));
                         }
                 ));

@@ -98,7 +98,7 @@ public class SwiftJustice implements SpecBoostManager.SpecBoost<SwiftJustice> {
                                     );
                                 }
                             };
-                            cd.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (e, currentDamageValue) -> {
+                            cd.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
                                         WarlordsEntity victim = e.getWarlordsEntity();
                                         if (e.getAbility() instanceof RighteousStrike && !strikeUsed[0]) {
                                             strikeUsed[0] = true;

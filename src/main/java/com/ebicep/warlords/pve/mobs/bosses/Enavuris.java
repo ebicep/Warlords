@@ -446,7 +446,7 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
                         cooldownManager -> {
                         },
                         3 * 20
-                ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                             currentDamageValue.addMultiplicativeModifierMult(name, 0.75f);
                         }
                 ));
@@ -648,12 +648,12 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
                         }
                     };
                 }
-            }.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+            }.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                         if (currentDebuff.get() == Debuff.CRIPPLE) {
                             currentDamageValue.addMultiplicativeModifierMult(name, 0.75f);
                         }
                     }
-            ).addModifier(Modifier.DAMAGE_ON_DAMAGE_SELF, (event, currentDamageValue, isCrit) -> {
+            ).addModifier(Modifier.ON_INCOMING_DAMAGE, (event, currentDamageValue, isCrit) -> {
                         if (currentDebuff.get() != Debuff.LEECH) {
                             return;
                         }
@@ -666,7 +666,7 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
                                 .value(healValue)
                         );
                     }
-            ).addModifier(Modifier.HEALING_MODIFY_SELF, (event, currentHealValue) -> {
+            ).addModifier(Modifier.MODIFY_INCOMING_HEALING, (event, currentHealValue) -> {
                         if (currentDebuff.get() == Debuff.WOUND) {
                             currentHealValue.addMultiplicativeModifierMult(name, 0.75f);
                         }

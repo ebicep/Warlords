@@ -173,7 +173,7 @@ public class IceBlock implements SpecBoostManager.SpecBoost<IceBlock> {
                                 };
                             }
                         };
-                        cd.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (e, currentDamageValue) -> {
+                        cd.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (e, currentDamageValue) -> {
                                     currentDamageValue.addMultiplicativeModifierMult(getStringName(), AbstractAbility.convertToDivisionDecimal(recastDamageReductionPercent));
                                 }
                         );

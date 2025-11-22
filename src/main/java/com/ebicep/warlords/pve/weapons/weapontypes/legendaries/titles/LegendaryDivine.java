@@ -147,7 +147,7 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
                                 },
                                 DURATION * 20
                         );
-                        regularCooldown.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (e, currentDamageValue) -> {
+                        regularCooldown.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
                                     currentDamageValue.addMultiplicativeModifierMult(getTitleName(), 1 + damageBoost.get() * DAMAGE_BOOST / 100f);
                                 }
                         );
@@ -206,7 +206,7 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
                                 },
                                 10 * 20
                         );
-                        divineCooldown.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                        divineCooldown.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                                     currentDamageValue.addMultiplicativeModifierMult(getTitleName(), 1 + ABILITY_DAMAGE_BOOST / 100f);
                                 }
                         );

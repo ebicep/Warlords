@@ -21,7 +21,7 @@ public class SpawnDamageCooldown extends RegularCooldown<SpawnDamageCooldown> {
                 tickDuration
         );
         this.damageBoost = damageBoost;
-        this.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+        this.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     currentDamageValue.addAdditiveModifier(name, damageBoost);
                 }
         );

@@ -5,7 +5,6 @@ import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -78,7 +77,7 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
                     }
                 })
         );
-        berserkCooldown.addModifier(Modifier.DAMAGE_CRIT_CHANCE_ATTACKER, (event, currentCritChance) -> {
+        berserkCooldown.addModifier(Modifier.MODIFY_OUTGOING_CRIT_CHANCE, (event, currentCritChance) -> {
                     if (pveMasterUpgrade) {
                         if (event.getCause().isEmpty() || event.getCause().equals("Time Warp")) {
                             return;
@@ -88,7 +87,7 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
                     }
                 }
         );
-        berserkCooldown.addModifier(Modifier.DAMAGE_CRIT_MULTIPLIER_ATTACKER, (event, currentCritMultiplier) -> {
+        berserkCooldown.addModifier(Modifier.MODIFY_OUTGOING_CRIT_MULTIPLIER, (event, currentCritMultiplier) -> {
                     if (pveMasterUpgrade) {
                         if (event.getCause().isEmpty() || event.getCause().equals("Time Warp")) {
                             return;
@@ -99,7 +98,7 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
                     }
                 }
         );
-        berserkCooldown.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamgeValue) -> {
+        berserkCooldown.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamgeValue) -> {
                     stats.hitsDoneAmplified++;
                     multiplier.getAndIncrement();
                     currentDamgeValue.addMultiplicativeModifierAdd(name, damageIncrease / 100);

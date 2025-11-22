@@ -166,7 +166,7 @@ public class LegendaryBastion extends AbstractLegendaryWeapon {
                 CooldownTypes.WEAPON,
                 cooldownManager -> {},
                 false
-        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
             if (owner.isDead()) {
                 return;
             }

@@ -180,7 +180,7 @@ public class LegendaryEverlasting extends AbstractLegendaryWeapon implements Lis
                     },
                     (DURATION + DURATION_PER_UPGRADE * getTitleLevel()) * 20
             );
-            cd.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (e, currentDamageValue) -> {
+            cd.addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
                         currentDamageValue.addMultiplicativeModifierMult(getTitleName(), (1 - stacks * reduction));
                     }
             );

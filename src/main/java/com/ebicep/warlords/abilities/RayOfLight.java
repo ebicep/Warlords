@@ -78,7 +78,7 @@ public class RayOfLight extends AbstractBeam<RayOfLight, RayOfLight.RayOfLightSt
             hit.getCooldownManager().addCooldown(new RegularCooldown<>(name, "RAY", RayOfLight.class, new RayOfLight(), wp, CooldownTypes.ABILITY, cooldownManager -> {
             }, cooldownManager -> {
             }, 100
-            ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+            ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                         currentDamageValue.addMultiplicativeModifierMult(name, maxStacks ? 1.2f : 1.05f);
                     }
             ));

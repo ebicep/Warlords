@@ -48,7 +48,7 @@ public class ShawlOfMithra extends AbstractFixedItem implements FixedItemApplies
                 cooldownManager -> {
                 },
                 true
-        ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                     WarlordsEntity attacker = event.getSource();
                     if (attacker instanceof WarlordsNPC warlordsNPC) {
                         if (warlordsNPC.getMob().getInternalLevel() < 2) {

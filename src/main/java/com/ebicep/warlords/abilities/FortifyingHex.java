@@ -92,7 +92,7 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
                 return NamedTextColor.YELLOW;
             }
         };
-        cd.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+        cd.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
             currentDamageValue.addMultiplicativeModifierAdd(
                     hexName + " " + Integer.toHexString(cd.hashCode()),
                     -data.damageReduction * (event.getWarlordsEntity().hasFlag() ? data.damageReductionFlagMultiplier : 1) / 100f,
@@ -261,7 +261,7 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
                         cooldownManager -> {
                         },
                         6 * 20
-                ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (event, currentDamageValue) -> {
+                ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                             currentDamageValue.addMultiplicativeModifierMult("Weakening Hex", (1 + 0.05f * data.getStacks()));
                         }
                 ));

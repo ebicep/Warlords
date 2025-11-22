@@ -52,7 +52,7 @@ public class AGuideToMMA extends SpecialDeltaTome implements CraftsInto {
 
                 },
                 false
-        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof BossLike) {
                         currentDamageValue.addMultiplicativeModifierMult(getName(), 1.15f);
                     }

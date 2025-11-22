@@ -69,7 +69,7 @@ public class CapacitorTotem extends AbstractTotem implements Duration, Damages<C
             }
         })
         );
-        totemCooldown.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+        totemCooldown.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                     if (!pveMasterUpgrade2) {
                         return;
                     }

@@ -161,7 +161,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
                     }
                 })
         );
-        orbsOfLifeCooldown.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+        orbsOfLifeCooldown.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     if (pveMasterUpgrade) {
                         currentDamageValue.addMultiplicativeModifierMult(name, convertToMultiplicationDecimal(Math.min(30f, 1f * data.spawnedOrbs.size())));
                     }

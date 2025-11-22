@@ -46,7 +46,7 @@ public class CrescentBulwark extends SpecialOmegaBuckler implements AppliesToWar
                 cooldownManager -> {
                 },
                 false
-        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     int mobCount = pveOption.mobCount();
                     currentDamageValue.addMultiplicativeModifierMult(getName(), 1 + (mobCount * .005f));
                 }

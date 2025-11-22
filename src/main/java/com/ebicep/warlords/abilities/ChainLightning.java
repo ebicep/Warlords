@@ -50,12 +50,12 @@ public class ChainLightning extends AbstractChain<ChainLightning, ChainLightning
                         EffectUtils.displayParticle(Particle.ELECTRIC_SPARK, receiver.getLocation().add(0, 1.2, 0), 5, .25, .25, .25, 0);
                     }
                 })
-        ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                     if (event.getSource().equals(giver)) {
                         currentDamageValue.addMultiplicativeModifierMult("Aftershock", 1.3f);
                     }
                 }
-        ).addModifier(Modifier.DAMAGE_ON_DEATH_ENEMIES, (event, currentDamageValue, isCrit, isKiller) -> {
+        ).addModifier(Modifier.ON_ENEMY_DEATH, (event, currentDamageValue, isCrit, isKiller) -> {
                     if (event.getSource().equals(giver) && isKiller) {
                         for (AbstractAbility ability : giver.getAbilities()) {
                             if (ability instanceof OrangeAbilityIcon) {
@@ -122,7 +122,7 @@ public class ChainLightning extends AbstractChain<ChainLightning, ChainLightning
                 CooldownTypes.BUFF,
                 cooldownManager -> {},
                 damageReductionTickDuration
-        ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                     currentDamageValue.addMultiplicativeModifierMult(name,
                             convertToDivisionDecimal(Math.min(hitCounter * damageReductionPerBounce.getCalculatedValue(), maxDamageReduction.getCalculatedValue()))
                     );

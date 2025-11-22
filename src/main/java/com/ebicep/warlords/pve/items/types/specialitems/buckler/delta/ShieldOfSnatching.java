@@ -49,7 +49,7 @@ public class ShieldOfSnatching extends SpecialDeltaBuckler implements CraftsInto
 
                 },
                 false
-        ).addModifier(Modifier.HEALING_MODIFY_ATTACKER, (event, currentHealValue) -> {
+        ).addModifier(Modifier.MODIFY_OUTGOING_HEALING, (event, currentHealValue) -> {
                     long playersBelowThreshold = warlordsPlayer.getGame()
                                                                .warlordsPlayers()
                                                                .filter(p -> p.getCurrentHealth() / p.getMaxHealth() < 0.75)

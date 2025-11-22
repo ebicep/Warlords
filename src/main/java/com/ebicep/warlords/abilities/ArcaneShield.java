@@ -107,7 +107,7 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
             public PlayerNameData addPrefixFromOther() {
                 return new PlayerNameData(Component.text((int) (shield.getShieldHealth()), NamedTextColor.YELLOW), we -> we.isTeammate(wp));
             }
-        }.addModifier(Modifier.DAMAGE_ON_SHIELD_SELF, (event, currentDamageValue, isCrit) -> {
+        }.addModifier(Modifier.ON_INCOMING_SHIELD_DAMAGE, (event, currentDamageValue, isCrit) -> {
                     event.getWarlordsEntity().getCooldownManager().queueUpdatePlayerNames();
                 }
         ));

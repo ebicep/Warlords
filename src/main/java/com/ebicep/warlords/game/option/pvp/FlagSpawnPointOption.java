@@ -224,7 +224,7 @@ public class FlagSpawnPointOption implements Option {
                                         cooldownManager -> {
                                         },
                                         15 * 20
-                                ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                                ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                                             currentDamageValue.addMultiplicativeModifierMult("Flag Damage Resistance", AbstractAbility.convertToDivisionDecimal(flagRes));
                                         }
                                 ));

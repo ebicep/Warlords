@@ -149,7 +149,7 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
                 };
             }
 
-        }.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+        }.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     CooldownManager cooldownManager = event.getWarlordsEntity().getCooldownManager();
                     if (pveMasterUpgrade && (cooldownManager.hasCooldown(WoundingCooldown.WoundingData.class) || cooldownManager.hasCooldownFromName("Bleed"))) {
                         for (AbstractAbility ability : wp.getAbilities()) {

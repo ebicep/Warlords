@@ -55,7 +55,7 @@ public class LightInfusionAvenger extends AbstractLightInfusion {
                     }
                 })
         );
-        infusionCooldown.addModifier(Modifier.DAMAGE_ON_DAMAGE_ATTACKER, (event, currentDamageValue, isCrit) -> {
+        infusionCooldown.addModifier(Modifier.ON_OUTGOING_DAMAGE, (event, currentDamageValue, isCrit) -> {
                     if (pveMasterUpgrade) {
                         if (event.getCause().equals("Avenger's Strike")) {
                             strikesUsed.getAndIncrement();

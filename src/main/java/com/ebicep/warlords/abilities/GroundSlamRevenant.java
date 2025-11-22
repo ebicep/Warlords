@@ -48,7 +48,7 @@ public class GroundSlamRevenant extends AbstractGroundSlam implements Damages<Gr
                     cooldownManager -> {
                     },
                     5 * 20
-            ).addModifier(Modifier.HEALING_MODIFY_ATTACKER, (event, currentHealValue) -> {
+            ).addModifier(Modifier.MODIFY_OUTGOING_HEALING, (event, currentHealValue) -> {
                         currentHealValue.addMultiplicativeModifierMult(name, healingBoost);
                     }
             ));

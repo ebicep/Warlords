@@ -92,7 +92,7 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
                 return true;
             }
 
-        }.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+        }.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
             if (pveMasterUpgrade) {
                 WarlordsEntity hit = event.getWarlordsEntity();
                 int oldHitCount = hitCount.computeIfAbsent(hit, k -> 0);
@@ -102,27 +102,27 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
                 currentDamageValue.addMultiplicativeModifierMult(name, 1.2f);
             }
                 }
-        ).addModifier(Modifier.DAMAGE_CRIT_CHANCE_ATTACKER, (event, currentCritChance) -> {
+        ).addModifier(Modifier.MODIFY_OUTGOING_CRIT_CHANCE, (event, currentCritChance) -> {
                     if (event.getCause().isEmpty()) {
                         return;
                     }
                     stats.hitsAmplified++;
                     currentCritChance.addAdditiveModifier(name, critChanceIncrease);
                 }
-        ).addModifier(Modifier.DAMAGE_CRIT_MULTIPLIER_ATTACKER, (event, currentCritMultiplier) -> {
+        ).addModifier(Modifier.MODIFY_OUTGOING_CRIT_MULTIPLIER, (event, currentCritMultiplier) -> {
                     if (event.getCause().isEmpty()) {
                         return;
                     }
                     stats.hitsAmplified++;
                     currentCritMultiplier.addAdditiveModifier(name, critMultiplierIncrease);
                 }
-        ).addModifier(Modifier.DAMAGE_BEFORE_VARIABLE_SET_ATTACKER, event -> {
+        ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_VARIABLE_SET, event -> {
                     if (pveMasterUpgrade2 && event.getCause().equals("Ignite")) {
                         event.getMin().setBaseValue(event.getMin().getBaseValue() * 2);
                         event.getMax().setBaseValue(event.getMax().getBaseValue() * 2);
                     }
                 }
-        ).addModifier(Modifier.DAMAGE_ON_DEATH_ENEMIES, (event, currentDamageValue, isCrit, isKiller) -> {
+        ).addModifier(Modifier.ON_ENEMY_DEATH, (event, currentDamageValue, isCrit, isKiller) -> {
                     if (pveMasterUpgrade2 && isKiller) {
                         wp.addEnergy(wp, "Inferno", event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof EventBoltaroShadow ? 10 : 30);
                     }

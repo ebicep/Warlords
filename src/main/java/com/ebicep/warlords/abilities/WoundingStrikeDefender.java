@@ -87,7 +87,7 @@ public class WoundingStrikeDefender extends AbstractStrike<WoundingStrikeDefende
 
                     },
                     4 * 20
-            ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+            ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                         currentDamageValue.addMultiplicativeModifierMult(name, 0.85f);
                     }
             ));
@@ -130,7 +130,7 @@ public class WoundingStrikeDefender extends AbstractStrike<WoundingStrikeDefende
                 Collections.emptyList(),
                 teammates
         );
-        linkedCooldown.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+        linkedCooldown.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                     currentDamageValue.addMultiplicativeModifierMult(name, .7f);
                 }
         );

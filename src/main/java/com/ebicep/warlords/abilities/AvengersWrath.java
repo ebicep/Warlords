@@ -70,7 +70,7 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
                     }
                 })
         );
-        wrathCooldown.addModifier(Modifier.DAMAGE_ON_DAMAGE_ATTACKER, (event, currentDamageValue, isCrit) -> {
+        wrathCooldown.addModifier(Modifier.ON_OUTGOING_DAMAGE, (event, currentDamageValue, isCrit) -> {
                     if (!event.getCause().equals("Avenger's Strike") || event.getFlags().contains(InstanceFlags.AVENGER_WRATH_STRIKE)) {
                         return;
                     }
@@ -119,7 +119,7 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
                     }
                 }
         );
-        wrathCooldown.addModifier(Modifier.DAMAGE_ON_DEATH_ENEMIES, (event, currentDamageValue, isCrit, isKiller) -> {
+        wrathCooldown.addModifier(Modifier.ON_ENEMY_DEATH, (event, currentDamageValue, isCrit, isKiller) -> {
                     if (isKiller) {
                         stats.targetsKilledDuringWrath++;
                         data.targetsKilledDuringWrath++;

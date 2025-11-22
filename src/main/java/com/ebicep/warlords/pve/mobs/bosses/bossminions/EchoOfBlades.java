@@ -70,7 +70,7 @@ public class EchoOfBlades extends AbstractMob implements BossMinionMob {
                                 CooldownTypes.ABILITY,
                                 cooldownManager -> {},
                                 41
-                        ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                        ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                                     currentDamageValue.addMultiplicativeModifierMult(name, 0.1f);
                                 }
                         ));

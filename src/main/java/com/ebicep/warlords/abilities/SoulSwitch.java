@@ -133,7 +133,7 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                     CooldownTypes.BUFF,
                     cooldownManager -> {},
                     damageReductionTickDuration
-            ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+            ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                         currentDamageValue.addMultiplicativeModifierMult(name, convertToDivisionDecimal(damageReduction));
                     }
             ));
@@ -174,7 +174,7 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
 
                                 })
-                        ).addModifier(Modifier.DAMAGE_CRIT_CHANCE_ATTACKER, (event, currentCritChance) -> {
+                        ).addModifier(Modifier.MODIFY_OUTGOING_CRIT_CHANCE, (event, currentCritChance) -> {
                                     currentCritChance.addAdditiveModifier("Tricky Switch", 15);
                                 }
                         ));
@@ -198,7 +198,7 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                                 wp.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, ticksLeft, 0, true, false));
                             }
                         })
-                ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                             currentDamageValue.addMultiplicativeModifierMult(name, 0.5f);
                         }
                 ));

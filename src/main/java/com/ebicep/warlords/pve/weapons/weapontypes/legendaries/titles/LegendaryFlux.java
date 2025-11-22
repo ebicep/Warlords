@@ -138,7 +138,7 @@ public class LegendaryFlux extends AbstractLegendaryWeapon implements PassiveCou
                 CooldownTypes.WEAPON,
                 cm -> {},
                 false
-        ).addModifier(Modifier.DAMAGE_ON_DAMAGE_ATTACKER, (event, currentDamageValue, isCrit) -> {
+        ).addModifier(Modifier.ON_OUTGOING_DAMAGE, (event, currentDamageValue, isCrit) -> {
                     if (cooldown > 0) {
                         return;
                     }

@@ -163,7 +163,7 @@ public class FallenSouls extends AbstractPiercingProjectile<FallenSouls, FallenS
                         CooldownTypes.LOW_LEVEL_DEBUFF,
                         cooldownManager -> {},
                         false
-                ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                             currentDamageValue.addMultiplicativeModifierMult(name, soulFeast.getDamageMultiplier());
                         }
                 ));

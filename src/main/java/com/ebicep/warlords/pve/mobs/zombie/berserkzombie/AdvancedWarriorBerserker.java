@@ -77,7 +77,7 @@ public class AdvancedWarriorBerserker extends AbstractBerserkZombie implements A
                         EffectUtils.displayParticle(Particle.ANGRY_VILLAGER, warlordsNPC.getLocation().add(0, 1.75, 0), 1, 0, 0, 0, 0.1);
                     }
                 }
-        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     currentDamageValue.addMultiplicativeModifierMult("Berserk", 1.2f);
                 }
         ));
@@ -105,7 +105,7 @@ public class AdvancedWarriorBerserker extends AbstractBerserkZombie implements A
                         );
                     }
                 }
-        ).addModifier(Modifier.DAMAGE_ON_DAMAGE_ATTACKER, (event, currentDamageValue, isCrit) -> {
+        ).addModifier(Modifier.ON_OUTGOING_DAMAGE, (event, currentDamageValue, isCrit) -> {
                     WarlordsEntity attacker = event.getSource();
                     attacker.addInstance(InstanceBuilder
                             .healing()

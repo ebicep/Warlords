@@ -134,13 +134,13 @@ public class SuperBrew extends AbstractAbility implements OrangeAbilityIcon, Hit
                 }),
                 linkedEntities
         );
-        superBrewCooldown.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+        superBrewCooldown.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     if (event.getCause().isEmpty() && event.getSource().equals(target)) {
                         currentDamageValue.addMultiplicativeModifierMult(name, AbstractAbility.convertToMultiplicationDecimal(meleeDamageIncreasePercent));
                     }
                 }
         );
-        superBrewCooldown.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+        superBrewCooldown.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                     if (event.getCause().isEmpty() && event.getWarlordsEntity().equals(target)) {
                         currentDamageValue.addMultiplicativeModifierMult(name, convertToDivisionDecimal(meleeDamageTakenDecreasePercent));
                     }

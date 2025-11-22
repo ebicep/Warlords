@@ -70,7 +70,7 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
                             CooldownTypes.MASTERY,
                             cm -> {},
                             false
-                    ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                    ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                                 boolean isAboveElite = event.getWarlordsEntity() instanceof WarlordsNPC npc && npc.getMob().getInternalLevel() >= 4;
                                 boolean isNotDuplicateStrike =
                                         !event.getFlags().contains(InstanceFlags.AVENGER_WRATH_STRIKE) ||

@@ -84,7 +84,7 @@ public class EarthboundInfusion implements SpecBoostManager.SpecBoost<Earthbound
                     CooldownTypes.SPEC_BOOST,
                     cooldownManager -> {},
                     false
-            ).addModifier(Modifier.HEALING_MODIFY_ATTACKER, (event, currentHealValue) -> {
+            ).addModifier(Modifier.MODIFY_OUTGOING_HEALING, (event, currentHealValue) -> {
                         if (event.getWarlordsEntity().equals(warlordsPlayer) && event.getSource().equals(warlordsPlayer) && event.getCause().equals("Earthliving Weapon")) {
                             List<CustomInstanceFlags> customFlags = event.getCustomFlags();
                             for (CustomInstanceFlags customFlag : customFlags) {

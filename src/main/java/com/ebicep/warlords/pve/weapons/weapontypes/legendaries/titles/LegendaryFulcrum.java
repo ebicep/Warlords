@@ -111,7 +111,7 @@ public class LegendaryFulcrum extends AbstractLegendaryWeapon implements GardenO
                         tickCounter--;
                     }
                 }
-        ).addModifier(Modifier.DAMAGE_ON_DAMAGE_SELF, (event, currentDamageValue, isCrit) -> {
+        ).addModifier(Modifier.ON_INCOMING_DAMAGE, (event, currentDamageValue, isCrit) -> {
                     if (tickCounter != 0) {
                         return;
                     }
@@ -137,7 +137,7 @@ public class LegendaryFulcrum extends AbstractLegendaryWeapon implements GardenO
                             );
                         }
                     };
-            fulcrumCooldown.addModifier(Modifier.DAMAGE_ON_SHIELD_ATTACKER, (e, currentDamageValue2, isCrit2) -> {
+            fulcrumCooldown.addModifier(Modifier.ON_OUTGOING_SHIELD_DAMAGE, (e, currentDamageValue2, isCrit2) -> {
                         e.getWarlordsEntity().getCooldownManager().queueUpdatePlayerNames();
                     }
             );

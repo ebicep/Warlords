@@ -45,7 +45,7 @@ public class AerialAegis extends SpecialDeltaBuckler implements CraftsInto {
 
                 },
                 false
-        ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                     if (!warlordsPlayer.getEntity().isOnGround()) {
                         currentDamageValue.addMultiplicativeModifierMult(getName(), 0.8f);
                     }

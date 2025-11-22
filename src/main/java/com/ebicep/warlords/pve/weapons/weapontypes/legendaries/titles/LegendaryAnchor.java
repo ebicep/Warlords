@@ -101,7 +101,7 @@ public class LegendaryAnchor extends AbstractLegendaryWeapon implements PassiveC
                 CooldownTypes.WEAPON,
                 cm -> {},
                 false
-        ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                     float dr = (stacks * getDrPerStack()) / 100f;
                     currentDamageValue.addMultiplicativeModifierMult(getTitleName(), (1f - dr));
                 }

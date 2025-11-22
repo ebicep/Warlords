@@ -91,7 +91,7 @@ public class LegendaryArbalest extends AbstractLegendaryWeapon implements EventT
                 cooldownManager -> {
                 },
                 false
-        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     if (event.getWarlordsEntity().getCurrentHealth() < playerHPCheck) {
                         currentDamageValue.addMultiplicativeModifierMult(getTitleName(), damageBoost);
                     }

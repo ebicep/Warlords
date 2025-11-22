@@ -112,7 +112,7 @@ public class Torment extends AbstractMob implements BossMob {
                 cooldownManager -> {
                 },
                 true
-        ).addModifier(Modifier.DAMAGE_AFTER_ALL_SELF, (event, currentDamageValue, isCrit) -> {
+        ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_ALL_MODIFIERS, (event, currentDamageValue, isCrit) -> {
                     if (event.getSource().getCooldownManager().hasCooldown(DamageCheck.class)) {
                         currentDamageValue.addMultiplicativeModifierMult(name, 3);
                     } else {
@@ -193,14 +193,14 @@ public class Torment extends AbstractMob implements BossMob {
                                             cooldownManager -> {
                                             },
                                             3
-                                    ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                                    ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                                                 currentDamageValue.addOverridingModifier(name, 0);
                                             }
                                     ));
                                 }
                             }
                         })
-                ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                             currentDamageValue.addMultiplicativeModifierMult(name, 0.05f);
                         }
                 ));

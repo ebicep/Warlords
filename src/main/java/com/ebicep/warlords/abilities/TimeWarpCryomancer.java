@@ -89,7 +89,7 @@ public class TimeWarpCryomancer extends AbstractTimeWarp {
                             cooldownManager -> {
                             },
                             duration
-                    ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (event, currentDamageValue) -> {
+                    ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                                 currentDamageValue.addMultiplicativeModifierMult("Freezing Cold", 1.15f);
                             }
                     ));
@@ -127,7 +127,7 @@ public class TimeWarpCryomancer extends AbstractTimeWarp {
                                   5 * 20,
                                   Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                                   })
-                          ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                          ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                                       currentDamageValue.addMultiplicativeModifierMult(name, .2f);
                                   }
                           ));

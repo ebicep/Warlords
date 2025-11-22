@@ -142,7 +142,7 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
                                 }
                             },
                             true
-                    ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                    ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                                 currentDamageValue.addMultiplicativeModifierMult(name, 0.75f);
                             }
                     ));

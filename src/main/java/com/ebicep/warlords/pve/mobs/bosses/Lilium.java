@@ -152,7 +152,7 @@ public class Lilium extends AbstractMob implements BossMob {
                 CooldownTypes.BUFF,
                 cooldownManager -> {},
                 true
-        ).addModifier(Modifier.DAMAGE_AFTER_ALL_SELF, (event, currentDamageValue, isCrit) -> {
+        ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_ALL_MODIFIERS, (event, currentDamageValue, isCrit) -> {
                     if (crystals.isEmpty()) {
                         return;
                     }
@@ -705,14 +705,14 @@ public class Lilium extends AbstractMob implements BossMob {
                                                         cooldownManager -> {
                                                         },
                                                         3
-                                                ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                                                ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                                                             currentDamageValue.addOverridingModifier(name, 0);
                                                         }
                                                 ));
                                             }
                                         }
                                     })
-                            ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                            ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                                         currentDamageValue.addMultiplicativeModifierMult(name, 0.1f);
                                     }
                             ));

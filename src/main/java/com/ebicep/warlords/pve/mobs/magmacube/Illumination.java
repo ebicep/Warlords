@@ -136,7 +136,7 @@ public class Illumination extends AbstractMob implements AdvancedMob {
                             cooldownManager -> {
                             },
                             3 * 20
-                    ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                    ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                         currentDamageValue.addMultiplicativeModifierMult(name, 0.5f);
                         }
                     ));

@@ -140,7 +140,7 @@ public class Illumina extends AbstractMob implements BossMob {
                 },
                 true
         );
-        permanentCooldown.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+        permanentCooldown.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                     damageToDeal.set((int) (damageToDeal.get() - currentDamageValue.getCalculatedValue()));
                 }
         );

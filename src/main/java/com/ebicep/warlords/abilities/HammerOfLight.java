@@ -358,7 +358,7 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                 cooldownManager -> {
                 },
                 20
-        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     currentDamageValue.addMultiplicativeModifierMult("Hammer of Disillusion", 1.15f);
                 }
         ));

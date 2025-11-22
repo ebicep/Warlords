@@ -332,7 +332,7 @@ public class GrimoiresGraveyard extends GameMap {
 
                         },
                         false
-                ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                             currentDamageValue.addMultiplicativeModifierMult("Scaling", damageMultiplier);
                         }
                 ));

@@ -229,7 +229,7 @@ public class Orbyz extends AbstractMob implements BossMob {
                 CooldownTypes.BUFF,
                 cooldownManager -> {},
                 true
-        ).addModifier(Modifier.DAMAGE_AFTER_ALL_SELF, (event, currentDamageValue, isCrit) -> {
+        ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_ALL_MODIFIERS, (event, currentDamageValue, isCrit) -> {
                     if (event.getSource().getCooldownManager().hasCooldownFromName("Empowering Allies")) {
                         currentDamageValue.addMultiplicativeModifierMult(name, 1.2f);
                     } else {

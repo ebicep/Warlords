@@ -71,7 +71,7 @@ public class PactOfProtection implements SpecBoostManager.SpecBoost<PactOfProtec
             if (!cooldown.getCooldownClass().equals(MysticalBarrier.class) || !cooldown.getFrom().equals(warlordsEntity)) {
                 return;
             }
-            regularCooldown.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (e, currentDamageValue) -> {
+            regularCooldown.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (e, currentDamageValue) -> {
                         currentDamageValue.addMultiplicativeModifierMult(getStringName(), AbstractAbility.convertToDivisionDecimal(targetDamageReductionPercent));
                     }
             );
@@ -89,7 +89,7 @@ public class PactOfProtection implements SpecBoostManager.SpecBoost<PactOfProtec
                         cd.setTicksLeft(regularCooldown.getTicksLeft());
                     })
             );
-            pactCooldown.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (e, currentDamageValue) -> {
+            pactCooldown.addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
                         currentDamageValue.addMultiplicativeModifierMult(getStringName(), AbstractAbility.convertToMultiplicationDecimal(selfDamageIncreasePercent));
                     }
             );

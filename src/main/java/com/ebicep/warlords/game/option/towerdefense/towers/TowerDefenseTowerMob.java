@@ -120,7 +120,7 @@ public abstract class TowerDefenseTowerMob extends AbstractMob implements Mob {
                 (cooldown, ticksElapsed) -> {
                     armor.tick();
                 }
-        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     List<CustomInstanceFlags> customFlags = event.getCustomFlags();
                     for (CustomInstanceFlags customFlag : customFlags) {
                         if (customFlag instanceof CustomInstanceFlags.Valued(Consumer<FloatModifiable> floatModifiableConsumer, CustomInstanceFlags.Valued.Flag flag) &&

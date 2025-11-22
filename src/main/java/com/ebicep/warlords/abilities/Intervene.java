@@ -159,7 +159,7 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
         if (inPve) {
             wp.getCooldownManager().addCooldown(new RegularCooldown<>(name + " Damage", null, InterveneData.class, null, wp, CooldownTypes.BUFF, cooldownManager -> {
             }, tickDuration
-            ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+            ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                         currentDamageValue.addMultiplicativeModifierMult(name, (float) (1 + venes.stream().mapToDouble(InterveneData::getDamagePrevented).sum() / 100 * .01));
                     }
             ));

@@ -101,7 +101,7 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon implements Passiv
 
                         },
                         false
-                ).addModifier(Modifier.DAMAGE_AFTER_ALL_SELF, (event, currentDamageValue, isCrit) -> {
+                ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_ALL_MODIFIERS, (event, currentDamageValue, isCrit) -> {
                             if (player.getCurrentHealth() <= player.getMaxHealth() * .8) {
                                 return;
                             }
@@ -123,7 +123,7 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon implements Passiv
                                     cooldownManager -> {
                                     },
                                     REDUCTION_DURATION * 20
-                            ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (e, currentDamageValue2) -> {
+                            ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (e, currentDamageValue2) -> {
                                         currentDamageValue2.addMultiplicativeModifierMult("Stalwart", .01f);
                                     }
                             ));
@@ -131,7 +131,7 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon implements Passiv
                             player.sendMessage(Component.text("Triggered Stalwart! +99% damage reduction for 5s.", NamedTextColor.GREEN));
                             currentDamageValue.addOverridingModifier("Stalwart", 0);
                         }
-                ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                             if (player.getCurrentHealth() >= player.getMaxHealth() * upperBoundHP) {
                                 return;
                             }

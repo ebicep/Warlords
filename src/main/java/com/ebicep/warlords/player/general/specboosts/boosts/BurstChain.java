@@ -86,7 +86,7 @@ public class BurstChain implements SpecBoostManager.SpecBoost<BurstChain> {
                     cooldownManager -> {
                     },
                     false
-            ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+            ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                         WarlordsEntity victim = event.getWarlordsEntity();
                         if (victim.getCooldownManager()
                                   .getCooldowns()

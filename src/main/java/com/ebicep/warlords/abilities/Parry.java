@@ -144,7 +144,7 @@ public class Parry extends AbstractAbility implements AbilityStats<Parry, Parry.
                                                     );
                                                 }
                                     };
-                                    parryCooldown.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (e, currentDamageValue) -> {
+                                    parryCooldown.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (e, currentDamageValue) -> {
                                                 currentDamageValue.addMultiplicativeModifierMult(name, convertToDivisionDecimal(data.instances.size() * damageReduction));
                                             }
                                     );
@@ -170,7 +170,7 @@ public class Parry extends AbstractAbility implements AbilityStats<Parry, Parry.
                 },
                 knockbackTickDuration
         );
-        parryCooldown.addModifier(Modifier.DAMAGE_ON_DAMAGE_ATTACKER, (event, currentDamageValue, isCrit) -> {
+        parryCooldown.addModifier(Modifier.ON_OUTGOING_DAMAGE, (event, currentDamageValue, isCrit) -> {
                     if (!parried[0] && event.getAbility() instanceof AbstractStrike<?, ?>) {
                         parried[0] = true;
                         stats.timesKnockbacked++;

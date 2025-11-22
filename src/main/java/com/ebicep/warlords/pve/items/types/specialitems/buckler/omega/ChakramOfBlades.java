@@ -48,7 +48,7 @@ public class ChakramOfBlades extends SpecialOmegaBuckler implements AppliesToWar
 
                 },
                 false
-        ).addModifier(Modifier.DAMAGE_ON_DEATH_ENEMIES, (event, currentDamageValue, isCrit, isKiller) -> {
+        ).addModifier(Modifier.ON_ENEMY_DEATH, (event, currentDamageValue, isCrit, isKiller) -> {
                     if (event.getSource().equals(warlordsPlayer) && isKiller) {
                         kills[0]++;
                         if (kills[0] % 7 == 0) {

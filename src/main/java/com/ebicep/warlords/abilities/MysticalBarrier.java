@@ -210,7 +210,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                     }
                 };
             }
-        }.addModifier(Modifier.DAMAGE_ON_DAMAGE_SELF, (event, currentDamageValue, isCrit) -> {
+        }.addModifier(Modifier.ON_INCOMING_DAMAGE, (event, currentDamageValue, isCrit) -> {
                     if (event.getFlags().contains(InstanceFlags.DOT)) {
                         return;
                     }
@@ -221,7 +221,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                     damageInstances.getAndIncrement();
                     stats.timesCooldownsIncreased++;
                 }
-        ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                     if (event.getCause().isEmpty()) {
                         stats.meleesReduced++;
                         currentDamageValue.addMultiplicativeModifierMult(name, convertToDivisionDecimal(meleeDamageReduction));
@@ -256,7 +256,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
             public PlayerNameData addPrefixFromOther() {
                 return new PlayerNameData(Component.text((int) (shield.getShieldHealth()), NamedTextColor.YELLOW), we -> we.isTeammate(from));
             }
-        }.addModifier(Modifier.DAMAGE_ON_SHIELD_ATTACKER, (event, currentDamageValue, isCrit) -> {
+        }.addModifier(Modifier.ON_OUTGOING_SHIELD_DAMAGE, (event, currentDamageValue, isCrit) -> {
                     event.getWarlordsEntity().getCooldownManager().queueUpdatePlayerNames();
                 }
         ));

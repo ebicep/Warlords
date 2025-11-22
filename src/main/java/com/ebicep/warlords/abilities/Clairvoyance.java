@@ -60,7 +60,7 @@ public class Clairvoyance extends AbstractAbility implements PurpleAbilityIcon, 
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
 
                 })
-        ).addModifier(Modifier.HEALING_MODIFY_ATTACKER, (event, currentHealValue) -> {
+        ).addModifier(Modifier.MODIFY_OUTGOING_HEALING, (event, currentHealValue) -> {
             currentHealValue.addMultiplicativeModifierMult(
                     name,
                     convertToMultiplicationDecimal(healingIncreasePercent),

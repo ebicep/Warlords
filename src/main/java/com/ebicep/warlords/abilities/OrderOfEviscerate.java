@@ -106,11 +106,11 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                     EffectUtils.displayParticle(Particle.SMOKE, wp.getLocation(), 4, 0.2, 0.2, 0.2, 0.05);
                 })
         );
-        orderOfEviscerateCooldown.addModifier(Modifier.DAMAGE_ON_DAMAGE_SELF, (event, currentDamageValue, isCrit) -> {
+        orderOfEviscerateCooldown.addModifier(Modifier.ON_INCOMING_DAMAGE, (event, currentDamageValue, isCrit) -> {
                     data.addAndCheckDamageThreshold(currentDamageValue, wp);
                 }
         );
-        orderOfEviscerateCooldown.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+        orderOfEviscerateCooldown.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     if (!Objects.equals(data.getMarkedPlayer(), event.getWarlordsEntity())) {
                         return;
                     }
@@ -135,11 +135,11 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                     }
                 }
         );
-        orderOfEviscerateCooldown.addModifier(Modifier.DAMAGE_ON_DAMAGE_ATTACKER, (event, currentDamageValue, isCrit) -> {
+        orderOfEviscerateCooldown.addModifier(Modifier.ON_OUTGOING_DAMAGE, (event, currentDamageValue, isCrit) -> {
                     data.damageDoneWithOrder += currentDamageValue;
                 }
         );
-        orderOfEviscerateCooldown.addModifier(Modifier.DAMAGE_ON_DEATH_ENEMIES, (event, currentDamageValue, isCrit, isKiller) -> {
+        orderOfEviscerateCooldown.addModifier(Modifier.ON_ENEMY_DEATH, (event, currentDamageValue, isCrit, isKiller) -> {
                     if (!Objects.equals(event.getWarlordsEntity(), data.getMarkedPlayer())) {
                         return;
                     }
@@ -191,7 +191,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                                                 },
                                                 8 * 20
                                         );
-                                        regularCooldown.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                                        regularCooldown.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                                                     currentDamageValue.addMultiplicativeModifierMult(name, 1 + 0.4f * stacks.get());
                                                 }
                                         );

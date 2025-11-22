@@ -123,7 +123,7 @@ public class ShadowStep extends AbstractAbility implements
                 cooldownManager -> {
                 },
                 2
-        ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                     currentDamageValue.addMultiplicativeModifierMult(name, .25f);
                 }
         ));
@@ -171,10 +171,10 @@ public class ShadowStep extends AbstractAbility implements
                     CooldownTypes.BUFF,
                     cooldownManager -> {},
                     5 * 20
-            ).addModifier(Modifier.DAMAGE_CRIT_CHANCE_ATTACKER, (event, currentCritChance) -> {
+            ).addModifier(Modifier.MODIFY_OUTGOING_CRIT_CHANCE, (event, currentCritChance) -> {
                         currentCritChance.addMultiplicativeModifierMult("Shadow Dash CC", convertToMultiplicationDecimal(Math.min(2f * hit.size(), 20)));
                     }
-            ).addModifier(Modifier.DAMAGE_CRIT_MULTIPLIER_ATTACKER, (event, currentCritMultiplier) -> {
+            ).addModifier(Modifier.MODIFY_OUTGOING_CRIT_MULTIPLIER, (event, currentCritMultiplier) -> {
                 currentCritMultiplier.addMultiplicativeModifierMult("Shadow Dash CC", convertToMultiplicationDecimal(Math.min(2f * hit.size(), 20)));
                     }
             ));

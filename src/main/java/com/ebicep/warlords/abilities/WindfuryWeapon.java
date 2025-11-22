@@ -134,7 +134,7 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
                         shreddingFurySpeed.setModifier(shreddingFurySpeed.getModifier() + 2.5f);
                     }
                 }
-        ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                     if (pveMasterUpgrade2) {
                         currentDamageValue.addMultiplicativeModifierMult(name, (100 - Math.min(15, procs.get() * 2.5f)) / 100f);
                     }

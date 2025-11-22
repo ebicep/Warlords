@@ -124,7 +124,7 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                                         );
                                     }
                                 })
-                        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (e, currentDamageValue) -> {
+                        ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
                                     currentDamageValue.addMultiplicativeModifierMult("Disaster Fragment - Burn", 1.2f);
                                 }
                         ));
@@ -154,7 +154,7 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                                         );
                                     }
                                 })
-                        ).addModifier(Modifier.HEALING_MODIFY_SELF, (e, currentHealValue) -> {
+                        ).addModifier(Modifier.MODIFY_INCOMING_HEALING, (e, currentHealValue) -> {
                                     currentHealValue.addMultiplicativeModifierMult("Disaster Fragment - Bleed", 0.2f);
                                 }
                         ));
@@ -172,7 +172,7 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                                 cooldownManager -> {
                                 },
                                 60
-                        ).addModifier(Modifier.DAMAGE_ON_DAMAGE_SELF, (e, currentDamageValue, isCrit) -> {
+                        ).addModifier(Modifier.ON_INCOMING_DAMAGE, (e, currentDamageValue, isCrit) -> {
                                     // if (totalHealingDone.get() >= 1000) {
                                     //     setTicksLeft(0);
                                     //     return;

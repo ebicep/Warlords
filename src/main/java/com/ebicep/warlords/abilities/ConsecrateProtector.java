@@ -80,7 +80,7 @@ public class ConsecrateProtector extends AbstractConsecrate implements CanReduce
                 });
             }
         })
-        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     if (event.getFlags().contains(InstanceFlags.STRIKE_IN_CONS)) {
                         return;
                     }

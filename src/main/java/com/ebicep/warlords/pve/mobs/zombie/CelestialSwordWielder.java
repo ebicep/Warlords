@@ -63,7 +63,7 @@ public class CelestialSwordWielder extends AbstractMob implements EliteMob {
                 cooldownManager -> {
                 },
                 true
-        ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                     if (Utils.isProjectile(event.getCause())) {
                         currentDamageValue.addMultiplicativeModifierMult(name, 0.1f);
                     }

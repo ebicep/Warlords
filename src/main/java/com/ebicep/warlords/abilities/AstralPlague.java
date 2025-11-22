@@ -144,12 +144,12 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
                     }
                 };
             }
-        }.addModifier(Modifier.DAMAGE_CRIT_MULTIPLIER_ATTACKER, (event, currentCritMultiplier) -> {
+        }.addModifier(Modifier.MODIFY_OUTGOING_CRIT_MULTIPLIER, (event, currentCritMultiplier) -> {
                     if (pveMasterUpgrade) {
                         currentCritMultiplier.addAdditiveModifier(name, 60);
                     }
                 }
-        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     if (inPve && event.getCause().equals("Poisonous Hex") && event.getFlags().contains(InstanceFlags.DOT)) {
                         currentDamageValue.addMultiplicativeModifierMult(name, 5.0f);
                     }

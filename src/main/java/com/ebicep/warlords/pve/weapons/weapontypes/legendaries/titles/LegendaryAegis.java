@@ -116,7 +116,7 @@ public class LegendaryAegis extends AbstractLegendaryWeapon implements PassiveCo
                 CooldownTypes.WEAPON,
                 cm -> {},
                 false
-        ).addModifier(Modifier.HEALING_MODIFY_SELF, (event, currentHealValue) -> {
+        ).addModifier(Modifier.MODIFY_INCOMING_HEALING, (event, currentHealValue) -> {
                     // replace with actual Shield class
                     float max = player.getMaxHealth();
                     float cur = player.getCurrentHealth();
@@ -130,12 +130,12 @@ public class LegendaryAegis extends AbstractLegendaryWeapon implements PassiveCo
                         player.playSound(player.getLocation(), Sound.ITEM_SHIELD_BLOCK, 2, 1.4f);
                     }
                 }
-        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
             if (barrierActive()) {
                 currentDamageValue.addMultiplicativeModifierMult(getTitleName(), 1f + DMG_BONUS_WHILE_BARRIER_PERCENT / 100f);
             }
                 }
-        ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                     if (!barrierActive()) {
                         return;
                     }

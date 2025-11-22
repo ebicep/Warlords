@@ -129,7 +129,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                                                 cooldownManager -> {
                                                 },
                                                 21
-                                        ).addModifier(Modifier.HEALING_MODIFY_SELF, (event, currentHealValue) -> {
+                                        ).addModifier(Modifier.MODIFY_INCOMING_HEALING, (event, currentHealValue) -> {
                                             currentHealValue.addMultiplicativeModifierMult(
                                                     name,
                                                     convertToMultiplicationDecimal(hexHealingBonus),
@@ -158,7 +158,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                     }
                 };
             }
-        }.addModifier(Modifier.HEALING_MODIFY_SELF, (event, currentHealValue) -> {
+        }.addModifier(Modifier.MODIFY_INCOMING_HEALING, (event, currentHealValue) -> {
                     if (new CooldownFilter<>(wp, RegularCooldown.class).filterCooldownFrom(wp).filterCooldownClass(MercifulHex.class).stream().count() >= maxStacks) {
                         currentHealValue.addMultiplicativeModifierMult(
                                 name,

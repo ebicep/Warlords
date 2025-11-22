@@ -103,7 +103,7 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
                     }
                 })
         );
-        lastStandCooldown.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+        lastStandCooldown.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
             currentDamageValue.addMultiplicativeModifierMult(
                     name,
                     convertToDivisionDecimal(selfDamageReductionPercent),
@@ -129,7 +129,7 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
                     cooldownManager -> {
                     },
                     allyTickDuration
-            ).addModifier(Modifier.DAMAGE_ON_DAMAGE_SELF, (event, currentDamageValue, isCrit) -> {
+            ).addModifier(Modifier.ON_INCOMING_DAMAGE, (event, currentDamageValue, isCrit) -> {
                         wp.addInstance(InstanceBuilder.healing()
                                                       .ability(LastStand.this)
                                                       .source(wp)
@@ -137,14 +137,14 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
                                                       .showAsCrit(isCrit)
                         );
                     }
-            ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+            ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                 currentDamageValue.addMultiplicativeModifierMult(
                         name,
                         convertToDivisionDecimal(teammateDamageReductionPercent),
                         contribution -> data.addAmountPrevented(Math.abs(contribution))
                 );
                     }
-            ).addModifier(Modifier.DAMAGE_ON_SHIELD_ATTACKER, (event, currentDamageValue, isCrit) -> {
+            ).addModifier(Modifier.ON_OUTGOING_SHIELD_DAMAGE, (event, currentDamageValue, isCrit) -> {
                         data.addAmountPrevented(amountPrevented);
                         wp.addInstance(InstanceBuilder.healing()
                                                       .ability(LastStand.this)

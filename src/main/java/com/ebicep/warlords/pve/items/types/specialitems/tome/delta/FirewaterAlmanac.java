@@ -51,7 +51,7 @@ public class FirewaterAlmanac extends SpecialDeltaTome implements CraftsInto {
 
                 },
                 false
-        ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                     int targeted = pveOption.getMobs()
                                             .stream()
                                             .mapToInt(mob -> {

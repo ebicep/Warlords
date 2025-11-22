@@ -195,25 +195,29 @@ public class FreezingBreath extends AbstractProjectile<FreezingBreath, FreezingB
             }
             nearEntity.addSpeedModifier(shooter, name, -50, 5 * 20);
             float damageIncrease = (float) Math.min(1 + projectile.getBlocksTravelled() * .08, 2);
-            nearEntity.addInstance(InstanceBuilder.damage()
-                                                  .ability(this)
-                                                  .source(shooter)
-                                                  .min(damageValues.freezingBreathDamage.getMinValue() * damageIncrease)
-                                                  .max(damageValues.freezingBreathDamage.getMaxValue() * damageIncrease)
-                                                  .crit(damageValues.freezingBreathDamage));
-            nearEntity.getCooldownManager()
-                      .addCooldown(new RegularCooldown<>("Chilled",
-                              "CHILLED",
-                              FreezingBreath.class,
-                              new FreezingBreath(),
-                              shooter,
-                              CooldownTypes.LOW_LEVEL_DEBUFF,
-                              cooldownManager -> {
-                              }, 5 * 20
-                      ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
-                                  currentDamageValue.addMultiplicativeModifierMult(name, 0.6f);
-                              }
-                      ));
+            nearEntity.addInstance(InstanceBuilder
+                    .damage()
+                    .ability(this)
+                    .source(shooter)
+                    .min(damageValues.freezingBreathDamage.getMinValue() * damageIncrease)
+                    .max(damageValues.freezingBreathDamage.getMaxValue() * damageIncrease)
+                    .crit(damageValues.freezingBreathDamage)
+            );
+            nearEntity.getCooldownManager().addCooldown(new RegularCooldown<>(
+                    "Chilled",
+                    "CHILLED",
+                    FreezingBreath.class,
+                    new FreezingBreath(),
+                    shooter,
+                    CooldownTypes.LOW_LEVEL_DEBUFF,
+                    cooldownManager -> {},
+                    5 * 20
+            ).addModifier(
+                    Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE,
+                    (event, currentDamageValue) -> {
+                        currentDamageValue.addMultiplicativeModifierMult(name, 0.6f);
+                    }
+            ));
         }
         return playersHit;
     }
@@ -222,7 +226,7 @@ public class FreezingBreath extends AbstractProjectile<FreezingBreath, FreezingB
         we.getCooldownManager().removeCooldown(FreezingBreath.class, false);
         we.getCooldownManager().addCooldown(new RegularCooldown<>(name, "FRZ RES", FreezingBreath.class, new FreezingBreath(), we, CooldownTypes.BUFF, cooldownManager -> {
         }, 4 * 20
-        ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                     currentDamageValue.addMultiplicativeModifierMult(name, (1 - (0.05f * counter)));
                 }
         ));

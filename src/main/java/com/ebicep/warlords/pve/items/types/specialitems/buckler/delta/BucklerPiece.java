@@ -51,7 +51,7 @@ public class BucklerPiece extends SpecialDeltaBuckler implements CraftsInto {
                 cooldownManager -> {
                 },
                 false
-        ).addModifier(Modifier.HEALING_ON_HEAL_ATTACKER, (event, currentHealValue, isCrit) -> {
+        ).addModifier(Modifier.ON_OUTGOING_HEALING, (event, currentHealValue, isCrit) -> {
                     float damageAmount = currentHealValue * .1f;
                     PlayerFilter.entitiesAround(event.getWarlordsEntity(), 3, 3, 3)
                                 .aliveEnemiesOf(warlordsPlayer)

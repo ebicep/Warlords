@@ -83,7 +83,7 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
                     }
                 })
         );
-        presenceCooldown.addModifier(Modifier.DAMAGE_ON_DAMAGE_SELF, (event, currentDamageValue, isCrit) -> {
+        presenceCooldown.addModifier(Modifier.ON_INCOMING_DAMAGE, (event, currentDamageValue, isCrit) -> {
                     if (pveMasterUpgrade2) {
                         boolean isReflectionDamage = event.getFlags().add(InstanceFlags.REFLECTIVE_DAMAGE);
                         int energyAmount = isReflectionDamage ? 15 : 8;

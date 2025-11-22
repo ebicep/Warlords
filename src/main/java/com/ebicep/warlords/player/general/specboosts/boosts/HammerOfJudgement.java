@@ -132,7 +132,7 @@ public class HammerOfJudgement implements SpecBoostManager.SpecBoost<HammerOfJud
                                                     );
                                                 }
                                             })
-                                    ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (e, currentDamageValue) -> {
+                                    ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
                                                 if (!e.getCause().equals(consecrateProtector.getStrikeName()) ||
                                                         e.getFlags().contains(InstanceFlags.STRIKE_IN_CONS) ||
                                                         !e.getSource().equals(warlordsEntity)

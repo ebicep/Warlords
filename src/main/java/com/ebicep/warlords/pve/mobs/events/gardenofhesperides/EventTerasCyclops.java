@@ -55,7 +55,7 @@ public class EventTerasCyclops extends AbstractMob implements BossMinionMob, Ter
                 cooldownManager -> {
                 },
                 false
-        ).addModifier(Modifier.DAMAGE_ON_DAMAGE_ATTACKER, (event, currentDamageValue, isCrit) -> {
+        ).addModifier(Modifier.ON_OUTGOING_DAMAGE, (event, currentDamageValue, isCrit) -> {
                     if (event.getCause().isEmpty()) {
                         WarlordsEntity victim = event.getWarlordsEntity();
                         Utils.addKnockback(name, victim.getLocation(), victim, 1, 0.7f);

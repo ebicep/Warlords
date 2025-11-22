@@ -106,7 +106,7 @@ public class RecklessAscent implements SpecBoostManager.SpecBoost<RecklessAscent
                         CooldownTypes.SPEC_BOOST,
                         cooldownManager -> {},
                         damageReductionDurationTicks
-                ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (e, currentDamageValue) -> {
+                ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (e, currentDamageValue) -> {
                             currentDamageValue.addMultiplicativeModifierMult(getStringName(), AbstractAbility.convertToDivisionDecimal(damageReductionPercent));
                         }
                 ));

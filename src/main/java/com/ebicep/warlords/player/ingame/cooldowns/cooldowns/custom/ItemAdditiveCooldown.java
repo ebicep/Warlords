@@ -56,19 +56,19 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
                 },
                 false
         );
-        this.addModifier(Modifier.HEALING_MODIFY_ATTACKER, (event, currentHealValue) -> {
+        this.addModifier(Modifier.MODIFY_OUTGOING_HEALING, (event, currentHealValue) -> {
                     currentHealValue.addMultiplicativeModifierMult(name, healMultiplier);
                 }
         );
-        this.addModifier(Modifier.DAMAGE_CRIT_CHANCE_ATTACKER, (event, currentCritChance) -> {
+        this.addModifier(Modifier.MODIFY_OUTGOING_CRIT_CHANCE, (event, currentCritChance) -> {
                     currentCritChance.addAdditiveModifier(name, additionalCritChance);
                 }
         );
-        this.addModifier(Modifier.DAMAGE_CRIT_MULTIPLIER_ATTACKER, (event, currentCritMultiplier) -> {
+        this.addModifier(Modifier.MODIFY_OUTGOING_CRIT_MULTIPLIER, (event, currentCritMultiplier) -> {
                     currentCritMultiplier.addAdditiveModifier(name, additionalCritMultiplier);
                 }
         );
-        this.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+        this.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC) {
                         Aspect aspect = warlordsNPC.getMob().getAspect();
                         if (aspect == null) {
@@ -86,7 +86,7 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
                     }
                 }
         );
-        this.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+        this.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                     if (event.getSource() instanceof WarlordsNPC warlordsNPC) {
                         Aspect aspect = warlordsNPC.getMob().getAspect();
                         if (aspect == null) {
@@ -100,7 +100,7 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
                     }
                 }
         );
-        this.addModifier(Modifier.DAMAGE_ON_DAMAGE_SELF, (event, currentDamageValue, isCrit) -> {
+        this.addModifier(Modifier.ON_INCOMING_DAMAGE, (event, currentDamageValue, isCrit) -> {
                     // prevent recursion
                     WarlordsEntity attacker = event.getSource();
                     if (Objects.equals(attacker, from) || event.getFlags().contains(InstanceFlags.RECURSIVE)) {
@@ -122,7 +122,7 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
                     );
                 }
         );
-        this.addModifier(Modifier.DAMAGE_ON_DAMAGE_ATTACKER, (event, currentDamageValue, isCrit) -> {
+        this.addModifier(Modifier.ON_OUTGOING_DAMAGE, (event, currentDamageValue, isCrit) -> {
                     if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC) {
                         Aspect aspect = warlordsNPC.getMob().getAspect();
                         if (aspect == null) {

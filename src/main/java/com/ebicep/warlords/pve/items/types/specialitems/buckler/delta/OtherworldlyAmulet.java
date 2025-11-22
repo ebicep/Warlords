@@ -47,7 +47,7 @@ public class OtherworldlyAmulet extends SpecialDeltaBuckler implements CraftsInt
                 cooldownManager -> {
                 },
                 false
-        ).addModifier(Modifier.DAMAGE_CRIT_CHANCE_ATTACKER, (event, currentCritChance) -> {
+        ).addModifier(Modifier.MODIFY_OUTGOING_CRIT_CHANCE, (event, currentCritChance) -> {
                     for (String effect : EFFECTS) {
                         if (warlordsPlayer.getCooldownManager().hasCooldownFromName(effect)) {
                             currentCritChance.addAdditiveModifier(getName(), 25f);

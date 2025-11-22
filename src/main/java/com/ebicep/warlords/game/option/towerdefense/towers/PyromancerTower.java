@@ -165,7 +165,7 @@ public class PyromancerTower extends AbstractTower implements Upgradeable.Path2 
                                         );
                                     }
                                 })
-                        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (event, currentDamageValue) -> {
+                        ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                                     currentDamageValue.addMultiplicativeModifierMult("Pyromancer Tower Burn", 1.2f);
                                 }
                         ));

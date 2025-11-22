@@ -189,7 +189,7 @@ public class GameDebugCommand extends BaseCommand {
                                             cooldownManager -> {
                                             },
                                             false
-                                    ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                                    ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                                         currentDamageValue.addMultiplicativeModifierMult(getName(), 100);
                                             }
                                     ));

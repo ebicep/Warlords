@@ -54,7 +54,7 @@ public class PansTome extends SpecialDeltaTome implements CraftsInto {
 
                 },
                 false
-        ).addModifier(Modifier.DAMAGE_ON_DAMAGE_ATTACKER, (event, currentDamageValue, isCrit) -> {
+        ).addModifier(Modifier.ON_OUTGOING_DAMAGE, (event, currentDamageValue, isCrit) -> {
                     if (!event.getCause().isEmpty() || !(ThreadLocalRandom.current().nextDouble() <= .25) || event.getFlags().contains(InstanceFlags.RECURSIVE)) {
                         return;
                     }

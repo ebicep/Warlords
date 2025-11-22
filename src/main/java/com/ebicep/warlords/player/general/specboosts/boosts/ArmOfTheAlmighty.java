@@ -71,7 +71,7 @@ public class ArmOfTheAlmighty implements SpecBoostManager.SpecBoost<ArmOfTheAlmi
                     cooldownManager -> {
                     },
                     false
-            ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+            ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                         if (!(event.getAbility() instanceof AvengersStrike) || !warlordsPlayer.getCooldownManager().hasCooldown(AvengersWrath.AvengersWrathData.class)) {
                             return;
                         }

@@ -91,7 +91,7 @@ public class Triage extends AbstractAbility implements PurpleAbilityIcon, Listen
                 cooldownManager -> {
                 },
                 bonusHealingDurationTicks
-        ).addModifier(Modifier.HEALING_MODIFY_ATTACKER, (event, currentHealValue) -> {
+        ).addModifier(Modifier.MODIFY_OUTGOING_HEALING, (event, currentHealValue) -> {
                     if (event.getWarlordsEntity() == lastFlagCarrier) {
                         currentHealValue.addMultiplicativeModifierMult(
                                 name,

@@ -65,7 +65,7 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
                             CooldownTypes.MASTERY,
                             cm -> {},
                             false
-                    ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                    ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                                 if (event.getCause().equals("Judgement Strike")) {
                                     currentDamageValue.addAdditiveModifier("MAX HP DAMAGE (Death Strike)", DamageCheck.clamp(event.getWarlordsEntity().getMaxHealth() * 0.01f));
                                 }

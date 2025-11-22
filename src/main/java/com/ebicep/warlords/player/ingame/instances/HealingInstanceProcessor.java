@@ -208,13 +208,13 @@ public class HealingInstanceProcessor {
 
     private void applyOnHealModifiers(float cappedHealValue) {
         for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
-            abstractCooldown.applyModifiers(Modifier.HEALING_ON_HEAL_SELF,
+            abstractCooldown.applyModifiers(Modifier.ON_INCOMING_HEALING,
                     m -> m.apply(event, cappedHealValue, isCrit)
             );
         }
 
         for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
-            abstractCooldown.applyModifiers(Modifier.HEALING_ON_HEAL_ATTACKER,
+            abstractCooldown.applyModifiers(Modifier.ON_OUTGOING_HEALING,
                     m -> m.apply(event, cappedHealValue, isCrit)
             );
         }
@@ -427,13 +427,13 @@ public class HealingInstanceProcessor {
             toggleNegativeBoosts(InstanceFlags.PIERCE, true);
         }
         for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
-            abstractCooldown.applyModifiers(Modifier.HEALING_MODIFY_SELF, m -> m.apply(event, healValue));
+            abstractCooldown.applyModifiers(Modifier.MODIFY_INCOMING_HEALING, m -> m.apply(event, healValue));
         }
         if (pierce) { // ignore healing reduction
             toggleNegativeBoosts(InstanceFlags.PIERCE, false);
         }
         for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
-            abstractCooldown.applyModifiers(Modifier.HEALING_MODIFY_ATTACKER, m -> m.apply(event, healValue));
+            abstractCooldown.applyModifiers(Modifier.MODIFY_OUTGOING_HEALING, m -> m.apply(event, healValue));
         }
 
         healValue.refresh();

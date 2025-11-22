@@ -66,7 +66,7 @@ public class EcoDrive implements SpecBoostManager.SpecBoost<EcoDrive> {
                     cooldownManager -> {
                     },
                     false
-            ).addModifier(Modifier.HEALING_MODIFY_ATTACKER, (event, currentHealValue) -> {
+            ).addModifier(Modifier.MODIFY_OUTGOING_HEALING, (event, currentHealValue) -> {
                         if (event.getSource().equals(warlordsPlayer) && event.getCause().equals("Protector's Strike")) {
                             List<CustomInstanceFlags> customFlags = event.getCustomFlags();
                             for (CustomInstanceFlags customFlag : customFlags) {

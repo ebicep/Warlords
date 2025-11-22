@@ -304,7 +304,7 @@ public class EventMithra extends AbstractMob implements BossMob {
                         EffectUtils.displayParticle(Particle.ANGRY_VILLAGER, location, 1, 0, 0, 0, 0.1f);
                     }
                 }
-        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     currentDamageValue.addMultiplicativeModifierMult(name, 1.15f);
                 }
         ));

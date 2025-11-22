@@ -92,7 +92,7 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
                                     });
                     }
                 })
-        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     if (!event.getCause().equals(getStrikeName()) || event.getFlags().contains(InstanceFlags.STRIKE_IN_CONS)) {
                         return;
                     }

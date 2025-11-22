@@ -87,7 +87,7 @@ public class Haze extends AbstractAbility implements OrangeAbilityIcon, Damages<
                                             cooldownManager2 -> {
                                             },
                                             vulnerableTickDuration
-                                    ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (event, currentDamageValue) -> {
+                                    ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                                                 currentDamageValue.addMultiplicativeModifierMult("Vulernable", convertToMultiplicationDecimal(vulnerableDamageBonus));
                                             }
                                     ));
@@ -120,14 +120,14 @@ public class Haze extends AbstractAbility implements OrangeAbilityIcon, Damages<
                     }
                 })
         );
-        hazeCooldown.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+        hazeCooldown.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                     if (!data.vanished) {
                         return;
                     }
                     currentDamageValue.addMultiplicativeModifierMult(name, convertToDivisionDecimal(incomingDamageReduction));
                 }
         );
-        hazeCooldown.addModifier(Modifier.DAMAGE_ON_DAMAGE_ATTACKER, (event, currentDamageValue, isCrit) -> {
+        hazeCooldown.addModifier(Modifier.ON_OUTGOING_DAMAGE, (event, currentDamageValue, isCrit) -> {
                     if (event.getAbility() instanceof JudgementStrike || event.getCause().isEmpty()) {
                         hazeCooldown.setTicksLeft(0);
                     }

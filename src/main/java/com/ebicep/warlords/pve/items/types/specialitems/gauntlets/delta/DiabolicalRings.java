@@ -37,7 +37,7 @@ public class DiabolicalRings extends SpecialDeltaGauntlet implements AppliesToWa
 
                 },
                 false
-        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     if (!event.getWarlordsEntity().equals(warlordsPlayer) && ThreadLocalRandom.current().nextDouble() <= 0.1) {
                         currentDamageValue.addMultiplicativeModifierMult(getName(), 1.25f);
                     }

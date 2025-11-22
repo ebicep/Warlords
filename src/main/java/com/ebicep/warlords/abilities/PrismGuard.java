@@ -134,7 +134,7 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                                     cm -> {
                                     },
                                     tickDuration
-                            ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                            ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                                 currentDamageValue.addMultiplicativeModifierMult(
                                         name,
                                         convertToDivisionDecimal(damageReduction),
@@ -171,7 +171,7 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                                             CooldownTypes.LOW_LEVEL_DEBUFF,
                                             cooldownManager -> {},
                                             6
-                                    ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (event, currentDamageValue) -> {
+                                    ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                                                 currentDamageValue.addMultiplicativeModifierMult(name, 1.1f);
                                             }
                                     ));
@@ -194,7 +194,7 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                                     cooldownManager -> {
                                     },
                                     4
-                            ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                            ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                                         if (Utils.isProjectile(event.getCause())) {
                                             if (!isInsideBubble.contains(event.getSource())) {
                                                 stats.timesProjectilesReduced++;
@@ -246,7 +246,7 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                 };
             }
         };
-        prismGuardCooldown.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+        prismGuardCooldown.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                     int totalReduction = damageReductionActive;
                     data.hitsTaken++;
                     if (Utils.isProjectile(event.getCause())) {

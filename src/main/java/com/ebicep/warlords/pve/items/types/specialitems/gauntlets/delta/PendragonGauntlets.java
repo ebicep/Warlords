@@ -37,7 +37,7 @@ public class PendragonGauntlets extends SpecialDeltaGauntlet implements AppliesT
 
                 },
                 false
-        ).addModifier(Modifier.DAMAGE_ON_DAMAGE_ATTACKER, (event, currentDamageValue, isCrit) -> {
+        ).addModifier(Modifier.ON_OUTGOING_DAMAGE, (event, currentDamageValue, isCrit) -> {
                     if (event.getCause().isEmpty()) {
                         hits[0]++;
                         if (hits[0] == 5) {

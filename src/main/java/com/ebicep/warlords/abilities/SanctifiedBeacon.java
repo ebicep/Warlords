@@ -138,7 +138,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
                             // a little longer to make sure there's no gaps in the effect
                             6
                     );
-                    shadowGardenCooldown.addModifier(Modifier.DAMAGE_CRIT_MULTIPLIER_ATTACKER, (event, currentCritMultiplier) -> {
+                    shadowGardenCooldown.addModifier(Modifier.MODIFY_OUTGOING_CRIT_MULTIPLIER, (event, currentCritMultiplier) -> {
                                 currentCritMultiplier.addAdditiveModifier("Shadow Garden", 30);
                             }
                     );
@@ -157,13 +157,13 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
                             CooldownTypes.ABILITY,
                             cooldownManager -> {},
                             6 // a little longer to make sure there's no gaps in the effect
-                    ).addModifier(Modifier.DAMAGE_POST_CRIT_CALCULATION_ATTACKER, (event, currentDamageValue, isCrit, critChance, critMultiplier) -> {
+                    ).addModifier(Modifier.MODIFY_OUTGOING_CRIT_MULTIPLIER_POST_CALC, (event, currentDamageValue, isCrit, critChance, critMultiplier) -> {
                         crit[0] = isCrit;
                         if (isCrit) {
                             stats.critsReduced++;
                         }
                             }
-                    ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                    ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                                 if (crit[0]) { // TODO unscuff
                                     currentDamageValue.addMultiplicativeModifierAdd(
                                             name,
@@ -196,7 +196,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
                                       CooldownTypes.ABILITY,
                                       cooldownManager -> {},
                                       false
-                              ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                              ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                                           currentDamageValue.addMultiplicativeModifierMult(name, 0.7f);
                                       }
                               ));

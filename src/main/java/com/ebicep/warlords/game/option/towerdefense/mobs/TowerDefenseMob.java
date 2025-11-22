@@ -137,7 +137,7 @@ public abstract class TowerDefenseMob extends AbstractMob {
                     physicalResistance.tick();
                     magicResistance.tick();
                 }
-        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     EnumSet<InstanceFlags> flags = event.getFlags();
                     List<CustomInstanceFlags> customFlags = event.getCustomFlags();
                     for (CustomInstanceFlags customFlag : customFlags) {

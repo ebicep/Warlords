@@ -145,7 +145,7 @@ public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<
                                     },
                                     5 * 20
                             );
-                            deathParadeCooldown.addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+                            deathParadeCooldown.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                                         currentDamageValue.addMultiplicativeModifierMult(name, finalDamageReduction);
                                     }
                             );
@@ -214,7 +214,7 @@ public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<
                     }
                 })
         );
-        spiritsRespiteCooldown.addModifier(Modifier.DAMAGE_ON_DAMAGE_SELF, (event, currentDamageValue, isCrit) -> {
+        spiritsRespiteCooldown.addModifier(Modifier.ON_INCOMING_DAMAGE, (event, currentDamageValue, isCrit) -> {
                     data.delayedDamage += currentDamageValue;
                 }
         );

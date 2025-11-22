@@ -74,7 +74,7 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, H
                       cooldownManager -> {
                       },
                       2 * 20
-              ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+              ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                           currentDamageValue.addMultiplicativeModifierMult(name, 0.2f);
                       }
               ));
@@ -175,7 +175,7 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, H
                                     cooldownManager -> {
                                     },
                                     getStunTimeInTicks()
-                            ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (event, currentDamageValue) -> {
+                            ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                                         if (event.getCause().contains("Strike")) {
                                             currentDamageValue.addMultiplicativeModifierMult("Reckless Rampage", 1.25f);
                                         }
@@ -194,7 +194,7 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, H
                                 cooldownManager -> {
                                 },
                                 8 * 20
-                        ).addModifier(Modifier.HEALING_MODIFY_SELF, (event, currentHealValue) -> {
+                        ).addModifier(Modifier.MODIFY_INCOMING_HEALING, (event, currentHealValue) -> {
                                     currentHealValue.addMultiplicativeModifierMult(name, 1.5f);
                                 }
                         ));

@@ -167,7 +167,7 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
                 }),
                 teammatesNear
         );
-        remedicChainsCooldown.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+        remedicChainsCooldown.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     currentDamageValue.addAdditiveModifier(name, damageValues.getBonusDamage().getValue());
                     currentDamageValue.addMultiplicativeModifierMult(name, pveMasterUpgrade2 ? 1.15f : 1);
                 }

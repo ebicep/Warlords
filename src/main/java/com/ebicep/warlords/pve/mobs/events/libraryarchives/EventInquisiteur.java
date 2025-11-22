@@ -171,7 +171,7 @@ public abstract class EventInquisiteur extends AbstractMob implements BossMob {
                 cooldownManager -> {
                 },
                 false
-        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_SELF, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     currentDamageValue.addMultiplicativeModifierMult("Killing Blow", (1 - damageResistance.get() / 100f));
                 }
         ));

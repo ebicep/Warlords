@@ -138,7 +138,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
                 cooldownManager -> {
                 },
                 false
-        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     if (warlordsNPC.getEntity().isInsideVehicle()) {
                         currentDamageValue.addMultiplicativeModifierMult(name, 0.6f);
                     }
