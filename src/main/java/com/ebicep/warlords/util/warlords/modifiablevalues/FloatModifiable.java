@@ -364,11 +364,11 @@ public class FloatModifiable {
             components.addAll(getDebugInfo(additiveModifiers));
         }
         if (!multiplicativeModifiersAdditive.isEmpty()) {
-            components.add(getDebugInfo("Additive Multiplier", base.getCachedMultiplicativeModifierAdditive()));
+            components.add(getDebugInfo("Additive Multiplier", base.getCachedMultiplicativeModifierAdditive(), "x"));
             components.addAll(getDebugInfo(multiplicativeModifiersAdditive));
         }
         if (!multiplicativeModifiersMultiplicative.isEmpty()) {
-            components.add(getDebugInfo("Multiplicative Multiplier", base.getCachedMultiplicativeModifierMultiplicative()));
+            components.add(getDebugInfo("Multiplicative Multiplier", base.getCachedMultiplicativeModifierMultiplicative(), "x"));
             components.addAll(getDebugInfo(multiplicativeModifiersMultiplicative));
         }
         return components;
@@ -379,28 +379,33 @@ public class FloatModifiable {
     }
 
     private Component getDebugInfo(String name, float value) {
-        return ComponentBuilder.create()
-                               .text(name, NamedTextColor.DARK_GREEN)
-                               .text(": ", NamedTextColor.GRAY)
-                               .text(NumberFormat.formatOptionalHundredths(value), NamedTextColor.GOLD)
-                               .build();
+        return getDebugInfo(name, value, "");
     }
 
     private List<Component> getDebugInfo(List<FloatModifier> modifiers) {
         Map<String, Float> contributions = marginalContributions.getOrDefault("Base", Collections.emptyMap());
         List<Component> result = new ArrayList<>(modifiers.size());
         for (FloatModifier floatModifier : modifiers) {
+            String value = NumberFormat.formatOptionalHundredths(contributions.getOrDefault(floatModifier.getLog(), 0f));
             result.add(ComponentBuilder
                     .create()
                     .text(" - ", NamedTextColor.WHITE)
                     .append(floatModifier.getDebugInfo())
                     .text(" (", NamedTextColor.GRAY)
-                    .text(NumberFormat.formatOptionalHundredths(contributions.getOrDefault(floatModifier.getLog(), 0f)), NamedTextColor.GOLD)
+                    .text(value, NamedTextColor.GOLD)
                     .text(")", NamedTextColor.GRAY)
                     .build()
             );
         }
         return result;
+    }
+
+    private Component getDebugInfo(String name, float value, String valueSuffix) {
+        return ComponentBuilder.create()
+                               .text(name, NamedTextColor.DARK_GREEN)
+                               .text(": ", NamedTextColor.GRAY)
+                               .text(NumberFormat.formatOptionalHundredths(value) + valueSuffix, NamedTextColor.GOLD)
+                               .build();
     }
 
     public void clearModifiers() {
