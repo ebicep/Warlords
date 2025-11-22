@@ -117,11 +117,9 @@ public class PrestigeVendorTrait extends WarlordsTrait {
     public void rightClick(NPCRightClickEvent event) {
         Player player = event.getClicker();
         UUID uuid = player.getUniqueId();
-        DatabaseManager.getPlayer(uuid, databasePlayer -> {
-            DatabaseManager.getPlayer(uuid, PlayersCollections.WEEKLY, databasePlayerWeekly -> {
-                openPrestigeVendor(player, databasePlayer, databasePlayerWeekly);
-            });
-        });
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid);
+        DatabasePlayer databasePlayerWeekly = DatabaseManager.getPlayer(uuid, PlayersCollections.WEEKLY);
+        openPrestigeVendor(player, databasePlayer, databasePlayerWeekly);
     }
 
     public PrestigeVendorTrait() {

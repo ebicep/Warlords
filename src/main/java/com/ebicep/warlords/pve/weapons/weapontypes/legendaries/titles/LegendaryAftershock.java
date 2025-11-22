@@ -8,6 +8,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCounter;
@@ -86,29 +87,27 @@ public class LegendaryAftershock extends AbstractLegendaryWeapon {
                 CooldownTypes.WEAPON,
                 cm -> {},
                 false
-        ) {
-            @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                float targetMax = event.getWarlordsEntity().getMaxHealth();
-                if (targetMax <= 0) {
-                    return currentDamageValue;
-                }
-                float threshold = targetMax * (getThresholdPercent() / 100f);
-                if (currentDamageValue < threshold) {
-                    return currentDamageValue;
-                }
+        ).addModifier(
+                Modifier.ON_OUTGOING_DAMAGE,
+                (event, currentDamageValue, isCrit) -> {
+                    float targetMax = event.getWarlordsEntity().getMaxHealth();
+                    if (targetMax <= 0) {
+                        return;
+                    }
+                    float threshold = targetMax * (getThresholdPercent() / 100f);
+                    if (currentDamageValue < threshold) {
+                        return;
+                    }
 
-                Location center = event.getWarlordsEntity().getLocation();
-                if (center.getWorld() == null) {
-                    return currentDamageValue;
-                }
+                    Location center = event.getWarlordsEntity().getLocation();
+                    if (center.getWorld() == null) {
+                        return;
+                    }
 
-                float totalZoneDamage = currentDamageValue * (getZoneDamagePercent() / 100f);
-                spawnAftershockZone(player, center.clone(), totalZoneDamage);
-
-                return currentDamageValue;
-            }
-        });
+                    float totalZoneDamage = currentDamageValue * (getZoneDamagePercent() / 100f);
+                    spawnAftershockZone(player, center.clone(), totalZoneDamage);
+                })
+        );
     }
 
     private void spawnAftershockZone(WarlordsPlayer owner, Location center, float totalDamage) {

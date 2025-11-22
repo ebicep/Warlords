@@ -11,6 +11,7 @@ import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.SpendableBuyShop;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.MobDrop;
+import com.ebicep.warlords.pve.weapons.menu.WeaponCraftMenu;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.java.DateUtil;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
@@ -143,10 +144,8 @@ public class TreasureHuntVendorTrait extends WarlordsTrait {
     public void rightClick(NPCRightClickEvent event) {
         Player player = event.getClicker();
         UUID uuid = player.getUniqueId();
-        DatabaseManager.getPlayer(uuid, databasePlayer -> {
-            DatabaseManager.getPlayer(uuid, PlayersCollections.WEEKLY, databasePlayerWeekly -> {
-                openTreasureHuntVendor(player, databasePlayer, databasePlayerWeekly);
-            });
-        });
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid);
+        DatabasePlayer databasePlayerWeekly = DatabaseManager.getPlayer(uuid, PlayersCollections.WEEKLY);
+        openTreasureHuntVendor(player, databasePlayer, databasePlayerWeekly);
     }
 }
