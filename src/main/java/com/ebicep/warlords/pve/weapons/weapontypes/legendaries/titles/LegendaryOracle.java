@@ -119,12 +119,12 @@ public class LegendaryOracle extends AbstractLegendaryWeapon implements PassiveC
                 CooldownTypes.WEAPON,
                 cm -> {},
                 false
-        ).addModifier(Modifier.DAMAGE_AFTER_INTERVENE_SELF, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                     if (currentDamageValue.getCalculatedValue() > 0) {
                         lastDamagedAt = Instant.now();
                     }
                 }
-        ).addModifier(Modifier.DAMAGE_ON_DAMAGE_ATTACKER, (event, currentDamageValue, isCrit) -> {
+        ).addModifier(Modifier.ON_OUTGOING_DAMAGE, (event, currentDamageValue, isCrit) -> {
                     if (clarity <= 0) {
                         return;
                     }
