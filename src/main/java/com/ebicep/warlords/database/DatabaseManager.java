@@ -68,16 +68,16 @@ public class DatabaseManager {
     public static volatile boolean enabled = true;
 
     public static void init() {
-        if (!enabled) {
-            NPCManager.createGameJoinNPCs();
-            return;
+        if (ApplicationConfiguration.key == null) {
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage("Database key is null, disabling database");
+            enabled = false;
         }
         if (!StatsLeaderboardManager.enabled) {
             NPCManager.createGameJoinNPCs();
         }
-        if (ApplicationConfiguration.key == null) {
-            ChatUtils.MessageType.WARLORDS.sendErrorMessage("Database key is null, disabling database");
-            enabled = false;
+        if (!enabled) {
+            ConfigManager.loadConfigsFromFolder();
+            NPCManager.createGameJoinNPCs();
             return;
         }
 
@@ -86,6 +86,7 @@ public class DatabaseManager {
         AbstractApplicationContext context = new AnnotationConfigApplicationContext(ApplicationConfiguration.class);
 
         try {
+            ConfigManager.loadConfigs(warlordsDatabase);
             playerService = context.getBean("playerService", PlayerService.class);
             gameService = context.getBean("gameService", GameService.class);
             timingsService = context.getBean("timingsService", TimingsService.class);
@@ -94,7 +95,6 @@ public class DatabaseManager {
             gameEventsService = context.getBean("gameEventsService", GameEventsService.class);
             weeklyBlessingsService = context.getBean("itemsWeeklyBlessingsService", WeeklyBlessingsService.class);
             illusionVendorService = context.getBean("illusionVendorService", IllusionVendorService.class);
-            ConfigManager.loadConfigs(warlordsDatabase);
         } catch (Exception e) {
             ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
             enabled = false;
@@ -107,7 +107,6 @@ public class DatabaseManager {
         if (!StatsLeaderboardManager.enabled) {
             DatabaseGameEvent.startGameEvent();
         }
-
 
         ChatUtils.MessageType.GUILD_SERVICE.sendMessage("Storing all guilds");
         long guildStart = System.nanoTime();
@@ -280,7 +279,7 @@ public class DatabaseManager {
     }
 
     public static void updateGameAsync(DatabaseGameBase databaseGame) {
-        if (playerService == null || !enabled) {
+        if (!enabled) {
             return;
         }
         Warlords.newChain().async(() -> gameService.save(databaseGame, GamesCollections.ALL)).execute();

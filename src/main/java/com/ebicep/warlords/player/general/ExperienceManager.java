@@ -83,7 +83,7 @@ public class ExperienceManager {
     }
 
     public static void awardWeeklyExperience(Document weeklyDocument) {
-        if (DatabaseManager.playerService == null) {
+        if (!DatabaseManager.enabled) {
             ChatUtils.MessageType.PLAYER_SERVICE.sendErrorMessage("WARNING - Could not give weekly experience bonus - playerService is null");
             return;
         }

@@ -1,12 +1,19 @@
 package com.ebicep.warlords.database.repositories.config;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ConfigManager {
 
@@ -28,17 +35,44 @@ public class ConfigManager {
         try (MongoCursor<Document> cursor = collection.find().iterator()) {
             while (cursor.hasNext()) {
                 Document doc = cursor.next();
-                String type = doc.getString("type");
-                for (Config value : CONFIGS) {
-                    if (value.getName().equalsIgnoreCase(type)) {
-                        value.load(doc.get("data", Document.class));
-                        ChatUtils.MessageType.CONFIG.sendMessage("Loaded config: " + type);
-                        break;
-                    }
-                }
+                loadConfig(doc);
             }
         }
         ChatUtils.MessageType.CONFIG.sendMessage("Finished loading config from database.");
+    }
+
+    private static void loadConfig(Document doc) {
+        String type = doc.getString("type");
+        for (Config value : CONFIGS) {
+            if (value.getName().equalsIgnoreCase(type)) {
+                value.load(doc.get("data", Document.class));
+                ChatUtils.MessageType.CONFIG.sendMessage("Loaded config: " + type);
+                break;
+            }
+        }
+    }
+
+    public static void loadConfigsFromFolder() {
+        Path dirPath = Paths.get(Warlords.getInstance().getDataFolder().toString(), "config");
+        if (!Files.isDirectory(dirPath)) {
+            ChatUtils.MessageType.CONFIG.sendErrorMessage("Config folder does not exist: " + dirPath);
+            return;
+        }
+        try (Stream<Path> paths = Files.list(dirPath)) {
+            paths.filter(Files::isRegularFile)
+                 .filter(p -> p.toString().toLowerCase().endsWith(".json"))
+                 .forEach(path -> {
+                     try (Stream<String> lines = Files.lines(path)) {
+                         String jsonString = lines.collect(Collectors.joining(System.lineSeparator()));
+                         Document bsonDocument = Document.parse(jsonString);
+                         loadConfig(bsonDocument);
+                     } catch (IOException e) {
+                         ChatUtils.MessageType.CONFIG.sendErrorMessage(e);
+                     }
+                 });
+        } catch (IOException e) {
+            ChatUtils.MessageType.CONFIG.sendErrorMessage(e);
+        }
     }
 
     public static <T> T getAbilityConfigValue(List<String> namespaces, String key, Class<T> fieldType) {

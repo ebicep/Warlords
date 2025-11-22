@@ -253,9 +253,6 @@ public class PlayingState implements State, TimerDebugAble {
             //pubs or pve
             else if (players.size() >= game.getMap().getMinPlayers()) {
                 ChatUtils.MessageType.GAME_DEBUG.sendMessage("Adding pub/pve game");
-                if (DatabaseManager.playerService == null) {
-                    return;
-                }
                 gameAdded.set(DatabaseGameBase.addGame(game, winEvent, true));
                 ChatUtils.MessageType.GAME_DEBUG.sendMessage("Done adding pub/pve game");
                 if (!com.ebicep.warlords.game.GameMode.isPvE(game.getGameMode())) {

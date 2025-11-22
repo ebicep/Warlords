@@ -46,7 +46,11 @@ public class DatabaseCommand extends BaseCommand {
     @Subcommand("reloadconfig")
     public void reloadConfig(CommandIssuer issuer) {
         try {
-            ConfigManager.loadConfigs(DatabaseManager.warlordsDatabase);
+            if (DatabaseManager.enabled) {
+                ConfigManager.loadConfigs(DatabaseManager.warlordsDatabase);
+            } else {
+                ConfigManager.loadConfigsFromFolder();
+            }
             ChatChannels.sendDebugMessage(issuer, "Reloaded database config");
         } catch (Exception e) {
             ChatChannels.sendDebugMessage(issuer, "Failed to reload database config: " + e.getMessage());

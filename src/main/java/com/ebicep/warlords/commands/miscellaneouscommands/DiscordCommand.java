@@ -29,7 +29,7 @@ public class DiscordCommand extends BaseCommand {
     @Subcommand("link")
     @Description("Links your discord account to your minecraft account")
     public void link(Player player) {
-        if (DatabaseManager.playerService == null) {
+        if (!DatabaseManager.enabled) {
             player.sendMessage(Component.text("Try again later.", NamedTextColor.RED));
             return;
         }
@@ -92,7 +92,7 @@ public class DiscordCommand extends BaseCommand {
     @Subcommand("info")
     @Description("Shows information about your linked discord account")
     public void info(Player player) {
-        if (DatabaseManager.playerService == null) {
+        if (!DatabaseManager.enabled) {
             player.sendMessage(Component.text("Try again later.", NamedTextColor.RED));
             return;
         }
