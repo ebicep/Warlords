@@ -190,7 +190,7 @@ public class ChainHeal extends AbstractChain<ChainHeal, ChainHeal.ChainHealStats
                 if (event.getCause().isEmpty() || event.getCause().equals("Time Warp")) {
                     return currentCritMultiplier;
                 }
-                return currentCritMultiplier + 20;
+                return currentCritMultiplier + 25;
             }
         });
     }

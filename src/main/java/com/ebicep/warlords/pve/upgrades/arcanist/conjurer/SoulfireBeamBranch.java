@@ -50,13 +50,15 @@ public class SoulfireBeamBranch extends AbstractUpgradeBranch<SoulfireBeam> {
                 """
                         +1 Additional Block Radius
                         +15 Block range
+                        -20 Energy Cost
                         
-                        Soulfire Beam fires two additional beams.
+                        Soulfire Beam fires two additional beams and hit targets receive 1 stack of PHEX.
                         """,
                 50000,
                 () -> {
                     ability.getHitBoxRadius().addAdditiveModifier("Master Upgrade Branch", 1);
                     ability.getMaxDistance().addAdditiveModifier("Master Upgrade Branch", 15);
+                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -20);
                     ability.setShotsFiredAtATime(3);
                 }
         );

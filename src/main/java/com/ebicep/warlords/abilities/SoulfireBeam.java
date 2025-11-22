@@ -125,6 +125,9 @@ public class SoulfireBeam extends AbstractBeam<SoulfireBeam, SoulfireBeam.Soulfi
         if (projectile.getHit().contains(hit)) {
             return;
         }
+        if (pveMasterUpgrade2) {
+            PoisonousHex.givePoisonousHex(wp, hit);
+        }
         getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
         int hexStacks = (int) new CooldownFilter<>(hit, RegularCooldown.class)
                 .filterCooldownClass(PoisonousHex.class)

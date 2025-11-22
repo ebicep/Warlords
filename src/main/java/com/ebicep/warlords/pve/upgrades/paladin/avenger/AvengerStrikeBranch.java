@@ -97,7 +97,6 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
                 "Avenger's Strike - Master Upgrade",
                 """
                         +1 Block Radius.
-                        +30 additional energy cost.
                         
                         Strike damage is increased by 50%, and crit chance is increased by 15%.
                         
@@ -105,7 +104,6 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
                         """,
                 50000,
                 () -> {
-                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", 30);
                     ability.getHitBoxRadius().addAdditiveModifier("Master Upgrade Branch", 1);
                     ability.getDamageValues().getStrikeDamage().critChance().addAdditiveModifier("Master Upgrade Branch", 15);
                     MotionSystem calculateSpeed = warlordsPlayer.getSpeed();

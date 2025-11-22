@@ -59,7 +59,6 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
         EffectUtils.playCircularShieldAnimation(wp.getLocation(), Particle.SOUL, 8, 3, 1);
         EffectUtils.playCircularEffectAround(wp.getGame(), wp.getLocation(), Particle.FLAME, 1, 1, 0.25, 1, 1, 2);
         List<FloatModifiable.FloatModifier> modifiers;
-        hexDamageIncrease = pveMasterUpgrade ? 9 : 5;
 
         wp.getCooldownManager().removeCooldown(AstralPlague.class, false);
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
@@ -129,7 +128,7 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
                         if (pveMasterUpgrade2 && event.getCause().equals("Soulfire Beam") && event.getInstanceFlags().contains(InstanceFlags.FIRST_HIT)) {
 
                             for (SoulfireBeam soulfireBeam : wp.getAbilitiesMatching(SoulfireBeam.class)) {
-                                soulfireBeam.subtractCurrentCooldown(soulfireBeam.getCurrentCooldown() * 0.5f);
+                                soulfireBeam.subtractCurrentCooldown(soulfireBeam.getCurrentCooldown() * 0.6f);
                             }
                         }
                         WarlordsEntity target = event.getWarlordsEntity();
@@ -150,6 +149,14 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
                         }
                     }
                 };
+            }
+
+            @Override
+            public float addCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
+                if (pveMasterUpgrade) {
+                    return currentCritMultiplier + 45;
+                }
+                return currentCritMultiplier;
             }
 
             @Override
