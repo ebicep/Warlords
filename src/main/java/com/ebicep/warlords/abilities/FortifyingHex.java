@@ -255,7 +255,7 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
                 cooldown.addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     currentDamageValue.addMultiplicativeModifierMult("Weakening Hex", 1 + 0.05f * cooldown.getCurrentStacks());
                 });
-                wp.getCooldownManager().addCooldown(cooldown);
+                hit.getCooldownManager().addCooldown(cooldown);
             }
         }
         stats.addPlayersHit();
