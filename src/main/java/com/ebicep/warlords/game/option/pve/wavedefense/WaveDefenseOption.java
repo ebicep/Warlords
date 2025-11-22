@@ -146,7 +146,7 @@ public class WaveDefenseOption implements PveOption {
                 if (we instanceof WarlordsNPC) {
                     AbstractMob mobToRemove = ((WarlordsNPC) we).getMob();
                     if (mobs.containsKey(mobToRemove)) {
-                        mobToRemove.onDeath(killer, we.getDeathLocation(), WaveDefenseOption.this);
+                        mobToRemove.onDeath(killer, we.getLocation(), WaveDefenseOption.this);
                         new GameRunnable(game) {
                             @Override
                             public void run() {
