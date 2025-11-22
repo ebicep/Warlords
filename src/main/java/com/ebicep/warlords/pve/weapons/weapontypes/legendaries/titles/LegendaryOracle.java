@@ -5,6 +5,8 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
@@ -49,7 +51,7 @@ public class LegendaryOracle extends AbstractLegendaryWeapon implements PassiveC
     public TextComponent getPassiveEffect() {
         return Component.text("Each second you avoid damage, gain 1 Clarity (max ", NamedTextColor.GRAY)
                         .append(formatTitleUpgrade(getMaxClarity()))
-                        .append(Component.text("). On your next hit, consume all Clarity to heal " + HEAL_PER_STACK_PERCENT + "% max health", NamedTextColor.GRAY))
+                        .append(Component.text("). On your next ability hit, consume all Clarity to heal " + HEAL_PER_STACK_PERCENT + "% max health", NamedTextColor.GRAY))
                         .append(Component.text(" per stack and reduce active ability cooldowns by ", NamedTextColor.GRAY))
                         .append(formatTitleUpgrade(getCdrPerStackSeconds(), "s"))
                         .append(Component.text(" per stack.", NamedTextColor.GRAY));
@@ -119,12 +121,22 @@ public class LegendaryOracle extends AbstractLegendaryWeapon implements PassiveC
                 CooldownTypes.WEAPON,
                 cm -> {},
                 false
-        ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
+        ).addModifier(
+                Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE,
+                (event, currentDamageValue) -> {
                     if (currentDamageValue.getCalculatedValue() > 0) {
                         lastDamagedAt = Instant.now();
                     }
                 }
-        ).addModifier(Modifier.ON_OUTGOING_DAMAGE, (event, currentDamageValue, isCrit) -> {
+        ).addModifier(
+                Modifier.ON_OUTGOING_DAMAGE,
+                (event, currentDamageValue, isCrit) -> {
+                    if (event.getFlags().contains(InstanceFlags.REFLECTIVE_DAMAGE) || event.getFlags().contains(InstanceFlags.RECURSIVE)) {
+                        return;
+                    }
+                    if (event.getCause().isEmpty()) {
+                        return;
+                    }
                     if (clarity <= 0) {
                         return;
                     }
@@ -132,7 +144,7 @@ public class LegendaryOracle extends AbstractLegendaryWeapon implements PassiveC
                     clarity = 0;
 
                     float heal = player.getMaxHealth() * (HEAL_PER_STACK_PERCENT / 100f) * stacks;
-                    player.addInstance(com.ebicep.warlords.player.ingame.instances.InstanceBuilder
+                    player.addInstance(InstanceBuilder
                             .healing()
                             .cause("Oracle")
                             .source(player)
