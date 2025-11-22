@@ -291,7 +291,7 @@ public class DamageInstanceProcessor {
     }
 
     private void applySpecDamageResistance() {
-        FloatModifiable.FloatModifier modifier = damageValue.addMultiplicativeModifierAdd("Spec Damage Resistance", -warlordsEntity.getSpec().getDamageResistance() / 100f);
+        FloatModifiable.FloatModifier modifier = damageValue.addMultiplicativeModifierMult("Spec Damage Resistance", -warlordsEntity.getSpec().getDamageResistance() / 100f);
         if (flags.contains(InstanceFlags.IGNORE_SELF_RES)) {
             modifier.addDisabledReason(InstanceFlags.IGNORE_SELF_RES.name());
         }
