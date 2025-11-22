@@ -510,7 +510,7 @@ public abstract class WarlordsEntity {
     }
 
     public boolean isShowDebugMessages() {
-        return getDatabasePlayer().getAdvancedHoverMessages() == AdvancedHoverMessages.OFF;
+        return getDatabasePlayer().getAdvancedHoverMessages() == AdvancedHoverMessages.ON;
     }
 
     public void setName(String name) {
