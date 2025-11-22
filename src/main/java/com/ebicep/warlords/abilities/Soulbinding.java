@@ -4,11 +4,11 @@ import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.spiritguard.SoulbindingWeaponBranch;
@@ -106,7 +106,7 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
         Utils.playGlobalSound(wp.getLocation(), "paladin.consecrate.activation", 2, 2);
         wp.getCooldownManager().limitCooldowns(PersistentCooldown.class, Soulbinding.SoulbindingData.class, wp.isInPve() ? 2 : maxStacks);
         SoulbindingData data = new SoulbindingData(this);
-        wp.getCooldownManager().addCooldown(new PersistentCooldown<>(
+        PersistentCooldown<SoulbindingData> soulBindingCooldown = new PersistentCooldown<>(
                 name,
                 "SOUL",
                 SoulbindingData.class,
@@ -116,7 +116,7 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
                 cooldownManager -> {
                 },
                 cooldownManager -> {
-                    if (new CooldownFilter<>(cooldownManager, PersistentCooldown.class).filterCooldownClass(Soulbinding.SoulbindingData.class).stream().count() == 1) {
+                    if (new CooldownFilter<>(cooldownManager, PersistentCooldown.class).filterCooldownClass(SoulbindingData.class).stream().count() == 1) {
                         if (wp.getEntity() instanceof Player) {
                             ItemStack item = ((Player) wp.getEntity()).getInventory().getItem(0);
                             if (item != null) {
@@ -141,27 +141,26 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
                         .removeIf(soulBoundPlayer -> soulBoundPlayer.getTimeLeft() == 0 || (soulBoundPlayer.isHitWithSoul() && soulBoundPlayer.isHitWithLink()));
                 })
         ) {
-
-            @Override
-            public void damageDoBeforeVariableSetFromAttacker(WarlordsDamageHealingEvent event) {
-                WarlordsEntity wpAttacker = event.getSource();
-                WarlordsEntity wpVictim = event.getWarlordsEntity();
-                if (!event.getCause().isEmpty() || wpAttacker == wpVictim) {
-                    return;
-                }
-                if (!hasTicksLeft()) {
-                    return;
-                }
-                data.bindPlayer(wpAttacker, wpVictim);
-            }
-
             @Override
             public PlayerNameData addSuffixFromSelf() {
                 return new PlayerNameData(Component.text("BOUND", NamedTextColor.LIGHT_PURPLE),
                         we -> data.getSoulBindedPlayers().stream().anyMatch(soulBoundPlayer -> soulBoundPlayer.getBoundPlayer() == we)
                 );
             }
-        });
+        };
+        soulBindingCooldown.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_VARIABLE_SET, event -> {
+                    WarlordsEntity wpAttacker = event.getSource();
+                    WarlordsEntity wpVictim = event.getWarlordsEntity();
+                    if (!event.getCause().isEmpty() || wpAttacker == wpVictim) {
+                        return;
+                    }
+                    if (!soulBindingCooldown.hasTicksLeft()) {
+                        return;
+                    }
+                    data.bindPlayer(wpAttacker, wpVictim);
+                }
+        );
+        wp.getCooldownManager().addCooldown(soulBindingCooldown);
         if (wp.getEntity() instanceof Player player) {
             ItemStack item = player.getInventory().getItem(0);
             if (item != null) {
@@ -195,6 +194,10 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
 
     public int getKbRes() {
         return kbRes;
+    }
+
+    public void setKbRes(int kbRes) {
+        this.kbRes = kbRes;
     }
 
     public void addPlayersBinded() {
@@ -255,10 +258,6 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
 
     public void setMaxAlliesHit(int maxAlliesHit) {
         this.maxAlliesHit = maxAlliesHit;
-    }
-
-    public void setKbRes(int kbRes) {
-        this.kbRes = kbRes;
     }
 
     public static class SoulbindingData {

@@ -8,8 +8,6 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.menu.generalmenu.WarlordsShopMenu;
 import com.ebicep.warlords.player.general.Classes;
-import com.ebicep.warlords.player.general.PlayerSettings;
-import com.ebicep.warlords.player.general.SkillBoosts;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
@@ -83,7 +81,6 @@ public class SwapSpecOption implements Option {
                 }
                 try {
                     List<Float> oldCooldowns = warlordsEntity.getAbilities().stream().map(ability -> ability.anyCharges() ? 0 : ability.getCurrentCooldown()).toList();
-                    SkillBoosts skillBoost = PlayerSettings.getPlayerSettings(warlordsEntity.getUuid()).getSkillBoostForSpec(swappedSpec);
                     warlordsEntity.setSpec(swappedSpec);
                     for (int i = 0; i < warlordsEntity.getAbilities().size(); i++) {
                         AbstractAbility ability = warlordsEntity.getAbilities().get(i);
@@ -107,12 +104,16 @@ public class SwapSpecOption implements Option {
         player.getInventory().setItem(22, new ItemBuilder(Material.BOOK)
                 .name(Component.text("Swap Specialization", NamedTextColor.GOLD))
                 .addLore(WordWrap.wrap(Component.text("Click any spec to switch to that spec when you respawn. " +
-                        "There can only be one type of each spec and at most 2 DPS/TANK/HEALER on the team at one time.", NamedTextColor.GRAY), 150))
+                                "There can only be one type of each spec and at most 2 DPS/TANK/HEALER on the team at one time.", NamedTextColor.GRAY
+                        ), 150
+                ))
                 .addLore(Component.empty())
                 .addLore(WordWrap.wrap(Component.text("The cooldowns of your abilities after you swap specs will match the cooldowns of your current abilities.",
-                        NamedTextColor.GRAY
-                ), 150))
-                .get());
+                                NamedTextColor.GRAY
+                        ), 150
+                ))
+                .get()
+        );
     }
 
     private void openSpecMenu(WarlordsEntity warlordsEntity) {
@@ -125,12 +126,16 @@ public class SwapSpecOption implements Option {
                 .name(Component.text("Swap Specialization", NamedTextColor.GOLD))
                 .lore(Component.empty())
                 .addLore(WordWrap.wrap(Component.text("Click any spec to switch to that spec when you respawn. " +
-                        "There can only be one type of each spec and at most 2 DPS/TANK/HEALER on the team at one time.", NamedTextColor.GRAY), 150))
+                                "There can only be one type of each spec and at most 2 DPS/TANK/HEALER on the team at one time.", NamedTextColor.GRAY
+                        ), 150
+                ))
                 .addLore(Component.empty())
                 .addLore(WordWrap.wrap(Component.text("The cooldowns of your abilities after you swap specs will match the cooldowns of your current abilities.",
-                        NamedTextColor.GRAY
-                ), 150))
-                .get());
+                                NamedTextColor.GRAY
+                        ), 150
+                ))
+                .get()
+        );
 
 
         for (int i = 0; i < Classes.VALUES.length; i++) {
@@ -158,9 +163,10 @@ public class SwapSpecOption implements Option {
                         if (specChangeResult == SpecChangeResult.CAN_CHANGE) {
                             swappedSpecs.put(warlordsEntity, spec);
                             WarlordsShopMenu.openSkillBoostMenu(player, spec, m2 -> {
-                                m2.setItem(3, 5, Menu.MENU_BACK, (m3, e3) -> openSpecMenu(warlordsEntity));
-                                m2.setItem(4, 5, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU);
-                            });
+                                        m2.setItem(3, 5, Menu.MENU_BACK, (m3, e3) -> openSpecMenu(warlordsEntity));
+                                        m2.setItem(4, 5, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU);
+                                    }
+                            );
                         }
                     }
             );

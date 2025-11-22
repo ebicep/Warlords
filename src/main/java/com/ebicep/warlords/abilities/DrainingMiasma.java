@@ -6,7 +6,6 @@ import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownUtils;
@@ -14,6 +13,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.apothecary.DrainingMiasmaBranch;
@@ -142,12 +142,10 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
                                 }
                             },
                             true
-                    ) {
-                        @Override
-                        public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                            return currentDamageValue * 0.75f;
-                        }
-                    });
+                    ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                                currentDamageValue.addMultiplicativeModifierMult(name, 0.75f);
+                            }
+                    ));
                 }
                 Leech.giveLeechCooldown(Leech.LeechInstance
                         .create(wp, miasmaTarget)
@@ -160,29 +158,29 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
             } else {
                 if (pveMasterUpgrade2) {
                     miasmaTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
-                        "Toxic Immunity",
-                        "MIAS",
-                        DrainingMiasmaData.class,
-                        data,
-                        wp,
-                        CooldownTypes.ABILITY,
-                        cooldownManager -> {},
-                        tickDuration,
-                        Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                            if (ticksElapsed % 20 != 0) {
-                                return;
-                            }
+                            "Toxic Immunity",
+                            "MIAS",
+                            DrainingMiasmaData.class,
+                            data,
+                            wp,
+                            CooldownTypes.ABILITY,
+                            cooldownManager -> {},
+                            tickDuration,
+                            Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                                if (ticksElapsed % 20 != 0) {
+                                    return;
+                                }
 
-                            float healing = miasmaTarget.getMaxHealth() * .02f;
-                            miasmaTarget.addInstance(InstanceBuilder
-                                    .healing()
-                                    .ability(this)
-                                    .source(wp)
-                                    .value(healing)
-                                    .flags(InstanceFlags.CAN_OVERHEAL_OTHERS)
-                            );
-                            Overheal.giveOverHeal(wp, miasmaTarget);
-                        })
+                                float healing = miasmaTarget.getMaxHealth() * .02f;
+                                miasmaTarget.addInstance(InstanceBuilder
+                                        .healing()
+                                        .ability(this)
+                                        .source(wp)
+                                        .value(healing)
+                                        .flags(InstanceFlags.CAN_OVERHEAL_OTHERS)
+                                );
+                                Overheal.giveOverHeal(wp, miasmaTarget);
+                            })
                     ) {
                         @Override
                         protected Listener getListener() {

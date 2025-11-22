@@ -6,7 +6,6 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayer
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.menu.generalmenu.WarlordsNewHotbarMenu;
 import com.ebicep.warlords.permissions.Permissions;
-import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.Spendable;
@@ -51,14 +50,13 @@ public class WeaponManagerMenu {
 
     public static void openWeaponInventoryFromExternal(Player player, boolean fromNPC) {
         UUID uuid = player.getUniqueId();
-        DatabaseManager.getPlayer(uuid, databasePlayer -> {
-            PLAYER_MENU_SETTINGS.putIfAbsent(uuid, new PlayerWeaponMenuSettings(databasePlayer));
-            PlayerWeaponMenuSettings menuSettings = PLAYER_MENU_SETTINGS.get(uuid);
-            menuSettings.setOpenedFromNPC(fromNPC);
-            menuSettings.sort(PlayerSettings.getPlayerSettings(uuid).getSelectedSpec());
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+        PLAYER_MENU_SETTINGS.putIfAbsent(uuid, new PlayerWeaponMenuSettings(databasePlayer));
+        PlayerWeaponMenuSettings menuSettings = PLAYER_MENU_SETTINGS.get(uuid);
+        menuSettings.setOpenedFromNPC(fromNPC);
+        menuSettings.sort(databasePlayer.getLastSpec());
 
-            openWeaponInventoryFromInternal(player, databasePlayer);
-        });
+        openWeaponInventoryFromInternal(player, databasePlayer);
     }
 
     public static void openWeaponInventoryFromInternal(Player player, DatabasePlayer databasePlayer) {
@@ -66,7 +64,7 @@ public class WeaponManagerMenu {
         PLAYER_MENU_SETTINGS.putIfAbsent(uuid, new PlayerWeaponMenuSettings(databasePlayer));
         PlayerWeaponMenuSettings menuSettings = PLAYER_MENU_SETTINGS.get(uuid);
         int page = menuSettings.getPage();
-        menuSettings.sort(PlayerSettings.getPlayerSettings(uuid).getSelectedSpec());
+        menuSettings.sort(databasePlayer.getLastSpec());
         List<AbstractWeapon> weaponInventory = new ArrayList<>(menuSettings.getSortedWeaponInventory());
         weaponInventory.removeIf(weapon -> weapon instanceof StarterWeapon);
 
@@ -129,7 +127,8 @@ public class WeaponManagerMenu {
                                         Component.text("to salvage all weapons below ", NamedTextColor.GRAY),
                                         Component.text(menuSettings.getWeaponScoreSalvage() + "% ", NamedTextColor.GREEN),
                                         Component.text("weapon score, excluding bound weapons.", NamedTextColor.GRAY)
-                                ), 160))
+                                ), 160
+                        ))
                         .addLore(Component.empty())
                         .addLore(WordWrap.wrap(
                                 Component.textOfChildren(
@@ -139,13 +138,15 @@ public class WeaponManagerMenu {
                                         Component.text("weapons below ", NamedTextColor.GRAY),
                                         Component.text(menuSettings.getWeaponScoreSalvage() + "% ", NamedTextColor.GREEN),
                                         Component.text("weapon score, excluding bound weapons.", NamedTextColor.GRAY)
-                                ), 160))
+                                ), 160
+                        ))
                         .addLore(Component.empty())
                         .addLore(WordWrap.wrap(
                                 Component.textOfChildren(
                                         Component.text("SHIFT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
                                         Component.text("to change the weapon score filter amount.", NamedTextColor.GRAY)
-                                ), 160))
+                                ), 160
+                        ))
                         .addLore(Component.empty())
                         .addLore(Component.text("This feature is for Patreons only!", NamedTextColor.LIGHT_PURPLE))
                         .get(),
@@ -659,7 +660,8 @@ public class WeaponManagerMenu {
                     return 0;
                 }
             }
-        }),
+        }
+        ),
 
         ;
 
@@ -701,6 +703,7 @@ public class WeaponManagerMenu {
     }
 
     static class PlayerWeaponMenuSettings {
+
         private boolean openedFromNPC = false;
         private int page = 1;
         private List<AbstractWeapon> weaponInventory = new ArrayList<>();

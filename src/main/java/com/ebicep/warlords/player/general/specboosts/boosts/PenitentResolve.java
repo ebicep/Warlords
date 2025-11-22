@@ -2,13 +2,13 @@ package com.ebicep.warlords.player.general.specboosts.boosts;
 
 import com.ebicep.warlords.abilities.Repentance;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import org.bukkit.event.EventHandler;
 
 import java.util.Collections;
@@ -63,7 +63,7 @@ public class PenitentResolve implements SpecBoostManager.SpecBoost<PenitentResol
                 return;
             }
             if (event.getAbility() instanceof Repentance) {
-                warlordsEntity.getCooldownManager().addCooldown(new RegularCooldown<>(
+                RegularCooldown<Boost> regularCooldown = new RegularCooldown<>(
                         getStringName(),
                         "RESOLVE",
                         Boost.class,
@@ -83,15 +83,14 @@ public class PenitentResolve implements SpecBoostManager.SpecBoost<PenitentResol
                                 );
                             }
                         })
-                ) {
-                    @Override
-                    public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                        if (event.getCause().isEmpty()) {
-                            setTicksLeft(0);
+                );
+                regularCooldown.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
+                            if (e.getCause().isEmpty()) {
+                                regularCooldown.setTicksLeft(0);
+                            }
                         }
-                        return currentDamageValue;
-                    }
-                });
+                );
+                warlordsEntity.getCooldownManager().addCooldown(regularCooldown);
             }
         }
 

@@ -262,10 +262,8 @@ public class CustomScoreboard {
 
             StatsLeaderboardCategory<?, ?, ?> statsLeaderboardCategory = getLeaderboardCategoryFromUUID(uuid);
             if (statsLeaderboardCategory == null) {
-                DatabaseManager.getPlayer(uuid,
-                        databasePlayer -> givePvPSidebar("Lifetime", databasePlayer),
-                        () -> giveNASidebar("Lifetime")
-                );
+                DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid);
+                givePvPSidebar("Lifetime", databasePlayer);
                 return;
             }
             StatsLeaderboard statsLeaderboard = statsLeaderboardCategory.getStatsLeaderboards().get(0);
@@ -293,11 +291,8 @@ public class CustomScoreboard {
             }
             return;
         }
-
-        DatabaseManager.getPlayer(uuid,
-                databasePlayer -> givePvPSidebar("Lifetime", databasePlayer),
-                () -> giveNASidebar("Lifetime")
-        );
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid);
+        givePvPSidebar("Lifetime", databasePlayer);
     }
 
     private void giveNASidebar(String title) {
@@ -321,10 +316,8 @@ public class CustomScoreboard {
     }
 
     private void givePvESidebar() {
-        DatabaseManager.getPlayer(uuid,
-                databasePlayer -> givePvESidebar(databasePlayer.getPveStats(), true),
-                () -> giveNASidebar("PvE")
-        );
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid);
+        givePvESidebar(databasePlayer.getPveStats(), true);
     }
 
 
@@ -347,4 +340,5 @@ public class CustomScoreboard {
                 VERSION_TEXT
         );
     }
+
 }

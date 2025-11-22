@@ -1,10 +1,10 @@
 package com.ebicep.warlords.pve.items.types.specialitems.tome.delta;
 
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
@@ -24,8 +24,8 @@ public class ScrollOfUncertainty extends SpecialDeltaTome implements CraftsInto 
     }
 
     @Override
-    public String getName() {
-        return "Scroll of Uncertainty";
+    public String getDescription() {
+        return "I'm positive this is worth the read.";
     }
 
     @Override
@@ -34,10 +34,9 @@ public class ScrollOfUncertainty extends SpecialDeltaTome implements CraftsInto 
     }
 
     @Override
-    public String getDescription() {
-        return "I'm positive this is worth the read.";
+    public String getName() {
+        return "Scroll of Uncertainty";
     }
-
 
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {
@@ -52,22 +51,21 @@ public class ScrollOfUncertainty extends SpecialDeltaTome implements CraftsInto 
 
                 },
                 false
-        ) {
-            @Override
-            public void damageDoBeforeVariableSetFromAttacker(WarlordsDamageHealingEvent event) {
-                if (!event.getWarlordsEntity().equals(warlordsPlayer)) {
-                    if (ThreadLocalRandom.current().nextDouble() <= .6) {
-                        event.setMin(event.getMax());
-                    } else {
-                        event.setMax(event.getMin());
+        ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_VARIABLE_SET, event -> {
+                    if (!event.getWarlordsEntity().equals(warlordsPlayer)) {
+                        if (ThreadLocalRandom.current().nextDouble() <= .6) {
+                            event.getMin().setBaseValue(event.getMax().getCalculatedValue());
+                        } else {
+                            event.getMax().setBaseValue(event.getMin().getCalculatedValue());
+                        }
                     }
                 }
-            }
-        });
+        ));
     }
 
     @Override
     public AbstractItem getCraftsInto(Set<BasicStatPool> statPool) {
         return new TomeOfTheft(statPool);
     }
+
 }

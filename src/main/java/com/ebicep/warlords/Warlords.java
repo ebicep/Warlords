@@ -14,8 +14,10 @@ import com.ebicep.warlords.commands.debugcommands.misc.AdminCommand;
 import com.ebicep.warlords.commands.debugcommands.misc.OldTestCommand;
 import com.ebicep.warlords.commands.miscellaneouscommands.StreamChaptersCommand;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.DatabaseUpdater;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.GeneralEvents;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.game.*;
@@ -41,6 +43,8 @@ import com.ebicep.warlords.util.java.MemoryManager;
 import com.ebicep.warlords.util.java.Priority;
 import com.ebicep.warlords.util.warlords.ConfigUtil;
 import com.onarandombox.MultiverseCore.MultiverseCore;
+import io.papermc.paper.command.brigadier.Commands;
+import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.luckperms.api.LuckPerms;
@@ -72,6 +76,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static com.ebicep.warlords.util.java.JavaUtils.iterable;
 
 public class Warlords extends JavaPlugin {
+
     public static final HashMap<UUID, Location> SPAWN_POINTS = new HashMap<>();
     public static final AtomicBoolean SENT_HOUR_REMINDER = new AtomicBoolean(false);
     public static final AtomicBoolean SENT_HALF_HOUR_REMINDER = new AtomicBoolean(false);
@@ -232,10 +237,16 @@ public class Warlords extends JavaPlugin {
         return PLAYERS.containsKey(player);
     }
 
+    public static <T> TaskChain<T> newChain() {
+        return taskChainFactory.newChain();
+    }
+
     private GameManager gameManager;
+    private boolean disabling = false;
 
     @Override
     public void onDisable() {
+        disabling = true;
         try {
             if (BotManager.task != null) {
                 BotManager.task.cancel();
@@ -246,7 +257,7 @@ public class Warlords extends JavaPlugin {
         if (DatabaseManager.enabled) {
             //updates all queues, locks main thread to ensure update is complete before disabling
             try {
-                DatabaseManager.updateQueue();
+                DatabaseUpdater.updatePlayersBlocking(DatabaseManager.playerService);
             } catch (Exception e) {
                 ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
             }
@@ -357,8 +368,15 @@ public class Warlords extends JavaPlugin {
 //        getServer().getPluginManager().registerEvents(new HorseOption(), this);
         getServer().getPluginManager().registerEvents(TracksOutsideGame.getListener(), this);
         getServer().getPluginManager().registerEvents(new DatabaseGameEvent(), this);
+        this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, commands -> {
+                    Commands registrar = commands.registrar();
+                    registrar.register("oldtest", new OldTestCommand());
+                    registrar.register(Commands.literal("me").build());
+                    registrar.register(Commands.literal("help").build());
+                }
+        );
 
-        getCommand("oldtest").setExecutor(new OldTestCommand());
+//        getCommand("oldtest").setExecutor(new OldTestCommand());
 
 //        ConcurrentHashMap<UUID, Integer> playerClicks = new ConcurrentHashMap<>();
 //        getServer().getPluginManager().registerEvents(new Listener() {
@@ -414,9 +432,7 @@ public class Warlords extends JavaPlugin {
         });
 
         //connects to the database
-        Warlords.newChain()
-                .async(DatabaseManager::init)
-                .execute();
+        DatabaseManager.init();
 
         if (!BotManager.DISCORD_SERVERS.isEmpty()) {
             try {
@@ -456,13 +472,9 @@ public class Warlords extends JavaPlugin {
             }
         }.runTaskTimer(this, 1, 1);
 
-//        TowerRegistry.updateCaches();
+//        TowerRegistry.updateCaches()
 
         ChatUtils.MessageType.WARLORDS.sendMessage("Plugin is enabled");
-    }
-
-    public static <T> TaskChain<T> newChain() {
-        return taskChainFactory.newChain();
     }
 
     private void startWarlordsEntitiesLoop() {
@@ -496,7 +508,8 @@ public class Warlords extends JavaPlugin {
                                     .filter(Objects::nonNull)
                                     .forEach(p -> {
                                         if (Objects.equals(p.getSpectatorTarget(), player)) {
-                                            DatabaseManager.getPlayer(p.getUniqueId(), databasePlayer -> p.sendActionBar(we.getActionBar(databasePlayer)));
+                                            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+                                            p.sendActionBar(we.getActionBar(databasePlayer));
                                         } else {
                                             p.sendActionBar(Component.empty());
                                         }
@@ -566,6 +579,10 @@ public class Warlords extends JavaPlugin {
 
             }
         }.runTaskTimer(this, 20, 1000);
+    }
+
+    public boolean isDisabling() {
+        return disabling;
     }
 
     public void hideAndUnhidePeople(@Nonnull Player player) {

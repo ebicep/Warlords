@@ -5,10 +5,10 @@ import com.ebicep.warlords.abilities.internal.AbstractGroundSlam;
 import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.berserker.GroundSlamBranchBerserker;
@@ -34,25 +34,22 @@ public class GroundSlamBerserker extends AbstractGroundSlam implements Damages<G
     }
 
     @Override
+    public Value.RangedValueCritable getSlamDamage() {
+        return damageValues.slamDamage;
+    }
+
+    @Override
     protected void onSecondSlamHit(WarlordsEntity wp, Set<WarlordsEntity> playersHit) {
         if (pveMasterUpgrade2) {
             float damageBoost = 1 + Math.min(5, playersHit.size()) * .05f;
             wp.getCooldownManager()
               .addCooldown(new RegularCooldown<>("Reverberation", "REVERB", GroundSlamBerserker.class, new GroundSlamBerserker(), wp, CooldownTypes.BUFF, cooldownManager -> {
               }, 5 * 20
-              ) {
-
-                  @Override
-                  public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                      return currentDamageValue * damageBoost;
-                  }
-              });
+              ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                          currentDamageValue.addMultiplicativeModifierMult(name, damageBoost);
+                      }
+              ));
         }
-    }
-
-    @Override
-    public Value.RangedValueCritable getSlamDamage() {
-        return damageValues.slamDamage;
     }
 
     @Override

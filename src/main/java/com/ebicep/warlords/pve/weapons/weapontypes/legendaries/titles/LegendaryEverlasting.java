@@ -1,6 +1,5 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -9,6 +8,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
@@ -44,20 +44,6 @@ public class LegendaryEverlasting extends AbstractLegendaryWeapon implements Lis
 
     public LegendaryEverlasting(AbstractLegendaryWeapon legendaryWeapon) {
         super(legendaryWeapon);
-    }
-
-    @Override
-    public LinkedHashMap<Currencies, Long> getCost() {
-        LinkedHashMap<Currencies, Long> baseCost = super.getCost();
-        baseCost.put(Currencies.TITLE_TOKEN_LIBRARY_ARCHIVES, 1L);
-        return baseCost;
-    }
-
-    @Override
-    public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
-        super.applyToWarlordsPlayer(player, pveOption);
-        cooldown = null;
-        stacks = 0;
     }
 
     @Override
@@ -104,6 +90,20 @@ public class LegendaryEverlasting extends AbstractLegendaryWeapon implements Lis
     @Override
     protected float getSkillCritChanceBonusValue() {
         return 10;
+    }
+
+    @Override
+    public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
+        super.applyToWarlordsPlayer(player, pveOption);
+        cooldown = null;
+        stacks = 0;
+    }
+
+    @Override
+    public LinkedHashMap<Currencies, Long> getCost() {
+        LinkedHashMap<Currencies, Long> baseCost = super.getCost();
+        baseCost.put(Currencies.TITLE_TOKEN_LIBRARY_ARCHIVES, 1L);
+        return baseCost;
     }
 
     @Override
@@ -164,7 +164,8 @@ public class LegendaryEverlasting extends AbstractLegendaryWeapon implements Lis
             stacks++;
         }
         if (cooldown == null) {
-            warlordsPlayer.getCooldownManager().addCooldown(cooldown = new RegularCooldown<>(
+            float reduction = (DAMAGE_REDUCTION + DAMAGE_REDUCTION_PER_UPGRADE * getTitleLevel()) / 100;
+            RegularCooldown<LegendaryEverlasting> cd = new RegularCooldown<>(
                     getTitleName() + " 1",
                     "EVER 1",
                     LegendaryEverlasting.class,
@@ -178,14 +179,12 @@ public class LegendaryEverlasting extends AbstractLegendaryWeapon implements Lis
                         stacks = 0;
                     },
                     (DURATION + DURATION_PER_UPGRADE * getTitleLevel()) * 20
-            ) {
-                final float reduction = (DAMAGE_REDUCTION + DAMAGE_REDUCTION_PER_UPGRADE * getTitleLevel()) / 100;
-
-                @Override
-                public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    return currentDamageValue * (1 - stacks * reduction);
-                }
-            });
+            );
+            cd.addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
+                        currentDamageValue.addMultiplicativeModifierMult(getTitleName(), (1 - stacks * reduction));
+                    }
+            );
+            warlordsPlayer.getCooldownManager().addCooldown(cooldown = cd);
         } else {
             cooldown.setTicksLeft((DURATION + DURATION_PER_UPGRADE * getTitleLevel()) * 20);
             cooldown.setName(getTitleName() + " " + stacks);

@@ -4,14 +4,13 @@ import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
-import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.revenant.RecklessChargeBranch;
@@ -75,13 +74,10 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, H
                       cooldownManager -> {
                       },
                       2 * 20
-              ) {
-
-                  @Override
-                  public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                      return currentDamageValue * 0.2f;
-                  }
-              });
+              ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
+                          currentDamageValue.addMultiplicativeModifierMult(name, 0.2f);
+                      }
+              ));
         }
         Location location = wp.getLocation();
         boolean horizontal = Math.abs(location.getPitch()) < 50;
@@ -179,27 +175,29 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, H
                                     cooldownManager -> {
                                     },
                                     getStunTimeInTicks()
-                            ) {
-                                @Override
-                                public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                    if (event.getCause().contains("Strike")) {
-                                        return currentDamageValue * 1.25f;
+                            ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                                        if (event.getCause().contains("Strike")) {
+                                            currentDamageValue.addMultiplicativeModifierMult("Reckless Rampage", 1.25f);
+                                        }
                                     }
-                                    return currentDamageValue;
-                                }
-                            });
+                            ));
                         }
                     } else if (pveMasterUpgrade2 && otherPlayer.isTeammateAlive(wp)) {
-                        otherPlayer.getCooldownManager()
-                                   .addCooldown(new RegularCooldown<>("Probiotic", "PROBIO", RecklessCharge.class, null, wp, CooldownTypes.ABILITY, cooldownManager -> {
-                                   }, 8 * 20
-                                   ) {
+                        otherPlayer.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                "Probiotic",
+                                "PROBIO",
+                                RecklessCharge.class,
+                                null,
+                                wp,
+                                CooldownTypes.ABILITY,
 
-                                       @Override
-                                       public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-                                           return currentHealValue * 1.5f;
-                                       }
-                                   });
+                                cooldownManager -> {
+                                },
+                                8 * 20
+                        ).addModifier(Modifier.MODIFY_INCOMING_HEALING, (event, currentHealValue) -> {
+                                    currentHealValue.addMultiplicativeModifierMult(name, 1.5f);
+                                }
+                        ));
                         new CooldownFilter<>(otherPlayer, RegularCooldown.class).filter(cd -> cd.getCooldownType() != CooldownTypes.LOW_LEVEL_DEBUFF)
                                                                                 .forEach(cd -> cd.setTicksLeft(cd.getTicksLeft() + 40));
                         EffectUtils.displayParticle(Particle.HEART, otherPlayer.getLocation().add(0, 2, 0), 10, .5, .25, .5, 0);

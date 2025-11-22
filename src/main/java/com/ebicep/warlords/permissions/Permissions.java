@@ -12,10 +12,10 @@ import net.luckperms.api.event.user.UserDataRecalculateEvent;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.node.Node;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.util.chat.ChatChannels.CHAT_ARROW;
@@ -37,20 +37,23 @@ public enum Permissions {
     public static final Permissions[] VALUES = values();
 
     public static void listenToNewPatreons(UserDataRecalculateEvent event) {
-        User user = event.getUser();
-        List<String> permissions = user.getNodes()
-                                       .stream()
-                                       .map(Node::getKey)
-                                       .collect(Collectors.toList());
-        permissions.remove("group.default");
-        for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
-            DatabaseManager.updatePlayer(user.getUniqueId(), activeCollection, dp -> {
-                dp.setPermissions(permissions);
-                Warlords.newChain()
-                        .sync(CustomScoreboard::updateLobbyPlayerNames)
-                        .execute();
-            });
-        }
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                User user = event.getUser();
+                List<String> permissions = user.getNodes()
+                                               .stream()
+                                               .map(Node::getKey)
+                                               .collect(Collectors.toList());
+                permissions.remove("group.default");
+                for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
+                    DatabasePlayer databasePlayer = DatabaseManager.getPlayer(user.getUniqueId(), activeCollection);
+                    databasePlayer.setPermissions(permissions);
+                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer, activeCollection);
+                }
+                CustomScoreboard.updateLobbyPlayerNames();
+            }
+        }.runTaskLater(Warlords.getInstance(), 60);
     }
 
     public static Component getPrefixWithColor(Player player, boolean includeName) {
@@ -66,20 +69,16 @@ public enum Permissions {
     }
 
     public static Component getPrefixWithColor(UUID uuid, boolean includeName) {
-        AtomicReference<Component> component = new AtomicReference<>(Component.text("", NamedTextColor.AQUA));
-        DatabaseManager.getPlayer(uuid, databasePlayer -> {
-            String name = includeName ? databasePlayer.getName() : "";
-            for (Permissions value : VALUES) {
-                if (databasePlayer.getPermissions().contains(value.permission)) {
-                    component.set(value == DEFAULT ?
-                                  Component.text(name, NamedTextColor.AQUA) :
-                                  Component.text("[" + value.prefix + "] " + name, value.prefixColor));
-                    return;
-                }
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid);
+        String name = includeName ? databasePlayer.getName() : "";
+        for (Permissions value : VALUES) {
+            if (databasePlayer.getPermissions().contains(value.permission)) {
+                return value == DEFAULT ?
+                       Component.text(name, NamedTextColor.AQUA) :
+                       Component.text("[" + value.prefix + "] " + name, value.prefixColor);
             }
-            component.set(Component.text(name, NamedTextColor.AQUA));
-        });
-        return component.get();
+        }
+        return Component.text(name, NamedTextColor.AQUA);
     }
 
     public static NamedTextColor getColor(Player player) {

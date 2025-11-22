@@ -4,7 +4,6 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.events.game.WarlordsFlagUpdatedEvent;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.flags.*;
@@ -16,6 +15,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -81,45 +81,49 @@ public class FlagSpawnPointOption implements Option {
         this.game = game;
         // We register a gamemarker to prevent any captures for our own team if we lost our flag
         game.registerGameMarker(FlagCaptureInhibitMarker.class, pFlag -> {
-            return !(info.getFlag() instanceof SpawnFlagLocation) && info.getTeam() == pFlag.getPlayer().getTeam();
-        });
+                    return !(info.getFlag() instanceof SpawnFlagLocation) && info.getTeam() == pFlag.getPlayer().getTeam();
+                }
+        );
         game.registerGameMarker(DebugLocationMarker.class, DebugLocationMarker.create(Material.BLACK_BANNER, 0, this.getClass(),
-                Component.text("Flag spawn: " + info.getTeam()),
-                this.info.getSpawnLocation()
-        ));
+                        Component.text("Flag spawn: " + info.getTeam()),
+                        this.info.getSpawnLocation()
+                )
+        );
         game.registerGameMarker(DebugLocationMarker.class, DebugLocationMarker.create(Material.BLACK_BANNER, 15, this.getClass(),
-                Component.text("Flag: " + info.getTeam()),
-                () -> info.getFlag().getLocation(),
-                () -> info.getFlag().getDebugInformation()
-        ));
+                        Component.text("Flag: " + info.getTeam()),
+                        () -> info.getFlag().getLocation(),
+                        () -> info.getFlag().getDebugInformation()
+                )
+        );
         FlagHolder holder = FlagHolder.create(() -> info);
         game.registerGameMarker(FlagHolder.class, holder);
         if (this.registerCompassMarker) {
             game.registerGameMarker(CompassTargetMarker.class, holder);
         }
         game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(info.getTeam() == Team.RED ? 20 : 21, "flag") {
-            @Nonnull
-            @Override
-            public List<Component> computeLines(@Nullable WarlordsPlayer player) {
-                FlagLocation flag = info.getFlag();
-                Component component = info.getTeam().coloredPrefix().append(Component.text(" Flag: "));
-                if (flag instanceof SpawnFlagLocation spawnFlagLocation) {
-                    String extra = spawnFlagLocation.getFlagMultiplier() == 0 ? "" : " +" + spawnFlagLocation.getFlagMultiplier() + "%";
-                    return singletonList(component.append(Component.text("Safe", NamedTextColor.GREEN))
-                                                  .append(Component.text(extra, NamedTextColor.GRAY)));
-                } else if (flag instanceof PlayerFlagLocation playerFlagLocation) {
-                    String extra = playerFlagLocation.getFlagMultiplier() == 0 ? "" : " +" + playerFlagLocation.getFlagMultiplier() + "%";
-                    return singletonList(component.append(Component.text("Stolen!", NamedTextColor.RED))
-                                                  .append(Component.text(extra, NamedTextColor.YELLOW)));
-                } else if (flag instanceof GroundFlagLocation gFlag) {
-                    return singletonList(component.append(Component.text("Dropped! ", NamedTextColor.YELLOW)
-                                                                   .append(Component.text(gFlag.getDespawnTimerSeconds(), NamedTextColor.GRAY)))
-                    );
-                } else {
-                    return singletonList(component.append(Component.text("Respawning...", NamedTextColor.GRAY)));
+                    @Nonnull
+                    @Override
+                    public List<Component> computeLines(@Nullable WarlordsPlayer player) {
+                        FlagLocation flag = info.getFlag();
+                        Component component = info.getTeam().coloredPrefix().append(Component.text(" Flag: "));
+                        if (flag instanceof SpawnFlagLocation spawnFlagLocation) {
+                            String extra = spawnFlagLocation.getFlagMultiplier() == 0 ? "" : " +" + spawnFlagLocation.getFlagMultiplier() + "%";
+                            return singletonList(component.append(Component.text("Safe", NamedTextColor.GREEN))
+                                                          .append(Component.text(extra, NamedTextColor.GRAY)));
+                        } else if (flag instanceof PlayerFlagLocation playerFlagLocation) {
+                            String extra = playerFlagLocation.getFlagMultiplier() == 0 ? "" : " +" + playerFlagLocation.getFlagMultiplier() + "%";
+                            return singletonList(component.append(Component.text("Stolen!", NamedTextColor.RED))
+                                                          .append(Component.text(extra, NamedTextColor.YELLOW)));
+                        } else if (flag instanceof GroundFlagLocation gFlag) {
+                            return singletonList(component.append(Component.text("Dropped! ", NamedTextColor.YELLOW)
+                                                                           .append(Component.text(gFlag.getDespawnTimerSeconds(), NamedTextColor.GRAY)))
+                            );
+                        } else {
+                            return singletonList(component.append(Component.text("Respawning...", NamedTextColor.GRAY)));
+                        }
+                    }
                 }
-            }
-        });
+        );
         game.registerEvents(new Listener() {
 
             @EventHandler(priority = EventPriority.LOW)
@@ -220,12 +224,10 @@ public class FlagSpawnPointOption implements Option {
                                         cooldownManager -> {
                                         },
                                         15 * 20
-                                ) {
-                                    @Override
-                                    public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                        return currentDamageValue * AbstractAbility.convertToDivisionDecimal(flagRes);
-                                    }
-                                });
+                                ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
+                                            currentDamageValue.addMultiplicativeModifierMult("Flag Damage Resistance", AbstractAbility.convertToDivisionDecimal(flagRes));
+                                        }
+                                ));
                             }
                         }
                         return true;
@@ -297,9 +299,10 @@ public class FlagSpawnPointOption implements Option {
                 }
                 if (flagIsInCaptureZone(playerFlagLocation) && !flagCaptureIsNotBlocked(playerFlagLocation)) {
                     FlagHolder.update(game, info -> new WaitingFlagLocation(
-                            info.getSpawnLocation(),
-                            info.getFlag() == playerFlagLocation ? playerFlagLocation.getPlayer() : null
-                    ));
+                                    info.getSpawnLocation(),
+                                    info.getFlag() == playerFlagLocation ? playerFlagLocation.getPlayer() : null
+                            )
+                    );
                 }
             }
         }.runTaskTimer(0, 5);

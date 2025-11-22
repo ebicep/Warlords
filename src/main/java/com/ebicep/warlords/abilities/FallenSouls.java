@@ -4,7 +4,6 @@ import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -13,6 +12,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.spiritguard.FallenSoulsBranch;
@@ -141,6 +141,11 @@ public class FallenSouls extends AbstractPiercingProjectile<FallenSouls, FallenS
         return playersHit;
     }
 
+    @Override
+    protected Location modifyProjectileStartingLocation(WarlordsEntity shooter, Location startingLocation) {
+        return new LocationBuilder(startingLocation.clone()).addY(-.3).backward(0f);
+    }
+
     private Optional<WarlordsDamageHealingFinalEvent> hit(WarlordsEntity wp, WarlordsEntity enemy) {
         if (pveMasterUpgrade2) {
             if (enemy.getCooldownManager().hasCooldown(FallenSoulsBranch.SoulFeast.class)) {
@@ -158,12 +163,10 @@ public class FallenSouls extends AbstractPiercingProjectile<FallenSouls, FallenS
                         CooldownTypes.LOW_LEVEL_DEBUFF,
                         cooldownManager -> {},
                         false
-                ) {
-                     @Override
-                     public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                         return currentDamageValue * soulFeast.getDamageMultiplier();
-                     }
-                });
+                ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                            currentDamageValue.addMultiplicativeModifierMult(name, soulFeast.getDamageMultiplier());
+                        }
+                ));
             }
         }
         return enemy.addInstance(InstanceBuilder.damage().ability(this).source(wp).value(damageValues.fallenSoulDamage));
@@ -197,40 +200,35 @@ public class FallenSouls extends AbstractPiercingProjectile<FallenSouls, FallenS
         }
     }
 
-    @Override
-    protected Location modifyProjectileStartingLocation(WarlordsEntity shooter, Location startingLocation) {
-        return new LocationBuilder(startingLocation.clone()).addY(-.3).backward(0f);
-    }
-
     private void reduceCooldowns(WarlordsEntity wp, WarlordsEntity enemy) {
         new CooldownFilter<>(wp, PersistentCooldown.class).filterCooldownClassAndMapToObjectsOfClass(Soulbinding.SoulbindingData.class)
-                .filter(soulbinding -> soulbinding.hasBoundPlayerSoul(enemy))
-                .forEachOrdered(data -> {
-                    Soulbinding soulbinding = data.getSoulbinding();
-                    soulbinding.addSoulProcs();
+                                                          .filter(soulbinding -> soulbinding.hasBoundPlayerSoul(enemy))
+                                                          .forEachOrdered(data -> {
+                                                              Soulbinding soulbinding = data.getSoulbinding();
+                                                              soulbinding.addSoulProcs();
 
-                    for (AbstractAbility ability : wp.getAbilities()) {
-                        ability.subtractCurrentCooldownForce(soulbinding.getSelfCooldownReduction());
-                    }
+                                                              for (AbstractAbility ability : wp.getAbilities()) {
+                                                                  ability.subtractCurrentCooldownForce(soulbinding.getSelfCooldownReduction());
+                                                              }
 
-                    int radius = soulbinding.getRadius();
-                    for (WarlordsEntity teammate : PlayerFilter
-                            .entitiesAround(wp.getLocation(), radius, radius, radius)
-                            .aliveTeammatesOfExcludingSelf(wp)
-                            .filter(warlordsEntity -> warlordsEntity.getSpecClass() != Specializations.SPIRITGUARD)
-                            .closestWarlordPlayersFirst(wp.getLocation())
-                            .limit(soulbinding.getMaxAlliesHit())
-                    ) {
-                        soulbinding.addSoulTeammatesCDReductions();
-                        for (AbstractAbility ability : teammate.getAbilities()) {
-                            ability.subtractCurrentCooldown(soulbinding.getAllyCooldownReduction());
-                        }
-                    }
+                                                              int radius = soulbinding.getRadius();
+                                                              for (WarlordsEntity teammate : PlayerFilter
+                                                                      .entitiesAround(wp.getLocation(), radius, radius, radius)
+                                                                      .aliveTeammatesOfExcludingSelf(wp)
+                                                                      .filter(warlordsEntity -> warlordsEntity.getSpecClass() != Specializations.SPIRITGUARD)
+                                                                      .closestWarlordPlayersFirst(wp.getLocation())
+                                                                      .limit(soulbinding.getMaxAlliesHit())
+                                                              ) {
+                                                                  soulbinding.addSoulTeammatesCDReductions();
+                                                                  for (AbstractAbility ability : teammate.getAbilities()) {
+                                                                      ability.subtractCurrentCooldown(soulbinding.getAllyCooldownReduction());
+                                                                  }
+                                                              }
 
-                    if (soulbinding.isPveMasterUpgrade()) {
-                        wp.addEnergy(wp, "Soulbinding Weapon", 1);
-                    }
-                });
+                                                              if (soulbinding.isPveMasterUpgrade()) {
+                                                                  wp.addEnergy(wp, "Soulbinding Weapon", 1);
+                                                              }
+                                                          });
     }
 
     @Override

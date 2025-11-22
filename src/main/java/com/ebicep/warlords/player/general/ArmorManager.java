@@ -1,5 +1,7 @@
 package com.ebicep.warlords.player.general;
 
+import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.ingame.CosmeticSettings;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -27,9 +29,8 @@ public class ArmorManager {
     );
 
     public static void resetArmor(Player player) {
-        PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player);
-        Specializations selectedSpec = playerSettings.getSelectedSpec();
-        resetArmor(player, playerSettings.getHelmet(selectedSpec), playerSettings.getArmorSet(selectedSpec), playerSettings.getWantedTeam());
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+        resetArmor(player, databasePlayer.getHelmet(), databasePlayer.getArmorSet(), databasePlayer.getWantedTeam());
     }
 
     public static void resetArmor(Player player, Helmets helmet, ArmorSets armorSet, Team team) {

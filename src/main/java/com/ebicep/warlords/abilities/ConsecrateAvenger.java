@@ -8,12 +8,12 @@ import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.paladin.avenger.ConsecrateBranchAvenger;
@@ -73,33 +73,30 @@ public class ConsecrateAvenger extends AbstractConsecrate implements Damages<Con
                 });
             }
         })
-        ) {
-
-            @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (event.getFlags().contains(InstanceFlags.STRIKE_IN_CONS)) {
-                    return currentDamageValue;
+        ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                    if (event.getFlags().contains(InstanceFlags.STRIKE_IN_CONS)) {
+                        return;
+                    }
+                    if (!hit.contains(event.getWarlordsEntity())) {
+                        return;
+                    }
+                    event.getFlags().add(InstanceFlags.STRIKE_IN_CONS);
+                    addStrikesBoosted();
+                    currentDamageValue.addMultiplicativeModifierMult(name, convertToMultiplicationDecimal(strikeDamageBoost));
                 }
-                if (!hit.contains(event.getWarlordsEntity())) {
-                    return currentDamageValue;
-                }
-                event.getFlags().add(InstanceFlags.STRIKE_IN_CONS);
-                addStrikesBoosted();
-                return currentDamageValue * convertToMultiplicationDecimal(strikeDamageBoost);
-            }
-        });
+        ));
         return true;
+    }
+
+    @Override
+    public Value.RangedValueCritable getConsecrateDamage() {
+        return damageValues.consecrateDamage;
     }
 
     @Nonnull
     @Override
     public String getStrikeName() {
         return "Avenger's Strike";
-    }
-
-    @Override
-    public Value.RangedValueCritable getConsecrateDamage() {
-        return damageValues.consecrateDamage;
     }
 
     @Override

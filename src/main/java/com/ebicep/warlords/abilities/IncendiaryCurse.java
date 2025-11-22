@@ -4,13 +4,13 @@ import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsThrowableProjectileImpactEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.assassin.IncendiaryCurseBranch;
@@ -137,16 +137,20 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
             if (pveMasterUpgrade) {
                 EffectUtils.playFirework(newLoc, FireworkEffect.builder().withColor(Color.RED).withColor(Color.BLACK).with(FireworkEffect.Type.BALL_LARGE).build(), 1);
                 nearEntity.getCooldownManager().removeCooldown(IncendiaryCurse.class, false);
-                nearEntity.getCooldownManager()
-                          .addCooldown(new RegularCooldown<>(name, "INCEN", IncendiaryCurse.class, new IncendiaryCurse(), wp, CooldownTypes.LOW_LEVEL_DEBUFF, cooldownManager -> {
-                          }, 5 * 20
-                          ) {
-
-                              @Override
-                              public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                  return currentDamageValue * 1.3f;
-                              }
-                          });
+                nearEntity.getCooldownManager().addCooldown(new RegularCooldown<>(
+                        name,
+                        "INCEN",
+                        IncendiaryCurse.class,
+                        null,
+                        wp,
+                        CooldownTypes.LOW_LEVEL_DEBUFF,
+                        cooldownManager -> {
+                        },
+                        5 * 20
+                ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                            currentDamageValue.addMultiplicativeModifierMult(name, 1.3f);
+                        }
+                ));
             } else if (pveMasterUpgrade2) {
                 EffectUtils.displayParticle(Particle.DUST, nearEntity.getLocation().add(0, 1.2, 0), 3, 0.3, 0.2, 0.3, 0, new Particle.DustOptions(Color.fromRGB(255, 255, 0), 2));
             }

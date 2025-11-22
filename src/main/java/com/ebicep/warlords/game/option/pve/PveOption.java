@@ -5,6 +5,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.ProjectileAbility;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
@@ -18,7 +19,6 @@ import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
 import com.ebicep.warlords.game.option.pve.rewards.PveRewards;
 import com.ebicep.warlords.player.general.Specializations;
-import com.ebicep.warlords.player.general.settings.AdvancedHoverMessages;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -54,14 +54,96 @@ import java.util.function.ToDoubleFunction;
 
 public interface PveOption extends Option {
 
-    @Nullable
-    default Location getRandomSpawnLocation(WarlordsEntity entity) {
-        return getRandomSpawnLocation(marker -> marker.getPriority(entity));
+    @Override
+    default void onGameEnding(@Nonnull Game game) {
+        game.warlordsPlayers().forEach(warlordsPlayer -> {
+            AbstractWeapon weapon = warlordsPlayer.getWeapon();
+            if (weapon != null) {
+                weapon.cleanup();
+            }
+        });
+    }
+
+    @Override
+    default void onGameCleanup(@Nonnull Game game) {
+        ChatUtils.MessageType.GAME.sendMessage("Cleaning up " + this + " - " + mobCount());
+        getMobs().forEach(this::despawnMob);
+        ChatUtils.MessageType.GAME.sendMessage("Cleaned up " + this + " - " + mobCount());
+    }
+
+    default int mobCount() {
+        return (int) getMobs()
+                .stream()
+                .filter(mob -> mob.getWarlordsNPC().getTeam() == Team.RED)
+                .count();
+    }
+
+    Set<AbstractMob> getMobs();
+
+    default void despawnMob(AbstractMob mob) {
+        mob.cleanup(this);
+        mob.getWarlordsNPC().cleanup();
+        getMobsMap().remove(mob);
+        getGame().getPlayers().remove(mob.getWarlordsNPC().getUuid());
+        Warlords.removePlayer(mob.getWarlordsNPC().getUuid());
+    }
+
+    ConcurrentHashMap<AbstractMob, ? extends MobData> getMobsMap();
+
+    Game getGame();
+
+    @Override
+    default void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
+        if (player instanceof WarlordsPlayer warlordsPlayer) {
+            for (AbstractAbility ability : warlordsPlayer.getSpec().getAbilities()) {
+                ability.setInPve(true);
+            }
+            if (player.getEntity() instanceof Player) {
+                getGame().setPlayerTeam((OfflinePlayer) player.getEntity(), Team.BLUE);
+                player.setTeam(Team.BLUE);
+                player.updateArmor();
+            }
+            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player.getUuid());
+            //weapons
+            DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+            Optional<AbstractWeapon> optionalWeapon = pveStats
+                    .getWeaponInventory()
+                    .stream()
+                    .filter(AbstractWeapon::isBound)
+                    .filter(abstractWeapon -> abstractWeapon.getSpecializations() == player.getSpecClass())
+                    .findFirst();
+            optionalWeapon.ifPresent(abstractWeapon -> {
+                warlordsPlayer.getCosmeticSettings().setWeaponSkin(abstractWeapon.getSelectedWeaponSkin());
+                warlordsPlayer.setWeapon(abstractWeapon);
+                abstractWeapon.applyToWarlordsPlayer(warlordsPlayer, this);
+                player.updateEntity();
+                player.getSpec().updateCustomStats(warlordsPlayer);
+            });
+            AbilityTree.handleAutoUpgrade(player);
+        }
+    }
+
+    @Override
+    default void updateInventory(@Nonnull WarlordsPlayer warlordsPlayer, Player player) {
+        player.getInventory().setItem(7, new ItemBuilder(Material.GOLD_NUGGET).name(Component.text("Upgrade Talisman", NamedTextColor.GREEN)).get());
+        if (warlordsPlayer.getWeapon() instanceof AbstractLegendaryWeapon) {
+            ((AbstractLegendaryWeapon) warlordsPlayer.getWeapon()).updateAbilityItem(warlordsPlayer, player);
+        }
+    }
+
+    @Override
+    default void onSpecChange(@Nonnull WarlordsEntity player, Specializations oldSpec) {
+        if (player instanceof WarlordsPlayer warlordsPlayer) {
+            warlordsPlayer.resetAbilityTree();
+            for (AbstractAbility ability : warlordsPlayer.getSpec().getAbilities()) {
+                ability.setInPve(true);
+            }
+        }
     }
 
     @Nullable
-    default Location getRandomSpawnLocation(Team team) {
-        return getRandomSpawnLocation(marker -> marker.getPriorityTeam(team));
+    default Location getRandomSpawnLocation(WarlordsEntity entity) {
+        return getRandomSpawnLocation(marker -> marker.getPriority(entity));
     }
 
     @Nullable
@@ -89,7 +171,10 @@ public interface PveOption extends Option {
         return null;
     }
 
-    Game getGame();
+    @Nullable
+    default Location getRandomSpawnLocation(Team team) {
+        return getRandomSpawnLocation(marker -> marker.getPriorityTeam(team));
+    }
 
     default void mobTick() {
         for (AbstractMob mob : new ArrayList<>(getMobs())) {
@@ -98,21 +183,10 @@ public interface PveOption extends Option {
         }
     }
 
-    Set<AbstractMob> getMobs();
-
     int getTicksElapsed();
-
-    ConcurrentHashMap<AbstractMob, ? extends MobData> getMobsMap();
 
     default int playerCount() {
         return (int) getGame().warlordsPlayers().count();
-    }
-
-    default int mobCount() {
-        return (int) getMobs()
-                .stream()
-                .filter(mob -> mob.getWarlordsNPC().getTeam() == Team.RED)
-                .count();
     }
 
     default int getWaveCounter() {
@@ -128,14 +202,6 @@ public interface PveOption extends Option {
     }
 
     void spawnNewMob(AbstractMob mob, Team team);
-
-    default void despawnMob(AbstractMob mob) {
-        mob.cleanup(this);
-        mob.getWarlordsNPC().cleanup();
-        getMobsMap().remove(mob);
-        getGame().getPlayers().remove(mob.getWarlordsNPC().getUuid());
-        Warlords.removePlayer(mob.getWarlordsNPC().getUuid());
-    }
 
     default boolean isPauseMobSpawn() {
         return false;
@@ -270,76 +336,6 @@ public interface PveOption extends Option {
                     .merge(event1, 1L, Long::sum);
     }
 
-    @Override
-    default void onGameEnding(@Nonnull Game game) {
-        game.warlordsPlayers().forEach(warlordsPlayer -> {
-            AbstractWeapon weapon = warlordsPlayer.getWeapon();
-            if (weapon != null) {
-                weapon.cleanup();
-            }
-        });
-    }
-
-    @Override
-    default void onGameCleanup(@Nonnull Game game) {
-        ChatUtils.MessageType.GAME.sendMessage("Cleaning up " + this + " - " + mobCount());
-        getMobs().forEach(this::despawnMob);
-        ChatUtils.MessageType.GAME.sendMessage("Cleaned up " + this + " - " + mobCount());
-    }
-
-    @Override
-    default void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
-        if (player instanceof WarlordsPlayer warlordsPlayer) {
-            for (AbstractAbility ability : warlordsPlayer.getSpec().getAbilities()) {
-                ability.setInPve(true);
-            }
-            if (player.getEntity() instanceof Player) {
-                getGame().setPlayerTeam((OfflinePlayer) player.getEntity(), Team.BLUE);
-                player.setTeam(Team.BLUE);
-                player.updateArmor();
-            }
-            DatabaseManager.getPlayer(player.getUuid(), databasePlayer -> {
-                //weapons
-                DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
-                Optional<AbstractWeapon> optionalWeapon = pveStats
-                        .getWeaponInventory()
-                        .stream()
-                        .filter(AbstractWeapon::isBound)
-                        .filter(abstractWeapon -> abstractWeapon.getSpecializations() == player.getSpecClass())
-                        .findFirst();
-                optionalWeapon.ifPresent(abstractWeapon -> {
-                    warlordsPlayer.getCosmeticSettings().setWeaponSkin(abstractWeapon.getSelectedWeaponSkin());
-                    warlordsPlayer.setWeapon(abstractWeapon);
-                    abstractWeapon.applyToWarlordsPlayer(warlordsPlayer, this);
-                    player.updateEntity();
-                    player.getSpec().updateCustomStats(warlordsPlayer);
-                });
-                if (databasePlayer.getAdvancedHoverMessages() == AdvancedHoverMessages.ON) {
-                    player.setShowDebugMessage(true);
-                }
-            });
-            AbilityTree.handleAutoUpgrade(player);
-        }
-    }
-
-    @Override
-    default void updateInventory(@Nonnull WarlordsPlayer warlordsPlayer, Player player) {
-        player.getInventory().setItem(7, new ItemBuilder(Material.GOLD_NUGGET).name(Component.text("Upgrade Talisman", NamedTextColor.GREEN)).get());
-        if (warlordsPlayer.getWeapon() instanceof AbstractLegendaryWeapon) {
-            ((AbstractLegendaryWeapon) warlordsPlayer.getWeapon()).updateAbilityItem(warlordsPlayer, player);
-        }
-    }
-
-    @Override
-    default void onSpecChange(@Nonnull WarlordsEntity player, Specializations oldSpec) {
-        if (player instanceof WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.resetAbilityTree();
-            for (AbstractAbility ability : warlordsPlayer.getSpec().getAbilities()) {
-                ability.setInPve(true);
-            }
-        }
-    }
-
     default List<Component> healthScoreboard(Game game) {
         List<Component> list = new ArrayList<>();
         for (WarlordsEntity we : game.warlordsPlayers().toList()) {
@@ -362,6 +358,7 @@ public interface PveOption extends Option {
     }
 
     class MobData {
+
         private final int spawnTick;
 
         public MobData(int spawnTick) {
@@ -371,6 +368,7 @@ public interface PveOption extends Option {
         public int getSpawnTick() {
             return spawnTick;
         }
+
     }
 
 }

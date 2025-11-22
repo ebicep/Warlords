@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.rewards;
 
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.menu.generalmenu.WarlordsNewHotbarMenu;
@@ -31,64 +32,35 @@ public class RewardInventory {
     }
 
     public static void openRewardInventory(Player player, int page) {
-        DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
-            DatabasePlayerPvE databasePlayerPvE = databasePlayer.getPveStats();
-            List<AbstractReward> rewards = Stream
-                    .of(databasePlayerPvE.getMasterworksFairRewards(),
-                            databasePlayerPvE.getPatreonRewards(),
-                            databasePlayerPvE.getCompensationRewards(),
-                            databasePlayerPvE.getGameEventRewards(),
-                            databasePlayerPvE.getPouchRewards(),
-                            databasePlayerPvE.getBountyRewards()
-                    )
-                    .flatMap(List::stream)
-                    .filter(reward -> reward.getTimeClaimed() == null)
-                    .collect(Collectors.toList());
-            if (rewards.isEmpty()) {
-                player.sendMessage(Component.text("You have no rewards to claim!", NamedTextColor.RED));
-                return;
-            }
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+        DatabasePlayerPvE databasePlayerPvE = databasePlayer.getPveStats();
+        List<AbstractReward> rewards = Stream
+                .of(databasePlayerPvE.getMasterworksFairRewards(),
+                        databasePlayerPvE.getPatreonRewards(),
+                        databasePlayerPvE.getCompensationRewards(),
+                        databasePlayerPvE.getGameEventRewards(),
+                        databasePlayerPvE.getPouchRewards(),
+                        databasePlayerPvE.getBountyRewards()
+                )
+                .flatMap(List::stream)
+                .filter(reward -> reward.getTimeClaimed() == null)
+                .collect(Collectors.toList());
+        if (rewards.isEmpty()) {
+            player.sendMessage(Component.text("You have no rewards to claim!", NamedTextColor.RED));
+            return;
+        }
 
-            Menu menu = new Menu("Your Rewards", 9 * 6);
-            for (int i = 0; i < 45; i++) {
-                int rewardNumber = ((page - 1) * 45) + i;
-                if (rewardNumber < rewards.size()) {
-                    AbstractReward reward = rewards.get(rewardNumber);
-                    menu.setItem(i % 9, i / 9,
-                            reward.getItem(),
-                            (m, e) -> {
-                                reward.giveToPlayer(databasePlayer);
-                                DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                                player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2f);
-                                sendRewardMessage(
-                                        player.getUniqueId(),
-                                        Component.text("Claimed: ", NamedTextColor.GREEN)
-                                                 .append(Component.text(reward.getFrom() + " Reward", reward.getNameColor())
-                                                                  .hoverEvent(reward.getItemWithoutClaim().asHoverEvent()))
-                                                 .hoverEvent(HoverEvent.showText(Component.text(reward.getFrom() + " Reward", reward.getNameColor())))
-                                );
-
-                                if (rewards.size() > 1) {
-                                    openRewardInventory(player, page);
-                                } else {
-                                    player.closeInventory();
-                                }
-                            }
-                    );
-
-                } else {
-                    break;
-                }
-            }
-
-            menu.setItem(3, 5,
-                    Menu.CLAIM_ALL,
-                    (m, e) -> {
-                        player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2f);
-
-                        for (AbstractReward reward : rewards) {
+        Menu menu = new Menu("Your Rewards", 9 * 6);
+        for (int i = 0; i < 45; i++) {
+            int rewardNumber = ((page - 1) * 45) + i;
+            if (rewardNumber < rewards.size()) {
+                AbstractReward reward = rewards.get(rewardNumber);
+                menu.setItem(i % 9, i / 9,
+                        reward.getItem(),
+                        (m, e) -> {
                             reward.giveToPlayer(databasePlayer);
-
+                            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                            player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2f);
                             sendRewardMessage(
                                     player.getUniqueId(),
                                     Component.text("Claimed: ", NamedTextColor.GREEN)
@@ -96,39 +68,67 @@ public class RewardInventory {
                                                               .hoverEvent(reward.getItemWithoutClaim().asHoverEvent()))
                                              .hoverEvent(HoverEvent.showText(Component.text(reward.getFrom() + " Reward", reward.getNameColor())))
                             );
+
+                            if (rewards.size() > 1) {
+                                openRewardInventory(player, page);
+                            } else {
+                                player.closeInventory();
+                            }
                         }
-                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                        player.closeInventory();
+                );
+
+            } else {
+                break;
+            }
+        }
+
+        menu.setItem(3, 5,
+                Menu.CLAIM_ALL,
+                (m, e) -> {
+                    player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2f);
+
+                    for (AbstractReward reward : rewards) {
+                        reward.giveToPlayer(databasePlayer);
+
+                        sendRewardMessage(
+                                player.getUniqueId(),
+                                Component.text("Claimed: ", NamedTextColor.GREEN)
+                                         .append(Component.text(reward.getFrom() + " Reward", reward.getNameColor())
+                                                          .hoverEvent(reward.getItemWithoutClaim().asHoverEvent()))
+                                         .hoverEvent(HoverEvent.showText(Component.text(reward.getFrom() + " Reward", reward.getNameColor())))
+                        );
+                    }
+                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                    player.closeInventory();
+                }
+        );
+
+        if (page - 1 > 0) {
+            menu.setItem(0, 5,
+                    new ItemBuilder(Material.ARROW)
+                            .name(Component.text("Previous Page", NamedTextColor.GREEN))
+                            .lore(Component.text("Page " + (page - 1), NamedTextColor.YELLOW))
+                            .get(),
+                    (m, e) -> {
+                        openRewardInventory(player, page - 1);
                     }
             );
-
-            if (page - 1 > 0) {
-                menu.setItem(0, 5,
-                        new ItemBuilder(Material.ARROW)
-                                .name(Component.text("Previous Page", NamedTextColor.GREEN))
-                                .lore(Component.text("Page " + (page - 1), NamedTextColor.YELLOW))
-                                .get(),
-                        (m, e) -> {
-                            openRewardInventory(player, page - 1);
-                        }
-                );
-            }
-            if (rewards.size() > (page * 45)) {
-                menu.setItem(8, 5,
-                        new ItemBuilder(Material.ARROW)
-                                .name(Component.text("Next Page", NamedTextColor.GREEN))
-                                .lore(Component.text("Page " + (page + 1), NamedTextColor.YELLOW))
-                                .get(),
-                        (m, e) -> {
-                            openRewardInventory(player, page + 1);
-                        }
-                );
-            }
+        }
+        if (rewards.size() > (page * 45)) {
+            menu.setItem(8, 5,
+                    new ItemBuilder(Material.ARROW)
+                            .name(Component.text("Next Page", NamedTextColor.GREEN))
+                            .lore(Component.text("Page " + (page + 1), NamedTextColor.YELLOW))
+                            .get(),
+                    (m, e) -> {
+                        openRewardInventory(player, page + 1);
+                    }
+            );
+        }
 
 
-            menu.setItem(4, 5, WarlordsNewHotbarMenu.PvEMenu.MENU_BACK_PVE, (m, e) -> WarlordsNewHotbarMenu.PvEMenu.openPvEMenu(player));
-            menu.openForPlayer(player);
-        });
+        menu.setItem(4, 5, WarlordsNewHotbarMenu.PvEMenu.MENU_BACK_PVE, (m, e) -> WarlordsNewHotbarMenu.PvEMenu.openPvEMenu(player));
+        menu.openForPlayer(player);
     }
 
 }

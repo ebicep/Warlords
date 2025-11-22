@@ -3,7 +3,6 @@ package com.ebicep.warlords.pve.mobs.events.libraryarchives;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.SpecType;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -12,6 +11,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
@@ -95,15 +95,12 @@ public class EventNecronomiconGrimoire extends AbstractMob implements BossMinion
                 cooldownManager -> {
                 },
                 false
-        ) {
-            @Override
-            public float modifyDamageAfterInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (currentDamageValue > warlordsNPC.getMaxHealth() * .1) {
-                    return currentDamageValue * .3f;
+        ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
+                    if (currentDamageValue.getCalculatedValue() > warlordsNPC.getMaxHealth() * .1) {
+                        currentDamageValue.addMultiplicativeModifierMult("Damage Reduction", 0.3f);
+                    }
                 }
-                return currentDamageValue;
-            }
-        });
+        ));
     }
 
     @Override
@@ -161,14 +158,6 @@ public class EventNecronomiconGrimoire extends AbstractMob implements BossMinion
         return new LocationBuilder(warlordsNPC.getEyeLocation()).backward(.25f);
     }
 
-    @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
-        super.onDeath(killer, deathLocation, option);
-        if (laser != null && laser.isStarted()) {
-            laser.stop();
-        }
-    }
-
     private void smite() {
         if (targetWarlordsEntity == null) {
             return;
@@ -207,18 +196,26 @@ public class EventNecronomiconGrimoire extends AbstractMob implements BossMinion
         }
     }
 
+    @Override
+    public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
+        super.onDeath(killer, deathLocation, option);
+        if (laser != null && laser.isStarted()) {
+            laser.stop();
+        }
+    }
+
     private Optional<WarlordsPlayer> targetPlayer(PveOption option) {
         return option.getGame()
-              .warlordsPlayers()
-              .filter(WarlordsEntity::isAlive)
-              .min(Comparator.comparing(warlordsPlayer -> {
-                  Map<SpecType, Integer> orderMap = Map.of(
-                          SpecType.HEALER, 0,
-                          SpecType.DAMAGE, 1,
-                          SpecType.TANK, 2
-                  );
-                  return orderMap.get(warlordsPlayer.getSpecClass().specType);
-              }));
+                     .warlordsPlayers()
+                     .filter(WarlordsEntity::isAlive)
+                     .min(Comparator.comparing(warlordsPlayer -> {
+                         Map<SpecType, Integer> orderMap = Map.of(
+                                 SpecType.HEALER, 0,
+                                 SpecType.DAMAGE, 1,
+                                 SpecType.TANK, 2
+                         );
+                         return orderMap.get(warlordsPlayer.getSpecClass().specType);
+                     }));
     }
 
 }

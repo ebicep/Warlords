@@ -1,6 +1,5 @@
 package com.ebicep.warlords.player.ingame.cooldowns.cooldowns.custom;
 
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
@@ -8,6 +7,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.mobs.Aspect;
 
@@ -23,15 +23,16 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
                 .filterCooldownName("Item Additive")
                 .findAny()
                 .ifPresentOrElse(permanentCooldown -> {
-                    ItemAdditiveCooldown itemAdditiveCooldown = (ItemAdditiveCooldown) permanentCooldown;
-                    consumer.accept(itemAdditiveCooldown);
-                    warlordsEntity.addKnockbackModifier(warlordsEntity, "Item Additive", -itemAdditiveCooldown.kbMultiplier, itemAdditiveCooldown);
-                }, () -> {
-                    ItemAdditiveCooldown itemAdditiveCooldown = new ItemAdditiveCooldown(warlordsEntity);
-                    consumer.accept(itemAdditiveCooldown);
-                    warlordsEntity.addKnockbackModifier(warlordsEntity, "Item Additive", -itemAdditiveCooldown.kbMultiplier, itemAdditiveCooldown);
-                    warlordsEntity.getCooldownManager().addCooldown(itemAdditiveCooldown);
-                });
+                            ItemAdditiveCooldown itemAdditiveCooldown = (ItemAdditiveCooldown) permanentCooldown;
+                            consumer.accept(itemAdditiveCooldown);
+                            warlordsEntity.addKnockbackModifier(warlordsEntity, "Item Additive", -itemAdditiveCooldown.kbMultiplier, itemAdditiveCooldown);
+                        }, () -> {
+                            ItemAdditiveCooldown itemAdditiveCooldown = new ItemAdditiveCooldown(warlordsEntity);
+                            consumer.accept(itemAdditiveCooldown);
+                            warlordsEntity.addKnockbackModifier(warlordsEntity, "Item Additive", -itemAdditiveCooldown.kbMultiplier, itemAdditiveCooldown);
+                            warlordsEntity.getCooldownManager().addCooldown(itemAdditiveCooldown);
+                        }
+                );
     }
 
     private final Map<Aspect, AspectModifier> aspectModifiers = new HashMap<>();
@@ -54,6 +55,86 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
                 cooldownManager -> {
                 },
                 false
+        );
+        this.addModifier(Modifier.MODIFY_OUTGOING_HEALING, (event, currentHealValue) -> {
+                    currentHealValue.addMultiplicativeModifierMult(name, healMultiplier);
+                }
+        );
+        this.addModifier(Modifier.MODIFY_OUTGOING_CRIT_CHANCE, (event, currentCritChance) -> {
+                    currentCritChance.addAdditiveModifier(name, additionalCritChance);
+                }
+        );
+        this.addModifier(Modifier.MODIFY_OUTGOING_CRIT_MULTIPLIER, (event, currentCritMultiplier) -> {
+                    currentCritMultiplier.addAdditiveModifier(name, additionalCritMultiplier);
+                }
+        );
+        this.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                    if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC) {
+                        Aspect aspect = warlordsNPC.getMob().getAspect();
+                        if (aspect == null) {
+                            currentDamageValue.addMultiplicativeModifierMult(name, damageMultiplier);
+                            return;
+                        }
+                        AspectModifier aspectModifier = aspectModifiers.get(aspect);
+                        if (aspectModifier == null) {
+                            currentDamageValue.addMultiplicativeModifierMult(name, damageMultiplier);
+                            return;
+                        }
+                        currentDamageValue.addMultiplicativeModifierMult(name, (damageMultiplier + aspectModifier.damageMultiplier - 1));
+                    } else {
+                        currentDamageValue.addMultiplicativeModifierMult(name, damageMultiplier);
+                    }
+                }
+        );
+        this.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
+                    if (event.getSource() instanceof WarlordsNPC warlordsNPC) {
+                        Aspect aspect = warlordsNPC.getMob().getAspect();
+                        if (aspect == null) {
+                            return;
+                        }
+                        AspectModifier aspectModifier = aspectModifiers.get(aspect);
+                        if (aspectModifier == null) {
+                            return;
+                        }
+                        currentDamageValue.addMultiplicativeModifierMult(name, (aspectModifier.damageReductionMultiplier));
+                    }
+                }
+        );
+        this.addModifier(Modifier.ON_INCOMING_DAMAGE, (event, currentDamageValue, isCrit) -> {
+                    // prevent recursion
+                    WarlordsEntity attacker = event.getSource();
+                    if (Objects.equals(attacker, from) || event.getFlags().contains(InstanceFlags.RECURSIVE)) {
+                        return;
+                    }
+                    if (thorns <= 0) {
+                        return;
+                    }
+                    float thornsDamage = currentDamageValue * thorns;
+                    if (thornsDamage > maxThornsDamage) {
+                        thornsDamage = maxThornsDamage;
+                    }
+                    attacker.addInstance(InstanceBuilder
+                            .damage()
+                            .cause("Thorns")
+                            .source(from)
+                            .value(thornsDamage)
+                            .flags(InstanceFlags.RECURSIVE, InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST)
+                    );
+                }
+        );
+        this.addModifier(Modifier.ON_OUTGOING_DAMAGE, (event, currentDamageValue, isCrit) -> {
+                    if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC) {
+                        Aspect aspect = warlordsNPC.getMob().getAspect();
+                        if (aspect == null) {
+                            return;
+                        }
+                        AspectModifier aspectModifier = aspectModifiers.get(aspect);
+                        if (aspectModifier == null) {
+                            return;
+                        }
+                        Aspect.AspectNegationCooldown.giveAspectNegationCooldown(from, warlordsNPC, aspectModifier.effectNegationTicks);
+                    }
+                }
         );
     }
 
@@ -86,91 +167,6 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
         aspectModifiers.put(aspect, aspectModifier);
     }
 
-    @Override
-    public float addCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
-        return currentCritChance + additionalCritChance;
-    }
-
-    @Override
-    public float addCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
-        return currentCritMultiplier + additionalCritMultiplier;
-    }
-
-    @Override
-    public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-        if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC) {
-            Aspect aspect = warlordsNPC.getMob().getAspect();
-            if (aspect == null) {
-                return currentDamageValue * damageMultiplier;
-            }
-            AspectModifier aspectModifier = aspectModifiers.get(aspect);
-            if (aspectModifier == null) {
-                return currentDamageValue * damageMultiplier;
-            }
-            return currentDamageValue * (damageMultiplier + aspectModifier.damageMultiplier - 1);
-        }
-        return currentDamageValue * damageMultiplier;
-    }
-
-    @Override
-    public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-        if (event.getSource() instanceof WarlordsNPC warlordsNPC) {
-            Aspect aspect = warlordsNPC.getMob().getAspect();
-            if (aspect == null) {
-                return currentDamageValue;
-            }
-            AspectModifier aspectModifier = aspectModifiers.get(aspect);
-            if (aspectModifier == null) {
-                return currentDamageValue;
-            }
-            return currentDamageValue * (aspectModifier.damageReductionMultiplier);
-        }
-        return currentDamageValue;
-    }
-
-    @Override
-    public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-        // prevent recursion
-        WarlordsEntity attacker = event.getSource();
-        if (Objects.equals(attacker, from) || event.getFlags().contains(InstanceFlags.RECURSIVE)) {
-            return;
-        }
-        if (thorns <= 0) {
-            return;
-        }
-        float thornsDamage = currentDamageValue * thorns;
-        if (thornsDamage > maxThornsDamage) {
-            thornsDamage = maxThornsDamage;
-        }
-        attacker.addInstance(InstanceBuilder
-                .damage()
-                .cause("Thorns")
-                .source(from)
-                .value(thornsDamage)
-                .flags(InstanceFlags.RECURSIVE, InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST)
-        );
-    }
-
-    @Override
-    public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-        if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC) {
-            Aspect aspect = warlordsNPC.getMob().getAspect();
-            if (aspect == null) {
-                return;
-            }
-            AspectModifier aspectModifier = aspectModifiers.get(aspect);
-            if (aspectModifier == null) {
-                return;
-            }
-            Aspect.AspectNegationCooldown.giveAspectNegationCooldown(from, warlordsNPC, aspectModifier.effectNegationTicks);
-        }
-    }
-
-    @Override
-    public float modifyHealingFromAttacker(WarlordsDamageHealingEvent event, float currentHealValue) {
-        return currentHealValue * healMultiplier;
-    }
-
     /**
      * @param damageMultiplier          1.2 = 20% more damage
      * @param effectNegationTicks       20 = 1 second
@@ -178,4 +174,5 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
      */
     public record AspectModifier(float damageMultiplier, int effectNegationTicks, float damageReductionMultiplier) {
     }
+
 }

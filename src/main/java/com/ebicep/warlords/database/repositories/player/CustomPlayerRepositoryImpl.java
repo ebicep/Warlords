@@ -14,6 +14,7 @@ import org.springframework.data.mongodb.core.query.UpdateDefinition;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -58,8 +59,12 @@ public class CustomPlayerRepositoryImpl implements CustomPlayerRepository {
     }
 
     @Override
-    public DatabasePlayer findByUUID(UUID uuid, PlayersCollections collection) {
-        return mongoTemplate.findOne(new Query().addCriteria(Criteria.where("uuid").is(uuid)), DatabasePlayer.class, collection.collectionName);
+    public Optional<DatabasePlayer> findByUUID(UUID uuid, PlayersCollections collection) {
+        return Optional.ofNullable(mongoTemplate.findOne(new Query()
+                        .addCriteria(Criteria.where("uuid").is(uuid)),
+                DatabasePlayer.class,
+                collection.collectionName
+        ));
     }
 
     @Override
@@ -81,9 +86,9 @@ public class CustomPlayerRepositoryImpl implements CustomPlayerRepository {
     public List<DatabasePlayer> getPlayersSorted(Aggregation aggregation, PlayersCollections collections) {
         return mongoTemplate.aggregate(aggregation,
                                     collections.collectionName,
-                        DatabasePlayer.class
-                )
-                .getMappedResults();
+                                    DatabasePlayer.class
+                            )
+                            .getMappedResults();
     }
 
     @Override

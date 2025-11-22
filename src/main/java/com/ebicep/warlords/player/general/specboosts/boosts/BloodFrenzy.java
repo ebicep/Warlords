@@ -80,8 +80,9 @@ public class BloodFrenzy implements SpecBoostManager.SpecBoost<BloodFrenzy> {
             for (CustomInstanceFlags customFlag : event.getCustomFlags()) {
                 if (customFlag instanceof CustomInstanceFlags.FinalEventInstanceFlag(WarlordsDamageHealingFinalEvent finalEvent)) {
                     float additionalHealing = finalEvent.getValueBeforeAllReduction() * bloodLustHealingPiercePercent / 100f;
-                    event.setMin(event.getMin() + additionalHealing);
-                    event.setMax(event.getMax() + additionalHealing);
+                    event.applyToMinMax(floatModifiable ->
+                            floatModifiable.addAdditiveModifier(getStringName(), additionalHealing)
+                    );
                     return;
                 }
             }

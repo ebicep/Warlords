@@ -5,12 +5,12 @@ import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.thunderlord.ChainLightningBranch;
@@ -50,23 +50,21 @@ public class ChainLightning extends AbstractChain<ChainLightning, ChainLightning
                         EffectUtils.displayParticle(Particle.ELECTRIC_SPARK, receiver.getLocation().add(0, 1.2, 0), 5, .25, .25, .25, 0);
                     }
                 })
-        ) {
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return event.getSource().equals(giver) ? currentDamageValue * 1.3f : currentDamageValue;
-            }
-
-            @Override
-            public void onDeathFromEnemies(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit, boolean isKiller) {
-                if (event.getSource().equals(giver) && isKiller) {
-                    for (AbstractAbility ability : giver.getAbilities()) {
-                        if (ability instanceof OrangeAbilityIcon) {
-                            ability.subtractCurrentCooldown(.5f);
+        ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
+                    if (event.getSource().equals(giver)) {
+                        currentDamageValue.addMultiplicativeModifierMult("Aftershock", 1.3f);
+                    }
+                }
+        ).addModifier(Modifier.ON_ENEMY_DEATH, (event, currentDamageValue, isCrit, isKiller) -> {
+                    if (event.getSource().equals(giver) && isKiller) {
+                        for (AbstractAbility ability : giver.getAbilities()) {
+                            if (ability instanceof OrangeAbilityIcon) {
+                                ability.subtractCurrentCooldown(.5f);
+                            }
                         }
                     }
                 }
-            }
-        });
+        ));
     }
 
     private final ChainLightningStats stats = new ChainLightningStats();
@@ -124,12 +122,12 @@ public class ChainLightning extends AbstractChain<ChainLightning, ChainLightning
                 CooldownTypes.BUFF,
                 cooldownManager -> {},
                 damageReductionTickDuration
-        ) {
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * convertToDivisionDecimal(Math.min(hitCounter * damageReductionPerBounce.getCalculatedValue(), maxDamageReduction.getCalculatedValue()));
-            }
-        });
+        ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
+                    currentDamageValue.addMultiplicativeModifierMult(name,
+                            convertToDivisionDecimal(Math.min(hitCounter * damageReductionPerBounce.getCalculatedValue(), maxDamageReduction.getCalculatedValue()))
+                    );
+                }
+        ));
     }
 
     @Override

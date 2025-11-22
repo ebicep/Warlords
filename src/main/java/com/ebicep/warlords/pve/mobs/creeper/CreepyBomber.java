@@ -76,8 +76,10 @@ public class CreepyBomber extends AbstractMob implements EliteMob {
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
         super.onDamageTaken(self, attacker, event);
         if (Utils.isProjectile(event.getCause())) {
-            event.setMin(event.getMin() * .2f);
-            event.setMax(event.getMax() * .2f);
+            event.applyToMinMax(floatModifiable ->
+                    floatModifiable.addMultiplicativeModifierMult(name, .2f)
+            );
         }
     }
+
 }

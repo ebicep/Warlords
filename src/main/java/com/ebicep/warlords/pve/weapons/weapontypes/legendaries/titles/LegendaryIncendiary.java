@@ -1,10 +1,10 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
@@ -36,45 +36,6 @@ public class LegendaryIncendiary extends AbstractLegendaryWeapon implements Even
 
     public LegendaryIncendiary(AbstractLegendaryWeapon legendaryWeapon) {
         super(legendaryWeapon);
-    }
-
-    @Override
-    public LinkedHashMap<Currencies, Long> getCost() {
-        LinkedHashMap<Currencies, Long> baseCost = super.getCost();
-        baseCost.put(Currencies.TITLE_TOKEN_SPIDERS_BURROW, 1L);
-        return baseCost;
-    }
-
-    @Override
-    public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
-        super.applyToWarlordsPlayer(player, pveOption);
-
-        float critChanceBoost = CRIT_CHANCE_BOOST + CRIT_CHANCE_BOOST_INCREASE_PER_UPGRADE * getTitleLevel();
-
-        player.getEnergyPerHit().addMultiplicativeModifierAdd(getTitleName(), (EPH_PERCENT_INCREASE + EPH_PERCENT_INCREASE_PER_UPGRADE * getTitleLevel()) / 100);
-        player.getCooldownManager().addCooldown(new PermanentCooldown<>(
-                "Incendiary",
-                null,
-                LegendaryIncendiary.class,
-                null,
-                player,
-                CooldownTypes.WEAPON,
-                cooldownManager -> {
-                },
-                false
-        ) {
-
-            @Override
-            public float addCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
-                String ability = event.getCause();
-                if (Utils.isProjectile(ability)) {
-                    return currentCritChance + critChanceBoost;
-                } else {
-                    return currentCritChance;
-                }
-            }
-
-        });
     }
 
     @Override
@@ -117,6 +78,39 @@ public class LegendaryIncendiary extends AbstractLegendaryWeapon implements Even
     }
 
     @Override
+    public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
+        super.applyToWarlordsPlayer(player, pveOption);
+
+        float critChanceBoost = CRIT_CHANCE_BOOST + CRIT_CHANCE_BOOST_INCREASE_PER_UPGRADE * getTitleLevel();
+
+        player.getEnergyPerHit().addMultiplicativeModifierAdd(getTitleName(), (EPH_PERCENT_INCREASE + EPH_PERCENT_INCREASE_PER_UPGRADE * getTitleLevel()) / 100);
+        player.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                getTitleName(),
+                null,
+                LegendaryIncendiary.class,
+                null,
+                player,
+                CooldownTypes.WEAPON,
+                cooldownManager -> {
+                },
+                false
+        ).addModifier(Modifier.MODIFY_OUTGOING_CRIT_CHANCE, (event, currentCritChance) -> {
+                    String ability = event.getCause();
+                    if (Utils.isProjectile(ability) || ability.equals("Boulder")) {
+                        currentCritChance.addAdditiveModifier(getTitleName(), critChanceBoost);
+                    }
+                }
+        ));
+    }
+
+    @Override
+    public LinkedHashMap<Currencies, Long> getCost() {
+        LinkedHashMap<Currencies, Long> baseCost = super.getCost();
+        baseCost.put(Currencies.TITLE_TOKEN_SPIDERS_BURROW, 1L);
+        return baseCost;
+    }
+
+    @Override
     protected float getMeleeDamageMaxValue() {
         return 180;
     }
@@ -144,5 +138,6 @@ public class LegendaryIncendiary extends AbstractLegendaryWeapon implements Even
                 )
         );
     }
+
 }
 

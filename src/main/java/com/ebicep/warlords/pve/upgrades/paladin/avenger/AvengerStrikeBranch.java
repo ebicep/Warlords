@@ -3,12 +3,12 @@ package com.ebicep.warlords.pve.upgrades.paladin.avenger;
 import com.ebicep.warlords.abilities.AvengersStrike;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.abilities.internal.Value;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.player.ingame.motionsystem.MotionModifier;
 import com.ebicep.warlords.player.ingame.motionsystem.MotionModifierBuilder;
 import com.ebicep.warlords.player.ingame.motionsystem.MotionSystem;
@@ -19,13 +19,6 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
 
     float energySteal = ability.getEnergySteal();
 
-    @Override
-    public void runOnce() {
-        Value.RangedValueCritable damage = ability.getDamageValues().getStrikeDamage();
-        damage.min().addMultiplicativeModifierAdd("PvE", .3f);
-        damage.max().addMultiplicativeModifierAdd("PvE", .3f);
-    }
-
     public AvengerStrikeBranch(AbilityTree abilityTree, AvengersStrike ability) {
         super(abilityTree, ability);
         WarlordsPlayer warlordsPlayer = abilityTree.getWarlordsPlayer();
@@ -34,16 +27,17 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
                 .create(abilityTree, this)
                 .addUpgradeDamage(ability.getDamageValues().getStrikeDamage(), 12.5f)
                 .addUpgrade(new UpgradeTypes.UpgradeType() {
-                    @Override
-                    public String getDescription0(String value) {
-                        return "+" + value + " Energy Steal";
-                    }
+                                @Override
+                                public String getDescription0(String value) {
+                                    return "+" + value + " Energy Steal";
+                                }
 
-                    @Override
-                    public void run(float value) {
-                        ability.setEnergySteal(energySteal + value);
-                    }
-                }, 7.5f)
+                                @Override
+                                public void run(float value) {
+                                    ability.setEnergySteal(energySteal + value);
+                                }
+                            }, 7.5f
+                )
                 .addTo(treeA);
 
         UpgradeTreeBuilder
@@ -76,20 +70,17 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
                             CooldownTypes.MASTERY,
                             cm -> {},
                             false
-                    ) {
-                        @Override
-                        public float modifyDamageAfterInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                            boolean isAboveElite = event.getWarlordsEntity() instanceof WarlordsNPC npc && npc.getMob().getInternalLevel() >= 4;
-                            boolean isNotDuplicateStrike =
-                                    !event.getFlags().contains(InstanceFlags.AVENGER_WRATH_STRIKE) ||
-                                    !event.getFlags().contains(InstanceFlags.DUPLICATE_AVENGER_STRIKE);
+                    ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
+                                boolean isAboveElite = event.getWarlordsEntity() instanceof WarlordsNPC npc && npc.getMob().getInternalLevel() >= 4;
+                                boolean isNotDuplicateStrike =
+                                        !event.getFlags().contains(InstanceFlags.AVENGER_WRATH_STRIKE) ||
+                                                !event.getFlags().contains(InstanceFlags.DUPLICATE_AVENGER_STRIKE);
 
-                            if (isAboveElite && event.getCause().equals("Avenger's Strike") && isNotDuplicateStrike) {
-                                return currentDamageValue + DamageCheck.clamp(event.getWarlordsEntity().getMaxHealth() * 0.005f);
+                                if (isAboveElite && event.getCause().equals("Avenger's Strike") && isNotDuplicateStrike) {
+                                    currentDamageValue.addAdditiveModifier("MAX HP DAMAGE (Avenger's Slash)", DamageCheck.clamp(event.getWarlordsEntity().getMaxHealth() * 0.005f));
+                                }
                             }
-                            return currentDamageValue;
-                        }
-                    });
+                    ));
                 }
         );
         masterUpgrade2 = new Upgrade(
@@ -141,4 +132,12 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
                 }
         );
     }
+
+    @Override
+    public void runOnce() {
+        Value.RangedValueCritable damage = ability.getDamageValues().getStrikeDamage();
+        damage.min().addMultiplicativeModifierAdd("PvE", .3f);
+        damage.max().addMultiplicativeModifierAdd("PvE", .3f);
+    }
+
 }

@@ -6,10 +6,10 @@ import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.conjurer.ContagiousFacadeBranch;
@@ -80,32 +80,40 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                     Utils.playGlobalSound(wp.getLocation(), "mage.arcaneshield.activation", 2, 0.4f);
                     Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_EVOKER_PREPARE_ATTACK, 2, 2);
                     float shieldHealth = (float) totalAbsorbed.get();
-                    shieldHealth *= pveMasterUpgrade2 ? 2.5 : 1;
+                    shieldHealth *= pveMasterUpgrade2 ? 2.5f : 1;
                     stats.totalShieldGained += shieldHealth;
                     Shield shield = new Shield(name, shieldHealth);
-                    wp.getCooldownManager().addCooldown(new RegularCooldown<>(name + " Shield", "SHIELD", Shield.class, shield, wp, CooldownTypes.ABILITY, cooldownManager1 -> {
-                    }, cooldownManager1 -> {
-                    }, shieldTickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                        if (ticksElapsed % 3 == 0) {
-                            Location location = wp.getLocation();
-                            location.add(0, 1.5, 0);
-                            EffectUtils.displayParticle(Particle.CHERRY_LEAVES, location, 2, 0.15, 0.3, 0.15, 0.01);
-                            EffectUtils.displayParticle(Particle.FIREWORK, location, 1, 0.3, 0.3, 0.3, 0.0001);
-                            EffectUtils.displayParticle(Particle.WITCH, location, 1, 0.3, 0.3, 0.3, 0);
-                        }
-                    })
+                    wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                            name + " Shield",
+                            "SHIELD",
+                            Shield.class,
+                            shield,
+                            wp,
+                            CooldownTypes.ABILITY,
+                            cooldownManager1 -> {
+                            },
+                            cooldownManager1 -> {
+                            },
+                            shieldTickDuration,
+                            Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                                if (ticksElapsed % 3 == 0) {
+                                    Location location = wp.getLocation();
+                                    location.add(0, 1.5, 0);
+                                    EffectUtils.displayParticle(Particle.CHERRY_LEAVES, location, 2, 0.15, 0.3, 0.15, 0.01);
+                                    EffectUtils.displayParticle(Particle.FIREWORK, location, 1, 0.3, 0.3, 0.3, 0.0001);
+                                    EffectUtils.displayParticle(Particle.WITCH, location, 1, 0.3, 0.3, 0.3, 0);
+                                }
+                            })
                     ) {
-
-                        @Override
-                        public void onShieldFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                            event.getWarlordsEntity().getCooldownManager().queueUpdatePlayerNames();
-                        }
 
                         @Override
                         public PlayerNameData addPrefixFromOther() {
                             return new PlayerNameData(Component.text((int) (shield.getShieldHealth()), NamedTextColor.YELLOW), we -> we.isTeammate(wp));
                         }
-                    });
+                    }.addModifier(Modifier.ON_OUTGOING_SHIELD_DAMAGE, (event, currentDamageValue, isCrit) -> {
+                                event.getWarlordsEntity().getCooldownManager().queueUpdatePlayerNames();
+                            }
+                    ));
                     wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" Your ", NamedTextColor.GRAY))
                                                                   .append(Component.text(name, NamedTextColor.YELLOW))
                                                                   .append(Component.text(" is now shielding you!", NamedTextColor.GRAY)));
@@ -115,16 +123,15 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                     EffectUtils.displayParticle(Particle.CRIMSON_SPORE, wp.getLocation(), 1, 0.05, 0.1, 0.05, 0.25);
                     EffectUtils.displayParticle(Particle.CHERRY_LEAVES, wp.getLocation(), 2, 0.15, 0.3, 0.15, 0);
                 })
-        ) {
-
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                float afterValue = currentDamageValue * convertToDivisionDecimal(damageAbsorption.getCalculatedValue());
-                float absorbedAmount = currentDamageValue - afterValue;
-                totalAbsorbed.addAndGet(absorbedAmount);
-                return afterValue;
-            }
-        };
+        );
+        protectiveLayerCooldown.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
+            currentDamageValue.addMultiplicativeModifierMult(
+                    name,
+                    convertToDivisionDecimal(damageAbsorption.getCalculatedValue()),
+                    contribution -> totalAbsorbed.addAndGet(Math.abs(contribution))
+            );
+                }
+        );
         if (pveMasterUpgrade2) {
             wp.addKnockbackModifier(wp, name, -100, protectiveLayerCooldown);
         }
@@ -174,6 +181,17 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                 .build();
     }
 
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new ContagiousFacadeBranch(abilityTree, this);
+    }
+
+    @Override
+    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
+        damageAbsorption.tick();
+        super.runEveryTick(warlordsEntity);
+    }
+
     private void reactivate(@Nonnull WarlordsEntity wp) {
         wp.addSpeedModifier(wp, name, speedIncrease, speedIncreaseDuration);
         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_EVOKER_PREPARE_ATTACK, 2, 2);
@@ -201,32 +219,19 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
             stats.totalHexesInflicted++;
         }
         if (pveMasterUpgrade) {
-            wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "FAC", ContagiousFacade.class, null, wp, CooldownTypes.ABILITY, cooldownManager -> {
-            }, 20 * 8
-            ) {
-
-                @Override
-                public float addEnergyGainPerTick(float energyGainPerTick) {
-                    return energyGainPerTick + 0.5f;
-                }
-            });
+            wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                    name,
+                    "FAC",
+                    ContagiousFacade.class,
+                    null,
+                    wp,
+                    CooldownTypes.ABILITY,
+                    cooldownManager -> {
+                    },
+                    20 * 8
+            ).addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> energyGainPerTick.addAdditiveModifier(name, 0.5f)));
         }
         stats.timesReactivated++;
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new ContagiousFacadeBranch(abilityTree, this);
-    }
-
-    @Override
-    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
-        damageAbsorption.tick();
-        super.runEveryTick(warlordsEntity);
-    }
-
-    public void setReactivateAbility(boolean reactivateAbility) {
-        this.reactivateAbility = reactivateAbility;
     }
 
     @Override
@@ -242,6 +247,10 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
     @Override
     public ContagiousFacadeStats getAbilityStats() {
         return stats;
+    }
+
+    public void setReactivateAbility(boolean reactivateAbility) {
+        this.reactivateAbility = reactivateAbility;
     }
 
     public FloatModifiable getDamageAbsorption() {

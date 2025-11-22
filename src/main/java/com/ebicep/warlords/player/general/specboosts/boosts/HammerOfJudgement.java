@@ -13,6 +13,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
@@ -131,20 +132,18 @@ public class HammerOfJudgement implements SpecBoostManager.SpecBoost<HammerOfJud
                                                     );
                                                 }
                                             })
-                                    ) {
-                                        @Override
-                                        public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                            if (!event.getCause().equals(consecrateProtector.getStrikeName()) ||
-                                                    event.getFlags().contains(InstanceFlags.STRIKE_IN_CONS) ||
-                                                    !event.getSource().equals(warlordsEntity)
-                                            ) {
-                                                return currentDamageValue;
+                                    ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
+                                                if (!e.getCause().equals(consecrateProtector.getStrikeName()) ||
+                                                        e.getFlags().contains(InstanceFlags.STRIKE_IN_CONS) ||
+                                                        !e.getSource().equals(warlordsEntity)
+                                                ) {
+                                                    return;
+                                                }
+                                                e.getFlags().add(InstanceFlags.STRIKE_IN_CONS);
+                                                consecrateProtector.addStrikesBoosted();
+                                                currentDamageValue.addMultiplicativeModifierMult(cooldownName, convertToMultiplicationDecimal(consecrateProtector.getStrikeDamageBoost()));
                                             }
-                                            event.getFlags().add(InstanceFlags.STRIKE_IN_CONS);
-                                            consecrateProtector.addStrikesBoosted();
-                                            return currentDamageValue * convertToMultiplicationDecimal(consecrateProtector.getStrikeDamageBoost());
-                                        }
-                                    });
+                                    ));
                                 }
                         );
         }

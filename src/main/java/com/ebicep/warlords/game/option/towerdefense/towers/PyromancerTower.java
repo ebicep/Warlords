@@ -3,7 +3,6 @@ package com.ebicep.warlords.game.option.towerdefense.towers;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.TowerUpgrade;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.TowerUpgradeInstance;
@@ -15,6 +14,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -94,6 +94,7 @@ public class PyromancerTower extends AbstractTower implements Upgradeable.Path2 
 
         private static final int TELEPORT_DURATION = 5; // arrow teleport duration
         private final FloatModifiable range = new FloatModifiable(30);
+        private final DamageValues damageValues = new DamageValues();
 
         public FlameAttack() {
             super(AbstractAbilityBuilder.create("flameAttack").td().cooldown(10).energyCost(0));
@@ -164,12 +165,10 @@ public class PyromancerTower extends AbstractTower implements Upgradeable.Path2 
                                         );
                                     }
                                 })
-                        ) {
-                            @Override
-                            public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                return currentDamageValue * 1.2f;
-                            }
-                        });
+                        ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                                    currentDamageValue.addMultiplicativeModifierMult("Pyromancer Tower Burn", 1.2f);
+                                }
+                        ));
                     }
                     EffectUtils.displayParticle(Particle.LAVA, target.getLocation().clone().add(0, 1, 0), 15, 0.5F, 0, 0.5F, 500);
                     arrow.remove();
@@ -232,8 +231,6 @@ public class PyromancerTower extends AbstractTower implements Upgradeable.Path2 
             return range;
         }
 
-        private final DamageValues damageValues = new DamageValues();
-
         @Override
         public DamageValues getDamageValues() {
             return damageValues;
@@ -250,5 +247,7 @@ public class PyromancerTower extends AbstractTower implements Upgradeable.Path2 
             }
 
         }
+
     }
+
 }

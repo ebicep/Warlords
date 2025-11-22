@@ -2,6 +2,7 @@ package com.ebicep.warlords.menu.debugmenu;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.Team;
@@ -694,6 +695,8 @@ public class DebugMenuPlayerOptions {
                                         Component.text("Click to select!", NamedTextColor.YELLOW)
                                 ).get(),
                         (m, e) -> {
+                            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(target.getUuid());
+                            databasePlayer.setSkillBoostForSpec(selectedSpec, skillBoost);
                             setSpec(player, target, selectedSpec);
                             openSpecMenu(player, target);
                         }
@@ -713,26 +716,24 @@ public class DebugMenuPlayerOptions {
                 return;
             }
 
-            DatabaseManager.getPlayer(target.getUuid(), databasePlayer -> {
-                        Map<Specializations, Integer> selectedBoosts = databasePlayer.getSpecBoosts();
-                        for (int i = 0; i < specBoosts.size(); i++) {
-                            SpecBoostManager.SpecBoost<?> specBoost = specBoosts.get(i);
+            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(target.getUuid());
+            Map<Specializations, Integer> selectedBoosts = databasePlayer.getSpecBoosts();
+            for (int i = 0; i < specBoosts.size(); i++) {
+                SpecBoostManager.SpecBoost<?> specBoost = specBoosts.get(i);
 
-                            int finalI = i;
-                            menu.setItem(i + 2, 1,
-                                    new ItemBuilder(selectedSpec.specType.itemStack)
-                                            .name(specBoost.getName())
-                                            .lore(specBoost.getDescriptionLore())
-                                            .get(),
-                                    (m, e) -> {
-                                        selectedBoosts.put(selectedSpec, finalI);
-                                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                                        setSpec(player, target, selectedSpec);
-                                    }
-                            );
+                int finalI = i;
+                menu.setItem(i + 2, 1,
+                        new ItemBuilder(selectedSpec.specType.itemStack)
+                                .name(specBoost.getName())
+                                .lore(specBoost.getDescriptionLore())
+                                .get(),
+                        (m, e) -> {
+                            selectedBoosts.put(selectedSpec, finalI);
+                            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                            setSpec(player, target, selectedSpec);
                         }
-                    }
-            );
+                );
+            }
 
             menu.setItem(3, 3, MENU_BACK, (m, e) -> openSpecMenu(player, target));
             menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);

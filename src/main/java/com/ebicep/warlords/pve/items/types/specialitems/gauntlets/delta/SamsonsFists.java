@@ -1,10 +1,10 @@
 package com.ebicep.warlords.pve.items.types.specialitems.gauntlets.delta;
 
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
@@ -13,6 +13,7 @@ import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.omega.HandsOfT
 import java.util.Set;
 
 public class SamsonsFists extends SpecialDeltaGauntlet implements AppliesToWarlordsPlayer {
+
     public SamsonsFists() {
 
     }
@@ -35,25 +36,12 @@ public class SamsonsFists extends SpecialDeltaGauntlet implements AppliesToWarlo
 
                 },
                 false
-        ) {
-            @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (event.getCause().isEmpty()) {
-                    return currentDamageValue * 1.4f;
+        ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                    if (event.getCause().isEmpty()) {
+                        currentDamageValue.addMultiplicativeModifierMult(getName(), 1.4f);
+                    }
                 }
-                return currentDamageValue;
-            }
-        });
-    }
-
-    @Override
-    public String getName() {
-        return "Samson's Fists";
-    }
-
-    @Override
-    public String getBonus() {
-        return "Increases your melee damage by 40%.";
+        ));
     }
 
     @Override
@@ -62,7 +50,18 @@ public class SamsonsFists extends SpecialDeltaGauntlet implements AppliesToWarlo
     }
 
     @Override
+    public String getBonus() {
+        return "Increases your melee damage by 40%.";
+    }
+
+    @Override
+    public String getName() {
+        return "Samson's Fists";
+    }
+
+    @Override
     public AbstractItem getCraftsInto(Set<BasicStatPool> statPool) {
         return new HandsOfTheHolyCorpse(statPool);
     }
+
 }

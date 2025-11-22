@@ -111,8 +111,9 @@ public class EventDjer extends AbstractMob implements BossMinionMob {
                 if (!skillsImmuneTo.contains(event.getCause())) {
                     return;
                 }
-                event.setMin(event.getMin() * .75f);
-                event.setMax(event.getMax() * .75f);
+                event.applyToMinMax(floatModifiable ->
+                        floatModifiable.addMultiplicativeModifierMult(name, .75f)
+                );
             }
 
         });
@@ -125,6 +126,7 @@ public class EventDjer extends AbstractMob implements BossMinionMob {
     private static class GroundShred extends AbstractPveAbility implements Damages<GroundShred.DamageValues> {
 
         private final int earthQuakeRadius = 12;
+        private final DamageValues damageValues = new DamageValues();
 
         public GroundShred() {
             super(AbstractAbilityBuilder.create("djerGroundShred").pve());
@@ -164,8 +166,6 @@ public class EventDjer extends AbstractMob implements BossMinionMob {
             return true;
         }
 
-        private final DamageValues damageValues = new DamageValues();
-
         @Override
         public DamageValues getDamageValues() {
             return damageValues;
@@ -184,4 +184,5 @@ public class EventDjer extends AbstractMob implements BossMinionMob {
         }
 
     }
+
 }

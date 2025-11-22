@@ -1,19 +1,23 @@
 package com.ebicep.warlords.player.ingame.cooldowns;
 
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.instances.type.*;
+import com.ebicep.warlords.player.ingame.instances.type.DebugInstance;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
+import com.ebicep.warlords.player.ingame.instances.type.PlayerNameInstance;
+import com.ebicep.warlords.player.ingame.instances.type.SpecDamageReductionInstance;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
-public abstract class AbstractCooldown<T> implements DamageInstance, HealingInstance, EnergyInstance, PlayerNameInstance, SpecDamageReductionInstance, DebugInstance {
+public abstract class AbstractCooldown<T> implements PlayerNameInstance, SpecDamageReductionInstance, DebugInstance {
 
     public static List<AbstractCooldown<?>> COOLDOWNS_WITH_LISTENERS = new ArrayList<>();
     protected String name;
@@ -26,9 +30,29 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
     protected Consumer<CooldownManager> onRemoveForce;
     protected boolean removeOnDeath;
     private final Listener activeListener;
-    private List<DamageInstance> extraDamageInstances = null;
-    private List<HealingInstance> extraHealingInstances = null;
     private List<CooldownFlag> flags = new ArrayList<>();
+
+    private final Map<Modifier<?>, List<Object>> modifiers = new HashMap<>();
+
+    public <R> AbstractCooldown<T> addModifier(Modifier<R> modifier, R value) {
+        modifiers.computeIfAbsent(modifier, k -> new ArrayList<>()).add(value);
+        return this;
+    }
+
+//    @SuppressWarnings("unchecked")
+//    public <R> List<R> getModifiers(Modifier<R> modifier) {
+//        return (List<R>) modifiers.getOrDefault(modifier, Collections.emptyList());
+//    }
+
+    @SuppressWarnings("unchecked")
+    public <R> void applyModifiers(Modifier<R> modifier, Consumer<R> consumer) {
+        List<?> list = modifiers.get(modifier);
+        if (list != null) {
+            for (Object item : list) {
+                consumer.accept((R) item);
+            }
+        }
+    }
 
     public AbstractCooldown(
             String name,
@@ -99,6 +123,10 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
         }
     }
 
+    public boolean distinct() {
+        return false;
+    }
+
     protected Listener getListener() {
         return null;
     }
@@ -114,16 +142,6 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
             Consumer<CooldownManager> onRemoveForce
     ) {
         this(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove, onRemoveForce, true);
-    }
-
-    @Override
-    public @Nullable List<DamageInstance> getExtraDamageInstances() {
-        return extraDamageInstances;
-    }
-
-    @Override
-    public @Nullable List<HealingInstance> getExtraHealingInstances() {
-        return extraHealingInstances;
     }
 
     public void expire(CooldownManager cooldownManager) {
@@ -201,20 +219,6 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
 
     public void setRemoveOnDeath(boolean removeOnDeath) {
         this.removeOnDeath = removeOnDeath;
-    }
-
-    public void addExtraDamageInstance(DamageInstance extraDamageInstance) {
-        if (extraDamageInstances == null) {
-            extraDamageInstances = new ArrayList<>();
-        }
-        extraDamageInstances.add(extraDamageInstance);
-    }
-
-    public void addExtraHealingInstance(HealingInstance extraHealingInstance) {
-        if (extraHealingInstances == null) {
-            extraHealingInstances = new ArrayList<>();
-        }
-        extraHealingInstances.add(extraHealingInstance);
     }
 
     public Listener getActiveListener() {

@@ -2,6 +2,7 @@ package com.ebicep.warlords.database.repositories.timings.pojos;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.DatabaseUpdater;
 import com.ebicep.warlords.database.leaderboards.guilds.GuildLeaderboardManager;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboard;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
@@ -32,6 +33,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Document(collection = "Timings")
 public class DatabaseTiming {
 
+    public static final AtomicBoolean RESET_MONTHLY = new AtomicBoolean(false);
+    public static final AtomicBoolean RESET_WEEKLY = new AtomicBoolean(false);
+    public static final AtomicBoolean RESET_DAILY = new AtomicBoolean(false);
     private static final String[] WEEKLY_EXPERIENCE_LEADERBOARDS = new String[]{
             "Wins",
             "Losses",
@@ -46,9 +50,6 @@ public class DatabaseTiming {
             "Flags Captured",
             "Flags Returned",
     };
-    public static final AtomicBoolean RESET_MONTHLY = new AtomicBoolean(false);
-    public static final AtomicBoolean RESET_WEEKLY = new AtomicBoolean(false);
-    public static final AtomicBoolean RESET_DAILY = new AtomicBoolean(false);
 
     public static void checkTimings() {
         Instant currentDate = Instant.now();
@@ -204,7 +205,7 @@ public class DatabaseTiming {
             }
             //reloading boards
             DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.MONTHLY).clear();
-            DatabaseManager.clearQueue(PlayersCollections.MONTHLY);
+            DatabaseUpdater.clearQueue(PlayersCollections.MONTHLY);
             for (Player player : Bukkit.getOnlinePlayers()) {
                 DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.MONTHLY).put(player.getUniqueId(), new DatabasePlayer(player.getUniqueId(), player.getName()));
             }
@@ -242,7 +243,7 @@ public class DatabaseTiming {
             }
             //reloading boards
             DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.WEEKLY).clear();
-            DatabaseManager.clearQueue(PlayersCollections.WEEKLY);
+            DatabaseUpdater.clearQueue(PlayersCollections.WEEKLY);
             for (Player player : Bukkit.getOnlinePlayers()) {
                 DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.WEEKLY).put(player.getUniqueId(), new DatabasePlayer(player.getUniqueId(), player.getName()));
             }
@@ -271,7 +272,7 @@ public class DatabaseTiming {
             }
             //reloading boards
             DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.DAILY).clear();
-            DatabaseManager.clearQueue(PlayersCollections.DAILY);
+            DatabaseUpdater.clearQueue(PlayersCollections.DAILY);
             for (Player player : Bukkit.getOnlinePlayers()) {
                 DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.DAILY).put(player.getUniqueId(), new DatabasePlayer(player.getUniqueId(), player.getName()));
             }
@@ -332,10 +333,6 @@ public class DatabaseTiming {
         this.timing = timing;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
     @Override
     public String toString() {
         return "DatabaseTiming{" +
@@ -343,4 +340,9 @@ public class DatabaseTiming {
                 ", timing=" + timing +
                 '}';
     }
+
+    public String getTitle() {
+        return title;
+    }
+
 }

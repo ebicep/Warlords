@@ -2,12 +2,12 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.luminary.RayOfLightBranch;
@@ -53,6 +53,49 @@ public class RayOfLight extends AbstractBeam<RayOfLight, RayOfLight.RayOfLightSt
         return BEAM_ITEM;
     }
 
+    private void beamPlayer(@Nonnull WarlordsEntity hit, WarlordsEntity wp) {
+        int hexStacks = (int) new CooldownFilter<>(hit, RegularCooldown.class).filterCooldownClass(MercifulHex.class).stream().count();
+        boolean hasDivineBlessing = wp.getCooldownManager().hasCooldown(DivineBlessing.DivineBlessingData.class);
+        if (!hasDivineBlessing) {
+            hit.getCooldownManager().removeCooldown(MercifulHex.class, false);
+        } else {
+            wp.doOnStaticAbility(DivineBlessing.class,
+                    divineBlessing -> divineBlessing.getAbilityStats().setHexesNotConsumed(divineBlessing.getAbilityStats().getHexesNotConsumed() + hexStacks)
+            );
+        }
+        boolean maxStacks = hexStacks >= 3;
+        if (maxStacks && removeDebuffs) {
+            hit.getCooldownManager().removeDebuffCooldowns();
+        }
+        float multiplier = switch (hexStacks) {
+            case 0 -> 1f;
+            case 1 -> 1.25f;
+            case 2 -> 1.5f;
+            default -> 2f;
+        };
+        getAbilityStats().getStacksRemoved().merge(hexStacks, 1, Integer::sum);
+        if (pveMasterUpgrade) {
+            hit.getCooldownManager().addCooldown(new RegularCooldown<>(name, "RAY", RayOfLight.class, new RayOfLight(), wp, CooldownTypes.ABILITY, cooldownManager -> {
+            }, cooldownManager -> {
+            }, 100
+            ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                        currentDamageValue.addMultiplicativeModifierMult(name, maxStacks ? 1.2f : 1.05f);
+                    }
+            ));
+        }
+        hit.addInstance(InstanceBuilder.healing()
+                                       .ability(this)
+                                       .source(wp)
+                                       .min(healingValues.rayHealing.getMinValue() * multiplier)
+                                       .max(healingValues.rayHealing.getMaxValue() * multiplier)
+                                       .crit(healingValues.rayHealing));
+    }
+
+    @Override
+    public RayOfLightStats getAbilityStats() {
+        return stats;
+    }
+
     @Override
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder.create("Unleash a concentrated beam of holy light, healing ")
@@ -72,11 +115,6 @@ public class RayOfLight extends AbstractBeam<RayOfLight, RayOfLight.RayOfLightSt
                                                .text(" relative to the number of stacks and all stacks are removed.")
                                                .maxRange(maxDistance)
                                                .build();
-    }
-
-    @Override
-    public RayOfLightStats getAbilityStats() {
-        return stats;
     }
 
     @Override
@@ -122,54 +160,13 @@ public class RayOfLight extends AbstractBeam<RayOfLight, RayOfLight.RayOfLightSt
         }
     }
 
-    public void setRemoveDebuffs(boolean removeDebuffs) {
-        this.removeDebuffs = removeDebuffs;
-    }
-
-    private void beamPlayer(@Nonnull WarlordsEntity hit, WarlordsEntity wp) {
-        int hexStacks = (int) new CooldownFilter<>(hit, RegularCooldown.class).filterCooldownClass(MercifulHex.class).stream().count();
-        boolean hasDivineBlessing = wp.getCooldownManager().hasCooldown(DivineBlessing.DivineBlessingData.class);
-        if (!hasDivineBlessing) {
-            hit.getCooldownManager().removeCooldown(MercifulHex.class, false);
-        } else {
-            wp.doOnStaticAbility(DivineBlessing.class,
-                    divineBlessing -> divineBlessing.getAbilityStats().setHexesNotConsumed(divineBlessing.getAbilityStats().getHexesNotConsumed() + hexStacks)
-            );
-        }
-        boolean maxStacks = hexStacks >= 3;
-        if (maxStacks && removeDebuffs) {
-            hit.getCooldownManager().removeDebuffCooldowns();
-        }
-        float multiplier = switch (hexStacks) {
-            case 0 -> 1f;
-            case 1 -> 1.25f;
-            case 2 -> 1.5f;
-            default -> 2f;
-        };
-        getAbilityStats().getStacksRemoved().merge(hexStacks, 1, Integer::sum);
-        if (pveMasterUpgrade) {
-            hit.getCooldownManager().addCooldown(new RegularCooldown<>(name, "RAY", RayOfLight.class, new RayOfLight(), wp, CooldownTypes.ABILITY, cooldownManager -> {
-            }, cooldownManager -> {
-            }, 100
-            ) {
-
-                @Override
-                public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    return currentDamageValue * (maxStacks ? 1.2f : 1.05f);
-                }
-            });
-        }
-        hit.addInstance(InstanceBuilder.healing()
-                                       .ability(this)
-                                       .source(wp)
-                                       .min(healingValues.rayHealing.getMinValue() * multiplier)
-                                       .max(healingValues.rayHealing.getMaxValue() * multiplier)
-                                       .crit(healingValues.rayHealing));
-    }
-
     @Override
     public HealingValues getHealValues() {
         return healingValues;
+    }
+
+    public void setRemoveDebuffs(boolean removeDebuffs) {
+        this.removeDebuffs = removeDebuffs;
     }
 
     public static class HealingValues implements Value.ValueHolder {

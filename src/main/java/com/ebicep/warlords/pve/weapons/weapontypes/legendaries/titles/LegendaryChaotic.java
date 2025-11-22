@@ -1,13 +1,13 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
-import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.StackableCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
@@ -34,7 +34,7 @@ public class LegendaryChaotic extends AbstractLegendaryWeapon implements Listene
     @Transient
     public List<String> abilityNames;
     @Transient
-    private RegularCooldown<LegendaryChaotic> cooldown = null;
+    private StackableCooldown<LegendaryChaotic> cooldown = null;
     @Transient
     private int stacks = 0;
 
@@ -47,21 +47,6 @@ public class LegendaryChaotic extends AbstractLegendaryWeapon implements Listene
 
     public LegendaryChaotic(AbstractLegendaryWeapon legendaryWeapon) {
         super(legendaryWeapon);
-    }
-
-    @Override
-    public LinkedHashMap<Currencies, Long> getCost() {
-        LinkedHashMap<Currencies, Long> baseCost = super.getCost();
-        baseCost.put(Currencies.TITLE_TOKEN_LIBRARY_ARCHIVES, 1L);
-        return baseCost;
-    }
-
-    @Override
-    public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
-        super.applyToWarlordsPlayer(player, pveOption);
-        abilityNames = player.getAbilities().stream().map(AbstractAbility::getName).toList();
-        cooldown = null;
-        stacks = 0;
     }
 
     @Override
@@ -112,6 +97,21 @@ public class LegendaryChaotic extends AbstractLegendaryWeapon implements Listene
     }
 
     @Override
+    public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
+        super.applyToWarlordsPlayer(player, pveOption);
+        abilityNames = player.getAbilities().stream().map(AbstractAbility::getName).toList();
+        cooldown = null;
+        stacks = 0;
+    }
+
+    @Override
+    public LinkedHashMap<Currencies, Long> getCost() {
+        LinkedHashMap<Currencies, Long> baseCost = super.getCost();
+        baseCost.put(Currencies.TITLE_TOKEN_LIBRARY_ARCHIVES, 1L);
+        return baseCost;
+    }
+
+    @Override
     protected float getMeleeDamageMaxValue() {
         return 200;
     }
@@ -151,49 +151,42 @@ public class LegendaryChaotic extends AbstractLegendaryWeapon implements Listene
         if (event.getInstanceFlags().contains(InstanceFlags.RECURSIVE)) {
             return;
         }
-        if (event.isCrit() && stacks > 0) {
-            stacks--;
+        if (event.isCrit() && cooldown != null && cooldown.getCurrentStacks() > 0) {
+            cooldown.removeStack();
             return;
         }
-        if (stacks < MAX_STACKS + MAX_STACKS_PER_UPGRADE * getTitleLevel()) {
-            stacks++;
-        }
         if (cooldown == null) {
-            warlordsPlayer.getCooldownManager().addCooldown(cooldown = new RegularCooldown<>(
-                    getTitleName() + " 1",
-                    "CHAOTIC 1",
+            cooldown = new StackableCooldown<>(
+                    getTitleName(),
+                    "CHAOTIC",
                     LegendaryChaotic.class,
                     null,
                     warlordsPlayer,
                     CooldownTypes.WEAPON,
                     cooldownManager -> {
-                    },
-                    cooldownManager -> {
                         cooldown = null;
-                        stacks = 0;
                     },
-                    5 * 20
-            ) {
-                @Override
-                public float addCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
-                    if (!abilityNames.contains(event.getCause())) {
-                        return currentCritChance;
+                    5 * 20,
+                    (int) (MAX_STACKS + MAX_STACKS_PER_UPGRADE * getTitleLevel()),
+                    false
+            );
+            cooldown.addModifier(Modifier.MODIFY_OUTGOING_CRIT_CHANCE, (e, currentCritChance) -> {
+                        if (!abilityNames.contains(e.getCause())) {
+                            return;
+                        }
+                        currentCritChance.addAdditiveModifier(getTitleName(), CRIT_CHANCE * cooldown.getCurrentStacks());
                     }
-                    return currentCritChance + CRIT_CHANCE * stacks;
-                }
-
-                @Override
-                public float addCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
-                    if (!abilityNames.contains(event.getCause())) {
-                        return currentCritMultiplier;
+            );
+            cooldown.addModifier(Modifier.MODIFY_OUTGOING_CRIT_MULTIPLIER, (e, currentCritMultiplier) -> {
+                        if (!abilityNames.contains(e.getCause())) {
+                            return;
+                        }
+                        currentCritMultiplier.addAdditiveModifier(getTitleName(), (CRIT_MULTIPLIER + CRIT_MULTIPLIER_PER_UPGRADE * getTitleLevel()) * cooldown.getCurrentStacks());
                     }
-                    return currentCritMultiplier + (CRIT_MULTIPLIER + CRIT_MULTIPLIER_PER_UPGRADE * getTitleLevel()) * stacks;
-                }
-            });
+            );
+            warlordsPlayer.getCooldownManager().addCooldown(cooldown);
         } else {
-            cooldown.setTicksLeft(5 * 20);
-            cooldown.setName(getTitleName() + " " + stacks);
-            cooldown.setNameAbbreviation("CHAOTIC " + stacks);
+            cooldown.addStack();
         }
     }
 

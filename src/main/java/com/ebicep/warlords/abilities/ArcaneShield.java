@@ -5,10 +5,10 @@ import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.AbstractWarlordsEntityEvent;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.ArcaneShieldBranch;
@@ -41,6 +41,23 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
     }
 
     @Override
+    public int getTickDuration() {
+        return tickDuration;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
+    }
+
+    @Override
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.shieldPercentage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("shieldPercentage"), float.class);
+        this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
+    }
+
+    @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "mage.arcaneshield.activation", 2, 1);
         Shield shield = new Shield(name, maxShieldHealth);
@@ -60,15 +77,15 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
                 FloatModifiable.FloatModifier modifier = rightClick.getEnergyCost().addMultiplicativeModifierAdd("Arcane Energy", -.25f);
                 wp.updateItem(rightClick);
                 wp.getCooldownManager()
-                        .addCooldown(new RegularCooldown<>("Arcane Energy", "ARC", ArcaneShield.class, new ArcaneShield(), wp, CooldownTypes.ABILITY, cooldownManager2 -> {
-                            modifier.forceEnd();
-                            wp.updateItem(rightClick);
-                        }, 6 * 20, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                            if (ticksElapsed % 3 == 0) {
-                                EffectUtils.displayParticle(Particle.ELECTRIC_SPARK, wp.getLocation().add(0, 1, 0), 10, .4, .4, .4, 0);
-                            }
-                        })
-                        ));
+                  .addCooldown(new RegularCooldown<>("Arcane Energy", "ARC", ArcaneShield.class, new ArcaneShield(), wp, CooldownTypes.ABILITY, cooldownManager2 -> {
+                      modifier.forceEnd();
+                      wp.updateItem(rightClick);
+                  }, 6 * 20, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                      if (ticksElapsed % 3 == 0) {
+                          EffectUtils.displayParticle(Particle.ELECTRIC_SPARK, wp.getLocation().add(0, 1, 0), 10, .4, .4, .4, 0);
+                      }
+                  })
+                  ));
             }
         }, cooldownManager -> {
             if (shield.isBroken()) {
@@ -86,35 +103,51 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
             }
         })
         ) {
-
-            @Override
-            public void onShieldFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                event.getWarlordsEntity().getCooldownManager().queueUpdatePlayerNames();
-            }
-
             @Override
             public PlayerNameData addPrefixFromOther() {
                 return new PlayerNameData(Component.text((int) (shield.getShieldHealth()), NamedTextColor.YELLOW), we -> we.isTeammate(wp));
             }
-        });
+        }.addModifier(Modifier.ON_INCOMING_SHIELD_DAMAGE, (event, currentDamageValue, isCrit) -> {
+                    event.getWarlordsEntity().getCooldownManager().queueUpdatePlayerNames();
+                }
+        ));
         return true;
     }
 
     @Override
-    public int getTickDuration() {
-        return tickDuration;
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Surround yourself with arcane energy, creating a shield that will absorb up to ")
+                                               .percent(shieldPercentage, AbilityDescriptionBuilder.COLOR_BROWN)
+                                               .text(" of your maximum health. Lasts ")
+                                               .durationTicks(tickDuration)
+                                               .text(".")
+                                               .build();
     }
 
     @Override
-    public void setTickDuration(int tickDuration) {
-        this.tickDuration = tickDuration;
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new ArcaneShieldBranch(abilityTree, this);
     }
 
     @Override
-    public void init(AbstractAbilityBuilder builder) {
-        super.init(builder);
-        this.shieldPercentage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("shieldPercentage"), float.class);
-        this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
+    public void updateCustomStats(WarlordsEntity warlordsEntity) {
+        super.updateCustomStats(warlordsEntity);
+        if (warlordsEntity != null) {
+            setMaxShieldHealth((int) (warlordsEntity.getMaxHealth() * (getShieldPercentage() / 100f)));
+            updateDescription(null);
+        }
+    }
+
+    public void setMaxShieldHealth(int maxShieldHealth) {
+        this.maxShieldHealth = maxShieldHealth;
+    }
+
+    public float getShieldPercentage() {
+        return shieldPercentage;
+    }
+
+    public void setShieldPercentage(float shieldPercentage) {
+        this.shieldPercentage = shieldPercentage;
     }
 
     @Override
@@ -158,16 +191,6 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
 
     }
 
-    @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Surround yourself with arcane energy, creating a shield that will absorb up to ")
-                .percent(shieldPercentage, AbilityDescriptionBuilder.COLOR_BROWN)
-                .text(" of your maximum health. Lasts ")
-                .durationTicks(tickDuration)
-                .text(".")
-                .build();
-    }
-
     public static class WarlordsArcaneShieldBrokenEvent extends AbstractWarlordsEntityEvent {
 
         private static final HandlerList handlers = new HandlerList();
@@ -189,29 +212,4 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
 
     }
 
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new ArcaneShieldBranch(abilityTree, this);
-    }
-
-    @Override
-    public void updateCustomStats(WarlordsEntity warlordsEntity) {
-        super.updateCustomStats(warlordsEntity);
-        if (warlordsEntity != null) {
-            setMaxShieldHealth((int) (warlordsEntity.getMaxHealth() * (getShieldPercentage() / 100f)));
-            updateDescription(null);
-        }
-    }
-
-    public void setMaxShieldHealth(int maxShieldHealth) {
-        this.maxShieldHealth = maxShieldHealth;
-    }
-
-    public float getShieldPercentage() {
-        return shieldPercentage;
-    }
-
-    public void setShieldPercentage(float shieldPercentage) {
-        this.shieldPercentage = shieldPercentage;
-    }
 }

@@ -6,6 +6,7 @@ import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.HelpEntry;
 import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.pve.items.menu.ItemCraftingMenu;
 import com.ebicep.warlords.pve.items.menu.ItemEquipMenu;
 import com.ebicep.warlords.pve.items.types.AbstractFixedItem;
@@ -29,39 +30,39 @@ public class ItemsCommand extends BaseCommand {
     @Default
     @Subcommand("menu")
     public void menu(Player player) {
-        DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> ItemEquipMenu.openItemEquipMenuExternal(player, databasePlayer));
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+        ItemEquipMenu.openItemEquipMenuExternal(player, databasePlayer);
     }
 
     @Subcommand("equipmenu")
     public void equipMenu(Player player) {
-        DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> ItemEquipMenu.openItemLoadoutMenu(player, null, databasePlayer));
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+        ItemEquipMenu.openItemLoadoutMenu(player, null, databasePlayer);
     }
 
     @Subcommand("forgemenu")
     public void openForgingMenu(Player player, ItemTier tier) {
-        DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> ItemCraftingMenu.openItemCraftingMenu(player, databasePlayer));
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+        ItemCraftingMenu.openItemCraftingMenu(player, databasePlayer);
     }
 
     @Subcommand("addfoundblessings")
     public void addFoundBlessings(Player player, @Conditions("limits:min=1,max=10") Integer amount) {
-        DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
-                    databasePlayer.getPveStats()
-                                  .getItemsManager()
-                                  .addBlessingsFound(amount);
-                    ChatChannels.sendDebugMessage(player, Component.text("Added " + amount + " found blessings", NamedTextColor.GREEN));
-                }
-        );
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+        databasePlayer.getPveStats()
+                      .getItemsManager()
+                      .addBlessingsFound(amount);
+        ChatChannels.sendDebugMessage(player, Component.text("Added " + amount + " found blessings", NamedTextColor.GREEN));
     }
 
     @Subcommand("addboughtblessings")
     public void addBoughtBlessings(Player player, @Conditions("limits:min=1,max=5") Integer tier, @Conditions("limits:min=1,max=10") Integer amount) {
-        DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
-            databasePlayer.getPveStats()
-                          .getItemsManager()
-                          .getBlessingsBought()
-                          .merge(tier, amount, Integer::sum);
-            ChatChannels.sendDebugMessage(player, Component.text("Added " + amount + " Tier " + tier + " bought blessings", NamedTextColor.GREEN));
-        });
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+        databasePlayer.getPveStats()
+                      .getItemsManager()
+                      .getBlessingsBought()
+                      .merge(tier, amount, Integer::sum);
+        ChatChannels.sendDebugMessage(player, Component.text("Added " + amount + " Tier " + tier + " bought blessings", NamedTextColor.GREEN));
     }
 
     @Subcommand("generate")
@@ -71,66 +72,69 @@ public class ItemsCommand extends BaseCommand {
             ChatChannels.sendDebugMessage(player, Component.text("Item tier was set to " + tier.name() + " because it was NONE", NamedTextColor.GREEN));
         }
         ItemTier finalTier = tier;
-        DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
-            for (int i = 0; i < amount; i++) {
-                AbstractItem item = type.create(finalTier);
-                if (item == null) {
-                    continue;
-                }
-                databasePlayer.getPveStats().getItemsManager().addItem(item);
-                ChatChannels.playerSendMessage(player, ChatChannels.DEBUG, Component.text("Spawned item: ", NamedTextColor.GRAY)
-                                                                                    .append(item.getHoverComponent()));
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+        for (int i = 0; i < amount; i++) {
+            AbstractItem item = type.create(finalTier);
+            if (item == null) {
+                continue;
             }
-        });
+            databasePlayer.getPveStats().getItemsManager().addItem(item);
+            ChatChannels.playerSendMessage(player, ChatChannels.DEBUG, Component.text("Spawned item: ", NamedTextColor.GRAY)
+                                                                                .append(item.getHoverComponent())
+            );
+        }
+        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
     }
 
     @Subcommand("generaterandom")
     public void generateRandom(Player player, @Default("1") @Conditions("limits:min=1,max=10") Integer amount) {
         ThreadLocalRandom random = ThreadLocalRandom.current();
-        DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
-            for (int i = 0; i < amount; i++) {
-                ItemTier randomItemTier = ItemTier.VALID_VALUES[random.nextInt(ItemTier.VALID_VALUES.length)];
-                AbstractItem item = ItemType.getRandom().create(randomItemTier);
-                if (item == null) {
-                    continue;
-                }
-                databasePlayer.getPveStats().getItemsManager().addItem(item);
-                ChatChannels.playerSendMessage(player, ChatChannels.DEBUG, Component.text("Spawned item: ", NamedTextColor.GRAY)
-                                                                                    .append(item.getHoverComponent()));
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+        for (int i = 0; i < amount; i++) {
+            ItemTier randomItemTier = ItemTier.VALID_VALUES[random.nextInt(ItemTier.VALID_VALUES.length)];
+            AbstractItem item = ItemType.getRandom().create(randomItemTier);
+            if (item == null) {
+                continue;
             }
-        });
+            databasePlayer.getPveStats().getItemsManager().addItem(item);
+            ChatChannels.playerSendMessage(player, ChatChannels.DEBUG, Component.text("Spawned item: ", NamedTextColor.GRAY)
+                                                                                .append(item.getHoverComponent())
+            );
+        }
+        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
     }
 
     @Subcommand("spawnspecial")
     public void spawnSpecial(Player player, SpecialItems specialItem, @Default("1") @Conditions("limits:min=1,max=10") Integer amount) {
         ThreadLocalRandom random = ThreadLocalRandom.current();
-        DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
-            for (int i = 0; i < amount; i++) {
-                AbstractSpecialItem item = specialItem.create();
-                databasePlayer.getPveStats().getItemsManager().addItem(item);
-                ChatChannels.playerSendMessage(player, ChatChannels.DEBUG, Component.text("Spawned item: ", NamedTextColor.GRAY)
-                                                                                    .append(item.getHoverComponent()));
-            }
-        });
-    }
-
-    @Subcommand("spawnfixed")
-    public void spawnFixed(Player player, FixedItems fixedItem) {
-        DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
-            AbstractFixedItem item = fixedItem.create.get();
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+        for (int i = 0; i < amount; i++) {
+            AbstractSpecialItem item = specialItem.create();
             databasePlayer.getPveStats().getItemsManager().addItem(item);
             ChatChannels.playerSendMessage(player, ChatChannels.DEBUG, Component.text("Spawned item: ", NamedTextColor.GRAY)
                                                                                 .append(item.getHoverComponent())
             );
-        });
+        }
+        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+    }
+
+    @Subcommand("spawnfixed")
+    public void spawnFixed(Player player, FixedItems fixedItem) {
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+        AbstractFixedItem item = fixedItem.create.get();
+        databasePlayer.getPveStats().getItemsManager().addItem(item);
+        ChatChannels.playerSendMessage(player, ChatChannels.DEBUG, Component.text("Spawned item: ", NamedTextColor.GRAY)
+                                                                            .append(item.getHoverComponent())
+        );
+        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
     }
 
     @Subcommand("clear")
     public void clear(Player player) {
-        DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
-            databasePlayer.getPveStats().getItemsManager().getItemInventory().clear();
-            ChatChannels.playerSendMessage(player, ChatChannels.DEBUG, Component.text("Cleared items", NamedTextColor.GREEN));
-        });
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+        databasePlayer.getPveStats().getItemsManager().getItemInventory().clear();
+        ChatChannels.playerSendMessage(player, ChatChannels.DEBUG, Component.text("Cleared items", NamedTextColor.GREEN));
+        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
     }
 
 

@@ -10,7 +10,6 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.pve.mobs.bosses.bossabilities.BossAbilityPhase;
 import com.ebicep.warlords.player.general.SpecType;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -18,7 +17,9 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
-import com.ebicep.warlords.pve.mobs.*;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.bosses.bossabilities.*;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.EchoOfBlades;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.NineCrystal;
@@ -53,8 +54,8 @@ import static java.lang.Math.cos;
 
 public class OneOfNine extends AbstractMob implements BossMob {
 
-    private Listener listener;
     List<UUID> pylons = new ArrayList<>();
+    private Listener listener;
     private Location mapCenter;
     private Location mapLeft;
     private Location mapRight;
@@ -110,6 +111,21 @@ public class OneOfNine extends AbstractMob implements BossMob {
     }
 
     @Override
+    public Mob getMobRegistry() {
+        return Mob.ONE_OF_NINE;
+    }
+
+    @Override
+    public Component getDescription() {
+        return Component.text("Echoes of the Past", NamedTextColor.DARK_PURPLE);
+    }
+
+    @Override
+    public TextColor getColor() {
+        return NamedTextColor.GRAY;
+    }
+
+    @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
 
@@ -118,10 +134,11 @@ public class OneOfNine extends AbstractMob implements BossMob {
         mapRight = new Location(warlordsNPC.getWorld(), 137.5, 24, 37.5);
 
         EffectUtils.playFirework(warlordsNPC.getLocation(), FireworkEffect.builder()
-                .withColor(Color.GRAY)
-                .with(FireworkEffect.Type.BALL_LARGE)
-                .withTrail()
-                .build());
+                                                                          .withColor(Color.GRAY)
+                                                                          .with(FireworkEffect.Type.BALL_LARGE)
+                                                                          .withTrail()
+                                                                          .build()
+        );
         EffectUtils.strikeLightningInCylinder(warlordsNPC.getLocation(), 10, false);
         Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ITEM_GOAT_HORN_SOUND_6, 10, 0.5f);
 
@@ -223,29 +240,26 @@ public class OneOfNine extends AbstractMob implements BossMob {
                 CooldownTypes.BUFF,
                 cooldownManager -> {},
                 true
-        ) {
-            @Override
-            public float modifyDamageAfterAllFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (damageController.isInDamageWindow()) {
-                    return currentDamageValue;
-                }
-                // nullify reflected damage
-                if (event.getFlags().contains(InstanceFlags.REFLECTIVE_DAMAGE)) {
-                    return currentDamageValue * 0f;
-                }
-
+        ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_ALL_MODIFIERS, (event, currentDamageValue, isCrit) -> {
+                    if (damageController.isInDamageWindow()) {
+                        return;
+                    }
+                    // nullify reflected damage
+                    if (event.getFlags().contains(InstanceFlags.REFLECTIVE_DAMAGE)) {
+                        currentDamageValue.addOverridingModifier(name, 0f);
+                    } else {
                 event.getSource().addInstance(InstanceBuilder
                         .damage()
                         .source(warlordsNPC)
                         .cause("Greed")
-                        .value(currentDamageValue * (event.getFlags().contains(InstanceFlags.DOT) ? 0.25f : 1))
+                        .value(currentDamageValue.getCalculatedValue() * (event.getFlags().contains(InstanceFlags.DOT) ? 0.25f : 1))
                         .flags(InstanceFlags.RECURSIVE, InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST)
                 );
                 event.getSource().sendMessage(Component.text("Your divine punishment awaits if you keep giving in to your greed...", NamedTextColor.RED));
                 event.setCancelled(true);
-                return currentDamageValue;
             }
-        });
+                }
+        ));
 
         new GameRunnable(warlordsNPC.getGame()) {
             @Override
@@ -287,6 +301,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
             Utils.playGlobalSound(mapCenter, Sound.ENTITY_ALLAY_AMBIENT_WITHOUT_ITEM, 500, 0.5f);
             new GameRunnable(warlordsNPC.getGame()) {
                 int counter = 0;
+
                 @Override
                 public void run() {
                     counter++;
@@ -311,7 +326,8 @@ public class OneOfNine extends AbstractMob implements BossMob {
             }.runTaskTimer(0, 0);
 
             phaseTransition();
-        });
+        }
+        );
 
         phaseTwo = new BossAbilityPhase(warlordsNPC, 70, () -> {
             preventDamagePhase = true;
@@ -339,7 +355,9 @@ public class OneOfNine extends AbstractMob implements BossMob {
             listener = new Listener() {
                 @EventHandler(ignoreCancelled = true)
                 private void onAllyDeath(WarlordsDeathEvent event) {
-                    if (pylons.isEmpty()) return;
+                    if (pylons.isEmpty()) {
+                        return;
+                    }
 
                     pylons.removeIf(p -> p.equals(event.getWarlordsEntity().getUuid()));
                     Utils.playGlobalSound(mapCenter, Sound.ENTITY_ALLAY_AMBIENT_WITHOUT_ITEM, 500, 1.5f);
@@ -352,6 +370,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
             new GameRunnable(warlordsNPC.getGame()) {
                 int counter = 0;
                 double angle = 0;
+
                 @Override
                 public void run() {
                     if (counter % 20 == 0) {
@@ -370,10 +389,10 @@ public class OneOfNine extends AbstractMob implements BossMob {
                         EffectUtils.playFirework(
                                 warlordsNPC.getLocation(),
                                 FireworkEffect.builder()
-                                        .with(FireworkEffect.Type.BALL_LARGE)
-                                        .withColor(Color.WHITE)
-                                        .withTrail()
-                                        .build()
+                                              .with(FireworkEffect.Type.BALL_LARGE)
+                                              .withColor(Color.WHITE)
+                                              .withTrail()
+                                              .build()
                         );
 
                         preventDamagePhase = false;
@@ -386,10 +405,10 @@ public class OneOfNine extends AbstractMob implements BossMob {
                         EffectUtils.playFirework(
                                 warlordsNPC.getLocation(),
                                 FireworkEffect.builder()
-                                        .with(FireworkEffect.Type.BALL_LARGE)
-                                        .withColor(Color.RED)
-                                        .withTrail()
-                                        .build()
+                                              .with(FireworkEffect.Type.BALL_LARGE)
+                                              .withColor(Color.RED)
+                                              .withTrail()
+                                              .build()
                         );
 
                         for (WarlordsEntity we : PlayerFilter
@@ -431,7 +450,8 @@ public class OneOfNine extends AbstractMob implements BossMob {
             }.runTaskTimer(60, 0);
 
             phaseTransition();
-        });
+        }
+        );
 
         phaseThree = new BossAbilityPhase(warlordsNPC, 50, () -> {
             Utils.playGlobalSound(mapCenter, Sound.ENTITY_ALLAY_AMBIENT_WITHOUT_ITEM, 500, 0.3f);
@@ -446,6 +466,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
 
             new GameRunnable(warlordsNPC.getGame()) {
                 int t = 0;
+
                 @Override
                 public void run() {
                     t++;
@@ -463,7 +484,8 @@ public class OneOfNine extends AbstractMob implements BossMob {
                     }
                 }
             }.runTaskTimer(0, 0);
-        });
+        }
+        );
 
         phaseFour = new BossAbilityPhase(warlordsNPC, 30, () -> {
             preventMinions = true;
@@ -480,6 +502,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
             Utils.playGlobalSound(mapCenter, Sound.ENTITY_ALLAY_AMBIENT_WITHOUT_ITEM, 500, 0.4f);
             new GameRunnable(warlordsNPC.getGame()) {
                 int counter = 0;
+
                 @Override
                 public void run() {
                     counter++;
@@ -505,7 +528,8 @@ public class OneOfNine extends AbstractMob implements BossMob {
                 }
             }.runTaskTimer(0, 0);
             phaseTransition();
-        });
+        }
+        );
 
         phaseFive = new BossAbilityPhase(warlordsNPC, 15, () -> {
             preventMinions = true;
@@ -522,6 +546,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
 
             new GameRunnable(warlordsNPC.getGame()) {
                 int counter = 0;
+
                 @Override
                 public void run() {
                     counter++;
@@ -547,20 +572,49 @@ public class OneOfNine extends AbstractMob implements BossMob {
                     CooldownTypes.BUFF,
                     cooldownManager -> {},
                     true
-            ) {
-                @Override
-                public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    return currentDamageValue * 0.7f;
-                }
-
-                @Override
-                public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    return currentDamageValue * 1.5f;
-                }
-            });
+            ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
+                        currentDamageValue.addMultiplicativeModifierMult(name, 0.7f);
+                    }
+            ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                        currentDamageValue.addMultiplicativeModifierMult(name, 1.5f);
+                    }
+            ));
 
             phaseTransition();
-        });
+        }
+        );
+    }
+
+    public void phaseTransition() {
+        FallingBlockWaveEffect.create(
+                mapCenter.clone().add(0, 1, 0),
+                20,
+                7,
+                Material.SOUL_FIRE
+        );
+
+        Utils.playGlobalSound(mapCenter, Sound.ENTITY_WITHER_DEATH, 0.5f, 0.2f);
+        EffectUtils.playFirework(warlordsNPC.getLocation(), FireworkEffect.builder()
+                                                                          .withColor(Color.BLACK)
+                                                                          .with(FireworkEffect.Type.STAR)
+                                                                          .withTrail()
+                                                                          .build()
+        );
+        EffectUtils.strikeLightningInCylinder(warlordsNPC.getLocation(), 10, false);
+
+        for (WarlordsEntity we : PlayerFilter
+                .entitiesAround(warlordsNPC, 20, 20, 20)
+                .aliveEnemiesOf(warlordsNPC)
+        ) {
+            Utils.addKnockback("One of Nine", warlordsNPC.getLocation(), we, -20, 0.15);
+            we.addInstance(InstanceBuilder
+                    .damage()
+                    .cause("Command of Nine")
+                    .source(warlordsNPC)
+                    .min(2000)
+                    .max(3000)
+            );
+        }
     }
 
     public void castDeathRay(Location start, Vector direction, double length, WarlordsEntity caster) {
@@ -580,37 +634,6 @@ public class OneOfNine extends AbstractMob implements BossMob {
                         .source(warlordsNPC)
                 );
             }
-        }
-    }
-
-    public void phaseTransition() {
-        FallingBlockWaveEffect.create(
-                mapCenter.clone().add(0, 1, 0),
-                20,
-                7,
-                Material.SOUL_FIRE
-        );
-
-        Utils.playGlobalSound(mapCenter, Sound.ENTITY_WITHER_DEATH, 0.5f, 0.2f);
-        EffectUtils.playFirework(warlordsNPC.getLocation(), FireworkEffect.builder()
-                .withColor(Color.BLACK)
-                .with(FireworkEffect.Type.STAR)
-                .withTrail()
-                .build());
-        EffectUtils.strikeLightningInCylinder(warlordsNPC.getLocation(), 10, false);
-
-        for (WarlordsEntity we : PlayerFilter
-                .entitiesAround(warlordsNPC, 20, 20, 20)
-                .aliveEnemiesOf(warlordsNPC)
-        ) {
-            Utils.addKnockback("One of Nine", warlordsNPC.getLocation(), we, -20, 0.15);
-            we.addInstance(InstanceBuilder
-                    .damage()
-                    .cause("Command of Nine")
-                    .source(warlordsNPC)
-                    .min(2000)
-                    .max(3000)
-            );
         }
     }
 
@@ -653,8 +676,8 @@ public class OneOfNine extends AbstractMob implements BossMob {
         if (ticksElapsed % 400 == 0 && ticksElapsed > 0 && !preventDamagePhase) {
             damageController.openWindow(10 * 20);
             PlayerFilter.playingGame(warlordsNPC.getGame())
-                    .warlordPlayersFirst()
-                    .forEach(we -> we.sendMessage(Component.text("One of Nine is marked vulnerable!", NamedTextColor.LIGHT_PURPLE)));
+                        .warlordPlayersFirst()
+                        .forEach(we -> we.sendMessage(Component.text("One of Nine is marked vulnerable!", NamedTextColor.LIGHT_PURPLE)));
         }
 
         float health = warlordsNPC.getCurrentHealth();
@@ -681,21 +704,6 @@ public class OneOfNine extends AbstractMob implements BossMob {
         centerSwordManager.stop();
         damageController.closeWindow();
         arenaCollapseAbility.stop();
-    }
-
-    @Override
-    public TextColor getColor() {
-        return NamedTextColor.GRAY;
-    }
-
-    @Override
-    public Mob getMobRegistry() {
-        return Mob.ONE_OF_NINE;
-    }
-
-    @Override
-    public Component getDescription() {
-        return Component.text("Echoes of the Past", NamedTextColor.DARK_PURPLE);
     }
 
     private void rainSwordDrop() {
@@ -738,21 +746,22 @@ public class OneOfNine extends AbstractMob implements BossMob {
                         double z = mapCenter.getZ() + radius * Math.sin(s.theta());
 
                         ItemDisplay d = world.spawn(new Location(world, x, mapCenter.getY() + 2, z), ItemDisplay.class, disp -> {
-                            disp.setItemStack(new ItemStack(Material.NETHERITE_SWORD));
-                            disp.setBillboard(Display.Billboard.FIXED);
+                                    disp.setItemStack(new ItemStack(Material.NETHERITE_SWORD));
+                                    disp.setBillboard(Display.Billboard.FIXED);
 
-                            // Base orientation: face inward + blade upright (adjust +/−90 if your model needs)
-                            Quaternionf faceCenter = new Quaternionf().rotateY((float) (s.theta() + Math.PI));
-                            Quaternionf upright = new Quaternionf().rotateX((float) Math.toRadians(+90));
-                            Quaternionf baseRight = new Quaternionf(faceCenter).mul(upright);
+                                    // Base orientation: face inward + blade upright (adjust +/−90 if your model needs)
+                                    Quaternionf faceCenter = new Quaternionf().rotateY((float) (s.theta() + Math.PI));
+                                    Quaternionf upright = new Quaternionf().rotateX((float) Math.toRadians(+90));
+                                    Quaternionf baseRight = new Quaternionf(faceCenter).mul(upright);
 
-                            disp.setTransformation(new Transformation(
-                                    new Vector3f(0, 0, 0),         // leftRotation (animated later)
-                                    baseRight,             // start with identity
-                                    new Vector3f(50f, 50f, 50f),
-                                    new Quaternionf()                      // rightRotation = base orientation
-                            ));
-                        });
+                                    disp.setTransformation(new Transformation(
+                                            new Vector3f(0, 0, 0),         // leftRotation (animated later)
+                                            baseRight,             // start with identity
+                                            new Vector3f(50f, 50f, 50f),
+                                            new Quaternionf()                      // rightRotation = base orientation
+                                    ));
+                                }
+                        );
 
                         // store back
                         ring.set(i, new Slot(s.theta(), s.startTick(), d));
@@ -784,13 +793,17 @@ public class OneOfNine extends AbstractMob implements BossMob {
                             new Quaternionf(cur.getRightRotation())
                     ));
 
-                    if (p < 1f) allDone = false;
+                    if (p < 1f) {
+                        allDone = false;
+                    }
                 }
 
                 if (allDone) {
                     // (optional) remove all or leave them
                     for (Slot s : ring) {
-                        if (s.display != null) s.display.remove();
+                        if (s.display != null) {
+                            s.display.remove();
+                        }
                     }
                     Utils.playGlobalSound(warlordsNPC.getLocation(), "arcanist.beaconshadow.activation", 500, 0.5f);
                     cancel();
@@ -798,4 +811,5 @@ public class OneOfNine extends AbstractMob implements BossMob {
             }
         }.runTaskTimer(0, 1);
     }
+
 }

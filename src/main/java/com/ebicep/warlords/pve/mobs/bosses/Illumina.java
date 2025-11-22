@@ -6,13 +6,13 @@ import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
@@ -30,8 +30,6 @@ import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.title.Title;
-import net.kyori.adventure.util.Ticks;
 import org.bukkit.*;
 
 import javax.annotation.Nonnull;
@@ -141,13 +139,11 @@ public class Illumina extends AbstractMob implements BossMob {
                 cooldownManager -> {
                 },
                 true
-        ) {
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                damageToDeal.set((int) (damageToDeal.get() - currentDamageValue));
-                return currentDamageValue;
-            }
-        };
+        );
+        permanentCooldown.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
+                    damageToDeal.set((int) (damageToDeal.get() - currentDamageValue.getCalculatedValue()));
+                }
+        );
         warlordsNPC.addKnockbackModifier(warlordsNPC, "KB RES", -100, permanentCooldown);
         warlordsNPC.getCooldownManager().addCooldown(permanentCooldown);
     }
@@ -195,9 +191,10 @@ public class Illumina extends AbstractMob implements BossMob {
     public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         super.onDeath(killer, deathLocation, option);
         EffectUtils.playFirework(deathLocation, FireworkEffect.builder()
-                                                                       .withColor(Color.BLUE)
-                                                                       .with(FireworkEffect.Type.BALL_LARGE)
-                                                                       .build());
+                                                              .withColor(Color.BLUE)
+                                                              .with(FireworkEffect.Type.BALL_LARGE)
+                                                              .build()
+        );
         EffectUtils.strikeLightning(deathLocation, false, 2);
     }
 
@@ -234,9 +231,9 @@ public class Illumina extends AbstractMob implements BossMob {
                     EffectUtils.playFirework(
                             warlordsNPC.getLocation(),
                             FireworkEffect.builder()
-                               .withColor(Color.WHITE)
-                               .with(FireworkEffect.Type.BALL_LARGE)
-                               .build()
+                                          .withColor(Color.WHITE)
+                                          .with(FireworkEffect.Type.BALL_LARGE)
+                                          .build()
                     );
                     this.cancel();
                     return;
@@ -274,9 +271,10 @@ public class Illumina extends AbstractMob implements BossMob {
                     }
 
                     EffectUtils.playFirework(warlordsNPC.getLocation(), FireworkEffect.builder()
-                                                                                               .withColor(Color.WHITE)
-                                                                                               .with(FireworkEffect.Type.BALL_LARGE)
-                                                                                               .build());
+                                                                                      .withColor(Color.WHITE)
+                                                                                      .with(FireworkEffect.Type.BALL_LARGE)
+                                                                                      .build()
+                    );
                     EffectUtils.strikeLightning(warlordsNPC.getLocation(), false, 10);
                     Utils.playGlobalSound(warlordsNPC.getLocation(), "shaman.earthlivingweapon.impact", 500, 0.5f);
 
@@ -316,6 +314,8 @@ public class Illumina extends AbstractMob implements BossMob {
 
     public static class Bramble extends AbstractPveAbility implements Damages<Bramble.DamageValues> {
 
+        private final DamageValues damageValues = new DamageValues();
+
         public Bramble() {
             super(AbstractAbilityBuilder.create("illuminaBramble").pve());
         }
@@ -342,8 +342,6 @@ public class Illumina extends AbstractMob implements BossMob {
             return true;
         }
 
-        private final DamageValues damageValues = new DamageValues();
-
         @Override
         public DamageValues getDamageValues() {
             return damageValues;
@@ -360,6 +358,7 @@ public class Illumina extends AbstractMob implements BossMob {
             }
 
         }
+
     }
 
     public static class BrambleSlowness extends AbstractPveAbility {
@@ -383,5 +382,7 @@ public class Illumina extends AbstractMob implements BossMob {
             }
             return true;
         }
+
     }
+
 }

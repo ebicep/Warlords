@@ -5,10 +5,10 @@ import com.ebicep.warlords.abilities.internal.AbstractGroundSlam;
 import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.defender.GroundSlamBranchDefender;
@@ -34,25 +34,30 @@ public class GroundSlamDefender extends AbstractGroundSlam implements Damages<Gr
     }
 
     @Override
+    public Value.RangedValueCritable getSlamDamage() {
+        return damageValues.slamDamage;
+    }
+
+    @Override
     protected void onSecondSlamHit(WarlordsEntity wp, Set<WarlordsEntity> playersHit) {
         if (pveMasterUpgrade2) {
             float damageReduction = 1 - Math.min(5, playersHit.size()) * .05f;
             wp.getCooldownManager()
-              .addCooldown(new RegularCooldown<>("Reverberation", "REVERB", GroundSlamDefender.class, new GroundSlamDefender(), wp, CooldownTypes.BUFF, cooldownManager -> {
-              }, 5 * 20
-              ) {
-
-                  @Override
-                  public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                      return currentDamageValue * damageReduction;
-                  }
-              });
+              .addCooldown(new RegularCooldown<>(
+                      "Reverberation",
+                      "REVERB",
+                      GroundSlamDefender.class,
+                      new GroundSlamDefender(),
+                      wp,
+                      CooldownTypes.BUFF,
+                      cooldownManager -> {
+                      },
+                      5 * 20
+              ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
+                          currentDamageValue.addMultiplicativeModifierMult(name, damageReduction);
+                      }
+              ));
         }
-    }
-
-    @Override
-    public Value.RangedValueCritable getSlamDamage() {
-        return damageValues.slamDamage;
     }
 
     @Override

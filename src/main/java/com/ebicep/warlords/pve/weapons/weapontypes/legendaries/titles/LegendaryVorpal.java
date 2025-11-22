@@ -47,67 +47,6 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon implements PassiveC
     }
 
     @Override
-    public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
-        super.applyToWarlordsPlayer(player, pveOption);
-        this.meleeCounter = 0;
-
-        float meleeDamageBoost = 1 + (MELEE_DAMAGE_BOOST + MELEE_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel()) / 100;
-        float procChanceIncrease = PROC_CHANCE_INCREASE + PROC_CHANCE_INCREASE_PER_UPGRADE * getTitleLevel();
-
-        for (AbstractAbility ability : player.getSpec().getAbilities()) {
-            if (ability instanceof WindfuryWeapon windfuryWeapon) {
-                windfuryWeapon.setProcChance(windfuryWeapon.getProcChance() + procChanceIncrease);
-            } else if (ability instanceof EarthlivingWeapon earthlivingWeapon) {
-                earthlivingWeapon.setProcChance(earthlivingWeapon.getProcChance() + procChanceIncrease);
-            }
-        }
-
-        player.getGame().registerEvents(new Listener() {
-
-            @EventHandler
-            public void onEvent(WarlordsDamageHealingEvent event) {
-                if (event.getSource() != player || event.getWarlordsEntity() == player) {
-                    return;
-                }
-                if (event.getFlags().contains(InstanceFlags.RECURSIVE)) {
-                    return;
-                }
-
-                String ability = event.getCause();
-                CooldownManager cooldownManager = player.getCooldownManager();
-                if (cooldownManager.hasCooldownFromName("Windfury Weapon") && ability.equals("Windfury Weapon")) {
-                    event.setMin(event.getMin() * meleeDamageBoost);
-                    event.setMax(event.getMax() * meleeDamageBoost);
-                    return;
-                }
-                if (cooldownManager.hasCooldownFromName("Earthliving Weapon") && ability.equals("Earthliving Weapon")) {
-                    event.setMin(event.getMin() * meleeDamageBoost);
-                    event.setMax(event.getMax() * meleeDamageBoost);
-                    return;
-                }
-                if (!ability.isEmpty()) {
-                    return;
-                }
-                meleeCounter++;
-                updateItemCounter(player);
-                if (cooldownManager.hasCooldownFromName("Windfury Weapon") ||
-                        cooldownManager.hasCooldownFromName("Earthliving Weapon") ||
-                        cooldownManager.hasCooldownFromName("Soulbinding Weapon")
-                ) {
-                    event.setMin(event.getMin() * meleeDamageBoost);
-                    event.setMax(event.getMax() * meleeDamageBoost);
-                }
-                if (meleeCounter % 4 == 0) {
-                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
-                    event.setMin(event.getMin() * 7);
-                    event.setMax(event.getMax() * 7);
-                    event.getFlags().add(InstanceFlags.TRUE_DAMAGE);
-                }
-            }
-        });
-    }
-
-    @Override
     public TextComponent getPassiveEffect() {
         return Component.text(
                                 "Every 4th melee hit deals 7x damage, bypassing damage reduction. When any of Windfury, Earthliving, and Soulbinding Weapon are active, increase the player’s melee damage by ",
@@ -150,6 +89,68 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon implements PassiveC
     }
 
     @Override
+    public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
+        super.applyToWarlordsPlayer(player, pveOption);
+        this.meleeCounter = 0;
+
+        float meleeDamageBoost = 1 + (MELEE_DAMAGE_BOOST + MELEE_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel()) / 100;
+        float procChanceIncrease = PROC_CHANCE_INCREASE + PROC_CHANCE_INCREASE_PER_UPGRADE * getTitleLevel();
+
+        for (AbstractAbility ability : player.getSpec().getAbilities()) {
+            if (ability instanceof WindfuryWeapon windfuryWeapon) {
+                windfuryWeapon.setProcChance(windfuryWeapon.getProcChance() + procChanceIncrease);
+            } else if (ability instanceof EarthlivingWeapon earthlivingWeapon) {
+                earthlivingWeapon.setProcChance(earthlivingWeapon.getProcChance() + procChanceIncrease);
+            }
+        }
+
+        player.getGame().registerEvents(new Listener() {
+
+            @EventHandler
+            public void onEvent(WarlordsDamageHealingEvent event) {
+                if (event.getSource() != player || event.getWarlordsEntity() == player) {
+                    return;
+                }
+                if (event.getFlags().contains(InstanceFlags.RECURSIVE)) {
+                    return;
+                }
+
+                String ability = event.getCause();
+                CooldownManager cooldownManager = player.getCooldownManager();
+                if (
+                        cooldownManager.hasCooldownFromName("Windfury Weapon") && ability.equals("Windfury Weapon") ||
+                                cooldownManager.hasCooldownFromName("Earthliving Weapon") && ability.equals("Earthliving Weapon")
+                ) {
+                    event.applyToMinMax(floatModifiable ->
+                            floatModifiable.addMultiplicativeModifierMult(getTitleName(), meleeDamageBoost)
+                    );
+                    return;
+                }
+                if (!ability.isEmpty()) {
+                    return;
+                }
+                meleeCounter++;
+                updateItemCounter(player);
+                if (cooldownManager.hasCooldownFromName("Windfury Weapon") ||
+                        cooldownManager.hasCooldownFromName("Earthliving Weapon") ||
+                        cooldownManager.hasCooldownFromName("Soulbinding Weapon")
+                ) {
+                    event.applyToMinMax(floatModifiable ->
+                            floatModifiable.addMultiplicativeModifierMult(getTitleName(), meleeDamageBoost)
+                    );
+                }
+                if (meleeCounter % 4 == 0) {
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
+                    event.applyToMinMax(floatModifiable ->
+                            floatModifiable.addMultiplicativeModifierMult(getTitleName(), 7)
+                    );
+                    event.getFlags().add(InstanceFlags.TRUE_DAMAGE);
+                }
+            }
+        });
+    }
+
+    @Override
     protected float getMeleeDamageMaxValue() {
         return 220;
     }
@@ -186,4 +187,5 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon implements PassiveC
     public boolean constantlyUpdate() {
         return false;
     }
+
 }

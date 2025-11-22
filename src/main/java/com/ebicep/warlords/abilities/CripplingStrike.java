@@ -2,7 +2,6 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.general.SpecType;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -10,6 +9,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.revenant.CripplingStrikeBranch;
@@ -57,21 +57,22 @@ public class CripplingStrike extends AbstractStrike<CripplingStrike, CripplingSt
                 },
                 tickDuration
         ) {
-
-            @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                float afterValue = currentDamageValue * crippleAmount;
-                if (cripplingStrike != null) {
-                    cripplingStrike.stats.damageReduced += currentDamageValue - afterValue;
-                }
-                return afterValue;
-            }
-
             @Override
             public PlayerNameData addSuffixFromOther() {
                 return new PlayerNameData(Component.text("CRIP", NamedTextColor.RED), we -> we == from || (we.isTeammate(target) && we.getSpecClass().specType == SpecType.HEALER));
             }
-        });
+        }.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+            currentDamageValue.addMultiplicativeModifierMult(
+                    name,
+                    crippleAmount,
+                    contribution -> {
+                        if (cripplingStrike != null) {
+                            cripplingStrike.stats.damageReduced += Math.abs(contribution);
+                        }
+                    }
+            );
+                }
+        ));
         if (cripplingStrike != null) {
             cripplingStrike.stats.crippleStacks.merge(0, 1, Integer::sum);
         }
@@ -108,21 +109,22 @@ public class CripplingStrike extends AbstractStrike<CripplingStrike, CripplingSt
     @Override
     protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull WarlordsEntity nearPlayer) {
         nearPlayer.addInstance(InstanceBuilder
-                        .damage()
-                        .ability(this)
-                        .source(wp)
-                        .value(damageValues.strikeDamage)
-                ).ifPresent(finalEvent -> onFinalEvent(wp, nearPlayer, finalEvent)
+                .damage()
+                .ability(this)
+                .source(wp)
+                .value(damageValues.strikeDamage)
+        ).ifPresent(finalEvent -> onFinalEvent(wp, nearPlayer, finalEvent)
         );
         if (pveMasterUpgrade) {
             additionalHit(4, wp, nearPlayer, warlordsEntity -> {
                         warlordsEntity.addInstance(InstanceBuilder
-                                        .damage()
-                                        .ability(this)
-                                        .source(wp)
-                                        .value(damageValues.strikeDamage)
+                                .damage()
+                                .ability(this)
+                                .source(wp)
+                                .value(damageValues.strikeDamage)
                         ).ifPresent(event -> onFinalEvent(wp, event.getWarlordsEntity(), event));
-            });
+                    }
+            );
         }
         return true;
     }

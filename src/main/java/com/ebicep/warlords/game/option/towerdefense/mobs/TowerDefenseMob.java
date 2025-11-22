@@ -2,7 +2,6 @@ package com.ebicep.warlords.game.option.towerdefense.mobs;
 
 import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.pve.PveOption;
@@ -18,6 +17,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.player.ingame.instances.type.CustomInstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.CustomAttackStrategy;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
@@ -137,42 +137,39 @@ public abstract class TowerDefenseMob extends AbstractMob {
                     physicalResistance.tick();
                     magicResistance.tick();
                 }
-        ) {
-            @Override
-            public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                EnumSet<InstanceFlags> flags = event.getFlags();
-                List<CustomInstanceFlags> customFlags = event.getCustomFlags();
-                for (CustomInstanceFlags customFlag : customFlags) {
-                    if (customFlag instanceof CustomInstanceFlags.Valued valued) {
-                        switch (valued.flag()) {
-                            case TD_PHYSICAL_RES_REDUCTION -> valued.floatModifiableConsumer().accept(physicalResistance);
-                            case TD_MAGIC_RES_REDUCTION -> valued.floatModifiableConsumer().accept(magicResistance);
+        ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                    EnumSet<InstanceFlags> flags = event.getFlags();
+                    List<CustomInstanceFlags> customFlags = event.getCustomFlags();
+                    for (CustomInstanceFlags customFlag : customFlags) {
+                        if (customFlag instanceof CustomInstanceFlags.Valued(Consumer<FloatModifiable> floatModifiableConsumer, CustomInstanceFlags.Valued.Flag flag)) {
+                            switch (flag) {
+                                case TD_PHYSICAL_RES_REDUCTION -> floatModifiableConsumer.accept(physicalResistance);
+                                case TD_MAGIC_RES_REDUCTION -> floatModifiableConsumer.accept(magicResistance);
+                            }
+                            physicalResistance.refresh();
+                            magicResistance.refresh();
                         }
-                        physicalResistance.refresh();
-                        magicResistance.refresh();
                     }
+                    if (flags.contains(InstanceFlags.TD_PHYSICAL)) {
+                        currentDamageValue.addMultiplicativeModifierMult("Physical Resistance", 1 - physicalResistance.getCalculatedValue());
+                    } else if (flags.contains(InstanceFlags.TD_MAGIC)) {
+                        currentDamageValue.addMultiplicativeModifierMult("Magic Resistance", 1 - magicResistance.getCalculatedValue());
+                    }
+                    physicalResistance.tick();
+                    magicResistance.tick();
                 }
-                if (flags.contains(InstanceFlags.TD_PHYSICAL)) {
-                    currentDamageValue *= (1 - physicalResistance.getCalculatedValue());
-                } else if (flags.contains(InstanceFlags.TD_MAGIC)) {
-                    currentDamageValue *= (1 - magicResistance.getCalculatedValue());
-                }
-                physicalResistance.tick();
-                magicResistance.tick();
-                return currentDamageValue;
-            }
-        });
+        ));
 
         return warlordsNPC;
     }
 
     @Override
-    protected void handleAspects(PveOption option) {
-        // disable aspects
+    public void giveGoals() {
     }
 
     @Override
-    public void giveGoals() {
+    protected void handleAspects(PveOption option) {
+        // disable aspects
     }
 
     public void setSpawner(@Nullable WarlordsEntity spawner) {

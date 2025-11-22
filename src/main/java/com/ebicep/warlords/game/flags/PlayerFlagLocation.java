@@ -3,6 +3,7 @@ package com.ebicep.warlords.game.flags;
 import com.ebicep.warlords.abilities.OrderOfEviscerate;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.game.WarlordsFlagUpdatedEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
@@ -22,20 +23,14 @@ import java.util.List;
 
 public class PlayerFlagLocation implements FlagLocation {
 
-    public static int getIncreaseDelay() {
-        return ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "ctf.flagPercentageIncreaseTickDelay", int.class);
-    }
-
     public static PlayerFlagLocation of(@Nonnull FlagLocation flag, WarlordsEntity player) {
         return flag instanceof GroundFlagLocation groundFlagLocation ?
                new PlayerFlagLocation(player, groundFlagLocation.getTicksElapsed(), groundFlagLocation.getFlagMultiplier()) :
                new PlayerFlagLocation(player, 0, 0);
     }
-
     private final WarlordsEntity player;
     private int ticksElapsed;
     private int flagMultiplier;
-
     public PlayerFlagLocation(WarlordsEntity player, int ticksElapsed, int flagMultiplier) {
         this.player = player;
         this.ticksElapsed = ticksElapsed;
@@ -61,6 +56,10 @@ public class PlayerFlagLocation implements FlagLocation {
         return null;
     }
 
+    public static int getIncreaseDelay() {
+        return ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "ctf.flagPercentageIncreaseTickDelay", int.class);
+    }
+
     @Nonnull
     @Override
     public List<TextComponent> getDebugInformation() {
@@ -71,6 +70,11 @@ public class PlayerFlagLocation implements FlagLocation {
                 Component.text("pickUpTicks / 20: " + getTicksElapsed() / 20),
                 Component.text("Multiplier: +" + getFlagMultiplier() + "%")
         );
+    }
+
+    @Override
+    public void onFlagUpdateEventOld(WarlordsFlagUpdatedEvent event) {
+        player.setCarriedFlag(null);
     }
 
     @Override
@@ -87,75 +91,75 @@ public class PlayerFlagLocation implements FlagLocation {
             // PLAYER -> PLAYER only happens if the multiplier gets to a new scale
             int computedHumanMultiplier = getFlagMultiplier();
             if (computedHumanMultiplier % 10 == 0) {
-                game.forEachOnlinePlayer((p, t) -> DatabaseManager.getPlayer(p.getUniqueId(), databasePlayer -> {
-                            if (t != null && databasePlayer.getFlagMessageMode() == FlagMessageMode.RELATIVE) {
-                                NamedTextColor playerColor = getPlayer().getTeam().getTeamColor();
-                                if (t != eventTeam) {
-                                    p.sendMessage(Component.text("", NamedTextColor.YELLOW)
-                                                           .append(Component.text("YOUR", playerColor))
-                                                           .append(Component.text(" flag carrier now takes "))
-                                                           .append(Component.text(computedHumanMultiplier + "%", NamedTextColor.RED))
-                                                           .append(Component.text(" increased damage!"))
-                                    );
-                                } else {
-                                    p.sendMessage(Component.text("The ", NamedTextColor.YELLOW)
-                                                           .append(Component.text("ENEMY", playerColor))
-                                                           .append(Component.text(" flag carrier now takes "))
-                                                           .append(Component.text(computedHumanMultiplier + "%", NamedTextColor.RED))
-                                                           .append(Component.text(" increased damage!"))
-                                    );
-                                }
-                            } else {
-                                p.sendMessage(Component.text("The ", NamedTextColor.YELLOW)
-                                                       .append(coloredPrefix)
-                                                       .append(Component.text(" flag carrier now takes "))
-                                                       .append(Component.text(computedHumanMultiplier + "%", NamedTextColor.RED))
-                                                       .append(Component.text(" increased damage!"))
-                                );
-                            }
+                game.forEachOnlinePlayer((p, t) -> {
+                    DatabasePlayer databasePlayer = DatabaseManager.getPlayer(p);
+                    if (t != null && databasePlayer.getFlagMessageMode() == FlagMessageMode.RELATIVE) {
+                        NamedTextColor playerColor = getPlayer().getTeam().getTeamColor();
+                        if (t != eventTeam) {
+                            p.sendMessage(Component.text("", NamedTextColor.YELLOW)
+                                                   .append(Component.text("YOUR", playerColor))
+                                                   .append(Component.text(" flag carrier now takes "))
+                                                   .append(Component.text(computedHumanMultiplier + "%", NamedTextColor.RED))
+                                                   .append(Component.text(" increased damage!"))
+                            );
+                        } else {
+                            p.sendMessage(Component.text("The ", NamedTextColor.YELLOW)
+                                                   .append(Component.text("ENEMY", playerColor))
+                                                   .append(Component.text(" flag carrier now takes "))
+                                                   .append(Component.text(computedHumanMultiplier + "%", NamedTextColor.RED))
+                                                   .append(Component.text(" increased damage!"))
+                            );
                         }
-                ));
+                    } else {
+                        p.sendMessage(Component.text("The ", NamedTextColor.YELLOW)
+                                               .append(coloredPrefix)
+                                               .append(Component.text(" flag carrier now takes "))
+                                               .append(Component.text(computedHumanMultiplier + "%", NamedTextColor.RED))
+                                               .append(Component.text(" increased damage!"))
+                        );
+                    }
+                });
             }
         } else {
             // eg GROUND -> PLAYER
             // or SPAWN -> PLAYER
-            game.forEachOnlinePlayer((p, t) -> DatabaseManager.getPlayer(p.getUniqueId(), databasePlayer -> {
-                        Component playerColoredName = player.getColoredName();
-                        Component flagMessage = Component.text("", NamedTextColor.YELLOW)
-                                                         .append(playerColoredName)
-                                                         .append(Component.text(" picked up the "))
-                                                         .append(coloredPrefix)
-                                                         .append(Component.text(" §eflag!"));
-                        if (t != null) {
-                            if (t == eventTeam) {
-                                p.playSound(player.getLocation(), "ctf.friendlyflagtaken", 500, 1);
-                                if (databasePlayer.getFlagMessageMode() == FlagMessageMode.RELATIVE) {
-                                    flagMessage = Component.text("", NamedTextColor.YELLOW)
-                                                           .append(playerColoredName)
-                                                           .append(Component.text(" picked up "))
-                                                           .append(Component.text("YOUR", teamColor))
-                                                           .append(Component.text(" flag!"));
-                                }
-                            } else {
-                                p.playSound(player.getLocation(), "ctf.enemyflagtaken", 500, 1);
-                                if (databasePlayer.getFlagMessageMode() == FlagMessageMode.RELATIVE) {
-                                    flagMessage = Component.text("", NamedTextColor.YELLOW)
-                                                           .append(playerColoredName)
-                                                           .append(Component.text(" picked up the "))
-                                                           .append(Component.text("ENEMY", teamColor))
-                                                           .append(Component.text(" flag!"));
-                                }
-                            }
+            game.forEachOnlinePlayer((p, t) -> {
+                DatabasePlayer databasePlayer = DatabaseManager.getPlayer(p);
+                Component playerColoredName = player.getColoredName();
+                Component flagMessage = Component.text("", NamedTextColor.YELLOW)
+                                                 .append(playerColoredName)
+                                                 .append(Component.text(" picked up the "))
+                                                 .append(coloredPrefix)
+                                                 .append(Component.text(" §eflag!"));
+                if (t != null) {
+                    if (t == eventTeam) {
+                        p.playSound(player.getLocation(), "ctf.friendlyflagtaken", 500, 1);
+                        if (databasePlayer.getFlagMessageMode() == FlagMessageMode.RELATIVE) {
+                            flagMessage = Component.text("", NamedTextColor.YELLOW)
+                                                   .append(playerColoredName)
+                                                   .append(Component.text(" picked up "))
+                                                   .append(Component.text("YOUR", teamColor))
+                                                   .append(Component.text(" flag!"));
                         }
-                        p.sendMessage(flagMessage);
-                        p.showTitle(Title.title(
-                                Component.empty(),
-                                flagMessage,
-                                Title.Times.times(Ticks.duration(0), Ticks.duration(60), Ticks.duration(0))
-                        ));
-
+                    } else {
+                        p.playSound(player.getLocation(), "ctf.enemyflagtaken", 500, 1);
+                        if (databasePlayer.getFlagMessageMode() == FlagMessageMode.RELATIVE) {
+                            flagMessage = Component.text("", NamedTextColor.YELLOW)
+                                                   .append(playerColoredName)
+                                                   .append(Component.text(" picked up the "))
+                                                   .append(Component.text("ENEMY", teamColor))
+                                                   .append(Component.text(" flag!"));
+                        }
                     }
-            ));
+                }
+                p.sendMessage(flagMessage);
+                p.showTitle(Title.title(
+                        Component.empty(),
+                        flagMessage,
+                        Title.Times.times(Ticks.duration(0), Ticks.duration(60), Ticks.duration(0))
+                ));
+
+            });
         }
     }
 
@@ -169,11 +173,6 @@ public class PlayerFlagLocation implements FlagLocation {
 
     public void setFlagMultiplier(int flagMultiplier) {
         this.flagMultiplier = flagMultiplier;
-    }
-
-    @Override
-    public void onFlagUpdateEventOld(WarlordsFlagUpdatedEvent event) {
-        player.setCarriedFlag(null);
     }
 
     public int getTicksElapsed() {

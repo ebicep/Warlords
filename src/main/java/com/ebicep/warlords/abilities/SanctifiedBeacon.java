@@ -6,26 +6,24 @@ import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.LineEffect;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.mobs.bosses.bossabilities.ChasingOrbsAbility;
 import com.ebicep.warlords.pve.mobs.flags.BossLike;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.luminary.SanctifiedBeaconBranch;
-import com.ebicep.warlords.pve.upgrades.shaman.spiritguard.FallenSoulsBranch;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Boss;
 import org.bukkit.inventory.ItemStack;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -139,19 +137,17 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
                             },
                             // a little longer to make sure there's no gaps in the effect
                             6
-                    ) {
-
-                        @Override
-                        public float setCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
-                            return currentCritMultiplier + 30;
-                        }
-
-                    };
+                    );
+                    shadowGardenCooldown.addModifier(Modifier.MODIFY_OUTGOING_CRIT_MULTIPLIER, (event, currentCritMultiplier) -> {
+                                currentCritMultiplier.addAdditiveModifier("Shadow Garden", 30);
+                            }
+                    );
                     nearBy.addKnockbackModifier(wp, "Shadow Garden", -50, shadowGardenCooldown);
                     nearBy.getCooldownManager().removeCooldownByName("Shadow Garden");
                     nearBy.getCooldownManager().addCooldown(shadowGardenCooldown);
                 } else {
                     nearBy.getCooldownManager().removeCooldownByObject(beacon);
+                    boolean[] crit = {false};
                     nearBy.getCooldownManager().addCooldown(new RegularCooldown<>(
                             name,
                             null,
@@ -161,34 +157,28 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
                             CooldownTypes.ABILITY,
                             cooldownManager -> {},
                             6 // a little longer to make sure there's no gaps in the effect
-                    ) {
-                        @Override
-                        public float setCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
-                            return currentCritMultiplier * convertToDivisionDecimal(critMultiplierReducedBy);
+                    ).addModifier(Modifier.MODIFY_OUTGOING_CRIT_MULTIPLIER_POST_CALC, (event, currentDamageValue, isCrit, critChance, critMultiplier) -> {
+                        crit[0] = isCrit;
+                        if (isCrit) {
+                            stats.critsReduced++;
                         }
-
-                        @Override
-                        public void onPostCritCalculationFromAttacker(
-                                WarlordsDamageHealingEvent event,
-                                float currentDamageValue,
-                                boolean isCrit,
-                                float critChance,
-                                float critMultiplier
-                        ) {
-                            if (isCrit) {
-                                stats.critsReduced++;
-                                stats.critDamageReduced += currentDamageValue / convertToDivisionDecimal(critMultiplierReducedBy) - currentDamageValue;
                             }
-                        }
-
-                        @Override
-                        public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                            if (wp.isInPve()) {
-                                return currentDamageValue * convertToDivisionDecimal(damageReductionPve);
+                    ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                                if (crit[0]) { // TODO unscuff
+                                    currentDamageValue.addMultiplicativeModifierAdd(
+                                            name,
+                                            -critMultiplierReducedBy / 100f,
+                                            contribution -> stats.critDamageReduced += Math.abs(contribution)
+                                    );
+                                }
+                                if (wp.isInPve()) {
+                                    currentDamageValue.addMultiplicativeModifierMult(
+                                            name,
+                                            convertToDivisionDecimal(damageReductionPve)
+                                    );
+                                }
                             }
-                            return currentDamageValue;
-                        }
-                    });
+                    ));
                     if (pveMasterUpgrade2) {
                         if (nearBy instanceof WarlordsNPC npc && npc.getMob() instanceof BossLike) {
                             return;
@@ -197,21 +187,19 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
                         nearBy.addSpeedModifier(wp, name, -30, 9999);
                         nearBy.getCooldownManager().removeCooldownByName("Shadow Garden");
                         nearBy.getCooldownManager()
-                                .addCooldown(new PermanentCooldown<>(
-                                        "Shadow Garden",
-                                        "GARDEN",
-                                        SanctifiedBeacon.class,
-                                        null,
-                                        wp,
-                                        CooldownTypes.ABILITY,
-                                        cooldownManager -> {},
-                                        false
-                                ) {
-                                    @Override
-                                    public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                        return currentDamageValue * 0.7f;
-                                    }
-                                });
+                              .addCooldown(new PermanentCooldown<>(
+                                      "Shadow Garden",
+                                      "GARDEN",
+                                      SanctifiedBeacon.class,
+                                      null,
+                                      wp,
+                                      CooldownTypes.ABILITY,
+                                      cooldownManager -> {},
+                                      false
+                              ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                                          currentDamageValue.addMultiplicativeModifierMult(name, 0.7f);
+                                      }
+                              ));
                     }
                 }
             }

@@ -193,7 +193,7 @@ public class BotManager {
     }
 
     public static Optional<TextChannel> getTextChannelGeneralByName(String name) {
-        return getServer("general").getTextChannelByName(name);
+        return getServer("main").getTextChannelByName(name);
     }
 
     public static void sendDebugMessage(MessageEmbed embed) {

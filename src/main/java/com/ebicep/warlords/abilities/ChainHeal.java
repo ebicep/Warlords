@@ -5,11 +5,11 @@ import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityTargetEvent;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.earthwarden.ChainHealBranch;
@@ -68,24 +68,26 @@ public class ChainHeal extends AbstractChain<ChainHeal, ChainHeal.ChainHealStats
         }
         if (pveMasterUpgrade2) {
             for (WarlordsEntity warlordsEntity : hitCounter) {
-                warlordsEntity.getCooldownManager()
-                              .addCooldown(new RegularCooldown<>("Chains of Blessings", "CHAINS", ChainHeal.class, new ChainHeal(), wp, CooldownTypes.BUFF, cooldownManager -> {
-                              }, 5 * 20, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                                  if (ticksLeft % 20 != 0) {
-                                      return;
-                                  }
-                                  float healing = 0.025f * wp.getMaxHealth();
-                                  warlordsEntity.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(healing));
-                                  EffectUtils.playParticleLinkAnimation(warlordsEntity.getLocation(), wp.getLocation(), Particle.HAPPY_VILLAGER, 1, 1.25, -1);
-                                  EffectUtils.displayParticle(Particle.HAPPY_VILLAGER, warlordsEntity.getLocation().add(0, 1.2, 0), 4, 0.5, 0.3, 0.5, 0.01);
-                              })
-                              ) {
-
-                                  @Override
-                                  public float addEnergyGainPerTick(float energyGainPerTick) {
-                                      return energyGainPerTick + 0.5f;
-                                  }
-                              });
+                warlordsEntity.getCooldownManager().addCooldown(new RegularCooldown<>(
+                        "Chains of Blessings",
+                        "CHAINS",
+                        ChainHeal.class,
+                        null,
+                        wp,
+                        CooldownTypes.BUFF,
+                        cooldownManager -> {
+                        },
+                        5 * 20,
+                        Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                            if (ticksLeft % 20 != 0) {
+                                return;
+                            }
+                            float healing = 0.025f * wp.getMaxHealth();
+                            warlordsEntity.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(healing));
+                            EffectUtils.playParticleLinkAnimation(warlordsEntity.getLocation(), wp.getLocation(), Particle.HAPPY_VILLAGER, 1, 1.25, -1);
+                            EffectUtils.displayParticle(Particle.HAPPY_VILLAGER, warlordsEntity.getLocation().add(0, 1.2, 0), 4, 0.5, 0.3, 0.5, 0.01);
+                        })
+                ).addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> energyGainPerTick.addAdditiveModifier("Chains of Blessings", 0.5f)));
             }
         }
         return hitCounter;
@@ -164,35 +166,34 @@ public class ChainHeal extends AbstractChain<ChainHeal, ChainHeal.ChainHealStats
 
     private void critStatsOnHit(WarlordsEntity we) {
         we.getCooldownManager().removeCooldown(ChainHeal.class, false);
-        we.getCooldownManager().addCooldown(new RegularCooldown<>(name, "CHAIN CRIT", ChainHeal.class, new ChainHeal(), we, CooldownTypes.BUFF, cooldownManager -> {
-        }, 8 * 20, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-            if (ticksLeft % 6 == 0) {
-                EffectUtils.displayParticle(Particle.HAPPY_VILLAGER, we.getLocation().add(0, 1.2, 0), 1, 0.5, 0.3, 0.5, 0.01);
-            }
-        })
-        ) {
-
-            @Override
-            public boolean distinct() {
-                return true;
-            }
-
-            @Override
-            public float addCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
-                if (event.getCause().isEmpty() || event.getCause().equals("Time Warp")) {
-                    return currentCritChance;
+        we.getCooldownManager().addCooldown(new RegularCooldown<>(
+                name,
+                "CHAIN CRIT",
+                ChainHeal.class,
+                new ChainHeal(),
+                we,
+                CooldownTypes.BUFF,
+                cooldownManager -> {
+                },
+                8 * 20,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksLeft % 6 == 0) {
+                        EffectUtils.displayParticle(Particle.HAPPY_VILLAGER, we.getLocation().add(0, 1.2, 0), 1, 0.5, 0.3, 0.5, 0.01);
+                    }
+                })
+        ).addModifier(Modifier.MODIFY_OUTGOING_CRIT_CHANCE, (event, currentCritChance) -> {
+                    if (event.getCause().isEmpty() || event.getCause().equals("Time Warp")) {
+                        return;
+                    }
+                    currentCritChance.addAdditiveModifier(name, 10);
                 }
-                return currentCritChance + 10;
-            }
-
-            @Override
-            public float addCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
-                if (event.getCause().isEmpty() || event.getCause().equals("Time Warp")) {
-                    return currentCritMultiplier;
+        ).addModifier(Modifier.MODIFY_OUTGOING_CRIT_MULTIPLIER, (event, currentCritMultiplier) -> {
+                    if (event.getCause().isEmpty() || event.getCause().equals("Time Warp")) {
+                        return;
+                    }
+                    currentCritMultiplier.addAdditiveModifier(name, 25);
                 }
-                return currentCritMultiplier + 25;
-            }
-        });
+        ));
     }
 
     public float getCooldownReductionInSeconds() {

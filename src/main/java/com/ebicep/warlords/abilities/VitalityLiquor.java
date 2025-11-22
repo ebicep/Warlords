@@ -10,6 +10,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.apothecary.VitalityLiquorBranch;
@@ -53,26 +54,6 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
     }
 
     @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Discharge a shockwave of special potions around you, healing allies in the range for ")
-                                               .heal(healingValues.liquorHealing)
-                                               .text(" health.")
-                                               .emptyLine()
-                                               .text("Each enemy afflicted with your ")
-                                               .text("LEECH", NamedTextColor.DARK_GREEN)
-                                               .text(" effect within the range will cause the enemy to discharge an additional shockwave of vitality that heals ")
-                                               .text("2", NamedTextColor.BLUE)
-                                               .text(" nearby allies for ")
-                                               .heal(healingValues.waveHealing)
-                                               .text(" health and increase their energy regeneration by ")
-                                               .text(energyPerSecond, NamedTextColor.YELLOW)
-                                               .text(" for ")
-                                               .durationSeconds(duration)
-                                               .text(".")
-                                               .build();
-    }
-
-    @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), Sound.BLOCK_GLASS_BREAK, 2, 0.1f);
         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_BLAZE_DEATH, 2, 0.7f);
@@ -104,36 +85,53 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
                                 for (WarlordsEntity allyTarget : PlayerFilter.entitiesAround(enemy, 6, 6, 6)
                                                                              .aliveTeammatesOf(wp)
                                                                              .closestFirst(enemy)
-                                                                             .limit(2)) {
+                                                                             .limit(2)
+                                ) {
                                     stats.numberOfAdditionalWaves++;
                                     allyTarget.addInstance(InstanceBuilder.healing()
                                                                           .ability(VitalityLiquor.this)
                                                                           .source(wp)
                                                                           .value(healingValues.waveHealing));
                                     allyTarget.getCooldownManager().removeCooldown(VitalityLiquor.class, false);
-                                    allyTarget.getCooldownManager()
-                                              .addCooldown(new RegularCooldown<>("Vitality Liquor",
-                                                      "VITAL",
-                                                      VitalityLiquor.class,
-                                                      null,
-                                                      wp,
-                                                      CooldownTypes.BUFF,
-                                                      cooldownManager -> {
-                                                      },
-                                                      duration * 20
-                                              ) {
-
-                                                  @Override
-                                                  public float addEnergyGainPerTick(float energyGainPerTick) {
-                                                      return energyGainPerTick + energyPerSecond / 20f;
-                                                  }
-                                              });
+                                    allyTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                            "Vitality Liquor",
+                                            "VITAL",
+                                            VitalityLiquor.class,
+                                            null,
+                                            wp,
+                                            CooldownTypes.BUFF,
+                                            cooldownManager -> {
+                                            },
+                                            duration * 20
+                                    ).addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick ->
+                                            energyGainPerTick.addAdditiveModifier("Vitality Liquor", energyPerSecond / 20f)
+                                    ));
                                 }
                             }
                         }.runTaskLater(5);
                     });
         }
         return true;
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Discharge a shockwave of special potions around you, healing allies in the range for ")
+                                               .heal(healingValues.liquorHealing)
+                                               .text(" health.")
+                                               .emptyLine()
+                                               .text("Each enemy afflicted with your ")
+                                               .text("LEECH", NamedTextColor.DARK_GREEN)
+                                               .text(" effect within the range will cause the enemy to discharge an additional shockwave of vitality that heals ")
+                                               .text("2", NamedTextColor.BLUE)
+                                               .text(" nearby allies for ")
+                                               .heal(healingValues.waveHealing)
+                                               .text(" health and increase their energy regeneration by ")
+                                               .text(energyPerSecond, NamedTextColor.YELLOW)
+                                               .text(" for ")
+                                               .durationSeconds(duration)
+                                               .text(".")
+                                               .build();
     }
 
     @Override

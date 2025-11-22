@@ -8,6 +8,7 @@ import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.WrappedDataValue;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.player.general.settings.GlowingMode;
@@ -34,35 +35,34 @@ public class FlagGlowOption implements Option {
                 if (warlordsPlayer == null || !Objects.equals(warlordsPlayer.getGame(), game)) {
                     return;
                 }
-                DatabaseManager.getPlayer(warlordsPlayer.getUuid(), databasePlayer -> {
-                    if (databasePlayer.getGlowingMode() == GlowingMode.OFF) {
-                        return;
-                    }
+                DatabasePlayer databasePlayer = DatabaseManager.getPlayer(warlordsPlayer.getUuid());
+                if (databasePlayer.getGlowingMode() == GlowingMode.OFF) {
+                    return;
+                }
 
-                    PacketContainer packet = event.getPacket().deepClone();
-                    int entityID = packet.getIntegers().read(0);
-                    WarlordsPlayer targetPlayer = game.warlordsPlayers()
-                                                      .filter(wp -> wp.getEntity().getEntityId() == entityID)
-                                                      .filter(wp -> wp.getTeam() == warlordsPlayer.getTeam())
-                                                      .filter(WarlordsEntity::hasFlag)
-                                                      .findFirst()
-                                                      .orElse(null);
-                    if (targetPlayer == null || playerReceiving == targetPlayer) {
-                        return;
-                    }
-                    List<WrappedDataValue> metadata = packet.getDataValueCollectionModifier().read(0);
-                    WrappedDataValue bitMasks = metadata.stream()
-                                                        .filter(wrappedWatchableObject -> wrappedWatchableObject.getIndex() == 0)
-                                                        .findAny()
-                                                        .orElse(null);
-                    if (bitMasks == null) {
-                        return;
-                    }
-                    byte bitMask = (byte) bitMasks.getValue();
-                    bitMask = (byte) (bitMask | 0x40);
-                    bitMasks.setValue(bitMask);
-                    event.setPacket(packet);
-                });
+                PacketContainer packet = event.getPacket().deepClone();
+                int entityID = packet.getIntegers().read(0);
+                WarlordsPlayer targetPlayer = game.warlordsPlayers()
+                                                  .filter(wp -> wp.getEntity().getEntityId() == entityID)
+                                                  .filter(wp -> wp.getTeam() == warlordsPlayer.getTeam())
+                                                  .filter(WarlordsEntity::hasFlag)
+                                                  .findFirst()
+                                                  .orElse(null);
+                if (targetPlayer == null || playerReceiving == targetPlayer) {
+                    return;
+                }
+                List<WrappedDataValue> metadata = packet.getDataValueCollectionModifier().read(0);
+                WrappedDataValue bitMasks = metadata.stream()
+                                                    .filter(wrappedWatchableObject -> wrappedWatchableObject.getIndex() == 0)
+                                                    .findAny()
+                                                    .orElse(null);
+                if (bitMasks == null) {
+                    return;
+                }
+                byte bitMask = (byte) bitMasks.getValue();
+                bitMask = (byte) (bitMask | 0x40);
+                bitMasks.setValue(bitMask);
+                event.setPacket(packet);
             }
         };
         PacketUtils.PROTOCOL_MANAGER.addPacketListener(packetListener);

@@ -1,12 +1,12 @@
 package com.ebicep.warlords.abilities.internal;
 
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsPlayerWoundedEvent;
 import com.ebicep.warlords.player.general.SpecType;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.player.ingame.instances.type.PlayerNameInstance;
 import com.ebicep.warlords.util.java.NumberFormat;
 import net.kyori.adventure.text.Component;
@@ -54,14 +54,28 @@ public class WoundingCooldown extends RegularCooldown<WoundingCooldown.WoundingD
                 );
     }
 
-    private final WarlordsEntity target;
-
     public void updateTicksLeft() {
         ticksLeft = getCooldownObject().instances
                 .stream()
                 .mapToInt(WoundingData.WoundingInstance::getTicksLeft)
                 .max()
                 .orElse(0);
+    }
+
+    private final WarlordsEntity target;
+
+    public WoundingCooldown(
+            WarlordsEntity target,
+            String name,
+            WarlordsEntity from,
+            float amount,
+            int tickDuration
+    ) {
+        this(
+                target, name,
+                from,
+                new WoundingData.WoundingInstance(from, name, amount, tickDuration)
+        );
     }
 
     public WoundingCooldown(
@@ -91,11 +105,10 @@ public class WoundingCooldown extends RegularCooldown<WoundingCooldown.WoundingD
                 })
         );
         this.target = target;
-    }
-
-    @Override
-    public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-        return currentHealValue * cooldownObject.getWoundingMultiplier();
+        this.addModifier(Modifier.MODIFY_INCOMING_HEALING, (event, currentHealValue) -> {
+                    currentHealValue.addMultiplicativeModifierMult(name, cooldownObject.getWoundingMultiplier());
+                }
+        );
     }
 
     @Override
@@ -112,20 +125,6 @@ public class WoundingCooldown extends RegularCooldown<WoundingCooldown.WoundingD
         return Component.text(NumberFormat.formatOptionalHundredths(cooldownObject.getWoundingMultiplier()) + "=" +
                         instances.stream().map(Object::toString).collect(Collectors.joining(",")),
                 cooldownType.getTextColor()
-        );
-    }
-
-    public WoundingCooldown(
-            WarlordsEntity target,
-            String name,
-            WarlordsEntity from,
-            float amount,
-            int tickDuration
-    ) {
-        this(
-                target, name,
-                from,
-                new WoundingData.WoundingInstance(from, name, amount, tickDuration)
         );
     }
 

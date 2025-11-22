@@ -13,6 +13,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.conjurer.AstralPlagueBranch;
@@ -105,7 +106,7 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
                         if (!(event.getAbility() instanceof SoulfireBeam soulfireBeam)) {
                             return;
                         }
-                        event.setCritChance(100);
+                        event.getCritChance().addOverridingModifier(name, 100);
                         PoisonousHex fromHex = PoisonousHex.getFromHex(wp);
                         if (new CooldownFilter<>(victim, RegularCooldown.class).filterCooldownClass(PoisonousHex.class).stream().count() < fromHex.getMaxStacks()) {
                             return;
@@ -150,23 +151,17 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
                     }
                 };
             }
-
-            @Override
-            public float addCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
-                if (pveMasterUpgrade) {
-                    return currentCritMultiplier + 45;
+        }.addModifier(Modifier.MODIFY_OUTGOING_CRIT_MULTIPLIER, (event, currentCritMultiplier) -> {
+                    if (pveMasterUpgrade) {
+                        currentCritMultiplier.addAdditiveModifier(name, 45);
+                    }
                 }
-                return currentCritMultiplier;
-            }
-
-            @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (inPve && event.getCause().equals("Poisonous Hex") && event.getFlags().contains(InstanceFlags.DOT)) {
-                    return currentDamageValue * (hexDamageIncrease);
+        ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                    if (inPve && event.getCause().equals("Poisonous Hex") && event.getFlags().contains(InstanceFlags.DOT)) {
+                        currentDamageValue.addMultiplicativeModifierMult(name, hexDamageIncrease);
+                    }
                 }
-                return currentDamageValue;
-            }
-        });
+        ));
         PlayerFilter.playingGame(wp.getGame()).enemiesOf(wp).forEach(enemy -> {
             new CooldownFilter<>(enemy, RegularCooldown.class).filterCooldownClass(PoisonousHex.class).filterCooldownFrom(wp).forEach(cd -> {
                 cd.setTicksLeft(cd.getTicksLeft() + hexTickDurationIncrease);

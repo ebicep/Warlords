@@ -5,12 +5,14 @@ import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.StackableCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.cryomancer.FrostboltBranch;
@@ -36,6 +38,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class FrostBolt extends AbstractPiercingProjectile<FrostBolt, FrostBolt.FrostBoltStats> implements WeaponAbilityIcon, Splash, Damages<FrostBolt.DamageValues> {
 
@@ -199,22 +202,31 @@ public class FrostBolt extends AbstractPiercingProjectile<FrostBolt, FrostBolt.F
         if (projectile.getHit().isEmpty()) {
             toReduceBy += .15f;
         }
-        hit.getCooldownManager().limitCooldowns(RegularCooldown.class, IncendiaryCurse.class, 3);
-        hit.getCooldownManager().addCooldown(new RegularCooldown<>(
-                "Splintered Ice",
-                null,
-                IncendiaryCurse.class,
-                new IncendiaryCurse(),
-                projectile.getShooter(),
-                CooldownTypes.LOW_LEVEL_DEBUFF,
-                cooldownManager -> {},
-                3 * 20
-        ) {
-            @Override
-            public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * 1.08f;
-            }
-        });
+        Optional<StackableCooldown> splinteredIceCooldown = new CooldownFilter<>(hit, StackableCooldown.class)
+                .filterCooldownClass(SplinteredIceData.class)
+                .findFirst();
+
+        if (splinteredIceCooldown.isPresent()) {
+            splinteredIceCooldown.get().addStack();
+        } else {
+            StackableCooldown<SplinteredIceData> cooldown = new StackableCooldown<>(
+                    "Splintered Ice",
+                    null,
+                    SplinteredIceData.class,
+                    null,
+                    projectile.getShooter(),
+                    CooldownTypes.LOW_LEVEL_DEBUFF,
+                    cooldownManager -> {
+                    },
+                    3 * 20,
+                    3,
+                    true
+            );
+            cooldown.addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                currentDamageValue.addMultiplicativeModifierMult(name, 1 + 0.08f * cooldown.getCurrentStacks());
+            });
+            shooter.getCooldownManager().addCooldown(cooldown);
+        }
         hit(projectile, shooter, toReduceBy, stats.getTargetsHit(), hit);
         hit.addSpeedModifier(shooter, "Splintered Ice", -35, 40);
         EffectUtils.displayParticle(Particle.ITEM_SNOWBALL, hit.getLocation().add(0, 1, 0), 10, .2, .2, .2, 0);
@@ -359,6 +371,10 @@ public class FrostBolt extends AbstractPiercingProjectile<FrostBolt, FrostBolt.F
         public FrostBoltStats create() {
             return new FrostBoltStats();
         }
+
+    }
+
+    public static class SplinteredIceData {
 
     }
 

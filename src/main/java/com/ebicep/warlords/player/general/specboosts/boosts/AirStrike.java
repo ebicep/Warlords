@@ -11,6 +11,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.Location;
@@ -209,15 +210,12 @@ public class AirStrike implements SpecBoostManager.SpecBoost<AirStrike> {
                                     }
                                 };
                             }
-
-                            @Override
-                            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                if (event.getAbility() instanceof SoulfireBeam) {
-                                    return currentDamageValue * AbstractAbility.convertToDivisionDecimal(soulfireBeamDamageReductionPercent);
+                        }.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
+                                    if (event.getAbility() instanceof SoulfireBeam) {
+                                        currentDamageValue.addMultiplicativeModifierMult(getStringName(), AbstractAbility.convertToDivisionDecimal(soulfireBeamDamageReductionPercent));
+                                    }
                                 }
-                                return currentDamageValue;
-                            }
-                        });
+                        ));
                     },
                     ascendDurationTicks,
                     Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {

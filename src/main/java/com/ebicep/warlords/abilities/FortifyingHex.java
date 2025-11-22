@@ -4,14 +4,15 @@ import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.StackableCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.type.CustomInstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.sentinel.FortifyingHexBranch;
@@ -68,7 +69,7 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
         int duration = fromHex.getTickDuration();
         to.getCooldownManager().limitCooldowns(RegularCooldown.class, FortifyingHexData.class, maxStacks);
         FortifyingHexData data = new FortifyingHexData(fromHex.getDamageReduction().getCalculatedValue(), fromHex.getDamageReductionFlagMultiplier());
-        to.getCooldownManager().addCooldown(new RegularCooldown<>(
+        RegularCooldown<FortifyingHexData> cd = new RegularCooldown<>(
                 hexName,
                 "FHEX",
                 FortifyingHexData.class,
@@ -79,14 +80,6 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
                 },
                 duration
         ) {
-
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                float afterValue = currentDamageValue * convertToDivisionDecimal(data.damageReduction * (event.getWarlordsEntity().hasFlag() ? data.damageReductionFlagMultiplier : 1));
-                fromHex.getAbilityStats().damageReduced += currentDamageValue - afterValue;
-                return afterValue;
-            }
-
             @Override
             public PlayerNameData addPrefixFromOther() {
                 boolean flag = new CooldownFilter<>(to, RegularCooldown.class).filterCooldownClass(PoisonousHex.class).stream().count() == fromHex.maxStacks;
@@ -99,7 +92,16 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
             public TextColor customActionBarColor() {
                 return NamedTextColor.YELLOW;
             }
-        });
+        };
+        cd.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
+            currentDamageValue.addMultiplicativeModifierAdd(
+                    hexName + " " + Integer.toHexString(cd.hashCode()),
+                    -data.damageReduction * (event.getWarlordsEntity().hasFlag() ? data.damageReductionFlagMultiplier : 1) / 100f,
+                    contribution -> fromHex.getAbilityStats().damageReduced += Math.abs(contribution)
+                    );
+                }
+        );
+        to.getCooldownManager().addCooldown(cd);
         from.playSound(from.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
         if (from != to) {
             from.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
@@ -111,11 +113,6 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
                     .append(Component.text("Fortifying Hex", NamedTextColor.YELLOW))
                     .append(Component.text("!", NamedTextColor.GRAY)));
         }
-    }
-
-    @Override
-    public DamageValues getDamageValues() {
-        return damageValues;
     }
 
     @Override
@@ -158,6 +155,11 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
         return stats;
     }
 
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
     public int getMaxEnemiesHit() {
         return maxEnemiesHit;
     }
@@ -172,46 +174,6 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
 
     public void setMaxAlliesHit(int maxAlliesHit) {
         this.maxAlliesHit = maxAlliesHit;
-    }
-
-    private void hitEnemy(@Nonnull WarlordsEntity hit, WarlordsEntity wp, float toReduceBy, InternalProjectile projectile) {
-        hit.addInstance(InstanceBuilder.damage()
-                                       .ability(this)
-                                       .source(wp)
-                                       .min(damageValues.hexDamage.getMinValue() * toReduceBy)
-                                       .max(damageValues.hexDamage.getMaxValue() * toReduceBy)
-                                       .crit(damageValues.hexDamage)
-                                       .customFlags(new CustomInstanceFlags.ProjectileHitInstanceFlag(projectile)));
-        if (pveMasterUpgrade2) {
-            Optional<RegularCooldown> weakeningHexCooldown = new CooldownFilter<>(hit, RegularCooldown.class).filterCooldownClass(WeakeningHex.class).findFirst();
-            if (weakeningHexCooldown.isPresent()) {
-                RegularCooldown regularCooldown = weakeningHexCooldown.get();
-                WeakeningHex weakeningHex = (WeakeningHex) regularCooldown.getCooldownObject();
-                if (weakeningHex.getStacks() < 4) {
-                    weakeningHex.setStacks(weakeningHex.getStacks() + 1);
-                }
-                regularCooldown.setTicksLeft(tickDuration);
-            } else {
-                hit.getCooldownManager().addCooldown(new RegularCooldown<>(
-                        "Weakening Hex",
-                        "WHEX",
-                        WeakeningHex.class,
-                        new WeakeningHex(),
-                        wp,
-                        CooldownTypes.LOW_LEVEL_DEBUFF,
-                        cooldownManager -> {
-                        },
-                        6 * 20
-                ) {
-
-                    @Override
-                    public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                        return currentDamageValue * (1 + 0.05f * cooldownObject.getStacks());
-                    }
-                });
-            }
-        }
-        stats.addPlayersHit();
     }
 
     public static class DamageValues implements Value.ValueHolder {
@@ -237,19 +199,100 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
 
     }
 
-    static class WeakeningHex {
+    static class WeakeningHexData {
 
-        private int stacks = 1;
+    }
 
-        public int getStacks() {
-            return stacks;
+    public static class FortifyingHexData {
+
+        private final float damageReductionFlagMultiplier;
+        private float damageReduction;
+
+        public FortifyingHexData(float damageReduction, float damageReductionFlagMultiplier) {
+            this.damageReduction = damageReduction;
+            this.damageReductionFlagMultiplier = damageReductionFlagMultiplier;
         }
 
-        public void setStacks(int stacks) {
-            this.stacks = stacks;
+        public float getDamageReduction() {
+            return damageReduction;
+        }
+
+        public void setDamageReduction(float damageReduction) {
+            this.damageReduction = damageReduction;
         }
 
     }
+
+    private void hitEnemy(@Nonnull WarlordsEntity hit, WarlordsEntity wp, float toReduceBy, InternalProjectile projectile) {
+        hit.addInstance(InstanceBuilder.damage()
+                                       .ability(this)
+                                       .source(wp)
+                                       .min(damageValues.hexDamage.getMinValue() * toReduceBy)
+                                       .max(damageValues.hexDamage.getMaxValue() * toReduceBy)
+                                       .crit(damageValues.hexDamage)
+                                       .customFlags(new CustomInstanceFlags.ProjectileHitInstanceFlag(projectile)));
+        if (pveMasterUpgrade2) {
+            Optional<StackableCooldown<WeakeningHexData>> weakeningHexCooldown = new CooldownFilter<>(hit, StackableCooldown.class)
+                    .filterCooldownClass(WeakeningHexData.class)
+                    .findFirst()
+                    .map(cooldown -> (StackableCooldown<WeakeningHexData>) cooldown);
+            if (weakeningHexCooldown.isPresent()) {
+                weakeningHexCooldown.get().addStack();
+            } else {
+                StackableCooldown<WeakeningHexData> cooldown = new StackableCooldown<>(
+                        "Weakening Hex",
+                        "WHEX",
+                        WeakeningHexData.class,
+                        new WeakeningHexData(),
+                        wp,
+                        CooldownTypes.LOW_LEVEL_DEBUFF,
+                        cooldownManager -> {
+                        },
+                        6 * 20,
+                        4,
+                        true
+                );
+                cooldown.addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                    currentDamageValue.addMultiplicativeModifierMult("Weakening Hex", 1 + 0.05f * cooldown.getCurrentStacks());
+                });
+                wp.getCooldownManager().addCooldown(cooldown);
+            }
+        }
+        stats.addPlayersHit();
+    }
+
+    public static class FortifyingHexStats extends AbstractPiercingProjectileStats<FortifyingHex, FortifyingHexStats> {
+
+        @Field("damage_reduced")
+        private float damageReduced = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.removeIf(abilityStatDisplay -> abilityStatDisplay.name().equals("Direct Hits"));
+            statsDisplay.add(new AbilityStatDisplay("Damage Reduced", damageReduced));
+            return statsDisplay;
+        }
+
+        @Override
+        public FortifyingHexStats merge(FortifyingHexStats other, int multiplier) {
+            FortifyingHexStats stats = super.merge(other, multiplier);
+            stats.damageReduced = this.damageReduced + other.damageReduced * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<FortifyingHexStats> getClazz() {
+            return FortifyingHexStats.class;
+        }
+
+        @Override
+        public FortifyingHexStats create() {
+            return new FortifyingHexStats();
+        }
+
+    }
+
 
     @Nonnull
     public static FortifyingHex getFromHex(WarlordsEntity from) {
@@ -429,57 +472,6 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
         return true;
     }
 
-    public static class FortifyingHexData {
-
-        private final float damageReductionFlagMultiplier;
-        private float damageReduction;
-
-        public FortifyingHexData(float damageReduction, float damageReductionFlagMultiplier) {
-            this.damageReduction = damageReduction;
-            this.damageReductionFlagMultiplier = damageReductionFlagMultiplier;
-        }
-
-        public float getDamageReduction() {
-            return damageReduction;
-        }
-
-        public void setDamageReduction(float damageReduction) {
-            this.damageReduction = damageReduction;
-        }
-
-    }
-
-    public static class FortifyingHexStats extends AbstractPiercingProjectileStats<FortifyingHex, FortifyingHexStats> {
-
-        @Field("damage_reduced")
-        private float damageReduced = 0;
-
-        @Override
-        public List<AbilityStatDisplay> getStatsDisplay() {
-            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
-            statsDisplay.removeIf(abilityStatDisplay -> abilityStatDisplay.name().equals("Direct Hits"));
-            statsDisplay.add(new AbilityStatDisplay("Damage Reduced", damageReduced));
-            return statsDisplay;
-        }
-
-        @Override
-        public FortifyingHexStats merge(FortifyingHexStats other, int multiplier) {
-            FortifyingHexStats stats = super.merge(other, multiplier);
-            stats.damageReduced = this.damageReduced + other.damageReduced * multiplier;
-            return stats;
-        }
-
-        @Override
-        public Class<FortifyingHexStats> getClazz() {
-            return FortifyingHexStats.class;
-        }
-
-        @Override
-        public FortifyingHexStats create() {
-            return new FortifyingHexStats();
-        }
-
-    }
 
     public float getDamageReductionFlagMultiplier() {
         return damageReductionFlagMultiplier;

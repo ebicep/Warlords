@@ -4,12 +4,12 @@ import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -66,7 +66,7 @@ public class Haze extends AbstractAbility implements OrangeAbilityIcon, Damages<
         wp.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(healingValues.hazeHealing));
         wp.addSpeedModifier(wp, name, speedBuff, tickDuration);
         HazeData data = new HazeData(!FlagHolder.isPlayerHolderFlag(wp));
-        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+        RegularCooldown<HazeData> hazeCooldown = new RegularCooldown<>(
                 name,
                 "HAZE",
                 HazeData.class,
@@ -87,12 +87,10 @@ public class Haze extends AbstractAbility implements OrangeAbilityIcon, Damages<
                                             cooldownManager2 -> {
                                             },
                                             vulnerableTickDuration
-                                    ) {
-                                        @Override
-                                        public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                            return currentDamageValue * convertToMultiplicationDecimal(vulnerableDamageBonus);
-                                        }
-                                    });
+                                    ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                                                currentDamageValue.addMultiplicativeModifierMult("Vulernable", convertToMultiplicationDecimal(vulnerableDamageBonus));
+                                            }
+                                    ));
                                 });
                 },
                 cooldownManager -> {
@@ -121,23 +119,21 @@ public class Haze extends AbstractAbility implements OrangeAbilityIcon, Damages<
                                     });
                     }
                 })
-        ) {
-
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (!data.vanished) {
-                    return currentDamageValue;
+        );
+        hazeCooldown.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
+                    if (!data.vanished) {
+                        return;
+                    }
+                    currentDamageValue.addMultiplicativeModifierMult(name, convertToDivisionDecimal(incomingDamageReduction));
                 }
-                return currentDamageValue * convertToDivisionDecimal(incomingDamageReduction);
-            }
-
-            @Override
-            public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (event.getAbility() instanceof JudgementStrike || event.getCause().isEmpty()) {
-                    setTicksLeft(0);
+        );
+        hazeCooldown.addModifier(Modifier.ON_OUTGOING_DAMAGE, (event, currentDamageValue, isCrit) -> {
+                    if (event.getAbility() instanceof JudgementStrike || event.getCause().isEmpty()) {
+                        hazeCooldown.setTicksLeft(0);
+                    }
                 }
-            }
-        });
+        );
+        wp.getCooldownManager().addCooldown(hazeCooldown);
 
         return true;
     }

@@ -4,7 +4,6 @@ import com.ebicep.warlords.abilities.SoulShackle;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.abilities.internal.WoundingCooldown;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -13,6 +12,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractFixedItem;
@@ -124,12 +124,10 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                                         );
                                     }
                                 })
-                        ) {
-                            @Override
-                            public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                return currentDamageValue * 1.2f;
-                            }
-                        });
+                        ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
+                                    currentDamageValue.addMultiplicativeModifierMult("Disaster Fragment - Burn", 1.2f);
+                                }
+                        ));
                     }
                     case "Bleed" -> {
                         victim.getCooldownManager().removeCooldownByName("Disaster Fragment - Bleed");
@@ -156,12 +154,10 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                                         );
                                     }
                                 })
-                        ) {
-                            @Override
-                            public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-                                return currentHealValue * .2f;
-                            }
-                        });
+                        ).addModifier(Modifier.MODIFY_INCOMING_HEALING, (e, currentHealValue) -> {
+                                    currentHealValue.addMultiplicativeModifierMult("Disaster Fragment - Bleed", 0.2f);
+                                }
+                        ));
                     }
                     case "Leech" -> {
                         AtomicReference<Float> totalHealingDone = new AtomicReference<>((float) 0);
@@ -176,30 +172,28 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                                 cooldownManager -> {
                                 },
                                 60
-                        ) {
-                            @Override
-                            public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-//                                if (totalHealingDone.get() >= 1000) {
-//                                    setTicksLeft(0);
-//                                    return;
-//                                }
-                                float healingMultiplier;
-                                if (event.getSource() == attacker) {
-                                    healingMultiplier = 15;
-                                } else {
-                                    healingMultiplier = 25;
+                        ).addModifier(Modifier.ON_INCOMING_DAMAGE, (e, currentDamageValue, isCrit) -> {
+                                    // if (totalHealingDone.get() >= 1000) {
+                                    //     setTicksLeft(0);
+                                    //     return;
+                                    // }
+                                    float healingMultiplier;
+                                    if (e.getSource() == attacker) {
+                                        healingMultiplier = 15;
+                                    } else {
+                                        healingMultiplier = 25;
+                                    }
+                                    float healValue = Math.min(300, currentDamageValue * healingMultiplier);
+                                    e.getSource().addInstance(InstanceBuilder
+                                            .healing()
+                                            .cause("Leech")
+                                            .source(attacker)
+                                            .value(healValue)
+                                    ).ifPresent(warlordsDamageHealingFinalEvent -> {
+                                        totalHealingDone.updateAndGet(v -> v + warlordsDamageHealingFinalEvent.getValue());
+                                    });
                                 }
-                                float healValue = Math.min(300, currentDamageValue * healingMultiplier);
-                                event.getSource().addInstance(InstanceBuilder
-                                        .healing()
-                                        .cause("Leech")
-                                        .source(attacker)
-                                        .value(healValue)
-                                ).ifPresent(warlordsDamageHealingFinalEvent -> {
-                                    totalHealingDone.updateAndGet(v -> v + warlordsDamageHealingFinalEvent.getValue());
-                                });
-                            }
-                        });
+                        ));
                     }
                     case "Silence" -> {
                         victim.getCooldownManager().removeCooldownByName("Disaster Fragment - Silence");
