@@ -2,14 +2,24 @@ package com.ebicep.warlords.player.ingame.instances;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 public class InstanceManager {
+
+    public static Consumer<FloatModifiable.FloatModifier> TARGET_LABEL = floatModifier -> floatModifier.setDebugPrefix(ComponentBuilder.create("(Target) ",
+            NamedTextColor.DARK_GREEN
+    ));
+    public static Consumer<FloatModifiable.FloatModifier> SOURCE_LABEL = floatModifier -> floatModifier.setDebugPrefix(ComponentBuilder.create("(Source) ",
+            NamedTextColor.DARK_RED
+    ));
 
     public static Optional<WarlordsDamageHealingFinalEvent> addDamageHealingInstance(WarlordsDamageHealingEvent event) {
         if (event.getWarlordsEntity().isDead()) {
