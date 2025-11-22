@@ -17,6 +17,7 @@ import org.bukkit.entity.Player;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class MysteriousTokenTrait extends WarlordsTrait {
+
     public MysteriousTokenTrait() {
         super("MysteriousTokenTrait");
     }
@@ -24,9 +25,8 @@ public class MysteriousTokenTrait extends WarlordsTrait {
     @Override
     public void rightClick(NPCRightClickEvent event) {
         Player player = event.getClicker();
-        DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
-            openMysteriousTokenMenu(player, databasePlayer);
-        });
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+        openMysteriousTokenMenu(player, databasePlayer);
     }
 
     private static void openMysteriousTokenMenu(Player player, DatabasePlayer databasePlayer) {

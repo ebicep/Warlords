@@ -1,16 +1,16 @@
 package com.ebicep.warlords.menu;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.menu.generalmenu.WarlordsNewHotbarMenu;
 import com.ebicep.warlords.party.Party;
 import com.ebicep.warlords.party.PartyManager;
 import com.ebicep.warlords.party.PartyPlayer;
 import com.ebicep.warlords.party.RegularGamesMenu;
 import com.ebicep.warlords.player.general.AbstractPlayerClass;
-import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Specializations;
-import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.util.bukkit.ComponentUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
@@ -84,34 +84,38 @@ public class PlayerHotBarItemListener implements Listener {
 
     static {
         SLOT_HOTBAR_LISTENER.put(1, e -> {
-        });
+                }
+        );
         SLOT_HOTBAR_LISTENER.put(2, e -> {
 //            WarlordsNewHotbarMenu.PvPMenu.openPvPMenu(e.getPlayer());
-        });
+                }
+        );
         SLOT_HOTBAR_LISTENER.put(3, e -> {
-            if (e.getPlayer().hasPermission("warlords.game.debug")) {
-                Bukkit.getServer().dispatchCommand(e.getPlayer(), "wl");
-            } else {
-                openGamemodeMenu(e.getPlayer());
-            }
-        });
+                    if (e.getPlayer().hasPermission("warlords.game.debug")) {
+                        Bukkit.getServer().dispatchCommand(e.getPlayer(), "wl");
+                    } else {
+                        openGamemodeMenu(e.getPlayer());
+                    }
+                }
+        );
         SLOT_HOTBAR_LISTENER.put(4, e -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(e.getPlayer()));
         SLOT_HOTBAR_LISTENER.put(5, e -> Bukkit.getServer().dispatchCommand(e.getPlayer(), "spectate"));
 //        SLOT_HOTBAR_LISTENER.put(6, e -> WarlordsNewHotbarMenu.PvEMenu.openPvEMenu(e.getPlayer()));
         SLOT_HOTBAR_LISTENER.put(7, e -> {
-            Pair<Party, PartyPlayer> p = PartyManager.getPartyAndPartyPlayerFromAny(e.getPlayer().getUniqueId());
-            if (p != null) {
-                RegularGamesMenu regularGamesMenu = p.getA().getRegularGamesMenu();
-                regularGamesMenu.openMenuForPlayer(e.getPlayer());
-            }
-        });
+                    Pair<Party, PartyPlayer> p = PartyManager.getPartyAndPartyPlayerFromAny(e.getPlayer().getUniqueId());
+                    if (p != null) {
+                        RegularGamesMenu regularGamesMenu = p.getA().getRegularGamesMenu();
+                        regularGamesMenu.openMenuForPlayer(e.getPlayer());
+                    }
+                }
+        );
 //        SLOT_HOTBAR_LISTENER.put(8, e -> WarlordsNewHotbarMenu.SettingsMenu.openSettingsMenu(e.getPlayer()));
     }
 
     public static void giveLobbyHotBar(Player player, boolean fromGame) {
         UUID uuid = player.getUniqueId();
-        PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(uuid);
-        Specializations selectedSpec = playerSettings.getSelectedSpec();
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+        Specializations selectedSpec = databasePlayer.getLastSpec();
         AbstractPlayerClass apc = selectedSpec.create(ConfigManager.DEFAULT_NAMESPACES);
 
         if (!fromGame) {
@@ -128,7 +132,7 @@ public class PlayerHotBarItemListener implements Listener {
                 });
             }
         }
-        ItemStack weaponSkin = playerSettings.getWeaponSkins().getOrDefault(selectedSpec, Weapons.STEEL_SWORD).getItem();
+        ItemStack weaponSkin = databasePlayer.getLastSpecWeapon().getItem();
         setItem(player,
                 1,
                 new ItemBuilder(apc.getWeapon().getItem(weaponSkin))
@@ -175,5 +179,6 @@ public class PlayerHotBarItemListener implements Listener {
             SLOT_HOTBAR_LISTENER.get(slot).accept(e);
         }
     }
+
 }
 

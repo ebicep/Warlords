@@ -2,6 +2,8 @@ package com.ebicep.warlords.game.state;
 
 import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.Team;
@@ -11,7 +13,6 @@ import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.player.general.ExperienceManager;
-import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.sr.Balancer;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -128,7 +129,8 @@ public class PreLobbyState implements State, TimerDebugAble {
 
                     Map<Team, Balancer.TeamInfo> bestTeam = balancer.getBestTeam();
                     bestTeam.forEach((team, teamInfo) -> teamInfo.getPlayersSpecs().forEach((uuid, specializations) -> {
-                        PlayerSettings.getPlayerSettings(uuid).setWantedTeam(team);
+                        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid);
+                        databasePlayer.setWantedTeam(team);
                         game.setPlayerTeam(uuid, team);
                         List<LobbyLocationMarker> lobbies = game.getMarkers(LobbyLocationMarker.class);
                         LobbyLocationMarker location = lobbies.stream().filter(e -> e.matchesTeam(team)).collect(Utils.randomElement());
@@ -168,12 +170,13 @@ public class PreLobbyState implements State, TimerDebugAble {
 
     public void giveLobbyScoreboard(boolean init, Player player) {
         CustomScoreboard customScoreboard = CustomScoreboard.getPlayerScoreboard(player);
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
 
         Component date = Component.text(DateUtil.formatCurrentDateEST("MM/dd/yyyy"), NamedTextColor.GRAY);
         Component map = Component.text("Map: ", NamedTextColor.WHITE).append(Component.text(game.getMap().getMapName(), NamedTextColor.GREEN));
         Component players = Component.text("Players: ", NamedTextColor.WHITE)
                                      .append(Component.text(game.playersCount() + "/" + game.getMaxPlayers(), NamedTextColor.GREEN));
-        Specializations specializations = PlayerSettings.getPlayerSettings(player.getUniqueId()).getSelectedSpec();
+        Specializations specializations = databasePlayer.getLastSpec();
         Component level = Component.text("Lv" + ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(player.getUniqueId(), specializations)) + " ",
                                            NamedTextColor.GRAY
                                    )
@@ -231,7 +234,8 @@ public class PreLobbyState implements State, TimerDebugAble {
             return;
         }
         EnumSet<Team> teams = TeamMarker.getTeams(game);
-        Team team = PlayerSettings.getPlayerSettings(op.getUniqueId()).getWantedTeam();
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(op.getUniqueId());
+        Team team = databasePlayer.getWantedTeam();
         if (team == null || !teams.contains(team)) {
             team = TeamMarker.getTeams(game).stream().filter(t -> t != Team.GAME).collect(Utils.randomElement());
         }

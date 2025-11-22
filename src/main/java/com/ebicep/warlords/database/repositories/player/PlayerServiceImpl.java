@@ -12,6 +12,7 @@ import org.springframework.data.mongodb.core.query.UpdateDefinition;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -76,21 +77,17 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
-    public DatabasePlayer findByUUID(UUID uuid) {
+    public Optional<DatabasePlayer> findByUUID(UUID uuid) {
         return findByUUID(uuid, PlayersCollections.LIFETIME);
     }
 
     @Override
-    public DatabasePlayer findByUUID(UUID uuid, PlayersCollections collection) {
-        ConcurrentHashMap<UUID, DatabasePlayer> concurrentHashMap = DatabaseManager.CACHED_PLAYERS.get(collection);
-        if (concurrentHashMap.containsKey(uuid)) {
-            return concurrentHashMap.get(uuid);
-        }
-        DatabasePlayer databasePlayer = playerRepository.findByUUID(uuid, collection);
-        if (databasePlayer != null) {
-            concurrentHashMap.put(uuid, databasePlayer);
-        }
-        return databasePlayer;
+    public Optional<DatabasePlayer> findByUUID(UUID uuid, PlayersCollections collection) {
+        ConcurrentHashMap<UUID, DatabasePlayer> cache = DatabaseManager.CACHED_PLAYERS.get(collection);
+        DatabasePlayer player = cache.computeIfAbsent(uuid,
+                key -> playerRepository.findByUUID(key, collection).orElse(null)
+        );
+        return Optional.ofNullable(player);
     }
 
     @Override

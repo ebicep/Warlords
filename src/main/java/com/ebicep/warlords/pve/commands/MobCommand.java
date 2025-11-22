@@ -7,6 +7,7 @@ import co.aikar.commands.HelpEntry;
 import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
@@ -142,7 +143,8 @@ public class MobCommand extends BaseCommand {
         }
         ChatChannels.sendDebugMessage(player, Component.text("Set Target: ", NamedTextColor.GREEN)
                                                        .append(Component.text(target.getName(), NamedTextColor.AQUA))
-                                                       .append(Component.text(" for " + SPAWNED_MOBS.size() + " mobs")));
+                                                       .append(Component.text(" for " + SPAWNED_MOBS.size() + " mobs"))
+        );
     }
 
     @Subcommand("targetnpc")
@@ -266,14 +268,16 @@ public class MobCommand extends BaseCommand {
     public void printValues(CommandIssuer issuer) {
         for (Mob value : Mob.VALUES) {
             ChatChannels.sendDebugMessage(issuer, Component.text(
-                    value.name() + " - " +
-                            value.name + " - " +
-                            value.maxHealth + " - " +
-                            value.walkSpeed + " - " +
-                            value.damageResistance + " - " +
-                            value.minMeleeDamage + " - " +
-                            value.maxMeleeDamage
-                    , NamedTextColor.GREEN));
+                            value.name() + " - " +
+                                    value.name + " - " +
+                                    value.maxHealth + " - " +
+                                    value.walkSpeed + " - " +
+                                    value.damageResistance + " - " +
+                                    value.minMeleeDamage + " - " +
+                                    value.maxMeleeDamage
+                            , NamedTextColor.GREEN
+                    )
+            );
         }
     }
 
@@ -302,9 +306,9 @@ public class MobCommand extends BaseCommand {
 
         @Subcommand("add")
         public void add(Player player, MobDrop mobDrop, Integer amount) {
-            DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
-                databasePlayer.getPveStats().addMobDrops(mobDrop, amount);
-            });
+            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+            databasePlayer.getPveStats().addMobDrops(mobDrop, amount);
+            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
             ChatChannels.playerSendMessage(player,
                     ChatChannels.DEBUG,
                     Component.text("Gave yourself ", NamedTextColor.GREEN).append(mobDrop.getCostColoredName(amount))

@@ -15,10 +15,11 @@ import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.*;
-import com.ebicep.warlords.player.general.settings.*;
+import com.ebicep.warlords.player.general.settings.ChatSettings;
+import com.ebicep.warlords.player.general.settings.CooldownDisplaySettings;
+import com.ebicep.warlords.player.general.settings.ParticleQuality;
 import com.ebicep.warlords.player.general.settings.actionbar.ActionBarSettings;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostMenu;
-import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.Spendable;
@@ -85,8 +86,8 @@ public class WarlordsNewHotbarMenu {
 
     public static void openLobbyAbilityMenu(Player player, boolean pve, ItemStack backItem, BiConsumer<Menu, InventoryClickEvent> backAction) {
         Menu menu = new Menu("Class Information", 9);
-        PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
-        Specializations selectedSpec = playerSettings.getSelectedSpec();
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player.getUniqueId());
+        Specializations selectedSpec = databasePlayer.getLastSpec();
         WarlordsPlayer warlordsPlayer = new WarlordsPlayer(player, selectedSpec, pve ? ConfigManager.PVE_NAMESPACES : ConfigManager.DEFAULT_NAMESPACES);
         AbstractPlayerClass apc = warlordsPlayer.getSpec();
 
@@ -133,9 +134,7 @@ public class WarlordsNewHotbarMenu {
         });
 
         menu.setItem(0, icon.get(), ACTION_DO_NOTHING);
-        ItemStack weaponSkin = playerSettings.getWeaponSkins()
-                                             .getOrDefault(selectedSpec, Weapons.STEEL_SWORD)
-                                             .getItem();
+        ItemStack weaponSkin = databasePlayer.getLastSpecWeapon().getItem();
         for (int i = 0; i < abilities.size() && i < 5; i++) {
             AbstractAbility ability = abilities.get(i);
             menu.setItem(i + 2, ability.getItem(i == 0 ? weaponSkin : ability.getAbilityIcon()), ACTION_DO_NOTHING);
@@ -150,114 +149,112 @@ public class WarlordsNewHotbarMenu {
         public static final int LEVELS_PER_PAGE = 25;
 
         public static void openWarlordsMenu(Player player) {
-            DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
-                        Menu menu = new Menu("Warlords Menu", 9 * 6);
+            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+            Menu menu = new Menu("Warlords Menu", 9 * 6);
 
-                        boolean hasRewardsForAny = false;
-                        Classes[] classes = Classes.VALUES;
-                        for (int i = 0, classesLength = classes.length; i < classesLength; i++) {
-                            Classes value = classes[i];
+            boolean hasRewardsForAny = false;
+            Classes[] classes = Classes.VALUES;
+            for (int i = 0, classesLength = classes.length; i < classesLength; i++) {
+                Classes value = classes[i];
 
-                            long classExperience = ExperienceManager.getExperienceForClass(player.getUniqueId(), value);
-                            int classLevel = (int) ExperienceManager.calculateLevelFromExp(classExperience);
+                long classExperience = ExperienceManager.getExperienceForClass(player.getUniqueId(), value);
+                int classLevel = (int) ExperienceManager.calculateLevelFromExp(classExperience);
 
-                            ItemBuilder itemBuilder = new ItemBuilder(value.item)
-                                    .name(Component.text(value.name, NamedTextColor.GOLD)
-                                                   .append(Component.text(" [", NamedTextColor.DARK_GRAY))
-                                                   .append(Component.text("Lv" + classLevel, NamedTextColor.GRAY))
-                                                   .append(Component.text("]", NamedTextColor.DARK_GRAY)))
-                                    .lore(WordWrap.wrap(Component.text(value.description, NamedTextColor.GRAY), 150))
-                                    .addLore(
-                                            Component.empty(),
-                                            Component.text("Class Stats:", NamedTextColor.GOLD)
-                                    )
-                                    .addLore(
-                                            ExperienceManager.getProgressString(classExperience, classLevel + 1))
-                                    .addLore(
-                                            Component.empty(),
-                                            Component.text("Spec Stats:", NamedTextColor.GOLD)
-                                    );
+                ItemBuilder itemBuilder = new ItemBuilder(value.item)
+                        .name(Component.text(value.name, NamedTextColor.GOLD)
+                                       .append(Component.text(" [", NamedTextColor.DARK_GRAY))
+                                       .append(Component.text("Lv" + classLevel, NamedTextColor.GRAY))
+                                       .append(Component.text("]", NamedTextColor.DARK_GRAY)))
+                        .lore(WordWrap.wrap(Component.text(value.description, NamedTextColor.GRAY), 150))
+                        .addLore(
+                                Component.empty(),
+                                Component.text("Class Stats:", NamedTextColor.GOLD)
+                        )
+                        .addLore(
+                                ExperienceManager.getProgressString(classExperience, classLevel + 1))
+                        .addLore(
+                                Component.empty(),
+                                Component.text("Spec Stats:", NamedTextColor.GOLD)
+                        );
 
 
-                            boolean hasRewards = false;
-                            for (Specializations spec : value.subclasses) {
-                                DatabaseSpecialization databasePlayerSpec = databasePlayer.getSpec(spec);
-                                int prestige = databasePlayerSpec.getPrestige();
-                                int level = ExperienceManager.getLevelFromExp(databasePlayerSpec.getExperience());
-                                long experience = databasePlayerSpec.getExperience();
+                boolean hasRewards = false;
+                for (Specializations spec : value.subclasses) {
+                    DatabaseSpecialization databasePlayerSpec = databasePlayer.getSpec(spec);
+                    int prestige = databasePlayerSpec.getPrestige();
+                    int level = ExperienceManager.getLevelFromExp(databasePlayerSpec.getExperience());
+                    long experience = databasePlayerSpec.getExperience();
 
-                                itemBuilder.addLore(Component
-                                        .text(spec.name, (databasePlayer.getLastSpec() == spec ? NamedTextColor.GREEN : NamedTextColor.GRAY))
-                                        .append(ExperienceManager.getLevelStringBracket(level))
-                                        .append(ExperienceManager.getPrestigeLevelString(player.getUniqueId(), spec))
-                                );
-                                itemBuilder.addLore(ExperienceManager.getProgressStringWithPrestige(experience, level + 1, prestige));
-                                itemBuilder.addLore(Component.empty());
+                    itemBuilder.addLore(Component
+                            .text(spec.name, (databasePlayer.getLastSpec() == spec ? NamedTextColor.GREEN : NamedTextColor.GRAY))
+                            .append(ExperienceManager.getLevelStringBracket(level))
+                            .append(ExperienceManager.getPrestigeLevelString(player.getUniqueId(), spec))
+                    );
+                    itemBuilder.addLore(ExperienceManager.getProgressStringWithPrestige(experience, level + 1, prestige));
+                    itemBuilder.addLore(Component.empty());
 
-                                for (int prestigeCheck = 0; prestigeCheck < prestige + 1; prestigeCheck++) {
-                                    int maxLevel = prestigeCheck == prestige ? level : 100;
-                                    for (int levelCheck = 1; levelCheck <= maxLevel; levelCheck++) {
-                                        if (!databasePlayerSpec.hasLevelUpReward(levelCheck, prestigeCheck)) {
-                                            hasRewards = true;
-                                            break;
+                    for (int prestigeCheck = 0; prestigeCheck < prestige + 1; prestigeCheck++) {
+                        int maxLevel = prestigeCheck == prestige ? level : 100;
+                        for (int levelCheck = 1; levelCheck <= maxLevel; levelCheck++) {
+                            if (!databasePlayerSpec.hasLevelUpReward(levelCheck, prestigeCheck)) {
+                                hasRewards = true;
+                                break;
+                            }
+                        }
+                        if (hasRewards) {
+                            break;
+                        }
+                    }
+                }
+
+                itemBuilder.addLore(WordWrap.wrap(Component.text("Click here to select a " + value.name + " specialization or claim rewards", NamedTextColor.YELLOW), 170));
+                if (hasRewards) {
+                    itemBuilder.addLore(Component.empty(), Component.text("You have unclaimed rewards!", NamedTextColor.GREEN));
+                    itemBuilder.enchant(Enchantment.RESPIRATION, 1);
+                    hasRewardsForAny = true;
+                }
+                menu.setItem(
+                        i + 1 + (i >= 3 ? 1 : 0),
+                        1,
+                        itemBuilder.get(),
+                        (m, e) -> openLevelingRewardsMenuForClass(player, databasePlayer, value)
+                );
+            }
+
+            menu.setItem(2, 3, PlayerHotBarItemListener.PVP_MENU, (m, e) -> PvPMenu.openPvPMenu(player));
+            menu.setItem(4, 3, PlayerHotBarItemListener.SETTINGS_MENU, (m, e) -> SettingsMenu.openSettingsMenu(player));
+            menu.setItem(6, 3, PlayerHotBarItemListener.PVE_MENU, (m, e) -> PvEMenu.openPvEMenu(player));
+            menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
+            if (hasRewardsForAny) {
+                menu.setItem(5, 5, CLAIM_ALL, (m, e) -> {
+                            for (Classes value : classes) {
+                                for (Specializations spec : value.subclasses) {
+                                    DatabaseSpecialization databasePlayerSpec = databasePlayer.getSpec(spec);
+                                    int prestige = databasePlayerSpec.getPrestige();
+                                    int level = ExperienceManager.getLevelFromExp(databasePlayerSpec.getExperience());
+                                    for (int prestigeCheck = 0; prestigeCheck < prestige + 1; prestigeCheck++) {
+                                        int maxLevel = prestigeCheck == prestige ? level : 100;
+                                        for (int levelCheck = 1; levelCheck <= maxLevel; levelCheck++) {
+                                            if (databasePlayerSpec.hasLevelUpReward(levelCheck, prestigeCheck)) {
+                                                continue;
+                                            }
+                                            claimLevelReward(player,
+                                                    databasePlayer,
+                                                    databasePlayerSpec,
+                                                    LevelUpReward.getRewardForLevel(levelCheck),
+                                                    prestigeCheck,
+                                                    levelCheck,
+                                                    spec
+                                            );
                                         }
-                                    }
-                                    if (hasRewards) {
-                                        break;
                                     }
                                 }
                             }
-
-                            itemBuilder.addLore(WordWrap.wrap(Component.text("Click here to select a " + value.name + " specialization or claim rewards", NamedTextColor.YELLOW), 170));
-                            if (hasRewards) {
-                                itemBuilder.addLore(Component.empty(), Component.text("You have unclaimed rewards!", NamedTextColor.GREEN));
-                                itemBuilder.enchant(Enchantment.RESPIRATION, 1);
-                                hasRewardsForAny = true;
-                            }
-                            menu.setItem(
-                                    i + 1 + (i >= 3 ? 1 : 0),
-                                    1,
-                                    itemBuilder.get(),
-                                    (m, e) -> openLevelingRewardsMenuForClass(player, databasePlayer, value)
-                            );
+                            openWarlordsMenu(player);
                         }
-
-                        menu.setItem(2, 3, PlayerHotBarItemListener.PVP_MENU, (m, e) -> PvPMenu.openPvPMenu(player));
-                        menu.setItem(4, 3, PlayerHotBarItemListener.SETTINGS_MENU, (m, e) -> SettingsMenu.openSettingsMenu(player));
-                        menu.setItem(6, 3, PlayerHotBarItemListener.PVE_MENU, (m, e) -> PvEMenu.openPvEMenu(player));
-                        menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
-                        if (hasRewardsForAny) {
-                            menu.setItem(5, 5, CLAIM_ALL, (m, e) -> {
-                                        for (Classes value : classes) {
-                                            for (Specializations spec : value.subclasses) {
-                                                DatabaseSpecialization databasePlayerSpec = databasePlayer.getSpec(spec);
-                                                int prestige = databasePlayerSpec.getPrestige();
-                                                int level = ExperienceManager.getLevelFromExp(databasePlayerSpec.getExperience());
-                                                for (int prestigeCheck = 0; prestigeCheck < prestige + 1; prestigeCheck++) {
-                                                    int maxLevel = prestigeCheck == prestige ? level : 100;
-                                                    for (int levelCheck = 1; levelCheck <= maxLevel; levelCheck++) {
-                                                        if (databasePlayerSpec.hasLevelUpReward(levelCheck, prestigeCheck)) {
-                                                            continue;
-                                                        }
-                                                        claimLevelReward(player,
-                                                                databasePlayer,
-                                                                databasePlayerSpec,
-                                                                LevelUpReward.getRewardForLevel(levelCheck),
-                                                                prestigeCheck,
-                                                                levelCheck,
-                                                                spec
-                                                        );
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        openWarlordsMenu(player);
-                                    }
-                            );
-                        }
-                        menu.openForPlayer(player);
-                    }
-            );
+                );
+            }
+            menu.openForPlayer(player);
         }
 
         public static void openLevelingRewardsMenuForClass(Player player, DatabasePlayer databasePlayer, Classes classes) {
@@ -318,24 +315,19 @@ public class WarlordsNewHotbarMenu {
                                 player.sendMessage(Component.text("You have changed your specialization to: ", NamedTextColor.GREEN)
                                                             .append(Component.text(spec.name, NamedTextColor.AQUA)));
                                 player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
-                                PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
-                                playerSettings.setSelectedSpec(spec);
+                                databasePlayer.setLastSpec(spec);
                                 if (!player.getWorld().getName().equals("MainLobby")) {
                                     ArmorManager.resetArmor(player);
                                 }
 
                                 AbstractPlayerClass apc = spec.create(ConfigManager.DEFAULT_NAMESPACES);
-                                ItemStack weaponSkin = playerSettings
-                                        .getWeaponSkins()
-                                        .getOrDefault(spec, Weapons.STEEL_SWORD)
-                                        .getItem();
+                                ItemStack weaponSkin = databasePlayer.getLastSpecWeapon().getItem();
                                 player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(weaponSkin))
                                         .name(Component.text("Weapon Skin Preview", NamedTextColor.GREEN))
                                         .noLore()
                                         .get()
                                 );
                                 openLevelingRewardsMenuForClass(player, databasePlayer, classes);
-                                databasePlayer.setLastSpec(spec);
 
                                 DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                             } else if (e.isRightClick()) {
@@ -645,9 +637,9 @@ public class WarlordsNewHotbarMenu {
         }
 
         public static void openWeaponMenu(Player player, int pageNumber) {
-            PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
-            Specializations selectedSpec = playerSettings.getSelectedSpec();
-            Weapons selectedWeapon = playerSettings.getWeaponSkinForSelectedSpec();
+            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player.getUniqueId());
+            Specializations selectedSpec = databasePlayer.getLastSpec();
+            Weapons selectedWeapon = databasePlayer.getSpec(selectedSpec).getWeapon();
             Menu menu = new Menu("Weapon Skin Selector", 9 * 6);
             List<Weapons> values = new ArrayList<>(Arrays.asList(Weapons.VALUES));
             for (int i = (pageNumber - 1) * 21; i < pageNumber * 21 && i < values.size(); i++) {
@@ -680,16 +672,16 @@ public class WarlordsNewHotbarMenu {
                                 player.sendMessage(Component.text("You have changed your ", NamedTextColor.GREEN)
                                                             .append(Component.text(selectedSpec.name, NamedTextColor.AQUA))
                                                             .append(Component.text("'s weapon skin to: §b" + weapon.getName() + "!")));
-                                playerSettings.getWeaponSkins().put(selectedSpec, weapon);
                                 openWeaponMenu(player, pageNumber);
                                 AbstractPlayerClass apc = selectedSpec.create(ConfigManager.DEFAULT_NAMESPACES);
-                                ItemStack weaponSkin = playerSettings.getWeaponSkins().getOrDefault(selectedSpec, Weapons.STEEL_SWORD).getItem();
+                                databasePlayer.setWeaponSkin(selectedSpec, weapon);
+                                ItemStack weaponSkin = databasePlayer.getLastSpecWeapon().getItem();
                                 player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(weaponSkin))
                                         .name(Component.text("Weapon Skin Preview", NamedTextColor.GREEN))
                                         .noLore()
                                         .get()
                                 );
-                                DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> databasePlayer.getSpec(selectedSpec).setWeapon(weapon));
+                                DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                             } else {
                                 player.sendMessage(Component.text("This weapon skin has not been unlocked yet!", NamedTextColor.RED));
                             }
@@ -730,8 +722,8 @@ public class WarlordsNewHotbarMenu {
                                          .getPlayerGame(player.getUniqueId())
                                          .map(g -> g.getPlayerTeam(player.getUniqueId()))
                                          .orElse(Team.BLUE) == Team.BLUE;
-            PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
-            List<ArmorManager.Helmets> selectedHelmet = playerSettings.getHelmets();
+            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player.getUniqueId());
+            List<ArmorManager.Helmets> selectedHelmet = databasePlayer.getHelmets();
 
             Menu menu = new Menu("Armor Sets & Helmets", 9 * 6);
 
@@ -754,7 +746,7 @@ public class WarlordsNewHotbarMenu {
                         builder.get(),
                         (m, e) -> {
                             player.sendMessage(Component.text("Selected: ", NamedTextColor.YELLOW).append(Component.text(helmet.name, NamedTextColor.GREEN)));
-                            playerSettings.setHelmet(helmet.classes, helmet);
+                            databasePlayer.setHelmet(helmet.classes, helmet);
                             ArmorManager.resetArmor(player);
                             openArmorMenu(player, pageNumber);
                         }
@@ -771,7 +763,7 @@ public class WarlordsNewHotbarMenu {
                         .name(Component.text(armorSet.name, onBlueTeam ? NamedTextColor.BLUE : NamedTextColor.RED))
                         .lore(ARMOR_DESCRIPTION)
                         .addLore(Component.empty());
-                if (playerSettings.getArmorSet(classes) == armorSet) {
+                if (databasePlayer.getArmorSet(classes) == armorSet) {
                     builder.addLore(Component.text(">>> ACTIVE <<<", NamedTextColor.GREEN));
                     builder.enchant(Enchantment.RESPIRATION, 1);
                 } else {
@@ -783,7 +775,7 @@ public class WarlordsNewHotbarMenu {
                         builder.get(),
                         (m, e) -> {
                             player.sendMessage(Component.text("Selected: ", NamedTextColor.YELLOW).append(Component.text(armorSet.name, NamedTextColor.GREEN)));
-                            playerSettings.setArmor(classes, armorSet);
+                            databasePlayer.setArmor(classes, armorSet);
                             openArmorMenu(player, pageNumber);
                         }
                 );
@@ -840,7 +832,8 @@ public class WarlordsNewHotbarMenu {
         }
 
         public static void openSkillBoostMenu(Player player, Specializations selectedSpec, List<String> namespaces) {
-            SkillBoosts selectedBoost = PlayerSettings.getPlayerSettings(player.getUniqueId()).getSkillBoostForClass();
+            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+            SkillBoosts selectedBoost = databasePlayer.getSkillBoostForSpec(selectedSpec);
             Menu menu = new Menu("Skill Boost", 9 * 6);
             List<SkillBoosts> values = selectedSpec.skillBoosts;
             for (int i = 0; i < values.size(); i++) {
@@ -866,18 +859,14 @@ public class WarlordsNewHotbarMenu {
                         builder.get(),
                         (m, e) -> {
                             player.sendMessage(Component.text("You have changed your weapon boost to: ", NamedTextColor.GREEN).append(Component.text(skillBoost.name + "!")));
-                            PlayerSettings.getPlayerSettings(player.getUniqueId()).setSkillBoostForSelectedSpec(skillBoost);
+                            databasePlayer.setSkillBoostForSpec(selectedSpec, skillBoost);
                             openSkillBoostMenu(player, selectedSpec, namespaces);
-
-                            DatabaseManager.updatePlayer(player.getUniqueId(),
-                                    databasePlayer -> databasePlayer.getSpec(selectedSpec).setSkillBoost(skillBoost)
-                            );
+                            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                         }
                 );
             }
 
             //showing change of ability
-            PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
             AbstractPlayerClass apc = selectedSpec.create(ConfigManager.DEFAULT_NAMESPACES);
             AbstractPlayerClass apc2 = selectedSpec.create(ConfigManager.DEFAULT_NAMESPACES);
             List<AbstractAbility> abilities = apc.getAbilities();
@@ -890,7 +879,7 @@ public class WarlordsNewHotbarMenu {
                 }
                 ItemStack icon;
                 if (ability == apc.getWeapon()) {
-                    icon = new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins().getOrDefault(selectedSpec, Weapons.STEEL_SWORD).getItem()))
+                    icon = new ItemBuilder(apc.getWeapon().getItem(databasePlayer.getLastSpecWeapon().getItem()))
                             .noLore()
                             .get();
                 } else {
@@ -966,51 +955,49 @@ public class WarlordsNewHotbarMenu {
                 .get();
 
         public static void openPvEMenu(Player player) {
-            DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
-                        Menu menu = new Menu("PvE Menu", 9 * 4);
+            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+            Menu menu = new Menu("PvE Menu", 9 * 4);
 
-                        List<AbstractWeapon> weapons = databasePlayer.getPveStats().getWeaponInventory();
-                        Optional<AbstractWeapon> optionalWeapon = weapons
-                                .stream()
-                                .filter(AbstractWeapon::isBound)
-                                .filter(abstractWeapon -> abstractWeapon.getSpecializations() == databasePlayer.getLastSpec())
-                                .findFirst();
-                        ItemStack itemStack = WEAPONS_MENU;
-                        if (optionalWeapon.isPresent()) {
-                            itemStack = optionalWeapon.get().generateItemStack(false);
+            List<AbstractWeapon> weapons = databasePlayer.getPveStats().getWeaponInventory();
+            Optional<AbstractWeapon> optionalWeapon = weapons
+                    .stream()
+                    .filter(AbstractWeapon::isBound)
+                    .filter(abstractWeapon -> abstractWeapon.getSpecializations() == databasePlayer.getLastSpec())
+                    .findFirst();
+            ItemStack itemStack = WEAPONS_MENU;
+            if (optionalWeapon.isPresent()) {
+                itemStack = optionalWeapon.get().generateItemStack(false);
+            }
+
+            menu.setItem(1, 1, MENU_ABILITY_DESCRIPTION, (m, e) -> openLobbyAbilityMenu(player, true, MENU_BACK_PVE, (m1, e1) -> openPvEMenu(player)));
+            menu.setItem(2, 1, itemStack, (m, e) -> {
+                        if (e.isRightClick() && optionalWeapon.isPresent()) {
+                            WeaponManagerMenu.openWeaponEditor(player, databasePlayer, optionalWeapon.get());
+                        } else {
+                            WeaponManagerMenu.openWeaponInventoryFromExternal(player, false);
                         }
-
-                        menu.setItem(1, 1, MENU_ABILITY_DESCRIPTION, (m, e) -> openLobbyAbilityMenu(player, true, MENU_BACK_PVE, (m1, e1) -> openPvEMenu(player)));
-                        menu.setItem(2, 1, itemStack, (m, e) -> {
-                                    if (e.isRightClick() && optionalWeapon.isPresent()) {
-                                        WeaponManagerMenu.openWeaponEditor(player, databasePlayer, optionalWeapon.get());
-                                    } else {
-                                        WeaponManagerMenu.openWeaponInventoryFromExternal(player, false);
-                                    }
-                                }
-                        );
-                        menu.setItem(3, 1,
-                                new ItemBuilder(Material.ZOMBIE_HEAD)
-                                        .name(Component.text("Mob Drops", NamedTextColor.GREEN))
-                                        .lore(Arrays.stream(MobDrop.VALUES)
-                                                .filter(drop -> !drop.isHidden())
-                                                .map(drop -> drop.getCostColoredName(databasePlayer.getPveStats()
-                                                                                                       .getMobDrops()
-                                                                                                       .getOrDefault(drop, 0L)))
-                                                    .collect(Collectors.toList()))
-                                        .get(),
-                                (m, e) -> {}
-                        );
-                        menu.setItem(4, 1, ITEMS_MENU, (m, e) -> ItemEquipMenu.openItemEquipMenuExternal(player, databasePlayer));
-                        menu.setItem(5, 1, REWARD_INVENTORY_MENU, (m, e) -> RewardInventory.openRewardInventory(player, 1));
-                        menu.setItem(6, 1, ABILITY_TREE_MENU, (m, e) -> AbilityTreeCommand.open(player));
-
-                        menu.setItem(3, 3, MENU_BACK, (m, e) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(player));
-                        menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
-
-                        menu.openForPlayer(player);
                     }
             );
+            menu.setItem(3, 1,
+                    new ItemBuilder(Material.ZOMBIE_HEAD)
+                            .name(Component.text("Mob Drops", NamedTextColor.GREEN))
+                            .lore(Arrays.stream(MobDrop.VALUES)
+                                        .filter(drop -> !drop.isHidden())
+                                        .map(drop -> drop.getCostColoredName(databasePlayer.getPveStats()
+                                                                                           .getMobDrops()
+                                                                                           .getOrDefault(drop, 0L)))
+                                        .collect(Collectors.toList()))
+                            .get(),
+                    (m, e) -> {}
+            );
+            menu.setItem(4, 1, ITEMS_MENU, (m, e) -> ItemEquipMenu.openItemEquipMenuExternal(player, databasePlayer));
+            menu.setItem(5, 1, REWARD_INVENTORY_MENU, (m, e) -> RewardInventory.openRewardInventory(player, 1));
+            menu.setItem(6, 1, ABILITY_TREE_MENU, (m, e) -> AbilityTreeCommand.open(player));
+
+            menu.setItem(3, 3, MENU_BACK, (m, e) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(player));
+            menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
+
+            menu.openForPlayer(player);
         }
 
     }
@@ -1037,123 +1024,119 @@ public class WarlordsNewHotbarMenu {
 
         @Default
         public static void openSettingsMenu(Player player) {
-            DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
-                        Menu menu = new Menu("Settings", 9 * 5);
-                        menu.setItem(
-                                1,
-                                1,
-                                MENU_SETTINGS_PARTICLE_QUALITY,
-                                (m, e) -> openParticleQualityMenu(player)
-                        );
-                        menu.setItem(
-                                2,
-                                1,
-                                databasePlayer.getHotkeyMode().item,
-                                (m, e) -> {
-                                    player.performCommand("hotkeymode");
-                                    openSettingsMenu(player);
-                                }
-                        );
-                        menu.setItem(
-                                3,
-                                1,
-                                databasePlayer.getFlagMessageMode().item,
-                                (m, e) -> {
-                                    player.performCommand("flagmessagemode");
-                                    openSettingsMenu(player);
-                                }
-                        );
-                        menu.setItem(
-                                4,
-                                1,
-                                databasePlayer.getGlowingMode().item,
-                                (m, e) -> {
-                                    player.performCommand("glowingmode");
-                                    openSettingsMenu(player);
-                                }
-                        );
-                        menu.setItem(
-                                5,
-                                1,
-                                databasePlayer.getFastWaveMode().item,
-                                (m, e) -> {
-                                    player.performCommand("fastwavemode");
-                                    openSettingsMenu(player);
-                                }
-                        );
-                        menu.setItem(
-                                6,
-                                1,
-                                MENU_SETTINGS_CHAT_SETTINGS,
-                                (m, e) -> {
-                                    ChatSettings.openChatSettingsMenu(player);
-                                }
-                        );
-                        menu.setItem(
-                                7,
-                                1,
-                                CooldownDisplaySettings.ITEM,
-                                (m, e) -> {
-                                    CooldownDisplaySettings.openMenu(player, databasePlayer);
-                                }
-                        );
-                        menu.setItem(
-                                1,
-                                2,
-                                ActionBarSettings.ITEM,
-                                (m, e) -> {
-                                    ActionBarSettings.openMenu(player, databasePlayer);
-                                }
-                        );
-                        menu.setItem(
-                                2,
-                                2,
-                                databasePlayer.getAdvancedHoverMessages().item,
-                                (m, e) -> {
-                                    player.performCommand("advancedhovermessages");
-                                    openSettingsMenu(player);
-                                }
-                        );
-
-                        menu.setItem(3, 4, MENU_BACK, (m, e) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(player));
-                        menu.setItem(4, 4, MENU_CLOSE, ACTION_CLOSE_MENU);
-                        menu.openForPlayer(player);
+            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+            Menu menu = new Menu("Settings", 9 * 5);
+            menu.setItem(
+                    1,
+                    1,
+                    MENU_SETTINGS_PARTICLE_QUALITY,
+                    (m, e) -> openParticleQualityMenu(player)
+            );
+            menu.setItem(
+                    2,
+                    1,
+                    databasePlayer.getHotkeyMode().item,
+                    (m, e) -> {
+                        player.performCommand("hotkeymode");
+                        openSettingsMenu(player);
                     }
             );
+            menu.setItem(
+                    3,
+                    1,
+                    databasePlayer.getFlagMessageMode().item,
+                    (m, e) -> {
+                        player.performCommand("flagmessagemode");
+                        openSettingsMenu(player);
+                    }
+            );
+            menu.setItem(
+                    4,
+                    1,
+                    databasePlayer.getGlowingMode().item,
+                    (m, e) -> {
+                        player.performCommand("glowingmode");
+                        openSettingsMenu(player);
+                    }
+            );
+            menu.setItem(
+                    5,
+                    1,
+                    databasePlayer.getFastWaveMode().item,
+                    (m, e) -> {
+                        player.performCommand("fastwavemode");
+                        openSettingsMenu(player);
+                    }
+            );
+            menu.setItem(
+                    6,
+                    1,
+                    MENU_SETTINGS_CHAT_SETTINGS,
+                    (m, e) -> {
+                        ChatSettings.openChatSettingsMenu(player);
+                    }
+            );
+            menu.setItem(
+                    7,
+                    1,
+                    CooldownDisplaySettings.ITEM,
+                    (m, e) -> {
+                        CooldownDisplaySettings.openMenu(player, databasePlayer);
+                    }
+            );
+            menu.setItem(
+                    1,
+                    2,
+                    ActionBarSettings.ITEM,
+                    (m, e) -> {
+                        ActionBarSettings.openMenu(player, databasePlayer);
+                    }
+            );
+            menu.setItem(
+                    2,
+                    2,
+                    databasePlayer.getAdvancedHoverMessages().item,
+                    (m, e) -> {
+                        player.performCommand("advancedhovermessages");
+                        openSettingsMenu(player);
+                    }
+            );
+
+            menu.setItem(3, 4, MENU_BACK, (m, e) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(player));
+            menu.setItem(4, 4, MENU_CLOSE, ACTION_CLOSE_MENU);
+            menu.openForPlayer(player);
         }
 
         public static void openParticleQualityMenu(Player player) {
-            DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
-                        ParticleQuality selectedParticleQuality = databasePlayer.getParticleQuality();
+            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+            ParticleQuality selectedParticleQuality = databasePlayer.getParticleQuality();
 
-                        Menu menu = new Menu("Particle Quality", 9 * 4);
+            Menu menu = new Menu("Particle Quality", 9 * 4);
 
-                        ParticleQuality[] particleQualities = ParticleQuality.values();
-                        for (int i = 0; i < particleQualities.length; i++) {
-                            ParticleQuality particleQuality = particleQualities[i];
+            ParticleQuality[] particleQualities = ParticleQuality.values();
+            for (int i = 0; i < particleQualities.length; i++) {
+                ParticleQuality particleQuality = particleQualities[i];
 
-                            menu.setItem(
-                                    i + 3,
-                                    1,
-                                    new ItemBuilder(particleQuality.item)
-                                            .lore(WordWrap.wrap(particleQuality.description, 160))
-                                            .addLore(
-                                                    Component.empty(),
-                                                    selectedParticleQuality == particleQuality ? Component.text("SELECTED", NamedTextColor.GREEN) : Component.text("Click to select",
-                                                            NamedTextColor.YELLOW
-                                                    )
-                                            )
-                                            .get(),
-                                    (m, e) -> {
-                                        Bukkit.getServer().dispatchCommand(player, "pq " + particleQuality.name());
-                                        openParticleQualityMenu(player);
-                                    }
-                            );
+                menu.setItem(
+                        i + 3,
+                        1,
+                        new ItemBuilder(particleQuality.item)
+                                .lore(WordWrap.wrap(particleQuality.description, 160))
+                                .addLore(
+                                        Component.empty(),
+                                        selectedParticleQuality == particleQuality ? Component.text("SELECTED", NamedTextColor.GREEN) : Component.text("Click to select",
+                                                NamedTextColor.YELLOW
+                                        )
+                                )
+                                .get(),
+                        (m, e) -> {
+                            Bukkit.getServer().dispatchCommand(player, "pq " + particleQuality.name());
+                            openParticleQualityMenu(player);
                         }
-                        menu.setItem(4, 3, MENU_BACK, (m, e) -> openSettingsMenu(player));
-                        menu.openForPlayer(player);
-                    }
-            );
+                );
+            }
+            menu.setItem(4, 3, MENU_BACK, (m, e) -> openSettingsMenu(player));
+            menu.openForPlayer(player);
         }
 
     }

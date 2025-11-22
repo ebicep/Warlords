@@ -39,6 +39,7 @@ public class ConfigUtil {
 
     public static void readBotConfig(Warlords instance) {
         try {
+            BotManager.DISCORD_SERVERS.clear();
             YamlConfiguration config = YamlConfiguration.loadConfiguration(new File(instance.getDataFolder(), "bot.yml"));
             for (String key : config.getKeys(false)) {
                 BotManager.DiscordServer discordServer = new BotManager.DiscordServer(

@@ -6,6 +6,7 @@ import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.HelpEntry;
 import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import net.kyori.adventure.text.Component;
@@ -21,9 +22,9 @@ public class PvECurrencyCommand extends BaseCommand {
     @Subcommand("add")
     @Description("Add pve currency to your inventory")
     public void add(Player player, Currencies currency, @Conditions("limits:min=1") Integer amount) {
-        DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
-            databasePlayer.getPveStats().addCurrency(currency, amount);
-        });
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+        databasePlayer.getPveStats().addCurrency(currency, amount);
+        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
         ChatChannels.playerSendMessage(player,
                 ChatChannels.DEBUG,
                 Component.text("Gave yourself ", NamedTextColor.GREEN).append(currency.getCostColoredName(amount))

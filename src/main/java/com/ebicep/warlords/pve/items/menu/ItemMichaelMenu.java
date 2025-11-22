@@ -53,9 +53,10 @@ public class ItemMichaelMenu {
                         .lore(WordWrap.wrap(Component.text("Buy blessings at the cost of mob drops.", NamedTextColor.GRAY), 170))
                         .addLore(Component.empty())
                         .addLore(WordWrap.wrap(Component.text(
-                                        "There are 9 purchasable blessings per week. Higher tier blessings have a lower chance to be in stock.",
-                                        NamedTextColor.GRAY
-                                ), 150)
+                                                "There are 9 purchasable blessings per week. Higher tier blessings have a lower chance to be in stock.",
+                                                NamedTextColor.GRAY
+                                        ), 150
+                                )
                         )
                         .get(),
                 (m, e) -> {
@@ -83,15 +84,17 @@ public class ItemMichaelMenu {
                         )
                         .addLore(
                                 WordWrap.wrap(Component.text("Applying unknown blessings to an Item gives it a random blessing or curse, or does nothing. " +
-                                                "The chance of a blessing or curse is based on the tier of the blessing.", NamedTextColor.GRAY),
+                                                "The chance of a blessing or curse is based on the tier of the blessing.", NamedTextColor.GRAY
+                                        ),
                                         170
                                 ))
                         .addLore(Component.empty())
                         .addLore(
                                 WordWrap.wrap(Component.text(
-                                        "Applying bought blessings to an Item has a guaranteed chance of blessing it, adding its tier to the current modified value.",
-                                        NamedTextColor.GRAY
-                                ), 170)
+                                                "Applying bought blessings to an Item has a guaranteed chance of blessing it, adding its tier to the current modified value.",
+                                                NamedTextColor.GRAY
+                                        ), 170
+                                )
                         )
                         .get(),
                 (m, e) -> {
@@ -103,8 +106,9 @@ public class ItemMichaelMenu {
                 new ItemBuilder(Material.MILK_BUCKET)
                         .name(Component.text("Remove a Curse", NamedTextColor.GREEN))
                         .lore(WordWrap.wrap(Component.text("Removing a Curse on an Item will lower its curse effectiveness by a tier.",
-                                NamedTextColor.GRAY
-                        ), 150))
+                                        NamedTextColor.GRAY
+                                ), 150
+                        ))
                         .get(),
                 (m, e) -> {
                     RemoveACurseMenu.openPurifyItemMenu(player, databasePlayer, null);
@@ -115,6 +119,7 @@ public class ItemMichaelMenu {
         menu.openForPlayer(player);
     }
 
+    @Deprecated
     public static class YourBlessingsMenu {
 
         public static void openYourBlessingsMenu(Player player, DatabasePlayer databasePlayer) {
@@ -131,7 +136,9 @@ public class ItemMichaelMenu {
                             )
                             .addLore(
                                     WordWrap.wrap(Component.text("You can buy blessings through Michael. " +
-                                            "Bought blessings have a guaranteed chance of applying its tier.", NamedTextColor.GRAY), 150)
+                                                    "Bought blessings have a guaranteed chance of applying its tier.", NamedTextColor.GRAY
+                                            ), 150
+                                    )
                             )
                             .get(),
                     (m, e) -> {
@@ -180,25 +187,30 @@ public class ItemMichaelMenu {
         public static final HashMap<Integer, LinkedHashMap<Spendable, Long>> COSTS = new HashMap<>() {{
             put(1, new LinkedHashMap<>() {{
 
-                put(Currencies.COIN, 300_000L);
-            }});
+                        put(Currencies.COIN, 300_000L);
+                    }}
+            );
             put(2, new LinkedHashMap<>() {{
 
-                put(Currencies.SYNTHETIC_SHARD, 5_000L);
-            }});
+                        put(Currencies.SYNTHETIC_SHARD, 5_000L);
+                    }}
+            );
             put(3, new LinkedHashMap<>() {{
 
-                put(Currencies.LEGEND_FRAGMENTS, 2_500L);
-            }});
+                        put(Currencies.LEGEND_FRAGMENTS, 2_500L);
+                    }}
+            );
             put(4, new LinkedHashMap<>() {{
 
-                put(Currencies.LEGEND_FRAGMENTS, 5_000L);
-                put(MobDrop.ZENITH_STAR, 5L);
-            }});
+                        put(Currencies.LEGEND_FRAGMENTS, 5_000L);
+                        put(MobDrop.ZENITH_STAR, 5L);
+                    }}
+            );
             put(5, new LinkedHashMap<>() {{
 
-                put(MobDrop.ZENITH_STAR, 10L);
-            }});
+                        put(MobDrop.ZENITH_STAR, 10L);
+                    }}
+            );
         }};
         private static final HashMap<Integer, List<Component>> COSTS_LORE = new HashMap<>() {{
             COSTS.forEach((tier, costs) -> {
@@ -257,7 +269,8 @@ public class ItemMichaelMenu {
                                     new ArrayList<>(lore) {{
                                         add(0, Component.text("Buy ", NamedTextColor.GRAY)
                                                         .append(Component.text("Tier " + finalTier, NamedTextColor.GREEN))
-                                                        .append(Component.text(" Blessing")));
+                                                        .append(Component.text(" Blessing"))
+                                        );
                                     }},
                                     Menu.GO_BACK,
                                     (m2, e2) -> {
@@ -359,8 +372,9 @@ public class ItemMichaelMenu {
             }
 
             ItemMenuUtil.addItemConfirmation(menu, () -> {
-                addCraftItemConfirmation(player, databasePlayer, menuData, menu);
-            });
+                        addCraftItemConfirmation(player, databasePlayer, menuData, menu);
+                    }
+            );
 
             menu.setItem(4, 5, MENU_BACK, (m, e) -> openMichaelItemMenu(player, databasePlayer));
             menu.addBorder(Menu.GRAY_EMPTY_PANE, true);
@@ -422,7 +436,9 @@ public class ItemMichaelMenu {
                             )
                             .addLore(
                                     WordWrap.wrap(Component.text("You can buy blessings through Michael. " +
-                                            "Bought blessings have a guaranteed chance of applying its tier.", NamedTextColor.GRAY), 150)
+                                                    "Bought blessings have a guaranteed chance of applying its tier.", NamedTextColor.GRAY
+                                            ), 150
+                                    )
                             )
                             .get(),
                     (m, e) -> {
@@ -596,6 +612,7 @@ public class ItemMichaelMenu {
         }
 
         private static class ApplyBlessingMenuData {
+
             private AbstractItem item;
             private Integer blessing;
             private boolean blessingFound;
@@ -648,7 +665,8 @@ public class ItemMichaelMenu {
                             Component.text("Normal", NamedTextColor.WHITE),
                             Component.text(" - ", NamedTextColor.GRAY),
                             Component.text(NumberFormat.formatOptionalHundredths(item.getTier().blessedChance * 100) + "%", NamedTextColor.YELLOW)
-                    ), null);
+                    ), null
+                    );
                 } else {
                     ItemModifier itemModifier = item.getItemModifier(newModifier);
                     boolean isBlessing = newModifier > 0;
@@ -720,7 +738,9 @@ public class ItemMichaelMenu {
             public void setBlessingFound(boolean blessingFound) {
                 this.blessingFound = blessingFound;
             }
+
         }
+
     }
 
     public static class RemoveACurseMenu {
@@ -751,8 +771,9 @@ public class ItemMichaelMenu {
                 ItemMenuUtil.addSpendableCostRequirement(databasePlayer, menu, item.getTier().removeCurseCost, 1, 2);
             }
             ItemMenuUtil.addItemConfirmation(menu, () -> {
-                addPurifyItemConfirmation(player, databasePlayer, item, menu);
-            });
+                        addPurifyItemConfirmation(player, databasePlayer, item, menu);
+                    }
+            );
 
             menu.setItem(4, 5, MENU_BACK, (m, e) -> openMichaelItemMenu(player, databasePlayer));
             menu.addBorder(Menu.GRAY_EMPTY_PANE, true);
@@ -871,5 +892,7 @@ public class ItemMichaelMenu {
                     }
             );
         }
+
     }
+
 }

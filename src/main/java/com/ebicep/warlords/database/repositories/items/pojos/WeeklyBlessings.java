@@ -27,7 +27,6 @@ public class WeeklyBlessings {
                 .execute();
     }
 
-    @Deprecated
     private static void loadWeeklyBlessings() {
         ChatUtils.MessageType.WEEKLY_BLESSINGS.sendMessage("Loading Weekly Blessings - " + DatabaseTiming.RESET_WEEKLY.get());
         if (DatabaseTiming.RESET_WEEKLY.get()) {
@@ -76,6 +75,7 @@ public class WeeklyBlessings {
     }};
     @Field("player_orders")
     private Map<UUID, Map<Integer, Integer>> playerOrders = new HashMap<>();
+
     public WeeklyBlessings() {
     }
 

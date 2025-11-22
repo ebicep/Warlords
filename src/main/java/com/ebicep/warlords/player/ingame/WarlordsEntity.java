@@ -28,6 +28,7 @@ import com.ebicep.warlords.player.general.AbstractPlayerClass;
 import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.MinuteStats;
 import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.player.general.settings.AdvancedHoverMessages;
 import com.ebicep.warlords.player.general.settings.ChatSettings;
 import com.ebicep.warlords.player.general.settings.actionbar.ActionBarSettings;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
@@ -42,7 +43,6 @@ import com.ebicep.warlords.player.ingame.motionsystem.speed.BaseToWalkingSpeedVa
 import com.ebicep.warlords.pve.mobs.player.TestDummy;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.TeleportUtils;
-import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.StringUtils;
@@ -153,7 +153,6 @@ public abstract class WarlordsEntity {
     private FlagInfo carriedFlag = null;
     private boolean active = true;
     private boolean isInPve = false;
-    private boolean showDebugMessage = false;
     private float bonusAggroWeight = 0;
     @NotNull
     private Component previousActionBar = Component.empty();
@@ -275,7 +274,9 @@ public abstract class WarlordsEntity {
 
     @Nonnull
     public Location getLocation() {
-        if (entity == null) return new Location(Bukkit.getWorlds().getFirst().getSpawnLocation().getWorld(), 0, 0, 0);
+        if (entity == null) {
+            return new Location(Bukkit.getWorlds().getFirst().getSpawnLocation().getWorld(), 0, 0, 0);
+        }
 
         return this.entity.getLocation();
     }
@@ -440,10 +441,6 @@ public abstract class WarlordsEntity {
         if (cachedDatabasePlayer == null) {
             cachedDatabasePlayer = DatabaseManager.getPlayer(uuid, this instanceof WarlordsPlayer);
         }
-        if (cachedDatabasePlayer == null) {
-            ChatUtils.MessageType.WARLORDS.sendErrorMessage("Problem caching player " + name + " with uuid " + uuid + " - " + this + " - " + entity);
-            cachedDatabasePlayer = DatabaseManager.CACHED_MOB_DATABASEPLAYER;
-        }
         return cachedDatabasePlayer;
     }
 
@@ -476,7 +473,7 @@ public abstract class WarlordsEntity {
         if (this.entity == null) {
             return;
         }
-        if (isDamageHealMessage && !showDebugMessage) {
+        if (isDamageHealMessage && !isShowDebugMessages()) {
             this.entity.sendMessage(component.hoverEvent(null));
         } else {
             this.entity.sendMessage(component);
@@ -510,6 +507,10 @@ public abstract class WarlordsEntity {
 
     public float getMaxBaseHealth() {
         return maxBaseHealthFilter.getCachedValue();
+    }
+
+    public boolean isShowDebugMessages() {
+        return getDatabasePlayer().getAdvancedHoverMessages() == AdvancedHoverMessages.ON;
     }
 
     public void setName(String name) {
@@ -1582,7 +1583,7 @@ public abstract class WarlordsEntity {
                 }
             }
         }
-        if (showDebugMessage) {
+        if (isShowDebugMessages()) {
             if (addedAny) {
                 actionBarMessage.append(Component.text("  "));
             }
@@ -1760,14 +1761,6 @@ public abstract class WarlordsEntity {
         this.getEntity().setFallDistance(amount);
     }
 
-    public boolean isShowDebugMessage() {
-        return showDebugMessage;
-    }
-
-    public void setShowDebugMessage(boolean showDebugMessage) {
-        this.showDebugMessage = showDebugMessage;
-    }
-
     public float getBonusAggroWeight() {
         return bonusAggroWeight;
     }
@@ -1814,4 +1807,5 @@ public abstract class WarlordsEntity {
     public void setPveHitRange(int pveHitRange) {
         this.pveHitRange = pveHitRange;
     }
+
 }

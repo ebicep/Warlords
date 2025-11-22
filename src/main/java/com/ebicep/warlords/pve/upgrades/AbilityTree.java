@@ -85,7 +85,8 @@ public class AbilityTree {
 
     public AutoUpgradeProfile getAutoUpgradeProfile() {
         if (autoUpgradeProfile == null) {
-            DatabaseManager.getPlayer(warlordsPlayer.getUuid(), this::resetAutoUpgradeProfile);
+            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(warlordsPlayer.getUuid());
+            resetAutoUpgradeProfile(databasePlayer);
         }
         return autoUpgradeProfile;
     }
@@ -192,188 +193,186 @@ public class AbilityTree {
         );
 
 
-        DatabaseManager.getPlayer(warlordsPlayer.getUuid(), databasePlayer -> {
-            List<AutoUpgradeProfile> autoUpgradeProfiles = databasePlayer
-                    .getPveStats()
-                    .getAutoUpgradeProfiles()
-                    .computeIfAbsent(warlordsPlayer.getSpecClass(), k -> new ArrayList<>());
-            getAutoUpgradeProfile();
-            List<Component> lore = new ArrayList<>();
-            for (int i = 0; i < autoUpgradeProfiles.size(); i++) {
-                AutoUpgradeProfile l = autoUpgradeProfiles.get(i);
-                DifficultyMode difficulty = l.getDifficultyMode();
-                lore.add(Component.text((i + 1) + ". " + l.getName() + " (" + difficulty.getShortName() + ")",
-                        l.equals(autoUpgradeProfile) ? NamedTextColor.AQUA : NamedTextColor.GRAY
-                ));
-            }
-            menu.setItem(1, 4,
-                    new ItemBuilder(Material.BOOK)
-                            .name(Component.text("Change Profile", NamedTextColor.GREEN))
-                            .lore(lore)
-                            .get(),
-                    (m, e) -> {
-                        int index = autoUpgradeProfiles.indexOf(autoUpgradeProfile);
-                        int nextLoadout = index >= autoUpgradeProfiles.size() - 1 ? 0 : index + 1;
-                        autoUpgradeProfile = autoUpgradeProfiles.get(nextLoadout);
-                        openAbilityTree();
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(warlordsPlayer.getUuid());
+        List<AutoUpgradeProfile> autoUpgradeProfiles = databasePlayer
+                .getPveStats()
+                .getAutoUpgradeProfiles()
+                .computeIfAbsent(warlordsPlayer.getSpecClass(), k -> new ArrayList<>());
+        getAutoUpgradeProfile();
+        List<Component> lore = new ArrayList<>();
+        for (int i = 0; i < autoUpgradeProfiles.size(); i++) {
+            AutoUpgradeProfile l = autoUpgradeProfiles.get(i);
+            DifficultyMode difficulty = l.getDifficultyMode();
+            lore.add(Component.text((i + 1) + ". " + l.getName() + " (" + difficulty.getShortName() + ")",
+                    l.equals(autoUpgradeProfile) ? NamedTextColor.AQUA : NamedTextColor.GRAY
+            ));
+        }
+        menu.setItem(1, 4,
+                new ItemBuilder(Material.BOOK)
+                        .name(Component.text("Change Profile", NamedTextColor.GREEN))
+                        .lore(lore)
+                        .get(),
+                (m, e) -> {
+                    int index = autoUpgradeProfiles.indexOf(autoUpgradeProfile);
+                    int nextLoadout = index >= autoUpgradeProfiles.size() - 1 ? 0 : index + 1;
+                    autoUpgradeProfile = autoUpgradeProfiles.get(nextLoadout);
+                    openAbilityTree();
+                }
+        );
+        menu.setItem(2, 4,
+                new ItemBuilder(Material.WRITABLE_BOOK)
+                        .name(Component.text("Create Profile", NamedTextColor.GREEN))
+                        .lore(WordWrap.wrap(Component.text("Create a new profile to customize your experience.", NamedTextColor.GRAY), 150))
+                        .get(),
+                (m, e) -> {
+                    if (autoUpgradeProfiles.size() >= 8) {
+                        warlordsPlayer.sendMessage(Component.text("You can only have up to 8 profiles per spec!", NamedTextColor.RED));
+                        return;
                     }
-            );
-            menu.setItem(2, 4,
-                    new ItemBuilder(Material.WRITABLE_BOOK)
-                            .name(Component.text("Create Profile", NamedTextColor.GREEN))
-                            .lore(WordWrap.wrap(Component.text("Create a new profile to customize your experience.", NamedTextColor.GRAY), 150))
-                            .get(),
-                    (m, e) -> {
-                        if (autoUpgradeProfiles.size() >= 8) {
-                            warlordsPlayer.sendMessage(Component.text("You can only have up to 8 profiles per spec!", NamedTextColor.RED));
-                            return;
-                        }
-                        try {
-                            SignGUI.builder()
-                                   .setLines("", "Enter", "Profile Name", "")
-                                   .setHandler((p, lines) -> {
-                                       String name = lines.getLine(0);
-                                       if (!name.matches("[a-zA-Z0-9 ]+")) {
-                                           warlordsPlayer.sendMessage(Component.text("Invalid name!", NamedTextColor.RED));
-                                           warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
-                                           return null;
-                                       }
-                                       if (autoUpgradeProfiles.stream().anyMatch(i -> i.getName().equalsIgnoreCase(name))) {
-                                           warlordsPlayer.sendMessage(Component.text("You already have a profile with that name!", NamedTextColor.RED));
-                                           warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
-                                           return null;
-                                       }
-                                       AutoUpgradeProfile newProfile = new AutoUpgradeProfile(name);
-                                       autoUpgradeProfiles.add(newProfile);
-                                       autoUpgradeProfile = newProfile;
-                                       DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                                       openAbilityTreeAfterTick();
+                    try {
+                        SignGUI.builder()
+                               .setLines("", "Enter", "Profile Name", "")
+                               .setHandler((p, lines) -> {
+                                   String name = lines.getLine(0);
+                                   if (!name.matches("[a-zA-Z0-9 ]+")) {
+                                       warlordsPlayer.sendMessage(Component.text("Invalid name!", NamedTextColor.RED));
+                                       warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
                                        return null;
-                                   }).build().open(player);
-                        } catch (SignGUIVersionException ex) {
-                            ChatUtils.MessageType.WARLORDS.sendErrorMessage(ex);
-                        }
-                    }
-            );
-            menu.setItem(3, 4,
-                    new ItemBuilder(Material.NAME_TAG)
-                            .name(Component.text("Rename Profile", NamedTextColor.GREEN))
-                            .lore(WordWrap.wrap(Component.text("Rename the current profile.", NamedTextColor.GRAY), 150))
-                            .get(),
-                    (m, e) -> {
-                        try {
-                            SignGUI.builder()
-                                   .setLines("", "Enter", "Profile Name", "")
-                                   .setHandler((p, lines) -> {
-                                       String name = lines.getLine(0);
-                                       if (!name.matches("[a-zA-Z0-9 ]+")) {
-                                           player.sendMessage(Component.text("Invalid name!", NamedTextColor.RED));
-                                           player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
-                                           return null;
-                                       }
-                                       if (autoUpgradeProfiles.stream().anyMatch(l -> l.getName().equalsIgnoreCase(name))) {
-                                           player.sendMessage(Component.text("You already have a profile with that name!", NamedTextColor.RED));
-                                           player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
-                                           return null;
-                                       }
-                                       autoUpgradeProfile.setName(name);
-                                       DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                                       openAbilityTreeAfterTick();
+                                   }
+                                   if (autoUpgradeProfiles.stream().anyMatch(i -> i.getName().equalsIgnoreCase(name))) {
+                                       warlordsPlayer.sendMessage(Component.text("You already have a profile with that name!", NamedTextColor.RED));
+                                       warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
                                        return null;
-                                   }).build().open(player);
-                        } catch (SignGUIVersionException ex) {
-                            ChatUtils.MessageType.WARLORDS.sendErrorMessage(ex);
-                        }
+                                   }
+                                   AutoUpgradeProfile newProfile = new AutoUpgradeProfile(name);
+                                   autoUpgradeProfiles.add(newProfile);
+                                   autoUpgradeProfile = newProfile;
+                                   DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                   openAbilityTreeAfterTick();
+                                   return null;
+                               }).build().open(player);
+                    } catch (SignGUIVersionException ex) {
+                        ChatUtils.MessageType.WARLORDS.sendErrorMessage(ex);
                     }
-            );
-            menu.setItem(5, 4,
-                    new ItemBuilder(Material.LAVA_BUCKET)
-                            .name(Component.text("Delete Profile", NamedTextColor.RED))
-                            .lore(WordWrap.wrap(Component.text("Delete the current profile.", NamedTextColor.GRAY), 150))
-                            .get(),
-                    (m, e) -> {
-                        if (autoUpgradeProfiles.size() == 1) {
-                            player.sendMessage(Component.text("You must have at least one profile!", NamedTextColor.RED));
-                            return;
-                        }
-                        Menu.openConfirmationMenu(
-                                player,
-                                "Delete Profile",
-                                3,
-                                Arrays.asList(
-                                        Component.textOfChildren(
-                                                Component.text("Delete Profile: ", NamedTextColor.GRAY),
-                                                Component.text(autoUpgradeProfile.getName(), NamedTextColor.GOLD)
-                                        ),
-                                        Component.empty(),
-                                        Component.textOfChildren(
-                                                Component.text("WARNING: ", NamedTextColor.RED),
-                                                Component.text("This cannot be undone!", NamedTextColor.GRAY)
-                                        )
-                                ),
-                                Menu.GO_BACK,
-                                (m2, e2) -> {
-                                    autoUpgradeProfiles.remove(autoUpgradeProfile);
-                                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                                    openAbilityTree();
-                                },
-                                (m2, e2) -> openAbilityTree(),
-                                (m2) -> {
-                                }
-                        );
+                }
+        );
+        menu.setItem(3, 4,
+                new ItemBuilder(Material.NAME_TAG)
+                        .name(Component.text("Rename Profile", NamedTextColor.GREEN))
+                        .lore(WordWrap.wrap(Component.text("Rename the current profile.", NamedTextColor.GRAY), 150))
+                        .get(),
+                (m, e) -> {
+                    try {
+                        SignGUI.builder()
+                               .setLines("", "Enter", "Profile Name", "")
+                               .setHandler((p, lines) -> {
+                                   String name = lines.getLine(0);
+                                   if (!name.matches("[a-zA-Z0-9 ]+")) {
+                                       player.sendMessage(Component.text("Invalid name!", NamedTextColor.RED));
+                                       player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
+                                       return null;
+                                   }
+                                   if (autoUpgradeProfiles.stream().anyMatch(l -> l.getName().equalsIgnoreCase(name))) {
+                                       player.sendMessage(Component.text("You already have a profile with that name!", NamedTextColor.RED));
+                                       player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
+                                       return null;
+                                   }
+                                   autoUpgradeProfile.setName(name);
+                                   DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                   openAbilityTreeAfterTick();
+                                   return null;
+                               }).build().open(player);
+                    } catch (SignGUIVersionException ex) {
+                        ChatUtils.MessageType.WARLORDS.sendErrorMessage(ex);
                     }
-            );
-            lore.clear();
-            for (int i = 0; i < autoUpgradeProfiles.size(); i++) {
-                lore.add(Component.text((i + 1) + ". " + autoUpgradeProfiles.get(i).getName(),
-                        autoUpgradeProfiles.get(i).equals(autoUpgradeProfile) ? NamedTextColor.AQUA : NamedTextColor.GRAY
-                ));
-            }
-            menu.setItem(6, 4,
-                    new ItemBuilder(Material.TRIPWIRE_HOOK)
-                            .name(Component.text("Change Profile Priority", NamedTextColor.GREEN))
-                            .lore(lore)
-                            .addLore(Component.empty())
-                            .addLore(
-                                    WordWrap.wrap(Component.text("Change the priority of the current profile, for when you have " +
-                                                    "multiple profile with the same filters.", NamedTextColor.GRAY),
-                                            170
+                }
+        );
+        menu.setItem(5, 4,
+                new ItemBuilder(Material.LAVA_BUCKET)
+                        .name(Component.text("Delete Profile", NamedTextColor.RED))
+                        .lore(WordWrap.wrap(Component.text("Delete the current profile.", NamedTextColor.GRAY), 150))
+                        .get(),
+                (m, e) -> {
+                    if (autoUpgradeProfiles.size() == 1) {
+                        player.sendMessage(Component.text("You must have at least one profile!", NamedTextColor.RED));
+                        return;
+                    }
+                    Menu.openConfirmationMenu(
+                            player,
+                            "Delete Profile",
+                            3,
+                            Arrays.asList(
+                                    Component.textOfChildren(
+                                            Component.text("Delete Profile: ", NamedTextColor.GRAY),
+                                            Component.text(autoUpgradeProfile.getName(), NamedTextColor.GOLD)
+                                    ),
+                                    Component.empty(),
+                                    Component.textOfChildren(
+                                            Component.text("WARNING: ", NamedTextColor.RED),
+                                            Component.text("This cannot be undone!", NamedTextColor.GRAY)
                                     )
-                            )
-                            .get(),
-                    (m, e) -> {
-                        int loadoutIndex = autoUpgradeProfiles.indexOf(autoUpgradeProfile);
-                        int newLoadoutIndex;
-                        if (loadoutIndex == autoUpgradeProfiles.size() - 1) {
-                            newLoadoutIndex = 0;
-                        } else {
-                            newLoadoutIndex = loadoutIndex + 1;
-                        }
-                        autoUpgradeProfiles.remove(autoUpgradeProfile);
-                        autoUpgradeProfiles.add(newLoadoutIndex, autoUpgradeProfile);
-                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                        openAbilityTree();
+                            ),
+                            Menu.GO_BACK,
+                            (m2, e2) -> {
+                                autoUpgradeProfiles.remove(autoUpgradeProfile);
+                                DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                openAbilityTree();
+                            },
+                            (m2, e2) -> openAbilityTree(),
+                            (m2) -> {
+                            }
+                    );
+                }
+        );
+        lore.clear();
+        for (int i = 0; i < autoUpgradeProfiles.size(); i++) {
+            lore.add(Component.text((i + 1) + ". " + autoUpgradeProfiles.get(i).getName(),
+                    autoUpgradeProfiles.get(i).equals(autoUpgradeProfile) ? NamedTextColor.AQUA : NamedTextColor.GRAY
+            ));
+        }
+        menu.setItem(6, 4,
+                new ItemBuilder(Material.TRIPWIRE_HOOK)
+                        .name(Component.text("Change Profile Priority", NamedTextColor.GREEN))
+                        .lore(lore)
+                        .addLore(Component.empty())
+                        .addLore(
+                                WordWrap.wrap(Component.text("Change the priority of the current profile, for when you have " +
+                                                "multiple profile with the same filters.", NamedTextColor.GRAY
+                                        ),
+                                        170
+                                )
+                        )
+                        .get(),
+                (m, e) -> {
+                    int loadoutIndex = autoUpgradeProfiles.indexOf(autoUpgradeProfile);
+                    int newLoadoutIndex;
+                    if (loadoutIndex == autoUpgradeProfiles.size() - 1) {
+                        newLoadoutIndex = 0;
+                    } else {
+                        newLoadoutIndex = loadoutIndex + 1;
                     }
-            );
-            lore.clear();
-            DifficultyMode[] difficultyModes = DifficultyMode.VALUES;
-            for (DifficultyMode value : difficultyModes) {
-                lore.add(Component.text(value.name, autoUpgradeProfile.getDifficultyMode() == value ? NamedTextColor.AQUA : NamedTextColor.GRAY));
-            }
-            menu.setItem(7, 4,
-                    new ItemBuilder(Material.COMPARATOR)
-                            .name(Component.text("Bind to Mode", NamedTextColor.GREEN))
-                            .lore(lore)
-                            .get(),
-                    (m, e) -> {
-                        autoUpgradeProfile.setDifficultyMode(autoUpgradeProfile.getDifficultyMode().next());
-                        openAbilityTree();
-                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                    }
-            );
-        }, () -> {
-            autoUpgradeProfile = new AutoUpgradeProfile();
-        });
+                    autoUpgradeProfiles.remove(autoUpgradeProfile);
+                    autoUpgradeProfiles.add(newLoadoutIndex, autoUpgradeProfile);
+                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                    openAbilityTree();
+                }
+        );
+        lore.clear();
+        DifficultyMode[] difficultyModes = DifficultyMode.VALUES;
+        for (DifficultyMode value : difficultyModes) {
+            lore.add(Component.text(value.name, autoUpgradeProfile.getDifficultyMode() == value ? NamedTextColor.AQUA : NamedTextColor.GRAY));
+        }
+        menu.setItem(7, 4,
+                new ItemBuilder(Material.COMPARATOR)
+                        .name(Component.text("Bind to Mode", NamedTextColor.GREEN))
+                        .lore(lore)
+                        .get(),
+                (m, e) -> {
+                    autoUpgradeProfile.setDifficultyMode(autoUpgradeProfile.getDifficultyMode().next());
+                    openAbilityTree();
+                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                }
+        );
         if (autoUpgradeProfile == null) {
             autoUpgradeProfile = new AutoUpgradeProfile();
         }
@@ -385,7 +384,8 @@ public class AbilityTree {
                         .lore(autoUpgradeProfile.getAutoUpgradeEntries().isEmpty() ?
                               WordWrap.wrap(Component.text("You have no upgrades queued. ", NamedTextColor.GRAY)
                                                      .append(Component.text("RIGHT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD))
-                                                     .append(Component.text("upgrades to add/remove them.")), 130) :
+                                                     .append(Component.text("upgrades to add/remove them.")), 130
+                              ) :
                               autoUpgradeProfile.getLore(this)
                         )
                         .addLore(
@@ -561,5 +561,7 @@ public class AbilityTree {
             this.upgradeName = upgradeName;
             this.upgradeDescription = upgradeDescription;
         }
+
     }
+
 }

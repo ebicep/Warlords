@@ -34,37 +34,36 @@ public class AchievementsMenu {
     //TIERED ACHIEVEMENTS - CHALLENGES
     //ACHIEVEMENT HISTORY
     public static void openAchievementsMenu(Player player) {
-        DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
-            Menu menu = new Menu("Achievements", 9 * 4);
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+        Menu menu = new Menu("Achievements", 9 * 4);
 
-            menu.setItem(
-                    1,
-                    1,
-                    new ItemBuilder(Material.STONE_AXE)
-                            .name(Component.text("General", NamedTextColor.GREEN))
-                            .get(),
-                    (m, e) -> openAchievementTypeMenu(player, databasePlayer, null)
-            );
+        menu.setItem(
+                1,
+                1,
+                new ItemBuilder(Material.STONE_AXE)
+                        .name(Component.text("General", NamedTextColor.GREEN))
+                        .get(),
+                (m, e) -> openAchievementTypeMenu(player, databasePlayer, null)
+        );
 
-            int x = 0;
-            for (GameMode gameMode : GameMode.VALUES) {
-                if (gameMode.getItemStack() == null) {
-                    continue;
-                }
-                menu.setItem(
-                        x + 2,
-                        1,
-                        new ItemBuilder(gameMode.getItemStack())
-                                .name(Component.text(gameMode.getName(), NamedTextColor.GREEN))
-                                .get(),
-                        (m, e) -> openAchievementTypeMenu(player, databasePlayer, gameMode)
-                );
-                x++;
+        int x = 0;
+        for (GameMode gameMode : GameMode.VALUES) {
+            if (gameMode.getItemStack() == null) {
+                continue;
             }
+            menu.setItem(
+                    x + 2,
+                    1,
+                    new ItemBuilder(gameMode.getItemStack())
+                            .name(Component.text(gameMode.getName(), NamedTextColor.GREEN))
+                            .get(),
+                    (m, e) -> openAchievementTypeMenu(player, databasePlayer, gameMode)
+            );
+            x++;
+        }
 
-            menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
-            menu.openForPlayer(player);
-        });
+        menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
+        menu.openForPlayer(player);
     }
 
     public static void openAchievementTypeMenu(Player player, DatabasePlayer databasePlayer, GameMode gameMode) {

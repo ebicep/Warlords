@@ -3,6 +3,7 @@ package com.ebicep.warlords.game.option.pve;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
@@ -35,21 +36,20 @@ public class BountyOption implements Option {
                 if (bountyInfo == null) {
                     continue;
                 }
-                DatabaseManager.getPlayer(uniqueId, activeCollection, databasePlayer -> {
-                    List<AbstractBounty> trackableBounties = databasePlayer.getPveStats().getTrackableBounties();
-                    addTracksDuringGameBounties(game, trackableBounties);
-                    if (activeCollection == PlayersCollections.LIFETIME && DatabaseGameEvent.eventIsActive()) {
-                        DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
-                        EventMode eventMode = currentGameEvent.getEvent().eventsStatsFunction
-                                .apply(databasePlayer.getPveStats().getEventStats())
-                                .get(currentGameEvent.getStartDateSecond());
-                        if (eventMode == null) {
-                            return;
-                        }
-                        addTracksDuringGameBounties(game, eventMode.getTrackableBounties());
+                DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uniqueId, activeCollection);
+                List<AbstractBounty> trackableBounties = databasePlayer.getPveStats().getTrackableBounties();
+                addTracksDuringGameBounties(game, trackableBounties);
+                if (activeCollection == PlayersCollections.LIFETIME && DatabaseGameEvent.eventIsActive()) {
+                    DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
+                    EventMode eventMode = currentGameEvent.getEvent().eventsStatsFunction
+                            .apply(databasePlayer.getPveStats().getEventStats())
+                            .get(currentGameEvent.getStartDateSecond());
+                    if (eventMode == null) {
+                        return;
                     }
-                    trackedBounties.forEach(bounty -> bounty.init(databasePlayer));
-                });
+                    addTracksDuringGameBounties(game, eventMode.getTrackableBounties());
+                }
+                trackedBounties.forEach(bounty -> bounty.init(databasePlayer));
             }
         });
     }
@@ -66,4 +66,5 @@ public class BountyOption implements Option {
     public void onGameCleanup(@Nonnull Game game) {
         trackedBounties.forEach(AbstractBounty::unregister);
     }
+
 }

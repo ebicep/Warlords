@@ -3,6 +3,7 @@ package com.ebicep.warlords.guilds.menu;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.guilds.GuildLeaderboardManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.timings.pojos.Timing;
 import com.ebicep.warlords.guilds.*;
 import com.ebicep.warlords.guilds.logs.AbstractGuildLog;
@@ -222,93 +223,92 @@ public class GuildMenu {
             return;
         }
         int coinConversionRatio = Guild.getConversionRatio(guild);
-        DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
-            Long playerCoins = databasePlayer.getPveStats().getCurrencyValue(Currencies.COIN);
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+        Long playerCoins = databasePlayer.getPveStats().getCurrencyValue(Currencies.COIN);
 
-            int maxCoinsCanConvert = (int) ((10000 - dailyCoinsConverted) * coinConversionRatio);
-            try {
-                SignGUI.builder()
-                       .setLines("",
-                               "Bal: " + NumberFormat.addCommaAndRound(playerCoins),
-                               "Max: " + NumberFormat.addCommaAndRound(maxCoinsCanConvert),
-                               "Ratio: " + coinConversionRatio + ":1"
-                       )
-                       .setHandler((p, lines) -> {
-                           int playerCoinsToConvert;
-                           try {
-                               playerCoinsToConvert = Integer.parseInt(lines.getLine(0));
-                           } catch (NumberFormatException ex) {
-                               player.sendMessage(Component.text("Invalid Number!", NamedTextColor.RED));
-                               openGuildMenuAfterTick(guild, player);
-                               return null;
-                           }
-                           if (playerCoinsToConvert <= 0) {
-                               player.sendMessage(Component.text("You must enter a positive number.", NamedTextColor.RED));
-                               openGuildMenuAfterTick(guild, player);
-                               return null;
-                           }
-                           if (playerCoinsToConvert > playerCoins) {
-                               player.sendMessage(Component.text("You do not have enough player coins to convert to guild coins.", NamedTextColor.RED));
-                               openGuildMenuAfterTick(guild, player);
-                               return null;
-                           }
-                           if (playerCoinsToConvert < coinConversionRatio) {
-                               player.sendMessage(Component.text("You must enter a number greater than or equal to " + coinConversionRatio + ".", NamedTextColor.RED));
-                               openGuildMenuAfterTick(guild, player);
-                               return null;
-                           }
-                           if (playerCoinsToConvert > maxCoinsCanConvert) {
-                               player.sendMessage(Component.text("You cannot exceed the max convertable amount.", NamedTextColor.RED));
-                               openGuildMenuAfterTick(guild, player);
-                               return null;
-                           }
-                           new BukkitRunnable() {
-
-                               @Override
-                               public void run() {
-                                   int guildCoinsGained = playerCoinsToConvert / coinConversionRatio;
-                                   Menu.openConfirmationMenu(
-                                           player,
-                                           "Confirm Conversion",
-                                           3,
-                                           Arrays.asList(
-                                                   Component.text("+" + guildCoinsGained + " Guild Coins", NamedTextColor.GREEN),
-                                                   Component.text("-" + playerCoinsToConvert + " Player Coins", NamedTextColor.RED)
-                                           ),
-                                           Menu.GO_BACK,
-                                           (m2, e2) -> {
-                                               databasePlayer.getPveStats().subtractCurrency(Currencies.COIN, playerCoinsToConvert);
-                                               DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                                               guild.addCurrentCoins(guildCoinsGained);
-                                               guildPlayer.addDailyCoinsConverted(guildCoinsGained);
-                                               guild.log(new GuildLogCoinsConverted(player.getUniqueId(), playerCoinsToConvert, guildCoinsGained));
-                                               guild.queueUpdate();
-                                               guild.sendGuildMessageToOnlinePlayers(
-                                                       Component.empty().color(NamedTextColor.GRAY)
-                                                                .append(Component.text(player.getName(), NamedTextColor.AQUA))
-                                                                .append(Component.text(" converted "))
-                                                                .append(Component.text(playerCoinsToConvert, NamedTextColor.GREEN))
-                                                                .append(Component.text(" player coins to "))
-                                                                .append(Component.text(guildCoinsGained, NamedTextColor.GREEN))
-                                                                .append(Component.text(" guild coins.")),
-                                                       true
-                                               );
-                                               GuildLeaderboardManager.recalculateAllLeaderboards();
-                                               openGuildMenu(guild, player, 1);
-                                           },
-                                           (m2, e2) -> openGuildMenu(guild, player, 1),
-                                           (m2) -> {
-                                           }
-                                   );
-
-                               }
-                           }.runTaskLater(Warlords.getInstance(), 1);
+        int maxCoinsCanConvert = (int) ((10000 - dailyCoinsConverted) * coinConversionRatio);
+        try {
+            SignGUI.builder()
+                   .setLines("",
+                           "Bal: " + NumberFormat.addCommaAndRound(playerCoins),
+                           "Max: " + NumberFormat.addCommaAndRound(maxCoinsCanConvert),
+                           "Ratio: " + coinConversionRatio + ":1"
+                   )
+                   .setHandler((p, lines) -> {
+                       int playerCoinsToConvert;
+                       try {
+                           playerCoinsToConvert = Integer.parseInt(lines.getLine(0));
+                       } catch (NumberFormatException ex) {
+                           player.sendMessage(Component.text("Invalid Number!", NamedTextColor.RED));
+                           openGuildMenuAfterTick(guild, player);
                            return null;
-                       }).build().open(player);
-            } catch (SignGUIVersionException e) {
-                ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
-            }
-        });
+                       }
+                       if (playerCoinsToConvert <= 0) {
+                           player.sendMessage(Component.text("You must enter a positive number.", NamedTextColor.RED));
+                           openGuildMenuAfterTick(guild, player);
+                           return null;
+                       }
+                       if (playerCoinsToConvert > playerCoins) {
+                           player.sendMessage(Component.text("You do not have enough player coins to convert to guild coins.", NamedTextColor.RED));
+                           openGuildMenuAfterTick(guild, player);
+                           return null;
+                       }
+                       if (playerCoinsToConvert < coinConversionRatio) {
+                           player.sendMessage(Component.text("You must enter a number greater than or equal to " + coinConversionRatio + ".", NamedTextColor.RED));
+                           openGuildMenuAfterTick(guild, player);
+                           return null;
+                       }
+                       if (playerCoinsToConvert > maxCoinsCanConvert) {
+                           player.sendMessage(Component.text("You cannot exceed the max convertable amount.", NamedTextColor.RED));
+                           openGuildMenuAfterTick(guild, player);
+                           return null;
+                       }
+                       new BukkitRunnable() {
+
+                           @Override
+                           public void run() {
+                               int guildCoinsGained = playerCoinsToConvert / coinConversionRatio;
+                               Menu.openConfirmationMenu(
+                                       player,
+                                       "Confirm Conversion",
+                                       3,
+                                       Arrays.asList(
+                                               Component.text("+" + guildCoinsGained + " Guild Coins", NamedTextColor.GREEN),
+                                               Component.text("-" + playerCoinsToConvert + " Player Coins", NamedTextColor.RED)
+                                       ),
+                                       Menu.GO_BACK,
+                                       (m2, e2) -> {
+                                           databasePlayer.getPveStats().subtractCurrency(Currencies.COIN, playerCoinsToConvert);
+                                           DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                           guild.addCurrentCoins(guildCoinsGained);
+                                           guildPlayer.addDailyCoinsConverted(guildCoinsGained);
+                                           guild.log(new GuildLogCoinsConverted(player.getUniqueId(), playerCoinsToConvert, guildCoinsGained));
+                                           guild.queueUpdate();
+                                           guild.sendGuildMessageToOnlinePlayers(
+                                                   Component.empty().color(NamedTextColor.GRAY)
+                                                            .append(Component.text(player.getName(), NamedTextColor.AQUA))
+                                                            .append(Component.text(" converted "))
+                                                            .append(Component.text(playerCoinsToConvert, NamedTextColor.GREEN))
+                                                            .append(Component.text(" player coins to "))
+                                                            .append(Component.text(guildCoinsGained, NamedTextColor.GREEN))
+                                                            .append(Component.text(" guild coins.")),
+                                                   true
+                                           );
+                                           GuildLeaderboardManager.recalculateAllLeaderboards();
+                                           openGuildMenu(guild, player, 1);
+                                       },
+                                       (m2, e2) -> openGuildMenu(guild, player, 1),
+                                       (m2) -> {
+                                       }
+                               );
+
+                           }
+                       }.runTaskLater(Warlords.getInstance(), 1);
+                       return null;
+                   }).build().open(player);
+        } catch (SignGUIVersionException e) {
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
+        }
 
     }
 

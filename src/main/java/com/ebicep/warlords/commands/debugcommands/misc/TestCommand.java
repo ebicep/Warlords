@@ -413,6 +413,7 @@ public class TestCommand extends BaseCommand {
         help.getHelpEntries().sort(Comparator.comparing(HelpEntry::getCommand));
         help.showHelp();
     }
+
 }
 
 /*
@@ -528,7 +529,7 @@ public class TestCommand extends BaseCommand {
         //  DatabaseManager.guildService.update(GuildManager.GUILDS.get(0));
 
 //        PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
-//        System.out.println(playerSettings.getSelectedSpec());
+//        System.out.println(databasePlayer.getLastSpec());
 //        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
 //        System.out.println(databasePlayer.getLastSpec());
 

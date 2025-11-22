@@ -5,6 +5,7 @@ import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.libraryarchives.DatabasePlayerPvEEventLibraryArchivesDifficultyStats;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -36,31 +37,8 @@ public class CodexCollector implements FieldEffect {
     private final Map<WarlordsEntity, PlayerCodex> playerCodexEquipped = new HashMap<>();
     private int codexesEquipped = 0;
 
-    @Override
-    public String getName() {
-        return "Codex Collector";
-    }
-
-    @Override
-    public String getDescription() {
-        return "Players gain a special bonus based on the amount of codexes equipped.";
-    }
-
-    @Override
-    public List<Component> getSubDescription() {
-        return new ArrayList<>() {{
-            add(Component.empty());
-            add(Component.text("2 Codexes", NamedTextColor.GOLD));
-            add(Component.text("Defeating an opponent instantly restores", NamedTextColor.GRAY));
-            add(Component.text("5% of max HP.", NamedTextColor.GRAY));
-            add(Component.empty());
-            add(Component.text("4 Codexes", NamedTextColor.GOLD));
-            add(Component.text("+5% Crit Chance and +10 Crit Multiplier.", NamedTextColor.GRAY));
-            add(Component.empty());
-            add(Component.text("6 Codexes", NamedTextColor.GOLD));
-            add(Component.text("Defeating an opponent with a rune ability", NamedTextColor.GRAY));
-            add(Component.text("has a 25% chance of ending its cooldown", NamedTextColor.GRAY));
-        }};
+    public Map<WarlordsEntity, PlayerCodex> getPlayerCodexEquipped() {
+        return playerCodexEquipped;
     }
 
     @Override
@@ -73,26 +51,25 @@ public class CodexCollector implements FieldEffect {
             if (!(player instanceof WarlordsPlayer warlordsPlayer)) {
                 return;
             }
-            DatabaseManager.getPlayer(player.getUuid(), databasePlayer -> {
-                EventMode eventMode = currentGameEvent.getEvent().eventsStatsFunction.apply(databasePlayer.getPveStats().getEventStats())
-                                                                                     .get(currentGameEvent.getStartDateSecond());
-                if (!(eventMode instanceof DatabasePlayerPvEEventLibraryArchivesDifficultyStats stats)) {
-                    return;
+            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player.getUuid());
+            EventMode eventMode = currentGameEvent.getEvent().eventsStatsFunction.apply(databasePlayer.getPveStats().getEventStats())
+                                                                                 .get(currentGameEvent.getStartDateSecond());
+            if (!(eventMode instanceof DatabasePlayerPvEEventLibraryArchivesDifficultyStats stats)) {
+                return;
+            }
+            Specializations specClass = player.getSpecClass();
+            PlayerCodex codexForSpec = PlayerCodex.getCodexForSpec(specClass);
+            if (stats.getCodexesEarned().getOrDefault(codexForSpec, 0) > 0) {
+                codexesEquipped++;
+                player.getSpec().getAbilities().clear();
+                for (Ability<?> ability : codexForSpec.abilities) {
+                    AbstractAbility abstractAbility = ability.create.get();
+                    abstractAbility.init(abstractAbility.getBuilder());
+                    player.getSpec().getAbilities().add(abstractAbility);
                 }
-                Specializations specClass = player.getSpecClass();
-                PlayerCodex codexForSpec = PlayerCodex.getCodexForSpec(specClass);
-                if (stats.getCodexesEarned().getOrDefault(codexForSpec, 0) > 0) {
-                    codexesEquipped++;
-                    player.getSpec().getAbilities().clear();
-                    for (Ability<?> ability : codexForSpec.abilities) {
-                        AbstractAbility abstractAbility = ability.create.get();
-                        abstractAbility.init(abstractAbility.getBuilder());
-                        player.getSpec().getAbilities().add(abstractAbility);
-                    }
-                    warlordsPlayer.resetAbilityTree();
-                    playerCodexEquipped.put(player, codexForSpec);
-                }
-            });
+                warlordsPlayer.resetAbilityTree();
+                playerCodexEquipped.put(player, codexForSpec);
+            }
         }
         Game game = players.get(0).getGame();
         game.registerEvents(new Listener() {
@@ -165,22 +142,50 @@ public class CodexCollector implements FieldEffect {
             for (WarlordsEntity player : players) {
                 for (AbstractAbility ability : player.getAbilities()) {
                     Value.applyDamageHealing(ability, value -> {
-                        if (value instanceof Value.RangedValueCritable rangedValueCritable) {
-                            rangedValueCritable.critChance().addAdditiveModifier(getName(), 5);
-                            rangedValueCritable.critMultiplier().addAdditiveModifier(getName(), 10);
-                        }
-                    });
+                                if (value instanceof Value.RangedValueCritable rangedValueCritable) {
+                                    rangedValueCritable.critChance().addAdditiveModifier(getName(), 5);
+                                    rangedValueCritable.critMultiplier().addAdditiveModifier(getName(), 10);
+                                }
+                            }
+                    );
                 }
             }
         }
     }
 
-    public Map<WarlordsEntity, PlayerCodex> getPlayerCodexEquipped() {
-        return playerCodexEquipped;
-    }
-
     public int getCodexesEquipped() {
         return codexesEquipped;
     }
+
+    @Override
+    public String getName() {
+        return "Codex Collector";
+    }
+
+
+    @Override
+    public String getDescription() {
+        return "Players gain a special bonus based on the amount of codexes equipped.";
+    }
+
+    @Override
+    public List<Component> getSubDescription() {
+        return new ArrayList<>() {{
+            add(Component.empty());
+            add(Component.text("2 Codexes", NamedTextColor.GOLD));
+            add(Component.text("Defeating an opponent instantly restores", NamedTextColor.GRAY));
+            add(Component.text("5% of max HP.", NamedTextColor.GRAY));
+            add(Component.empty());
+            add(Component.text("4 Codexes", NamedTextColor.GOLD));
+            add(Component.text("+5% Crit Chance and +10 Crit Multiplier.", NamedTextColor.GRAY));
+            add(Component.empty());
+            add(Component.text("6 Codexes", NamedTextColor.GOLD));
+            add(Component.text("Defeating an opponent with a rune ability", NamedTextColor.GRAY));
+            add(Component.text("has a 25% chance of ending its cooldown", NamedTextColor.GRAY));
+        }};
+    }
+
+
+
 
 }

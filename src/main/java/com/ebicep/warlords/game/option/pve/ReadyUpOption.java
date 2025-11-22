@@ -2,6 +2,7 @@ package com.ebicep.warlords.game.option.pve;
 
 import com.ebicep.customentities.npc.WarlordsTrait;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.gardenofhesperides.DatabasePlayerPvEEventGardenOfHesperidesStats;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
@@ -55,10 +56,6 @@ public class ReadyUpOption implements Option {
         this.name = name;
     }
 
-    public void setWhenAllReady(Runnable whenAllReady) {
-        this.whenAllReady = whenAllReady;
-    }
-
     @Override
     public void register(@Nonnull Game game) {
         this.game = game;
@@ -99,20 +96,19 @@ public class ReadyUpOption implements Option {
     @Override
     public void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
         if (player instanceof WarlordsPlayer) {
-            DatabaseManager.getPlayer(player.getUuid(), databasePlayer -> {
-                DatabasePlayerPvEEventGardenOfHesperidesStats gardenOfHesperidesStats = databasePlayer.getPveStats().getEventStats().getGardenOfHesperidesStats();
-                boolean tartarusAutoReady = gardenOfHesperidesStats.isTartarusAutoReady();
-                readyPlayers.put(player, tartarusAutoReady);
-                if (tartarusAutoReady) {
-                    sendNPCMessage(Component.textOfChildren(
-                            Component.text(player.getName(), NamedTextColor.AQUA),
-                            Component.text(" is now ready", NamedTextColor.GREEN)
-                    ));
-                    player.sendMessage(Component.text("[Click to Disable Auto Ready]", NamedTextColor.YELLOW, TextDecoration.BOLD)
-                                                .hoverEvent(HoverEvent.showText(Component.text("Disable Auto Ready", NamedTextColor.GREEN)))
-                                                .clickEvent(ClickEvent.callback(audience -> gardenOfHesperidesStats.setTartarusAutoReady(false))));
-                }
-            });
+            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player.getUuid());
+            DatabasePlayerPvEEventGardenOfHesperidesStats gardenOfHesperidesStats = databasePlayer.getPveStats().getEventStats().getGardenOfHesperidesStats();
+            boolean tartarusAutoReady = gardenOfHesperidesStats.isTartarusAutoReady();
+            readyPlayers.put(player, tartarusAutoReady);
+            if (tartarusAutoReady) {
+                sendNPCMessage(Component.textOfChildren(
+                        Component.text(player.getName(), NamedTextColor.AQUA),
+                        Component.text(" is now ready", NamedTextColor.GREEN)
+                ));
+                player.sendMessage(Component.text("[Click to Disable Auto Ready]", NamedTextColor.YELLOW, TextDecoration.BOLD)
+                                            .hoverEvent(HoverEvent.showText(Component.text("Disable Auto Ready", NamedTextColor.GREEN)))
+                                            .clickEvent(ClickEvent.callback(audience -> gardenOfHesperidesStats.setTartarusAutoReady(false))));
+            }
             // safety
             if (!readyPlayers.containsKey(player)) {
                 readyPlayers.put(player, false);
@@ -129,6 +125,10 @@ public class ReadyUpOption implements Option {
             ));
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 100, 2);
         });
+    }
+
+    public void setWhenAllReady(Runnable whenAllReady) {
+        this.whenAllReady = whenAllReady;
     }
 
     private void openReadyUpMenu(Player player, int page) {
@@ -220,31 +220,30 @@ public class ReadyUpOption implements Option {
         }
 
         menu.setItem(4, 4, MENU_CLOSE, ACTION_CLOSE_MENU);
-        DatabaseManager.getPlayer(player, databasePlayer -> {
-            DatabasePlayerPvEEventGardenOfHesperidesStats gardenOfHesperidesStats = databasePlayer.getPveStats().getEventStats().getGardenOfHesperidesStats();
-            boolean tartarusAutoReady = gardenOfHesperidesStats.isTartarusAutoReady();
-            ItemBuilder itemBuilder = new ItemBuilder(Material.DIAMOND)
-                    .name(Component.text("Auto Ready", NamedTextColor.AQUA))
-                    .lore(
-                            Component.text("Automatically ready up when joining", NamedTextColor.GRAY),
-                            Component.empty(),
-                            Component.text("Currently: ", NamedTextColor.GRAY)
-                                     .append(Component.text(tartarusAutoReady ? "Enabled" : "Disabled", tartarusAutoReady ? NamedTextColor.GREEN : NamedTextColor.RED)),
-                            Component.empty(),
-                            Component.text("Click to toggle", NamedTextColor.YELLOW)
-                    );
-            if (tartarusAutoReady) {
-                itemBuilder.enchant(Enchantment.RESPIRATION, 1);
-            }
-            menu.setItem(5, 4,
-                    itemBuilder.get(),
-                    (m, e) -> {
-                        gardenOfHesperidesStats.setTartarusAutoReady(!tartarusAutoReady);
-                        openReadyUpMenu(player, page);
-                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                    }
-            );
-        });
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+        DatabasePlayerPvEEventGardenOfHesperidesStats gardenOfHesperidesStats = databasePlayer.getPveStats().getEventStats().getGardenOfHesperidesStats();
+        boolean tartarusAutoReady = gardenOfHesperidesStats.isTartarusAutoReady();
+        ItemBuilder itemBuilder = new ItemBuilder(Material.DIAMOND)
+                .name(Component.text("Auto Ready", NamedTextColor.AQUA))
+                .lore(
+                        Component.text("Automatically ready up when joining", NamedTextColor.GRAY),
+                        Component.empty(),
+                        Component.text("Currently: ", NamedTextColor.GRAY)
+                                 .append(Component.text(tartarusAutoReady ? "Enabled" : "Disabled", tartarusAutoReady ? NamedTextColor.GREEN : NamedTextColor.RED)),
+                        Component.empty(),
+                        Component.text("Click to toggle", NamedTextColor.YELLOW)
+                );
+        if (tartarusAutoReady) {
+            itemBuilder.enchant(Enchantment.RESPIRATION, 1);
+        }
+        menu.setItem(5, 4,
+                itemBuilder.get(),
+                (m, e) -> {
+                    gardenOfHesperidesStats.setTartarusAutoReady(!tartarusAutoReady);
+                    openReadyUpMenu(player, page);
+                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                }
+        );
         menu.openForPlayer(player);
     }
 
@@ -281,6 +280,7 @@ public class ReadyUpOption implements Option {
         public void setReadyUpOption(ReadyUpOption readyUpOption) {
             this.readyUpOption = readyUpOption;
         }
+
     }
 
 }

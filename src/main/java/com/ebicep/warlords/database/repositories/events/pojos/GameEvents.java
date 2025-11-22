@@ -19,6 +19,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.pve.events.librarya
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.libraryarchives.grimoiresgraveyard.DatabaseGamePvEEventGrimoiresGraveyard;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.mithra.spidersdwelling.DatabaseGamePvEEventSpidersDwelling;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.narmer.narmerstomb.DatabaseGamePvEEventNarmersTomb;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.DatabasePlayerPvEEventStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
@@ -356,11 +357,12 @@ public enum GameEvents {
         public void initialize() {
             super.initialize();
             Warlords.getInstance().getServer().getPluginManager().registerEvents(new Listener() {
-                @EventHandler
-                public void onPreWeaponSalvage(WeaponSalvageEvent.Pre event) {
-                    event.getSalvageAmount().getAndUpdate(operand -> (int) (operand * 1.25));
-                }
-            }, Warlords.getInstance());
+                                                                                     @EventHandler
+                                                                                     public void onPreWeaponSalvage(WeaponSalvageEvent.Pre event) {
+                                                                                         event.getSalvageAmount().getAndUpdate(operand -> (int) (operand * 1.25));
+                                                                                     }
+                                                                                 }, Warlords.getInstance()
+            );
         }
 
         @Override
@@ -565,11 +567,12 @@ public enum GameEvents {
         public void initialize() {
             super.initialize();
             Warlords.getInstance().getServer().getPluginManager().registerEvents(new Listener() {
-                @EventHandler
-                public void onPreWeaponSalvage(WeaponSalvageEvent.Pre event) {
-                    event.getSalvageAmount().getAndUpdate(operand -> (int) (operand * 1.25));
-                }
-            }, Warlords.getInstance());
+                                                                                     @EventHandler
+                                                                                     public void onPreWeaponSalvage(WeaponSalvageEvent.Pre event) {
+                                                                                         event.getSalvageAmount().getAndUpdate(operand -> (int) (operand * 1.25));
+                                                                                     }
+                                                                                 }, Warlords.getInstance()
+            );
         }
 
         @Override
@@ -1399,38 +1402,37 @@ public enum GameEvents {
             if (!DatabaseGameEvent.eventIsActive()) {
                 return;
             }
-            DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
-                DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
-                EventMode eventMode = currentGameEvent.getEvent().eventsStatsFunction.apply(databasePlayer.getPveStats().getEventStats())
-                                                                                     .get(currentGameEvent.getStartDateSecond());
-                if (eventMode != null && !(eventMode instanceof DatabasePlayerPvEEventLibraryArchivesDifficultyStats)) {
-                    return;
-                }
-                menu.setItem(8, 5,
-                        new ItemBuilder(Material.BOOKSHELF)
-                                .name(Component.text("Codexes Aquired", NamedTextColor.GREEN))
-                                .lore(WordWrap.wrap(ComponentBuilder
-                                                .create("Every spec has a Codex which has ")
-                                                .text("5 unique abilities", NamedTextColor.GOLD)
-                                                .text(" and overrides the spec's normal abilities.")
-                                                .text("\n\nComplete ")
-                                                .text("Grimoire's Graveyard", NamedTextColor.GREEN)
-                                                .text(" to unlock a new codex. Codexes are automatically applied in ")
-                                                .text("Forgotten Codex", NamedTextColor.GREEN)
-                                                .text(".")
-                                                .build(),
-                                        150
-                                ))
-                                .addLore(
-                                        Component.empty(),
-                                        ComponentUtils.CLICK_TO_VIEW
-                                )
-                                .get(),
-                        (m, e) -> {
-                            openCodexMenu(player, (DatabasePlayerPvEEventLibraryArchivesDifficultyStats) eventMode);
-                        }
-                );
-            });
+            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+            DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
+            EventMode eventMode = currentGameEvent.getEvent().eventsStatsFunction.apply(databasePlayer.getPveStats().getEventStats())
+                                                                                 .get(currentGameEvent.getStartDateSecond());
+            if (eventMode != null && !(eventMode instanceof DatabasePlayerPvEEventLibraryArchivesDifficultyStats)) {
+                return;
+            }
+            menu.setItem(8, 5,
+                    new ItemBuilder(Material.BOOKSHELF)
+                            .name(Component.text("Codexes Aquired", NamedTextColor.GREEN))
+                            .lore(WordWrap.wrap(ComponentBuilder
+                                            .create("Every spec has a Codex which has ")
+                                            .text("5 unique abilities", NamedTextColor.GOLD)
+                                            .text(" and overrides the spec's normal abilities.")
+                                            .text("\n\nComplete ")
+                                            .text("Grimoire's Graveyard", NamedTextColor.GREEN)
+                                            .text(" to unlock a new codex. Codexes are automatically applied in ")
+                                            .text("Forgotten Codex", NamedTextColor.GREEN)
+                                            .text(".")
+                                            .build(),
+                                    150
+                            ))
+                            .addLore(
+                                    Component.empty(),
+                                    ComponentUtils.CLICK_TO_VIEW
+                            )
+                            .get(),
+                    (m, e) -> {
+                        openCodexMenu(player, (DatabasePlayerPvEEventLibraryArchivesDifficultyStats) eventMode);
+                    }
+            );
         }
 
         private void openCodexMenu(Player player, @Nullable DatabasePlayerPvEEventLibraryArchivesDifficultyStats stats) {
@@ -1740,96 +1742,95 @@ public enum GameEvents {
         DatabaseGameEvent finalGameEvent = gameEvent;
 
         UUID uuid = player.getUniqueId();
-        DatabaseManager.getPlayer(uuid, databasePlayer -> {
-            DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
-            DatabasePlayerPvEEventStats eventStats = pveStats.getEventStats();
-            EventMode eventMode = eventsStatsFunction.apply(eventStats).get(finalGameEvent.getStartDateSecond());
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+        DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+        DatabasePlayerPvEEventStats eventStats = pveStats.getEventStats();
+        EventMode eventMode = eventsStatsFunction.apply(eventStats).get(finalGameEvent.getStartDateSecond());
 
-            Menu menu = new Menu(name + " Shop", 9 * 6);
+        Menu menu = new Menu(name + " Shop", 9 * 6);
 
-            menu.setItem(4, 0,
-                    new ItemBuilder(Material.CHEST)
-                            .name(currency.getCostColoredName(pveStats.getCurrencyValue(currency)))
-                            .get(),
-                    (m, e) -> {
+        menu.setItem(4, 0,
+                new ItemBuilder(Material.CHEST)
+                        .name(currency.getCostColoredName(pveStats.getCurrencyValue(currency)))
+                        .get(),
+                (m, e) -> {
 
-                    }
-            );
-
-            int x = 1;
-            int y = 1;
-            for (SpendableBuyShop reward : shopRewards) {
-                int rewardAmount = reward.amount();
-                Spendable rewardSpendable = reward.spendable();
-                int rewardPrice = reward.price();
-                String mapName = reward.getMapName();
-
-                String stock;
-                if (reward.stock() == -1) {
-                    stock = "Unlimited";
-                } else if (eventMode == null) {
-                    stock = "" + reward.stock();
-                } else {
-                    stock = "" + (reward.stock() - eventMode.getRewardsPurchased().getOrDefault(mapName, 0L));
                 }
+        );
 
+        int x = 1;
+        int y = 1;
+        for (SpendableBuyShop reward : shopRewards) {
+            int rewardAmount = reward.amount();
+            Spendable rewardSpendable = reward.spendable();
+            int rewardPrice = reward.price();
+            String mapName = reward.getMapName();
 
-                ItemBuilder itemBuilder = new ItemBuilder(rewardSpendable.getItem())
-                        .name(rewardSpendable.getCostColoredName(rewardAmount));
-                if (rewardSpendable instanceof FixedItems) {
-                    itemBuilder.addLore(Component.empty());
-                }
-                menu.setItem(x, y,
-                        itemBuilder
-                                .addLore(
-                                        Component.text("Cost: ", NamedTextColor.GRAY).append(currency.getCostColoredName(rewardPrice)),
-                                        Component.text("Stock: ", NamedTextColor.GRAY).append(Component.text(stock, NamedTextColor.YELLOW))
-                                )
-                                .get(),
-                        (m, e) -> {
-                            if (eventMode == null || pveStats.getCurrencyValue(currency) < rewardPrice) {
-                                player.sendMessage(Component.text("You need ", NamedTextColor.RED)
-                                                            .append(currency.getCostColoredName(rewardPrice))
-                                                            .append(Component.text(" to purchase this item!"))
-                                );
-                                return;
-                            }
-                            Map<String, Long> rewardsPurchased = eventMode.getRewardsPurchased();
-                            if (reward.stock() != -1 && rewardsPurchased.getOrDefault(mapName, 0L) >= reward.stock()) {
-                                player.sendMessage(Component.text("This item is out of stock!", NamedTextColor.RED));
-                                return;
-                            }
-                            pveStats.subtractCurrency(currency, rewardPrice);
-                            rewardSpendable.addToPlayer(databasePlayer, rewardAmount);
-
-                            //event in event mode
-                            rewardsPurchased.merge(mapName, 1L, Long::sum);
-
-                            player.sendMessage(Component.text("Purchased ", NamedTextColor.GREEN)
-                                                        .append(rewardSpendable.getCostColoredName(rewardAmount))
-                                                        .append(Component.text(" for "))
-                                                        .append(currency.getCostColoredName(rewardPrice))
-                                                        .append(Component.text("!"))
-                            );
-                            player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2.5f);
-                            Bukkit.getPluginManager().callEvent(new EventShopPurchaseEvent(uuid, reward));
-                            openShopMenu(player);
-
-                            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                        }
-                );
-                x++;
-                if (x == 8) {
-                    x = 1;
-                    y++;
-                }
+            String stock;
+            if (reward.stock() == -1) {
+                stock = "Unlimited";
+            } else if (eventMode == null) {
+                stock = "" + reward.stock();
+            } else {
+                stock = "" + (reward.stock() - eventMode.getRewardsPurchased().getOrDefault(mapName, 0L));
             }
 
-            menu.setItem(3, 5, MENU_BACK, (m, e) -> openMenu(player));
-            menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
-            menu.addBorder(Menu.GRAY_EMPTY_PANE, true);
-            menu.openForPlayer(player);
-        });
+
+            ItemBuilder itemBuilder = new ItemBuilder(rewardSpendable.getItem())
+                    .name(rewardSpendable.getCostColoredName(rewardAmount));
+            if (rewardSpendable instanceof FixedItems) {
+                itemBuilder.addLore(Component.empty());
+            }
+            menu.setItem(x, y,
+                    itemBuilder
+                            .addLore(
+                                    Component.text("Cost: ", NamedTextColor.GRAY).append(currency.getCostColoredName(rewardPrice)),
+                                    Component.text("Stock: ", NamedTextColor.GRAY).append(Component.text(stock, NamedTextColor.YELLOW))
+                            )
+                            .get(),
+                    (m, e) -> {
+                        if (eventMode == null || pveStats.getCurrencyValue(currency) < rewardPrice) {
+                            player.sendMessage(Component.text("You need ", NamedTextColor.RED)
+                                                        .append(currency.getCostColoredName(rewardPrice))
+                                                        .append(Component.text(" to purchase this item!"))
+                            );
+                            return;
+                        }
+                        Map<String, Long> rewardsPurchased = eventMode.getRewardsPurchased();
+                        if (reward.stock() != -1 && rewardsPurchased.getOrDefault(mapName, 0L) >= reward.stock()) {
+                            player.sendMessage(Component.text("This item is out of stock!", NamedTextColor.RED));
+                            return;
+                        }
+                        pveStats.subtractCurrency(currency, rewardPrice);
+                        rewardSpendable.addToPlayer(databasePlayer, rewardAmount);
+
+                        //event in event mode
+                        rewardsPurchased.merge(mapName, 1L, Long::sum);
+
+                        player.sendMessage(Component.text("Purchased ", NamedTextColor.GREEN)
+                                                    .append(rewardSpendable.getCostColoredName(rewardAmount))
+                                                    .append(Component.text(" for "))
+                                                    .append(currency.getCostColoredName(rewardPrice))
+                                                    .append(Component.text("!"))
+                        );
+                        player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2.5f);
+                        Bukkit.getPluginManager().callEvent(new EventShopPurchaseEvent(uuid, reward));
+                        openShopMenu(player);
+
+                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                    }
+            );
+            x++;
+            if (x == 8) {
+                x = 1;
+                y++;
+            }
+        }
+
+        menu.setItem(3, 5, MENU_BACK, (m, e) -> openMenu(player));
+        menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
+        menu.addBorder(Menu.GRAY_EMPTY_PANE, true);
+        menu.openForPlayer(player);
     }
 
 }

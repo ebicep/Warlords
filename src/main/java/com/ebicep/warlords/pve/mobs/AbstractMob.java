@@ -4,7 +4,6 @@ import com.ebicep.customentities.nms.pve.pathfindergoals.NPCTargetAggroWarlordsE
 import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.warlords.abilities.internal.AbilityStats;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
@@ -39,8 +38,6 @@ import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Equipment;
-import net.citizensnpcs.api.util.BoundingBox;
-import net.citizensnpcs.api.util.EntityDim;
 import net.citizensnpcs.trait.WolfModifiers;
 import net.citizensnpcs.trait.versioned.BossBarTrait;
 import net.kyori.adventure.text.Component;
@@ -389,7 +386,7 @@ public abstract class AbstractMob implements Mob {
 
     public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         cleanup(option);
-        if (DatabaseManager.playerService == null || !(killer instanceof WarlordsPlayer)) {
+        if (!(killer instanceof WarlordsPlayer)) {
             return;
         }
         dropWeapon(killer);
