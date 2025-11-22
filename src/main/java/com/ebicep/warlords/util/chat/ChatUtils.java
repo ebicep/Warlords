@@ -211,7 +211,10 @@ public class ChatUtils {
             }
         }
 
-        private static void sendErrorToAdmin(String error) {
+        public static void sendErrorToAdmin(String error) {
+            if (Warlords.getInstance().isDisabling()) {
+                return;
+            }
             BotManager.DiscordServer admin = BotManager.getServer("admin");
             if (admin == null) {
                 return;

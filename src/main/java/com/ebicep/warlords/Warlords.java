@@ -43,6 +43,8 @@ import com.ebicep.warlords.util.java.MemoryManager;
 import com.ebicep.warlords.util.java.Priority;
 import com.ebicep.warlords.util.warlords.ConfigUtil;
 import com.onarandombox.MultiverseCore.MultiverseCore;
+import io.papermc.paper.command.brigadier.Commands;
+import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.luckperms.api.LuckPerms;
@@ -235,10 +237,16 @@ public class Warlords extends JavaPlugin {
         return PLAYERS.containsKey(player);
     }
 
+    public static <T> TaskChain<T> newChain() {
+        return taskChainFactory.newChain();
+    }
+
     private GameManager gameManager;
+    private boolean disabling = false;
 
     @Override
     public void onDisable() {
+        disabling = true;
         try {
             if (BotManager.task != null) {
                 BotManager.task.cancel();
@@ -360,8 +368,15 @@ public class Warlords extends JavaPlugin {
 //        getServer().getPluginManager().registerEvents(new HorseOption(), this);
         getServer().getPluginManager().registerEvents(TracksOutsideGame.getListener(), this);
         getServer().getPluginManager().registerEvents(new DatabaseGameEvent(), this);
+        this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, commands -> {
+                    Commands registrar = commands.registrar();
+                    registrar.register("oldtest", new OldTestCommand());
+                    registrar.register(Commands.literal("me").build());
+                    registrar.register(Commands.literal("help").build());
+                }
+        );
 
-        getCommand("oldtest").setExecutor(new OldTestCommand());
+//        getCommand("oldtest").setExecutor(new OldTestCommand());
 
 //        ConcurrentHashMap<UUID, Integer> playerClicks = new ConcurrentHashMap<>();
 //        getServer().getPluginManager().registerEvents(new Listener() {
@@ -457,13 +472,9 @@ public class Warlords extends JavaPlugin {
             }
         }.runTaskTimer(this, 1, 1);
 
-//        TowerRegistry.updateCaches();
+//        TowerRegistry.updateCaches()
 
         ChatUtils.MessageType.WARLORDS.sendMessage("Plugin is enabled");
-    }
-
-    public static <T> TaskChain<T> newChain() {
-        return taskChainFactory.newChain();
     }
 
     private void startWarlordsEntitiesLoop() {
@@ -568,6 +579,10 @@ public class Warlords extends JavaPlugin {
 
             }
         }.runTaskTimer(this, 20, 1000);
+    }
+
+    public boolean isDisabling() {
+        return disabling;
     }
 
     public void hideAndUnhidePeople(@Nonnull Player player) {
