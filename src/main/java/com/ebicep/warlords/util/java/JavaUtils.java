@@ -2,6 +2,8 @@ package com.ebicep.warlords.util.java;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Predicate;
@@ -23,15 +25,17 @@ public class JavaUtils {
 
     public static <T> Collector<T, ?, List<T>> lastN(int n) {
         return Collector.<T, Deque<T>, List<T>>of(ArrayDeque::new, (acc, t) -> {
-            if (acc.size() == n)
-                acc.pollFirst();
-            acc.add(t);
-        }, (acc1, acc2) -> {
-            while (acc2.size() < n && !acc1.isEmpty()) {
-                acc2.addFirst(acc1.pollLast());
-            }
-            return acc2;
-        }, ArrayList::new);
+                    if (acc.size() == n) {
+                        acc.pollFirst();
+                    }
+                    acc.add(t);
+                }, (acc1, acc2) -> {
+                    while (acc2.size() < n && !acc1.isEmpty()) {
+                        acc2.addFirst(acc1.pollLast());
+                    }
+                    return acc2;
+                }, ArrayList::new
+        );
     }
 
 
@@ -42,6 +46,7 @@ public class JavaUtils {
      * @param <T>      The type of the items
      * @param iterable The list of items
      * @param matcher  The matcher
+     *
      * @return return true if any item matches, false otherwise. Empty iterables return false.
      */
     public static <T> boolean collectionHasItem(@Nonnull Iterable<T> iterable, @Nonnull Predicate<? super T> matcher) {
@@ -68,6 +73,7 @@ public class JavaUtils {
      *
      * @param <T>    The type
      * @param stream The stream
+     *
      * @return A one-time use <code>Iterable</code> for iterating over the stream
      */
     @Nonnull
@@ -81,4 +87,21 @@ public class JavaUtils {
         Collections.addAll(list, elements);
         return list;
     }
+
+    public static String throwableToString(Throwable throwable, int maxLines) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        throwable.printStackTrace(pw);
+
+        String[] all = sw.toString().split("\\R");
+        StringBuilder sb = new StringBuilder();
+
+        int limit = Math.min(maxLines, all.length);
+        for (int i = 0; i < limit; i++) {
+            sb.append(all[i]).append(System.lineSeparator());
+        }
+
+        return sb.toString();
+    }
+
 }

@@ -1,8 +1,10 @@
 package com.ebicep.warlords.util.chat;
 
+import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.java.JavaUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
@@ -14,7 +16,9 @@ import net.kyori.adventure.util.Ticks;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ChatUtils {
 
@@ -23,10 +27,11 @@ public class ChatUtils {
 
     public static void sendTitleToGamePlayers(Game game, Component title, Component subtitle) {
         sendTitleToGamePlayers(game, Title.title(
-                title,
-                subtitle,
-                Title.Times.times(Ticks.duration(20), Ticks.duration(30), Ticks.duration(20))
-        ));
+                        title,
+                        subtitle,
+                        Title.Times.times(Ticks.duration(20), Ticks.duration(30), Ticks.duration(20))
+                )
+        );
     }
 
     public static void sendTitleToGamePlayers(
@@ -183,6 +188,13 @@ public class ChatUtils {
 
         ;
 
+        private static final Set<String> ERRORS = new HashSet<>();
+
+        public void sendErrorMessage(String message) {
+            Warlords.getInstance().getComponentLogger().error(Component.text("[" + name + "] " + message, NamedTextColor.RED));
+            sendErrorToAdmin(message);
+        }
+
         public final String name;
         public final TextColor textColor;
         private boolean enabled;
@@ -199,12 +211,27 @@ public class ChatUtils {
             }
         }
 
-        public void sendErrorMessage(String message) {
-            Warlords.getInstance().getComponentLogger().error(Component.text("[" + name + "] " + message, NamedTextColor.RED));
+        private static void sendErrorToAdmin(String error) {
+            BotManager.DiscordServer admin = BotManager.getServer("admin");
+            if (admin == null) {
+                return;
+            }
+            if (ERRORS.contains(error)) {
+                return;
+            }
+            if (BotManager.numberOfMessagesSentLast30Sec++ > 15) {
+                return;
+            }
+            ERRORS.add(error);
+            admin.getTextChannelByName("errors").ifPresent(textChannel -> {
+                textChannel.sendMessage("```" + error + "```").queue();
+                BotManager.numberOfMessagesSentLast30Sec++;
+            });
         }
 
         public void sendErrorMessage(Throwable throwable) {
             Warlords.getInstance().getComponentLogger().error(Component.text("[" + name + "] ", NamedTextColor.RED), throwable);
+            sendErrorToAdmin(JavaUtils.throwableToString(throwable, 10));
         }
 
         public boolean isEnabled() {
@@ -214,6 +241,7 @@ public class ChatUtils {
         public void setEnabled(boolean enabled) {
             this.enabled = enabled;
         }
+
     }
 
 }

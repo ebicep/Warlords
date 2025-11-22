@@ -5,12 +5,14 @@ import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Subcommand;
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import com.ebicep.warlords.util.warlords.ConfigUtil;
 
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -54,6 +56,17 @@ public class DatabaseCommand extends BaseCommand {
             ChatChannels.sendDebugMessage(issuer, "Reloaded database config");
         } catch (Exception e) {
             ChatChannels.sendDebugMessage(issuer, "Failed to reload database config: " + e.getMessage());
+            ChatUtils.MessageType.CONFIG.sendErrorMessage(e);
+        }
+    }
+
+    @Subcommand("reloadconfiglocal")
+    public void reloadConfigLocal(CommandIssuer issuer) {
+        try {
+            ConfigUtil.loadConfigs(Warlords.getInstance());
+            ChatChannels.sendDebugMessage(issuer, "Reloaded local config");
+        } catch (Exception e) {
+            ChatChannels.sendDebugMessage(issuer, "Failed to reload local config: " + e.getMessage());
             ChatUtils.MessageType.CONFIG.sendErrorMessage(e);
         }
     }
