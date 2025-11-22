@@ -138,7 +138,7 @@ public class LegendaryFervent extends AbstractLegendaryWeapon implements Passive
                                 },
                                 DURATION * 20
                         );
-                        regularCooldown.addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (e, currentDamageValue) -> {
+                        regularCooldown.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
                                     currentDamageValue.addMultiplicativeModifierMult(getTitleName(), 1 + damageBoost.get() * DAMAGE_BOOST / 100f);
                                 }
                         );
@@ -188,7 +188,7 @@ public class LegendaryFervent extends AbstractLegendaryWeapon implements Passive
                                 cooldownManager -> {
                                 },
                                 (ABILITY_DURATION + ABILITY_DURATION_PER_UPGRADE * getTitleLevel()) * 20
-                        ).addModifier(Modifier.DAMAGE_BEFORE_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
+                        ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                                     if (!event.getSource().equals(player)) {
                                         return;
                                     }
