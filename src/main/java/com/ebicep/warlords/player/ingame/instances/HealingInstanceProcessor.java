@@ -66,6 +66,7 @@ public class HealingInstanceProcessor {
     private boolean isCrit;
 
     public HealingInstanceProcessor(InstanceDebugHoverable debugMessage, WarlordsDamageHealingEvent event) {
+        applyPreEventModifiers();
         this.debugMessage = debugMessage;
         this.event = event;
         this.warlordsEntity = event.getWarlordsEntity();
@@ -86,18 +87,10 @@ public class HealingInstanceProcessor {
         this.selfCooldownsDistinct = warlordsEntity.getCooldownManager().getCooldownsDistinct();
         this.attackersCooldownsDistinct = source.getCooldownManager().getCooldownsDistinct();
         this.finalEvent = null;
-        this.healValue = new FloatModifiable(0);
+        this.healValue = new FloatModifiable(ThreadLocalRandom.current().nextFloat() * (max.getCalculatedValue() - min.getCalculatedValue()) + min.getCalculatedValue());
     }
 
     public Optional<WarlordsDamageHealingFinalEvent> process() {
-        applyPreEventModifiers();
-        this.min.refresh();
-        this.max.refresh();
-        float maxVal = max.getCalculatedValue();
-        float minVal = min.getCalculatedValue();
-        this.healValue.setBaseValue(ThreadLocalRandom.current().nextFloat() * (maxVal - minVal) + minVal);
-
-
         if (!validateEntityState()) {
             return Optional.empty();
         }
@@ -356,12 +349,16 @@ public class HealingInstanceProcessor {
     }
 
     private void applyPreEventModifiers() {
-        for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
-            abstractCooldown.applyModifiers(Modifier.HEALING_BEFORE_VARIABLE_SET_SELF, m -> m.apply(event));
+        if (warlordsEntity != null) {
+            for (AbstractCooldown<?> abstractCooldown : warlordsEntity.getCooldownManager().getCooldownsDistinct()) {
+                abstractCooldown.applyModifiers(Modifier.HEALING_BEFORE_VARIABLE_SET_SELF, m -> m.apply(event));
+            }
         }
 
-        for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
-            abstractCooldown.applyModifiers(Modifier.HEALING_BEFORE_VARIABLE_SET_ATTACKER, m -> m.apply(event));
+        if (source != null) {
+            for (AbstractCooldown<?> abstractCooldown : source.getCooldownManager().getCooldownsDistinct()) {
+                abstractCooldown.applyModifiers(Modifier.HEALING_BEFORE_VARIABLE_SET_ATTACKER, m -> m.apply(event));
+            }
         }
     }
 

@@ -91,6 +91,7 @@ public class DamageInstanceProcessor {
     private boolean isCrit;
 
     public DamageInstanceProcessor(InstanceDebugHoverable debugMessage, WarlordsDamageHealingEvent event) {
+        applyPreEventModifiers();
         this.debugMessage = debugMessage;
         this.event = event;
         this.warlordsEntity = event.getWarlordsEntity();
@@ -117,17 +118,10 @@ public class DamageInstanceProcessor {
         this.selfCooldownsDistinct = warlordsEntity.getCooldownManager().getCooldownsDistinct();
         this.attackersCooldownsDistinct = source.getCooldownManager().getCooldownsDistinct();
         this.finalEvent = null;
-        this.damageValue = new FloatModifiable(0);
+        this.damageValue = new FloatModifiable(ThreadLocalRandom.current().nextFloat() * (max.getCalculatedValue() - min.getCalculatedValue()) + min.getCalculatedValue());
     }
 
     public Optional<WarlordsDamageHealingFinalEvent> process() {
-        applyPreEventModifiers();
-        this.min.refresh();
-        this.max.refresh();
-        float maxVal = max.getCalculatedValue();
-        float minVal = min.getCalculatedValue();
-        this.damageValue.setBaseValue(ThreadLocalRandom.current().nextFloat() * (maxVal - minVal) + minVal);
-
         if (!validateEntityState()) {
             return Optional.empty();
         }
@@ -161,8 +155,10 @@ public class DamageInstanceProcessor {
     }
 
     private void applyPreEventModifiers() {
-        for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
-            abstractCooldown.applyModifiers(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_VARIABLE_SET, m -> m.apply(event));
+        if (source != null) {
+            for (AbstractCooldown<?> abstractCooldown : source.getCooldownManager().getCooldownsDistinct()) {
+                abstractCooldown.applyModifiers(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_VARIABLE_SET, m -> m.apply(event));
+            }
         }
     }
 
