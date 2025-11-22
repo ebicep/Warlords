@@ -8,13 +8,13 @@ import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsEnergyUseEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -65,7 +65,7 @@ public abstract class AbstractEnergySeer<T extends AbstractEnergySeer.EnergySeer
         wp.addEnergy(wp, name, energyRestore);
 
         T data = getDataObject();
-        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+        RegularCooldown<T> cd = new RegularCooldown<>(
                 name,
                 "SEER",
                 getDataClass(),
@@ -138,23 +138,20 @@ public abstract class AbstractEnergySeer<T extends AbstractEnergySeer.EnergySeer
                 };
             }
 
-            @Override
-            public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-                if (inPve && AbstractEnergySeer.this instanceof EnergySeerLuminary energySeerLuminary) {
-                    return currentHealValue * convertToMultiplicationDecimal(energySeerLuminary.getHealingIncrease());
-
+        };
+        cd.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                    if (inPve && AbstractEnergySeer.this instanceof EnergySeerConjurer energySeerConjurer) {
+                        currentDamageValue.addMultiplicativeModifierMult(name, convertToMultiplicationDecimal(energySeerConjurer.getDamageIncrease()));
+                    }
                 }
-                return currentHealValue;
-            }
-
-            @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (inPve && AbstractEnergySeer.this instanceof EnergySeerConjurer energySeerConjurer) {
-                    return currentDamageValue * convertToMultiplicationDecimal(energySeerConjurer.getDamageIncrease());
-                }
-                return currentDamageValue;
-            }
-        });
+        );
+        if (inPve && AbstractEnergySeer.this instanceof EnergySeerLuminary energySeerLuminary) {
+            cd.addModifier(Modifier.MODIFY_INCOMING_HEALING, (event, currentHealValue) -> {
+                        currentHealValue.addMultiplicativeModifierMult(name, convertToMultiplicationDecimal(energySeerLuminary.getHealingIncrease()));
+                    }
+            );
+        }
+        wp.getCooldownManager().addCooldown(cd);
         return true;
     }
 
@@ -216,12 +213,7 @@ public abstract class AbstractEnergySeer<T extends AbstractEnergySeer.EnergySeer
                         );
                     }
                 })
-        ) {
-            @Override
-            public float addEnergyGainPerTick(float energyGainPerTick) {
-                return energyGainPerTick - epsDecrease / 20f;
-            }
-        });
+        ).addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> energyGainPerTick.addAdditiveModifier(name, -epsDecrease / 20f)));
     }
 
     protected void onEndForce(WarlordsEntity wp, T data) {

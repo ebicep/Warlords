@@ -7,7 +7,6 @@ import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.game.pve.WarlordsMagmaticOozeSplitEvent;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -16,6 +15,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
@@ -138,15 +138,12 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
                 cooldownManager -> {
                 },
                 false
-        ) {
-            @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (warlordsNPC.getEntity().isInsideVehicle()) {
-                    return currentDamageValue * .6f;
+        ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                    if (warlordsNPC.getEntity().isInsideVehicle()) {
+                        currentDamageValue.addMultiplicativeModifierMult(name, 0.6f);
+                    }
                 }
-                return currentDamageValue;
-            }
-        });
+        ));
         if (splitNumber != INITIAL_SPLIT_NUMBER) {
             return;
         }
@@ -246,6 +243,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
         private final double gravity = -0.005;
         private final double hitbox = 7;
         private final double kbVelocity = 1.2;
+        private final DamageValues damageValues;
 
         public FieryProjectile(float minDamageHeal, float maxDamageHeal) {
             super(AbstractAbilityBuilder.create("magmaticOozeFieryProjectile").pve());
@@ -274,8 +272,9 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
             Utils.spawnThrowableProjectile(
                     wp.getGame(),
                     Utils.spawnArmorStand(location, armorStand -> {
-                        armorStand.getEquipment().setHelmet(new ItemStack(Material.FIRE_CHARGE));
-                    }),
+                                armorStand.getEquipment().setHelmet(new ItemStack(Material.FIRE_CHARGE));
+                            }
+                    ),
                     speed,
                     gravity,
                     this.speed,
@@ -320,9 +319,6 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
             return true;
         }
 
-
-        private final DamageValues damageValues;
-
         public static class DamageValues implements Value.ValueHolder {
 
             private final Value.RangedValue fieryProjectileDamage;
@@ -339,11 +335,13 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
             }
 
         }
+
     }
 
     public static class FlamingSlam extends AbstractPveAbility {
 
         private final int hitbox = 11;
+        private final DamageValues damageValues;
         private boolean launched = false;
 
         public FlamingSlam(float minDamageHeal, float maxDamageHeal) {
@@ -464,8 +462,6 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
             }
         }
 
-        private final DamageValues damageValues;
-
         public static class DamageValues implements Value.ValueHolder {
 
             private final Value.RangedValue slamDamage;
@@ -482,11 +478,13 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
             }
 
         }
+
     }
 
     public static class HeatAura extends AbstractPveAbility {
 
         private final int hitbox;
+        private final DamageValues damageValues;
         private float damageIncrese = 1;
         private int timesUsed = 0;
 
@@ -516,8 +514,6 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
             return true;
         }
 
-        private final DamageValues damageValues;
-
         public static class DamageValues implements Value.ValueHolder {
 
             private final Value.SetValue heatAuraDamage;
@@ -534,6 +530,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
             }
 
         }
+
     }
 
     public static class MoltenFissure extends AbstractPveAbility implements RedAbilityIcon {
@@ -786,4 +783,5 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
         }
 
     }
+
 }

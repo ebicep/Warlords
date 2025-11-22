@@ -3,7 +3,6 @@ package com.ebicep.warlords.player.general.specboosts.boosts;
 import com.ebicep.warlords.abilities.MysticalBarrier;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -11,7 +10,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.player.ingame.instances.type.DamageInstance;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import org.bukkit.event.EventHandler;
 
 import java.util.Collections;
@@ -72,14 +71,10 @@ public class PactOfProtection implements SpecBoostManager.SpecBoost<PactOfProtec
             if (!cooldown.getCooldownClass().equals(MysticalBarrier.class) || !cooldown.getFrom().equals(warlordsEntity)) {
                 return;
             }
-            regularCooldown.addExtraDamageInstance(new DamageInstance() {
-
-                @Override
-                public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    return currentDamageValue * AbstractAbility.convertToDivisionDecimal(targetDamageReductionPercent);
-                }
-
-            });
+            regularCooldown.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (e, currentDamageValue) -> {
+                        currentDamageValue.addMultiplicativeModifierMult(getStringName(), AbstractAbility.convertToDivisionDecimal(targetDamageReductionPercent));
+                    }
+            );
             RegularCooldown<Boost> pactCooldown = new RegularCooldown<>(
                     getStringName(),
                     "PACT",
@@ -93,12 +88,11 @@ public class PactOfProtection implements SpecBoostManager.SpecBoost<PactOfProtec
                     Collections.singletonList((cd, ticksLeft, ticksElapsed) -> {
                         cd.setTicksLeft(regularCooldown.getTicksLeft());
                     })
-            ) {
-                @Override
-                public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    return currentDamageValue * AbstractAbility.convertToMultiplicationDecimal(selfDamageIncreasePercent);
-                }
-            };
+            );
+            pactCooldown.addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
+                        currentDamageValue.addMultiplicativeModifierMult(getStringName(), AbstractAbility.convertToMultiplicationDecimal(selfDamageIncreasePercent));
+                    }
+            );
             Consumer<CooldownManager> oldOnRemoveForce = regularCooldown.getOnRemoveForce();
             regularCooldown.setOnRemoveForce(cooldownManager -> {
                 oldOnRemoveForce.accept(cooldownManager);

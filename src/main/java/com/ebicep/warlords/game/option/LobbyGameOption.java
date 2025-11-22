@@ -1,8 +1,9 @@
 package com.ebicep.warlords.game.option;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.*;
-import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
@@ -88,8 +89,15 @@ public class LobbyGameOption implements Option {
         });
     }
 
+    private static void removePlayerFromGame(Player player, UUID uniqueId, @Nonnull Game game) {
+        Warlords.SPAWN_POINTS.put(uniqueId, player.getLocation());
+        game.removePlayer(uniqueId);
+        Warlords.SPAWN_POINTS.remove(uniqueId);
+    }
+
     private static void addPlayerToGame(Player player, UUID uniqueId, @Nonnull Game game) {
-        PlayerSettings.getPlayerSettings(uniqueId).setWantedTeam(Team.BLUE);
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+        databasePlayer.setWantedTeam(Team.BLUE);
         Warlords.SPAWN_POINTS.put(uniqueId, player.getLocation());
         Warlords.addPlayer(new WarlordsPlayer(
                 player,
@@ -101,9 +109,4 @@ public class LobbyGameOption implements Option {
         Utils.resetPlayerMovementStatistics(player);
     }
 
-    private static void removePlayerFromGame(Player player, UUID uniqueId, @Nonnull Game game) {
-        Warlords.SPAWN_POINTS.put(uniqueId, player.getLocation());
-        game.removePlayer(uniqueId);
-        Warlords.SPAWN_POINTS.remove(uniqueId);
-    }
 }

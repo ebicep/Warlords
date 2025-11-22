@@ -39,7 +39,6 @@ public class SanctuaryBranch extends AbstractUpgradeBranch<Sanctuary> {
                 50000,
                 () -> {
                     ability.setTickDuration(ability.getTickDuration() + 100);
-                    ability.setAdditionalDamageReduction(ability.getAdditionalDamageReduction() + 15);
                 }
         );
         masterUpgrade2 = new Upgrade(

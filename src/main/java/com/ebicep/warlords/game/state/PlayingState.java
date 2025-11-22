@@ -15,7 +15,6 @@ import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.*;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.CustomScoreboard;
-import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.PlayerStatisticsMinute;
 import com.ebicep.warlords.player.ingame.PlayerStatisticsSecond;
@@ -86,8 +85,8 @@ public class PlayingState implements State, TimerDebugAble {
             if (team == null || (!player.isOnline() && com.ebicep.warlords.game.GameMode.isPvE(game.getGameMode()))) {
                 return;
             }
-            PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
-            Specializations selectedSpec = playerSettings.getSelectedSpec();
+            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player.getUniqueId());
+            Specializations selectedSpec = databasePlayer.getLastSpec();
             if (selectedSpec.isBanned()) {
                 for (Specializations value : Specializations.VALUES) {
                     if (value.isBanned()) {
@@ -96,10 +95,10 @@ public class PlayingState implements State, TimerDebugAble {
                     if (p != null) {
                         p.sendMessage(Component.text(selectedSpec.name + " is currently disabled. Your specialization has been changed.", NamedTextColor.RED));
                     }
-                    playerSettings.setSelectedSpec(value);
+                    databasePlayer.setLastSpec(value);
                     break;
                 }
-                if (playerSettings.getSelectedSpec().isBanned()) {
+                if (databasePlayer.getLastSpec().isBanned()) {
                     if (p != null) {
                         game.forEachOnlinePlayer((player1, team1) -> {
                             player1.sendMessage(Component.text("All specializations are currently disabled. Game closing.", NamedTextColor.RED));
@@ -254,9 +253,6 @@ public class PlayingState implements State, TimerDebugAble {
             //pubs or pve
             else if (players.size() >= game.getMap().getMinPlayers()) {
                 ChatUtils.MessageType.GAME_DEBUG.sendMessage("Adding pub/pve game");
-                if (DatabaseManager.playerService == null) {
-                    return;
-                }
                 gameAdded.set(DatabaseGameBase.addGame(game, winEvent, true));
                 ChatUtils.MessageType.GAME_DEBUG.sendMessage("Done adding pub/pve game");
                 if (!com.ebicep.warlords.game.GameMode.isPvE(game.getGameMode())) {

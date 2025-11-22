@@ -1,10 +1,10 @@
 package com.ebicep.warlords.pve.items.types.specialitems.buckler.delta;
 
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
@@ -47,17 +47,14 @@ public class OtherworldlyAmulet extends SpecialDeltaBuckler implements CraftsInt
                 cooldownManager -> {
                 },
                 false
-        ) {
-            @Override
-            public float addCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
-                for (String effect : EFFECTS) {
-                    if (warlordsPlayer.getCooldownManager().hasCooldownFromName(effect)) {
-                        return currentCritChance + 25f;
+        ).addModifier(Modifier.MODIFY_OUTGOING_CRIT_CHANCE, (event, currentCritChance) -> {
+                    for (String effect : EFFECTS) {
+                        if (warlordsPlayer.getCooldownManager().hasCooldownFromName(effect)) {
+                            currentCritChance.addAdditiveModifier(getName(), 25f);
+                        }
                     }
                 }
-                return currentCritChance;
-            }
-        });
+        ));
     }
 
     @Override
@@ -79,4 +76,5 @@ public class OtherworldlyAmulet extends SpecialDeltaBuckler implements CraftsInt
     public AbstractItem getCraftsInto(Set<BasicStatPool> statPool) {
         return new LovelyOmamori(statPool);
     }
+
 }

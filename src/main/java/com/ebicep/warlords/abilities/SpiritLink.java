@@ -4,7 +4,6 @@ import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
@@ -12,6 +11,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.spiritguard.SpiritLinkBranch;
@@ -80,14 +80,6 @@ public class SpiritLink extends AbstractChain<SpiritLink, SpiritLink.SpiritLinkS
         return hitCounter;
     }
 
-    public float getDamageReduction() {
-        return damageReduction;
-    }
-
-    public void setDamageReduction(float damageReduction) {
-        this.damageReduction = damageReduction;
-    }
-
     @Override
     protected void onHit(WarlordsEntity we, int hitCounter) {
         we.playSound(we.getLocation(), "mage.firebreath.activation", 1, 1);
@@ -95,15 +87,19 @@ public class SpiritLink extends AbstractChain<SpiritLink, SpiritLink.SpiritLinkS
         // speed buff
         // 30 is ticks
         we.addSpeedModifier(we, "Spirit Link", speedBuff, (int) (speedDuration * 20));
-        we.getCooldownManager().addCooldown(new RegularCooldown<>(name, "LINK", SpiritLink.class, new SpiritLink(), we, CooldownTypes.BUFF, cooldownManager -> {
-        }, (int) (damageReductionDuration * 20)
-        ) {
-
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * (1 - damageReduction / 100f);
-            }
-        });
+        we.getCooldownManager().addCooldown(new RegularCooldown<>(
+                name,
+                "LINK",
+                SpiritLink.class,
+                new SpiritLink(),
+                we, CooldownTypes.BUFF,
+                cooldownManager -> {
+                },
+                (int) (damageReductionDuration * 20)
+        ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
+                    currentDamageValue.addMultiplicativeModifierMult(name, 1 - damageReduction / 100f);
+                }
+        ));
     }
 
     @Override
@@ -145,6 +141,14 @@ public class SpiritLink extends AbstractChain<SpiritLink, SpiritLink.SpiritLinkS
     @Override
     public SpiritLinkStats getAbilityStats() {
         return stats;
+    }
+
+    public float getDamageReduction() {
+        return damageReduction;
+    }
+
+    public void setDamageReduction(float damageReduction) {
+        this.damageReduction = damageReduction;
     }
 
     private void additionalBounce(WarlordsEntity wp, Set<WarlordsEntity> hitCounter, WarlordsEntity chainTarget, List<WarlordsEntity> toExclude, int bounceCount) {

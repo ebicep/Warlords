@@ -30,7 +30,6 @@ public class DebugModeCommand extends BaseCommand {
         warlordsPlayer.setNoEnergyConsumption(true);
         warlordsPlayer.setDisableCooldowns(true);
         warlordsPlayer.setTakeDamage(false);
-        warlordsPlayer.setShowDebugMessage(true);
         for (AbstractAbility ability : warlordsPlayer.getSpec().getAbilities()) {
             ability.setCurrentCooldown(0);
             ability.queueUpdateItem();

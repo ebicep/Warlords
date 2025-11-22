@@ -62,6 +62,11 @@ public class ComponentBuilder {
         this.componentBuilder = Component.text(text, textColor, textDecoration).toBuilder();
     }
 
+    public ComponentBuilder decorate(TextDecoration textDecoration, boolean flag) {
+        componentBuilder.decoration(textDecoration, flag);
+        return this;
+    }
+
     public ComponentBuilder append(Component component) {
         componentBuilder.append(component);
         return this;

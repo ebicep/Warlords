@@ -67,10 +67,6 @@ public class StatsLeaderboardManager {
             ChatUtils.MessageType.WARLORDS.sendErrorMessage("Not adding hologram leaderboards - database is disabled");
             return;
         }
-        if (DatabaseManager.playerService == null || DatabaseManager.gameService == null) {
-            ChatUtils.MessageType.WARLORDS.sendErrorMessage("Not adding hologram leaderboards - database services are null");
-            return;
-        }
 
         STATS_LEADERBOARDS.forEach((gameType, statsLeaderboardGameType) -> statsLeaderboardGameType.addLeaderboards());
 
@@ -174,9 +170,6 @@ public class StatsLeaderboardManager {
             return;
         }
         if (!DatabaseManager.enabled || !enabled) {
-            return;
-        }
-        if (DatabaseManager.playerService == null || DatabaseManager.gameService == null) {
             return;
         }
         if (!PlayersCollections.ACTIVE_LEADERBOARD_COLLECTIONS.contains(playersCollections)) {

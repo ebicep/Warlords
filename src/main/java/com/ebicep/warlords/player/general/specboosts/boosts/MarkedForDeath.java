@@ -4,7 +4,6 @@ import com.ebicep.warlords.abilities.AvengersStrike;
 import com.ebicep.warlords.abilities.HolyRadianceAvenger;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -12,7 +11,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
-import com.ebicep.warlords.player.ingame.instances.type.DamageInstance;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import org.bukkit.event.EventHandler;
 
 import java.util.List;
@@ -101,26 +100,21 @@ public class MarkedForDeath implements SpecBoostManager.SpecBoost<MarkedForDeath
                     .value(100)
             );
             target.addSpeedModifier(warlordsEntity, getStringName(), -avengerMarkSlowPercent, regularCooldown);
-            regularCooldown.addExtraDamageInstance(new DamageInstance() {
-
-                int ticksIncreased = 0;
-
-                @Override
-                public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    return currentDamageValue * AbstractAbility.convertToMultiplicationDecimal(avengerMarkIncreaseDamagePercent);
-                }
-
-                @Override
-                public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                    if (event.getSource().equals(warlordsEntity) && event.getAbility() instanceof AvengersStrike) {
-                        if (ticksIncreased >= maxStrikeMarkDurationIncreaseTicks) {
-                            return;
-                        }
-                        regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + strikeMarkDurationIncreaseTicks);
-                        ticksIncreased += strikeMarkDurationIncreaseTicks;
+            regularCooldown.addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
+                        currentDamageValue.addMultiplicativeModifierMult(getStringName(), AbstractAbility.convertToMultiplicationDecimal(avengerMarkIncreaseDamagePercent));
                     }
-                }
-            });
+            );
+            final int[] ticksIncreased = {0};
+            regularCooldown.addModifier(Modifier.ON_INCOMING_DAMAGE, (e, currentDamageValue, isCrit) -> {
+                if (e.getSource().equals(warlordsEntity) && e.getAbility() instanceof AvengersStrike) {
+                            if (ticksIncreased[0] >= maxStrikeMarkDurationIncreaseTicks) {
+                                return;
+                            }
+                            regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + strikeMarkDurationIncreaseTicks);
+                            ticksIncreased[0] += strikeMarkDurationIncreaseTicks;
+                        }
+                    }
+            );
 
         }
 

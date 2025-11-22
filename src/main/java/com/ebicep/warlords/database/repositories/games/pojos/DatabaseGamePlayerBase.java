@@ -4,11 +4,12 @@ import com.ebicep.warlords.abilities.internal.Ability;
 import com.ebicep.warlords.abilities.internal.AbilityStats;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.AbstractAbilityStats;
+import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePlayerPvEWaveDefense;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.option.pvp.ApplySpecBoostsOption;
 import com.ebicep.warlords.player.general.ExperienceManager;
-import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.SkillBoosts;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.PlayerStatisticsMinute;
@@ -26,8 +27,6 @@ import java.util.stream.Collectors;
 
 public class DatabaseGamePlayerBase {
 
-    @Id
-    private String id;
     protected UUID uuid;
     protected String name;
     protected Specializations spec;
@@ -65,18 +64,21 @@ public class DatabaseGamePlayerBase {
     protected long experienceEarnedUniversal;
     @Field("ability_stats")
     protected Map<Ability<?>, AbstractAbilityStats<?, ?>> abilityStats = new LinkedHashMap<>();
+    @Id
+    private String id;
 
     public DatabaseGamePlayerBase() {
     }
 
     public DatabaseGamePlayerBase(WarlordsPlayer warlordsPlayer, WarlordsGameTriggerWinEvent gameWinEvent, boolean counted) {
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(warlordsPlayer.getUuid());
         LinkedHashMap<String, Long> universalExpGain = ExperienceManager.getExpFromGameStats(warlordsPlayer, true).getUniversalExpGainSummary();
         long experienceEarnedUniversal = universalExpGain.values().stream().mapToLong(Long::longValue).sum();
         long experienceEarnedSpec = ExperienceManager.getSpecExpFromSummary(universalExpGain);
         this.uuid = warlordsPlayer.getUuid();
         this.name = warlordsPlayer.getName();
         this.spec = warlordsPlayer.getSpecClass();
-        this.skillBoost = PlayerSettings.getPlayerSettings(warlordsPlayer.getUuid()).getSkillBoostForClass();
+        this.skillBoost = databasePlayer.getSkillBoostForSpec(warlordsPlayer.getSpecClass());
         this.specBoost = ApplySpecBoostsOption.getPlayerSpecBoost(warlordsPlayer);
         this.blocksTravelled = warlordsPlayer.getBlocksTravelled();
         this.xLocations = warlordsPlayer.getLocations()
@@ -213,4 +215,5 @@ public class DatabaseGamePlayerBase {
     public Map<Ability<?>, AbstractAbilityStats<?, ?>> getAbilityStats() {
         return abilityStats;
     }
+
 }

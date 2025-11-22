@@ -5,6 +5,7 @@ import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
@@ -63,16 +64,6 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public LegendaryVigorousAbility getAbility() {
-        return ability;
-    }
-
-    @Override
-    public void resetAbility() {
-        ability = new LegendaryVigorousAbility(EPS + EPS_PER_UPGRADE * getTitleLevel(), DURATION + DURATION_PER_UPGRADE * getTitleLevel());
-    }
-
-    @Override
     protected float getMeleeDamageMinValue() {
         return 140;
     }
@@ -90,6 +81,16 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
     @Override
     protected float getEnergyPerSecondBonusValue() {
         return 3;
+    }
+
+    @Override
+    public void resetAbility() {
+        ability = new LegendaryVigorousAbility(EPS + EPS_PER_UPGRADE * getTitleLevel(), DURATION + DURATION_PER_UPGRADE * getTitleLevel());
+    }
+
+    @Override
+    public LegendaryVigorousAbility getAbility() {
+        return ability;
     }
 
     @Override
@@ -133,17 +134,9 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
         }
 
         @Override
-        public void updateDescription(Player player) {
-            description = Component.text("+" + DECIMAL_FORMAT_TITLE.format(energyPerSecond), NamedTextColor.YELLOW)
-                                   .append(Component.text(" energy per second for "))
-                                   .append(Component.text("10", NamedTextColor.GOLD))
-                                   .append(Component.text(" seconds."));
-        }
-
-        @Override
         protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
             wp.getCooldownManager().addCooldown(new RegularCooldown<>(
-                    "LegendaryVigorous",
+                    name,
                     "VIGOR",
                     LegendaryVigorous.class,
                     null,
@@ -152,15 +145,19 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
                     cooldownManager -> {
                     },
                     duration * 20
-            ) {
-                @Override
-                public float addEnergyGainPerTick(float energyGainPerTick) {
-                    return energyGainPerTick + (energyPerSecond / 20);
-                }
-            });
+            ).addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> energyGainPerTick.addAdditiveModifier(name, energyPerSecond / 20f)));
             return true;
         }
 
+        @Override
+        public void updateDescription(Player player) {
+            description = Component.text("+" + DECIMAL_FORMAT_TITLE.format(energyPerSecond), NamedTextColor.YELLOW)
+                                   .append(Component.text(" energy per second for "))
+                                   .append(Component.text("10", NamedTextColor.GOLD))
+                                   .append(Component.text(" seconds."));
+        }
+
     }
+
 }
 

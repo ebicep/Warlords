@@ -7,6 +7,7 @@ import co.aikar.commands.HelpEntry;
 import co.aikar.commands.annotation.*;
 import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.player.general.Specializations;
 import net.kyori.adventure.text.Component;
@@ -101,13 +102,11 @@ public class StreamChaptersCommand extends BaseCommand {
     @Subcommand("get")
     @Description("Prints stream chapters with offset")
     public void get(Player player, Integer hour, Integer minute, Integer second) {
-        DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
-                    Instant startTime = Instant.now().minus(hour, ChronoUnit.HOURS).minus(minute, ChronoUnit.MINUTES).minus(second, ChronoUnit.SECONDS);
-                    List<GameTime> gameLogs = databasePlayer.getGameLogs();
-                    List<GameTime> gameTimes = gameLogs.stream().filter(gameTime -> gameTime.start.isAfter(startTime)).toList();
-                    print(player.getUniqueId(), startTime, gameTimes);
-                }
-        );
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+        Instant startTime = Instant.now().minus(hour, ChronoUnit.HOURS).minus(minute, ChronoUnit.MINUTES).minus(second, ChronoUnit.SECONDS);
+        List<GameTime> gameLogs = databasePlayer.getGameLogs();
+        List<GameTime> gameTimes = gameLogs.stream().filter(gameTime -> gameTime.start.isAfter(startTime)).toList();
+        print(player.getUniqueId(), startTime, gameTimes);
     }
 
     @HelpCommand

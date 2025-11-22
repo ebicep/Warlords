@@ -2,10 +2,9 @@ package com.ebicep.warlords.player.ingame.instances;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
-import com.ebicep.warlords.player.ingame.instances.type.DamageInstance;
-import com.ebicep.warlords.player.ingame.instances.type.HealingInstance;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.java.NumberFormat;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -38,14 +37,22 @@ public class InstanceDebugHoverable {
         namedValue("Source", event.getSource().getName());
         grayBar();
         namedValue("Ability", event.getCause());
-        grayDash();
-        namedValue("Min", event.getMin());
-        grayBar();
-        namedValue("Max", event.getMax());
-        grayBar();
-        namedValue("Crit Chance", event.getCritChance());
-        grayBar();
-        namedValue("Crit Multiplier", event.getCritMultiplier());
+        append(InstanceDebugHoverable.LevelBuilder
+                .create(1)
+                .prefix(ComponentBuilder.create("Min: ", NamedTextColor.LIGHT_PURPLE))
+                .value(event.getMin()));
+        append(InstanceDebugHoverable.LevelBuilder
+                .create(1)
+                .prefix(ComponentBuilder.create("Max: ", NamedTextColor.LIGHT_PURPLE))
+                .value(event.getMax()));
+        append(InstanceDebugHoverable.LevelBuilder
+                .create(1)
+                .prefix(ComponentBuilder.create("Crit Chance: ", NamedTextColor.LIGHT_PURPLE))
+                .value(event.getCritChance()));
+        append(InstanceDebugHoverable.LevelBuilder
+                .create(1)
+                .prefix(ComponentBuilder.create("Crit Multiplier: ", NamedTextColor.LIGHT_PURPLE))
+                .value(event.getCritMultiplier()));
         grayDash();
         namedValue("Flags", "" + event.getFlags());
     }
@@ -95,11 +102,13 @@ public class InstanceDebugHoverable {
         }
 
         private final int level;
+        private final String frontSpacing;
         private TextComponent prefix = Component.empty();
         private TextComponent value = Component.empty();
 
         public LevelBuilder(int level) {
             this.level = level;
+            this.frontSpacing = " ".repeat(Math.max(0, level == 1 ? 1 : level * 2));
         }
 
         public LevelBuilder prefix(ComponentBuilder componentBuilder) {
@@ -131,26 +140,16 @@ public class InstanceDebugHoverable {
             return this;
         }
 
-        public LevelBuilder value(float before, float after, AbstractCooldown<?> cooldown) {
-            List<DamageInstance> extraDamageInstances = cooldown.getExtraDamageInstances();
-            List<HealingInstance> extraHealingInstances = cooldown.getExtraHealingInstances();
-            ComponentBuilder builder = ComponentBuilder
-                    .create(NumberFormat.formatOptionalHundredths(after), NamedTextColor.GOLD)
-                    .text(" (", NamedTextColor.DARK_GRAY)
-                    .text(NumberFormat.formatOptionalHundredths(after / before) + "x", NamedTextColor.RED)
-                    .text(")", NamedTextColor.DARK_GRAY)
-                    .text(" (", NamedTextColor.DARK_GRAY)
-                    .text(cooldown.getName(), NamedTextColor.GRAY)
-                    .text(")", NamedTextColor.DARK_GRAY);
-            if (extraDamageInstances != null) {
-                builder.text(" (", NamedTextColor.DARK_GRAY)
-                       .text(extraDamageInstances.size(), NamedTextColor.RED)
-                       .text(")", NamedTextColor.DARK_GRAY);
+        public LevelBuilder value(FloatModifiable floatModifiable) {
+            ComponentBuilder builder = ComponentBuilder.create("", NamedTextColor.GOLD);
+            TextComponent spacer = Component.text(frontSpacing + " ".repeat(Math.max(0, (level + 1) * 2)));
+            List<Component> debugInfo = floatModifiable.getDebugInfo();
+            if (!debugInfo.isEmpty()) {
+                builder.append(debugInfo.getFirst());
             }
-            if (extraHealingInstances != null) {
-                builder.text(" (", NamedTextColor.DARK_GRAY)
-                       .text(extraHealingInstances.size(), NamedTextColor.RED)
-                       .text(")", NamedTextColor.DARK_GRAY);
+            for (int i = 1; i < debugInfo.size(); i++) {
+                Component component = debugInfo.get(i);
+                builder.append(Component.newline()).append(spacer).append(component);
             }
             this.value = builder.build();
             return this;
@@ -158,7 +157,7 @@ public class InstanceDebugHoverable {
 
         public TextComponent build() {
             return Component.textOfChildren(
-                    Component.text(" ".repeat(Math.max(0, level == 1 ? 1 : level * 2)) + " - ", NamedTextColor.GRAY),
+                    Component.text(frontSpacing + " - ", NamedTextColor.GRAY),
                     prefix,
                     value
             );

@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.quests;
 
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import net.kyori.adventure.text.Component;
@@ -43,29 +44,17 @@ public class QuestsMenu {
                 );
                 col.incrementAndGet();
             }
-            DatabaseManager.getPlayer(player.getUniqueId(), quest.time, databasePlayer -> {
-                menu.setItem(col.get(), row.get(),
-                        quest.getItemStack(databasePlayer, databasePlayer.getPveStats().getQuestsCompleted().containsKey(quest)),
-                        (m, e) -> {
-                        }
-                );
-                col.getAndIncrement();
-                if (row.get() > 7) {
-                    row.incrementAndGet();
-                    col.set(2);
-                }
-            }, () -> {
-                menu.setItem(col.get(), row.get(),
-                        quest.getItemStack(null, false),
-                        (m, e) -> {
-                        }
-                );
-                col.getAndIncrement();
-                if (row.get() > 7) {
-                    row.incrementAndGet();
-                    col.set(2);
-                }
-            });
+            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player, quest.time);
+            menu.setItem(col.get(), row.get(),
+                    quest.getItemStack(databasePlayer, databasePlayer.getPveStats().getQuestsCompleted().containsKey(quest)),
+                    (m, e) -> {
+                    }
+            );
+            col.getAndIncrement();
+            if (row.get() > 7) {
+                row.incrementAndGet();
+                col.set(2);
+            }
             previousQuest = quest;
         }
 

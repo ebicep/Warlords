@@ -1,10 +1,10 @@
 package com.ebicep.warlords.pve.items.types.specialitems.gauntlets.delta;
 
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
@@ -25,6 +25,7 @@ public class PendragonGauntlets extends SpecialDeltaGauntlet implements AppliesT
 
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {
+        final int[] hits = {0};
         warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
                 getName(),
                 null,
@@ -36,20 +37,16 @@ public class PendragonGauntlets extends SpecialDeltaGauntlet implements AppliesT
 
                 },
                 false
-        ) {
-            int hits = 0;
-
-            @Override
-            public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (event.getCause().isEmpty()) {
-                    hits++;
-                    if (hits == 5) {
-                        warlordsPlayer.addKnockbackModifier(warlordsPlayer, getName() + " KB", -50, 40);
-                        hits = 0;
+        ).addModifier(Modifier.ON_OUTGOING_DAMAGE, (event, currentDamageValue, isCrit) -> {
+                    if (event.getCause().isEmpty()) {
+                        hits[0]++;
+                        if (hits[0] == 5) {
+                            warlordsPlayer.addKnockbackModifier(warlordsPlayer, getName(), -50, 40);
+                            hits[0] = 0;
+                        }
                     }
                 }
-            }
-        });
+        ));
     }
 
     @Override
@@ -71,4 +68,5 @@ public class PendragonGauntlets extends SpecialDeltaGauntlet implements AppliesT
     public AbstractItem getCraftsInto(Set<BasicStatPool> statPool) {
         return new GlassKnuckles(statPool);
     }
+
 }

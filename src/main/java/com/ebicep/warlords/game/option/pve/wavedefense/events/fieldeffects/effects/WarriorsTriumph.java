@@ -56,8 +56,9 @@ public class WarriorsTriumph implements FieldEffect {
                 }
                 String ability = event.getCause();
                 if (ability.equals("Wounding Strike") || ability.equals("Crippling Strike")) {
-                    event.setMin(event.getMin() * 3);
-                    event.setMax(event.getMax() * 3);
+                    event.applyToMinMax(floatModifiable ->
+                            floatModifiable.addMultiplicativeModifierMult(getName(), 3)
+                    );
                 }
             }
         });

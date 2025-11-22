@@ -4,12 +4,12 @@ import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsApplyBurnEffectEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.mobs.events.boltarobonanza.EventBoltaroShadow;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
@@ -51,18 +51,6 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
     }
 
     @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Combust into a molten inferno, increasing your Crit Chance by ")
-                                               .percent(critChanceIncrease, NamedTextColor.RED)
-                                               .text(" and your Crit Multiplier by ")
-                                               .percent(critMultiplierIncrease, NamedTextColor.RED)
-                                               .text(". Lasts ")
-                                               .durationTicks(tickDuration)
-                                               .text(".")
-                                               .build();
-    }
-
-    @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "mage.inferno.activation", 2, 1);
         List<FloatModifiable.FloatModifier> modifiers;
@@ -72,6 +60,7 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
         } else {
             modifiers = Collections.emptyList();
         }
+        final Map<WarlordsEntity, Integer> hitCount = new HashMap<>();
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "INFR", Inferno.class, null, wp, CooldownTypes.ABILITY, cooldownManager -> {
         }, cooldownManager -> {
             modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
@@ -84,8 +73,6 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
             }
         })
         ) {
-
-            private final Map<WarlordsEntity, Integer> hitCount = new HashMap<>();
 
             @Override
             protected Listener getListener() {
@@ -105,52 +92,55 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
                 return true;
             }
 
-            @Override
-            public void damageDoBeforeVariableSetFromAttacker(WarlordsDamageHealingEvent event) {
-                if (pveMasterUpgrade2 && event.getCause().equals("Ignite")) {
-                    event.setMinForce(event.getMin() * 2);
-                    event.setMaxForce(event.getMax() * 2);
-                }
+        }.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+            if (pveMasterUpgrade) {
+                WarlordsEntity hit = event.getWarlordsEntity();
+                int oldHitCount = hitCount.computeIfAbsent(hit, k -> 0);
+                hitCount.put(hit, oldHitCount + 1);
+                currentDamageValue.addMultiplicativeModifierMult(name, convertToMultiplicationDecimal(Math.min(50, 5 * oldHitCount)));
+            } else if (pveMasterUpgrade2) {
+                currentDamageValue.addMultiplicativeModifierMult(name, 1.2f);
             }
-
-            @Override
-            public float addCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
-                if (event.getCause().isEmpty()) {
-                    return currentCritChance;
                 }
-                stats.hitsAmplified++;
-                return currentCritChance + critChanceIncrease;
-            }
-
-            @Override
-            public float addCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
-                if (event.getCause().isEmpty()) {
-                    return currentCritMultiplier;
+        ).addModifier(Modifier.MODIFY_OUTGOING_CRIT_CHANCE, (event, currentCritChance) -> {
+                    if (event.getCause().isEmpty()) {
+                        return;
+                    }
+                    stats.hitsAmplified++;
+                    currentCritChance.addAdditiveModifier(name, critChanceIncrease);
                 }
-                return currentCritMultiplier + critMultiplierIncrease;
-            }
-
-            @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (pveMasterUpgrade) {
-                    WarlordsEntity hit = event.getWarlordsEntity();
-                    int oldHitCount = hitCount.computeIfAbsent(hit, k -> 0);
-                    hitCount.put(hit, oldHitCount + 1);
-                    return currentDamageValue * convertToMultiplicationDecimal(Math.min(50, 5 * oldHitCount));
-                } else if (pveMasterUpgrade2) {
-                    return currentDamageValue * 1.2f;
+        ).addModifier(Modifier.MODIFY_OUTGOING_CRIT_MULTIPLIER, (event, currentCritMultiplier) -> {
+                    if (event.getCause().isEmpty()) {
+                        return;
+                    }
+                    stats.hitsAmplified++;
+                    currentCritMultiplier.addAdditiveModifier(name, critMultiplierIncrease);
                 }
-                return currentDamageValue;
-            }
-
-            @Override
-            public void onDeathFromEnemies(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit, boolean isKiller) {
-                if (pveMasterUpgrade2 && isKiller) {
-                    wp.addEnergy(wp, "Inferno", event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof EventBoltaroShadow ? 10 : 30);
+        ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_VARIABLE_SET, event -> {
+                    if (pveMasterUpgrade2 && event.getCause().equals("Ignite")) {
+                        event.getMin().setBaseValue(event.getMin().getBaseValue() * 2);
+                        event.getMax().setBaseValue(event.getMax().getBaseValue() * 2);
+                    }
                 }
-            }
-        });
+        ).addModifier(Modifier.ON_ENEMY_DEATH, (event, currentDamageValue, isCrit, isKiller) -> {
+                    if (pveMasterUpgrade2 && isKiller) {
+                        wp.addEnergy(wp, "Inferno", event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof EventBoltaroShadow ? 10 : 30);
+                    }
+                }
+        ));
         return true;
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Combust into a molten inferno, increasing your Crit Chance by ")
+                                               .percent(critChanceIncrease, NamedTextColor.RED)
+                                               .text(" and your Crit Multiplier by ")
+                                               .percent(critMultiplierIncrease, NamedTextColor.RED)
+                                               .text(". Lasts ")
+                                               .durationTicks(tickDuration)
+                                               .text(".")
+                                               .build();
     }
 
     @Override

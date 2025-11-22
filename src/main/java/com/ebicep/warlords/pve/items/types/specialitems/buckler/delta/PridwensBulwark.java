@@ -48,7 +48,7 @@ public class PridwensBulwark extends SpecialDeltaBuckler implements CraftsInto {
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {
         List<String> redAbility = warlordsPlayer.getAbilities()
-                                                .stream().filter(ability -> ability instanceof RedAbilityIcon)
+                                                .stream().filter(RedAbilityIcon.class::isInstance)
                                                 .map(AbstractAbility::getName)
                                                 .toList();
         warlordsPlayer.getGame().registerEvents(new Listener() {
@@ -72,8 +72,9 @@ public class PridwensBulwark extends SpecialDeltaBuckler implements CraftsInto {
                             }
                         }.runTaskLater(event.getCause().equals("Seismic Wave") ? 3 : 0);
                     } else if (Objects.equals(event.getCause(), "Reckless Charge")) {
-                        event.setMin(event.getMin() * 1.25f);
-                        event.setMax(event.getMax() * 1.25f);
+                        event.applyToMinMax(floatModifiable ->
+                                floatModifiable.addMultiplicativeModifierMult(getName(), 1.25f)
+                        );
                     }
                 }
             }

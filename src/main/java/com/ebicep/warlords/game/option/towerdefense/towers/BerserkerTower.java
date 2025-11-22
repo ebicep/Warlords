@@ -1,7 +1,6 @@
 package com.ebicep.warlords.game.option.towerdefense.towers;
 
 import com.ebicep.warlords.abilities.internal.*;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.towerdefense.TowerDefenseUtils;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.TowerUpgrade;
@@ -13,6 +12,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
@@ -55,7 +55,8 @@ public class BerserkerTower extends AbstractTower implements Upgradeable.Path2 {
             public Component getDescription() {
                 return ComponentBuilder.create("Bleed").build();
             }
-        }) {
+        }
+        ) {
             @Override
             public void onUpgrade() {
                 strikeAttack.setPveMasterUpgrade(true);
@@ -66,7 +67,8 @@ public class BerserkerTower extends AbstractTower implements Upgradeable.Path2 {
             public Component getDescription() {
                 return ComponentBuilder.create("AOE Attack").build();
             }
-        }) {
+        }
+        ) {
             @Override
             protected void onUpgrade() {
                 warlordsTower.getAbilities().add(attack = new AOEAttack());
@@ -96,6 +98,7 @@ public class BerserkerTower extends AbstractTower implements Upgradeable.Path2 {
 
         private static final ItemStack SWORD_ITEM = new ItemStack(Material.DIAMOND_SWORD);
         private final FloatModifiable range = new FloatModifiable(30);
+        private final DamageValues damageValues = new DamageValues();
 
         public StrikeAttack() {
             super(AbstractAbilityBuilder.create("strikeAttack").td().cooldown(2).energyCost(0));
@@ -137,12 +140,10 @@ public class BerserkerTower extends AbstractTower implements Upgradeable.Path2 {
                                         );
                                     }
                                 })
-                        ) {
-                            @Override
-                            public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-                                return currentHealValue * .2f;
-                            }
-                        });
+                        ).addModifier(Modifier.MODIFY_INCOMING_HEALING, (event, currentHealValue) -> {
+                                    currentHealValue.addMultiplicativeModifierMult("Bleed", 0.2f);
+                                }
+                        ));
                     }
                 });
             }
@@ -153,8 +154,6 @@ public class BerserkerTower extends AbstractTower implements Upgradeable.Path2 {
         public FloatModifiable getHitBoxRadius() {
             return range;
         }
-
-        private final DamageValues damageValues = new DamageValues();
 
         @Override
         public DamageValues getDamageValues() {
@@ -172,11 +171,13 @@ public class BerserkerTower extends AbstractTower implements Upgradeable.Path2 {
             }
 
         }
+
     }
 
     private static class AOEAttack extends AbstractAbility implements TDAbility, HitBox, Damages<AOEAttack.DamageValues> {
 
         private final FloatModifiable range = new FloatModifiable(10);
+        private final DamageValues damageValues = new DamageValues();
 
         public AOEAttack() {
             super(AbstractAbilityBuilder.create("aoeAttack").td().cooldown(5).energyCost(0));
@@ -203,8 +204,6 @@ public class BerserkerTower extends AbstractTower implements Upgradeable.Path2 {
             return range;
         }
 
-        private final DamageValues damageValues = new DamageValues();
-
         @Override
         public DamageValues getDamageValues() {
             return damageValues;
@@ -221,6 +220,7 @@ public class BerserkerTower extends AbstractTower implements Upgradeable.Path2 {
             }
 
         }
+
     }
 
 }

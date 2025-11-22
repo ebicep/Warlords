@@ -74,7 +74,8 @@ public class DatabaseGameEvent implements Listener {
                                 gameEvent.setStarted(true);
                                 Warlords.newChain().async(() -> DatabaseManager.gameEventsService.update(gameEvent)).execute();
                                 for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-                                    DatabaseManager.getPlayer(onlinePlayer.getUniqueId(), DatabaseGameEvent::checkPlayerEventCurrency);
+                                    DatabasePlayer databasePlayer = DatabaseManager.getPlayer(onlinePlayer);
+                                    DatabaseGameEvent.checkPlayerEventCurrency(databasePlayer);
                                 }
                             }
                             gameEvent.start();
@@ -154,9 +155,36 @@ public class DatabaseGameEvent implements Listener {
         }
         return firstFriday;
     }
+    @Id
+    protected String id;
+    private GameEvents event;
+    @Field("start_date")
+    private Instant startDate;
+    @Field("end_date")
+    private Instant endDate;
+    private boolean started;
+    @Field("gave_rewards")
+    private boolean gaveRewards;
+    public DatabaseGameEvent() {
+    }
+
+    public DatabaseGameEvent(GameEvents event, Instant startDate, Instant endDate) {
+        this.event = event;
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
 
     public static boolean eventIsActive() {
         return currentGameEvent != null && currentGameEvent.isActive();
+    }
+
+    @EventHandler
+    public void onDatabasePlayerLoad(DatabasePlayerFirstLoadEvent event) {
+        if (!eventIsActive()) {
+            return;
+        }
+        DatabasePlayer databasePlayer = event.getDatabasePlayer();
+        checkPlayerEventCurrency(databasePlayer);
     }
 
     private static void checkPlayerEventCurrency(DatabasePlayer databasePlayer) {
@@ -175,34 +203,15 @@ public class DatabaseGameEvent implements Listener {
         ChatUtils.MessageType.GAME_EVENTS.sendMessage("New event, cleared " + databasePlayer.getName() + " " + currency.name + " currency.");
     }
 
-    @Id
-    protected String id;
-    private GameEvents event;
-    @Field("start_date")
-    private Instant startDate;
-    @Field("end_date")
-    private Instant endDate;
-    private boolean started;
-
-    @Field("gave_rewards")
-    private boolean gaveRewards;
-
-    public DatabaseGameEvent() {
-    }
-
-    public DatabaseGameEvent(GameEvents event, Instant startDate, Instant endDate) {
-        this.event = event;
-        this.startDate = startDate;
-        this.endDate = endDate;
-    }
-
-    @EventHandler
-    public void onDatabasePlayerLoad(DatabasePlayerFirstLoadEvent event) {
-        if (!eventIsActive()) {
-            return;
-        }
-        DatabasePlayer databasePlayer = event.getDatabasePlayer();
-        checkPlayerEventCurrency(databasePlayer);
+    @Override
+    public String toString() {
+        return "DatabaseGameEvent{" +
+                "event=" + event +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
+                ", started=" + started +
+                ", startDateSecond=" + getStartDateSecond() +
+                '}';
     }
 
     public boolean isActive() {
@@ -339,14 +348,4 @@ public class DatabaseGameEvent implements Listener {
         this.gaveRewards = gaveRewards;
     }
 
-    @Override
-    public String toString() {
-        return "DatabaseGameEvent{" +
-                "event=" + event +
-                ", startDate=" + startDate +
-                ", endDate=" + endDate +
-                ", started=" + started +
-                ", startDateSecond=" + getStartDateSecond() +
-                '}';
-    }
 }

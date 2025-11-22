@@ -82,40 +82,40 @@ public class ChatSettings {
     }};
 
     public static void openChatSettingsMenu(Player player) {
-        DatabaseManager.getPlayer(player, databasePlayer -> {
-            Menu menu = new Menu("Chat Settings", 9 * 4);
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+        Menu menu = new Menu("Chat Settings", 9 * 4);
 
-            for (int i = 0; i < MENU_SETTINGS.size(); i++) {
-                ChatMenuSetting<?> menuSetting = MENU_SETTINGS.get(i);
-                ChatSetting<?> selectedSetting = menuSetting.getCurrentSetting.apply(databasePlayer);
-                menu.setItem(i % 7 + 1, i / 7 + 1,
-                        new ItemBuilder(menuSetting.itemStack)
-                                .name(Component.text(menuSetting.name, NamedTextColor.GREEN))
-                                .lore(Component.text(menuSetting.description, NamedTextColor.GRAY))
-                                .addLore(Component.empty())
-                                .addLore(
-                                        Arrays.stream(menuSetting.settings)
-                                              .map(chatSetting -> Component.text("🠒 " + chatSetting.getName(),
-                                                      chatSetting == selectedSetting ? NamedTextColor.AQUA : NamedTextColor.GRAY
-                                              ))
-                                              .collect(Collectors.toList())
-                                )
-                                .addLore(
-                                        Component.empty(),
-                                        Component.text("Click to change", NamedTextColor.YELLOW)
-                                )
-                                .get(),
-                        (m, e) -> {
-                            DatabaseManager.updatePlayer(player, menuSetting.updateDatabasePlayerSettings);
-                            openChatSettingsMenu(player);
-                        }
-                );
-            }
+        for (int i = 0; i < MENU_SETTINGS.size(); i++) {
+            ChatMenuSetting<?> menuSetting = MENU_SETTINGS.get(i);
+            ChatSetting<?> selectedSetting = menuSetting.getCurrentSetting.apply(databasePlayer);
+            menu.setItem(i % 7 + 1, i / 7 + 1,
+                    new ItemBuilder(menuSetting.itemStack)
+                            .name(Component.text(menuSetting.name, NamedTextColor.GREEN))
+                            .lore(Component.text(menuSetting.description, NamedTextColor.GRAY))
+                            .addLore(Component.empty())
+                            .addLore(
+                                    Arrays.stream(menuSetting.settings)
+                                          .map(chatSetting -> Component.text("🠒 " + chatSetting.getName(),
+                                                  chatSetting == selectedSetting ? NamedTextColor.AQUA : NamedTextColor.GRAY
+                                          ))
+                                          .collect(Collectors.toList())
+                            )
+                            .addLore(
+                                    Component.empty(),
+                                    Component.text("Click to change", NamedTextColor.YELLOW)
+                            )
+                            .get(),
+                    (m, e) -> {
+                        menuSetting.updateDatabasePlayerSettings.accept(databasePlayer);
+                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                        openChatSettingsMenu(player);
+                    }
+            );
+        }
 
-            menu.setItem(3, 3, MENU_BACK, (m, e) -> WarlordsNewHotbarMenu.SettingsMenu.openSettingsMenu(player));
-            menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
-            menu.openForPlayer(player);
-        });
+        menu.setItem(3, 3, MENU_BACK, (m, e) -> WarlordsNewHotbarMenu.SettingsMenu.openSettingsMenu(player));
+        menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
+        menu.openForPlayer(player);
     }
 
     public enum ChatDamage implements ChatSetting<ChatDamage> {
@@ -318,6 +318,7 @@ public class ChatSettings {
         T next();
 
         T[] getValues();
+
     }
 
     private record ChatMenuSetting<T extends ChatSetting<T>>(

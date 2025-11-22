@@ -5,12 +5,12 @@ import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.revenant.OrbsOfLifeBranch;
@@ -160,20 +160,24 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
                         }
                     }
                 })
-        ) {
-
-            @Override
-            public void doBeforeReductionFromAttacker(WarlordsDamageHealingEvent event) {
-                String ability = event.getCause();
-                if (event.getFlags().contains(InstanceFlags.NO_HEALING_ORBS) || event.getFlags().contains(InstanceFlags.RECURSIVE)) {
-                    return;
+        );
+        orbsOfLifeCooldown.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                    if (pveMasterUpgrade) {
+                        currentDamageValue.addMultiplicativeModifierMult(name, convertToMultiplicationDecimal(Math.min(30f, 1f * data.spawnedOrbs.size())));
+                    }
                 }
-                spawnOrbs(wp, event.getWarlordsEntity(), ability, this);
-                if (ability.equals("Crippling Strike")) {
-                    spawnOrbs(wp, event.getWarlordsEntity(), ability, this);
+        );
+        orbsOfLifeCooldown.addModifier(Modifier.DAMAGE_BEFORE_ANY_REDUCTION_ATTACKER, event -> {
+                    String ability = event.getCause();
+                    if (event.getFlags().contains(InstanceFlags.NO_HEALING_ORBS) || event.getFlags().contains(InstanceFlags.RECURSIVE)) {
+                        return;
+                    }
+                    spawnOrbs(wp, event.getWarlordsEntity(), ability, orbsOfLifeCooldown);
+                    if (ability.equals("Crippling Strike")) {
+                        spawnOrbs(wp, event.getWarlordsEntity(), ability, orbsOfLifeCooldown);
+                    }
                 }
-            }
-        };
+        );
         wp.getCooldownManager().addCooldown(orbsOfLifeCooldown);
         for (int i = 0; i < initialOrbs; i++) {
             spawnOrbs(wp, wp, "Orbs of Life", orbsOfLifeCooldown);

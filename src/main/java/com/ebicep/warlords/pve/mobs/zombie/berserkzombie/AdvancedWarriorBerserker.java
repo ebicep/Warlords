@@ -4,12 +4,12 @@ import com.ebicep.warlords.abilities.Berserk;
 import com.ebicep.warlords.abilities.BloodLust;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.AdvancedMob;
 import org.bukkit.Color;
@@ -77,12 +77,10 @@ public class AdvancedWarriorBerserker extends AbstractBerserkZombie implements A
                         EffectUtils.displayParticle(Particle.ANGRY_VILLAGER, warlordsNPC.getLocation().add(0, 1.75, 0), 1, 0, 0, 0, 0.1);
                     }
                 }
-        ) {
-            @Override
-            public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * 1.2f;
-            }
-        });
+        ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                    currentDamageValue.addMultiplicativeModifierMult("Berserk", 1.2f);
+                }
+        ));
         warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
                 name,
                 "LUST",
@@ -107,18 +105,16 @@ public class AdvancedWarriorBerserker extends AbstractBerserkZombie implements A
                         );
                     }
                 }
-        ) {
-            @Override
-            public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                WarlordsEntity attacker = event.getSource();
-                attacker.addInstance(InstanceBuilder
-                        .healing()
-                        .cause(name)
-                        .source(attacker)
-                        .value(currentDamageValue * .65f)
-                );
-            }
-        });
+        ).addModifier(Modifier.ON_OUTGOING_DAMAGE, (event, currentDamageValue, isCrit) -> {
+                    WarlordsEntity attacker = event.getSource();
+                    attacker.addInstance(InstanceBuilder
+                            .healing()
+                            .cause(name)
+                            .source(attacker)
+                            .value(currentDamageValue * .65f)
+                    );
+                }
+        ));
     }
 
 }

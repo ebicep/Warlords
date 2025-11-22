@@ -2,13 +2,13 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.berserker.WoundingStrikeBranchBerserker;
@@ -151,12 +151,10 @@ public class WoundingStrikeBerserker extends AbstractStrike<WoundingStrikeBerser
                        );
                     }
                 })
-        ) {
-           @Override
-           public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-               return currentHealValue * .2f;
-           }
-        });
+        ).addModifier(Modifier.MODIFY_INCOMING_HEALING, (event, currentHealValue) -> {
+                    currentHealValue.addMultiplicativeModifierMult(name, 0.2f);
+                }
+        ));
     }
 
     public FloatModifiable getWounding() {

@@ -16,22 +16,16 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.bosses.bossabilities.BossAbilityPhase;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.SoulOfGradient;
-import com.ebicep.warlords.pve.mobs.flags.NoTargetAbilities;
-import com.ebicep.warlords.pve.mobs.flags.Untargetable;
-import com.ebicep.warlords.pve.mobs.player.CryoPod;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
-import com.ebicep.warlords.pve.mobs.tiers.PlayerMob;
 import com.ebicep.warlords.pve.mobs.witherskeleton.CelestialOpus;
-import com.ebicep.warlords.pve.mobs.zombie.NightmareZombie;
-import com.ebicep.warlords.pve.mobs.zombie.RiftWalker;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
-import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -86,6 +80,21 @@ public class Torment extends AbstractMob implements BossMob {
     }
 
     @Override
+    public Mob getMobRegistry() {
+        return Mob.TORMENT;
+    }
+
+    @Override
+    public Component getDescription() {
+        return Component.text("Corrupted Soul", NamedTextColor.WHITE);
+    }
+
+    @Override
+    public TextColor getColor() {
+        return NamedTextColor.RED;
+    }
+
+    @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
         ChatUtils.sendTitleToGamePlayers(
@@ -103,30 +112,30 @@ public class Torment extends AbstractMob implements BossMob {
                 cooldownManager -> {
                 },
                 true
-        ) {
-            @Override
-            public float modifyDamageAfterAllFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (event.getSource().getCooldownManager().hasCooldown(DamageCheck.class)) {
-                    return currentDamageValue * 3;
-                } else {
-                    EffectUtils.playParticleLinkAnimation(
-                            warlordsNPC.getLocation(),
-                            event.getSource().getLocation(),
-                            Particle.SCULK_SOUL
-                    );
-                    return currentDamageValue * 0.4f;
+        ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_ALL_MODIFIERS, (event, currentDamageValue, isCrit) -> {
+                    if (event.getSource().getCooldownManager().hasCooldown(DamageCheck.class)) {
+                        currentDamageValue.addMultiplicativeModifierMult(name, 3);
+                    } else {
+                        EffectUtils.playParticleLinkAnimation(
+                                warlordsNPC.getLocation(),
+                                event.getSource().getLocation(),
+                                Particle.SCULK_SOUL
+                        );
+                        currentDamageValue.addMultiplicativeModifierMult(name, 0.4f);
+                    }
                 }
-            }
-        });
+        ));
 
         Location loc = new Location(warlordsNPC.getWorld(), 112.5, 13, 62.5);
         suctionPhase = new BossAbilityPhase(warlordsNPC, 80, () -> {
             suction(loc);
-        });
+        }
+        );
 
         suctionPhaseTwo = new BossAbilityPhase(warlordsNPC, 50, () -> {
             suction(loc);
-        });
+        }
+        );
 
         divinePhase = new BossAbilityPhase(warlordsNPC, 25, () -> {
 
@@ -184,26 +193,23 @@ public class Torment extends AbstractMob implements BossMob {
                                             cooldownManager -> {
                                             },
                                             3
-                                    ) {
-                                        @Override
-                                        public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                            return currentDamageValue * 0;
-                                        }
-                                    });
+                                    ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
+                                                currentDamageValue.addOverridingModifier(name, 0);
+                                            }
+                                    ));
                                 }
                             }
                         })
-                ) {
-                    @Override
-                    public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                        return currentDamageValue * 0.05f;
-                    }
-                });
+                ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
+                            currentDamageValue.addMultiplicativeModifierMult(name, 0.05f);
+                        }
+                ));
             }
 
             WarlordsEntity finalDivineProtector = divineProtector;
             new GameRunnable(warlordsNPC.getGame()) {
                 int counter = 0;
+
                 @Override
                 public void run() {
                     if (warlordsNPC.isDead()) {
@@ -273,7 +279,8 @@ public class Torment extends AbstractMob implements BossMob {
                     counter++;
                 }
             }.runTaskTimer(140, 0);
-        });
+        }
+        );
     }
 
     private void suction(Location loc) {
@@ -305,6 +312,7 @@ public class Torment extends AbstractMob implements BossMob {
 
         new GameRunnable(warlordsNPC.getGame()) {
             int counter = 0;
+
             @Override
             public void run() {
                 counter++;
@@ -466,7 +474,8 @@ public class Torment extends AbstractMob implements BossMob {
                                     );
                                 }
                             }
-                        })));
+                        })
+                ));
             }
         }
     }
@@ -486,18 +495,4 @@ public class Torment extends AbstractMob implements BossMob {
         super.onDeath(killer, deathLocation, option);
     }
 
-    @Override
-    public TextColor getColor() {
-        return NamedTextColor.RED;
-    }
-
-    @Override
-    public Mob getMobRegistry() {
-        return Mob.TORMENT;
-    }
-
-    @Override
-    public Component getDescription() {
-        return Component.text("Corrupted Soul", NamedTextColor.WHITE);
-    }
 }

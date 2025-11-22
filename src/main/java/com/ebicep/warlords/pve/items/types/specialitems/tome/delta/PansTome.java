@@ -1,12 +1,12 @@
 package com.ebicep.warlords.pve.items.types.specialitems.tome.delta;
 
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
@@ -54,30 +54,29 @@ public class PansTome extends SpecialDeltaTome implements CraftsInto {
 
                 },
                 false
-        ) {
-            @Override
-            public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (!event.getCause().isEmpty() || !(ThreadLocalRandom.current().nextDouble() <= .25) || event.getFlags().contains(InstanceFlags.RECURSIVE)) {
-                    return;
+        ).addModifier(Modifier.ON_OUTGOING_DAMAGE, (event, currentDamageValue, isCrit) -> {
+                    if (!event.getCause().isEmpty() || !(ThreadLocalRandom.current().nextDouble() <= .25) || event.getFlags().contains(InstanceFlags.RECURSIVE)) {
+                        return;
+                    }
+                    EnumSet<InstanceFlags> flags = EnumSet.copyOf(event.getFlags());
+                    flags.add(InstanceFlags.RECURSIVE);
+                    for (int i = 0; i < 2; i++) {
+                        event.getWarlordsEntity().addInstance(InstanceBuilder
+                                .damage()
+                                .cause(event.getCause())
+                                .source(warlordsPlayer)
+                                .value(event)
+                                .flags(event.getFlags())
+                                .flags(InstanceFlags.RECURSIVE)
+                        );
+                    }
                 }
-                EnumSet<InstanceFlags> flags = EnumSet.copyOf(event.getFlags());
-                flags.add(InstanceFlags.RECURSIVE);
-                for (int i = 0; i < 2; i++) {
-                    event.getWarlordsEntity().addInstance(InstanceBuilder
-                            .damage()
-                            .cause(event.getCause())
-                            .source(warlordsPlayer)
-                            .value(event)
-                            .flags(event.getFlags())
-                            .flags(InstanceFlags.RECURSIVE)
-                    );
-                }
-            }
-        });
+        ));
     }
 
     @Override
     public AbstractItem getCraftsInto(Set<BasicStatPool> statPool) {
         return new GuideForTheRiverStyx(statPool);
     }
+
 }

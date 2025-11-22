@@ -16,6 +16,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.flags.Unsilencable;
@@ -67,6 +68,16 @@ public class EventZeus extends AbstractMob implements BossMob, God, Unsilencable
     @Override
     public Mob getMobRegistry() {
         return Mob.EVENT_ZEUS;
+    }
+
+    @Override
+    public Component getDescription() {
+        return Component.text("God of the Sky", NamedTextColor.WHITE);
+    }
+
+    @Override
+    public TextColor getColor() {
+        return TextColor.color(242, 242, 242);
     }
 
     @Override
@@ -131,16 +142,6 @@ public class EventZeus extends AbstractMob implements BossMob, God, Unsilencable
     }
 
     @Override
-    public Component getDescription() {
-        return Component.text("God of the Sky", NamedTextColor.WHITE);
-    }
-
-    @Override
-    public TextColor getColor() {
-        return TextColor.color(242, 242, 242);
-    }
-
-    @Override
     public double weaponDropRate() {
         return BossMob.super.weaponDropRate() * 3;
     }
@@ -165,15 +166,13 @@ public class EventZeus extends AbstractMob implements BossMob, God, Unsilencable
                     cooldownManager -> {
                     },
                     5 * 20
-            ) {
-                @Override
-                public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    if (event.getCause().isEmpty()) {
-                        return currentDamageValue;
+            ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                        if (event.getCause().isEmpty()) {
+                            return;
+                        }
+                        currentDamageValue.addMultiplicativeModifierMult(name, damageBuff);
                     }
-                    return currentDamageValue * damageBuff;
-                }
-            });
+            ));
             return super.onActivateInternal(wp);
         }
 
@@ -184,5 +183,7 @@ public class EventZeus extends AbstractMob implements BossMob, God, Unsilencable
         public void setDamageBuff(float damageBuff) {
             this.damageBuff = damageBuff;
         }
+
     }
+
 }

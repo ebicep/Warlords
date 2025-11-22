@@ -1,10 +1,10 @@
 package com.ebicep.warlords.pve.items.types.specialitems.buckler.omega;
 
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
 
@@ -46,18 +46,11 @@ public class AthenianAegis extends SpecialOmegaBuckler implements AppliesToWarlo
                 cooldownManager -> {
                 },
                 false
-        ) {
-
-            @Override
-            public float modifyHealingFromAttacker(WarlordsDamageHealingEvent event, float currentHealValue) {
-                return currentHealValue * getHealingBoost();
-            }
-
-            private float getHealingBoost() {
-                int mobCount = pveOption.mobCount();
-                return 1 + (mobCount * .005f);
-            }
-        });
+        ).addModifier(Modifier.MODIFY_OUTGOING_HEALING, (event, currentHealValue) -> {
+                    int mobCount = pveOption.mobCount();
+                    currentHealValue.addMultiplicativeModifierMult(getName(), 1 + (mobCount * .005f));
+                }
+        ));
     }
 
 }

@@ -1,11 +1,11 @@
 package com.ebicep.warlords.pve.items.types.specialitems.buckler.omega;
 
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
@@ -56,18 +56,15 @@ public class BreastplateBuckler extends SpecialOmegaBuckler implements AppliesTo
                         repeatedAttacks.entrySet().removeIf(warlordsEntityIntegerEntry -> !pveOption.getMobs().contains(warlordsEntityIntegerEntry.getKey()));
                     }
                 }
-        ) {
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC) {
-                    AbstractMob mob = warlordsNPC.getMob();
-                    float damageReduction = Math.max(1 - (repeatedAttacks.getOrDefault(mob, 0) * 0.02f), 0.8f);
-                    repeatedAttacks.merge(mob, 1, Integer::sum);
-                    return currentDamageValue * damageReduction;
+        ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
+                    if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC) {
+                        AbstractMob mob = warlordsNPC.getMob();
+                        float damageReduction = Math.max(1 - (repeatedAttacks.getOrDefault(mob, 0) * 0.02f), 0.8f);
+                        repeatedAttacks.merge(mob, 1, Integer::sum);
+                        currentDamageValue.addMultiplicativeModifierMult(getName(), damageReduction);
+                    }
                 }
-                return currentDamageValue;
-            }
-        });
+        ));
     }
 
 }

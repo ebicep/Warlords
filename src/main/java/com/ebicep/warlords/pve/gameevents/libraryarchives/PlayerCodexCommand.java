@@ -8,6 +8,7 @@ import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.database.repositories.events.pojos.GameEvents;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.libraryarchives.DatabasePlayerPvEEventLibraryArchivesDifficultyStats;
 import com.ebicep.warlords.permissions.Permissions;
@@ -34,30 +35,30 @@ public class PlayerCodexCommand extends BaseCommand {
         }
         DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
         GameEvents event = currentGameEvent.getEvent();
-        DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
-            EventMode eventMode = event.eventsStatsFunction.apply(databasePlayer.getPveStats().getEventStats()).get(currentGameEvent.getStartDateSecond());
-            if (eventMode == null) {
-                ChatChannels.playerSendMessage(player,
-                        ChatChannels.DEBUG,
-                        Component.text("Player has not played this event", NamedTextColor.RED)
-                );
-                return;
-            }
-            if (!(eventMode instanceof DatabasePlayerPvEEventLibraryArchivesDifficultyStats stats)) {
-                ChatChannels.playerSendMessage(player,
-                        ChatChannels.DEBUG,
-                        Component.text("EventMode not DatabasePlayerPvEEventLibraryArchivesDifficultyStats", NamedTextColor.RED)
-                );
-                return;
-            }
-            stats.getCodexesEarned().put(playerCodex, stats.getCodexesEarned().getOrDefault(playerCodex, 0) + 1);
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+        EventMode eventMode = event.eventsStatsFunction.apply(databasePlayer.getPveStats().getEventStats()).get(currentGameEvent.getStartDateSecond());
+        if (eventMode == null) {
             ChatChannels.playerSendMessage(player,
                     ChatChannels.DEBUG,
-                    Component.text("Gave ", NamedTextColor.GREEN)
-                             .append(Permissions.getPrefixWithColor(player, true))
-                             .append(Component.text(" " + playerCodex.name, NamedTextColor.YELLOW))
+                    Component.text("Player has not played this event", NamedTextColor.RED)
             );
-        });
+            return;
+        }
+        if (!(eventMode instanceof DatabasePlayerPvEEventLibraryArchivesDifficultyStats stats)) {
+            ChatChannels.playerSendMessage(player,
+                    ChatChannels.DEBUG,
+                    Component.text("EventMode not DatabasePlayerPvEEventLibraryArchivesDifficultyStats", NamedTextColor.RED)
+            );
+            return;
+        }
+        stats.getCodexesEarned().put(playerCodex, stats.getCodexesEarned().getOrDefault(playerCodex, 0) + 1);
+        ChatChannels.playerSendMessage(player,
+                ChatChannels.DEBUG,
+                Component.text("Gave ", NamedTextColor.GREEN)
+                         .append(Permissions.getPrefixWithColor(player, true))
+                         .append(Component.text(" " + playerCodex.name, NamedTextColor.YELLOW))
+        );
+        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
     }
 
     @HelpCommand

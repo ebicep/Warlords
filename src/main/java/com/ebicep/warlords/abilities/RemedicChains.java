@@ -5,14 +5,11 @@ import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityTargetEvent;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.LinkedCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
-import com.ebicep.warlords.pve.mobs.flags.NoTargetAbilities;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.apothecary.RemedicChainsBranch;
@@ -169,13 +166,12 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
                     }
                 }),
                 teammatesNear
-        ) {
-
-            @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return (currentDamageValue + damageValues.getBonusDamage().getValue()) * (pveMasterUpgrade2 ? 1.15f : 1);
-            }
-        };
+        );
+        remedicChainsCooldown.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                    currentDamageValue.addAdditiveModifier(name, damageValues.getBonusDamage().getValue());
+                    currentDamageValue.addMultiplicativeModifierMult(name, pveMasterUpgrade2 ? 1.15f : 1);
+                }
+        );
         wp.getCooldownManager().removeCooldown(RemedicChains.class, false);
         wp.getCooldownManager().addCooldown(remedicChainsCooldown);
         teammatesNear.forEach(entity -> entity.getCooldownManager().removeCooldown(RemedicChains.class, false));

@@ -3,14 +3,13 @@ package com.ebicep.warlords.player.general.specboosts.boosts;
 import com.ebicep.warlords.abilities.DivineBlessing;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
-import com.ebicep.warlords.player.ingame.instances.type.HealingInstance;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import org.bukkit.event.EventHandler;
 
@@ -74,17 +73,14 @@ public class HolyNova implements SpecBoostManager.SpecBoost<HolyNova> {
             if (!(cooldown.getCooldownObject() instanceof DivineBlessing.DivineBlessingData data) || !cooldown.getFrom().equals(warlordsEntity)) {
                 return;
             }
-            cooldown.addExtraHealingInstance(new HealingInstance() {
-                @Override
-                public float modifyHealingFromAttacker(WarlordsDamageHealingEvent event, float currentHealValue) {
-                    if (event.getCause().equals("Divine Blessing") &&
-                            event.getWarlordsEntity().getLocation().distanceSquared(warlordsEntity.getLocation()) > divineBlessingFarRangeBlocks * divineBlessingFarRangeBlocks
-                    ) {
-                        return currentHealValue * AbstractAbility.convertToMultiplicationDecimal(divineBlessingHealingIncreasePercentFar);
+            cooldown.addModifier(Modifier.MODIFY_OUTGOING_HEALING, (e, currentHealValue) -> {
+                        if (e.getCause().equals("Divine Blessing") &&
+                                e.getWarlordsEntity().getLocation().distanceSquared(warlordsEntity.getLocation()) > divineBlessingFarRangeBlocks * divineBlessingFarRangeBlocks
+                        ) {
+                            currentHealValue.addMultiplicativeModifierMult(getStringName(), AbstractAbility.convertToMultiplicationDecimal(divineBlessingHealingIncreasePercentFar));
+                        }
                     }
-                    return currentHealValue;
-                }
-            });
+            );
             regularCooldown.addTriConsumer((cd, ticksLeft, ticksElapsed) -> {
                 if (ticksElapsed == data.getDivineBlessing().getPostHealthTickDelay()) {
                     PlayerFilter.playingGame(warlordsEntity.getGame()).aliveEnemiesOf(warlordsEntity).forEach(teammate -> {

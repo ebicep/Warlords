@@ -1,10 +1,10 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
@@ -34,33 +34,6 @@ public class LegendaryInanition extends AbstractLegendaryWeapon implements Event
 
     public LegendaryInanition(AbstractLegendaryWeapon legendaryWeapon) {
         super(legendaryWeapon);
-    }
-
-    @Override
-    public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
-        super.applyToWarlordsPlayer(player, pveOption);
-
-        float debuffDamageBoost = (DEBUFF_DAMAGE_BOOST + DEBUFF_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel()) / 100f;
-        float maxDebuffDamageBoost = (CAP_DEBUFF_DAMAGE_BOOST + CAP_DEBUFF_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel()) / 100f;
-        player.getCooldownManager().addCooldown(new PermanentCooldown<>(
-                "Inanition",
-                null,
-                LegendaryInanition.class,
-                null,
-                player,
-                CooldownTypes.WEAPON,
-                cooldownManager -> {
-                },
-                false
-        ) {
-
-            @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                int debuffs = event.getWarlordsEntity().getCooldownManager().getDebuffCooldowns(true).size();
-                float damageBoost = 1 + Math.min(debuffs * debuffDamageBoost, maxDebuffDamageBoost);
-                return currentDamageValue * damageBoost;
-            }
-        });
     }
 
     @Override
@@ -98,6 +71,37 @@ public class LegendaryInanition extends AbstractLegendaryWeapon implements Event
     }
 
     @Override
+    public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
+        super.applyToWarlordsPlayer(player, pveOption);
+
+        float debuffDamageBoost = (DEBUFF_DAMAGE_BOOST + DEBUFF_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel()) / 100f;
+        float maxDebuffDamageBoost = (CAP_DEBUFF_DAMAGE_BOOST + CAP_DEBUFF_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel()) / 100f;
+        player.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                "Inanition",
+                null,
+                LegendaryInanition.class,
+                null,
+                player,
+                CooldownTypes.WEAPON,
+                cooldownManager -> {
+                },
+                false
+        ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                    int debuffs = event.getWarlordsEntity().getCooldownManager().getDebuffCooldowns(true).size();
+                    float damageBoost = 1 + Math.min(debuffs * debuffDamageBoost, maxDebuffDamageBoost);
+                    currentDamageValue.addMultiplicativeModifierMult(getTitleName(), damageBoost);
+                }
+        ));
+    }
+
+    @Override
+    public LinkedHashMap<Currencies, Long> getCost() {
+        LinkedHashMap<Currencies, Long> baseCost = super.getCost();
+        baseCost.put(Currencies.TITLE_TOKEN_BANE_OF_IMPURITIES, 1L);
+        return baseCost;
+    }
+
+    @Override
     protected float getMeleeDamageMaxValue() {
         return 180;
     }
@@ -123,13 +127,6 @@ public class LegendaryInanition extends AbstractLegendaryWeapon implements Event
                         formatTitleUpgrade(CAP_DEBUFF_DAMAGE_BOOST + CAP_DEBUFF_DAMAGE_BOOST_PER_UPGRADE * getTitleLevelUpgraded(), "%")
                 )
         );
-    }
-
-    @Override
-    public LinkedHashMap<Currencies, Long> getCost() {
-        LinkedHashMap<Currencies, Long> baseCost = super.getCost();
-        baseCost.put(Currencies.TITLE_TOKEN_BANE_OF_IMPURITIES, 1L);
-        return baseCost;
     }
 
 

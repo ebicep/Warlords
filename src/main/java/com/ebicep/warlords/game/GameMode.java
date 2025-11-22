@@ -2,6 +2,7 @@ package com.ebicep.warlords.game;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.database.repositories.games.GamesCollections;
@@ -13,6 +14,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.pve.onslaught.Datab
 import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePvEWaveDefense;
 import com.ebicep.warlords.database.repositories.games.pojos.siege.DatabaseGameSiege;
 import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGameTDM;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.option.*;
 import com.ebicep.warlords.game.option.cuboid.GateOption;
@@ -35,7 +37,9 @@ import com.ebicep.warlords.game.option.win.WinByPointsOption;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.menu.generalmenu.WarlordsNewHotbarMenu;
-import com.ebicep.warlords.player.general.*;
+import com.ebicep.warlords.player.general.AbstractPlayerClass;
+import com.ebicep.warlords.player.general.SpecType;
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 import com.ebicep.warlords.util.bukkit.WordWrap;
@@ -780,11 +784,11 @@ public enum GameMode {
         List<Option> options = new ArrayList<>(64);
 
         options.add(new PreGameItemOption(1, (g, p) -> {
-            PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(p.getUniqueId());
-            Specializations selectedSpec = playerSettings.getSelectedSpec();
+            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(p);
+            Specializations selectedSpec = databasePlayer.getLastSpec();
             AbstractPlayerClass apc = selectedSpec.create(namespaces);
 
-            ItemStack weaponSkin = playerSettings.getWeaponSkins().getOrDefault(selectedSpec, Weapons.STEEL_SWORD).getItem();
+            ItemStack weaponSkin = databasePlayer.getSpec(selectedSpec).getWeapon().getItem();
             return new ItemBuilder(apc.getWeapon().getItem(weaponSkin))
                     .name(Component.text("Weapon Skin Preview", NamedTextColor.GREEN))
                     .noLore()
@@ -839,15 +843,6 @@ public enum GameMode {
         return options;
     }
 
-    public List<Option> postMapModifyOptions(
-            GameMap map,
-            LocationFactory loc,
-            EnumSet<GameAddon> addons,
-            List<Option> options
-    ) {
-        return options;
-    }
-
     public static void openPlayerSpecInfoMenu(Game game, Player player) {
         Menu menu = new Menu("Player Specs", 9 * 4);
         int x = 3;
@@ -857,8 +852,8 @@ public enum GameMode {
             List<Component> lore = new ArrayList<>();
             lore.add(Component.text("Total: ", NamedTextColor.GREEN)
                               .append(Component.text((int) game.getPlayers().keySet().stream()
-                                                               .map(PlayerSettings::getPlayerSettings)
-                                                               .map(PlayerSettings::getSelectedSpec)
+                                                               .map(DatabaseManager::getPlayer)
+                                                               .map(DatabasePlayer::getLastSpec)
                                                                .filter(c -> c.specType == value)
                                                                .count(), NamedTextColor.GOLD
                               )));
@@ -867,8 +862,8 @@ public enum GameMode {
                   .filter(classes -> classes.specType == value)
                   .forEach(classes -> {
                       int playersOnSpec = (int) game.getPlayers().keySet().stream()
-                                                    .map(PlayerSettings::getPlayerSettings)
-                                                    .map(PlayerSettings::getSelectedSpec)
+                                                    .map(DatabaseManager::getPlayer)
+                                                    .map(DatabasePlayer::getLastSpec)
                                                     .filter(c -> c == classes)
                                                     .count();
                       lore.add(Component.text(classes.name + " : ").append(Component.text(playersOnSpec, NamedTextColor.YELLOW)));
@@ -885,6 +880,15 @@ public enum GameMode {
         }
         menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
+    }
+
+    public List<Option> postMapModifyOptions(
+            GameMap map,
+            LocationFactory loc,
+            EnumSet<GameAddon> addons,
+            List<Option> options
+    ) {
+        return options;
     }
 
     public String getName() {

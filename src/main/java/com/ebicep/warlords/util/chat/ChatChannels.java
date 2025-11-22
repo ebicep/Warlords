@@ -4,6 +4,7 @@ import co.aikar.commands.CommandIssuer;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.debugcommands.misc.SeeAllChatsCommand;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.guilds.*;
 import com.ebicep.warlords.guilds.logs.AbstractGuildLog;
@@ -12,7 +13,6 @@ import com.ebicep.warlords.party.PartyManager;
 import com.ebicep.warlords.party.PartyPlayer;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.ExperienceManager;
-import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -52,8 +52,8 @@ public enum ChatChannels {
         public Component getFormat(Player player) {
             UUID uuid = player.getUniqueId();
             WarlordsEntity wp = Warlords.getPlayer(player);
-            PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(uuid);
-            int level = ExperienceManager.getLevelForSpec(uuid, playerSettings.getSelectedSpec());
+            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+            int level = ExperienceManager.getLevelForSpec(uuid, databasePlayer.getLastSpec());
 
             if (wp != null) {
                 return Component.empty().color(NamedTextColor.DARK_GRAY)
@@ -63,20 +63,20 @@ public enum ChatChannels {
                                 .append(Component.text("]["))
                                 .append(Component.text((level < 10 ? "0" : "") + level, NamedTextColor.GRAY))
                                 .append(Component.text("]"))
-                                .append(ExperienceManager.getPrestigeLevelString(player.getUniqueId(), playerSettings.getSelectedSpec()))
+                                .append(ExperienceManager.getPrestigeLevelString(player.getUniqueId(), databasePlayer.getLastSpec()))
                                 .append(Component.text("["))
-                                .append(playerSettings.getSelectedSpec().specType.getColoredSymbol())
+                                .append(databasePlayer.getLastSpec().specType.getColoredSymbol())
                                 .append(Component.text("] "))
                                 .append(Component.text(wp.isDead() ? "[SPECTATOR] " : "", NamedTextColor.GRAY));
             } else {
                 return Component.text("[", NamedTextColor.DARK_GRAY)
-                                .append(Component.text(Specializations.getClass(playerSettings.getSelectedSpec()).name.toUpperCase().substring(0, 3), NamedTextColor.GOLD))
+                                .append(Component.text(Specializations.getClass(databasePlayer.getLastSpec()).name.toUpperCase().substring(0, 3), NamedTextColor.GOLD))
                                 .append(Component.text("]["))
                                 .append(Component.text((level < 10 ? "0" : "") + level, NamedTextColor.GRAY))
                                 .append(Component.text("]"))
-                                .append(ExperienceManager.getPrestigeLevelString(player.getUniqueId(), playerSettings.getSelectedSpec()))
+                                .append(ExperienceManager.getPrestigeLevelString(player.getUniqueId(), databasePlayer.getLastSpec()))
                                 .append(Component.text("["))
-                                .append(playerSettings.getSelectedSpec().specType.getColoredSymbol())
+                                .append(databasePlayer.getLastSpec().specType.getColoredSymbol())
                                 .append(Component.text("] "));
             }
         }
@@ -262,11 +262,10 @@ public enum ChatChannels {
             SeeAllChatsCommand.addPlayerSeeAllChats(viewers);
             for (Audience audience : viewers) {
                 if (audience instanceof Player p) {
-                    DatabaseManager.getPlayer(p.getUniqueId(), databasePlayer -> {
-                        if (!databasePlayer.getIgnored().contains(player.getUniqueId())) {
-                            audience.sendMessage(component);
-                        }
-                    }, () -> audience.sendMessage(component));
+                    DatabasePlayer databasePlayer = DatabaseManager.getPlayer(p);
+                    if (!databasePlayer.getIgnored().contains(player.getUniqueId())) {
+                        audience.sendMessage(component);
+                    }
                 } else {
                     audience.sendMessage(component);
                 }

@@ -29,8 +29,9 @@ public class ConqueringEnergy implements FieldEffect {
                     return;
                 }
                 if (event.getCause().isEmpty()) {
-                    event.setMin(event.getMin() * 1.5f);
-                    event.setMax(event.getMax() * 1.5f);
+                    event.applyToMinMax(floatModifiable ->
+                            floatModifiable.addMultiplicativeModifierMult(getName(), 1.5f)
+                    );
                 }
             }
 

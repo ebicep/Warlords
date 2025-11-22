@@ -2,13 +2,13 @@ package com.ebicep.warlords.player.general.specboosts.boosts;
 
 import com.ebicep.warlords.abilities.HolyRadianceProtector;
 import com.ebicep.warlords.abilities.LightInfusionProtector;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.instances.type.CustomInstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 
 import java.util.List;
 
@@ -66,22 +66,17 @@ public class EcoDrive implements SpecBoostManager.SpecBoost<EcoDrive> {
                     cooldownManager -> {
                     },
                     false
-            ) {
-
-                @Override
-                public float modifyHealingFromAttacker(WarlordsDamageHealingEvent event, float currentHealValue) {
-                    if (event.getSource().equals(warlordsPlayer) && event.getCause().equals("Protector's Strike")) {
-                        List<CustomInstanceFlags> customFlags = event.getCustomFlags();
-                        for (CustomInstanceFlags customFlag : customFlags) {
-                            if (customFlag instanceof CustomInstanceFlags.PlayersEffectedInstanceFlag(List<WarlordsEntity> healedPlayers) && healedPlayers.size() == 1) {
-                                return currentHealValue * (1 + singleAllyHealBonusPercent / 100);
+            ).addModifier(Modifier.MODIFY_OUTGOING_HEALING, (event, currentHealValue) -> {
+                        if (event.getSource().equals(warlordsPlayer) && event.getCause().equals("Protector's Strike")) {
+                            List<CustomInstanceFlags> customFlags = event.getCustomFlags();
+                            for (CustomInstanceFlags customFlag : customFlags) {
+                                if (customFlag instanceof CustomInstanceFlags.PlayersEffectedInstanceFlag(List<WarlordsEntity> healedPlayers) && healedPlayers.size() == 1) {
+                                    currentHealValue.addMultiplicativeModifierMult(getStringName(), 1 + singleAllyHealBonusPercent / 100);
+                                }
                             }
                         }
                     }
-                    return currentHealValue;
-                }
-
-            });
+            ));
         }
 
     }

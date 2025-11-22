@@ -218,11 +218,9 @@ public class IllusionVendorTrait extends WarlordsTrait {
     public void rightClick(NPCRightClickEvent event) {
         Player player = event.getClicker();
         UUID uuid = player.getUniqueId();
-        DatabaseManager.getPlayer(uuid, databasePlayer -> {
-            DatabaseManager.getPlayer(uuid, PlayersCollections.WEEKLY, databasePlayerWeekly -> {
-                openIllusionVendor(player, databasePlayer, databasePlayerWeekly);
-            });
-        });
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid);
+        DatabasePlayer databasePlayerWeekly = DatabaseManager.getPlayer(uuid, PlayersCollections.WEEKLY);
+        openIllusionVendor(player, databasePlayer, databasePlayerWeekly);
     }
 
 }

@@ -3,12 +3,12 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractTimeWarp;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.aquamancer.TimeWarpBranchAquamancer;
@@ -75,16 +75,20 @@ public class TimeWarpAquamancer extends AbstractTimeWarp {
                     wp.getEntity().teleport(warpLocation);
                     warpTrail.clear();
                     if (pveMasterUpgrade2) {
-                        wp.getCooldownManager()
-                          .addCooldown(new RegularCooldown<>("Cyclone", "CYC", TimeWarpAquamancer.class, null, wp, CooldownTypes.ABILITY, cooldownManager1 -> {
-                          }, 5 * 20
-                          ) {
-
-                              @Override
-                              public float modifyHealingFromAttacker(WarlordsDamageHealingEvent event, float currentHealValue) {
-                                  return currentHealValue * 1.15f;
-                              }
-                          });
+                        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                "Cyclone",
+                                "CYC",
+                                TimeWarpAquamancer.class,
+                                null,
+                                wp,
+                                CooldownTypes.ABILITY,
+                                cooldownManager1 -> {
+                                },
+                                5 * 20
+                        ).addModifier(Modifier.MODIFY_OUTGOING_HEALING, (event, currentHealValue) -> {
+                                    currentHealValue.addMultiplicativeModifierMult(name, 1.15f);
+                                }
+                        ));
                     }
                 },
                 cooldownManager -> {
@@ -152,11 +156,6 @@ public class TimeWarpAquamancer extends AbstractTimeWarp {
     }
 
     @Override
-    public void init(AbstractAbilityBuilder builder) {
-        super.init(builder);
-    }
-
-    @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new TimeWarpBranchAquamancer(abilityTree, this);
     }
@@ -192,6 +191,11 @@ public class TimeWarpAquamancer extends AbstractTimeWarp {
         );
         pillars.add(light);
         return pillars;
+    }
+
+    @Override
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
     }
 
 }

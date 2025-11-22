@@ -1,10 +1,10 @@
 package com.ebicep.warlords.pve.items.types.specialitems.buckler.delta;
 
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
@@ -45,25 +45,12 @@ public class AerialAegis extends SpecialDeltaBuckler implements CraftsInto {
 
                 },
                 false
-        ) {
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (!warlordsPlayer.getEntity().isOnGround()) {
-                    return currentDamageValue * 0.8f;
+        ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
+                    if (!warlordsPlayer.getEntity().isOnGround()) {
+                        currentDamageValue.addMultiplicativeModifierMult(getName(), 0.8f);
+                    }
                 }
-                return currentDamageValue;
-            }
-        });
-    }
-
-    @Override
-    public String getName() {
-        return "Aerial Aegis";
-    }
-
-    @Override
-    public String getBonus() {
-        return "+1 Block Jump Height. Take 20% less damage while in the air.";
+        ));
     }
 
     @Override
@@ -72,7 +59,18 @@ public class AerialAegis extends SpecialDeltaBuckler implements CraftsInto {
     }
 
     @Override
+    public String getBonus() {
+        return "+1 Block Jump Height. Take 20% less damage while in the air.";
+    }
+
+    @Override
+    public String getName() {
+        return "Aerial Aegis";
+    }
+
+    @Override
     public AbstractItem getCraftsInto(Set<BasicStatPool> statPool) {
         return new CrescentBulwark(statPool);
     }
+
 }

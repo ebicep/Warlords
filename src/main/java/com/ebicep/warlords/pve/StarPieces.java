@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve;
 
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.weapons.events.StarPieceSynthesizedEvent;
@@ -65,72 +66,71 @@ public enum StarPieces {
     };
 
     public static void openStarPieceSynthesizerMenu(Player player) {
-        DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
-            Menu menu = new Menu("Star Piece Synthesizer", 9 * 4);
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+        Menu menu = new Menu("Star Piece Synthesizer", 9 * 4);
 
-            int row = 1;
-            int col = 2;
-            for (StarPieces starPiece : VALUES) {
-                if (starPiece.synthesisCosts.isEmpty()) {
-                    continue;
-                }
-                List<Component> costLore = starPiece.getCostLore();
-                menu.setItem(col, row,
-                        new ItemBuilder(Material.NETHER_STAR)
-                                .name(Component.textOfChildren(Component.text("Synthesize: ", NamedTextColor.GREEN), starPiece.currency.getColoredName()))
-                                .lore(WordWrap.wrap(Component.text("Combines lower tier star pieces to create a higher one.", NamedTextColor.GRAY), 140))
-                                .addLore(costLore)
-                                .get(),
-                        (m, e) -> {
-                            DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
-                            for (Map.Entry<Currencies, Long> currenciesLongEntry : starPiece.synthesisCosts.entrySet()) {
-                                Currencies currency = currenciesLongEntry.getKey();
-                                long value = currenciesLongEntry.getValue();
-                                if (pveStats.getCurrencyValue(currency) < value) {
-                                    player.sendMessage(Component.text("You need ", NamedTextColor.RED)
-                                                                .append(currency.getCostColoredName(value))
-                                                                .append(Component.text(" to synthesize this star piece."))
-                                    );
-                                    return;
-                                }
-                            }
-                            List<Component> confirmLore = new ArrayList<>();
-                            confirmLore.add(Component.textOfChildren(Component.text("Synthesize: ", NamedTextColor.GRAY), starPiece.currency.getColoredName()));
-                            confirmLore.addAll(costLore);
-                            Menu.openConfirmationMenu(player,
-                                    "Confirm Synthesis",
-                                    3,
-                                    confirmLore,
-                                    Menu.GO_BACK,
-                                    (m2, e2) -> {
-                                        starPiece.synthesisCosts.forEach(pveStats::subtractCurrency);
-                                        pveStats.addCurrency(starPiece.currency, 1);
-                                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-
-                                        Bukkit.getPluginManager().callEvent(new StarPieceSynthesizedEvent(player.getUniqueId(), starPiece));
-
-                                        player.sendMessage(Component.textOfChildren(
-                                                Component.text("Synthesized ", NamedTextColor.GREEN),
-                                                starPiece.currency.getCostColoredName(1),
-                                                Component.text("!", NamedTextColor.GRAY)
-                                        ));
-                                        player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
-
-                                        openStarPieceSynthesizerMenu(player);
-                                    },
-                                    (m2, e2) -> openStarPieceSynthesizerMenu(player),
-                                    (m2) -> {
-                                    }
-                            );
-
-                        }
-                );
-                col += 2;
+        int row = 1;
+        int col = 2;
+        for (StarPieces starPiece : VALUES) {
+            if (starPiece.synthesisCosts.isEmpty()) {
+                continue;
             }
+            List<Component> costLore = starPiece.getCostLore();
+            menu.setItem(col, row,
+                    new ItemBuilder(Material.NETHER_STAR)
+                            .name(Component.textOfChildren(Component.text("Synthesize: ", NamedTextColor.GREEN), starPiece.currency.getColoredName()))
+                            .lore(WordWrap.wrap(Component.text("Combines lower tier star pieces to create a higher one.", NamedTextColor.GRAY), 140))
+                            .addLore(costLore)
+                            .get(),
+                    (m, e) -> {
+                        DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+                        for (Map.Entry<Currencies, Long> currenciesLongEntry : starPiece.synthesisCosts.entrySet()) {
+                            Currencies currency = currenciesLongEntry.getKey();
+                            long value = currenciesLongEntry.getValue();
+                            if (pveStats.getCurrencyValue(currency) < value) {
+                                player.sendMessage(Component.text("You need ", NamedTextColor.RED)
+                                                            .append(currency.getCostColoredName(value))
+                                                            .append(Component.text(" to synthesize this star piece."))
+                                );
+                                return;
+                            }
+                        }
+                        List<Component> confirmLore = new ArrayList<>();
+                        confirmLore.add(Component.textOfChildren(Component.text("Synthesize: ", NamedTextColor.GRAY), starPiece.currency.getColoredName()));
+                        confirmLore.addAll(costLore);
+                        Menu.openConfirmationMenu(player,
+                                "Confirm Synthesis",
+                                3,
+                                confirmLore,
+                                Menu.GO_BACK,
+                                (m2, e2) -> {
+                                    starPiece.synthesisCosts.forEach(pveStats::subtractCurrency);
+                                    pveStats.addCurrency(starPiece.currency, 1);
+                                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
-            menu.setItem(4, 3, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU);
-            menu.openForPlayer(player);
-        });
+                                    Bukkit.getPluginManager().callEvent(new StarPieceSynthesizedEvent(player.getUniqueId(), starPiece));
+
+                                    player.sendMessage(Component.textOfChildren(
+                                            Component.text("Synthesized ", NamedTextColor.GREEN),
+                                            starPiece.currency.getCostColoredName(1),
+                                            Component.text("!", NamedTextColor.GRAY)
+                                    ));
+                                    player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
+
+                                    openStarPieceSynthesizerMenu(player);
+                                },
+                                (m2, e2) -> openStarPieceSynthesizerMenu(player),
+                                (m2) -> {
+                                }
+                        );
+
+                    }
+            );
+            col += 2;
+        }
+
+        menu.setItem(4, 3, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU);
+        menu.openForPlayer(player);
     }
 
     public final Currencies currency;

@@ -1,11 +1,11 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCounter;
@@ -62,22 +62,23 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon implements Passiv
     }
 
     @Override
-    public List<Pair<Component, Component>> getPassiveEffectUpgrade() {
-        return Arrays.asList(
-                new Pair<>(
-                        formatTitleUpgrade(EVERY_HP_PERCENT - EVERY_HP_PERCENT_DECREASE_PER_UPGRADE * getTitleLevel(), "%"),
-                        formatTitleUpgrade(EVERY_HP_PERCENT - EVERY_HP_PERCENT_DECREASE_PER_UPGRADE * getTitleLevelUpgraded(), "%")
-                ),
-                new Pair<>(
-                        formatTitleUpgrade(UNDER_HP_CHECK + UNDER_HP_CHECK_INCREASE_PER_UPGRADE * getTitleLevel(), "%"),
-                        formatTitleUpgrade(UNDER_HP_CHECK + UNDER_HP_CHECK_INCREASE_PER_UPGRADE * getTitleLevelUpgraded(), "%")
-                )
-        );
+    public LegendaryTitles getTitle() {
+        return LegendaryTitles.STALWART;
     }
 
     @Override
-    protected float getMeleeDamageMaxValue() {
-        return 160;
+    protected float getMeleeDamageMinValue() {
+        return 140;
+    }
+
+    @Override
+    protected float getHealthBonusValue() {
+        return 1000;
+    }
+
+    @Override
+    protected float getSpeedBonusValue() {
+        return 7;
     }
 
     @Override
@@ -100,64 +101,53 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon implements Passiv
 
                         },
                         false
-                ) {
-                    @Override
-                    public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                        if (player.getCurrentHealth() >= player.getMaxHealth() * upperBoundHP) {
-                            return currentDamageValue;
-                        }
-                        float currentHpPercent = player.getCurrentHealth() / player.getMaxHealth();
-                        int timesToReduce = (int) ((getUnderHpCheck() - currentHpPercent) / getEveryHpPercent());
-                        float reduction = Math.min(timesToReduce * .075f, .8f);
-                        return currentDamageValue * (1 - reduction);
-                    }
-
-                    @Override
-                    public float modifyDamageAfterAllFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                        if (player.getCurrentHealth() <= player.getMaxHealth() * .8) {
-                            return currentDamageValue;
-                        }
-                        if (player.getCurrentHealth() - currentDamageValue > 0) {
-                            return currentDamageValue;
-                        }
-                        if (Instant.now().isBefore(lastActivated.get())) {
-                            return currentDamageValue;
-                        }
-                        lastActivated.set(Instant.now().plus(COOLDOWN, ChronoUnit.SECONDS));
-                        player.setCurrentHealth(player.getMaxBaseHealth() * .05f);
-                        player.getCooldownManager().addCooldown(new RegularCooldown<>(
-                                "Stalwart",
-                                "STALWART",
-                                LegendaryDivine.class,
-                                null,
-                                player,
-                                CooldownTypes.WEAPON,
-                                cooldownManager -> {
-                                },
-                                REDUCTION_DURATION * 20
-                        ) {
-                            @Override
-                            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                return currentDamageValue * .01f;
+                ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_ALL_MODIFIERS, (event, currentDamageValue, isCrit) -> {
+                            if (player.getCurrentHealth() <= player.getMaxHealth() * .8) {
+                                return;
                             }
-                        });
-                        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
-                        player.sendMessage(Component.text("Triggered Stalwart! +99% damage reduction for 5s.", NamedTextColor.GREEN));
-                        return 0;
-                    }
-                }
+                            if (player.getCurrentHealth() - currentDamageValue.getCalculatedValue() > 0) {
+                                return;
+                            }
+                            if (Instant.now().isBefore(lastActivated.get())) {
+                                return;
+                            }
+                            lastActivated.set(Instant.now().plus(COOLDOWN, ChronoUnit.SECONDS));
+                            player.setCurrentHealth(player.getMaxBaseHealth() * .05f);
+                            player.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                    "Stalwart",
+                                    "STALWART",
+                                    LegendaryDivine.class,
+                                    null,
+                                    player,
+                                    CooldownTypes.WEAPON,
+                                    cooldownManager -> {
+                                    },
+                                    REDUCTION_DURATION * 20
+                            ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (e, currentDamageValue2) -> {
+                                        currentDamageValue2.addMultiplicativeModifierMult("Stalwart", .01f);
+                                    }
+                            ));
+                            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
+                            player.sendMessage(Component.text("Triggered Stalwart! +99% damage reduction for 5s.", NamedTextColor.GREEN));
+                            currentDamageValue.addOverridingModifier("Stalwart", 0);
+                        }
+                ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
+                            if (player.getCurrentHealth() >= player.getMaxHealth() * upperBoundHP) {
+                                return;
+                            }
+                            float currentHpPercent = player.getCurrentHealth() / player.getMaxHealth();
+                            int timesToReduce = (int) ((getUnderHpCheck() - currentHpPercent) / getEveryHpPercent());
+                            float reduction = Math.min(timesToReduce * .075f, .8f);
+                            currentDamageValue.addMultiplicativeModifierMult(getTitleName(), (1 - reduction));
+                        }
+                )
         );
 
     }
 
     @Override
-    public LegendaryTitles getTitle() {
-        return LegendaryTitles.STALWART;
-    }
-
-    @Override
-    protected float getMeleeDamageMinValue() {
-        return 140;
+    protected float getMeleeDamageMaxValue() {
+        return 160;
     }
 
     @Override
@@ -171,13 +161,17 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon implements Passiv
     }
 
     @Override
-    protected float getHealthBonusValue() {
-        return 1000;
-    }
-
-    @Override
-    protected float getSpeedBonusValue() {
-        return 7;
+    public List<Pair<Component, Component>> getPassiveEffectUpgrade() {
+        return Arrays.asList(
+                new Pair<>(
+                        formatTitleUpgrade(EVERY_HP_PERCENT - EVERY_HP_PERCENT_DECREASE_PER_UPGRADE * getTitleLevel(), "%"),
+                        formatTitleUpgrade(EVERY_HP_PERCENT - EVERY_HP_PERCENT_DECREASE_PER_UPGRADE * getTitleLevelUpgraded(), "%")
+                ),
+                new Pair<>(
+                        formatTitleUpgrade(UNDER_HP_CHECK + UNDER_HP_CHECK_INCREASE_PER_UPGRADE * getTitleLevel(), "%"),
+                        formatTitleUpgrade(UNDER_HP_CHECK + UNDER_HP_CHECK_INCREASE_PER_UPGRADE * getTitleLevelUpgraded(), "%")
+                )
+        );
     }
 
     private float getEveryHpPercent() {
@@ -195,4 +189,5 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon implements Passiv
         }
         return 0;
     }
+
 }

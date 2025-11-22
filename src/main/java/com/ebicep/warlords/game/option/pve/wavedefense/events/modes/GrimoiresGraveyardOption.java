@@ -3,6 +3,7 @@ package com.ebicep.warlords.game.option.pve.wavedefense.events.modes;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.database.repositories.events.pojos.GameEvents;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.libraryarchives.DatabasePlayerPvEEventLibraryArchivesDifficultyStats;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
@@ -42,28 +43,19 @@ public class GrimoiresGraveyardOption implements Option {
                 DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
                 GameEvents gameEvent = currentGameEvent.getEvent();
                 game.warlordsPlayers().forEach(warlordsPlayer -> {
-                    DatabaseManager.getPlayer(warlordsPlayer.getUuid(), databasePlayer -> {
-                        EventMode eventMode = gameEvent.eventsStatsFunction.apply(databasePlayer.getPveStats().getEventStats()).get(currentGameEvent.getStartDateSecond());
-                        if (eventMode != null && !(eventMode instanceof DatabasePlayerPvEEventLibraryArchivesDifficultyStats)) {
-                            ChatUtils.MessageType.GAME_EVENTS.sendErrorMessage("Error: stats is not a DatabasePlayerPvEEventLibraryArchivesDifficultyStats - " + eventMode.getClass()
-                                                                                                                                                                          .getSimpleName());
-                            return;
-                        }
-                        Set<PlayerCodex> toExclude = eventMode == null ? Collections.emptySet() : ((DatabasePlayerPvEEventLibraryArchivesDifficultyStats) eventMode).getCodexesEarned()
-                                                                                                                                                                    .keySet();
-                        codexRewards.put(warlordsPlayer.getUuid(), PlayerCodex.getRandomCodex(toExclude));
-                    });
+                    DatabasePlayer databasePlayer = DatabaseManager.getPlayer(warlordsPlayer.getUuid());
+                    EventMode eventMode = gameEvent.eventsStatsFunction.apply(databasePlayer.getPveStats().getEventStats()).get(currentGameEvent.getStartDateSecond());
+                    if (eventMode != null && !(eventMode instanceof DatabasePlayerPvEEventLibraryArchivesDifficultyStats)) {
+                        ChatUtils.MessageType.GAME_EVENTS.sendErrorMessage("Error: stats is not a DatabasePlayerPvEEventLibraryArchivesDifficultyStats - " + eventMode.getClass()
+                                                                                                                                                                      .getSimpleName());
+                        return;
+                    }
+                    Set<PlayerCodex> toExclude = eventMode == null ? Collections.emptySet() : ((DatabasePlayerPvEEventLibraryArchivesDifficultyStats) eventMode).getCodexesEarned()
+                                                                                                                                                                .keySet();
+                    codexRewards.put(warlordsPlayer.getUuid(), PlayerCodex.getRandomCodex(toExclude));
                 });
             }
         });
-    }
-
-    @Override
-    public void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
-        if (player instanceof WarlordsPlayer) {
-            AbilityTree abilityTree = ((WarlordsPlayer) player).getAbilityTree();
-            abilityTree.setMaxMasterUpgrades(4);
-        }
     }
 
     @Override
@@ -79,7 +71,16 @@ public class GrimoiresGraveyardOption implements Option {
         );
     }
 
+    @Override
+    public void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
+        if (player instanceof WarlordsPlayer) {
+            AbilityTree abilityTree = ((WarlordsPlayer) player).getAbilityTree();
+            abilityTree.setMaxMasterUpgrades(4);
+        }
+    }
+
     public Map<UUID, PlayerCodex> getCodexRewards() {
         return codexRewards;
     }
+
 }

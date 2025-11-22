@@ -1,13 +1,13 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
@@ -47,21 +47,6 @@ public class LegendaryChaotic extends AbstractLegendaryWeapon implements Listene
 
     public LegendaryChaotic(AbstractLegendaryWeapon legendaryWeapon) {
         super(legendaryWeapon);
-    }
-
-    @Override
-    public LinkedHashMap<Currencies, Long> getCost() {
-        LinkedHashMap<Currencies, Long> baseCost = super.getCost();
-        baseCost.put(Currencies.TITLE_TOKEN_LIBRARY_ARCHIVES, 1L);
-        return baseCost;
-    }
-
-    @Override
-    public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
-        super.applyToWarlordsPlayer(player, pveOption);
-        abilityNames = player.getAbilities().stream().map(AbstractAbility::getName).toList();
-        cooldown = null;
-        stacks = 0;
     }
 
     @Override
@@ -112,6 +97,21 @@ public class LegendaryChaotic extends AbstractLegendaryWeapon implements Listene
     }
 
     @Override
+    public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
+        super.applyToWarlordsPlayer(player, pveOption);
+        abilityNames = player.getAbilities().stream().map(AbstractAbility::getName).toList();
+        cooldown = null;
+        stacks = 0;
+    }
+
+    @Override
+    public LinkedHashMap<Currencies, Long> getCost() {
+        LinkedHashMap<Currencies, Long> baseCost = super.getCost();
+        baseCost.put(Currencies.TITLE_TOKEN_LIBRARY_ARCHIVES, 1L);
+        return baseCost;
+    }
+
+    @Override
     protected float getMeleeDamageMaxValue() {
         return 200;
     }
@@ -159,7 +159,7 @@ public class LegendaryChaotic extends AbstractLegendaryWeapon implements Listene
             stacks++;
         }
         if (cooldown == null) {
-            warlordsPlayer.getCooldownManager().addCooldown(cooldown = new RegularCooldown<>(
+            cooldown = new RegularCooldown<>(
                     getTitleName() + " 1",
                     "CHAOTIC 1",
                     LegendaryChaotic.class,
@@ -173,23 +173,22 @@ public class LegendaryChaotic extends AbstractLegendaryWeapon implements Listene
                         stacks = 0;
                     },
                     5 * 20
-            ) {
-                @Override
-                public float addCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
-                    if (!abilityNames.contains(event.getCause())) {
-                        return currentCritChance;
+            );
+            cooldown.addModifier(Modifier.MODIFY_OUTGOING_CRIT_CHANCE, (e, currentCritChance) -> {
+                        if (!abilityNames.contains(e.getCause())) {
+                            return;
+                        }
+                        currentCritChance.addAdditiveModifier(getTitleName(), CRIT_CHANCE * stacks);
                     }
-                    return currentCritChance + CRIT_CHANCE * stacks;
-                }
-
-                @Override
-                public float addCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
-                    if (!abilityNames.contains(event.getCause())) {
-                        return currentCritMultiplier;
+            );
+            cooldown.addModifier(Modifier.MODIFY_OUTGOING_CRIT_MULTIPLIER, (e, currentCritMultiplier) -> {
+                        if (!abilityNames.contains(e.getCause())) {
+                            return;
+                        }
+                        currentCritMultiplier.addAdditiveModifier(getTitleName(), (CRIT_MULTIPLIER + CRIT_MULTIPLIER_PER_UPGRADE * getTitleLevel()) * stacks);
                     }
-                    return currentCritMultiplier + (CRIT_MULTIPLIER + CRIT_MULTIPLIER_PER_UPGRADE * getTitleLevel()) * stacks;
-                }
-            });
+            );
+            warlordsPlayer.getCooldownManager().addCooldown(cooldown);
         } else {
             cooldown.setTicksLeft(5 * 20);
             cooldown.setName(getTitleName() + " " + stacks);

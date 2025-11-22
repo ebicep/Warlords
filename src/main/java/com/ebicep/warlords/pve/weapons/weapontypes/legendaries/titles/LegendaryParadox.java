@@ -6,7 +6,6 @@ import com.ebicep.warlords.abilities.internal.Shield;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -14,6 +13,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
@@ -50,10 +50,45 @@ public class LegendaryParadox extends AbstractLegendaryWeapon implements GardenO
     }
 
     @Override
-    public LinkedHashMap<Currencies, Long> getCost() {
-        LinkedHashMap<Currencies, Long> baseCost = super.getCost();
-        baseCost.put(Currencies.TITLE_TOKEN_GARDEN_OF_HESPERIDES, 1L);
-        return baseCost;
+    public TextComponent getPassiveEffect() {
+        return Component.text("For 10s after using a orange rune, creating a shield, using Prism Guard, or healing an ally, gain the PARADOX effect.", NamedTextColor.GRAY)
+                        .append(Component.newline())
+                        .append(Component.newline())
+                        .append(Component.text("PARADOX: Gain 30 energy every 2s and increase damage by 0.4% for every "))
+                        .append(formatTitleUpgrade(HP_INTERVAL + HP_INTERVAL_PER_UPGRADE * getTitleLevel()))
+                        .append(Component.text(" health you possess at the time the effect began. Max of "))
+                        .append(formatTitleUpgrade(DAMAGE_BOOST_MAX + DAMAGE_BOOST_MAX_PER_UPGRADE * getTitleLevel(), "%"))
+                        .append(Component.text(" damage bonus. Effect can occur once every 15s."));
+    }
+
+    @Override
+    public LegendaryTitles getTitle() {
+        return LegendaryTitles.PARADOX;
+    }
+
+    @Override
+    protected float getMeleeDamageMinValue() {
+        return 170;
+    }
+
+    @Override
+    protected float getHealthBonusValue() {
+        return 700;
+    }
+
+    @Override
+    protected float getSpeedBonusValue() {
+        return 7;
+    }
+
+    @Override
+    protected float getEnergyPerHitBonusValue() {
+        return 3;
+    }
+
+    @Override
+    protected float getSkillCritMultiplierBonusValue() {
+        return 15;
     }
 
     @Override
@@ -104,55 +139,19 @@ public class LegendaryParadox extends AbstractLegendaryWeapon implements GardenO
                 };
             }
 
-            @Override
-            public void onHealFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (!event.getWarlordsEntity().equals(player)) {
-                    giveParadoxCooldown(player);
+        }.addModifier(Modifier.ON_OUTGOING_HEALING, (event, currentHealValue, isCrit) -> {
+                    if (!event.getWarlordsEntity().equals(player)) {
+                        giveParadoxCooldown(player);
+                    }
                 }
-            }
-        });
+        ));
     }
 
     @Override
-    public TextComponent getPassiveEffect() {
-        return Component.text("For 10s after using a orange rune, creating a shield, using Prism Guard, or healing an ally, gain the PARADOX effect.", NamedTextColor.GRAY)
-                        .append(Component.newline())
-                        .append(Component.newline())
-                        .append(Component.text("PARADOX: Gain 30 energy every 2s and increase damage by 0.4% for every "))
-                        .append(formatTitleUpgrade(HP_INTERVAL + HP_INTERVAL_PER_UPGRADE * getTitleLevel()))
-                        .append(Component.text(" health you possess at the time the effect began. Max of "))
-                        .append(formatTitleUpgrade(DAMAGE_BOOST_MAX + DAMAGE_BOOST_MAX_PER_UPGRADE * getTitleLevel(), "%"))
-                        .append(Component.text(" damage bonus. Effect can occur once every 15s."));
-    }
-
-    @Override
-    public LegendaryTitles getTitle() {
-        return LegendaryTitles.PARADOX;
-    }
-
-    @Override
-    protected float getMeleeDamageMinValue() {
-        return 170;
-    }
-
-    @Override
-    protected float getHealthBonusValue() {
-        return 700;
-    }
-
-    @Override
-    protected float getSpeedBonusValue() {
-        return 7;
-    }
-
-    @Override
-    protected float getEnergyPerHitBonusValue() {
-        return 3;
-    }
-
-    @Override
-    protected float getSkillCritMultiplierBonusValue() {
-        return 15;
+    public LinkedHashMap<Currencies, Long> getCost() {
+        LinkedHashMap<Currencies, Long> baseCost = super.getCost();
+        baseCost.put(Currencies.TITLE_TOKEN_GARDEN_OF_HESPERIDES, 1L);
+        return baseCost;
     }
 
     @Override
@@ -207,16 +206,15 @@ public class LegendaryParadox extends AbstractLegendaryWeapon implements GardenO
                         player.addEnergy(player, getTitleName(), 30);
                     }
                 })
-        ) {
-            @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * damageBoost;
-            }
-        });
+        ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                    currentDamageValue.addMultiplicativeModifierMult(getTitleName(), damageBoost);
+                }
+        ));
     }
 
     @Override
     public int getCounter() {
         return secondCounter;
     }
+
 }

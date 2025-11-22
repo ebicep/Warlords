@@ -1,6 +1,5 @@
 package com.ebicep.warlords.game.maps;
 
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.*;
 import com.ebicep.warlords.game.option.*;
 import com.ebicep.warlords.game.option.cuboid.AbstractCuboidOption;
@@ -25,6 +24,7 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
@@ -144,12 +144,10 @@ public class ForgottenCodex extends GameMap {
 
                         },
                         false
-                ) {
-                    @Override
-                    public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                        return currentDamageValue * damageMultiplier;
-                    }
-                });
+                ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                            currentDamageValue.addMultiplicativeModifierMult("Scaling", damageMultiplier);
+                        }
+                ));
             }
         });
         options.add(new ItemOption());

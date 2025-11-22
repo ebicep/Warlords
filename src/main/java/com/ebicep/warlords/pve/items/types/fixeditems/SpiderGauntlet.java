@@ -1,12 +1,12 @@
 package com.ebicep.warlords.pve.items.types.fixeditems;
 
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractFixedItem;
@@ -37,6 +37,11 @@ public class SpiderGauntlet extends AbstractFixedItem implements FixedItemApplie
     }
 
     @Override
+    protected ItemStack getItemStack() {
+        return SkullUtils.getSkullFrom(SkullID.CAVE_SPIDER);
+    }
+
+    @Override
     public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {
         warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
                 getName(),
@@ -48,21 +53,17 @@ public class SpiderGauntlet extends AbstractFixedItem implements FixedItemApplie
                 cooldownManager -> {
                 },
                 true
-        ) {
-            @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                WarlordsEntity victim = event.getWarlordsEntity();
-                WarlordsEntity attacker = event.getSource();
-                if (victim instanceof WarlordsNPC warlordsNPC && Objects.equals(attacker, warlordsPlayer)) {
-                    AbstractMob mob = warlordsNPC.getMob();
-                    if (mob instanceof Spider || mob instanceof EventEggSac || mob instanceof EggSac) {
-                        return currentDamageValue * 1.1f;
+        ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                    WarlordsEntity victim = event.getWarlordsEntity();
+                    WarlordsEntity attacker = event.getSource();
+                    if (victim instanceof WarlordsNPC warlordsNPC && Objects.equals(attacker, warlordsPlayer)) {
+                        AbstractMob mob = warlordsNPC.getMob();
+                        if (mob instanceof Spider || mob instanceof EventEggSac || mob instanceof EggSac) {
+                            currentDamageValue.addMultiplicativeModifierMult(getName(), 1.1f);
+                        }
                     }
                 }
-                return currentDamageValue;
-            }
-
-        });
+        ));
     }
 
     @Override
@@ -86,11 +87,6 @@ public class SpiderGauntlet extends AbstractFixedItem implements FixedItemApplie
     }
 
     @Override
-    protected ItemStack getItemStack() {
-        return SkullUtils.getSkullFrom(SkullID.CAVE_SPIDER);
-    }
-
-    @Override
     public String getEffect() {
         return "Exterminator";
     }
@@ -99,4 +95,5 @@ public class SpiderGauntlet extends AbstractFixedItem implements FixedItemApplie
     public String getEffectDescription() {
         return "Deal 10% more damage to Spiders and Egg Sacs.";
     }
+
 }

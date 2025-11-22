@@ -5,12 +5,12 @@ import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownUtils;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.apothecary.VitalityConcoctionBranch;
@@ -99,11 +99,11 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
                 return CooldownUtils.getPartialDebuffImmunityListener(wp);
             }
 
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * convertToDivisionDecimal(damageResistance);
-            }
         };
+        cooldown.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
+                    currentDamageValue.addMultiplicativeModifierMult(name, convertToDivisionDecimal(damageResistance));
+                }
+        );
         wp.getCooldownManager().addCooldown(cooldown);
 
         if (pveMasterUpgrade) {
@@ -130,15 +130,15 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
                         Collections.singletonList((cooldown2, ticksLeft, ticksElapsed) -> {
                             if (ticksElapsed % 3 == 0) {
                                 PlayerFilter.entitiesAround(we, leechRadius, leechRadius, leechRadius)
-                                        .aliveEnemiesOf(we)
-                                        .excluding(leeched)
-                                        .forEach(warlordsEntity -> {
-                                            leeched.add(warlordsEntity);
-                                            Leech.giveLeechCooldown(Leech.LeechInstance
-                                                    .create(we, warlordsEntity)
-                                                    .withImpalingStrike()
-                                            );
-                                        });
+                                            .aliveEnemiesOf(we)
+                                            .excluding(leeched)
+                                            .forEach(warlordsEntity -> {
+                                                leeched.add(warlordsEntity);
+                                                Leech.giveLeechCooldown(Leech.LeechInstance
+                                                        .create(we, warlordsEntity)
+                                                        .withImpalingStrike()
+                                                );
+                                            });
                             }
                         })
                 ) {
@@ -148,11 +148,10 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
                         return CooldownUtils.getPartialDebuffImmunityListener(we);
                     }
 
-                    @Override
-                    public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                        return currentDamageValue * convertToDivisionDecimal(damageResistance / 2f);
-                    }
-                });
+                }.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
+                            currentDamageValue.addMultiplicativeModifierMult(name, convertToDivisionDecimal(damageResistance / 2f));
+                        }
+                ));
                 we.addInstance(InstanceBuilder
                         .healing()
                         .ability(this)

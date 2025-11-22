@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class MonaLisasPalms extends SpecialOmegaGauntlet implements AppliesToWarlordsPlayer {
+
     public MonaLisasPalms() {
 
     }
@@ -68,12 +69,14 @@ public class MonaLisasPalms extends SpecialOmegaGauntlet implements AppliesToWar
                     if (ThreadLocalRandom.current().nextDouble() > 0.01) {
                         return;
                     }
-                    event.setMin(warlordsEntity.getCurrentHealth() + 1);
-                    event.setMax(warlordsEntity.getCurrentHealth() + 1);
+                    event.applyToMinMax(floatModifiable ->
+                            floatModifiable.addOverridingModifier(getName(), warlordsEntity.getCurrentHealth() + 1)
+                    );
                     event.getFlags().add(InstanceFlags.IGNORE_SELF_RES);
                     event.getFlags().add(InstanceFlags.TRUE_DAMAGE);
                 }
             }
         });
     }
+
 }
