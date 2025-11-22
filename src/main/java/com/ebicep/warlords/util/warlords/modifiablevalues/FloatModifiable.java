@@ -467,6 +467,7 @@ public class FloatModifiable {
         private final String log;
         private final Set<String> disabledReasons = new HashSet<>(2);
         private final Consumer<Float> callback;
+        private ComponentBuilder debugPrefix = null;
         private float modifier;
         private int ticksLeft;
         private boolean dirty = false;
@@ -492,12 +493,16 @@ public class FloatModifiable {
 
         public Component getDebugInfo() {
             ComponentBuilder builder = ComponentBuilder
-                    .create()
-//                    .decorate(TextDecoration.STRIKETHROUGH, isDisabled())
-                    .text(log, isDisabled() ? NamedTextColor.RED : NamedTextColor.GREEN)
+                    .create();
+            if (debugPrefix != null) {
+                builder.append(debugPrefix.build());
+            }
+            builder.text(log, isDisabled() ? NamedTextColor.RED : NamedTextColor.GREEN)
                     .text(": ", NamedTextColor.GRAY)
-                    .text(NumberFormat.formatOptionalHundredths(modifier), NamedTextColor.YELLOW)
-                    .text(" (" + (ticksLeft == -1 ? "INF" : ticksLeft) + ")", NamedTextColor.DARK_GRAY);
+                   .text(NumberFormat.formatOptionalHundredths(modifier), NamedTextColor.YELLOW);
+            if (ticksLeft != -1) {
+                builder.text(" (" + ticksLeft + ")", NamedTextColor.DARK_GRAY);
+            }
             if (isDisabled()) {
                 builder.text(" [" + String.join(", ", disabledReasons) + "]", NamedTextColor.RED);
             }
@@ -546,6 +551,14 @@ public class FloatModifiable {
         public void addDisabledReason(String reason) {
             disabledReasons.add(reason);
             dirty = true;
+        }
+
+        public ComponentBuilder getDebugPrefix() {
+            return debugPrefix;
+        }
+
+        public void setDebugPrefix(ComponentBuilder debugPrefix) {
+            this.debugPrefix = debugPrefix;
         }
 
     }

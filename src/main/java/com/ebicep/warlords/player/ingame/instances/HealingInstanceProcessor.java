@@ -55,8 +55,8 @@ public class HealingInstanceProcessor {
     private final boolean trueHealing;
     // State tracking
     private final float initialHealth;
-    private final List<AbstractCooldown<?>> selfCooldownsDistinct;
-    private final List<AbstractCooldown<?>> attackersCooldownsDistinct;
+    private final List<AbstractCooldown<?>> targetCooldownsDistinct;
+    private final List<AbstractCooldown<?>> sourceCooldownsDistinct;
     private WarlordsDamageHealingFinalEvent finalEvent;
     // Calculated values
     private float healValueBeforeReduction;
@@ -84,10 +84,24 @@ public class HealingInstanceProcessor {
         this.pierce = flags.contains(InstanceFlags.PIERCE);
         this.trueHealing = flags.contains(InstanceFlags.TRUE_HEALING);
         this.initialHealth = warlordsEntity.getCurrentHealth();
-        this.selfCooldownsDistinct = warlordsEntity.getCooldownManager().getCooldownsDistinct();
-        this.attackersCooldownsDistinct = source.getCooldownManager().getCooldownsDistinct();
+        this.targetCooldownsDistinct = warlordsEntity.getCooldownManager().getCooldownsDistinct();
+        this.sourceCooldownsDistinct = source.getCooldownManager().getCooldownsDistinct();
         this.finalEvent = null;
         this.healValue = new FloatModifiable(ThreadLocalRandom.current().nextFloat() * (max.getCalculatedValue() - min.getCalculatedValue()) + min.getCalculatedValue());
+    }
+
+    private void applyPreEventModifiers() {
+        if (warlordsEntity != null) {
+            for (AbstractCooldown<?> abstractCooldown : warlordsEntity.getCooldownManager().getCooldownsDistinct()) {
+                abstractCooldown.applyModifiers(Modifier.HEALING_BEFORE_VARIABLE_SET_SELF, m -> m.apply(event));
+            }
+        }
+
+        if (source != null) {
+            for (AbstractCooldown<?> abstractCooldown : source.getCooldownManager().getCooldownsDistinct()) {
+                abstractCooldown.applyModifiers(Modifier.HEALING_BEFORE_VARIABLE_SET_ATTACKER, m -> m.apply(event));
+            }
+        }
     }
 
     public Optional<WarlordsDamageHealingFinalEvent> process() {
@@ -200,17 +214,44 @@ public class HealingInstanceProcessor {
     }
 
     private void applyOnHealModifiers(float cappedHealValue) {
-        for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
+        healValue.addModifierListener(
+                InstanceManager.TARGET_LABEL,
+                FloatModifiable.ModifierType.OVERRIDING,
+                FloatModifiable.ModifierType.ADDITIVE,
+                FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
+        );
+        for (AbstractCooldown<?> abstractCooldown : targetCooldownsDistinct) {
             abstractCooldown.applyModifiers(Modifier.ON_INCOMING_HEALING,
                     m -> m.apply(event, cappedHealValue, isCrit)
             );
         }
-
-        for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
+        healValue.removeModifierListener(
+                InstanceManager.TARGET_LABEL,
+                FloatModifiable.ModifierType.OVERRIDING,
+                FloatModifiable.ModifierType.ADDITIVE,
+                FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
+        );
+        healValue.addModifierListener(
+                InstanceManager.SOURCE_LABEL,
+                FloatModifiable.ModifierType.OVERRIDING,
+                FloatModifiable.ModifierType.ADDITIVE,
+                FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
+        );
+        for (AbstractCooldown<?> abstractCooldown : sourceCooldownsDistinct) {
             abstractCooldown.applyModifiers(Modifier.ON_OUTGOING_HEALING,
                     m -> m.apply(event, cappedHealValue, isCrit)
             );
         }
+        healValue.removeModifierListener(
+                InstanceManager.SOURCE_LABEL,
+                FloatModifiable.ModifierType.OVERRIDING,
+                FloatModifiable.ModifierType.ADDITIVE,
+                FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
+        );
     }
 
     private float calculateMaxHealth() {
@@ -348,20 +389,6 @@ public class HealingInstanceProcessor {
                         flags.contains(InstanceFlags.CAN_OVERHEAL_OTHERS);
     }
 
-    private void applyPreEventModifiers() {
-        if (warlordsEntity != null) {
-            for (AbstractCooldown<?> abstractCooldown : warlordsEntity.getCooldownManager().getCooldownsDistinct()) {
-                abstractCooldown.applyModifiers(Modifier.HEALING_BEFORE_VARIABLE_SET_SELF, m -> m.apply(event));
-            }
-        }
-
-        if (source != null) {
-            for (AbstractCooldown<?> abstractCooldown : source.getCooldownManager().getCooldownsDistinct()) {
-                abstractCooldown.applyModifiers(Modifier.HEALING_BEFORE_VARIABLE_SET_ATTACKER, m -> m.apply(event));
-            }
-        }
-    }
-
     private boolean validateEntityState() {
         return !warlordsEntity.isDead() && warlordsEntity.isActive();
     }
@@ -377,7 +404,7 @@ public class HealingInstanceProcessor {
                 .create(1)
                 .prefix(ComponentBuilder.create("Target Cooldowns", NamedTextColor.DARK_GREEN)));
 
-        for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
+        for (AbstractCooldown<?> abstractCooldown : targetCooldownsDistinct) {
             debugMessage.append(InstanceDebugHoverable.LevelBuilder
                     .create(2)
                     .prefix(abstractCooldown));
@@ -387,7 +414,7 @@ public class HealingInstanceProcessor {
                 .create(1)
                 .prefix(ComponentBuilder.create("Source Cooldowns", NamedTextColor.DARK_GREEN)));
 
-        for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
+        for (AbstractCooldown<?> abstractCooldown : sourceCooldownsDistinct) {
             debugMessage.append(InstanceDebugHoverable.LevelBuilder
                     .create(2)
                     .prefix(abstractCooldown));
@@ -423,15 +450,43 @@ public class HealingInstanceProcessor {
         if (pierce) { // ignore healing reduction
             toggleNegativeBoosts(InstanceFlags.PIERCE, true);
         }
-        for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
+        healValue.addModifierListener(
+                InstanceManager.TARGET_LABEL,
+                FloatModifiable.ModifierType.OVERRIDING,
+                FloatModifiable.ModifierType.ADDITIVE,
+                FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
+        );
+        for (AbstractCooldown<?> abstractCooldown : targetCooldownsDistinct) {
             abstractCooldown.applyModifiers(Modifier.MODIFY_INCOMING_HEALING, m -> m.apply(event, healValue));
         }
+        healValue.removeModifierListener(
+                InstanceManager.TARGET_LABEL,
+                FloatModifiable.ModifierType.OVERRIDING,
+                FloatModifiable.ModifierType.ADDITIVE,
+                FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
+        );
         if (pierce) { // ignore healing reduction
             toggleNegativeBoosts(InstanceFlags.PIERCE, false);
         }
-        for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
+        healValue.addModifierListener(
+                InstanceManager.SOURCE_LABEL,
+                FloatModifiable.ModifierType.OVERRIDING,
+                FloatModifiable.ModifierType.ADDITIVE,
+                FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
+        );
+        for (AbstractCooldown<?> abstractCooldown : sourceCooldownsDistinct) {
             abstractCooldown.applyModifiers(Modifier.MODIFY_OUTGOING_HEALING, m -> m.apply(event, healValue));
         }
+        healValue.removeModifierListener(
+                InstanceManager.SOURCE_LABEL,
+                FloatModifiable.ModifierType.OVERRIDING,
+                FloatModifiable.ModifierType.ADDITIVE,
+                FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
+        );
 
         healValue.refresh();
         debugMessage.append(InstanceDebugHoverable.LevelBuilder

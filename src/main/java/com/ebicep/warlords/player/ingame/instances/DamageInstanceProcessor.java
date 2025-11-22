@@ -79,8 +79,8 @@ public class DamageInstanceProcessor {
     private final boolean noTargetDamageBoost;
     // State tracking
     private final float initialHealth;
-    private final List<AbstractCooldown<?>> selfCooldownsDistinct;
-    private final List<AbstractCooldown<?>> attackersCooldownsDistinct;
+    private final List<AbstractCooldown<?>> targetCooldownsDistinct;
+    private final List<AbstractCooldown<?>> sourceCooldownsDistinct;
     private WarlordsDamageHealingFinalEvent finalEvent;
     // Calculated values
     private float damageHealValueBeforeAllReduction;
@@ -115,10 +115,18 @@ public class DamageInstanceProcessor {
         this.noSourceDamageBoost = flags.contains(InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST);
         this.noTargetDamageBoost = flags.contains(InstanceFlags.IGNORE_TARGET_DAMAGE_BOOST);
         this.initialHealth = warlordsEntity.getCurrentHealth();
-        this.selfCooldownsDistinct = warlordsEntity.getCooldownManager().getCooldownsDistinct();
-        this.attackersCooldownsDistinct = source.getCooldownManager().getCooldownsDistinct();
+        this.targetCooldownsDistinct = warlordsEntity.getCooldownManager().getCooldownsDistinct();
+        this.sourceCooldownsDistinct = source.getCooldownManager().getCooldownsDistinct();
         this.finalEvent = null;
         this.damageValue = new FloatModifiable(ThreadLocalRandom.current().nextFloat() * (max.getCalculatedValue() - min.getCalculatedValue()) + min.getCalculatedValue());
+    }
+
+    private void applyPreEventModifiers() {
+        if (source != null) {
+            for (AbstractCooldown<?> abstractCooldown : source.getCooldownManager().getCooldownsDistinct()) {
+                abstractCooldown.applyModifiers(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_VARIABLE_SET, m -> m.apply(event));
+            }
+        }
     }
 
     public Optional<WarlordsDamageHealingFinalEvent> process() {
@@ -154,14 +162,6 @@ public class DamageInstanceProcessor {
         return Optional.ofNullable(finalEvent);
     }
 
-    private void applyPreEventModifiers() {
-        if (source != null) {
-            for (AbstractCooldown<?> abstractCooldown : source.getCooldownManager().getCooldownsDistinct()) {
-                abstractCooldown.applyModifiers(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_VARIABLE_SET, m -> m.apply(event));
-            }
-        }
-    }
-
     private boolean validateEntityState() {
         return !warlordsEntity.isDead() && warlordsEntity.isActive();
     }
@@ -177,7 +177,7 @@ public class DamageInstanceProcessor {
                 .create(1)
                 .prefix(ComponentBuilder.create("Target Cooldowns", NamedTextColor.DARK_GREEN)));
 
-        for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
+        for (AbstractCooldown<?> abstractCooldown : targetCooldownsDistinct) {
             debugMessage.append(InstanceDebugHoverable.LevelBuilder
                     .create(2)
                     .prefix(abstractCooldown));
@@ -187,7 +187,7 @@ public class DamageInstanceProcessor {
                 .create(1)
                 .prefix(ComponentBuilder.create("Source Cooldowns", NamedTextColor.DARK_GREEN)));
 
-        for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
+        for (AbstractCooldown<?> abstractCooldown : sourceCooldownsDistinct) {
             abstractCooldown.applyModifiers(Modifier.DAMAGE_BEFORE_ANY_REDUCTION_ATTACKER, m -> m.apply(event));
             debugMessage.append(InstanceDebugHoverable.LevelBuilder
                     .create(2)
@@ -213,7 +213,7 @@ public class DamageInstanceProcessor {
                         FloatModifiable.ModifierType.ADDITIVE, FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
                 );
             }
-            for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
+            for (AbstractCooldown<?> abstractCooldown : sourceCooldownsDistinct) {
                 abstractCooldown.applyModifiers(
                         Modifier.MODIFY_OUTGOING_CRIT_CHANCE,
                         m -> m.apply(event, critChance)
@@ -266,7 +266,7 @@ public class DamageInstanceProcessor {
 
         damageHealValueBeforeAllReduction = damageValue.getCalculatedValue();
 
-        for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
+        for (AbstractCooldown<?> abstractCooldown : sourceCooldownsDistinct) {
             abstractCooldown.applyModifiers(Modifier.MODIFY_OUTGOING_CRIT_MULTIPLIER_POST_CALC, m -> m.apply(
                             event,
                             damageHealValueBeforeAllReduction,
@@ -414,9 +414,23 @@ public class DamageInstanceProcessor {
         if (noTargetDamageBoost) {
             togglePositiveBoosts(InstanceFlags.IGNORE_TARGET_DAMAGE_BOOST, true);
         }
-        for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
+        damageValue.addModifierListener(
+                InstanceManager.TARGET_LABEL,
+                FloatModifiable.ModifierType.OVERRIDING,
+                FloatModifiable.ModifierType.ADDITIVE,
+                FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
+        );
+        for (AbstractCooldown<?> abstractCooldown : targetCooldownsDistinct) {
             abstractCooldown.applyModifiers(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, m -> m.apply(event, damageValue));
         }
+        damageValue.removeModifierListener(
+                InstanceManager.TARGET_LABEL,
+                FloatModifiable.ModifierType.OVERRIDING,
+                FloatModifiable.ModifierType.ADDITIVE,
+                FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
+        );
         if (ignoreDamageReduction) {
             toggleNegativeBoosts(pierceDamage ? InstanceFlags.PIERCE : InstanceFlags.IGNORE_DAMAGE_REDUCTION_ONLY, false);
         }
@@ -427,9 +441,23 @@ public class DamageInstanceProcessor {
         if (noSourceDamageBoost) {
             togglePositiveBoosts(InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST, true);
         }
-        for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
+        damageValue.addModifierListener(
+                InstanceManager.SOURCE_LABEL,
+                FloatModifiable.ModifierType.OVERRIDING,
+                FloatModifiable.ModifierType.ADDITIVE,
+                FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
+        );
+        for (AbstractCooldown<?> abstractCooldown : sourceCooldownsDistinct) {
             abstractCooldown.applyModifiers(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, m -> m.apply(event, damageValue));
         }
+        damageValue.removeModifierListener(
+                InstanceManager.SOURCE_LABEL,
+                FloatModifiable.ModifierType.OVERRIDING,
+                FloatModifiable.ModifierType.ADDITIVE,
+                FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
+        );
         if (noSourceDamageBoost) {
             togglePositiveBoosts(InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST, false);
         }
@@ -559,7 +587,7 @@ public class DamageInstanceProcessor {
     private void applyFinalDamage() {
         debugMessage.appendTitle("Modify Damage After All", NamedTextColor.AQUA);
 
-        for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
+        for (AbstractCooldown<?> abstractCooldown : targetCooldownsDistinct) {
             abstractCooldown.applyModifiers(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_ALL_MODIFIERS, m -> m.apply(event, damageValue, isCrit));
         }
 
@@ -687,6 +715,16 @@ public class DamageInstanceProcessor {
         ).ifPresent(e -> finalEvent = e);
     }
 
+    private void applyOnDamageModifiers(float finalDamageValue) {
+        for (AbstractCooldown<?> abstractCooldown : targetCooldownsDistinct) {
+            abstractCooldown.applyModifiers(Modifier.ON_INCOMING_DAMAGE, m -> m.apply(event, finalDamageValue, isCrit));
+        }
+
+        for (AbstractCooldown<?> abstractCooldown : sourceCooldownsDistinct) {
+            abstractCooldown.applyModifiers(Modifier.ON_OUTGOING_DAMAGE, m -> m.apply(event, finalDamageValue, isCrit));
+        }
+    }
+
     private void playInterveneEffects(WarlordsEntity intervenedBy, float calculatedDamageValue) {
         Location loc = warlordsEntity.getLocation();
         Utils.playGlobalSound(loc, "warrior.intervene.block", 2, 1);
@@ -700,65 +738,13 @@ public class DamageInstanceProcessor {
                 .prefix(ComponentBuilder.create("Intervene From Attacker", NamedTextColor.LIGHT_PURPLE))
         );
 
-        for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
+        for (AbstractCooldown<?> abstractCooldown : sourceCooldownsDistinct) {
             abstractCooldown.applyModifiers(Modifier.DAMAGE_ON_INTERVENE_ATTACKER, m -> m.apply(event, calculatedDamageValue));
             debugMessage.append(InstanceDebugHoverable.LevelBuilder
                     .create(2)
                     .prefix(abstractCooldown)
             );
         }
-    }
-
-    private void applyAfterInterveneModifiers() {
-        debugMessage.appendTitle("After Intervene", NamedTextColor.AQUA);
-
-        if (trueDamage) {
-            damageValue.addModifierListener(
-                    InstanceFlags.TRUE_DAMAGE.createDisabledReason(),
-                    FloatModifiable.ModifierType.ADDITIVE, FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
-            );
-        }
-        // target / self modifiers
-        if (ignoreDamageReduction) {
-            toggleNegativeBoosts(pierceDamage ? InstanceFlags.PIERCE : InstanceFlags.IGNORE_DAMAGE_REDUCTION_ONLY, true);
-        }
-        if (noTargetDamageBoost) {
-            togglePositiveBoosts(InstanceFlags.IGNORE_TARGET_DAMAGE_BOOST, true);
-        }
-        for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
-            abstractCooldown.applyModifiers(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, m -> m.apply(event, damageValue));
-        }
-        if (ignoreDamageReduction) {
-            toggleNegativeBoosts(pierceDamage ? InstanceFlags.PIERCE : InstanceFlags.IGNORE_DAMAGE_REDUCTION_ONLY, false);
-        }
-        if (noTargetDamageBoost) {
-            togglePositiveBoosts(InstanceFlags.IGNORE_TARGET_DAMAGE_BOOST, false);
-        }
-        // source / attacker modifiers
-        if (noSourceDamageBoost) {
-            togglePositiveBoosts(InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST, true);
-        }
-        for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
-            abstractCooldown.applyModifiers(Modifier.MODIFY_OUTGOING_DAMAGE_AFTER_INTERVENE, m -> m.apply(event, damageValue));
-        }
-        if (noSourceDamageBoost) {
-            togglePositiveBoosts(InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST, false);
-        }
-
-        damageValue.refresh();
-        if (damageHealValueBeforeInterveneReduction != damageValue.getCalculatedValue()) {
-            debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                    .create(1)
-                    .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.LIGHT_PURPLE))
-                    .value(damageValue));
-        } else {
-            debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                    .create(1)
-                    .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.LIGHT_PURPLE))
-                    .value(ComponentBuilder.create("No Change", NamedTextColor.WHITE)));
-        }
-
-        damageHealValueBeforeShieldReduction = damageValue.getCalculatedValue();
     }
 
     private boolean handleShield() {
@@ -926,36 +912,84 @@ public class DamageInstanceProcessor {
         }
     }
 
-    private void applyShieldModifiers() {
-        debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                .create(1)
-                .prefix(ComponentBuilder.create("On Shield", NamedTextColor.DARK_GREEN))
-        );
-        debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                .create(2)
-                .prefix(ComponentBuilder.create("Target Cooldowns", NamedTextColor.DARK_GREEN))
-        );
+    private void applyAfterInterveneModifiers() {
+        debugMessage.appendTitle("After Intervene", NamedTextColor.AQUA);
 
-        for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
-            abstractCooldown.applyModifiers(Modifier.ON_INCOMING_SHIELD_DAMAGE, m -> m.apply(event, damageHealValueBeforeShieldReduction, isCrit));
-            debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                    .create(3)
-                    .prefix(abstractCooldown)
+        if (trueDamage) {
+            damageValue.addModifierListener(
+                    InstanceFlags.TRUE_DAMAGE.createDisabledReason(),
+                    FloatModifiable.ModifierType.ADDITIVE, FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
             );
         }
-
-        debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                .create(2)
-                .prefix(ComponentBuilder.create("Attackers Cooldowns", NamedTextColor.DARK_GREEN))
-        );
-
-        for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
-            abstractCooldown.applyModifiers(Modifier.ON_OUTGOING_SHIELD_DAMAGE, m -> m.apply(event, damageHealValueBeforeShieldReduction, isCrit));
-            debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                    .create(3)
-                    .prefix(abstractCooldown)
-            );
+        // target / self modifiers
+        if (ignoreDamageReduction) {
+            toggleNegativeBoosts(pierceDamage ? InstanceFlags.PIERCE : InstanceFlags.IGNORE_DAMAGE_REDUCTION_ONLY, true);
         }
+        if (noTargetDamageBoost) {
+            togglePositiveBoosts(InstanceFlags.IGNORE_TARGET_DAMAGE_BOOST, true);
+        }
+        damageValue.addModifierListener(
+                InstanceManager.TARGET_LABEL,
+                FloatModifiable.ModifierType.OVERRIDING,
+                FloatModifiable.ModifierType.ADDITIVE,
+                FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
+        );
+        for (AbstractCooldown<?> abstractCooldown : targetCooldownsDistinct) {
+            abstractCooldown.applyModifiers(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, m -> m.apply(event, damageValue));
+        }
+        damageValue.removeModifierListener(
+                InstanceManager.TARGET_LABEL,
+                FloatModifiable.ModifierType.OVERRIDING,
+                FloatModifiable.ModifierType.ADDITIVE,
+                FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
+        );
+        if (ignoreDamageReduction) {
+            toggleNegativeBoosts(pierceDamage ? InstanceFlags.PIERCE : InstanceFlags.IGNORE_DAMAGE_REDUCTION_ONLY, false);
+        }
+        if (noTargetDamageBoost) {
+            togglePositiveBoosts(InstanceFlags.IGNORE_TARGET_DAMAGE_BOOST, false);
+        }
+        // source / attacker modifiers
+        if (noSourceDamageBoost) {
+            togglePositiveBoosts(InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST, true);
+        }
+        damageValue.addModifierListener(
+                InstanceManager.SOURCE_LABEL,
+                FloatModifiable.ModifierType.OVERRIDING,
+                FloatModifiable.ModifierType.ADDITIVE,
+                FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
+        );
+        for (AbstractCooldown<?> abstractCooldown : sourceCooldownsDistinct) {
+            abstractCooldown.applyModifiers(Modifier.MODIFY_OUTGOING_DAMAGE_AFTER_INTERVENE, m -> m.apply(event, damageValue));
+        }
+        damageValue.removeModifierListener(
+                InstanceManager.SOURCE_LABEL,
+                FloatModifiable.ModifierType.OVERRIDING,
+                FloatModifiable.ModifierType.ADDITIVE,
+                FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
+        );
+        if (noSourceDamageBoost) {
+            togglePositiveBoosts(InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST, false);
+        }
+
+        damageValue.refresh();
+        if (damageHealValueBeforeInterveneReduction != damageValue.getCalculatedValue()) {
+            debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                    .create(1)
+                    .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.LIGHT_PURPLE))
+                    .value(damageValue));
+        } else {
+            debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                    .create(1)
+                    .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.LIGHT_PURPLE))
+                    .value(ComponentBuilder.create("No Change", NamedTextColor.WHITE)));
+        }
+
+        damageHealValueBeforeShieldReduction = damageValue.getCalculatedValue();
     }
 
     private void handleActiveShield(Shield shield, RegularCooldown<Shield> cooldown) {
@@ -994,13 +1028,35 @@ public class DamageInstanceProcessor {
         );
     }
 
-    private void applyOnDamageModifiers(float finalDamageValue) {
-        for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
-            abstractCooldown.applyModifiers(Modifier.ON_INCOMING_DAMAGE, m -> m.apply(event, finalDamageValue, isCrit));
+    private void applyShieldModifiers() {
+        debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                .create(1)
+                .prefix(ComponentBuilder.create("On Shield", NamedTextColor.DARK_GREEN))
+        );
+        debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                .create(2)
+                .prefix(ComponentBuilder.create("Target Cooldowns", NamedTextColor.DARK_GREEN))
+        );
+
+        for (AbstractCooldown<?> abstractCooldown : targetCooldownsDistinct) {
+            abstractCooldown.applyModifiers(Modifier.ON_INCOMING_SHIELD_DAMAGE, m -> m.apply(event, damageHealValueBeforeShieldReduction, isCrit));
+            debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                    .create(3)
+                    .prefix(abstractCooldown)
+            );
         }
 
-        for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
-            abstractCooldown.applyModifiers(Modifier.ON_OUTGOING_DAMAGE, m -> m.apply(event, finalDamageValue, isCrit));
+        debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                .create(2)
+                .prefix(ComponentBuilder.create("Attackers Cooldowns", NamedTextColor.DARK_GREEN))
+        );
+
+        for (AbstractCooldown<?> abstractCooldown : sourceCooldownsDistinct) {
+            abstractCooldown.applyModifiers(Modifier.ON_OUTGOING_SHIELD_DAMAGE, m -> m.apply(event, damageHealValueBeforeShieldReduction, isCrit));
+            debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                    .create(3)
+                    .prefix(abstractCooldown)
+            );
         }
     }
 
@@ -1076,7 +1132,7 @@ public class DamageInstanceProcessor {
     private void applyEndModifiers() {
         float finalDamageValue = damageValue.getCalculatedValue();
 
-        for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
+        for (AbstractCooldown<?> abstractCooldown : sourceCooldownsDistinct) {
             abstractCooldown.applyModifiers(Modifier.DAMAGE_ON_END_ATTACKER,
                     m -> m.apply(event, finalDamageValue, isCrit)
             );
