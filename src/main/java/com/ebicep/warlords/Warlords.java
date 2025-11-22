@@ -417,9 +417,7 @@ public class Warlords extends JavaPlugin {
         });
 
         //connects to the database
-        Warlords.newChain()
-                .async(DatabaseManager::init)
-                .execute();
+        DatabaseManager.init();
 
         if (!BotManager.DISCORD_SERVERS.isEmpty()) {
             try {
