@@ -15,7 +15,6 @@ import com.ebicep.warlords.util.bukkit.WordWrap;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -36,8 +35,9 @@ public class ApplySkillBoostOption implements Option {
                         return 0;
                     }
 
+            @Nonnull
                     @Override
-                    public @Nullable List<Component> leftClickDescription(WarlordsPlayer wp, Player player) {
+            public List<Component> leftClickDescription(WarlordsPlayer wp, Player player) {
                         AbstractPlayerClass spec = wp.getSpec();
                         List<Component> description = new ArrayList<>();
                         description.add(Component.text(spec.getClassName() + " (" + spec.getClass().getSimpleName() + "):", NamedTextColor.GREEN));

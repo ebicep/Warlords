@@ -20,8 +20,8 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.PvEStatsWarlor
 import com.ebicep.warlords.database.repositories.player.pojos.pve.PvEStatsWarlordsSpecs;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMode;
-import com.ebicep.warlords.player.general.Classes;
-import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.player.general.*;
 import com.ebicep.warlords.player.general.settings.*;
 import com.ebicep.warlords.player.general.settings.actionbar.ActionBarSettings;
 import com.ebicep.warlords.pve.Currencies;
@@ -33,6 +33,7 @@ import com.ebicep.warlords.util.chat.ChatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -123,6 +124,9 @@ public class DatabasePlayer implements MultiStatsGeneral, TracksMultiAbilityStat
     @Field("game_logs")
     private List<StreamChaptersCommand.GameTime> gameLogs = new ArrayList<>();
 
+    @Transient
+    private Team wantedTeam = Team.BLUE;
+
     public DatabasePlayer() {
     }
 
@@ -156,11 +160,6 @@ public class DatabasePlayer implements MultiStatsGeneral, TracksMultiAbilityStat
                 ", uuid=" + uuid +
                 ", name='" + name + '\'' +
                 '}';
-    }
-
-    public void loadInCollection(PlayersCollections collection) {
-        pveStats.loadInCollection(collection);
-        pveStats.setDatabasePlayer(this);
     }
 
     @Override
@@ -215,6 +214,39 @@ public class DatabasePlayer implements MultiStatsGeneral, TracksMultiAbilityStat
             case SENTINEL -> arcanist.getSentinel();
             case LUMINARY -> arcanist.getLuminary();
         };
+    }
+
+    @Override
+    public Collection<StatsWarlordsClasses<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>, StatsWarlordsSpecs<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>>>> getStats() {
+        List<StatsWarlordsClasses<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>, StatsWarlordsSpecs<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>>>> stats = new ArrayList<>();
+        stats.addAll(pubStats.getStats());
+        stats.addAll(compStats.getStats());
+        for (PvEStatsWarlordsClasses<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase, PvEStats<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase>, PvEStatsWarlordsSpecs<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase, PvEStats<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase>>> stat : pveStats.getStats()) {
+            stats.add((StatsWarlordsClasses<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>, StatsWarlordsSpecs<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>>>) (Object) stat);
+        }
+        stats.addAll(tournamentStats.getStats());
+        return stats;
+    }
+
+    @Override
+    public long getExperience() {
+        return experience;
+    }
+
+    public void setExperience(long experience) {
+        this.experience = experience;
+    }
+
+    @Override
+    public Collection<TracksAbilityStats> getAllAbilityStats() {
+        return Stream.of(pubStats, compStats, tournamentStats, pveStats)
+                     .flatMap(s -> s.getAllAbilityStats().stream())
+                     .collect(Collectors.toList());
+    }
+
+    public void loadInCollection(PlayersCollections collection) {
+        pveStats.loadInCollection(collection);
+        pveStats.setDatabasePlayer(this);
     }
 
     public String getName() {
@@ -278,17 +310,6 @@ public class DatabasePlayer implements MultiStatsGeneral, TracksMultiAbilityStat
         }
     }
 
-    public DatabaseBaseGeneral getClass(Classes classes) {
-        return switch (classes) {
-            case MAGE -> mage;
-            case WARRIOR -> warrior;
-            case PALADIN -> paladin;
-            case SHAMAN -> shaman;
-            case ROGUE -> rogue;
-            case ARCANIST -> arcanist;
-        };
-    }
-
     public DatabasePlayerCompStats getCompStats() {
         return compStats;
     }
@@ -327,6 +348,81 @@ public class DatabasePlayer implements MultiStatsGeneral, TracksMultiAbilityStat
 
     public void setLastSpec(Specializations lastSpec) {
         this.lastSpec = lastSpec;
+    }
+
+    public List<ArmorManager.Helmets> getHelmets() {
+        List<ArmorManager.Helmets> armorSets = new ArrayList<>();
+        for (Classes value : Classes.VALUES) {
+            armorSets.add(getClass(value).getHelmet());
+        }
+        return armorSets;
+    }
+
+    public DatabaseBaseGeneral getClass(Classes classes) {
+        return switch (classes) {
+            case MAGE -> mage;
+            case WARRIOR -> warrior;
+            case PALADIN -> paladin;
+            case SHAMAN -> shaman;
+            case ROGUE -> rogue;
+            case ARCANIST -> arcanist;
+        };
+    }
+
+    public List<ArmorManager.ArmorSets> getArmorSets() {
+        List<ArmorManager.ArmorSets> armorSets = new ArrayList<>();
+        for (Classes value : Classes.VALUES) {
+            armorSets.add(getClass(value).getArmor());
+        }
+        return armorSets;
+    }
+
+    public void setHelmet(Classes classes, ArmorManager.Helmets helmet) {
+        getClass(classes).setHelmet(helmet);
+    }
+
+    public void setArmor(Classes classes, ArmorManager.ArmorSets armor) {
+        getClass(classes).setArmor(armor);
+    }
+
+    public ArmorManager.ArmorSets getArmorSet(Classes classes) {
+        return getClass(classes).getArmor();
+    }
+
+    public ArmorManager.ArmorSets getArmorSet(Specializations spec) {
+        return getClass(Specializations.getClass(spec)).getArmor();
+    }
+
+    public ArmorManager.ArmorSets getArmorSet() {
+        return getClass(Specializations.getClass(lastSpec)).getArmor();
+    }
+
+    public ArmorManager.Helmets getHelmet(Classes classes) {
+        return getClass(classes).getHelmet();
+    }
+
+    public ArmorManager.Helmets getHelmet() {
+        return getClass(Specializations.getClass(lastSpec)).getHelmet();
+    }
+
+    public ArmorManager.Helmets getHelmet(Specializations spec) {
+        return getClass(Specializations.getClass(spec)).getHelmet();
+    }
+
+    public Weapons getLastSpecWeapon() {
+        return getSpec(lastSpec).getWeapon();
+    }
+
+    public void setWeaponSkin(Specializations specializations, Weapons weapon) {
+        getSpec(specializations).setWeapon(weapon);
+    }
+
+    public SkillBoosts getSkillBoostForSpec(Specializations specializations) {
+        return getSpec(specializations).getSkillBoost();
+    }
+
+    public void setSkillBoostForSpec(Specializations specializations, SkillBoosts skillBoosts) {
+        getSpec(specializations).setSkillBoost(skillBoosts);
     }
 
     public Map<Specializations, Integer> getSpecBoosts() {
@@ -493,34 +589,6 @@ public class DatabasePlayer implements MultiStatsGeneral, TracksMultiAbilityStat
         return patchesApplied;
     }
 
-    @Override
-    public Collection<StatsWarlordsClasses<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>, StatsWarlordsSpecs<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>>>> getStats() {
-        List<StatsWarlordsClasses<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>, StatsWarlordsSpecs<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>>>> stats = new ArrayList<>();
-        stats.addAll(pubStats.getStats());
-        stats.addAll(compStats.getStats());
-        for (PvEStatsWarlordsClasses<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase, PvEStats<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase>, PvEStatsWarlordsSpecs<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase, PvEStats<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase>>> stat : pveStats.getStats()) {
-            stats.add((StatsWarlordsClasses<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>, StatsWarlordsSpecs<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>>>) (Object) stat);
-        }
-        stats.addAll(tournamentStats.getStats());
-        return stats;
-    }
-
-    @Override
-    public long getExperience() {
-        return experience;
-    }
-
-    public void setExperience(long experience) {
-        this.experience = experience;
-    }
-
-    @Override
-    public Collection<TracksAbilityStats> getAllAbilityStats() {
-        return Stream.of(pubStats, compStats, tournamentStats, pveStats)
-                     .flatMap(s -> s.getAllAbilityStats().stream())
-                     .collect(Collectors.toList());
-    }
-
     public List<StreamChaptersCommand.GameTime> getGameLogs() {
         return gameLogs;
     }
@@ -531,6 +599,14 @@ public class DatabasePlayer implements MultiStatsGeneral, TracksMultiAbilityStat
 
     public void setAdvancedHoverMessages(AdvancedHoverMessages advancedHoverMessages) {
         this.advancedHoverMessages = advancedHoverMessages;
+    }
+
+    public Team getWantedTeam() {
+        return wantedTeam;
+    }
+
+    public void setWantedTeam(Team team) {
+        this.wantedTeam = team;
     }
 
     public enum Patches {
@@ -692,4 +768,5 @@ public class DatabasePlayer implements MultiStatsGeneral, TracksMultiAbilityStat
             return false;
         }
     }
+
 }

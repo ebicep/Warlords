@@ -5,7 +5,6 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.WeaponDisplayMarker;
-import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -51,7 +50,7 @@ public class ApplySpecBoostsOption implements Option {
                                     .anyMatch(uuid -> {
                                                 String uuidString = uuid.toString().replace("-", "");
                                                 List<String> permittedPlayers = specBoost.getPermittedPlayers();
-                                                return PlayerSettings.getPlayerSettings(uuid).getSelectedSpec() == specializations &&
+                                                return DatabaseManager.getPlayer(uuid).getLastSpec() == specializations &&
                                                         (!permittedPlayers.isEmpty() && !permittedPlayers.contains(uuidString) || specBoost.getBannedPlayers().contains(uuidString));
                                             }
                                     )

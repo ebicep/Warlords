@@ -111,12 +111,8 @@ public class Balancer {
         return getTeam(teamListMap, Comparator.comparingInt(o -> o.getPlayersSpecs().size()));
     }
 
-    @Nullable
-    private Team getTeam(Map<Team, TeamInfo> teamListMap, Comparator<TeamInfo> comparator) {
-        // use comparator to get team with least whatever
-        AtomicReference<Team> team = new AtomicReference<>(null);
-        teamListMap.entrySet().stream().min(Map.Entry.comparingByValue(comparator)).ifPresent(e -> team.set(e.getKey()));
-        return team.get();
+    private void addPlayerToTeam(DatabasePlayer databasePlayer, Team team) {
+        bestTeam.computeIfAbsent(team, v -> new TeamInfo()).getPlayersSpecs().put(databasePlayer.getUuid(), databasePlayer.getLastSpec());
     }
 
     private Team getTeamWithLeastSpec(Map<Team, TeamInfo> teamListMap, Specializations spec) {
@@ -145,8 +141,12 @@ public class Balancer {
         bestTeam.computeIfAbsent(team, v -> new TeamInfo()).getPlayersSpecs().put(uuid, spec);
     }
 
-    private void addPlayerToTeam(DatabasePlayer databasePlayer, Team team) {
-        bestTeam.computeIfAbsent(team, v -> new TeamInfo()).getPlayersSpecs().put(databasePlayer.getUuid(), databasePlayer.getLastSpec());
+    @Nullable
+    private Team getTeam(Map<Team, TeamInfo> teamListMap, Comparator<TeamInfo> comparator) {
+        // use comparator to get team with least whatever
+        AtomicReference<Team> team = new AtomicReference<>(null);
+        teamListMap.entrySet().stream().min(Map.Entry.comparingByValue(comparator)).ifPresent(e -> team.set(e.getKey()));
+        return team.get();
     }
 
     public void printDebugInfo() {
@@ -240,8 +240,8 @@ public class Balancer {
             game.onlinePlayersWithoutSpectators().filter(e -> e.getValue() != null).forEach(e -> {
                 Player player = e.getKey();
                 Team team = e.getValue();
-                PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
-                playerSpecs.computeIfAbsent(playerSettings.getSelectedSpec(), v -> new ArrayList<>()).add(player.getUniqueId());
+                DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player.getUniqueId());
+                playerSpecs.computeIfAbsent(databasePlayer.getLastSpec(), v -> new ArrayList<>()).add(player.getUniqueId());
             });
             //specs that dont have an even amount of players to redistribute later
             List<UUID> playersLeft = new ArrayList<>();
@@ -338,8 +338,8 @@ public class Balancer {
             game.onlinePlayersWithoutSpectators().filter(e -> e.getValue() != null).forEach(e -> {
                 Player player = e.getKey();
                 Team team = e.getValue();
-                PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
-                playerSpecs.computeIfAbsent(playerSettings.getSelectedSpec(), v -> new ArrayList<>()).add(player.getUniqueId());
+                DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player.getUniqueId());
+                playerSpecs.computeIfAbsent(databasePlayer.getLastSpec(), v -> new ArrayList<>()).add(player.getUniqueId());
             });
             List<UUID> playersLeft = new ArrayList<>();
             //distributing specs evenly
@@ -406,8 +406,8 @@ public class Balancer {
             game.onlinePlayersWithoutSpectators().filter(e -> e.getValue() != null).forEach(e -> {
                 Player player = e.getKey();
                 Team team = e.getValue();
-                PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
-                playerSpecs.computeIfAbsent(playerSettings.getSelectedSpec(), v -> new ArrayList<>()).add(player.getUniqueId());
+                DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player.getUniqueId());
+                playerSpecs.computeIfAbsent(databasePlayer.getLastSpec(), v -> new ArrayList<>()).add(player.getUniqueId());
             });
             int blueSR = 0;
             int redSR = 0;

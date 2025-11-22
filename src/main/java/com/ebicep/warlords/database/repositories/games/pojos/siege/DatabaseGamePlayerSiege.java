@@ -1,12 +1,13 @@
 package com.ebicep.warlords.database.repositories.games.pojos.siege;
 
+import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.pvp.siege.SiegeOption;
 import com.ebicep.warlords.game.option.pvp.siege.SiegeStats;
 import com.ebicep.warlords.player.general.ExperienceManager;
-import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.PlayerStatisticsMinute;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -48,9 +49,10 @@ public class DatabaseGamePlayerSiege extends DatabaseGamePlayerBase {
     }
 
     public DatabaseGamePlayerSiege(WarlordsPlayer warlordsPlayer, Specializations spec) {
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(warlordsPlayer.getUuid());
         ExperienceManager.ExperienceSummary expGain = ExperienceManager.getExpFromGameStats(warlordsPlayer, false);
         long experienceEarnedSpec = expGain.getSpecExpGain(spec);
-        this.skillBoost = PlayerSettings.getPlayerSettings(warlordsPlayer.getUuid()).getSkillBoostForSpec(spec);
+        this.skillBoost = databasePlayer.getSkillBoostForSpec(spec);
         this.blocksTravelled = warlordsPlayer.getBlocksTravelled();
         PlayerStatisticsMinute minuteStats = warlordsPlayer.getSpecMinuteStats().getOrDefault(spec, new PlayerStatisticsMinute());
         PlayerStatisticsMinute.Entry total = minuteStats.total();
@@ -157,4 +159,5 @@ public class DatabaseGamePlayerSiege extends DatabaseGamePlayerBase {
     public long getTimeOnPayloadDefending() {
         return timeOnPayloadDefending;
     }
+
 }

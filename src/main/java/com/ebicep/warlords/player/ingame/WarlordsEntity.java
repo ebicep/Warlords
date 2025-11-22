@@ -43,7 +43,6 @@ import com.ebicep.warlords.player.ingame.motionsystem.speed.BaseToWalkingSpeedVa
 import com.ebicep.warlords.pve.mobs.player.TestDummy;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.TeleportUtils;
-import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.StringUtils;
@@ -275,7 +274,9 @@ public abstract class WarlordsEntity {
 
     @Nonnull
     public Location getLocation() {
-        if (entity == null) return new Location(Bukkit.getWorlds().getFirst().getSpawnLocation().getWorld(), 0, 0, 0);
+        if (entity == null) {
+            return new Location(Bukkit.getWorlds().getFirst().getSpawnLocation().getWorld(), 0, 0, 0);
+        }
 
         return this.entity.getLocation();
     }
@@ -440,10 +441,6 @@ public abstract class WarlordsEntity {
         if (cachedDatabasePlayer == null) {
             cachedDatabasePlayer = DatabaseManager.getPlayer(uuid, this instanceof WarlordsPlayer);
         }
-        if (cachedDatabasePlayer == null) {
-            ChatUtils.MessageType.WARLORDS.sendErrorMessage("Problem caching player " + name + " with uuid " + uuid + " - " + this + " - " + entity);
-            cachedDatabasePlayer = DatabaseManager.CACHED_MOB_DATABASEPLAYER;
-        }
         return cachedDatabasePlayer;
     }
 
@@ -496,10 +493,6 @@ public abstract class WarlordsEntity {
         }
     }
 
-    public boolean isShowDebugMessages() {
-        return cachedDatabasePlayer.getAdvancedHoverMessages() == AdvancedHoverMessages.OFF;
-    }
-
     public String getName() {
         return name;
     }
@@ -514,6 +507,10 @@ public abstract class WarlordsEntity {
 
     public float getMaxBaseHealth() {
         return maxBaseHealthFilter.getCachedValue();
+    }
+
+    public boolean isShowDebugMessages() {
+        return getDatabasePlayer().getAdvancedHoverMessages() == AdvancedHoverMessages.OFF;
     }
 
     public void setName(String name) {
@@ -1810,4 +1807,5 @@ public abstract class WarlordsEntity {
     public void setPveHitRange(int pveHitRange) {
         this.pveHitRange = pveHitRange;
     }
+
 }

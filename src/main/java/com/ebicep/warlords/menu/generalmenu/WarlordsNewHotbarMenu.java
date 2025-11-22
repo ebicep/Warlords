@@ -86,8 +86,8 @@ public class WarlordsNewHotbarMenu {
 
     public static void openLobbyAbilityMenu(Player player, boolean pve, ItemStack backItem, BiConsumer<Menu, InventoryClickEvent> backAction) {
         Menu menu = new Menu("Class Information", 9);
-        PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
-        Specializations selectedSpec = playerSettings.getSelectedSpec();
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player.getUniqueId());
+        Specializations selectedSpec = databasePlayer.getLastSpec();
         WarlordsPlayer warlordsPlayer = new WarlordsPlayer(player, selectedSpec, pve ? ConfigManager.PVE_NAMESPACES : ConfigManager.DEFAULT_NAMESPACES);
         AbstractPlayerClass apc = warlordsPlayer.getSpec();
 
@@ -134,9 +134,7 @@ public class WarlordsNewHotbarMenu {
         });
 
         menu.setItem(0, icon.get(), ACTION_DO_NOTHING);
-        ItemStack weaponSkin = playerSettings.getWeaponSkins()
-                                             .getOrDefault(selectedSpec, Weapons.STEEL_SWORD)
-                                             .getItem();
+        ItemStack weaponSkin = databasePlayer.getLastSpecWeapon().getItem();
         for (int i = 0; i < abilities.size() && i < 5; i++) {
             AbstractAbility ability = abilities.get(i);
             menu.setItem(i + 2, ability.getItem(i == 0 ? weaponSkin : ability.getAbilityIcon()), ACTION_DO_NOTHING);
@@ -317,24 +315,19 @@ public class WarlordsNewHotbarMenu {
                                 player.sendMessage(Component.text("You have changed your specialization to: ", NamedTextColor.GREEN)
                                                             .append(Component.text(spec.name, NamedTextColor.AQUA)));
                                 player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
-                                PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
-                                playerSettings.setSelectedSpec(spec);
+                                databasePlayer.setLastSpec(spec);
                                 if (!player.getWorld().getName().equals("MainLobby")) {
                                     ArmorManager.resetArmor(player);
                                 }
 
                                 AbstractPlayerClass apc = spec.create(ConfigManager.DEFAULT_NAMESPACES);
-                                ItemStack weaponSkin = playerSettings
-                                        .getWeaponSkins()
-                                        .getOrDefault(spec, Weapons.STEEL_SWORD)
-                                        .getItem();
+                                ItemStack weaponSkin = databasePlayer.getLastSpecWeapon().getItem();
                                 player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(weaponSkin))
                                         .name(Component.text("Weapon Skin Preview", NamedTextColor.GREEN))
                                         .noLore()
                                         .get()
                                 );
                                 openLevelingRewardsMenuForClass(player, databasePlayer, classes);
-                                databasePlayer.setLastSpec(spec);
 
                                 DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                             } else if (e.isRightClick()) {
@@ -644,9 +637,9 @@ public class WarlordsNewHotbarMenu {
         }
 
         public static void openWeaponMenu(Player player, int pageNumber) {
-            PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
-            Specializations selectedSpec = playerSettings.getSelectedSpec();
-            Weapons selectedWeapon = playerSettings.getWeaponSkinForSelectedSpec();
+            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player.getUniqueId());
+            Specializations selectedSpec = databasePlayer.getLastSpec();
+            Weapons selectedWeapon = databasePlayer.getSpec(selectedSpec).getWeapon();
             Menu menu = new Menu("Weapon Skin Selector", 9 * 6);
             List<Weapons> values = new ArrayList<>(Arrays.asList(Weapons.VALUES));
             for (int i = (pageNumber - 1) * 21; i < pageNumber * 21 && i < values.size(); i++) {
@@ -679,17 +672,15 @@ public class WarlordsNewHotbarMenu {
                                 player.sendMessage(Component.text("You have changed your ", NamedTextColor.GREEN)
                                                             .append(Component.text(selectedSpec.name, NamedTextColor.AQUA))
                                                             .append(Component.text("'s weapon skin to: §b" + weapon.getName() + "!")));
-                                playerSettings.getWeaponSkins().put(selectedSpec, weapon);
                                 openWeaponMenu(player, pageNumber);
                                 AbstractPlayerClass apc = selectedSpec.create(ConfigManager.DEFAULT_NAMESPACES);
-                                ItemStack weaponSkin = playerSettings.getWeaponSkins().getOrDefault(selectedSpec, Weapons.STEEL_SWORD).getItem();
+                                databasePlayer.setWeaponSkin(selectedSpec, weapon);
+                                ItemStack weaponSkin = databasePlayer.getLastSpecWeapon().getItem();
                                 player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(weaponSkin))
                                         .name(Component.text("Weapon Skin Preview", NamedTextColor.GREEN))
                                         .noLore()
                                         .get()
                                 );
-                                DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
-                                databasePlayer.getSpec(selectedSpec).setWeapon(weapon);
                                 DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                             } else {
                                 player.sendMessage(Component.text("This weapon skin has not been unlocked yet!", NamedTextColor.RED));
@@ -731,8 +722,8 @@ public class WarlordsNewHotbarMenu {
                                          .getPlayerGame(player.getUniqueId())
                                          .map(g -> g.getPlayerTeam(player.getUniqueId()))
                                          .orElse(Team.BLUE) == Team.BLUE;
-            PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
-            List<ArmorManager.Helmets> selectedHelmet = playerSettings.getHelmets();
+            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player.getUniqueId());
+            List<ArmorManager.Helmets> selectedHelmet = databasePlayer.getHelmets();
 
             Menu menu = new Menu("Armor Sets & Helmets", 9 * 6);
 
@@ -755,7 +746,7 @@ public class WarlordsNewHotbarMenu {
                         builder.get(),
                         (m, e) -> {
                             player.sendMessage(Component.text("Selected: ", NamedTextColor.YELLOW).append(Component.text(helmet.name, NamedTextColor.GREEN)));
-                            playerSettings.setHelmet(helmet.classes, helmet);
+                            databasePlayer.setHelmet(helmet.classes, helmet);
                             ArmorManager.resetArmor(player);
                             openArmorMenu(player, pageNumber);
                         }
@@ -772,7 +763,7 @@ public class WarlordsNewHotbarMenu {
                         .name(Component.text(armorSet.name, onBlueTeam ? NamedTextColor.BLUE : NamedTextColor.RED))
                         .lore(ARMOR_DESCRIPTION)
                         .addLore(Component.empty());
-                if (playerSettings.getArmorSet(classes) == armorSet) {
+                if (databasePlayer.getArmorSet(classes) == armorSet) {
                     builder.addLore(Component.text(">>> ACTIVE <<<", NamedTextColor.GREEN));
                     builder.enchant(Enchantment.RESPIRATION, 1);
                 } else {
@@ -784,7 +775,7 @@ public class WarlordsNewHotbarMenu {
                         builder.get(),
                         (m, e) -> {
                             player.sendMessage(Component.text("Selected: ", NamedTextColor.YELLOW).append(Component.text(armorSet.name, NamedTextColor.GREEN)));
-                            playerSettings.setArmor(classes, armorSet);
+                            databasePlayer.setArmor(classes, armorSet);
                             openArmorMenu(player, pageNumber);
                         }
                 );
@@ -841,7 +832,8 @@ public class WarlordsNewHotbarMenu {
         }
 
         public static void openSkillBoostMenu(Player player, Specializations selectedSpec, List<String> namespaces) {
-            SkillBoosts selectedBoost = PlayerSettings.getPlayerSettings(player.getUniqueId()).getSkillBoostForClass();
+            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+            SkillBoosts selectedBoost = databasePlayer.getSkillBoostForSpec(selectedSpec);
             Menu menu = new Menu("Skill Boost", 9 * 6);
             List<SkillBoosts> values = selectedSpec.skillBoosts;
             for (int i = 0; i < values.size(); i++) {
@@ -867,17 +859,14 @@ public class WarlordsNewHotbarMenu {
                         builder.get(),
                         (m, e) -> {
                             player.sendMessage(Component.text("You have changed your weapon boost to: ", NamedTextColor.GREEN).append(Component.text(skillBoost.name + "!")));
-                            PlayerSettings.getPlayerSettings(player.getUniqueId()).setSkillBoostForSelectedSpec(skillBoost);
+                            databasePlayer.setSkillBoostForSpec(selectedSpec, skillBoost);
                             openSkillBoostMenu(player, selectedSpec, namespaces);
-                            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
-                            databasePlayer.getSpec(selectedSpec).setSkillBoost(skillBoost);
                             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                         }
                 );
             }
 
             //showing change of ability
-            PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
             AbstractPlayerClass apc = selectedSpec.create(ConfigManager.DEFAULT_NAMESPACES);
             AbstractPlayerClass apc2 = selectedSpec.create(ConfigManager.DEFAULT_NAMESPACES);
             List<AbstractAbility> abilities = apc.getAbilities();
@@ -890,7 +879,7 @@ public class WarlordsNewHotbarMenu {
                 }
                 ItemStack icon;
                 if (ability == apc.getWeapon()) {
-                    icon = new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins().getOrDefault(selectedSpec, Weapons.STEEL_SWORD).getItem()))
+                    icon = new ItemBuilder(apc.getWeapon().getItem(databasePlayer.getLastSpecWeapon().getItem()))
                             .noLore()
                             .get();
                 } else {

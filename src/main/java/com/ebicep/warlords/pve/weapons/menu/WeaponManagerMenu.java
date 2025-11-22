@@ -6,7 +6,6 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayer
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.menu.generalmenu.WarlordsNewHotbarMenu;
 import com.ebicep.warlords.permissions.Permissions;
-import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.Spendable;
@@ -55,7 +54,7 @@ public class WeaponManagerMenu {
         PLAYER_MENU_SETTINGS.putIfAbsent(uuid, new PlayerWeaponMenuSettings(databasePlayer));
         PlayerWeaponMenuSettings menuSettings = PLAYER_MENU_SETTINGS.get(uuid);
         menuSettings.setOpenedFromNPC(fromNPC);
-        menuSettings.sort(PlayerSettings.getPlayerSettings(uuid).getSelectedSpec());
+        menuSettings.sort(databasePlayer.getLastSpec());
 
         openWeaponInventoryFromInternal(player, databasePlayer);
     }
@@ -65,7 +64,7 @@ public class WeaponManagerMenu {
         PLAYER_MENU_SETTINGS.putIfAbsent(uuid, new PlayerWeaponMenuSettings(databasePlayer));
         PlayerWeaponMenuSettings menuSettings = PLAYER_MENU_SETTINGS.get(uuid);
         int page = menuSettings.getPage();
-        menuSettings.sort(PlayerSettings.getPlayerSettings(uuid).getSelectedSpec());
+        menuSettings.sort(databasePlayer.getLastSpec());
         List<AbstractWeapon> weaponInventory = new ArrayList<>(menuSettings.getSortedWeaponInventory());
         weaponInventory.removeIf(weapon -> weapon instanceof StarterWeapon);
 

@@ -695,6 +695,8 @@ public class DebugMenuPlayerOptions {
                                         Component.text("Click to select!", NamedTextColor.YELLOW)
                                 ).get(),
                         (m, e) -> {
+                            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(target.getUuid());
+                            databasePlayer.setSkillBoostForSpec(selectedSpec, skillBoost);
                             setSpec(player, target, selectedSpec);
                             openSpecMenu(player, target);
                         }

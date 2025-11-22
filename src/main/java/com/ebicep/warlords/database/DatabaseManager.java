@@ -24,7 +24,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayer
 import com.ebicep.warlords.database.repositories.timings.TimingsService;
 import com.ebicep.warlords.database.repositories.timings.pojos.DatabaseTiming;
 import com.ebicep.warlords.guilds.GuildManager;
-import com.ebicep.warlords.player.general.*;
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.StarterWeapon;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -38,7 +38,9 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.context.support.AbstractApplicationContext;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -209,33 +211,33 @@ public class DatabaseManager {
             }
         }
 
-
-        PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(uuid);
-        playerSettings.setSelectedSpec(databasePlayer.getLastSpec());
-
-        for (Classes classes : Classes.VALUES) {
-            playerSettings.setHelmet(classes, databasePlayer.getClass(classes).getHelmet());
-            playerSettings.setArmor(classes, databasePlayer.getClass(classes).getArmor());
-        }
-
-        HashMap<Specializations, Weapons> weaponSkins = new HashMap<>();
-        for (Specializations spec : Specializations.VALUES) {
-            weaponSkins.put(spec, databasePlayer.getSpec(spec).getWeapon());
-        }
-        weaponSkins.values().removeAll(Collections.singleton(null));
-        playerSettings.setWeaponSkins(weaponSkins);
-
-        HashMap<Specializations, SkillBoosts> classesSkillBoosts = new HashMap<>();
-        for (Specializations spec : Specializations.VALUES) {
-            classesSkillBoosts.put(spec, databasePlayer.getSpec(spec).getSkillBoost());
-        }
-        classesSkillBoosts.values().removeAll(Collections.singleton(null));
-        classesSkillBoosts.forEach((specializations, skillBoosts) -> {
-            if (!specializations.skillBoosts.contains(skillBoosts)) {
-                classesSkillBoosts.put(specializations, specializations.skillBoosts.get(0));
-            }
-        });
-        playerSettings.setSpecsSkillBoosts(classesSkillBoosts);
+//
+//        PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(uuid);
+//        databasePlayer.setLastSpec(databasePlayer.getLastSpec());
+//
+//        for (Classes classes : Classes.VALUES) {
+//            playerSettings.setHelmet(classes, databasePlayer.getClass(classes).getHelmet());
+//            playerSettings.setArmor(classes, databasePlayer.getClass(classes).getArmor());
+//        }
+//
+//        HashMap<Specializations, Weapons> weaponSkins = new HashMap<>();
+//        for (Specializations spec : Specializations.VALUES) {
+//            weaponSkins.put(spec, databasePlayer.getSpec(spec).getWeapon());
+//        }
+//        weaponSkins.values().removeAll(Collections.singleton(null));
+//        playerSettings.setWeaponSkins(weaponSkins);
+//
+//        HashMap<Specializations, SkillBoosts> classesSkillBoosts = new HashMap<>();
+//        for (Specializations spec : Specializations.VALUES) {
+//            classesSkillBoosts.put(spec, databasePlayer.getSpec(spec).getSkillBoost());
+//        }
+//        classesSkillBoosts.values().removeAll(Collections.singleton(null));
+//        classesSkillBoosts.forEach((specializations, skillBoosts) -> {
+//            if (!specializations.skillBoosts.contains(skillBoosts)) {
+//                classesSkillBoosts.put(specializations, specializations.skillBoosts.get(0));
+//            }
+//        });
+//        playerSettings.setSpecsSkillBoosts(classesSkillBoosts);
 
         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
     }
@@ -254,11 +256,6 @@ public class DatabaseManager {
     @Nonnull
     public static DatabasePlayer getPlayer(UUID uuid, boolean isAPlayer) {
         return getPlayer(uuid, PlayersCollections.LIFETIME, isAPlayer);
-    }
-
-    @Nonnull
-    public static DatabasePlayer getPlayer(UUID uuid) {
-        return getPlayer(uuid, PlayersCollections.LIFETIME, true);
     }
 
     @Nonnull
@@ -294,6 +291,11 @@ public class DatabaseManager {
             ConcurrentHashMap<UUID, DatabasePlayer> concurrentHashMap = DatabaseManager.CACHED_PLAYERS.get(playersCollections);
             return concurrentHashMap.computeIfAbsent(uuid, k -> new DatabasePlayer(uuid, Bukkit.getOfflinePlayer(uuid).getName()));
         }
+    }
+
+    @Nonnull
+    public static DatabasePlayer getPlayer(UUID uuid) {
+        return getPlayer(uuid, PlayersCollections.LIFETIME, true);
     }
 
     @Nonnull
