@@ -1,6 +1,7 @@
 package com.ebicep.warlords.game.flags;
 
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.game.WarlordsFlagUpdatedEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
@@ -68,7 +69,8 @@ public class SpawnFlagLocation extends AbstractLocationBasedFlagLocation {
         if (event.getOld() instanceof GroundFlagLocation) {
             if (toucher != null) {
                 toucher.addFlagReturn();
-                game.forEachOnlinePlayer((p, t) -> DatabaseManager.getPlayer(p.getUniqueId(), databasePlayer -> {
+                game.forEachOnlinePlayer((p, t) -> {
+                    DatabasePlayer databasePlayer = DatabaseManager.getPlayer(p);
                     boolean sameTeam = t == eventTeam;
                     Component toucherColoredName = toucher.getColoredName();
                     Component flagMessage = Component.text("", NamedTextColor.YELLOW)
@@ -101,9 +103,10 @@ public class SpawnFlagLocation extends AbstractLocationBasedFlagLocation {
                     if (sameTeam) {
                         p.playSound(p.getLocation(), "ctf.flagreturned", 500, 1);
                     }
-                }));
+                });
             } else {
-                game.forEachOnlinePlayer((p, t) -> DatabaseManager.getPlayer(p.getUniqueId(), databasePlayer -> {
+                game.forEachOnlinePlayer((p, t) -> {
+                    DatabasePlayer databasePlayer = DatabaseManager.getPlayer(p);
                     if (databasePlayer.getFlagMessageMode() == FlagMessageMode.RELATIVE) {
                         if (t == eventTeam) {
                             p.sendMessage(Component.text("", NamedTextColor.YELLOW)
@@ -122,7 +125,7 @@ public class SpawnFlagLocation extends AbstractLocationBasedFlagLocation {
                                                .append(Component.text(" flag has returned to base!"))
                         );
                     }
-                }));
+                });
             }
         }
     }
@@ -144,4 +147,5 @@ public class SpawnFlagLocation extends AbstractLocationBasedFlagLocation {
     public void setFlagMultiplier(int flagMultiplier) {
         this.flagMultiplier = flagMultiplier;
     }
+
 }

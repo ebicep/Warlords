@@ -1,4 +1,5 @@
 import xyz.jpenilla.resourcefactory.bukkit.BukkitPluginYaml
+import xyz.jpenilla.resourcefactory.paper.PaperPluginYaml
 
 plugins {
     id("com.gradleup.shadow") version "8.3.5" // Creates a fat jar
@@ -7,7 +8,7 @@ plugins {
     `java-library`
     id("io.papermc.paperweight.userdev") version "2.0.0-beta.14"
     id("xyz.jpenilla.run-paper") version "2.3.1" // Adds runServer and runMojangMappedServer tasks for testing
-    id("xyz.jpenilla.resource-factory-bukkit-convention") version "1.2.0" // Generates plugin.yml based on the Gradle config
+    id("xyz.jpenilla.resource-factory-paper-convention") version "1.3.1" // Generates plugin.yml based on the Gradle config
 }
 
 group = "com.ebicep"
@@ -190,29 +191,36 @@ tasks.withType<JavaCompile>().configureEach {
 //    options.forkOptions.executable = "javac"
 }
 
-bukkitPluginYaml {
-    load = BukkitPluginYaml.PluginLoadOrder.POSTWORLD
+
+paperPluginYaml {
     main = "com.ebicep.warlords.Warlords"
+    bootstrapper = "com.ebicep.warlords.WarlordsBootstrap"
     apiVersion = "1.21.4"
+    load = BukkitPluginYaml.PluginLoadOrder.POSTWORLD
+    version = project.version.toString()
     authors = listOf("ebicep", "Plikie")
-    depend = listOf("ProtocolLib", "Citizens", "Multiverse-Core")
-    commands {
-        register("oldtest") {
-            aliases = listOf("oldtest")
-            description = "Old test command"
-            permission = "group.administrator"
-        }
-        register("me") {
-            aliases = listOf("me")
-            description = "Me"
-            permission = "group.administrator"
-        }
-        register("help") {
-            aliases = listOf("help")
-            description = "Help"
-            permission = "group.administrator"
+    dependencies {
+        server {
+            register("LuckPerms") {
+                joinClasspath = true
+                load = PaperPluginYaml.Load.BEFORE
+            }
+            register("ProtocolLib") {
+                joinClasspath = true
+                required = true
+                load = PaperPluginYaml.Load.BEFORE
+            }
+            register("Citizens") {
+                joinClasspath = true
+                required = true
+                load = PaperPluginYaml.Load.BEFORE
+            }
+            register("Multiverse-Core") {
+                joinClasspath = true
+                required = true
+                load = PaperPluginYaml.Load.BEFORE
+            }
         }
     }
 }
-
 

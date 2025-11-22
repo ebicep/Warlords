@@ -195,6 +195,13 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
                         -additionalDamageReduction * maxStacks / 100f,
                         contribution -> stats.damageReduced += Math.abs(contribution)
                 );
+                if (pveMasterUpgrade) {
+                    currentDamageValue.addMultiplicativeModifierMult(
+                            name,
+                            .85f,
+                            contribution -> stats.damageReduced += Math.abs(contribution)
+                    );
+                }
                     }
             ));
         });

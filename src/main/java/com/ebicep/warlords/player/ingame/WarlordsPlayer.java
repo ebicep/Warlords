@@ -5,15 +5,15 @@ import com.ebicep.warlords.abilities.Soulbinding;
 import com.ebicep.warlords.abilities.UndyingArmy;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Shield;
+import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsPlayerStunEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.CompassTargetMarker;
-import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.ArmorManager;
-import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.motionsystem.MotionModifierBuilder;
 import com.ebicep.warlords.player.ingame.motionsystem.speed.BaseToWalkingSpeedValueModifier;
@@ -108,11 +108,11 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
 
     public WarlordsPlayer(Player player, Specializations specialization, List<String> namespaces) {
         super(player, specialization, namespaces);
-        PlayerSettings settings = PlayerSettings.getPlayerSettings(player.getUniqueId());
+        DatabasePlayer databasePlayer = getDatabasePlayer();
         this.cosmeticSettings = new CosmeticSettings(
-                settings.getWeaponSkinForSelectedSpec(),
-                settings.getHelmet(settings.getSelectedSpec()),
-                settings.getArmorSet(settings.getSelectedSpec())
+                databasePlayer.getSpec(specialization).getWeapon(),
+                databasePlayer.getHelmet(specialization),
+                databasePlayer.getArmorSet(specialization)
         );
         resetAbilityTree();
         if (isInPve()) {
@@ -141,32 +141,23 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
             @Nonnull Game game,
             @Nonnull Team team
     ) {
-        this(location, player, game, team, PlayerSettings.getPlayerSettings(player.getUniqueId()));
-    }
-
-    private WarlordsPlayer(
-            @Nonnull Location location,
-            @Nonnull OfflinePlayer player,
-            @Nonnull Game game,
-            @Nonnull Team team,
-            @Nonnull PlayerSettings settings
-    ) {
         super(player.getUniqueId(),
                 player.getName(),
                 spawnSimpleJimmy(location, null),
                 game,
                 team,
-                settings.getSelectedSpec()
+                DatabaseManager.getPlayer(player.getUniqueId()).getLastSpec()
         );
         this.compassTarget = game
                 .getMarkers(CompassTargetMarker.class)
                 .stream().filter(CompassTargetMarker::isEnabled)
                 .max(Comparator.comparing((CompassTargetMarker c) -> c.getCompassTargetPriority(this)))
                 .orElse(null);
+        DatabasePlayer databasePlayer = getDatabasePlayer();
         this.cosmeticSettings = new CosmeticSettings(
-                settings.getWeaponSkinForSelectedSpec(),
-                settings.getHelmet(settings.getSelectedSpec()),
-                settings.getArmorSet(settings.getSelectedSpec())
+                databasePlayer.getLastSpecWeapon(),
+                databasePlayer.getHelmet(),
+                databasePlayer.getArmorSet()
         );
 
         resetAbilityTree();
@@ -176,10 +167,6 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
 
         updatePlayerReference(player.getPlayer());
         updateEntity();
-
-        if (player.getPlayer() != null && Permissions.isAdmin(player.getPlayer())) {
-            this.setShowDebugMessage(true);
-        }
     }
 
     @Override
@@ -205,6 +192,12 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
         if (isInPve() && debugMessageLog.size() > 200) {
             debugMessageLog.subList(0, 100).clear();
         }
+    }
+
+    @Override
+    public void setTeam(Team team) {
+        super.setTeam(team);
+        queueUpdateTabName();
     }
 
     @Override
@@ -389,10 +382,10 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
         this.specClass = spec;
         this.specClass.init(this);
 
-        PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(uuid);
-        cosmeticSettings.setWeaponSkin(playerSettings.getWeaponSkins().get(spec));
-        cosmeticSettings.setHelmet(playerSettings.getHelmet(spec));
-        cosmeticSettings.setArmorSet(playerSettings.getArmorSet(spec));
+        DatabasePlayer databasePlayer = getDatabasePlayer();
+        cosmeticSettings.setWeaponSkin(databasePlayer.getSpec(spec).getWeapon());
+        cosmeticSettings.setHelmet(databasePlayer.getHelmet(spec));
+        cosmeticSettings.setArmorSet(databasePlayer.getArmorSet(spec));
 
         Player player = Bukkit.getPlayer(uuid);
 
@@ -456,6 +449,15 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
     @Override
     public ItemStack getWeaponItem() {
         return weapon == null ? cosmeticSettings.getWeaponSkin().getItem() : weapon.getSelectedWeaponSkin().getItem();
+    }
+
+    @Nullable
+    public AbstractWeapon getWeapon() {
+        return weapon;
+    }
+
+    public void setWeapon(@Nullable AbstractWeapon weapon) {
+        this.weapon = weapon;
     }
 
     public void queueUpdateTabName() {
@@ -546,27 +548,12 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
         return abilityTree;
     }
 
-    @Nullable
-    public AbstractWeapon getWeapon() {
-        return weapon;
-    }
-
-    public void setWeapon(@Nullable AbstractWeapon weapon) {
-        this.weapon = weapon;
-    }
-
     public CosmeticSettings getCosmeticSettings() {
         return cosmeticSettings;
     }
 
     public boolean isUpdateTabName() {
         return updateTabName;
-    }
-
-    @Override
-    public void setTeam(Team team) {
-        super.setTeam(team);
-        queueUpdateTabName();
     }
 
     public void setUpdateTabName(boolean updateTabName) {

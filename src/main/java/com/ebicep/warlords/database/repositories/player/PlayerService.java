@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.query.UpdateDefinition;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -32,9 +33,9 @@ public interface PlayerService {
 
     //DatabasePlayer findOne(Criteria criteria, PlayersCollections collection);
 
-    DatabasePlayer findByUUID(UUID uuid);
+    Optional<DatabasePlayer> findByUUID(UUID uuid);
 
-    DatabasePlayer findByUUID(UUID uuid, PlayersCollections collection);
+    Optional<DatabasePlayer> findByUUID(UUID uuid, PlayersCollections collection);
 
     DatabasePlayer findByNameIgnoreCase(String name);
 

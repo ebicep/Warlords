@@ -49,6 +49,15 @@ public class Balancer {
         }
     }
 
+    public void balance(boolean useSR) {
+        // useSR ignored for now
+        preassignParties();
+        // balance based on spec type only then swap stacking specs maybe
+        for (SpecType value : SpecType.VALUES) {
+            balanceSpecType(value);
+        }
+    }
+
     private void preassignParties() {
         Map<Party, List<DatabasePlayer>> partiedPlayers = new HashMap<>();
         forEachPlayer(player -> {
@@ -79,35 +88,6 @@ public class Balancer {
         });
     }
 
-    private void forEachPlayer(Consumer<DatabasePlayer> biConsumer) {
-        players.forEach(uuid -> DatabaseManager.getPlayer(uuid, biConsumer));
-    }
-
-    private Team getTeamWithLeastPlayers(Map<Team, TeamInfo> teamListMap) {
-        return getTeam(teamListMap, Comparator.comparingInt(o -> o.getPlayersSpecs().size()));
-    }
-
-    private void addPlayerToTeam(DatabasePlayer databasePlayer, Team team) {
-        bestTeam.computeIfAbsent(team, v -> new TeamInfo()).getPlayersSpecs().put(databasePlayer.getUuid(), databasePlayer.getLastSpec());
-    }
-
-    @Nullable
-    private Team getTeam(Map<Team, TeamInfo> teamListMap, Comparator<TeamInfo> comparator) {
-        // use comparator to get team with least whatever
-        AtomicReference<Team> team = new AtomicReference<>(null);
-        teamListMap.entrySet().stream().min(Map.Entry.comparingByValue(comparator)).ifPresent(e -> team.set(e.getKey()));
-        return team.get();
-    }
-
-    public void balance(boolean useSR) {
-        // useSR ignored for now
-        preassignParties();
-        // balance based on spec type only then swap stacking specs maybe
-        for (SpecType value : SpecType.VALUES) {
-            balanceSpecType(value);
-        }
-    }
-
     private void balanceSpecType(SpecType matchingSpecType) {
         Set<UUID> playersToRemove = new HashSet<>();
         forEachPlayer(databasePlayer -> {
@@ -121,6 +101,18 @@ public class Balancer {
             playersToRemove.add(databasePlayer.getUuid());
         });
         players.removeAll(playersToRemove);
+    }
+
+    private void forEachPlayer(Consumer<DatabasePlayer> biConsumer) {
+        players.forEach(uuid -> biConsumer.accept(DatabaseManager.getPlayer(uuid)));
+    }
+
+    private Team getTeamWithLeastPlayers(Map<Team, TeamInfo> teamListMap) {
+        return getTeam(teamListMap, Comparator.comparingInt(o -> o.getPlayersSpecs().size()));
+    }
+
+    private void addPlayerToTeam(DatabasePlayer databasePlayer, Team team) {
+        bestTeam.computeIfAbsent(team, v -> new TeamInfo()).getPlayersSpecs().put(databasePlayer.getUuid(), databasePlayer.getLastSpec());
     }
 
     private Team getTeamWithLeastSpec(Map<Team, TeamInfo> teamListMap, Specializations spec) {
@@ -149,6 +141,14 @@ public class Balancer {
         bestTeam.computeIfAbsent(team, v -> new TeamInfo()).getPlayersSpecs().put(uuid, spec);
     }
 
+    @Nullable
+    private Team getTeam(Map<Team, TeamInfo> teamListMap, Comparator<TeamInfo> comparator) {
+        // use comparator to get team with least whatever
+        AtomicReference<Team> team = new AtomicReference<>(null);
+        teamListMap.entrySet().stream().min(Map.Entry.comparingByValue(comparator)).ifPresent(e -> team.set(e.getKey()));
+        return team.get();
+    }
+
     public void printDebugInfo() {
         ChatChannels.sendDebugMessage((CommandIssuer) null, Component.text("----- BALANCE INFORMATION -----", NamedTextColor.DARK_AQUA));
 //        ChatChannels.sendDebugMessage((CommandIssuer) null, Component.text("Max SR Diff: " + maxSRDiff, NamedTextColor.GREEN));
@@ -164,7 +164,8 @@ public class Balancer {
                                                                          .append(Component.text(players, NamedTextColor.GOLD))
                                                                          .append(Component.text(" - ", NamedTextColor.GRAY))
                                                                          .append(Component.text("SR: "))
-                                                                         .append(Component.text(sr, NamedTextColor.GOLD)));
+                                                                         .append(Component.text(sr, NamedTextColor.GOLD))
+            );
         }
         ChatChannels.sendDebugMessage((CommandIssuer) null, Component.empty());
 //        ChatChannels.sendDebugMessage((CommandIssuer) null, Component.text("Fail Safe: ", NamedTextColor.GREEN)
@@ -191,7 +192,8 @@ public class Balancer {
                                                                                                  .append(Component.text(" - ", NamedTextColor.GRAY))
                                                                                                  .append(Component.text(specializations.name,
                                                                                                          specializations.specType.getTextColor()
-                                                                                                 )));
+                                                                                                 ))
+                                    );
                                 });
                 });
         ChatChannels.sendDebugMessage((CommandIssuer) null, Component.text("-------------------------------", NamedTextColor.DARK_AQUA));
@@ -202,11 +204,13 @@ public class Balancer {
     }
 
     public static class TeamInfo {
+
         private final Map<UUID, Specializations> playersSpecs = new HashMap<>();
 
         public Map<UUID, Specializations> getPlayersSpecs() {
             return playersSpecs;
         }
+
     }
 
 
@@ -236,8 +240,8 @@ public class Balancer {
             game.onlinePlayersWithoutSpectators().filter(e -> e.getValue() != null).forEach(e -> {
                 Player player = e.getKey();
                 Team team = e.getValue();
-                PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
-                playerSpecs.computeIfAbsent(playerSettings.getSelectedSpec(), v -> new ArrayList<>()).add(player.getUniqueId());
+                DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player.getUniqueId());
+                playerSpecs.computeIfAbsent(databasePlayer.getLastSpec(), v -> new ArrayList<>()).add(player.getUniqueId());
             });
             //specs that dont have an even amount of players to redistribute later
             List<UUID> playersLeft = new ArrayList<>();
@@ -334,8 +338,8 @@ public class Balancer {
             game.onlinePlayersWithoutSpectators().filter(e -> e.getValue() != null).forEach(e -> {
                 Player player = e.getKey();
                 Team team = e.getValue();
-                PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
-                playerSpecs.computeIfAbsent(playerSettings.getSelectedSpec(), v -> new ArrayList<>()).add(player.getUniqueId());
+                DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player.getUniqueId());
+                playerSpecs.computeIfAbsent(databasePlayer.getLastSpec(), v -> new ArrayList<>()).add(player.getUniqueId());
             });
             List<UUID> playersLeft = new ArrayList<>();
             //distributing specs evenly
@@ -402,8 +406,8 @@ public class Balancer {
             game.onlinePlayersWithoutSpectators().filter(e -> e.getValue() != null).forEach(e -> {
                 Player player = e.getKey();
                 Team team = e.getValue();
-                PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
-                playerSpecs.computeIfAbsent(playerSettings.getSelectedSpec(), v -> new ArrayList<>()).add(player.getUniqueId());
+                DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player.getUniqueId());
+                playerSpecs.computeIfAbsent(databasePlayer.getLastSpec(), v -> new ArrayList<>()).add(player.getUniqueId());
             });
             int blueSR = 0;
             int redSR = 0;

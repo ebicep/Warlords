@@ -2,6 +2,7 @@ package com.ebicep.warlords.database.repositories.masterworksfair.pojos;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.general.FutureMessage;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.pve.Currencies;
@@ -43,6 +44,11 @@ public class MasterworksFair {
     public MasterworksFair() {
     }
 
+    @Override
+    public String toString() {
+        return "MasterworksFair{startDate=" + startDate + ", commonPlayerEntries=" + commonPlayerEntries.size() + ", rarePlayerEntries=" + rarePlayerEntries.size() + ", epicPlayerEntries=" + epicPlayerEntries.size() + '}';
+    }
+
     public void sendRewards(boolean throughRewardsInventory) {
         Instant now = Instant.now();
         HashMap<UUID, List<MasterworksFairEntry>> playerFairResults = new HashMap<>();
@@ -67,38 +73,40 @@ public class MasterworksFair {
             }
         }
         Warlords.newChain()
-                .async(() -> playerFairResults.forEach((uuid, masterworksFairEntries) -> Warlords.newChain()
-                                                                                                 .asyncFirst(() -> DatabaseManager.playerService.findByUUID(uuid))
-                                                                                                 .syncLast(databasePlayer -> {
-                                                                                                     if (databasePlayer == null) {
-                                                                                                         return;
-                                                                                                     }
-                                                                                                     DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
-                                                                                                     if (pveStats == null) {
-                                                                                                         return;
-                                                                                                     }
-                                                                                                     for (MasterworksFairEntry masterworksFairEntry : masterworksFairEntries) {
-                                                                                                         WeaponsPvE rarity = masterworksFairEntry.getRarity();
-                                                                                                         pveStats.addMasterworksFairEntry(masterworksFairEntry);
-                                                                                                         LinkedHashMap<Spendable, Long> rewards = getRewards(
-                                                                                                                 masterworksFairEntry);
-                                                                                                         if (throughRewardsInventory) {
-                                                                                                             pveStats.addReward(new MasterworksFairReward(
-                                                                                                                     rewards,
-                                                                                                                     now,
-                                                                                                                     rarity
-                                                                                                             ));
-                                                                                                         } else {
-                                                                                                             rewards.forEach((spendable, amount) -> spendable.addToPlayer(
-                                                                                                                     databasePlayer,
-                                                                                                                     amount
-                                                                                                             ));
-                                                                                                         }
-                                                                                                     }
+                .async(() -> playerFairResults.forEach((uuid, masterworksFairEntries) ->
+                        Warlords.newChain()
+                                .asyncFirst(() -> DatabaseManager.playerService.findByUUID(uuid))
+                                .syncLast(optionalDatabasePlayer -> {
+                                    if (optionalDatabasePlayer.isEmpty()) {
+                                        return;
+                                    }
+                                    DatabasePlayer databasePlayer = optionalDatabasePlayer.get();
+                                    DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+                                    if (pveStats == null) {
+                                        return;
+                                    }
+                                    for (MasterworksFairEntry masterworksFairEntry : masterworksFairEntries) {
+                                        WeaponsPvE rarity = masterworksFairEntry.getRarity();
+                                        pveStats.addMasterworksFairEntry(masterworksFairEntry);
+                                        LinkedHashMap<Spendable, Long> rewards = getRewards(
+                                                masterworksFairEntry);
+                                        if (throughRewardsInventory) {
+                                            pveStats.addReward(new MasterworksFairReward(
+                                                    rewards,
+                                                    now,
+                                                    rarity
+                                            ));
+                                        } else {
+                                            rewards.forEach((spendable, amount) -> spendable.addToPlayer(
+                                                    databasePlayer,
+                                                    amount
+                                            ));
+                                        }
+                                    }
 
-                                                                                                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                                                                                                 })
-                                                                                                 .execute()))
+                                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                })
+                                .execute()))
                 .execute();
         sendResults(playerFairResults, false);
         if (throughRewardsInventory) {
@@ -173,10 +181,11 @@ public class MasterworksFair {
         playerFairResults.forEach((uuid, masterworksFairEntries) ->
                 Warlords.newChain()
                         .asyncFirst(() -> DatabaseManager.playerService.findByUUID(uuid))
-                        .syncLast(databasePlayer -> {
-                            if (databasePlayer == null) {
+                        .syncLast(optionalDatabasePlayer -> {
+                            if (optionalDatabasePlayer.isEmpty()) {
                                 return;
                             }
+                            DatabasePlayer databasePlayer = optionalDatabasePlayer.get();
                             List<Component> message = new ArrayList<>();
                             message.add(Component.text("------------------------------------------------", NamedTextColor.GOLD));
                             if (inCaseYouMissedIt) {
@@ -288,8 +297,4 @@ public class MasterworksFair {
         this.fairNumber = fairNumber;
     }
 
-    @Override
-    public String toString() {
-        return "MasterworksFair{startDate=" + startDate + ", commonPlayerEntries=" + commonPlayerEntries.size() + ", rarePlayerEntries=" + rarePlayerEntries.size() + ", epicPlayerEntries=" + epicPlayerEntries.size() + '}';
-    }
 }

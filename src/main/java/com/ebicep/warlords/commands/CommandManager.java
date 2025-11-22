@@ -91,208 +91,222 @@ public class CommandManager {
     public static void registerContexts() {
         //Issuer aware contexts
         manager.getCommandContexts().registerIssuerAwareContext(Player.class, (c) -> {
-            boolean isOptional = c.isOptional();
-            CommandSender sender = c.getSender();
-            boolean isPlayerSender = sender instanceof Player;
-            if (!c.hasFlag("other")) {
-                Player player = isPlayerSender ? (Player) sender : null;
-                if (player == null && !isOptional) {
-                    throw new InvalidCommandArgument(MessageKeys.NOT_ALLOWED_ON_CONSOLE, false);
-                }
+                    boolean isOptional = c.isOptional();
+                    CommandSender sender = c.getSender();
+                    boolean isPlayerSender = sender instanceof Player;
+                    if (!c.hasFlag("other")) {
+                        Player player = isPlayerSender ? (Player) sender : null;
+                        if (player == null && !isOptional) {
+                            throw new InvalidCommandArgument(MessageKeys.NOT_ALLOWED_ON_CONSOLE, false);
+                        }
 //                PlayerInventory inventory = player != null ? player.getInventory() : null;
 //                if (inventory != null && c.hasFlag("itemheld") && !ACFBukkitUtil.isValidItem(inventory.getItem(inventory.getHeldItemSlot()))) {
 //                    throw new InvalidCommandArgument(MinecraftMessageKeys.YOU_MUST_BE_HOLDING_ITEM, false);
 //                }
-                return player;
-            } else {
-                String arg = c.popFirstArg();
-                if (arg == null && isOptional) {
-                    if (c.hasFlag("defaultself")) {
-                        if (isPlayerSender) {
-                            return (Player) sender;
-                        } else {
-                            throw new InvalidCommandArgument(MessageKeys.NOT_ALLOWED_ON_CONSOLE, false);
-                        }
+                        return player;
                     } else {
-                        return null;
-                    }
-                } else if (arg == null) {
-                    throw new InvalidCommandArgument();
-                }
+                        String arg = c.popFirstArg();
+                        if (arg == null && isOptional) {
+                            if (c.hasFlag("defaultself")) {
+                                if (isPlayerSender) {
+                                    return (Player) sender;
+                                } else {
+                                    throw new InvalidCommandArgument(MessageKeys.NOT_ALLOWED_ON_CONSOLE, false);
+                                }
+                            } else {
+                                return null;
+                            }
+                        } else if (arg == null) {
+                            throw new InvalidCommandArgument();
+                        }
 
-                OnlinePlayer onlinePlayer = getOnlinePlayer(c.getIssuer(), arg, isOptional);
-                return onlinePlayer != null ? onlinePlayer.getPlayer() : null;
-            }
-        });
+                        OnlinePlayer onlinePlayer = getOnlinePlayer(c.getIssuer(), arg, isOptional);
+                        return onlinePlayer != null ? onlinePlayer.getPlayer() : null;
+                    }
+                }
+        );
         //TODO fix syntax/completion when this is issuer
         manager.getCommandContexts().registerIssuerAwareContext(WarlordsPlayer.class, command -> {
-            String target;
-            String name = command.getSender().getName();
-            if (command.getIndex() == 0) {
-                target = name;
-            } else {
-                String arg = command.popFirstArg();
-                target = arg == null ? name : arg;
-            }
-            Optional<WarlordsPlayer> optionalWarlordsPlayer = Warlords.getPlayers().values()
-                                                                      .stream()
-                                                                      .filter(WarlordsPlayer.class::isInstance)
-                                                                      .map(WarlordsPlayer.class::cast)
-                                                                      .filter(warlordsPlayer -> warlordsPlayer.getName().equalsIgnoreCase(target))
-                                                                      .findAny();
-            if (optionalWarlordsPlayer.isEmpty()) {
-                if (target.equals(name)) {
-                    throw new ConditionFailedException("You must be in an active game to use this command!");
-                } else {
-                    throw new InvalidCommandArgument("Could not find WarlordsPlayer with name " + target);
+                    String target;
+                    String name = command.getSender().getName();
+                    if (command.getIndex() == 0) {
+                        target = name;
+                    } else {
+                        String arg = command.popFirstArg();
+                        target = arg == null ? name : arg;
+                    }
+                    Optional<WarlordsPlayer> optionalWarlordsPlayer = Warlords.getPlayers().values()
+                                                                              .stream()
+                                                                              .filter(WarlordsPlayer.class::isInstance)
+                                                                              .map(WarlordsPlayer.class::cast)
+                                                                              .filter(warlordsPlayer -> warlordsPlayer.getName().equalsIgnoreCase(target))
+                                                                              .findAny();
+                    if (optionalWarlordsPlayer.isEmpty()) {
+                        if (target.equals(name)) {
+                            throw new ConditionFailedException("You must be in an active game to use this command!");
+                        } else {
+                            throw new InvalidCommandArgument("Could not find WarlordsPlayer with name " + target);
+                        }
+                    }
+                    return optionalWarlordsPlayer.get();
                 }
-            }
-            return optionalWarlordsPlayer.get();
-        });
+        );
         //Issuer only contexts
         manager.getCommandContexts().registerIssuerOnlyContext(PartyPlayerWrapper.class, command -> {
-            Player player = command.getPlayer();
-            Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(player.getUniqueId());
-            if (partyPlayerPair != null) {
-                if (command.hasFlag("leader") && partyPlayerPair.getB().getPartyPlayerType() != PartyPlayerType.LEADER) {
-                    Party.sendPartyMessage(player, Component.text("Insufficient Permissions!", NamedTextColor.RED));
-                    throw new ConditionFailedException();
+                    Player player = command.getPlayer();
+                    Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(player.getUniqueId());
+                    if (partyPlayerPair != null) {
+                        if (command.hasFlag("leader") && partyPlayerPair.getB().getPartyPlayerType() != PartyPlayerType.LEADER) {
+                            Party.sendPartyMessage(player, Component.text("Insufficient Permissions!", NamedTextColor.RED));
+                            throw new ConditionFailedException();
+                        }
+                        return new PartyPlayerWrapper(partyPlayerPair);
+                    }
+                    throw new ConditionFailedException("You must be in a party to use this command!");
                 }
-                return new PartyPlayerWrapper(partyPlayerPair);
-            }
-            throw new ConditionFailedException("You must be in a party to use this command!");
-        });
+        );
         manager.getCommandContexts().registerIssuerOnlyContext(GuildPlayerWrapper.class, command -> {
-            Player player = command.getPlayer();
-            Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(player);
-            if (guildPlayerPair != null) {
-                if (command.hasFlag("master") && !guildPlayerPair.getA().getCurrentMaster().equals(player.getUniqueId())) {
-                    Guild.sendGuildMessage(player, Component.text("Insufficient Permissions!", NamedTextColor.RED));
-                    throw new ConditionFailedException();
+                    Player player = command.getPlayer();
+                    Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(player);
+                    if (guildPlayerPair != null) {
+                        if (command.hasFlag("master") && !guildPlayerPair.getA().getCurrentMaster().equals(player.getUniqueId())) {
+                            Guild.sendGuildMessage(player, Component.text("Insufficient Permissions!", NamedTextColor.RED));
+                            throw new ConditionFailedException();
+                        }
+                        return new GuildPlayerWrapper(guildPlayerPair);
+                    }
+                    throw new ConditionFailedException("You must be in a guild to use this command!");
                 }
-                return new GuildPlayerWrapper(guildPlayerPair);
-            }
-            throw new ConditionFailedException("You must be in a guild to use this command!");
-        });
+        );
         //Contexts
         manager.getCommandContexts().registerContext(WarlordsNPC.class, command -> {
-            String target = command.popFirstArg();
-            Optional<WarlordsNPC> optionalWarlordsNPC = Warlords.getPlayers().values()
-                                                                .stream()
-                                                                .filter(WarlordsNPC.class::isInstance)
-                                                                .map(WarlordsNPC.class::cast)
-                                                                .filter(warlordsNPC -> warlordsNPC.getUuid().equals(UUID.fromString(target)))
-                                                                .findAny();
-            if (optionalWarlordsNPC.isEmpty()) {
-                throw new InvalidCommandArgument("Could not find WarlordsNPC with UUID " + target);
-            }
-            return optionalWarlordsNPC.get();
-        });
-        manager.getCommandContexts().registerContext(DatabasePlayerFuture.class, command -> {
-            String name = command.popFirstArg();
-            OfflinePlayer[] offlinePlayers = Bukkit.getOfflinePlayers();
-            return new DatabasePlayerFuture(CompletableFuture.supplyAsync(() -> {
-                for (OfflinePlayer offlinePlayer : offlinePlayers) {
-                    //~50ms
-                    if (offlinePlayer.getName() != null && offlinePlayer.getName().equalsIgnoreCase(name)) {
-                        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(offlinePlayer.getUniqueId());
-                        if (databasePlayer == null) {
-                            throw new ConditionFailedException("Could not find DatabasePlayer with UUID " + offlinePlayer.getUniqueId() + " (" + offlinePlayer.getName() + ")");
-                        }
-                        return databasePlayer;
+                    String target = command.popFirstArg();
+                    Optional<WarlordsNPC> optionalWarlordsNPC = Warlords.getPlayers().values()
+                                                                        .stream()
+                                                                        .filter(WarlordsNPC.class::isInstance)
+                                                                        .map(WarlordsNPC.class::cast)
+                                                                        .filter(warlordsNPC -> warlordsNPC.getUuid().equals(UUID.fromString(target)))
+                                                                        .findAny();
+                    if (optionalWarlordsNPC.isEmpty()) {
+                        throw new InvalidCommandArgument("Could not find WarlordsNPC with UUID " + target);
                     }
+                    return optionalWarlordsNPC.get();
                 }
-                throw new ConditionFailedException("Could not find player with name " + name);
-            }));
-        });
+        );
+        manager.getCommandContexts().registerContext(DatabasePlayerFuture.class, command -> {
+                    String name = command.popFirstArg();
+                    OfflinePlayer[] offlinePlayers = Bukkit.getOfflinePlayers();
+                    return new DatabasePlayerFuture(CompletableFuture.supplyAsync(() -> {
+                        for (OfflinePlayer offlinePlayer : offlinePlayers) {
+                            //~50ms
+                            if (offlinePlayer.getName() != null && offlinePlayer.getName().equalsIgnoreCase(name)) {
+                                Optional<DatabasePlayer> databasePlayer = DatabaseManager.playerService.findByUUID(offlinePlayer.getUniqueId());
+                                if (databasePlayer.isEmpty()) {
+                                    throw new ConditionFailedException("Could not find DatabasePlayer with UUID " + offlinePlayer.getUniqueId() + " (" + offlinePlayer.getName() + ")");
+                                }
+                                return databasePlayer.get();
+                            }
+                        }
+                        throw new ConditionFailedException("Could not find player with name " + name);
+                    }));
+                }
+        );
         manager.getCommandContexts().registerContext(UUID.class, command -> UUID.fromString(command.popFirstArg()));
         manager.getCommandContexts().registerContext(Boolean.class, command -> {
-            String arg = command.popFirstArg();
-            return arg.equalsIgnoreCase("true") || arg.equalsIgnoreCase("enable");
-        });
+                    String arg = command.popFirstArg();
+                    return arg.equalsIgnoreCase("true") || arg.equalsIgnoreCase("enable");
+                }
+        );
         manager.getCommandContexts().registerContext(PartyPlayer.class, command -> {
-            String arg = command.popFirstArg();
-            Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(command.getPlayer().getUniqueId());
-            if (partyPlayerPair == null) {
-                throw new ConditionFailedException("You must be in a party to use this command!");
-            }
-            for (PartyPlayer partyPlayer : partyPlayerPair.getA().getPartyPlayers()) {
-                if (Bukkit.getOfflinePlayer(partyPlayer.getUUID()).getName().equalsIgnoreCase(arg)) {
-                    return partyPlayer;
+                    String arg = command.popFirstArg();
+                    Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(command.getPlayer().getUniqueId());
+                    if (partyPlayerPair == null) {
+                        throw new ConditionFailedException("You must be in a party to use this command!");
+                    }
+                    for (PartyPlayer partyPlayer : partyPlayerPair.getA().getPartyPlayers()) {
+                        if (Bukkit.getOfflinePlayer(partyPlayer.getUUID()).getName().equalsIgnoreCase(arg)) {
+                            return partyPlayer;
+                        }
+                    }
+                    throw new InvalidCommandArgument("Could not find a player in your party with the name " + arg);
                 }
-            }
-            throw new InvalidCommandArgument("Could not find a player in your party with the name " + arg);
-        });
+        );
         manager.getCommandContexts().registerContext(GuildPlayer.class, command -> {
-            String arg = command.popFirstArg();
-            Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(command.getPlayer());
-            if (guildPlayerPair == null) {
-                throw new ConditionFailedException("You must be in a guild to use this command!");
-            }
-            for (GuildPlayer guildPlayer : guildPlayerPair.getA().getPlayers()) {
-                if (guildPlayer.getName().equalsIgnoreCase(arg)) {
-                    return guildPlayer;
+                    String arg = command.popFirstArg();
+                    Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(command.getPlayer());
+                    if (guildPlayerPair == null) {
+                        throw new ConditionFailedException("You must be in a guild to use this command!");
+                    }
+                    for (GuildPlayer guildPlayer : guildPlayerPair.getA().getPlayers()) {
+                        if (guildPlayer.getName().equalsIgnoreCase(arg)) {
+                            return guildPlayer;
+                        }
+                    }
+                    throw new InvalidCommandArgument("Could not find a player in your guild with the name " + arg);
                 }
-            }
-            throw new InvalidCommandArgument("Could not find a player in your guild with the name " + arg);
-        });
+        );
         manager.getCommandContexts().registerContext(AbstractPoll.class, command -> {
-            Optional<AbstractPoll<?>> optionalPoll = AbstractPoll.getPoll(command.popFirstArg());
-            if (optionalPoll.isEmpty()) {
-                throw new InvalidCommandArgument("Could not find a poll with that ID");
-            }
-            if (!optionalPoll.get().getUUIDsAllowedToVote().contains(command.getPlayer().getUniqueId())) {
-                throw new ConditionFailedException("You can't vote in this poll!");
-            }
-            return optionalPoll.get();
-        });
+                    Optional<AbstractPoll<?>> optionalPoll = AbstractPoll.getPoll(command.popFirstArg());
+                    if (optionalPoll.isEmpty()) {
+                        throw new InvalidCommandArgument("Could not find a poll with that ID");
+                    }
+                    if (!optionalPoll.get().getUUIDsAllowedToVote().contains(command.getPlayer().getUniqueId())) {
+                        throw new ConditionFailedException("You can't vote in this poll!");
+                    }
+                    return optionalPoll.get();
+                }
+        );
         manager.getCommandContexts().registerContext(Game.class, command -> {
-            String gameID = command.popFirstArg();
-            Optional<Game> game = Warlords.getGameManager()
-                                          .getGames()
-                                          .stream()
-                                          .map(GameManager.GameHolder::getGame)
-                                          .filter(Objects::nonNull)
-                                          .filter(gameHolderGame -> gameHolderGame.getGameId().toString().equalsIgnoreCase(gameID))
-                                          .findAny();
-            if (game.isPresent()) {
-                return game.get();
-            } else {
-                throw new InvalidCommandArgument("Could not find a game with that ID");
-            }
-        });
+                    String gameID = command.popFirstArg();
+                    Optional<Game> game = Warlords.getGameManager()
+                                                  .getGames()
+                                                  .stream()
+                                                  .map(GameManager.GameHolder::getGame)
+                                                  .filter(Objects::nonNull)
+                                                  .filter(gameHolderGame -> gameHolderGame.getGameId().toString().equalsIgnoreCase(gameID))
+                                                  .findAny();
+                    if (game.isPresent()) {
+                        return game.get();
+                    } else {
+                        throw new InvalidCommandArgument("Could not find a game with that ID");
+                    }
+                }
+        );
         manager.getCommandContexts().registerContext(Instant.class, command -> Instant.parse(command.popFirstArg()));
         manager.getCommandContexts().registerContext(Year.class, command -> Year.parse(command.popFirstArg()));
         manager.getCommandContexts().registerContext(NamedTextColor.class, command -> {
-            NamedTextColor namedTextColor = NamedTextColor.NAMES.value(command.popFirstArg().toLowerCase());
-            if (namedTextColor == null) {
-                throw new InvalidCommandArgument("Could not find a color with that name");
-            }
-            return namedTextColor;
-        });
-        manager.getCommandContexts().registerContext(GameMap.class, command -> {
-            String map = command.popFirstArg();
-            for (GameMap value : GameMap.VALUES) {
-                if (value.getMapName().replaceAll(" ", "_").equalsIgnoreCase(map)) {
-                    return value;
+                    NamedTextColor namedTextColor = NamedTextColor.NAMES.value(command.popFirstArg().toLowerCase());
+                    if (namedTextColor == null) {
+                        throw new InvalidCommandArgument("Could not find a color with that name");
+                    }
+                    return namedTextColor;
                 }
-            }
-            throw new InvalidCommandArgument("Could not find a game map with that name");
-        });
+        );
+        manager.getCommandContexts().registerContext(GameMap.class, command -> {
+                    String map = command.popFirstArg();
+                    for (GameMap value : GameMap.VALUES) {
+                        if (value.getMapName().replaceAll(" ", "_").equalsIgnoreCase(map)) {
+                            return value;
+                        }
+                    }
+                    throw new InvalidCommandArgument("Could not find a game map with that name");
+                }
+        );
     }
 
     public static void registerCompletions() {
         CommandCompletions<BukkitCommandCompletionContext> commandCompletions = manager.getCommandCompletions();
         commandCompletions.registerAsyncCompletion("warlordsplayerssamegame", command -> {
-            CommandSender sender = command.getSender();
-            if (sender instanceof Player player) {
-                WarlordsEntity warlordsEntity = Warlords.getPlayer(player);
-                if (warlordsEntity != null) {
-                    return warlordsEntity.getGame().warlordsPlayers().map(WarlordsEntity::getName).toList();
+                    CommandSender sender = command.getSender();
+                    if (sender instanceof Player player) {
+                        WarlordsEntity warlordsEntity = Warlords.getPlayer(player);
+                        if (warlordsEntity != null) {
+                            return warlordsEntity.getGame().warlordsPlayers().map(WarlordsEntity::getName).toList();
+                        }
+                    }
+                    return null;
                 }
-            }
-            return null;
-        });
+        );
         commandCompletions.registerAsyncCompletion("warlordsplayers", command ->
                 Warlords.getPlayers().values()
                         .stream()
@@ -327,11 +341,13 @@ public class CommandManager {
                 Arrays.stream(GameMap.VALUES)
                       .map(GameMap::getMapName)
                       .map(s -> s.replaceAll(" ", "_"))
-                      .toList());
+                      .toList()
+        );
         commandCompletions.registerAsyncCompletion("gamemodes", command ->
                 Arrays.stream(GameMode.VALUES)
                       .map(GameMode::name)
-                      .toList());
+                      .toList()
+        );
         commandCompletions.registerAsyncCompletion("gameids", command ->
                 Warlords.getGameManager().getGames()
                         .stream()
@@ -352,235 +368,255 @@ public class CommandManager {
         );
         commandCompletions.registerAsyncCompletion("chatchannels", command -> Arrays.asList("a", "all", "p", "party", "g", "guild"));
         commandCompletions.registerAsyncCompletion("partymembers", command -> {
-            CommandSender sender = command.getSender();
-            if (sender instanceof Player) {
-                return PartyManager.PARTIES.stream()
-                                           .filter(party -> party.hasUUID(((Player) sender).getUniqueId()))
-                                           .map(Party::getPartyPlayers)
-                                           .flatMap(Collection::stream)
-                                           .map(PartyPlayer::getUUID)
-                                           .map(uuid -> Bukkit.getOfflinePlayer(uuid).getName())
-                                           .toList();
-            }
-            return null;
-        });
+                    CommandSender sender = command.getSender();
+                    if (sender instanceof Player) {
+                        return PartyManager.PARTIES.stream()
+                                                   .filter(party -> party.hasUUID(((Player) sender).getUniqueId()))
+                                                   .map(Party::getPartyPlayers)
+                                                   .flatMap(Collection::stream)
+                                                   .map(PartyPlayer::getUUID)
+                                                   .map(uuid -> Bukkit.getOfflinePlayer(uuid).getName())
+                                                   .toList();
+                    }
+                    return null;
+                }
+        );
         commandCompletions.registerAsyncCompletion("guildmembers", command -> {
-            CommandSender sender = command.getSender();
-            if (sender instanceof Player) {
-                return GuildManager.GUILDS.stream()
-                                          .filter(guild -> guild.hasUUID(((Player) sender).getUniqueId()))
-                                          .map(Guild::getPlayers)
-                                          .flatMap(Collection::stream)
-                                          .map(GuildPlayer::getUUID)
-                                          .map(uuid -> Bukkit.getOfflinePlayer(uuid).getName())
-                                          .toList();
-            }
-            return null;
-        });
+                    CommandSender sender = command.getSender();
+                    if (sender instanceof Player) {
+                        return GuildManager.GUILDS.stream()
+                                                  .filter(guild -> guild.hasUUID(((Player) sender).getUniqueId()))
+                                                  .map(Guild::getPlayers)
+                                                  .flatMap(Collection::stream)
+                                                  .map(GuildPlayer::getUUID)
+                                                  .map(uuid -> Bukkit.getOfflinePlayer(uuid).getName())
+                                                  .toList();
+                    }
+                    return null;
+                }
+        );
         commandCompletions.registerAsyncCompletion("guildnames", command -> {
-            CommandSender sender = command.getSender();
-            if (sender instanceof Player) {
-                return GuildManager.GUILDS.stream()
-                                          .map(Guild::getName)
-                                          .toList();
-            }
-            return null;
-        });
+                    CommandSender sender = command.getSender();
+                    if (sender instanceof Player) {
+                        return GuildManager.GUILDS.stream()
+                                                  .map(Guild::getName)
+                                                  .toList();
+                    }
+                    return null;
+                }
+        );
         commandCompletions.registerAsyncCompletion("pvemobs", command -> Arrays.stream(Mob.values())
                                                                                .map(Mob::name)
-                                                                               .toList());
+                                                                               .toList()
+        );
         commandCompletions.registerAsyncCompletion("classesalias", command -> Classes.NAMES);
         commandCompletions.registerAsyncCompletion("specsalias", command -> Specializations.NAMES);
         commandCompletions.registerAsyncCompletion("textcolors", command -> NamedTextColor.NAMES.keys());
         commandCompletions.registerAsyncCompletion("floatmodifiabletype", command -> Arrays.stream(PrintFloatModifiableCommand.Type.VALUES)
                                                                                            .map(Enum::name)
-                                                                                           .toList());
+                                                                                           .toList()
+        );
     }
 
     public static void registerConditions() {
         manager.getCommandConditions().addCondition("database", command -> {
-            if (!DatabaseManager.enabled) {
-                throw new ConditionFailedException("The database is currently disabled!");
-            }
-            if (command.hasConfig("player") && DatabaseManager.playerService == null) {
-                throw new ConditionFailedException("Player database is currently disabled!");
-            }
-            if (command.hasConfig("game") && DatabaseManager.gameService == null) {
-                throw new ConditionFailedException("Games are currently disabled!");
-            }
-            if (command.hasConfig("guild") && DatabaseManager.guildService == null) {
-                throw new ConditionFailedException("Guilds are current disabled!");
-            }
-        });
+                    if (!DatabaseManager.enabled) {
+                        throw new ConditionFailedException("The database is currently disabled!");
+                    }
+                    if (command.hasConfig("player") && DatabaseManager.playerService == null) {
+                        throw new ConditionFailedException("Player database is currently disabled!");
+                    }
+                    if (command.hasConfig("game") && DatabaseManager.gameService == null) {
+                        throw new ConditionFailedException("Games are currently disabled!");
+                    }
+                    if (command.hasConfig("guild") && DatabaseManager.guildService == null) {
+                        throw new ConditionFailedException("Guilds are current disabled!");
+                    }
+                }
+        );
         manager.getCommandConditions().addCondition("bot", command -> {
-            if (BotManager.jda == null) {
-                throw new ConditionFailedException("The bot is not enabled!");
-            }
-        });
+                    if (BotManager.jda == null) {
+                        throw new ConditionFailedException("The bot is not enabled!");
+                    }
+                }
+        );
         manager.getCommandConditions().addCondition(Player.class, "requireWarlordsPlayer", (command, exec, player) -> requireWarlordsPlayer(player));
 
         manager.getCommandConditions().addCondition(Player.class, "requireGame", (command, exec, player) -> {
-            Optional<Game> game = Warlords.getGameManager().getPlayerGame(player.getUniqueId());
-            if (game.isEmpty()) {
-                BukkitCommandIssuer issuer = command.getIssuer();
-                if (issuer.isPlayer() && issuer.getPlayer().equals(player)) {
-                    throw new ConditionFailedException("You must be in an active game to use this command!");
-                } else {
-                    throw new ConditionFailedException("Target player must be in an active game to use this command!");
+                    Optional<Game> game = Warlords.getGameManager().getPlayerGame(player.getUniqueId());
+                    if (game.isEmpty()) {
+                        BukkitCommandIssuer issuer = command.getIssuer();
+                        if (issuer.isPlayer() && issuer.getPlayer().equals(player)) {
+                            throw new ConditionFailedException("You must be in an active game to use this command!");
+                        } else {
+                            throw new ConditionFailedException("Target player must be in an active game to use this command!");
+                        }
+                    }
+                    requireGameConfig(command, game.get());
                 }
-            }
-            requireGameConfig(command, game.get());
-        });
+        );
         manager.getCommandConditions().addCondition(WarlordsPlayer.class, "requireGame", (command, exec, warlordsPlayer) -> {
-            Game game = warlordsPlayer.getGame();
-            if (game == null) {
-                throw new ConditionFailedException("You must be in an active game to use this command!");
-            }
-            requireGameConfig(command, game);
-        });
+                    Game game = warlordsPlayer.getGame();
+                    if (game == null) {
+                        throw new ConditionFailedException("You must be in an active game to use this command!");
+                    }
+                    requireGameConfig(command, game);
+                }
+        );
         manager.getCommandConditions().addCondition(Game.class, "filter", (command, exec, game) -> {
-            requireGameConfig(command, game);
-        });
+                    requireGameConfig(command, game);
+                }
+        );
 
         manager.getCommandConditions().addCondition(Player.class, "outsideGame", (command, exec, player) -> {
-            if (Warlords.hasPlayer(player)) {
-                throw new ConditionFailedException("You cannot use this command while in an active game!");
-            }
-        });
+                    if (Warlords.hasPlayer(player)) {
+                        throw new ConditionFailedException("You cannot use this command while in an active game!");
+                    }
+                }
+        );
         manager.getCommandConditions().addCondition(Player.class, "party", (command, exec, player) -> {
-            Pair<Party, PartyPlayer> optionalParty = PartyManager.getPartyAndPartyPlayerFromAny(player.getUniqueId());
-            if (optionalParty == null && command.hasConfig("true")) {
-                throw new ConditionFailedException("You must be in a party to use this command!");
-            }
-            if (optionalParty != null && command.hasConfig("false")) {
-                throw new ConditionFailedException("You cannot be in a party to use this command!");
+                    Pair<Party, PartyPlayer> optionalParty = PartyManager.getPartyAndPartyPlayerFromAny(player.getUniqueId());
+                    if (optionalParty == null && command.hasConfig("true")) {
+                        throw new ConditionFailedException("You must be in a party to use this command!");
+                    }
+                    if (optionalParty != null && command.hasConfig("false")) {
+                        throw new ConditionFailedException("You cannot be in a party to use this command!");
 
-            }
-        });
+                    }
+                }
+        );
         manager.getCommandConditions().addCondition(Player.class, "guild", (command, exec, player) -> {
-            Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(player);
-            if (guildPlayerPair == null && command.hasConfig("true")) {
-                throw new ConditionFailedException("You must be in a guild to use this command!");
-            }
-            if (guildPlayerPair != null && command.hasConfig("false")) {
-                throw new ConditionFailedException("You cannot be in a guild to use this command!");
-            }
-        });
+                    Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(player);
+                    if (guildPlayerPair == null && command.hasConfig("true")) {
+                        throw new ConditionFailedException("You must be in a guild to use this command!");
+                    }
+                    if (guildPlayerPair != null && command.hasConfig("false")) {
+                        throw new ConditionFailedException("You cannot be in a guild to use this command!");
+                    }
+                }
+        );
         manager.getCommandConditions().addCondition(Player.class, "otherChatChannel", (command, exec, player) -> {
-            ChatChannels selectedChatChannel = ChatChannels.PLAYER_CHAT_CHANNELS.get(player.getUniqueId());
-            if (command.hasConfig("target")) {
-                ChatChannels currentChatChannel = ChatChannels.valueOf(command.getConfigValue("target", ""));
-                if (selectedChatChannel == currentChatChannel) {
-                    throw new ConditionFailedException("You are already in this channel");
+                    ChatChannels selectedChatChannel = ChatChannels.PLAYER_CHAT_CHANNELS.get(player.getUniqueId());
+                    if (command.hasConfig("target")) {
+                        ChatChannels currentChatChannel = ChatChannels.valueOf(command.getConfigValue("target", ""));
+                        if (selectedChatChannel == currentChatChannel) {
+                            throw new ConditionFailedException("You are already in this channel");
+                        }
+                    }
                 }
-            }
-        });
+        );
         manager.getCommandConditions().addCondition(Integer.class, "limits", (c, exec, value) -> {
-            if (value == null) {
-                return;
-            }
-            if (c.hasConfig("previousGames")) {
-                int size = DatabaseGameBase.previousGames.size();
-                if (size == 0) {
-                    throw new ConditionFailedException("No previous games found!");
-                }
-                if (value < 0 || value > size) {
-                    throw new ConditionFailedException("Game must be an index in the previous games list!");
-                }
-                return;
-            }
+                    if (value == null) {
+                        return;
+                    }
+                    if (c.hasConfig("previousGames")) {
+                        int size = DatabaseGameBase.previousGames.size();
+                        if (size == 0) {
+                            throw new ConditionFailedException("No previous games found!");
+                        }
+                        if (value < 0 || value > size) {
+                            throw new ConditionFailedException("Game must be an index in the previous games list!");
+                        }
+                        return;
+                    }
 
-            Integer min = c.getConfigValue("min", 0);
-            Integer max = c.getConfigValue("max", 3);
+                    Integer min = c.getConfigValue("min", 0);
+                    Integer max = c.getConfigValue("max", 3);
 
-            if (c.hasConfig("min") && min > value) {
-                throw new ConditionFailedException("Min value must be " + min);
-            }
-            if (c.hasConfig("max") && max < value) {
-                throw new ConditionFailedException("Max value must be " + max);
-            }
-        });
+                    if (c.hasConfig("min") && min > value) {
+                        throw new ConditionFailedException("Min value must be " + min);
+                    }
+                    if (c.hasConfig("max") && max < value) {
+                        throw new ConditionFailedException("Max value must be " + max);
+                    }
+                }
+        );
         manager.getCommandConditions().addCondition(Double.class, "limits", (c, exec, value) -> {
-            if (value == null) {
-                return;
-            }
-            if (c.hasConfig("previousGames")) {
-                int size = DatabaseGameBase.previousGames.size();
-                if (size == 0) {
-                    throw new ConditionFailedException("No previous games found!");
-                }
-                if (value < 0 || value > size) {
-                    throw new ConditionFailedException("Game must be an index in the previous games list!");
-                }
-                return;
-            }
+                    if (value == null) {
+                        return;
+                    }
+                    if (c.hasConfig("previousGames")) {
+                        int size = DatabaseGameBase.previousGames.size();
+                        if (size == 0) {
+                            throw new ConditionFailedException("No previous games found!");
+                        }
+                        if (value < 0 || value > size) {
+                            throw new ConditionFailedException("Game must be an index in the previous games list!");
+                        }
+                        return;
+                    }
 
-            double min = Double.parseDouble(c.getConfigValue("min", ""));
-            double max = Double.parseDouble(c.getConfigValue("max", ""));
+                    double min = Double.parseDouble(c.getConfigValue("min", ""));
+                    double max = Double.parseDouble(c.getConfigValue("max", ""));
 
-            if (c.hasConfig("min") && min > value) {
-                throw new ConditionFailedException("Min value must be " + min);
-            }
-            if (c.hasConfig("max") && max < value) {
-                throw new ConditionFailedException("Max value must be " + max);
-            }
-        });
+                    if (c.hasConfig("min") && min > value) {
+                        throw new ConditionFailedException("Min value must be " + min);
+                    }
+                    if (c.hasConfig("max") && max < value) {
+                        throw new ConditionFailedException("Max value must be " + max);
+                    }
+                }
+        );
         manager.getCommandConditions().addCondition(Float.class, "limits", (c, exec, value) -> {
-            if (value == null) {
-                return;
-            }
-            if (c.hasConfig("previousGames")) {
-                int size = DatabaseGameBase.previousGames.size();
-                if (size == 0) {
-                    throw new ConditionFailedException("No previous games found!");
-                }
-                if (value < 0 || value > size) {
-                    throw new ConditionFailedException("Game must be an index in the previous games list!");
-                }
-                return;
-            }
+                    if (value == null) {
+                        return;
+                    }
+                    if (c.hasConfig("previousGames")) {
+                        int size = DatabaseGameBase.previousGames.size();
+                        if (size == 0) {
+                            throw new ConditionFailedException("No previous games found!");
+                        }
+                        if (value < 0 || value > size) {
+                            throw new ConditionFailedException("Game must be an index in the previous games list!");
+                        }
+                        return;
+                    }
 
-            float min = Float.parseFloat(c.getConfigValue("min", ""));
-            float max = Float.parseFloat(c.getConfigValue("max", ""));
+                    float min = Float.parseFloat(c.getConfigValue("min", ""));
+                    float max = Float.parseFloat(c.getConfigValue("max", ""));
 
-            if (c.hasConfig("min") && min > value) {
-                throw new ConditionFailedException("Min value must be " + min);
-            }
-            if (c.hasConfig("max") && max < value) {
-                throw new ConditionFailedException("Max value must be " + max);
-            }
-        });
+                    if (c.hasConfig("min") && min > value) {
+                        throw new ConditionFailedException("Min value must be " + min);
+                    }
+                    if (c.hasConfig("max") && max < value) {
+                        throw new ConditionFailedException("Max value must be " + max);
+                    }
+                }
+        );
         manager.getCommandConditions().addCondition(PartyPlayer.class, "lowerRank", (command, exec, partyPlayer) -> {
-            Player player = command.getIssuer().getPlayer();
-            Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(player.getUniqueId());
-            if (partyPlayerPair == null) {
-                throw new ConditionFailedException("You must be in a party to use this command!");
-            }
-            if (partyPlayerPair.getB().getPartyPlayerType().ordinal() >= partyPlayer.getPartyPlayerType().ordinal()) {
-                Party.sendPartyMessage(player, Component.text("Insufficient Permissions!", NamedTextColor.RED));
-                throw new ConditionFailedException();
-            }
-        });
+                    Player player = command.getIssuer().getPlayer();
+                    Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(player.getUniqueId());
+                    if (partyPlayerPair == null) {
+                        throw new ConditionFailedException("You must be in a party to use this command!");
+                    }
+                    if (partyPlayerPair.getB().getPartyPlayerType().ordinal() >= partyPlayer.getPartyPlayerType().ordinal()) {
+                        Party.sendPartyMessage(player, Component.text("Insufficient Permissions!", NamedTextColor.RED));
+                        throw new ConditionFailedException();
+                    }
+                }
+        );
         manager.getCommandConditions().addCondition(GuildPlayer.class, "lowerRank", (command, exec, guildPlayer) -> {
-            Player player = command.getIssuer().getPlayer();
-            Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(player);
-            if (guildPlayerPair == null) {
-                throw new ConditionFailedException("You must be in a party to use this command!");
-            }
-            Guild guild = guildPlayerPair.getA();
-            if (guild.getRoleLevel(guildPlayerPair.getB()) >= guild.getRoleLevel(guildPlayer)) {
-                Guild.sendGuildMessage(player, Component.text("Insufficient Permissions!", NamedTextColor.RED));
-                throw new ConditionFailedException();
-            }
-        });
+                    Player player = command.getIssuer().getPlayer();
+                    Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(player);
+                    if (guildPlayerPair == null) {
+                        throw new ConditionFailedException("You must be in a party to use this command!");
+                    }
+                    Guild guild = guildPlayerPair.getA();
+                    if (guild.getRoleLevel(guildPlayerPair.getB()) >= guild.getRoleLevel(guildPlayer)) {
+                        Guild.sendGuildMessage(player, Component.text("Insufficient Permissions!", NamedTextColor.RED));
+                        throw new ConditionFailedException();
+                    }
+                }
+        );
         manager.getCommandConditions().addCondition(GuildPlayerWrapper.class, "requirePerm", (command, exec, guildPlayerWrapper) -> {
-            Player player = command.getIssuer().getPlayer();
-            GuildPermissions perm = GuildPermissions.valueOf(command.getConfigValue("perm", ""));
-            if (!guildPlayerWrapper.getGuild().playerHasPermission(guildPlayerWrapper.getGuildPlayer(), perm)) {
-                Guild.sendGuildMessage(player, Component.text("Insufficient Permissions!", NamedTextColor.RED));
-                throw new ConditionFailedException();
-            }
-        });
+                    Player player = command.getIssuer().getPlayer();
+                    GuildPermissions perm = GuildPermissions.valueOf(command.getConfigValue("perm", ""));
+                    if (!guildPlayerWrapper.getGuild().playerHasPermission(guildPlayerWrapper.getGuildPlayer(), perm)) {
+                        Guild.sendGuildMessage(player, Component.text("Insufficient Permissions!", NamedTextColor.RED));
+                        throw new ConditionFailedException();
+                    }
+                }
+        );
     }
 
     public static void registerCommands() {
@@ -794,4 +830,5 @@ public class CommandManager {
             throw new ConditionFailedException("This command requires a player!");
         }
     }
+
 }

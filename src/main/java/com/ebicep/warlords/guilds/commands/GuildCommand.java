@@ -7,6 +7,7 @@ import co.aikar.commands.HelpEntry;
 import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.guilds.GuildLeaderboardManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.timings.pojos.Timing;
 import com.ebicep.warlords.guilds.*;
 import com.ebicep.warlords.guilds.menu.GuildMenu;
@@ -38,31 +39,31 @@ public class GuildCommand extends BaseCommand {
     @Subcommand("create")
     @Description("Creates a guild")
     public void create(@Conditions("guild:false") Player player, String guildName) {
-        DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
-            if (!Guild.CAN_CREATE.test(databasePlayer)) {
-                player.sendMessage(Component.text("You need at least 500,000 coins and 10 Normal/Hard PvE wins to create a guild.", NamedTextColor.RED));
-                return;
-            }
-            if (guildName.length() > 15) {
-                Guild.sendGuildMessage(player, Component.text("Guild name cannot be longer than 15 characters.", NamedTextColor.RED));
-                return;
-            }
-            //check if name has special characters
-            if (!guildName.matches("[a-zA-Z0-9 ]+")) {
-                Guild.sendGuildMessage(player, Component.text("Guild name cannot contain special characters.", NamedTextColor.RED));
-                return;
-            }
-            if (GuildManager.existingGuildWithName(guildName)) {
-                Guild.sendGuildMessage(player, Component.text("A guild with that name already exists.", NamedTextColor.RED));
-                return;
-            }
-            databasePlayer.getPveStats().subtractCurrency(Currencies.COIN, Guild.CREATE_COIN_COST);
-            GuildManager.addGuild(new Guild(player, guildName));
-            Guild.sendGuildMessage(player, Component.textOfChildren(
-                    Component.text("You created guild ", NamedTextColor.RED),
-                    Component.text(guildName, NamedTextColor.GOLD)
-            ));
-        });
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+        if (!Guild.CAN_CREATE.test(databasePlayer)) {
+            player.sendMessage(Component.text("You need at least 500,000 coins and 10 Normal/Hard PvE wins to create a guild.", NamedTextColor.RED));
+            return;
+        }
+        if (guildName.length() > 15) {
+            Guild.sendGuildMessage(player, Component.text("Guild name cannot be longer than 15 characters.", NamedTextColor.RED));
+            return;
+        }
+        //check if name has special characters
+        if (!guildName.matches("[a-zA-Z0-9 ]+")) {
+            Guild.sendGuildMessage(player, Component.text("Guild name cannot contain special characters.", NamedTextColor.RED));
+            return;
+        }
+        if (GuildManager.existingGuildWithName(guildName)) {
+            Guild.sendGuildMessage(player, Component.text("A guild with that name already exists.", NamedTextColor.RED));
+            return;
+        }
+        databasePlayer.getPveStats().subtractCurrency(Currencies.COIN, Guild.CREATE_COIN_COST);
+        GuildManager.addGuild(new Guild(player, guildName));
+        Guild.sendGuildMessage(player, Component.textOfChildren(
+                        Component.text("You created guild ", NamedTextColor.RED),
+                        Component.text(guildName, NamedTextColor.GOLD)
+                )
+        );
     }
 
     @Subcommand("join")
@@ -245,9 +246,10 @@ public class GuildCommand extends BaseCommand {
         }
         guild.unmutePlayer(guildPlayer, target);
         Guild.sendGuildMessage(player, Component.textOfChildren(
-                Component.text("Unmuted ", NamedTextColor.RED),
-                Component.text(target.getName(), NamedTextColor.AQUA)
-        ));
+                        Component.text("Unmuted ", NamedTextColor.RED),
+                        Component.text(target.getName(), NamedTextColor.AQUA)
+                )
+        );
     }
 
     @Subcommand("disband")
@@ -378,9 +380,10 @@ public class GuildCommand extends BaseCommand {
         GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
         if (guild.getRoles().get(guild.getRoles().size() - 1).getPlayers().contains(target.getUUID())) {
             Guild.sendGuildMessage(player, Component.textOfChildren(
-                    Component.text(target.getName(), NamedTextColor.AQUA),
-                    Component.text(" already has the lowest role!", NamedTextColor.RED)
-            ));
+                            Component.text(target.getName(), NamedTextColor.AQUA),
+                            Component.text(" already has the lowest role!", NamedTextColor.RED)
+                    )
+            );
             return;
         }
         guild.demote(guildPlayer, target);
@@ -486,11 +489,13 @@ public class GuildCommand extends BaseCommand {
                     Component.text("------------------------------------------", NamedTextColor.GREEN, TextDecoration.BOLD)
             );
             ChatUtils.sendCenteredMessage(onlinePlayer, Component.textOfChildren(
-                    Component.text(player.getName(), NamedTextColor.AQUA),
-                    Component.text(" created a guild party!", NamedTextColor.YELLOW)
-            ));
+                            Component.text(player.getName(), NamedTextColor.AQUA),
+                            Component.text(" created a guild party!", NamedTextColor.YELLOW)
+                    )
+            );
             ChatUtils.sendCenteredMessage(onlinePlayer, Component.text("Click here to join!", NamedTextColor.GOLD, TextDecoration.BOLD)
-                                                                 .clickEvent(ClickEvent.runCommand("/party join " + player.getName())));
+                                                                 .clickEvent(ClickEvent.runCommand("/party join " + player.getName()))
+            );
             ChatUtils.sendCenteredMessage(onlinePlayer,
                     Component.text("------------------------------------------", NamedTextColor.GREEN, TextDecoration.BOLD)
             );

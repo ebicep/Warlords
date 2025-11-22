@@ -59,27 +59,25 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
                 if (warlordsPlayer == null || !Objects.equals(warlordsPlayer.getGame(), game)) {
                     return;
                 }
-                DatabaseManager.getPlayer(warlordsPlayer.getUuid(), databasePlayer -> {
-                            WrapperPlayServerEntityMetadata entityMetadata = new WrapperPlayServerEntityMetadata(event.getPacket());
-                            int id = entityMetadata.getId();
-                            EntityData entityData = entityDataByID.get(id);
-                            if (entityData == null) {
-                                return;
-                            }
-                            CooldownDisplaySettings cooldownDisplaySettings = databasePlayer.getCooldownDisplaySettings();
-                            List<WrappedDataValue> packedItems = entityMetadata.getPackedItems();
-                            for (WrappedDataValue packedItem : packedItems) {
-                                if (packedItem.getIndex() == 12) {
-                                    if (entityData.entity instanceof TextDisplay) {
-                                        packedItem.setValue(new Vector3f(cooldownDisplaySettings.getTextScale()));
-                                    } else if (entityData.entity instanceof ItemDisplay) {
-                                        packedItem.setValue(new Vector3f(cooldownDisplaySettings.getItemScale(), cooldownDisplaySettings.getItemScale(), .1f));
-                                    }
-                                }
-                            }
-                            event.setPacket(entityMetadata.getHandle());
+                DatabasePlayer databasePlayer = DatabaseManager.getPlayer(warlordsPlayer.getUuid());
+                WrapperPlayServerEntityMetadata entityMetadata = new WrapperPlayServerEntityMetadata(event.getPacket());
+                int id = entityMetadata.getId();
+                EntityData entityData = entityDataByID.get(id);
+                if (entityData == null) {
+                    return;
+                }
+                CooldownDisplaySettings cooldownDisplaySettings = databasePlayer.getCooldownDisplaySettings();
+                List<WrappedDataValue> packedItems = entityMetadata.getPackedItems();
+                for (WrappedDataValue packedItem : packedItems) {
+                    if (packedItem.getIndex() == 12) {
+                        if (entityData.entity instanceof TextDisplay) {
+                            packedItem.setValue(new Vector3f(cooldownDisplaySettings.getTextScale()));
+                        } else if (entityData.entity instanceof ItemDisplay) {
+                            packedItem.setValue(new Vector3f(cooldownDisplaySettings.getItemScale(), cooldownDisplaySettings.getItemScale(), .1f));
                         }
-                );
+                    }
+                }
+                event.setPacket(entityMetadata.getHandle());
             }
         };
         PacketUtils.PROTOCOL_MANAGER.addPacketListener(packetListener);
@@ -158,25 +156,6 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
     }
 
     @Override
-    public void onPlayerQuit(Player player) {
-        WarlordsEntity warlordsEntity = Warlords.getPlayer(player);
-        if (warlordsEntity == null) {
-            return;
-        }
-        CooldownData cooldownData = playerSettings.remove(warlordsEntity);
-        if (cooldownData != null) {
-            cooldownData.cooldowns.cooldownEntities.forEach(cooldownEntities -> cooldownEntities.remove(entityDataByID));
-        }
-    }
-
-    @EventHandler(ignoreCancelled = true)
-    public void onWarlordsAbilityActivateEvent(WarlordsAbilityActivateEvent.Post event) {
-        if (event.getAbility() instanceof OrderOfEviscerateLike) {
-            refreshVisibility();
-        }
-    }
-
-    @Override
     public void onGameCleanup(@Nonnull Game game) {
         ChatUtils.MessageType.GAME.sendMessage("Cleaning up cooldown display entities");
         PacketUtils.PROTOCOL_MANAGER.removePacketListener(packetListener);
@@ -195,6 +174,25 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
     public void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
         if (player instanceof WarlordsPlayer) {
             playerSettings.computeIfAbsent(player, k -> new CooldownData());
+        }
+    }
+
+    @Override
+    public void onPlayerQuit(Player player) {
+        WarlordsEntity warlordsEntity = Warlords.getPlayer(player);
+        if (warlordsEntity == null) {
+            return;
+        }
+        CooldownData cooldownData = playerSettings.remove(warlordsEntity);
+        if (cooldownData != null) {
+            cooldownData.cooldowns.cooldownEntities.forEach(cooldownEntities -> cooldownEntities.remove(entityDataByID));
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onWarlordsAbilityActivateEvent(WarlordsAbilityActivateEvent.Post event) {
+        if (event.getAbility() instanceof OrderOfEviscerateLike) {
+            refreshVisibility();
         }
     }
 

@@ -862,12 +862,13 @@ public class DamageInstanceProcessor {
                 break;
             }
         }
+        List<CustomInstanceFlags> newCustomFlags = new ArrayList<>(customFlags);
         if (flag != null) {
             flag.shields().add(shield);
         } else {
             List<Shield> shieldList = new ArrayList<>(1);
             shieldList.add(shield);
-            customFlags.add(new CustomInstanceFlags.InstanceShieldsInstanceFlag(shieldList));
+            newCustomFlags.add(new CustomInstanceFlags.InstanceShieldsInstanceFlag(shieldList));
         }
 
         finalEvent = addDamageInstance(
@@ -876,7 +877,7 @@ public class DamageInstanceProcessor {
                         warlordsEntity, source, cause, newDamage, newDamage,
                         isCrit ? 100 : 0, 100, true,
                         InstanceFlags.TRUE_DAMAGE_IGNORE_CRIT,
-                        customFlags, debugMessages
+                        newCustomFlags, debugMessages
                 )
         ).orElse(null);
     }
@@ -911,7 +912,7 @@ public class DamageInstanceProcessor {
 
         switch (databasePlayer.getChatHealingMode()) {
             case ALL -> {
-                if (entity.isShowDebugMessage()) {
+                if (entity.isShowDebugMessages()) {
                     entity.sendMessage(message.hoverEvent(HoverEvent.showText(debugMessage.getDebugMessage())));
                 } else {
                     entity.sendMessage(message);
@@ -919,7 +920,7 @@ public class DamageInstanceProcessor {
             }
             case CRITS_ONLY -> {
                 if (isCrit) {
-                    if (entity.isShowDebugMessage()) {
+                    if (entity.isShowDebugMessages()) {
                         entity.sendMessage(message.hoverEvent(HoverEvent.showText(debugMessage.getDebugMessage())));
                     } else {
                         entity.sendMessage(message);

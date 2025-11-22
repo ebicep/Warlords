@@ -1,7 +1,7 @@
 package com.ebicep.warlords.pve.weapons;
 
+import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -68,7 +68,7 @@ public abstract class AbstractWeapon {
 
     public AbstractWeapon(UUID uuid) {
         generateStats();
-        this.specialization = Specializations.generateSpec(PlayerSettings.getPlayerSettings(uuid).getSelectedSpec());
+        this.specialization = Specializations.generateSpec(DatabaseManager.getPlayer(uuid).getLastSpec());
     }
 
     public abstract void generateStats();
@@ -82,10 +82,10 @@ public abstract class AbstractWeapon {
         player.getHealth().addAdditiveModifier("Weapon Health (Base)", getHealthBonus());
     }
 
+    public abstract float getHealthBonus();
+
     public void cleanup() {
     }
-
-    public abstract float getHealthBonus();
 
     public abstract WeaponsPvE getRarity();
 
@@ -98,6 +98,14 @@ public abstract class AbstractWeapon {
     public abstract float getCritChance();
 
     public abstract float getCritMultiplier();
+
+    public Component getHoverComponent(boolean enchantIfBound) {
+        return getName().hoverEvent(generateItemStack(enchantIfBound));
+    }
+
+    public Component getName() {
+        return Component.text(selectedWeaponSkin.getName() + " of the " + specialization.name, getTextColor());
+    }
 
     public ItemStack generateItemStack(boolean enchantIfBound) {
         ItemBuilder itemBuilder = new ItemBuilder(selectedWeaponSkin.getItem())
@@ -122,13 +130,7 @@ public abstract class AbstractWeapon {
                 .get();
     }
 
-    public Component getHoverComponent(boolean enchantIfBound) {
-        return getName().hoverEvent(generateItemStack(enchantIfBound));
-    }
-
-    public Component getName() {
-        return Component.text(selectedWeaponSkin.getName() + " of the " + specialization.name, getTextColor());
-    }
+    public abstract TextColor getTextColor();
 
     public abstract List<Component> getBaseStats();
 
@@ -137,8 +139,6 @@ public abstract class AbstractWeapon {
     public List<Component> getLoreAddons() {
         return new ArrayList<>();
     }
-
-    public abstract TextColor getTextColor();
 
     public ItemBuilder generateItemStackInLore(Component name) {
         List<Component> lore = new ArrayList<>();

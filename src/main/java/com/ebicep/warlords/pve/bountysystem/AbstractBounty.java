@@ -36,19 +36,23 @@ import static com.ebicep.warlords.pve.bountysystem.BountyUtils.BOUNTY_COLLECTION
 public abstract class AbstractBounty implements Listener, RewardSpendable, BountyCost {
 
     protected long value;
-    private boolean started = false;
-
     // values for bounties to know who the owner is for events
     @Transient
     protected DatabasePlayer databasePlayer;
     @Transient
     protected UUID uuid;
+    private boolean started = false;
 
     public void init(DatabasePlayer databasePlayer) {
         this.databasePlayer = databasePlayer;
         this.uuid = databasePlayer.getUuid();
         log("initializing bounty");
         this.register();
+    }
+
+    public void unregister() {
+        log("unregistering bounty");
+        HandlerList.unregisterAll(this);
     }
 
     protected void register() {
@@ -58,18 +62,13 @@ public abstract class AbstractBounty implements Listener, RewardSpendable, Bount
         log("done registering bounty");
     }
 
-    public void unregister() {
-        log("unregistering bounty");
-        HandlerList.unregisterAll(this);
+    private String getDebugInfo() {
+        String name = databasePlayer == null ? "null" : databasePlayer.getName();
+        return this.getClass().getSimpleName() + " for " + name + "(" + uuid + ")";
     }
 
     private void log(String message) {
         ChatUtils.MessageType.BOUNTIES.sendMessage(message + ": " + getDebugInfo());
-    }
-
-    private String getDebugInfo() {
-        String name = databasePlayer == null ? "null" : databasePlayer.getName();
-        return this.getClass().getSimpleName() + " for " + name + "(" + uuid + ")";
     }
 
     public ItemBuilder getItemWithProgress() {
@@ -207,14 +206,14 @@ public abstract class AbstractBounty implements Listener, RewardSpendable, Bount
             pveStats.getCompletedBounties().merge(getBounty(), 1L, Long::sum);
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer, collection);
         }
-        DatabaseManager.updatePlayer(databasePlayer.getUuid(), lifetimeDatabasePlayer -> {
-            DatabasePlayerPvE lifetimePveStats = lifetimeDatabasePlayer.getPveStats();
-            lifetimePveStats.getBountyRewards().add(new BountyReward(getCurrencyReward(), getBounty()));
-            lifetimePveStats.getCompletedBounties().merge(getBounty(), 1L, Long::sum);
-            if (isEventBounty) {
-                eventMode.getCompletedBounties().merge(getBounty(), 1L, Long::sum);
-            }
-        });
+        DatabasePlayer lifetimeDatabasePlayer = DatabaseManager.getPlayer(databasePlayer.getUuid());
+        DatabasePlayerPvE lifetimePveStats = lifetimeDatabasePlayer.getPveStats();
+        lifetimePveStats.getBountyRewards().add(new BountyReward(getCurrencyReward(), getBounty()));
+        lifetimePveStats.getCompletedBounties().merge(getBounty(), 1L, Long::sum);
+        if (isEventBounty) {
+            eventMode.getCompletedBounties().merge(getBounty(), 1L, Long::sum);
+        }
+        DatabaseManager.queueUpdatePlayerAsync(lifetimeDatabasePlayer);
     }
 
     public abstract Bounty getBounty();

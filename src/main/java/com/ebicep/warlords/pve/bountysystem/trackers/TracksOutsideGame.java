@@ -29,9 +29,8 @@ public interface TracksOutsideGame {
             @EventHandler
             public void onDatabasePlayerFirstLoad(DatabasePlayerFirstLoadEvent event) {
                 for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
-                    DatabaseManager.getPlayer(event.getPlayer().getUniqueId(), activeCollection, databasePlayer -> {
-                        refreshTracker(databasePlayer, true);
-                    });
+                    DatabasePlayer databasePlayer = DatabaseManager.getPlayer(event.getPlayer(), activeCollection);
+                    refreshTracker(databasePlayer, true);
                 }
             }
 
@@ -63,7 +62,8 @@ public interface TracksOutsideGame {
 
             @EventHandler
             public void onPlayerQuit(PlayerQuitEvent event) {
-                DatabaseManager.getPlayer(event.getPlayer(), databasePlayer -> refreshTracker(databasePlayer, false));
+                DatabasePlayer databasePlayer = DatabaseManager.getPlayer(event.getPlayer());
+                refreshTracker(databasePlayer, false);
             }
 
             @EventHandler

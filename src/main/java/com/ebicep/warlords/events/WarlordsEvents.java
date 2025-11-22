@@ -14,6 +14,7 @@ import com.ebicep.warlords.database.leaderboards.guilds.GuildLeaderboardManager;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.general.FutureMessage;
 import com.ebicep.warlords.events.player.DatabasePlayerFirstLoadEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
@@ -81,20 +82,20 @@ public class WarlordsEvents implements Listener {
         }
         if (DatabaseManager.playerService == null && DatabaseManager.enabled) {
             event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, Component.text("Please wait!"));
-        } else {
-            if (!DatabaseManager.enabled) {
-                return;
-            }
-            UUID uuid = event.getUniqueId();
-            for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
-                DatabaseManager.loadPlayer(uuid, activeCollection, (databasePlayer) -> {
-                            if (databasePlayer.getName() == null || !Objects.equals(databasePlayer.getName(), event.getName())) {
-                                databasePlayer.setName(event.getName());
-                                DatabaseManager.queueUpdatePlayerAsync(databasePlayer, activeCollection);
-                            }
+            return;
+        }
+        if (!DatabaseManager.enabled) {
+            return;
+        }
+        UUID uuid = event.getUniqueId();
+        for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
+            DatabaseManager.loadPlayer(uuid, activeCollection, (databasePlayer) -> {
+                        if (databasePlayer.getName() == null || !Objects.equals(databasePlayer.getName(), event.getName())) {
+                            databasePlayer.setName(event.getName());
+                            DatabaseManager.queueUpdatePlayerAsync(databasePlayer, activeCollection);
                         }
-                );
-            }
+                    }
+            );
         }
     }
 
@@ -221,54 +222,50 @@ public class WarlordsEvents implements Listener {
             player.resetTitle();
             PlayerHotBarItemListener.giveLobbyHotBar(player, fromGame);
 
-            DatabaseManager.getPlayer(uuid, databasePlayer -> {
-                        if (fromGame) {
-                            ExperienceManager.checkForPrestige(player, uuid, databasePlayer);
-                        } else {
-                            databasePlayer.setLastLogin(Instant.now());
-                            HeadUtils.updateHead(player);
-                            //future messages
-                            Warlords.newChain()
-                                    .delay(20)
-                                    .async(() -> {
-                                        List<FutureMessage> futureMessages = databasePlayer.getFutureMessages();
-                                        if (!futureMessages.isEmpty()) {
-                                            futureMessages.forEach(futureMessage -> futureMessage.sendToPlayer(player));
-                                            futureMessages.clear();
-                                            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                                        }
-                                    }).execute();
-
-                            List<String> permissions = player.getEffectivePermissions()
-                                                             .stream()
-                                                             .map(PermissionAttachmentInfo::getPermission)
-                                                             .collect(Collectors.toList());
-                            permissions.remove("group.default");
-                            for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
-                                DatabaseManager.updatePlayer(uuid, activeCollection, dp -> dp.setPermissions(permissions));
+            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid);
+            if (fromGame) {
+                ExperienceManager.checkForPrestige(player, uuid, databasePlayer);
+            } else {
+                databasePlayer.setLastLogin(Instant.now());
+                HeadUtils.updateHead(player);
+                //future messages
+                Warlords.newChain()
+                        .delay(20)
+                        .async(() -> {
+                            List<FutureMessage> futureMessages = databasePlayer.getFutureMessages();
+                            if (!futureMessages.isEmpty()) {
+                                futureMessages.forEach(futureMessage -> futureMessage.sendToPlayer(player));
+                                futureMessages.clear();
+                                DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                             }
-                            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                            Bukkit.getPluginManager().callEvent(new DatabasePlayerFirstLoadEvent(player, databasePlayer));
-                        }
-                        CustomScoreboard.updateLobbyPlayerNames();
-                        ExperienceManager.giveExperienceBar(player);
-                        if (StatsLeaderboardManager.loaded) {
-                            new BukkitRunnable() {
-                                @Override
-                                public void run() {
-                                    StatsLeaderboardManager.setLeaderboardHologramVisibility(player);
-                                    EventsLeaderboardManager.resetVisibility(player);
-                                    GuildLeaderboardManager.resetVisibility(player);
-                                    DatabaseGameBase.setGameHologramVisibility(player);
-                                }
-                            }.runTaskLater(Warlords.getInstance(), 20);
-                        }
-                    }, () -> {
-                        if (!fromGame) {
-                            player.kick(Component.text("Unable to load player data. Report this if this issue persists.*"));
-                        }
+                        }).execute();
+
+                List<String> permissions = player.getEffectivePermissions()
+                                                 .stream()
+                                                 .map(PermissionAttachmentInfo::getPermission)
+                                                 .collect(Collectors.toList());
+                permissions.remove("group.default");
+                for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
+                    DatabasePlayer dbPlayer = DatabaseManager.getPlayer(uuid, activeCollection);
+                    dbPlayer.setPermissions(permissions);
+                    DatabaseManager.queueUpdatePlayerAsync(dbPlayer, activeCollection);
+                }
+                DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                Bukkit.getPluginManager().callEvent(new DatabasePlayerFirstLoadEvent(player, databasePlayer));
+            }
+            CustomScoreboard.updateLobbyPlayerNames();
+            ExperienceManager.giveExperienceBar(player);
+            if (StatsLeaderboardManager.loaded) {
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        StatsLeaderboardManager.setLeaderboardHologramVisibility(player);
+                        EventsLeaderboardManager.resetVisibility(player);
+                        GuildLeaderboardManager.resetVisibility(player);
+                        DatabaseGameBase.setGameHologramVisibility(player);
                     }
-            );
+                }.runTaskLater(Warlords.getInstance(), 20);
+            }
             CustomScoreboard.getPlayerScoreboard(player).giveMainLobbyScoreboard();
         }
 
@@ -447,19 +444,19 @@ public class WarlordsEvents implements Listener {
                         player.playSound(player.getLocation(), Sound.BLOCK_SNOW_BREAK, 500, 2);
                         ((WarlordsPlayer) wp).getAbilityTree().openAbilityTree();
                     }
-                    default -> DatabaseManager.getPlayer(wp.getUuid(), databasePlayer -> {
-                                if (heldItemSlot == 0 || databasePlayer.getHotkeyMode() == HotkeyMode.CLASSIC_MODE) {
-                                    if (heldItemSlot == 8 && wp instanceof WarlordsPlayer warlordsPlayer) {
-                                        AbstractWeapon weapon = warlordsPlayer.getWeapon();
-                                        if (weapon instanceof AbstractLegendaryWeapon) {
-                                            ((AbstractLegendaryWeapon) weapon).activateAbility(warlordsPlayer, player, false);
-                                        }
-                                    } else {
-                                        wp.getSpec().onRightClick(wp, player, heldItemSlot, false);
-                                    }
+                    default -> {
+                        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(wp.getUuid());
+                        if (heldItemSlot == 0 || databasePlayer.getHotkeyMode() == HotkeyMode.CLASSIC_MODE) {
+                            if (heldItemSlot == 8 && wp instanceof WarlordsPlayer warlordsPlayer) {
+                                AbstractWeapon weapon = warlordsPlayer.getWeapon();
+                                if (weapon instanceof AbstractLegendaryWeapon) {
+                                    ((AbstractLegendaryWeapon) weapon).activateAbility(warlordsPlayer, player, false);
                                 }
+                            } else {
+                                wp.getSpec().onRightClick(wp, player, heldItemSlot, false);
                             }
-                    );
+                        }
+                    }
                 }
             } else {
                 Warlords.getGameManager().getPlayerGame(player.getUniqueId())
@@ -490,19 +487,17 @@ public class WarlordsEvents implements Listener {
             return;
         }
         int heldItemSlot = player.getInventory().getHeldItemSlot();
-        DatabaseManager.getPlayer(wp.getUuid(), databasePlayer -> {
-                    if (heldItemSlot == 0 || databasePlayer.getHotkeyMode() == HotkeyMode.CLASSIC_MODE) {
-                        if (heldItemSlot == 8 && wp instanceof WarlordsPlayer warlordsPlayer) {
-                            AbstractWeapon weapon = warlordsPlayer.getWeapon();
-                            if (weapon instanceof AbstractLegendaryWeapon) {
-                                ((AbstractLegendaryWeapon) weapon).activateAbility(warlordsPlayer, player, false);
-                            }
-                        } else {
-                            wp.getSpec().onRightClick(wp, player, heldItemSlot, false);
-                        }
-                    }
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(wp.getUuid());
+        if (heldItemSlot == 0 || databasePlayer.getHotkeyMode() == HotkeyMode.CLASSIC_MODE) {
+            if (heldItemSlot == 8 && wp instanceof WarlordsPlayer warlordsPlayer) {
+                AbstractWeapon weapon = warlordsPlayer.getWeapon();
+                if (weapon instanceof AbstractLegendaryWeapon) {
+                    ((AbstractLegendaryWeapon) weapon).activateAbility(warlordsPlayer, player, false);
                 }
-        );
+            } else {
+                wp.getSpec().onRightClick(wp, player, heldItemSlot, false);
+            }
+        }
     }
 
     @EventHandler
@@ -531,23 +526,21 @@ public class WarlordsEvents implements Listener {
             return;
         }
         List<AbstractAbility> abilities = wp.getAbilities();
-        DatabaseManager.getPlayer(wp.getUuid(), databasePlayer -> {
-                    if (databasePlayer.getHotkeyMode() == HotkeyMode.NEW_MODE) {
-                        if (1 <= slot && slot <= 4 && slot < abilities.size()) {
-                            wp.getSpec().onRightClick(wp, player, slot, true);
-                        } else if (slot == 8 && wp instanceof WarlordsPlayer warlordsPlayer) {
-                            AbstractWeapon weapon = warlordsPlayer.getWeapon();
-                            if (weapon instanceof AbstractLegendaryWeapon) {
-                                AbstractAbility ability = ((AbstractLegendaryWeapon) weapon).getAbility();
-                                if (ability != null) {
-                                    ((AbstractLegendaryWeapon) weapon).activateAbility(warlordsPlayer, player, true);
-                                    e.setCancelled(true);
-                                }
-                            }
-                        }
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(wp.getUuid());
+        if (databasePlayer.getHotkeyMode() == HotkeyMode.NEW_MODE) {
+            if (1 <= slot && slot <= 4 && slot < abilities.size()) {
+                wp.getSpec().onRightClick(wp, player, slot, true);
+            } else if (slot == 8 && wp instanceof WarlordsPlayer warlordsPlayer) {
+                AbstractWeapon weapon = warlordsPlayer.getWeapon();
+                if (weapon instanceof AbstractLegendaryWeapon) {
+                    AbstractAbility ability = ((AbstractLegendaryWeapon) weapon).getAbility();
+                    if (ability != null) {
+                        ((AbstractLegendaryWeapon) weapon).activateAbility(warlordsPlayer, player, true);
+                        e.setCancelled(true);
                     }
                 }
-        );
+            }
+        }
     }
 
     @EventHandler

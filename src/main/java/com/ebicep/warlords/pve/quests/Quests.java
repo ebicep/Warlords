@@ -219,14 +219,12 @@ public enum Quests {
             if (quest.expireOn != null && quest.expireOn.isBefore(Instant.now())) {
                 continue;
             }
-            DatabaseManager.getPlayer(warlordsPlayer.getUuid(), quest.time, databasePlayer -> {
-                if (databasePlayer.getPveStats().getQuestsCompleted().containsKey(quest)) {
-                    return;
-                }
+            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(warlordsPlayer.getUuid(), quest.time);
+            if (!databasePlayer.getPveStats().getQuestsCompleted().containsKey(quest)) {
                 if (quest.checkReward(pveOption, warlordsPlayer, databasePlayer)) {
                     questsCompleted.add(quest);
                 }
-            });
+            }
         }
 
         CACHED_PLAYER_QUESTS.put(warlordsPlayer.getUuid(), questsCompleted);

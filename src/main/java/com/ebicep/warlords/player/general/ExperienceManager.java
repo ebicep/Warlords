@@ -83,7 +83,7 @@ public class ExperienceManager {
     }
 
     public static void awardWeeklyExperience(Document weeklyDocument) {
-        if (DatabaseManager.playerService == null) {
+        if (!DatabaseManager.enabled) {
             ChatUtils.MessageType.PLAYER_SERVICE.sendErrorMessage("WARNING - Could not give weekly experience bonus - playerService is null");
             return;
         }
@@ -130,7 +130,11 @@ public class ExperienceManager {
 
             Warlords.newChain()
                     .asyncFirst(() -> DatabaseManager.playerService.findByUUID(UUID.fromString(s)))
-                    .syncLast(databasePlayer -> {
+                    .syncLast(optionalDatabasePlayer -> {
+                        if (optionalDatabasePlayer.isEmpty()) {
+                            return;
+                        }
+                        DatabasePlayer databasePlayer = optionalDatabasePlayer.get();
                         databasePlayer.setExperience(databasePlayer.getExperience() + totalExperienceGain);
                         databasePlayer.addFutureMessage(FutureMessage.create(awardSummary.getMessages(), true));
                         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
@@ -269,20 +273,13 @@ public class ExperienceManager {
                 experienceSummary.getSpecExpGainSummary().put(specializations, specExpGain);
             }
 
-            DatabaseManager.getPlayer(warlordsPlayer.getUuid(),
-                    PlayersCollections.DAILY,
-                    databasePlayer -> {
-                        int plays = isCompGame ? databasePlayer.getCompStats().getPlays() : databasePlayer.getPubStats().getPlays();
-                        switch (plays) {
-                            case 0 -> universalExpGain.put("First Game of the Day", 500L / (isCompGame ? 1 : 10));
-                            case 1 -> universalExpGain.put("Second Game of the Day", 250L / (isCompGame ? 1 : 10));
-                            case 2 -> universalExpGain.put("Third Game of the Day", 100L / (isCompGame ? 1 : 10));
-                        }
-                    },
-                    () -> {
-                        ChatUtils.MessageType.WARLORDS.sendErrorMessage("ERROR: Could not find player: " + warlordsPlayer.getName() + " during experience calculation");
-                    }
-            );
+            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(warlordsPlayer.getUuid(), PlayersCollections.DAILY);
+            int plays = isCompGame ? databasePlayer.getCompStats().getPlays() : databasePlayer.getPubStats().getPlays();
+            switch (plays) {
+                case 0 -> universalExpGain.put("First Game of the Day", 500L / (isCompGame ? 1 : 10));
+                case 1 -> universalExpGain.put("Second Game of the Day", 250L / (isCompGame ? 1 : 10));
+                case 2 -> universalExpGain.put("Third Game of the Day", 100L / (isCompGame ? 1 : 10));
+            }
         }
 
         experienceSummary.getUniversalExpGainSummary().putAll(universalExpGain);
@@ -308,7 +305,8 @@ public class ExperienceManager {
 
     public static long getExperienceForClass(UUID uuid, Classes classes) {
         AtomicLong experience = new AtomicLong(0);
-        DatabaseManager.getPlayer(uuid, databasePlayer -> experience.set(databasePlayer.getStat(classes, Stats::getExperience, Long::sum, 0L)));
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid);
+        experience.set(databasePlayer.getStat(classes, Stats::getExperience, Long::sum, 0L));
         return experience.get();
     }
 
@@ -318,16 +316,13 @@ public class ExperienceManager {
 
     private static long getExperienceFromSpec(UUID uuid, Specializations specializations) {
         AtomicLong experience = new AtomicLong(0);
-        DatabaseManager.getPlayer(uuid, databasePlayer -> experience.set(databasePlayer.getSpec(specializations).getExperience()));
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid);
+        experience.set(databasePlayer.getSpec(specializations).getExperience());
         return experience.get();
     }
 
     public static int getLevelFromExp(long experience) {
         return (int) calculateLevelFromExp(experience);
-    }
-
-    public static String getLevelString(int level) {
-        return level < 10 ? "0" + level : String.valueOf(level);
     }
 
     public static Component getLevelStringBracket(int level) {
@@ -336,6 +331,10 @@ public class ExperienceManager {
                 Component.text("Lv" + getLevelString(level), NamedTextColor.GRAY),
                 Component.text("] ", NamedTextColor.DARK_GRAY)
         );
+    }
+
+    public static String getLevelString(int level) {
+        return level < 10 ? "0" + level : String.valueOf(level);
     }
 
     public static List<Component> getProgressString(long currentExperience, int nextLevel) {
@@ -388,13 +387,7 @@ public class ExperienceManager {
     }
 
     public static TextComponent getPrestigeLevelString(UUID uuid, Specializations spec) {
-        if (DatabaseManager.playerService == null) {
-            return Component.text("[-]", getPrestigeColor(0));
-        }
-        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
-        if (databasePlayer == null) {
-            return Component.text("[-]", getPrestigeColor(0));
-        }
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid);
         int prestigeLevel = databasePlayer.getSpec(spec).getPrestige();
         return Component.text("[", NamedTextColor.DARK_GRAY)
                         .append(Component.text(prestigeLevel, getPrestigeColor(prestigeLevel)))
@@ -424,11 +417,8 @@ public class ExperienceManager {
     }
 
     public static long getUniversalLevel(UUID uuid) {
-        if (DatabaseManager.playerService == null) {
-            return 0;
-        }
-        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
-        return databasePlayer == null ? 0L : databasePlayer.getExperience();
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid);
+        return databasePlayer.getExperience();
     }
 
     public static void giveLevelUpMessage(Player player, long expBefore, long expAfter) {

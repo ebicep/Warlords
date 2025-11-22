@@ -1,11 +1,11 @@
 package com.ebicep.warlords.party;
 
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.Classes;
-import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.SpecType;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
@@ -99,6 +99,7 @@ public class RegularGamesMenu {
         public void setSelectedSpec(Specializations selectedSpec) {
             this.selectedSpec = selectedSpec;
         }
+
     }
 
     public static class RegularGameTeam {
@@ -139,10 +140,9 @@ public class RegularGamesMenu {
                             UUID uuid = teamPlayer.getUuid();
                             Specializations spec = teamPlayer.getSelectedSpec();
                             OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
-                            PlayerSettings.getPlayerSettings(uuid).setSelectedSpec(spec);
-                            DatabaseManager.updatePlayer(uuid, databasePlayer -> {
-                                databasePlayer.setLastSpec(spec);
-                            });
+                            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid);
+                            databasePlayer.setLastSpec(spec);
+                            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                             if (offlinePlayer.getPlayer() != null) {
                                 offlinePlayer.getPlayer().sendMessage(Component.text("---------------------------------------", NamedTextColor.DARK_BLUE));
                                 offlinePlayer.getPlayer().sendMessage(Component.text("Your spec was automatically changed to ", NamedTextColor.GREEN)
@@ -189,23 +189,27 @@ public class RegularGamesMenu {
             //team wool surround
             for (int i = 0; i < 6; i++) {
                 menu.setItem(0, i, new ItemBuilder(team.getWool()).name(team.coloredPrefix()).get(), (m, e) -> {
-                });
+                        }
+                );
                 menu.setItem(8, i, new ItemBuilder(team.getWool()).name(team.coloredPrefix()).get(), (m, e) -> {
-                });
+                        }
+                );
             }
 
             //two columns of class icons
             for (int i = 0; i < Classes.VALUES.length; i++) {
                 Classes spec = Classes.VALUES[i];
                 menu.setItem(2 + i, 0, new ItemBuilder(spec.item).name(Component.text(spec.name, NamedTextColor.GREEN)).get(), (m, e) -> {
-                });
+                        }
+                );
             }
 
             //row of spec icons
             for (int i = 0; i < SpecType.VALUES.length; i++) {
                 SpecType specType = SpecType.VALUES[i];
                 menu.setItem(1, i + 1, new ItemBuilder(specType.itemStack).name(Component.text(specType.name, specType.getTextColor())).get(), (m, e) -> {
-                });
+                        }
+                );
             }
 
         }
@@ -424,6 +428,7 @@ public class RegularGamesMenu {
         public List<RegularGamePlayer> getTeamPlayers() {
             return teamPlayers;
         }
+
     }
 
 }

@@ -1,10 +1,10 @@
 package com.ebicep.warlords.game.option.pvp;
 
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.WeaponDisplayMarker;
-import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -50,7 +50,7 @@ public class ApplySpecBoostsOption implements Option {
                                     .anyMatch(uuid -> {
                                                 String uuidString = uuid.toString().replace("-", "");
                                                 List<String> permittedPlayers = specBoost.getPermittedPlayers();
-                                                return PlayerSettings.getPlayerSettings(uuid).getSelectedSpec() == specializations &&
+                                                return DatabaseManager.getPlayer(uuid).getLastSpec() == specializations &&
                                                         (!permittedPlayers.isEmpty() && !permittedPlayers.contains(uuidString) || specBoost.getBannedPlayers().contains(uuidString));
                                             }
                                     )
@@ -117,25 +117,23 @@ public class ApplySpecBoostsOption implements Option {
         if (random) {
             giveRandomBoost(warlordsPlayer, newSpec);
         } else {
-            DatabaseManager.getPlayer(wp.getUuid(), databasePlayer -> {
-                        List<SpecBoostManager.SpecBoost<?>> specBoosts = SpecBoostManager.getSpecBoosts(newSpec);
-                        if (specBoosts.isEmpty()) {
-                            return;
-                        }
-                        SpecBoostManager.SpecBoost<?> specBoost = specBoosts.get(databasePlayer.getSelectedSpecBoost(newSpec));
-                        if (specBoost.isDisabled()) {
-                            // find spec boost that is not disabled
-                            specBoost = specBoosts.stream()
-                                                  .filter(boost -> !boost.isDisabled())
-                                                  .findFirst()
-                                                  .orElse(null);
-                            if (specBoost == null) {
-                                return;
-                            }
-                        }
-                        applyBoost(warlordsPlayer, specBoost);
-                    }
-            );
+            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(wp.getUuid());
+            List<SpecBoostManager.SpecBoost<?>> specBoosts = SpecBoostManager.getSpecBoosts(newSpec);
+            if (specBoosts.isEmpty()) {
+                return;
+            }
+            SpecBoostManager.SpecBoost<?> specBoost = specBoosts.get(databasePlayer.getSelectedSpecBoost(newSpec));
+            if (specBoost.isDisabled()) {
+                // find spec boost that is not disabled
+                specBoost = specBoosts.stream()
+                                      .filter(boost -> !boost.isDisabled())
+                                      .findFirst()
+                                      .orElse(null);
+                if (specBoost == null) {
+                    return;
+                }
+            }
+            applyBoost(warlordsPlayer, specBoost);
         }
     }
 
@@ -153,24 +151,22 @@ public class ApplySpecBoostsOption implements Option {
         if (random) {
             giveRandomBoost(warlordsPlayer, newSpec);
         } else {
-            DatabaseManager.getPlayer(wp.getUuid(), databasePlayer -> {
-                        List<SpecBoostManager.SpecBoost<?>> specBoosts = SpecBoostManager.getSpecBoosts(newSpec);
-                        if (specBoosts.isEmpty()) {
-                            return;
-                        }
-                        SpecBoostManager.SpecBoost<?> specBoost = specBoosts.get(databasePlayer.getSelectedSpecBoost(newSpec));
-                        if (specBoost.isDisabled()) {
-                            specBoost = specBoosts.stream()
-                                                  .filter(boost -> !boost.isDisabled())
-                                                  .findFirst()
-                                                  .orElse(null);
-                            if (specBoost == null) {
-                                return;
-                            }
-                        }
-                        applyBoost(warlordsPlayer, specBoost);
-                    }
-            );
+            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(wp.getUuid());
+            List<SpecBoostManager.SpecBoost<?>> specBoosts = SpecBoostManager.getSpecBoosts(newSpec);
+            if (specBoosts.isEmpty()) {
+                return;
+            }
+            SpecBoostManager.SpecBoost<?> specBoost = specBoosts.get(databasePlayer.getSelectedSpecBoost(newSpec));
+            if (specBoost.isDisabled()) {
+                specBoost = specBoosts.stream()
+                                      .filter(boost -> !boost.isDisabled())
+                                      .findFirst()
+                                      .orElse(null);
+                if (specBoost == null) {
+                    return;
+                }
+            }
+            applyBoost(warlordsPlayer, specBoost);
         }
     }
 

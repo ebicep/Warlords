@@ -6,6 +6,7 @@ import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.HelpEntry;
 import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.game.GameManager;
 import com.ebicep.warlords.player.general.Specializations;
@@ -34,15 +35,14 @@ public class AdminCommand extends BaseCommand {
     @Subcommand("bypasscurrencies")
     @Description("Bypasses player pve currency costs - Prevents any from being added")
     public void bypassCurrencies(Player player) {
-        DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
-            if (BYPASSED_PLAYER_CURRENCIES.contains(databasePlayer.getPveStats())) {
-                BYPASSED_PLAYER_CURRENCIES.remove(databasePlayer.getPveStats());
-                ChatChannels.sendDebugMessage(player, Component.text("Disabled Bypassing Currencies", NamedTextColor.GREEN));
-            } else {
-                BYPASSED_PLAYER_CURRENCIES.add(databasePlayer.getPveStats());
-                ChatChannels.sendDebugMessage(player, Component.text("Enabled Bypassing Currencies", NamedTextColor.GREEN));
-            }
-        });
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+        if (BYPASSED_PLAYER_CURRENCIES.contains(databasePlayer.getPveStats())) {
+            BYPASSED_PLAYER_CURRENCIES.remove(databasePlayer.getPveStats());
+            ChatChannels.sendDebugMessage(player, Component.text("Disabled Bypassing Currencies", NamedTextColor.GREEN));
+        } else {
+            BYPASSED_PLAYER_CURRENCIES.add(databasePlayer.getPveStats());
+            ChatChannels.sendDebugMessage(player, Component.text("Enabled Bypassing Currencies", NamedTextColor.GREEN));
+        }
     }
 
     @Subcommand("disablegames")

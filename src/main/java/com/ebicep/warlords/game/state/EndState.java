@@ -79,10 +79,9 @@ public class EndState implements State, TimerDebugAble {
         ChatUtils.MessageType.GAME_DEBUG.sendMessage("Game " + game.getGameId() + " has ended");
         if (game.getGameMode() == com.ebicep.warlords.game.GameMode.TUTORIAL) {
             game.warlordsPlayers().forEach(warlordsPlayer -> {
-                DatabaseManager.updatePlayer(warlordsPlayer.getUuid(), databasePlayer -> {
-                            databasePlayer.getPveStats().setCompletedTutorial(true);
-                        }
-                );
+                DatabasePlayer databasePlayer = DatabaseManager.getPlayer(warlordsPlayer.getUuid());
+                databasePlayer.getPveStats().setCompletedTutorial(true);
+                DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
             });
             return;
         }
@@ -263,7 +262,7 @@ public class EndState implements State, TimerDebugAble {
 
         //EXPERIENCE
         ChatUtils.MessageType.WARLORDS.sendMessage("Game Added = " + gameAdded);
-        if (gameAdded.get() && DatabaseManager.playerService != null) {
+        if (gameAdded.get()) {
             sendGlobalMessage(game,
                     Component.text(" ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬", NamedTextColor.GREEN, TextDecoration.BOLD),
                     true
@@ -633,38 +632,36 @@ public class EndState implements State, TimerDebugAble {
                 for (AbstractWeapon weapon : weaponsFound) {
                     weaponsFoundByType.get(weapon.getRarity()).add(weapon);
                 }
-                DatabaseManager.getPlayer(wp.getUuid(), databasePlayer -> {
-                            List<AbstractWeapon> weaponInventory = databasePlayer.getPveStats().getWeaponInventory();
-                            weaponsFoundByType.forEach((rarity, weapons) -> {
-                                int amountFound = weapons.size();
-                                if (amountFound > 0) {
-                                    boolean autoSalvaged = weapons.stream().anyMatch(abstractWeapon -> !weaponInventory.contains(abstractWeapon));
-                                    TextComponent.Builder weaponTypeSummary = Component.empty().toBuilder();
-                                    for (int i = 0; i < weapons.size(); i++) {
-                                        AbstractWeapon weapon = weapons.get(i);
-                                        weaponTypeSummary.append(weapon.getName());
-                                        if (weapon instanceof WeaponScore) {
-                                            weaponTypeSummary.append(Component.text(" (" + NumberFormat.formatOptionalHundredths(((WeaponScore) weapon).getWeaponScore()) + ")",
-                                                    NamedTextColor.YELLOW
-                                            ));
-                                        }
-                                        if (!weaponInventory.contains(weapon)) {
-                                            weaponTypeSummary.append(Component.text(" (Auto Salvaged)", NamedTextColor.WHITE));
-                                        }
-                                        if (i != weapons.size() - 1) {
-                                            weaponTypeSummary.append(Component.newline());
-                                        }
-                                    }
-                                    ChatUtils.sendCenteredMessage(player,
-                                            Component.text(amountFound + " ", rarity.textColor)
-                                                     .append(Component.text(rarity.name + " Weapon" + (amountFound == 1 ? "" : "s")))
-                                                     .append(Component.text(autoSalvaged ? "*" : "", NamedTextColor.WHITE))
-                                                     .hoverEvent(HoverEvent.showText(weaponTypeSummary.build()))
-                                    );
-                                }
-                            });
+                DatabasePlayer databasePlayer = DatabaseManager.getPlayer(wp.getUuid());
+                List<AbstractWeapon> weaponInventory = databasePlayer.getPveStats().getWeaponInventory();
+                weaponsFoundByType.forEach((rarity, weapons) -> {
+                    int amountFound = weapons.size();
+                    if (amountFound > 0) {
+                        boolean autoSalvaged = weapons.stream().anyMatch(abstractWeapon -> !weaponInventory.contains(abstractWeapon));
+                        TextComponent.Builder weaponTypeSummary = Component.empty().toBuilder();
+                        for (int i = 0; i < weapons.size(); i++) {
+                            AbstractWeapon weapon = weapons.get(i);
+                            weaponTypeSummary.append(weapon.getName());
+                            if (weapon instanceof WeaponScore) {
+                                weaponTypeSummary.append(Component.text(" (" + NumberFormat.formatOptionalHundredths(((WeaponScore) weapon).getWeaponScore()) + ")",
+                                        NamedTextColor.YELLOW
+                                ));
+                            }
+                            if (!weaponInventory.contains(weapon)) {
+                                weaponTypeSummary.append(Component.text(" (Auto Salvaged)", NamedTextColor.WHITE));
+                            }
+                            if (i != weapons.size() - 1) {
+                                weaponTypeSummary.append(Component.newline());
+                            }
                         }
-                );
+                        ChatUtils.sendCenteredMessage(player,
+                                Component.text(amountFound + " ", rarity.textColor)
+                                         .append(Component.text(rarity.name + " Weapon" + (amountFound == 1 ? "" : "s")))
+                                         .append(Component.text(autoSalvaged ? "*" : "", NamedTextColor.WHITE))
+                                         .hoverEvent(HoverEvent.showText(weaponTypeSummary.build()))
+                        );
+                    }
+                });
             }
             long fragmentGain = playerPveRewards.getLegendFragmentGain();
             if (fragmentGain > 0) {
@@ -731,7 +728,7 @@ public class EndState implements State, TimerDebugAble {
                 if (!ascendantPouch.isEmpty()) {
                     ChatUtils.sendCenteredMessage(player,
                             Component.text("Ascendant Pouch", NamedTextColor.RED)
-                                    .hoverEvent(HoverEvent.showText(getPouchSummary(ascendantPouch)))
+                                     .hoverEvent(HoverEvent.showText(getPouchSummary(ascendantPouch)))
                     );
                 }
             }
