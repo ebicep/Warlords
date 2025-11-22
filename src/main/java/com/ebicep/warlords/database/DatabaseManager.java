@@ -161,7 +161,6 @@ public class DatabaseManager {
                 .execute();
     }
 
-
     public static void loadPlayer(UUID uuid, PlayersCollections collections, Consumer<DatabasePlayer> callback) {
         if (!enabled) {
             return;
@@ -210,34 +209,6 @@ public class DatabaseManager {
                 ChatUtils.MessageType.WARLORDS.sendErrorMessage("Failed to apply " + patch + " patch to " + uuid);
             }
         }
-
-//
-//        PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(uuid);
-//        databasePlayer.setLastSpec(databasePlayer.getLastSpec());
-//
-//        for (Classes classes : Classes.VALUES) {
-//            playerSettings.setHelmet(classes, databasePlayer.getClass(classes).getHelmet());
-//            playerSettings.setArmor(classes, databasePlayer.getClass(classes).getArmor());
-//        }
-//
-//        HashMap<Specializations, Weapons> weaponSkins = new HashMap<>();
-//        for (Specializations spec : Specializations.VALUES) {
-//            weaponSkins.put(spec, databasePlayer.getSpec(spec).getWeapon());
-//        }
-//        weaponSkins.values().removeAll(Collections.singleton(null));
-//        playerSettings.setWeaponSkins(weaponSkins);
-//
-//        HashMap<Specializations, SkillBoosts> classesSkillBoosts = new HashMap<>();
-//        for (Specializations spec : Specializations.VALUES) {
-//            classesSkillBoosts.put(spec, databasePlayer.getSpec(spec).getSkillBoost());
-//        }
-//        classesSkillBoosts.values().removeAll(Collections.singleton(null));
-//        classesSkillBoosts.forEach((specializations, skillBoosts) -> {
-//            if (!specializations.skillBoosts.contains(skillBoosts)) {
-//                classesSkillBoosts.put(specializations, specializations.skillBoosts.get(0));
-//            }
-//        });
-//        playerSettings.setSpecsSkillBoosts(classesSkillBoosts);
 
         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
     }

@@ -672,7 +672,7 @@ public class DatabasePlayer implements MultiStatsGeneral, TracksMultiAbilityStat
             public boolean run(UUID uuid, DatabasePlayer databasePlayer) {
                 List<WeeklyBlessings> weeklyBlessings = WeeklyBlessings.allWeeklyBlessings;
                 if (weeklyBlessings.isEmpty()) {
-                    return false;
+                    return true;
                 }
                 DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
 
