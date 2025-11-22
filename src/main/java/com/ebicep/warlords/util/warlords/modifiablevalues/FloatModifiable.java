@@ -364,11 +364,11 @@ public class FloatModifiable {
             components.addAll(getDebugInfo(additiveModifiers));
         }
         if (!multiplicativeModifiersAdditive.isEmpty()) {
-            components.add(getDebugInfo("Multiplicative Additive", base.getCachedMultiplicativeModifierAdditive()));
+            components.add(getDebugInfo("Additive Multiplier", base.getCachedMultiplicativeModifierAdditive()));
             components.addAll(getDebugInfo(multiplicativeModifiersAdditive));
         }
         if (!multiplicativeModifiersMultiplicative.isEmpty()) {
-            components.add(getDebugInfo("Multiplicative Multiplicative", base.getCachedMultiplicativeModifierMultiplicative()));
+            components.add(getDebugInfo("Multiplicative Multiplier", base.getCachedMultiplicativeModifierMultiplicative()));
             components.addAll(getDebugInfo(multiplicativeModifiersMultiplicative));
         }
         return components;
