@@ -413,6 +413,7 @@ public class Warlords extends JavaPlugin {
         multiverseCore = (MultiverseCore) Bukkit.getServer().getPluginManager().getPlugin("Multiverse-Core");
         citizensEnabled = Bukkit.getPluginManager().isPluginEnabled("Citizens");
         ChatUtils.MessageType.WARLORDS.sendMessage("citizensEnabled: " + citizensEnabled);
+        NPCManager.createNPCs();
         RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
         if (provider != null) {
             ChatUtils.MessageType.WARLORDS.sendMessage("Hooked into LuckPerms");

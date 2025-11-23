@@ -19,9 +19,9 @@ public class NPCCommand extends BaseCommand {
 
     private static final List<NPC> SPAWNED = new ArrayList<>();
 
-    @Subcommand("createdbnpcs")
+    @Subcommand("createnpcs")
     public void createDBNPCs(CommandIssuer commandIssuer) {
-        NPCManager.createDatabaseRequiredNPCs();
+        NPCManager.createNPCs();
     }
 
     @Subcommand("test")
