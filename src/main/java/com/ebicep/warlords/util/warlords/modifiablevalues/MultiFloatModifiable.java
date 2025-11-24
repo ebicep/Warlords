@@ -1,5 +1,6 @@
 package com.ebicep.warlords.util.warlords.modifiablevalues;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -12,6 +13,7 @@ public class MultiFloatModifiable implements Modifiable {
     );
     private final FloatModifiable baseModifiable;
     private final Map<ApplyFloatModifiable, Map<String, Float>> globalMarginalContributions = new HashMap<>();
+    private final Map<Consumer<FloatModifiable.FloatModifier>, FloatModifiable.ModifierType[]> onAddModifiers = new HashMap<>(2);
 
     public MultiFloatModifiable(FloatModifiable baseModifiable) {
         this.baseModifiable = baseModifiable;
@@ -68,6 +70,7 @@ public class MultiFloatModifiable implements Modifiable {
 
     @Override
     public void addModifierListener(Consumer<FloatModifiable.FloatModifier> consumer, FloatModifiable.ModifierType... modifierTypes) {
+        onAddModifiers.put(consumer, modifierTypes);
         for (FloatModifiable value : modifiables.values()) {
             value.addModifierListener(consumer, modifierTypes);
         }
@@ -75,6 +78,7 @@ public class MultiFloatModifiable implements Modifiable {
 
     @Override
     public void removeModifierListener(Consumer<FloatModifiable.FloatModifier> consumer, FloatModifiable.ModifierType... modifierTypes) {
+        onAddModifiers.remove(consumer);
         for (FloatModifiable value : modifiables.values()) {
             value.removeModifierListener(consumer, modifierTypes);
         }
@@ -166,15 +170,22 @@ public class MultiFloatModifiable implements Modifiable {
     ) {
         FloatModifiable floatModifiable = modifiables.computeIfAbsent(
                 new ApplyFloatModifiable(priority, applyType),
-                k -> new FloatModifiable(applyType == ApplyFloatModifiableType.MULTIPLICATIVE ? 1.0f : 0.0f)
+                k -> createNewFloatModifiable(applyType)
         );
         return floatModifiable.addModifier(type, log, value, ticksLeft, callback, override);
+    }
+
+    @Nonnull
+    private FloatModifiable createNewFloatModifiable(ApplyFloatModifiableType applyType) {
+        FloatModifiable fm = new FloatModifiable(applyType == ApplyFloatModifiableType.MULTIPLICATIVE ? 1.0f : 0.0f);
+        onAddModifiers.forEach(fm::addModifierListener);
+        return fm;
     }
 
     public FloatModifiable.FloatModifier addModifier(int priority, ApplyFloatModifiableType applyType, FloatModifiable.ModifierType type, String log, float value) {
         FloatModifiable floatModifiable = modifiables.computeIfAbsent(
                 new ApplyFloatModifiable(priority, applyType),
-                k -> new FloatModifiable(applyType == ApplyFloatModifiableType.MULTIPLICATIVE ? 1.0f : 0.0f)
+                k -> createNewFloatModifiable(applyType)
         );
         return floatModifiable.addModifier(type, log, value);
     }
@@ -182,7 +193,7 @@ public class MultiFloatModifiable implements Modifiable {
     public FloatModifiable.FloatModifier addModifier(int priority, ApplyFloatModifiableType applyType, FloatModifiable.ModifierType type, String log, float value, int ticksLeft) {
         FloatModifiable floatModifiable = modifiables.computeIfAbsent(
                 new ApplyFloatModifiable(priority, applyType),
-                k -> new FloatModifiable(applyType == ApplyFloatModifiableType.MULTIPLICATIVE ? 1.0f : 0.0f)
+                k -> createNewFloatModifiable(applyType)
         );
         return floatModifiable.addModifier(type, log, value, ticksLeft);
     }
@@ -197,7 +208,7 @@ public class MultiFloatModifiable implements Modifiable {
     ) {
         FloatModifiable floatModifiable = modifiables.computeIfAbsent(
                 new ApplyFloatModifiable(priority, applyType),
-                k -> new FloatModifiable(applyType == ApplyFloatModifiableType.MULTIPLICATIVE ? 1.0f : 0.0f)
+                k -> createNewFloatModifiable(applyType)
         );
         return floatModifiable.addModifier(type, log, value, callback);
     }

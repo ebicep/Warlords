@@ -147,6 +147,7 @@ public class DamageInstanceProcessor {
         }
 
         applyFlagMultiplier();
+        debugMessage.appendTitle("Modify Damage", NamedTextColor.AQUA);
         applyBeforeInterveneModifiers();
 
         if (handleIntervene()) {
@@ -407,8 +408,6 @@ public class DamageInstanceProcessor {
     }
 
     private void applyBeforeInterveneModifiers() {
-        debugMessage.appendTitle("Before Intervene", NamedTextColor.AQUA);
-
         if (trueDamage) {
             damageValue.addModifierListener(
                     InstanceFlags.TRUE_DAMAGE.createDisabledReason(),
@@ -423,7 +422,7 @@ public class DamageInstanceProcessor {
             togglePositiveBoosts(InstanceFlags.IGNORE_TARGET_DAMAGE_BOOST, true);
         }
         damageValue.addModifierListener(
-                InstanceManager.TARGET_LABEL,
+                InstanceManager.TARGET_LABEL_BI,
                 FloatModifiable.ModifierType.OVERRIDING,
                 FloatModifiable.ModifierType.ADDITIVE,
                 FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
@@ -433,7 +432,7 @@ public class DamageInstanceProcessor {
             abstractCooldown.applyModifiers(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, m -> m.apply(event, damageValue));
         }
         damageValue.removeModifierListener(
-                InstanceManager.TARGET_LABEL,
+                InstanceManager.TARGET_LABEL_BI,
                 FloatModifiable.ModifierType.OVERRIDING,
                 FloatModifiable.ModifierType.ADDITIVE,
                 FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
@@ -450,7 +449,7 @@ public class DamageInstanceProcessor {
             togglePositiveBoosts(InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST, true);
         }
         damageValue.addModifierListener(
-                InstanceManager.SOURCE_LABEL,
+                InstanceManager.SOURCE_LABEL_BI,
                 FloatModifiable.ModifierType.OVERRIDING,
                 FloatModifiable.ModifierType.ADDITIVE,
                 FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
@@ -460,7 +459,7 @@ public class DamageInstanceProcessor {
             abstractCooldown.applyModifiers(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, m -> m.apply(event, damageValue));
         }
         damageValue.removeModifierListener(
-                InstanceManager.SOURCE_LABEL,
+                InstanceManager.SOURCE_LABEL_BI,
                 FloatModifiable.ModifierType.OVERRIDING,
                 FloatModifiable.ModifierType.ADDITIVE,
                 FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
@@ -471,18 +470,6 @@ public class DamageInstanceProcessor {
         }
 
         damageValue.refresh();
-        if (damageHealValueBeforeAllReduction != damageValue.getCalculatedValue()) {
-            debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                    .create(1)
-                    .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.LIGHT_PURPLE))
-                    .value(damageValue));
-        } else {
-            debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                    .create(1)
-                    .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.LIGHT_PURPLE))
-                    .value(ComponentBuilder.create("No Change", NamedTextColor.WHITE)));
-        }
-
         damageHealValueBeforeInterveneReduction = damageValue.getCalculatedValue();
     }
 
@@ -592,97 +579,70 @@ public class DamageInstanceProcessor {
         playInterveneEffects(intervenedBy, calculatedDamageValue);
     }
 
-    private void applyFinalDamage() {
-        debugMessage.appendTitle("Modify Damage After All", NamedTextColor.AQUA);
-
+    private void applyAfterInterveneModifiers() {
+        if (trueDamage) {
+            damageValue.addModifierListener(
+                    InstanceFlags.TRUE_DAMAGE.createDisabledReason(),
+                    FloatModifiable.ModifierType.ADDITIVE, FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
+            );
+        }
+        // target / self modifiers
+        if (ignoreDamageReduction) {
+            toggleNegativeBoosts(pierceDamage ? InstanceFlags.PIERCE : InstanceFlags.IGNORE_DAMAGE_REDUCTION_ONLY, true);
+        }
+        if (noTargetDamageBoost) {
+            togglePositiveBoosts(InstanceFlags.IGNORE_TARGET_DAMAGE_BOOST, true);
+        }
+        damageValue.addModifierListener(
+                InstanceManager.TARGET_LABEL_AI,
+                FloatModifiable.ModifierType.OVERRIDING,
+                FloatModifiable.ModifierType.ADDITIVE,
+                FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
+        );
         for (AbstractCooldown<?> abstractCooldown : targetCooldownsDistinct) {
-            abstractCooldown.applyModifiers(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_ALL_MODIFIERS, m -> m.apply(event, damageValue, isCrit));
+            abstractCooldown.applyModifiers(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, m -> m.apply(event, damageValue));
+        }
+        damageValue.removeModifierListener(
+                InstanceManager.TARGET_LABEL_AI,
+                FloatModifiable.ModifierType.OVERRIDING,
+                FloatModifiable.ModifierType.ADDITIVE,
+                FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
+        );
+        if (ignoreDamageReduction) {
+            toggleNegativeBoosts(pierceDamage ? InstanceFlags.PIERCE : InstanceFlags.IGNORE_DAMAGE_REDUCTION_ONLY, false);
+        }
+        if (noTargetDamageBoost) {
+            togglePositiveBoosts(InstanceFlags.IGNORE_TARGET_DAMAGE_BOOST, false);
+        }
+        // source / attacker modifiers
+        if (noSourceDamageBoost) {
+            togglePositiveBoosts(InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST, true);
+        }
+        damageValue.addModifierListener(
+                InstanceManager.SOURCE_LABEL_AI,
+                FloatModifiable.ModifierType.OVERRIDING,
+                FloatModifiable.ModifierType.ADDITIVE,
+                FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
+        );
+        for (AbstractCooldown<?> abstractCooldown : sourceCooldownsDistinct) {
+            abstractCooldown.applyModifiers(Modifier.MODIFY_OUTGOING_DAMAGE_AFTER_INTERVENE, m -> m.apply(event, damageValue));
+        }
+        damageValue.removeModifierListener(
+                InstanceManager.SOURCE_LABEL,
+                FloatModifiable.ModifierType.OVERRIDING,
+                FloatModifiable.ModifierType.ADDITIVE,
+                FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
+        );
+        if (noSourceDamageBoost) {
+            togglePositiveBoosts(InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST, false);
         }
 
         damageValue.refresh();
-        if (damageHealValueBeforeShieldReduction != damageValue.getCalculatedValue()) {
-            debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                    .create(1)
-                    .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.LIGHT_PURPLE))
-                    .value(damageValue));
-        } else {
-            debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                    .create(1)
-                    .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.LIGHT_PURPLE))
-                    .value(ComponentBuilder.create("No Change", NamedTextColor.WHITE)));
-        }
-
-        damageValue.callGlobalContributionCallbacks();
-
-        boolean debt = warlordsEntity.getCooldownManager().hasCooldownFromName("Spirits' Respite");
-        debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                .create(1)
-                .prefix(ComponentBuilder.create("Debt: ", NamedTextColor.LIGHT_PURPLE))
-                .value(ComponentBuilder.create("" + debt, NamedTextColor.GOLD))
-        );
-        warlordsEntity.getHitBy().put(source, 10);
-        warlordsEntity.cancelHealingPowerUp();
-
-        float finalDamageValue = damageValue.getCalculatedValue();
-        debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                .create(1)
-                .prefix(ComponentBuilder.create("Final Damage Value: ", NamedTextColor.LIGHT_PURPLE))
-                .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(finalDamageValue), NamedTextColor.GOLD))
-        );
-
-        updateAbilityPools(finalDamageValue);
-
-        applyOnDamageModifiers(finalDamageValue);
-
-        float cappedDamage = Math.min(finalDamageValue,
-                warlordsEntity.getCurrentHealth() - (flags.contains(InstanceFlags.CANT_KILL) ? 1 : 0)
-        );
-        debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                .create(1)
-                .prefix(ComponentBuilder.create("Capped Damage Value: ", NamedTextColor.LIGHT_PURPLE))
-                .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(cappedDamage), NamedTextColor.GOLD))
-        );
-
-        if (!flags.contains(InstanceFlags.NO_MESSAGE)) {
-            sendDamageMessage(finalDamageValue);
-        }
-
-        source.addDamage(cappedDamage, FlagHolder.isPlayerHolderFlag(warlordsEntity));
-        warlordsEntity.addDamageTaken(cappedDamage);
-        warlordsEntity.playHurtAnimation(source);
-        warlordsEntity.resetRegenTimer();
-        warlordsEntity.updateHealth();
-
-        if (source.isNoEnergyConsumption()) {
-            source.getRecordDamage().add(cappedDamage);
-        }
-
-        float newHealth = calculateNewHealth(debt, finalDamageValue);
-        debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                .create(1)
-                .prefix(ComponentBuilder.create("New Health: ", NamedTextColor.LIGHT_PURPLE))
-                .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(newHealth), NamedTextColor.GOLD))
-        );
-        warlordsEntity.setCurrentHealth(newHealth);
-
-        if (newHealth <= 0) {
-            handleDeath(finalDamageValue);
-        } else {
-            if (!flags.contains(InstanceFlags.NO_HIT_SOUND) && warlordsEntity != source && finalDamageValue != 0) {
-                warlordsEntity.playHitSound(source);
-            }
-        }
-
-        finalEvent = new WarlordsDamageHealingFinalEvent(
-                event, flags, warlordsEntity, source, ability, cause,
-                initialHealth, damageHealValueBeforeAllReduction,
-                damageHealValueBeforeInterveneReduction, damageHealValueBeforeShieldReduction,
-                finalDamageValue, calculatedCritChance, calculatedCritMultiplier,
-                isCrit, true, WarlordsDamageHealingFinalEvent.FinalEventFlag.REGULAR
-        );
-
-        warlordsEntity.getSecondStats().addDamageHealingEventAsSelf(finalEvent);
-        source.getSecondStats().addDamageHealingEventAsAttacker(finalEvent);
+        damageHealValueBeforeShieldReduction = damageValue.getCalculatedValue();
     }
 
     private void handleInterveneBreak(
@@ -920,84 +880,103 @@ public class DamageInstanceProcessor {
         }
     }
 
-    private void applyAfterInterveneModifiers() {
-        debugMessage.appendTitle("After Intervene", NamedTextColor.AQUA);
-
-        if (trueDamage) {
-            damageValue.addModifierListener(
-                    InstanceFlags.TRUE_DAMAGE.createDisabledReason(),
-                    FloatModifiable.ModifierType.ADDITIVE, FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
-            );
-        }
-        // target / self modifiers
-        if (ignoreDamageReduction) {
-            toggleNegativeBoosts(pierceDamage ? InstanceFlags.PIERCE : InstanceFlags.IGNORE_DAMAGE_REDUCTION_ONLY, true);
-        }
-        if (noTargetDamageBoost) {
-            togglePositiveBoosts(InstanceFlags.IGNORE_TARGET_DAMAGE_BOOST, true);
-        }
+    private void applyFinalDamage() {
         damageValue.addModifierListener(
-                InstanceManager.TARGET_LABEL,
+                InstanceManager.TARGET_LABEL_AA,
                 FloatModifiable.ModifierType.OVERRIDING,
                 FloatModifiable.ModifierType.ADDITIVE,
                 FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
                 FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
         );
         for (AbstractCooldown<?> abstractCooldown : targetCooldownsDistinct) {
-            abstractCooldown.applyModifiers(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, m -> m.apply(event, damageValue));
+            abstractCooldown.applyModifiers(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_ALL_MODIFIERS, m -> m.apply(event, damageValue, isCrit));
         }
         damageValue.removeModifierListener(
-                InstanceManager.TARGET_LABEL,
+                InstanceManager.TARGET_LABEL_AA,
                 FloatModifiable.ModifierType.OVERRIDING,
                 FloatModifiable.ModifierType.ADDITIVE,
                 FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
                 FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
         );
-        if (ignoreDamageReduction) {
-            toggleNegativeBoosts(pierceDamage ? InstanceFlags.PIERCE : InstanceFlags.IGNORE_DAMAGE_REDUCTION_ONLY, false);
-        }
-        if (noTargetDamageBoost) {
-            togglePositiveBoosts(InstanceFlags.IGNORE_TARGET_DAMAGE_BOOST, false);
-        }
-        // source / attacker modifiers
-        if (noSourceDamageBoost) {
-            togglePositiveBoosts(InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST, true);
-        }
-        damageValue.addModifierListener(
-                InstanceManager.SOURCE_LABEL,
-                FloatModifiable.ModifierType.OVERRIDING,
-                FloatModifiable.ModifierType.ADDITIVE,
-                FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
-                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
-        );
-        for (AbstractCooldown<?> abstractCooldown : sourceCooldownsDistinct) {
-            abstractCooldown.applyModifiers(Modifier.MODIFY_OUTGOING_DAMAGE_AFTER_INTERVENE, m -> m.apply(event, damageValue));
-        }
-        damageValue.removeModifierListener(
-                InstanceManager.SOURCE_LABEL,
-                FloatModifiable.ModifierType.OVERRIDING,
-                FloatModifiable.ModifierType.ADDITIVE,
-                FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
-                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
-        );
-        if (noSourceDamageBoost) {
-            togglePositiveBoosts(InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST, false);
-        }
 
         damageValue.refresh();
-        if (damageHealValueBeforeInterveneReduction != damageValue.getCalculatedValue()) {
-            debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                    .create(1)
-                    .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.LIGHT_PURPLE))
-                    .value(damageValue));
-        } else {
-            debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                    .create(1)
-                    .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.LIGHT_PURPLE))
-                    .value(ComponentBuilder.create("No Change", NamedTextColor.WHITE)));
+        debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                .create(1)
+                .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.LIGHT_PURPLE))
+                .value(damageValue));
+        debugMessage.appendTitle("Final", NamedTextColor.AQUA);
+
+        damageValue.callGlobalContributionCallbacks();
+
+        boolean debt = warlordsEntity.getCooldownManager().hasCooldownFromName("Spirits' Respite");
+        debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                .create(1)
+                .prefix(ComponentBuilder.create("Debt: ", NamedTextColor.LIGHT_PURPLE))
+                .value(ComponentBuilder.create("" + debt, NamedTextColor.GOLD))
+        );
+        warlordsEntity.getHitBy().put(source, 10);
+        warlordsEntity.cancelHealingPowerUp();
+
+        float finalDamageValue = damageValue.getCalculatedValue();
+        debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                .create(1)
+                .prefix(ComponentBuilder.create("Final Damage Value: ", NamedTextColor.LIGHT_PURPLE))
+                .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(finalDamageValue), NamedTextColor.GOLD))
+        );
+
+        updateAbilityPools(finalDamageValue);
+
+        applyOnDamageModifiers(finalDamageValue);
+
+        float cappedDamage = Math.min(finalDamageValue,
+                warlordsEntity.getCurrentHealth() - (flags.contains(InstanceFlags.CANT_KILL) ? 1 : 0)
+        );
+        debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                .create(1)
+                .prefix(ComponentBuilder.create("Capped Damage Value: ", NamedTextColor.LIGHT_PURPLE))
+                .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(cappedDamage), NamedTextColor.GOLD))
+        );
+
+        if (!flags.contains(InstanceFlags.NO_MESSAGE)) {
+            sendDamageMessage(finalDamageValue);
         }
 
-        damageHealValueBeforeShieldReduction = damageValue.getCalculatedValue();
+        source.addDamage(cappedDamage, FlagHolder.isPlayerHolderFlag(warlordsEntity));
+        warlordsEntity.addDamageTaken(cappedDamage);
+        warlordsEntity.playHurtAnimation(source);
+        warlordsEntity.resetRegenTimer();
+        warlordsEntity.updateHealth();
+
+        if (source.isNoEnergyConsumption()) {
+            source.getRecordDamage().add(cappedDamage);
+        }
+
+        float newHealth = calculateNewHealth(debt, finalDamageValue);
+        debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                .create(1)
+                .prefix(ComponentBuilder.create("New Health: ", NamedTextColor.LIGHT_PURPLE))
+                .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(newHealth), NamedTextColor.GOLD))
+        );
+        warlordsEntity.setCurrentHealth(newHealth);
+
+        if (newHealth <= 0) {
+            handleDeath(finalDamageValue);
+        } else {
+            if (!flags.contains(InstanceFlags.NO_HIT_SOUND) && warlordsEntity != source && finalDamageValue != 0) {
+                warlordsEntity.playHitSound(source);
+            }
+        }
+
+        finalEvent = new WarlordsDamageHealingFinalEvent(
+                event, flags, warlordsEntity, source, ability, cause,
+                initialHealth, damageHealValueBeforeAllReduction,
+                damageHealValueBeforeInterveneReduction, damageHealValueBeforeShieldReduction,
+                finalDamageValue, calculatedCritChance, calculatedCritMultiplier,
+                isCrit, true, WarlordsDamageHealingFinalEvent.FinalEventFlag.REGULAR
+        );
+
+        warlordsEntity.getSecondStats().addDamageHealingEventAsSelf(finalEvent);
+        source.getSecondStats().addDamageHealingEventAsAttacker(finalEvent);
     }
 
     private void handleActiveShield(Shield shield, RegularCooldown<Shield> cooldown) {

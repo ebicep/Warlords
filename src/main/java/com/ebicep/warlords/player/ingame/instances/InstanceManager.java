@@ -14,12 +14,22 @@ import java.util.function.Consumer;
 
 public class InstanceManager {
 
-    public static Consumer<FloatModifiable.FloatModifier> TARGET_LABEL = floatModifier -> floatModifier.setDebugPrefix(ComponentBuilder.create("(Target) ",
-            NamedTextColor.DARK_GREEN
-    ));
-    public static Consumer<FloatModifiable.FloatModifier> SOURCE_LABEL = floatModifier -> floatModifier.setDebugPrefix(ComponentBuilder.create("(Source) ",
-            NamedTextColor.DARK_RED
-    ));
+    public static Consumer<FloatModifiable.FloatModifier> TARGET_LABEL = floatModifier ->
+            floatModifier.setDebugPrefix(ComponentBuilder.create("(Target) ", NamedTextColor.DARK_GREEN));
+    public static Consumer<FloatModifiable.FloatModifier> SOURCE_LABEL = floatModifier ->
+            floatModifier.setDebugPrefix(ComponentBuilder.create("(Source) ", NamedTextColor.DARK_RED));
+    public static Consumer<FloatModifiable.FloatModifier> TARGET_LABEL_BI = floatModifier ->
+            floatModifier.setDebugPrefix(ComponentBuilder.create("(BI) ", NamedTextColor.AQUA).text("(Target) ", NamedTextColor.DARK_GREEN));
+    public static Consumer<FloatModifiable.FloatModifier> SOURCE_LABEL_BI = floatModifier ->
+            floatModifier.setDebugPrefix(ComponentBuilder.create("(BI) ", NamedTextColor.AQUA).text("(Source) ", NamedTextColor.DARK_RED));
+    public static Consumer<FloatModifiable.FloatModifier> TARGET_LABEL_AI = floatModifier ->
+            floatModifier.setDebugPrefix(ComponentBuilder.create("(AI) ", NamedTextColor.AQUA).text("(Target) ", NamedTextColor.DARK_GREEN));
+    public static Consumer<FloatModifiable.FloatModifier> SOURCE_LABEL_AI = floatModifier ->
+            floatModifier.setDebugPrefix(ComponentBuilder.create("(AI) ", NamedTextColor.AQUA).text("(Source) ", NamedTextColor.DARK_RED));
+    public static Consumer<FloatModifiable.FloatModifier> TARGET_LABEL_AA = floatModifier ->
+            floatModifier.setDebugPrefix(ComponentBuilder.create("(AA) ", NamedTextColor.AQUA).text("(Target) ", NamedTextColor.DARK_GREEN));
+    public static Consumer<FloatModifiable.FloatModifier> SOURCE_LABEL_AA = floatModifier ->
+            floatModifier.setDebugPrefix(ComponentBuilder.create("(AA) ", NamedTextColor.AQUA).text("(Source) ", NamedTextColor.DARK_RED));
 
     public static Optional<WarlordsDamageHealingFinalEvent> addDamageHealingInstance(WarlordsDamageHealingEvent event) {
         if (event.getWarlordsEntity().isDead()) {
