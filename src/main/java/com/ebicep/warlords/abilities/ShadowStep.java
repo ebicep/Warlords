@@ -16,6 +16,7 @@ import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -124,7 +125,7 @@ public class ShadowStep extends AbstractAbility implements
                 },
                 2
         ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
-                    currentDamageValue.addMultiplicativeModifierMult(name, .25f);
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, .25f);
                 }
         ));
         Set<WarlordsEntity> hit = new HashSet<>();
@@ -172,10 +173,14 @@ public class ShadowStep extends AbstractAbility implements
                     cooldownManager -> {},
                     5 * 20
             ).addModifier(Modifier.MODIFY_OUTGOING_CRIT_CHANCE, (event, currentCritChance) -> {
-                        currentCritChance.addMultiplicativeModifierMult("Shadow Dash CC", convertToMultiplicationDecimal(Math.min(2f * hit.size(), 20)));
+                currentCritChance.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                        "Shadow Dash CC", convertToMultiplicationDecimal(Math.min(2f * hit.size(), 20))
+                );
                     }
             ).addModifier(Modifier.MODIFY_OUTGOING_CRIT_MULTIPLIER, (event, currentCritMultiplier) -> {
-                currentCritMultiplier.addMultiplicativeModifierMult("Shadow Dash CC", convertToMultiplicationDecimal(Math.min(2f * hit.size(), 20)));
+                currentCritMultiplier.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                        "Shadow Dash CC", convertToMultiplicationDecimal(Math.min(2f * hit.size(), 20))
+                );
                     }
             ));
         }

@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.upgrades.mage.cryomancer;
 import com.ebicep.warlords.abilities.FreezingBreath;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.pve.upgrades.*;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import javax.annotation.Nullable;
 
@@ -51,8 +52,8 @@ public class FreezingBreathBranch extends AbstractUpgradeBranch<FreezingBreath> 
                 50000,
                 () -> {
                     Value.RangedValueCritable damage = ability.getDamageValues().getFreezingBreathDamage();
-                    damage.min().addMultiplicativeModifierAdd("Master Upgrade Branch", .5f);
-                    damage.max().addMultiplicativeModifierAdd("Master Upgrade Branch", .5f);
+                    damage.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Master Upgrade Branch", .5f);
+                    damage.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Master Upgrade Branch", .5f);
                     ability.setHitbox(ability.getHitbox() * 1.6f);
                     ability.setMaxAnimationTime(ability.getMaxAnimationTime() * 2);
                 }

@@ -10,6 +10,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.event.EventHandler;
 
 import java.util.List;
@@ -64,7 +65,7 @@ public class SovereignSolitude implements SpecBoostManager.SpecBoost<SovereignSo
                 crusadersStrike.setBlockedByArcaneShield(false);
             });
             warlordsPlayer.getAbilitiesMatching(HolyRadianceCrusader.class).forEach(holyRadiance -> {
-                holyRadiance.getCooldown().addAdditiveModifier("Spec Boost", -radianceCooldownReductionTicks / 20f);
+                holyRadiance.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", -radianceCooldownReductionTicks / 20f);
                 holyRadiance.setMarkSpeed(markedAllySpeedPercent);
             });
         }

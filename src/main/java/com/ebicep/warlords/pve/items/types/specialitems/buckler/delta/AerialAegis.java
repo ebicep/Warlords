@@ -10,6 +10,7 @@ import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 import com.ebicep.warlords.pve.items.types.specialitems.buckler.omega.CrescentBulwark;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -47,7 +48,7 @@ public class AerialAegis extends SpecialDeltaBuckler implements CraftsInto {
                 false
         ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                     if (!warlordsPlayer.getEntity().isOnGround()) {
-                        currentDamageValue.addMultiplicativeModifierMult(getName(), 0.8f);
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getName(), 0.8f);
                     }
                 }
         ));

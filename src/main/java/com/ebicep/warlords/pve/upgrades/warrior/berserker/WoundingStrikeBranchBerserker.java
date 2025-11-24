@@ -8,13 +8,6 @@ import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 public class WoundingStrikeBranchBerserker extends AbstractUpgradeBranch<WoundingStrikeBerserker> {
 
-    @Override
-    public void runOnce() {
-        Value.RangedValueCritable damage = ability.getDamageValues().getStrikeDamage();
-        damage.min().addMultiplicativeModifierAdd("PvE", .5f);
-        damage.max().addMultiplicativeModifierAdd("PvE", .5f);
-    }
-
     public WoundingStrikeBranchBerserker(AbilityTree abilityTree, WoundingStrikeBerserker ability) {
         super(abilityTree, ability);
 
@@ -37,7 +30,7 @@ public class WoundingStrikeBranchBerserker extends AbstractUpgradeBranch<Woundin
                     public void modifyFloatModifiable(FloatModifiable.FloatModifier modifier, float value) {
                         modifier.setModifier(value);
                     }
-                            }, ability.getWounding().addAdditiveModifier("Upgrade Branch", 0), 2f
+                            }, ability.getWounding().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Upgrade Branch", 0), 2f
                 )
                 .addTo(treeB);
 
@@ -53,10 +46,10 @@ public class WoundingStrikeBranchBerserker extends AbstractUpgradeBranch<Woundin
                         BLEED: Enemies afflicted take 100% more damage from Wounding Strike while Blood Lust is active. Bleeding enemies have their healing reduced by 80% and lose 0.5% of their max health per second.""",
                 50000,
                 () -> {
-                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -5);
+                    ability.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade Branch", -5);
                     Value.RangedValueCritable damage = ability.getDamageValues().getStrikeDamage();
-                    damage.min().addMultiplicativeModifierAdd("Master Upgrade Branch", .5f);
-                    damage.max().addMultiplicativeModifierAdd("Master Upgrade Branch", .5f);
+                    damage.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Master Upgrade Branch", .5f);
+                    damage.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Master Upgrade Branch", .5f);
                 }
         );
         masterUpgrade2 = new Upgrade(
@@ -69,12 +62,19 @@ public class WoundingStrikeBranchBerserker extends AbstractUpgradeBranch<Woundin
                         """,
                 50000,
                 () -> {
-                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -10);
+                    ability.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade Branch", -10);
                     abilityTree.getWarlordsPlayer().doOnStaticAbility(BloodLust.class, bloodLust -> {
                         bloodLust.setDamageConvertPercent(bloodLust.getDamageConvertPercent() - 25);
                     });
                 }
         );
 
+    }
+
+    @Override
+    public void runOnce() {
+        Value.RangedValueCritable damage = ability.getDamageValues().getStrikeDamage();
+        damage.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .5f);
+        damage.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .5f);
     }
 }

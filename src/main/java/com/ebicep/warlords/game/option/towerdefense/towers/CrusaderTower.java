@@ -113,8 +113,8 @@ public class CrusaderTower extends AbstractTower implements Upgradeable.Path2 {
                 abstractTower.getTowers(range)
                              .forEach(tower -> tower.getWarlordsTower()
                                                     .getAbilities()
-                                                    .forEach(ability -> ability.getCooldown().addMultiplicativeModifierAdd(
-                                                            abstractTower.getTowerRegistry().name,
+                                                    .forEach(ability -> ability.getCooldown().addModifier(
+                                                            FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, abstractTower.getTowerRegistry().name,
                                                             -buffValue.getCalculatedValue() / 100,
                                                             (int) (getCooldownValue() * 20) + 1
                                                     ))

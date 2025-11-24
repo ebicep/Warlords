@@ -55,9 +55,9 @@ public class TorrentialSoul implements SpecBoostManager.SpecBoost<TorrentialSoul
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
-            warlordsPlayer.getEnergy().addAdditiveModifier("Spec Boost", maxEnergyIncrease);
+            warlordsPlayer.getEnergy().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", maxEnergyIncrease);
             warlordsPlayer.getAbilitiesMatching(SoulSwitch.class).forEach(soulSwitch -> {
-                soulSwitch.getEnergyCost().addOverridingModifier("Spec Boost", 0);
+                soulSwitch.getEnergyCost().addModifier(FloatModifiable.ModifierType.OVERRIDING, "Spec Boost", 0);
             });
             warlordsPlayer.getAbilitiesMatching(OrderOfEviscerate.class).forEach(orderOfEviscerate -> {
                 orderOfEviscerate.setSpeedBuff(orderOfEviscerate.getSpeedBuff() + orderOfEviscerateSpeedIncreasePercent);
@@ -76,7 +76,7 @@ public class TorrentialSoul implements SpecBoostManager.SpecBoost<TorrentialSoul
             }
             FloatModifiable.FloatModifier modifier = warlordsEntity
                     .getEnergyPerSec()
-                    .addAdditiveModifier("Spec Boost", orderOfEviscerateEnergyPerSecond, regularCooldown.getStartingTicks());
+                    .addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", orderOfEviscerateEnergyPerSecond, regularCooldown.getStartingTicks());
             Consumer<CooldownManager> oldOnRemoveForce = cooldown.getOnRemoveForce();
             cooldown.setOnRemoveForce(cooldownManager -> {
                 oldOnRemoveForce.accept(cooldownManager);

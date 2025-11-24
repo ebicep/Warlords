@@ -102,7 +102,7 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
                     }
                     event.getFlags().add(InstanceFlags.STRIKE_IN_CONS);
                     addStrikesBoosted();
-                    currentDamageValue.addMultiplicativeModifierMult(name, convertToMultiplicationDecimal(strikeDamageBoost));
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, convertToMultiplicationDecimal(strikeDamageBoost));
                 }
         ));
 

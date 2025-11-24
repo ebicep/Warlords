@@ -18,6 +18,7 @@ import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
@@ -163,7 +164,9 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
         );
         orbsOfLifeCooldown.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     if (pveMasterUpgrade) {
-                        currentDamageValue.addMultiplicativeModifierMult(name, convertToMultiplicationDecimal(Math.min(30f, 1f * data.spawnedOrbs.size())));
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                                name, convertToMultiplicationDecimal(Math.min(30f, 1f * data.spawnedOrbs.size()))
+                        );
                     }
                 }
         );

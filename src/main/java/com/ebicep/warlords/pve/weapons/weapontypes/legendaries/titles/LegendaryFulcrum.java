@@ -13,6 +13,7 @@ import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCounter;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -141,7 +142,10 @@ public class LegendaryFulcrum extends AbstractLegendaryWeapon implements GardenO
                         e.getWarlordsEntity().getCooldownManager().queueUpdatePlayerNames();
                     }
             );
-            fulcrumCooldown.addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> energyGainPerTick.addAdditiveModifier(getTitleName(), EPS_BOOST / 20f));
+            fulcrumCooldown.addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> energyGainPerTick.addModifier(FloatModifiable.ModifierType.ADDITIVE,
+                            getTitleName(), EPS_BOOST / 20f
+                    )
+            );
                     player.getCooldownManager().addCooldown(fulcrumCooldown);
                 }
         ));

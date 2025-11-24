@@ -13,6 +13,7 @@ import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendary
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -178,14 +179,17 @@ public class LegendaryChaotic extends AbstractLegendaryWeapon implements Listene
                         if (!abilityNames.contains(e.getCause())) {
                             return;
                         }
-                        currentCritChance.addAdditiveModifier(getTitleName(), CRIT_CHANCE * stacks);
+                currentCritChance.addModifier(FloatModifiable.ModifierType.ADDITIVE, getTitleName(), CRIT_CHANCE * stacks);
                     }
             );
             cooldown.addModifier(Modifier.MODIFY_OUTGOING_CRIT_MULTIPLIER, (e, currentCritMultiplier) -> {
                         if (!abilityNames.contains(e.getCause())) {
                             return;
                         }
-                        currentCritMultiplier.addAdditiveModifier(getTitleName(), (CRIT_MULTIPLIER + CRIT_MULTIPLIER_PER_UPGRADE * getTitleLevel()) * stacks);
+                currentCritMultiplier.addModifier(FloatModifiable.ModifierType.ADDITIVE,
+                        getTitleName(),
+                        (CRIT_MULTIPLIER + CRIT_MULTIPLIER_PER_UPGRADE * getTitleLevel()) * stacks
+                );
                     }
             );
             warlordsPlayer.getCooldownManager().addCooldown(cooldown);

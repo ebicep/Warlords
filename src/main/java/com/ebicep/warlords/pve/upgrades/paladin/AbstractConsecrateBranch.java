@@ -6,6 +6,7 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 public abstract class AbstractConsecrateBranch<T extends AbstractConsecrate> extends AbstractUpgradeBranch<T> {
 
@@ -35,11 +36,11 @@ public abstract class AbstractConsecrateBranch<T extends AbstractConsecrate> ext
                 50000,
                 () -> {
                     Value.RangedValueCritable damage = ability.getConsecrateDamage();
-                    damage.min().addMultiplicativeModifierAdd("Master Upgrade Branch", 1.50f);
-                    damage.max().addMultiplicativeModifierAdd("Master Upgrade Branch", 1.50f);
-                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -30);
-                    ability.getHitBoxRadius().addAdditiveModifier("Master Upgrade Branch", 2);
-                    ability.getCooldown().addMultiplicativeModifierMult("Sanctify", 0.8f);
+                    damage.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Master Upgrade Branch", 1.50f);
+                    damage.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Master Upgrade Branch", 1.50f);
+                    ability.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade Branch", -30);
+                    ability.getHitBoxRadius().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade Branch", 2);
+                    ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Sanctify", 0.8f);
                 }
         );
     }

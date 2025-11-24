@@ -14,6 +14,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -70,7 +71,7 @@ public class DimensionalWarp implements SpecBoostManager.SpecBoost<DimensionalWa
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
-            warlordsPlayer.getEnergy().addAdditiveModifier("Spec Boost", maxEnergyGain);
+            warlordsPlayer.getEnergy().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", maxEnergyGain);
             warlordsPlayer.getAbilitiesMatching(TimeWarpPyromancer.class).forEach(timeWarp -> {
                 timeWarp.setTickDuration(timeWarp.getTickDuration() - ticks);
             });
@@ -88,7 +89,10 @@ public class DimensionalWarp implements SpecBoostManager.SpecBoost<DimensionalWa
             cooldown.getFlags().add(CooldownFlag.CANNOT_BE_REDUCED_VIND);
             warlordsEntity.addSpeedModifier(warlordsEntity, getStringName(), speedIncrease, cooldown);
             cooldown.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
-                        currentDamageValue.addMultiplicativeModifierMult(getStringName(), AbstractAbility.convertToMultiplicationDecimal(damageIncrease));
+                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                        getStringName(),
+                        AbstractAbility.convertToMultiplicationDecimal(damageIncrease)
+                );
                     }
             );
         }

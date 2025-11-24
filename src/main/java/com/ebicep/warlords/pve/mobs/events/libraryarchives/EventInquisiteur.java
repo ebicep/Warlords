@@ -172,7 +172,7 @@ public abstract class EventInquisiteur extends AbstractMob implements BossMob {
                 },
                 false
         ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                    currentDamageValue.addMultiplicativeModifierMult("Killing Blow", (1 - damageResistance.get() / 100f));
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Killing Blow", (1 - damageResistance.get() / 100f));
                 }
         ));
     }

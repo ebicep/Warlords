@@ -28,6 +28,7 @@ import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
+import com.ebicep.warlords.util.warlords.modifiablevalues.MultiFloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -65,7 +66,7 @@ public class DamageInstanceProcessor {
     private final FloatModifiable max;
     private final FloatModifiable critChance;
     private final FloatModifiable critMultiplier;
-    private final FloatModifiable damageValue;
+    private final MultiFloatModifiable damageValue;
     // Flags
     private final boolean isMeleeHit;
     private final boolean isFallDamage;
@@ -118,7 +119,9 @@ public class DamageInstanceProcessor {
         this.targetCooldownsDistinct = warlordsEntity.getCooldownManager().getCooldownsDistinct();
         this.sourceCooldownsDistinct = source.getCooldownManager().getCooldownsDistinct();
         this.finalEvent = null;
-        this.damageValue = new FloatModifiable(ThreadLocalRandom.current().nextFloat() * (max.getCalculatedValue() - min.getCalculatedValue()) + min.getCalculatedValue());
+        this.damageValue = new MultiFloatModifiable(
+                new FloatModifiable(ThreadLocalRandom.current().nextFloat() * (max.getCalculatedValue() - min.getCalculatedValue()) + min.getCalculatedValue())
+        );
     }
 
     private void applyPreEventModifiers() {
@@ -261,7 +264,7 @@ public class DamageInstanceProcessor {
         isCrit = calculatedCritChance > 0 && crit <= calculatedCritChance && source.isCanCrit();
 
         if (isCrit) {
-            damageValue.addMultiplicativeModifierAdd("Crit Multiplier", calculatedCritMultiplier / 100f - 1);
+            damageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Crit Multiplier", calculatedCritMultiplier / 100f - 1);
         }
 
         damageHealValueBeforeAllReduction = damageValue.getCalculatedValue();
@@ -291,7 +294,9 @@ public class DamageInstanceProcessor {
     }
 
     private void applySpecDamageResistance() {
-        FloatModifiable.FloatModifier modifier = damageValue.addMultiplicativeModifierMult("Spec Damage Resistance", 1 - warlordsEntity.getSpec().getDamageResistance() / 100f);
+        FloatModifiable.FloatModifier modifier = damageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                "Spec Damage Resistance", 1 - warlordsEntity.getSpec().getDamageResistance() / 100f
+        );
         if (flags.contains(InstanceFlags.IGNORE_SELF_RES)) {
             modifier.addDisabledReason(InstanceFlags.IGNORE_SELF_RES.name());
         }
@@ -384,7 +389,10 @@ public class DamageInstanceProcessor {
         if (flagMultiplier == 1) {
             return;
         }
-        FloatModifiable.FloatModifier modifier = damageValue.addMultiplicativeModifierMult("Flag Carrier Multiplier", (float) flagMultiplier);
+        FloatModifiable.FloatModifier modifier = damageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                "Flag Carrier Multiplier",
+                (float) flagMultiplier
+        );
         if (trueDamage) {
             modifier.addDisabledReason(InstanceFlags.TRUE_DAMAGE.name());
         }
@@ -573,7 +581,7 @@ public class DamageInstanceProcessor {
         float maxDamagePrevented = data.getMaxDamagePrevented();
         float preDamagePrevented = data.getDamagePrevented();
 
-        damageValue.callContributionCallbacks();
+        damageValue.callGlobalContributionCallbacks();
 
         if (preDamagePrevented + calculatedDamageValue > maxDamagePrevented) {
             handleInterveneBreak(interveneCooldown, data, intervenedBy, calculatedDamageValue, maxDamagePrevented, preDamagePrevented);
@@ -604,7 +612,7 @@ public class DamageInstanceProcessor {
                     .value(ComponentBuilder.create("No Change", NamedTextColor.WHITE)));
         }
 
-        damageValue.callContributionCallbacks();
+        damageValue.callGlobalContributionCallbacks();
 
         boolean debt = warlordsEntity.getCooldownManager().hasCooldownFromName("Spirits' Respite");
         debugMessage.append(InstanceDebugHoverable.LevelBuilder
@@ -792,7 +800,7 @@ public class DamageInstanceProcessor {
             cooldown.setTicksLeft(0);
         }
 
-        damageValue.callContributionCallbacks();
+        damageValue.callGlobalContributionCallbacks();
 
         if (shield.isBroken()) {
             handleBrokenShield(shield, cooldown, preShieldHealth);

@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilities.VolatileBrew;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.TextComponent;
 
 import java.util.List;
@@ -52,7 +53,7 @@ public class DrainingMiasma implements SpecBoostManager.SpecBoost<DrainingMiasma
                 if (ability instanceof VolatileBrew) {
                     com.ebicep.warlords.abilities.DrainingMiasma drainingMiasma = new com.ebicep.warlords.abilities.DrainingMiasma();
                     drainingMiasma.init(drainingMiasma.getBuilder());
-                    drainingMiasma.getCooldown().addMultiplicativeModifierAdd("Spec Boost", -drainingMiasmaCooldownReductionPercent / 100);
+                    drainingMiasma.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", -drainingMiasmaCooldownReductionPercent / 100);
                     abilities.set(i, drainingMiasma);
                 }
             }

@@ -16,6 +16,7 @@ import com.ebicep.warlords.pve.upgrades.warrior.defender.InterveneBranch;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -160,7 +161,9 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
             wp.getCooldownManager().addCooldown(new RegularCooldown<>(name + " Damage", null, InterveneData.class, null, wp, CooldownTypes.BUFF, cooldownManager -> {
             }, tickDuration
             ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                        currentDamageValue.addMultiplicativeModifierMult(name, (float) (1 + venes.stream().mapToDouble(InterveneData::getDamagePrevented).sum() / 100 * .01));
+                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                        name, (float) (1 + venes.stream().mapToDouble(InterveneData::getDamagePrevented).sum() / 100 * .01)
+                );
                     }
             ));
         }

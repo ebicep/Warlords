@@ -7,14 +7,6 @@ import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 public class PoisonousHexBranch extends AbstractUpgradeBranch<PoisonousHex> {
 
-    @Override
-    public void runOnce() {
-        Value.RangedValueCritable hexDamage = ability.getDamageValues().getHexDamage();
-        hexDamage.min().addMultiplicativeModifierAdd("PvE", .3f);
-        hexDamage.max().addMultiplicativeModifierAdd("PvE", .3f);
-        ability.setMaxEnemiesHit(4);
-    }
-
     public PoisonousHexBranch(AbilityTree abilityTree, PoisonousHex ability) {
         super(abilityTree, ability);
 
@@ -36,7 +28,7 @@ public class PoisonousHexBranch extends AbstractUpgradeBranch<PoisonousHex> {
                     public void modifyFloatModifiable(FloatModifiable.FloatModifier modifier, float value) {
                         modifier.setModifier(value / 100);
                     }
-                            }, ability.getProjectileSpeed().addMultiplicativeModifierAdd("Upgrade Branch", 0), 50f, 4
+                            }, ability.getProjectileSpeed().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Upgrade Branch", 0), 50f, 4
                 )
                 .addTo(treeB);
 
@@ -49,7 +41,7 @@ public class PoisonousHexBranch extends AbstractUpgradeBranch<PoisonousHex> {
                         """,
                 50000,
                 () -> {
-                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -5);
+                    ability.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade Branch", -5);
                     ability.setMaxEnemiesHit(200);
                 }
         );
@@ -65,12 +57,20 @@ public class PoisonousHexBranch extends AbstractUpgradeBranch<PoisonousHex> {
                 50000,
                 () -> {
                     Value.RangedValueCritable damage = ability.getDamageValues().getHexDamage();
-                    damage.min().addMultiplicativeModifierAdd("Master Upgrade Branch", .35f);
-                    damage.max().addMultiplicativeModifierAdd("Master Upgrade Branch", .35f);
+                    damage.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Master Upgrade Branch", .35f);
+                    damage.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Master Upgrade Branch", .35f);
                     ability.setMaxEnemiesHit(ability.getMaxEnemiesHit() + 12);
                     ability.setTicksBetweenDot(10);
                 }
         );
+    }
+
+    @Override
+    public void runOnce() {
+        Value.RangedValueCritable hexDamage = ability.getDamageValues().getHexDamage();
+        hexDamage.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .3f);
+        hexDamage.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .3f);
+        ability.setMaxEnemiesHit(4);
     }
 
 }

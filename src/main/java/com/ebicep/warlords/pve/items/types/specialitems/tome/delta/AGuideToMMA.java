@@ -11,6 +11,7 @@ import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 import com.ebicep.warlords.pve.items.types.specialitems.tome.omega.ScrollOfScripts;
 import com.ebicep.warlords.pve.mobs.flags.BossLike;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.Set;
 
@@ -54,7 +55,7 @@ public class AGuideToMMA extends SpecialDeltaTome implements CraftsInto {
                 false
         ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof BossLike) {
-                        currentDamageValue.addMultiplicativeModifierMult(getName(), 1.15f);
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getName(), 1.15f);
                     }
                 }
         ));

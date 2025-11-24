@@ -2,6 +2,7 @@ package com.ebicep.warlords.player.ingame.motionsystem.speed;
 
 import com.ebicep.warlords.player.ingame.motionsystem.MotionSystem;
 import com.ebicep.warlords.player.ingame.motionsystem.motionaddon.NewValueModifier;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 public class BaseToWalkingSpeedValueModifier implements NewValueModifier {
 
@@ -25,8 +26,8 @@ public class BaseToWalkingSpeedValueModifier implements NewValueModifier {
 
     @Override
     public void modifyNewValue(MotionSystem.NewValueData newValueData) {
-//        floatModifiable.addMultiplicativeModifierMult(addonName() + " - Base Speed", BASE_SPEED);
-        newValueData.newValue().addMultiplicativeModifierMult(addonName() + " - Base Walk Speed", baseWalkSpeed);
+//        floatModifiable.addModifier(addonName() + " - Base Speed", BASE_SPEED);
+        newValueData.newValue().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, addonName() + " - Base Walk Speed", baseWalkSpeed);
     }
 
     @Override

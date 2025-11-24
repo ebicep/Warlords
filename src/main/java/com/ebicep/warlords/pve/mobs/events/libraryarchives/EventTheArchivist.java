@@ -85,7 +85,7 @@ public class EventTheArchivist extends AbstractMob implements BossMob, Unsilenca
 
         option.getGame().registerEvents(new Listener() {
 
-            final FloatModifiable.FloatModifier modifier = warlordsNPC.getHealth().addAdditiveModifier(name + " (Base)", 0);
+            final FloatModifiable.FloatModifier modifier = warlordsNPC.getHealth().addModifier(FloatModifiable.ModifierType.ADDITIVE, name + " (Base)", 0);
 
             @EventHandler
             public void onAbilityUse(WarlordsAbilityActivateEvent.Post event) {
@@ -113,7 +113,7 @@ public class EventTheArchivist extends AbstractMob implements BossMob, Unsilenca
 
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-        event.getCritChance().addAdditiveModifier(name, -25);
+        event.getCritChance().addModifier(FloatModifiable.ModifierType.ADDITIVE, name, -25);
     }
 
 }

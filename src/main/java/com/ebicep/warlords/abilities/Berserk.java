@@ -8,15 +8,16 @@ import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.berserker.BerserkBranch;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
@@ -83,7 +84,7 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
                             return;
                         }
                         float critBoost = (1f * multiplier.get());
-                        currentCritChance.addAdditiveModifier(name, Math.min(60, critBoost));
+                        currentCritChance.addModifier(FloatModifiable.ModifierType.ADDITIVE, name, Math.min(60, critBoost));
                     }
                 }
         );
@@ -93,7 +94,7 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
                             return;
                         }
                         float critBoost = (1f * multiplier.get());
-                        currentCritMultiplier.addAdditiveModifier(name, Math.min(60, critBoost));
+                        currentCritMultiplier.addModifier(FloatModifiable.ModifierType.ADDITIVE, name, Math.min(60, critBoost));
 
                     }
                 }
@@ -101,7 +102,7 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
         berserkCooldown.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamgeValue) -> {
                     stats.hitsDoneAmplified++;
                     multiplier.getAndIncrement();
-                    currentDamgeValue.addMultiplicativeModifierAdd(name, damageIncrease / 100);
+            currentDamgeValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, name, damageIncrease / 100);
                 }
         );
         wp.getCooldownManager().addCooldown(berserkCooldown);

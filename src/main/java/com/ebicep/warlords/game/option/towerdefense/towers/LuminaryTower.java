@@ -56,16 +56,16 @@ public class LuminaryTower extends AbstractTower implements Upgradeable.Path2 {
         upgrades.add(new TowerUpgrade("Increased Buff Range", upgradeDamage4) {
             @Override
             public void onUpgrade() {
-                buffTowers.getBuffValue().addAdditiveModifier("Upgrade 3", upgradeBuff3.getValue());
+                buffTowers.getBuffValue().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Upgrade 3", upgradeBuff3.getValue());
             }
         });
         upgrades.add(new TowerUpgrade("Increase Damge and Healing", upgradeDamage4) {
             @Override
             protected void onUpgrade() {
-//                hexAttack.getMinDamageHeal().addAdditiveModifier("Upgrade 4", upgradeDamage4.getValue()); TODO
-//                hexAttack.getMaxDamageHeal().addAdditiveModifier("Upgrade 4", upgradeDamage4.getValue());
-//                mercifulHex.getMinDamageHeal().addAdditiveModifier("Upgrade 4", upgradeHealing4.getValue());
-//                mercifulHex.getMaxDamageHeal().addAdditiveModifier("Upgrade 4", upgradeHealing4.getValue());
+//                hexAttack.getMinDamageHeal().addModifier("Upgrade 4", upgradeDamage4.getValue()); TODO
+//                hexAttack.getMaxDamageHeal().addModifier("Upgrade 4", upgradeDamage4.getValue());
+//                mercifulHex.getMinDamageHeal().addModifier("Upgrade 4", upgradeHealing4.getValue());
+//                mercifulHex.getMaxDamageHeal().addModifier("Upgrade 4", upgradeHealing4.getValue());
             }
         });
     }
@@ -157,8 +157,8 @@ public class LuminaryTower extends AbstractTower implements Upgradeable.Path2 {
                                      .getAbilities()
                                      .forEach(ability -> {
                                          if (ability instanceof HitBox hitBox) {
-                                             hitBox.getHitBoxRadius().addMultiplicativeModifierAdd(
-                                                     abstractTower.getTowerRegistry().name,
+                                             hitBox.getHitBoxRadius().addModifier(
+                                                     FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, abstractTower.getTowerRegistry().name,
                                                      -buffValue.getCalculatedValue() / 100,
                                                      (int) (getCooldownValue() * 20) + 1
                                              );

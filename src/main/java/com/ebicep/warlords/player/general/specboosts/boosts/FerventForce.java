@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilities.GroundSlamDefender;
 import com.ebicep.warlords.abilities.SeismicWaveDefender;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.List;
 
@@ -43,10 +44,10 @@ public class FerventForce implements SpecBoostManager.SpecBoost<FerventForce> {
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getAbilitiesMatching(SeismicWaveDefender.class).forEach(seismicWave -> {
-                seismicWave.getCooldown().addMultiplicativeModifierAdd("Spec Boost", -seismicWaveCooldownReductionPercent / 100);
+                seismicWave.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", -seismicWaveCooldownReductionPercent / 100);
             });
             warlordsPlayer.getAbilitiesMatching(GroundSlamDefender.class).forEach(groundSlam -> {
-                groundSlam.getCooldown().addMultiplicativeModifierAdd("Spec Boost", -groundSlamCooldownReductionPercent / 100);
+                groundSlam.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", -groundSlamCooldownReductionPercent / 100);
             });
         }
 

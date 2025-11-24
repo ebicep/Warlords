@@ -10,6 +10,7 @@ import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendary
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCounter;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -124,12 +125,12 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon implements Passiv
                                     },
                                     REDUCTION_DURATION * 20
                             ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (e, currentDamageValue2) -> {
-                                        currentDamageValue2.addMultiplicativeModifierMult("Stalwart", .01f);
+                                currentDamageValue2.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Stalwart", .01f);
                                     }
                             ));
                             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
                             player.sendMessage(Component.text("Triggered Stalwart! +99% damage reduction for 5s.", NamedTextColor.GREEN));
-                            currentDamageValue.addOverridingModifier("Stalwart", 0);
+                    currentDamageValue.addModifier(FloatModifiable.ModifierType.OVERRIDING, "Stalwart", 0);
                         }
                 ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                             if (player.getCurrentHealth() >= player.getMaxHealth() * upperBoundHP) {
@@ -138,7 +139,7 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon implements Passiv
                             float currentHpPercent = player.getCurrentHealth() / player.getMaxHealth();
                             int timesToReduce = (int) ((getUnderHpCheck() - currentHpPercent) / getEveryHpPercent());
                             float reduction = Math.min(timesToReduce * .075f, .8f);
-                            currentDamageValue.addMultiplicativeModifierMult(getTitleName(), (1 - reduction));
+                    currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getTitleName(), (1 - reduction));
                         }
                 )
         );

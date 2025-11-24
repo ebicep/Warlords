@@ -5,6 +5,7 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 public class SanctifiedBeaconBranch extends AbstractUpgradeBranch<SanctifiedBeacon> {
 
@@ -32,7 +33,7 @@ public class SanctifiedBeaconBranch extends AbstractUpgradeBranch<SanctifiedBeac
                         """,
                 50000,
                 () -> {
-                    ability.getHitBoxRadius().addMultiplicativeModifierMult("Master Upgrade Branch", 2);
+                    ability.getHitBoxRadius().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Master Upgrade Branch", 2);
                     ability.setHexIntervalTicks((int) (ability.getHexIntervalTicks() * 0.5f));
                 }
         );
@@ -48,7 +49,7 @@ public class SanctifiedBeaconBranch extends AbstractUpgradeBranch<SanctifiedBeac
                         """,
                 50000,
                 () -> {
-                    ability.getHitBoxRadius().addMultiplicativeModifierMult("Master Upgrade Branch", 2);
+                    ability.getHitBoxRadius().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Master Upgrade Branch", 2);
                 }
         );
     }

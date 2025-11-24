@@ -6,16 +6,10 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 public class RighteousStrikeBranch extends AbstractUpgradeBranch<RighteousStrike> {
 
-
-    @Override
-    public void runOnce() {
-        Value.RangedValueCritable damage = ability.getDamageValues().getStrikeDamage();
-        damage.min().addMultiplicativeModifierAdd("PvE", .3f);
-        damage.max().addMultiplicativeModifierAdd("PvE", .3f);
-    }
 
     public RighteousStrikeBranch(AbilityTree abilityTree, RighteousStrike ability) {
         super(abilityTree, ability);
@@ -48,8 +42,15 @@ public class RighteousStrikeBranch extends AbstractUpgradeBranch<RighteousStrike
                         """,
                 50000,
                 () -> {
-                    ability.getEnergyCost().addAdditiveModifier("Righteous Strike Master", -10f);
+                    ability.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Righteous Strike Master", -10f);
                 }
         );
+    }
+
+    @Override
+    public void runOnce() {
+        Value.RangedValueCritable damage = ability.getDamageValues().getStrikeDamage();
+        damage.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .3f);
+        damage.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .3f);
     }
 }

@@ -20,6 +20,7 @@ import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.luminary.SanctifiedBeaconBranch;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
@@ -139,7 +140,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
                             6
                     );
                     shadowGardenCooldown.addModifier(Modifier.MODIFY_OUTGOING_CRIT_MULTIPLIER, (event, currentCritMultiplier) -> {
-                                currentCritMultiplier.addAdditiveModifier("Shadow Garden", 30);
+                        currentCritMultiplier.addModifier(FloatModifiable.ModifierType.ADDITIVE, "Shadow Garden", 30);
                             }
                     );
                     nearBy.addKnockbackModifier(wp, "Shadow Garden", -50, shadowGardenCooldown);
@@ -165,15 +166,15 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
                             }
                     ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                                 if (crit[0]) { // TODO unscuff
-                                    currentDamageValue.addMultiplicativeModifierAdd(
-                                            name,
+                                    currentDamageValue.addModifier(
+                                            FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, name,
                                             -critMultiplierReducedBy / 100f,
                                             contribution -> stats.critDamageReduced += Math.abs(contribution)
                                     );
                                 }
                                 if (wp.isInPve()) {
-                                    currentDamageValue.addMultiplicativeModifierMult(
-                                            name,
+                                    currentDamageValue.addModifier(
+                                            FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name,
                                             convertToDivisionDecimal(damageReductionPve)
                                     );
                                 }
@@ -197,7 +198,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
                                       cooldownManager -> {},
                                       false
                               ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                                          currentDamageValue.addMultiplicativeModifierMult(name, 0.7f);
+                                  currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 0.7f);
                                       }
                               ));
                     }

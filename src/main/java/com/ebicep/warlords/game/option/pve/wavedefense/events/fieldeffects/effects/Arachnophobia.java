@@ -8,6 +8,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.events.spidersburrow.EventEggSac;
 import com.ebicep.warlords.pve.mobs.events.spidersburrow.EventPoisonousSpider;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -42,12 +43,12 @@ public class Arachnophobia implements FieldEffect {
                     }
                     if (event.getCause().contains("Strike")) {
                         event.applyToMinMax(floatModifiable ->
-                                floatModifiable.addMultiplicativeModifierMult(getName(), 3)
+                                floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getName(), 3)
                         );
                     }
                 } else if (event.isHealingInstance()) {
                     event.applyToMinMax(floatModifiable ->
-                            floatModifiable.addMultiplicativeModifierMult(getName(), 1.15f)
+                            floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getName(), 1.15f)
                     );
                 }
             }

@@ -13,6 +13,7 @@ import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
+import com.ebicep.warlords.util.warlords.modifiablevalues.MultiFloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -47,7 +48,7 @@ public class HealingInstanceProcessor {
     private final FloatModifiable max;
     private final FloatModifiable critChance;
     private final FloatModifiable critMultiplier;
-    private final FloatModifiable healValue;
+    private final MultiFloatModifiable healValue;
     // Flags
     private final EnumSet<InstanceFlags> flags;
     private final boolean isLastStandFromShield;
@@ -87,7 +88,9 @@ public class HealingInstanceProcessor {
         this.targetCooldownsDistinct = warlordsEntity.getCooldownManager().getCooldownsDistinct();
         this.sourceCooldownsDistinct = source.getCooldownManager().getCooldownsDistinct();
         this.finalEvent = null;
-        this.healValue = new FloatModifiable(ThreadLocalRandom.current().nextFloat() * (max.getCalculatedValue() - min.getCalculatedValue()) + min.getCalculatedValue());
+        this.healValue = new MultiFloatModifiable(
+                new FloatModifiable(ThreadLocalRandom.current().nextFloat() * (max.getCalculatedValue() - min.getCalculatedValue()) + min.getCalculatedValue())
+        );
     }
 
     private void applyPreEventModifiers() {
@@ -130,7 +133,7 @@ public class HealingInstanceProcessor {
     }
 
     private void applyFinalHealing(float cappedHealValue) {
-        healValue.callContributionCallbacks();
+        healValue.callGlobalContributionCallbacks();
 
         applyOnHealModifiers(cappedHealValue);
 
@@ -504,7 +507,7 @@ public class HealingInstanceProcessor {
         isCrit = calculatedCritChance > 0 && crit <= calculatedCritChance && source.isCanCrit();
 
         if (isCrit) {
-            healValue.addMultiplicativeModifierMult("Crit Multiplier", calculatedCritMultiplier / 100f);
+            healValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Crit Multiplier", calculatedCritMultiplier / 100f);
         }
 
         healValueBeforeReduction = healValue.getCalculatedValue();

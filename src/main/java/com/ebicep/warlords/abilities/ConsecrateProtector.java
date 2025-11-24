@@ -16,6 +16,7 @@ import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.paladin.protector.ConsecrateBranchProtector;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -86,7 +87,7 @@ public class ConsecrateProtector extends AbstractConsecrate implements CanReduce
                     }
                     event.getFlags().add(InstanceFlags.STRIKE_IN_CONS);
                     addStrikesBoosted();
-                    currentDamageValue.addMultiplicativeModifierMult(name, convertToMultiplicationDecimal(strikeDamageBoost));
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, convertToMultiplicationDecimal(strikeDamageBoost));
                 }
         ));
         return true;

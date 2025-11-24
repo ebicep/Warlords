@@ -3,6 +3,7 @@ package com.ebicep.warlords.player.general.specboosts.boosts;
 import com.ebicep.warlords.abilities.Fireball;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.List;
 
@@ -42,7 +43,9 @@ public class Meteor implements SpecBoostManager.SpecBoost<Meteor> {
             warlordsPlayer.getAbilitiesMatching(Fireball.class).forEach(fireball ->
                     fireball.getDamageValues()
                             .getFireballDamage()
-                            .forEachValue(floatModifiable -> floatModifiable.addMultiplicativeModifierAdd("Spec Boost", damageIncrease / 100))
+                            .forEachValue(floatModifiable -> floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                                    "Spec Boost", damageIncrease / 100
+                            ))
             );
         }
 

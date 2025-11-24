@@ -67,8 +67,8 @@ public class VindicatorTower extends AbstractTower implements Upgradeable.Path2 
             @Override
             protected void onUpgrade() {
                 strikeAttack.setMobsHit(2);
-//                strikeAttack.getMinDamageHeal().addMultiplicativeModifierAdd(name, -.3f); TODO
-//                strikeAttack.getMaxDamageHeal().addMultiplicativeModifierAdd(name, -.3f);
+//                strikeAttack.getMinDamageHeal().addModifier(name, -.3f); TODO
+//                strikeAttack.getMaxDamageHeal().addModifier(name, -.3f);
             }
         });
     }
@@ -114,7 +114,7 @@ public class VindicatorTower extends AbstractTower implements Upgradeable.Path2 
                             .flags(InstanceFlags.TD_PHYSICAL)
                     );
                     if (warlordsNPC.getMob() instanceof TowerDefenseMob towerDefenseMob) {
-                        towerDefenseMob.getMagicResistance().addAdditiveModifier(name, -10);
+                        towerDefenseMob.getMagicResistance().addModifier(FloatModifiable.ModifierType.ADDITIVE, name, -10);
                     }
                     if (pveMasterUpgrade) {
                         SoulShackle.shacklePlayer(wp, warlordsNPC, 10);

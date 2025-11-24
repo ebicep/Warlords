@@ -20,7 +20,6 @@ import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractSpawnMobAbility;
 import com.ebicep.warlords.pve.mobs.abilities.SpawnMobAbility;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.NarmerAcolyte;
-import com.ebicep.warlords.pve.mobs.bosses.bossminions.NarmersDeathCharge;
 import com.ebicep.warlords.pve.mobs.flags.DynamicFlags;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.ZombieLancer;
@@ -28,6 +27,7 @@ import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
@@ -98,7 +98,7 @@ public class Narmer extends AbstractMob implements BossMob {
         if (difficulty == DifficultyIndex.ENDLESS) {
             for (AbstractAbility ability : warlordsNPC.getAbilities()) {
                 if (ability instanceof GroundShred) {
-                    ability.getCooldown().addMultiplicativeModifierAdd("Narmer Endless", -0.5f);
+                    ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Narmer Endless", -0.5f);
                 }
             }
         }

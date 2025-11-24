@@ -71,7 +71,7 @@ public record TowerUpgradeCategory(Component name, List<TowerUpgradeInstance> up
 
         public TowerUpgradeCategoryBuilder<T> value(String name, float value, Function<T, FloatModifiable> modifiableFunction) {
             upgradeInstances.add(new TowerUpgradeInstance.Valued(value, towerUpgradeInstance -> {
-                modifiableFunction.apply(ability).addAdditiveModifier("Upgrade", value);
+                modifiableFunction.apply(ability).addModifier(FloatModifiable.ModifierType.ADDITIVE, "Upgrade", value);
             }) {
                 @Override
                 public String getName() {

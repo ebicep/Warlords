@@ -16,6 +16,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
@@ -141,13 +142,17 @@ public abstract class AbstractEnergySeer<T extends AbstractEnergySeer.EnergySeer
         };
         cd.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     if (inPve && AbstractEnergySeer.this instanceof EnergySeerConjurer energySeerConjurer) {
-                        currentDamageValue.addMultiplicativeModifierMult(name, convertToMultiplicationDecimal(energySeerConjurer.getDamageIncrease()));
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                                name, convertToMultiplicationDecimal(energySeerConjurer.getDamageIncrease())
+                        );
                     }
                 }
         );
         if (inPve && AbstractEnergySeer.this instanceof EnergySeerLuminary energySeerLuminary) {
             cd.addModifier(Modifier.MODIFY_INCOMING_HEALING, (event, currentHealValue) -> {
-                        currentHealValue.addMultiplicativeModifierMult(name, convertToMultiplicationDecimal(energySeerLuminary.getHealingIncrease()));
+                currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                        name, convertToMultiplicationDecimal(energySeerLuminary.getHealingIncrease())
+                );
                     }
             );
         }
@@ -213,7 +218,7 @@ public abstract class AbstractEnergySeer<T extends AbstractEnergySeer.EnergySeer
                         );
                     }
                 })
-        ).addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> energyGainPerTick.addAdditiveModifier(name, -epsDecrease / 20f)));
+        ).addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> energyGainPerTick.addModifier(FloatModifiable.ModifierType.ADDITIVE, name, -epsDecrease / 20f)));
     }
 
     protected void onEndForce(WarlordsEntity wp, T data) {

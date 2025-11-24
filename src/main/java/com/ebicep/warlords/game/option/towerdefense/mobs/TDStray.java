@@ -6,6 +6,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.instances.type.CustomInstanceFlags;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BasicMob;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.Location;
 
 public class TDStray extends TowerDefenseMob implements BasicMob {
@@ -38,11 +39,11 @@ public class TDStray extends TowerDefenseMob implements BasicMob {
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
         event.getCustomFlags().add(new CustomInstanceFlags.Valued(
-                floatModifiable -> floatModifiable.addMultiplicativeModifierMult(name, .5f, 0),
+                floatModifiable -> floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, .5f, 0),
                 CustomInstanceFlags.Valued.Flag.TD_DEFENDER_ARMOR
         ));
         event.getCustomFlags().add(new CustomInstanceFlags.Valued(
-                floatModifiable -> floatModifiable.addMultiplicativeModifierMult(name, .5f, 0),
+                floatModifiable -> floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, .5f, 0),
                 CustomInstanceFlags.Valued.Flag.TD_DEFENDER_ARMOR
         ));
     }

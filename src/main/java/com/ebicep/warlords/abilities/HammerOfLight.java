@@ -280,7 +280,7 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                     hammerOfLightCooldown.setNameAbbreviation("CROWN");
                     // prot strike energy reduction
                     for (ProtectorsStrike protectorsStrike : wp.getAbilitiesMatching(ProtectorsStrike.class)) {
-                        protectorsStrike.getEnergyCost().addAdditiveModifier("Hammer of Light", -crownEnergyReduction);
+                        protectorsStrike.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Hammer of Light", -crownEnergyReduction);
                     }
                     if (pveMasterUpgrade) {
                         pulseHeal(wp, 20, 1.5, data);
@@ -359,7 +359,7 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                 },
                 20
         ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                    currentDamageValue.addMultiplicativeModifierMult("Hammer of Disillusion", 1.15f);
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Hammer of Disillusion", 1.15f);
                 }
         ));
     }

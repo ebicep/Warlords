@@ -7,6 +7,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.Set;
 
@@ -48,7 +49,7 @@ public class AthenianAegis extends SpecialOmegaBuckler implements AppliesToWarlo
                 false
         ).addModifier(Modifier.MODIFY_OUTGOING_HEALING, (event, currentHealValue) -> {
                     int mobCount = pveOption.mobCount();
-                    currentHealValue.addMultiplicativeModifierMult(getName(), 1 + (mobCount * .005f));
+            currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getName(), 1 + (mobCount * .005f));
                 }
         ));
     }

@@ -5,6 +5,7 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 public class HeartToHeartBranch extends AbstractUpgradeBranch<HeartToHeart> {
 
@@ -40,7 +41,7 @@ public class HeartToHeartBranch extends AbstractUpgradeBranch<HeartToHeart> {
                         """,
                 50000,
                 () -> {
-                    ability.getHitBoxRadius().addAdditiveModifier("Master Upgrade Branch", 10);
+                    ability.getHitBoxRadius().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade Branch", 10);
                 }
         );
     }

@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilities.Boulder;
 import com.ebicep.warlords.abilities.ChainHeal;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.List;
 
@@ -44,7 +45,7 @@ public class MegalithicBoulder implements SpecBoostManager.SpecBoost<MegalithicB
         public void apply(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getAbilitiesMatching(Boulder.class).forEach(boulder -> {
                 boulder.getDamageValues().getBoulderDamage().forEachValue(floatModifiable ->
-                        floatModifiable.addMultiplicativeModifierAdd("Spec Boost", boulderDamageIncreasePercent / 100)
+                        floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", boulderDamageIncreasePercent / 100)
                 );
             });
             warlordsPlayer.getAbilitiesMatching(ChainHeal.class).forEach(chainHeal -> {

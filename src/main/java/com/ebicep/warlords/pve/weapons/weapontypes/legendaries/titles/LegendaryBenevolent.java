@@ -6,6 +6,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -62,7 +63,7 @@ public class LegendaryBenevolent extends AbstractLegendaryWeapon {
                 if (event.isHealingInstance() && event.getSource().equals(player)) {
                     float healingIncrease = 1 + (HEALING_INCREASE + HEALING_INCREASE_PER_UPGRADE * getTitleLevel()) / 100f;
                     event.applyToMinMax(floatModifiable ->
-                            floatModifiable.addMultiplicativeModifierMult(getTitleName(), healingIncrease)
+                            floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getTitleName(), healingIncrease)
                     );
                 }
             }

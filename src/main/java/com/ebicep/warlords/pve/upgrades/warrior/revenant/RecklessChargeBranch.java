@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.upgrades.warrior.revenant;
 import com.ebicep.warlords.abilities.RecklessCharge;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.pve.upgrades.*;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 public class RecklessChargeBranch extends AbstractUpgradeBranch<RecklessCharge> {
 
@@ -50,8 +51,8 @@ public class RecklessChargeBranch extends AbstractUpgradeBranch<RecklessCharge> 
                 50000,
                 () -> {
                     Value.RangedValueCritable damage = ability.getDamageValues().getChargeDamage();
-                    damage.min().addMultiplicativeModifierAdd("Master Upgrade Branch", 1.5f);
-                    damage.max().addMultiplicativeModifierAdd("Master Upgrade Branch", 1.5f);
+                    damage.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Master Upgrade Branch", 1.5f);
+                    damage.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Master Upgrade Branch", 1.5f);
                     ability.setStunTimeInTicks(60);
                 }
         );

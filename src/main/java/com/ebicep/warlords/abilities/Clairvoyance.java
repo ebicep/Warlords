@@ -9,6 +9,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -61,8 +62,8 @@ public class Clairvoyance extends AbstractAbility implements PurpleAbilityIcon, 
 
                 })
         ).addModifier(Modifier.MODIFY_OUTGOING_HEALING, (event, currentHealValue) -> {
-            currentHealValue.addMultiplicativeModifierMult(
-                    name,
+            currentHealValue.addModifier(
+                    FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name,
                     convertToMultiplicationDecimal(healingIncreasePercent),
                     contribution -> stats.healingIncreased += Math.abs(contribution)
             );

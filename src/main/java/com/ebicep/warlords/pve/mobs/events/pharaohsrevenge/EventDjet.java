@@ -13,6 +13,7 @@ import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.Location;
 
 import javax.annotation.Nonnull;
@@ -74,7 +75,7 @@ public class EventDjet extends AbstractMob implements BossMinionMob {
     public void whileAlive(int ticksElapsed, PveOption option) {
         if (!aboveHealthThreshold() && !wentBelowHealthThreshold) {
             wentBelowHealthThreshold = true;
-            playerClass.getAbilities().get(0).getCooldown().addAdditiveModifier("Djet Health Threshold", 1000000f);
+            playerClass.getAbilities().get(0).getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Djet Health Threshold", 1000000f);
         }
     }
 

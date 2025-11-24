@@ -70,8 +70,8 @@ public abstract class TowerUpgradeInstance {
 
         public Damage(float value, AbstractAbility ability) {
             super(value, towerUpgradeInstance -> {
-//                ability.getMinDamageHeal().addAdditiveModifier("Upgrade", value);
-//                ability.getMaxDamageHeal().addAdditiveModifier("Upgrade", value); TODO
+//                ability.getMinDamageHeal().addModifier("Upgrade", value);
+//                ability.getMaxDamageHeal().addModifier("Upgrade", value); TODO
             });
         }
 
@@ -93,8 +93,8 @@ public abstract class TowerUpgradeInstance {
 
         public Healing(float value, AbstractAbility ability) {
             super(value, towerUpgradeInstance -> {
-//                ability.getMinDamageHeal().addAdditiveModifier("Upgrade", value);
-//                ability.getMaxDamageHeal().addAdditiveModifier("Upgrade", value);
+//                ability.getMinDamageHeal().addModifier("Upgrade", value);
+//                ability.getMaxDamageHeal().addModifier("Upgrade", value);
             });
         }
 
@@ -116,8 +116,8 @@ public abstract class TowerUpgradeInstance {
 
         public <T extends AbstractAbility & HitBox> Range(float value, T ability) {
             super(value, towerUpgradeInstance -> {
-                ability.getHitBoxRadius().addAdditiveModifier("Upgrade", value);
-                ability.getHitBoxRadius().addAdditiveModifier("Upgrade", value);
+                ability.getHitBoxRadius().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Upgrade", value);
+                ability.getHitBoxRadius().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Upgrade", value);
             });
         }
 

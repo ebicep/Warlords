@@ -13,6 +13,7 @@ import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -197,7 +198,7 @@ public class LegendaryBastion extends AbstractLegendaryWeapon {
                     redirectUsedThisSecond += toRedirect;
                 }
             }
-            currentDamageValue.addMultiplicativeModifierMult(getTitleName(), 1f - dr);
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getTitleName(), 1f - dr);
                 }
         ));
     }

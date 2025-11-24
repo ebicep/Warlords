@@ -10,6 +10,7 @@ import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
 import com.ebicep.warlords.pve.mobs.flags.BossLike;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -69,7 +70,7 @@ public class RobinHoodsGloves extends SpecialOmegaGauntlet implements AppliesToW
                         return;
                     }
                     event.applyToMinMax(floatModifiable ->
-                            floatModifiable.addOverridingModifier(getName(), warlordsEntity.getCurrentHealth() + 1)
+                            floatModifiable.addModifier(FloatModifiable.ModifierType.OVERRIDING, getName(), warlordsEntity.getCurrentHealth() + 1)
                     );
                     event.getFlags().add(InstanceFlags.IGNORE_SELF_RES);
                     event.getFlags().add(InstanceFlags.TRUE_DAMAGE);

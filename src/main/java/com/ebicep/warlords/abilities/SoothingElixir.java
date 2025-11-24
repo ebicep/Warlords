@@ -165,7 +165,7 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
                     }
                     if (pveMasterUpgrade2) {
                         float healthBoost = (float) (wp.getMaxHealth() * Math.max(.25, (teammatesHit.size() + enemiesHit.size()) * .015f));
-                        wp.getHealth().addAdditiveModifier("Soothing Elixir", healthBoost, 4 * 20);
+                        wp.getHealth().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Soothing Elixir", healthBoost, 4 * 20);
                         wp.setCurrentHealth(wp.getCurrentHealth() + healthBoost);
                     }
                 }

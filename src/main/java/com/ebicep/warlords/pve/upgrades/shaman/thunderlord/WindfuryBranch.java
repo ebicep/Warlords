@@ -6,6 +6,8 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.*;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
+import com.ebicep.warlords.util.warlords.modifiablevalues.MultiFloatModifiable;
 
 public class WindfuryBranch extends AbstractUpgradeBranch<WindfuryWeapon> {
 
@@ -130,7 +132,9 @@ public class WindfuryBranch extends AbstractUpgradeBranch<WindfuryWeapon> {
                             false
                     ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                                 if (event.getCause().equals("Windfury Weapon")) {
-                                    currentDamageValue.addAdditiveModifier("MAX HP DAMAGE (Shredding Fury)", DamageCheck.clamp(event.getWarlordsEntity().getMaxHealth() * 0.005f));
+                                    currentDamageValue.addModifier(50, MultiFloatModifiable.ApplyFloatModifiableType.ADDITIVE, FloatModifiable.ModifierType.ADDITIVE,
+                                            "MAX HP DAMAGE (Shredding Fury)", DamageCheck.clamp(event.getWarlordsEntity().getMaxHealth() * 0.005f)
+                                    );
                                 }
                             }
                     ));

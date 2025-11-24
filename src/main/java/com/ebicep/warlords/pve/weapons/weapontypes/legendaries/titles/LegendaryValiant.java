@@ -1,7 +1,6 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
@@ -10,6 +9,7 @@ import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -92,12 +92,18 @@ public class LegendaryValiant extends AbstractLegendaryWeapon implements EventTi
                 false
         ).addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> {
                     if (player.getCurrentHealth() == player.getMaxHealth()) {
-                        energyGainPerTick.addMultiplicativeModifierMult(getTitleName(), (1 + (EPS_INCREASE + EPS_INCREASE_PER_UPGRADE * getTitleLevel()) / 100f));
+                        energyGainPerTick.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                                getTitleName(),
+                                (1 + (EPS_INCREASE + EPS_INCREASE_PER_UPGRADE * getTitleLevel()) / 100f)
+                        );
                     }
                 }
         ).addModifier(Modifier.ENERGY_GAIN_PER_HIT, energyGainPerHit -> {
                     if (player.getCurrentHealth() == player.getMaxHealth()) {
-                        energyGainPerHit.addMultiplicativeModifierMult(getTitleName(), (1 + (EPS_INCREASE + EPS_INCREASE_PER_UPGRADE * getTitleLevel()) / 100f));
+                        energyGainPerHit.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                                getTitleName(),
+                                (1 + (EPS_INCREASE + EPS_INCREASE_PER_UPGRADE * getTitleLevel()) / 100f)
+                        );
                     }
                 }
         ));

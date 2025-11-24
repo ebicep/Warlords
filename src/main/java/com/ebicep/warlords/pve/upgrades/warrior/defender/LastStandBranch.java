@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.upgrades.warrior.defender;
 
 import com.ebicep.warlords.abilities.LastStand;
 import com.ebicep.warlords.pve.upgrades.*;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import javax.annotation.Nonnull;
 
@@ -52,7 +53,7 @@ public class LastStandBranch extends AbstractUpgradeBranch<LastStand> {
                         """,
                 50000,
                 () -> {
-                    ability.getCooldown().addMultiplicativeModifierMult("Final Stand", 0.75f);
+                    ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Final Stand", 0.75f);
                     ability.setSelfDamageReductionPercent(ability.getSelfDamageReduction() + 25);
                     ability.setRadius(ability.getRadius() * 2);
                 }
@@ -68,7 +69,7 @@ public class LastStandBranch extends AbstractUpgradeBranch<LastStand> {
                         """,
                 50000,
                 () -> {
-                    ability.getCooldown().addMultiplicativeModifierMult("Enduring Defense", 0.75f);
+                    ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Enduring Defense", 0.75f);
                     ability.setTeammateDamageReductionPercent(ability.getTeammateDamageReduction() + 15);
                     ability.setRadius(ability.getRadius() * 2);
                 }

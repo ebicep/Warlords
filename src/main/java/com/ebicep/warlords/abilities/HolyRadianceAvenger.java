@@ -13,6 +13,7 @@ import com.ebicep.warlords.pve.upgrades.paladin.avenger.HolyRadianceBranchAvenge
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
@@ -115,7 +116,9 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance implements Heals<H
                         EffectUtils.playCylinderAnimation(markTarget.getLocation(), 1, 250, 25, 25, 8, 6, .3);
                     }
                 })
-        ).addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> energyGainPerTick.addAdditiveModifier("Avenger's Mark", -energyDrainPerSecond / 20f)));
+        ).addModifier(Modifier.ENERGY_GAIN_PER_TICK,
+                energyGainPerTick -> energyGainPerTick.addModifier(FloatModifiable.ModifierType.ADDITIVE, "Avenger's Mark", -energyDrainPerSecond / 20f)
+        ));
     }
 
     private void aoeMark(WarlordsEntity giver, WarlordsEntity target) {
@@ -140,15 +143,15 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance implements Heals<H
                 })
         ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     if (pveMasterUpgrade) {
-                        currentDamageValue.addMultiplicativeModifierMult(name, 0.9f);
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 0.9f);
                     }
                 }
         ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     if (pveMasterUpgrade && event.getCause().equals("Avenger's Strike")) {
-                        currentDamageValue.addMultiplicativeModifierMult("Avenger's Mark", 1.4f);
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Avenger's Mark", 1.4f);
                     }
                     if (pveMasterUpgrade2) {
-                        currentDamageValue.addMultiplicativeModifierMult("Avenger's Mark", 1.2f);
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Avenger's Mark", 1.2f);
                     }
                 }
         ));
