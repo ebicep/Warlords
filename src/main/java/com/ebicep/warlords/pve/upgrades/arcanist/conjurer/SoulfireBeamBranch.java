@@ -6,15 +6,9 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 public class SoulfireBeamBranch extends AbstractUpgradeBranch<SoulfireBeam> {
-
-    @Override
-    public void runOnce() {
-        Value.RangedValueCritable hexDamage = ability.getDamageValues().getBeamDamage();
-        hexDamage.min().addMultiplicativeModifierAdd("PvE", .3f);
-        hexDamage.max().addMultiplicativeModifierAdd("PvE", .3f);
-    }
 
     public SoulfireBeamBranch(AbilityTree abilityTree, SoulfireBeam ability) {
         super(abilityTree, ability);
@@ -51,12 +45,19 @@ public class SoulfireBeamBranch extends AbstractUpgradeBranch<SoulfireBeam> {
                         """,
                 50000,
                 () -> {
-                    ability.getHitBoxRadius().addAdditiveModifier("Master Upgrade Branch", 3);
-                    ability.getMaxDistance().addAdditiveModifier("Master Upgrade Branch", 15);
+                    ability.getHitBoxRadius().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade Branch", 3);
+                    ability.getMaxDistance().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade Branch", 15);
                     ability.setShotsFiredAtATime(3);
                     ability.getDamageValues().getDamageMultipliers().replaceAll(aFloat -> aFloat * 2);
                 }
         );
+    }
+
+    @Override
+    public void runOnce() {
+        Value.RangedValueCritable hexDamage = ability.getDamageValues().getBeamDamage();
+        hexDamage.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .3f);
+        hexDamage.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .3f);
     }
 
 }

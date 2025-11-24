@@ -6,6 +6,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.event.EventHandler;
 
 import java.util.List;
@@ -55,7 +56,7 @@ public class SeismicShift implements SpecBoostManager.SpecBoost<SeismicShift> {
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(SeismicWaveBerserker.class).forEach(seismicWave -> {
-                seismicWave.getCooldown().addAdditiveModifier("Spec Boost", -seismicWaveCooldownReductionTicks / 20f);
+                seismicWave.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", -seismicWaveCooldownReductionTicks / 20f);
             });
         }
 

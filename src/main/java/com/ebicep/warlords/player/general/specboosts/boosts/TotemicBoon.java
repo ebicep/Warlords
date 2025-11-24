@@ -9,6 +9,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFlag;
 import com.ebicep.warlords.player.ingame.instances.type.CustomInstanceFlags;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.event.EventHandler;
 
 import java.util.Comparator;
@@ -72,14 +73,17 @@ public class TotemicBoon implements SpecBoostManager.SpecBoost<TotemicBoon> {
             warlordsPlayer.getAbilitiesMatching(HealingTotem.class).forEach(healingTotem -> {
                 healingTotem.getHealValues()
                             .getTotemHealing()
-                            .forEachValue(floatModifiable -> floatModifiable.addMultiplicativeModifierAdd("Spec Boost", -healingTotemHealingDecreasePercent / 100f));
-                healingTotem.getEnergyCost().addMultiplicativeModifierAdd("Spec Boost", -healingTotemEnergyDecreasePercent / 100f);
-                healingTotem.getCooldown().addMultiplicativeModifierAdd("Spec Boost", -healingTotemCooldownDecreasePercent / 100f);
+                            .forEachValue(floatModifiable -> floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                                    "Spec Boost",
+                                    -healingTotemHealingDecreasePercent / 100f
+                            ));
+                healingTotem.getEnergyCost().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", -healingTotemEnergyDecreasePercent / 100f);
+                healingTotem.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", -healingTotemCooldownDecreasePercent / 100f);
                 healingTotem.setMaxCharges(healingTotemMaxAbilityCharges);
                 healingTotem.setCurrentCharges(healingTotemMaxAbilityCharges);
                 healingTotem.setHealingPeriod((int) (healingTotem.getHealingPeriod() / healingTotemSpeedMultiplier));
                 healingTotem.setTickDuration((int) (healingTotem.getTickDuration() / healingTotemSpeedMultiplier));
-                healingTotem.getHitBoxRadius().addAdditiveModifier("Spec Boost", healingTotemRadiusIncrease);
+                healingTotem.getHitBoxRadius().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", healingTotemRadiusIncrease);
             });
         }
 

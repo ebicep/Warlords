@@ -9,6 +9,7 @@ import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 import com.ebicep.warlords.pve.items.types.specialitems.tome.omega.FlemingAlmanac;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.entity.Entity;
 
 import java.util.Set;
@@ -60,7 +61,7 @@ public class FirewaterAlmanac extends SpecialDeltaTome implements CraftsInto {
                                             })
                                             .sum();
                     targeted = Math.min(10, targeted);
-                    currentDamageValue.addMultiplicativeModifierMult(getName(), (1 - (targeted * 0.01f)));
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getName(), (1 - (targeted * 0.01f)));
                 }
         ));
     }

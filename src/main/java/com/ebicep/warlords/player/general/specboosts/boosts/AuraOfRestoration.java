@@ -10,6 +10,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.event.EventHandler;
 
 import java.util.Collections;
@@ -61,9 +62,11 @@ public class AuraOfRestoration implements SpecBoostManager.SpecBoost<AuraOfResto
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(SoothingElixir.class).forEach(soothingElixir -> {
-                soothingElixir.getCooldown().addAdditiveModifier("Spec Boost", soothingElixirCooldownIncreaseSeconds);
+                soothingElixir.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", soothingElixirCooldownIncreaseSeconds);
                 soothingElixir.getHealValues().getElixirDOTHealing()
-                              .forEachValue(floatModifiable -> floatModifiable.addMultiplicativeModifierAdd("Spec Boost", puddleHealingIncreasePercent / 100));
+                              .forEachValue(floatModifiable -> floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                                      "Spec Boost", puddleHealingIncreasePercent / 100
+                              ));
             });
             warlordsPlayer.getAbilitiesMatching(RemedicChains.class).forEach(remedicChains -> {
                 remedicChains.setLinkBreakRadius((int) (remedicChains.getLinkBreakRadius() + remedicChainsBreakRadiusIncrease));

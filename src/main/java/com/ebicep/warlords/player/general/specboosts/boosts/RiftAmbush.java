@@ -11,6 +11,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.event.EventHandler;
@@ -65,7 +66,7 @@ public class RiftAmbush implements SpecBoostManager.SpecBoost<RiftAmbush> {
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(SoulSwitch.class).forEach(soulSwitch -> {
-                soulSwitch.getHitBoxRadius().addAdditiveModifier("Spec Boost", soulSwitchRadiusIncrease);
+                soulSwitch.getHitBoxRadius().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", soulSwitchRadiusIncrease);
                 soulSwitch.setVerticalLimit(soulSwitchVerticalLimit);
                 soulSwitch.setDamageReduction(soulSwitch.getDamageReduction() + soulSwitchDamageReductionIncreasePercent);
                 soulSwitch.setCanSwitchToCarrier(true);

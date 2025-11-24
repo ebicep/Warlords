@@ -9,6 +9,7 @@ import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 import com.ebicep.warlords.pve.items.types.specialitems.buckler.omega.LovelyOmamori;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.List;
 import java.util.Set;
@@ -50,7 +51,7 @@ public class OtherworldlyAmulet extends SpecialDeltaBuckler implements CraftsInt
         ).addModifier(Modifier.MODIFY_OUTGOING_CRIT_CHANCE, (event, currentCritChance) -> {
                     for (String effect : EFFECTS) {
                         if (warlordsPlayer.getCooldownManager().hasCooldownFromName(effect)) {
-                            currentCritChance.addAdditiveModifier(getName(), 25f);
+                            currentCritChance.addModifier(FloatModifiable.ModifierType.ADDITIVE, getName(), 25f);
                         }
                     }
                 }

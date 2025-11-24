@@ -148,7 +148,7 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
                                 DURATION * 20
                         );
                         regularCooldown.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
-                                    currentDamageValue.addMultiplicativeModifierMult(getTitleName(), 1 + damageBoost.get() * DAMAGE_BOOST / 100f);
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getTitleName(), 1 + damageBoost.get() * DAMAGE_BOOST / 100f);
                                 }
                         );
                         cooldown.set(regularCooldown);
@@ -188,7 +188,9 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
                         List<FloatModifiable.FloatModifier> modifiers = new ArrayList<>();
                         for (AbstractAbility ability : player.getSpec().getAbilities()) {
                             if (ability.getEnergyCostValue() > 0) {
-                                modifiers.add(ability.getEnergyCost().addMultiplicativeModifierAdd("Divine", energyCostReduction));
+                                modifiers.add(ability.getEnergyCost().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                                        "Divine", energyCostReduction
+                                ));
                             }
                         }
                         RegularCooldown<LegendaryDivine> divineCooldown = new RegularCooldown<>(
@@ -207,10 +209,13 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
                                 10 * 20
                         );
                         divineCooldown.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                                    currentDamageValue.addMultiplicativeModifierMult(getTitleName(), 1 + ABILITY_DAMAGE_BOOST / 100f);
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getTitleName(), 1 + ABILITY_DAMAGE_BOOST / 100f);
                                 }
                         );
-                        divineCooldown.addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> energyGainPerTick.addAdditiveModifier("Divine Ability", 2.5f));
+                        divineCooldown.addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> energyGainPerTick.addModifier(FloatModifiable.ModifierType.ADDITIVE,
+                                        "Divine Ability", 2.5f
+                                )
+                        );
                         player.getCooldownManager().addCooldown(divineCooldown);
                         passiveCooldown = 40 * GameRunnable.SECOND;
                     }

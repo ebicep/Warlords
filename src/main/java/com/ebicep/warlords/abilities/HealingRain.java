@@ -192,7 +192,10 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
                                         cooldownManager -> {
                                         },
                                         10
-                                ).addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> energyGainPerTick.addAdditiveModifier("Nimbus", 0.25f)));
+                                ).addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> energyGainPerTick.addModifier(FloatModifiable.ModifierType.ADDITIVE,
+                                                "Nimbus", 0.25f
+                                        )
+                                ));
                             }
                         } else {
                             for (WarlordsEntity teammateInRain : teammatesInRain) {

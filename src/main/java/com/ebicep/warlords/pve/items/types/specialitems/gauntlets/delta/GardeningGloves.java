@@ -9,6 +9,7 @@ import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
 import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.omega.NaturesClaws;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
@@ -39,7 +40,7 @@ public class GardeningGloves extends SpecialDeltaGauntlet implements AppliesToWa
                 false
         ).addModifier(Modifier.MODIFY_OUTGOING_HEALING, (event, currentHealValue) -> {
                     if (ThreadLocalRandom.current().nextDouble() <= .15) {
-                        currentHealValue.addMultiplicativeModifierMult(getName(), 1.3f);
+                        currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getName(), 1.3f);
                     }
                 }
         ));

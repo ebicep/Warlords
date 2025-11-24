@@ -10,14 +10,6 @@ import java.util.List;
 
 public class GuardianBeamBranch extends AbstractUpgradeBranch<GuardianBeam> {
 
-    @Override
-    public void runOnce() {
-        Value.RangedValueCritable damage = ability.getDamageValues().getBeamDamage();
-        damage.min().addMultiplicativeModifierAdd("PvE", .3f);
-        damage.max().addMultiplicativeModifierAdd("PvE", .3f);
-        ability.setShieldValues(new ArrayList<>(List.of(600, 1200, 2400)));
-    }
-
     public GuardianBeamBranch(AbilityTree abilityTree, GuardianBeam ability) {
         super(abilityTree, ability);
 
@@ -39,7 +31,7 @@ public class GuardianBeamBranch extends AbstractUpgradeBranch<GuardianBeam> {
                     public void modifyFloatModifiable(FloatModifiable.FloatModifier modifier, float value) {
                         modifier.setModifier(value);
                     }
-                            }, ability.getMaxDistance().addAdditiveModifier("Upgrade Branch", 0), 4
+                            }, ability.getMaxDistance().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Upgrade Branch", 0), 4
                 )
                 .addTo(treeB);
 
@@ -67,10 +59,18 @@ public class GuardianBeamBranch extends AbstractUpgradeBranch<GuardianBeam> {
                 50000,
                 () -> {
                     Value.RangedValueCritable damage = ability.getDamageValues().getBeamDamage();
-                    damage.min().addMultiplicativeModifierAdd("PvE", .25f);
-                    damage.max().addMultiplicativeModifierAdd("PvE", .25f);
+                    damage.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .25f);
+                    damage.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .25f);
                 }
         );
+    }
+
+    @Override
+    public void runOnce() {
+        Value.RangedValueCritable damage = ability.getDamageValues().getBeamDamage();
+        damage.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .3f);
+        damage.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .3f);
+        ability.setShieldValues(new ArrayList<>(List.of(600, 1200, 2400)));
     }
 
 }

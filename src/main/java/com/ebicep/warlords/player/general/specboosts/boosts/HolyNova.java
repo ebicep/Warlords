@@ -11,6 +11,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.event.EventHandler;
 
 import java.util.List;
@@ -77,7 +78,10 @@ public class HolyNova implements SpecBoostManager.SpecBoost<HolyNova> {
                         if (e.getCause().equals("Divine Blessing") &&
                                 e.getWarlordsEntity().getLocation().distanceSquared(warlordsEntity.getLocation()) > divineBlessingFarRangeBlocks * divineBlessingFarRangeBlocks
                         ) {
-                            currentHealValue.addMultiplicativeModifierMult(getStringName(), AbstractAbility.convertToMultiplicationDecimal(divineBlessingHealingIncreasePercentFar));
+                            currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                                    getStringName(),
+                                    AbstractAbility.convertToMultiplicationDecimal(divineBlessingHealingIncreasePercentFar)
+                            );
                         }
                     }
             );

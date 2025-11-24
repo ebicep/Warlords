@@ -16,6 +16,7 @@ import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -89,7 +90,9 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
                                                     },
                                                     ticksLeft
                                             ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                                                        currentDamageValue.addMultiplicativeModifierMult("Ice Wall", 1.35f);
+                                                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                                                        "Ice Wall", 1.35f
+                                                );
                                                     }
                                             ));
                                         });
@@ -129,7 +132,7 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
                     if (pveMasterUpgrade2) {
                         return;
                     }
-                    currentDamageValue.addMultiplicativeModifierMult(name, getDamageReduction());
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, getDamageReduction());
                 }
         );
         wp.getCooldownManager().addCooldown(iceBarrierCooldown);

@@ -13,6 +13,7 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.spiritguard.SoulbindingWeaponBranch;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
@@ -129,7 +130,7 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
                 soulbinding -> soulbinding.getSoulBindedPlayers().isEmpty(),
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed == 1) {
-                        this.energyCost.addOverridingModifier("Soulbinding Reactivation", 0, tickDuration);
+                        this.energyCost.addModifier(FloatModifiable.ModifierType.OVERRIDING, "Soulbinding Reactivation", 0, tickDuration);
                     }
                     if (ticksElapsed % 4 == 0) {
                         Location location = wp.getLocation();

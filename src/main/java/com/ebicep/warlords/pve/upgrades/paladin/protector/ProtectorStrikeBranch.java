@@ -6,15 +6,9 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 public class ProtectorStrikeBranch extends AbstractUpgradeBranch<ProtectorsStrike> {
-
-    @Override
-    public void runOnce() {
-        Value.RangedValueCritable damage = ability.getDamageValues().getStrikeDamage();
-        damage.min().addMultiplicativeModifierAdd("PvE", .3f);
-        damage.max().addMultiplicativeModifierAdd("PvE", .3f);
-    }
 
     public ProtectorStrikeBranch(AbilityTree abilityTree, ProtectorsStrike ability) {
         super(abilityTree, ability);
@@ -49,12 +43,19 @@ public class ProtectorStrikeBranch extends AbstractUpgradeBranch<ProtectorsStrik
                 50000,
                 () -> {
                     Value.RangedValueCritable damage = ability.getDamageValues().getStrikeDamage();
-                    damage.min().addMultiplicativeModifierAdd("Master Upgrade Branch", .2f);
-                    damage.max().addMultiplicativeModifierAdd("Master Upgrade Branch", .2f);
-                    ability.getDamageValues().getStrikeDamage().critChance().addAdditiveModifier("Master Upgrade Branch", 15);
+                    damage.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Master Upgrade Branch", .2f);
+                    damage.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Master Upgrade Branch", .2f);
+                    ability.getDamageValues().getStrikeDamage().critChance().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade Branch", 15);
                     ability.setStrikeRadius(ability.getStrikeRadius() * 2);
                     ability.setMaxAllies(ability.getMaxAllies() + 1);
                 }
         );
+    }
+
+    @Override
+    public void runOnce() {
+        Value.RangedValueCritable damage = ability.getDamageValues().getStrikeDamage();
+        damage.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .3f);
+        damage.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .3f);
     }
 }

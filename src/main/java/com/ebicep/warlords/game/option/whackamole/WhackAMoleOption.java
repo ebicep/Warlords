@@ -15,6 +15,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.OfflinePlayer;
@@ -134,10 +135,10 @@ public class WhackAMoleOption implements PveOption, Listener {
             return;
         }
         event.applyToMinMax(floatModifiable ->
-                floatModifiable.addOverridingModifier("WackAMole", 100)
+                floatModifiable.addModifier(FloatModifiable.ModifierType.OVERRIDING, "WackAMole", 100)
         );
-        event.getCritChance().addOverridingModifier("WackAMole", 0);
-        event.getCritMultiplier().addOverridingModifier("WackAMole", 100);
+        event.getCritChance().addModifier(FloatModifiable.ModifierType.OVERRIDING, "WackAMole", 0);
+        event.getCritMultiplier().addModifier(FloatModifiable.ModifierType.OVERRIDING, "WackAMole", 100);
     }
 
     public static class WhackAMoleMobData extends MobData {

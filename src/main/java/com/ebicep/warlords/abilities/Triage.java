@@ -12,6 +12,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Particle;
@@ -93,8 +94,8 @@ public class Triage extends AbstractAbility implements PurpleAbilityIcon, Listen
                 bonusHealingDurationTicks
         ).addModifier(Modifier.MODIFY_OUTGOING_HEALING, (event, currentHealValue) -> {
                     if (event.getWarlordsEntity() == lastFlagCarrier) {
-                        currentHealValue.addMultiplicativeModifierMult(
-                                name,
+                        currentHealValue.addModifier(
+                                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name,
                                 convertToMultiplicationDecimal(targetBonusHealing),
                                 contribution -> stats.healingIncreased += Math.abs(contribution)
                         );

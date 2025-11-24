@@ -14,7 +14,7 @@ public class MidSpeedReductionValueModifier implements NewValueModifier {
         float min = newValueData.min();
         FloatModifiable newValue = newValueData.newValue();
         if (min != 1 && newValue.getCalculatedValue() < speedThreshold) {
-            newValue.addAdditiveModifier(addonName(), -speedReduction); // TODO
+            newValue.addModifier(FloatModifiable.ModifierType.ADDITIVE, addonName(), -speedReduction); // TODO
         }
     }
 

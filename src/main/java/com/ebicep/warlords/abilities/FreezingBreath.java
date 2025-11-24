@@ -16,6 +16,7 @@ import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -215,7 +216,7 @@ public class FreezingBreath extends AbstractProjectile<FreezingBreath, FreezingB
             ).addModifier(
                     Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE,
                     (event, currentDamageValue) -> {
-                        currentDamageValue.addMultiplicativeModifierMult(name, 0.6f);
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 0.6f);
                     }
             ));
         }
@@ -227,7 +228,7 @@ public class FreezingBreath extends AbstractProjectile<FreezingBreath, FreezingB
         we.getCooldownManager().addCooldown(new RegularCooldown<>(name, "FRZ RES", FreezingBreath.class, new FreezingBreath(), we, CooldownTypes.BUFF, cooldownManager -> {
         }, 4 * 20
         ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
-                    currentDamageValue.addMultiplicativeModifierMult(name, (1 - (0.05f * counter)));
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, (1 - (0.05f * counter)));
                 }
         ));
     }

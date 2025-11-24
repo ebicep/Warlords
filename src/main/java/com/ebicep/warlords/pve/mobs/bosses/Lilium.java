@@ -33,6 +33,7 @@ import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
@@ -156,7 +157,7 @@ public class Lilium extends AbstractMob implements BossMob {
                     if (crystals.isEmpty()) {
                         return;
                     }
-                    currentDamageValue.addMultiplicativeModifierMult(name, 0.1f);
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 0.1f);
                 }
         ));
 
@@ -706,14 +707,14 @@ public class Lilium extends AbstractMob implements BossMob {
                                                         },
                                                         3
                                                 ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
-                                                            currentDamageValue.addOverridingModifier(name, 0);
+                                                    currentDamageValue.addModifier(FloatModifiable.ModifierType.OVERRIDING, name, 0);
                                                         }
                                                 ));
                                             }
                                         }
                                     })
                             ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
-                                        currentDamageValue.addMultiplicativeModifierMult(name, 0.1f);
+                                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 0.1f);
                                     }
                             ));
                         });

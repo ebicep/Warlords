@@ -8,6 +8,7 @@ import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BasicMob;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.Location;
 
 import java.util.Collections;
@@ -53,7 +54,7 @@ public class TDZombifiedPiglin extends TowerDefenseMob implements BasicMob {
         if (!inGroup) {
             return;
         }
-        getPhysicalResistance().addAdditiveModifier("Group Bonus", 20, 11);
+        getPhysicalResistance().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Group Bonus", 20, 11);
         warlordsNPC.getCooldownManager().addCooldown(new RegularCooldown<>(
                 "Group Bonus",
                 null,
@@ -67,7 +68,7 @@ public class TDZombifiedPiglin extends TowerDefenseMob implements BasicMob {
                 Collections.singletonList((cooldown, ticksLeft, cdTicksElapsed) -> {
                 })
         ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
-                    currentDamageValue.addMultiplicativeModifierMult("Group Bonus", 1.3f);
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Group Bonus", 1.3f);
                 }
         ));
     }

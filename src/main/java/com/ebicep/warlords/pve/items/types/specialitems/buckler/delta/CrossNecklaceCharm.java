@@ -11,6 +11,7 @@ import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 import com.ebicep.warlords.pve.items.types.specialitems.buckler.omega.BreastplateBuckler;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.Set;
 
@@ -68,7 +69,9 @@ public class CrossNecklaceCharm extends SpecialDeltaBuckler implements CraftsInt
                                                 },
                                                 3
                                         ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                                                    currentDamageValue.addMultiplicativeModifierMult(getName() + " Damage", 1.1f);
+                                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                                                    getName() + " Damage", 1.1f
+                                            );
                                                 }
                                         ));
                                     });

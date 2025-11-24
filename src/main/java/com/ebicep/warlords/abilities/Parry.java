@@ -13,6 +13,7 @@ import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Sound;
@@ -145,7 +146,9 @@ public class Parry extends AbstractAbility implements AbilityStats<Parry, Parry.
                                                 }
                                     };
                                     parryCooldown.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (e, currentDamageValue) -> {
-                                                currentDamageValue.addMultiplicativeModifierMult(name, convertToDivisionDecimal(data.instances.size() * damageReduction));
+                                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                                                name, convertToDivisionDecimal(data.instances.size() * damageReduction)
+                                        );
                                             }
                                     );
                                     wp.getCooldownManager().addCooldown(parryCooldown);

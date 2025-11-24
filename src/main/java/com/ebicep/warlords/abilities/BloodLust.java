@@ -18,6 +18,7 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.berserker.BloodlustBranch;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Color;
 import org.bukkit.Particle;
@@ -160,7 +161,7 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
                         }
                     } else if (pveMasterUpgrade2) {
                         if (cooldownManager.hasCooldownFromName("Bleed")) {
-                            currentDamageValue.addMultiplicativeModifierMult("Blood Thirsty", 1.3f);
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Blood Thirsty", 1.3f);
                         }
                     }
                 }

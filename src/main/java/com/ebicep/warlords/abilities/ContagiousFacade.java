@@ -125,8 +125,8 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                 })
         );
         protectiveLayerCooldown.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
-            currentDamageValue.addMultiplicativeModifierMult(
-                    name,
+            currentDamageValue.addModifier(
+                    FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name,
                     convertToDivisionDecimal(damageAbsorption.getCalculatedValue()),
                     contribution -> totalAbsorbed.addAndGet(Math.abs(contribution))
             );
@@ -229,7 +229,7 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                     cooldownManager -> {
                     },
                     20 * 8
-            ).addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> energyGainPerTick.addAdditiveModifier(name, 0.5f)));
+            ).addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> energyGainPerTick.addModifier(FloatModifiable.ModifierType.ADDITIVE, name, 0.5f)));
         }
         stats.timesReactivated++;
     }

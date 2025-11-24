@@ -332,7 +332,10 @@ public class PowerupOption implements Option {
                             we.sendMessage(getWornOffMessage());
                         },
                         getTickDuration()
-                ).addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> energyGainPerTick.addAdditiveModifier("Energy Powerup", 0.5f)));
+                ).addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> energyGainPerTick.addModifier(FloatModifiable.ModifierType.ADDITIVE,
+                                "Energy Powerup", 0.5f
+                        )
+                ));
                 we.sendMessage(Component.text("You activated the ", NamedTextColor.GOLD)
                                         .append(Component.text("ENERGY", NamedTextColor.GOLD, TextDecoration.BOLD))
                                         .append(Component.text(" powerup! "))
@@ -366,7 +369,7 @@ public class PowerupOption implements Option {
                         },
                         getTickDuration()
                 ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                            currentDamageValue.addMultiplicativeModifierMult("Damage", 1.2f);
+                    currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Damage", 1.2f);
                         }
                 ));
                 we.sendMessage(Component.text("You activated the ", NamedTextColor.GOLD)
@@ -390,7 +393,9 @@ public class PowerupOption implements Option {
                 we.getCooldownManager().removeCooldown(CooldownPowerup.class, false);
                 List<FloatModifiable.FloatModifier> modifiers = we.getAbilities()
                                                                   .stream()
-                                                                  .map(ability -> ability.getCooldown().addMultiplicativeModifierMult(name + " Powerup", 0.75f))
+                                                                  .map(ability -> ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                                                                          name + " Powerup", 0.75f
+                                                                  ))
                                                                   .toList();
                 we.getCooldownManager().addCooldown(new RegularCooldown<>(
                         "Cooldown",
@@ -492,7 +497,7 @@ public class PowerupOption implements Option {
                             }
                         })
                 ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
-                            currentDamageValue.addMultiplicativeModifierMult(name, 1.1f);
+                    currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 1.1f);
                         }
                 ));
                 we.sendMessage(Component.text("You activated the ", NamedTextColor.GOLD)

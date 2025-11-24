@@ -27,7 +27,7 @@ public class LightningBoltBranch extends AbstractUpgradeBranch<LightningBolt> {
                         modifier.setModifier(value / 100);
                     }},
 
-                    ability.getProjectileSpeed().addMultiplicativeModifierAdd("Upgrade Branch", 0), 20f
+                        ability.getProjectileSpeed().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Upgrade Branch", 0), 20f
                 )
                 .addTo(treeA);
 
@@ -46,7 +46,7 @@ public class LightningBoltBranch extends AbstractUpgradeBranch<LightningBolt> {
                         Lightning Bolt shoots two additional projectiles.""",
                 50000,
                 () -> {
-                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -10);
+                    ability.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade Branch", -10);
                     ability.setShotsFiredAtATime(3);
                 }
         );
@@ -60,7 +60,7 @@ public class LightningBoltBranch extends AbstractUpgradeBranch<LightningBolt> {
                         """,
                 50000,
                 () -> {
-                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", 10);
+                    ability.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade Branch", 10);
                 }
         );
     }

@@ -15,6 +15,7 @@ import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.event.EventHandler;
 
 import java.util.List;
@@ -69,7 +70,9 @@ public class ArcaneReflection implements SpecBoostManager.SpecBoost<ArcaneReflec
             warlordsPlayer.getAbilitiesMatching(WaterBolt.class).forEach(waterBolt ->
                     waterBolt.getDamageValues()
                              .getBoltDamage()
-                             .forEachValue(floatModifiable -> floatModifiable.addMultiplicativeModifierAdd("Arcane Reflection", waterBoltDamageIncreasePercent / 100))
+                             .forEachValue(floatModifiable -> floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                                     "Arcane Reflection", waterBoltDamageIncreasePercent / 100
+                             ))
             );
             warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
                     getStringName(),
@@ -83,7 +86,10 @@ public class ArcaneReflection implements SpecBoostManager.SpecBoost<ArcaneReflec
                     false
             ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                         if (event.getCause().isEmpty()) {
-                            currentDamageValue.addMultiplicativeModifierMult(getStringName(), AbstractAbility.convertToMultiplicationDecimal(meleeDamageIncreasePercent));
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                                    getStringName(),
+                                    AbstractAbility.convertToMultiplicationDecimal(meleeDamageIncreasePercent)
+                            );
                         }
                     }
             ).addModifier(Modifier.ON_OUTGOING_SHIELD_DAMAGE, (event, currentDamageValue, isCrit) -> {

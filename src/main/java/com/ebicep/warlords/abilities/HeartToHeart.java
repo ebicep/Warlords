@@ -183,7 +183,7 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
                                   },
                                   6 * 20
                           ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
-                                      currentDamageValue.addMultiplicativeModifierMult(name, damageMultiplier);
+                              currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, damageMultiplier);
                                   }
                           ));
                     }

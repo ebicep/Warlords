@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilities.PoisonousHex;
 import com.ebicep.warlords.abilities.SoulfireBeam;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.List;
 
@@ -53,7 +54,7 @@ public class StackulatorMax implements SpecBoostManager.SpecBoost<StackulatorMax
         public void apply(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getAbilitiesMatching(PoisonousHex.class).forEach(poisonousHex -> {
                 poisonousHex.getDamageValues().getHexDOTDamage().forEachValue(floatModifiable ->
-                        floatModifiable.addAdditiveModifier("Spec Boost", poisonousHexTickDamageIncrease)
+                        floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", poisonousHexTickDamageIncrease)
                 );
                 poisonousHex.setTickDurationDot(poisonousHex.getTickDurationDot() - poisonousHex.getTicksBetweenDot());
             });

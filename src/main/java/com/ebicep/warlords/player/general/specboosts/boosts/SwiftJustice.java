@@ -10,6 +10,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.*;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -60,7 +61,7 @@ public class SwiftJustice implements SpecBoostManager.SpecBoost<SwiftJustice> {
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(Vindicate.class).forEach(vindicate -> {
-                vindicate.getCooldown().addAdditiveModifier("Spec Boost", -vindicateCooldownReductionSeconds);
+                vindicate.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", -vindicateCooldownReductionSeconds);
             });
         }
 
@@ -108,7 +109,7 @@ public class SwiftJustice implements SpecBoostManager.SpecBoost<SwiftJustice> {
                                                     .filter(regularCooldown -> !regularCooldown.getFlags().contains(CooldownFlag.CANNOT_BE_REDUCED) &&
                                                             !regularCooldown.getFlags().contains(CooldownFlag.CANNOT_BE_REDUCED_VIND))
                                                     .forEach(regularCooldown -> regularCooldown.subtractTime(nextStrikeCooldownReductionTicks));
-                                            currentDamageValue.addMultiplicativeModifierMult(getStringName(),
+                                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getStringName(),
                                                     AbstractAbility.convertToMultiplicationDecimal(nextStrikeDamageIncreasePercent)
                                             );
                                         }

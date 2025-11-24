@@ -9,6 +9,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 
@@ -62,8 +63,10 @@ public class AbyssalGrasp implements SpecBoostManager.SpecBoost<AbyssalGrasp> {
             warlordsPlayer.getAbilitiesMatching(SoulShackle.class).forEach(soulShackle -> {
                 soulShackle.getDamageValues()
                            .getShackleDamage()
-                           .forEachValue(floatModifiable -> floatModifiable.addMultiplicativeModifierAdd("Spec Boost", soulShackleDamageIncreasePercent / 100));
-                soulShackle.getCooldown().addAdditiveModifier("Spec Boost", soulShackleCooldownIncreaseTicks / 20f);
+                           .forEachValue(floatModifiable -> floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                                   "Spec Boost", soulShackleDamageIncreasePercent / 100
+                           ));
+                soulShackle.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", soulShackleCooldownIncreaseTicks / 20f);
                 this.soulShackleRange = soulShackle.getShackleRange() - soulShackleRangeDecrease;
                 soulShackle.setShackleRange(soulShackleRange);
             });

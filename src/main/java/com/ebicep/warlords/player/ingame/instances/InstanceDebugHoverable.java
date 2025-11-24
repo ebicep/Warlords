@@ -5,11 +5,14 @@ import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
+import com.ebicep.warlords.util.warlords.modifiablevalues.MultiFloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 public class InstanceDebugHoverable {
 
@@ -53,8 +56,10 @@ public class InstanceDebugHoverable {
                 .create(1)
                 .prefix(ComponentBuilder.create("Crit Multiplier: ", NamedTextColor.LIGHT_PURPLE))
                 .value(event.getCritMultiplier()));
-        grayDash();
-        namedValue("Flags", "" + event.getFlags());
+        if (!event.getFlags().isEmpty()) {
+            grayDash();
+            namedValue("Flags", "" + event.getFlags());
+        }
     }
 
     public void grayDash() {
@@ -73,17 +78,17 @@ public class InstanceDebugHoverable {
         debugMessage.append(GRAY_BAR);
     }
 
+    public void append(LevelBuilder levelBuilder) {
+        debugMessage.append(Component.newline());
+        debugMessage.append(levelBuilder.build());
+    }
+
     public void namedValue(String title, float value) {
         namedValue(title, NumberFormat.addCommaAndRoundHundredths(value));
     }
 
     public void cooldown(AbstractCooldown<?> cooldown) {
 
-    }
-
-    public void append(LevelBuilder levelBuilder) {
-        debugMessage.append(Component.newline());
-        debugMessage.append(levelBuilder.build());
     }
 
     public void append(Component component) {
@@ -150,6 +155,37 @@ public class InstanceDebugHoverable {
             for (int i = 1; i < debugInfo.size(); i++) {
                 Component component = debugInfo.get(i);
                 builder.append(Component.newline()).append(spacer).append(component);
+            }
+            this.value = builder.build();
+            return this;
+        }
+
+        public LevelBuilder value(MultiFloatModifiable multiFloatModifiable) {
+            TextComponent spacer = Component.text(frontSpacing + " ".repeat(Math.max(0, (level + 2) * 2)));
+            TextComponent spacer2 = Component.text(frontSpacing + " ".repeat(Math.max(0, (level + 1) * 2)));
+            Map<MultiFloatModifiable.ApplyFloatModifiable, Map<String, Float>> globalMarginalContributions = multiFloatModifiable.getGlobalMarginalContributions();
+            ComponentBuilder builder = ComponentBuilder.create(NumberFormat.formatOptionalHundredths(multiFloatModifiable.getCalculatedValue()), NamedTextColor.GOLD);
+            builder.newLine();
+            Iterator<Map.Entry<MultiFloatModifiable.ApplyFloatModifiable, FloatModifiable>> iterator = multiFloatModifiable
+                    .getModifiables()
+                    .entrySet()
+                    .iterator();
+            while (iterator.hasNext()) {
+                Map.Entry<MultiFloatModifiable.ApplyFloatModifiable, FloatModifiable> entry = iterator.next();
+                MultiFloatModifiable.ApplyFloatModifiable applyFloatModifiable = entry.getKey();
+                FloatModifiable floatModifiable = entry.getValue();
+                ComponentBuilder modifierDebug = ComponentBuilder
+                        .create(spacer2)
+                        .text(applyFloatModifiable.priority() + " - " + applyFloatModifiable.applyType(), NamedTextColor.DARK_PURPLE);
+                Map<String, Float> contributions = globalMarginalContributions.get(applyFloatModifiable);
+                List<Component> debugInfo = floatModifiable.getDebugInfo(contributions);
+                for (Component component : debugInfo) {
+                    modifierDebug.append(Component.newline()).append(spacer).append(component);
+                }
+                builder.append(modifierDebug.build());
+                if (iterator.hasNext()) {
+                    builder.newLine();
+                }
             }
             this.value = builder.build();
             return this;

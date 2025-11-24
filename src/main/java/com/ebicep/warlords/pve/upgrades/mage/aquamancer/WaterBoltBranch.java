@@ -5,6 +5,7 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 public class WaterBoltBranch extends AbstractUpgradeBranch<WaterBolt> {
 
@@ -29,8 +30,8 @@ public class WaterBoltBranch extends AbstractUpgradeBranch<WaterBolt> {
                 "+6 Energy per hit\n+100% Projectile speed\n\nWater Bolt increases the energy per hit of all allies it hits by +6 for 5 seconds.",
                 50000,
                 () -> {
-                    ability.getProjectileSpeed().addMultiplicativeModifierAdd("Master Upgrade Branch", 1);
-                    abilityTree.getWarlordsPlayer().getEnergyPerHit().addAdditiveModifier("Master Upgrade Branch", 6);
+                    ability.getProjectileSpeed().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Master Upgrade Branch", 1);
+                    abilityTree.getWarlordsPlayer().getEnergyPerHit().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade Branch", 6);
                 }
         );
         masterUpgrade2 = new Upgrade(
@@ -44,8 +45,8 @@ public class WaterBoltBranch extends AbstractUpgradeBranch<WaterBolt> {
                         """,
                 50000,
                 () -> {
-                    ability.getProjectileSpeed().addMultiplicativeModifierAdd("Master Upgrade Branch", 1);
-                    ability.getHealValues().getBoltHealing().critMultiplier().addAdditiveModifier("Master Upgrade Branch", 25);
+                    ability.getProjectileSpeed().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Master Upgrade Branch", 1);
+                    ability.getHealValues().getBoltHealing().critMultiplier().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade Branch", 25);
                 }
         );
     }

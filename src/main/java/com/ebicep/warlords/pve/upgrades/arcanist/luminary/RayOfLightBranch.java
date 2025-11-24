@@ -6,15 +6,9 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 public class RayOfLightBranch extends AbstractUpgradeBranch<RayOfLight> {
-
-    @Override
-    public void runOnce() {
-        Value.RangedValueCritable healing = ability.getHealValues().getRayHealing();
-        healing.min().addMultiplicativeModifierAdd("PvE", .3f);
-        healing.max().addMultiplicativeModifierAdd("PvE", .3f);
-    }
 
     public RayOfLightBranch(AbilityTree abilityTree, RayOfLight ability) {
         super(abilityTree, ability);
@@ -50,10 +44,17 @@ public class RayOfLightBranch extends AbstractUpgradeBranch<RayOfLight> {
                         """,
                 50000,
                 () -> {
-                    ability.getHealValues().getRayHealing().critMultiplier().addAdditiveModifier("Master Upgrade Branch", 45);
+                    ability.getHealValues().getRayHealing().critMultiplier().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade Branch", 45);
                     ability.setShotsFiredAtATime(3);
                 }
         );
+    }
+
+    @Override
+    public void runOnce() {
+        Value.RangedValueCritable healing = ability.getHealValues().getRayHealing();
+        healing.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .3f);
+        healing.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .3f);
     }
 
 }
