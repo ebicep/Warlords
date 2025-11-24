@@ -73,7 +73,7 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
                     ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                                 if (event.getCause().equals("Judgement Strike")) {
                                     currentDamageValue.addModifier(50, MultiFloatModifiable.ApplyFloatModifiableType.ADDITIVE, FloatModifiable.ModifierType.ADDITIVE,
-                                            "MAX HP DAMAGE (Death Strike)", DamageCheck.clamp(event.getWarlordsEntity().getMaxHealth() * 0.01f)
+                                            "Death Strike", DamageCheck.clamp(event.getWarlordsEntity().getMaxHealth() * 0.01f)
                                     );
                                 }
                             }

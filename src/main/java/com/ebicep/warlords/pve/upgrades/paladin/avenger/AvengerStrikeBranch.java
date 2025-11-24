@@ -80,7 +80,7 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
 
                                 if (isAboveElite && event.getCause().equals("Avenger's Strike") && isNotDuplicateStrike) {
                                     currentDamageValue.addModifier(50, MultiFloatModifiable.ApplyFloatModifiableType.ADDITIVE, FloatModifiable.ModifierType.ADDITIVE,
-                                            "MAX HP DAMAGE (Avenger's Slash)", DamageCheck.clamp(event.getWarlordsEntity().getMaxHealth() * 0.005f)
+                                            "Avenger's Slash", DamageCheck.clamp(event.getWarlordsEntity().getMaxHealth() * 0.005f)
                                     );
                                 }
                             }

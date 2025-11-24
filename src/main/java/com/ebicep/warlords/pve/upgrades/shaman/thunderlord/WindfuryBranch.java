@@ -133,7 +133,7 @@ public class WindfuryBranch extends AbstractUpgradeBranch<WindfuryWeapon> {
                     ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                                 if (event.getCause().equals("Windfury Weapon")) {
                                     currentDamageValue.addModifier(50, MultiFloatModifiable.ApplyFloatModifiableType.ADDITIVE, FloatModifiable.ModifierType.ADDITIVE,
-                                            "MAX HP DAMAGE (Shredding Fury)", DamageCheck.clamp(event.getWarlordsEntity().getMaxHealth() * 0.005f)
+                                            "Shredding Fury", DamageCheck.clamp(event.getWarlordsEntity().getMaxHealth() * 0.005f)
                                     );
                                 }
                             }

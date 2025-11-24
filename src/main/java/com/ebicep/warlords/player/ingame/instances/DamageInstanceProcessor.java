@@ -147,7 +147,7 @@ public class DamageInstanceProcessor {
         }
 
         applyFlagMultiplier();
-        debugMessage.appendTitle("Modify Damage", NamedTextColor.AQUA);
+        debugMessage.appendTitle("Modified Damage", NamedTextColor.AQUA);
         applyBeforeInterveneModifiers();
 
         if (handleIntervene()) {
@@ -177,25 +177,30 @@ public class DamageInstanceProcessor {
 
     private void applyBeforeReductionModifiers() {
         debugMessage.appendTitle("Before Reduction", NamedTextColor.AQUA);
-        debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                .create(1)
-                .prefix(ComponentBuilder.create("Target Cooldowns", NamedTextColor.DARK_GREEN)));
 
-        for (AbstractCooldown<?> abstractCooldown : targetCooldownsDistinct) {
+        if (!targetCooldownsDistinct.isEmpty()) {
             debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                    .create(2)
-                    .prefix(abstractCooldown));
+                    .create(1)
+                    .prefix(ComponentBuilder.create("Target Cooldowns", NamedTextColor.DARK_GREEN)));
+
+            for (AbstractCooldown<?> abstractCooldown : targetCooldownsDistinct) {
+                debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                        .create(2)
+                        .prefix(abstractCooldown));
+            }
         }
 
-        debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                .create(1)
-                .prefix(ComponentBuilder.create("Source Cooldowns", NamedTextColor.DARK_GREEN)));
-
-        for (AbstractCooldown<?> abstractCooldown : sourceCooldownsDistinct) {
-            abstractCooldown.applyModifiers(Modifier.DAMAGE_BEFORE_ANY_REDUCTION_ATTACKER, m -> m.apply(event));
+        if (!sourceCooldownsDistinct.isEmpty()) {
             debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                    .create(2)
-                    .prefix(abstractCooldown));
+                    .create(1)
+                    .prefix(ComponentBuilder.create("Source Cooldowns", NamedTextColor.DARK_RED)));
+
+            for (AbstractCooldown<?> abstractCooldown : sourceCooldownsDistinct) {
+                abstractCooldown.applyModifiers(Modifier.DAMAGE_BEFORE_ANY_REDUCTION_ATTACKER, m -> m.apply(event));
+                debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                        .create(2)
+                        .prefix(abstractCooldown));
+            }
         }
     }
 
@@ -237,22 +242,12 @@ public class DamageInstanceProcessor {
                     .create(1)
                     .prefix(ComponentBuilder.create("Crit Chance: ", NamedTextColor.LIGHT_PURPLE))
                     .value(critChance));
-        } else {
-            debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                    .create(1)
-                    .prefix(ComponentBuilder.create("Crit Chance: ", NamedTextColor.LIGHT_PURPLE))
-                    .value(ComponentBuilder.create("No Change", NamedTextColor.WHITE)));
         }
         if (previousCritMultiplier != critMultiplier.getCalculatedValue()) {
             debugMessage.append(InstanceDebugHoverable.LevelBuilder
                     .create(1)
                     .prefix(ComponentBuilder.create("Crit Multiplier: ", NamedTextColor.LIGHT_PURPLE))
                     .value(critMultiplier));
-        } else {
-            debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                    .create(1)
-                    .prefix(ComponentBuilder.create("Crit Multiplier: ", NamedTextColor.LIGHT_PURPLE))
-                    .value(ComponentBuilder.create("No Change", NamedTextColor.WHITE)));
         }
 
         applyCriticalHit();
@@ -1016,34 +1011,11 @@ public class DamageInstanceProcessor {
     }
 
     private void applyShieldModifiers() {
-        debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                .create(1)
-                .prefix(ComponentBuilder.create("On Shield", NamedTextColor.DARK_GREEN))
-        );
-        debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                .create(2)
-                .prefix(ComponentBuilder.create("Target Cooldowns", NamedTextColor.DARK_GREEN))
-        );
-
         for (AbstractCooldown<?> abstractCooldown : targetCooldownsDistinct) {
             abstractCooldown.applyModifiers(Modifier.ON_INCOMING_SHIELD_DAMAGE, m -> m.apply(event, damageHealValueBeforeShieldReduction, isCrit));
-            debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                    .create(3)
-                    .prefix(abstractCooldown)
-            );
         }
-
-        debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                .create(2)
-                .prefix(ComponentBuilder.create("Attackers Cooldowns", NamedTextColor.DARK_GREEN))
-        );
-
         for (AbstractCooldown<?> abstractCooldown : sourceCooldownsDistinct) {
             abstractCooldown.applyModifiers(Modifier.ON_OUTGOING_SHIELD_DAMAGE, m -> m.apply(event, damageHealValueBeforeShieldReduction, isCrit));
-            debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                    .create(3)
-                    .prefix(abstractCooldown)
-            );
         }
     }
 

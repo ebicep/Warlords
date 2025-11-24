@@ -403,45 +403,58 @@ public class HealingInstanceProcessor {
 
     private void applyBeforeReductionModifiers() {
         debugMessage.appendTitle("Before Reduction", NamedTextColor.AQUA);
-        debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                .create(1)
-                .prefix(ComponentBuilder.create("Target Cooldowns", NamedTextColor.DARK_GREEN)));
 
-        for (AbstractCooldown<?> abstractCooldown : targetCooldownsDistinct) {
+        if (!targetCooldownsDistinct.isEmpty()) {
             debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                    .create(2)
-                    .prefix(abstractCooldown));
+                    .create(1)
+                    .prefix(ComponentBuilder.create("Target Cooldowns", NamedTextColor.DARK_GREEN)));
+            for (AbstractCooldown<?> abstractCooldown : targetCooldownsDistinct) {
+                debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                        .create(2)
+                        .prefix(abstractCooldown));
+            }
         }
 
-        debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                .create(1)
-                .prefix(ComponentBuilder.create("Source Cooldowns", NamedTextColor.DARK_GREEN)));
-
-        for (AbstractCooldown<?> abstractCooldown : sourceCooldownsDistinct) {
+        if (!sourceCooldownsDistinct.isEmpty()) {
             debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                    .create(2)
-                    .prefix(abstractCooldown));
+                    .create(1)
+                    .prefix(ComponentBuilder.create("Source Cooldowns", NamedTextColor.DARK_GREEN)));
+
+            for (AbstractCooldown<?> abstractCooldown : sourceCooldownsDistinct) {
+                debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                        .create(2)
+                        .prefix(abstractCooldown));
+            }
         }
     }
 
     private void calculateCriticals() {
+        debugMessage.appendTitle("Crit Modifiers", NamedTextColor.AQUA);
+
+        float previousCritChance = critChance.getCalculatedValue();
+        float previousCritMultiplier = critMultiplier.getCalculatedValue();
+
         critChance.refresh();
         critMultiplier.refresh();
 
-        debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                .create(1)
-                .prefix(ComponentBuilder.create("Crit Chance: ", NamedTextColor.LIGHT_PURPLE))
-                .value(critChance));
+        if (previousCritChance != critChance.getCalculatedValue()) {
+            debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                    .create(1)
+                    .prefix(ComponentBuilder.create("Crit Chance: ", NamedTextColor.LIGHT_PURPLE))
+                    .value(critChance));
+        }
+        if (previousCritMultiplier != critMultiplier.getCalculatedValue()) {
         debugMessage.append(InstanceDebugHoverable.LevelBuilder
                 .create(1)
                 .prefix(ComponentBuilder.create("Crit Multiplier: ", NamedTextColor.LIGHT_PURPLE))
                 .value(critMultiplier));
+        }
 
         applyCriticalHit();
     }
 
     private void applyHealingModifiers() {
-        debugMessage.appendTitle("Before Heal", NamedTextColor.AQUA);
+        debugMessage.appendTitle("Modified Healing", NamedTextColor.AQUA);
 
         if (trueHealing) {
             healValue.addModifierListener(

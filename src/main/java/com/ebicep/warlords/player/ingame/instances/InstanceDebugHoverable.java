@@ -56,8 +56,10 @@ public class InstanceDebugHoverable {
                 .create(1)
                 .prefix(ComponentBuilder.create("Crit Multiplier: ", NamedTextColor.LIGHT_PURPLE))
                 .value(event.getCritMultiplier()));
-        grayDash();
-        namedValue("Flags", "" + event.getFlags());
+        if (!event.getFlags().isEmpty()) {
+            grayDash();
+            namedValue("Flags", "" + event.getFlags());
+        }
     }
 
     public void grayDash() {
