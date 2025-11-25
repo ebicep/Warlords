@@ -50,7 +50,7 @@ public class ContagiousFacadeBranch extends AbstractUpgradeBranch<ContagiousFaca
                                 public void modifyFloatModifiable(FloatModifiable.FloatModifier modifier, float value) {
                                     modifier.setModifier(value);
                                 }
-                            }, ability.getDamageAbsorption().addAdditiveModifier("Upgrade Branch", 0), 2.5f
+                            }, ability.getDamageAbsorption().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Upgrade Branch", 0), 2.5f
                 )
                 .addTo(treeB);
 
@@ -64,7 +64,7 @@ public class ContagiousFacadeBranch extends AbstractUpgradeBranch<ContagiousFaca
                         """,
                 50000,
                 () -> {
-                    ability.getCooldown().addMultiplicativeModifierMult("Corrosive Facade", 0.8f);
+                    ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Corrosive Facade", 0.8f);
                 }
         );
         masterUpgrade2 = new Upgrade(
@@ -78,8 +78,8 @@ public class ContagiousFacadeBranch extends AbstractUpgradeBranch<ContagiousFaca
                         """,
                 50000,
                 () -> {
-                    ability.getCooldown().addMultiplicativeModifierMult("Polluting Guise", 0.8f);
-                    ability.getDamageAbsorption().addAdditiveModifier("Polluting Guise", 20f);
+                    ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Polluting Guise", 0.8f);
+                    ability.getDamageAbsorption().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Polluting Guise", 20f);
                 }
         );
     }

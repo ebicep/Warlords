@@ -87,10 +87,11 @@ public class SuperBrew extends AbstractAbility implements OrangeAbilityIcon, Hit
 
         target.setRegenTickTimer(tickDuration);
         List<FloatModifiable.FloatModifier> modifiers = new ArrayList<>();
-        modifiers.add(target.getEnergyPerSec().addAdditiveModifier(name, energyPerSecondIncrease));
-        modifiers.add(target.getEnergy().addAdditiveModifier(name, maxEnergyIncrease));
+        modifiers.add(target.getEnergyPerSec().addModifier(FloatModifiable.ModifierType.ADDITIVE, name, energyPerSecondIncrease));
+        modifiers.add(target.getEnergy().addModifier(FloatModifiable.ModifierType.ADDITIVE, name, maxEnergyIncrease));
         for (AbstractAbility ability : target.getAbilitiesImplementing(OrangeAbilityIcon.class)) {
-            modifiers.add(ability.getCooldownReductionPerTick().addMultiplicativeModifierMult(name, 100f / (100 - ultCooldownReductionPercent))); // 20% = 1.25
+            modifiers.add(ability.getCooldownReductionPerTick()
+                                 .addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 100f / (100 - ultCooldownReductionPercent))); // 20% = 1.25
         }
         SuperBrewData data = new SuperBrewData(this);
         target.getCooldownManager().removeCooldown(SuperBrewData.class, false);
@@ -136,13 +137,16 @@ public class SuperBrew extends AbstractAbility implements OrangeAbilityIcon, Hit
         );
         superBrewCooldown.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     if (event.getCause().isEmpty() && event.getSource().equals(target)) {
-                        currentDamageValue.addMultiplicativeModifierMult(name, AbstractAbility.convertToMultiplicationDecimal(meleeDamageIncreasePercent));
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                                name,
+                                AbstractAbility.convertToMultiplicationDecimal(meleeDamageIncreasePercent)
+                        );
                     }
                 }
         );
         superBrewCooldown.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                     if (event.getCause().isEmpty() && event.getWarlordsEntity().equals(target)) {
-                        currentDamageValue.addMultiplicativeModifierMult(name, convertToDivisionDecimal(meleeDamageTakenDecreasePercent));
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, convertToDivisionDecimal(meleeDamageTakenDecreasePercent));
                     }
                 }
         );

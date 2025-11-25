@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.AbstractTimeWarp;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.TextComponent;
 
 import java.util.List;
@@ -49,7 +50,7 @@ public class Portal implements SpecBoostManager.SpecBoost<Portal> {
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getAbilitiesMatching(com.ebicep.warlords.abilities.Fireball.class).forEach(fireball -> {
-                fireball.getDamageValues().getFireballDamage().critChance().addAdditiveModifier("Spec Boost", fireballCritChanceIncrease);
+                fireball.getDamageValues().getFireballDamage().critChance().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", fireballCritChanceIncrease);
                 fireball.setMaxFullDistance(fireball.getMaxFullDistance() - fireballRangeDecreaseBlocks);
             });
             List<AbstractAbility> abilities = warlordsPlayer.getAbilities();

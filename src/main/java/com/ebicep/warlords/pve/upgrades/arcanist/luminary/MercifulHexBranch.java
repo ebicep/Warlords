@@ -6,6 +6,7 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 public class MercifulHexBranch extends AbstractUpgradeBranch<MercifulHex> {
 
@@ -36,13 +37,13 @@ public class MercifulHexBranch extends AbstractUpgradeBranch<MercifulHex> {
                         """,
                 50000,
                 () -> {
-                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -5);
-                    ability.getProjectileSpeed().addMultiplicativeModifierAdd("Master Upgrade Branch", 2);
+                    ability.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade Branch", -5);
+                    ability.getProjectileSpeed().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Master Upgrade Branch", 2);
                     ability.setHexStacksPerHit(ability.getHexStacksPerHit() + 1);
                     ability.setHexStacksPerHitAfter(ability.getHexStacksPerHitAfter() + 1);
                     Value.RangedValueCritable healing = ability.getHealValues().getHexHealing();
-                    healing.min().addAdditiveModifier("PvE", 100f);
-                    healing.max().addAdditiveModifier("PvE", 100f);
+                    healing.min().addModifier(FloatModifiable.ModifierType.ADDITIVE, "PvE", 100f);
+                    healing.max().addModifier(FloatModifiable.ModifierType.ADDITIVE, "PvE", 100f);
                 }
         );
         masterUpgrade2 = new Upgrade(
@@ -55,7 +56,7 @@ public class MercifulHexBranch extends AbstractUpgradeBranch<MercifulHex> {
                         """,
                 50000,
                 () -> {
-                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -15);
+                    ability.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade Branch", -15);
                     ability.setTicksBetweenDot(10);
                 }
         );
@@ -66,12 +67,12 @@ public class MercifulHexBranch extends AbstractUpgradeBranch<MercifulHex> {
         ability.getDamageValues()
                .getValues()
                .forEach(value -> {
-                   value.forEachValue(floatModifiable -> floatModifiable.addMultiplicativeModifierAdd("PvE", .15f));
+                   value.forEachValue(floatModifiable -> floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .15f));
                });
         ability.getHealValues()
                .getValues()
                .forEach(value -> {
-                   value.forEachValue(floatModifiable -> floatModifiable.addMultiplicativeModifierAdd("PvE", .15f));
+                   value.forEachValue(floatModifiable -> floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .15f));
                });
         ability.setMaxAlliesHit(3);
     }

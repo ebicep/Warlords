@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.upgrades.shaman.spiritguard;
 import com.ebicep.warlords.abilities.SpiritLink;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.pve.upgrades.*;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.jetbrains.annotations.Nullable;
 
 public class SpiritLinkBranch extends AbstractUpgradeBranch<SpiritLink> {
@@ -12,8 +13,8 @@ public class SpiritLinkBranch extends AbstractUpgradeBranch<SpiritLink> {
     @Override
     public void runOnce() {
         Value.RangedValueCritable damage = ability.getDamageValues().getLinkDamage();
-        damage.min().addMultiplicativeModifierAdd("PvE", .2f);
-        damage.max().addMultiplicativeModifierAdd("PvE", .2f);
+        damage.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .2f);
+        damage.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .2f);
     }
 
     public SpiritLinkBranch(AbilityTree abilityTree, SpiritLink ability) {

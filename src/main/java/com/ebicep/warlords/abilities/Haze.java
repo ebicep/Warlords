@@ -12,6 +12,7 @@ import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -88,7 +89,9 @@ public class Haze extends AbstractAbility implements OrangeAbilityIcon, Damages<
                                             },
                                             vulnerableTickDuration
                                     ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                                                currentDamageValue.addMultiplicativeModifierMult("Vulernable", convertToMultiplicationDecimal(vulnerableDamageBonus));
+                                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                                                "Vulernable", convertToMultiplicationDecimal(vulnerableDamageBonus)
+                                        );
                                             }
                                     ));
                                 });
@@ -124,7 +127,7 @@ public class Haze extends AbstractAbility implements OrangeAbilityIcon, Damages<
                     if (!data.vanished) {
                         return;
                     }
-                    currentDamageValue.addMultiplicativeModifierMult(name, convertToDivisionDecimal(incomingDamageReduction));
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, convertToDivisionDecimal(incomingDamageReduction));
                 }
         );
         hazeCooldown.addModifier(Modifier.ON_OUTGOING_DAMAGE, (event, currentDamageValue, isCrit) -> {

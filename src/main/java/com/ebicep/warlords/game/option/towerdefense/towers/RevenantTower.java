@@ -73,7 +73,7 @@ public class RevenantTower extends AbstractTower implements Upgradeable.Path2, L
         }) {
             @Override
             protected void onUpgrade() {
-                spawnTroops.getHitBoxRadius().addAdditiveModifier("Upgrade 4", 5);
+                spawnTroops.getHitBoxRadius().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Upgrade 4", 5);
                 spawnTroops.setMaxSpawnCount(spawnTroops.getMaxSpawnCount() + 2);
                 spawnTroops.setPveMasterUpgrade2(true);
             }
@@ -219,7 +219,7 @@ public class RevenantTower extends AbstractTower implements Upgradeable.Path2, L
         public void onSpawn(PveOption option) {
             super.onSpawn(option);
             if (increasedEHP) {
-                warlordsNPC.getHealth().addMultiplicativeModifierAdd("Increased EHP", .1f);
+                warlordsNPC.getHealth().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Increased EHP", .1f);
             }
         }
 

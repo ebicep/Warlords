@@ -5,6 +5,7 @@ import com.ebicep.warlords.abilities.TimeWarpAquamancer;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.TextComponent;
 
 import java.util.List;
@@ -52,7 +53,7 @@ public class Clairvoyance implements SpecBoostManager.SpecBoost<Clairvoyance> {
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getEnergy().addAdditiveModifier("Spec Boost", maxEnergyIncrease);
+            warlordsPlayer.getEnergy().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", maxEnergyIncrease);
             List<AbstractAbility> abilities = warlordsPlayer.getAbilities();
             for (int i = 0; i < abilities.size(); i++) {
                 AbstractAbility ability = abilities.get(i);
@@ -63,7 +64,7 @@ public class Clairvoyance implements SpecBoostManager.SpecBoost<Clairvoyance> {
                 } else if (ability instanceof HealingRain healingRain) {
                     healingRain.setTickDuration(healingRain.getTickDuration() - healingRainDurationDecreaseTicks);
                     healingRain.getHealValues().getRainHealing().forEachValue(floatModifiable ->
-                            floatModifiable.addMultiplicativeModifierAdd("Spec Boost", healingRainHealIncreasePercent / 100)
+                            floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", healingRainHealIncreasePercent / 100)
                     );
                 }
             }

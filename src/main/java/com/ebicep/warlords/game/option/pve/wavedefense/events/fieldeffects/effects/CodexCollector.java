@@ -21,6 +21,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.gameevents.libraryarchives.PlayerCodex;
 import com.ebicep.warlords.pve.mobs.events.libraryarchives.EventInquisiteur;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.event.EventHandler;
@@ -100,8 +101,8 @@ public class CodexCollector implements FieldEffect {
                     return;
                 }
                 if (event.getCause().isEmpty()) {
-                    event.getCritChance().addAdditiveModifier(getName(), 5);
-                    event.getCritMultiplier().addAdditiveModifier(getName(), 10);
+                    event.getCritChance().addModifier(FloatModifiable.ModifierType.ADDITIVE, getName(), 5);
+                    event.getCritMultiplier().addModifier(FloatModifiable.ModifierType.ADDITIVE, getName(), 10);
                 }
             }
 
@@ -143,8 +144,8 @@ public class CodexCollector implements FieldEffect {
                 for (AbstractAbility ability : player.getAbilities()) {
                     Value.applyDamageHealing(ability, value -> {
                                 if (value instanceof Value.RangedValueCritable rangedValueCritable) {
-                                    rangedValueCritable.critChance().addAdditiveModifier(getName(), 5);
-                                    rangedValueCritable.critMultiplier().addAdditiveModifier(getName(), 10);
+                                    rangedValueCritable.critChance().addModifier(FloatModifiable.ModifierType.ADDITIVE, getName(), 5);
+                                    rangedValueCritable.critMultiplier().addModifier(FloatModifiable.ModifierType.ADDITIVE, getName(), 10);
                                 }
                             }
                     );

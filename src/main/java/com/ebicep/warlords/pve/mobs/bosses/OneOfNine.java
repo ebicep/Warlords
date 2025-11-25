@@ -30,6 +30,7 @@ import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
@@ -246,7 +247,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
                     }
                     // nullify reflected damage
                     if (event.getFlags().contains(InstanceFlags.REFLECTIVE_DAMAGE)) {
-                        currentDamageValue.addOverridingModifier(name, 0f);
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.OVERRIDING, name, 0f);
                     } else {
                 event.getSource().addInstance(InstanceBuilder
                         .damage()
@@ -573,10 +574,10 @@ public class OneOfNine extends AbstractMob implements BossMob {
                     cooldownManager -> {},
                     true
             ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
-                        currentDamageValue.addMultiplicativeModifierMult(name, 0.7f);
+                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 0.7f);
                     }
             ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                        currentDamageValue.addMultiplicativeModifierMult(name, 1.5f);
+                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 1.5f);
                     }
             ));
 

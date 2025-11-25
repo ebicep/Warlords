@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilities.SoothingElixir;
 import com.ebicep.warlords.abilities.VolatileBrew;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.List;
 
@@ -49,14 +50,14 @@ public class AlchemistsFury implements SpecBoostManager.SpecBoost<AlchemistsFury
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getAbilitiesMatching(SoothingElixir.class).forEach(soothingElixir -> {
-                soothingElixir.getCooldown().addAdditiveModifier("Spec Boost", -soothingElixirCooldownReductionSeconds);
+                soothingElixir.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", -soothingElixirCooldownReductionSeconds);
                 soothingElixir.setSpeed(soothingElixir.getSpeed() * soothingElixirProjectileSpeedMultiplier);
                 soothingElixir.setGravity(soothingElixir.getGravity() * soothingElixirProjectileSpeedMultiplier);
                 soothingElixir.getDamageValues().getElixirDamage().forEachValue(floatModifiable ->
-                        floatModifiable.addMultiplicativeModifierAdd("Spec Boost", soothingElixirDamageIncreasePercent / 100)
+                        floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", soothingElixirDamageIncreasePercent / 100)
                 );
                 soothingElixir.getHealValues().getElixirDOTHealing().forEachValue(floatModifiable ->
-                        floatModifiable.addOverridingModifier("Spec Boost", 0)
+                        floatModifiable.addModifier(FloatModifiable.ModifierType.OVERRIDING, "Spec Boost", 0)
                 );
             });
             warlordsPlayer.getAbilitiesMatching(VolatileBrew.class).forEach(volatileBrew -> {

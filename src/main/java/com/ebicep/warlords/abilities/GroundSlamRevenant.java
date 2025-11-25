@@ -12,6 +12,7 @@ import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.revenant.GroundSlamBranchRevenant;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.List;
 import java.util.Set;
@@ -49,7 +50,7 @@ public class GroundSlamRevenant extends AbstractGroundSlam implements Damages<Gr
                     },
                     5 * 20
             ).addModifier(Modifier.MODIFY_OUTGOING_HEALING, (event, currentHealValue) -> {
-                        currentHealValue.addMultiplicativeModifierMult(name, healingBoost);
+                currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, healingBoost);
                     }
             ));
         }

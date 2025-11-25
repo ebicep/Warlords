@@ -17,6 +17,7 @@ import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -112,7 +113,7 @@ public class EventDjer extends AbstractMob implements BossMinionMob {
                     return;
                 }
                 event.applyToMinMax(floatModifiable ->
-                        floatModifiable.addMultiplicativeModifierMult(name, .75f)
+                        floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, .75f)
                 );
             }
 

@@ -29,7 +29,8 @@ public class PrismGuardBranch extends AbstractUpgradeBranch<PrismGuard> {
                     public void modifyFloatModifiable(FloatModifiable.FloatModifier modifier, float value) {
                         modifier.setModifier(value);
                     }
-                }, ability.getHealValues().getBubbleBaseHealing().value().addAdditiveModifier("Upgrade Branch", 0), 100f)
+                            }, ability.getHealValues().getBubbleBaseHealing().value().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Upgrade Branch", 0), 100f
+                )
                 .addUpgrade(new UpgradeTypes.HealingUpgradeType() {
 
                     @Override
@@ -41,7 +42,8 @@ public class PrismGuardBranch extends AbstractUpgradeBranch<PrismGuard> {
                     public void modifyFloatModifiable(FloatModifiable.FloatModifier modifier, float value) {
                         modifier.setModifier(value);
                     }
-                }, ability.getHealValues().getBubbleMissingHealthHealing().value().addAdditiveModifier("Upgrade Branch", 0), 1f)
+                            }, ability.getHealValues().getBubbleMissingHealthHealing().value().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Upgrade Branch", 0), 1f
+                )
                 .addTo(treeA);
 
         UpgradeTreeBuilder

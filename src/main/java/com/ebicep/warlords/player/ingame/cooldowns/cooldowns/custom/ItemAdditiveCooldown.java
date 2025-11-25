@@ -10,6 +10,7 @@ import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.mobs.Aspect;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -57,32 +58,32 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
                 false
         );
         this.addModifier(Modifier.MODIFY_OUTGOING_HEALING, (event, currentHealValue) -> {
-                    currentHealValue.addMultiplicativeModifierMult(name, healMultiplier);
+            currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, healMultiplier);
                 }
         );
         this.addModifier(Modifier.MODIFY_OUTGOING_CRIT_CHANCE, (event, currentCritChance) -> {
-                    currentCritChance.addAdditiveModifier(name, additionalCritChance);
+            currentCritChance.addModifier(FloatModifiable.ModifierType.ADDITIVE, name, additionalCritChance);
                 }
         );
         this.addModifier(Modifier.MODIFY_OUTGOING_CRIT_MULTIPLIER, (event, currentCritMultiplier) -> {
-                    currentCritMultiplier.addAdditiveModifier(name, additionalCritMultiplier);
+            currentCritMultiplier.addModifier(FloatModifiable.ModifierType.ADDITIVE, name, additionalCritMultiplier);
                 }
         );
         this.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC) {
                         Aspect aspect = warlordsNPC.getMob().getAspect();
                         if (aspect == null) {
-                            currentDamageValue.addMultiplicativeModifierMult(name, damageMultiplier);
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, damageMultiplier);
                             return;
                         }
                         AspectModifier aspectModifier = aspectModifiers.get(aspect);
                         if (aspectModifier == null) {
-                            currentDamageValue.addMultiplicativeModifierMult(name, damageMultiplier);
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, damageMultiplier);
                             return;
                         }
-                        currentDamageValue.addMultiplicativeModifierMult(name, (damageMultiplier + aspectModifier.damageMultiplier - 1));
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, (damageMultiplier + aspectModifier.damageMultiplier - 1));
                     } else {
-                        currentDamageValue.addMultiplicativeModifierMult(name, damageMultiplier);
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, damageMultiplier);
                     }
                 }
         );
@@ -96,7 +97,7 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
                         if (aspectModifier == null) {
                             return;
                         }
-                        currentDamageValue.addMultiplicativeModifierMult(name, (aspectModifier.damageReductionMultiplier));
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, (aspectModifier.damageReductionMultiplier));
                     }
                 }
         );

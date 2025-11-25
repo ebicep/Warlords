@@ -10,6 +10,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.player.ingame.instances.type.CustomInstanceFlags;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.event.EventHandler;
 
 import java.util.List;
@@ -59,9 +60,9 @@ public class BloodFrenzy implements SpecBoostManager.SpecBoost<BloodFrenzy> {
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(BloodLust.class).forEach(bloodLust -> {
-                bloodLust.getCooldown().addAdditiveModifier("Spec Boost", -bloodLustCooldownReductionTicks / 20f);
+                bloodLust.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", -bloodLustCooldownReductionTicks / 20f);
                 bloodLust.setTickDuration(bloodLust.getTickDuration() - bloodLustDurationReductionTicks);
-                bloodLust.getEnergyCost().addAdditiveModifier("Spec Boost", -bloodLustEnergyCostReduction);
+                bloodLust.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", -bloodLustEnergyCostReduction);
                 bloodLust.setDamageConvertPercent(bloodLust.getDamageConvertPercent() - (int) bloodLustHealingPercent);
             });
         }
@@ -81,7 +82,7 @@ public class BloodFrenzy implements SpecBoostManager.SpecBoost<BloodFrenzy> {
                 if (customFlag instanceof CustomInstanceFlags.FinalEventInstanceFlag(WarlordsDamageHealingFinalEvent finalEvent)) {
                     float additionalHealing = finalEvent.getValueBeforeAllReduction() * bloodLustHealingPiercePercent / 100f;
                     event.applyToMinMax(floatModifiable ->
-                            floatModifiable.addAdditiveModifier(getStringName(), additionalHealing)
+                            floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE, getStringName(), additionalHealing)
                     );
                     return;
                 }

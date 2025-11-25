@@ -123,8 +123,14 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
         UndyingArmyData data = getArmyData(wp);
         List<FloatModifiable.FloatModifier> modifiers = new ArrayList<>();
         if (pveMasterUpgrade) {
-            wp.doOnStaticAbility(RecklessCharge.class, ability -> modifiers.add(ability.getCooldown().addMultiplicativeModifierAdd("Relentless Army", -.5f)));
-            wp.doOnStaticAbility(GroundSlamRevenant.class, ability -> modifiers.add(ability.getCooldown().addMultiplicativeModifierAdd("Relentless Army", -.5f)));
+            wp.doOnStaticAbility(RecklessCharge.class, ability -> modifiers.add(ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                            "Relentless Army", -.5f
+                    ))
+            );
+            wp.doOnStaticAbility(GroundSlamRevenant.class, ability -> modifiers.add(ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                            "Relentless Army", -.5f
+                    ))
+            );
         }
         int numberOfPlayersWithArmy = 0;
         for (WarlordsEntity teammate : PlayerFilter

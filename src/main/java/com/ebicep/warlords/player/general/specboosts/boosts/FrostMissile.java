@@ -3,6 +3,7 @@ package com.ebicep.warlords.player.general.specboosts.boosts;
 import com.ebicep.warlords.abilities.FrostBolt;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.List;
 
@@ -46,10 +47,13 @@ public class FrostMissile implements SpecBoostManager.SpecBoost<FrostMissile> {
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getAbilitiesMatching(FrostBolt.class).forEach(frostBolt -> {
-                frostBolt.getEnergyCost().addAdditiveModifier("Spec Boost", -energyDecrease);
+                frostBolt.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", -energyDecrease);
                 frostBolt.getDamageValues()
                          .getBoltDamage()
-                         .forEachValue(floatModifiable -> floatModifiable.addMultiplicativeModifierAdd("Spec Boost", -damageDecreasePercent / 100));
+                         .forEachValue(floatModifiable -> floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                                 "Spec Boost",
+                                 -damageDecreasePercent / 100
+                         ));
                 frostBolt.setSlowness(frostBolt.getSlowness() + slowIncrease);
                 frostBolt.setDirectHitAdditionalSlowness(frostBolt.getDirectHitAdditionalSlowness() + directHitSlowIncrease);
             });

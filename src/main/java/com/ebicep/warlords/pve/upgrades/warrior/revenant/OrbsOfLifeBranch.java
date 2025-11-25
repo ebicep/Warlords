@@ -5,6 +5,7 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 public class OrbsOfLifeBranch extends AbstractUpgradeBranch<OrbsOfLife> {
 
@@ -31,7 +32,7 @@ public class OrbsOfLifeBranch extends AbstractUpgradeBranch<OrbsOfLife> {
                        """,
                 50000,
                 () -> {
-                    ability.getHealValues().getOrbHealing().value().addMultiplicativeModifierAdd("Orbs of Eruption", -.5f);
+                    ability.getHealValues().getOrbHealing().value().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Orbs of Eruption", -.5f);
                 }
         );
         masterUpgrade2 = new Upgrade(
@@ -44,7 +45,7 @@ public class OrbsOfLifeBranch extends AbstractUpgradeBranch<OrbsOfLife> {
                         """,
                 50000,
                 () -> {
-                    ability.getHealValues().getOrbHealing().value().addMultiplicativeModifierAdd("Orbs of Time", .3f);
+                    ability.getHealValues().getOrbHealing().value().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Orbs of Time", .3f);
                     ability.setOrbTickDuration(ability.getOrbTickDuration() * 2);
                     ability.setHealingIncrease(ability.getHealingIncrease() * 2);
                 }

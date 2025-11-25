@@ -52,13 +52,13 @@ public class EarthwardenTower extends AbstractTower implements Upgradeable.Path2
         upgrades.add(new TowerUpgrade("Upgrade 1", upgradeDamage1) {
             @Override
             public void onUpgrade() {
-//                flameDamage.addAdditiveModifier(name, upgradeDamage1.getValue());
+//                flameDamage.addModifier(name, upgradeDamage1.getValue());
             }
         });
         upgrades.add(new TowerUpgrade("Upgrade 2", upgradeDamage2) {
             @Override
             public void onUpgrade() {
-//                flameDamage.addAdditiveModifier(name, upgradeDamage2.getValue());
+//                flameDamage.addModifier(name, upgradeDamage2.getValue());
             }
         });
         upgrades.add(new TowerUpgrade("Attacks Slow Enemies", new TowerUpgradeInstance() {

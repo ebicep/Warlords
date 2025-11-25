@@ -10,6 +10,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 
@@ -63,7 +64,7 @@ public class RecklessAscent implements SpecBoostManager.SpecBoost<RecklessAscent
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(RecklessCharge.class).forEach(recklessCharge -> {
                 recklessCharge.setAdditionalBlocks(recklessCharge.getAdditionalBlocks() + travelDistanceIncrease);
-                recklessCharge.getHitBoxRadius().addAdditiveModifier("Spec Boost", radiusIncrease);
+                recklessCharge.getHitBoxRadius().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", radiusIncrease);
                 recklessCharge.setVerticalMovement(true);
             });
         }
@@ -107,7 +108,10 @@ public class RecklessAscent implements SpecBoostManager.SpecBoost<RecklessAscent
                         cooldownManager -> {},
                         damageReductionDurationTicks
                 ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (e, currentDamageValue) -> {
-                            currentDamageValue.addMultiplicativeModifierMult(getStringName(), AbstractAbility.convertToDivisionDecimal(damageReductionPercent));
+                    currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                            getStringName(),
+                            AbstractAbility.convertToDivisionDecimal(damageReductionPercent)
+                    );
                         }
                 ));
             }

@@ -14,6 +14,8 @@ import com.ebicep.warlords.player.ingame.motionsystem.MotionModifierBuilder;
 import com.ebicep.warlords.player.ingame.motionsystem.MotionSystem;
 import com.ebicep.warlords.pve.upgrades.*;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
+import com.ebicep.warlords.util.warlords.modifiablevalues.MultiFloatModifiable;
 
 public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
 
@@ -58,8 +60,8 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
                         Deal 40% more damage against ADVANCED or lower enemies and deal 0.5% max health damage against ELITE or higher enemies.""",
                 50000,
                 () -> {
-                    ability.getHitBoxRadius().addAdditiveModifier("Master Upgrade Branch", 1);
-                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -5);
+                    ability.getHitBoxRadius().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade Branch", 1);
+                    ability.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade Branch", -5);
 
                     warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
                             "MAX HP DAMAGE (Avenger's Slash)",
@@ -77,7 +79,9 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
                                                 !event.getFlags().contains(InstanceFlags.DUPLICATE_AVENGER_STRIKE);
 
                                 if (isAboveElite && event.getCause().equals("Avenger's Strike") && isNotDuplicateStrike) {
-                                    currentDamageValue.addAdditiveModifier("MAX HP DAMAGE (Avenger's Slash)", DamageCheck.clamp(event.getWarlordsEntity().getMaxHealth() * 0.005f));
+                                    currentDamageValue.addModifier(50, MultiFloatModifiable.ApplyFloatModifiableType.ADDITIVE, FloatModifiable.ModifierType.ADDITIVE,
+                                            "Avenger's Slash", DamageCheck.clamp(event.getWarlordsEntity().getMaxHealth() * 0.005f)
+                                    );
                                 }
                             }
                     ));
@@ -97,8 +101,8 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
                         """,
                 50000,
                 () -> {
-                    ability.getHitBoxRadius().addAdditiveModifier("Master Upgrade Branch", 1);
-                    ability.getDamageValues().getStrikeDamage().critChance().addAdditiveModifier("Master Upgrade Branch", 15);
+                    ability.getHitBoxRadius().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade Branch", 1);
+                    ability.getDamageValues().getStrikeDamage().critChance().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade Branch", 15);
                     MotionSystem calculateSpeed = warlordsPlayer.getSpeed();
                     MotionModifier modifier = new MotionModifierBuilder().setFrom(warlordsPlayer)
                                                                          .setName("Avenging Strike")
@@ -138,8 +142,8 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
     @Override
     public void runOnce() {
         Value.RangedValueCritable damage = ability.getDamageValues().getStrikeDamage();
-        damage.min().addMultiplicativeModifierAdd("PvE", .3f);
-        damage.max().addMultiplicativeModifierAdd("PvE", .3f);
+        damage.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .3f);
+        damage.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .3f);
     }
 
 }

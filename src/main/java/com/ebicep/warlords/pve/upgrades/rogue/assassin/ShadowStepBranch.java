@@ -5,6 +5,7 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 public class ShadowStepBranch extends AbstractUpgradeBranch<ShadowStep> {
 
@@ -43,7 +44,7 @@ public class ShadowStepBranch extends AbstractUpgradeBranch<ShadowStep> {
                         """,
                 50000,
                 () -> {
-                    ability.getCooldown().addMultiplicativeModifierMult("Shadow Dash", 0.9f);
+                    ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Shadow Dash", 0.9f);
                     ability.setMaxCharges(2);
                 }
         );

@@ -9,6 +9,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.player.ingame.instances.type.PlayerNameInstance;
 import com.ebicep.warlords.util.java.NumberFormat;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -106,7 +107,7 @@ public class WoundingCooldown extends RegularCooldown<WoundingCooldown.WoundingD
         );
         this.target = target;
         this.addModifier(Modifier.MODIFY_INCOMING_HEALING, (event, currentHealValue) -> {
-                    currentHealValue.addMultiplicativeModifierMult(name, cooldownObject.getWoundingMultiplier());
+            currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, cooldownObject.getWoundingMultiplier());
                 }
         );
     }

@@ -7,15 +7,6 @@ import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 public class FortifyingHexBranch extends AbstractUpgradeBranch<FortifyingHex> {
 
-    @Override
-    public void runOnce() {
-        Value.RangedValueCritable damage = ability.getDamageValues().getHexDamage();
-        damage.min().addMultiplicativeModifierAdd("PvE", .3f);
-        damage.max().addMultiplicativeModifierAdd("PvE", .3f);
-        ability.setMaxEnemiesHit(2);
-        ability.setMaxAlliesHit(3);
-    }
-
     public FortifyingHexBranch(AbilityTree abilityTree, FortifyingHex ability) {
         super(abilityTree, ability);
 
@@ -32,7 +23,7 @@ public class FortifyingHexBranch extends AbstractUpgradeBranch<FortifyingHex> {
                     public void modifyFloatModifiable(FloatModifiable.FloatModifier modifier, float value) {
                         modifier.setModifier(value / 100);
                     }
-                            }, ability.getProjectileSpeed().addMultiplicativeModifierAdd("Upgrade Branch", 0), 50f, 4
+                            }, ability.getProjectileSpeed().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Upgrade Branch", 0), 50f, 4
                 )
                 .addTo(treeA);
 
@@ -54,8 +45,8 @@ public class FortifyingHexBranch extends AbstractUpgradeBranch<FortifyingHex> {
                 () -> {
                     ability.setMaxEnemiesHit(200);
                     ability.setMaxAlliesHit(200);
-                    ability.getEnergyCost().addAdditiveModifier("Bolstering Hex", -15);
-                    ability.getDamageReduction().addAdditiveModifier("Bolstering Hex", 3);
+                    ability.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Bolstering Hex", -15);
+                    ability.getDamageReduction().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Bolstering Hex", 3);
                 }
         );
         masterUpgrade2 = new Upgrade(
@@ -69,6 +60,15 @@ public class FortifyingHexBranch extends AbstractUpgradeBranch<FortifyingHex> {
 
                 }
         );
+    }
+
+    @Override
+    public void runOnce() {
+        Value.RangedValueCritable damage = ability.getDamageValues().getHexDamage();
+        damage.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .3f);
+        damage.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .3f);
+        ability.setMaxEnemiesHit(2);
+        ability.setMaxAlliesHit(3);
     }
 
 }

@@ -12,6 +12,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -87,12 +88,15 @@ public class TycheProsperity implements FieldEffect {
     }
 
     private void mageBonus(WarlordsEntity warlordsEntity) {
-        warlordsEntity.getEnergyPerSec().addAdditiveModifier(getName(), 5);
-        warlordsEntity.getAbilitiesMatching(AbstractPiercingProjectile.class).forEach(proj -> proj.getProjectileSpeed().addMultiplicativeModifierAdd(getName(), .1f));
+        warlordsEntity.getEnergyPerSec().addModifier(FloatModifiable.ModifierType.ADDITIVE, getName(), 5);
+        warlordsEntity.getAbilitiesMatching(AbstractPiercingProjectile.class)
+                      .forEach(proj -> proj.getProjectileSpeed().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                              getName(), .1f
+                      ));
     }
 
     private void paladinBonus(WarlordsEntity warlordsEntity) {
-        warlordsEntity.getEnergyPerHit().addAdditiveModifier(getName(), 5);
+        warlordsEntity.getEnergyPerHit().addModifier(FloatModifiable.ModifierType.ADDITIVE, getName(), 5);
         warlordsEntity.getSpeed().addBaseModifier(5);
     }
 
@@ -109,7 +113,7 @@ public class TycheProsperity implements FieldEffect {
                 false
         );
         warriorCooldown.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                    currentDamageValue.addMultiplicativeModifierMult(getName(), 1.05f);
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getName(), 1.05f);
                 }
         );
         warlordsEntity.getCooldownManager().addCooldown(warriorCooldown);
@@ -117,7 +121,7 @@ public class TycheProsperity implements FieldEffect {
     }
 
     private void shamanBonus(WarlordsEntity warlordsEntity) {
-        warlordsEntity.getHealth().addMultiplicativeModifierAdd(getName() + " (Base)", .05f);
+        warlordsEntity.getHealth().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, getName() + " (Base)", .05f);
         warlordsEntity.getCooldownManager().addCooldown(new PermanentCooldown<>(
                 getName(),
                 null,
@@ -130,14 +134,16 @@ public class TycheProsperity implements FieldEffect {
                 false
         ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     if (event.getCause().isEmpty()) {
-                        currentDamageValue.addMultiplicativeModifierMult(getName(), 1.1f);
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getName(), 1.1f);
                     }
                 }
         ));
     }
 
     private void rogueBonus(WarlordsEntity warlordsEntity) {
-        warlordsEntity.getAbilities().forEach(ability -> ability.getCooldown().addMultiplicativeModifierMult(getName(), .9f));
+        warlordsEntity.getAbilities().forEach(ability -> ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                getName(), .9f
+        ));
         warlordsEntity.getCooldownManager().addCooldown(new PermanentCooldown<>(
                 getName(),
                 null,
@@ -149,7 +155,7 @@ public class TycheProsperity implements FieldEffect {
                 },
                 false
         ).addModifier(Modifier.MODIFY_OUTGOING_HEALING, (event, currentHealValue) -> {
-                    currentHealValue.addMultiplicativeModifierMult(getName(), 1.05f);
+            currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getName(), 1.05f);
                 }
         ));
     }
@@ -158,7 +164,7 @@ public class TycheProsperity implements FieldEffect {
         warlordsEntity.getAbilities().forEach(ability -> {
             Value.applyDamageHealing(ability, value -> {
                         if (value instanceof Value.RangedValueCritable rangedValueCritable) {
-                            rangedValueCritable.critChance().addAdditiveModifier(getName(), 10);
+                            rangedValueCritable.critChance().addModifier(FloatModifiable.ModifierType.ADDITIVE, getName(), 10);
                         }
                     }
             );
@@ -174,7 +180,7 @@ public class TycheProsperity implements FieldEffect {
                 },
                 false
         ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
-                    currentDamageValue.addMultiplicativeModifierMult(getName(), .95f);
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getName(), .95f);
                 }
         ));
     }

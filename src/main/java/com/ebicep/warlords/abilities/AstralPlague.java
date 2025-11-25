@@ -63,7 +63,9 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
         if (pveMasterUpgrade2) {
             modifiers = wp.getAbilitiesMatching(SoulfireBeam.class)
                           .stream()
-                          .map(soulfireBeam -> soulfireBeam.getCooldown().addMultiplicativeModifierMult(name + " Master", 0.6f))
+                          .map(soulfireBeam -> soulfireBeam.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                                  name + " Master", 0.6f
+                          ))
                           .toList();
         } else {
             modifiers = Collections.emptyList();
@@ -105,7 +107,7 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
                         if (!(event.getAbility() instanceof SoulfireBeam soulfireBeam)) {
                             return;
                         }
-                        event.getCritChance().addOverridingModifier(name, 100);
+                        event.getCritChance().addModifier(FloatModifiable.ModifierType.OVERRIDING, name, 100);
                         PoisonousHex fromHex = PoisonousHex.getFromHex(wp);
                         if (new CooldownFilter<>(victim, RegularCooldown.class).filterCooldownClass(PoisonousHex.class).stream().count() < fromHex.getMaxStacks()) {
                             return;
@@ -146,15 +148,15 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
             }
         }.addModifier(Modifier.MODIFY_OUTGOING_CRIT_MULTIPLIER, (event, currentCritMultiplier) -> {
                     if (pveMasterUpgrade) {
-                        currentCritMultiplier.addAdditiveModifier(name, 60);
+                        currentCritMultiplier.addModifier(FloatModifiable.ModifierType.ADDITIVE, name, 60);
                     }
                 }
         ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     if (inPve && event.getCause().equals("Poisonous Hex") && event.getFlags().contains(InstanceFlags.DOT)) {
-                        currentDamageValue.addMultiplicativeModifierMult(name, 5.0f);
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 5.0f);
                     }
                     if (pveMasterUpgrade2 && event.getCause().equals("Soulfire Beam")) {
-                        currentDamageValue.addMultiplicativeModifierMult(name, 1.7f);
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 1.7f);
                     }
                 }
         ));

@@ -19,6 +19,7 @@ import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.thunderlord.WindfuryBranch;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
@@ -136,7 +137,7 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
                 }
         ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                     if (pveMasterUpgrade2) {
-                        currentDamageValue.addMultiplicativeModifierMult(name, (100 - Math.min(15, procs.get() * 2.5f)) / 100f);
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, (100 - Math.min(15, procs.get() * 2.5f)) / 100f);
                     }
                 }
         ));

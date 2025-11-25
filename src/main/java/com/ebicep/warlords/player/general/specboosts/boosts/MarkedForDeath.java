@@ -12,6 +12,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.event.EventHandler;
 
 import java.util.List;
@@ -76,8 +77,8 @@ public class MarkedForDeath implements SpecBoostManager.SpecBoost<MarkedForDeath
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(HolyRadianceAvenger.class).forEach(holyRadiance -> {
-                holyRadiance.getCooldown().addAdditiveModifier("Spec Boost", -holyRadianceCooldownReductionTicks / 20f);
-                holyRadiance.getEnergyCost().addOverridingModifier("Spec Boost", holyRadianceEnergyCost);
+                holyRadiance.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", -holyRadianceCooldownReductionTicks / 20f);
+                holyRadiance.getEnergyCost().addModifier(FloatModifiable.ModifierType.OVERRIDING, "Spec Boost", holyRadianceEnergyCost);
             });
         }
 
@@ -101,7 +102,10 @@ public class MarkedForDeath implements SpecBoostManager.SpecBoost<MarkedForDeath
             );
             target.addSpeedModifier(warlordsEntity, getStringName(), -avengerMarkSlowPercent, regularCooldown);
             regularCooldown.addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
-                        currentDamageValue.addMultiplicativeModifierMult(getStringName(), AbstractAbility.convertToMultiplicationDecimal(avengerMarkIncreaseDamagePercent));
+                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                        getStringName(),
+                        AbstractAbility.convertToMultiplicationDecimal(avengerMarkIncreaseDamagePercent)
+                );
                     }
             );
             final int[] ticksIncreased = {0};

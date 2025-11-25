@@ -5,6 +5,7 @@ import com.ebicep.warlords.abilities.RecklessCharge;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.TextComponent;
 
 import java.util.List;
@@ -55,7 +56,7 @@ public class HealingLink implements SpecBoostManager.SpecBoost<HealingLink> {
                     healingLink.init(healingLink.getBuilder());
                     abilities.set(i, healingLink);
                 } else if (ability instanceof GroundSlamRevenant groundSlam) {
-                    groundSlam.getCooldown().addAdditiveModifier("Spec Boost", -groundSlamCooldownReductionTicks / 20f);
+                    groundSlam.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", -groundSlamCooldownReductionTicks / 20f);
                 }
             }
             warlordsPlayer.resetAbilityTree();

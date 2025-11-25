@@ -7,6 +7,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.util.bukkit.packets.PacketUtils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 
@@ -44,7 +45,7 @@ public abstract class AbstractBerserkZombie extends AbstractMob {
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
         if (option.getDifficulty() != DifficultyIndex.EASY && option.getGame().onlinePlayersWithoutSpectators().count() == 1) {
-            woundingStrike.getHitBoxRadius().addAdditiveModifier(name, -1);
+            woundingStrike.getHitBoxRadius().addModifier(FloatModifiable.ModifierType.ADDITIVE, name, -1);
         }
     }
 

@@ -1,7 +1,7 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
-import com.ebicep.warlords.abilities.internal.AbstractArcaneShield;
 import com.ebicep.warlords.abilities.WaterBreath;
+import com.ebicep.warlords.abilities.internal.AbstractArcaneShield;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -9,6 +9,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownUtils;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -62,11 +63,11 @@ public class DivinePurification implements SpecBoostManager.SpecBoost<DivinePuri
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(WaterBreath.class).forEach(waterBreath -> {
-                waterBreath.getCooldown().addMultiplicativeModifierAdd("Spec Boost", -waterBreathCooldownReductionPercent / 100f);
-                waterBreath.getEnergyCost().addMultiplicativeModifierAdd("Spec Boost", -waterBreathEnergyCostReductionPercent / 100f);
+                waterBreath.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", -waterBreathCooldownReductionPercent / 100f);
+                waterBreath.getEnergyCost().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", -waterBreathEnergyCostReductionPercent / 100f);
             });
             warlordsPlayer.getAbilitiesMatching(AbstractArcaneShield.class).forEach(arcaneShield -> {
-                arcaneShield.getEnergyCost().addOverridingModifier("Spec Boost", arcaneShieldEnergyCost);
+                arcaneShield.getEnergyCost().addModifier(FloatModifiable.ModifierType.OVERRIDING, "Spec Boost", arcaneShieldEnergyCost);
             });
         }
 

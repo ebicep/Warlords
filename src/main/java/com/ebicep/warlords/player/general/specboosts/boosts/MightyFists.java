@@ -8,6 +8,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsPlayerWoundedEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.event.EventHandler;
 
 import java.util.List;
@@ -63,7 +64,7 @@ public class MightyFists implements SpecBoostManager.SpecBoost<MightyFists> {
             this.warlordsEntity = warlordsPlayer;
 
             warlordsPlayer.getAbilitiesMatching(WoundingStrikeBerserker.class).forEach(woundingStrike -> {
-                woundingStrike.getWounding().addAdditiveModifier("Spec Boost", woundingIncreasePercent);
+                woundingStrike.getWounding().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", woundingIncreasePercent);
             });
         }
 
