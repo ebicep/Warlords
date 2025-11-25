@@ -9,7 +9,6 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.StackableCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.type.CustomInstanceFlags;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
@@ -42,7 +41,6 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, FortifyingHex.FortifyingHexStats> implements WeaponAbilityIcon, Duration, Damages<FortifyingHex.DamageValues> {
 
@@ -199,7 +197,7 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
 
     }
 
-    static class WeakeningHexData {
+     static class WeakeningHex {
 
     }
 
@@ -232,31 +230,27 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
                                        .crit(damageValues.hexDamage)
                                        .customFlags(new CustomInstanceFlags.ProjectileHitInstanceFlag(projectile)));
         if (pveMasterUpgrade2) {
-            Optional<StackableCooldown<WeakeningHexData>> weakeningHexCooldown = new CooldownFilter<>(hit, StackableCooldown.class)
-                    .filterCooldownClass(WeakeningHexData.class)
-                    .findFirst()
-                    .map(cooldown -> (StackableCooldown<WeakeningHexData>) cooldown);
-            if (weakeningHexCooldown.isPresent()) {
-                weakeningHexCooldown.get().addStack();
-            } else {
-                StackableCooldown<WeakeningHexData> cooldown = new StackableCooldown<>(
-                        "Weakening Hex",
-                        "WHEX",
-                        WeakeningHexData.class,
-                        new WeakeningHexData(),
-                        wp,
-                        CooldownTypes.LOW_LEVEL_DEBUFF,
-                        cooldownManager -> {
-                        },
-                        6 * 20,
-                        4,
-                        true
-                );
-                cooldown.addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                    currentDamageValue.addMultiplicativeModifierMult("Weakening Hex", 1 + 0.05f * cooldown.getCurrentStacks());
-                });
-                hit.getCooldownManager().addCooldown(cooldown);
-            }
+            hit.getCooldownManager().limitCooldowns(RegularCooldown.class, WeakeningHex.class, 4);
+            WeakeningHex data = new WeakeningHex();
+            hit.getCooldownManager().addCooldown(new RegularCooldown<>(
+                    "Weakening Hex",
+                    "WHEX",
+                    WeakeningHex.class,
+                    data,
+                    wp,
+                    CooldownTypes.LOW_LEVEL_DEBUFF,
+                    cooldownManager -> {
+                    },
+                    cooldownManager -> {
+                    },
+                    6 * 20
+            ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                long stacks = new CooldownFilter<>(hit, RegularCooldown.class)
+                        .filterCooldownClass(WeakeningHex.class)
+                        .stream()
+                        .count();
+                currentDamageValue.addMultiplicativeModifierMult("Weakening Hex", (1 + 0.05f * stacks));
+            }));
         }
         stats.addPlayersHit();
     }
@@ -335,8 +329,8 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
         ItemDisplay display = startingLocation.getWorld().spawn(location, ItemDisplay.class, itemDisplay -> {
                     itemDisplay.setItemStack(new ItemStack(Material.WARPED_DOOR));
                     itemDisplay.setTeleportDuration(1);
-            itemDisplay.setBrightness(EntitiesUtils.MAX_BRIGHTNESS);
-            itemDisplay.setTransformation(new Transformation(new Vector3f(),
+                    itemDisplay.setBrightness(EntitiesUtils.MAX_BRIGHTNESS);
+                    itemDisplay.setTransformation(new Transformation(new Vector3f(),
                             new AxisAngle4f((float) Math.toRadians(startingLocation.getPitch()), 1, 0, 0),
                             new Vector3f(1f),
                             new AxisAngle4f()

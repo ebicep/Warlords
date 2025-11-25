@@ -5,7 +5,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
-import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.StackableCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.Currencies;
@@ -34,7 +34,7 @@ public class LegendaryChaotic extends AbstractLegendaryWeapon implements Listene
     @Transient
     public List<String> abilityNames;
     @Transient
-    private StackableCooldown<LegendaryChaotic> cooldown = null;
+    private RegularCooldown<LegendaryChaotic> cooldown = null;
     @Transient
     private int stacks = 0;
 
@@ -59,11 +59,11 @@ public class LegendaryChaotic extends AbstractLegendaryWeapon implements Listene
     @Override
     public TextComponent getPassiveEffect() {
         return ComponentBuilder.create("Upon damaging an enemy, all abilities gain a " + CRIT_CHANCE + "% crit chance and ", NamedTextColor.GRAY)
-                               .append(formatTitleUpgrade(CRIT_MULTIPLIER + CRIT_MULTIPLIER_PER_UPGRADE * getTitleLevel(), "%"))
-                               .text(" crit multiplier. Maximum ")
-                               .append(formatTitleUpgrade(MAX_STACKS + MAX_STACKS_PER_UPGRADE * getTitleLevel()))
-                               .text(" stacks. Once an ability crit occurs, one stack is removed.")
-                               .build();
+                .append(formatTitleUpgrade(CRIT_MULTIPLIER + CRIT_MULTIPLIER_PER_UPGRADE * getTitleLevel(), "%"))
+                .text(" crit multiplier. Maximum ")
+                .append(formatTitleUpgrade(MAX_STACKS + MAX_STACKS_PER_UPGRADE * getTitleLevel()))
+                .text(" stacks. Once an ability crit occurs, one stack is removed.")
+                .build();
     }
 
     @Override
@@ -151,42 +151,48 @@ public class LegendaryChaotic extends AbstractLegendaryWeapon implements Listene
         if (event.getInstanceFlags().contains(InstanceFlags.RECURSIVE)) {
             return;
         }
-        if (event.isCrit() && cooldown != null && cooldown.getCurrentStacks() > 0) {
-            cooldown.removeStack();
+        if (event.isCrit() && stacks > 0) {
+            stacks--;
             return;
         }
+        if (stacks < MAX_STACKS + MAX_STACKS_PER_UPGRADE * getTitleLevel()) {
+            stacks++;
+        }
         if (cooldown == null) {
-            cooldown = new StackableCooldown<>(
-                    getTitleName(),
-                    "CHAOTIC",
+            cooldown = new RegularCooldown<>(
+                    getTitleName() + " 1",
+                    "CHAOTIC 1",
                     LegendaryChaotic.class,
                     null,
                     warlordsPlayer,
                     CooldownTypes.WEAPON,
                     cooldownManager -> {
-                        cooldown = null;
                     },
-                    5 * 20,
-                    (int) (MAX_STACKS + MAX_STACKS_PER_UPGRADE * getTitleLevel()),
-                    false
+                    cooldownManager -> {
+                        cooldown = null;
+                        stacks = 0;
+                    },
+                    5 * 20
             );
             cooldown.addModifier(Modifier.MODIFY_OUTGOING_CRIT_CHANCE, (e, currentCritChance) -> {
                         if (!abilityNames.contains(e.getCause())) {
                             return;
                         }
-                        currentCritChance.addAdditiveModifier(getTitleName(), CRIT_CHANCE * cooldown.getCurrentStacks());
+                        currentCritChance.addAdditiveModifier(getTitleName(), CRIT_CHANCE * stacks);
                     }
             );
             cooldown.addModifier(Modifier.MODIFY_OUTGOING_CRIT_MULTIPLIER, (e, currentCritMultiplier) -> {
                         if (!abilityNames.contains(e.getCause())) {
                             return;
                         }
-                        currentCritMultiplier.addAdditiveModifier(getTitleName(), (CRIT_MULTIPLIER + CRIT_MULTIPLIER_PER_UPGRADE * getTitleLevel()) * cooldown.getCurrentStacks());
+                        currentCritMultiplier.addAdditiveModifier(getTitleName(), (CRIT_MULTIPLIER + CRIT_MULTIPLIER_PER_UPGRADE * getTitleLevel()) * stacks);
                     }
             );
             warlordsPlayer.getCooldownManager().addCooldown(cooldown);
         } else {
-            cooldown.addStack();
+            cooldown.setTicksLeft(5 * 20);
+            cooldown.setName(getTitleName() + " " + stacks);
+            cooldown.setNameAbbreviation("CHAOTIC " + stacks);
         }
     }
 

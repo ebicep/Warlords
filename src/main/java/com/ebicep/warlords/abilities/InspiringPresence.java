@@ -57,11 +57,12 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "paladin.inspiringpresence.activation", 2, 1);
         wp.addSpeedModifier(wp, name, speedBuff, tickDuration);
+        String uuid = Integer.toHexString((int) (System.nanoTime() ^ wp.hashCode()));
         float rad = radius.getCalculatedValue();
         List<WarlordsEntity> teammatesNear = PlayerFilter.entitiesAround(wp, rad, rad, rad).aliveTeammatesOfExcludingSelf(wp).toList();
         InspiringPresenceData data = new InspiringPresenceData();
         RegularCooldown<InspiringPresenceData> presenceCooldown = new RegularCooldown<>(
-                name,
+                name + uuid,
                 "PRES",
                 InspiringPresenceData.class,
                 data,
@@ -95,7 +96,7 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
         presenceCooldown.addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> {
                     float energy = energyPerSecond / 20f;
                     data.addEnergyGivenFromStrikeAndPresence(energy);
-                    energyGainPerTick.addAdditiveModifier(name, energy);
+                    energyGainPerTick.addAdditiveModifier(name + uuid, energy);
                 }
         );
         wp.getCooldownManager().addCooldown(presenceCooldown);
@@ -140,7 +141,7 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
             ).addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> {
                         float energy = energyPerSecond / 20f;
                         data.addEnergyGivenFromStrikeAndPresence(energy);
-                        energyGainPerTick.addAdditiveModifier(name, energy);
+                        energyGainPerTick.addAdditiveModifier(name + uuid, energy);
                     }
             ));
         }

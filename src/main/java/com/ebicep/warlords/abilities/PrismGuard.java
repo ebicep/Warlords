@@ -265,7 +265,7 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
             );
                 }
         );
-        if (pveMasterUpgrade) {
+        if (pveMasterUpgrade2) {
             wp.addKnockbackModifier(wp, name, -100, prismGuardCooldown);
         }
         wp.getCooldownManager().addCooldown(prismGuardCooldown);

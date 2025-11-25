@@ -9,7 +9,7 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
-import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.StackableCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
@@ -83,33 +83,26 @@ public class SpiritLink extends AbstractChain<SpiritLink, SpiritLink.SpiritLinkS
     @Override
     protected void onHit(WarlordsEntity we, int hitCounter) {
         we.playSound(we.getLocation(), "mage.firebreath.activation", 1, 1);
-        Optional<StackableCooldown<SpiritLinkData>> spiritLinkCooldown = new CooldownFilter<>(we, StackableCooldown.class)
-                .filterCooldownClass(SpiritLinkData.class)
-                .findFirst()
-                .map(cooldown -> (StackableCooldown<SpiritLinkData>) cooldown);
         // speed buff
         we.addSpeedModifier(we, "Spirit Link", speedBuff, (int) (speedDuration * 20));
-        if (spiritLinkCooldown.isPresent()) {
-            spiritLinkCooldown.get().addStack();
-        } else {
-            StackableCooldown<SpiritLinkData> cooldown = new StackableCooldown<>(
-                    name,
-                    "LINK",
-                    SpiritLinkData.class,
-                    new SpiritLinkData(),
-                    we,
-                    CooldownTypes.BUFF,
-                    cooldownManager -> {
-                    },
-                    (int) (damageReductionDuration * 20),
-                    inPve ? 4 : maxStacks,
-                    true
-            );
-            cooldown.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
-                currentDamageValue.addMultiplicativeModifierMult(name, (float)Math.pow(1 - damageReduction / 100f, cooldown.getCurrentStacks()));
-            });
-            we.getCooldownManager().addCooldown(cooldown);
-        }
+        SpiritLinkData spiritLinkData = new SpiritLinkData();
+        we.getCooldownManager().addCooldown(new RegularCooldown<>(
+                name,
+                "LINK",
+                SpiritLinkData.class,
+                spiritLinkData,
+                we,
+                CooldownTypes.BUFF,
+                cooldownManager -> {
+                },
+                (int) (damageReductionDuration * 20)
+        ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
+            long stacks = new CooldownFilter<>(we, RegularCooldown.class)
+                    .filterCooldownClass(SpiritLinkData.class)
+                    .stream()
+                    .count();
+            currentDamageValue.addMultiplicativeModifierMult(name, (float) Math.pow(1 - damageReduction / 100f, stacks));
+        }));
     }
 
     @Override

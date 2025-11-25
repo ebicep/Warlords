@@ -8,7 +8,6 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.StackableCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
@@ -26,7 +25,10 @@ import org.bukkit.entity.Player;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ShadowStep extends AbstractAbility implements
@@ -161,36 +163,36 @@ public class ShadowStep extends AbstractAbility implements
         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 2, 1.5f);
         wp.teleportLocationOnly(locationBuilder);
         if (!hit.isEmpty()) {
-            Optional<StackableCooldown<ShadowDashData>> shadowDashCooldown = new CooldownFilter<>(wp, StackableCooldown.class)
-                    .filterCooldownClass(ShadowDashData.class)
-                    .findFirst()
-                    .map(cooldown -> (StackableCooldown<ShadowDashData>) cooldown);
-            if (shadowDashCooldown.isPresent()) {
-                shadowDashCooldown.get().getCooldownObject().addEnemiesHit(hit.size());
-                shadowDashCooldown.get().addStack();
-            } else {
-                ShadowDashData data = new ShadowDashData(hit.size());
-                wp.getCooldownManager().addCooldown(new StackableCooldown<>(
-                        "Shadow Dash",
-                        "SHDW",
-                        ShadowDashData.class,
-                        data,
-                        wp,
-                        CooldownTypes.BUFF,
-                        cooldownManager -> {
-                            data.addEnemiesHit(- hit.size());
-                        },
-                        5 * 20,
-                        5,
-                        true
-                ).addModifier(Modifier.MODIFY_OUTGOING_CRIT_CHANCE, (event, currentCritChance) -> {
-                            currentCritChance.addMultiplicativeModifierMult("Shadow Dash CC", convertToMultiplicationDecimal(Math.min(2f * data.getEnemiesHit(), 20)));
-                        }
-                ).addModifier(Modifier.MODIFY_OUTGOING_CRIT_MULTIPLIER, (event, currentCritMultiplier) -> {
-                    currentCritMultiplier.addMultiplicativeModifierMult("Shadow Dash CC", convertToMultiplicationDecimal(Math.min(2f * data.getEnemiesHit(), 20)));
-                    }
-                ));
-            }
+            wp.getCooldownManager().limitCooldowns(RegularCooldown.class, ShadowDash.class, 4);
+
+            ShadowDash data = new ShadowDash(hit.size());
+            RegularCooldown<ShadowDash> cooldown = new RegularCooldown<>(
+                    "Shadow Dash",
+                    "SHDW",
+                    ShadowDash.class,
+                    data,
+                    wp,
+                    CooldownTypes.BUFF,
+                    cooldownManager -> {},
+                    5 * 20
+            );
+            cooldown.addModifier(Modifier.MODIFY_OUTGOING_CRIT_CHANCE, (event, currentCritChance) -> {
+                long stacks = new CooldownFilter<>(wp, RegularCooldown.class)
+                        .filterCooldownClass(ShadowDash.class)
+                        .stream()
+                        .mapToInt(cd -> ((ShadowDash) cd.getCooldownObject()).getEnemiesHit())
+                        .sum();
+                currentCritChance.addAdditiveModifier("Shadow Dash", 2f * stacks);
+            });
+            cooldown.addModifier(Modifier.MODIFY_OUTGOING_CRIT_MULTIPLIER, (event, currentCritMultiplier) -> {
+                long stacks = new CooldownFilter<>(wp, RegularCooldown.class)
+                        .filterCooldownClass(ShadowDash.class)
+                        .stream()
+                        .mapToInt(cd -> ((ShadowDash) cd.getCooldownObject()).getEnemiesHit())
+                        .sum();
+                currentCritMultiplier.addAdditiveModifier("Shadow Dash", 2f * stacks);
+            });
+            wp.getCooldownManager().addCooldown(cooldown);
         }
     }
 
@@ -363,15 +365,11 @@ public class ShadowStep extends AbstractAbility implements
         }
 
     }
-    public static class ShadowDashData {
-        private int enemiesHit;
+    public static class ShadowDash {
+        private final int enemiesHit;
 
-        public ShadowDashData(int enemiesHit) {
-            this.enemiesHit = enemiesHit;
-        }
-
-        public void addEnemiesHit(int enemiesHit) {
-            this.enemiesHit += enemiesHit;
+        public ShadowDash(int enemiesHit) {
+            this.enemiesHit = Math.min(enemiesHit, 10);
         }
 
         public int getEnemiesHit() {
