@@ -62,7 +62,6 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {},
-
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 4 == 0) {
@@ -70,18 +69,16 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
                     }
                 })
         );
-        wrathCooldown.addModifier(Modifier.ON_OUTGOING_DAMAGE, (event, currentDamageValue, isCrit) -> {
+        wrathCooldown.addModifier(
+                Modifier.ON_OUTGOING_DAMAGE,
+                (event, currentDamageValue, isCrit) -> {
                     if (!event.getCause().equals("Avenger's Strike") || event.getFlags().contains(InstanceFlags.AVENGER_WRATH_STRIKE)) {
                         return;
                     }
                     WarlordsEntity warlordsEntity = event.getWarlordsEntity();
                     stats.targetsStruckDuringWrath++;
                     data.targetsStruckDuringWrath++;
-                    EnumSet<InstanceFlags> flags = EnumSet.of(
-                            InstanceFlags.AVENGER_WRATH_STRIKE,
-                            InstanceFlags.IGNORE_FERVENT_TITLE,
-                            InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST
-                    );
+                    EnumSet<InstanceFlags> flags = EnumSet.of(InstanceFlags.AVENGER_WRATH_STRIKE);
                     if (event.getFlags().contains(InstanceFlags.STRIKE_IN_CONS)) {
                         flags.add(InstanceFlags.STRIKE_IN_CONS);
                     }
@@ -119,7 +116,9 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
                     }
                 }
         );
-        wrathCooldown.addModifier(Modifier.ON_ENEMY_DEATH, (event, currentDamageValue, isCrit, isKiller) -> {
+        wrathCooldown.addModifier(
+                Modifier.ON_ENEMY_DEATH,
+                (event, currentDamageValue, isCrit, isKiller) -> {
                     if (isKiller) {
                         stats.targetsKilledDuringWrath++;
                         data.targetsKilledDuringWrath++;
