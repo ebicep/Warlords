@@ -62,7 +62,7 @@ public class CripplingStrike extends AbstractStrike<CripplingStrike, CripplingSt
             public PlayerNameData addSuffixFromOther() {
                 return new PlayerNameData(Component.text("CRIP", NamedTextColor.RED), we -> we == from || (we.isTeammate(target) && we.getSpecClass().specType == SpecType.HEALER));
             }
-        }.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+        }.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
             currentDamageValue.addModifier(
                     FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name,
                     crippleAmount,

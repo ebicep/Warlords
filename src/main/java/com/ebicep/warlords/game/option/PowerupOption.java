@@ -368,7 +368,7 @@ public class PowerupOption implements Option {
                             we.sendMessage(getWornOffMessage());
                         },
                         getTickDuration()
-                ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Damage", 1.2f);
                         }
                 ));

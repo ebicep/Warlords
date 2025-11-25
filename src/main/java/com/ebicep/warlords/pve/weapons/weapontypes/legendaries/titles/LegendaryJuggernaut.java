@@ -111,7 +111,7 @@ public class LegendaryJuggernaut extends AbstractLegendaryWeapon implements Even
                 cooldownManager -> {
                 },
                 false
-        ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     int playerKills = player.getMinuteStats().total().getKills();
                     for (int i = KILL_MILESTONES.size() - 1; i >= 0; i--) {
                         int killMilestone = KILL_MILESTONES.get(i);

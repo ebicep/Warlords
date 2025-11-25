@@ -54,7 +54,7 @@ public class SpiderGauntlet extends AbstractFixedItem implements FixedItemApplie
                 cooldownManager -> {
                 },
                 true
-        ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     WarlordsEntity victim = event.getWarlordsEntity();
                     WarlordsEntity attacker = event.getSource();
                     if (victim instanceof WarlordsNPC warlordsNPC && Objects.equals(attacker, warlordsPlayer)) {

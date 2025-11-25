@@ -131,7 +131,7 @@ public class LegendaryAegis extends AbstractLegendaryWeapon implements PassiveCo
                         player.playSound(player.getLocation(), Sound.ITEM_SHIELD_BLOCK, 2, 1.4f);
                     }
                 }
-        ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
             if (barrierActive()) {
                 currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getTitleName(), 1f + DMG_BONUS_WHILE_BARRIER_PERCENT / 100f);
             }

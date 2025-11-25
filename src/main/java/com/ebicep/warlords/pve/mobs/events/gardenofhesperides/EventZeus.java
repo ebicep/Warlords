@@ -167,7 +167,7 @@ public class EventZeus extends AbstractMob implements BossMob, God, Unsilencable
                     cooldownManager -> {
                     },
                     5 * 20
-            ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+            ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                         if (event.getCause().isEmpty()) {
                             return;
                         }

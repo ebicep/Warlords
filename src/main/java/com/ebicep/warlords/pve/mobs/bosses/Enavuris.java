@@ -447,7 +447,7 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
                         cooldownManager -> {
                         },
                         3 * 20
-                ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 0.75f);
                         }
                 ));
@@ -649,7 +649,7 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
                         }
                     };
                 }
-            }.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+            }.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                         if (currentDebuff.get() == Debuff.CRIPPLE) {
                             currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 0.75f);
                         }

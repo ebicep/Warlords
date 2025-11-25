@@ -160,7 +160,7 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
                 },
                 8 * 20
         );
-        damageBoost.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+        damageBoost.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     if (pveMasterUpgrade) {
                         currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
                                 name, convertToMultiplicationDecimal(0.75f * (we.getBlocksTravelled() - startingBlocksTravelled))

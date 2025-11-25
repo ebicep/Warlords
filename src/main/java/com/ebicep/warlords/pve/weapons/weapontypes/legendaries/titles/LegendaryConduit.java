@@ -156,7 +156,7 @@ public class LegendaryConduit extends AbstractLegendaryWeapon implements Passive
                                     CooldownTypes.WEAPON,
                                     cm -> {},
                                     LINK_DURATION_SECONDS * 20
-                            ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
+                            ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
                                         if (granted.compareAndSet(false, true)) {
                                             int energy = getEnergyOnPairProc();
                                             float cdr = (float) getCdrOnPairProcSeconds();

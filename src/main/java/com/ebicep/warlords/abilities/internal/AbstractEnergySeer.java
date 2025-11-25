@@ -140,7 +140,7 @@ public abstract class AbstractEnergySeer<T extends AbstractEnergySeer.EnergySeer
             }
 
         };
-        cd.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+        cd.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     if (inPve && AbstractEnergySeer.this instanceof EnergySeerConjurer energySeerConjurer) {
                         currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
                                 name, convertToMultiplicationDecimal(energySeerConjurer.getDamageIncrease())

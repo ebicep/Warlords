@@ -85,7 +85,7 @@ public class PenitentResolve implements SpecBoostManager.SpecBoost<PenitentResol
                             }
                         })
                 );
-                regularCooldown.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
+                regularCooldown.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
                             if (e.getCause().isEmpty()) {
                                 regularCooldown.setTicksLeft(0);
                             }

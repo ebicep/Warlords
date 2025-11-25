@@ -87,7 +87,7 @@ public class WoundingStrikeDefender extends AbstractStrike<WoundingStrikeDefende
 
                     },
                     4 * 20
-            ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+            ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                 currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 0.85f);
                     }
             ));

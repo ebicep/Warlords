@@ -67,7 +67,7 @@ public class AccumulatingKnowledge implements FieldEffect {
                     multiplier.set(newMultiplier);
                     player.getHealth().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, getName() + " (Base)", Math.min(multiplier.get(), 25) / 100f);
                 }
-        ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     int buff = Math.min(multiplier.get(), 25);
             currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getName(), 1 - buff / 100f);
                 }

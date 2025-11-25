@@ -104,7 +104,7 @@ public class ArcaneShatter implements SpecBoostManager.SpecBoost<ArcaneShatter> 
                         CooldownTypes.SPEC_BOOST,
                         cM -> {},
                         stunTicks
-                ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
+                ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
                     currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
                             getStringName(),
                             AbstractAbility.convertToMultiplicationDecimal(damageIncrease)

@@ -74,7 +74,7 @@ public class ConsecrateAvenger extends AbstractConsecrate implements Damages<Con
                 });
             }
         })
-        ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     if (event.getFlags().contains(InstanceFlags.STRIKE_IN_CONS)) {
                         return;
                     }

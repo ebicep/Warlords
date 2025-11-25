@@ -117,7 +117,7 @@ public class LegendaryMomentum extends AbstractLegendaryWeapon implements Passiv
                 CooldownTypes.WEAPON,
                 cm -> {},
                 false
-        ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     float mul = 1f + (stacks * DMG_PER_STACK_PERCENT) / 100f;
             currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getTitleName(), mul);
                 }

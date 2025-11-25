@@ -141,7 +141,7 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance implements Heals<H
                         EffectUtils.playCylinderAnimation(target.getLocation(), 1, 250, 25, 25, 8, 6, .3);
                     }
                 })
-        ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     if (pveMasterUpgrade) {
                         currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 0.9f);
                     }

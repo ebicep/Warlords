@@ -64,7 +64,7 @@ public class WitheringPlague implements SpecBoostManager.SpecBoost<WitheringPlag
             if (!cooldown.getCooldownClass().equals(AstralPlague.class) || !cooldown.getFrom().equals(warlordsEntity)) {
                 return;
             }
-            cooldown.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
+            cooldown.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
                 WarlordsEntity victim = e.getWarlordsEntity();
                         if (victim.getSpecClass().specType == SpecType.TANK) {
                             return;

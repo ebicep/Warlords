@@ -33,7 +33,7 @@ public class Modifier<T> {
     /**
      * Called before intervene, use this to increase outgoing damage. (eg. Damage Powerup, Berserk)
      */
-    public static final Modifier<DamageModifyBeforeInterveneFromAttacker> OUTGOING_DAMAGE_BEFORE_INTERVENE = new Modifier<>();
+    public static final Modifier<DamageModifyBeforeInterveneFromAttacker> MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE = new Modifier<>();
     /**
      * Called after intervene, use this to decrease incoming damage. (eg. Last Stand, Vindicate)
      */

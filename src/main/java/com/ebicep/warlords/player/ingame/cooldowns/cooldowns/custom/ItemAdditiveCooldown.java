@@ -69,7 +69,7 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
             currentCritMultiplier.addModifier(FloatModifiable.ModifierType.ADDITIVE, name, additionalCritMultiplier);
                 }
         );
-        this.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+        this.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC) {
                         Aspect aspect = warlordsNPC.getMob().getAspect();
                         if (aspect == null) {

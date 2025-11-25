@@ -99,7 +99,7 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
                     }
                 }
         );
-        berserkCooldown.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamgeValue) -> {
+        berserkCooldown.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamgeValue) -> {
                     stats.hitsDoneAmplified++;
                     multiplier.getAndIncrement();
             currentDamgeValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, name, damageIncrease / 100);

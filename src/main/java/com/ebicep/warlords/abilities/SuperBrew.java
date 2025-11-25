@@ -135,7 +135,7 @@ public class SuperBrew extends AbstractAbility implements OrangeAbilityIcon, Hit
                 }),
                 linkedEntities
         );
-        superBrewCooldown.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+        superBrewCooldown.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     if (event.getCause().isEmpty() && event.getSource().equals(target)) {
                         currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
                                 name,

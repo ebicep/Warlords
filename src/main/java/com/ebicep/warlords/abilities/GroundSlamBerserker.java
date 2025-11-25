@@ -46,7 +46,7 @@ public class GroundSlamBerserker extends AbstractGroundSlam implements Damages<G
             wp.getCooldownManager()
               .addCooldown(new RegularCooldown<>("Reverberation", "REVERB", GroundSlamBerserker.class, new GroundSlamBerserker(), wp, CooldownTypes.BUFF, cooldownManager -> {
               }, 5 * 20
-              ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+              ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                   currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, damageBoost);
                       }
               ));

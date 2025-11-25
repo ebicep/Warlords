@@ -451,7 +451,7 @@ public class DamageInstanceProcessor {
                 FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
         );
         for (AbstractCooldown<?> abstractCooldown : sourceCooldownsDistinct) {
-            abstractCooldown.applyModifiers(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, m -> m.apply(event, damageValue));
+            abstractCooldown.applyModifiers(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, m -> m.apply(event, damageValue));
         }
         damageValue.removeModifierListener(
                 InstanceManager.SOURCE_LABEL_BI,

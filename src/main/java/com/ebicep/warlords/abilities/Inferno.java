@@ -94,7 +94,7 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
                 return true;
             }
 
-        }.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+        }.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
             if (pveMasterUpgrade) {
                 WarlordsEntity hit = event.getWarlordsEntity();
                 int oldHitCount = hitCount.computeIfAbsent(hit, k -> 0);

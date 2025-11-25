@@ -214,7 +214,7 @@ public class FreezingBreath extends AbstractProjectile<FreezingBreath, FreezingB
                     cooldownManager -> {},
                     5 * 20
             ).addModifier(
-                    Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE,
+                    Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE,
                     (event, currentDamageValue) -> {
                         currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 0.6f);
                     }
