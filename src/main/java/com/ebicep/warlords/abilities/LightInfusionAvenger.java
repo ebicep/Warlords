@@ -11,6 +11,7 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.paladin.avenger.LightInfusionBranchAvenger;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 
@@ -64,8 +65,8 @@ public class LightInfusionAvenger extends AbstractLightInfusion {
                 }
         );
         if (pveMasterUpgrade2) {
-            infusionCooldown.addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> energyGainPerTick.addAdditiveModifier(name, 0.5f));
-            infusionCooldown.addModifier(Modifier.ENERGY_GAIN_PER_HIT, energyGainPerTick -> energyGainPerTick.addAdditiveModifier(name, 20));
+            infusionCooldown.addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> energyGainPerTick.addModifier(FloatModifiable.ModifierType.ADDITIVE, name, 0.5f));
+            infusionCooldown.addModifier(Modifier.ENERGY_GAIN_PER_HIT, energyGainPerTick -> energyGainPerTick.addModifier(FloatModifiable.ModifierType.ADDITIVE, name, 20));
         }
         wp.getCooldownManager().addCooldown(infusionCooldown);
         playCastEffect(wp);

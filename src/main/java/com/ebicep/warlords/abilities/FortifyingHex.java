@@ -41,7 +41,6 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, FortifyingHex.FortifyingHexStats> implements WeaponAbilityIcon, Duration, Damages<FortifyingHex.DamageValues> {
 
@@ -93,8 +92,8 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
             }
         };
         cd.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
-            currentDamageValue.addMultiplicativeModifierAdd(
-                    hexName + " " + Integer.toHexString(cd.hashCode()),
+            currentDamageValue.addModifier(
+                    FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, hexName + " " + Integer.toHexString(cd.hashCode()),
                     -data.damageReduction * (event.getWarlordsEntity().hasFlag() ? data.damageReductionFlagMultiplier : 1) / 100f,
                     contribution -> fromHex.getAbilityStats().damageReduced += Math.abs(contribution)
                     );
@@ -198,17 +197,7 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
 
     }
 
-    static class WeakeningHex {
-
-        private int stacks = 1;
-
-        public int getStacks() {
-            return stacks;
-        }
-
-        public void setStacks(int stacks) {
-            this.stacks = stacks;
-        }
+     static class WeakeningHex {
 
     }
 
@@ -241,31 +230,27 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
                                        .crit(damageValues.hexDamage)
                                        .customFlags(new CustomInstanceFlags.ProjectileHitInstanceFlag(projectile)));
         if (pveMasterUpgrade2) {
-            Optional<RegularCooldown> weakeningHexCooldown = new CooldownFilter<>(hit, RegularCooldown.class).filterCooldownClass(WeakeningHex.class).findFirst();
-            if (weakeningHexCooldown.isPresent()) {
-                RegularCooldown regularCooldown = weakeningHexCooldown.get();
-                WeakeningHex weakeningHex = (WeakeningHex) regularCooldown.getCooldownObject();
-                if (weakeningHex.getStacks() < 4) {
-                    weakeningHex.setStacks(weakeningHex.getStacks() + 1);
-                }
-                regularCooldown.setTicksLeft(tickDuration);
-            } else {
-                WeakeningHex data = new WeakeningHex();
-                hit.getCooldownManager().addCooldown(new RegularCooldown<>(
-                        "Weakening Hex",
-                        "WHEX",
-                        WeakeningHex.class,
-                        data,
-                        wp,
-                        CooldownTypes.LOW_LEVEL_DEBUFF,
-                        cooldownManager -> {
-                        },
-                        6 * 20
-                ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                            currentDamageValue.addMultiplicativeModifierMult("Weakening Hex", (1 + 0.05f * data.getStacks()));
-                        }
-                ));
-            }
+            hit.getCooldownManager().limitCooldowns(RegularCooldown.class, WeakeningHex.class, 4);
+            WeakeningHex data = new WeakeningHex();
+            hit.getCooldownManager().addCooldown(new RegularCooldown<>(
+                    "Weakening Hex",
+                    "WHEX",
+                    WeakeningHex.class,
+                    data,
+                    wp,
+                    CooldownTypes.LOW_LEVEL_DEBUFF,
+                    cooldownManager -> {
+                    },
+                    cooldownManager -> {
+                    },
+                    6 * 20
+            ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                int stacks = (int) new CooldownFilter<>(hit, RegularCooldown.class)
+                        .filterCooldownClass(WeakeningHex.class)
+                        .stream()
+                        .count();
+                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,"Weakening Hex", (1 + 0.05f * stacks));
+            }));
         }
         stats.addPlayersHit();
     }
@@ -344,8 +329,8 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
         ItemDisplay display = startingLocation.getWorld().spawn(location, ItemDisplay.class, itemDisplay -> {
                     itemDisplay.setItemStack(new ItemStack(Material.WARPED_DOOR));
                     itemDisplay.setTeleportDuration(1);
-            itemDisplay.setBrightness(EntitiesUtils.MAX_BRIGHTNESS);
-            itemDisplay.setTransformation(new Transformation(new Vector3f(),
+                    itemDisplay.setBrightness(EntitiesUtils.MAX_BRIGHTNESS);
+                    itemDisplay.setTransformation(new Transformation(new Vector3f(),
                             new AxisAngle4f((float) Math.toRadians(startingLocation.getPitch()), 1, 0, 0),
                             new Vector3f(1f),
                             new AxisAngle4f()

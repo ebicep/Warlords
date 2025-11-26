@@ -26,6 +26,7 @@ import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.citizensnpcs.trait.MountTrait;
 import net.citizensnpcs.trait.SlimeSize;
 import net.kyori.adventure.text.Component;
@@ -138,9 +139,9 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
                 cooldownManager -> {
                 },
                 false
-        ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     if (warlordsNPC.getEntity().isInsideVehicle()) {
-                        currentDamageValue.addMultiplicativeModifierMult(name, 0.6f);
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 0.6f);
                     }
                 }
         ));
@@ -499,7 +500,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
             // increase heat / damage on every use
             if (timesUsed++ <= 40) { // ~700 max at split 0
                 damageIncrese += .05f;
-                damageValues.heatAuraDamage.value().addMultiplicativeModifierAdd(name, damageIncrese);
+                damageValues.heatAuraDamage.value().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, name, damageIncrese);
             }
             PlayerFilter.entitiesAround(wp, hitbox, hitbox, hitbox)
                         .aliveEnemiesOf(wp)

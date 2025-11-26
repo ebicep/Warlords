@@ -13,6 +13,7 @@ import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.event.EventHandler;
 
 import java.util.List;
@@ -71,11 +72,14 @@ public class ArmOfTheAlmighty implements SpecBoostManager.SpecBoost<ArmOfTheAlmi
                     cooldownManager -> {
                     },
                     false
-            ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+            ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                         if (!(event.getAbility() instanceof AvengersStrike) || !warlordsPlayer.getCooldownManager().hasCooldown(AvengersWrath.AvengersWrathData.class)) {
                             return;
                         }
-                        currentDamageValue.addMultiplicativeModifierMult(getStringName(), AbstractAbility.convertToMultiplicationDecimal(wrathDamageBoostPercent));
+                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                        getStringName(),
+                        AbstractAbility.convertToMultiplicationDecimal(wrathDamageBoostPercent)
+                );
                     }
             ));
         }

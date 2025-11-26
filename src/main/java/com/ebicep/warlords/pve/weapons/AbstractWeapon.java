@@ -7,6 +7,7 @@ import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.java.NumberFormat;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -79,7 +80,7 @@ public abstract class AbstractWeapon {
     }
 
     public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
-        player.getHealth().addAdditiveModifier("Weapon Health (Base)", getHealthBonus());
+        player.getHealth().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Weapon Health (Base)", getHealthBonus());
     }
 
     public abstract float getHealthBonus();

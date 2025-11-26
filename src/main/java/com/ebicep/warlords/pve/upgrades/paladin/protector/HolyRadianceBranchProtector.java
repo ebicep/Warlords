@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.upgrades.paladin.protector;
 
 import com.ebicep.warlords.abilities.HolyRadianceProtector;
 import com.ebicep.warlords.pve.upgrades.*;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 public class HolyRadianceBranchProtector extends AbstractUpgradeBranch<HolyRadianceProtector> {
 
@@ -51,7 +52,7 @@ public class HolyRadianceBranchProtector extends AbstractUpgradeBranch<HolyRadia
                         """,
                 50000,
                 () -> {
-                    ability.getMarkRadius().addAdditiveModifier("Master Upgrade Branch", 12);
+                    ability.getMarkRadius().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade Branch", 12);
                 }
         );
     }

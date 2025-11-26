@@ -57,15 +57,15 @@ public class AvengersStrike extends AbstractStrike<AvengersStrike, AvengersStrik
                     multiplier += 0.4f;
                 }
             } else if (pveMasterUpgrade2) {
-                int enemiesNearBy = Math.toIntExact(PlayerFilter
+                int enemiesNearby = Math.toIntExact(PlayerFilter
                         .entitiesAround(wp, 10, 10, 10)
                         .aliveEnemiesOf(wp)
                         .stream().count()
                 );
-                if (enemiesNearBy >= 7) {
-                    multiplier += 0.25f;
-                } else {
+                if (enemiesNearby >= 7) {
                     multiplier += 0.5f;
+                } else {
+                    multiplier += 1f;
                 }
             }
         }
@@ -91,7 +91,7 @@ public class AvengersStrike extends AbstractStrike<AvengersStrike, AvengersStrik
                             .ability(this)
                             .source(wp)
                             .value(finalEvent.getWarlordsDamageHealingEvent())
-                            .flags(InstanceFlags.DUPLICATE_AVENGER_STRIKE, InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST, InstanceFlags.IGNORE_FERVENT_TITLE)
+                            .flags(InstanceFlags.DUPLICATE_AVENGER_STRIKE)
                     );
                     Bukkit.getPluginManager().callEvent(new WarlordsStrikeEvent(wp, this, we));
                 }

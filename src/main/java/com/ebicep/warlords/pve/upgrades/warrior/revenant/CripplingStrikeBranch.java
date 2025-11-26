@@ -6,16 +6,10 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 public class CripplingStrikeBranch extends AbstractUpgradeBranch<CripplingStrike> {
 
-
-    @Override
-    public void runOnce() {
-        Value.RangedValueCritable damage = ability.getDamageValues().getStrikeDamage();
-        damage.min().addMultiplicativeModifierAdd("PvE", .3f);
-        damage.max().addMultiplicativeModifierAdd("PvE", .3f);
-    }
 
     public CripplingStrikeBranch(AbilityTree abilityTree, CripplingStrike ability) {
         super(abilityTree, ability);
@@ -39,7 +33,7 @@ public class CripplingStrikeBranch extends AbstractUpgradeBranch<CripplingStrike
                         """,
                 50000,
                 () -> {
-                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -10);
+                    ability.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade Branch", -10);
                     ability.setCripple(40);
                 }
         );
@@ -53,8 +47,15 @@ public class CripplingStrikeBranch extends AbstractUpgradeBranch<CripplingStrike
                         """,
                 50000,
                 () -> {
-                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -20);
+                    ability.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade Branch", -20);
                 }
         );
+    }
+
+    @Override
+    public void runOnce() {
+        Value.RangedValueCritable damage = ability.getDamageValues().getStrikeDamage();
+        damage.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .3f);
+        damage.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .3f);
     }
 }

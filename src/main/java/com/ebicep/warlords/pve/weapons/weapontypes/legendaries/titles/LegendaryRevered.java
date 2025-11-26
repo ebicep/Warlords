@@ -11,6 +11,7 @@ import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -169,8 +170,11 @@ public class LegendaryRevered extends AbstractLegendaryWeapon implements EventTi
                 },
                 (int) ((DURATION + DURATION_INCREASE_PER_UPGRADE * getTitleLevel()) * 20)
         );
-        cooldown.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                    currentDamageValue.addMultiplicativeModifierMult(getTitleName(), 1 + (DAMAGE_INCREASE + DAMAGE_INCREASE_PER_UPGRADE * getTitleLevel()) / 100f);
+        cooldown.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                    getTitleName(),
+                    1 + (DAMAGE_INCREASE + DAMAGE_INCREASE_PER_UPGRADE * getTitleLevel()) / 100f
+            );
                 }
         );
         return cooldown;

@@ -24,6 +24,7 @@ import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -273,15 +274,15 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         }
 
         AbstractPlayerClass playerClass = player.getSpec();
-        warlordsPlayer.getEnergyPerHit().addAdditiveModifier("Legendary Weapon", getEnergyPerHitBonus());
-        warlordsPlayer.getEnergyPerSec().addAdditiveModifier("Legendary Weapon", getEnergyPerSecondBonus());
+        warlordsPlayer.getEnergyPerHit().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Legendary Weapon", getEnergyPerHitBonus());
+        warlordsPlayer.getEnergyPerSec().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Legendary Weapon", getEnergyPerSecondBonus());
 
         for (AbstractAbility ability : playerClass.getAbilities()) {
             if (ability.getClass().equals(selectedSkillBoost.ability)) {
                 Value.applyDamageHealing(ability, value -> {
                             if (value instanceof Value.RangedValueCritable rangedValueCritable) {
-                                rangedValueCritable.critChance().addAdditiveModifier("Legendary Weapon", getSkillCritChanceBonus());
-                                rangedValueCritable.critMultiplier().addAdditiveModifier("Legendary Weapon", getSkillCritMultiplierBonus());
+                                rangedValueCritable.critChance().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Legendary Weapon", getSkillCritChanceBonus());
+                                rangedValueCritable.critMultiplier().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Legendary Weapon", getSkillCritMultiplierBonus());
                             }
                         }
                 );

@@ -13,6 +13,7 @@ import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCounter;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -130,9 +131,9 @@ public class LegendaryAegis extends AbstractLegendaryWeapon implements PassiveCo
                         player.playSound(player.getLocation(), Sound.ITEM_SHIELD_BLOCK, 2, 1.4f);
                     }
                 }
-        ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
             if (barrierActive()) {
-                currentDamageValue.addMultiplicativeModifierMult(getTitleName(), 1f + DMG_BONUS_WHILE_BARRIER_PERCENT / 100f);
+                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getTitleName(), 1f + DMG_BONUS_WHILE_BARRIER_PERCENT / 100f);
             }
                 }
         ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
@@ -145,7 +146,7 @@ public class LegendaryAegis extends AbstractLegendaryWeapon implements PassiveCo
                     if (barrierPool <= 0f) {
                         tryTriggerPulse(player);
                     }
-                    currentDamageValue.addAdditiveModifier(getTitleName(), -absorb);
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE, getTitleName(), -absorb);
                 }
         ));
         new GameRunnable(player.getGame()) {
@@ -230,6 +231,9 @@ public class LegendaryAegis extends AbstractLegendaryWeapon implements PassiveCo
 
     @Override
     public int getCounter() {
+        if (warlordsPlayer == null) {
+            return 0;
+        }
         if (barrierActive()) {
             float cap = getBarrierCapPercent() / 100f * warlordsPlayer.getMaxHealth();
             return cap <= 0 ? 0 : (int) Math.ceil((barrierPool / cap) * 100f);

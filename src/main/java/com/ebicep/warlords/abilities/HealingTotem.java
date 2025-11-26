@@ -160,7 +160,7 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                             PlayerFilter.entitiesAround(totemStand, rad, rad, rad).aliveEnemiesOf(wp).forEach(enemy -> {
                                 enemy.addSpeedModifier(wp, "Totem Slowness", -50, 20);
                                 if (enemy instanceof WarlordsNPC npc) {
-                                    npc.setDamageResistance(npc.getSpec().getDamageResistance() - 5);
+                                    npc.setDamageResistance(npc.getSpec().getDamageResistance() - 2);
                                 }
                                 EffectUtils.playParticleLinkAnimation(enemy.getLocation(), totemStand.getLocation(), 255, 255, 255, 1);
                                 enemy.getCooldownManager()
@@ -172,8 +172,8 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                                              CooldownTypes.LOW_LEVEL_DEBUFF,
                                              cooldownManager -> {
                                              }, 20
-                                     ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                                                 currentDamageValue.addMultiplicativeModifierMult(name, 0.5f);
+                                     ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                                         currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 0.5f);
                                              }
                                      ));
                             });
@@ -226,8 +226,8 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                             p.getCooldownManager()
                              .addCooldown(new RegularCooldown<>("Totem Crippling", "CRIP", HealingTotemData.class, data, wp, CooldownTypes.LOW_LEVEL_DEBUFF, cooldownManager -> {
                              }, crippleDuration * 20
-                             ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                                         currentDamageValue.addMultiplicativeModifierMult(name, 0.75f);
+                             ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                                 currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 0.75f);
                                      }
                              ));
                         });

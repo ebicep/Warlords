@@ -11,6 +11,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.event.EventHandler;
 
 import java.util.Collections;
@@ -58,7 +59,7 @@ public class PactOfProtection implements SpecBoostManager.SpecBoost<PactOfProtec
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(MysticalBarrier.class).forEach(mysticalBarrier -> {
-                mysticalBarrier.getCooldown().addMultiplicativeModifierAdd("Spec Boost", -mysticalBarrierCooldownReductionPercent / 100);
+                mysticalBarrier.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", -mysticalBarrierCooldownReductionPercent / 100);
             });
         }
 
@@ -72,7 +73,10 @@ public class PactOfProtection implements SpecBoostManager.SpecBoost<PactOfProtec
                 return;
             }
             regularCooldown.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (e, currentDamageValue) -> {
-                        currentDamageValue.addMultiplicativeModifierMult(getStringName(), AbstractAbility.convertToDivisionDecimal(targetDamageReductionPercent));
+                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                        getStringName(),
+                        AbstractAbility.convertToDivisionDecimal(targetDamageReductionPercent)
+                );
                     }
             );
             RegularCooldown<Boost> pactCooldown = new RegularCooldown<>(
@@ -90,7 +94,10 @@ public class PactOfProtection implements SpecBoostManager.SpecBoost<PactOfProtec
                     })
             );
             pactCooldown.addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
-                        currentDamageValue.addMultiplicativeModifierMult(getStringName(), AbstractAbility.convertToMultiplicationDecimal(selfDamageIncreasePercent));
+                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                        getStringName(),
+                        AbstractAbility.convertToMultiplicationDecimal(selfDamageIncreasePercent)
+                );
                     }
             );
             Consumer<CooldownManager> oldOnRemoveForce = regularCooldown.getOnRemoveForce();

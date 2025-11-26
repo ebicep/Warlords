@@ -10,6 +10,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.event.EventHandler;
 
 import java.util.List;
@@ -67,9 +68,9 @@ public class DivineEffulgence implements SpecBoostManager.SpecBoost<DivineEffulg
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(HolyRadianceProtector.class).forEach(holyRadiance -> {
                 holyRadiance.getHealValues().getRadianceHealing().forEachValue(floatModifiable ->
-                        floatModifiable.addMultiplicativeModifierAdd("Spec Boost", holyRadianceHealingIncreasePercent / 100)
+                        floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", holyRadianceHealingIncreasePercent / 100)
                 );
-                holyRadiance.getSpeed().addMultiplicativeModifierAdd("Spec Boost", holyRadianceTravelSpeedPercentIncrease / 100);
+                holyRadiance.getSpeed().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", holyRadianceTravelSpeedPercentIncrease / 100);
             });
         }
 
@@ -95,7 +96,10 @@ public class DivineEffulgence implements SpecBoostManager.SpecBoost<DivineEffulg
                     rangedDamageReductionDurationTicks
             ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (e, currentDamageValue) -> {
                         if (Utils.isProjectile(e.getCause()) || isCustomProjectile(e.getCause())) {
-                            currentDamageValue.addMultiplicativeModifierMult(getStringName(), AbstractAbility.convertToDivisionDecimal(rangedDamageReductionPercent));
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                                    getStringName(),
+                                    AbstractAbility.convertToDivisionDecimal(rangedDamageReductionPercent)
+                            );
                         }
                     }
             ));

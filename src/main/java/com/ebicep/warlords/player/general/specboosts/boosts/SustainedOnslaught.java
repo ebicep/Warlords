@@ -7,6 +7,7 @@ import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.event.EventHandler;
 
 import java.util.List;
@@ -52,10 +53,10 @@ public class SustainedOnslaught implements SpecBoostManager.SpecBoost<SustainedO
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(ImpalingStrike.class).forEach(impalingStrike -> {
-                impalingStrike.getEnergyCost().addAdditiveModifier("Spec Boost", -impalingStrikeEnergyCostReduction);
+                impalingStrike.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", -impalingStrikeEnergyCostReduction);
             });
             warlordsPlayer.getAbilitiesMatching(VitalityConcoction.class).forEach(vitalityConcoction -> {
-                vitalityConcoction.getCooldown().addAdditiveModifier("Spec Boost", -vitalityConcoctionCooldownReductionSeconds);
+                vitalityConcoction.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", -vitalityConcoctionCooldownReductionSeconds);
             });
         }
 

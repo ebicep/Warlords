@@ -86,7 +86,9 @@ public class LegendaryJuggernaut extends AbstractLegendaryWeapon implements Even
         super.applyToWarlordsPlayer(player, pveOption);
 
         player.getGame().registerEvents(new Listener() {
-            final FloatModifiable.FloatModifier modifier = player.getHealth().addMultiplicativeModifierAdd(getTitleName() + " (Base)", 0);
+            final FloatModifiable.FloatModifier modifier = player.getHealth().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                    getTitleName() + " (Base)", 0
+            );
 
             @EventHandler(ignoreCancelled = true)
             public void onDeath(WarlordsDeathEvent event) {
@@ -109,12 +111,12 @@ public class LegendaryJuggernaut extends AbstractLegendaryWeapon implements Even
                 cooldownManager -> {
                 },
                 false
-        ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     int playerKills = player.getMinuteStats().total().getKills();
                     for (int i = KILL_MILESTONES.size() - 1; i >= 0; i--) {
                         int killMilestone = KILL_MILESTONES.get(i);
                         if (playerKills >= killMilestone) {
-                            currentDamageValue.addMultiplicativeModifierMult(getTitleName(), 1 + (getDamageBoost() * (i + 1)) / 100f);
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getTitleName(), 1 + (getDamageBoost() * (i + 1)) / 100f);
                             return;
                         }
                     }

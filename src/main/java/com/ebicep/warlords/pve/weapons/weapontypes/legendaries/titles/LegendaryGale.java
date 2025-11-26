@@ -146,7 +146,7 @@ public class LegendaryGale extends AbstractLegendaryWeapon {
             List<FloatModifiable.FloatModifier> modifiers = wp
                     .getAbilities()
                     .stream()
-                    .map(a -> a.getEnergyCost().addAdditiveModifier("Gale", -abilityEnergyDecrease))
+                    .map(a -> a.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Gale", -abilityEnergyDecrease))
                     .toList();
             RegularCooldown<LegendaryGale> galeCooldown = new RegularCooldown<>(
                     name,

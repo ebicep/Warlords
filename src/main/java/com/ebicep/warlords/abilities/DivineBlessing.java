@@ -79,7 +79,12 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
         int maxStacks = MercifulHex.getFromHex(wp).getMaxStacks();
         List<FloatModifiable.FloatModifier> modifiers;
         if (pveMasterUpgrade2) {
-            modifiers = wp.getAbilitiesMatching(RayOfLight.class).stream().map(ability -> ability.getCooldown().addMultiplicativeModifierMult(name + " Master", 0.55f)).toList();
+            modifiers = wp.getAbilitiesMatching(RayOfLight.class)
+                          .stream()
+                          .map(ability -> ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                                  name + " Master", 0.55f
+                          ))
+                          .toList();
         } else {
             modifiers = Collections.emptyList();
         }
@@ -130,8 +135,8 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                                                 },
                                                 21
                                         ).addModifier(Modifier.MODIFY_INCOMING_HEALING, (event, currentHealValue) -> {
-                                            currentHealValue.addMultiplicativeModifierMult(
-                                                    name,
+                                            currentHealValue.addModifier(
+                                                    FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name,
                                                     convertToMultiplicationDecimal(hexHealingBonus),
                                                     contribution -> stats.healingIncreased += Math.abs(contribution)
                                             );
@@ -160,8 +165,8 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
             }
         }.addModifier(Modifier.MODIFY_INCOMING_HEALING, (event, currentHealValue) -> {
                     if (new CooldownFilter<>(wp, RegularCooldown.class).filterCooldownFrom(wp).filterCooldownClass(MercifulHex.class).stream().count() >= maxStacks) {
-                        currentHealValue.addMultiplicativeModifierMult(
-                                name,
+                        currentHealValue.addModifier(
+                                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name,
                                 convertToMultiplicationDecimal(hexHealingBonus),
                                 contribution -> stats.healingIncreased += Math.abs(contribution)
                         );

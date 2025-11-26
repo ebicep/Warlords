@@ -18,6 +18,7 @@ import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Particle;
@@ -110,7 +111,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                     data.addAndCheckDamageThreshold(currentDamageValue, wp);
                 }
         );
-        orderOfEviscerateCooldown.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+        orderOfEviscerateCooldown.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     if (!Objects.equals(data.getMarkedPlayer(), event.getWarlordsEntity())) {
                         return;
                     }
@@ -119,7 +120,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                         stats.numberOfBackstabs++;
                         damageBonus += 70;
                     }
-                    currentDamageValue.addMultiplicativeModifierMult(name, 1 + damageBonus / 100f);
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 1 + damageBonus / 100f);
                 }
         );
         orderOfEviscerateCooldown.addModifier(Modifier.DAMAGE_BEFORE_ANY_REDUCTION_ATTACKER, event -> {
@@ -191,8 +192,10 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                                                 },
                                                 8 * 20
                                         );
-                                        regularCooldown.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                                                    currentDamageValue.addMultiplicativeModifierMult(name, 1 + 0.4f * stacks.get());
+                                        regularCooldown.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                                                    name, 1 + 0.4f * stacks.get()
+                                            );
                                                 }
                                         );
                                         cooldown.set(regularCooldown);

@@ -17,6 +17,7 @@ import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.spiritguard.SpiritLinkBranch;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -83,23 +84,26 @@ public class SpiritLink extends AbstractChain<SpiritLink, SpiritLink.SpiritLinkS
     @Override
     protected void onHit(WarlordsEntity we, int hitCounter) {
         we.playSound(we.getLocation(), "mage.firebreath.activation", 1, 1);
-        we.getCooldownManager().limitCooldowns(RegularCooldown.class, SpiritLink.class, inPve ? 4 : maxStacks);
         // speed buff
-        // 30 is ticks
         we.addSpeedModifier(we, "Spirit Link", speedBuff, (int) (speedDuration * 20));
+        SpiritLinkData spiritLinkData = new SpiritLinkData();
         we.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "LINK",
-                SpiritLink.class,
-                new SpiritLink(),
-                we, CooldownTypes.BUFF,
+                SpiritLinkData.class,
+                spiritLinkData,
+                we,
+                CooldownTypes.BUFF,
                 cooldownManager -> {
                 },
                 (int) (damageReductionDuration * 20)
         ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
-                    currentDamageValue.addMultiplicativeModifierMult(name, 1 - damageReduction / 100f);
-                }
-        ));
+            int stacks = (int) new CooldownFilter<>(we, RegularCooldown.class)
+                    .filterCooldownClass(SpiritLinkData.class)
+                    .stream()
+                    .count();
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, (float) Math.pow(1 - damageReduction / 100f, stacks));
+        }));
     }
 
     @Override
@@ -149,6 +153,9 @@ public class SpiritLink extends AbstractChain<SpiritLink, SpiritLink.SpiritLinkS
 
     public void setDamageReduction(float damageReduction) {
         this.damageReduction = damageReduction;
+    }
+
+    public static class SpiritLinkData {
     }
 
     private void additionalBounce(WarlordsEntity wp, Set<WarlordsEntity> hitCounter, WarlordsEntity chainTarget, List<WarlordsEntity> toExclude, int bounceCount) {

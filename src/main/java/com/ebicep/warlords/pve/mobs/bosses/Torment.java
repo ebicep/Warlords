@@ -27,6 +27,7 @@ import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
@@ -114,14 +115,14 @@ public class Torment extends AbstractMob implements BossMob {
                 true
         ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_ALL_MODIFIERS, (event, currentDamageValue, isCrit) -> {
                     if (event.getSource().getCooldownManager().hasCooldown(DamageCheck.class)) {
-                        currentDamageValue.addMultiplicativeModifierMult(name, 3);
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 3);
                     } else {
                         EffectUtils.playParticleLinkAnimation(
                                 warlordsNPC.getLocation(),
                                 event.getSource().getLocation(),
                                 Particle.SCULK_SOUL
                         );
-                        currentDamageValue.addMultiplicativeModifierMult(name, 0.4f);
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 0.4f);
                     }
                 }
         ));
@@ -194,14 +195,14 @@ public class Torment extends AbstractMob implements BossMob {
                                             },
                                             3
                                     ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
-                                                currentDamageValue.addOverridingModifier(name, 0);
+                                        currentDamageValue.addModifier(FloatModifiable.ModifierType.OVERRIDING, name, 0);
                                             }
                                     ));
                                 }
                             }
                         })
                 ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
-                            currentDamageValue.addMultiplicativeModifierMult(name, 0.05f);
+                    currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 0.05f);
                         }
                 ));
             }

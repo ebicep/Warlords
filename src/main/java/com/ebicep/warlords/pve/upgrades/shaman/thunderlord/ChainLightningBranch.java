@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.upgrades.shaman.thunderlord;
 
 import com.ebicep.warlords.abilities.ChainLightning;
 import com.ebicep.warlords.pve.upgrades.*;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 public class ChainLightningBranch extends AbstractUpgradeBranch<ChainLightning> {
 
@@ -53,7 +54,7 @@ public class ChainLightningBranch extends AbstractUpgradeBranch<ChainLightning> 
                         Chain Lightning now deals 10% more damage per bounce instead of less.""",
                 50000,
                 () -> {
-                    ability.getDamageDecreasePerBounce().addMultiplicativeModifierMult("Master Upgrade Branch", -1);
+                    ability.getDamageDecreasePerBounce().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Master Upgrade Branch", -1);
                     ability.setAdditionalBounces(ability.getAdditionalBounces() * 3);
                 }
         );

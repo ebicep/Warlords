@@ -6,15 +6,9 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 public class WoundingStrikeBranchDefender extends AbstractUpgradeBranch<WoundingStrikeDefender> {
-
-    @Override
-    public void runOnce() {
-        Value.RangedValueCritable damage = ability.getDamageValues().getStrikeDamage();
-        damage.min().addMultiplicativeModifierAdd("PvE", .3f);
-        damage.max().addMultiplicativeModifierAdd("PvE", .3f);
-    }
 
     public WoundingStrikeBranchDefender(AbilityTree abilityTree, WoundingStrikeDefender ability) {
         super(abilityTree, ability);
@@ -38,7 +32,7 @@ public class WoundingStrikeBranchDefender extends AbstractUpgradeBranch<Wounding
                         Critical Strikes grant you and nearby allies 30% damage reduction for 5 seconds.""",
                 50000,
                 () -> {
-                    ability.getDamageValues().getStrikeDamage().critChance().addAdditiveModifier("Master Upgrade Branch", 100);
+                    ability.getDamageValues().getStrikeDamage().critChance().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade Branch", 100);
                 }
         );
         masterUpgrade2 = new Upgrade(
@@ -51,8 +45,15 @@ public class WoundingStrikeBranchDefender extends AbstractUpgradeBranch<Wounding
                         """,
                 50000,
                 () -> {
-                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -10);
+                    ability.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade Branch", -10);
                 }
         );
+    }
+
+    @Override
+    public void runOnce() {
+        Value.RangedValueCritable damage = ability.getDamageValues().getStrikeDamage();
+        damage.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .3f);
+        damage.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .3f);
     }
 }

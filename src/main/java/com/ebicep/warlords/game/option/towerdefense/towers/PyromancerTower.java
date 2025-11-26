@@ -54,19 +54,19 @@ public class PyromancerTower extends AbstractTower implements Upgradeable.Path2 
         upgrades.add(new TowerUpgrade("Upgrade 1", upgradeDamage1) {
             @Override
             public void onUpgrade() {
-//                flameDamage.addAdditiveModifier(name, upgradeDamage1.getValue());
+//                flameDamage.addModifier(name, upgradeDamage1.getValue());
             }
         });
         upgrades.add(new TowerUpgrade("Upgrade 2", upgradeDamage2) {
             @Override
             public void onUpgrade() {
-//                flameDamage.addAdditiveModifier(name, upgradeDamage2.getValue());
+//                flameDamage.addModifier(name, upgradeDamage2.getValue());
             }
         });
         upgrades.add(new TowerUpgrade("Future Damage + Minor AOE", upgradeDamage3) {
             @Override
             public void onUpgrade() {
-//                flameDamage.addAdditiveModifier(name, upgradeDamage3.getValue());
+//                flameDamage.addModifier(name, upgradeDamage3.getValue());
             }
         });
         upgrades.add(new TowerUpgrade("Burn", upgradeDamage3) {});
@@ -166,7 +166,7 @@ public class PyromancerTower extends AbstractTower implements Upgradeable.Path2 
                                     }
                                 })
                         ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                                    currentDamageValue.addMultiplicativeModifierMult("Pyromancer Tower Burn", 1.2f);
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Pyromancer Tower Burn", 1.2f);
                                 }
                         ));
                     }

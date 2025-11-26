@@ -19,6 +19,7 @@ import com.ebicep.warlords.pve.items.types.AbstractFixedItem;
 import com.ebicep.warlords.pve.items.types.ItemType;
 import com.ebicep.warlords.util.java.RandomCollection;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.title.Title;
@@ -125,7 +126,7 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                                     }
                                 })
                         ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
-                                    currentDamageValue.addMultiplicativeModifierMult("Disaster Fragment - Burn", 1.2f);
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Disaster Fragment - Burn", 1.2f);
                                 }
                         ));
                     }
@@ -155,7 +156,7 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                                     }
                                 })
                         ).addModifier(Modifier.MODIFY_INCOMING_HEALING, (e, currentHealValue) -> {
-                                    currentHealValue.addMultiplicativeModifierMult("Disaster Fragment - Bleed", 0.2f);
+                            currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Disaster Fragment - Bleed", 0.2f);
                                 }
                         ));
                     }

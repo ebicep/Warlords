@@ -3,6 +3,7 @@ package com.ebicep.warlords.player.general.specboosts.boosts;
 import com.ebicep.warlords.abilities.ContagiousFacade;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.List;
 
@@ -43,9 +44,9 @@ public class Contagion implements SpecBoostManager.SpecBoost<Contagion> {
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getEnergyPerHit().addAdditiveModifier("Spec Boost", ephIncrease);
+            warlordsPlayer.getEnergyPerHit().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", ephIncrease);
             warlordsPlayer.getAbilitiesMatching(ContagiousFacade.class).forEach(contagiousFacade -> {
-                contagiousFacade.getDamageAbsorption().addAdditiveModifier("Spec Boost", facadeResistanceIncreasePercent);
+                contagiousFacade.getDamageAbsorption().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", facadeResistanceIncreasePercent);
                 contagiousFacade.setStacksGranted(contagiousFacade.getStacksGranted() + facadePhexStacksIncrease);
                 contagiousFacade.setReactivateAbility(false);
             });

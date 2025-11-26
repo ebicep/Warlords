@@ -11,6 +11,7 @@ import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 import com.ebicep.warlords.pve.items.types.specialitems.buckler.omega.AthenianAegis;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -73,7 +74,7 @@ public class PridwensBulwark extends SpecialDeltaBuckler implements CraftsInto {
                         }.runTaskLater(event.getCause().equals("Seismic Wave") ? 3 : 0);
                     } else if (Objects.equals(event.getCause(), "Reckless Charge")) {
                         event.applyToMinMax(floatModifiable ->
-                                floatModifiable.addMultiplicativeModifierMult(getName(), 1.25f)
+                                floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getName(), 1.25f)
                         );
                     }
                 }

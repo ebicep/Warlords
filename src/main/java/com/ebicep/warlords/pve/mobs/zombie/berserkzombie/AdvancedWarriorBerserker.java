@@ -12,6 +12,7 @@ import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.AdvancedMob;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -50,8 +51,8 @@ public class AdvancedWarriorBerserker extends AbstractBerserkZombie implements A
                 new BerserkerZombieWoundingStrike()
         );
         Value.RangedValueCritable strikeDamage = woundingStrike.getDamageValues().getStrikeDamage();
-        strikeDamage.min().addMultiplicativeModifierAdd(name, .5f);
-        strikeDamage.max().addMultiplicativeModifierAdd(name, .5f);
+        strikeDamage.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, name, .5f);
+        strikeDamage.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, name, .5f);
     }
 
     @Override
@@ -78,7 +79,7 @@ public class AdvancedWarriorBerserker extends AbstractBerserkZombie implements A
                     }
                 }
         ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                    currentDamageValue.addMultiplicativeModifierMult("Berserk", 1.2f);
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Berserk", 1.2f);
                 }
         ));
         warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(

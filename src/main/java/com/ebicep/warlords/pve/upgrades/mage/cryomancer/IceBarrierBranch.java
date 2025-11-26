@@ -46,7 +46,7 @@ public class IceBarrierBranch extends AbstractUpgradeBranch<IceBarrier> {
                 "Aggravating Hailstorm",
                 "Ice Barrier - Master Upgrade",
                 "Surround yourself in a glacial super shield, gaining 30% knockback resistance and slowing all nearby enemies by 75%." +
-                        " Additionally, reduce their damage reduction by 1% for every 0.25 seconds in your glacial shield.",
+                        " Additionally, reduce their damage reduction by 1% for every 0.5 seconds in your glacial shield.",
                 50000,
                 () -> {
 

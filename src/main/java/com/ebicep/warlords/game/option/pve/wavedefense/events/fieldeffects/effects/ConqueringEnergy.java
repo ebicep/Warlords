@@ -5,6 +5,7 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.fieldeffects.FieldEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -30,7 +31,7 @@ public class ConqueringEnergy implements FieldEffect {
                 }
                 if (event.getCause().isEmpty()) {
                     event.applyToMinMax(floatModifiable ->
-                            floatModifiable.addMultiplicativeModifierMult(getName(), 1.5f)
+                            floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getName(), 1.5f)
                     );
                 }
             }
@@ -40,7 +41,7 @@ public class ConqueringEnergy implements FieldEffect {
 
     @Override
     public void onWarlordsEntityCreated(WarlordsEntity player) {
-        player.getEnergyPerSec().addAdditiveModifier(getName(), -10);
-        player.getEnergyPerHit().addMultiplicativeModifierAdd(getName(), 1.5f);
+        player.getEnergyPerSec().addModifier(FloatModifiable.ModifierType.ADDITIVE, getName(), -10);
+        player.getEnergyPerHit().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, getName(), 1.5f);
     }
 }

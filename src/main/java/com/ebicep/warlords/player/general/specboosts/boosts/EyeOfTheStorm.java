@@ -15,6 +15,7 @@ import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -79,9 +80,9 @@ public class EyeOfTheStorm implements SpecBoostManager.SpecBoost<EyeOfTheStorm> 
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(LightningBolt.class).forEach(lightningBolt -> {
-                lightningBolt.getMaxDistance().addOverridingModifier("Spec Boost", maxTravelBlocks);
-                lightningBolt.getProjectileSpeed().addMultiplicativeModifierAdd("Spec Boost", (velocityIncreasePercentage + 100) / 100);
-                lightningBolt.getSplashRadius().addOverridingModifier("Spec Boost", splashRadiusBlocks);
+                lightningBolt.getMaxDistance().addModifier(FloatModifiable.ModifierType.OVERRIDING, "Spec Boost", maxTravelBlocks);
+                lightningBolt.getProjectileSpeed().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", (velocityIncreasePercentage + 100) / 100);
+                lightningBolt.getSplashRadius().addModifier(FloatModifiable.ModifierType.OVERRIDING, "Spec Boost", splashRadiusBlocks);
                 lightningBolt.setCooldownReduction(lightningBolt.getCooldownReduction() + chainCooldownReductionIncrease);
             });
             warlordsPlayer.getAbilitiesMatching(LightningRod.class).forEach(lightningRod -> {

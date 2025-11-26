@@ -14,6 +14,7 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.revenant.CripplingStrikeBranch;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
@@ -61,9 +62,9 @@ public class CripplingStrike extends AbstractStrike<CripplingStrike, CripplingSt
             public PlayerNameData addSuffixFromOther() {
                 return new PlayerNameData(Component.text("CRIP", NamedTextColor.RED), we -> we == from || (we.isTeammate(target) && we.getSpecClass().specType == SpecType.HEALER));
             }
-        }.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-            currentDamageValue.addMultiplicativeModifierMult(
-                    name,
+        }.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+            currentDamageValue.addModifier(
+                    FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name,
                     crippleAmount,
                     contribution -> {
                         if (cripplingStrike != null) {

@@ -6,6 +6,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.conjurer.SoulfireBeamBranch;
@@ -54,17 +55,19 @@ public class SoulfireBeam extends AbstractBeam<SoulfireBeam, SoulfireBeam.Soulfi
 
     @Override
     public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder
+        AbilityDescriptionBuilder builder = AbilityDescriptionBuilder
                 .create("Unleash a concentrated beam of demonic power, dealing ")
                 .damage(damageValues.beamDamage)
                 .text(" damage to all enemies hit. If the target is affected by ")
                 .text("PHEX", NamedTextColor.DARK_RED)
-                .text(" the damage dealt is increased by ")
-                .percent((damageValues.damageMultipliers.get(1) - 1) * 100, NamedTextColor.RED)
-                .text("/")
-                .percent((damageValues.damageMultipliers.get(2) - 1) * 100, NamedTextColor.RED)
-                .text("/")
-                .percent((damageValues.damageMultipliers.get(3) - 1) * 100, NamedTextColor.RED)
+                .text(" the damage dealt is increased by ");
+        for (int i = 1; i < damageValues.damageMultipliers.size(); i++) {
+            builder.percent((damageValues.damageMultipliers.get(i) - 1) * 100f, NamedTextColor.RED);
+            if (i < damageValues.damageMultipliers.size() - 1) {
+                builder.text("/");
+            }
+        }
+        description = builder
                 .text(" relative to the number of stacks and all stacks are removed.")
                 .maxRange(maxDistance)
                 .build();
@@ -122,8 +125,14 @@ public class SoulfireBeam extends AbstractBeam<SoulfireBeam, SoulfireBeam.Soulfi
         if (projectile.getHit().contains(hit)) {
             return;
         }
+        if (pveMasterUpgrade2) {
+            PoisonousHex.givePoisonousHex(wp, hit);
+        }
         getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
-        int hexStacks = (int) new CooldownFilter<>(hit, RegularCooldown.class).filterCooldownClass(PoisonousHex.class).stream().count();
+        int hexStacks = (int) new CooldownFilter<>(hit, RegularCooldown.class)
+                .filterCooldownClass(PoisonousHex.class)
+                .stream()
+                .count();
         boolean hasAstral = wp.getCooldownManager().hasCooldown(AstralPlague.class);
         if (!hasAstral) {
             hit.getCooldownManager().removeCooldown(PoisonousHex.class, false);
@@ -132,20 +141,20 @@ public class SoulfireBeam extends AbstractBeam<SoulfireBeam, SoulfireBeam.Soulfi
                     astralPlague -> astralPlague.getAbilityStats().setHexesNotConsumed(astralPlague.getAbilityStats().getHexesNotConsumed() + hexStacks)
             );
         }
-        float multiplier = damageValues.damageMultipliers.get(MathUtils.clamp(hexStacks, 0, 3));
+        float multiplier = damageValues.damageMultipliers.get(MathUtils.clamp(hexStacks, 0, PoisonousHex.getFromHex(wp).getMaxStacks()));
         getAbilityStats().getStacksRemoved().merge(hexStacks, 1, Integer::sum);
-        if (pveMasterUpgrade && maxStacksHit.getOrDefault(projectile, 0) <= 8 && hexStacks >= PoisonousHex.getFromHex(wp).getMaxStacks()) {
-            multiplier += 5;
-            maxStacksHit.put(projectile, maxStacksHit.getOrDefault(projectile, 0) + 1);
-        }
-        hit.addInstance(InstanceBuilder
+        InstanceBuilder instanceBuilder = InstanceBuilder
                 .damage()
                 .ability(this)
                 .source(wp)
                 .min(damageValues.beamDamage.getMinValue() * multiplier)
                 .max(damageValues.beamDamage.getMaxValue() * multiplier)
-                .crit(damageValues.beamDamage)
-        );
+                .crit(damageValues.beamDamage);
+        if (maxStacksHit.getOrDefault(projectile, 0) == 0 && hexStacks >= PoisonousHex.getFromHex(wp).getMaxStacks()) {
+            instanceBuilder.flags(InstanceFlags.FIRST_HIT);
+            maxStacksHit.put(projectile, 1);
+        }
+        hit.addInstance(instanceBuilder);
     }
 
     @Override
@@ -180,6 +189,10 @@ public class SoulfireBeam extends AbstractBeam<SoulfireBeam, SoulfireBeam.Soulfi
 
         public List<Float> getDamageMultipliers() {
             return damageMultipliers;
+        }
+
+        public void setDamageMultipliers(List<Float> damageMultipliers) {
+            this.damageMultipliers = damageMultipliers;
         }
 
         public Value.RangedValueCritable getBeamDamage() {

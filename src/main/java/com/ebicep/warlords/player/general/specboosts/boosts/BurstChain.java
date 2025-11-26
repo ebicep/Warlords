@@ -11,6 +11,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.event.EventHandler;
 
 import java.util.*;
@@ -71,10 +72,10 @@ public class BurstChain implements SpecBoostManager.SpecBoost<BurstChain> {
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
-            warlordsPlayer.getHealth().addAdditiveModifier("Spec Boost (Base)", -healthDecrease);
+            warlordsPlayer.getHealth().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost (Base)", -healthDecrease);
             warlordsPlayer.getSpeed().addBaseModifier(baseSpeedIncreasePercent);
             warlordsPlayer.getAbilitiesMatching(FlameBurst.class).forEach(flameBurst -> {
-                flameBurst.getProjectileSpeed().addMultiplicativeModifierAdd("Spec Boost", (velocityIncreasePercentage + 100) / 100);
+                flameBurst.getProjectileSpeed().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", (velocityIncreasePercentage + 100) / 100);
             });
             warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
                     getStringName(),
@@ -86,7 +87,7 @@ public class BurstChain implements SpecBoostManager.SpecBoost<BurstChain> {
                     cooldownManager -> {
                     },
                     false
-            ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+            ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                         WarlordsEntity victim = event.getWarlordsEntity();
                         if (victim.getCooldownManager()
                                   .getCooldowns()
@@ -95,7 +96,7 @@ public class BurstChain implements SpecBoostManager.SpecBoost<BurstChain> {
                                   .noneMatch(damageReductionAbilities::contains)
                         ) {
                             boolean hasInferno = warlordsPlayer.getCooldownManager().hasCooldown(Inferno.class);
-                            currentDamageValue.addMultiplicativeModifierMult(getStringName(),
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getStringName(),
                                     AbstractAbility.convertToMultiplicationDecimal(hasInferno ? infernoDamageIncreasePercent :
                                                                                    damageIncreasePercent)
                             );
@@ -117,7 +118,7 @@ public class BurstChain implements SpecBoostManager.SpecBoost<BurstChain> {
                 return;
             }
             flameBurstHit.put(event.getUUID(), (hitCount == null ? 0 : hitCount) + 1);
-            event.getCritChance().addOverridingModifier(getStringName(), 100);
+            event.getCritChance().addModifier(FloatModifiable.ModifierType.OVERRIDING, getStringName(), 100);
         }
 
     }

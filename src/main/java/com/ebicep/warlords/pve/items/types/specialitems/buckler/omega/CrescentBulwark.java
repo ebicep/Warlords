@@ -7,6 +7,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.Set;
 
@@ -46,9 +47,9 @@ public class CrescentBulwark extends SpecialOmegaBuckler implements AppliesToWar
                 cooldownManager -> {
                 },
                 false
-        ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     int mobCount = pveOption.mobCount();
-                    currentDamageValue.addMultiplicativeModifierMult(getName(), 1 + (mobCount * .005f));
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getName(), 1 + (mobCount * .005f));
                 }
         ));
     }

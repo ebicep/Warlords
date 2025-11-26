@@ -18,6 +18,7 @@ import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.vindicator.VindicateBranch;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Particle;
@@ -97,9 +98,9 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
                                 .value(currentDamageValue.getCalculatedValue() * .75f)
                                 .flags(InstanceFlags.IGNORE_SELF_RES, InstanceFlags.RECURSIVE, InstanceFlags.REFLECTIVE_DAMAGE)
                         );
-                        currentDamageValue.addMultiplicativeModifierMult(name, .1f);
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, .1f);
                     } else {
-                        currentDamageValue.addMultiplicativeModifierMult(name, getCalculatedVindicateDamageReduction());
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, getCalculatedVindicateDamageReduction());
                     }
                 }
         ));
@@ -137,7 +138,7 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
         };
         vindiateCooldown.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                     if (vindPveMaster2) {
-                        currentDamageValue.addMultiplicativeModifierMult("Vindicate", .85f);
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Vindicate", .85f);
                     }
                 }
         );

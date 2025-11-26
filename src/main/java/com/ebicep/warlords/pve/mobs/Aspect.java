@@ -61,7 +61,7 @@ public enum Aspect {
                     }
             ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                         if (!Aspect.isNegated(warlordsEntity)) {
-                            currentDamageValue.addMultiplicativeModifierMult("Aspect - Armoured", 0.6f);
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Aspect - Armoured", 0.6f);
                         }
                     }
             ));
@@ -189,7 +189,7 @@ public enum Aspect {
                                 })
                         ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue2) -> {
                                     if (!Aspect.isNegated(warlordsEntity)) {
-                                        currentDamageValue2.addMultiplicativeModifierMult("Aspect - Burn", 1.2f);
+                                        currentDamageValue2.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Aspect - Burn", 1.2f);
                                     }
                                 }
                         ));
@@ -201,7 +201,9 @@ public enum Aspect {
         @Override
         public void apply(WarlordsEntity warlordsEntity) {
             float additionalHealth = warlordsEntity.getMaxBaseHealth() * .5f;
-            AtomicReference<FloatModifiable.FloatModifier> modifier = new AtomicReference<>(warlordsEntity.getHealth().addAdditiveModifier(name + " (Base)", additionalHealth));
+            AtomicReference<FloatModifiable.FloatModifier> modifier = new AtomicReference<>(warlordsEntity.getHealth().addModifier(FloatModifiable.ModifierType.ADDITIVE,
+                    name + " (Base)", additionalHealth
+            ));
             warlordsEntity.heal();
             AtomicBoolean hasEffect = new AtomicBoolean(true);
             warlordsEntity.getCooldownManager().addCooldown(new PermanentCooldown<>(
@@ -222,7 +224,7 @@ public enum Aspect {
                             }
                         } else if (!hasEffect.get()) {
                             hasEffect.set(true);
-                            modifier.set(warlordsEntity.getHealth().addAdditiveModifier(name + " (Base)", additionalHealth));
+                            modifier.set(warlordsEntity.getHealth().addModifier(FloatModifiable.ModifierType.ADDITIVE, name + " (Base)", additionalHealth));
                         }
                     }
             ));

@@ -7,6 +7,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.event.EventHandler;
 
 import java.util.HashSet;
@@ -59,13 +60,13 @@ public class AugmentedChains implements SpecBoostManager.SpecBoost<AugmentedChai
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(ChainHeal.class).forEach(chainHeal -> {
                 chainHeal.getHealValues().getChainHealing().forEachValue(floatModifiable ->
-                        floatModifiable.addMultiplicativeModifierAdd("Spec Boost", chainHealHealingIncreasePercent / 100)
+                        floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", chainHealHealingIncreasePercent / 100)
                 );
-                chainHeal.getEnergyCost().addAdditiveModifier("Spec Boost", -chainHealEnergyCostDecrease);
+                chainHeal.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", -chainHealEnergyCostDecrease);
             });
             warlordsPlayer.getAbilitiesMatching(Boulder.class).forEach(boulder -> {
                 boulder.getDamageValues().getBoulderDamage().forEachValue(floatModifiable ->
-                        floatModifiable.addMultiplicativeModifierAdd("Spec Boost", -boulderDamageDecreasePercent / 100)
+                        floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", -boulderDamageDecreasePercent / 100)
                 );
             });
         }

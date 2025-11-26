@@ -17,6 +17,7 @@ import com.ebicep.warlords.pve.mobs.events.spidersburrow.EventEggSac;
 import com.ebicep.warlords.pve.mobs.flags.Spider;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
@@ -53,13 +54,13 @@ public class SpiderGauntlet extends AbstractFixedItem implements FixedItemApplie
                 cooldownManager -> {
                 },
                 true
-        ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     WarlordsEntity victim = event.getWarlordsEntity();
                     WarlordsEntity attacker = event.getSource();
                     if (victim instanceof WarlordsNPC warlordsNPC && Objects.equals(attacker, warlordsPlayer)) {
                         AbstractMob mob = warlordsNPC.getMob();
                         if (mob instanceof Spider || mob instanceof EventEggSac || mob instanceof EggSac) {
-                            currentDamageValue.addMultiplicativeModifierMult(getName(), 1.1f);
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getName(), 1.1f);
                         }
                     }
                 }

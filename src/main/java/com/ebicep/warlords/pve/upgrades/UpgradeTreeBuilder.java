@@ -60,7 +60,9 @@ public class UpgradeTreeBuilder {
 
     public UpgradeTreeBuilder addUpgradeDamage(Value ability, float value, int... levels) {
         List<FloatModifiable.FloatModifier> modifiers = new ArrayList<>();
-        ability.forEachValue(floatModifiable -> modifiers.add(floatModifiable.addMultiplicativeModifierAdd("Upgrade Branch", 0, false)));
+        ability.forEachValue(floatModifiable -> modifiers.add(floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                "Upgrade Branch", 0, false
+        )));
         return addUpgrade(
                 UpgradeTypes.DAMAGE,
                 modifiers,
@@ -71,7 +73,9 @@ public class UpgradeTreeBuilder {
 
     public UpgradeTreeBuilder addUpgradeDamage(Value.ValueHolder ability, float value, int... levels) {
         List<FloatModifiable.FloatModifier> modifiers = new ArrayList<>();
-        ability.getValues().forEach(v -> v.forEachValue(floatModifiable -> modifiers.add(floatModifiable.addMultiplicativeModifierAdd("Upgrade Branch", 0, false))));
+        ability.getValues().forEach(v -> v.forEachValue(floatModifiable -> modifiers.add(floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                "Upgrade Branch", 0, false
+        ))));
         return addUpgrade(
                 UpgradeTypes.DAMAGE,
                 modifiers,
@@ -86,7 +90,9 @@ public class UpgradeTreeBuilder {
 
     public UpgradeTreeBuilder addUpgradeHealing(Value ability, float value, int... levels) {
         List<FloatModifiable.FloatModifier> modifiers = new ArrayList<>();
-        ability.forEachValue(floatModifiable -> modifiers.add(floatModifiable.addMultiplicativeModifierAdd("Upgrade Branch", 0, false)));
+        ability.forEachValue(floatModifiable -> modifiers.add(floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                "Upgrade Branch", 0, false
+        )));
         return addUpgrade(
                 UpgradeTypes.HEALING,
                 modifiers,
@@ -97,7 +103,9 @@ public class UpgradeTreeBuilder {
 
     public UpgradeTreeBuilder addUpgradeHealing(Value.ValueHolder ability, float value, int... levels) {
         List<FloatModifiable.FloatModifier> modifiers = new ArrayList<>();
-        ability.getValues().forEach(v -> v.forEachValue(floatModifiable -> modifiers.add(floatModifiable.addMultiplicativeModifierAdd("Upgrade Branch", 0, false))));
+        ability.getValues().forEach(v -> v.forEachValue(floatModifiable -> modifiers.add(floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                "Upgrade Branch", 0, false
+        ))));
         return addUpgrade(
                 UpgradeTypes.HEALING,
                 modifiers,
@@ -113,7 +121,7 @@ public class UpgradeTreeBuilder {
     public UpgradeTreeBuilder addUpgradeCooldown(AbstractAbility ability, float value, int... levels) {
         return addUpgrade(
                 UpgradeTypes.COOLDOWN_REDUCTION,
-                ability.getCooldown().addMultiplicativeModifierAdd("Upgrade Branch", 0),
+                ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Upgrade Branch", 0),
                 value,
                 levels
         );
@@ -126,7 +134,7 @@ public class UpgradeTreeBuilder {
     public UpgradeTreeBuilder addUpgradeEnergy(AbstractAbility ability, float value, int... levels) {
         return addUpgrade(
                 UpgradeTypes.ENERGY_COST,
-                ability.getEnergyCost().addAdditiveModifier("Upgrade Branch", 0),
+                ability.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Upgrade Branch", 0),
                 value,
                 levels
         );
@@ -194,7 +202,7 @@ public class UpgradeTreeBuilder {
     public UpgradeTreeBuilder addUpgradeHitBox(HitBox hitBox, float value, int... levels) {
         return addUpgrade(
                 UpgradeTypes.HITBOX,
-                hitBox.getHitBoxRadius().addAdditiveModifier("Upgrade Branch", 0),
+                hitBox.getHitBoxRadius().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Upgrade Branch", 0),
                 value,
                 levels
         );
@@ -203,7 +211,7 @@ public class UpgradeTreeBuilder {
     public UpgradeTreeBuilder addUpgradeSplash(Splash splash, float value, int... levels) {
         return addUpgrade(
                 UpgradeTypes.SPLASH,
-                splash.getSplashRadius().addAdditiveModifier("Upgrade Branch", 0),
+                splash.getSplashRadius().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Upgrade Branch", 0),
                 value,
                 levels
         );

@@ -127,7 +127,7 @@ public class HolyRadianceProtector extends AbstractHolyRadiance implements Heals
                     }
                 })
         ).addModifier(Modifier.MODIFY_INCOMING_HEALING, (event, currentHealValue) -> {
-                    currentHealValue.addMultiplicativeModifierMult(name, convertToMultiplicationDecimal(markBonusHealing));
+            currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, convertToMultiplicationDecimal(markBonusHealing));
                 }
         ));
     }

@@ -6,6 +6,7 @@ import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
@@ -36,6 +37,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class FrostBolt extends AbstractPiercingProjectile<FrostBolt, FrostBolt.FrostBoltStats> implements WeaponAbilityIcon, Splash, Damages<FrostBolt.DamageValues> {
 
@@ -153,12 +155,12 @@ public class FrostBolt extends AbstractPiercingProjectile<FrostBolt, FrostBolt.F
             }
             hit.addSpeedModifier(shooter, "Frostbolt", -(slowness + directHitAdditionalSlowness), slowDuration * 20);
             hit.addInstance(InstanceBuilder.damage()
-                                           .ability(this)
-                                           .source(shooter)
-                                           .min(damageValues.boltDamage.getMinValue() * convertToMultiplicationDecimal(directHitMultiplier) * toReduceBy)
-                                           .max(damageValues.boltDamage.getMaxValue() * convertToMultiplicationDecimal(directHitMultiplier) * toReduceBy)
-                                           .crit(damageValues.boltDamage)
-                                           .flags(InstanceFlags.DIRECT_HIT));
+                    .ability(this)
+                    .source(shooter)
+                    .min(damageValues.boltDamage.getMinValue() * convertToMultiplicationDecimal(directHitMultiplier) * toReduceBy)
+                    .max(damageValues.boltDamage.getMaxValue() * convertToMultiplicationDecimal(directHitMultiplier) * toReduceBy)
+                    .crit(damageValues.boltDamage)
+                    .flags(InstanceFlags.DIRECT_HIT));
             if (pveMasterUpgrade) {
                 freezeExplodeOnHit(shooter, hit);
             }
@@ -166,8 +168,8 @@ public class FrostBolt extends AbstractPiercingProjectile<FrostBolt, FrostBolt.F
         int playersHit = 0;
         float splashRadius = splash.getCalculatedValue();
         for (WarlordsEntity nearEntity : PlayerFilter.entitiesAround(hit != null ? hit.getLocation() : currentLocation, splashRadius, splashRadius, splashRadius)
-                                                     .aliveEnemiesOf(shooter)
-                                                     .excluding(projectile.getHit())) {
+                .aliveEnemiesOf(shooter)
+                .excluding(projectile.getHit())) {
             playersHit = hit(projectile, shooter, toReduceBy, playersHit, nearEntity);
         }
         return playersHit;
@@ -199,21 +201,25 @@ public class FrostBolt extends AbstractPiercingProjectile<FrostBolt, FrostBolt.F
         if (projectile.getHit().isEmpty()) {
             toReduceBy += .15f;
         }
-        hit.getCooldownManager().limitCooldowns(RegularCooldown.class, IncendiaryCurse.class, 3);
+        hit.getCooldownManager().limitCooldowns(RegularCooldown.class, SplinteredIce.class, 3);
+        SplinteredIce data = new SplinteredIce();
         hit.getCooldownManager().addCooldown(new RegularCooldown<>(
                 "Splintered Ice",
-                null,
-                IncendiaryCurse.class,
-                null,
+                "SPLINT",
+                SplinteredIce.class,
+                data,
                 projectile.getShooter(),
                 CooldownTypes.LOW_LEVEL_DEBUFF,
                 cooldownManager -> {
                 },
                 3 * 20
         ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                    currentDamageValue.addMultiplicativeModifierMult(name, 1.08f);
-                }
-        ));
+            int stacks = (int) new CooldownFilter<>(hit, RegularCooldown.class)
+                    .filterCooldownClass(SplinteredIce.class)
+                    .stream()
+                    .count();
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Splintered Ice", 1 + 0.08f * stacks);
+        }));
         hit(projectile, shooter, toReduceBy, stats.getTargetsHit(), hit);
         hit.addSpeedModifier(shooter, "Splintered Ice", -35, 40);
         EffectUtils.displayParticle(Particle.ITEM_SNOWBALL, hit.getLocation().add(0, 1, 0), 10, .2, .2, .2, 0);
@@ -242,11 +248,11 @@ public class FrostBolt extends AbstractPiercingProjectile<FrostBolt, FrostBolt.F
         }
         nearEntity.addSpeedModifier(shooter, "Frostbolt", -slowness, slowDuration * 20);
         nearEntity.addInstance(InstanceBuilder.damage()
-                                              .ability(this)
-                                              .source(shooter)
-                                              .min(damageValues.boltDamage.getMinValue() * damageModifier)
-                                              .max(damageValues.boltDamage.getMaxValue() * damageModifier)
-                                              .crit(damageValues.boltDamage));
+                .ability(this)
+                .source(shooter)
+                .min(damageValues.boltDamage.getMinValue() * damageModifier)
+                .max(damageValues.boltDamage.getMaxValue() * damageModifier)
+                .crit(damageValues.boltDamage));
         return playersHit;
     }
 
@@ -258,16 +264,16 @@ public class FrostBolt extends AbstractPiercingProjectile<FrostBolt, FrostBolt.F
     @Override
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder.create("Shoot a frostbolt that will shatter for ")
-                                               .damage(damageValues.boltDamage)
-                                               .text(" damage and slow by ")
-                                               .percent(slowness, NamedTextColor.WHITE)
-                                               .text(" for ")
-                                               .durationSeconds(slowDuration)
-                                               .text(". A direct hit will cause the enemy to take an additional ")
-                                               .percent(directHitMultiplier, NamedTextColor.RED)
-                                               .text(" extra damage.")
-                                               .optimalRange(maxFullDistance)
-                                               .build();
+                .damage(damageValues.boltDamage)
+                .text(" damage and slow by ")
+                .percent(slowness, NamedTextColor.WHITE)
+                .text(" for ")
+                .durationSeconds(slowDuration)
+                .text(". A direct hit will cause the enemy to take an additional ")
+                .percent(directHitMultiplier, NamedTextColor.RED)
+                .text(" extra damage.")
+                .optimalRange(maxFullDistance)
+                .build();
     }
 
     @Override
@@ -331,6 +337,20 @@ public class FrostBolt extends AbstractPiercingProjectile<FrostBolt, FrostBolt.F
 
         public Value.RangedValueCritable getBoltDamage() {
             return boltDamage;
+        }
+
+    }
+
+    static class SplinteredIce {
+
+        private int stacks = 1;
+
+        public int getStacks() {
+            return stacks;
+        }
+
+        public void setStacks(int stacks) {
+            this.stacks = stacks;
         }
 
     }

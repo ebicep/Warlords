@@ -1,6 +1,5 @@
 package com.ebicep.warlords.database;
 
-import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.configuration.ApplicationConfiguration;
 import com.ebicep.warlords.database.leaderboards.PlayerLeaderboardInfo;
@@ -72,12 +71,8 @@ public class DatabaseManager {
             ChatUtils.MessageType.WARLORDS.sendErrorMessage("Database key is null, disabling database");
             enabled = false;
         }
-        if (!StatsLeaderboardManager.enabled) {
-            NPCManager.createGameJoinNPCs();
-        }
         if (!enabled) {
             ConfigManager.loadConfigsFromFolder();
-            NPCManager.createGameJoinNPCs();
             return;
         }
 
@@ -103,7 +98,6 @@ public class DatabaseManager {
 
         WeeklyBlessings.loadAllWeeklyBlessings();
 
-        NPCManager.createDatabaseRequiredNPCs();
         if (!StatsLeaderboardManager.enabled) {
             DatabaseGameEvent.startGameEvent();
         }

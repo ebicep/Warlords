@@ -14,6 +14,7 @@ import com.ebicep.warlords.pve.mobs.slime.SlimyChess;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.trait.SlimeSize;
 import net.kyori.adventure.text.Component;
@@ -116,7 +117,8 @@ public class Chessking extends AbstractMob implements BossMob {
             warlordsNPC.getAbilitiesMatching(Belch.class)
                        .forEach(belch -> belch.setRange(9 - ((20 - newSize) * .2f)));
             warlordsNPC.getAbilitiesMatching(SpawnMobAbility.class)
-                       .forEach(spawnMobAbility -> spawnMobAbility.getCooldown().addMultiplicativeModifierAdd("Chessking", -((20 - newSize) * .01f)));
+                       .forEach(spawnMobAbility -> spawnMobAbility.getCooldown()
+                                                                  .addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Chessking", -((20 - newSize) * .01f)));
         }
     }
 

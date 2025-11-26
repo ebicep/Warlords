@@ -34,7 +34,8 @@ public class LightningRodBranch extends AbstractUpgradeBranch<LightningRod> {
                     public void modifyFloatModifiable(FloatModifiable.FloatModifier modifier, float value) {
                         modifier.setModifier(value);
                     }
-                }, ability.getHealValues().getHealthRestore().value().addAdditiveModifier("Upgrade Branch", 0), 6f)
+                            }, ability.getHealValues().getHealthRestore().value().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Upgrade Branch", 0), 6f
+                )
                 .addTo(treeB);
 
         masterUpgrade = new Upgrade(

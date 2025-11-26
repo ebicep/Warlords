@@ -8,6 +8,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.*;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
+import com.ebicep.warlords.util.warlords.modifiablevalues.MultiFloatModifiable;
 
 public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike> {
 
@@ -33,7 +34,7 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
                                 public void modifyFloatModifiable(FloatModifiable.FloatModifier modifier, float value) {
                                     modifier.setModifier(value);
                                 }
-                            }, ability.getHealValues().getStrikeHealing().value().addAdditiveModifier("Upgrade Branch", 0), 100f
+                            }, ability.getHealValues().getStrikeHealing().value().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Upgrade Branch", 0), 100f
                 )
                 .addUpgradeEnergy(ability, 5f)
                 .addTo(treeB);
@@ -50,10 +51,14 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
                         """,
                 50000,
                 () -> {
-                    ability.getDamageValues().getStrikeDamage().min().addMultiplicativeModifierAdd("Master Upgrade Branch", .15f);
-                    ability.getDamageValues().getStrikeDamage().max().addMultiplicativeModifierAdd("Master Upgrade Branch", .15f);
-                    ability.getHealValues().getStrikeHealing().value().addAdditiveModifier("Master Upgrade Branch", 100);
-                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -10);
+                    ability.getDamageValues().getStrikeDamage().min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                            "Master Upgrade Branch", .15f
+                    );
+                    ability.getDamageValues().getStrikeDamage().max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                            "Master Upgrade Branch", .15f
+                    );
+                    ability.getHealValues().getStrikeHealing().value().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade Branch", 100);
+                    ability.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade Branch", -10);
                     ability.setStrikeCritInterval(2);
 
                     abilityTree.getWarlordsPlayer().getCooldownManager().addCooldown(new PermanentCooldown<>(
@@ -67,7 +72,9 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
                             false
                     ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                                 if (event.getCause().equals("Judgement Strike")) {
-                                    currentDamageValue.addAdditiveModifier("MAX HP DAMAGE (Death Strike)", DamageCheck.clamp(event.getWarlordsEntity().getMaxHealth() * 0.01f));
+                                    currentDamageValue.addModifier(50, MultiFloatModifiable.ApplyFloatModifiableType.ADDITIVE, FloatModifiable.ModifierType.ADDITIVE,
+                                            "Death Strike", DamageCheck.clamp(event.getWarlordsEntity().getMaxHealth() * 0.01f)
+                                    );
                                 }
                             }
                     ));
@@ -83,7 +90,7 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
                         """,
                 50000,
                 () -> {
-                    ability.getDamageValues().getStrikeDamage().critMultiplier().addAdditiveModifier("Master Upgrade Branch", 30);
+                    ability.getDamageValues().getStrikeDamage().critMultiplier().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade Branch", 30);
                 }
         );
     }
@@ -91,8 +98,8 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
     @Override
     public void runOnce() {
         Value.RangedValueCritable damage = ability.getDamageValues().getStrikeDamage();
-        damage.min().addMultiplicativeModifierAdd("PvE", .3f);
-        damage.max().addMultiplicativeModifierAdd("PvE", .3f);
+        damage.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .3f);
+        damage.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .3f);
         ability.setDamageIncreaseHealthThreshold(ability.getDamageIncreaseHealthThreshold() + 30);
     }
 

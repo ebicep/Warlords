@@ -13,6 +13,7 @@ import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.luminary.RayOfLightBranch;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -78,8 +79,8 @@ public class RayOfLight extends AbstractBeam<RayOfLight, RayOfLight.RayOfLightSt
             hit.getCooldownManager().addCooldown(new RegularCooldown<>(name, "RAY", RayOfLight.class, new RayOfLight(), wp, CooldownTypes.ABILITY, cooldownManager -> {
             }, cooldownManager -> {
             }, 100
-            ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                        currentDamageValue.addMultiplicativeModifierMult(name, maxStacks ? 1.2f : 1.05f);
+            ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, maxStacks ? 1.2f : 1.05f);
                     }
             ));
         }

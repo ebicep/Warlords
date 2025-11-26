@@ -7,6 +7,7 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 public class DumbDebuffs implements FieldEffect {
 
@@ -35,7 +36,7 @@ public class DumbDebuffs implements FieldEffect {
                     false
             ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                         int debuffDamageBoost = Math.min(event.getWarlordsEntity().getCooldownManager().getDebuffCooldowns(true).size(), 12);
-                        currentDamageValue.addMultiplicativeModifierMult("Dumb Debuff", (1 + (debuffDamageBoost * .15f)));
+                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Dumb Debuff", (1 + (debuffDamageBoost * .15f)));
                     }
             ));
         }

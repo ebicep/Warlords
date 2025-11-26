@@ -3,6 +3,7 @@ package com.ebicep.warlords.player.general.specboosts.boosts;
 import com.ebicep.warlords.abilities.LightInfusionCrusader;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.List;
 
@@ -46,11 +47,11 @@ public class VigorousInfusion implements SpecBoostManager.SpecBoost<VigorousInfu
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getEnergy().addAdditiveModifier("Spec Boost", maxEnergyIncrease);
+            warlordsPlayer.getEnergy().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", maxEnergyIncrease);
             warlordsPlayer.getAbilitiesMatching(LightInfusionCrusader.class).forEach(lightInfusion -> {
                 lightInfusion.setSpeedBuff(lightInfusion.getSpeedBuff() + infusionSpeedIncrease);
                 lightInfusion.setTickDuration(lightInfusion.getTickDuration() + infusionDurationIncreaseTicks);
-                lightInfusion.getCooldown().addAdditiveModifier("Spec Boost", -cooldownReductionSeconds);
+                lightInfusion.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", -cooldownReductionSeconds);
             });
         }
 

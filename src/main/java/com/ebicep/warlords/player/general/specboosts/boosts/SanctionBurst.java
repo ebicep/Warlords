@@ -1,6 +1,9 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
-import com.ebicep.warlords.abilities.*;
+import com.ebicep.warlords.abilities.HeartToHeart;
+import com.ebicep.warlords.abilities.PrismGuard;
+import com.ebicep.warlords.abilities.SoulShackle;
+import com.ebicep.warlords.abilities.Vindicate;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
@@ -10,6 +13,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.util.Vector;
@@ -58,14 +62,17 @@ public class SanctionBurst implements SpecBoostManager.SpecBoost<SanctionBurst> 
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(HeartToHeart.class).forEach(heartToHeart -> {
-                heartToHeart.getHitBoxRadius().addAdditiveModifier("Spec Boost", heartToHeartRangeIncrease);
+                heartToHeart.getHitBoxRadius().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", heartToHeartRangeIncrease);
                 heartToHeart.setFlagDistance(heartToHeart.getFlagDistance() + heartToHeartFlagRangeIncrease);
                 heartToHeart.setTargetEnemies(true);
             });
             warlordsPlayer.getAbilitiesMatching(SoulShackle.class).forEach(soulShackle -> {
                 soulShackle.getDamageValues()
                            .getShackleDamage()
-                           .forEachValue(floatModifier -> floatModifier.addMultiplicativeModifierAdd("Spec Boost", -soulShackleDamageDecreasePercent / 100));
+                           .forEachValue(floatModifier -> floatModifier.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                                   "Spec Boost",
+                                   -soulShackleDamageDecreasePercent / 100
+                           ));
             });
         }
 

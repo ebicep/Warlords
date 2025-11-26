@@ -5,6 +5,7 @@ import com.ebicep.warlords.abilities.WaterBolt;
 import com.ebicep.warlords.abilities.WaterBreath;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.List;
 
@@ -61,7 +62,7 @@ public class Downpour implements SpecBoostManager.SpecBoost<Downpour> {
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getAbilitiesMatching(WaterBolt.class).forEach(waterBolt -> {
-                waterBolt.getProjectileSpeed().addMultiplicativeModifierAdd("Spec Boost", (waterBoltSpeedIncreasePercent + 100) / 100);
+                waterBolt.getProjectileSpeed().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", (waterBoltSpeedIncreasePercent + 100) / 100);
                 waterBolt.setMaxFullDistance((int) waterBolt.getMaxDistance().getCalculatedValue());
             });
             warlordsPlayer.getAbilitiesMatching(WaterBreath.class).forEach(waterBreath -> {
@@ -69,12 +70,12 @@ public class Downpour implements SpecBoostManager.SpecBoost<Downpour> {
             });
             warlordsPlayer.getAbilitiesMatching(HealingRain.class).forEach(healingRain -> {
                 healingRain.setMaxCharges(healingRainMaxCharges);
-                healingRain.getCooldown().addMultiplicativeModifierAdd("Spec Boost", -healingRainCooldownReductionPercent / 100);
+                healingRain.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", -healingRainCooldownReductionPercent / 100);
                 healingRain.getHealValues().getRainHealing().forEachValue(floatModifiable ->
-                        floatModifiable.addMultiplicativeModifierAdd("Spec Boost", healingRainHealingIncreasePercent / 100)
+                        floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", healingRainHealingIncreasePercent / 100)
                 );
                 healingRain.setTickDuration(Math.round(healingRain.getTickDuration() * (1 - healingRainDurationDecreasePercent / 100)));
-                healingRain.getHitBoxRadius().addAdditiveModifier("Spec Boost", -healingRainRadiusDecreaseBlocks);
+                healingRain.getHitBoxRadius().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", -healingRainRadiusDecreaseBlocks);
             });
         }
 

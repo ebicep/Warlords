@@ -22,7 +22,7 @@ public class FrostboltBranch extends AbstractUpgradeBranch<FrostBolt> {
                     public void modifyFloatModifiable(FloatModifiable.FloatModifier modifier, float value) {
                         modifier.setModifier(value / 100);
                     }
-                            }, ability.getProjectileSpeed().addMultiplicativeModifierAdd("Upgrade Branch", 0), 50f, 4
+                            }, ability.getProjectileSpeed().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Upgrade Branch", 0), 50f, 4
                 )
                 .addTo(treeA);
 
@@ -50,7 +50,7 @@ public class FrostboltBranch extends AbstractUpgradeBranch<FrostBolt> {
                         """,
                 50000,
                 () -> {
-                    ability.getSplashRadius().addAdditiveModifier("Master Upgrade Branch", 1.5f);
+                    ability.getSplashRadius().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade Branch", 1.5f);
                 }
         );
     }

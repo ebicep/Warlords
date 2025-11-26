@@ -17,6 +17,7 @@ import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.tiers.AdvancedMob;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.trait.SlimeSize;
 import org.bukkit.*;
@@ -137,7 +138,7 @@ public class Illumination extends AbstractMob implements AdvancedMob {
                             },
                             3 * 20
                     ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
-                        currentDamageValue.addMultiplicativeModifierMult(name, 0.5f);
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 0.5f);
                         }
                     ));
                 }

@@ -18,6 +18,7 @@ import com.ebicep.warlords.pve.upgrades.shaman.earthwarden.EarthlivingWeaponBran
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -89,7 +90,10 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
                 }
         );
         if (pveMasterUpgrade2) {
-            earthlivingCooldown.addModifier(Modifier.ENERGY_GAIN_PER_HIT, energyGainPerTick -> energyGainPerTick.addAdditiveModifier(name, 10f));
+            earthlivingCooldown.addModifier(Modifier.ENERGY_GAIN_PER_HIT, energyGainPerTick -> energyGainPerTick.addModifier(FloatModifiable.ModifierType.ADDITIVE,
+                            name, 10f
+                    )
+            );
         }
         wp.getCooldownManager().addCooldown(earthlivingCooldown);
         return true;

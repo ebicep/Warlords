@@ -12,6 +12,7 @@ import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.defender.GroundSlamBranchDefender;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.List;
 import java.util.Set;
@@ -54,7 +55,7 @@ public class GroundSlamDefender extends AbstractGroundSlam implements Damages<Gr
                       },
                       5 * 20
               ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
-                          currentDamageValue.addMultiplicativeModifierMult(name, damageReduction);
+                  currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, damageReduction);
                       }
               ));
         }

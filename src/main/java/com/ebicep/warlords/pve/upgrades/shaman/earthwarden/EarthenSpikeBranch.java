@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.upgrades.shaman.earthwarden;
 import com.ebicep.warlords.abilities.EarthenSpike;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.pve.upgrades.*;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 public class EarthenSpikeBranch extends AbstractUpgradeBranch<EarthenSpike> {
 
@@ -50,15 +51,13 @@ public class EarthenSpikeBranch extends AbstractUpgradeBranch<EarthenSpike> {
                 """                      
                         Earthen Spike becomes a single-target ability that chains between up to 4 enemies but dealing 3x the damage.
                         
-                        Enemies hit are CRIPPLED for 5s, and killed enemies heal the user for 20% of the damage dealt.
-                        
-                        Critical spikes will refund the caster with 10 energy.
+                        Enemies hit are CRIPPLED for 5s, and killed enemies heal the user for 10% of the damage dealt.
                         """,
                 50000,
                 () -> {
                     Value.RangedValueCritable damage = ability.getDamageValues().getSpikeDamage();
-                    damage.min().addMultiplicativeModifierAdd("Master Upgrade Branch", 2);
-                    damage.max().addMultiplicativeModifierAdd("Master Upgrade Branch", 2);
+                    damage.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Master Upgrade Branch", 2);
+                    damage.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Master Upgrade Branch", 2);
                 }
         );
     }

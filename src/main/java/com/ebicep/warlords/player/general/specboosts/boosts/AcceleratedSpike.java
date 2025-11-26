@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilities.EarthenSpike;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.List;
 
@@ -54,14 +55,14 @@ public class AcceleratedSpike implements SpecBoostManager.SpecBoost<AcceleratedS
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getEnergy().addAdditiveModifier("Spec Boost", maxEnergyIncrease);
+            warlordsPlayer.getEnergy().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", maxEnergyIncrease);
             warlordsPlayer.getAbilitiesMatching(EarthenSpike.class).forEach(earthenSpike -> {
                 earthenSpike.setVerticalVelocity(0);
                 earthenSpike.setSpeed(earthenSpike.getSpeed() * AbstractAbility.convertToMultiplicationDecimal(travelSpeedIncreasePercent));
-                earthenSpike.getHitBoxRadius().addAdditiveModifier("Spec Boost", castRangeIncrease);
+                earthenSpike.getHitBoxRadius().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", castRangeIncrease);
                 earthenSpike.setSpikeHitbox(hitRadius);
                 earthenSpike.getDamageValues().getSpikeDamage().forEachValue(floatModifiable ->
-                        floatModifiable.addMultiplicativeModifierAdd("Spec Boost", damageIncreasePercent / 100)
+                        floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", damageIncreasePercent / 100)
                 );
             });
         }

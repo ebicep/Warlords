@@ -20,6 +20,7 @@ import com.ebicep.warlords.pve.upgrades.rogue.vindicator.PrismGuardBranch;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -135,8 +136,8 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                                     },
                                     tickDuration
                             ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
-                                currentDamageValue.addMultiplicativeModifierMult(
-                                        name,
+                                currentDamageValue.addModifier(
+                                        FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name,
                                         convertToDivisionDecimal(damageReduction),
                                         contribution -> data.totalDamageReduced += Math.abs(contribution)
                                 );
@@ -172,7 +173,7 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                                             cooldownManager -> {},
                                             6
                                     ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                                                currentDamageValue.addMultiplicativeModifierMult(name, 1.1f);
+                                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 1.1f);
                                             }
                                     ));
                                 }
@@ -198,8 +199,8 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                                         if (Utils.isProjectile(event.getCause())) {
                                             if (!isInsideBubble.contains(event.getSource())) {
                                                 stats.timesProjectilesReduced++;
-                                                currentDamageValue.addMultiplicativeModifierMult(
-                                                        name,
+                                                currentDamageValue.addModifier(
+                                                        FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name,
                                                         (100 - projectileDamageReduction) / 100f,
                                                         contribution -> data.totalDamageReduced += Math.abs(contribution)
                                                 );
@@ -239,7 +240,7 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                         }
                         if (event.getCause().isEmpty()) {
                             event.applyToMinMax(floatModifiable ->
-                                    floatModifiable.addMultiplicativeModifierMult(name, .75f)
+                                    floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, .75f)
                             );
                         }
                     }
@@ -258,14 +259,14 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                     if (pveMasterUpgrade) {
                         totalReduction += 10;
                     }
-            currentDamageValue.addMultiplicativeModifierMult(
-                    name,
+            currentDamageValue.addModifier(
+                    FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name,
                     (100 - totalReduction) / 100f,
                     contribution -> data.totalDamageReduced += Math.abs(contribution)
             );
                 }
         );
-        if (pveMasterUpgrade) {
+        if (pveMasterUpgrade2) {
             wp.addKnockbackModifier(wp, name, -100, prismGuardCooldown);
         }
         wp.getCooldownManager().addCooldown(prismGuardCooldown);

@@ -11,6 +11,7 @@ import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.AdvancedMob;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.Location;
 
 public class CelestialBowWielder extends AbstractMob implements AdvancedMob {
@@ -69,7 +70,7 @@ public class CelestialBowWielder extends AbstractMob implements AdvancedMob {
                 true
         ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                     if (!Utils.isProjectile(event.getCause())) {
-                        currentDamageValue.addMultiplicativeModifierMult(name, 0.1f);
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 0.1f);
                     }
                 }
         ));
