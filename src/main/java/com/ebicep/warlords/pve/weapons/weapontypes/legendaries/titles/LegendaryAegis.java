@@ -231,6 +231,9 @@ public class LegendaryAegis extends AbstractLegendaryWeapon implements PassiveCo
 
     @Override
     public int getCounter() {
+        if (warlordsPlayer == null) {
+            return 0;
+        }
         if (barrierActive()) {
             float cap = getBarrierCapPercent() / 100f * warlordsPlayer.getMaxHealth();
             return cap <= 0 ? 0 : (int) Math.ceil((barrierPool / cap) * 100f);
