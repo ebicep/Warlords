@@ -199,11 +199,8 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
             if (!pveMasterUpgrade2) {
                 return;
             }
-            if (finalEvent.isCrit()) {
-                caster.addEnergy(caster, "Earthen Verdancy", 10);
-            }
             if (finalEvent.isDead()) {
-                float healing = finalEvent.getValue() * .2f;
+                float healing = finalEvent.getValue() * .10f;
                 caster.addInstance(InstanceBuilder
                         .healing()
                         .cause("Earthen Verdancy")

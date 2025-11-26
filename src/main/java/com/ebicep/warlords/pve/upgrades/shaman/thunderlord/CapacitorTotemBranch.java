@@ -27,7 +27,7 @@ public class CapacitorTotemBranch extends AbstractUpgradeBranch<CapacitorTotem> 
         masterUpgrade = new Upgrade(
                 "Incapacitating Totem",
                 "Capacitor Totem - Master Upgrade",
-                "+20% Damage\n\nEach Capacitor Totem proc increases the hit radius by 0.5 blocks and all enemies hit have their damage resistance permanently reduced by 20%",
+                "+20% Damage\n\nEach Capacitor Totem proc increases the hit radius by 0.5 blocks and permanently reduces the damage resistance of enemies hit by 5%",
                 50000,
                 () -> {
                     Value.RangedValueCritable damage = ability.getDamageValues().getTotemDamage();

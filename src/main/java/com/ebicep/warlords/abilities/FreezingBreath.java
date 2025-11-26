@@ -98,7 +98,12 @@ public class FreezingBreath extends AbstractProjectile<FreezingBreath, FreezingB
             }
             stats.addPlayersHit();
             counter++;
-            breathTarget.addInstance(InstanceBuilder.damage().ability(this).source(wp).value(damageValues.freezingBreathDamage).uuid(uuid));
+            breathTarget.addInstance(InstanceBuilder
+                    .damage()
+                    .ability(this)
+                    .source(wp)
+                    .value(damageValues.freezingBreathDamage)
+                    .uuid(uuid));
             breathTarget.addSpeedModifier(wp, "Freezing Breath", -slowness, slowDuration * 20);
         }
         if (pveMasterUpgrade) {

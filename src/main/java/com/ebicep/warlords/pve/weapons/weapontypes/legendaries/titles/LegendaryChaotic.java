@@ -60,11 +60,11 @@ public class LegendaryChaotic extends AbstractLegendaryWeapon implements Listene
     @Override
     public TextComponent getPassiveEffect() {
         return ComponentBuilder.create("Upon damaging an enemy, all abilities gain a " + CRIT_CHANCE + "% crit chance and ", NamedTextColor.GRAY)
-                               .append(formatTitleUpgrade(CRIT_MULTIPLIER + CRIT_MULTIPLIER_PER_UPGRADE * getTitleLevel(), "%"))
-                               .text(" crit multiplier. Maximum ")
-                               .append(formatTitleUpgrade(MAX_STACKS + MAX_STACKS_PER_UPGRADE * getTitleLevel()))
-                               .text(" stacks. Once an ability crit occurs, one stack is removed.")
-                               .build();
+                .append(formatTitleUpgrade(CRIT_MULTIPLIER + CRIT_MULTIPLIER_PER_UPGRADE * getTitleLevel(), "%"))
+                .text(" crit multiplier. Maximum ")
+                .append(formatTitleUpgrade(MAX_STACKS + MAX_STACKS_PER_UPGRADE * getTitleLevel()))
+                .text(" stacks. Once an ability crit occurs, one stack is removed.")
+                .build();
     }
 
     @Override

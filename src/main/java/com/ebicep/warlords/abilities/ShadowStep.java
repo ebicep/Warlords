@@ -5,6 +5,7 @@ import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
@@ -163,26 +164,31 @@ public class ShadowStep extends AbstractAbility implements
         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 2, 1.5f);
         wp.teleportLocationOnly(locationBuilder);
         if (!hit.isEmpty()) {
-            wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+            wp.getCooldownManager().limitCooldowns(RegularCooldown.class, ShadowDash.class, 4);
+
+            ShadowDash data = new ShadowDash(hit.size());
+            RegularCooldown<ShadowDash> cooldown = new RegularCooldown<>(
                     "Shadow Dash",
                     "SHDW",
-                    ShadowStep.class,
-                    new ShadowStep(),
+                    ShadowDash.class,
+                    data,
                     wp,
                     CooldownTypes.BUFF,
                     cooldownManager -> {},
                     5 * 20
-            ).addModifier(Modifier.MODIFY_OUTGOING_CRIT_CHANCE, (event, currentCritChance) -> {
-                currentCritChance.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
-                        "Shadow Dash CC", convertToMultiplicationDecimal(Math.min(2f * hit.size(), 20))
-                );
-                    }
-            ).addModifier(Modifier.MODIFY_OUTGOING_CRIT_MULTIPLIER, (event, currentCritMultiplier) -> {
-                currentCritMultiplier.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
-                        "Shadow Dash CC", convertToMultiplicationDecimal(Math.min(2f * hit.size(), 20))
-                );
-                    }
-            ));
+            );
+            int stacks = new CooldownFilter<>(wp, RegularCooldown.class)
+                    .filterCooldownClass(ShadowDash.class)
+                    .stream()
+                    .mapToInt(cd -> ((ShadowDash) cd.getCooldownObject()).getEnemiesHit())
+                    .sum();
+            cooldown.addModifier(Modifier.MODIFY_OUTGOING_CRIT_CHANCE, (event, currentCritChance) -> {
+                currentCritChance.addModifier(FloatModifiable.ModifierType.ADDITIVE, "Shadow Dash", 2f * stacks);
+            });
+            cooldown.addModifier(Modifier.MODIFY_OUTGOING_CRIT_MULTIPLIER, (event, currentCritMultiplier) -> {
+                currentCritMultiplier.addModifier(FloatModifiable.ModifierType.ADDITIVE, "Shadow Dash", 2f * stacks);
+            });
+            wp.getCooldownManager().addCooldown(cooldown);
         }
     }
 
@@ -355,5 +361,15 @@ public class ShadowStep extends AbstractAbility implements
         }
 
     }
+    public static class ShadowDash {
+        private final int enemiesHit;
 
+        public ShadowDash(int enemiesHit) {
+            this.enemiesHit = Math.min(enemiesHit, 10);
+        }
+
+        public int getEnemiesHit() {
+            return enemiesHit;
+        }
+    }
 }

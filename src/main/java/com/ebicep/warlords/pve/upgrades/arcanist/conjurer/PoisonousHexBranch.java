@@ -36,31 +36,32 @@ public class PoisonousHexBranch extends AbstractUpgradeBranch<PoisonousHex> {
                 "Intrusive Hex",
                 "Poisonous Hex - Master Upgrade",
                 """
-                        -5 Energy cost
-                        Poisonous Hex now pierces through all enemies.
+                        +28 Pierce
+                        
+                        Poisonous Hex damage occurs every 0.5s instead of 2s.
                         """,
                 50000,
                 () -> {
-                    ability.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade Branch", -5);
-                    ability.setMaxEnemiesHit(200);
+                    ability.setTicksBetweenDot(10);
+                    ability.setMaxEnemiesHit(ability.getMaxEnemiesHit() + 28);
                 }
         );
         masterUpgrade2 = new Upgrade(
                 "Baneful Hex",
                 "Poisonous Hex - Master Upgrade",
                 """
-                        +35% Damage
+                        +50% Damage
                         +12 Pierce
                         
-                        Poisonous Hex damage occurs every 0.5s instead of 2s.
+                        PHEX can now stack up to 5 times.
                         """,
                 50000,
                 () -> {
                     Value.RangedValueCritable damage = ability.getDamageValues().getHexDamage();
-                    damage.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Master Upgrade Branch", .35f);
-                    damage.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Master Upgrade Branch", .35f);
+                    damage.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Master Upgrade Branch", .50f);
+                    damage.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Master Upgrade Branch", .50f);
                     ability.setMaxEnemiesHit(ability.getMaxEnemiesHit() + 12);
-                    ability.setTicksBetweenDot(10);
+                    ability.setMaxStacks(5);
                 }
         );
     }

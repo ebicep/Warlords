@@ -189,13 +189,13 @@ public class ChainHeal extends AbstractChain<ChainHeal, ChainHeal.ChainHealStats
                     if (event.getCause().isEmpty() || event.getCause().equals("Time Warp")) {
                         return;
                     }
-            currentCritChance.addModifier(FloatModifiable.ModifierType.ADDITIVE, name, 20);
+            currentCritChance.addModifier(FloatModifiable.ModifierType.ADDITIVE, name, 10);
                 }
         ).addModifier(Modifier.MODIFY_OUTGOING_CRIT_MULTIPLIER, (event, currentCritMultiplier) -> {
                     if (event.getCause().isEmpty() || event.getCause().equals("Time Warp")) {
                         return;
                     }
-            currentCritMultiplier.addModifier(FloatModifiable.ModifierType.ADDITIVE, name, 40);
+            currentCritMultiplier.addModifier(FloatModifiable.ModifierType.ADDITIVE, name, 25);
                 }
         ));
     }

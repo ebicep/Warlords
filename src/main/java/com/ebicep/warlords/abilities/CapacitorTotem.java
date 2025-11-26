@@ -90,7 +90,7 @@ public class CapacitorTotem extends AbstractTotem implements Duration, Damages<C
                 });
                 if (pveMasterUpgrade) {
                     float damageResistance = warlordsPlayer.getSpec().getDamageResistance();
-                    warlordsPlayer.setDamageResistance(damageResistance - 20);
+                    warlordsPlayer.setDamageResistance(damageResistance - 5);
                 }
             });
             if (pveMasterUpgrade) {

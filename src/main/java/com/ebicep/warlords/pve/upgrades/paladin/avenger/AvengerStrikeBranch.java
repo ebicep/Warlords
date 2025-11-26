@@ -93,11 +93,9 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
                 """
                         +1 Block Radius.
                         
-                        Strike crit chance is increased by 15%.
+                        Strike damage is increased by 50%, and crit chance is increased by 15%.
                         
-                        If there are at least 7 enemies within 10 blocks, strike damage is increased by 25% and movement speed is increased by 20%.
-                        
-                        If there are fewer, strike damage is further increased by 50%.
+                        If there are at fewer than 7 enemies within 10 blocks, strike damage is increased by an additional 50% and movement speed is increased by 20%.
                         """,
                 50000,
                 () -> {

@@ -51,9 +51,7 @@ public class EarthenSpikeBranch extends AbstractUpgradeBranch<EarthenSpike> {
                 """                      
                         Earthen Spike becomes a single-target ability that chains between up to 4 enemies but dealing 3x the damage.
                         
-                        Enemies hit are CRIPPLED for 5s, and killed enemies heal the user for 20% of the damage dealt.
-                        
-                        Critical spikes will refund the caster with 10 energy.
+                        Enemies hit are CRIPPLED for 5s, and killed enemies heal the user for 10% of the damage dealt.
                         """,
                 50000,
                 () -> {

@@ -182,6 +182,10 @@ public class PoisonousHex extends AbstractPiercingProjectile<PoisonousHex, Poiso
         return maxStacks;
     }
 
+    public int setMaxStacks(int maxStacks) {
+        return this.maxStacks = maxStacks;
+    }
+
     public int getMaxEnemiesHit() {
         return maxEnemiesHit;
     }

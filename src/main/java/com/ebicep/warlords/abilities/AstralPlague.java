@@ -31,7 +31,6 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -41,6 +40,7 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
     private final AstralPlagueStats stats = new AstralPlagueStats();
     private int tickDuration = 240;
     private int hexTickDurationIncrease = 40;
+    private int hexDamageIncrease= 5;
 
     public AstralPlague() {
         super(AbstractAbilityBuilder.create("astralPlague").pvp());
@@ -60,21 +60,20 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
         EffectUtils.playCircularShieldAnimation(wp.getLocation(), Particle.SOUL, 8, 3, 1);
         EffectUtils.playCircularEffectAround(wp.getGame(), wp.getLocation(), Particle.FLAME, 1, 1, 0.25, 1, 1, 2);
         List<FloatModifiable.FloatModifier> modifiers;
-        if (pveMasterUpgrade2) {
-            modifiers = wp.getAbilitiesMatching(SoulfireBeam.class)
-                          .stream()
-                          .map(soulfireBeam -> soulfireBeam.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
-                                  name + " Master", 0.6f
-                          ))
-                          .toList();
-        } else {
-            modifiers = Collections.emptyList();
-        }
+
         wp.getCooldownManager().removeCooldown(AstralPlague.class, false);
-        wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "ASTRAL", AstralPlague.class, new AstralPlague(), wp, CooldownTypes.ABILITY, cooldownManager -> {
-        }, cooldownManager -> {
-            modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
-        }, tickDuration
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                name,
+                "ASTRAL",
+                AstralPlague.class,
+                new AstralPlague(),
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                },
+                cooldownManager -> {
+                },
+                tickDuration
         ) {
 
             @Override
@@ -127,6 +126,12 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
                         if (!event.getInstanceFlags().contains(InstanceFlags.PIERCE)) {
                             return;
                         }
+                        if (pveMasterUpgrade2 && event.getCause().equals("Soulfire Beam") && event.getInstanceFlags().contains(InstanceFlags.FIRST_HIT)) {
+
+                            for (SoulfireBeam soulfireBeam : wp.getAbilitiesMatching(SoulfireBeam.class)) {
+                                soulfireBeam.subtractCurrentCooldown(soulfireBeam.getCurrentCooldown() * 0.6f);
+                            }
+                        }
                         WarlordsEntity target = event.getWarlordsEntity();
                         List<AbstractCooldown<?>> cooldowns = event
                                 .getPlayerCooldowns()
@@ -148,17 +153,14 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
             }
         }.addModifier(Modifier.MODIFY_OUTGOING_CRIT_MULTIPLIER, (event, currentCritMultiplier) -> {
                     if (pveMasterUpgrade) {
-                        currentCritMultiplier.addModifier(FloatModifiable.ModifierType.ADDITIVE, name, 60);
+                        currentCritMultiplier.addModifier(FloatModifiable.ModifierType.ADDITIVE, name, 45);
                     }
                 }
         ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     if (inPve && event.getCause().equals("Poisonous Hex") && event.getFlags().contains(InstanceFlags.DOT)) {
-                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 5.0f);
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, hexDamageIncrease);
                     }
-                    if (pveMasterUpgrade2 && event.getCause().equals("Soulfire Beam")) {
-                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 1.7f);
-                    }
-                }
+        }
         ));
         PlayerFilter.playingGame(wp.getGame()).enemiesOf(wp).forEach(enemy -> {
             new CooldownFilter<>(enemy, RegularCooldown.class).filterCooldownClass(PoisonousHex.class).filterCooldownFrom(wp).forEach(cd -> {
@@ -183,9 +185,14 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
                 .text("Soulfire Beam pierces the shields and defenses of enemies with max stacks of ")
                 .text("PHEX", NamedTextColor.DARK_RED);
         if (inPve) {
-            builder.text(". For the duration of Astral Plague the damage from Poisonous Hex stacks are increased by 400%");
+            builder.text(". For the duration of Astral Plague the damage from Poisonous Hex stacks are increased by ")
+                    .percent((hexDamageIncrease - 1) * 100, NamedTextColor.RED);
         }
-        description = builder.text(". Lasts ").durationTicks(tickDuration).text(".").build();
+        description = builder
+                .text(". Lasts ")
+                .durationTicks(tickDuration)
+                .text(".")
+                .build();
     }
 
     @Override
