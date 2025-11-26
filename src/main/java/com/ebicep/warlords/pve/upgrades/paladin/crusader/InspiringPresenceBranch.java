@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.upgrades.paladin.crusader;
 
 import com.ebicep.warlords.abilities.InspiringPresence;
 import com.ebicep.warlords.pve.upgrades.*;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 public class InspiringPresenceBranch extends AbstractUpgradeBranch<InspiringPresence> {
 
@@ -42,7 +43,7 @@ public class InspiringPresenceBranch extends AbstractUpgradeBranch<InspiringPres
                         """,
                 50000,
                 () -> {
-                    ability.getCooldown().addMultiplicativeModifierMult("Transcendent Presence", 0.9f);
+                    ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Transcendent Presence", 0.9f);
                 }
         );
         masterUpgrade2 = new Upgrade(
@@ -57,7 +58,7 @@ public class InspiringPresenceBranch extends AbstractUpgradeBranch<InspiringPres
                         """,
                 50000,
                 () -> {
-                    ability.getCooldown().addMultiplicativeModifierMult("Resilient Presence", 0.8f);
+                    ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Resilient Presence", 0.8f);
                     ability.setSpeedBuff(ability.getSpeedBuff() + 25);
                     abilityTree.getWarlordsPlayer().getSpec().setDamageResistance(abilityTree.getWarlordsPlayer().getSpec().getDamageResistance() + 10);
                 }

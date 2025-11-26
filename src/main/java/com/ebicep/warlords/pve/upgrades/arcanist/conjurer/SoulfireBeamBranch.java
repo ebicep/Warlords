@@ -6,6 +6,7 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,8 +57,8 @@ public class SoulfireBeamBranch extends AbstractUpgradeBranch<SoulfireBeam> {
                         """,
                 50000,
                 () -> {
-                    ability.getHitBoxRadius().addAdditiveModifier("Master Upgrade Branch", 1);
-                    ability.getMaxDistance().addAdditiveModifier("Master Upgrade Branch", 15);
+                    ability.getHitBoxRadius().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade Branch", 1);
+                    ability.getMaxDistance().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade Branch", 15);
                     ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -20);
                     ability.setShotsFiredAtATime(3);
                 }

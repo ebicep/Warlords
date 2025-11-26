@@ -96,7 +96,7 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
         presenceCooldown.addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> {
                     float energy = energyPerSecond / 20f;
                     data.addEnergyGivenFromStrikeAndPresence(energy);
-                    energyGainPerTick.addAdditiveModifier(name + uuid, energy);
+            energyGainPerTick.addModifier(FloatModifiable.ModifierType.ADDITIVE, name + uuid, energy);
                 }
         );
         wp.getCooldownManager().addCooldown(presenceCooldown);
@@ -118,7 +118,9 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
             presenceTarget.addSpeedModifier(wp, name, speedBuff, tickDuration);
             List<FloatModifiable.FloatModifier> modifiers;
             if (pveMasterUpgrade) {
-                modifiers = presenceTarget.getAbilities().stream().map(ability -> ability.getCooldown().addMultiplicativeModifierMult(name + " Master", 0.8f)).toList();
+                modifiers = presenceTarget.getAbilities().stream().map(ability -> ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                        name + " Master", 0.8f
+                )).toList();
             } else {
                 modifiers = Collections.emptyList();
             }
@@ -141,7 +143,7 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
             ).addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> {
                         float energy = energyPerSecond / 20f;
                         data.addEnergyGivenFromStrikeAndPresence(energy);
-                        energyGainPerTick.addAdditiveModifier(name + uuid, energy);
+                energyGainPerTick.addModifier(FloatModifiable.ModifierType.ADDITIVE, name + uuid, energy);
                     }
             ));
         }

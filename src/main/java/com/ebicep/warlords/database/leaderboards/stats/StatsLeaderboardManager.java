@@ -1,6 +1,5 @@
 package com.ebicep.warlords.database.leaderboards.stats;
 
-import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.holograms.*;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
@@ -144,7 +143,6 @@ public class StatsLeaderboardManager {
                         ChatUtils.MessageType.LEADERBOARDS.sendMessage("init Running");
 
                         DatabaseTiming.checkLeaderboardResets();
-                        NPCManager.createGameJoinNPCs();
                         DatabaseGameEvent.startGameEvent();
                         SRCalculator.recalculateSR();
 

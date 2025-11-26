@@ -6,6 +6,7 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 public class CapacitorTotemBranch extends AbstractUpgradeBranch<CapacitorTotem> {
 
@@ -30,8 +31,8 @@ public class CapacitorTotemBranch extends AbstractUpgradeBranch<CapacitorTotem> 
                 50000,
                 () -> {
                     Value.RangedValueCritable damage = ability.getDamageValues().getTotemDamage();
-                    damage.min().addMultiplicativeModifierAdd("Master Branch Upgrade", .2f);
-                    damage.max().addMultiplicativeModifierAdd("Master Branch Upgrade", .2f);
+                    damage.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Master Branch Upgrade", .2f);
+                    damage.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Master Branch Upgrade", .2f);
                 }
         );
         masterUpgrade2 = new Upgrade(

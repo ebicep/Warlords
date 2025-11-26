@@ -9,6 +9,7 @@ import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.Map;
 import java.util.Set;
@@ -61,7 +62,7 @@ public class BreastplateBuckler extends SpecialOmegaBuckler implements AppliesTo
                         AbstractMob mob = warlordsNPC.getMob();
                         float damageReduction = Math.max(1 - (repeatedAttacks.getOrDefault(mob, 0) * 0.02f), 0.8f);
                         repeatedAttacks.merge(mob, 1, Integer::sum);
-                        currentDamageValue.addMultiplicativeModifierMult(getName(), damageReduction);
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getName(), damageReduction);
                     }
                 }
         ));

@@ -13,6 +13,7 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.mobs.pvp.TricksterDummy;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.citizensnpcs.trait.SkinTrait;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
@@ -80,9 +81,9 @@ public class Trickster implements SpecBoostManager.SpecBoost<Trickster> {
             warlordsPlayer.getAbilitiesMatching(IncendiaryCurse.class).forEach(incendiaryCurse -> {
                 incendiaryCurse.setDamageIncreaseHealthThreshold(incendiaryCurse.getDamageIncreaseHealthThreshold() - incendiaryCurseDamageThresholdDecrease);
                 incendiaryCurse.getDamageValues().getCurseDamage().forEachValue(floatModifiable ->
-                        floatModifiable.addMultiplicativeModifierAdd("Spec Boost", incendiaryCurseDamageIncreasePercent / 100)
+                        floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", incendiaryCurseDamageIncreasePercent / 100)
                 );
-                incendiaryCurse.getEnergyCost().addAdditiveModifier("Spec Boost", incendiaryCurseEnergyCostIncrease);
+                incendiaryCurse.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", incendiaryCurseEnergyCostIncrease);
             });
             warlordsPlayer.getAbilitiesMatching(ShadowStep.class).forEach(shadowStep -> {
                 shadowStep.setLeapHealThreshold(shadowLeapHealthThreshold);

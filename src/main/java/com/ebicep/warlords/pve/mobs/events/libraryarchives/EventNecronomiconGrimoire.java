@@ -17,6 +17,7 @@ import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import fr.skytasul.guardianbeam.Laser;
 import net.citizensnpcs.trait.SkinTrait;
 import org.bukkit.Location;
@@ -97,7 +98,7 @@ public class EventNecronomiconGrimoire extends AbstractMob implements BossMinion
                 false
         ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                     if (currentDamageValue.getCalculatedValue() > warlordsNPC.getMaxHealth() * .1) {
-                        currentDamageValue.addMultiplicativeModifierMult("Damage Reduction", 0.3f);
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Damage Reduction", 0.3f);
                     }
                 }
         ));

@@ -14,6 +14,7 @@ import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendary
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -181,7 +182,7 @@ public class LegendaryEverlasting extends AbstractLegendaryWeapon implements Lis
                     (DURATION + DURATION_PER_UPGRADE * getTitleLevel()) * 20
             );
             cd.addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
-                        currentDamageValue.addMultiplicativeModifierMult(getTitleName(), (1 - stacks * reduction));
+                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getTitleName(), (1 - stacks * reduction));
                     }
             );
             warlordsPlayer.getCooldownManager().addCooldown(cooldown = cd);

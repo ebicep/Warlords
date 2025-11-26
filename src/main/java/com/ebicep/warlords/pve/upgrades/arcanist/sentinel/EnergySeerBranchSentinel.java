@@ -22,7 +22,8 @@ public class EnergySeerBranchSentinel extends AbstractUpgradeBranch<EnergySeerSe
                     public void modifyFloatModifiable(FloatModifiable.FloatModifier modifier, float value) {
                         modifier.setModifier(value / 100);
                     }
-                }, ability.getHealValues().getSeerHealingMultiplier().value().addAdditiveModifier("Upgrade Branch", 0), 25f)
+                            }, ability.getHealValues().getSeerHealingMultiplier().value().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Upgrade Branch", 0), 25f
+                )
                 .addTo(treeB);
 
         masterUpgrade = new Upgrade(
@@ -51,7 +52,7 @@ public class EnergySeerBranchSentinel extends AbstractUpgradeBranch<EnergySeerSe
                 () -> {
                     ability.setEpsDecrease(0);
                     ability.setTickDuration(ability.getTickDuration() + 120);
-                    ability.getCooldown().addMultiplicativeModifierMult("Collective Vaticinator", 0.75f);
+                    ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Collective Vaticinator", 0.75f);
                 }
         );
     }

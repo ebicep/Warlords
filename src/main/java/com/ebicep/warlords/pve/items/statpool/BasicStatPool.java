@@ -4,6 +4,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.custom.ItemAdditiveCooldown;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.util.java.NumberFormat;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
@@ -14,7 +15,7 @@ public enum BasicStatPool implements StatPool {
     HP("Health") {
         @Override
         public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value, ItemTier highestTier) {
-            warlordsPlayer.getHealth().addAdditiveModifier("Item " + getName() + " (Base)", value);
+            warlordsPlayer.getHealth().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Item " + getName() + " (Base)", value);
         }
 
         @Override
@@ -30,7 +31,7 @@ public enum BasicStatPool implements StatPool {
     MAX_ENERGY("Max Energy") {
         @Override
         public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value, ItemTier highestTier) {
-            warlordsPlayer.getEnergy().addAdditiveModifier("Item Basic Stat Pool", value);
+            warlordsPlayer.getEnergy().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Item Basic Stat Pool", value);
         }
 
         @Override
@@ -46,7 +47,7 @@ public enum BasicStatPool implements StatPool {
     EPH("Energy Per Hit") {
         @Override
         public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value, ItemTier highestTier) {
-            warlordsPlayer.getEnergyPerHit().addAdditiveModifier("Item Basic Stat Pool", value);
+            warlordsPlayer.getEnergyPerHit().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Item Basic Stat Pool", value);
         }
 
         @Override

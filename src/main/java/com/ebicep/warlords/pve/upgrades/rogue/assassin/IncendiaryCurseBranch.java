@@ -6,17 +6,9 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 public class IncendiaryCurseBranch extends AbstractUpgradeBranch<IncendiaryCurse> {
-
-    @Override
-    public void runOnce() {
-        Value.RangedValueCritable damage = ability.getDamageValues().getCurseDamage();
-        ability.getEnergyCost().setBaseValue(40);
-        ability.setBlindDurationInTicks(30);
-        damage.min().addMultiplicativeModifierAdd("PvE", .3f);
-        damage.max().addMultiplicativeModifierAdd("PvE", .3f);
-    }
 
     public IncendiaryCurseBranch(AbilityTree abilityTree, IncendiaryCurse ability) {
         super(abilityTree, ability);
@@ -51,12 +43,21 @@ public class IncendiaryCurseBranch extends AbstractUpgradeBranch<IncendiaryCurse
                         """,
                 50000,
                 () -> {
-                    ability.getHitBoxRadius().addAdditiveModifier("Master Upgrade", 3);
+                    ability.getHitBoxRadius().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade", 3);
 
                     Value.RangedValueCritable damage = ability.getDamageValues().getCurseDamage();
-                    damage.min().addMultiplicativeModifierAdd("PvE", .3f);
-                    damage.max().addMultiplicativeModifierAdd("PvE", .3f);
+                    damage.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .3f);
+                    damage.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .3f);
                 }
         );
+    }
+
+    @Override
+    public void runOnce() {
+        Value.RangedValueCritable damage = ability.getDamageValues().getCurseDamage();
+        ability.getEnergyCost().setBaseValue(40);
+        ability.setBlindDurationInTicks(30);
+        damage.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .3f);
+        damage.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .3f);
     }
 }

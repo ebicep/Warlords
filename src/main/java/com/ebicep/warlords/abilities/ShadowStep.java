@@ -17,6 +17,7 @@ import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -125,7 +126,7 @@ public class ShadowStep extends AbstractAbility implements
                 },
                 2
         ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
-                    currentDamageValue.addMultiplicativeModifierMult(name, .25f);
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, .25f);
                 }
         ));
         Set<WarlordsEntity> hit = new HashSet<>();
@@ -182,7 +183,7 @@ public class ShadowStep extends AbstractAbility implements
                         .stream()
                         .mapToInt(cd -> ((ShadowDash) cd.getCooldownObject()).getEnemiesHit())
                         .sum();
-                currentCritChance.addAdditiveModifier("Shadow Dash", 2f * stacks);
+                currentCritChance.addModifier(FloatModifiable.ModifierType.ADDITIVE, ("Shadow Dash", 2f * stacks);
             });
             cooldown.addModifier(Modifier.MODIFY_OUTGOING_CRIT_MULTIPLIER, (event, currentCritMultiplier) -> {
                 long stacks = new CooldownFilter<>(wp, RegularCooldown.class)
@@ -190,7 +191,7 @@ public class ShadowStep extends AbstractAbility implements
                         .stream()
                         .mapToInt(cd -> ((ShadowDash) cd.getCooldownObject()).getEnemiesHit())
                         .sum();
-                currentCritMultiplier.addAdditiveModifier("Shadow Dash", 2f * stacks);
+                currentCritMultiplier.addModifier(FloatModifiable.ModifierType.ADDITIVE, ("Shadow Dash", 2f * stacks);
             });
             wp.getCooldownManager().addCooldown(cooldown);
         }

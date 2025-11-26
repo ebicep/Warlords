@@ -9,6 +9,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.instances.type.CustomInstanceFlags;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.List;
 
@@ -66,9 +67,9 @@ public class EarthboundInfusion implements SpecBoostManager.SpecBoost<Earthbound
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getHealth().addAdditiveModifier("Spec Boost (Base)", healthIncrease);
+            warlordsPlayer.getHealth().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost (Base)", healthIncrease);
             warlordsPlayer.getAbilitiesMatching(EarthlivingWeapon.class).forEach(earthlivingWeapon -> {
-                earthlivingWeapon.getCooldown().addAdditiveModifier("Spec Boost", -earthlivingCooldownReductionSeconds);
+                earthlivingWeapon.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", -earthlivingCooldownReductionSeconds);
                 earthlivingWeapon.setTickDuration(earthlivingWeapon.getTickDuration() - earthlivingDurationDecreaseTicks);
                 earthlivingWeapon.setGuaranteedHits(earthlivingWeapon.getGuaranteedHits() + earthlivingExtraGuaranteedHits);
             });
@@ -89,7 +90,7 @@ public class EarthboundInfusion implements SpecBoostManager.SpecBoost<Earthbound
                             List<CustomInstanceFlags> customFlags = event.getCustomFlags();
                             for (CustomInstanceFlags customFlag : customFlags) {
                                 if (customFlag instanceof CustomInstanceFlags.PlayersEffectedInstanceFlag(List<WarlordsEntity> healedPlayers) && healedPlayers.isEmpty()) {
-                                    currentHealValue.addAdditiveModifier(getStringName(), earthlivingSingleHealBonus);
+                                    currentHealValue.addModifier(FloatModifiable.ModifierType.ADDITIVE, getStringName(), earthlivingSingleHealBonus);
                                 }
                             }
                         }

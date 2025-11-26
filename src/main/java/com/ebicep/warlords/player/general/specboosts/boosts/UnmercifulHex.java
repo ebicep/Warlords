@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilities.MercifulHex;
 import com.ebicep.warlords.abilities.RayOfLight;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.List;
 
@@ -44,7 +45,7 @@ public class UnmercifulHex implements SpecBoostManager.SpecBoost<UnmercifulHex> 
                 mercifulHex.setMaxEnemiesHit(Integer.MAX_VALUE);
                 mercifulHex.setHexStacksPerHitAfter(0);
                 mercifulHex.getDamageValues().getHexDamage().forEachValue(floatModifiable ->
-                        floatModifiable.addMultiplicativeModifierAdd("Spec Boost", mercifulHexDamageIncrease / 100)
+                        floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", mercifulHexDamageIncrease / 100)
                 );
             });
             warlordsPlayer.getAbilitiesMatching(RayOfLight.class).forEach(rayOfLight -> {

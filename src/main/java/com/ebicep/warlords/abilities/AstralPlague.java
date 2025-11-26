@@ -106,7 +106,7 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
                         if (!(event.getAbility() instanceof SoulfireBeam soulfireBeam)) {
                             return;
                         }
-                        event.getCritChance().addOverridingModifier(name, 100);
+                        event.getCritChance().addModifier(FloatModifiable.ModifierType.OVERRIDING, name, 100);
                         PoisonousHex fromHex = PoisonousHex.getFromHex(wp);
                         if (new CooldownFilter<>(victim, RegularCooldown.class).filterCooldownClass(PoisonousHex.class).stream().count() < fromHex.getMaxStacks()) {
                             return;
@@ -153,14 +153,14 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
             }
         }.addModifier(Modifier.MODIFY_OUTGOING_CRIT_MULTIPLIER, (event, currentCritMultiplier) -> {
                     if (pveMasterUpgrade) {
-                        currentCritMultiplier.addAdditiveModifier(name, 45);
+                        currentCritMultiplier.addModifier(FloatModifiable.ModifierType.ADDITIVE, name, 45);
                     }
                 }
-        ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     if (inPve && event.getCause().equals("Poisonous Hex") && event.getFlags().contains(InstanceFlags.DOT)) {
-                        currentDamageValue.addMultiplicativeModifierMult(name, hexDamageIncrease);
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, hexDamageIncrease);
                     }
-                }
+        }
         ));
         PlayerFilter.playingGame(wp.getGame()).enemiesOf(wp).forEach(enemy -> {
             new CooldownFilter<>(enemy, RegularCooldown.class).filterCooldownClass(PoisonousHex.class).filterCooldownFrom(wp).forEach(cd -> {

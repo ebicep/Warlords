@@ -3,6 +3,7 @@ package com.ebicep.warlords.player.general.specboosts.boosts;
 import com.ebicep.warlords.abilities.EnergySeerConjurer;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.List;
 
@@ -46,12 +47,12 @@ public class HouseOfLife implements SpecBoostManager.SpecBoost<HouseOfLife> {
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getHealth().addAdditiveModifier("Spec Boost (Base)", healthIncrease);
-            warlordsPlayer.getEnergy().addAdditiveModifier("Spec Boost", energyIncrease);
+            warlordsPlayer.getHealth().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost (Base)", healthIncrease);
+            warlordsPlayer.getEnergy().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", energyIncrease);
 
             warlordsPlayer.getAbilitiesMatching(EnergySeerConjurer.class).forEach(energySeer -> {
                 energySeer.getHealValues().getSeerHealingMultiplier().forEachValue(floatModifiable ->
-                        floatModifiable.addOverridingModifier("Spec Boost", energySeerHealingMultiplier / 100)
+                        floatModifiable.addModifier(FloatModifiable.ModifierType.OVERRIDING, "Spec Boost", energySeerHealingMultiplier / 100)
                 );
                 energySeer.setEnergyRestore(energySeer.getEnergyRestore() + energySeerEnergyIncrease);
             });

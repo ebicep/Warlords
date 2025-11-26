@@ -9,6 +9,7 @@ import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 import com.ebicep.warlords.pve.items.types.specialitems.buckler.omega.ChakramOfBlades;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.Set;
 
@@ -54,7 +55,7 @@ public class ShieldOfSnatching extends SpecialDeltaBuckler implements CraftsInto
                                                                .warlordsPlayers()
                                                                .filter(p -> p.getCurrentHealth() / p.getMaxHealth() < 0.75)
                                                                .count();
-                    currentHealValue.addMultiplicativeModifierMult(getName(), (1 + playersBelowThreshold * 0.08f));
+            currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getName(), (1 + playersBelowThreshold * 0.08f));
                 }
         ));
     }

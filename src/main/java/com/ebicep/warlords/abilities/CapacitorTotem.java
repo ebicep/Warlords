@@ -14,6 +14,7 @@ import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.thunderlord.CapacitorTotemBranch;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
@@ -73,7 +74,7 @@ public class CapacitorTotem extends AbstractTotem implements Duration, Damages<C
                     if (!pveMasterUpgrade2) {
                         return;
                     }
-                    currentDamageValue.addMultiplicativeModifierMult(name, Math.max(.85f, 1 - (data.playersHit * .01f)));
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, Math.max(.85f, 1 - (data.playersHit * .01f)));
                 }
         );
         data.pulseDamage = () -> {

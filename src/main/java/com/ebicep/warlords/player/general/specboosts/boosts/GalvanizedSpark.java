@@ -7,6 +7,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.event.EventHandler;
 
 import java.util.List;
@@ -74,7 +75,7 @@ public class GalvanizedSpark implements SpecBoostManager.SpecBoost<GalvanizedSpa
             warlordsPlayer.getAbilitiesMatching(LightningRod.class).forEach(lightningRod -> {
                 lightningRod.setMaxCharges(lightningRodMaxAbilityCharges);
                 lightningRod.setCurrentCharges(lightningRodMaxAbilityCharges);
-                lightningRod.getCooldown().addAdditiveModifier("Spec Boost", -lightningRodCooldownDecreaseSeconds);
+                lightningRod.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", -lightningRodCooldownDecreaseSeconds);
                 lightningRod.getHealValues().getHealthRestore().value().setBaseValue(lightningRod.getHealValues().getHealthRestore().getValue() - lightningRodHealingDecreasePercent);
                 lightningRod.setEnergyRestore(lightningRod.getEnergyRestore() - lightningRodEnergyRestoreDecrease);
                 lightningRod.setMagnitude(lightningRodMagnitude);
@@ -83,7 +84,10 @@ public class GalvanizedSpark implements SpecBoostManager.SpecBoost<GalvanizedSpa
             warlordsPlayer.getAbilitiesMatching(CapacitorTotem.class).forEach(capacitorTotem -> {
                 capacitorTotem.getDamageValues()
                               .getTotemDamage()
-                              .forEachValue(floatModifiable -> floatModifiable.addMultiplicativeModifierAdd("Spec Boost", -capacitorTotemDamageDecreasePercent / 100));
+                              .forEachValue(floatModifiable -> floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                                      "Spec Boost",
+                                      -capacitorTotemDamageDecreasePercent / 100
+                              ));
             });
         }
 

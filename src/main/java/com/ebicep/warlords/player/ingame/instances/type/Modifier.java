@@ -2,6 +2,7 @@ package com.ebicep.warlords.player.ingame.instances.type;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
+import com.ebicep.warlords.util.warlords.modifiablevalues.MultiFloatModifiable;
 
 @SuppressWarnings("InstantiationOfUtilityClass")
 public class Modifier<T> {
@@ -32,7 +33,7 @@ public class Modifier<T> {
     /**
      * Called before intervene, use this to increase outgoing damage. (eg. Damage Powerup, Berserk)
      */
-    public static final Modifier<DamageModifyBeforeInterveneFromAttacker> OUTGOING_DAMAGE_BEFORE_INTERVENE = new Modifier<>();
+    public static final Modifier<DamageModifyBeforeInterveneFromAttacker> MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE = new Modifier<>();
     /**
      * Called after intervene, use this to decrease incoming damage. (eg. Last Stand, Vindicate)
      */
@@ -145,14 +146,14 @@ public class Modifier<T> {
     @FunctionalInterface
     public interface DamageModifyBeforeInterveneFromSelf {
 
-        void apply(WarlordsDamageHealingEvent event, FloatModifiable currentDamageValue);
+        void apply(WarlordsDamageHealingEvent event, MultiFloatModifiable currentDamageValue);
 
     }
 
     @FunctionalInterface
     public interface DamageModifyBeforeInterveneFromAttacker {
 
-        void apply(WarlordsDamageHealingEvent event, FloatModifiable currentDamageValue);
+        void apply(WarlordsDamageHealingEvent event, MultiFloatModifiable currentDamageValue);
 
     }
 
@@ -166,14 +167,14 @@ public class Modifier<T> {
     @FunctionalInterface
     public interface DamageModifyAfterInterveneFromSelf {
 
-        void apply(WarlordsDamageHealingEvent event, FloatModifiable currentDamageValue);
+        void apply(WarlordsDamageHealingEvent event, MultiFloatModifiable currentDamageValue);
 
     }
 
     @FunctionalInterface
     public interface DamageModifyAfterInterveneFromAttacker {
 
-        void apply(WarlordsDamageHealingEvent event, FloatModifiable currentDamageValue);
+        void apply(WarlordsDamageHealingEvent event, MultiFloatModifiable currentDamageValue);
 
     }
 
@@ -194,7 +195,7 @@ public class Modifier<T> {
     @FunctionalInterface
     public interface DamageModifyAfterAllFromSelf {
 
-        void apply(WarlordsDamageHealingEvent event, FloatModifiable currentDamageValue, boolean isCrit);
+        void apply(WarlordsDamageHealingEvent event, MultiFloatModifiable currentDamageValue, boolean isCrit);
 
     }
 
@@ -250,14 +251,14 @@ public class Modifier<T> {
     @FunctionalInterface
     public interface HealingModifyFromSelf {
 
-        void apply(WarlordsDamageHealingEvent event, FloatModifiable currentHealValue);
+        void apply(WarlordsDamageHealingEvent event, MultiFloatModifiable currentHealValue);
 
     }
 
     @FunctionalInterface
     public interface HealingModifyFromAttacker {
 
-        void apply(WarlordsDamageHealingEvent event, FloatModifiable currentHealValue);
+        void apply(WarlordsDamageHealingEvent event, MultiFloatModifiable currentHealValue);
 
     }
 

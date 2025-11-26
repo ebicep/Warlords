@@ -3,6 +3,7 @@ package com.ebicep.warlords.player.general.specboosts.boosts;
 import com.ebicep.warlords.abilities.OrbsOfLife;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.List;
 
@@ -42,7 +43,9 @@ public class VibrantOrbs implements SpecBoostManager.SpecBoost<VibrantOrbs> {
             warlordsPlayer.getAbilitiesMatching(OrbsOfLife.class).forEach(orbsOfLife ->
                     orbsOfLife.getHealValues()
                             .getOrbHealing()
-                            .forEachValue(floatModifiable -> floatModifiable.addMultiplicativeModifierAdd("Spec Boost", healingIncreasePercent / 100))
+                              .forEachValue(floatModifiable -> floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                                      "Spec Boost", healingIncreasePercent / 100
+                              ))
             );
         }
 

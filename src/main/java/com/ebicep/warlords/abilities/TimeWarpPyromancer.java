@@ -18,6 +18,7 @@ import com.ebicep.warlords.pve.upgrades.mage.pyromancer.TimeWarpBranchPyromancer
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.minecraft.sounds.SoundSource;
 import org.bukkit.Instrument;
 import org.bukkit.Location;
@@ -159,9 +160,11 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
                 },
                 8 * 20
         );
-        damageBoost.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+        damageBoost.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     if (pveMasterUpgrade) {
-                        currentDamageValue.addMultiplicativeModifierMult(name, convertToMultiplicationDecimal(0.75f * (we.getBlocksTravelled() - startingBlocksTravelled)));
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                                name, convertToMultiplicationDecimal(0.75f * (we.getBlocksTravelled() - startingBlocksTravelled))
+                        );
                     }
                 }
         );

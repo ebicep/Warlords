@@ -5,13 +5,9 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 public class RemedicChainsBranch extends AbstractUpgradeBranch<RemedicChains> {
-
-    @Override
-    public void runOnce() {
-        ability.getDamageValues().getBonusDamage().value().addAdditiveModifier("PvE (Base)", 80);
-    }
 
     public RemedicChainsBranch(AbilityTree abilityTree, RemedicChains ability) {
         super(abilityTree, ability);
@@ -36,7 +32,7 @@ public class RemedicChainsBranch extends AbstractUpgradeBranch<RemedicChains> {
                 50000,
                 () -> {
                     ability.setLinkBreakRadius(ability.getLinkBreakRadius() + 20);
-                    ability.getDamageValues().getBonusDamage().value().addAdditiveModifier("Crystallizing Chains", 80);
+                    ability.getDamageValues().getBonusDamage().value().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Crystallizing Chains", 80);
                 }
         );
         masterUpgrade2 = new Upgrade(
@@ -52,5 +48,10 @@ public class RemedicChainsBranch extends AbstractUpgradeBranch<RemedicChains> {
                     ability.setLinkBreakRadius(ability.getLinkBreakRadius() + 20);
                 }
         );
+    }
+
+    @Override
+    public void runOnce() {
+        ability.getDamageValues().getBonusDamage().value().addModifier(FloatModifiable.ModifierType.ADDITIVE, "PvE (Base)", 80);
     }
 }

@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.upgrades.paladin.avenger;
 
 import com.ebicep.warlords.abilities.AvengersWrath;
 import com.ebicep.warlords.pve.upgrades.*;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 public class AvengersWrathBranch extends AbstractUpgradeBranch<AvengersWrath> {
 
@@ -43,7 +44,7 @@ public class AvengersWrathBranch extends AbstractUpgradeBranch<AvengersWrath> {
                 () -> {
                     ability.setHitRadius(ability.getHitRadius() * 2);
                     ability.setMaxTargets(ability.getMaxTargets() + 3);
-                    ability.getCooldown().addMultiplicativeModifierMult("Avenger's Armageddon", 0.8f);
+                    ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Avenger's Armageddon", 0.8f);
                 }
         );
         masterUpgrade2 = new Upgrade(
@@ -56,7 +57,7 @@ public class AvengersWrathBranch extends AbstractUpgradeBranch<AvengersWrath> {
                         """,
                 50000,
                 () -> {
-                    ability.getCooldown().addMultiplicativeModifierMult("Avenger's Vexation", 0.8f);
+                    ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Avenger's Vexation", 0.8f);
                 }
         );
     }

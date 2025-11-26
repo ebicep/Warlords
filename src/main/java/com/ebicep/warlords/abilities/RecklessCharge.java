@@ -75,7 +75,7 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, H
                       },
                       2 * 20
               ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
-                          currentDamageValue.addMultiplicativeModifierMult(name, 0.2f);
+                  currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 0.2f);
                       }
               ));
         }
@@ -177,7 +177,7 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, H
                                     getStunTimeInTicks()
                             ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                                         if (event.getCause().contains("Strike")) {
-                                            currentDamageValue.addMultiplicativeModifierMult("Reckless Rampage", 1.25f);
+                                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Reckless Rampage", 1.25f);
                                         }
                                     }
                             ));
@@ -195,7 +195,7 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, H
                                 },
                                 8 * 20
                         ).addModifier(Modifier.MODIFY_INCOMING_HEALING, (event, currentHealValue) -> {
-                                    currentHealValue.addMultiplicativeModifierMult(name, 1.5f);
+                            currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 1.5f);
                                 }
                         ));
                         new CooldownFilter<>(otherPlayer, RegularCooldown.class).filter(cd -> cd.getCooldownType() != CooldownTypes.LOW_LEVEL_DEBUFF)

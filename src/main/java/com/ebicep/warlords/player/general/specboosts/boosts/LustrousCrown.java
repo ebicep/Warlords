@@ -7,6 +7,7 @@ import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.event.EventHandler;
 
 import java.util.List;
@@ -52,7 +53,7 @@ public class LustrousCrown implements SpecBoostManager.SpecBoost<LustrousCrown> 
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(HammerOfLight.class).forEach(hammerOfLight -> {
-                hammerOfLight.getCrownRadius().addAdditiveModifier("Spec Boost", crownOfLightRadiusIncrease);
+                hammerOfLight.getCrownRadius().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", crownOfLightRadiusIncrease);
                 hammerOfLight.setCrownBonusHealing(hammerOfLight.getCrownBonusHealing() + crownOfLightHealingIncreasePercent);
             });
         }

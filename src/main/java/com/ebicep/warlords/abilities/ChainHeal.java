@@ -17,6 +17,7 @@ import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.bukkit.packets.PacketUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -87,7 +88,10 @@ public class ChainHeal extends AbstractChain<ChainHeal, ChainHeal.ChainHealStats
                             EffectUtils.playParticleLinkAnimation(warlordsEntity.getLocation(), wp.getLocation(), Particle.HAPPY_VILLAGER, 1, 1.25, -1);
                             EffectUtils.displayParticle(Particle.HAPPY_VILLAGER, warlordsEntity.getLocation().add(0, 1.2, 0), 4, 0.5, 0.3, 0.5, 0.01);
                         })
-                ).addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> energyGainPerTick.addAdditiveModifier("Chains of Blessings", 0.5f)));
+                ).addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> energyGainPerTick.addModifier(FloatModifiable.ModifierType.ADDITIVE,
+                                "Chains of Blessings", 0.5f
+                        )
+                ));
             }
         }
         return hitCounter;
@@ -185,13 +189,13 @@ public class ChainHeal extends AbstractChain<ChainHeal, ChainHeal.ChainHealStats
                     if (event.getCause().isEmpty() || event.getCause().equals("Time Warp")) {
                         return;
                     }
-                    currentCritChance.addAdditiveModifier(name, 10);
+            currentCritChance.addModifier(FloatModifiable.ModifierType.ADDITIVE, name, 10);
                 }
         ).addModifier(Modifier.MODIFY_OUTGOING_CRIT_MULTIPLIER, (event, currentCritMultiplier) -> {
                     if (event.getCause().isEmpty() || event.getCause().equals("Time Warp")) {
                         return;
                     }
-                    currentCritMultiplier.addAdditiveModifier(name, 25);
+            currentCritMultiplier.addModifier(FloatModifiable.ModifierType.ADDITIVE, name, 25);
                 }
         ));
     }

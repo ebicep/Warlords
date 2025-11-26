@@ -33,6 +33,7 @@ import com.ebicep.warlords.pve.mobs.events.libraryarchives.EventScriptedGrimoire
 import com.ebicep.warlords.pve.mobs.events.libraryarchives.EventTheArchivist;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -332,8 +333,8 @@ public class GrimoiresGraveyard extends GameMap {
 
                         },
                         false
-                ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                            currentDamageValue.addMultiplicativeModifierMult("Scaling", damageMultiplier);
+                ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                    currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Scaling", damageMultiplier);
                         }
                 ));
             }

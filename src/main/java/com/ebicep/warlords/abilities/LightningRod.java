@@ -150,8 +150,8 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
         we.getCooldownManager().removeCooldown(LightningRod.class, false);
         we.getCooldownManager().addCooldown(new RegularCooldown<>(name, "ROD DMG", LightningRod.class, new LightningRod(), we, CooldownTypes.ABILITY, cooldownManager -> {
         }, 12 * 20
-        ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                    currentDamageValue.addMultiplicativeModifierMult(name, 1.2f);
+        ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 1.2f);
                 }
         ));
     }
@@ -163,7 +163,9 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
         from.getCooldownManager().removeCooldownByName("Call of Thunder Buff");
         List<FloatModifiable.FloatModifier> modifiers;
         if (pveMasterUpgrade2) {
-            modifiers = from.getAbilitiesMatching(ChainLightning.class).stream().map(ability -> ability.getEnergyCost().addAdditiveModifier("Call of Thunder Buff", -25)).toList();
+            modifiers = from.getAbilitiesMatching(ChainLightning.class).stream().map(ability -> ability.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE,
+                    "Call of Thunder Buff", -25
+            )).toList();
         } else {
             modifiers = Collections.emptyList();
         }
@@ -181,7 +183,7 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
                     modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
                 },
                 10 * 20
-        ).addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> energyGainPerTick.addAdditiveModifier("Call of Thunder", 15 / 20f)));
+        ).addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> energyGainPerTick.addModifier(FloatModifiable.ModifierType.ADDITIVE, "Call of Thunder", 15 / 20f)));
     }
 
     @Override

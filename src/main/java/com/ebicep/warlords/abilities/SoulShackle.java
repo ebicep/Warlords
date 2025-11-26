@@ -16,6 +16,7 @@ import com.ebicep.warlords.pve.upgrades.rogue.vindicator.SoulShackleBranch;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.title.Title;
@@ -163,7 +164,7 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
                     },
                     3 * 20
             ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                        currentDamageValue.addMultiplicativeModifierMult("Oppressive Chains", 1.25f);
+                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Oppressive Chains", 1.25f);
                     }
             ));
         }

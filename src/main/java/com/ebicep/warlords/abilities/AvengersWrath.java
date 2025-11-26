@@ -16,6 +16,7 @@ import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.paladin.avenger.AvengersWrathBranch;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Particle;
@@ -61,8 +62,7 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
                 data,
                 wp,
                 CooldownTypes.ABILITY,
-                cooldownManager -> {
-                },
+                cooldownManager -> {},
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 4 == 0) {
@@ -70,18 +70,16 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
                     }
                 })
         );
-        wrathCooldown.addModifier(Modifier.ON_OUTGOING_DAMAGE, (event, currentDamageValue, isCrit) -> {
+        wrathCooldown.addModifier(
+                Modifier.ON_OUTGOING_DAMAGE,
+                (event, currentDamageValue, isCrit) -> {
                     if (!event.getCause().equals("Avenger's Strike") || event.getFlags().contains(InstanceFlags.AVENGER_WRATH_STRIKE)) {
                         return;
                     }
                     WarlordsEntity warlordsEntity = event.getWarlordsEntity();
                     stats.targetsStruckDuringWrath++;
                     data.targetsStruckDuringWrath++;
-                    EnumSet<InstanceFlags> flags = EnumSet.of(
-                            InstanceFlags.AVENGER_WRATH_STRIKE,
-                            InstanceFlags.IGNORE_FERVENT_TITLE,
-                            InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST
-                    );
+                    EnumSet<InstanceFlags> flags = EnumSet.of(InstanceFlags.AVENGER_WRATH_STRIKE);
                     if (event.getFlags().contains(InstanceFlags.STRIKE_IN_CONS)) {
                         flags.add(InstanceFlags.STRIKE_IN_CONS);
                     }
@@ -133,14 +131,19 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
                     }
                 }
         );
-        wrathCooldown.addModifier(Modifier.ON_ENEMY_DEATH, (event, currentDamageValue, isCrit, isKiller) -> {
+        wrathCooldown.addModifier(
+                Modifier.ON_ENEMY_DEATH,
+                (event, currentDamageValue, isCrit, isKiller) -> {
                     if (isKiller) {
                         stats.targetsKilledDuringWrath++;
                         data.targetsKilledDuringWrath++;
                     }
                 }
         );
-        wrathCooldown.addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> energyGainPerTick.addAdditiveModifier(name, energyPerSecond / 20f));
+        wrathCooldown.addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> energyGainPerTick.addModifier(FloatModifiable.ModifierType.ADDITIVE,
+                        name, energyPerSecond / 20f
+                )
+        );
         wp.getCooldownManager().addCooldown(wrathCooldown);
         return true;
     }

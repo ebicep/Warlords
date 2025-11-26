@@ -3,6 +3,7 @@ package com.ebicep.warlords.player.general.specboosts.boosts;
 import com.ebicep.warlords.abilities.FortifyingHex;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.List;
 
@@ -53,9 +54,9 @@ public class RuinousHex implements SpecBoostManager.SpecBoost<RuinousHex> {
             warlordsPlayer.getAbilitiesMatching(FortifyingHex.class).forEach(fortifyingHex -> {
                 fortifyingHex.setMaxEnemiesHit(fortifyingHex.getMaxEnemiesHit() + fortifyingHexEnemyPierceIncrease);
                 fortifyingHex.getDamageValues().getHexDamage().forEachValue(floatModifiable ->
-                        floatModifiable.addMultiplicativeModifierAdd("Spec Boost", fortifyingHexDamageIncreasePercent / 100)
+                        floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", fortifyingHexDamageIncreasePercent / 100)
                 );
-                fortifyingHex.getEnergyCost().addAdditiveModifier("Spec Boost", fortifyingHexEnergyCostIncrease);
+                fortifyingHex.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", fortifyingHexEnergyCostIncrease);
                 fortifyingHex.setMaxAlliesHit(fortifyingHex.getMaxAlliesHit() - fortifyingHexAllyPierceReduction);
             });
         }

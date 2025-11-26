@@ -13,6 +13,7 @@ import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.paladin.protector.LightInfusionBranchProtector;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.Particle;
 import org.bukkit.event.Listener;
 
@@ -60,7 +61,7 @@ public class LightInfusionProtector extends AbstractLightInfusion {
                     })
             );
             ornamentOfLightCooldown.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
-                        currentDamageValue.addMultiplicativeModifierMult(name, 0.1f);
+                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 0.1f);
                     }
             );
             wp.addKnockbackModifier(wp, "Ornament of Light", -50, ornamentOfLightCooldown);
@@ -78,7 +79,7 @@ public class LightInfusionProtector extends AbstractLightInfusion {
                     tickDuration
             ).addModifier(Modifier.MODIFY_OUTGOING_HEALING, (event, currentHealValue) -> {
                         if (event.getCause().equals("Protector's Strike")) {
-                            currentHealValue.addMultiplicativeModifierMult("Chiron Light", 1.25f);
+                            currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Chiron Light", 1.25f);
                         }
                     }
             ));

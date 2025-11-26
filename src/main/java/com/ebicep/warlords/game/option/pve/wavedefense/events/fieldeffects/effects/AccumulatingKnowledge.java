@@ -8,6 +8,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
@@ -64,15 +65,15 @@ public class AccumulatingKnowledge implements FieldEffect {
                         return;
                     }
                     multiplier.set(newMultiplier);
-                    player.getHealth().addMultiplicativeModifierAdd(getName() + " (Base)", Math.min(multiplier.get(), 25) / 100f);
+                    player.getHealth().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, getName() + " (Base)", Math.min(multiplier.get(), 25) / 100f);
                 }
-        ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     int buff = Math.min(multiplier.get(), 25);
-                    currentDamageValue.addMultiplicativeModifierMult(getName(), 1 - buff / 100f);
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getName(), 1 - buff / 100f);
                 }
         ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
             int buff = Math.min(multiplier.get(), 15);
-            currentDamageValue.addMultiplicativeModifierMult(getName(), (1 - buff / 100f));
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getName(), (1 - buff / 100f));
                 }
         ));
     }

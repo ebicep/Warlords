@@ -6,6 +6,7 @@ import com.ebicep.warlords.game.option.pvp.HorseOption;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.event.EventHandler;
 
 import java.util.List;
@@ -50,11 +51,11 @@ public class UndyingSteed implements SpecBoostManager.SpecBoost<UndyingSteed> {
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(CripplingStrike.class).forEach(cripplingStrike -> {
                 cripplingStrike.getDamageValues().getStrikeDamage().forEachValue(floatModifiable ->
-                        floatModifiable.addMultiplicativeModifierAdd("Spec Boost", cripplingStrikeDamageIncreasePercent / 100)
+                        floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", cripplingStrikeDamageIncreasePercent / 100)
                 );
             });
             for (HorseOption horseOption : warlordsEntity.getGame().getOption(HorseOption.class)) {
-                horseOption.getHorseForPlayer(warlordsEntity).getHealth().addAdditiveModifier("Spec Boost", horseHealth);
+                horseOption.getHorseForPlayer(warlordsEntity).getHealth().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", horseHealth);
             }
         }
 

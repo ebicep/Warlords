@@ -17,6 +17,7 @@ import com.ebicep.warlords.pve.upgrades.rogue.apothecary.VitalityLiquorBranch;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
@@ -104,7 +105,7 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
                                             },
                                             duration * 20
                                     ).addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick ->
-                                            energyGainPerTick.addAdditiveModifier("Vitality Liquor", energyPerSecond / 20f)
+                                            energyGainPerTick.addModifier(FloatModifiable.ModifierType.ADDITIVE, "Vitality Liquor", energyPerSecond / 20f)
                                     ));
                                 }
                             }

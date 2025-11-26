@@ -21,6 +21,7 @@ import com.ebicep.warlords.pve.upgrades.mage.cryomancer.TimeWarpBranchCryomancer
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -90,7 +91,7 @@ public class TimeWarpCryomancer extends AbstractTimeWarp {
                             },
                             duration
                     ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                                currentDamageValue.addMultiplicativeModifierMult("Freezing Cold", 1.15f);
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Freezing Cold", 1.15f);
                             }
                     ));
                 });
@@ -128,7 +129,7 @@ public class TimeWarpCryomancer extends AbstractTimeWarp {
                                   Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                                   })
                           ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
-                                      currentDamageValue.addMultiplicativeModifierMult(name, .2f);
+                              currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, .2f);
                                   }
                           ));
                     }

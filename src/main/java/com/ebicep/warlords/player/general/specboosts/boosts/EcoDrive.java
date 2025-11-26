@@ -9,6 +9,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.instances.type.CustomInstanceFlags;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.List;
 
@@ -51,10 +52,10 @@ public class EcoDrive implements SpecBoostManager.SpecBoost<EcoDrive> {
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getAbilitiesMatching(LightInfusionProtector.class).forEach(lightInfusion -> {
-                lightInfusion.getCooldown().addAdditiveModifier("Spec Boost", -lightInfusionCooldownReductionTicks / 20f);
+                lightInfusion.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", -lightInfusionCooldownReductionTicks / 20f);
             });
             warlordsPlayer.getAbilitiesMatching(HolyRadianceProtector.class).forEach(holyRadiance -> {
-                holyRadiance.getEnergyCost().addAdditiveModifier("Spec Boost", -holyRadianceEnergyCost);
+                holyRadiance.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", -holyRadianceEnergyCost);
             });
             warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
                     getStringName(),
@@ -71,7 +72,7 @@ public class EcoDrive implements SpecBoostManager.SpecBoost<EcoDrive> {
                             List<CustomInstanceFlags> customFlags = event.getCustomFlags();
                             for (CustomInstanceFlags customFlag : customFlags) {
                                 if (customFlag instanceof CustomInstanceFlags.PlayersEffectedInstanceFlag(List<WarlordsEntity> healedPlayers) && healedPlayers.size() == 1) {
-                                    currentHealValue.addMultiplicativeModifierMult(getStringName(), 1 + singleAllyHealBonusPercent / 100);
+                                    currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getStringName(), 1 + singleAllyHealBonusPercent / 100);
                                 }
                             }
                         }

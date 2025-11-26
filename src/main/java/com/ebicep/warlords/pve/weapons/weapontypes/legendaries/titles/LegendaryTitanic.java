@@ -58,7 +58,9 @@ public class LegendaryTitanic extends AbstractLegendaryWeapon {
         super.applyToWarlordsPlayer(player, pveOption);
 
         player.getGame().registerEvents(new Listener() {
-            final FloatModifiable.FloatModifier modifier = player.getHealth().addMultiplicativeModifierAdd(getTitleName() + " (Base)", 0);
+            final FloatModifiable.FloatModifier modifier = player.getHealth().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                    getTitleName() + " (Base)", 0
+            );
             @EventHandler
             public void onEvent(WarlordsUpgradeUnlockEvent event) {
                 if (event.getWarlordsEntity() == player) {

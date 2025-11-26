@@ -3,6 +3,7 @@ package com.ebicep.warlords.player.general.specboosts.boosts;
 import com.ebicep.warlords.abilities.FallenSouls;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.List;
 
@@ -41,7 +42,7 @@ public class SoulRend implements SpecBoostManager.SpecBoost<SoulRend> {
         public void apply(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getAbilitiesMatching(FallenSouls.class).forEach(fallenSouls -> {
                 fallenSouls.getDamageValues().getFallenSoulDamage().forEachValue(floatModifiable ->
-                        floatModifiable.addMultiplicativeModifierAdd("Spec Boost", fallenSoulsDamageIncreasePercent / 100)
+                        floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", fallenSoulsDamageIncreasePercent / 100)
                 );
             });
         }

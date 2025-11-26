@@ -15,6 +15,7 @@ import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 
@@ -78,7 +79,7 @@ public class HammerOfJudgement implements SpecBoostManager.SpecBoost<HammerOfJud
                         return cons;
                     });
             warlordsPlayer.getAbilitiesMatching(HammerOfLight.class).forEach(hammerOfLight -> {
-                hammerOfLight.getCooldown().addAdditiveModifier("Spec Boost", hammerOfLightCooldownIncreaseTicks / 20f);
+                hammerOfLight.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", hammerOfLightCooldownIncreaseTicks / 20f);
             });
         }
 
@@ -141,7 +142,9 @@ public class HammerOfJudgement implements SpecBoostManager.SpecBoost<HammerOfJud
                                                 }
                                                 e.getFlags().add(InstanceFlags.STRIKE_IN_CONS);
                                                 consecrateProtector.addStrikesBoosted();
-                                                currentDamageValue.addMultiplicativeModifierMult(cooldownName, convertToMultiplicationDecimal(consecrateProtector.getStrikeDamageBoost()));
+                                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                                                cooldownName, convertToMultiplicationDecimal(consecrateProtector.getStrikeDamageBoost())
+                                        );
                                             }
                                     ));
                                 }

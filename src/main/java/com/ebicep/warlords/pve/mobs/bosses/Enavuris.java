@@ -25,6 +25,7 @@ import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import io.papermc.paper.entity.TeleportFlag;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -446,8 +447,8 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
                         cooldownManager -> {
                         },
                         3 * 20
-                ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                            currentDamageValue.addMultiplicativeModifierMult(name, 0.75f);
+                ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                    currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 0.75f);
                         }
                 ));
             }
@@ -648,9 +649,9 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
                         }
                     };
                 }
-            }.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+            }.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                         if (currentDebuff.get() == Debuff.CRIPPLE) {
-                            currentDamageValue.addMultiplicativeModifierMult(name, 0.75f);
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 0.75f);
                         }
                     }
             ).addModifier(Modifier.ON_INCOMING_DAMAGE, (event, currentDamageValue, isCrit) -> {
@@ -668,7 +669,7 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
                     }
             ).addModifier(Modifier.MODIFY_INCOMING_HEALING, (event, currentHealValue) -> {
                         if (currentDebuff.get() == Debuff.WOUND) {
-                            currentHealValue.addMultiplicativeModifierMult(name, 0.75f);
+                            currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 0.75f);
                         }
                     }
             ));

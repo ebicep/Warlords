@@ -123,8 +123,10 @@ public class AirStrike implements SpecBoostManager.SpecBoost<AirStrike> {
                         }
                         List<FloatModifiable.FloatModifier> modifiers = new ArrayList<>();
                         warlordsEntity.getAbilitiesMatching(SoulfireBeam.class).forEach(soulfireBeam -> {
-                            modifiers.add(soulfireBeam.getCooldown().addOverridingModifier(getStringName(), 0, airStrikeDurationTicks));
-                            modifiers.add(soulfireBeam.getMaxDistance().addAdditiveModifier(getStringName(), -soulfireBeamRangeDecrease, airStrikeDurationTicks));
+                            modifiers.add(soulfireBeam.getCooldown().addModifier(FloatModifiable.ModifierType.OVERRIDING, getStringName(), 0, airStrikeDurationTicks));
+                            modifiers.add(soulfireBeam.getMaxDistance().addModifier(FloatModifiable.ModifierType.ADDITIVE,
+                                    getStringName(), -soulfireBeamRangeDecrease, airStrikeDurationTicks
+                            ));
                             soulfireBeam.setCurrentCooldown(0);
                         });
                         warlordsEntity.getCooldownManager().addCooldown(new RegularCooldown<>(
@@ -168,7 +170,7 @@ public class AirStrike implements SpecBoostManager.SpecBoost<AirStrike> {
                                             return;
                                         }
                                         if (event.getAbility() instanceof SoulfireBeam soulfireBeam) {
-                                            soulfireBeam.getHitBoxRadius().addAdditiveModifier("Spec Boost", soulfireBeamHitboxIncrease);
+                                            soulfireBeam.getHitBoxRadius().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", soulfireBeamHitboxIncrease);
                                         } else {
                                             event.setCancelled(true);
                                         }
@@ -210,9 +212,11 @@ public class AirStrike implements SpecBoostManager.SpecBoost<AirStrike> {
                                     }
                                 };
                             }
-                        }.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
+                        }.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
                                     if (event.getAbility() instanceof SoulfireBeam) {
-                                        currentDamageValue.addMultiplicativeModifierMult(getStringName(), AbstractAbility.convertToDivisionDecimal(soulfireBeamDamageReductionPercent));
+                                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                                                getStringName(), AbstractAbility.convertToDivisionDecimal(soulfireBeamDamageReductionPercent)
+                                        );
                                     }
                                 }
                         ));

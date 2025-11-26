@@ -18,6 +18,7 @@ import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Particle;
@@ -110,7 +111,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                     data.addAndCheckDamageThreshold(currentDamageValue, wp);
                 }
         );
-        orderOfEviscerateCooldown.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+        orderOfEviscerateCooldown.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     if (!Objects.equals(data.getMarkedPlayer(), event.getWarlordsEntity())) {
                         return;
                     }
@@ -119,7 +120,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                         stats.numberOfBackstabs++;
                         damageBonus += 70;
                     }
-                    currentDamageValue.addMultiplicativeModifierMult(name, 1 + damageBonus / 100f);
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 1 + damageBonus / 100f);
                 }
         );
         orderOfEviscerateCooldown.addModifier(Modifier.DAMAGE_BEFORE_ANY_REDUCTION_ATTACKER, event -> {
@@ -175,33 +176,35 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                                         orderOfEviscerate.subtractCurrentCooldown(reduction);
                                     }
                                     if (pveMasterUpgrade2) {
-                                        if (cooldown.get() == null) {
-                                            RegularCooldown<OrderOfEviscerateData> regularCooldown = new RegularCooldown<>(
-                                                    "Cloaked Engagement 1",
-                                                    "ENGAGE 1",
-                                                    OrderOfEviscerateData.class,
-                                                    null,
-                                                    wp,
-                                                    CooldownTypes.BUFF,
-                                                    cooldownManager -> {
-                                                    },
-                                                    cooldownManager -> {
-                                                        cooldown.set(null);
-                                                        stacks.set(0);
-                                                    },
-                                                    8 * 20
+                                    if (cooldown.get() == null) {
+                                        RegularCooldown<OrderOfEviscerateData> regularCooldown = new RegularCooldown<>(
+                                                "Cloaked Engagement 1",
+                                                "ENGAGE 1",
+                                                OrderOfEviscerateData.class,
+                                                null,
+                                                wp,
+                                                CooldownTypes.BUFF,
+                                                cooldownManager -> {
+                                                },
+                                                cooldownManager -> {
+                                                    cooldown.set(null);
+                                                    stacks.set(0);
+                                                },
+                                                8 * 20
+                                        );
+                                        regularCooldown.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                                                    name, 1 + 0.4f * stacks.get()
                                             );
-                                            regularCooldown.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                                                        currentDamageValue.addMultiplicativeModifierMult(name, 1 + 0.4f * stacks.get());
-                                                    }
-                                            );
-                                            cooldown.set(regularCooldown);
-                                            wp.getCooldownManager().addCooldown(regularCooldown);
-                                        } else {
-                                            cooldown.get().setTicksLeft(8 * 20);
-                                            cooldown.get().setName("Cloaked Engagement " + stacks);
-                                            cooldown.get().setNameAbbreviation("ENGAGE " + stacks);}
-                                    }
+                                                }
+                                        );
+                                        cooldown.set(regularCooldown);
+                                        wp.getCooldownManager().addCooldown(regularCooldown);
+                                    } else {
+                                        cooldown.get().setTicksLeft(8 * 20);
+                                        cooldown.get().setName("Cloaked Engagement " + stacks);
+                                        cooldown.get().setNameAbbreviation("ENGAGE " + stacks);}
+                                }
 
                                 } else {
                                     wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN

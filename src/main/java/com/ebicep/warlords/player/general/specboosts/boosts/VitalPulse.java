@@ -3,6 +3,7 @@ package com.ebicep.warlords.player.general.specboosts.boosts;
 import com.ebicep.warlords.abilities.HeartToHeart;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.List;
 
@@ -43,11 +44,11 @@ public class VitalPulse implements SpecBoostManager.SpecBoost<VitalPulse> {
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getHealth().addAdditiveModifier("Spec Boost (Base)", healthIncrease);
+            warlordsPlayer.getHealth().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost (Base)", healthIncrease);
             warlordsPlayer.getAbilitiesMatching(HeartToHeart.class).forEach(heartToHeart -> {
-                heartToHeart.getCooldown().addAdditiveModifier("Spec Boost", -heartToHeartCooldownReductionSeconds);
+                heartToHeart.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", -heartToHeartCooldownReductionSeconds);
                 heartToHeart.getHealValues().getHeartToHeartHealing().forEachValue(floatModifiable ->
-                        floatModifiable.addAdditiveModifier("Spec Boost", heartToHeartHealingIncrease)
+                        floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", heartToHeartHealingIncrease)
                 );
             });
         }

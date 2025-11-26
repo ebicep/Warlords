@@ -21,6 +21,7 @@ import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
@@ -161,7 +162,7 @@ public class EventNarmer extends AbstractMob implements BossMob {
             public void onDamageHealEvent(WarlordsDamageHealingEvent event) {
                 if (event.getSource().equals(warlordsNPC)) {
                     event.applyToMinMax(floatModifiable ->
-                            floatModifiable.addMultiplicativeModifierMult(name, hpDamageIncrease)
+                            floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, hpDamageIncrease)
                     );
                 } else if (event.getWarlordsEntity().equals(warlordsNPC)) {
                     Location loc = warlordsNPC.getLocation();

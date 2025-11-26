@@ -14,6 +14,7 @@ import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.player.ingame.motionsystem.MotionModifierBuilder;
 import com.ebicep.warlords.player.ingame.motionsystem.speed.OverrideValueModifier;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
@@ -174,7 +175,10 @@ public class IceBlock implements SpecBoostManager.SpecBoost<IceBlock> {
                             }
                         };
                         cd.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (e, currentDamageValue) -> {
-                                    currentDamageValue.addMultiplicativeModifierMult(getStringName(), AbstractAbility.convertToDivisionDecimal(recastDamageReductionPercent));
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                                    getStringName(),
+                                    AbstractAbility.convertToDivisionDecimal(recastDamageReductionPercent)
+                            );
                                 }
                         );
                         blockCooldown.set(cd);

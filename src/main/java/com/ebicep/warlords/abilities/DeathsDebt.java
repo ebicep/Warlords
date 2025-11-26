@@ -18,6 +18,7 @@ import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.spiritguard.DeathsDebtBranch;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
@@ -146,10 +147,13 @@ public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<
                                     5 * 20
                             );
                             deathParadeCooldown.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
-                                        currentDamageValue.addMultiplicativeModifierMult(name, finalDamageReduction);
+                                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, finalDamageReduction);
                                     }
                             );
-                            deathParadeCooldown.addModifier(Modifier.ENERGY_GAIN_PER_HIT, energyGainPerTick -> energyGainPerTick.addAdditiveModifier("Death Parade", 30));
+                            deathParadeCooldown.addModifier(Modifier.ENERGY_GAIN_PER_HIT, energyGainPerTick -> energyGainPerTick.addModifier(FloatModifiable.ModifierType.ADDITIVE,
+                                            "Death Parade", 30
+                                    )
+                            );
                             wp.getCooldownManager().addCooldown(deathParadeCooldown);
                         }
                         if (over5000DamageInstances.get() >= 5) {

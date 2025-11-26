@@ -249,8 +249,8 @@ public class SentinelTower extends AbstractTower implements Upgradeable.Path2 {
                                      .getAbilities()
                                      .forEach(ability -> {
                                          if (ability instanceof HitBox hitBox) {
-                                             hitBox.getHitBoxRadius().addMultiplicativeModifierAdd(
-                                                     abstractTower.getTowerRegistry().name,
+                                             hitBox.getHitBoxRadius().addModifier(
+                                                     FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, abstractTower.getTowerRegistry().name,
                                                      -buffValue.getCalculatedValue() / 100,
                                                      (int) (getCooldownValue() * 20) + 1
                                              );

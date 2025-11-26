@@ -5,12 +5,13 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 public class HealingRainBranch extends AbstractUpgradeBranch<HealingRain> {
 
     @Override
     public void runOnce() {
-        ability.getCooldown().addAdditiveModifier("PVE", -6);
+        ability.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE, "PVE", -6);
     }
 
     public HealingRainBranch(AbilityTree abilityTree, HealingRain ability) {

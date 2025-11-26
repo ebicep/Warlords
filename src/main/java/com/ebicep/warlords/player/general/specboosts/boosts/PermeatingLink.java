@@ -10,6 +10,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.List;
 
@@ -63,9 +64,12 @@ public class PermeatingLink implements SpecBoostManager.SpecBoost<PermeatingLink
                     CooldownTypes.SPEC_BOOST,
                     cooldownManager -> {},
                     false
-            ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+            ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                         if (event.getCause().isEmpty()) {
-                            currentDamageValue.addMultiplicativeModifierMult(getStringName(), AbstractAbility.convertToMultiplicationDecimal(meleeDamageIncreasePercent));
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                                    getStringName(),
+                                    AbstractAbility.convertToMultiplicationDecimal(meleeDamageIncreasePercent)
+                            );
                             return;
                         }
                         if (event.getAbility() instanceof SpiritLink) {
@@ -73,7 +77,7 @@ public class PermeatingLink implements SpecBoostManager.SpecBoost<PermeatingLink
                                     .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.SoulbindingData.class)
                                     .anyMatch(soulbindingData -> soulbindingData.hasBoundPlayer(event.getWarlordsEntity()));
                             if (boundPlayer) {
-                                currentDamageValue.addMultiplicativeModifierMult(getStringName(),
+                                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getStringName(),
                                         AbstractAbility.convertToMultiplicationDecimal(spiritLinkDamageToSoulboundIncreasePercent)
                                 );
                             }

@@ -58,7 +58,7 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
         List<FloatModifiable.FloatModifier> modifiers = new ArrayList<>();
         if (pveMasterUpgrade2) {
             wp.doOnStaticAbility(ImpalingStrike.class, impalingStrike -> {
-                        modifiers.add(impalingStrike.getEnergyCost().addMultiplicativeModifierAdd("Concoction Party", -.75f));
+                modifiers.add(impalingStrike.getEnergyCost().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Concoction Party", -.75f));
                     }
             );
         }
@@ -101,7 +101,7 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
 
         };
         cooldown.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
-                    currentDamageValue.addMultiplicativeModifierMult(name, convertToDivisionDecimal(damageResistance));
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, convertToDivisionDecimal(damageResistance));
                 }
         );
         wp.getCooldownManager().addCooldown(cooldown);
@@ -149,7 +149,7 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
                     }
 
                 }.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
-                            currentDamageValue.addMultiplicativeModifierMult(name, convertToDivisionDecimal(damageResistance / 2f));
+                    currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, convertToDivisionDecimal(damageResistance / 2f));
                         }
                 ));
                 we.addInstance(InstanceBuilder

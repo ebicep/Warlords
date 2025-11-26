@@ -19,6 +19,7 @@ import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.paladin.avenger.ConsecrateBranchAvenger;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -73,7 +74,7 @@ public class ConsecrateAvenger extends AbstractConsecrate implements Damages<Con
                 });
             }
         })
-        ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     if (event.getFlags().contains(InstanceFlags.STRIKE_IN_CONS)) {
                         return;
                     }
@@ -82,7 +83,7 @@ public class ConsecrateAvenger extends AbstractConsecrate implements Damages<Con
                     }
                     event.getFlags().add(InstanceFlags.STRIKE_IN_CONS);
                     addStrikesBoosted();
-                    currentDamageValue.addMultiplicativeModifierMult(name, convertToMultiplicationDecimal(strikeDamageBoost));
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, convertToMultiplicationDecimal(strikeDamageBoost));
                 }
         ));
         return true;

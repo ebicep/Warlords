@@ -20,6 +20,7 @@ import com.ebicep.warlords.util.bukkit.EntitiesUtils;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -163,8 +164,8 @@ public class FallenSouls extends AbstractPiercingProjectile<FallenSouls, FallenS
                         CooldownTypes.LOW_LEVEL_DEBUFF,
                         cooldownManager -> {},
                         false
-                ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                            currentDamageValue.addMultiplicativeModifierMult(name, soulFeast.getDamageMultiplier());
+                ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                    currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, soulFeast.getDamageMultiplier());
                         }
                 ));
             }

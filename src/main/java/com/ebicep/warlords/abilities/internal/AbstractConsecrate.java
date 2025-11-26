@@ -92,7 +92,7 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
                                     });
                     }
                 })
-        ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     if (!event.getCause().equals(getStrikeName()) || event.getFlags().contains(InstanceFlags.STRIKE_IN_CONS)) {
                         return;
                     }
@@ -102,7 +102,7 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
                     }
                     event.getFlags().add(InstanceFlags.STRIKE_IN_CONS);
                     addStrikesBoosted();
-                    currentDamageValue.addMultiplicativeModifierMult(name, convertToMultiplicationDecimal(strikeDamageBoost));
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, convertToMultiplicationDecimal(strikeDamageBoost));
                 }
         ));
 

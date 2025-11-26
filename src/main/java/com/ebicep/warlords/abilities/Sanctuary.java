@@ -64,7 +64,12 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
         EffectUtils.playCircularShieldAnimation(loc, Particle.DRIPPING_WATER, 3, 0.6, 1.2);
         List<FloatModifiable.FloatModifier> modifiers;
         if (pveMasterUpgrade2) {
-            modifiers = wp.getAbilitiesMatching(GuardianBeam.class).stream().map(ability -> ability.getCooldown().addMultiplicativeModifierMult(name + " Master", 0.7f)).toList();
+            modifiers = wp.getAbilitiesMatching(GuardianBeam.class)
+                          .stream()
+                          .map(ability -> ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                                  name + " Master", 0.7f
+                          ))
+                          .toList();
         } else {
             modifiers = Collections.emptyList();
         }
@@ -190,14 +195,14 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
                 if (hexStacks < maxStacks) {
                             return;
                         }
-                currentDamageValue.addMultiplicativeModifierAdd(
-                        name,
+                currentDamageValue.addModifier(
+                        FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, name,
                         -additionalDamageReduction * maxStacks / 100f,
                         contribution -> stats.damageReduced += Math.abs(contribution)
                 );
                 if (pveMasterUpgrade) {
-                    currentDamageValue.addMultiplicativeModifierMult(
-                            name,
+                    currentDamageValue.addModifier(
+                            FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name,
                             .85f,
                             contribution -> stats.damageReduced += Math.abs(contribution)
                     );

@@ -13,6 +13,7 @@ import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCounter;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import com.google.common.util.concurrent.AtomicDouble;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -138,8 +139,8 @@ public class LegendaryFervent extends AbstractLegendaryWeapon implements Passive
                                 },
                                 DURATION * 20
                         );
-                        regularCooldown.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
-                                    currentDamageValue.addMultiplicativeModifierMult(getTitleName(), 1 + damageBoost.get() * DAMAGE_BOOST / 100f);
+                        regularCooldown.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getTitleName(), 1 + damageBoost.get() * DAMAGE_BOOST / 100f);
                                 }
                         );
                         cooldown.set(regularCooldown);
@@ -188,7 +189,7 @@ public class LegendaryFervent extends AbstractLegendaryWeapon implements Passive
                                 cooldownManager -> {
                                 },
                                 (ABILITY_DURATION + ABILITY_DURATION_PER_UPGRADE * getTitleLevel()) * 20
-                        ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                        ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                                     if (!event.getSource().equals(player)) {
                                         return;
                                     }
@@ -200,7 +201,7 @@ public class LegendaryFervent extends AbstractLegendaryWeapon implements Passive
                                     }
 
                                     float strikeDamageBoost = 1 + (ABILITY_STRIKE_DAMAGE_BOOST + ABILITY_STRIKE_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel()) / 100f;
-                                    currentDamageValue.addMultiplicativeModifierMult(getTitleName(), strikeDamageBoost);
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getTitleName(), strikeDamageBoost);
                                 }
                         ));
                         passiveCooldown = 40 * GameRunnable.SECOND;

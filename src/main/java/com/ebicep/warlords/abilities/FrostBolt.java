@@ -218,7 +218,7 @@ public class FrostBolt extends AbstractPiercingProjectile<FrostBolt, FrostBolt.F
                     .filterCooldownClass(SplinteredIce.class)
                     .stream()
                     .count();
-            currentDamageValue.addMultiplicativeModifierMult("Splintered Ice", 1 + 0.08f * stacks);
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Splintered Ice", 1 + 0.08f * stacks);
         }));
         hit(projectile, shooter, toReduceBy, stats.getTargetsHit(), hit);
         hit.addSpeedModifier(shooter, "Splintered Ice", -35, 40);

@@ -34,7 +34,7 @@ public class NPCManager {
     public static final NPCRegistry NPC_REGISTRY = CitizensAPI.createAnonymousNPCRegistry(new MemoryNPCDataStore());
     //https://jd.citizensnpcs.co/net/citizensnpcs/api/npc/NPC.html
 
-    public static void createGameJoinNPCs() {
+    public static void createNPCs() {
         if (!Warlords.citizensEnabled) {
             return;
         }
@@ -49,6 +49,18 @@ public class NPCManager {
                     createOnslaughtNPC();
                     createTreasureHuntNPC();
 //                    createBossRushNPC();
+                    createMasterworksFairNPC();
+                    createWeaponsManagerNPC();
+                    createLegendaryWeaponNPC();
+                    createSupplyDropFairNPC();
+//                    createQuestMenuNPC();
+                    createBountyMenuNPC();
+                    createStarPieceSynthesizerNPC();
+//                    createMysteriousTokenNPC();
+//                    createItemMichaelNPC();
+                    createItemEnyaNPC();
+                    createIllusionVendorNPC();
+                    createSeasonalVendorNPC();
                 })
                 .execute();
 

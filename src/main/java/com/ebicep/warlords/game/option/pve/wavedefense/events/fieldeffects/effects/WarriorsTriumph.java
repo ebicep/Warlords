@@ -10,6 +10,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.LinkedCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -57,7 +58,7 @@ public class WarriorsTriumph implements FieldEffect {
                 String ability = event.getCause();
                 if (ability.equals("Wounding Strike") || ability.equals("Crippling Strike")) {
                     event.applyToMinMax(floatModifiable ->
-                            floatModifiable.addMultiplicativeModifierMult(getName(), 3)
+                            floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getName(), 3)
                     );
                 }
             }

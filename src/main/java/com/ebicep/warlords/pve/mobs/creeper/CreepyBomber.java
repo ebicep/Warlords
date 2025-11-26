@@ -12,6 +12,7 @@ import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.EliteMob;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 
@@ -77,7 +78,7 @@ public class CreepyBomber extends AbstractMob implements EliteMob {
         super.onDamageTaken(self, attacker, event);
         if (Utils.isProjectile(event.getCause())) {
             event.applyToMinMax(floatModifiable ->
-                    floatModifiable.addMultiplicativeModifierMult(name, .2f)
+                    floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, .2f)
             );
         }
     }

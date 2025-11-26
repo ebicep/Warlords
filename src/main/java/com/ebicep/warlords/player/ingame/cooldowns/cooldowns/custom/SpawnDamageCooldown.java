@@ -4,6 +4,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 public class SpawnDamageCooldown extends RegularCooldown<SpawnDamageCooldown> {
 
@@ -21,8 +22,8 @@ public class SpawnDamageCooldown extends RegularCooldown<SpawnDamageCooldown> {
                 tickDuration
         );
         this.damageBoost = damageBoost;
-        this.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                    currentDamageValue.addAdditiveModifier(name, damageBoost);
+        this.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE, name, damageBoost);
                 }
         );
     }

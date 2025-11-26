@@ -5,6 +5,7 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.Set;
 
@@ -35,7 +36,7 @@ public class NaturesClaws extends SpecialOmegaGauntlet implements AppliesToWarlo
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {
         for (AbstractAbility ability : warlordsPlayer.getAbilities()) {
-            ability.getCooldown().addMultiplicativeModifierAdd(getName(), -0.1f);
+            ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, getName(), -0.1f);
         }
     }
 

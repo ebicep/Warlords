@@ -5,6 +5,7 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 public class EnergySeerBranchLuminary extends AbstractUpgradeBranch<EnergySeerLuminary> {
 
@@ -51,7 +52,7 @@ public class EnergySeerBranchLuminary extends AbstractUpgradeBranch<EnergySeerLu
                 () -> {
                     ability.setEpsDecrease(0);
                     ability.setTickDuration(ability.getTickDuration() + 100);
-                    ability.getCooldown().addMultiplicativeModifierMult("Benevolent Gaze", 0.8f);
+                    ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Benevolent Gaze", 0.8f);
                 }
         );
     }

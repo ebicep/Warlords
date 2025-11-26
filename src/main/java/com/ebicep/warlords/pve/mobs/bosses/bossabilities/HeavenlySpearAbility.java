@@ -137,7 +137,6 @@ public class HeavenlySpearAbility {
                 if (t == telegraphTicks + 1) {
                     for (Location loc : landings) {
                         impactAt(loc);
-                        FallingBlockWaveEffect.create(loc, impactRadius, 10, Material.ICE);
                     }
                     Utils.playGlobalSound(centerSupplier.get(), impactSoundSfx, 500, 0.5f);
                 }
@@ -192,10 +191,6 @@ public class HeavenlySpearAbility {
         // Explosion effect
         w.spawnParticle(Particle.EXPLOSION, loc, 1, 0, 0, 0, 0);
         Utils.playGlobalSound(loc, Sound.ENTITY_GENERIC_EXPLODE, 2, 0.5f);
-        EffectUtils.playFirework(loc, FireworkEffect.builder()
-                .withColor(Color.WHITE)
-                .with(FireworkEffect.Type.BURST)
-                .build());
         // Damage nearby
         for (WarlordsEntity enemy : PlayerFilter
                 .entitiesAround(loc, impactRadius, 3, impactRadius)

@@ -10,6 +10,7 @@ import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendary
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -83,7 +84,8 @@ public class LegendaryIncendiary extends AbstractLegendaryWeapon implements Even
 
         float critChanceBoost = CRIT_CHANCE_BOOST + CRIT_CHANCE_BOOST_INCREASE_PER_UPGRADE * getTitleLevel();
 
-        player.getEnergyPerHit().addMultiplicativeModifierAdd(getTitleName(), (EPH_PERCENT_INCREASE + EPH_PERCENT_INCREASE_PER_UPGRADE * getTitleLevel()) / 100);
+        player.getEnergyPerHit()
+              .addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, getTitleName(), (EPH_PERCENT_INCREASE + EPH_PERCENT_INCREASE_PER_UPGRADE * getTitleLevel()) / 100);
         player.getCooldownManager().addCooldown(new PermanentCooldown<>(
                 getTitleName(),
                 null,
@@ -97,7 +99,7 @@ public class LegendaryIncendiary extends AbstractLegendaryWeapon implements Even
         ).addModifier(Modifier.MODIFY_OUTGOING_CRIT_CHANCE, (event, currentCritChance) -> {
                     String ability = event.getCause();
                     if (Utils.isProjectile(ability) || ability.equals("Boulder")) {
-                        currentCritChance.addAdditiveModifier(getTitleName(), critChanceBoost);
+                        currentCritChance.addModifier(FloatModifiable.ModifierType.ADDITIVE, getTitleName(), critChanceBoost);
                     }
                 }
         ));

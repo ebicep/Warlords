@@ -12,6 +12,7 @@ import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCounter;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -123,10 +124,10 @@ public class LegendaryBrilliance extends AbstractLegendaryWeapon implements Pass
                         },
                         200
                 ).addModifier(Modifier.MODIFY_INCOMING_HEALING, (event, currentHealValue) -> {
-                            currentHealValue.addMultiplicativeModifierMult(getTitleName(), 1.4f);
+                    currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getTitleName(), 1.4f);
                         }
                 ).addModifier(Modifier.MODIFY_OUTGOING_HEALING, (event, currentHealValue) -> {
-                            currentHealValue.addMultiplicativeModifierMult(getTitleName(), healBoost);
+                    currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getTitleName(), healBoost);
                         }
                 ));
                 player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);

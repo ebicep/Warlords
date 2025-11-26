@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.upgrades.paladin.protector;
 
 import com.ebicep.warlords.abilities.HammerOfLight;
 import com.ebicep.warlords.pve.upgrades.*;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 public class HammerOfLightBranch extends AbstractUpgradeBranch<HammerOfLight> {
 
@@ -50,8 +51,8 @@ public class HammerOfLightBranch extends AbstractUpgradeBranch<HammerOfLight> {
                         """,
                 50000,
                 () -> {
-                    ability.getCooldown().addMultiplicativeModifierMult("Master Upgrade Branch", 0.8f);
-                    ability.getHammerRadius().addAdditiveModifier("Master Upgrade Branch", 5);
+                    ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Master Upgrade Branch", 0.8f);
+                    ability.getHammerRadius().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade Branch", 5);
                     ability.setCrownEnergyReduction(ability.getCrownEnergyReduction() + 15);
                 }
         );

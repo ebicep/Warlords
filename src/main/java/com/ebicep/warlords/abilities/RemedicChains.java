@@ -90,13 +90,13 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
             warlordsEntity.setRegenTickTimer(1);
             float healthIncrease = warlordsEntity.getMaxHealth() * .25f;
             if (pveMasterUpgrade) {
-                healthBoosts.put(warlordsEntity, warlordsEntity.getHealth().addAdditiveModifier("Remedic Chains", healthIncrease));
+                healthBoosts.put(warlordsEntity, warlordsEntity.getHealth().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Remedic Chains", healthIncrease));
                 warlordsEntity.setCurrentHealth(warlordsEntity.getCurrentHealth() + healthIncrease);
             }
         });
         if (pveMasterUpgrade) {
             float healthIncrease = wp.getMaxHealth() * .25f;
-            healthBoosts.put(wp, wp.getHealth().addAdditiveModifier("Remedic Chains", healthIncrease));
+            healthBoosts.put(wp, wp.getHealth().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Remedic Chains", healthIncrease));
             wp.setCurrentHealth(wp.getCurrentHealth() + healthIncrease);
         }
         LinkedCooldown<RemedicChains> remedicChainsCooldown = new LinkedCooldown<>(name,
@@ -167,9 +167,9 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
                 }),
                 teammatesNear
         );
-        remedicChainsCooldown.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                    currentDamageValue.addAdditiveModifier(name, damageValues.getBonusDamage().getValue());
-                    currentDamageValue.addMultiplicativeModifierMult(name, pveMasterUpgrade2 ? 1.15f : 1);
+        remedicChainsCooldown.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE, name, damageValues.getBonusDamage().getValue());
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, pveMasterUpgrade2 ? 1.15f : 1);
                 }
         );
         wp.getCooldownManager().removeCooldown(RemedicChains.class, false);

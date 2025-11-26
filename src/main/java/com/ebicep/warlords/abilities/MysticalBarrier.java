@@ -18,6 +18,7 @@ import com.ebicep.warlords.pve.upgrades.arcanist.sentinel.MysticalBarrierBranch;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Particle;
@@ -224,7 +225,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
         ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                     if (event.getCause().isEmpty()) {
                         stats.meleesReduced++;
-                        currentDamageValue.addMultiplicativeModifierMult(name, convertToDivisionDecimal(meleeDamageReduction));
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, convertToDivisionDecimal(meleeDamageReduction));
                     }
                 }
         ));

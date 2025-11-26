@@ -5,6 +5,7 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 public class MysticalBarrierBranch extends AbstractUpgradeBranch<MysticalBarrier> {
 
@@ -32,7 +33,7 @@ public class MysticalBarrierBranch extends AbstractUpgradeBranch<MysticalBarrier
                         """,
                 50000,
                 () -> {
-                    ability.getCooldown().addMultiplicativeModifierMult("Transcendent Barrier", 0.8f);
+                    ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Transcendent Barrier", 0.8f);
                     ability.setShieldMaxHealth(ability.getShieldMaxHealth() + 3000);
                     ability.setShieldIncrease(ability.getShieldIncrease() + 80);
                     ability.setTickDuration(ability.getTickDuration() + 60);

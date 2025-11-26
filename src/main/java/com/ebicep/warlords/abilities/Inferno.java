@@ -56,7 +56,9 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
         List<FloatModifiable.FloatModifier> modifiers;
         if (pveMasterUpgrade) {
             wp.getCooldownManager().removeCooldown(Inferno.class, false);
-            modifiers = wp.getAbilitiesMatching(Fireball.class).stream().map(ability -> ability.getEnergyCost().addAdditiveModifier(name + " Master", -5)).toList();
+            modifiers = wp.getAbilitiesMatching(Fireball.class).stream().map(ability -> ability.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE,
+                    name + " Master", -5
+            )).toList();
         } else {
             modifiers = Collections.emptyList();
         }
@@ -92,14 +94,14 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
                 return true;
             }
 
-        }.addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+        }.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
             if (pveMasterUpgrade) {
                 WarlordsEntity hit = event.getWarlordsEntity();
                 int oldHitCount = hitCount.computeIfAbsent(hit, k -> 0);
                 hitCount.put(hit, oldHitCount + 1);
-                currentDamageValue.addMultiplicativeModifierMult(name, convertToMultiplicationDecimal(Math.min(50, 5 * oldHitCount)));
+                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, convertToMultiplicationDecimal(Math.min(50, 5 * oldHitCount)));
             } else if (pveMasterUpgrade2) {
-                currentDamageValue.addMultiplicativeModifierMult(name, 1.2f);
+                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 1.2f);
             }
                 }
         ).addModifier(Modifier.MODIFY_OUTGOING_CRIT_CHANCE, (event, currentCritChance) -> {
@@ -107,14 +109,14 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
                         return;
                     }
                     stats.hitsAmplified++;
-                    currentCritChance.addAdditiveModifier(name, critChanceIncrease);
+            currentCritChance.addModifier(FloatModifiable.ModifierType.ADDITIVE, name, critChanceIncrease);
                 }
         ).addModifier(Modifier.MODIFY_OUTGOING_CRIT_MULTIPLIER, (event, currentCritMultiplier) -> {
                     if (event.getCause().isEmpty()) {
                         return;
                     }
                     stats.hitsAmplified++;
-                    currentCritMultiplier.addAdditiveModifier(name, critMultiplierIncrease);
+            currentCritMultiplier.addModifier(FloatModifiable.ModifierType.ADDITIVE, name, critMultiplierIncrease);
                 }
         ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_VARIABLE_SET, event -> {
                     if (pveMasterUpgrade2 && event.getCause().equals("Ignite")) {

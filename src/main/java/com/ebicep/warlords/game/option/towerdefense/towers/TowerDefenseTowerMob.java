@@ -129,7 +129,7 @@ public abstract class TowerDefenseTowerMob extends AbstractMob implements Mob {
                             floatModifiableConsumer.accept(armor);
                         }
                     }
-                    currentDamageValue.addMultiplicativeModifierMult("Armor", (1 - armor.getCalculatedValue()));
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Armor", (1 - armor.getCalculatedValue()));
                     armor.tick();
                 }
         ));

@@ -17,6 +17,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.minecraft.world.phys.AABB;
@@ -225,7 +226,9 @@ public class FlagSpawnPointOption implements Option {
                                         },
                                         15 * 20
                                 ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
-                                            currentDamageValue.addMultiplicativeModifierMult("Flag Damage Resistance", AbstractAbility.convertToDivisionDecimal(flagRes));
+                                    currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                                            "Flag Damage Resistance", AbstractAbility.convertToDivisionDecimal(flagRes)
+                                    );
                                         }
                                 ));
                             }

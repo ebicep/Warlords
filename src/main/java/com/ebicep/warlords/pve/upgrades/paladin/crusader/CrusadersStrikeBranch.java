@@ -3,17 +3,11 @@ package com.ebicep.warlords.pve.upgrades.paladin.crusader;
 import com.ebicep.warlords.abilities.CrusadersStrike;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.pve.upgrades.*;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 public class CrusadersStrikeBranch extends AbstractUpgradeBranch<CrusadersStrike> {
 
     int energyGiven = ability.getEnergyGiven();
-
-    @Override
-    public void runOnce() {
-        Value.RangedValueCritable damage = ability.getDamageValues().getStrikeDamage();
-        damage.min().addMultiplicativeModifierAdd("PvE", .3f);
-        damage.max().addMultiplicativeModifierAdd("PvE", .3f);
-    }
 
     public CrusadersStrikeBranch(AbilityTree abilityTree, CrusadersStrike ability) {
         super(abilityTree, ability);
@@ -64,9 +58,16 @@ public class CrusadersStrikeBranch extends AbstractUpgradeBranch<CrusadersStrike
                         """,
                 50000,
                 () -> {
-                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -10);
-                    ability.getDamageValues().getStrikeDamage().critChance().addAdditiveModifier("Master Upgrade Branch", 5);
+                    ability.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade Branch", -10);
+                    ability.getDamageValues().getStrikeDamage().critChance().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade Branch", 5);
                 }
         );
+    }
+
+    @Override
+    public void runOnce() {
+        Value.RangedValueCritable damage = ability.getDamageValues().getStrikeDamage();
+        damage.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .3f);
+        damage.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .3f);
     }
 }

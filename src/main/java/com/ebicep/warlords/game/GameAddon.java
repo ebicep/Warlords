@@ -12,6 +12,7 @@ import com.ebicep.warlords.game.state.PreLobbyState;
 import com.ebicep.warlords.game.state.State;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
@@ -96,7 +97,9 @@ public enum GameAddon {
         @Override
         public void warlordsEntityCreated(@Nonnull Game game, @Nonnull WarlordsEntity player) {
             player.setEnergyModifier(player.getEnergyModifier() * 0.25f);
-            player.getAbilities().forEach(ability -> ability.getCooldown().addMultiplicativeModifierMult("Cooldown Mode", 0.25f));
+            player.getAbilities().forEach(ability -> ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                    "Cooldown Mode", 0.25f
+            ));
         }
     },
     TRIPLE_HEALTH(
@@ -106,7 +109,7 @@ public enum GameAddon {
     ) {
         @Override
         public void warlordsEntityCreated(@Nonnull Game game, @Nonnull WarlordsEntity player) {
-            player.getHealth().addMultiplicativeModifierAdd("Triple Health (Base)", 2f);
+            player.getHealth().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Triple Health (Base)", 2f);
             player.heal();
         }
     },

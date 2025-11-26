@@ -9,6 +9,7 @@ import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
 import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.omega.MonaLisasPalms;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
@@ -37,9 +38,9 @@ public class DiabolicalRings extends SpecialDeltaGauntlet implements AppliesToWa
 
                 },
                 false
-        ).addModifier(Modifier.OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+        ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     if (!event.getWarlordsEntity().equals(warlordsPlayer) && ThreadLocalRandom.current().nextDouble() <= 0.1) {
-                        currentDamageValue.addMultiplicativeModifierMult(getName(), 1.25f);
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getName(), 1.25f);
                     }
                 }
         ));
