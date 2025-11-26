@@ -214,7 +214,7 @@ public class FrostBolt extends AbstractPiercingProjectile<FrostBolt, FrostBolt.F
                 },
                 3 * 20
         ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-            long stacks = new CooldownFilter<>(hit, RegularCooldown.class)
+            int stacks = (int) new CooldownFilter<>(hit, RegularCooldown.class)
                     .filterCooldownClass(SplinteredIce.class)
                     .stream()
                     .count();

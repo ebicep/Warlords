@@ -245,7 +245,7 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
                     },
                     6 * 20
             ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                long stacks = new CooldownFilter<>(hit, RegularCooldown.class)
+                int stacks = (int) new CooldownFilter<>(hit, RegularCooldown.class)
                         .filterCooldownClass(WeakeningHex.class)
                         .stream()
                         .count();

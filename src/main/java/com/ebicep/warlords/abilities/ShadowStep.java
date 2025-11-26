@@ -177,21 +177,16 @@ public class ShadowStep extends AbstractAbility implements
                     cooldownManager -> {},
                     5 * 20
             );
+            int stacks = new CooldownFilter<>(wp, RegularCooldown.class)
+                    .filterCooldownClass(ShadowDash.class)
+                    .stream()
+                    .mapToInt(cd -> ((ShadowDash) cd.getCooldownObject()).getEnemiesHit())
+                    .sum();
             cooldown.addModifier(Modifier.MODIFY_OUTGOING_CRIT_CHANCE, (event, currentCritChance) -> {
-                long stacks = new CooldownFilter<>(wp, RegularCooldown.class)
-                        .filterCooldownClass(ShadowDash.class)
-                        .stream()
-                        .mapToInt(cd -> ((ShadowDash) cd.getCooldownObject()).getEnemiesHit())
-                        .sum();
-                currentCritChance.addModifier(FloatModifiable.ModifierType.ADDITIVE, ("Shadow Dash", 2f * stacks);
+                currentCritChance.addModifier(FloatModifiable.ModifierType.ADDITIVE, "Shadow Dash", 2f * stacks);
             });
             cooldown.addModifier(Modifier.MODIFY_OUTGOING_CRIT_MULTIPLIER, (event, currentCritMultiplier) -> {
-                long stacks = new CooldownFilter<>(wp, RegularCooldown.class)
-                        .filterCooldownClass(ShadowDash.class)
-                        .stream()
-                        .mapToInt(cd -> ((ShadowDash) cd.getCooldownObject()).getEnemiesHit())
-                        .sum();
-                currentCritMultiplier.addModifier(FloatModifiable.ModifierType.ADDITIVE, ("Shadow Dash", 2f * stacks);
+                currentCritMultiplier.addModifier(FloatModifiable.ModifierType.ADDITIVE, "Shadow Dash", 2f * stacks);
             });
             wp.getCooldownManager().addCooldown(cooldown);
         }
