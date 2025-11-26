@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 public class FloatModifiable implements Modifiable {
 
     private final List<FloatModifier> overridingModifiers = new ArrayList<>(); // these modifiers override the current value
-    private final List<FloatModifier> additiveModifiers = new ArrayList<>();
+    private final List<FloatModifier> additiveModifiers = new ArrayList<>(); // these modifiers are added to base
     private final List<FloatModifier> multiplicativeModifiersAdditive = new ArrayList<>(); // these modifiers are added together
     private final List<FloatModifier> multiplicativeModifiersMultiplicative = new ArrayList<>(); // these modifiers are multiplied together
     private final Map<String, FloatModifiableFilter> filters = new HashMap<>(4);
@@ -253,28 +253,39 @@ public class FloatModifiable implements Modifiable {
         List<Component> components = new ArrayList<>();
         FloatModifiableFilter base = filters.get("Base");
         if (getCalculatedValue() != baseValue) {
-            components.add(Component.textOfChildren(
-                    getDebugInfo("Base", baseValue),
-                    Component.text(" -> ", NamedTextColor.GRAY),
-                    getDebugInfo("Calculated", getCalculatedValue())
-            ));
+            ComponentBuilder builder = ComponentBuilder.create()
+                    .append(getDebugInfo("Base", baseValue));
+            if (!overridingModifiers.isEmpty()) {
+                builder.append(getDebugInfo("Overriding", overridingModifiers.get(0).getModifier()));
+            }
+            if (!additiveModifiers.isEmpty()) {
+                builder.append(getDebugInfo(" +", base.getCachedAdditiveModifier()));
+            }
+            if (!multiplicativeModifiersAdditive.isEmpty()) {
+                builder.append(getDebugInfo(" *", base.getCachedMultiplicativeModifierAdditive()));
+            }
+            if (!multiplicativeModifiersMultiplicative.isEmpty()) {
+                builder.append(getDebugInfo(" *", base.getCachedMultiplicativeModifierMultiplicative()));
+            }
+            builder.append(getDebugInfo(" =", getCalculatedValue()));
+
+            components.add(builder.build());
         } else {
-            components.add(getDebugInfo("Calculated", getCalculatedValue()));
+            components.add(getDebugInfo("", getCalculatedValue()));
         }
         if (!overridingModifiers.isEmpty()) {
             components.add(getDebugInfo("Overriding", overridingModifiers.get(0).getModifier()));
             components.addAll(getDebugInfo(overridingModifiers, globalContributions));
         }
         if (!additiveModifiers.isEmpty()) {
-            components.add(getDebugInfo("Additive", base.getCachedAdditiveModifier()));
             components.addAll(getDebugInfo(additiveModifiers, globalContributions));
         }
         if (!multiplicativeModifiersAdditive.isEmpty()) {
-            components.add(getDebugInfo("Additive Multiplier", base.getCachedMultiplicativeModifierAdditive(), "x"));
+            components.add(getDebugInfo("Additive", base.getCachedMultiplicativeModifierAdditive(), "x"));
             components.addAll(getDebugInfo(multiplicativeModifiersAdditive, globalContributions));
         }
         if (!multiplicativeModifiersMultiplicative.isEmpty()) {
-            components.add(getDebugInfo("Multiplicative Multiplier", base.getCachedMultiplicativeModifierMultiplicative(), "x"));
+            components.add(getDebugInfo("Multiplicative", base.getCachedMultiplicativeModifierMultiplicative(), "x"));
             components.addAll(getDebugInfo(multiplicativeModifiersMultiplicative, globalContributions));
         }
         return components;
@@ -433,7 +444,7 @@ public class FloatModifiable implements Modifiable {
     private Component getDebugInfo(String name, float value, String valueSuffix) {
         return ComponentBuilder.create()
                                .text(name, NamedTextColor.DARK_GREEN)
-                               .text(": ", NamedTextColor.GRAY)
+                               .text(" ", NamedTextColor.GRAY)
                                .text(NumberFormat.formatOptionalHundredths(value) + valueSuffix, NamedTextColor.GOLD)
                                .build();
     }

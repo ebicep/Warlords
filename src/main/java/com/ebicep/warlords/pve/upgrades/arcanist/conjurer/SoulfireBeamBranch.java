@@ -16,8 +16,8 @@ public class SoulfireBeamBranch extends AbstractUpgradeBranch<SoulfireBeam> {
     @Override
     public void runOnce() {
         Value.RangedValueCritable hexDamage = ability.getDamageValues().getBeamDamage();
-        hexDamage.min().addMultiplicativeModifierAdd("PvE", .3f);
-        hexDamage.max().addMultiplicativeModifierAdd("PvE", .3f);
+        hexDamage.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .3f);
+        hexDamage.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,"PvE", .3f);
         ability.getDamageValues().setDamageMultipliers(new ArrayList<>(List.of(1.0f, 1.25f, 1.5f, 2.0f, 3f, 4f)));
     }
 
@@ -59,7 +59,7 @@ public class SoulfireBeamBranch extends AbstractUpgradeBranch<SoulfireBeam> {
                 () -> {
                     ability.getHitBoxRadius().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade Branch", 1);
                     ability.getMaxDistance().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade Branch", 15);
-                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -20);
+                    ability.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE,"Master Upgrade Branch", -20);
                     ability.setShotsFiredAtATime(3);
                 }
         );
