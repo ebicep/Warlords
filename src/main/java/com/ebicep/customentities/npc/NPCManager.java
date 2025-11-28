@@ -28,6 +28,7 @@ import org.bukkit.entity.Display;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class NPCManager {
 
@@ -38,33 +39,34 @@ public class NPCManager {
         if (!Warlords.citizensEnabled) {
             return;
         }
-        ChatUtils.MessageType.GAME.sendMessage("Adding game join NPCs...");
-        Warlords.newChain()
-                .sync(() -> {
-                    createCTFNPC();
-                    createSiegeNPC();
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                ChatUtils.MessageType.GAME.sendMessage("Adding game join NPCs...");
+                createCTFNPC();
+                createSiegeNPC();
 //                    createTeamDeathmatchNPC();
 //                    createInterceptionNPC();
-                    createWaveDefenseNPC();
-                    createOnslaughtNPC();
-                    createTreasureHuntNPC();
+                createWaveDefenseNPC();
+                createOnslaughtNPC();
+                createTreasureHuntNPC();
 //                    createBossRushNPC();
-                    createMasterworksFairNPC();
-                    createWeaponsManagerNPC();
-                    createLegendaryWeaponNPC();
-                    createSupplyDropFairNPC();
+                createMasterworksFairNPC();
+                createWeaponsManagerNPC();
+                createLegendaryWeaponNPC();
+                createSupplyDropFairNPC();
 //                    createQuestMenuNPC();
-                    createBountyMenuNPC();
-                    createStarPieceSynthesizerNPC();
+                createBountyMenuNPC();
+                createStarPieceSynthesizerNPC();
 //                    createMysteriousTokenNPC();
 //                    createItemMichaelNPC();
-                    createItemEnyaNPC();
-                    createIllusionVendorNPC();
-                    createSeasonalVendorNPC();
-                })
-                .execute();
-
-        registerTrait(ReadyUpOption.ReadyUpTrait.class, "ReadyUpTrait");
+                createItemEnyaNPC();
+                createIllusionVendorNPC();
+                createSeasonalVendorNPC();
+                registerTrait(ReadyUpOption.ReadyUpTrait.class, "ReadyUpTrait");
+                ChatUtils.MessageType.GAME.sendMessage("Done adding game join NPCs");
+            }
+        }.runTask(Warlords.getInstance());
     }
 
     private static void createCTFNPC() {
@@ -111,37 +113,6 @@ public class NPCManager {
         npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 5.5, 82, 160.5, -135, 0));
     }
 
-    public static void createTeamDeathmatchNPC() {
-        registerTrait(TeamDeathmatchTrait.class, "TeamDeathmatchTrait");
-
-        NPC npc = NPC_REGISTRY.createNPC(EntityType.PLAYER, "team-deathmatch");
-        npc.addTrait(TeamDeathmatchTrait.class);
-//        npc.getOrAddTrait(SkinTrait.class).setSkinName("Richdragon123");
-
-        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
-
-        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 2.5, 82, 140.5, -45, 0));
-    }
-
-    public static void registerTrait(Class<? extends Trait> trait, String traitName) {
-        if (CitizensAPI.getTraitFactory().getTrait(traitName) != null) {
-            CitizensAPI.getTraitFactory().deregisterTrait(TraitInfo.create(trait).withName(traitName));
-        }
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(trait).withName(traitName));
-    }
-
-    public static void createInterceptionNPC() {
-        registerTrait(InterceptionTrait.class, "InterceptionTrait");
-
-        NPC npc = NPC_REGISTRY.createNPC(EntityType.PLAYER, "interception");
-        npc.addTrait(InterceptionTrait.class);
-//        npc.getOrAddTrait(SkinTrait.class).setSkinName("AwesomeRaki");
-
-        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
-
-        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 5.5, 82, 138.5, -45, 0));
-    }
-
     private static void createTreasureHuntNPC() {
         registerTrait(TreasureHuntStartTrait.class, "TreasureHuntStartTrait");
 
@@ -151,40 +122,6 @@ public class NPCManager {
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
         npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 20.5, 82, 158.5, 135, 0));
-    }
-
-    private static void createBossRushNPC() {
-        registerTrait(BossRushStartTrait.class, "BossRushStartTrait");
-
-        NPC npc = NPC_REGISTRY.createNPC(EntityType.PLAYER, "boss-rush-mode");
-        npc.addTrait(BossRushStartTrait.class);
-//        npc.getOrAddTrait(SkinTrait.class).setSkinName("Stratfull");
-
-        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
-        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), -2.5, 82, 136.5, -45, 0));
-    }
-
-    public static void createDatabaseRequiredNPCs() {
-        if (!Warlords.citizensEnabled) {
-            return;
-        }
-
-        Warlords.newChain()
-                .sync(() -> {
-                    createMasterworksFairNPC();
-                    createWeaponsManagerNPC();
-                    createLegendaryWeaponNPC();
-                    createSupplyDropFairNPC();
-//                    createQuestMenuNPC();
-                    createBountyMenuNPC();
-                    createStarPieceSynthesizerNPC();
-//                    createMysteriousTokenNPC();
-//                    createItemMichaelNPC();
-                    createItemEnyaNPC();
-                    createIllusionVendorNPC();
-                    createSeasonalVendorNPC();
-                })
-                .execute();
     }
 
     public static void createMasterworksFairNPC() {
@@ -368,6 +305,71 @@ public class NPCManager {
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
 
         npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), -3, 81, 135, -45, 0));
+    }
+
+    public static void registerTrait(Class<? extends Trait> trait, String traitName) {
+        if (CitizensAPI.getTraitFactory().getTrait(traitName) != null) {
+            CitizensAPI.getTraitFactory().deregisterTrait(TraitInfo.create(trait).withName(traitName));
+        }
+        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(trait).withName(traitName));
+    }
+
+    public static void createTeamDeathmatchNPC() {
+        registerTrait(TeamDeathmatchTrait.class, "TeamDeathmatchTrait");
+
+        NPC npc = NPC_REGISTRY.createNPC(EntityType.PLAYER, "team-deathmatch");
+        npc.addTrait(TeamDeathmatchTrait.class);
+//        npc.getOrAddTrait(SkinTrait.class).setSkinName("Richdragon123");
+
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
+
+        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 2.5, 82, 140.5, -45, 0));
+    }
+
+    public static void createInterceptionNPC() {
+        registerTrait(InterceptionTrait.class, "InterceptionTrait");
+
+        NPC npc = NPC_REGISTRY.createNPC(EntityType.PLAYER, "interception");
+        npc.addTrait(InterceptionTrait.class);
+//        npc.getOrAddTrait(SkinTrait.class).setSkinName("AwesomeRaki");
+
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
+
+        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 5.5, 82, 138.5, -45, 0));
+    }
+
+    private static void createBossRushNPC() {
+        registerTrait(BossRushStartTrait.class, "BossRushStartTrait");
+
+        NPC npc = NPC_REGISTRY.createNPC(EntityType.PLAYER, "boss-rush-mode");
+        npc.addTrait(BossRushStartTrait.class);
+//        npc.getOrAddTrait(SkinTrait.class).setSkinName("Stratfull");
+
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
+        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), -2.5, 82, 136.5, -45, 0));
+    }
+
+    public static void createDatabaseRequiredNPCs() {
+        if (!Warlords.citizensEnabled) {
+            return;
+        }
+
+        Warlords.newChain()
+                .sync(() -> {
+                    createMasterworksFairNPC();
+                    createWeaponsManagerNPC();
+                    createLegendaryWeaponNPC();
+                    createSupplyDropFairNPC();
+//                    createQuestMenuNPC();
+                    createBountyMenuNPC();
+                    createStarPieceSynthesizerNPC();
+//                    createMysteriousTokenNPC();
+//                    createItemMichaelNPC();
+                    createItemEnyaNPC();
+                    createIllusionVendorNPC();
+                    createSeasonalVendorNPC();
+                })
+                .execute();
     }
 
     public static void createItemMichaelNPC() {
