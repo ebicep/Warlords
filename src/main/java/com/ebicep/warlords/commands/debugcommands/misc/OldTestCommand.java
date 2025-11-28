@@ -55,7 +55,25 @@ public class OldTestCommand implements BasicCommand {
                 cooldown.addModifier(
                         Modifier.MODIFY_OUTGOING_DAMAGE_AFTER_INTERVENE,
                         (event, currentDamageValue) -> {
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.OVERRIDING, "OVER", 20);
+                        }
+                );
+                cooldown.addModifier(
+                        Modifier.MODIFY_OUTGOING_DAMAGE_AFTER_INTERVENE,
+                        (event, currentDamageValue) -> {
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE, "ADD", 500);
+                        }
+                );
+                cooldown.addModifier(
+                        Modifier.MODIFY_OUTGOING_DAMAGE_AFTER_INTERVENE,
+                        (event, currentDamageValue) -> {
                             currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "TEST2", 2);
+                        }
+                );
+                cooldown.addModifier(
+                        Modifier.MODIFY_OUTGOING_DAMAGE_AFTER_INTERVENE,
+                        (event, currentDamageValue) -> {
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "TEST5", 0.5f);
                         }
                 );
                 cooldown.addModifier(

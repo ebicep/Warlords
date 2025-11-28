@@ -255,20 +255,18 @@ public class FloatModifiable implements Modifiable {
         if (getCalculatedValue() != baseValue) {
             ComponentBuilder builder = ComponentBuilder.create()
                     .append(getDebugInfo("Base", baseValue));
-            if (!overridingModifiers.isEmpty()) {
-                builder.append(getDebugInfo("Overriding", overridingModifiers.get(0).getModifier()));
-            }
-            if (!additiveModifiers.isEmpty()) {
-                builder.append(getDebugInfo(" +", base.getCachedAdditiveModifier()));
-            }
-            if (!multiplicativeModifiersAdditive.isEmpty()) {
-                builder.append(getDebugInfo(" *", base.getCachedMultiplicativeModifierAdditive()));
-            }
-            if (!multiplicativeModifiersMultiplicative.isEmpty()) {
-                builder.append(getDebugInfo(" *", base.getCachedMultiplicativeModifierMultiplicative()));
+            if (overridingModifiers.isEmpty()) {
+                if (!additiveModifiers.isEmpty()) {
+                    builder.append(getDebugInfo(" +", base.getCachedAdditiveModifier()));
+                }
+                if (!multiplicativeModifiersAdditive.isEmpty()) {
+                    builder.append(getDebugInfo(" *", base.getCachedMultiplicativeModifierAdditive()));
+                }
+                if (!multiplicativeModifiersMultiplicative.isEmpty()) {
+                    builder.append(getDebugInfo(" *", base.getCachedMultiplicativeModifierMultiplicative()));
+                }
             }
             builder.append(getDebugInfo(" =", getCalculatedValue()));
-
             components.add(builder.build());
         } else {
             components.add(getDebugInfo("", getCalculatedValue()));
@@ -278,14 +276,15 @@ public class FloatModifiable implements Modifiable {
             components.addAll(getDebugInfo(overridingModifiers, globalContributions));
         }
         if (!additiveModifiers.isEmpty()) {
+            components.add(getDebugInfo("Additive", base.getCachedAdditiveModifier(), ""));
             components.addAll(getDebugInfo(additiveModifiers, globalContributions));
         }
         if (!multiplicativeModifiersAdditive.isEmpty()) {
-            components.add(getDebugInfo("Additive", base.getCachedMultiplicativeModifierAdditive(), "x"));
+            components.add(getDebugInfo("Additive Multiplier", base.getCachedMultiplicativeModifierAdditive(), "x"));
             components.addAll(getDebugInfo(multiplicativeModifiersAdditive, globalContributions));
         }
         if (!multiplicativeModifiersMultiplicative.isEmpty()) {
-            components.add(getDebugInfo("Multiplicative", base.getCachedMultiplicativeModifierMultiplicative(), "x"));
+            components.add(getDebugInfo("Multiplicative Multiplier", base.getCachedMultiplicativeModifierMultiplicative(), "x"));
             components.addAll(getDebugInfo(multiplicativeModifiersMultiplicative, globalContributions));
         }
         return components;
@@ -442,11 +441,17 @@ public class FloatModifiable implements Modifiable {
     }
 
     private Component getDebugInfo(String name, float value, String valueSuffix) {
-        return ComponentBuilder.create()
-                               .text(name, NamedTextColor.DARK_GREEN)
-                               .text(" ", NamedTextColor.GRAY)
-                               .text(NumberFormat.formatOptionalHundredths(value) + valueSuffix, NamedTextColor.GOLD)
-                               .build();
+        if (name.isEmpty()) {
+            return ComponentBuilder.create()
+                                   .text(NumberFormat.formatOptionalHundredths(value) + valueSuffix, NamedTextColor.GOLD)
+                                   .build();
+        } else {
+            return ComponentBuilder.create()
+                                   .text(name, NamedTextColor.DARK_GREEN)
+                                   .text(" ", NamedTextColor.GRAY)
+                                   .text(NumberFormat.formatOptionalHundredths(value) + valueSuffix, NamedTextColor.GOLD)
+                                   .build();
+        }
     }
 
     public void clearModifiers() {
