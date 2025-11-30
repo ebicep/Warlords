@@ -39,7 +39,7 @@ public class HealingInstanceProcessor {
     // Core event data
     private final InstanceDebugHoverable debugMessage;
     private final WarlordsDamageHealingEvent event;
-    private final WarlordsEntity warlordsEntity;
+    private final WarlordsEntity target;
     private final WarlordsEntity source;
     private final AbstractAbility ability;
     private final String cause;
@@ -70,7 +70,7 @@ public class HealingInstanceProcessor {
         applyPreEventModifiers();
         this.debugMessage = debugMessage;
         this.event = event;
-        this.warlordsEntity = event.getWarlordsEntity();
+        this.target = event.getWarlordsEntity();
         this.source = event.getSource();
         this.ability = event.getAbility();
         this.cause = event.getCause();
@@ -84,8 +84,8 @@ public class HealingInstanceProcessor {
         this.isLastStandFromShield = flags.contains(InstanceFlags.LAST_STAND_FROM_SHIELD);
         this.pierce = flags.contains(InstanceFlags.PIERCE);
         this.trueHealing = flags.contains(InstanceFlags.TRUE_HEALING);
-        this.initialHealth = warlordsEntity.getCurrentHealth();
-        this.targetCooldownsDistinct = warlordsEntity.getCooldownManager().getCooldownsDistinct();
+        this.initialHealth = target.getCurrentHealth();
+        this.targetCooldownsDistinct = target.getCooldownManager().getCooldownsDistinct();
         this.sourceCooldownsDistinct = source.getCooldownManager().getCooldownsDistinct();
         this.finalEvent = null;
         this.healValue = new MultiFloatModifiable(
@@ -94,8 +94,8 @@ public class HealingInstanceProcessor {
     }
 
     private void applyPreEventModifiers() {
-        if (warlordsEntity != null) {
-            for (AbstractCooldown<?> abstractCooldown : warlordsEntity.getCooldownManager().getCooldownsDistinct()) {
+        if (target != null) {
+            for (AbstractCooldown<?> abstractCooldown : target.getCooldownManager().getCooldownsDistinct()) {
                 abstractCooldown.applyModifiers(Modifier.HEALING_BEFORE_VARIABLE_SET_SELF, m -> m.apply(event));
             }
         }
@@ -139,7 +139,7 @@ public class HealingInstanceProcessor {
 
         if (!flags.contains(InstanceFlags.NO_MESSAGE)) {
             boolean isOverHeal = isOverHealing(cappedHealValue);
-            if (warlordsEntity == source) {
+            if (target == source) {
                 sendSelfHealingMessage(cappedHealValue, isOverHeal);
             } else {
                 sendHealingOthersMessage(cappedHealValue, isOverHeal);
@@ -147,33 +147,33 @@ public class HealingInstanceProcessor {
         }
 
         float maxHealth = calculateMaxHealth();
-        float actualHealing = Math.min(cappedHealValue, maxHealth - warlordsEntity.getCurrentHealth());
-        source.addHealing(actualHealing, FlagHolder.isPlayerHolderFlag(warlordsEntity));
-        warlordsEntity.setCurrentHealth(warlordsEntity.getCurrentHealth() + cappedHealValue);
-        warlordsEntity.updateHealth();
+        float actualHealing = Math.min(cappedHealValue, maxHealth - target.getCurrentHealth());
+        source.addHealing(actualHealing, FlagHolder.isPlayerHolderFlag(target));
+        target.setCurrentHealth(target.getCurrentHealth() + cappedHealValue);
+        target.updateHealth();
 
         if (!flags.contains(InstanceFlags.NO_HIT_SOUND)) {
-            warlordsEntity.playHitSound(source);
+            target.playHitSound(source);
         }
 
         finalEvent = new WarlordsDamageHealingFinalEvent(
-                event, flags, warlordsEntity, source, ability, cause,
+                event, flags, target, source, ability, cause,
                 initialHealth, healValueBeforeReduction,
                 healValueBeforeReduction, healValueBeforeReduction, healValueAfterModify,
                 calculatedCritChance, calculatedCritMultiplier, isCrit, false,
                 WarlordsDamageHealingFinalEvent.FinalEventFlag.REGULAR
         );
 
-        warlordsEntity.getSecondStats().addDamageHealingEventAsSelf(finalEvent);
+        target.getSecondStats().addDamageHealingEventAsSelf(finalEvent);
         source.getSecondStats().addDamageHealingEventAsAttacker(finalEvent);
     }
 
     private boolean isOverHealing(float healAmount) {
         float maxHealth = calculateMaxHealth();
-        float newHealth = healAmount + warlordsEntity.getCurrentHealth();
+        float newHealth = healAmount + target.getCurrentHealth();
 
-        return maxHealth > warlordsEntity.getMaxHealth() &&
-                newHealth > warlordsEntity.getMaxBaseHealth();
+        return maxHealth > target.getMaxHealth() &&
+                newHealth > target.getMaxBaseHealth();
     }
 
     /**
@@ -188,7 +188,7 @@ public class HealingInstanceProcessor {
                 .append(buildSelfHealText())
                 .append(message);
 
-        sendMessageBasedOnMode(warlordsEntity, ownFeed.build());
+        sendMessageBasedOnMode(target, ownFeed.build());
     }
 
     /**
@@ -213,58 +213,43 @@ public class HealingInstanceProcessor {
                 .append(buildReceiverText(isOverHeal))
                 .append(healInfo);
 
-        sendMessageBasedOnMode(warlordsEntity, receiverFeed.build(), true);
+        sendMessageBasedOnMode(target, receiverFeed.build(), true);
     }
 
     private void applyOnHealModifiers(float cappedHealValue) {
-        healValue.addModifierListener(
-                InstanceManager.TARGET_LABEL,
-                FloatModifiable.ModifierType.OVERRIDING,
-                FloatModifiable.ModifierType.ADDITIVE,
-                FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
-                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
-        );
+        healValue.addModifierListener(InstanceManager.TARGET_LABEL, FloatModifiable.ModifierType.ALL_TYPES);
         for (AbstractCooldown<?> abstractCooldown : targetCooldownsDistinct) {
             abstractCooldown.applyModifiers(Modifier.ON_INCOMING_HEALING,
                     m -> m.apply(event, cappedHealValue, isCrit)
             );
         }
-        healValue.removeModifierListener(
-                InstanceManager.TARGET_LABEL,
-                FloatModifiable.ModifierType.OVERRIDING,
-                FloatModifiable.ModifierType.ADDITIVE,
-                FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
-                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
-        );
-        healValue.addModifierListener(
-                InstanceManager.SOURCE_LABEL,
-                FloatModifiable.ModifierType.OVERRIDING,
-                FloatModifiable.ModifierType.ADDITIVE,
-                FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
-                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
-        );
+        healValue.removeModifierListener(InstanceManager.TARGET_LABEL, FloatModifiable.ModifierType.ALL_TYPES);
+        healValue.addModifierListener(InstanceManager.SOURCE_LABEL, FloatModifiable.ModifierType.ALL_TYPES);
         for (AbstractCooldown<?> abstractCooldown : sourceCooldownsDistinct) {
             abstractCooldown.applyModifiers(Modifier.ON_OUTGOING_HEALING,
                     m -> m.apply(event, cappedHealValue, isCrit)
             );
         }
-        healValue.removeModifierListener(
-                InstanceManager.SOURCE_LABEL,
-                FloatModifiable.ModifierType.OVERRIDING,
-                FloatModifiable.ModifierType.ADDITIVE,
-                FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
-                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
-        );
+        healValue.removeModifierListener(InstanceManager.SOURCE_LABEL, FloatModifiable.ModifierType.ALL_TYPES);
     }
 
-    private float calculateMaxHealth() {
-        float maxHealth = warlordsEntity.getHealth().getCalculatedValue();
+    /**
+     * Builds the text for the healer's message when healing others
+     */
+    private TextComponent.Builder buildHealerText(boolean isOverHeal) {
+        TextComponent.Builder hitBuilder = Component.text(" Your " + cause, NamedTextColor.GRAY).toBuilder();
 
-        if (canOverheal()) {
-            maxHealth *= 1.1f;
+        if (isCrit) {
+            hitBuilder.append(Component.text(" critically"));
         }
 
-        return maxHealth;
+        if (isOverHeal) {
+            hitBuilder.append(Component.text(" overhealed " + target.getName() + " for "));
+        } else {
+            hitBuilder.append(Component.text(" healed " + target.getName() + " for "));
+        }
+
+        return hitBuilder;
     }
 
     /**
@@ -313,23 +298,8 @@ public class HealingInstanceProcessor {
         sendMessageBasedOnMode(entity, message, false);
     }
 
-    /**
-     * Builds the text for the healer's message when healing others
-     */
-    private TextComponent.Builder buildHealerText(boolean isOverHeal) {
-        TextComponent.Builder hitBuilder = Component.text(" Your " + cause, NamedTextColor.GRAY).toBuilder();
-
-        if (isCrit) {
-            hitBuilder.append(Component.text(" critically"));
-        }
-
-        if (isOverHeal) {
-            hitBuilder.append(Component.text(" overhealed " + warlordsEntity.getName() + " for "));
-        } else {
-            hitBuilder.append(Component.text(" healed " + warlordsEntity.getName() + " for "));
-        }
-
-        return hitBuilder;
+    private boolean validateEntityState() {
+        return !target.isDead() && target.isActive();
     }
 
     /**
@@ -384,16 +354,50 @@ public class HealingInstanceProcessor {
         return hitBuilder;
     }
 
-    private boolean canOverheal() {
-        return warlordsEntity == source && flags.contains(InstanceFlags.CAN_OVERHEAL_SELF) // self
-                ||
-                warlordsEntity != source && // others
-                        warlordsEntity.isTeammate(source) &&
-                        flags.contains(InstanceFlags.CAN_OVERHEAL_OTHERS);
+    private void applyHealingModifiers() {
+        debugMessage.appendTitle("Modified Healing", NamedTextColor.AQUA);
+
+        if (trueHealing) {
+            healValue.addModifierListener(
+                    InstanceFlags.TRUE_HEALING.createDisabledReason(),
+                    FloatModifiable.ModifierType.ADDITIVE, FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
+            );
+        }
+        // source / self modifiers
+        if (pierce) { // ignore healing reduction
+            toggleNegativeBoosts(InstanceFlags.PIERCE, true);
+        }
+        healValue.addModifierListener(InstanceManager.TARGET_LABEL, FloatModifiable.ModifierType.ALL_TYPES);
+        for (AbstractCooldown<?> abstractCooldown : targetCooldownsDistinct) {
+            abstractCooldown.applyModifiers(Modifier.MODIFY_INCOMING_HEALING, m -> m.apply(event, healValue));
+        }
+        healValue.removeModifierListener(InstanceManager.TARGET_LABEL, FloatModifiable.ModifierType.ALL_TYPES);
+        if (pierce) { // ignore healing reduction
+            toggleNegativeBoosts(InstanceFlags.PIERCE, false);
+        }
+        healValue.addModifierListener(InstanceManager.SOURCE_LABEL, FloatModifiable.ModifierType.ALL_TYPES);
+        for (AbstractCooldown<?> abstractCooldown : sourceCooldownsDistinct) {
+            abstractCooldown.applyModifiers(Modifier.MODIFY_OUTGOING_HEALING, m -> m.apply(event, healValue));
+        }
+        healValue.removeModifierListener(InstanceManager.SOURCE_LABEL, FloatModifiable.ModifierType.ALL_TYPES);
+
+        healValue.refresh();
+        debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                .create(1)
+                .prefix(ComponentBuilder.create("Heal Value: ", NamedTextColor.LIGHT_PURPLE))
+                .value(healValue));
+
+        healValueAfterModify = healValue.getCalculatedValue();
     }
 
-    private boolean validateEntityState() {
-        return !warlordsEntity.isDead() && warlordsEntity.isActive();
+    private void toggleNegativeBoosts(InstanceFlags f, boolean addListener) {
+        if (addListener) {
+            healValue.addModifierListener(f.ignoreNegativeAdditive, FloatModifiable.ModifierType.ADDITIVE_TYPES);
+            healValue.addModifierListener(f.ignoreNegativeMultiplicative, FloatModifiable.ModifierType.MULTIPLICATIVE_TYPES);
+        } else {
+            healValue.removeModifierListener(f.ignoreNegativeAdditive, FloatModifiable.ModifierType.ADDITIVE_TYPES);
+            healValue.removeModifierListener(f.ignoreNegativeMultiplicative, FloatModifiable.ModifierType.MULTIPLICATIVE_TYPES);
+        }
     }
 
     private void setupDebugMessages() {
@@ -453,64 +457,14 @@ public class HealingInstanceProcessor {
         applyCriticalHit();
     }
 
-    private void applyHealingModifiers() {
-        debugMessage.appendTitle("Modified Healing", NamedTextColor.AQUA);
-
-        if (trueHealing) {
-            healValue.addModifierListener(
-                    InstanceFlags.TRUE_HEALING.createDisabledReason(),
-                    FloatModifiable.ModifierType.ADDITIVE, FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
-            );
+    private void togglePositiveBoosts(InstanceFlags f, boolean addListener) {
+        if (addListener) {
+            healValue.addModifierListener(f.ignorePositiveAdditive, FloatModifiable.ModifierType.ADDITIVE_TYPES);
+            healValue.addModifierListener(f.ignorePositiveMultiplicative, FloatModifiable.ModifierType.MULTIPLICATIVE_TYPES);
+        } else {
+            healValue.removeModifierListener(f.ignorePositiveAdditive, FloatModifiable.ModifierType.ADDITIVE_TYPES);
+            healValue.removeModifierListener(f.ignorePositiveMultiplicative, FloatModifiable.ModifierType.MULTIPLICATIVE_TYPES);
         }
-        // source / self modifiers
-        if (pierce) { // ignore healing reduction
-            toggleNegativeBoosts(InstanceFlags.PIERCE, true);
-        }
-        healValue.addModifierListener(
-                InstanceManager.TARGET_LABEL,
-                FloatModifiable.ModifierType.OVERRIDING,
-                FloatModifiable.ModifierType.ADDITIVE,
-                FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
-                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
-        );
-        for (AbstractCooldown<?> abstractCooldown : targetCooldownsDistinct) {
-            abstractCooldown.applyModifiers(Modifier.MODIFY_INCOMING_HEALING, m -> m.apply(event, healValue));
-        }
-        healValue.removeModifierListener(
-                InstanceManager.TARGET_LABEL,
-                FloatModifiable.ModifierType.OVERRIDING,
-                FloatModifiable.ModifierType.ADDITIVE,
-                FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
-                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
-        );
-        if (pierce) { // ignore healing reduction
-            toggleNegativeBoosts(InstanceFlags.PIERCE, false);
-        }
-        healValue.addModifierListener(
-                InstanceManager.SOURCE_LABEL,
-                FloatModifiable.ModifierType.OVERRIDING,
-                FloatModifiable.ModifierType.ADDITIVE,
-                FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
-                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
-        );
-        for (AbstractCooldown<?> abstractCooldown : sourceCooldownsDistinct) {
-            abstractCooldown.applyModifiers(Modifier.MODIFY_OUTGOING_HEALING, m -> m.apply(event, healValue));
-        }
-        healValue.removeModifierListener(
-                InstanceManager.SOURCE_LABEL,
-                FloatModifiable.ModifierType.OVERRIDING,
-                FloatModifiable.ModifierType.ADDITIVE,
-                FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
-                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
-        );
-
-        healValue.refresh();
-        debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                .create(1)
-                .prefix(ComponentBuilder.create("Heal Value: ", NamedTextColor.LIGHT_PURPLE))
-                .value(healValue));
-
-        healValueAfterModify = healValue.getCalculatedValue();
     }
 
     private void applyCriticalHit() {
@@ -538,63 +492,37 @@ public class HealingInstanceProcessor {
         );
     }
 
-    private void toggleNegativeBoosts(InstanceFlags f, boolean addListener) {
-        if (addListener) {
-            healValue.addModifierListener(
-                    f.ignoreNegativeAdditive,
-                    FloatModifiable.ModifierType.ADDITIVE, FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE
-            );
-            healValue.addModifierListener(
-                    f.ignoreNegativeMultiplicative,
-                    FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
-            );
-        } else {
-            healValue.removeModifierListener(
-                    f.ignoreNegativeAdditive,
-                    FloatModifiable.ModifierType.ADDITIVE, FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE
-            );
-            healValue.removeModifierListener(
-                    f.ignoreNegativeMultiplicative,
-                    FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
-            );
-        }
-    }
-
-    private void togglePositiveBoosts(InstanceFlags f, boolean addListener) {
-        if (addListener) {
-            healValue.addModifierListener(
-                    f.ignorePositiveAdditive,
-                    FloatModifiable.ModifierType.ADDITIVE, FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE
-            );
-            healValue.addModifierListener(
-                    f.ignorePositiveMultiplicative,
-                    FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
-            );
-        } else {
-            healValue.removeModifierListener(
-                    f.ignorePositiveAdditive,
-                    FloatModifiable.ModifierType.ADDITIVE, FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE
-            );
-            healValue.removeModifierListener(
-                    f.ignorePositiveMultiplicative,
-                    FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
-            );
-        }
-    }
-
     private boolean isValidHealingTarget() {
-        return warlordsEntity == source || warlordsEntity.isTeammate(source);
+        return target == source || target.isTeammate(source);
     }
 
     private float calculateCappedHealValue() {
         float maxHealth = calculateMaxHealth();
-        float potentialNewHealth = warlordsEntity.getCurrentHealth() + healValueAfterModify;
+        float potentialNewHealth = target.getCurrentHealth() + healValueAfterModify;
 
         if (potentialNewHealth > maxHealth) {
-            return maxHealth - warlordsEntity.getCurrentHealth();
+            return maxHealth - target.getCurrentHealth();
         }
 
         return healValueAfterModify;
+    }
+
+    private float calculateMaxHealth() {
+        float maxHealth = target.getHealth().getCalculatedValue();
+
+        if (canOverheal()) {
+            maxHealth *= 1.1f;
+        }
+
+        return maxHealth;
+    }
+
+    private boolean canOverheal() {
+        return target == source && flags.contains(InstanceFlags.CAN_OVERHEAL_SELF) // self
+                ||
+                target != source && // others
+                        target.isTeammate(source) &&
+                        flags.contains(InstanceFlags.CAN_OVERHEAL_OTHERS);
     }
 
 }
