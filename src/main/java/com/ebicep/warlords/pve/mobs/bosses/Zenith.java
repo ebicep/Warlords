@@ -9,7 +9,10 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
@@ -17,11 +20,17 @@ import com.ebicep.warlords.pve.mobs.MobDrop;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.abilities.SpawnMobAbility;
 import com.ebicep.warlords.pve.mobs.abilities.ThunderCloudAbility;
+import com.ebicep.warlords.pve.mobs.bosses.bossabilities.BossAbilityPhase;
+import com.ebicep.warlords.pve.mobs.bosses.bossabilities.LightningChainAbility;
+import com.ebicep.warlords.pve.mobs.bosses.bossabilities.ShatteringChainsAbility;
+import com.ebicep.warlords.pve.mobs.bosses.bossabilities.ThunderLineBarrageAbility;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
@@ -33,6 +42,14 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Zenith extends AbstractMob implements BossMob {
+
+    private ThunderLineBarrageAbility thunderLineBarrageAbility;
+    private LightningChainAbility lightningChainAbility;
+    private ShatteringChainsAbility shatteringChainsAbility;
+    private BossAbilityPhase phaseOne;
+    private BossAbilityPhase phaseTwo;
+    private BossAbilityPhase phaseThree;
+    private boolean enraged = false;
 
     public Zenith(Location spawnLocation) {
         this(spawnLocation,
@@ -78,9 +95,9 @@ public class Zenith extends AbstractMob implements BossMob {
             put(MobDrop.ZENITH_STAR, new HashMap<>() {{
                 put(DifficultyIndex.EASY, .015);
                 put(DifficultyIndex.NORMAL, .025);
-                put(DifficultyIndex.HARD, .05);
-                put(DifficultyIndex.EXTREME, .10);
-                put(DifficultyIndex.ENDLESS, .05);
+                put(DifficultyIndex.HARD, .06);
+                put(DifficultyIndex.EXTREME, .12);
+                put(DifficultyIndex.ENDLESS, .06);
             }});
         }};
     }
@@ -103,15 +120,27 @@ public class Zenith extends AbstractMob implements BossMob {
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
+
+        if (option.getDifficulty() == DifficultyIndex.ENDLESS) {
+            float newHealth = 52000;
+            warlordsNPC.setMaxHealthAndHeal(newHealth);
+        }
+
         EffectUtils.strikeLightning(warlordsNPC.getLocation(), false, 6);
         DifficultyIndex difficulty = option.getDifficulty();
-        int cooldown = 2;
-        int secondsMin = 7;
-        int secondsMax = 12;
+        float multiplier = switch (difficulty) {
+            case EASY -> 0.25f;
+            case HARD -> 1;
+            case EXTREME -> 1.25f;
+            default -> 0.75f;
+        };
+        int cooldown = 8;
+        int secondsMin = 8;
+        int secondsMax = 11;
         int sizeMin = 5;
         int sizeMax = 10;
         if (difficulty == DifficultyIndex.EASY || difficulty == DifficultyIndex.NORMAL) {
-            cooldown = 3;
+            cooldown = 5;
             secondsMin = 6;
             secondsMax = 10;
             sizeMin = 3;
@@ -123,17 +152,104 @@ public class Zenith extends AbstractMob implements BossMob {
                 secondsMin, secondsMax,
                 sizeMin, sizeMax
         ));
+
+        Location mapCenter = new Location(warlordsNPC.getWorld(), 112.5, 11, 62.5);
+        thunderLineBarrageAbility = new ThunderLineBarrageAbility(
+                warlordsNPC,
+                () -> warlordsNPC.getLocation(),
+                40,
+                1,
+                20,
+                80,
+                2,
+                4000 * multiplier, 6, 2
+        );
+        lightningChainAbility = new LightningChainAbility(
+                warlordsNPC,
+                () -> warlordsNPC.getLocation(),
+                12,
+                5000,
+                200,
+                2
+        );
+        shatteringChainsAbility = new ShatteringChainsAbility(
+                warlordsNPC,
+                () -> mapCenter.clone().add(0, 1.1, 0),
+                20,
+                40,
+                80,
+                200,
+                10,
+                1,
+                4,
+                2,
+                4000
+        );
+
+        phaseOne = new BossAbilityPhase(warlordsNPC, 60, () -> {
+            ChatUtils.sendTitleToGamePlayers(
+                    warlordsNPC.getGame(),
+                    Component.empty(),
+                    Component.text("Nine Crowns... The reign was mine to begin with!", NamedTextColor.LIGHT_PURPLE),
+                    20, 60, 20
+            );
+            warlordsNPC.addSpeedModifier(warlordsNPC, "Armageddon Slowness", -99, 150);
+            shatteringChainsAbility.start(warlordsNPC.getGame());
+        });
+
+        phaseTwo = new BossAbilityPhase(warlordsNPC, 40, () -> {
+            warlordsNPC.addSpeedModifier(warlordsNPC, "Armageddon Slowness", -99, 150);
+            shatteringChainsAbility.start(warlordsNPC.getGame());
+        });
+
+        phaseThree = new BossAbilityPhase(warlordsNPC, 25, () -> {
+            ChatUtils.sendTitleToGamePlayers(
+                    warlordsNPC.getGame(),
+                    Component.empty(),
+                    Component.text("Everyday our power grows, everyday he will get stronger...", NamedTextColor.LIGHT_PURPLE),
+                    20, 60, 20
+            );
+            warlordsNPC.getSpeed().addBaseModifier(40);
+            warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                    "Enraged",
+                    null,
+                    Zenith.class,
+                    null,
+                    warlordsNPC,
+                    CooldownTypes.BUFF,
+                    cooldownManager -> {},
+                    true
+            ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 0.5f);
+                    }
+            ));
+            enraged = true;
+        });
+    }
+
+    @Override
+    public void whileAlive(int ticksElapsed, PveOption option) {
+        if (ticksElapsed % (enraged ? 75 : 200) == 0) {
+            thunderLineBarrageAbility.start(warlordsNPC.getGame());
+        }
+
+        if (ticksElapsed % 360 == 0 && ticksElapsed > 0) {
+            lightningChainAbility.start(warlordsNPC.getGame());
+        }
+
+        if (option.getDifficulty() == DifficultyIndex.ENDLESS) {
+            float health = warlordsNPC.getCurrentHealth();
+            phaseOne.initialize(health);
+            phaseTwo.initialize(health);
+            phaseThree.initialize(health);
+        }
     }
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
         EffectUtils.strikeLightning(warlordsNPC.getLocation(), true);
 
-        if (event.getCause().equals("Uppercut") ||
-                event.getCause().equals("Armageddon") ||
-                event.getCause().equals("Intervene") ||
-                event.getCause().equals("Thunder Strike")
-        ) {
+        if (!event.getCause().isEmpty()) {
             return;
         }
         new GameRunnable(attacker.getGame()) {
