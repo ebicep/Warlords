@@ -36,8 +36,8 @@ public class ShatteringChainsAbility {
     private final double damagePerHit;      // damage applied each interval while inside band
 
     // Visuals
-    private final Particle.DustOptions telegraphDust = new Particle.DustOptions(Color.fromRGB(255, 0, 0), 1.2f);
-    private final Particle.DustOptions activeDust    = new Particle.DustOptions(Color.fromRGB(0, 0, 0), 2.4f);
+    private final Particle.DustOptions telegraphDust = new Particle.DustOptions(Color.fromRGB(255, 0, 0), 2f);
+    private final Particle.DustOptions activeDust    = new Particle.DustOptions(Color.fromRGB(0, 0, 0), 3f);
 
     // Runtime
     private final List<Chain> chains = new ArrayList<>();
@@ -92,7 +92,7 @@ public class ShatteringChainsAbility {
             Location anchor = new Location(
                     w,
                     center.getX() + Math.cos(ang) * arenaRadius,
-                    center.getY() + 0.05,
+                    center.getY() + 1,
                     center.getZ() + Math.sin(ang) * arenaRadius
             );
             chains.add(new Chain(ang, anchor));
@@ -133,7 +133,7 @@ public class ShatteringChainsAbility {
                     lastDamageTick = tick;
                     applyDamageBands(c);
                     if ((tick % 10) == 0) {
-                        Utils.playGlobalSound(c, Sound.BLOCK_CHAIN_HIT, 200, 0.5f);
+                        Utils.playGlobalSound(c, Sound.ITEM_AXE_WAX_OFF, 200, 0.5f);
                     }
                 }
 

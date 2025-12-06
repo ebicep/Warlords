@@ -158,8 +158,7 @@ public class Lilium extends AbstractMob implements BossMob {
                         return;
                     }
             currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 0.1f);
-                }
-        ));
+        }));
 
         Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.BLOCK_TRIAL_SPAWNER_AMBIENT_OMINOUS, 500, 0.5f);
         Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_ELDER_GUARDIAN_CURSE, 500, 0.5f);
@@ -326,13 +325,11 @@ public class Lilium extends AbstractMob implements BossMob {
         phaseOne = new BossAbilityPhase(warlordsNPC, 90, () -> {
             crystalProtectionAbility(3);
             petalStormAbility.cast();
-        }
-        );
+        });
 
         phaseTwo = new BossAbilityPhase(warlordsNPC, 80, () -> {
             triggerKillTrapSequence(9);
-        }
-        );
+        });
 
         phaseThree = new BossAbilityPhase(warlordsNPC, 70, () -> {
             preventDashing = true;
@@ -356,8 +353,7 @@ public class Lilium extends AbstractMob implements BossMob {
                     }
                 }
             }.runTaskTimer(40, 6);
-        }
-        );
+        });
 
         phaseFour = new BossAbilityPhase(warlordsNPC, 60, () -> {
             preventDashing = true;
@@ -488,14 +484,12 @@ public class Lilium extends AbstractMob implements BossMob {
                 }
             }.runTaskTimer(0, 0);
 
-        }
-        );
+        });
 
         phaseFive = new BossAbilityPhase(warlordsNPC, 50, () -> {
             crystalProtectionAbility(6);
             petalStormAbility.cast();
-        }
-        );
+        });
 
         phaseSix = new BossAbilityPhase(warlordsNPC, 40, () -> {
             preventDashing = true;
@@ -510,24 +504,27 @@ public class Lilium extends AbstractMob implements BossMob {
             int minLimit = option.playerCount() > 6 ? 3 : 2;
             int limit = Math.max(minLimit, Math.round(option.playerCount() / 3f));
             Game game = warlordsNPC.getGame();
-            List<WarlordsEntity> arenaOnePlayers = PlayerFilter.playingGame(game)
-                                                               .aliveEnemiesOf(warlordsNPC)
-                                                               .excludingAlliedMobs()
-                                                               .limit(limit)
-                                                               .stream().toList();
-            List<WarlordsEntity> arenaTwoPlayers = PlayerFilter.playingGame(game)
-                                                               .aliveEnemiesOf(warlordsNPC)
-                                                               .excludingAlliedMobs()
-                                                               .filter(p -> !arenaOnePlayers.contains(p))
-                                                               .limit(limit)
-                                                               .stream().toList();
-            List<WarlordsEntity> arenaThreePlayers = PlayerFilter.playingGame(game)
-                                                                 .aliveEnemiesOf(warlordsNPC)
-                                                                 .excludingAlliedMobs()
-                                                                 .filter(p -> !arenaOnePlayers.contains(p))
-                                                                 .filter(p -> !arenaTwoPlayers.contains(p))
-                                                                 .limit(limit)
-                                                                 .stream().toList();
+            List<WarlordsEntity> arenaOnePlayers = PlayerFilter
+                    .playingGame(game)
+                    .aliveEnemiesOf(warlordsNPC)
+                    .excludingAlliedMobs()
+                    .limit(limit)
+                    .stream().toList();
+            List<WarlordsEntity> arenaTwoPlayers = PlayerFilter
+                    .playingGame(game)
+                    .aliveEnemiesOf(warlordsNPC)
+                    .excludingAlliedMobs()
+                    .filter(p -> !arenaOnePlayers.contains(p))
+                    .limit(limit)
+                    .stream().toList();
+            List<WarlordsEntity> arenaThreePlayers = PlayerFilter
+                    .playingGame(game)
+                    .aliveEnemiesOf(warlordsNPC)
+                    .excludingAlliedMobs()
+                    .filter(p -> !arenaOnePlayers.contains(p))
+                    .filter(p -> !arenaTwoPlayers.contains(p))
+                    .limit(limit)
+                    .stream().toList();
 
             // tp players
             arenaShift.teleportPlayersToArenaOne(arenaOnePlayers);
@@ -604,18 +601,15 @@ public class Lilium extends AbstractMob implements BossMob {
                     }
                 }
             }.runTaskTimer(100, 0);
-        }
-        );
+        });
 
         phaseSeven = new BossAbilityPhase(warlordsNPC, 30, () -> {
             triggerKillTrapSequence(18);
-        }
-        );
+        });
 
         phaseEight = new BossAbilityPhase(warlordsNPC, 25, () -> {
             crystalProtectionAbility(9);
-        }
-        );
+        });
 
         phaseNine = new BossAbilityPhase(warlordsNPC, 20, () -> {
             // raining swords + 2 targets become heroes phase
@@ -624,9 +618,9 @@ public class Lilium extends AbstractMob implements BossMob {
             warlordsNPC.addSpeedModifier(warlordsNPC, "Lilium Slowness", -99, 30 * 20);
 
             List<WarlordsEntity> protectors = PlayerFilter.playingGame(warlordsNPC.getGame())
-                                                          .aliveEnemiesOf(warlordsNPC)
-                                                          .excludingAlliedMobs()
-                                                          .limit(2).stream().toList();
+                    .aliveEnemiesOf(warlordsNPC)
+                    .excludingAlliedMobs()
+                    .limit(2).stream().toList();
 
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < protectors.size(); i++) {
@@ -1115,23 +1109,25 @@ public class Lilium extends AbstractMob implements BossMob {
         PlayerFilter.entitiesAround(warlordsNPC, 28, 28, 28)
                     .aliveEnemiesOf(warlordsNPC)
                     .forEach(enemy -> {
-                                enemy.addInstance(InstanceBuilder.damage()
-                                                                 .cause("Sequence Fail")
-                                                                 .source(warlordsNPC)
-                                                                 .min(4000)
-                                                                 .max(4500)
-                                                                 .flags(InstanceFlags.TRUE_DAMAGE)
+                                enemy.addInstance(InstanceBuilder
+                                        .damage()
+                                        .cause("Sequence Fail")
+                                        .source(warlordsNPC)
+                                        .min(4000)
+                                        .max(4500)
+                                        .flags(InstanceFlags.TRUE_DAMAGE)
                                 );
 
                                 new GameRunnable(warlordsNPC.getGame()) {
                                     @Override
                                     public void run() {
-                                        enemy.addInstance(InstanceBuilder.damage()
-                                                                         .cause("Conduit Curse")
-                                                                         .source(warlordsNPC)
-                                                                         .min(250)
-                                                                         .max(350)
-                                                                         .flags(InstanceFlags.TRUE_DAMAGE)
+                                        enemy.addInstance(InstanceBuilder
+                                                .damage()
+                                                .cause("Conduit Curse")
+                                                .source(warlordsNPC)
+                                                .min(250)
+                                                .max(350)
+                                                .flags(InstanceFlags.TRUE_DAMAGE)
                                         );
                                         if (enemy.getLocation().getY() < 45 || conduitsFive.failed() || conduitsFive.isCompleted()) {
                                             this.cancel();
@@ -1142,10 +1138,11 @@ public class Lilium extends AbstractMob implements BossMob {
                     );
 
         // heal boss
-        warlordsNPC.addInstance(InstanceBuilder.healing()
-                                               .cause("Sequence Fail")
-                                               .source(warlordsNPC)
-                                               .value(200000)
+        warlordsNPC.addInstance(InstanceBuilder
+                .healing()
+                .cause("Sequence Fail")
+                .source(warlordsNPC)
+                .value(200000)
         );
     }
 
@@ -1160,12 +1157,13 @@ public class Lilium extends AbstractMob implements BossMob {
                     .aliveEnemiesOf(warlordsNPC)
                     .forEach(player -> {
                         EffectUtils.strikeLightning(player.getLocation(), false);
-                        player.addInstance(InstanceBuilder.damage()
-                                                          .cause("Petal Despair")
-                                                          .source(warlordsNPC)
-                                                          .min(2500)
-                                                          .max(3500)
-                                                          .flags(InstanceFlags.TRUE_DAMAGE)
+                        player.addInstance(InstanceBuilder
+                                .damage()
+                                .cause("Petal Despair")
+                                .source(warlordsNPC)
+                                .min(2500)
+                                .max(3500)
+                                .flags(InstanceFlags.TRUE_DAMAGE)
                         );
                     });
     }
