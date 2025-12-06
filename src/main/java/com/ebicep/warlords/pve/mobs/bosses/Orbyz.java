@@ -59,7 +59,7 @@ public class Orbyz extends AbstractMob implements BossMob {
         super(
                 spawnLocation,
                 "Orbyz",
-                240000,
+                230000,
                 0.3f,
                 40,
                 1200,
@@ -234,7 +234,7 @@ public class Orbyz extends AbstractMob implements BossMob {
                     if (event.getSource().getCooldownManager().hasCooldownFromName("Empowering Allies")) {
                         currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 1.2f);
                     } else {
-                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 0.1f);
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 0.2f);
                     }
                 }
         ));
