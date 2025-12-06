@@ -56,7 +56,7 @@ public class LightningBoltBranch extends AbstractUpgradeBranch<LightningBolt> {
                 """
                         +10 Energy cost
                         
-                        The first target hit takes 40% more damage, each subsequent enemy hit increases damage by an additional 10%.
+                        The first target hit takes 40% more damage, each subsequent enemy hit increases damage by an additional 10% up to 10 hits.
                         """,
                 50000,
                 () -> {
