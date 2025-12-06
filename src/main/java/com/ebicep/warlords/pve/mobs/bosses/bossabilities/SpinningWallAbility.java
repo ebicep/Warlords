@@ -101,7 +101,7 @@ public class SpinningWallAbility {
                 drawDiameterWall(w, center, dx, dz, arenaRadius);
 
                 // Optional damage along the diameter bandwidth
-                if (doDamage && damagePerTick > 0) {
+                if (doDamage && damagePerTick > 0 && ticks > 10) {
                     applyDamageAlongDiameter(center, dx, dz, arenaRadius);
                 }
 

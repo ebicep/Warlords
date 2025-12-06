@@ -290,7 +290,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
         phaseOne = new BossAbilityPhase(warlordsNPC, 90, () -> {
             preventDamagePhase = true;
             preventMinions = true;
-            damageController.closeWindow();
+            toggleDamageWindow();
             ChatUtils.sendTitleToGamePlayers(
                     warlordsNPC.getGame(),
                     Component.empty(),
@@ -333,7 +333,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
         phaseTwo = new BossAbilityPhase(warlordsNPC, 70, () -> {
             preventDamagePhase = true;
             preventMinions = true;
-            damageController.closeWindow();
+            toggleDamageWindow();
             ChatUtils.sendTitleToGamePlayers(
                     warlordsNPC.getGame(),
                     Component.empty(),
@@ -480,7 +480,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
                         meteorMarkersAbility.start(warlordsNPC.getGame());
                     }
 
-                    if (t % 1001 == 0) {
+                    if (t % 901 == 0) {
                         this.cancel();
                     }
                 }
@@ -491,7 +491,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
         phaseFour = new BossAbilityPhase(warlordsNPC, 30, () -> {
             preventMinions = true;
             preventDamagePhase = true;
-            damageController.closeWindow();
+            toggleDamageWindow();
             ChatUtils.sendTitleToGamePlayers(
                     warlordsNPC.getGame(),
                     Component.empty(),
@@ -674,7 +674,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
             chasingOrbsAbility.start(warlordsNPC.getGame());
         }
 
-        if (ticksElapsed % 400 == 0 && ticksElapsed > 0 && !preventDamagePhase) {
+        if (ticksElapsed % 360 == 0 && ticksElapsed > 0 && !preventDamagePhase) {
             damageController.openWindow(10 * 20);
             PlayerFilter.playingGame(warlordsNPC.getGame())
                         .warlordPlayersFirst()
@@ -705,6 +705,15 @@ public class OneOfNine extends AbstractMob implements BossMob {
         centerSwordManager.stop();
         damageController.closeWindow();
         arenaCollapseAbility.stop();
+    }
+
+    private void toggleDamageWindow() {
+        new GameRunnable(warlordsNPC.getGame()) {
+            @Override
+            public void run() {
+                damageController.closeWindow();
+            }
+        }.runTaskLater(10);
     }
 
     private void rainSwordDrop() {
