@@ -1,11 +1,9 @@
 package com.ebicep.warlords.pve.bountysystem;
 
 import com.ebicep.warlords.pve.bountysystem.bounties.*;
+import com.ebicep.warlords.pve.bountysystem.bounties.boltaroevent.*;
 import com.ebicep.warlords.pve.bountysystem.rewards.*;
-import com.ebicep.warlords.pve.bountysystem.rewards.events.GardenOfHesperides1;
-import com.ebicep.warlords.pve.bountysystem.rewards.events.GardenOfHesperides2;
-import com.ebicep.warlords.pve.bountysystem.rewards.events.LibraryArchives1;
-import com.ebicep.warlords.pve.bountysystem.rewards.events.LibraryArchives2;
+import com.ebicep.warlords.pve.bountysystem.rewards.events.*;
 
 import java.util.Arrays;
 import java.util.function.Supplier;
@@ -13,6 +11,7 @@ import java.util.stream.Stream;
 
 public enum Bounty {
 
+    // Daily bounties
     SLAYER_I(SlayerI.class, SlayerI::new),
     SLAYER_II(SlayerII.class, SlayerII::new),
     CHARMING_I(CharmingI.class, CharmingI::new),
@@ -36,6 +35,7 @@ public enum Bounty {
     ADVANCE_I(AdvanceI.class, AdvanceI::new),
     ADVANCE_II(AdvanceII.class, AdvanceII::new),
     CHALLENGE_I(ChallengeI.class, ChallengeI::new),
+    // Weekly bounties
     CHALLENGE_II(ChallengeII.class, ChallengeII::new),
     RECOUP_I(RecoupI.class, RecoupI::new),
     SALVAGE_III(SalvageIII.class, SalvageIII::new),
@@ -59,6 +59,7 @@ public enum Bounty {
     NONCOMPLIANCE_I(NoncomplianceI.class, NoncomplianceI::new),
     FLAWLESS_V(FlawlessV.class, FlawlessV::new),
     CHALLENGE_III(ChallengeIII.class, ChallengeIII::new),
+    // Lifetime bounties
     CHALLENGE_IV(ChallengeIV.class, ChallengeIV::new),
     CHALLENGE_V(ChallengeV.class, ChallengeV::new),
     CHALLENGE_VI(ChallengeVI.class, ChallengeVI::new),
@@ -83,7 +84,18 @@ public enum Bounty {
     ENTHRALL_I(EnthrallI.class, EnthrallI::new),
     MEND_I(MendI.class, MendI::new),
     AMASS_I(AmassI.class, AmassI::new),
-    // garden of hesperides event
+    // Fighters Glory event
+    BOLTAROS_BANE_I(BoltarosBaneI.class, BoltarosBaneI::new),
+    BOLTARO_AND_GOLIATH_I(BoltaroAndGoliathI.class, BoltaroAndGoliathI::new),
+    BONANZA_FLAWLESS_I(BonanzaFlawlessI.class, BonanzaFlawlessI::new),
+    EXTERMINATOR_I(ExterminatorI.class, ExterminatorI::new),
+    HUNT_LAIR_I(HuntLairI.class, HuntLairI::new),
+    INTO_THE_SHADOW_I(IntoTheShadowI.class, IntoTheShadowI::new),
+    LAIR_FLAWLESS_I(LairFlawlessI.class, LairFlawlessI::new),
+    PUSSY_I(PussyI.class, PussyI::new),
+    TAKE_MY_TITLE_III(TakeMyTitleIII.class, TakeMyTitleIII::new),
+    BOLTAROS_ADVANCE_I(BoltarosAdvanceI.class, BoltarosAdvanceI::new),
+    // Garden of Hesperides event
     ACROPOLIS_SLAYER_I(AcropolisSlayerI.class, AcropolisSlayerI::new),
     STATE_OF_MIND_I(StateOfMindI.class, StateOfMindI::new),
     TERAS_TORMENT_I(TerasTormentI.class, TerasTormentI::new),
@@ -94,7 +106,7 @@ public enum Bounty {
     TARTARUS_FLAWLESS_I(TartarusFlawlessI.class, TartarusFlawlessI::new),
     WITHIN_THE_TIME_I(WithinTheTimeI.class, WithinTheTimeI::new),
     TAKE_MY_TITLE_I(TakeMyTitleI.class, TakeMyTitleI::new),
-    // library archives event
+    // Library Archives event
     ARCHIVIST_HUNTER_I(ArchivistHunterI.class, ArchivistHunterI::new),
     CODEX_COLLECTOR_I(CodexCollectorI.class, CodexCollectorI::new),
     GRIMOIRES_GRIEF_I(GrimoiresGriefI.class, GrimoiresGriefI::new),
@@ -138,16 +150,21 @@ public enum Bounty {
         LIFETIME_2(getBountyFrom(LifetimeRewardSpendable2.class)),
         LIFETIME_3(getBountyFrom(LifetimeRewardSpendable3.class)),
         LIFETIME_ALL(Stream.of(LIFETIME_1, LIFETIME_2, LIFETIME_3).flatMap(bountyGroup -> Arrays.stream(bountyGroup.bounties)).toArray(Bounty[]::new)),
+        EVENT_FIGHTERS_GLORY_1(getBountyFrom(FightersGloryReward1.class)),
+        EVENT_FIGHTERS_GLORY_2(getBountyFrom(FightersGloryReward2.class)),
+        EVENT_FIGHTERS_GLORY_ALL(Stream.of(EVENT_FIGHTERS_GLORY_1, EVENT_FIGHTERS_GLORY_2)
+                .flatMap(bountyGroup -> Arrays.stream(bountyGroup.bounties))
+                .toArray(Bounty[]::new)),
         EVENT_GARDEN_OF_HESPERIDES_1(getBountyFrom(GardenOfHesperides1.class)),
         EVENT_GARDEN_OF_HESPERIDES_2(getBountyFrom(GardenOfHesperides2.class)),
         EVENT_GARDEN_OF_HESPERIDES_ALL(Stream.of(EVENT_GARDEN_OF_HESPERIDES_1, EVENT_GARDEN_OF_HESPERIDES_2)
-                                             .flatMap(bountyGroup -> Arrays.stream(bountyGroup.bounties))
-                                             .toArray(Bounty[]::new)),
+                .flatMap(bountyGroup -> Arrays.stream(bountyGroup.bounties))
+                .toArray(Bounty[]::new)),
         EVENT_LIBRARY_ARCHIVES_1(getBountyFrom(LibraryArchives1.class)),
         EVENT_LIBRARY_ARCHIVES_2(getBountyFrom(LibraryArchives2.class)),
         EVENT_LIBRARY_ARCHIVES_ALL(Stream.of(EVENT_LIBRARY_ARCHIVES_1, EVENT_LIBRARY_ARCHIVES_2)
-                                         .flatMap(bountyGroup -> Arrays.stream(bountyGroup.bounties))
-                                         .toArray(Bounty[]::new)),
+                .flatMap(bountyGroup -> Arrays.stream(bountyGroup.bounties))
+                .toArray(Bounty[]::new)),
 
         ;
 

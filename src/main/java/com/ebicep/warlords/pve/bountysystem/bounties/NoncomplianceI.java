@@ -18,7 +18,7 @@ public class NoncomplianceI extends AbstractBounty implements TracksDuringGame, 
 
     @Override
     public String getName() {
-        return "Separation";
+        return "Noncompliance";
     }
 
     @Override
