@@ -92,7 +92,7 @@ public enum Bounty {
     HUNT_LAIR_I(HuntLairI.class, HuntLairI::new),
     INTO_THE_SHADOW_I(IntoTheShadowI.class, IntoTheShadowI::new),
     LAIR_FLAWLESS_I(LairFlawlessI.class, LairFlawlessI::new),
-    PUSSY_I(PussyI.class, PussyI::new),
+    COWARD_I(CowardI.class, CowardI::new),
     TAKE_MY_TITLE_III(TakeMyTitleIII.class, TakeMyTitleIII::new),
     BOLTAROS_ADVANCE_I(BoltarosAdvanceI.class, BoltarosAdvanceI::new),
     // Garden of Hesperides event

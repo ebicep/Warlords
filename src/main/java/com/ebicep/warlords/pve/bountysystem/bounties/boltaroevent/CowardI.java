@@ -12,7 +12,7 @@ import com.ebicep.warlords.pve.bountysystem.trackers.TracksDuringGame;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import org.springframework.data.annotation.Transient;
 
-public class PussyI extends AbstractBounty implements TracksDuringGame, EventCost, FightersGloryReward2 {
+public class CowardI extends AbstractBounty implements TracksDuringGame, EventCost, FightersGloryReward2 {
 
     @Transient
     private int secondsInSafeZone = 0;
@@ -21,7 +21,7 @@ public class PussyI extends AbstractBounty implements TracksDuringGame, EventCos
 
     @Override
     public String getName() {
-        return "Pussy";
+        return "Coward";
     }
 
     @Override
@@ -36,7 +36,7 @@ public class PussyI extends AbstractBounty implements TracksDuringGame, EventCos
 
     @Override
     public Bounty getBounty() {
-        return Bounty.PUSSY_I;
+        return Bounty.COWARD_I;
     }
 
     @Override
