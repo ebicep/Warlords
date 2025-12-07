@@ -5,7 +5,6 @@ import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.BoltaroBonanzaOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.BoltarosLairOption;
-import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
@@ -15,7 +14,6 @@ import com.ebicep.warlords.pve.bountysystem.rewards.events.FightersGloryReward2;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksPostGame;
 
 import java.util.EnumSet;
-import java.util.List;
 import java.util.Set;
 
 public class BoltaroAndGoliathI extends AbstractBounty implements TracksPostGame, EventCost, FightersGloryReward2 {
@@ -51,17 +49,17 @@ public class BoltaroAndGoliathI extends AbstractBounty implements TracksPostGame
         if (!game.getOptions().stream().anyMatch(option -> option instanceof BoltaroBonanzaOption || option instanceof BoltarosLairOption)) {
             return;
         }
-        List<Specializations> requiredSpecs = Classes.WARRIOR.subclasses;
-        Set<Specializations> foundSpecs = EnumSet.noneOf(Specializations.class);
+        Set<Specializations> requiredSpecs = EnumSet.of(
+                Specializations.BERSERKER,
+                Specializations.DEFENDER,
+                Specializations.REVENANT
+        );
         for (WarlordsPlayer player : game.warlordsPlayers().toList()) {
             if (!player.getTeam().equals(warlordsPlayer.getTeam())) {
                 continue;
             }
-            Specializations spec = player.getSpecClass();
-            if (requiredSpecs.equals(spec)) {
-                foundSpecs.add(spec);
-            }
-            if (foundSpecs.containsAll(requiredSpecs)) {
+            requiredSpecs.remove(player.getSpecClass());
+            if (requiredSpecs.isEmpty()) {
                 value++;
                 return;
             }
