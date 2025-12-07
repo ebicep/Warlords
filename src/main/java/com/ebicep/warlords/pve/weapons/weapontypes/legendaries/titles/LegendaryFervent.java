@@ -119,6 +119,10 @@ public class LegendaryFervent extends AbstractLegendaryWeapon implements Passive
                 if (event.isHealingInstance()) {
                     return;
                 }
+                if (player.getCooldownManager().hasCooldownFromName("Fervent Ability")) {
+                    return;
+                }
+
                 if (damageTaken.addAndGet(event.getValueBeforeAllReduction()) >= DAMAGE_TO_TAKE) {
                     damageTaken.set(0);
                     damageBoost.set(Math.min(MAX_STACKS, damageBoost.get() + 1));
@@ -139,8 +143,10 @@ public class LegendaryFervent extends AbstractLegendaryWeapon implements Passive
                                 },
                                 DURATION * 20
                         );
-                        regularCooldown.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
-                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getTitleName(), 1 + damageBoost.get() * DAMAGE_BOOST / 100f);
+                        regularCooldown.addModifier(
+                                Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE,
+                                (e, currentDamageValue) -> {
+                                    currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getTitleName(), 1 + damageBoost.get() * DAMAGE_BOOST / 100f);
                                 }
                         );
                         cooldown.set(regularCooldown);
@@ -189,19 +195,21 @@ public class LegendaryFervent extends AbstractLegendaryWeapon implements Passive
                                 cooldownManager -> {
                                 },
                                 (ABILITY_DURATION + ABILITY_DURATION_PER_UPGRADE * getTitleLevel()) * 20
-                        ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                        ).addModifier(
+                                Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE,
+                                (event, currentDamageValue) -> {
                                     if (!event.getSource().equals(player)) {
                                         return;
                                     }
                                     if (event.isHealingInstance()) {
                                         return;
                                     }
-                                    if (!event.getCause().contains("Strike") || event.getFlags().contains(InstanceFlags.IGNORE_FERVENT_TITLE)) {
+                                    if (!event.getCause().contains("Strike")) {
                                         return;
                                     }
 
                                     float strikeDamageBoost = 1 + (ABILITY_STRIKE_DAMAGE_BOOST + ABILITY_STRIKE_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel()) / 100f;
-                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getTitleName(), strikeDamageBoost);
+                                    currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getTitleName(), strikeDamageBoost);
                                 }
                         ));
                         passiveCooldown = 40 * GameRunnable.SECOND;

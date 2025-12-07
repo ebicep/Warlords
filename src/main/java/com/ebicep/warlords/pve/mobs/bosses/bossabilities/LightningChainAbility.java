@@ -124,8 +124,6 @@ public class LightningChainAbility {
         return running;
     }
 
-    /* ---------------- Internals ---------------- */
-
     private void drawChainParticles(World w, Location a, Location b) {
         Vector dir = b.toVector().subtract(a.toVector());
         double length = dir.length();
@@ -152,6 +150,9 @@ public class LightningChainAbility {
 
         // snap chain
         for (WarlordsEntity enemy : List.of(playerA, playerB)) {
+            if (playerA.isDead() || playerB.isDead()) {
+                return;
+            }
             enemy.addInstance(
                     InstanceBuilder.damage()
                             .cause("Chain Snap")

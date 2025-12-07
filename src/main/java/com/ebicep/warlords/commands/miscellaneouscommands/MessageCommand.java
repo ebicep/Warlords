@@ -9,6 +9,8 @@ import co.aikar.commands.annotation.Description;
 import co.aikar.commands.annotation.Flags;
 import co.aikar.commands.annotation.HelpCommand;
 import com.ebicep.warlords.commands.debugcommands.misc.MuteCommand;
+import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -30,6 +32,12 @@ public class MessageCommand extends BaseCommand {
         }
         if (player.getUniqueId().equals(target.getUniqueId())) {
             player.sendMessage(Component.text("You cannot message yourself!", NamedTextColor.RED));
+            return;
+        }
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(target);
+        List<UUID> ignored = databasePlayer.getIgnored();
+        if (ignored.contains(player.getUniqueId())) {
+            player.sendMessage(Component.text("This user has you ignored.", NamedTextColor.RED));
             return;
         }
 

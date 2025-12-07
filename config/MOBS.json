@@ -397,13 +397,13 @@
         "min_melee_damage": 1800.0,
         "max_melee_damage": 2500.0
       },
-      "CHESSKING": {
-        "name": "Chessking",
-        "max_health": 50000,
-        "walk_speed": 0.3,
+      "MAGMATIC_OOZE": {
+        "name": "Magmatic Ooze",
+        "max_health": 70000,
+        "walk_speed": 0.25,
         "damage_resistance": 30.0,
-        "min_melee_damage": 0.0,
-        "max_melee_damage": 0.0
+        "min_melee_damage": 100.0,
+        "max_melee_damage": 200.0
       },
       "ILLUMINA": {
         "name": "Illumina",
@@ -413,14 +413,6 @@
         "min_melee_damage": 2000.0,
         "max_melee_damage": 3000.0
       },
-      "TORMENT": {
-        "name": "Torment",
-        "max_health": 135000,
-        "walk_speed": 0.3,
-        "damage_resistance": 20.0,
-        "min_melee_damage": 1600.0,
-        "max_melee_damage": 2000.0
-      },
       "VOID": {
         "name": "Void",
         "max_health": 100000,
@@ -429,13 +421,53 @@
         "min_melee_damage": 3000.0,
         "max_melee_damage": 4000.0
       },
-      "MAGMATIC_OOZE": {
-        "name": "Magmatic Ooze",
-        "max_health": 70000,
+      "TORMENT": {
+        "name": "Torment",
+        "max_health": 135000,
+        "walk_speed": 0.3,
+        "damage_resistance": 20.0,
+        "min_melee_damage": 1600.0,
+        "max_melee_damage": 2000.0
+      },
+      "ONE_OF_NINE": {
+        "name": "One of Nine",
+        "max_health": 200000,
         "walk_speed": 0.25,
+        "damage_resistance": 40.0,
+        "min_melee_damage": 1200.0,
+        "max_melee_damage": 2500.0
+      },
+      "ORBYZ": {
+        "name": "Orbyz",
+        "max_health": 230000,
+        "walk_speed": 0.28,
+        "damage_resistance": 40.0,
+        "min_melee_damage": 1200.0,
+        "max_melee_damage": 2000.0
+      },
+      "LILIUM": {
+        "name": "Lilium",
+        "max_health": 280000,
+        "walk_speed": 0.38,
         "damage_resistance": 30.0,
-        "min_melee_damage": 100.0,
-        "max_melee_damage": 200.0
+        "min_melee_damage": 450.0,
+        "max_melee_damage": 600.0
+      },
+      "VEILKEEPER": {
+        "name": "Veilkeeper",
+        "max_health": 1500000,
+        "walk_speed": 0.24,
+        "damage_resistance": 30.0,
+        "min_melee_damage": 1500.0,
+        "max_melee_damage": 2000.0
+      },
+      "VANGUARD": {
+        "name": "Vanguard",
+        "max_health": 800000,
+        "walk_speed": 0.25,
+        "damage_resistance": 20.0,
+        "min_melee_damage": 2000.0,
+        "max_melee_damage": 2500.0
       },
       "ENAVURIS": {
         "name": "Enavuris",
@@ -444,6 +476,14 @@
         "damage_resistance": 20.0,
         "min_melee_damage": 745.0,
         "max_melee_damage": 985.0
+      },
+      "CHESSKING": {
+        "name": "Chessking",
+        "max_health": 50000,
+        "walk_speed": 0.3,
+        "damage_resistance": 30.0,
+        "min_melee_damage": 0.0,
+        "max_melee_damage": 0.0
       },
       "BOLTARO_SHADOW": {
         "name": "Shadow Boltaro",
@@ -1340,46 +1380,6 @@
         "damage_resistance": 0.0,
         "min_melee_damage": 3000.0,
         "max_melee_damage": 4000.0
-      },
-      "ONE_OF_NINE": {
-        "name": "One of Nine",
-        "max_health": 200000,
-        "walk_speed": 0.25,
-        "damage_resistance": 40.0,
-        "min_melee_damage": 1200.0,
-        "max_melee_damage": 2500.0
-      },
-      "ORBYZ": {
-        "name": "Orbyz",
-        "max_health": 250000,
-        "walk_speed": 0.28,
-        "damage_resistance": 40.0,
-        "min_melee_damage": 1200.0,
-        "max_melee_damage": 2000.0
-      },
-      "LILIUM": {
-        "name": "Lilium",
-        "max_health": 300000,
-        "walk_speed": 0.36,
-        "damage_resistance": 30.0,
-        "min_melee_damage": 1000.0,
-        "max_melee_damage": 1500.0
-      },
-      "VEILKEEPER": {
-        "name": "Veilkeeper",
-        "max_health": 350000,
-        "walk_speed": 0.24,
-        "damage_resistance": 30.0,
-        "min_melee_damage": 1500.0,
-        "max_melee_damage": 2000.0
-      },
-      "VANGUARD": {
-        "name": "Vanguard",
-        "max_health": 500000,
-        "walk_speed": 0.25,
-        "damage_resistance": 20.0,
-        "min_melee_damage": 2000.0,
-        "max_melee_damage": 2500.0
       },
       "ECHO_OF_BLADES": {
         "name": "Echo of Blades",

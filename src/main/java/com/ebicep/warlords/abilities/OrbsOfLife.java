@@ -6,6 +6,7 @@ import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
@@ -138,6 +139,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
                                 for (WarlordsEntity nearPlayer : PlayerFilter
                                         .entitiesAround(teammateToHeal, healRadius, healRadius, healRadius)
                                         .aliveEnemiesOf(teammateToHeal)
+                                        .limit(20)
                                 ) {
                                     Utils.playGlobalSound(nearPlayer.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1, 1);
                                     EffectUtils.displayParticle(Particle.EXPLOSION, nearPlayer.getLocation(), 1);
@@ -175,6 +177,9 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
                     if (event.getFlags().contains(InstanceFlags.NO_HEALING_ORBS) || event.getFlags().contains(InstanceFlags.RECURSIVE)) {
                         return;
                     }
+                    if (data.getSpawnedOrbs().size() > 30) {
+                        return;
+                    }
                     spawnOrbs(wp, event.getWarlordsEntity(), ability, orbsOfLifeCooldown);
                     if (ability.equals("Crippling Strike")) {
                         spawnOrbs(wp, event.getWarlordsEntity(), ability, orbsOfLifeCooldown);
@@ -190,7 +195,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
                         return;
                     }
                     Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.08f, 0.7f);
-            EffectUtils.displayParticle(Particle.HAPPY_VILLAGER, wp.getLocation().add(0, 1.5, 0), 10, 0.8, 0, 0.8, 0.2);
+                    EffectUtils.displayParticle(Particle.HAPPY_VILLAGER, wp.getLocation().add(0, 1.5, 0), 10, 0.8, 0, 0.8, 0.2);
                     //setting target player to move towards (includes self)
                     if (wp.isInPve()) {
                         data.getSpawnedOrbs().forEach(orb -> {
