@@ -23,7 +23,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.UUID;
 
-public class LegendaryJuggernaut extends AbstractLegendaryWeapon implements EventTitle {
+public class LegendaryJuggernaut extends AbstractLegendaryWeapon implements FightersGloryTitle {
 
     public static final int DAMAGE_BOOST = 10;
     public static final float DAMAGE_BOOST_INCREASE_PER_UPGRADE = 1;

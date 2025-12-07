@@ -26,7 +26,7 @@ public class DevelopII extends AbstractBounty implements TracksPostGame, WeeklyC
 
     @Override
     public int getTarget() {
-        return 500;
+        return 300;
     }
 
     @Override
