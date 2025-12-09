@@ -59,7 +59,7 @@ public class PactOfProtection implements SpecBoostManager.SpecBoost<PactOfProtec
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(MysticalBarrier.class).forEach(mysticalBarrier -> {
-                mysticalBarrier.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", -mysticalBarrierCooldownReductionPercent / 100);
+                mysticalBarrier.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", -mysticalBarrierCooldownReductionPercent / 100);
             });
         }
 
@@ -73,7 +73,7 @@ public class PactOfProtection implements SpecBoostManager.SpecBoost<PactOfProtec
                 return;
             }
             regularCooldown.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (e, currentDamageValue) -> {
-                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
                         getStringName(),
                         AbstractAbility.convertToDivisionDecimal(targetDamageReductionPercent)
                 );
@@ -94,7 +94,7 @@ public class PactOfProtection implements SpecBoostManager.SpecBoost<PactOfProtec
                     })
             );
             pactCooldown.addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
-                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
                         getStringName(),
                         AbstractAbility.convertToMultiplicationDecimal(selfDamageIncreasePercent)
                 );

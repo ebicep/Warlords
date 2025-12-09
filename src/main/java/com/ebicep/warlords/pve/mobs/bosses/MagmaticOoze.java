@@ -141,7 +141,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
                 false
         ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     if (warlordsNPC.getEntity().isInsideVehicle()) {
-                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 0.6f);
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, 0.6f);
                     }
                 }
         ));
@@ -500,7 +500,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
             // increase heat / damage on every use
             if (timesUsed++ <= 40) { // ~700 max at split 0
                 damageIncrese += .05f;
-                damageValues.heatAuraDamage.value().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, name, damageIncrese);
+                damageValues.heatAuraDamage.value().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, name, damageIncrese);
             }
             PlayerFilter.entitiesAround(wp, hitbox, hitbox, hitbox)
                         .aliveEnemiesOf(wp)

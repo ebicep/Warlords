@@ -23,7 +23,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.UUID;
 
-public class LegendaryJuggernaut extends AbstractLegendaryWeapon implements EventTitle {
+public class LegendaryJuggernaut extends AbstractLegendaryWeapon implements FightersGloryTitle {
 
     public static final int DAMAGE_BOOST = 10;
     public static final float DAMAGE_BOOST_INCREASE_PER_UPGRADE = 1;
@@ -86,7 +86,7 @@ public class LegendaryJuggernaut extends AbstractLegendaryWeapon implements Even
         super.applyToWarlordsPlayer(player, pveOption);
 
         player.getGame().registerEvents(new Listener() {
-            final FloatModifiable.FloatModifier modifier = player.getHealth().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+            final FloatModifiable.FloatModifier modifier = player.getHealth().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,
                     getTitleName() + " (Base)", 0
             );
 
@@ -116,7 +116,7 @@ public class LegendaryJuggernaut extends AbstractLegendaryWeapon implements Even
                     for (int i = KILL_MILESTONES.size() - 1; i >= 0; i--) {
                         int killMilestone = KILL_MILESTONES.get(i);
                         if (playerKills >= killMilestone) {
-                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getTitleName(), 1 + (getDamageBoost() * (i + 1)) / 100f);
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getTitleName(), 1 + (getDamageBoost() * (i + 1)) / 100f);
                             return;
                         }
                     }

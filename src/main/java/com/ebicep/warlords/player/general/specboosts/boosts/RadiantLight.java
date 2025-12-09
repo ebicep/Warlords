@@ -42,7 +42,7 @@ public class RadiantLight implements SpecBoostManager.SpecBoost<RadiantLight> {
         public void apply(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getAbilitiesMatching(RayOfLight.class).forEach(rayOfLight -> {
                 rayOfLight.getHealValues().getRayHealing().forEachValue(floatModifiable ->
-                        floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", rayOfLightHealingIncreasePercent / 100)
+                        floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", rayOfLightHealingIncreasePercent / 100)
                 );
             });
         }

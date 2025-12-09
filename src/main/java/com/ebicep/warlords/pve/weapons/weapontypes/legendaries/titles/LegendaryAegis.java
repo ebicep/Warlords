@@ -133,7 +133,7 @@ public class LegendaryAegis extends AbstractLegendaryWeapon implements PassiveCo
                 }
         ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
             if (barrierActive()) {
-                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getTitleName(), 1f + DMG_BONUS_WHILE_BARRIER_PERCENT / 100f);
+                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getTitleName(), 1f + DMG_BONUS_WHILE_BARRIER_PERCENT / 100f);
             }
                 }
         ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {

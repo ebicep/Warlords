@@ -64,7 +64,7 @@ public class Clairvoyance implements SpecBoostManager.SpecBoost<Clairvoyance> {
                 } else if (ability instanceof HealingRain healingRain) {
                     healingRain.setTickDuration(healingRain.getTickDuration() - healingRainDurationDecreaseTicks);
                     healingRain.getHealValues().getRainHealing().forEachValue(floatModifiable ->
-                            floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", healingRainHealIncreasePercent / 100)
+                            floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", healingRainHealIncreasePercent / 100)
                     );
                 }
             }

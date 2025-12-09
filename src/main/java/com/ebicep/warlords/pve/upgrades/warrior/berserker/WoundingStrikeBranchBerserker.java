@@ -48,8 +48,8 @@ public class WoundingStrikeBranchBerserker extends AbstractUpgradeBranch<Woundin
                 () -> {
                     ability.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade Branch", -5);
                     Value.RangedValueCritable damage = ability.getDamageValues().getStrikeDamage();
-                    damage.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Master Upgrade Branch", .5f);
-                    damage.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Master Upgrade Branch", .5f);
+                    damage.min().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Master Upgrade Branch", .5f);
+                    damage.max().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Master Upgrade Branch", .5f);
                 }
         );
         masterUpgrade2 = new Upgrade(
@@ -74,7 +74,7 @@ public class WoundingStrikeBranchBerserker extends AbstractUpgradeBranch<Woundin
     @Override
     public void runOnce() {
         Value.RangedValueCritable damage = ability.getDamageValues().getStrikeDamage();
-        damage.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .5f);
-        damage.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .5f);
+        damage.min().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "PvE", .5f);
+        damage.max().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "PvE", .5f);
     }
 }

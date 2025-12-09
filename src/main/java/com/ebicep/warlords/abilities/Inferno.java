@@ -99,9 +99,9 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
                 WarlordsEntity hit = event.getWarlordsEntity();
                 int oldHitCount = hitCount.computeIfAbsent(hit, k -> 0);
                 hitCount.put(hit, oldHitCount + 1);
-                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, convertToMultiplicationDecimal(Math.min(50, 5 * oldHitCount)));
+                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, convertToMultiplicationDecimal(Math.min(50, 5 * oldHitCount)));
             } else if (pveMasterUpgrade2) {
-                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 1.2f);
+                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, 1.2f);
             }
                 }
         ).addModifier(Modifier.MODIFY_OUTGOING_CRIT_CHANCE, (event, currentCritChance) -> {

@@ -34,7 +34,7 @@ public class ElementalShield extends SpecialOmegaBuckler implements AppliesToWar
 
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {
-        warlordsPlayer.getHealth().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, getName(), 0.125f);
+        warlordsPlayer.getHealth().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, getName(), 0.125f);
     }
 
 }

@@ -43,7 +43,7 @@ public class InspiringPresenceBranch extends AbstractUpgradeBranch<InspiringPres
                         """,
                 50000,
                 () -> {
-                    ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Transcendent Presence", 0.9f);
+                    ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Transcendent Presence", 0.9f);
                 }
         );
         masterUpgrade2 = new Upgrade(
@@ -58,7 +58,7 @@ public class InspiringPresenceBranch extends AbstractUpgradeBranch<InspiringPres
                         """,
                 50000,
                 () -> {
-                    ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Resilient Presence", 0.8f);
+                    ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Resilient Presence", 0.8f);
                     ability.setSpeedBuff(ability.getSpeedBuff() + 25);
                     abilityTree.getWarlordsPlayer().getSpec().setDamageResistance(abilityTree.getWarlordsPlayer().getSpec().getDamageResistance() + 10);
                 }

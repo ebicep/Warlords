@@ -45,7 +45,7 @@ public class EnergyOversurge implements SpecBoostManager.SpecBoost<EnergyOversur
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getAbilitiesMatching(EnergySeerLuminary.class).forEach(energySeer -> {
-                energySeer.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", -energySeerCooldownReductionPercent / 100);
+                energySeer.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", -energySeerCooldownReductionPercent / 100);
                 energySeer.setEnergyRestore(energySeer.getEnergyRestore() + energySeerAdditionalEnergyGrant);
                 energySeer.setEpsDecrease((int) (energySeer.getEpsDecrease() * (1 + energyLostIncreasePercent / 100)));
             });

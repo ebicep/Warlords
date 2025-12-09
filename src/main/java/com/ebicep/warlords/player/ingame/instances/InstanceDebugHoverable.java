@@ -40,14 +40,22 @@ public class InstanceDebugHoverable {
         namedValue("Source", event.getSource().getName());
         grayBar();
         namedValue("Ability", event.getCause());
-        grayDash();
-        namedValue("Min", event.getMin().getCalculatedValue());
-        grayBar();
-        namedValue("Max", event.getMax().getCalculatedValue());
-        grayBar();
-        namedValue("Crit Chance", event.getCritChance().getCalculatedValue());
-        grayBar();
-        namedValue("Crit Multiplier", event.getCritMultiplier().getCalculatedValue());
+        append(InstanceDebugHoverable.LevelBuilder
+                .create(1)
+                .prefix(ComponentBuilder.create("Min: ", NamedTextColor.LIGHT_PURPLE))
+                .value(event.getMin()));
+        append(InstanceDebugHoverable.LevelBuilder
+                .create(1)
+                .prefix(ComponentBuilder.create("Max: ", NamedTextColor.LIGHT_PURPLE))
+                .value(event.getMax()));
+        append(InstanceDebugHoverable.LevelBuilder
+                .create(1)
+                .prefix(ComponentBuilder.create("Crit Chance: ", NamedTextColor.LIGHT_PURPLE))
+                .value(event.getCritChance()));
+        append(InstanceDebugHoverable.LevelBuilder
+                .create(1)
+                .prefix(ComponentBuilder.create("Crit Multiplier: ", NamedTextColor.LIGHT_PURPLE))
+                .value(event.getCritMultiplier()));
         if (!event.getFlags().isEmpty()) {
             grayDash();
             namedValue("Flags", "" + event.getFlags());

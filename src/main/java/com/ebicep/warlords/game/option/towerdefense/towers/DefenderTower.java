@@ -190,7 +190,7 @@ public class DefenderTower extends AbstractTower implements Upgradeable.Path2 {
                 warlordsNPC.setDamageResistance(warlordsNPC.getSpec().getDamageResistance() + 10);
             }
             if (increasedHealth) {
-                warlordsNPC.getHealth().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Increased Health", .1f);
+                warlordsNPC.getHealth().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Increased Health", .1f);
             }
         }
 

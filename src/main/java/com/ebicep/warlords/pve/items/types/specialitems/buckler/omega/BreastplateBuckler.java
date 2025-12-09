@@ -62,7 +62,7 @@ public class BreastplateBuckler extends SpecialOmegaBuckler implements AppliesTo
                         AbstractMob mob = warlordsNPC.getMob();
                         float damageReduction = Math.max(1 - (repeatedAttacks.getOrDefault(mob, 0) * 0.02f), 0.8f);
                         repeatedAttacks.merge(mob, 1, Integer::sum);
-                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getName(), damageReduction);
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getName(), damageReduction);
                     }
                 }
         ));

@@ -89,7 +89,7 @@ public class RallyingPresence implements SpecBoostManager.SpecBoost<RallyingPres
                 return;
             }
             regularCooldown.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (e, currentDamageValue) -> {
-                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
                         getStringName(),
                         AbstractAbility.convertToDivisionDecimal(inspiringPresenceDamageReductionPercent)
                 );

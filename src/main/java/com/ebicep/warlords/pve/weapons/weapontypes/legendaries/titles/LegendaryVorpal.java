@@ -123,7 +123,7 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon implements PassiveC
                                 cooldownManager.hasCooldownFromName("Earthliving Weapon") && ability.equals("Earthliving Weapon")
                 ) {
                     event.applyToMinMax(floatModifiable ->
-                            floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getTitleName(), meleeDamageBoost)
+                            floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getTitleName(), meleeDamageBoost)
                     );
                     return;
                 }
@@ -137,13 +137,13 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon implements PassiveC
                         cooldownManager.hasCooldownFromName("Soulbinding Weapon")
                 ) {
                     event.applyToMinMax(floatModifiable ->
-                            floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getTitleName(), meleeDamageBoost)
+                            floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getTitleName(), meleeDamageBoost)
                     );
                 }
                 if (meleeCounter % 4 == 0) {
                     player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
                     event.applyToMinMax(floatModifiable ->
-                            floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getTitleName(), 7)
+                            floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getTitleName(), 7)
                     );
                     event.getFlags().add(InstanceFlags.TRUE_DAMAGE);
                 }

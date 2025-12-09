@@ -52,7 +52,7 @@ public class EnergySeerBranchLuminary extends AbstractUpgradeBranch<EnergySeerLu
                 () -> {
                     ability.setEpsDecrease(0);
                     ability.setTickDuration(ability.getTickDuration() + 100);
-                    ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Benevolent Gaze", 0.8f);
+                    ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Benevolent Gaze", 0.8f);
                 }
         );
     }

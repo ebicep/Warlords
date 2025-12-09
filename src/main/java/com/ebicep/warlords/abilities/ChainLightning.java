@@ -52,7 +52,7 @@ public class ChainLightning extends AbstractChain<ChainLightning, ChainLightning
                 })
         ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                     if (event.getSource().equals(giver)) {
-                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Aftershock", 1.3f);
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Aftershock", 1.3f);
                     }
                 }
         ).addModifier(Modifier.ON_ENEMY_DEATH, (event, currentDamageValue, isCrit, isKiller) -> {
@@ -123,7 +123,7 @@ public class ChainLightning extends AbstractChain<ChainLightning, ChainLightning
                 cooldownManager -> {},
                 damageReductionTickDuration
         ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
-            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name,
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name,
                             convertToDivisionDecimal(Math.min(hitCounter * damageReductionPerBounce.getCalculatedValue(), maxDamageReduction.getCalculatedValue()))
                     );
                 }

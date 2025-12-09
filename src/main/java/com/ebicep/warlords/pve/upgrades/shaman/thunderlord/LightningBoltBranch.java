@@ -27,7 +27,7 @@ public class LightningBoltBranch extends AbstractUpgradeBranch<LightningBolt> {
                         modifier.setModifier(value / 100);
                     }},
 
-                        ability.getProjectileSpeed().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Upgrade Branch", 0), 20f
+                        ability.getProjectileSpeed().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Upgrade Branch", 0), 20f
                 )
                 .addTo(treeA);
 

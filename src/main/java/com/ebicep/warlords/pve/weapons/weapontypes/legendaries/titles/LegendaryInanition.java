@@ -90,7 +90,7 @@ public class LegendaryInanition extends AbstractLegendaryWeapon implements Event
         ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     int debuffs = event.getWarlordsEntity().getCooldownManager().getDebuffCooldowns(true).size();
                     float damageBoost = 1 + Math.min(debuffs * debuffDamageBoost, maxDebuffDamageBoost);
-            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getTitleName(), damageBoost);
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getTitleName(), damageBoost);
                 }
         ));
     }

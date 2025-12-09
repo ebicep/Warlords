@@ -64,7 +64,7 @@ public class CripplingStrike extends AbstractStrike<CripplingStrike, CripplingSt
             }
         }.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
             currentDamageValue.addModifier(
-                    FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name,
+                    FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name,
                     crippleAmount,
                     contribution -> {
                         if (cripplingStrike != null) {

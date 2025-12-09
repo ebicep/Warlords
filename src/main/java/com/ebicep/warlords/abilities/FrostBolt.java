@@ -37,7 +37,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class FrostBolt extends AbstractPiercingProjectile<FrostBolt, FrostBolt.FrostBoltStats> implements WeaponAbilityIcon, Splash, Damages<FrostBolt.DamageValues> {
 
@@ -218,7 +217,7 @@ public class FrostBolt extends AbstractPiercingProjectile<FrostBolt, FrostBolt.F
                     .filterCooldownClass(SplinteredIce.class)
                     .stream()
                     .count();
-            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Splintered Ice", 1 + 0.08f * stacks);
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Splintered Ice", 1 + 0.08f * stacks);
         }));
         hit(projectile, shooter, toReduceBy, stats.getTargetsHit(), hit);
         hit.addSpeedModifier(shooter, "Splintered Ice", -35, 40);

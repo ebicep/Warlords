@@ -42,7 +42,7 @@ public class SoulRend implements SpecBoostManager.SpecBoost<SoulRend> {
         public void apply(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getAbilitiesMatching(FallenSouls.class).forEach(fallenSouls -> {
                 fallenSouls.getDamageValues().getFallenSoulDamage().forEachValue(floatModifiable ->
-                        floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", fallenSoulsDamageIncreasePercent / 100)
+                        floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", fallenSoulsDamageIncreasePercent / 100)
                 );
             });
         }

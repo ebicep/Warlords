@@ -85,7 +85,7 @@ public class LegendaryIncendiary extends AbstractLegendaryWeapon implements Even
         float critChanceBoost = CRIT_CHANCE_BOOST + CRIT_CHANCE_BOOST_INCREASE_PER_UPGRADE * getTitleLevel();
 
         player.getEnergyPerHit()
-              .addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, getTitleName(), (EPH_PERCENT_INCREASE + EPH_PERCENT_INCREASE_PER_UPGRADE * getTitleLevel()) / 100);
+              .addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, getTitleName(), (EPH_PERCENT_INCREASE + EPH_PERCENT_INCREASE_PER_UPGRADE * getTitleLevel()) / 100);
         player.getCooldownManager().addCooldown(new PermanentCooldown<>(
                 getTitleName(),
                 null,

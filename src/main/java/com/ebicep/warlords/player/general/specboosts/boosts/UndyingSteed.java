@@ -51,7 +51,7 @@ public class UndyingSteed implements SpecBoostManager.SpecBoost<UndyingSteed> {
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(CripplingStrike.class).forEach(cripplingStrike -> {
                 cripplingStrike.getDamageValues().getStrikeDamage().forEachValue(floatModifiable ->
-                        floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", cripplingStrikeDamageIncreasePercent / 100)
+                        floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", cripplingStrikeDamageIncreasePercent / 100)
                 );
             });
             for (HorseOption horseOption : warlordsEntity.getGame().getOption(HorseOption.class)) {

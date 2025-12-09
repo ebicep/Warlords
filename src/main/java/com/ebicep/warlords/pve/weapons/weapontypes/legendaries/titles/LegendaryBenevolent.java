@@ -63,7 +63,7 @@ public class LegendaryBenevolent extends AbstractLegendaryWeapon {
                 if (event.isHealingInstance() && event.getSource().equals(player)) {
                     float healingIncrease = 1 + (HEALING_INCREASE + HEALING_INCREASE_PER_UPGRADE * getTitleLevel()) / 100f;
                     event.applyToMinMax(floatModifiable ->
-                            floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getTitleName(), healingIncrease)
+                            floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getTitleName(), healingIncrease)
                     );
                 }
             }

@@ -49,7 +49,7 @@ public class AthenianAegis extends SpecialOmegaBuckler implements AppliesToWarlo
                 false
         ).addModifier(Modifier.MODIFY_OUTGOING_HEALING, (event, currentHealValue) -> {
                     int mobCount = pveOption.mobCount();
-            currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getName(), 1 + (mobCount * .005f));
+            currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getName(), 1 + (mobCount * .005f));
                 }
         ));
     }

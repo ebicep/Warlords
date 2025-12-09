@@ -448,7 +448,7 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
                         },
                         3 * 20
                 ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                    currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 0.75f);
+                    currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, 0.75f);
                         }
                 ));
             }
@@ -651,7 +651,7 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
                 }
             }.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                         if (currentDebuff.get() == Debuff.CRIPPLE) {
-                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 0.75f);
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, 0.75f);
                         }
                     }
             ).addModifier(Modifier.ON_INCOMING_DAMAGE, (event, currentDamageValue, isCrit) -> {
@@ -669,7 +669,7 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
                     }
             ).addModifier(Modifier.MODIFY_INCOMING_HEALING, (event, currentHealValue) -> {
                         if (currentDebuff.get() == Debuff.WOUND) {
-                            currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 0.75f);
+                            currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, 0.75f);
                         }
                     }
             ));

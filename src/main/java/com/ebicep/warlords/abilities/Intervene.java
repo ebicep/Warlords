@@ -161,7 +161,7 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
             wp.getCooldownManager().addCooldown(new RegularCooldown<>(name + " Damage", null, InterveneData.class, null, wp, CooldownTypes.BUFF, cooldownManager -> {
             }, tickDuration
             ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
                         name, (float) (1 + venes.stream().mapToDouble(InterveneData::getDamagePrevented).sum() / 100 * .01)
                 );
                     }

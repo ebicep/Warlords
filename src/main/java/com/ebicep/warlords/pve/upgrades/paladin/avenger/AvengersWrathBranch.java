@@ -44,7 +44,7 @@ public class AvengersWrathBranch extends AbstractUpgradeBranch<AvengersWrath> {
                 () -> {
                     ability.setHitRadius(ability.getHitRadius() * 2);
                     ability.setMaxTargets(ability.getMaxTargets() + 3);
-                    ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Avenger's Armageddon", 0.8f);
+                    ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Avenger's Armageddon", 0.8f);
                 }
         );
         masterUpgrade2 = new Upgrade(
@@ -57,7 +57,7 @@ public class AvengersWrathBranch extends AbstractUpgradeBranch<AvengersWrath> {
                         """,
                 50000,
                 () -> {
-                    ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Avenger's Vexation", 0.8f);
+                    ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Avenger's Vexation", 0.8f);
                 }
         );
     }

@@ -175,7 +175,7 @@ public class IceBlock implements SpecBoostManager.SpecBoost<IceBlock> {
                             }
                         };
                         cd.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (e, currentDamageValue) -> {
-                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
                                     getStringName(),
                                     AbstractAbility.convertToDivisionDecimal(recastDamageReductionPercent)
                             );

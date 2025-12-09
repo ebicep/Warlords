@@ -56,10 +56,10 @@ public class Syringe implements SpecBoostManager.SpecBoost<Syringe> {
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(WaterBolt.class).forEach(waterBolt -> {
                 waterBolt.getDamageValues().getBoltDamage().forEachValue(floatModifiable ->
-                        floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", -waterBoltStatsDecreasePercent / 100)
+                        floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", -waterBoltStatsDecreasePercent / 100)
                 );
                 waterBolt.getHealValues().getBoltHealing().forEachValue(floatModifiable ->
-                        floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", -waterBoltStatsDecreasePercent / 100)
+                        floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", -waterBoltStatsDecreasePercent / 100)
                 );
                 waterBolt.getDirectHitMultiplier().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", waterBoltDirectHitHealingIncreasePercent);
             });

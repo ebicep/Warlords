@@ -138,6 +138,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
                                 for (WarlordsEntity nearPlayer : PlayerFilter
                                         .entitiesAround(teammateToHeal, healRadius, healRadius, healRadius)
                                         .aliveEnemiesOf(teammateToHeal)
+                                        .limit(20)
                                 ) {
                                     Utils.playGlobalSound(nearPlayer.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1, 1);
                                     EffectUtils.displayParticle(Particle.EXPLOSION, nearPlayer.getLocation(), 1);
@@ -164,7 +165,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
         );
         orbsOfLifeCooldown.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     if (pveMasterUpgrade) {
-                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
                                 name, convertToMultiplicationDecimal(Math.min(30f, 1f * data.spawnedOrbs.size()))
                         );
                     }
@@ -173,6 +174,9 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
         orbsOfLifeCooldown.addModifier(Modifier.DAMAGE_BEFORE_ANY_REDUCTION_ATTACKER, event -> {
                     String ability = event.getCause();
                     if (event.getFlags().contains(InstanceFlags.NO_HEALING_ORBS) || event.getFlags().contains(InstanceFlags.RECURSIVE)) {
+                        return;
+                    }
+                    if (data.getSpawnedOrbs().size() > 30) {
                         return;
                     }
                     spawnOrbs(wp, event.getWarlordsEntity(), ability, orbsOfLifeCooldown);
@@ -190,7 +194,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
                         return;
                     }
                     Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.08f, 0.7f);
-            EffectUtils.displayParticle(Particle.HAPPY_VILLAGER, wp.getLocation().add(0, 1.5, 0), 10, 0.8, 0, 0.8, 0.2);
+                    EffectUtils.displayParticle(Particle.HAPPY_VILLAGER, wp.getLocation().add(0, 1.5, 0), 10, 0.8, 0, 0.8, 0.2);
                     //setting target player to move towards (includes self)
                     if (wp.isInPve()) {
                         data.getSpawnedOrbs().forEach(orb -> {

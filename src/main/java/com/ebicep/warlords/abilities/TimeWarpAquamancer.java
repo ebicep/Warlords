@@ -87,7 +87,7 @@ public class TimeWarpAquamancer extends AbstractTimeWarp {
                                 },
                                 5 * 20
                         ).addModifier(Modifier.MODIFY_OUTGOING_HEALING, (event, currentHealValue) -> {
-                            currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 1.15f);
+                            currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, 1.15f);
                                 }
                         ));
                     }

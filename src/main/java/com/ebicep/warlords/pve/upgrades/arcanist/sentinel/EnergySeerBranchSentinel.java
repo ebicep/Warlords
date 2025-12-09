@@ -52,7 +52,7 @@ public class EnergySeerBranchSentinel extends AbstractUpgradeBranch<EnergySeerSe
                 () -> {
                     ability.setEpsDecrease(0);
                     ability.setTickDuration(ability.getTickDuration() + 120);
-                    ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Collective Vaticinator", 0.75f);
+                    ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Collective Vaticinator", 0.75f);
                 }
         );
     }

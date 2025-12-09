@@ -97,7 +97,7 @@ public enum GameAddon {
         @Override
         public void warlordsEntityCreated(@Nonnull Game game, @Nonnull WarlordsEntity player) {
             player.setEnergyModifier(player.getEnergyModifier() * 0.25f);
-            player.getAbilities().forEach(ability -> ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+            player.getAbilities().forEach(ability -> ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
                     "Cooldown Mode", 0.25f
             ));
         }
@@ -109,7 +109,7 @@ public enum GameAddon {
     ) {
         @Override
         public void warlordsEntityCreated(@Nonnull Game game, @Nonnull WarlordsEntity player) {
-            player.getHealth().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Triple Health (Base)", 2f);
+            player.getHealth().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Triple Health (Base)", 2f);
             player.heal();
         }
     },

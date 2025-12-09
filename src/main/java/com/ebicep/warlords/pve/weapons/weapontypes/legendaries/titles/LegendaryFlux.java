@@ -171,7 +171,7 @@ public class LegendaryFlux extends AbstractLegendaryWeapon implements PassiveCou
                 }
         ).addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> {
                     if (hasFluxBuff(player)) {
-                        energyGainPerTick.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getTitleName(), 1f + getRegenBonusPercent() / 100f);
+                        energyGainPerTick.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getTitleName(), 1f + getRegenBonusPercent() / 100f);
                     }
                 }
         ));
@@ -212,7 +212,7 @@ public class LegendaryFlux extends AbstractLegendaryWeapon implements PassiveCou
     private void startFluxBuff(WarlordsPlayer player) {
         float mult = 1f - (getCdrPercent() / 100f);
         player.getAbilities().forEach(ab ->
-                ab.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, CDR_MOD_KEY, mult)
+                ab.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, CDR_MOD_KEY, mult)
         );
 
         player.getCooldownManager().addCooldown(new RegularCooldown<>(
@@ -224,7 +224,7 @@ public class LegendaryFlux extends AbstractLegendaryWeapon implements PassiveCou
                 CooldownTypes.BUFF,
                 cm -> { // clean up cdr
                     player.getAbilities().forEach(ab ->
-                            ab.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, CDR_MOD_KEY, 1f)
+                            ab.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, CDR_MOD_KEY, 1f)
                     );
                 },
                 BUFF_DURATION_SECONDS * 20

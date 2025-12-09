@@ -59,8 +59,8 @@ public class GuardianBeamBranch extends AbstractUpgradeBranch<GuardianBeam> {
                 50000,
                 () -> {
                     Value.RangedValueCritable damage = ability.getDamageValues().getBeamDamage();
-                    damage.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .25f);
-                    damage.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .25f);
+                    damage.min().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "PvE", .25f);
+                    damage.max().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "PvE", .25f);
                 }
         );
     }
@@ -68,8 +68,8 @@ public class GuardianBeamBranch extends AbstractUpgradeBranch<GuardianBeam> {
     @Override
     public void runOnce() {
         Value.RangedValueCritable damage = ability.getDamageValues().getBeamDamage();
-        damage.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .3f);
-        damage.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .3f);
+        damage.min().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "PvE", .3f);
+        damage.max().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "PvE", .3f);
         ability.setShieldValues(new ArrayList<>(List.of(600, 1200, 2400)));
     }
 

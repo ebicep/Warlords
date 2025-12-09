@@ -70,7 +70,7 @@ public class CelestialBowWielder extends AbstractMob implements AdvancedMob {
                 true
         ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                     if (!Utils.isProjectile(event.getCause())) {
-                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 0.1f);
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, 0.1f);
                     }
                 }
         ));

@@ -51,7 +51,7 @@ public class HammerOfLightBranch extends AbstractUpgradeBranch<HammerOfLight> {
                         """,
                 50000,
                 () -> {
-                    ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Master Upgrade Branch", 0.8f);
+                    ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Master Upgrade Branch", 0.8f);
                     ability.getHammerRadius().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade Branch", 5);
                     ability.setCrownEnergyReduction(ability.getCrownEnergyReduction() + 15);
                 }

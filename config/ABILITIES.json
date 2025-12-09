@@ -5,6 +5,13 @@
   "type": "ABILITIES",
   "data": {
     "pvp": {
+      "arcaneShield": {
+        "name": "Arcane Shield",
+        "cooldown": 31,
+        "energyCost": 40,
+        "shieldPercentage": 50,
+        "tickDuration": 120
+      },
       "arcaneShieldPyromancer": {
         "name": "Arcane Shield",
         "cooldown": 31,
@@ -2980,8 +2987,8 @@
       },
       "zenithThunderCloud": {
         "name": "Thunder Cloud",
-        "cooldown": 0,
-        "energyCost": 50
+        "cooldown": 30,
+        "energyCost": 150
       },
       "voltaicSoulRemoveTarget": {
         "name": "Remove Target",
@@ -3011,13 +3018,13 @@
       },
       "zenithArmageddon": {
         "name": "Armageddon",
-        "cooldown": 12,
-        "energyCost": 100
+        "cooldown": 16,
+        "energyCost": 150
       },
       "zenithCleanse": {
         "name": "Cleanse",
-        "cooldown": 4,
-        "energyCost": 100
+        "cooldown": 6,
+        "energyCost": 150
       },
       "zenithLegionnaireRemedy": {
         "name": "Remedy",

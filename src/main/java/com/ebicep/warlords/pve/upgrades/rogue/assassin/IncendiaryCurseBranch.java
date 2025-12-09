@@ -46,8 +46,8 @@ public class IncendiaryCurseBranch extends AbstractUpgradeBranch<IncendiaryCurse
                     ability.getHitBoxRadius().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade", 3);
 
                     Value.RangedValueCritable damage = ability.getDamageValues().getCurseDamage();
-                    damage.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .3f);
-                    damage.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .3f);
+                    damage.min().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "PvE", .3f);
+                    damage.max().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "PvE", .3f);
                 }
         );
     }
@@ -57,7 +57,7 @@ public class IncendiaryCurseBranch extends AbstractUpgradeBranch<IncendiaryCurse
         Value.RangedValueCritable damage = ability.getDamageValues().getCurseDamage();
         ability.getEnergyCost().setBaseValue(40);
         ability.setBlindDurationInTicks(30);
-        damage.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .3f);
-        damage.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .3f);
+        damage.min().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "PvE", .3f);
+        damage.max().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "PvE", .3f);
     }
 }

@@ -54,7 +54,7 @@ public class AlchemistsFury implements SpecBoostManager.SpecBoost<AlchemistsFury
                 soothingElixir.setSpeed(soothingElixir.getSpeed() * soothingElixirProjectileSpeedMultiplier);
                 soothingElixir.setGravity(soothingElixir.getGravity() * soothingElixirProjectileSpeedMultiplier);
                 soothingElixir.getDamageValues().getElixirDamage().forEachValue(floatModifiable ->
-                        floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", soothingElixirDamageIncreasePercent / 100)
+                        floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", soothingElixirDamageIncreasePercent / 100)
                 );
                 soothingElixir.getHealValues().getElixirDOTHealing().forEachValue(floatModifiable ->
                         floatModifiable.addModifier(FloatModifiable.ModifierType.OVERRIDING, "Spec Boost", 0)

@@ -50,16 +50,14 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
         this.damageIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageIncrease"), float.class);
     }
 
-    //TODO remove
-    private float absorbedDamage = 0;
-    private int cooldown = 0;
-
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "warrior.berserk.activation", 2, 1);
         wp.addSpeedModifier(wp, name, speedBuff, tickDuration);
         wp.getCooldownManager().removeCooldown(Berserk.class, false);
         AtomicInteger multiplier = new AtomicInteger();
+        AtomicInteger absorbedDamage = new AtomicInteger();
+        AtomicInteger masterCooldown = new AtomicInteger();
         RegularCooldown<Berserk> berserkCooldown = new RegularCooldown<>(
                 name, "BERS",
                 Berserk.class,
@@ -78,7 +76,9 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
                     }
                 })
         );
-        berserkCooldown.addModifier(Modifier.MODIFY_OUTGOING_CRIT_CHANCE, (event, currentCritChance) -> {
+        berserkCooldown.addModifier(
+                Modifier.MODIFY_OUTGOING_CRIT_CHANCE,
+                (event, currentCritChance) -> {
                     if (pveMasterUpgrade) {
                         if (event.getCause().isEmpty() || event.getCause().equals("Time Warp")) {
                             return;
@@ -88,7 +88,9 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
                     }
                 }
         );
-        berserkCooldown.addModifier(Modifier.MODIFY_OUTGOING_CRIT_MULTIPLIER, (event, currentCritMultiplier) -> {
+        berserkCooldown.addModifier(
+                Modifier.MODIFY_OUTGOING_CRIT_MULTIPLIER,
+                (event, currentCritMultiplier) -> {
                     if (pveMasterUpgrade) {
                         if (event.getCause().isEmpty() || event.getCause().equals("Time Warp")) {
                             return;
@@ -99,10 +101,13 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
                     }
                 }
         );
-        berserkCooldown.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamgeValue) -> {
+        berserkCooldown.addModifier(
+                Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE,
+                (event, currentDamageValue) -> {
                     stats.hitsDoneAmplified++;
                     multiplier.getAndIncrement();
-            currentDamgeValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, name, damageIncrease / 100);
+                    absorbedDamage.addAndGet((int) currentDamageValue.getCalculatedValue());
+                    currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, name, damageIncrease / 100);
                 }
         );
         wp.getCooldownManager().addCooldown(berserkCooldown);
@@ -110,19 +115,19 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
             new GameRunnable(wp.getGame()) {
                 @Override
                 public void run() {
-                    cooldown--;
+                    masterCooldown.getAndDecrement();
                     if (!wp.getCooldownManager().hasCooldown(berserkCooldown)) {
                         this.cancel();
                     }
                 }
             }.runTaskTimer(0, 20);
             addSecondaryAbility(1, () -> {
-                if (cooldown > 0) {
+                if (masterCooldown.get() > 0) {
                     wp.sendMessage(Component.text("This ability is still on cooldown!", NamedTextColor.RED));
                     return;
                 }
 
-                float finalValue = Math.min(50000, absorbedDamage);
+                float finalValue = Math.min(50000, absorbedDamage.get());
                 wp.addEnergy(wp, "Berserk Master Upgrade", finalValue * 0.002f);
 
                 FallingBlockWaveEffect.create(wp.getLocation().clone().add(0, 1, 0), 10, 10, Material.AMETHYST_CLUSTER);
@@ -142,8 +147,8 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
                     );
                 }
 
-                cooldown = 2;
-                absorbedDamage = 0;
+                masterCooldown.set(2);
+                absorbedDamage.set(0);
             },
                     true,
                     secondaryAbility -> !wp.getCooldownManager().hasCooldown(berserkCooldown)

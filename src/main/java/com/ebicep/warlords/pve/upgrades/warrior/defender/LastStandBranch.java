@@ -53,7 +53,7 @@ public class LastStandBranch extends AbstractUpgradeBranch<LastStand> {
                         """,
                 50000,
                 () -> {
-                    ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Final Stand", 0.75f);
+                    ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Final Stand", 0.75f);
                     ability.setSelfDamageReductionPercent(ability.getSelfDamageReduction() + 25);
                     ability.setRadius(ability.getRadius() * 2);
                 }
@@ -69,7 +69,7 @@ public class LastStandBranch extends AbstractUpgradeBranch<LastStand> {
                         """,
                 50000,
                 () -> {
-                    ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Enduring Defense", 0.75f);
+                    ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Enduring Defense", 0.75f);
                     ability.setTeammateDamageReductionPercent(ability.getTeammateDamageReduction() + 15);
                     ability.setRadius(ability.getRadius() * 2);
                 }

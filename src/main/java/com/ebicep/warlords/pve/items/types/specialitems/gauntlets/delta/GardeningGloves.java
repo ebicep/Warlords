@@ -40,7 +40,7 @@ public class GardeningGloves extends SpecialDeltaGauntlet implements AppliesToWa
                 false
         ).addModifier(Modifier.MODIFY_OUTGOING_HEALING, (event, currentHealValue) -> {
                     if (ThreadLocalRandom.current().nextDouble() <= .15) {
-                        currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getName(), 1.3f);
+                        currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getName(), 1.3f);
                     }
                 }
         ));

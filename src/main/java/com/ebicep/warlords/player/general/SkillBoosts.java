@@ -26,7 +26,7 @@ public enum SkillBoosts {
                     fireball.getDamageValues()
                             .getFireballDamage()
                             .forEachValue(floatModifiable -> {
-                                floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Skill Boost", .1f);
+                                floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Skill Boost", .1f);
                             });
                     fireball.setDirectHitMultiplier(fireball.getDirectHitMultiplier() + 25);
                 }
@@ -46,7 +46,7 @@ public enum SkillBoosts {
                     flameBurst.getDamageValues()
                               .getFlameBurstDamage()
                               .forEachValue(floatModifiable -> {
-                                  floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Skill Boost", .25f);
+                                  floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Skill Boost", .25f);
                               });
                     abstractAbility.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Skill Boost", -40);
                 }
@@ -64,7 +64,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof TimeWarpPyromancer timeWarp) {
                     timeWarp.setWarpHealPercentage(timeWarp.getWarpHealPercentage() + 15);
-                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", .45f);
+                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", .45f);
                 }
             }
     ),
@@ -77,8 +77,8 @@ public enum SkillBoosts {
             AbstractArcaneShield.class,
             abstractAbility -> {
                 if (abstractAbility instanceof AbstractArcaneShield) {
-                    abstractAbility.getEnergyCost().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", 0);
-                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", .45f);
+                    abstractAbility.getEnergyCost().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", 0);
+                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", .45f);
                 }
             }
     ),
@@ -120,7 +120,7 @@ public enum SkillBoosts {
             FreezingBreath.class,
             abstractAbility -> {
                 if (abstractAbility instanceof FreezingBreath) {
-                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", .7f);
+                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", .7f);
                 }
             }
     ),
@@ -133,7 +133,7 @@ public enum SkillBoosts {
             TimeWarpCryomancer.class,
             abstractAbility -> {
                 if (abstractAbility instanceof TimeWarpCryomancer) {
-                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", .6f);
+                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", .6f);
                 }
             }
     ),
@@ -146,7 +146,7 @@ public enum SkillBoosts {
             AbstractArcaneShield.class,
             abstractAbility -> {
                 if (abstractAbility instanceof AbstractArcaneShield) {
-                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", .7f);
+                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", .7f);
                 }
             }
     ),
@@ -180,7 +180,7 @@ public enum SkillBoosts {
                     waterBolt.getHealValues()
                              .getBoltHealing()
                              .forEachValue(floatModifiable -> {
-                                 floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Skill Boost", .1f);
+                                 floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Skill Boost", .1f);
                              });
                     waterBolt.getDirectHitMultiplier().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Skill Boost", 25);
                 }
@@ -197,7 +197,7 @@ public enum SkillBoosts {
             WaterBreath.class,
             abstractAbility -> {
                 if (abstractAbility instanceof WaterBreath) {
-                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", .85f);
+                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", .85f);
                     abstractAbility.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Skill Boost", -30);
                 }
             }
@@ -214,7 +214,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof TimeWarpAquamancer timeWarpAquamancer) {
                     timeWarpAquamancer.setTickDuration(timeWarpAquamancer.getTickDuration() + 60);
-                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", .7f);
+                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", .7f);
                 }
             }
     ),
@@ -227,8 +227,8 @@ public enum SkillBoosts {
             AbstractArcaneShield.class,
             abstractAbility -> {
                 if (abstractAbility instanceof AbstractArcaneShield) {
-                    abstractAbility.getEnergyCost().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", 0);
-                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", .5f);
+                    abstractAbility.getEnergyCost().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", 0);
+                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", .5f);
                 }
             }
     ),
@@ -244,7 +244,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof HealingRain healingRain) {
                     healingRain.setTickDuration(healingRain.getTickDuration() + 40);
-                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", .8f);
+                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", .8f);
                 }
             }
     ),
@@ -262,7 +262,7 @@ public enum SkillBoosts {
                     woundingStrikeBerserker.getDamageValues()
                                            .getStrikeDamage()
                                            .forEachValue(floatModifiable -> {
-                                               floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Skill Boost", .1f);
+                                               floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Skill Boost", .1f);
                                            });
                     abstractAbility.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Skill Boost", -10);
                 }
@@ -282,9 +282,9 @@ public enum SkillBoosts {
                     seismicWaveBerserker.getDamageValues()
                                         .getWaveDamage()
                                         .forEachValue(floatModifiable -> {
-                                            floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Skill Boost", .15f);
+                                            floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Skill Boost", .15f);
                                         });
-                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", .75f);
+                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", .75f);
                 }
             }
     ),
@@ -300,9 +300,9 @@ public enum SkillBoosts {
                     groundSlamBerserker.getDamageValues()
                                        .getSlamDamage()
                                        .forEachValue(floatModifiable -> {
-                                           floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Skill Boost", .4f);
+                                           floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Skill Boost", .4f);
                                        });
-                    abstractAbility.getEnergyCost().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", 0);
+                    abstractAbility.getEnergyCost().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", 0);
                 }
             }
     ),
@@ -318,7 +318,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof BloodLust bloodLust) {
                     bloodLust.setDamageConvertPercent(bloodLust.getDamageConvertPercent() + 20);
-                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", .65f);
+                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", .65f);
                 }
             }
     ),
@@ -352,7 +352,7 @@ public enum SkillBoosts {
                     woundingStrikeDefender.getDamageValues()
                                           .getStrikeDamage()
                                           .forEachValue(floatModifiable -> {
-                                              floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Skill Boost", .15f);
+                                              floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Skill Boost", .15f);
                                           });
                     woundingStrikeDefender.getWounding().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Skill Boost", 10);
                 }
@@ -370,7 +370,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof AbstractSeismicWave seismicWave) {
                     seismicWave.setVelocity(1.5f);
-                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", .85f);
+                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", .85f);
                 }
             }
     ),
@@ -386,7 +386,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof AbstractGroundSlam groundSlam) {
                     groundSlam.setVelocity(1.35f);
-                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", .75f);
+                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", .75f);
                 }
             }
     ),
@@ -420,7 +420,7 @@ public enum SkillBoosts {
                 if (abstractAbility instanceof LastStand lastStand) {
                     lastStand.setSelfDamageReductionPercent((int) (lastStand.getSelfDamageReduction() + 5));
                     lastStand.setTeammateDamageReductionPercent((int) (lastStand.getTeammateDamageReduction() + 5));
-                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", .9f);
+                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", .9f);
                 }
             }
     ),
@@ -455,7 +455,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof RecklessCharge recklessCharge) {
                     recklessCharge.setStunTimeInTicks(recklessCharge.getStunTimeInTicks() + 10);
-                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", .7f);
+                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", .7f);
                 }
             }
     ),
@@ -468,7 +468,7 @@ public enum SkillBoosts {
             GroundSlamRevenant.class,
             abstractAbility -> {
                 if (abstractAbility instanceof GroundSlamRevenant) {
-                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", .7f);
+                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", .7f);
                 }
             }
     ),
@@ -484,7 +484,7 @@ public enum SkillBoosts {
                     orbsOfLife.getHealValues()
                               .getOrbHealing()
                               .forEachValue(floatModifiable -> {
-                                  floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Skill Boost", .2f);
+                                  floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Skill Boost", .2f);
                               });
                 }
             }
@@ -519,7 +519,7 @@ public enum SkillBoosts {
                     avengersStrike.getDamageValues()
                                   .getStrikeDamage()
                                   .forEachValue(floatModifiable -> {
-                                      floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Skill Boost", .1f);
+                                      floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Skill Boost", .1f);
                                   });
                     avengersStrike.setEnergySteal(avengersStrike.getEnergySteal() + 5);
                 }
@@ -534,11 +534,11 @@ public enum SkillBoosts {
             ConsecrateAvenger.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ConsecrateAvenger consecrateAvenger) {
-                    abstractAbility.getEnergyCost().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", 0);
+                    abstractAbility.getEnergyCost().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", 0);
                     consecrateAvenger.getDamageValues()
                                      .getConsecrateDamage()
                                      .forEachValue(floatModifiable -> {
-                                         floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Skill Boost", .4f);
+                                         floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Skill Boost", .4f);
                                      });
                 }
             }
@@ -554,7 +554,7 @@ public enum SkillBoosts {
             LightInfusionAvenger.class,
             abstractAbility -> {
                 if (abstractAbility instanceof LightInfusionAvenger lightInfusion) {
-                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", .65f);
+                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", .65f);
                     lightInfusion.setTickDuration(lightInfusion.getTickDuration() + 80);
                 }
             }
@@ -570,7 +570,7 @@ public enum SkillBoosts {
             HolyRadianceAvenger.class,
             abstractAbility -> {
                 if (abstractAbility instanceof HolyRadianceAvenger holyRadiance) {
-                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", .7f);
+                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", .7f);
                     holyRadiance.setEnergyDrainPerSecond(holyRadiance.getEnergyDrainPerSecond() * 1.5f);
                 }
             }
@@ -605,7 +605,7 @@ public enum SkillBoosts {
                     crusadersStrike.getDamageValues()
                             .getStrikeDamage()
                             .forEachValue(floatModifiable -> {
-                                floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Skill Boost", .1f);
+                                floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Skill Boost", .1f);
                             });
                     crusadersStrike.setEnergyGiven(crusadersStrike.getEnergyGiven() + 3);
                 }
@@ -620,11 +620,11 @@ public enum SkillBoosts {
             ConsecrateCrusader.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ConsecrateCrusader consecrateCrusader) {
-                    abstractAbility.getEnergyCost().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", 0);
+                    abstractAbility.getEnergyCost().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", 0);
                     consecrateCrusader.getDamageValues()
                                       .getConsecrateDamage()
                                       .forEachValue(floatModifiable -> {
-                                          floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Skill Boost", .35f);
+                                          floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Skill Boost", .35f);
                                       });
                 }
             }
@@ -640,7 +640,7 @@ public enum SkillBoosts {
             LightInfusionCrusader.class,
             abstractAbility -> {
                 if (abstractAbility instanceof LightInfusionCrusader lightInfusion) {
-                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", .65f);
+                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", .65f);
                     lightInfusion.setTickDuration(lightInfusion.getTickDuration() + 80);
                 }
             }
@@ -658,7 +658,7 @@ public enum SkillBoosts {
             HolyRadianceCrusader.class,
             abstractAbility -> {
                 if (abstractAbility instanceof HolyRadianceCrusader holyRadiance) {
-                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", .75f);
+                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", .75f);
                     holyRadiance.setMarkDuration(holyRadiance.getMarkDuration() + 4);
                     holyRadiance.setMarkSpeed(holyRadiance.getMarkSpeed() + 15);
                 }
@@ -675,7 +675,7 @@ public enum SkillBoosts {
             InspiringPresence.class,
             abstractAbility -> {
                 if (abstractAbility instanceof InspiringPresence inspiringPresence) {
-                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", .75f);
+                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", .75f);
                     inspiringPresence.setSpeedBuff(inspiringPresence.getSpeedBuff() + 10);
                 }
             }
@@ -705,7 +705,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof AbstractConsecrate consecrate) {
                     consecrate.getHitBoxRadius().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Skill Boost", 2);
-                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", .6f);
+                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", .6f);
                 }
             }
     ),
@@ -720,7 +720,7 @@ public enum SkillBoosts {
             LightInfusionProtector.class,
             abstractAbility -> {
                 if (abstractAbility instanceof LightInfusionProtector lightInfusion) {
-                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", .65f);
+                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", .65f);
                     lightInfusion.setTickDuration(lightInfusion.getTickDuration() + 80);
                 }
             }
@@ -737,7 +737,7 @@ public enum SkillBoosts {
                     holyRadianceProtector.getHealValues()
                                          .getRadianceHealing()
                                          .forEachValue(floatModifiable -> {
-                                             floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Skill Boost", .2f);
+                                             floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Skill Boost", .2f);
                                          });
                 }
             }
@@ -756,9 +756,9 @@ public enum SkillBoosts {
                     hammerOfLight.getHealValues()
                                  .getHammerHealing()
                                  .forEachValue(floatModifiable -> {
-                                     floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Skill Boost", .25f);
+                                     floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Skill Boost", .25f);
                                  });
-                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", .8f);
+                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", .8f);
                 }
             }
     ),
@@ -774,7 +774,7 @@ public enum SkillBoosts {
                     lightningBolt.getDamageValues()
                                  .getBoltDamage()
                                  .forEachValue(floatModifiable -> {
-                                     floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Skill Boost", .2f);
+                                     floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Skill Boost", .2f);
                                  });
                 }
             }
@@ -793,9 +793,9 @@ public enum SkillBoosts {
                     chainLightning.getDamageValues()
                                   .getChainDamage()
                                   .forEachValue(floatModifiable -> {
-                                      floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Skill Boost", .25f);
+                                      floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Skill Boost", .25f);
                                   });
-                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", .85f);
+                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", .85f);
                 }
             }
     ),
@@ -824,7 +824,7 @@ public enum SkillBoosts {
             LightningRod.class,
             abstractAbility -> {
                 if (abstractAbility instanceof LightningRod) {
-                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", .6f);
+                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", .6f);
                 }
             }
     ),
@@ -837,7 +837,7 @@ public enum SkillBoosts {
             CapacitorTotem.class,
             abstractAbility -> {
                 if (abstractAbility instanceof CapacitorTotem) {
-                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", .6f);
+                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", .6f);
                 }
             }
     ),
@@ -853,7 +853,7 @@ public enum SkillBoosts {
                     fallenSouls.getDamageValues()
                                .getFallenSoulDamage()
                                .forEachValue(floatModifiable -> {
-                                   floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Skill Boost", .25f);
+                                   floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Skill Boost", .25f);
                                });
                 }
             }
@@ -872,7 +872,7 @@ public enum SkillBoosts {
                     spiritLink.getDamageValues()
                               .getLinkDamage()
                               .forEachValue(floatModifiable -> {
-                                  floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Skill Boost", .25f);
+                                  floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Skill Boost", .25f);
                               });
                     spiritLink.setSpeedDuration(spiritLink.getSpeedDuration() + 0.5f);
                 }
@@ -890,12 +890,12 @@ public enum SkillBoosts {
                     soulbinding.getHealValues()
                                .getAllyHealing()
                                .forEachValue(floatModifiable -> {
-                                   floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Skill Boost", .2f);
+                                   floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Skill Boost", .2f);
                                });
                     soulbinding.getHealValues()
                                .getSelfHealing()
                                .forEachValue(floatModifiable -> {
-                                   floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Skill Boost", .2f);
+                                   floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Skill Boost", .2f);
                                });
                 }
             }
@@ -912,7 +912,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof Repentance repentance) {
                     repentance.setDamageConvertPercent(repentance.getDamageConvertPercent() + 5);
-                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", .9f);
+                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", .9f);
                 }
             }
     ),
@@ -947,7 +947,7 @@ public enum SkillBoosts {
                     earthenSpike.getDamageValues()
                                 .getSpikeDamage()
                                 .forEachValue(floatModifiable -> {
-                                    floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Skill Boost", .15f);
+                                    floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Skill Boost", .15f);
                                 });
                     earthenSpike.setSpeed(earthenSpike.getSpeed() * 1.2f);
                 }
@@ -965,7 +965,7 @@ public enum SkillBoosts {
                     boulder.getDamageValues()
                            .getBoulderDamage()
                            .forEachValue(floatModifiable -> {
-                               floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Skill Boost", .2f);
+                               floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Skill Boost", .2f);
                            });
                 }
             }
@@ -995,7 +995,7 @@ public enum SkillBoosts {
                     chainHeal.getHealValues()
                              .getChainHealing()
                              .forEachValue(floatModifiable -> {
-                                 floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Skill Boost", .3f);
+                                 floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Skill Boost", .3f);
                              });
                 }
             }
@@ -1014,9 +1014,9 @@ public enum SkillBoosts {
                     healingTotem.getHealValues()
                                 .getTotemHealing()
                                 .forEachValue(floatModifiable -> {
-                                    floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Skill Boost", .25f);
+                                    floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Skill Boost", .25f);
                                 });
-                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", .75f);
+                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", .75f);
                 }
             }
     ),
@@ -1032,7 +1032,7 @@ public enum SkillBoosts {
                     judgementStrike.getDamageValues()
                                    .getStrikeDamage()
                                    .forEachValue(floatModifiable -> {
-                                       floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Skill Boost", .2f);
+                                       floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Skill Boost", .2f);
                                    });
                 }
             }
@@ -1049,7 +1049,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof IncendiaryCurse incendiaryCurse) {
                     incendiaryCurse.setBlindDurationInTicks(incendiaryCurse.getBlindDurationInTicks() + 10);
-                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", .6f);
+                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", .6f);
                 }
             }
     ),
@@ -1063,7 +1063,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof ShadowStep shadowStep) {
                     shadowStep.setFallDamageNegation(1000);
-                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", .5f);
+                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", .5f);
                 }
             }
     ),
@@ -1079,7 +1079,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof SoulSwitch soulSwitch) {
                     soulSwitch.getHitBoxRadius().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Skill Boost", 6);
-                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", .4f);
+                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", .4f);
                 }
             }
     ),
@@ -1095,7 +1095,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof OrderOfEviscerate orderOfEviscerate) {
                     orderOfEviscerate.setTickDuration(orderOfEviscerate.getTickDuration() + 120);
-                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", .65f);
+                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", .65f);
                 }
             }
     ),
@@ -1111,7 +1111,7 @@ public enum SkillBoosts {
                     righteousStrike.getDamageValues()
                                    .getStrikeDamage()
                                    .forEachValue(floatModifiable -> {
-                                       floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Skill Boost", .2f);
+                                       floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Skill Boost", .2f);
                                    });
                 }
             }
@@ -1125,7 +1125,7 @@ public enum SkillBoosts {
             SoulShackle.class,
             abstractAbility -> {
                 if (abstractAbility instanceof SoulShackle) {
-                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", .8f);
+                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", .8f);
                 }
             }
     ),
@@ -1138,7 +1138,7 @@ public enum SkillBoosts {
             HeartToHeart.class,
             abstractAbility -> {
                 if (abstractAbility instanceof HeartToHeart) {
-                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", .8f);
+                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", .8f);
                 }
             }
     ),
@@ -1154,7 +1154,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof PrismGuard prismGuard) {
                     prismGuard.setProjectileDamageReduction(prismGuard.getProjectileDamageReduction() + 15);
-                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", .85f);
+                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", .85f);
                 }
             }
     ),
@@ -1170,7 +1170,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof Vindicate vindicate) {
                     vindicate.setVindicateDamageReduction(vindicate.getVindicateDamageReduction() + 10);
-                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", .75f);
+                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", .75f);
                 }
             }
     ),
@@ -1189,7 +1189,7 @@ public enum SkillBoosts {
                     impalingStrike.getDamageValues()
                                   .getStrikeDamage()
                                   .forEachValue(floatModifiable -> {
-                                      floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Skill Boost", .125f);
+                                      floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Skill Boost", .125f);
                                   });
                 }
             }
@@ -1206,7 +1206,7 @@ public enum SkillBoosts {
                     soothingElixir.getHealValues()
                                   .getElixirHealing()
                                   .forEachValue(floatModifiable -> {
-                                      floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Skill Boost", .25f);
+                                      floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Skill Boost", .25f);
                                   });
                 }
             }
@@ -1220,7 +1220,7 @@ public enum SkillBoosts {
             VitalityConcoction.class,
             abstractAbility -> {
                 if (abstractAbility instanceof VitalityConcoction vitalityConcoction) {
-                    abstractAbility.getEnergyCost().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", 0);
+                    abstractAbility.getEnergyCost().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", 0);
                     vitalityConcoction.setTickDuration(vitalityConcoction.getTickDuration() + 20);
                 }
             }
@@ -1253,7 +1253,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof DrainingMiasma drainingMiasma) {
                     drainingMiasma.setLeechTickDuration(drainingMiasma.getLeechTickDuration() + 5);
-                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", .8f);
+                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", .8f);
                 }
             }
     ),
@@ -1282,7 +1282,7 @@ public enum SkillBoosts {
             SoulfireBeam.class,
             abstractAbility -> {
                 if (abstractAbility instanceof SoulfireBeam) {
-                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", .8f);
+                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", .8f);
                 }
             }
     ),
@@ -1295,7 +1295,7 @@ public enum SkillBoosts {
             EnergySeerConjurer.class,
             abstractAbility -> {
                 if (abstractAbility instanceof EnergySeerConjurer) {
-                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", .55f);
+                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", .55f);
                 }
             }
     ),
@@ -1315,7 +1315,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof ContagiousFacade contagiousFacade) {
                     contagiousFacade.getDamageAbsorption().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Skill Boost", 20);
-                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", .7f);
+                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", .7f);
                     contagiousFacade.setStacksGranted(contagiousFacade.getStacksGranted() + 1);
                     contagiousFacade.setInfectedPlayers(contagiousFacade.getInfectedPlayers() + 1);
                 }
@@ -1332,7 +1332,7 @@ public enum SkillBoosts {
             AstralPlague.class,
             abstractAbility -> {
                 if (abstractAbility instanceof AstralPlague astralPlague) {
-                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", .8f);
+                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", .8f);
                     astralPlague.setTickDuration(astralPlague.getTickDuration() + 240);
                 }
             }
@@ -1362,7 +1362,7 @@ public enum SkillBoosts {
             GuardianBeam.class,
             abstractAbility -> {
                 if (abstractAbility instanceof GuardianBeam) {
-                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", .8f);
+                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", .8f);
                 }
             }
     ),
@@ -1404,7 +1404,7 @@ public enum SkillBoosts {
             Sanctuary.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Sanctuary) {
-                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", .75f);
+                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", .75f);
                 }
             }
     ),
@@ -1422,7 +1422,7 @@ public enum SkillBoosts {
                     mercifulHex.getHealValues()
                                .getHexDOTHealing()
                                .forEachValue(floatModifiable -> {
-                                   floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Skill Boost", 1.0f);
+                                   floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Skill Boost", 1.0f);
                                });
                     mercifulHex.setTickDuration(mercifulHex.getTickDuration() + 20);
                 }
@@ -1437,7 +1437,7 @@ public enum SkillBoosts {
             RayOfLight.class,
             abstractAbility -> {
                 if (abstractAbility instanceof RayOfLight) {
-                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", .8f);
+                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", .8f);
                 }
             }
     ),
@@ -1465,8 +1465,8 @@ public enum SkillBoosts {
             SanctifiedBeacon.class,
             abstractAbility -> {
                 if (abstractAbility instanceof SanctifiedBeacon sanctifiedBeacon) {
-                    abstractAbility.getEnergyCost().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", 0);
-                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", .5f);
+                    abstractAbility.getEnergyCost().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", 0);
+                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", .5f);
                     sanctifiedBeacon.setCritMultiplierReducedBy(sanctifiedBeacon.getCritMultiplierReducedBy() + 15);
                 }
             }
@@ -1480,7 +1480,7 @@ public enum SkillBoosts {
             DivineBlessing.class,
             abstractAbility -> {
                 if (abstractAbility instanceof DivineBlessing) {
-                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Skill Boost", .75f);
+                    abstractAbility.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Skill Boost", .75f);
                 }
             }
     ),

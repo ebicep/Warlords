@@ -89,7 +89,7 @@ public class Haze extends AbstractAbility implements OrangeAbilityIcon, Damages<
                                             },
                                             vulnerableTickDuration
                                     ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
                                                 "Vulernable", convertToMultiplicationDecimal(vulnerableDamageBonus)
                                         );
                                             }
@@ -127,7 +127,7 @@ public class Haze extends AbstractAbility implements OrangeAbilityIcon, Damages<
                     if (!data.vanished) {
                         return;
                     }
-            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, convertToDivisionDecimal(incomingDamageReduction));
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, convertToDivisionDecimal(incomingDamageReduction));
                 }
         );
         hazeCooldown.addModifier(Modifier.ON_OUTGOING_DAMAGE, (event, currentDamageValue, isCrit) -> {

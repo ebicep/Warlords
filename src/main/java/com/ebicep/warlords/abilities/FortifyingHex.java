@@ -93,7 +93,7 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
         };
         cd.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
             currentDamageValue.addModifier(
-                    FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, hexName + " " + Integer.toHexString(cd.hashCode()),
+                    FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, hexName + " " + Integer.toHexString(cd.hashCode()),
                     -data.damageReduction * (event.getWarlordsEntity().hasFlag() ? data.damageReductionFlagMultiplier : 1) / 100f,
                     contribution -> fromHex.getAbilityStats().damageReduced += Math.abs(contribution)
                     );
@@ -249,7 +249,7 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
                         .filterCooldownClass(WeakeningHex.class)
                         .stream()
                         .count();
-                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,"Weakening Hex", (1 + 0.05f * stacks));
+                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,"Weakening Hex", (1 + 0.05f * stacks));
             }));
         }
         stats.addPlayersHit();

@@ -113,7 +113,7 @@ public class EventDjer extends AbstractMob implements BossMinionMob {
                     return;
                 }
                 event.applyToMinMax(floatModifiable ->
-                        floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, .75f)
+                        floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, .75f)
                 );
             }
 

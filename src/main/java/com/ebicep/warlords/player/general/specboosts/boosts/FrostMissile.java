@@ -50,7 +50,7 @@ public class FrostMissile implements SpecBoostManager.SpecBoost<FrostMissile> {
                 frostBolt.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", -energyDecrease);
                 frostBolt.getDamageValues()
                          .getBoltDamage()
-                         .forEachValue(floatModifiable -> floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                         .forEachValue(floatModifiable -> floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,
                                  "Spec Boost",
                                  -damageDecreasePercent / 100
                          ));

@@ -6,6 +6,7 @@ import com.ebicep.warlords.util.warlords.modifiablevalues.filters.BaseFilter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -245,6 +246,15 @@ public class FloatModifiable implements Modifiable {
         callContributionCallback(contributions, multiplicativeModifiersMultiplicative);
     }
 
+    private void callContributionCallback(Map<String, Float> contributions, List<FloatModifier> modifiers) {
+        for (FloatModifier modifier : modifiers) {
+            List<Consumer<Float>> callbacks = modifier.callbacks;
+            for (Consumer<Float> callback : callbacks) {
+                callback.accept(contributions.getOrDefault(modifier.log, 0f));
+            }
+        }
+    }
+
     public List<Component> getDebugInfo() {
         return getDebugInfo(null);
     }
@@ -254,21 +264,19 @@ public class FloatModifiable implements Modifiable {
         FloatModifiableFilter base = filters.get("Base");
         if (getCalculatedValue() != baseValue) {
             ComponentBuilder builder = ComponentBuilder.create()
-                    .append(getDebugInfo("Base", baseValue));
-            if (!overridingModifiers.isEmpty()) {
-                builder.append(getDebugInfo("Overriding", overridingModifiers.get(0).getModifier()));
-            }
-            if (!additiveModifiers.isEmpty()) {
-                builder.append(getDebugInfo(" +", base.getCachedAdditiveModifier()));
-            }
-            if (!multiplicativeModifiersAdditive.isEmpty()) {
-                builder.append(getDebugInfo(" *", base.getCachedMultiplicativeModifierAdditive()));
-            }
-            if (!multiplicativeModifiersMultiplicative.isEmpty()) {
-                builder.append(getDebugInfo(" *", base.getCachedMultiplicativeModifierMultiplicative()));
+                                                       .append(getDebugInfo("Base", baseValue));
+            if (overridingModifiers.isEmpty()) {
+                if (!additiveModifiers.isEmpty()) {
+                    builder.append(getDebugInfo(" +", base.getCachedAdditiveModifier()));
+                }
+                if (!multiplicativeModifiersAdditive.isEmpty()) {
+                    builder.append(getDebugInfo(" *", base.getCachedMultiplicativeModifierAdditive()));
+                }
+                if (!multiplicativeModifiersMultiplicative.isEmpty()) {
+                    builder.append(getDebugInfo(" *", base.getCachedMultiplicativeModifierMultiplicative()));
+                }
             }
             builder.append(getDebugInfo(" =", getCalculatedValue()));
-
             components.add(builder.build());
         } else {
             components.add(getDebugInfo("", getCalculatedValue()));
@@ -278,14 +286,15 @@ public class FloatModifiable implements Modifiable {
             components.addAll(getDebugInfo(overridingModifiers, globalContributions));
         }
         if (!additiveModifiers.isEmpty()) {
+            components.add(getDebugInfo("Additive", base.getCachedAdditiveModifier(), ""));
             components.addAll(getDebugInfo(additiveModifiers, globalContributions));
         }
         if (!multiplicativeModifiersAdditive.isEmpty()) {
-            components.add(getDebugInfo("Additive", base.getCachedMultiplicativeModifierAdditive(), "x"));
+            components.add(getDebugInfo("Additive Multiplier", base.getCachedMultiplicativeModifierAdditive(), "x"));
             components.addAll(getDebugInfo(multiplicativeModifiersAdditive, globalContributions));
         }
         if (!multiplicativeModifiersMultiplicative.isEmpty()) {
-            components.add(getDebugInfo("Multiplicative", base.getCachedMultiplicativeModifierMultiplicative(), "x"));
+            components.add(getDebugInfo("Multiplicative Multiplier", base.getCachedMultiplicativeModifierMultiplicative(), "x"));
             components.addAll(getDebugInfo(multiplicativeModifiersMultiplicative, globalContributions));
         }
         return components;
@@ -294,19 +303,6 @@ public class FloatModifiable implements Modifiable {
     @Override
     public float getCalculatedValue() {
         return filters.get("Base").getCachedValue();
-    }
-
-    private void callOnAddModifier(ModifierType type, FloatModifier modifier) {
-        Set<Consumer<FloatModifier>> consumers = onAddModifier.get(type);
-        if (consumers != null) {
-            consumers.forEach(consumer -> consumer.accept(modifier));
-        }
-    }
-
-    private void addModifier(List<FloatModifier> list, FloatModifier modifier) {
-        list.removeIf(m -> m.getLog().equals(modifier.getLog()));
-        list.add(modifier);
-        refresh();
     }
 
     @Override
@@ -334,8 +330,8 @@ public class FloatModifiable implements Modifiable {
         List<FloatModifiable.FloatModifier> list = switch (type) {
             case OVERRIDING -> this.overridingModifiers;
             case ADDITIVE -> this.additiveModifiers;
-            case MULTIPLICATIVE_ADDITIVE -> this.multiplicativeModifiersAdditive;
-            case MULTIPLICATIVE_MULTIPLICATIVE -> this.multiplicativeModifiersMultiplicative;
+            case ADDITIVE_MULTIPLIER -> this.multiplicativeModifiersAdditive;
+            case MULTIPLICATIVE_MULTIPLIER -> this.multiplicativeModifiersMultiplicative;
         };
         if (!override) {
             for (FloatModifier modifier : list) {
@@ -353,6 +349,19 @@ public class FloatModifiable implements Modifiable {
     @Override
     public FloatModifier addModifier(ModifierType type, String log, float value, boolean override) {
         return addModifier(type, log, value, -1, null, override);
+    }
+
+    private void callOnAddModifier(ModifierType type, FloatModifier modifier) {
+        Set<Consumer<FloatModifier>> consumers = onAddModifier.get(type);
+        if (consumers != null) {
+            consumers.forEach(consumer -> consumer.accept(modifier));
+        }
+    }
+
+    private void addModifier(List<FloatModifier> list, FloatModifier modifier) {
+        list.removeIf(m -> m.getLog().equals(modifier.getLog()));
+        list.add(modifier);
+        refresh();
     }
 
     @Override
@@ -403,15 +412,6 @@ public class FloatModifiable implements Modifiable {
         callContributionCallback(contributions, multiplicativeModifiersMultiplicative);
     }
 
-    private void callContributionCallback(Map<String, Float> contributions, List<FloatModifier> modifiers) {
-        for (FloatModifier modifier : modifiers) {
-            Consumer<Float> callback = modifier.callback;
-            if (callback != null) {
-                callback.accept(contributions.getOrDefault(modifier.log, 0f));
-            }
-        }
-    }
-
     private Component getDebugInfo(String name, float value) {
         return getDebugInfo(name, value, "");
     }
@@ -442,11 +442,17 @@ public class FloatModifiable implements Modifiable {
     }
 
     private Component getDebugInfo(String name, float value, String valueSuffix) {
-        return ComponentBuilder.create()
-                               .text(name, NamedTextColor.DARK_GREEN)
-                               .text(" ", NamedTextColor.GRAY)
-                               .text(NumberFormat.formatOptionalHundredths(value) + valueSuffix, NamedTextColor.GOLD)
-                               .build();
+        if (name.isEmpty()) {
+            return ComponentBuilder.create()
+                                   .text(NumberFormat.formatOptionalHundredths(value) + valueSuffix, NamedTextColor.GOLD)
+                                   .build();
+        } else {
+            return ComponentBuilder.create()
+                                   .text(name, NamedTextColor.DARK_GREEN)
+                                   .text(" ", NamedTextColor.GRAY)
+                                   .text(NumberFormat.formatOptionalHundredths(value) + valueSuffix, NamedTextColor.GOLD)
+                                   .build();
+        }
     }
 
     public void clearModifiers() {
@@ -465,37 +471,56 @@ public class FloatModifiable implements Modifiable {
     public enum ModifierType {
         OVERRIDING,
         ADDITIVE,
-        MULTIPLICATIVE_ADDITIVE,
-        MULTIPLICATIVE_MULTIPLICATIVE
+        ADDITIVE_MULTIPLIER,
+        MULTIPLICATIVE_MULTIPLIER,
+
+        ;
+
+        public static final FloatModifiable.ModifierType[] ALL_TYPES = {
+                FloatModifiable.ModifierType.OVERRIDING,
+                FloatModifiable.ModifierType.ADDITIVE,
+                FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,
+                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER
+        };
+        public static final FloatModifiable.ModifierType[] NON_OVERRIDE_TYPES = {
+                FloatModifiable.ModifierType.ADDITIVE,
+                FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,
+                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER
+        };
+        public static final FloatModifiable.ModifierType[] ADDITIVE_TYPES = {
+                FloatModifiable.ModifierType.ADDITIVE,
+                FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER
+        };
+        public static final FloatModifiable.ModifierType[] MULTIPLICATIVE_TYPES = {
+                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER
+        };
     }
 
     public static class FloatModifier {
 
         private final String log;
         private final Set<String> disabledReasons = new HashSet<>(2);
-        private final Consumer<Float> callback;
+        private final List<Consumer<Float>> callbacks = new ArrayList<>(2);
         private ComponentBuilder debugPrefix = null;
         private float modifier;
         private int ticksLeft;
         private boolean dirty = false;
 
-        public FloatModifier(String log, float modifier, Consumer<Float> callback) {
-            this(log, modifier, -1, callback);
-        }
-
-        public FloatModifier(String log, float modifier, int ticksLeft, Consumer<Float> callback) {
-            this.log = log;
-            this.modifier = modifier;
-            this.ticksLeft = ticksLeft;
-            this.callback = callback;
-        }
-
         public FloatModifier(String log, float modifier, int ticksLeft) {
             this(log, modifier, ticksLeft, null);
         }
 
-        public FloatModifier(String log, float modifier) {
-            this(log, modifier, -1, null);
+        public FloatModifier(String log, float modifier, int ticksLeft, @Nullable Consumer<Float> callback) {
+            this.log = log;
+            this.modifier = modifier;
+            this.ticksLeft = ticksLeft;
+            if (callback != null) {
+                this.callbacks.add(callback);
+            }
+        }
+
+        public List<Consumer<Float>> getCallbacks() {
+            return callbacks;
         }
 
         public Component getDebugInfo() {

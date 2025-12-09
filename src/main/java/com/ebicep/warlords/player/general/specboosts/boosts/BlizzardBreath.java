@@ -80,14 +80,14 @@ public class BlizzardBreath implements SpecBoostManager.SpecBoost<BlizzardBreath
             }
             warlordsPlayer.resetAbilityTree();
             warlordsPlayer.getAbilitiesMatching(AbstractArcaneShield.class).forEach(arcaneShield -> {
-                arcaneShield.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", -productionValuesDecreasePercent / 100.0f);
-                arcaneShield.getEnergyCost().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", -productionValuesDecreasePercent / 100.0f);
+                arcaneShield.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", -productionValuesDecreasePercent / 100.0f);
+                arcaneShield.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", -productionValuesDecreasePercent / 100.0f);
                 arcaneShield.setShieldPercentage(arcaneShield.getShieldPercentage() * AbstractAbility.convertToDivisionDecimal(productionValuesDecreasePercent));
                 arcaneShield.updateCustomStats(warlordsPlayer);
             });
             warlordsPlayer.getAbilitiesMatching(TimeSurge.class).forEach(timeSurge -> {
-                timeSurge.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", -productionValuesDecreasePercent / 100.0f);
-                timeSurge.getEnergyCost().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", -productionValuesDecreasePercent / 100.0f);
+                timeSurge.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", -productionValuesDecreasePercent / 100.0f);
+                timeSurge.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", -productionValuesDecreasePercent / 100.0f);
                 timeSurge.setHealPercentage(timeSurge.getHealPercentage() * AbstractAbility.convertToDivisionDecimal(productionValuesDecreasePercent));
             });
         }

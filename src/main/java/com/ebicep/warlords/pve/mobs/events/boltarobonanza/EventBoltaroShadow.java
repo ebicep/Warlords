@@ -53,11 +53,11 @@ public class EventBoltaroShadow extends AbstractMob implements BossMinionMob {
     ) {
         super(spawnLocation,
                 name,
-                (int) (maxHealth * (1 + split * .025)),
+                maxHealth,
                 walkSpeed,
                 damageResistance,
-                minMeleeDamage * (1 + split * .025f),
-                maxMeleeDamage * (1 + split * .025f),
+                minMeleeDamage,
+                maxMeleeDamage,
                 new Fireball(AbstractAbilityBuilder.create("shadowBoltaroFireball").pve().cooldown(MathUtils.generateRandomValueBetweenInclusive(4, 8)))
         );
         this.split = split;
@@ -83,7 +83,8 @@ public class EventBoltaroShadow extends AbstractMob implements BossMinionMob {
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
-        EffectUtils.strikeLightning(warlordsNPC.getLocation(), false);
+        float newHealth = (float) (warlordsNPC.getMaxHealth() * (1 + split * .025));
+        warlordsNPC.setMaxHealthAndHeal(newHealth);
     }
 
     @Override
@@ -94,16 +95,11 @@ public class EventBoltaroShadow extends AbstractMob implements BossMinionMob {
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         super.onDeath(killer, deathLocation, option);
-        FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
-                                                                       .withColor(Color.ORANGE)
-                                                                       .with(FireworkEffect.Type.BALL)
-                                                                       .withTrail()
-                                                                       .build());
         Utils.playGlobalSound(deathLocation, Sound.ENTITY_ENDERMAN_DEATH, 2, 0.5f);
 
         int nextSplit = split + 1;
         option.spawnNewMob(new EventBoltaroShadow(warlordsNPC.getLocation(), nextSplit));
-        if (forceSplit || ThreadLocalRandom.current().nextDouble(0, 1) < (1.0 / nextSplit)) {
+        if (forceSplit || ThreadLocalRandom.current().nextDouble(0, 1) < (0.95 / nextSplit)) {
             option.spawnNewMob(new EventBoltaroShadow(warlordsNPC.getLocation(), nextSplit));
         }
     }
@@ -114,6 +110,6 @@ public class EventBoltaroShadow extends AbstractMob implements BossMinionMob {
 
     @Override
     public double weaponDropRate() {
-        return 2;
+        return 1.5;
     }
 }

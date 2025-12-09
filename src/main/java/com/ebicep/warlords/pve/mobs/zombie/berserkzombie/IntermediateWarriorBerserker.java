@@ -47,8 +47,8 @@ public class IntermediateWarriorBerserker extends AbstractBerserkZombie implemen
                 new BerserkerZombieWoundingStrike()
         );
         Value.RangedValueCritable strikeDamage = woundingStrike.getDamageValues().getStrikeDamage();
-        strikeDamage.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, name, .25f);
-        strikeDamage.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, name, .25f);
+        strikeDamage.min().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, name, .25f);
+        strikeDamage.max().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, name, .25f);
     }
 
     @Override
@@ -75,7 +75,7 @@ public class IntermediateWarriorBerserker extends AbstractBerserkZombie implemen
                     }
                 }
         ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Berserk", 1.2f);
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Berserk", 1.2f);
                 }
         ));
     }

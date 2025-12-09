@@ -171,7 +171,7 @@ public class EventZeus extends AbstractMob implements BossMob, God, Unsilencable
                         if (event.getCause().isEmpty()) {
                             return;
                         }
-                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, damageBuff);
+                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, damageBuff);
                     }
             ));
             return super.onActivateInternal(wp);

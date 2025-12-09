@@ -177,7 +177,7 @@ public class GameDebugCommand extends BaseCommand {
                                             },
                                             false
                                     ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getName(), 100);
+                                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getName(), 100);
                                             }
                                     ));
                                 });

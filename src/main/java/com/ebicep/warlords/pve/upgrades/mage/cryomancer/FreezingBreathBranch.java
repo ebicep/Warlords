@@ -52,8 +52,8 @@ public class FreezingBreathBranch extends AbstractUpgradeBranch<FreezingBreath> 
                 50000,
                 () -> {
                     Value.RangedValueCritable damage = ability.getDamageValues().getFreezingBreathDamage();
-                    damage.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Master Upgrade Branch", .5f);
-                    damage.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Master Upgrade Branch", .5f);
+                    damage.min().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Master Upgrade Branch", .5f);
+                    damage.max().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Master Upgrade Branch", .5f);
                     ability.setHitbox(ability.getHitbox() * 1.6f);
                     ability.setMaxAnimationTime(ability.getMaxAnimationTime() * 2);
                 }

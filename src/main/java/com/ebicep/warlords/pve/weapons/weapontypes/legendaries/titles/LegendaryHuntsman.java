@@ -124,7 +124,7 @@ public class LegendaryHuntsman extends AbstractLegendaryWeapon implements Passiv
                 false
         ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     if (isTargetFar(player, event, RANGED_MIN_DISTANCE_BLOCKS)) {
-                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getTitleName(), (1f + getRangedBonusPercent() / 100f));
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getTitleName(), (1f + getRangedBonusPercent() / 100f));
                     }
 
                     if (isMeleeHit(event)) {
@@ -175,7 +175,7 @@ public class LegendaryHuntsman extends AbstractLegendaryWeapon implements Passiv
 
                     float dr = getMeleeGuardDrPercent() / 100f;
                     dr = Math.min(dr, 0.6f);
-            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getTitleName(), (1f - dr));
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getTitleName(), (1f - dr));
                 }
         ));
     }

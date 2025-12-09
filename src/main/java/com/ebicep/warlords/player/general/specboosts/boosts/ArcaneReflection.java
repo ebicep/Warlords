@@ -70,7 +70,7 @@ public class ArcaneReflection implements SpecBoostManager.SpecBoost<ArcaneReflec
             warlordsPlayer.getAbilitiesMatching(WaterBolt.class).forEach(waterBolt ->
                     waterBolt.getDamageValues()
                              .getBoltDamage()
-                             .forEachValue(floatModifiable -> floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                             .forEachValue(floatModifiable -> floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,
                                      "Arcane Reflection", waterBoltDamageIncreasePercent / 100
                              ))
             );
@@ -86,7 +86,7 @@ public class ArcaneReflection implements SpecBoostManager.SpecBoost<ArcaneReflec
                     false
             ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                         if (event.getCause().isEmpty()) {
-                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
                                     getStringName(),
                                     AbstractAbility.convertToMultiplicationDecimal(meleeDamageIncreasePercent)
                             );

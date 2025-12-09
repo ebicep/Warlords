@@ -75,7 +75,7 @@ public class BurstChain implements SpecBoostManager.SpecBoost<BurstChain> {
             warlordsPlayer.getHealth().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost (Base)", -healthDecrease);
             warlordsPlayer.getSpeed().addBaseModifier(baseSpeedIncreasePercent);
             warlordsPlayer.getAbilitiesMatching(FlameBurst.class).forEach(flameBurst -> {
-                flameBurst.getProjectileSpeed().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", (velocityIncreasePercentage + 100) / 100);
+                flameBurst.getProjectileSpeed().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", (velocityIncreasePercentage + 100) / 100);
             });
             warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
                     getStringName(),
@@ -96,7 +96,7 @@ public class BurstChain implements SpecBoostManager.SpecBoost<BurstChain> {
                                   .noneMatch(damageReductionAbilities::contains)
                         ) {
                             boolean hasInferno = warlordsPlayer.getCooldownManager().hasCooldown(Inferno.class);
-                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getStringName(),
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getStringName(),
                                     AbstractAbility.convertToMultiplicationDecimal(hasInferno ? infernoDamageIncreasePercent :
                                                                                    damageIncreasePercent)
                             );

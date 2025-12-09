@@ -369,7 +369,7 @@ public class PowerupOption implements Option {
                         },
                         getTickDuration()
                 ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                    currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Damage", 1.2f);
+                    currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Damage", 1.2f);
                         }
                 ));
                 we.sendMessage(Component.text("You activated the ", NamedTextColor.GOLD)
@@ -393,7 +393,7 @@ public class PowerupOption implements Option {
                 we.getCooldownManager().removeCooldown(CooldownPowerup.class, false);
                 List<FloatModifiable.FloatModifier> modifiers = we.getAbilities()
                                                                   .stream()
-                                                                  .map(ability -> ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                                                                  .map(ability -> ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
                                                                           name + " Powerup", 0.75f
                                                                   ))
                                                                   .toList();
@@ -497,7 +497,7 @@ public class PowerupOption implements Option {
                             }
                         })
                 ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
-                    currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 1.1f);
+                    currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, 1.1f);
                         }
                 ));
                 we.sendMessage(Component.text("You activated the ", NamedTextColor.GOLD)

@@ -60,7 +60,7 @@ public class UpgradeTreeBuilder {
 
     public UpgradeTreeBuilder addUpgradeDamage(Value ability, float value, int... levels) {
         List<FloatModifiable.FloatModifier> modifiers = new ArrayList<>();
-        ability.forEachValue(floatModifiable -> modifiers.add(floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+        ability.forEachValue(floatModifiable -> modifiers.add(floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,
                 "Upgrade Branch", 0, false
         )));
         return addUpgrade(
@@ -73,7 +73,7 @@ public class UpgradeTreeBuilder {
 
     public UpgradeTreeBuilder addUpgradeDamage(Value.ValueHolder ability, float value, int... levels) {
         List<FloatModifiable.FloatModifier> modifiers = new ArrayList<>();
-        ability.getValues().forEach(v -> v.forEachValue(floatModifiable -> modifiers.add(floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+        ability.getValues().forEach(v -> v.forEachValue(floatModifiable -> modifiers.add(floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,
                 "Upgrade Branch", 0, false
         ))));
         return addUpgrade(
@@ -90,7 +90,7 @@ public class UpgradeTreeBuilder {
 
     public UpgradeTreeBuilder addUpgradeHealing(Value ability, float value, int... levels) {
         List<FloatModifiable.FloatModifier> modifiers = new ArrayList<>();
-        ability.forEachValue(floatModifiable -> modifiers.add(floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+        ability.forEachValue(floatModifiable -> modifiers.add(floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,
                 "Upgrade Branch", 0, false
         )));
         return addUpgrade(
@@ -103,7 +103,7 @@ public class UpgradeTreeBuilder {
 
     public UpgradeTreeBuilder addUpgradeHealing(Value.ValueHolder ability, float value, int... levels) {
         List<FloatModifiable.FloatModifier> modifiers = new ArrayList<>();
-        ability.getValues().forEach(v -> v.forEachValue(floatModifiable -> modifiers.add(floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+        ability.getValues().forEach(v -> v.forEachValue(floatModifiable -> modifiers.add(floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,
                 "Upgrade Branch", 0, false
         ))));
         return addUpgrade(
@@ -121,7 +121,7 @@ public class UpgradeTreeBuilder {
     public UpgradeTreeBuilder addUpgradeCooldown(AbstractAbility ability, float value, int... levels) {
         return addUpgrade(
                 UpgradeTypes.COOLDOWN_REDUCTION,
-                ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Upgrade Branch", 0),
+                ability.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Upgrade Branch", 0),
                 value,
                 levels
         );

@@ -42,7 +42,7 @@ public class Transistor implements SpecBoostManager.SpecBoost<Transistor> {
         public void apply(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getAbilitiesMatching(LightningBolt.class).forEach(lightningBolt -> {
                 lightningBolt.getDamageValues().getBoltDamage().forEachValue(floatModifiable ->
-                        floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", lightningBoltDamageIncreasePercent / 100)
+                        floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", lightningBoltDamageIncreasePercent / 100)
                 );
             });
         }

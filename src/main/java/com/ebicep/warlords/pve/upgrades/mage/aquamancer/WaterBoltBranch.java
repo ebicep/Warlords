@@ -30,7 +30,7 @@ public class WaterBoltBranch extends AbstractUpgradeBranch<WaterBolt> {
                 "+6 Energy per hit\n+100% Projectile speed\n\nWater Bolt increases the energy per hit of all allies it hits by +6 for 5 seconds.",
                 50000,
                 () -> {
-                    ability.getProjectileSpeed().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Master Upgrade Branch", 1);
+                    ability.getProjectileSpeed().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Master Upgrade Branch", 1);
                     abilityTree.getWarlordsPlayer().getEnergyPerHit().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade Branch", 6);
                 }
         );
@@ -45,7 +45,7 @@ public class WaterBoltBranch extends AbstractUpgradeBranch<WaterBolt> {
                         """,
                 50000,
                 () -> {
-                    ability.getProjectileSpeed().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Master Upgrade Branch", 1);
+                    ability.getProjectileSpeed().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Master Upgrade Branch", 1);
                     ability.getHealValues().getBoltHealing().critMultiplier().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade Branch", 25);
                 }
         );

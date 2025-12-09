@@ -43,12 +43,12 @@ public class Arachnophobia implements FieldEffect {
                     }
                     if (event.getCause().contains("Strike")) {
                         event.applyToMinMax(floatModifiable ->
-                                floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getName(), 3)
+                                floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getName(), 3)
                         );
                     }
                 } else if (event.isHealingInstance()) {
                     event.applyToMinMax(floatModifiable ->
-                            floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getName(), 1.15f)
+                            floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getName(), 1.15f)
                     );
                 }
             }

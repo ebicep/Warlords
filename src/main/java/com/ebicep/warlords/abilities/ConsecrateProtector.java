@@ -87,7 +87,7 @@ public class ConsecrateProtector extends AbstractConsecrate implements CanReduce
                     }
                     event.getFlags().add(InstanceFlags.STRIKE_IN_CONS);
                     addStrikesBoosted();
-            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, convertToMultiplicationDecimal(strikeDamageBoost));
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, convertToMultiplicationDecimal(strikeDamageBoost));
                 }
         ));
         return true;

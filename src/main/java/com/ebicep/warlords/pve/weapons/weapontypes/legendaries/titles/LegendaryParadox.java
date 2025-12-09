@@ -208,7 +208,7 @@ public class LegendaryParadox extends AbstractLegendaryWeapon implements GardenO
                     }
                 })
         ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getTitleName(), damageBoost);
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getTitleName(), damageBoost);
                 }
         ));
     }

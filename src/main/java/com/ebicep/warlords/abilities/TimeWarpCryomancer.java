@@ -91,7 +91,7 @@ public class TimeWarpCryomancer extends AbstractTimeWarp {
                             },
                             duration
                     ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Freezing Cold", 1.15f);
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Freezing Cold", 1.15f);
                             }
                     ));
                 });
@@ -129,7 +129,7 @@ public class TimeWarpCryomancer extends AbstractTimeWarp {
                                   Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                                   })
                           ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
-                              currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, .2f);
+                              currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, .2f);
                                   }
                           ));
                     }

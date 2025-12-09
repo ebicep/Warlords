@@ -107,7 +107,7 @@ public class WoundingCooldown extends RegularCooldown<WoundingCooldown.WoundingD
         );
         this.target = target;
         this.addModifier(Modifier.MODIFY_INCOMING_HEALING, (event, currentHealValue) -> {
-            currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, cooldownObject.getWoundingMultiplier());
+            currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, cooldownObject.getWoundingMultiplier());
                 }
         );
     }

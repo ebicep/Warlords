@@ -42,10 +42,10 @@ public class SharpFangs implements SpecBoostManager.SpecBoost<SharpFangs> {
         public void apply(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getAbilitiesMatching(PoisonousHex.class).forEach(poisonousHex -> {
                 poisonousHex.getDamageValues().getHexDamage().forEachValue(floatModifiable ->
-                        floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", poisonousHexDamageIncreasePercent / 100)
+                        floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", poisonousHexDamageIncreasePercent / 100)
                 );
                 poisonousHex.getDamageValues().getHexDOTDamage().forEachValue(floatModifiable ->
-                        floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", poisonousHexDamageIncreasePercent / 100)
+                        floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", poisonousHexDamageIncreasePercent / 100)
                 );
             });
         }

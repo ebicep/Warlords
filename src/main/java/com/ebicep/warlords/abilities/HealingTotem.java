@@ -173,7 +173,7 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                                              cooldownManager -> {
                                              }, 20
                                      ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                                         currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 0.5f);
+                                         currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, 0.5f);
                                              }
                                      ));
                             });
@@ -227,7 +227,7 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                              .addCooldown(new RegularCooldown<>("Totem Crippling", "CRIP", HealingTotemData.class, data, wp, CooldownTypes.LOW_LEVEL_DEBUFF, cooldownManager -> {
                              }, crippleDuration * 20
                              ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                                 currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 0.75f);
+                                 currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, 0.75f);
                                      }
                              ));
                         });

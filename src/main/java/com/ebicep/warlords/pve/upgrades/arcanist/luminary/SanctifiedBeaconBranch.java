@@ -33,7 +33,7 @@ public class SanctifiedBeaconBranch extends AbstractUpgradeBranch<SanctifiedBeac
                         """,
                 50000,
                 () -> {
-                    ability.getHitBoxRadius().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Master Upgrade Branch", 2);
+                    ability.getHitBoxRadius().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Master Upgrade Branch", 2);
                     ability.setHexIntervalTicks((int) (ability.getHexIntervalTicks() * 0.5f));
                 }
         );
@@ -49,7 +49,7 @@ public class SanctifiedBeaconBranch extends AbstractUpgradeBranch<SanctifiedBeac
                         """,
                 50000,
                 () -> {
-                    ability.getHitBoxRadius().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Master Upgrade Branch", 2);
+                    ability.getHitBoxRadius().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Master Upgrade Branch", 2);
                 }
         );
     }

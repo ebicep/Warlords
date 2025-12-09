@@ -88,7 +88,7 @@ public class WoundingStrikeDefender extends AbstractStrike<WoundingStrikeDefende
                     },
                     4 * 20
             ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 0.85f);
+                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, 0.85f);
                     }
             ));
             new CooldownFilter<>(wp, RegularCooldown.class)
@@ -131,7 +131,7 @@ public class WoundingStrikeDefender extends AbstractStrike<WoundingStrikeDefende
                 teammates
         );
         linkedCooldown.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
-            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, .7f);
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, .7f);
                 }
         );
         we.getCooldownManager().removeCooldownByName(name + " Resistance");

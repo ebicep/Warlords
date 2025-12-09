@@ -134,7 +134,7 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                     cooldownManager -> {},
                     damageReductionTickDuration
             ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
-                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, convertToDivisionDecimal(damageReduction));
+                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, convertToDivisionDecimal(damageReduction));
                     }
             ));
             if (swapTarget instanceof WarlordsNPC npc) {
@@ -199,7 +199,7 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                             }
                         })
                 ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
-                    currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 0.5f);
+                    currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, 0.5f);
                         }
                 ));
 

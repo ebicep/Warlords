@@ -162,7 +162,7 @@ public class EventNarmer extends AbstractMob implements BossMob {
             public void onDamageHealEvent(WarlordsDamageHealingEvent event) {
                 if (event.getSource().equals(warlordsNPC)) {
                     event.applyToMinMax(floatModifiable ->
-                            floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, hpDamageIncrease)
+                            floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, hpDamageIncrease)
                     );
                 } else if (event.getWarlordsEntity().equals(warlordsNPC)) {
                     Location loc = warlordsNPC.getLocation();

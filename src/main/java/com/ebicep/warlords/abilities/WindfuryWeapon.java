@@ -137,7 +137,7 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
                 }
         ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                     if (pveMasterUpgrade2) {
-                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, (100 - Math.min(15, procs.get() * 2.5f)) / 100f);
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, (100 - Math.min(15, procs.get() * 2.5f)) / 100f);
                     }
                 }
         ));

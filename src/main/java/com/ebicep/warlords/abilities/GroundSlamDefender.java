@@ -55,7 +55,7 @@ public class GroundSlamDefender extends AbstractGroundSlam implements Damages<Gr
                       },
                       5 * 20
               ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
-                  currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, damageReduction);
+                  currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, damageReduction);
                       }
               ));
         }

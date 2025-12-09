@@ -32,7 +32,7 @@ public class OrbsOfLifeBranch extends AbstractUpgradeBranch<OrbsOfLife> {
                        """,
                 50000,
                 () -> {
-                    ability.getHealValues().getOrbHealing().value().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Orbs of Eruption", -.5f);
+                    ability.getHealValues().getOrbHealing().value().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Orbs of Eruption", -.5f);
                 }
         );
         masterUpgrade2 = new Upgrade(
@@ -45,7 +45,7 @@ public class OrbsOfLifeBranch extends AbstractUpgradeBranch<OrbsOfLife> {
                         """,
                 50000,
                 () -> {
-                    ability.getHealValues().getOrbHealing().value().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Orbs of Time", .3f);
+                    ability.getHealValues().getOrbHealing().value().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Orbs of Time", .3f);
                     ability.setOrbTickDuration(ability.getOrbTickDuration() * 2);
                     ability.setHealingIncrease(ability.getHealingIncrease() * 2);
                 }

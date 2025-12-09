@@ -126,10 +126,10 @@ public class SiegeOption implements Option {
                 },
                 false
         ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Siege", 1.15f);
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Siege", 1.15f);
                 }
         ).addModifier(Modifier.MODIFY_OUTGOING_HEALING, (event, currentHealValue) -> {
-            currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Siege", 0.75f);
+            currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Siege", 0.75f);
                 }
         ));
         for (AbstractAbility ability : player.getAbilities()) {

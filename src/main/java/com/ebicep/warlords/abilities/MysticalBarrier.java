@@ -225,7 +225,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
         ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                     if (event.getCause().isEmpty()) {
                         stats.meleesReduced++;
-                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, convertToDivisionDecimal(meleeDamageReduction));
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, convertToDivisionDecimal(meleeDamageReduction));
                     }
                 }
         ));

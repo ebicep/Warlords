@@ -69,7 +69,7 @@ public class CrossNecklaceCharm extends SpecialDeltaBuckler implements CraftsInt
                                                 },
                                                 3
                                         ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
                                                     getName() + " Damage", 1.1f
                                             );
                                                 }

@@ -45,7 +45,7 @@ public class MegalithicBoulder implements SpecBoostManager.SpecBoost<MegalithicB
         public void apply(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getAbilitiesMatching(Boulder.class).forEach(boulder -> {
                 boulder.getDamageValues().getBoulderDamage().forEachValue(floatModifiable ->
-                        floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", boulderDamageIncreasePercent / 100)
+                        floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", boulderDamageIncreasePercent / 100)
                 );
             });
             warlordsPlayer.getAbilitiesMatching(ChainHeal.class).forEach(chainHeal -> {

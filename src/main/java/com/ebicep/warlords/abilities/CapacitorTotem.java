@@ -74,7 +74,7 @@ public class CapacitorTotem extends AbstractTotem implements Duration, Damages<C
                     if (!pveMasterUpgrade2) {
                         return;
                     }
-            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, Math.max(.85f, 1 - (data.playersHit * .01f)));
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, Math.max(.85f, 1 - (data.playersHit * .01f)));
                 }
         );
         data.pulseDamage = () -> {

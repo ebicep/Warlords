@@ -53,8 +53,8 @@ public class RayOfLightBranch extends AbstractUpgradeBranch<RayOfLight> {
     @Override
     public void runOnce() {
         Value.RangedValueCritable healing = ability.getHealValues().getRayHealing();
-        healing.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .3f);
-        healing.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .3f);
+        healing.min().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "PvE", .3f);
+        healing.max().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "PvE", .3f);
     }
 
 }

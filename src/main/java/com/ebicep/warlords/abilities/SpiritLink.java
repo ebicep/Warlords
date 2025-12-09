@@ -102,7 +102,7 @@ public class SpiritLink extends AbstractChain<SpiritLink, SpiritLink.SpiritLinkS
                     .filterCooldownClass(SpiritLinkData.class)
                     .stream()
                     .count();
-            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, (float) Math.pow(1 - damageReduction / 100f, stacks));
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, (float) Math.pow(1 - damageReduction / 100f, stacks));
         }));
     }
 

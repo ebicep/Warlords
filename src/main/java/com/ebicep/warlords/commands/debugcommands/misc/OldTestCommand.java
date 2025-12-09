@@ -55,18 +55,36 @@ public class OldTestCommand implements BasicCommand {
                 cooldown.addModifier(
                         Modifier.MODIFY_OUTGOING_DAMAGE_AFTER_INTERVENE,
                         (event, currentDamageValue) -> {
-                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "TEST2", 2);
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.OVERRIDING, "OVER", 20);
                         }
                 );
                 cooldown.addModifier(
                         Modifier.MODIFY_OUTGOING_DAMAGE_AFTER_INTERVENE,
                         (event, currentDamageValue) -> {
-                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "TEST3", 3);
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE, "ADD", 500);
+                        }
+                );
+                cooldown.addModifier(
+                        Modifier.MODIFY_OUTGOING_DAMAGE_AFTER_INTERVENE,
+                        (event, currentDamageValue) -> {
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "TEST2", 2);
+                        }
+                );
+                cooldown.addModifier(
+                        Modifier.MODIFY_OUTGOING_DAMAGE_AFTER_INTERVENE,
+                        (event, currentDamageValue) -> {
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "TEST5", 0.5f);
+                        }
+                );
+                cooldown.addModifier(
+                        Modifier.MODIFY_OUTGOING_DAMAGE_AFTER_INTERVENE,
+                        (event, currentDamageValue) -> {
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "TEST3", 3);
                         }
                 );
                 cooldown.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                             currentDamageValue.addModifier(
-                                    FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Ice Barrier",
+                                    FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Ice Barrier",
                                     0.75f
                             );
                         }
@@ -74,7 +92,7 @@ public class OldTestCommand implements BasicCommand {
                 cooldown.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                             currentDamageValue.addModifier(
                                     75, MultiFloatModifiable.ApplyFloatModifiableType.MULTIPLICATIVE,
-                                    FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Fortifying Hex 1",
+                                    FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Fortifying Hex 1",
                                     -0.1f
                             );
                         }
@@ -82,7 +100,7 @@ public class OldTestCommand implements BasicCommand {
                 cooldown.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                             currentDamageValue.addModifier(
                                     75, MultiFloatModifiable.ApplyFloatModifiableType.MULTIPLICATIVE,
-                                    FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Fortifying Hex 2",
+                                    FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Fortifying Hex 2",
                                     -0.1f
                             );
                         }
@@ -90,7 +108,7 @@ public class OldTestCommand implements BasicCommand {
                 cooldown.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                             currentDamageValue.addModifier(
                                     75, MultiFloatModifiable.ApplyFloatModifiableType.MULTIPLICATIVE,
-                                    FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Fortifying Hex 3",
+                                    FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Fortifying Hex 3",
                                     -0.1f
                             );
                         }
@@ -98,7 +116,7 @@ public class OldTestCommand implements BasicCommand {
                 cooldown.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                             currentDamageValue.addModifier(
                                     75, MultiFloatModifiable.ApplyFloatModifiableType.MULTIPLICATIVE,
-                                    FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Sanctuary",
+                                    FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Sanctuary",
                                     -0.6f,
                                     f -> {
                                         ChatChannels.sendDebugMessage(player, "" + f);

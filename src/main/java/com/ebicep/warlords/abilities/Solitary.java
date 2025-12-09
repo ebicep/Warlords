@@ -66,7 +66,7 @@ public class Solitary extends AbstractAbility implements OrangeAbilityIcon, Dura
                 },
                 tickDuration
         ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
-            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, convertToDivisionDecimal(damageReduction));
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, convertToDivisionDecimal(damageReduction));
                 }
         ));
         for (Intervene intervene : wp.getAbilitiesMatching(Intervene.class)) {

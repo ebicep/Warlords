@@ -44,7 +44,7 @@ public class ShadowStepBranch extends AbstractUpgradeBranch<ShadowStep> {
                         """,
                 50000,
                 () -> {
-                    ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Shadow Dash", 0.9f);
+                    ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Shadow Dash", 0.9f);
                     ability.setMaxCharges(2);
                 }
         );

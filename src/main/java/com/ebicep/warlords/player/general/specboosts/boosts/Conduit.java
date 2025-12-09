@@ -44,7 +44,7 @@ public class Conduit implements SpecBoostManager.SpecBoost<Conduit> {
         public void apply(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getAbilitiesMatching(AvengersStrike.class).forEach(avengerStrike -> {
                 avengerStrike.getDamageValues().getStrikeDamage().forEachValue(floatModifiable ->
-                        floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", avengerStrikeDamageIncreasePercent / 100)
+                        floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", avengerStrikeDamageIncreasePercent / 100)
                 );
                 avengerStrike.setEnergySteal(avengerStrike.getEnergySteal() + energyRemovalIncrease);
             });

@@ -51,8 +51,8 @@ public class AdvancedWarriorBerserker extends AbstractBerserkZombie implements A
                 new BerserkerZombieWoundingStrike()
         );
         Value.RangedValueCritable strikeDamage = woundingStrike.getDamageValues().getStrikeDamage();
-        strikeDamage.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, name, .5f);
-        strikeDamage.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, name, .5f);
+        strikeDamage.min().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, name, .5f);
+        strikeDamage.max().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, name, .5f);
     }
 
     @Override
@@ -79,7 +79,7 @@ public class AdvancedWarriorBerserker extends AbstractBerserkZombie implements A
                     }
                 }
         ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Berserk", 1.2f);
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Berserk", 1.2f);
                 }
         ));
         warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(

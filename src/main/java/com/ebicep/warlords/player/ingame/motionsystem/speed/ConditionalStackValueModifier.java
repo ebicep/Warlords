@@ -25,7 +25,7 @@ public class ConditionalStackValueModifier implements NewValueModifier {
     @Override
     public void modifyNewValue(MotionSystem.NewValueData newValueData) {
         if (newValueData.min() != multiplier) {
-            newValueData.newValue().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, addonName(), multiplier);
+            newValueData.newValue().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, addonName(), multiplier);
         }
     }
 

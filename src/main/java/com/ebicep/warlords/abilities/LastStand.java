@@ -69,11 +69,11 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
         List<FloatModifiable.FloatModifier> modifiers = new ArrayList<>();
         if (pveMasterUpgrade2) {
             for (SeismicWaveDefender ability : wp.getAbilitiesMatching(SeismicWaveDefender.class)) {
-                modifiers.add(ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Enduring Defense", -.5f));
+                modifiers.add(ability.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Enduring Defense", -.5f));
                 modifiers.add(ability.getEnergyCost().addModifier(FloatModifiable.ModifierType.OVERRIDING, "Enduring Defense", 30f));
             }
             for (GroundSlamDefender ability : wp.getAbilitiesMatching(GroundSlamDefender.class)) {
-                modifiers.add(ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Enduring Defense", -.5f));
+                modifiers.add(ability.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Enduring Defense", -.5f));
             }
         }
         RegularCooldown<LastStandData> lastStandCooldown = new RegularCooldown<>(
@@ -105,7 +105,7 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
         );
         lastStandCooldown.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
             currentDamageValue.addModifier(
-                    FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name,
+                    FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name,
                     convertToDivisionDecimal(selfDamageReductionPercent),
                     contribution -> data.addAmountPrevented(Math.abs(contribution))
             );
@@ -119,7 +119,7 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
         for (WarlordsEntity standTarget : PlayerFilter.entitiesAround(wp, radius, radius, radius).aliveTeammatesOf(wp).excluding(wp)) {
             stats.targetsLastStanded++;
             EffectUtils.playParticleLinkAnimation(wp.getLocation(), standTarget.getLocation(), Particle.HAPPY_VILLAGER);
-            float amountPrevented = 0;
+            final float[] amountPrevented = {0};
             standTarget.getCooldownManager().addCooldown(new RegularCooldown<>(name,
                     "LAST",
                     LastStandData.class,
@@ -129,29 +129,32 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
                     cooldownManager -> {
                     },
                     allyTickDuration
+            ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
+                        currentDamageValue.addModifier(
+                                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name,
+                                convertToDivisionDecimal(teammateDamageReductionPercent),
+                                contribution -> {
+                                    amountPrevented[0] = Math.abs(contribution);
+                                    data.addAmountPrevented(Math.abs(contribution));
+                                }
+                        );
+                    }
+            ).addModifier(Modifier.ON_INCOMING_SHIELD_DAMAGE, (event, currentDamageValue, isCrit) -> {
+                data.addAmountPrevented(amountPrevented[0]);
+                        wp.addInstance(InstanceBuilder.healing()
+                                                      .ability(LastStand.this)
+                                                      .source(wp)
+                                                      .value(amountPrevented[0])
+                                                      .showAsCrit(isCrit)
+                                                      .flags(InstanceFlags.LAST_STAND_FROM_SHIELD));
+                    }
             ).addModifier(Modifier.ON_INCOMING_DAMAGE, (event, currentDamageValue, isCrit) -> {
                         wp.addInstance(InstanceBuilder.healing()
                                                       .ability(LastStand.this)
                                                       .source(wp)
-                                                      .value(amountPrevented)
+                                                      .value(amountPrevented[0])
                                                       .showAsCrit(isCrit)
                         );
-                    }
-            ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
-                currentDamageValue.addModifier(
-                        FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name,
-                        convertToDivisionDecimal(teammateDamageReductionPercent),
-                        contribution -> data.addAmountPrevented(Math.abs(contribution))
-                );
-                    }
-            ).addModifier(Modifier.ON_OUTGOING_SHIELD_DAMAGE, (event, currentDamageValue, isCrit) -> {
-                        data.addAmountPrevented(amountPrevented);
-                        wp.addInstance(InstanceBuilder.healing()
-                                                      .ability(LastStand.this)
-                                                      .source(wp)
-                                                      .value(amountPrevented)
-                                                      .showAsCrit(isCrit)
-                                                      .flags(InstanceFlags.LAST_STAND_FROM_SHIELD));
                     }
             ));
             wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" Your Last Stand is now protecting ", NamedTextColor.GRAY))

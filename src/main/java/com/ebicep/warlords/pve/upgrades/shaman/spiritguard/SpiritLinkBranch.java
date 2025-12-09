@@ -13,8 +13,8 @@ public class SpiritLinkBranch extends AbstractUpgradeBranch<SpiritLink> {
     @Override
     public void runOnce() {
         Value.RangedValueCritable damage = ability.getDamageValues().getLinkDamage();
-        damage.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .2f);
-        damage.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .2f);
+        damage.min().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "PvE", .2f);
+        damage.max().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "PvE", .2f);
     }
 
     public SpiritLinkBranch(AbilityTree abilityTree, SpiritLink ability) {

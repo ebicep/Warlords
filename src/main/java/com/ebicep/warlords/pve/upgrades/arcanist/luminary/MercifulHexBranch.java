@@ -38,7 +38,7 @@ public class MercifulHexBranch extends AbstractUpgradeBranch<MercifulHex> {
                 50000,
                 () -> {
                     ability.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade Branch", -5);
-                    ability.getProjectileSpeed().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Master Upgrade Branch", 2);
+                    ability.getProjectileSpeed().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Master Upgrade Branch", 2);
                     ability.setHexStacksPerHit(ability.getHexStacksPerHit() + 1);
                     ability.setHexStacksPerHitAfter(ability.getHexStacksPerHitAfter() + 1);
                     Value.RangedValueCritable healing = ability.getHealValues().getHexHealing();
@@ -67,12 +67,12 @@ public class MercifulHexBranch extends AbstractUpgradeBranch<MercifulHex> {
         ability.getDamageValues()
                .getValues()
                .forEach(value -> {
-                   value.forEachValue(floatModifiable -> floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .15f));
+                   value.forEachValue(floatModifiable -> floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "PvE", .15f));
                });
         ability.getHealValues()
                .getValues()
                .forEach(value -> {
-                   value.forEachValue(floatModifiable -> floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .15f));
+                   value.forEachValue(floatModifiable -> floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "PvE", .15f));
                });
         ability.setMaxAlliesHit(3);
     }
