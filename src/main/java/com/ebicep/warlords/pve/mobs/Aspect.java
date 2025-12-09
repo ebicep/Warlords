@@ -61,7 +61,7 @@ public enum Aspect {
                     }
             ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                         if (!Aspect.isNegated(warlordsEntity)) {
-                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Aspect - Armoured", 0.6f);
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Aspect - Armoured", 0.6f);
                         }
                     }
             ));
@@ -189,7 +189,7 @@ public enum Aspect {
                                 })
                         ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue2) -> {
                                     if (!Aspect.isNegated(warlordsEntity)) {
-                                        currentDamageValue2.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Aspect - Burn", 1.2f);
+                                        currentDamageValue2.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Aspect - Burn", 1.2f);
                                     }
                                 }
                         ));

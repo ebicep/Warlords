@@ -64,7 +64,7 @@ public class AuraOfRestoration implements SpecBoostManager.SpecBoost<AuraOfResto
             warlordsPlayer.getAbilitiesMatching(SoothingElixir.class).forEach(soothingElixir -> {
                 soothingElixir.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", soothingElixirCooldownIncreaseSeconds);
                 soothingElixir.getHealValues().getElixirDOTHealing()
-                              .forEachValue(floatModifiable -> floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                              .forEachValue(floatModifiable -> floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,
                                       "Spec Boost", puddleHealingIncreasePercent / 100
                               ));
             });

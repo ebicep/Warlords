@@ -214,7 +214,7 @@ public class AirStrike implements SpecBoostManager.SpecBoost<AirStrike> {
                             }
                         }.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
                                     if (event.getAbility() instanceof SoulfireBeam) {
-                                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
                                                 getStringName(), AbstractAbility.convertToDivisionDecimal(soulfireBeamDamageReductionPercent)
                                         );
                                     }

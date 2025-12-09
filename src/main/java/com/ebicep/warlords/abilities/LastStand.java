@@ -69,11 +69,11 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
         List<FloatModifiable.FloatModifier> modifiers = new ArrayList<>();
         if (pveMasterUpgrade2) {
             for (SeismicWaveDefender ability : wp.getAbilitiesMatching(SeismicWaveDefender.class)) {
-                modifiers.add(ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Enduring Defense", -.5f));
+                modifiers.add(ability.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Enduring Defense", -.5f));
                 modifiers.add(ability.getEnergyCost().addModifier(FloatModifiable.ModifierType.OVERRIDING, "Enduring Defense", 30f));
             }
             for (GroundSlamDefender ability : wp.getAbilitiesMatching(GroundSlamDefender.class)) {
-                modifiers.add(ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Enduring Defense", -.5f));
+                modifiers.add(ability.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Enduring Defense", -.5f));
             }
         }
         RegularCooldown<LastStandData> lastStandCooldown = new RegularCooldown<>(
@@ -105,7 +105,7 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
         );
         lastStandCooldown.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
             currentDamageValue.addModifier(
-                    FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name,
+                    FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name,
                     convertToDivisionDecimal(selfDamageReductionPercent),
                     contribution -> data.addAmountPrevented(Math.abs(contribution))
             );
@@ -131,7 +131,7 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
                     allyTickDuration
             ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                         currentDamageValue.addModifier(
-                                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name,
+                                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name,
                                 convertToDivisionDecimal(teammateDamageReductionPercent),
                                 contribution -> {
                                     amountPrevented[0] = Math.abs(contribution);

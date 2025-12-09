@@ -31,8 +31,8 @@ public class CapacitorTotemBranch extends AbstractUpgradeBranch<CapacitorTotem> 
                 50000,
                 () -> {
                     Value.RangedValueCritable damage = ability.getDamageValues().getTotemDamage();
-                    damage.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Master Branch Upgrade", .2f);
-                    damage.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Master Branch Upgrade", .2f);
+                    damage.min().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Master Branch Upgrade", .2f);
+                    damage.max().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Master Branch Upgrade", .2f);
                 }
         );
         masterUpgrade2 = new Upgrade(

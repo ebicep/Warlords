@@ -73,12 +73,12 @@ public class TotemicBoon implements SpecBoostManager.SpecBoost<TotemicBoon> {
             warlordsPlayer.getAbilitiesMatching(HealingTotem.class).forEach(healingTotem -> {
                 healingTotem.getHealValues()
                             .getTotemHealing()
-                            .forEachValue(floatModifiable -> floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                            .forEachValue(floatModifiable -> floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,
                                     "Spec Boost",
                                     -healingTotemHealingDecreasePercent / 100f
                             ));
-                healingTotem.getEnergyCost().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", -healingTotemEnergyDecreasePercent / 100f);
-                healingTotem.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", -healingTotemCooldownDecreasePercent / 100f);
+                healingTotem.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", -healingTotemEnergyDecreasePercent / 100f);
+                healingTotem.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", -healingTotemCooldownDecreasePercent / 100f);
                 healingTotem.setMaxCharges(healingTotemMaxAbilityCharges);
                 healingTotem.setCurrentCharges(healingTotemMaxAbilityCharges);
                 healingTotem.setHealingPeriod((int) (healingTotem.getHealingPeriod() / healingTotemSpeedMultiplier));

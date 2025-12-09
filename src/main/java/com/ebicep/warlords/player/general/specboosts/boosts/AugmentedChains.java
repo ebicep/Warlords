@@ -60,13 +60,13 @@ public class AugmentedChains implements SpecBoostManager.SpecBoost<AugmentedChai
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(ChainHeal.class).forEach(chainHeal -> {
                 chainHeal.getHealValues().getChainHealing().forEachValue(floatModifiable ->
-                        floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", chainHealHealingIncreasePercent / 100)
+                        floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", chainHealHealingIncreasePercent / 100)
                 );
                 chainHeal.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", -chainHealEnergyCostDecrease);
             });
             warlordsPlayer.getAbilitiesMatching(Boulder.class).forEach(boulder -> {
                 boulder.getDamageValues().getBoulderDamage().forEachValue(floatModifiable ->
-                        floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", -boulderDamageDecreasePercent / 100)
+                        floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", -boulderDamageDecreasePercent / 100)
                 );
             });
         }

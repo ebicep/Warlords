@@ -63,8 +63,8 @@ public class ImpalingStrikeBranch extends AbstractUpgradeBranch<ImpalingStrike> 
     @Override
     public void runOnce() {
         Value.RangedValueCritable damage = ability.getDamageValues().getStrikeDamage();
-        damage.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .3f);
-        damage.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .3f);
+        damage.min().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "PvE", .3f);
+        damage.max().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "PvE", .3f);
         ability.setLeechAmount(14);
     }
 }

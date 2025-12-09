@@ -98,7 +98,7 @@ public class Narmer extends AbstractMob implements BossMob {
         if (difficulty == DifficultyIndex.ENDLESS) {
             for (AbstractAbility ability : warlordsNPC.getAbilities()) {
                 if (ability instanceof GroundShred) {
-                    ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Narmer Endless", -0.5f);
+                    ability.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Narmer Endless", -0.5f);
                 }
             }
         }

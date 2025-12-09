@@ -51,10 +51,10 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
                         """,
                 50000,
                 () -> {
-                    ability.getDamageValues().getStrikeDamage().min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                    ability.getDamageValues().getStrikeDamage().min().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,
                             "Master Upgrade Branch", .15f
                     );
-                    ability.getDamageValues().getStrikeDamage().max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                    ability.getDamageValues().getStrikeDamage().max().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,
                             "Master Upgrade Branch", .15f
                     );
                     ability.getHealValues().getStrikeHealing().value().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade Branch", 100);
@@ -98,8 +98,8 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
     @Override
     public void runOnce() {
         Value.RangedValueCritable damage = ability.getDamageValues().getStrikeDamage();
-        damage.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .3f);
-        damage.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .3f);
+        damage.min().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "PvE", .3f);
+        damage.max().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "PvE", .3f);
         ability.setDamageIncreaseHealthThreshold(ability.getDamageIncreaseHealthThreshold() + 30);
     }
 

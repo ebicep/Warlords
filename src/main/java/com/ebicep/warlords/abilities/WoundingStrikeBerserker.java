@@ -152,7 +152,7 @@ public class WoundingStrikeBerserker extends AbstractStrike<WoundingStrikeBerser
                     }
                 })
         ).addModifier(Modifier.MODIFY_INCOMING_HEALING, (event, currentHealValue) -> {
-            currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 0.2f);
+            currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, 0.2f);
                 }
         ));
     }

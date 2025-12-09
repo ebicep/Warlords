@@ -92,7 +92,7 @@ public class LegendaryValiant extends AbstractLegendaryWeapon implements EventTi
                 false
         ).addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> {
                     if (player.getCurrentHealth() == player.getMaxHealth()) {
-                        energyGainPerTick.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                        energyGainPerTick.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
                                 getTitleName(),
                                 (1 + (EPS_INCREASE + EPS_INCREASE_PER_UPGRADE * getTitleLevel()) / 100f)
                         );
@@ -100,7 +100,7 @@ public class LegendaryValiant extends AbstractLegendaryWeapon implements EventTi
                 }
         ).addModifier(Modifier.ENERGY_GAIN_PER_HIT, energyGainPerHit -> {
                     if (player.getCurrentHealth() == player.getMaxHealth()) {
-                        energyGainPerHit.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                        energyGainPerHit.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
                                 getTitleName(),
                                 (1 + (EPS_INCREASE + EPS_INCREASE_PER_UPGRADE * getTitleLevel()) / 100f)
                         );

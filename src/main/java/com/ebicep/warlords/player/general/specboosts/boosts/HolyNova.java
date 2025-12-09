@@ -78,7 +78,7 @@ public class HolyNova implements SpecBoostManager.SpecBoost<HolyNova> {
                         if (e.getCause().equals("Divine Blessing") &&
                                 e.getWarlordsEntity().getLocation().distanceSquared(warlordsEntity.getLocation()) > divineBlessingFarRangeBlocks * divineBlessingFarRangeBlocks
                         ) {
-                            currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                            currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
                                     getStringName(),
                                     AbstractAbility.convertToMultiplicationDecimal(divineBlessingHealingIncreasePercentFar)
                             );

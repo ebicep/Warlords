@@ -95,7 +95,7 @@ public class Triage extends AbstractAbility implements PurpleAbilityIcon, Listen
         ).addModifier(Modifier.MODIFY_OUTGOING_HEALING, (event, currentHealValue) -> {
                     if (event.getWarlordsEntity() == lastFlagCarrier) {
                         currentHealValue.addModifier(
-                                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name,
+                                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name,
                                 convertToMultiplicationDecimal(targetBonusHealing),
                                 contribution -> stats.healingIncreased += Math.abs(contribution)
                         );

@@ -98,7 +98,7 @@ public class EventNecronomiconGrimoire extends AbstractMob implements BossMinion
                 false
         ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                     if (currentDamageValue.getCalculatedValue() > warlordsNPC.getMaxHealth() * .1) {
-                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Damage Reduction", 0.3f);
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Damage Reduction", 0.3f);
                     }
                 }
         ));

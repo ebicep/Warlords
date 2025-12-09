@@ -49,7 +49,7 @@ public class CrescentBulwark extends SpecialOmegaBuckler implements AppliesToWar
                 false
         ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     int mobCount = pveOption.mobCount();
-            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getName(), 1 + (mobCount * .005f));
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getName(), 1 + (mobCount * .005f));
                 }
         ));
     }

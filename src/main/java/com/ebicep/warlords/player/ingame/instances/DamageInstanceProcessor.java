@@ -248,7 +248,7 @@ public class DamageInstanceProcessor {
         isCrit = calculatedCritChance > 0 && crit <= calculatedCritChance && source.isCanCrit();
 
         if (isCrit) {
-            damageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Crit Multiplier", calculatedCritMultiplier / 100f - 1);
+            damageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Crit Multiplier", calculatedCritMultiplier / 100f - 1);
         }
 
         damageHealValueBeforeAllReduction = damageValue.getCalculatedValue();
@@ -279,7 +279,7 @@ public class DamageInstanceProcessor {
 
     private void applySpecDamageResistance() {
         FloatModifiable.FloatModifier modifier = damageValue.addModifier(
-                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
                 "Spec Damage Resistance",
                 1 - target.getSpec().getDamageResistance() / 100f,
                 contribution -> target.addAbsorbed(Math.max(0, Math.abs(contribution)))
@@ -376,7 +376,7 @@ public class DamageInstanceProcessor {
         if (flagMultiplier == 1) {
             return;
         }
-        FloatModifiable.FloatModifier modifier = damageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+        FloatModifiable.FloatModifier modifier = damageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
                 "Flag Carrier Multiplier",
                 (float) flagMultiplier
         );

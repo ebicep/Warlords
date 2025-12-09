@@ -148,7 +148,7 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
                         },
                         5 * 20
                 ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                    currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 1.3f);
+                    currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, 1.3f);
                         }
                 ));
             } else if (pveMasterUpgrade2) {

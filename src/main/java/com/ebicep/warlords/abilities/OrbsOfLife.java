@@ -6,7 +6,6 @@ import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
@@ -166,7 +165,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
         );
         orbsOfLifeCooldown.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     if (pveMasterUpgrade) {
-                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
                                 name, convertToMultiplicationDecimal(Math.min(30f, 1f * data.spawnedOrbs.size()))
                         );
                     }

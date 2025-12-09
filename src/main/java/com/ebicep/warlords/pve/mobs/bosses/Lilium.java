@@ -157,7 +157,7 @@ public class Lilium extends AbstractMob implements BossMob {
                     if (crystals.isEmpty()) {
                         return;
                     }
-            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 0.1f);
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, 0.1f);
         }));
 
         Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.BLOCK_TRIAL_SPAWNER_AMBIENT_OMINOUS, 500, 0.5f);
@@ -708,7 +708,7 @@ public class Lilium extends AbstractMob implements BossMob {
                                         }
                                     })
                             ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
-                                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 0.1f);
+                                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, 0.1f);
                                     }
                             ));
                         });

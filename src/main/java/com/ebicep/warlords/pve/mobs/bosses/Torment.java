@@ -115,14 +115,14 @@ public class Torment extends AbstractMob implements BossMob {
                 true
         ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_ALL_MODIFIERS, (event, currentDamageValue, isCrit) -> {
                     if (event.getSource().getCooldownManager().hasCooldown(DamageCheck.class)) {
-                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 3);
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, 3);
                     } else {
                         EffectUtils.playParticleLinkAnimation(
                                 warlordsNPC.getLocation(),
                                 event.getSource().getLocation(),
                                 Particle.SCULK_SOUL
                         );
-                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 0.4f);
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, 0.4f);
                     }
                 }
         ));
@@ -130,13 +130,11 @@ public class Torment extends AbstractMob implements BossMob {
         Location loc = new Location(warlordsNPC.getWorld(), 112.5, 13, 62.5);
         suctionPhase = new BossAbilityPhase(warlordsNPC, 80, () -> {
             suction(loc);
-        }
-        );
+        });
 
         suctionPhaseTwo = new BossAbilityPhase(warlordsNPC, 50, () -> {
             suction(loc);
-        }
-        );
+        });
 
         divinePhase = new BossAbilityPhase(warlordsNPC, 25, () -> {
 
@@ -202,7 +200,7 @@ public class Torment extends AbstractMob implements BossMob {
                             }
                         })
                 ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
-                    currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 0.05f);
+                    currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, 0.05f);
                         }
                 ));
             }
@@ -280,8 +278,7 @@ public class Torment extends AbstractMob implements BossMob {
                     counter++;
                 }
             }.runTaskTimer(140, 0);
-        }
-        );
+        });
     }
 
     private void suction(Location loc) {

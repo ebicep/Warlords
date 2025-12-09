@@ -50,7 +50,7 @@ public class GroundSlamRevenant extends AbstractGroundSlam implements Damages<Gr
                     },
                     5 * 20
             ).addModifier(Modifier.MODIFY_OUTGOING_HEALING, (event, currentHealValue) -> {
-                currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, healingBoost);
+                currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, healingBoost);
                     }
             ));
         }

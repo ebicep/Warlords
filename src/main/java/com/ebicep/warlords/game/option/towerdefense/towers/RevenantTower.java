@@ -219,7 +219,7 @@ public class RevenantTower extends AbstractTower implements Upgradeable.Path2, L
         public void onSpawn(PveOption option) {
             super.onSpawn(option);
             if (increasedEHP) {
-                warlordsNPC.getHealth().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Increased EHP", .1f);
+                warlordsNPC.getHealth().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Increased EHP", .1f);
             }
         }
 

@@ -36,11 +36,11 @@ public abstract class AbstractConsecrateBranch<T extends AbstractConsecrate> ext
                 50000,
                 () -> {
                     Value.RangedValueCritable damage = ability.getConsecrateDamage();
-                    damage.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Master Upgrade Branch", 1.50f);
-                    damage.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Master Upgrade Branch", 1.50f);
+                    damage.min().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Master Upgrade Branch", 1.50f);
+                    damage.max().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Master Upgrade Branch", 1.50f);
                     ability.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade Branch", -30);
                     ability.getHitBoxRadius().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade Branch", 2);
-                    ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Sanctify", 0.8f);
+                    ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Sanctify", 0.8f);
                 }
         );
     }

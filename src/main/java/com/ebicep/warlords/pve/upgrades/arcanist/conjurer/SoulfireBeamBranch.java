@@ -16,8 +16,8 @@ public class SoulfireBeamBranch extends AbstractUpgradeBranch<SoulfireBeam> {
     @Override
     public void runOnce() {
         Value.RangedValueCritable hexDamage = ability.getDamageValues().getBeamDamage();
-        hexDamage.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .3f);
-        hexDamage.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,"PvE", .3f);
+        hexDamage.min().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "PvE", .3f);
+        hexDamage.max().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,"PvE", .3f);
         ability.getDamageValues().setDamageMultipliers(new ArrayList<>(List.of(1.0f, 1.25f, 1.5f, 2.0f, 3f, 4f)));
     }
 

@@ -126,7 +126,7 @@ public class ShadowStep extends AbstractAbility implements
                 },
                 2
         ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
-            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, .25f);
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, .25f);
                 }
         ));
         Set<WarlordsEntity> hit = new HashSet<>();

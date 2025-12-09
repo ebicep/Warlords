@@ -22,7 +22,7 @@ public class FrostboltBranch extends AbstractUpgradeBranch<FrostBolt> {
                     public void modifyFloatModifiable(FloatModifiable.FloatModifier modifier, float value) {
                         modifier.setModifier(value / 100);
                     }
-                            }, ability.getProjectileSpeed().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Upgrade Branch", 0), 50f, 4
+                            }, ability.getProjectileSpeed().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Upgrade Branch", 0), 50f, 4
                 )
                 .addTo(treeA);
 

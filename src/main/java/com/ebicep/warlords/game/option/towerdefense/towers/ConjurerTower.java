@@ -101,7 +101,7 @@ public class ConjurerTower extends AbstractTower implements Upgradeable.Path2 {
                             .value(damageValues.poisonDamage)
                             .flags(InstanceFlags.TD_MAGIC)
                             .customFlag(new CustomInstanceFlags.Valued(
-                                    floatModifiable -> floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                                    floatModifiable -> floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
                                             name + " Upgrade", .5f, 0
                                     ),
                                     CustomInstanceFlags.Valued.Flag.TD_MAGIC_RES_REDUCTION

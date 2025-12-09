@@ -42,7 +42,7 @@ public class CrusadersMight implements SpecBoostManager.SpecBoost<CrusadersMight
         public void apply(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getAbilitiesMatching(CrusadersStrike.class).forEach(crusaderStrike -> {
                 crusaderStrike.getDamageValues().getStrikeDamage().forEachValue(floatModifiable ->
-                        floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", damageIncreasePercent / 100)
+                        floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", damageIncreasePercent / 100)
                 );
             });
         }

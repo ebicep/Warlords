@@ -42,7 +42,7 @@ public class TyphoonBolt implements SpecBoostManager.SpecBoost<TyphoonBolt> {
         public void apply(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getAbilitiesMatching(WaterBolt.class).forEach(waterBolt -> {
                 waterBolt.getHealValues().getBoltHealing().forEachValue(floatModifiable ->
-                        floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", waterBoltHealingIncreasePercent / 100)
+                        floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", waterBoltHealingIncreasePercent / 100)
                 );
             });
         }

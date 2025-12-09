@@ -102,7 +102,7 @@ public class MarkedForDeath implements SpecBoostManager.SpecBoost<MarkedForDeath
             );
             target.addSpeedModifier(warlordsEntity, getStringName(), -avengerMarkSlowPercent, regularCooldown);
             regularCooldown.addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
-                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
                         getStringName(),
                         AbstractAbility.convertToMultiplicationDecimal(avengerMarkIncreaseDamagePercent)
                 );

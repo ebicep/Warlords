@@ -63,7 +63,7 @@ public class AbyssalGrasp implements SpecBoostManager.SpecBoost<AbyssalGrasp> {
             warlordsPlayer.getAbilitiesMatching(SoulShackle.class).forEach(soulShackle -> {
                 soulShackle.getDamageValues()
                            .getShackleDamage()
-                           .forEachValue(floatModifiable -> floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                           .forEachValue(floatModifiable -> floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,
                                    "Spec Boost", soulShackleDamageIncreasePercent / 100
                            ));
                 soulShackle.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", soulShackleCooldownIncreaseTicks / 20f);

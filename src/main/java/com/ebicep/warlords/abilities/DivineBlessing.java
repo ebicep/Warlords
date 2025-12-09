@@ -81,7 +81,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
         if (pveMasterUpgrade2) {
             modifiers = wp.getAbilitiesMatching(RayOfLight.class)
                           .stream()
-                          .map(ability -> ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                          .map(ability -> ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
                                   name + " Master", 0.55f
                           ))
                           .toList();
@@ -136,7 +136,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                                                 21
                                         ).addModifier(Modifier.MODIFY_INCOMING_HEALING, (event, currentHealValue) -> {
                                             currentHealValue.addModifier(
-                                                    FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name,
+                                                    FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name,
                                                     convertToMultiplicationDecimal(hexHealingBonus),
                                                     contribution -> stats.healingIncreased += Math.abs(contribution)
                                             );
@@ -166,7 +166,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
         }.addModifier(Modifier.MODIFY_INCOMING_HEALING, (event, currentHealValue) -> {
                     if (new CooldownFilter<>(wp, RegularCooldown.class).filterCooldownFrom(wp).filterCooldownClass(MercifulHex.class).stream().count() >= maxStacks) {
                         currentHealValue.addModifier(
-                                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name,
+                                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name,
                                 convertToMultiplicationDecimal(hexHealingBonus),
                                 contribution -> stats.healingIncreased += Math.abs(contribution)
                         );

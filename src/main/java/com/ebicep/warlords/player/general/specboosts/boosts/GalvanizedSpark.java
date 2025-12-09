@@ -84,7 +84,7 @@ public class GalvanizedSpark implements SpecBoostManager.SpecBoost<GalvanizedSpa
             warlordsPlayer.getAbilitiesMatching(CapacitorTotem.class).forEach(capacitorTotem -> {
                 capacitorTotem.getDamageValues()
                               .getTotemDamage()
-                              .forEachValue(floatModifiable -> floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                              .forEachValue(floatModifiable -> floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,
                                       "Spec Boost",
                                       -capacitorTotemDamageDecreasePercent / 100
                               ));

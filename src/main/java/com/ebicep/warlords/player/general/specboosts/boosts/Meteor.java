@@ -43,7 +43,7 @@ public class Meteor implements SpecBoostManager.SpecBoost<Meteor> {
             warlordsPlayer.getAbilitiesMatching(Fireball.class).forEach(fireball ->
                     fireball.getDamageValues()
                             .getFireballDamage()
-                            .forEachValue(floatModifiable -> floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                            .forEachValue(floatModifiable -> floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,
                                     "Spec Boost", damageIncrease / 100
                             ))
             );

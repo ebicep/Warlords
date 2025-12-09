@@ -56,8 +56,8 @@ public class EarthenSpikeBranch extends AbstractUpgradeBranch<EarthenSpike> {
                 50000,
                 () -> {
                     Value.RangedValueCritable damage = ability.getDamageValues().getSpikeDamage();
-                    damage.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Master Upgrade Branch", 2);
-                    damage.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Master Upgrade Branch", 2);
+                    damage.min().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Master Upgrade Branch", 2);
+                    damage.max().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Master Upgrade Branch", 2);
                 }
         );
     }

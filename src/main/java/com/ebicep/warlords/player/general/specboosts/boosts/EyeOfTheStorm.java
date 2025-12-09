@@ -81,7 +81,7 @@ public class EyeOfTheStorm implements SpecBoostManager.SpecBoost<EyeOfTheStorm> 
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(LightningBolt.class).forEach(lightningBolt -> {
                 lightningBolt.getMaxDistance().addModifier(FloatModifiable.ModifierType.OVERRIDING, "Spec Boost", maxTravelBlocks);
-                lightningBolt.getProjectileSpeed().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", (velocityIncreasePercentage + 100) / 100);
+                lightningBolt.getProjectileSpeed().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", (velocityIncreasePercentage + 100) / 100);
                 lightningBolt.getSplashRadius().addModifier(FloatModifiable.ModifierType.OVERRIDING, "Spec Boost", splashRadiusBlocks);
                 lightningBolt.setCooldownReduction(lightningBolt.getCooldownReduction() + chainCooldownReductionIncrease);
             });

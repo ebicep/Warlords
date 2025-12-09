@@ -74,7 +74,7 @@ public class PridwensBulwark extends SpecialDeltaBuckler implements CraftsInto {
                         }.runTaskLater(event.getCause().equals("Seismic Wave") ? 3 : 0);
                     } else if (Objects.equals(event.getCause(), "Reckless Charge")) {
                         event.applyToMinMax(floatModifiable ->
-                                floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getName(), 1.25f)
+                                floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getName(), 1.25f)
                         );
                     }
                 }

@@ -45,7 +45,7 @@ public class UnmercifulHex implements SpecBoostManager.SpecBoost<UnmercifulHex> 
                 mercifulHex.setMaxEnemiesHit(Integer.MAX_VALUE);
                 mercifulHex.setHexStacksPerHitAfter(0);
                 mercifulHex.getDamageValues().getHexDamage().forEachValue(floatModifiable ->
-                        floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", mercifulHexDamageIncrease / 100)
+                        floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", mercifulHexDamageIncrease / 100)
                 );
             });
             warlordsPlayer.getAbilitiesMatching(RayOfLight.class).forEach(rayOfLight -> {

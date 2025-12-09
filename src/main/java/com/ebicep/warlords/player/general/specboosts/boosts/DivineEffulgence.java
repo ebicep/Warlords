@@ -68,9 +68,9 @@ public class DivineEffulgence implements SpecBoostManager.SpecBoost<DivineEffulg
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(HolyRadianceProtector.class).forEach(holyRadiance -> {
                 holyRadiance.getHealValues().getRadianceHealing().forEachValue(floatModifiable ->
-                        floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", holyRadianceHealingIncreasePercent / 100)
+                        floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", holyRadianceHealingIncreasePercent / 100)
                 );
-                holyRadiance.getSpeed().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", holyRadianceTravelSpeedPercentIncrease / 100);
+                holyRadiance.getSpeed().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", holyRadianceTravelSpeedPercentIncrease / 100);
             });
         }
 
@@ -96,7 +96,7 @@ public class DivineEffulgence implements SpecBoostManager.SpecBoost<DivineEffulg
                     rangedDamageReductionDurationTicks
             ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (e, currentDamageValue) -> {
                         if (Utils.isProjectile(e.getCause()) || isCustomProjectile(e.getCause())) {
-                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
                                     getStringName(),
                                     AbstractAbility.convertToDivisionDecimal(rangedDamageReductionPercent)
                             );

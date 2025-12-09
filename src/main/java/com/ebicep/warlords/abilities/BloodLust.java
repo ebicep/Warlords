@@ -161,7 +161,7 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
                         }
                     } else if (pveMasterUpgrade2) {
                         if (cooldownManager.hasCooldownFromName("Bleed")) {
-                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Blood Thirsty", 1.3f);
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Blood Thirsty", 1.3f);
                         }
                     }
                 }

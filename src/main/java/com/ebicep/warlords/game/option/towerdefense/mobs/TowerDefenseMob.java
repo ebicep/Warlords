@@ -151,12 +151,12 @@ public abstract class TowerDefenseMob extends AbstractMob {
                         }
                     }
                     if (flags.contains(InstanceFlags.TD_PHYSICAL)) {
-                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
                                 "Physical Resistance",
                                 1 - physicalResistance.getCalculatedValue()
                         );
                     } else if (flags.contains(InstanceFlags.TD_MAGIC)) {
-                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Magic Resistance", 1 - magicResistance.getCalculatedValue());
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Magic Resistance", 1 - magicResistance.getCalculatedValue());
                     }
                     physicalResistance.tick();
                     magicResistance.tick();

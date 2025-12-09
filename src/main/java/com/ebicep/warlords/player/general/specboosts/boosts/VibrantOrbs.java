@@ -43,7 +43,7 @@ public class VibrantOrbs implements SpecBoostManager.SpecBoost<VibrantOrbs> {
             warlordsPlayer.getAbilitiesMatching(OrbsOfLife.class).forEach(orbsOfLife ->
                     orbsOfLife.getHealValues()
                             .getOrbHealing()
-                              .forEachValue(floatModifiable -> floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                              .forEachValue(floatModifiable -> floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,
                                       "Spec Boost", healingIncreasePercent / 100
                               ))
             );

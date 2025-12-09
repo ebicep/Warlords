@@ -198,7 +198,7 @@ public class LegendaryBastion extends AbstractLegendaryWeapon {
                     redirectUsedThisSecond += toRedirect;
                 }
             }
-            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getTitleName(), 1f - dr);
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getTitleName(), 1f - dr);
                 }
         ));
     }

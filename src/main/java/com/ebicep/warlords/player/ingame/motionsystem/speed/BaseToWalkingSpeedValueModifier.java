@@ -27,7 +27,7 @@ public class BaseToWalkingSpeedValueModifier implements NewValueModifier {
     @Override
     public void modifyNewValue(MotionSystem.NewValueData newValueData) {
 //        floatModifiable.addModifier(addonName() + " - Base Speed", BASE_SPEED);
-        newValueData.newValue().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, addonName() + " - Base Walk Speed", baseWalkSpeed);
+        newValueData.newValue().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, addonName() + " - Base Walk Speed", baseWalkSpeed);
     }
 
     @Override

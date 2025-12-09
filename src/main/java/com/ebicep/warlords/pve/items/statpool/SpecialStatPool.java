@@ -22,14 +22,14 @@ public enum SpecialStatPool implements StatPool {
     EPH {
         @Override
         public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value, ItemTier highestTier) {
-            warlordsPlayer.getEnergyPerHit().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Item Special Stat Pool", value / 100f);
+            warlordsPlayer.getEnergyPerHit().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Item Special Stat Pool", value / 100f);
         }
 
     },
     MAX_ENERGY {
         @Override
         public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value, ItemTier highestTier) {
-            warlordsPlayer.getEnergy().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Item Special Stat Pool", value / 100f);
+            warlordsPlayer.getEnergy().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Item Special Stat Pool", value / 100f);
         }
 
     },
@@ -37,7 +37,7 @@ public enum SpecialStatPool implements StatPool {
         @Override
         public void applyToAbility(AbstractAbility ability, float value, ItemTier highestTier) {
             float calculatedValue = 1 - value / 100f;
-            ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Item Special Stat Pool", calculatedValue);
+            ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Item Special Stat Pool", calculatedValue);
         }
 
     },

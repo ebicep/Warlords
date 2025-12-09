@@ -124,10 +124,10 @@ public class LegendaryBrilliance extends AbstractLegendaryWeapon implements Pass
                         },
                         200
                 ).addModifier(Modifier.MODIFY_INCOMING_HEALING, (event, currentHealValue) -> {
-                    currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getTitleName(), healBoost);
+                    currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getTitleName(), healBoost);
                         }
                 ).addModifier(Modifier.MODIFY_OUTGOING_HEALING, (event, currentHealValue) -> {
-                    currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getTitleName(), healBoost);
+                    currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getTitleName(), healBoost);
                         }
                 ));
                 player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);

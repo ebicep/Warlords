@@ -61,7 +61,7 @@ public class FirewaterAlmanac extends SpecialDeltaTome implements CraftsInto {
                                             })
                                             .sum();
                     targeted = Math.min(10, targeted);
-            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getName(), (1 - (targeted * 0.01f)));
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getName(), (1 - (targeted * 0.01f)));
                 }
         ));
     }

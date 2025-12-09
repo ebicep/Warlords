@@ -146,7 +146,7 @@ public class Parry extends AbstractAbility implements AbilityStats<Parry, Parry.
                                                 }
                                     };
                                     parryCooldown.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (e, currentDamageValue) -> {
-                                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
                                                 name, convertToDivisionDecimal(data.instances.size() * damageReduction)
                                         );
                                             }

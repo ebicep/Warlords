@@ -167,14 +167,14 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
                     ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                                 if (crit[0]) { // TODO unscuff
                                     currentDamageValue.addModifier(
-                                            FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, name,
+                                            FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, name,
                                             -critMultiplierReducedBy / 100f,
                                             contribution -> stats.critDamageReduced += Math.abs(contribution)
                                     );
                                 }
                                 if (wp.isInPve()) {
                                     currentDamageValue.addModifier(
-                                            FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name,
+                                            FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name,
                                             convertToDivisionDecimal(damageReductionPve)
                                     );
                                 }
@@ -198,7 +198,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
                                       cooldownManager -> {},
                                       false
                               ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                                  currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 0.7f);
+                                  currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, 0.7f);
                                       }
                               ));
                     }

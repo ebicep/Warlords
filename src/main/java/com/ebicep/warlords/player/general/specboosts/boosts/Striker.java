@@ -44,7 +44,7 @@ public class Striker implements SpecBoostManager.SpecBoost<Striker> {
         public void apply(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getAbilitiesMatching(WoundingStrikeDefender.class).forEach(woundingStrike -> {
                 woundingStrike.getDamageValues().getStrikeDamage().forEachValue(floatModifiable ->
-                        floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", woundingStrikeDamageIncreasePercent / 100)
+                        floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", woundingStrikeDamageIncreasePercent / 100)
                 );
                 woundingStrike.getWounding().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", woundingIncreasePercent);
             });

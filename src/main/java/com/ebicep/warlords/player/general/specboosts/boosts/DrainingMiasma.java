@@ -53,7 +53,7 @@ public class DrainingMiasma implements SpecBoostManager.SpecBoost<DrainingMiasma
                 if (ability instanceof VolatileBrew) {
                     com.ebicep.warlords.abilities.DrainingMiasma drainingMiasma = new com.ebicep.warlords.abilities.DrainingMiasma();
                     drainingMiasma.init(drainingMiasma.getBuilder());
-                    drainingMiasma.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", -drainingMiasmaCooldownReductionPercent / 100);
+                    drainingMiasma.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", -drainingMiasmaCooldownReductionPercent / 100);
                     abilities.set(i, drainingMiasma);
                 }
             }

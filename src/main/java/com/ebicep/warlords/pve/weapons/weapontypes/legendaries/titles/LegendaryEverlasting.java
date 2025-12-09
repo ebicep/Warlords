@@ -182,7 +182,7 @@ public class LegendaryEverlasting extends AbstractLegendaryWeapon implements Lis
                     (DURATION + DURATION_PER_UPGRADE * getTitleLevel()) * 20
             );
             cd.addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
-                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getTitleName(), (1 - stacks * reduction));
+                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getTitleName(), (1 - stacks * reduction));
                     }
             );
             warlordsPlayer.getCooldownManager().addCooldown(cooldown = cd);

@@ -54,7 +54,7 @@ public class RuinousHex implements SpecBoostManager.SpecBoost<RuinousHex> {
             warlordsPlayer.getAbilitiesMatching(FortifyingHex.class).forEach(fortifyingHex -> {
                 fortifyingHex.setMaxEnemiesHit(fortifyingHex.getMaxEnemiesHit() + fortifyingHexEnemyPierceIncrease);
                 fortifyingHex.getDamageValues().getHexDamage().forEachValue(floatModifiable ->
-                        floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", fortifyingHexDamageIncreasePercent / 100)
+                        floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", fortifyingHexDamageIncreasePercent / 100)
                 );
                 fortifyingHex.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", fortifyingHexEnergyCostIncrease);
                 fortifyingHex.setMaxAlliesHit(fortifyingHex.getMaxAlliesHit() - fortifyingHexAllyPierceReduction);

@@ -226,7 +226,7 @@ public class FlagSpawnPointOption implements Option {
                                         },
                                         15 * 20
                                 ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
-                                    currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                                    currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
                                             "Flag Damage Resistance", AbstractAbility.convertToDivisionDecimal(flagRes)
                                     );
                                         }

@@ -53,7 +53,7 @@ public class ShawlOfMithra extends AbstractFixedItem implements FixedItemApplies
                     WarlordsEntity attacker = event.getSource();
                     if (attacker instanceof WarlordsNPC warlordsNPC) {
                         if (warlordsNPC.getMob().getInternalLevel() < 2) {
-                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getName(), 0.9f);
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getName(), 0.9f);
                         }
                     }
                 }

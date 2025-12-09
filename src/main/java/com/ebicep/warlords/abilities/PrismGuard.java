@@ -137,7 +137,7 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                                     tickDuration
                             ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                                 currentDamageValue.addModifier(
-                                        FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name,
+                                        FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name,
                                         convertToDivisionDecimal(damageReduction),
                                         contribution -> data.totalDamageReduced += Math.abs(contribution)
                                 );
@@ -173,7 +173,7 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                                             cooldownManager -> {},
                                             6
                                     ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 1.1f);
+                                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, 1.1f);
                                             }
                                     ));
                                 }
@@ -200,7 +200,7 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                                             if (!isInsideBubble.contains(event.getSource())) {
                                                 stats.timesProjectilesReduced++;
                                                 currentDamageValue.addModifier(
-                                                        FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name,
+                                                        FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name,
                                                         (100 - projectileDamageReduction) / 100f,
                                                         contribution -> data.totalDamageReduced += Math.abs(contribution)
                                                 );
@@ -240,7 +240,7 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                         }
                         if (event.getCause().isEmpty()) {
                             event.applyToMinMax(floatModifiable ->
-                                    floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, .75f)
+                                    floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, .75f)
                             );
                         }
                     }
@@ -260,7 +260,7 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                         totalReduction += 10;
                     }
             currentDamageValue.addModifier(
-                    FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name,
+                    FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name,
                     (100 - totalReduction) / 100f,
                     contribution -> data.totalDamageReduced += Math.abs(contribution)
             );

@@ -118,7 +118,7 @@ public class Chessking extends AbstractMob implements BossMob {
                        .forEach(belch -> belch.setRange(9 - ((20 - newSize) * .2f)));
             warlordsNPC.getAbilitiesMatching(SpawnMobAbility.class)
                        .forEach(spawnMobAbility -> spawnMobAbility.getCooldown()
-                                                                  .addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Chessking", -((20 - newSize) * .01f)));
+                                                                  .addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Chessking", -((20 - newSize) * .01f)));
         }
     }
 

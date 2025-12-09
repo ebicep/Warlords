@@ -39,11 +39,11 @@ public class TDStray extends TowerDefenseMob implements BasicMob {
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
         event.getCustomFlags().add(new CustomInstanceFlags.Valued(
-                floatModifiable -> floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, .5f, 0),
+                floatModifiable -> floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, .5f, 0),
                 CustomInstanceFlags.Valued.Flag.TD_DEFENDER_ARMOR
         ));
         event.getCustomFlags().add(new CustomInstanceFlags.Valued(
-                floatModifiable -> floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, .5f, 0),
+                floatModifiable -> floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, .5f, 0),
                 CustomInstanceFlags.Valued.Flag.TD_DEFENDER_ARMOR
         ));
     }

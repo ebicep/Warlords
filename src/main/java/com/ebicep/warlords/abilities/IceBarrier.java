@@ -87,7 +87,7 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
                                                     },
                                                     ticksLeft
                                             ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                                                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                                                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
                                                         "Ice Wall", 1.35f
                                                 );
                                                     }
@@ -126,7 +126,7 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
                     if (pveMasterUpgrade2) {
                         return;
                     }
-            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, getDamageReduction());
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, getDamageReduction());
                 }
         );
         wp.getCooldownManager().addCooldown(iceBarrierCooldown);

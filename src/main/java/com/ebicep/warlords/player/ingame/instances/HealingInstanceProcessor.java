@@ -360,7 +360,7 @@ public class HealingInstanceProcessor {
         if (trueHealing) {
             healValue.addModifierListener(
                     InstanceFlags.TRUE_HEALING.createDisabledReason(),
-                    FloatModifiable.ModifierType.ADDITIVE, FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
+                    FloatModifiable.ModifierType.ADDITIVE, FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER
             );
         }
         // source / self modifiers
@@ -474,7 +474,7 @@ public class HealingInstanceProcessor {
         isCrit = calculatedCritChance > 0 && crit <= calculatedCritChance && source.isCanCrit();
 
         if (isCrit) {
-            healValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Crit Multiplier", calculatedCritMultiplier / 100f);
+            healValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Crit Multiplier", calculatedCritMultiplier / 100f);
         }
 
         healValueBeforeReduction = healValue.getCalculatedValue();

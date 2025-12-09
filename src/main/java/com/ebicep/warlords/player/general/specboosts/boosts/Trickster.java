@@ -81,7 +81,7 @@ public class Trickster implements SpecBoostManager.SpecBoost<Trickster> {
             warlordsPlayer.getAbilitiesMatching(IncendiaryCurse.class).forEach(incendiaryCurse -> {
                 incendiaryCurse.setDamageIncreaseHealthThreshold(incendiaryCurse.getDamageIncreaseHealthThreshold() - incendiaryCurseDamageThresholdDecrease);
                 incendiaryCurse.getDamageValues().getCurseDamage().forEachValue(floatModifiable ->
-                        floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", incendiaryCurseDamageIncreasePercent / 100)
+                        floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", incendiaryCurseDamageIncreasePercent / 100)
                 );
                 incendiaryCurse.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", incendiaryCurseEnergyCostIncrease);
             });

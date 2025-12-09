@@ -36,7 +36,7 @@ public class NaturesClaws extends SpecialOmegaGauntlet implements AppliesToWarlo
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {
         for (AbstractAbility ability : warlordsPlayer.getAbilities()) {
-            ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, getName(), -0.1f);
+            ability.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, getName(), -0.1f);
         }
     }
 

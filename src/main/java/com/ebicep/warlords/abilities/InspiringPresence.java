@@ -118,7 +118,7 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
             presenceTarget.addSpeedModifier(wp, name, speedBuff, tickDuration);
             List<FloatModifiable.FloatModifier> modifiers;
             if (pveMasterUpgrade) {
-                modifiers = presenceTarget.getAbilities().stream().map(ability -> ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                modifiers = presenceTarget.getAbilities().stream().map(ability -> ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
                         name + " Master", 0.8f
                 )).toList();
             } else {

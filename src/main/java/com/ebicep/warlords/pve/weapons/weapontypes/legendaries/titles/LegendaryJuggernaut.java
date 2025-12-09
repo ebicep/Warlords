@@ -86,7 +86,7 @@ public class LegendaryJuggernaut extends AbstractLegendaryWeapon implements Figh
         super.applyToWarlordsPlayer(player, pveOption);
 
         player.getGame().registerEvents(new Listener() {
-            final FloatModifiable.FloatModifier modifier = player.getHealth().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+            final FloatModifiable.FloatModifier modifier = player.getHealth().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,
                     getTitleName() + " (Base)", 0
             );
 
@@ -116,7 +116,7 @@ public class LegendaryJuggernaut extends AbstractLegendaryWeapon implements Figh
                     for (int i = KILL_MILESTONES.size() - 1; i >= 0; i--) {
                         int killMilestone = KILL_MILESTONES.get(i);
                         if (playerKills >= killMilestone) {
-                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getTitleName(), 1 + (getDamageBoost() * (i + 1)) / 100f);
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getTitleName(), 1 + (getDamageBoost() * (i + 1)) / 100f);
                             return;
                         }
                     }

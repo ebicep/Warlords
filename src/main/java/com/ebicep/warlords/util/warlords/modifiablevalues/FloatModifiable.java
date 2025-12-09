@@ -330,8 +330,8 @@ public class FloatModifiable implements Modifiable {
         List<FloatModifiable.FloatModifier> list = switch (type) {
             case OVERRIDING -> this.overridingModifiers;
             case ADDITIVE -> this.additiveModifiers;
-            case MULTIPLICATIVE_ADDITIVE -> this.multiplicativeModifiersAdditive;
-            case MULTIPLICATIVE_MULTIPLICATIVE -> this.multiplicativeModifiersMultiplicative;
+            case ADDITIVE_MULTIPLIER -> this.multiplicativeModifiersAdditive;
+            case MULTIPLICATIVE_MULTIPLIER -> this.multiplicativeModifiersMultiplicative;
         };
         if (!override) {
             for (FloatModifier modifier : list) {
@@ -471,26 +471,28 @@ public class FloatModifiable implements Modifiable {
     public enum ModifierType {
         OVERRIDING,
         ADDITIVE,
-        MULTIPLICATIVE_ADDITIVE,
-        MULTIPLICATIVE_MULTIPLICATIVE,
+        ADDITIVE_MULTIPLIER,
+        MULTIPLICATIVE_MULTIPLIER,
+
         ;
+
         public static final FloatModifiable.ModifierType[] ALL_TYPES = {
                 FloatModifiable.ModifierType.OVERRIDING,
                 FloatModifiable.ModifierType.ADDITIVE,
-                FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
-                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
+                FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,
+                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER
         };
         public static final FloatModifiable.ModifierType[] NON_OVERRIDE_TYPES = {
                 FloatModifiable.ModifierType.ADDITIVE,
-                FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
-                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
+                FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,
+                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER
         };
         public static final FloatModifiable.ModifierType[] ADDITIVE_TYPES = {
                 FloatModifiable.ModifierType.ADDITIVE,
-                FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE
+                FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER
         };
         public static final FloatModifiable.ModifierType[] MULTIPLICATIVE_TYPES = {
-                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE
+                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER
         };
     }
 

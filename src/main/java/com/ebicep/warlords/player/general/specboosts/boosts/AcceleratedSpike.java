@@ -62,7 +62,7 @@ public class AcceleratedSpike implements SpecBoostManager.SpecBoost<AcceleratedS
                 earthenSpike.getHitBoxRadius().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", castRangeIncrease);
                 earthenSpike.setSpikeHitbox(hitRadius);
                 earthenSpike.getDamageValues().getSpikeDamage().forEachValue(floatModifiable ->
-                        floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", damageIncreasePercent / 100)
+                        floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", damageIncreasePercent / 100)
                 );
             });
         }

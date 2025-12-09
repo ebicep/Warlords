@@ -32,10 +32,10 @@ public class BoulderBranch extends AbstractUpgradeBranch<Boulder> {
                 50000,
                 () -> {
                     ability.setBoulderSpeed(ability.getBoulderSpeed() * 0.25f);
-                    ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Terrestrial Meteor", 2);
+                    ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Terrestrial Meteor", 2);
                     Value.RangedValueCritable damage = ability.getDamageValues().getBoulderDamage();
-                    damage.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Master Upgrade Branch", 3);
-                    damage.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Master Upgrade Branch", 3);
+                    damage.min().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Master Upgrade Branch", 3);
+                    damage.max().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Master Upgrade Branch", 3);
                     ability.setHitbox(hitbox + 3);
                 }
         );
@@ -48,8 +48,8 @@ public class BoulderBranch extends AbstractUpgradeBranch<Boulder> {
                 50000,
                 () -> {
                     Value.RangedValueCritable damage = ability.getDamageValues().getBoulderDamage();
-                    damage.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Master Upgrade Branch", 2);
-                    damage.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Master Upgrade Branch", 2);
+                    damage.min().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Master Upgrade Branch", 2);
+                    damage.max().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Master Upgrade Branch", 2);
                 }
         );
     }

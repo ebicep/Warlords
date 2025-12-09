@@ -98,9 +98,9 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
                                 .value(currentDamageValue.getCalculatedValue() * .75f)
                                 .flags(InstanceFlags.IGNORE_SELF_RES, InstanceFlags.RECURSIVE, InstanceFlags.REFLECTIVE_DAMAGE)
                         );
-                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, .1f);
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, .1f);
                     } else {
-                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, getCalculatedVindicateDamageReduction());
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, getCalculatedVindicateDamageReduction());
                     }
                 }
         ));
@@ -138,7 +138,7 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
         };
         vindiateCooldown.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                     if (vindPveMaster2) {
-                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Vindicate", .85f);
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Vindicate", .85f);
                     }
                 }
         );

@@ -36,7 +36,7 @@ public class DumbDebuffs implements FieldEffect {
                     false
             ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                         int debuffDamageBoost = Math.min(event.getWarlordsEntity().getCooldownManager().getDebuffCooldowns(true).size(), 12);
-                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Dumb Debuff", (1 + (debuffDamageBoost * .15f)));
+                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Dumb Debuff", (1 + (debuffDamageBoost * .15f)));
                     }
             ));
         }

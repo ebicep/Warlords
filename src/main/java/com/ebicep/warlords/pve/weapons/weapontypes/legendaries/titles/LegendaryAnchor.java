@@ -104,7 +104,7 @@ public class LegendaryAnchor extends AbstractLegendaryWeapon implements PassiveC
                 false
         ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                     float dr = (stacks * getDrPerStack()) / 100f;
-            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getTitleName(), (1f - dr));
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getTitleName(), (1f - dr));
                 }
         ));
 

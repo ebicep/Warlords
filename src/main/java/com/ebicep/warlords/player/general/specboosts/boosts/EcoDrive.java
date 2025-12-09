@@ -72,7 +72,7 @@ public class EcoDrive implements SpecBoostManager.SpecBoost<EcoDrive> {
                             List<CustomInstanceFlags> customFlags = event.getCustomFlags();
                             for (CustomInstanceFlags customFlag : customFlags) {
                                 if (customFlag instanceof CustomInstanceFlags.PlayersEffectedInstanceFlag(List<WarlordsEntity> healedPlayers) && healedPlayers.size() == 1) {
-                                    currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getStringName(), 1 + singleAllyHealBonusPercent / 100);
+                                    currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getStringName(), 1 + singleAllyHealBonusPercent / 100);
                                 }
                             }
                         }

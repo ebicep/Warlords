@@ -33,7 +33,7 @@ public class MysticalBarrierBranch extends AbstractUpgradeBranch<MysticalBarrier
                         """,
                 50000,
                 () -> {
-                    ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Transcendent Barrier", 0.8f);
+                    ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Transcendent Barrier", 0.8f);
                     ability.setShieldMaxHealth(ability.getShieldMaxHealth() + 3000);
                     ability.setShieldIncrease(ability.getShieldIncrease() + 80);
                     ability.setTickDuration(ability.getTickDuration() + 60);

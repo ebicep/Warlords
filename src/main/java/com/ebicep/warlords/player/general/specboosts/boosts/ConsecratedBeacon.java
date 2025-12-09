@@ -46,7 +46,7 @@ public class ConsecratedBeacon implements SpecBoostManager.SpecBoost<Consecrated
         public void apply(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getAbilitiesMatching(SanctifiedBeacon.class).forEach(sanctifiedBeacon -> {
                 sanctifiedBeacon.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", -sanctifiedBeaconEnergyCostDecrease);
-                sanctifiedBeacon.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", -sanctifiedBeaconCooldownReductionPercent / 100);
+                sanctifiedBeacon.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", -sanctifiedBeaconCooldownReductionPercent / 100);
                 sanctifiedBeacon.setStacksGranted(sanctifiedBeacon.getStacksGranted() + sanctifiedBeaconAdditionalHexStacks);
             });
         }

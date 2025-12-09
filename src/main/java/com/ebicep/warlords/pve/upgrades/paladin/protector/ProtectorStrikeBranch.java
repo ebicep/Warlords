@@ -43,8 +43,8 @@ public class ProtectorStrikeBranch extends AbstractUpgradeBranch<ProtectorsStrik
                 50000,
                 () -> {
                     Value.RangedValueCritable damage = ability.getDamageValues().getStrikeDamage();
-                    damage.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Master Upgrade Branch", .2f);
-                    damage.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Master Upgrade Branch", .2f);
+                    damage.min().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Master Upgrade Branch", .2f);
+                    damage.max().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Master Upgrade Branch", .2f);
                     ability.getDamageValues().getStrikeDamage().critChance().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade Branch", 15);
                     ability.setStrikeRadius(ability.getStrikeRadius() * 2);
                     ability.setMaxAllies(ability.getMaxAllies() + 1);
@@ -55,7 +55,7 @@ public class ProtectorStrikeBranch extends AbstractUpgradeBranch<ProtectorsStrik
     @Override
     public void runOnce() {
         Value.RangedValueCritable damage = ability.getDamageValues().getStrikeDamage();
-        damage.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .3f);
-        damage.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "PvE", .3f);
+        damage.min().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "PvE", .3f);
+        damage.max().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "PvE", .3f);
     }
 }

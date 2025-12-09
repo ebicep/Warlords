@@ -63,8 +63,8 @@ public class DivinePurification implements SpecBoostManager.SpecBoost<DivinePuri
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(WaterBreath.class).forEach(waterBreath -> {
-                waterBreath.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", -waterBreathCooldownReductionPercent / 100f);
-                waterBreath.getEnergyCost().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", -waterBreathEnergyCostReductionPercent / 100f);
+                waterBreath.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", -waterBreathCooldownReductionPercent / 100f);
+                waterBreath.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", -waterBreathEnergyCostReductionPercent / 100f);
             });
             warlordsPlayer.getAbilitiesMatching(AbstractArcaneShield.class).forEach(arcaneShield -> {
                 arcaneShield.getEnergyCost().addModifier(FloatModifiable.ModifierType.OVERRIDING, "Spec Boost", arcaneShieldEnergyCost);

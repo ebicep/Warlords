@@ -147,7 +147,7 @@ public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<
                                     5 * 20
                             );
                             deathParadeCooldown.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
-                                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, finalDamageReduction);
+                                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, finalDamageReduction);
                                     }
                             );
                             deathParadeCooldown.addModifier(Modifier.ENERGY_GAIN_PER_HIT, energyGainPerTick -> energyGainPerTick.addModifier(FloatModifiable.ModifierType.ADDITIVE,

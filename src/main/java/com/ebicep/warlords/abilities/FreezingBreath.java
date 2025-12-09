@@ -221,7 +221,7 @@ public class FreezingBreath extends AbstractProjectile<FreezingBreath, FreezingB
             ).addModifier(
                     Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE,
                     (event, currentDamageValue) -> {
-                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 0.6f);
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, 0.6f);
                     }
             ));
         }
@@ -233,7 +233,7 @@ public class FreezingBreath extends AbstractProjectile<FreezingBreath, FreezingB
         we.getCooldownManager().addCooldown(new RegularCooldown<>(name, "FRZ RES", FreezingBreath.class, new FreezingBreath(), we, CooldownTypes.BUFF, cooldownManager -> {
         }, 4 * 20
         ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
-            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, (1 - (0.05f * counter)));
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, (1 - (0.05f * counter)));
                 }
         ));
     }

@@ -141,7 +141,7 @@ public class BerserkerTower extends AbstractTower implements Upgradeable.Path2 {
                                     }
                                 })
                         ).addModifier(Modifier.MODIFY_INCOMING_HEALING, (event, currentHealValue) -> {
-                            currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Bleed", 0.2f);
+                            currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Bleed", 0.2f);
                                 }
                         ));
                     }

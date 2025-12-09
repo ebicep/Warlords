@@ -5,7 +5,6 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
@@ -146,7 +145,7 @@ public class LegendaryFervent extends AbstractLegendaryWeapon implements Passive
                         regularCooldown.addModifier(
                                 Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE,
                                 (e, currentDamageValue) -> {
-                                    currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getTitleName(), 1 + damageBoost.get() * DAMAGE_BOOST / 100f);
+                                    currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getTitleName(), 1 + damageBoost.get() * DAMAGE_BOOST / 100f);
                                 }
                         );
                         cooldown.set(regularCooldown);
@@ -209,7 +208,7 @@ public class LegendaryFervent extends AbstractLegendaryWeapon implements Passive
                                     }
 
                                     float strikeDamageBoost = 1 + (ABILITY_STRIKE_DAMAGE_BOOST + ABILITY_STRIKE_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel()) / 100f;
-                                    currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getTitleName(), strikeDamageBoost);
+                                    currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getTitleName(), strikeDamageBoost);
                                 }
                         ));
                         passiveCooldown = 40 * GameRunnable.SECOND;

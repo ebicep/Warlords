@@ -69,7 +69,7 @@ public class SanctionBurst implements SpecBoostManager.SpecBoost<SanctionBurst> 
             warlordsPlayer.getAbilitiesMatching(SoulShackle.class).forEach(soulShackle -> {
                 soulShackle.getDamageValues()
                            .getShackleDamage()
-                           .forEachValue(floatModifier -> floatModifier.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE,
+                           .forEachValue(floatModifier -> floatModifier.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,
                                    "Spec Boost",
                                    -soulShackleDamageDecreasePercent / 100
                            ));

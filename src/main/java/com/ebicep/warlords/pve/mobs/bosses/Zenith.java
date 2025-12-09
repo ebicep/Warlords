@@ -1,6 +1,5 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
@@ -25,7 +24,6 @@ import com.ebicep.warlords.pve.mobs.bosses.bossabilities.LightningChainAbility;
 import com.ebicep.warlords.pve.mobs.bosses.bossabilities.ShatteringChainsAbility;
 import com.ebicep.warlords.pve.mobs.bosses.bossabilities.ThunderLineBarrageAbility;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
-import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -35,7 +33,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.*;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
@@ -220,7 +217,7 @@ public class Zenith extends AbstractMob implements BossMob {
                     cooldownManager -> {},
                     true
             ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
-                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 0.5f);
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, 0.5f);
                     }
             ));
             enraged = true;

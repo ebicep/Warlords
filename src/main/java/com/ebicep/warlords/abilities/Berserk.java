@@ -107,7 +107,7 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
                     stats.hitsDoneAmplified++;
                     multiplier.getAndIncrement();
                     absorbedDamage.addAndGet((int) currentDamageValue.getCalculatedValue());
-                    currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, name, damageIncrease / 100);
+                    currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, name, damageIncrease / 100);
                 }
         );
         wp.getCooldownManager().addCooldown(berserkCooldown);

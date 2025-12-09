@@ -306,7 +306,7 @@ public class EventMithra extends AbstractMob implements BossMob {
                     }
                 }
         ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name, 1.15f);
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, 1.15f);
                 }
         ));
         warlordsNPC.setDamageResistance(warlordsNPC.getSpec().getDamageResistance() + 10);

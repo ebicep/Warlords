@@ -126,7 +126,7 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                                     }
                                 })
                         ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
-                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Disaster Fragment - Burn", 1.2f);
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Disaster Fragment - Burn", 1.2f);
                                 }
                         ));
                     }
@@ -156,7 +156,7 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                                     }
                                 })
                         ).addModifier(Modifier.MODIFY_INCOMING_HEALING, (e, currentHealValue) -> {
-                            currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, "Disaster Fragment - Bleed", 0.2f);
+                            currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Disaster Fragment - Bleed", 0.2f);
                                 }
                         ));
                     }

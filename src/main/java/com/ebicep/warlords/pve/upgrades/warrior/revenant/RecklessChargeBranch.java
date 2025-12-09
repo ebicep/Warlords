@@ -51,8 +51,8 @@ public class RecklessChargeBranch extends AbstractUpgradeBranch<RecklessCharge> 
                 50000,
                 () -> {
                     Value.RangedValueCritable damage = ability.getDamageValues().getChargeDamage();
-                    damage.min().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Master Upgrade Branch", 1.5f);
-                    damage.max().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Master Upgrade Branch", 1.5f);
+                    damage.min().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Master Upgrade Branch", 1.5f);
+                    damage.max().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Master Upgrade Branch", 1.5f);
                     ability.setStunTimeInTicks(60);
                 }
         );

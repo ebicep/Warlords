@@ -126,7 +126,7 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
         );
         protectiveLayerCooldown.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
             currentDamageValue.addModifier(
-                    FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, name,
+                    FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name,
                     convertToDivisionDecimal(damageAbsorption.getCalculatedValue()),
                     contribution -> totalAbsorbed.addAndGet(Math.abs(contribution))
             );

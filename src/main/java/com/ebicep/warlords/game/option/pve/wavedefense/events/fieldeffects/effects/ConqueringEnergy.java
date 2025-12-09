@@ -31,7 +31,7 @@ public class ConqueringEnergy implements FieldEffect {
                 }
                 if (event.getCause().isEmpty()) {
                     event.applyToMinMax(floatModifiable ->
-                            floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE, getName(), 1.5f)
+                            floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getName(), 1.5f)
                     );
                 }
             }
@@ -42,6 +42,6 @@ public class ConqueringEnergy implements FieldEffect {
     @Override
     public void onWarlordsEntityCreated(WarlordsEntity player) {
         player.getEnergyPerSec().addModifier(FloatModifiable.ModifierType.ADDITIVE, getName(), -10);
-        player.getEnergyPerHit().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, getName(), 1.5f);
+        player.getEnergyPerHit().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, getName(), 1.5f);
     }
 }

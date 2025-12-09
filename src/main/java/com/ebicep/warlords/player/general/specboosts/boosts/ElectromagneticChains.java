@@ -59,12 +59,12 @@ public class ElectromagneticChains implements SpecBoostManager.SpecBoost<Electro
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(LightningBolt.class).forEach(lightningBolt -> {
                 lightningBolt.getDamageValues().getBoltDamage().forEachValue(floatModifiable ->
-                        floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", -damageReductionPercent / 100)
+                        floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", -damageReductionPercent / 100)
                 );
             });
             warlordsPlayer.getAbilitiesMatching(ChainLightning.class).forEach(chainLightning -> {
                 chainLightning.getDamageValues().getChainDamage().forEachValue(floatModifiable ->
-                        floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_ADDITIVE, "Spec Boost", -damageReductionPercent / 100)
+                        floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", -damageReductionPercent / 100)
                 );
             });
         }
@@ -89,7 +89,7 @@ public class ElectromagneticChains implements SpecBoostManager.SpecBoost<Electro
                     cooldownManager -> {},
                     chainLightningDurationTicks
             ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
-                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
+                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
                         getStringName(),
                         AbstractAbility.convertToDivisionDecimal(chainLightningDamageReductionPercent)
                 );
