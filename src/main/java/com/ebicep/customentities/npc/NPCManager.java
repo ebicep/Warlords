@@ -45,31 +45,30 @@ public class NPCManager {
                 ChatUtils.MessageType.GAME.sendMessage("Adding game join NPCs...");
                 createCTFNPC();
                 createSiegeNPC();
-//                    createTeamDeathmatchNPC();
-//                    createInterceptionNPC();
                 createWaveDefenseNPC();
                 createOnslaughtNPC();
                 createTreasureHuntNPC();
-//                    createBossRushNPC();
                 createMasterworksFairNPC();
                 createWeaponsManagerNPC();
                 createLegendaryWeaponNPC();
                 createSupplyDropFairNPC();
-//                    createQuestMenuNPC();
                 createBountyMenuNPC();
                 createStarPieceSynthesizerNPC();
-//                    createMysteriousTokenNPC();
-//                    createItemMichaelNPC();
-                    createItemEnyaNPC();
-                    createIllusionVendorNPC();
-                    //createSeasonalVendorNPC();
-                    createAnomalyNPC();
-                    createRaidNPC();
-                })
-                .execute();
+                createItemEnyaNPC();
+                createIllusionVendorNPC();
+                //createSeasonalVendorNPC();
+                createAnomalyNPC();
+                createRaidNPC();
+                createPrestigeVendorNPC();
+                createAscendantVendorNPC();
+                createWeeklyItemTraderNPC();
+                createSeasonalVendorNPC();
+                createTreasureHuntVendorNPC();
+            }
+        };
 
         registerTrait(ReadyUpOption.ReadyUpTrait.class, "ReadyUpTrait");
-    }
+    };
 
     private static void createCTFNPC() {
         registerTrait(CaptureTheFlagTrait.class, "GameStartTrait");
@@ -135,32 +134,6 @@ public class NPCManager {
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
         npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 22.5, 82, 155.5, 122, 0));
-    }
-
-    public static void createDatabaseRequiredNPCs() {
-        if (!Warlords.citizensEnabled) {
-            return;
-        }
-
-        Warlords.newChain()
-                .sync(() -> {
-                    createMasterworksFairNPC();
-                    createWeaponsManagerNPC();
-                    createLegendaryWeaponNPC();
-                    createAscendantWeaponNPC();
-                    createSupplyDropFairNPC();
-                    createBountyMenuNPC();
-                    createStarPieceSynthesizerNPC();
-                    createTreasureHuntVendorNPC();
-//                    createMysteriousTokenNPC();
-                    createItemEnyaNPC();
-                    createIllusionVendorNPC();
-                    createPrestigeVendorNPC();
-                    createAscendantVendorNPC();
-                    createWeeklyItemTraderNPC();
-                    createSeasonalVendorNPC();
-                })
-                .execute();
     }
 
     public static void createMasterworksFairNPC() {
@@ -452,12 +425,12 @@ public class NPCManager {
         }.runTaskTimer(Warlords.getInstance(), 0, 60);
     }
 
-        public static void registerTrait(Class<? extends Trait> trait, String traitName) {
-            if (CitizensAPI.getTraitFactory().getTrait(traitName) != null) {
-                CitizensAPI.getTraitFactory().deregisterTrait(TraitInfo.create(trait).withName(traitName));
-            }
-            CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(trait).withName(traitName));
+    public static void registerTrait(Class<? extends Trait> trait, String traitName) {
+        if (CitizensAPI.getTraitFactory().getTrait(traitName) != null) {
+            CitizensAPI.getTraitFactory().deregisterTrait(TraitInfo.create(trait).withName(traitName));
         }
+        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(trait).withName(traitName));
+    }
 
     public static void destroyNPCs() {
         if (!Warlords.citizensEnabled) {
@@ -484,6 +457,4 @@ public class NPCManager {
 
         npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), -2532.5, 48.5, 746.8, 90, 0));
     }
-
-
 }
