@@ -1,27 +1,27 @@
-package com.ebicep.warlords.pve.bountysystem.bounties;
+package com.ebicep.warlords.pve.bountysystem.bounties.gardenofhesperides;
 
 import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
-import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.TartarusOption;
+import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.TheAcropolisOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
 import com.ebicep.warlords.pve.bountysystem.Bounty;
 import com.ebicep.warlords.pve.bountysystem.BountyUtils;
 import com.ebicep.warlords.pve.bountysystem.costs.EventCost;
-import com.ebicep.warlords.pve.bountysystem.rewards.events.GardenOfHesperides2;
+import com.ebicep.warlords.pve.bountysystem.rewards.events.GardenOfHesperides1;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksPostGame;
 
-public class TartarusFlawlessI extends AbstractBounty implements TracksPostGame, EventCost, GardenOfHesperides2 {
+public class AcropolisFlawlessI extends AbstractBounty implements TracksPostGame, EventCost, GardenOfHesperides1 {
 
     @Override
     public String getName() {
-        return "Tartarus Flawless";
+        return "Acropolis Flawless";
     }
 
     @Override
     public String getDescription() {
-        return "Complete Tartarus without dying.";
+        return "Complete Acropolis without dying.";
     }
 
     @Override
@@ -31,7 +31,7 @@ public class TartarusFlawlessI extends AbstractBounty implements TracksPostGame,
 
     @Override
     public Bounty getBounty() {
-        return Bounty.TARTARUS_FLAWLESS_I;
+        return Bounty.ACROPOLIS_FLAWLESS_I;
     }
 
     @Override
@@ -39,12 +39,11 @@ public class TartarusFlawlessI extends AbstractBounty implements TracksPostGame,
         if (!DatabaseGameEvent.eventIsActive()) {
             return;
         }
-        BountyUtils.getOptionFromGame(game, TartarusOption.class).ifPresent(acropolisOption -> {
+        BountyUtils.getOptionFromGame(game, TheAcropolisOption.class).ifPresent(acropolisOption -> {
             int deaths = warlordsPlayer.getMinuteStats().total().getDeaths();
             if (deaths == 0) {
                 value++;
             }
         });
     }
-
 }
