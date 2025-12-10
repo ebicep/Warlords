@@ -20,12 +20,12 @@ public class ChallengeI extends AbstractBounty implements TracksPostGame, DailyC
 
     @Override
     public String getDescription() {
-        return "Reach " + getTarget() + " minutes in Onslaught.";
+        return "Reach " + (getTarget() / 60) + " minutes in Onslaught.";
     }
 
     @Override
     public int getTarget() {
-        return 5;
+        return 5 * 60;
     }
 
     @Override
@@ -37,7 +37,7 @@ public class ChallengeI extends AbstractBounty implements TracksPostGame, DailyC
     public void onGameEnd(Game game, WarlordsPlayer warlordsPlayer, WarlordsGameTriggerWinEvent gameWinEvent) {
         BountyUtils.getOptionFromGame(game, OnslaughtOption.class).ifPresent(onslaughtOption -> {
             int secondsElapsed = onslaughtOption.getTicksElapsed() / 20;
-            if (secondsElapsed / 60 > value) {
+            if (secondsElapsed > value) {
                 value = secondsElapsed;
             }
         });

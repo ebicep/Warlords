@@ -45,6 +45,7 @@ public abstract class DatabaseGamePlayerPvEEvent extends DatabaseGamePlayerPvEWa
                              tracksPostGame.onGameEnd(waveDefenseOption.getGame(), warlordsPlayer, gameWinEvent);
                          } else if (bounty instanceof TracksDuringGame tracksDuringGame) {
                              tracksDuringGame.apply(bounty);
+                             tracksDuringGame.reset();
                          }
                      });
         }

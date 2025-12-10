@@ -32,12 +32,17 @@ public class ExterminatorI extends AbstractBounty implements TracksDuringGame, E
 
     @Override
     public int getTarget() {
-        return 10000;
+        return 10_000;
     }
 
     @Override
     public Bounty getBounty() {
         return Bounty.EXTERMINATOR_I;
+    }
+
+    @Override
+    public void reset() {
+        newKills = 0;
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -52,10 +57,6 @@ public class ExterminatorI extends AbstractBounty implements TracksDuringGame, E
         return DatabaseGameEvent.eventIsActive() && game.getOptions().stream().anyMatch(option -> option instanceof BoltaroBonanzaOption);
     }
 
-    @Override
-    public void reset() {
-        newKills = 0;
-    }
 
     @Override
     public long getNewValue() {
