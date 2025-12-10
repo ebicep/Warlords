@@ -1,4 +1,4 @@
-package com.ebicep.warlords.pve.bountysystem.bounties;
+package com.ebicep.warlords.pve.bountysystem.bounties.gardenofhesperides;
 
 import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
@@ -13,19 +13,17 @@ import com.ebicep.warlords.pve.bountysystem.BountyUtils;
 import com.ebicep.warlords.pve.bountysystem.costs.EventCost;
 import com.ebicep.warlords.pve.bountysystem.rewards.events.GardenOfHesperides2;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksPostGame;
-import com.ebicep.warlords.pve.weapons.AbstractWeapon;
-import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles.GardenOfHesperidesTitle;
 
-public class TakeMyTitleI extends AbstractBounty implements TracksPostGame, EventCost, GardenOfHesperides2 {
+public class WithinTheTimeI extends AbstractBounty implements TracksPostGame, EventCost, GardenOfHesperides2 {
 
     @Override
     public String getName() {
-        return "Take My Title";
+        return "Within the Time";
     }
 
     @Override
     public String getDescription() {
-        return "Complete Tartarus with a Legendary weapon equipped with a Garden of Hesperides title.";
+        return "Complete Tartarus within 10 minutes.";
     }
 
     @Override
@@ -35,7 +33,7 @@ public class TakeMyTitleI extends AbstractBounty implements TracksPostGame, Even
 
     @Override
     public Bounty getBounty() {
-        return Bounty.TAKE_MY_TITLE_I;
+        return Bounty.WITHIN_THE_TIME_I;
     }
 
     @Override
@@ -44,13 +42,6 @@ public class TakeMyTitleI extends AbstractBounty implements TracksPostGame, Even
             return;
         }
         if (BountyUtils.getOptionFromGame(game, TartarusOption.class).isEmpty()) {
-            return;
-        }
-        AbstractWeapon weapon = warlordsPlayer.getWeapon();
-        if (weapon == null) {
-            return;
-        }
-        if (!(weapon instanceof GardenOfHesperidesTitle)) {
             return;
         }
         BountyUtils.getOptionFromGame(game, RecordTimeElapsedOption.class)
