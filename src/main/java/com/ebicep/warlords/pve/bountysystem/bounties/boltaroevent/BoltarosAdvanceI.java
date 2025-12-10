@@ -27,7 +27,7 @@ public class BoltarosAdvanceI extends AbstractBounty implements TracksPostGame, 
 
     @Override
     public int getTarget() {
-        return 30;
+        return 40;
     }
 
     @Override
