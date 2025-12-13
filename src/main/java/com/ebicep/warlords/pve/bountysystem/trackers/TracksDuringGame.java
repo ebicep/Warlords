@@ -6,11 +6,6 @@ import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
 public interface TracksDuringGame {
 
     /**
-     * Resets the local cached tracker (the one used in apply())
-     */
-    void reset();
-
-    /**
      * @param game The game that is being tracked
      * @return Whether this tracker should track given game, some trackers are gamemode specific etc.
      */
@@ -26,6 +21,11 @@ public interface TracksDuringGame {
     default void apply(AbstractBounty bounty) {
         bounty.setValue(bounty.getValue() + getNewValue());
     }
+
+    /**
+     * Resets the local cached tracker at the end of the game (the one used in apply())
+     */
+    void reset();
 
     long getNewValue();
 

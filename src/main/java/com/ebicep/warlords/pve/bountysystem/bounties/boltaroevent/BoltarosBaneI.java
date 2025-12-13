@@ -40,6 +40,11 @@ public class BoltarosBaneI extends AbstractBounty implements TracksDuringGame, E
         return Bounty.BOLTAROS_BANE_I;
     }
 
+    @Override
+    public void reset() {
+        newKills = 0;
+    }
+
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onKill(WarlordsDeathEvent event) {
         if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof Boltaro) {
@@ -50,11 +55,6 @@ public class BoltarosBaneI extends AbstractBounty implements TracksDuringGame, E
     @Override
     public boolean trackGame(Game game) {
         return DatabaseGameEvent.eventIsActive() && game.getOptions().stream().anyMatch(option -> option instanceof BoltarosLairOption);
-    }
-
-    @Override
-    public void reset() {
-        newKills = 0;
     }
 
     @Override

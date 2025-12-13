@@ -31,7 +31,7 @@ public class CowardI extends AbstractBounty implements TracksDuringGame, EventCo
 
     @Override
     public int getTarget() {
-        return 100 * 60;
+        return 10 * 60;
     }
 
     @Override

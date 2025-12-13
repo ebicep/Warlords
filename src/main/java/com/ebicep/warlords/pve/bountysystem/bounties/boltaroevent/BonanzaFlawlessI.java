@@ -21,12 +21,12 @@ public class BonanzaFlawlessI extends AbstractBounty implements TracksPostGame, 
 
     @Override
     public String getDescription() {
-        return "Complete Boltaro Bonanza without dying.";
+        return "Complete Boltaro Bonanza without dying " + getTarget() + " times.";
     }
 
     @Override
     public int getTarget() {
-        return 1;
+        return 5;
     }
 
     @Override
