@@ -109,6 +109,7 @@ public abstract class DatabaseGamePlayerPvEBase extends DatabaseGamePlayerBase {
                         tracksPostGame.onGameEnd(pveOption.getGame(), warlordsPlayer, gameWinEvent);
                     } else if (bounty instanceof TracksDuringGame tracksDuringGame) {
                         tracksDuringGame.apply(bounty);
+                        tracksDuringGame.reset();
                     }
                 }
             } catch (Exception e) {

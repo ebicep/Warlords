@@ -26,7 +26,7 @@ public class LairFlawlessI extends AbstractBounty implements TracksPostGame, Eve
 
     @Override
     public int getTarget() {
-        return 5;
+        return 3;
     }
 
     @Override
