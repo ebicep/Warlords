@@ -2,8 +2,6 @@ package com.ebicep.warlords.pve.bountysystem;
 
 import com.ebicep.warlords.pve.bountysystem.bounties.*;
 import com.ebicep.warlords.pve.bountysystem.bounties.boltaroevent.*;
-import com.ebicep.warlords.pve.bountysystem.bounties.gardenofhesperides.*;
-import com.ebicep.warlords.pve.bountysystem.bounties.libraryarchives.*;
 import com.ebicep.warlords.pve.bountysystem.rewards.*;
 import com.ebicep.warlords.pve.bountysystem.rewards.events.*;
 

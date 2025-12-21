@@ -1,6 +1,7 @@
-package com.ebicep.warlords.pve.bountysystem.bounties.libraryarchives;
+package com.ebicep.warlords.pve.bountysystem.bounties;
 
 import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.ForgottenCodexOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.GrimoiresGraveyardOption;
@@ -24,23 +25,13 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import java.util.Arrays;
 import java.util.List;
 
+public class ForgottenSlayerI extends AbstractBounty implements TracksDuringGame, EventCost, LibraryArchives2 {
 
-public class CodexChaosI extends AbstractBounty implements TracksDuringGame, EventCost, LibraryArchives2 {
-
-    @Field("killing_blows_experienced")
-    private int[] killingBlowsExperienced = {0, 0, 0};  // index > 0 = EGA, 1 = EWA, 2 = VPA | element value > # of blows
+    @Field("inquisiteurs_defeated")
+    private int[] inquisiteursDefeated = {0, 0, 0}; // index > 0 = EGA, 1 = EWA, 2 = VPA | element value > times killed
     @Transient
-    private int[] newKillingBlowsExperienced = {0, 0, 0};
+    private int[] newInquisiteursDefeated = {0, 0, 0};
 
-    @Override
-    public String getName() {
-        return "Codex Chaos";
-    }
-
-    @Override
-    public String getDescription() {
-        return "Experience the Killing Blow ability from each Inquisiteur variant 3 times.";
-    }
 
     @Nullable
     @Override
@@ -51,21 +42,31 @@ public class CodexChaosI extends AbstractBounty implements TracksDuringGame, Eve
         return List.of(
                 ComponentBuilder.create("Progress: ", NamedTextColor.GRAY).build(),
                 ComponentBuilder.create("  EGA: ", NamedTextColor.GRAY)
-                                .text(NumberFormat.addCommaAndRound(killingBlowsExperienced[0]), NamedTextColor.GOLD)
+                                .text(NumberFormat.addCommaAndRound(inquisiteursDefeated[0]), NamedTextColor.GOLD)
                                 .text("/", NamedTextColor.AQUA)
-                                .text("3", NamedTextColor.GOLD)
+                                .text("5", NamedTextColor.GOLD)
                                 .build(),
                 ComponentBuilder.create("  EWA: ", NamedTextColor.GRAY)
-                                .text(NumberFormat.addCommaAndRound(killingBlowsExperienced[1]), NamedTextColor.GOLD)
+                                .text(NumberFormat.addCommaAndRound(inquisiteursDefeated[1]), NamedTextColor.GOLD)
                                 .text("/", NamedTextColor.AQUA)
-                                .text("3", NamedTextColor.GOLD)
+                                .text("5", NamedTextColor.GOLD)
                                 .build(),
                 ComponentBuilder.create("  VPA: ", NamedTextColor.GRAY)
-                                .text(NumberFormat.addCommaAndRound(killingBlowsExperienced[2]), NamedTextColor.GOLD)
+                                .text(NumberFormat.addCommaAndRound(inquisiteursDefeated[2]), NamedTextColor.GOLD)
                                 .text("/", NamedTextColor.AQUA)
-                                .text("3", NamedTextColor.GOLD)
+                                .text("5", NamedTextColor.GOLD)
                                 .build()
         );
+    }
+
+    @Override
+    public String getName() {
+        return "Forgotten Slayer";
+    }
+
+    @Override
+    public String getDescription() {
+        return "Defeat each of the Inquisiteurs 5 times.";
     }
 
     @Override
@@ -75,13 +76,13 @@ public class CodexChaosI extends AbstractBounty implements TracksDuringGame, Eve
 
     @Override
     public Bounty getBounty() {
-        return Bounty.CODEX_CHAOS_I;
+        return Bounty.FORGOTTEN_SLAYER_I;
     }
 
     @Override
     public void reset() {
         for (int i = 0; i < 3; i++) {
-            killingBlowsExperienced[i] = 0;
+            inquisiteursDefeated[i] = 0;
         }
     }
 
@@ -95,23 +96,23 @@ public class CodexChaosI extends AbstractBounty implements TracksDuringGame, Eve
     @Override
     public void apply(AbstractBounty bounty) {
         for (int i = 0; i < 3; i++) {
-            killingBlowsExperienced[i] += newKillingBlowsExperienced[i];
+            inquisiteursDefeated[i] += newInquisiteursDefeated[i];
         }
         TracksDuringGame.super.apply(bounty);
     }
 
     @Override
     public long getNewValue() {
-        return Arrays.stream(killingBlowsExperienced).allMatch(integer -> integer >= 3) ? 1 : 0;
+        return Arrays.stream(inquisiteursDefeated).allMatch(integer -> integer >= 5) ? 1 : 0;
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onKillingBlow(EventInquisiteur.EventInquisteurKillingBlowEvent event) {
-        if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC) {
+    public void onKill(WarlordsDeathEvent event) {
+        if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof EventInquisiteur) {
             switch (warlordsNPC.getMob().getMobRegistry()) {
-                case EVENT_INQUISITEUR_EGA -> newKillingBlowsExperienced[0]++;
-                case EVENT_INQUISITEUR_EWA -> newKillingBlowsExperienced[1]++;
-                case EVENT_INQUISITEUR_VPA -> newKillingBlowsExperienced[2]++;
+                case EVENT_INQUISITEUR_EGA -> newInquisiteursDefeated[0]++;
+                case EVENT_INQUISITEUR_EWA -> newInquisiteursDefeated[1]++;
+                case EVENT_INQUISITEUR_VPA -> newInquisiteursDefeated[2]++;
             }
         }
     }

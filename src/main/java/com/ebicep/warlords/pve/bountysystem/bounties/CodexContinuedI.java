@@ -1,4 +1,4 @@
-package com.ebicep.warlords.pve.bountysystem.bounties.libraryarchives;
+package com.ebicep.warlords.pve.bountysystem.bounties;
 
 import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
