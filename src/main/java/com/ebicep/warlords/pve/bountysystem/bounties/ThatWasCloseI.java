@@ -1,4 +1,4 @@
-package com.ebicep.warlords.pve.bountysystem.bounties.libraryarchives;
+package com.ebicep.warlords.pve.bountysystem.bounties;
 
 import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
@@ -11,54 +11,41 @@ import com.ebicep.warlords.pve.bountysystem.Bounty;
 import com.ebicep.warlords.pve.bountysystem.costs.EventCost;
 import com.ebicep.warlords.pve.bountysystem.rewards.events.LibraryArchives1;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksDuringGame;
-import com.ebicep.warlords.pve.mobs.events.libraryarchives.EventGrimoire;
+import com.ebicep.warlords.pve.mobs.events.libraryarchives.EventNecronomiconGrimoire;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.springframework.data.annotation.Transient;
 
 import java.util.Objects;
 
-public class GrimoiresGriefI extends AbstractBounty implements TracksDuringGame, EventCost, LibraryArchives1 {
+public class ThatWasCloseI extends AbstractBounty implements TracksDuringGame, EventCost, LibraryArchives1 {
 
     @Transient
-    private int newKills = 0;
+    private int newValue = 0;
 
     @Override
     public String getName() {
-        return "Grimoire's Grief";
+        return "That Was Close";
     }
 
     @Override
     public String getDescription() {
-        return "Kill " + getTarget() + " Boss Minion Grimoire.";
+        return "Survive the smite of a Necronomicon " + getTarget() + " times.";
     }
 
     @Override
     public int getTarget() {
-        return 100;
+        return 15;
     }
 
     @Override
     public Bounty getBounty() {
-        return Bounty.GRIMOIRES_GRIEF_I;
+        return Bounty.THAT_WAS_CLOSE_I;
     }
 
     @Override
     public void reset() {
-        newKills = 0;
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onFinalDamageHeal(WarlordsDamageHealingFinalEvent event) {
-        if (!Objects.equals(event.getSource().getUuid(), uuid)) {
-            return;
-        }
-        if (!event.isDead()) {
-            return;
-        }
-        if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof EventGrimoire) {
-            newKills++;
-        }
+        newValue = 0;
     }
 
     @Override
@@ -70,6 +57,23 @@ public class GrimoiresGriefI extends AbstractBounty implements TracksDuringGame,
 
     @Override
     public long getNewValue() {
-        return newKills;
+        return newValue;
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onFinalDamageHeal(WarlordsDamageHealingFinalEvent event) {
+        if (!Objects.equals(event.getWarlordsEntity().getUuid(), uuid)) {
+            return;
+        }
+        if (!(event.getSource() instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof EventNecronomiconGrimoire)) {
+            return;
+        }
+        if (!event.getCause().equals("Smite")) {
+            return;
+        }
+        if (event.isDead()) {
+            return;
+        }
+        newValue++;
     }
 }

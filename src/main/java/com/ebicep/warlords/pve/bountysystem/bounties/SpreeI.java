@@ -1,4 +1,4 @@
-package com.ebicep.warlords.pve.bountysystem.bounties.gardenofhesperides;
+package com.ebicep.warlords.pve.bountysystem.bounties;
 
 import com.ebicep.warlords.events.EventShopPurchaseEvent;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
