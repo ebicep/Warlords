@@ -113,7 +113,8 @@ public class ArcaneShieldPyromancer extends AbstractArcaneShield {
             }
         }.addModifier(Modifier.ON_INCOMING_SHIELD_DAMAGE, (event, currentDamageValue, isCrit) -> {
                     event.getWarlordsEntity().getCooldownManager().queueUpdatePlayerNames();
-        }));
+                }
+        ));
         return true;
     }
 
@@ -137,19 +138,19 @@ public class ArcaneShieldPyromancer extends AbstractArcaneShield {
             // increase damage by 3% per enemy hit.
             float multiplier = 1 + Math.min(3, 0.03f * hits.get());
             PlayerFilter.entitiesAround(bladeLocA, 2, 2.25, 2)
-                    .aliveEnemiesOf(wp)
-                    .forEach(enemy -> {
-                        hits.getAndIncrement();
-                        enemy.addInstance(InstanceBuilder
-                                .damage()
-                                .cause("Blazing Saws")
-                                .min(175 * multiplier)
-                                .max(250 * multiplier)
-                                .critChance(15)
-                                .critMultiplier(125)
-                                .source(wp)
-                        );
-                    });
+                        .aliveEnemiesOf(wp)
+                        .forEach(enemy -> {
+                            hits.getAndIncrement();
+                            enemy.addInstance(InstanceBuilder
+                                    .damage()
+                                    .cause("Blazing Saws")
+                                    .min(175 * multiplier)
+                                    .max(250 * multiplier)
+                                    .critChance(15)
+                                    .critMultiplier(125)
+                                    .source(wp)
+                            );
+                        });
         }
     }
 

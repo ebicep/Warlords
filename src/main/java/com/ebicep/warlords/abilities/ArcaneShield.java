@@ -102,9 +102,9 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
                                 },
                                 6 * 20,
                                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                                      if (ticksElapsed % 3 == 0) {
-                                          EffectUtils.displayParticle(Particle.ELECTRIC_SPARK, wp.getLocation().add(0, 1, 0), 10, .4, .4, .4, 0);
-                                      }
+                                    if (ticksElapsed % 3 == 0) {
+                                        EffectUtils.displayParticle(Particle.ELECTRIC_SPARK, wp.getLocation().add(0, 1, 0), 10, .4, .4, .4, 0);
+                                    }
                                 })
                         ));
                     }
