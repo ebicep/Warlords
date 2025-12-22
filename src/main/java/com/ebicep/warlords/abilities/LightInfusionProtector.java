@@ -5,18 +5,15 @@ import com.ebicep.warlords.abilities.internal.AbstractLightInfusion;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownUtils;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.paladin.protector.LightInfusionBranchProtector;
-import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.Particle;
-import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
@@ -139,7 +136,10 @@ public class LightInfusionProtector extends AbstractLightInfusion {
                         ).addModifier(
                                 Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE,
                                 (event, currentDamageValue) -> {
-                                    currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Ornament of Darkness", 1 + Math.min(200, multiplier.get()) / 100f);
+                                    currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                                            "Ornament of Darkness",
+                                            1 + Math.min(200, multiplier.get()) / 100f
+                                    );
                                 }
                         ).addModifier(
                                 Modifier.MODIFY_OUTGOING_HEALING,
@@ -152,9 +152,10 @@ public class LightInfusionProtector extends AbstractLightInfusion {
                                     currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Ornament of Darkness", 0.2f);
                                 }
                         ));
-            },
-            false,
-            secondaryAbility -> !wp.getCooldownManager().hasCooldown(ornamentOfDarknessCooldown));
+                    },
+                    false,
+                    secondaryAbility -> !wp.getCooldownManager().hasCooldown(ornamentOfDarknessCooldown)
+            );
         }
 
         playCastEffect(wp);
