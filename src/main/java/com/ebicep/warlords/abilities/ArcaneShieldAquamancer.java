@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractArcaneShield;
 import com.ebicep.warlords.abilities.internal.Shield;
@@ -11,7 +12,9 @@ import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.aquamancer.ArcaneShieldBranchAquamancer;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -20,6 +23,7 @@ import org.bukkit.Particle;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
+import java.util.List;
 
 public class ArcaneShieldAquamancer extends AbstractArcaneShield {
 
@@ -39,10 +43,50 @@ public class ArcaneShieldAquamancer extends AbstractArcaneShield {
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
+                    if (pveMasterUpgrade) {
+                        Utils.playGlobalSound(wp.getLocation(), "mage.arcaneshield.activation", 2, 0.5f);
+                        EffectUtils.strikeLightning(wp.getLocation(), false);
+                        for (WarlordsEntity we : PlayerFilter
+                                .entitiesAround(wp, 6, 6, 6)
+                                .aliveEnemiesOf(wp)
+                                .closestFirst(wp)
+                        ) {
+                            we.setStunTicks(6 * 20);
+                        }
+                    }
+                    if (pveMasterUpgrade2) {
+                        List<AbstractAbility> abilities = wp.getAbilities();
+                        if (abilities.isEmpty()) {
+                            return;
+                        }
+                        AbstractAbility rightClick = abilities.getFirst();
+                        FloatModifiable.FloatModifier modifier = rightClick.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,
+                                "Arcane Energy", -.25f
+                        );
+                        wp.updateItem(rightClick);
+                        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                "Arcane Energy",
+                                "ARC",
+                                ArcaneShield.class,
+                                new ArcaneShield(),
+                                wp,
+                                CooldownTypes.ABILITY,
+                                cooldownManager2 -> {
+                                    modifier.forceEnd();
+                                    wp.updateItem(rightClick);
+                                },
+                                6 * 20,
+                                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                                    if (ticksElapsed % 3 == 0) {
+                                        EffectUtils.displayParticle(Particle.ELECTRIC_SPARK, wp.getLocation().add(0, 1, 0), 10, .4, .4, .4, 0);
+                                    }
+                                })
+                        ));
+                    }
                 },
                 cooldownManager -> {
                     if (shield.isBroken()) {
-                        Bukkit.getPluginManager().callEvent(new WarlordsArcaneShieldBrokenEvent(wp));
+                        Bukkit.getPluginManager().callEvent(new ArcaneShield.WarlordsArcaneShieldBrokenEvent(wp));
                         getAbilityStats().timesBroken++;
                     }
                     getAbilityStats().totalAbsorbed += shield.getMaxShieldHealth() - Math.max(0, shield.getShieldHealth());
@@ -62,10 +106,9 @@ public class ArcaneShieldAquamancer extends AbstractArcaneShield {
             public PlayerNameData addPrefixFromOther() {
                 return new PlayerNameData(Component.text((int) (shield.getShieldHealth()), NamedTextColor.YELLOW), we -> we.isTeammate(wp));
             }
-        }.addModifier(Modifier.ON_OUTGOING_SHIELD_DAMAGE, (event, currentDamageValue, isCrit) -> {
-                    event.getWarlordsEntity().getCooldownManager().queueUpdatePlayerNames();
-                }
-        ));
+        }.addModifier(Modifier.ON_INCOMING_SHIELD_DAMAGE, (event, currentDamageValue, isCrit) -> {
+            event.getWarlordsEntity().getCooldownManager().queueUpdatePlayerNames();
+        }));
 
         return true;
     }

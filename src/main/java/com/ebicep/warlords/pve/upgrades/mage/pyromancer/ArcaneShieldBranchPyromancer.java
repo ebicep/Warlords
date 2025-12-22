@@ -32,23 +32,27 @@ public class ArcaneShieldBranchPyromancer extends AbstractUpgradeBranch<ArcaneSh
                 .addTo(treeB);
 
         masterUpgrade = new Upgrade(
-                "Arcane Aegis",
+                "Arcane Energy",
                 "Arcane Shield - Master Upgrade",
-                "When arcane shield ends or breaks, unleash a shockwave that stuns enemies for 6 seconds within a 6 block radius.",
+                """
+                        When arcane shield ends or breaks, unleash a shockwave that stuns enemies for 6 seconds within a 6 block radius. Additionally, gain the ARC status for 6 seconds, reducing the energy cost of Right-Click attacks by 25%.
+                        """,
                 50000,
                 () -> {
 
                 }
         );
         masterUpgrade2 = new Upgrade(
-                "Arcane Energy",
+                "Blazing Anarchy",
                 "Arcane Shield - Master Upgrade",
                 """
-                        When arcane shield ends or breaks, gain the ARC status for 6s reducing the energy cost of Right-Click attacks by 25%.
+                        +2s Duration
+                        
+                        While Arcane Shield is active, summon 3 blazing saw blades around you, dealing 175-250 damage. Each hit increases the damage by 3% (max 300%).
                         """,
                 50000,
                 () -> {
-
+                    ability.setTickDuration(ability.getTickDuration() + 40);
                 }
         );
     }
