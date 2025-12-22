@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.upgrades.mage.aquamancer;
 
 import com.ebicep.warlords.abilities.WaterBreath;
 import com.ebicep.warlords.pve.upgrades.*;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 public class WaterBreathBranch extends AbstractUpgradeBranch<WaterBreath> {
 
@@ -54,19 +55,16 @@ public class WaterBreathBranch extends AbstractUpgradeBranch<WaterBreath> {
                 }
         );
         masterUpgrade2 = new Upgrade(
-                "Malicious Mist",
+                "Bubble Blessing",
                 "Water Breath - Master Upgrade",
                 """
-                        Additional cone range +100%.
-                                                
-                        All allies hit by Breath are healed by 2% of their max hp per second for 5s. Enemies pushed by breath will have all active buffs/abilities removed and be unable to receive/use them for 3s.
+                        +15% Cooldown reduction
+                        
+                        Healing allies grants them knockback immunity for 4 seconds. Additionally, allies hit by Water Breath are given Bubble Blessing, causing all their attacks (excluding DoT) to have a 35% chance to hit enemies for an additional 372-441 damage.
                         """,
                 50000,
                 () -> {
-                    ability.setMaxAnimationTime(ability.getMaxAnimationTime() * 2);
-                    ability.setHitbox(ability.getHitbox() * 2);
-                    ability.setMaxAnimationEffects(8);
-
+                    ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Bubble Blessing", 0.85f);
                 }
         );
     }
