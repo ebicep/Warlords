@@ -176,36 +176,36 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                                         orderOfEviscerate.subtractCurrentCooldown(reduction);
                                     }
                                     if (pveMasterUpgrade2) {
-                                    if (cooldown.get() == null) {
-                                        RegularCooldown<OrderOfEviscerateData> regularCooldown = new RegularCooldown<>(
-                                                "Cloaked Engagement 1",
-                                                "ENGAGE 1",
-                                                OrderOfEviscerateData.class,
-                                                null,
-                                                wp,
-                                                CooldownTypes.BUFF,
-                                                cooldownManager -> {
-                                                },
-                                                cooldownManager -> {
-                                                    cooldown.set(null);
-                                                    stacks.set(0);
-                                                },
-                                                8 * 20
-                                        );
-                                        regularCooldown.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
-                                                    name, 1 + 0.4f * stacks.get()
+                                        if (cooldown.get() == null) {
+                                            RegularCooldown<OrderOfEviscerateData> regularCooldown = new RegularCooldown<>(
+                                                    "Cloaked Engagement 1",
+                                                    "ENGAGE 1",
+                                                    OrderOfEviscerateData.class,
+                                                    null,
+                                                    wp,
+                                                    CooldownTypes.BUFF,
+                                                    cooldownManager -> {
+                                                    },
+                                                    cooldownManager -> {
+                                                        cooldown.set(null);
+                                                        stacks.set(0);
+                                                    },
+                                                    8 * 20
                                             );
-                                                }
-                                        );
-                                        cooldown.set(regularCooldown);
-                                        wp.getCooldownManager().addCooldown(regularCooldown);
-                                    } else {
-                                        cooldown.get().setTicksLeft(8 * 20);
-                                        cooldown.get().setName("Cloaked Engagement " + stacks);
-                                        cooldown.get().setNameAbbreviation("ENGAGE " + stacks);}
-                                }
-
+                                            regularCooldown.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                                                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                                                        name, 1 + 0.4f * stacks.get()
+                                                );
+                                                    }
+                                            );
+                                            cooldown.set(regularCooldown);
+                                            wp.getCooldownManager().addCooldown(regularCooldown);
+                                        } else {
+                                            cooldown.get().setTicksLeft(8 * 20);
+                                            cooldown.get().setName("Cloaked Engagement " + stacks);
+                                            cooldown.get().setNameAbbreviation("ENGAGE " + stacks);
+                                        }
+                                    }
                                 } else {
                                     wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
                                             .append(Component.text(" You killed your mark, ", NamedTextColor.GRAY))
