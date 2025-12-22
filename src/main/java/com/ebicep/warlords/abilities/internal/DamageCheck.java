@@ -9,7 +9,7 @@ public interface DamageCheck {
     DamageCheck DAMAGE_CHECK = new DamageCheck() {};
 
     float MINIMUM_DAMAGE = 100;
-    float MAXIMUM_DAMAGE = 1500;
+    float MAXIMUM_DAMAGE = 3000;
 
     static float clamp(float value) {
         // max cap + 2% effectiveness
