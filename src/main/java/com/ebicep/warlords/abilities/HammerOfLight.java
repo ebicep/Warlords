@@ -189,12 +189,12 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                             if (wp.isTeammate(hammerTarget)) {
                                 stats.targetsHealed++;
                                 hammerTarget.addInstance(InstanceBuilder
-                                                .healing()
-                                                .ability(this)
-                                                .source(wp)
-                                                .value(healingValues.hammerHealing)).ifPresent(warlordsDamageHealingFinalEvent -> {
-                                                    data.addAmountHealed(warlordsDamageHealingFinalEvent.getValue());
-                                                }
+                                        .healing()
+                                        .ability(this)
+                                        .source(wp)
+                                        .value(healingValues.hammerHealing)).ifPresent(warlordsDamageHealingFinalEvent -> {
+                                            data.addAmountHealed(warlordsDamageHealingFinalEvent.getValue());
+                                        }
                                 );
                             } else {
                                 stats.targetsDamaged++;
