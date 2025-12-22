@@ -7,6 +7,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownUtils;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
@@ -19,6 +20,7 @@ import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class LightInfusionProtector extends AbstractLightInfusion {
 
@@ -31,10 +33,19 @@ public class LightInfusionProtector extends AbstractLightInfusion {
         wp.addEnergy(wp, name, energyGiven);
         Utils.playGlobalSound(wp.getLocation(), "paladin.infusionoflight.activation", 2, 1);
         wp.addSpeedModifier(wp, name, speedBuff, tickDuration);
-        wp.getCooldownManager().addRegularCooldown(name, "INF", LightInfusionProtector.class, null, wp, CooldownTypes.ABILITY, cooldownManager -> {
-                }, cooldownManager -> {
-            wp.getSpeed().removeModifier(name);
-                }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+        wp.getCooldownManager().addRegularCooldown(
+                name,
+                "INF",
+                LightInfusionProtector.class,
+                null,
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {},
+                cooldownManager -> {
+                    wp.getSpeed().removeModifier(name);
+                },
+                tickDuration,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 4 == 0) {
                         EffectUtils.displayParticle(Particle.EFFECT, wp.getLocation().add(0, 1.2, 0), 2, 0.3, 0.1, 0.3, 0.2);
                     }
@@ -44,7 +55,8 @@ public class LightInfusionProtector extends AbstractLightInfusion {
             for (HolyRadianceProtector holyRadiance : wp.getAbilitiesMatching(HolyRadianceProtector.class)) {
                 holyRadiance.setCurrentCooldown(0);
             }
-            RegularCooldown<LightInfusionProtector> ornamentOfLightCooldown = new RegularCooldown<>("Ornament of Light",
+            RegularCooldown<LightInfusionProtector> ornamentOfLightCooldown = new RegularCooldown<>(
+                    "Ornament of Light",
                     "ORNA",
                     LightInfusionProtector.class,
                     null,
@@ -66,40 +78,85 @@ public class LightInfusionProtector extends AbstractLightInfusion {
             );
             wp.addKnockbackModifier(wp, "Ornament of Light", -50, ornamentOfLightCooldown);
             wp.getCooldownManager().addCooldown(ornamentOfLightCooldown);
-        } else if (pveMasterUpgrade2) {
-            wp.getCooldownManager().addCooldown(new RegularCooldown<>(
-                    "Chiron Light",
-                    "CHIRON",
+        }
+
+        if (pveMasterUpgrade2) {
+            Utils.playGlobalSound(wp.getLocation(), "paladin.infusionoflight.activation", 2, 0.7f);
+            AtomicInteger multiplier = new AtomicInteger(0);
+            RegularCooldown<LightInfusionProtector> ornamentOfDarknessCooldown = new RegularCooldown<>(
+                    "Ornament of Darkness",
+                    "DARK",
                     LightInfusionProtector.class,
                     null,
                     wp,
-                    CooldownTypes.BUFF,
+                    CooldownTypes.ABILITY,
                     cooldownManager -> {
                     },
-                    tickDuration
-            ).addModifier(Modifier.MODIFY_OUTGOING_HEALING, (event, currentHealValue) -> {
-                        if (event.getCause().equals("Protector's Strike")) {
-                            currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Chiron Light", 1.25f);
-                        }
-                    }
-            ));
-            for (WarlordsEntity infusionTarget : PlayerFilter.entitiesAround(wp, 5, 5, 5).aliveTeammatesOfExcludingSelf(wp)) {
-                playCastEffect(infusionTarget);
-                infusionTarget.getSpeed().removeNegativeModifiers();
-                infusionTarget.getCooldownManager().removeDebuffCooldowns();
-                infusionTarget.addSpeedModifier(wp, "Chiron Light", speedBuff, tickDuration);
-                infusionTarget.getCooldownManager()
-                              .addCooldown(new RegularCooldown<>("Chiron Light", "CHIRON", LightInfusionProtector.class, null, wp, CooldownTypes.ABILITY, cooldownManager -> {
-                              }, 4 * 20
-                              ) {
+                    tickDuration,
+                    Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
 
-                                  @Override
-                                  protected Listener getListener() {
-                                      return CooldownUtils.getFullDebuffImmunityListener(infusionTarget);
-                                  }
-                              });
-            }
+                    })
+            );
+            ornamentOfDarknessCooldown.addModifier(
+                    Modifier.MODIFY_OUTGOING_HEALING,
+                    (event, currentDamageValue) -> {
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, 0.2f);
+                    }
+            );
+            ornamentOfDarknessCooldown.addModifier(
+                    Modifier.MODIFY_INCOMING_HEALING,
+                    (event, currentDamageValue) -> {
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, 0.2f);
+                    }
+            );
+            ornamentOfDarknessCooldown.addModifier(
+                    Modifier.ON_OUTGOING_DAMAGE,
+                    (event, currentDamageValue, isCrit) -> {
+                        if (event.getFlags().contains(InstanceFlags.DOT)) {
+                            return;
+                        }
+                        multiplier.getAndAdd(5);
+                    }
+            );
+            wp.getCooldownManager().addCooldown(ornamentOfDarknessCooldown);
+
+            addSecondaryAbility(20, () -> {
+                        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                "Ornament of Darkness",
+                                "CORRUPT " + Math.min(200, multiplier.get()),
+                                LightInfusionProtector.class,
+                                null,
+                                wp,
+                                CooldownTypes.ABILITY,
+                                cooldownManager -> {
+                                },
+                                3 * 20,
+                                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                                    if (ticksElapsed % 5 == 0) {
+                                        EffectUtils.drawRing(wp.getLocation(), 4, 2, Particle.ANGRY_VILLAGER);
+                                    }
+                                })
+                        ).addModifier(
+                                Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE,
+                                (event, currentDamageValue) -> {
+                                    currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Ornament of Darkness", 1 + Math.min(200, multiplier.get()) / 100f);
+                                }
+                        ).addModifier(
+                                Modifier.MODIFY_OUTGOING_HEALING,
+                                (event, currentDamageValue) -> {
+                                    currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Ornament of Darkness", 0.2f);
+                                }
+                        ).addModifier(
+                                Modifier.MODIFY_INCOMING_HEALING,
+                                (event, currentDamageValue) -> {
+                                    currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Ornament of Darkness", 0.2f);
+                                }
+                        ));
+            },
+            false,
+            secondaryAbility -> !wp.getCooldownManager().hasCooldown(ornamentOfDarknessCooldown));
         }
+
         playCastEffect(wp);
         return true;
     }
