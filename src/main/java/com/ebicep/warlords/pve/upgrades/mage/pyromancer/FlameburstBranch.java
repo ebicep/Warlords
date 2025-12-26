@@ -13,7 +13,6 @@ public class FlameburstBranch extends AbstractUpgradeBranch<FlameBurst> {
         UpgradeTreeBuilder
                 .create(abilityTree, this)
                 .addUpgradeDamage(ability.getDamageValues().getFlameBurstDamage(), 7.5f)
-
                 .addUpgradeCooldown(ability)
                 .addTo(treeA);
 
@@ -30,7 +29,7 @@ public class FlameburstBranch extends AbstractUpgradeBranch<FlameBurst> {
                     public void modifyFloatModifiable(FloatModifiable.FloatModifier modifier, float value) {
                         modifier.setModifier(value);
                     }
-                            }, ability.getDamageValues().getFlameBurstDamage().critMultiplier().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Upgrade Branch", 0), 15f, 4
+                    }, ability.getDamageValues().getFlameBurstDamage().critMultiplier().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Upgrade Branch", 0), 15f, 4
                 )
                 .addTo(treeB);
 

@@ -29,9 +29,11 @@ public class TimeWarpBranchCryomancer extends AbstractUpgradeBranch<TimeWarpCryo
         masterUpgrade = new Upgrade(
                 "Frostbite Leap",
                 "Time Warp - Master Upgrade",
-                "Time Warp can now be re-activated to teleport you back early. Additionally, double the duration of Time Warp and summon a cryopod " +
-                        "that draws nearby enemies and shatters nearby enemies if destroyed, slowing them by 80% for 3 seconds. " +
-                        "Upon warping back, you're granted 80% damage reduction for 5 seconds",
+                """
+                        Time Warp can now be re-activated to teleport you back early. Additionally, double the duration of Time Warp
+                         and summon a cryopod that draws nearby enemies and shatters nearby enemies if destroyed, slowing them
+                         by 80% for 3 seconds. Upon warping back, you're granted 80% damage reduction for 5 seconds.
+                        """,
                 50000,
                 () -> {
                     ability.setTickDuration(ability.getTickDuration() * 2);

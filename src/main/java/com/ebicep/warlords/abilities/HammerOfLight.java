@@ -150,9 +150,11 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                             });
                         }
                     }
+
                     if (ticksElapsed % 20 != 0) {
                         return;
                     }
+
                     if (data.isCrownOfLight()) {
                         if (!wp.isAlive()) {
                             return;
@@ -163,14 +165,16 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                         ) {
                             if (wp.isTeammate(crownTarget)) {
                                 stats.targetsHealed++;
-                                crownTarget.addInstance(InstanceBuilder.healing()
-                                                                       .cause("Crown of Light")
-                                                                       .source(wp)
-                                                                       .min(healingValues.hammerHealing.getMinValue() * convertToMultiplicationDecimal(crownBonusHealing))
-                                                                       .max(healingValues.hammerHealing.getMaxValue() * convertToMultiplicationDecimal(crownBonusHealing))
-                                                                       .crit(healingValues.hammerHealing)).ifPresent(warlordsDamageHealingFinalEvent -> {
-                                    data.addAmountHealed(warlordsDamageHealingFinalEvent.getValue());
-                                });
+                                crownTarget.addInstance(InstanceBuilder
+                                        .healing()
+                                        .cause("Crown of Light")
+                                        .source(wp)
+                                        .min(healingValues.hammerHealing.getMinValue() * convertToMultiplicationDecimal(crownBonusHealing))
+                                        .max(healingValues.hammerHealing.getMaxValue() * convertToMultiplicationDecimal(crownBonusHealing))
+                                        .crit(healingValues.hammerHealing)).ifPresent(warlordsDamageHealingFinalEvent -> {
+                                            data.addAmountHealed(warlordsDamageHealingFinalEvent.getValue());
+                                        }
+                                );
                             } else {
                                 if (pveMasterUpgrade2) {
                                     giveHammerOfDisillusionEffect(crownTarget, wp);
@@ -184,13 +188,22 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                         ) {
                             if (wp.isTeammate(hammerTarget)) {
                                 stats.targetsHealed++;
-                                hammerTarget.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(healingValues.hammerHealing))
-                                            .ifPresent(warlordsDamageHealingFinalEvent -> {
-                                                data.addAmountHealed(warlordsDamageHealingFinalEvent.getValue());
-                                            });
+                                hammerTarget.addInstance(InstanceBuilder
+                                        .healing()
+                                        .ability(this)
+                                        .source(wp)
+                                        .value(healingValues.hammerHealing)).ifPresent(warlordsDamageHealingFinalEvent -> {
+                                            data.addAmountHealed(warlordsDamageHealingFinalEvent.getValue());
+                                        }
+                                );
                             } else {
                                 stats.targetsDamaged++;
-                                hammerTarget.addInstance(InstanceBuilder.damage().ability(this).source(wp).value(damageValues.hammerDamage));
+                                hammerTarget.addInstance(InstanceBuilder
+                                        .damage()
+                                        .ability(this)
+                                        .source(wp)
+                                        .value(damageValues.hammerDamage)
+                                );
                                 if (pveMasterUpgrade2) {
                                     giveHammerOfDisillusionEffect(hammerTarget, wp);
                                 }
@@ -226,17 +239,19 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                         if (!event.getInstanceFlags().contains(InstanceFlags.PIERCE)) {
                             return;
                         }
+
                         WarlordsEntity target = event.getWarlordsEntity();
                         List<AbstractCooldown<?>> cooldowns = event.getPlayerCooldowns()
-                                                                   .stream()
-                                                                   .map(WarlordsDamageHealingFinalEvent.CooldownRecord::getAbstractCooldown)
-                                                                   .collect(Collectors.toList());
+                                .stream()
+                                .map(WarlordsDamageHealingFinalEvent.CooldownRecord::getAbstractCooldown)
+                                .collect(Collectors.toList());
                         if (new CooldownFilter<>(cooldowns, RegularCooldown.class).filterCooldownClass(Intervene.InterveneData.class)
-                                                                                  .filter(regularCooldown -> !Objects.equals(regularCooldown.getFrom(), target))
-                                                                                  .findAny()
-                                                                                  .isPresent()) {
+                                .filter(regularCooldown -> !Objects.equals(regularCooldown.getFrom(), target))
+                                .findAny()
+                                .isPresent()) {
                             stats.intervenesPierced++;
                         }
+
                         if (new CooldownFilter<>(cooldowns, RegularCooldown.class).filterCooldownClass(Shield.class).filter(RegularCooldown::hasTicksLeft).findAny().isPresent()) {
                             stats.shieldsPierced++;
                         }

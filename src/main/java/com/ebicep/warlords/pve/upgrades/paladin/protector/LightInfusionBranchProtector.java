@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.upgrades.paladin.protector;
 
 import com.ebicep.warlords.abilities.LightInfusionProtector;
 import com.ebicep.warlords.pve.upgrades.*;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 public class LightInfusionBranchProtector extends AbstractUpgradeBranch<LightInfusionProtector> {
 
@@ -53,14 +54,18 @@ public class LightInfusionBranchProtector extends AbstractUpgradeBranch<LightInf
                 }
         );
         masterUpgrade2 = new Upgrade(
-                "Chiron Light",
+                "Ornament of Darkness",
                 "Light Infusion - Master Upgrade",
                 """
-                        Casting Light Infusion near allies in a 5 block radius, will grant them infusion's speed buff and immunity to all debuffs for 4s. Strike healing during the duration of Light Infusion is increased by 25%.
+                        +100% Cooldown increase
+                        +9s Duration
+                        
+                        Fall into darkness, causing your healing to be reduced by 80% but all your attacks (excluding Consecrate) grant you a stack of corruption. Upon reactivating the ability, consume all stacks to increase your damage by 5% per stack (max 200%) for 3 seconds.
                         """,
                 50000,
                 () -> {
-
+                    ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Ornament of Darkness", 2f);
+                    ability.setTickDuration(ability.getTickDuration() + 180);
                 }
         );
     }
