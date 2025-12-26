@@ -186,6 +186,8 @@ public class ChatUtils {
         HOLOGRAMS("Holograms", NamedTextColor.DARK_PURPLE, false),
         CONFIG("Config", NamedTextColor.GREEN, true),
 
+        NEW_ITEMS("NewItems", NamedTextColor.GOLD, true),
+
         ;
 
         private static final Set<String> ERRORS = new HashSet<>();

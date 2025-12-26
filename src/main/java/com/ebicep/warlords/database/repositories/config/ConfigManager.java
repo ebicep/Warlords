@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -25,7 +26,8 @@ public class ConfigManager {
     public static final SpecializationsConfig SPECIALIZATIONS_CONFIG = new SpecializationsConfig();
     public static final GameConfig GAME_CONFIG = new GameConfig();
     public static final MobsConfig MOBS_CONFIG = new MobsConfig();
-    public static final Config[] CONFIGS = {ABILITIES_CONFIG, SPEC_BOOST_CONFIG, SPECIALIZATIONS_CONFIG, GAME_CONFIG, MOBS_CONFIG};
+    public static final NewItemsConfig NEW_ITEMS_CONFIG = new NewItemsConfig();
+    public static final Config[] CONFIGS = {ABILITIES_CONFIG, SPEC_BOOST_CONFIG, SPECIALIZATIONS_CONFIG, GAME_CONFIG, MOBS_CONFIG, NEW_ITEMS_CONFIG};
     public static final String COLLECTION_NAME = "Config";
 
     public static void loadConfigs(MongoDatabase warlordsDatabase) {
@@ -119,6 +121,18 @@ public class ConfigManager {
         return GAME_CONFIG.getValue(namespaces, key, fieldType, defaultValue);
     }
 
+    public static <T> T getNewItemsConfigValue(List<String> namespaces, String key, Class<T> fieldType) {
+        return NEW_ITEMS_CONFIG.getValue(namespaces, key, fieldType);
+    }
+
+    public static <T> List<T> getNewItemsConfigListValue(List<String> namespaces, String key, Class<T> fieldType) {
+        return NEW_ITEMS_CONFIG.getListValue(namespaces, key, fieldType);
+    }
+
+    public static <T> Map<String, T> getNewItemsConfigMapValue(List<String> namespaces, String key, Class<T> valueType) {
+        return NEW_ITEMS_CONFIG.getMapValue(namespaces, key, valueType);
+    }
+
     public interface Config {
 
         String getName();
@@ -149,6 +163,23 @@ public class ConfigManager {
 
         default <T> List<T> getListValue(List<String> namespaces, String key, Class<T> itemType, boolean optionalField) {
             return ConfigUtils.getListValue(getConfigDocument(), namespaces, key, itemType, optionalField);
+        }
+
+        default <T> Map<String, T> getMapValue(
+                List<String> namespaces,
+                String key,
+                Class<T> valueType
+        ) {
+            return ConfigUtils.getMapValue(getConfigDocument(), namespaces, key, valueType);
+        }
+
+        default <T> Map<String, T> getMapValue(
+                List<String> namespaces,
+                String key,
+                Class<T> valueType,
+                boolean optionalField
+        ) {
+            return ConfigUtils.getMapValue(getConfigDocument(), namespaces, key, valueType, optionalField);
         }
 
     }

@@ -1,0 +1,338 @@
+{
+  "_id": {
+    "$oid": "694e16cb6ad349f17b38315c"
+  },
+  "type": "NEW_ITEMS",
+  "data": {
+    "pve": {
+      "tiers": {
+        "common": {
+          "name": "Common",
+          "bonusAttributes": 1,
+          "bonusAttributeRanges": {
+            "CC": {
+              "min": 1,
+              "max": 1
+            },
+            "CM": {
+              "min": 1,
+              "max": 2
+            },
+            "DAMAGE": {
+              "min": 1,
+              "max": 2
+            },
+            "BOSS_DAMAGE": {
+              "min": 1,
+              "max": 2
+            },
+            "EPH": {
+              "min": 1,
+              "max": 1
+            },
+            "HEALING": {
+              "min": 1,
+              "max": 2
+            },
+            "MAX_ENERGY": {
+              "min": 2,
+              "max": 4
+            },
+            "SPEED": {
+              "min": 1,
+              "max": 1
+            },
+            "THORNS": {
+              "min": 1,
+              "max": 2
+            }
+          }
+        },
+        "rare": {
+          "name": "Rare",
+          "bonusAttributes": 1,
+          "bonusAttributeRanges": {
+            "CC": {
+              "min": 1,
+              "max": 2
+            },
+            "CM": {
+              "min": 2,
+              "max": 3
+            },
+            "DAMAGE": {
+              "min": 2,
+              "max": 4
+            },
+            "BOSS_DAMAGE": {
+              "min": 2,
+              "max": 3
+            },
+            "EPH": {
+              "min": 1,
+              "max": 2
+            },
+            "HEALING": {
+              "min": 2,
+              "max": 3
+            },
+            "MAX_ENERGY": {
+              "min": 4,
+              "max": 6
+            },
+            "SPEED": {
+              "min": 1,
+              "max": 2
+            },
+            "THORNS": {
+              "min": 2,
+              "max": 3
+            }
+          }
+        },
+        "epic": {
+          "name": "Epic",
+          "bonusAttributes": 2,
+          "bonusAttributeRanges": {
+            "CC": {
+              "min": 2,
+              "max": 3
+            },
+            "CM": {
+              "min": 3,
+              "max": 5
+            },
+            "DAMAGE": {
+              "min": 4,
+              "max": 6
+            },
+            "BOSS_DAMAGE": {
+              "min": 3,
+              "max": 5
+            },
+            "EPH": {
+              "min": 2,
+              "max": 4
+            },
+            "HEALING": {
+              "min": 3,
+              "max": 5
+            },
+            "MAX_ENERGY": {
+              "min": 6,
+              "max": 9
+            },
+            "SPEED": {
+              "min": 2,
+              "max": 3
+            },
+            "THORNS": {
+              "min": 3,
+              "max": 5
+            }
+          }
+        },
+        "sovereign": {
+          "name": "Sovereign",
+          "bonusAttributes": 2,
+          "bonusAttributeRanges": {
+            "CC": {
+              "min": 3,
+              "max": 4
+            },
+            "CM": {
+              "min": 5,
+              "max": 7
+            },
+            "DAMAGE": {
+              "min": 6,
+              "max": 9
+            },
+            "BOSS_DAMAGE": {
+              "min": 5,
+              "max": 8
+            },
+            "EPH": {
+              "min": 4,
+              "max": 6
+            },
+            "HEALING": {
+              "min": 5,
+              "max": 7
+            },
+            "MAX_ENERGY": {
+              "min": 9,
+              "max": 13
+            },
+            "SPEED": {
+              "min": 3,
+              "max": 4
+            },
+            "THORNS": {
+              "min": 4,
+              "max": 6
+            }
+          }
+        },
+        "legendary": {
+          "name": "Legendary",
+          "bonusAttributes": 3,
+          "bonusAttributeRanges": {
+            "CC": {
+              "min": 4,
+              "max": 6
+            },
+            "CM": {
+              "min": 7,
+              "max": 10
+            },
+            "DAMAGE": {
+              "min": 9,
+              "max": 13
+            },
+            "BOSS_DAMAGE": {
+              "min": 8,
+              "max": 12
+            },
+            "EPH": {
+              "min": 6,
+              "max": 9
+            },
+            "HEALING": {
+              "min": 7,
+              "max": 10
+            },
+            "MAX_ENERGY": {
+              "min": 13,
+              "max": 18
+            },
+            "SPEED": {
+              "min": 4,
+              "max": 6
+            },
+            "THORNS": {
+              "min": 6,
+              "max": 9
+            }
+          }
+        },
+        "ascendant": {
+          "name": "Ascendant",
+          "bonusAttributes": 3,
+          "bonusAttributeRanges": {
+            "CC": {
+              "min": 6,
+              "max": 8
+            },
+            "CM": {
+              "min": 10,
+              "max": 14
+            },
+            "DAMAGE": {
+              "min": 13,
+              "max": 18
+            },
+            "BOSS_DAMAGE": {
+              "min": 12,
+              "max": 17
+            },
+            "EPH": {
+              "min": 9,
+              "max": 12
+            },
+            "HEALING": {
+              "min": 10,
+              "max": 14
+            },
+            "MAX_ENERGY": {
+              "min": 18,
+              "max": 25
+            },
+            "SPEED": {
+              "min": 6,
+              "max": 8
+            },
+            "THORNS": {
+              "min": 9,
+              "max": 12
+            }
+          }
+        }
+      },
+      "sets": {
+        "randomCommon": {
+          "tier": "COMMON",
+          "name": "Common",
+          "slots": [
+            "HELMET",
+            "CHESTPLATE",
+            "LEGGINGS",
+            "GLOVES",
+            "BOOTS",
+            "RING",
+            "TOME"
+          ],
+          "attributes": {
+          },
+          "bonusAttributeRanges": {
+          }
+        },
+        "randomRare": {
+          "tier": "RARE",
+          "name": "Rare",
+          "slots": [
+            "HELMET",
+            "CHESTPLATE",
+            "LEGGINGS",
+            "GLOVES",
+            "BOOTS",
+            "RING",
+            "TOME"
+          ],
+          "attributes": {
+          },
+          "bonusAttributeRanges": {
+          }
+        },
+        "randomEpic": {
+          "tier": "EPIC",
+          "name": "Epic",
+          "slots": [
+            "HELMET",
+            "CHESTPLATE",
+            "LEGGINGS",
+            "GLOVES",
+            "BOOTS",
+            "RING",
+            "TOME"
+          ],
+          "attributes": {
+          },
+          "bonusAttributeRanges": {
+          }
+        },
+        "illuminatedPrism": {
+          "tier": "LEGENDARY",
+          "name": "Illuminated Prism",
+          "slots": [
+            "HELMET",
+            "CHESTPLATE",
+            "LEGGINGS",
+            "GLOVES",
+            "BOOTS"
+          ],
+          "attributes": {
+            "HEALTH": 100,
+            "KB_RES": 10,
+            "REGEN": 20
+          },
+          "bonusAttributeRanges": {
+          },
+          "description": "Repeated attacks from the same target deal {{damage;%}} less damage, up to {{damage;%}}.",
+          "meleeDamageIncreasePercent": 5,
+          "meleeAttackTwiceChancePercent": 80
+        }
+      }
+    }
+  }
+}

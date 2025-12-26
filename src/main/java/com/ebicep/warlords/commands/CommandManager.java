@@ -51,6 +51,7 @@ import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairCommand;
 import com.ebicep.warlords.pve.gameevents.libraryarchives.PlayerCodexCommand;
 import com.ebicep.warlords.pve.items.ItemsCommand;
 import com.ebicep.warlords.pve.mobs.Mob;
+import com.ebicep.warlords.pve.newitems.NewItemsCommand;
 import com.ebicep.warlords.pve.quests.QuestCommand;
 import com.ebicep.warlords.pve.weapons.WeaponCommand;
 import com.ebicep.warlords.sr.BalancerCommand;
@@ -715,6 +716,7 @@ public class CommandManager {
         manager.registerCommand(new QuestCommand());
         manager.registerCommand(new WeaponCommand());
         manager.registerCommand(new MasterworksFairCommand());
+        manager.registerCommand(new NewItemsCommand());
         manager.registerCommand(new ItemsCommand());
 
         manager.registerCommand(new TutorialCommand());

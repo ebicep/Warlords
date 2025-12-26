@@ -1,12 +1,11 @@
 package com.ebicep.warlords.player.general.specboosts;
 
-import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.database.repositories.config.ConfigBased;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.specboosts.boosts.*;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -14,7 +13,10 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.event.Listener;
 
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class SpecBoostManager {
 
@@ -152,9 +154,19 @@ public class SpecBoostManager {
         SPEC_BOOSTS.values().stream().flatMap(List::stream).forEach(SpecBoost::init);
     }
 
-    public interface SpecBoost<S extends SpecBoost<S>> {
+    public interface SpecBoost<S extends SpecBoost<S>> extends ConfigBased.ConfigDescription {
 
         List<String> NAMESPACES = List.of("pvp");
+
+        @Override
+        default ConfigManager.Config getConfig() {
+            return ConfigManager.SPEC_BOOST_CONFIG;
+        }
+
+        @Override
+        default List<String> getConfigNamespaces() {
+            return NAMESPACES;
+        }
 
         void init();
 
@@ -162,26 +174,12 @@ public class SpecBoostManager {
             return getValue("disabled", boolean.class, true);
         }
 
-        default <T> T getValue(String fieldName, Class<T> clazz, boolean optionalField) {
-            return ConfigManager.getSpecBoostConfigValue(NAMESPACES, getConfigFieldName() + "." + fieldName, clazz, optionalField);
-        }
-
-        String getConfigFieldName();
-
         default TextComponent getName() {
             return Component.text(getStringName(), NamedTextColor.GREEN);
         }
 
         default String getStringName() {
             return getValue("name", String.class);
-        }
-
-        default <T> T getValue(String fieldName, Class<T> clazz) {
-            return ConfigManager.getSpecBoostConfigValue(NAMESPACES, getConfigFieldName() + "." + fieldName, clazz);
-        }
-
-        default <T> List<T> getListValue(String fieldName, Class<T> clazz) {
-            return ConfigManager.getSpecBoostConfigListValue(NAMESPACES, getConfigFieldName() + "." + fieldName, clazz);
         }
 
         default List<String> getBannedPlayers() {
@@ -192,72 +190,9 @@ public class SpecBoostManager {
             return getListValue("permitted", String.class, true);
         }
 
-        default <T> List<T> getListValue(String fieldName, Class<T> clazz, boolean optionalField) {
-            return ConfigManager.getSpecBoostConfigListValue(NAMESPACES, getConfigFieldName() + "." + fieldName, clazz, optionalField);
-        }
-
         default TextComponent getDifficulty() {
             return Component.text("☆".repeat(getValue("difficulty", int.class, true)), NamedTextColor.YELLOW);
         }
-
-        default List<Component> getDescriptionLore() {
-            return WordWrap.wrap(getDescription(), getMaxDescriptionWidth());
-        }
-
-        default TextComponent getDescription() {
-            return getTextDescription();
-        }
-
-        default int getMaxDescriptionWidth() {
-            return 150;
-        }
-
-        default TextComponent getTextDescription() {
-            try {
-                Queue<Object> variables = new LinkedList<>(getVariables());
-                String descriptionFormat = ConfigManager.getSpecBoostConfigValue(NAMESPACES, getConfigFieldName() + ".description", String.class);
-                AbilityDescriptionBuilder abilityDescriptionBuilder = AbilityDescriptionBuilder.create("", NamedTextColor.GRAY);
-                for (int i = 0; i < descriptionFormat.length(); i++) {
-                    int nextCustomIndex = descriptionFormat.indexOf("{{");
-                    if (nextCustomIndex == -1) {
-                        abilityDescriptionBuilder.text(descriptionFormat);
-                        break;
-                    }
-                    if (nextCustomIndex != 0) {
-                        String text = descriptionFormat.substring(0, nextCustomIndex);
-                        abilityDescriptionBuilder.text(text);
-                        descriptionFormat = descriptionFormat.substring(nextCustomIndex);
-                    } else {
-                        int endIndex = descriptionFormat.indexOf("}}");
-                        String customValue = descriptionFormat.substring(2, endIndex);
-                        int prefixIndex = customValue.indexOf(";");
-                        String prefix;
-                        if (prefixIndex == -1) {
-                            prefix = "";
-                        } else {
-                            prefix = customValue.substring(prefixIndex + 1);
-                            customValue = customValue.substring(0, prefixIndex);
-                        }
-                        if (customValue.contains(":")) {
-                            String type = customValue.substring(0, customValue.indexOf(":"));
-                            String value = customValue.substring(customValue.indexOf(":") + 1);
-                            // {{type:value;prefix}}
-                            abilityDescriptionBuilder.autoFormat(type, prefix, value.isEmpty() ? variables.poll() : value);
-                        } else {
-                            abilityDescriptionBuilder.autoFormat(customValue, prefix, variables.poll());
-                        }
-                        descriptionFormat = descriptionFormat.substring(endIndex + 2);
-                    }
-                    i--;
-                }
-                return abilityDescriptionBuilder.build();
-            } catch (Exception e) {
-                ChatUtils.MessageType.CONFIG.sendErrorMessage(e);
-                return Component.text("ERROR", NamedTextColor.RED);
-            }
-        }
-
-        List<Object> getVariables();
 
         default TextComponent appendAbility(TextComponent component, AbstractAbility ability) {
             ability.init(ability.getBuilder());

@@ -1,17 +1,17 @@
-package com.ebicep.warlords.pve.newitems.types;
+package com.ebicep.warlords.pve.newitems.tiers;
 
 import com.ebicep.warlords.pve.newitems.NewItemsUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 
-public class Rare extends NewItemType {
+public class Common extends BaseTier {
 
-    private static final Component STAR_COMPONENT = NewItemsUtils.createStarComponent(NamedTextColor.BLUE, 1);
+    private static final Component STAR_COMPONENT = NewItemsUtils.createStarComponent(NamedTextColor.GREEN, 1);
 
     @Override
     public TextColor getTextColor() {
-        return NamedTextColor.BLUE;
+        return NamedTextColor.GREEN;
     }
 
     @Override
@@ -20,8 +20,8 @@ public class Rare extends NewItemType {
     }
 
     @Override
-    public int bonusAttributes() {
-        return 1;
+    public String getConfigFieldName() {
+        return "common";
     }
 
 }

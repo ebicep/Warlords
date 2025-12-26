@@ -1,11 +1,22 @@
 package com.ebicep.warlords.pve.newitems;
 
+import com.ebicep.warlords.pve.newitems.setbonus.NewItemsSetBonus;
+import com.ebicep.warlords.pve.newitems.tiers.NewItemTier;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 
 public class NewItemsUtils {
+
+    public static void reloadConfig() {
+        for (NewItemsSetBonus value : NewItemsSetBonus.VALUES) {
+            value.init();
+        }
+        for (NewItemTier value : NewItemTier.VALUES) {
+            value.init();
+        }
+    }
 
     public static Component createStarComponent(TextColor textColor, int starCount) {
         if (starCount <= 0 || starCount > 6) {
