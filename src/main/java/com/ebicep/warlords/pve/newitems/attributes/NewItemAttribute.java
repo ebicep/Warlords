@@ -77,13 +77,13 @@ public enum NewItemAttribute implements Attribute {
     }
 
     @Override
-    public Component formatValue(int value) {
+    public Component formatValue(float value) {
         return attribute.formatValue(value);
     }
 
     @Override
-    public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer) {
-        attribute.applyToWarlordsPlayer(warlordsPlayer);
+    public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value) {
+        attribute.applyToWarlordsPlayer(warlordsPlayer, value);
     }
 
 }

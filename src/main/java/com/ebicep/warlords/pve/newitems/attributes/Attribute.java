@@ -10,8 +10,8 @@ public interface Attribute {
 
     TextColor getTextColor();
 
-    Component formatValue(int value);
+    Component formatValue(float value);
 
-    void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer);
+    void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value);
 
 }
