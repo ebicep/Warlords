@@ -80,8 +80,8 @@ public enum NewItemAttribute implements Attribute {
     }
 
     @Override
-    public Component formatValue(float value) {
-        return attribute.formatValue(value);
+    public Component formatValue(float value, String prefix) {
+        return attribute.formatValue(value, prefix);
     }
 
     @Override

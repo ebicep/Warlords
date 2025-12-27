@@ -10,7 +10,7 @@ public interface Attribute {
 
     TextColor getTextColor();
 
-    Component formatValue(float value);
+    Component formatValue(float value, String prefix);
 
     void apply(WarlordsPlayer warlordsPlayer, float value);
 

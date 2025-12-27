@@ -64,74 +64,37 @@ public class NewItem {
         return setBonus.getTier();
     }
 
-    public Map<NewItemAttribute, Integer> getBonusAttributeValues() {
-        Map<NewItemAttribute, Integer> attributeValues = new EnumMap<>(NewItemAttribute.class);
-        bonusAttributeDistribution.forEach((attribute, distributionPercent) -> {
-            Pair<Short, Short> range = getTier().bonusAttributeRanges().get(attribute);
-            if (range != null) {
-                int bonusValue = (int) Math.ceil(range.getA() + (range.getB() - range.getA()) * (distributionPercent / 100f));
-                attributeValues.put(attribute, attributeValues.getOrDefault(attribute, 0) + bonusValue);
-            }
-        });
-        return attributeValues;
+    public ItemBuilder getItemBuilder() {
+        return getItemBuilder(null, null);
     }
 
     public Component getName() {
         return Component.text(getStringName(), getTier().getTextColor());
     }
 
-    // TODO pass in loadout
-    public ItemBuilder getItemBuilder() {
-        List<Component> lore = new ArrayList<>();
-        lore.add(getTier().getStarComponent());
-        lore.add(Component.empty());
-        Map<NewItemAttribute, Float> basicAttributes = setBonus.getAttributes();
-        boolean onlyHealth = basicAttributes.size() == 1 && basicAttributes.containsKey(NewItemAttribute.HEALTH);
-        if (basicAttributes.containsKey(NewItemAttribute.HEALTH)) {
-            lore.add(NewItemAttribute.HEALTH.formatValue(basicAttributes.get(NewItemAttribute.HEALTH)));
-            lore.add(Component.empty());
-        }
-        if (!basicAttributes.isEmpty() && !onlyHealth) {
-            lore.add(Component.text("Basic Attributes:", NamedTextColor.GRAY));
-            for (NewItemAttribute basicAttribute : NewItemAttribute.BASIC_ATTRIBUTES) {
-                if (basicAttribute == NewItemAttribute.HEALTH) {
-                    continue;
-                }
-                Float value = basicAttributes.get(basicAttribute);
-                if (value != null) {
-                    lore.add(basicAttribute.formatValue(value));
-                }
-            }
-            lore.add(Component.empty());
-        }
-        Map<NewItemAttribute, Integer> bonusAttributeValues = getBonusAttributeValues();
-        if (!bonusAttributeValues.isEmpty()) {
-            lore.add(Component.text("Bonus Attributes:", NamedTextColor.GRAY));
-            for (NewItemAttribute bonusAttribute : NewItemAttribute.BONUS_ATTRIBUTES) {
-                Integer value = bonusAttributeValues.get(bonusAttribute);
-                if (value != null) {
-                    lore.add(bonusAttribute.formatValue(value));
-                }
-            }
-            lore.add(Component.empty());
-        }
-
-        if (!setBonus.isNoBonus()) {
-            List<NewItemsSlot> slots = setBonus.getSlots();
-            lore.add(Component.text(setBonus.getName() + " Set [" + "?" + "/" + slots.size() + "]", NamedTextColor.GRAY));
-            for (NewItemsSlot newItemsSlot : slots) {
-                lore.add(Component.text(" - " + setBonus.getName() + " " + newItemsSlot.getName(), getTier().getTextColor()));
-            }
-            lore.add(Component.empty());
-            lore.add(Component.text("Set Bonus:", NamedTextColor.GRAY));
-            lore.addAll(setBonus.getDescriptionLore());
-            lore.add(Component.empty());
-        }
-
+    public ItemBuilder getItemBuilder(NewItemsManager itemsManager, NewItemLoadout loadout) {
+        List<Component> lore = new NewItemLoreCreator.Builder(this)
+                .addStarComponent()
+                .addBasicAttributes()
+                .addBonusAttributes(getBonusAttributeValues())
+                .addSetBonus(itemsManager, loadout)
+                .build();
         lore.add(Component.text(getTier().getName() + " " + slot.getName(), getTier().getTextColor()));
         return new ItemBuilder(getItemStack())
                 .name(getName())
                 .lore(lore);
+    }
+
+    public Map<NewItemAttribute, Float> getBonusAttributeValues() {
+        Map<NewItemAttribute, Float> attributeValues = new EnumMap<>(NewItemAttribute.class);
+        bonusAttributeDistribution.forEach((attribute, distributionPercent) -> {
+            Pair<Float, Float> range = getTier().bonusAttributeRanges().get(attribute);
+            if (range != null) {
+                int bonusValue = (int) Math.ceil(range.getA() + (range.getB() - range.getA()) * (distributionPercent / 100f));
+                attributeValues.put(attribute, attributeValues.getOrDefault(attribute, 0f) + bonusValue);
+            }
+        });
+        return attributeValues;
     }
 
     public String getStringName() {

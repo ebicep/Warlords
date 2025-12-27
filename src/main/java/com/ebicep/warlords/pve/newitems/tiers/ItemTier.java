@@ -39,6 +39,6 @@ public interface ItemTier extends ConfigBased {
 
     int bonusAttributes();
 
-    Map<NewItemAttribute, Pair<Short, Short>> bonusAttributeRanges();
+    Map<NewItemAttribute, Pair<Float, Float>> bonusAttributeRanges();
 
 }

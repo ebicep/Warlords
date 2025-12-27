@@ -351,7 +351,10 @@
             "KB_RES": 10,
             "REGEN": 15
           },
-          "description": "Targets within 6 blocks of you take 10% more damage and are slowed by 35%."
+          "description": "Targets within {{blocks}} of you take {{damage;%}} more damage and are slowed by {{speed;%}}.",
+          "radius": 6,
+          "damage": 10,
+          "slow": 35
         },
         "olympic": {
           "tier": "LEGENDARY",
@@ -366,7 +369,9 @@
             "REGEN": 15,
             "CDR": 10
           },
-          "description": "+1 Block jump height. Take 20% less damage while in the air."
+          "description": "Increase jump height by {{blocks}}. Take {{damage;%}} less damage while in the air.",
+          "jumpHeight": 1,
+          "airResist": 20
         },
         "soothsayer": {
           "tier": "LEGENDARY",
@@ -380,7 +385,9 @@
             "HEALTH": 25,
             "ECR": 10
           },
-          "description": "Weapon right clicks have a 2% chance to perform 1 random rune."
+          "description": "Weapon right clicks have a {{blue;%}} chance to perform {{blue}} random rune.",
+          "runeChance": 2,
+          "runeCount": 1
         },
         "illuminatedPrism": {
           "tier": "LEGENDARY",
@@ -415,7 +422,8 @@
             "HEALTH": 100,
             "CDR": 15
           },
-          "description": "Healing done to a target damages nearby enemies for 30% of the healing done."
+          "description": "Healing done to a target damages nearby enemies for {{healing;%}} of the healing done.",
+          "healingDamageConversion": 30
         },
         "moonveil": {
           "tier": "LEGENDARY",
@@ -430,7 +438,8 @@
             "ECR": 10,
             "REGEN": 15
           },
-          "description": "Increase your crit chance by 25% while under damage-preventing effects."
+          "description": "Increase your crit chance by {{damage;%}} while under damage-preventing effects.",
+          "critChanceBoost": 25
         },
         "voidcarver": {
           "tier": "LEGENDARY",
@@ -443,7 +452,9 @@
             "HEALTH": 15,
             "CDR": 10
           },
-          "description": "Allies in a 10 block radius have their cooldowns reduced by 5%."
+          "description": "Allies in within {{blocks}} have their cooldowns reduced by {{blue;%}}.",
+          "radius": 10,
+          "cdrBoost": 5
         },
         "gravemind": {
           "tier": "LEGENDARY",
@@ -457,7 +468,9 @@
             "HEALTH": 60,
             "REGEN": 20
           },
-          "description": "Kills have a 5% chance to summon an allied mob for 30 seconds."
+          "description": "Kills have a {{blue;%}} chance to summon an allied mob for {{ticks}}.",
+          "summonChance": 5,
+          "duration": 30
         },
         "summoner": {
           "tier": "LEGENDARY",
@@ -473,7 +486,9 @@
             "HEALTH": 40,
             "REGEN": 20
           },
-          "description": "Summoned mobs deal 50% more damage and have 50% more speed. Summons are guaranteed to be Aspects."
+          "description": "Summoned mobs deal {{damage;%}} more damage and have {{speed;%}} more speed. Summons are guaranteed to be Aspects.",
+          "minionDamage": 50,
+          "minionSpeed": 50
         },
         "crownOfThorns": {
           "tier": "LEGENDARY",
@@ -487,7 +502,8 @@
             "HEALTH": 50,
             "KB_RES": 15
           },
-          "description": "Double the thorn damage cap and increase all thorn damage by 50%."
+          "description": "Double the thorn damage cap and increase all thorn damage by {{damage;%}}.",
+          "thornDamageBoost": 50
         },
         "obelisk": {
           "tier": "LEGENDARY",
@@ -502,7 +518,7 @@
             "CDR": 10,
             "REGEN": 15
           },
-          "description": "Increase the damage you deal against bosses by 30%. Additionally, take 15% less damage from boss attacks.",
+          "description": "Increase the damage you deal against bosses by {{damage;%}}. Additionally, take {{damage;%}} less damage from boss attacks.",
           "bossDamageIncreasePercent": 30,
           "bossDamageTakenReductionPercent": 15
         },
@@ -521,7 +537,7 @@
             "ECR": 10,
             "REGEN": 15
           },
-          "description": "For every player that is above 75% health, deal 5% more damage.",
+          "description": "For every player that is above {{heal;%}} health, deal {{damage;%}} more damage.",
           "damagePerHealthyPlayerPercent": 5,
           "healthyPlayerThresholdPercent": 75
         },
@@ -537,7 +553,7 @@
             "HEALTH": 40,
             "REGEN": 20
           },
-          "description": "For every mob on the field, increase your damage by 0.75%.",
+          "description": "For every mob on the field, increase your damage by {{damage;%}}.",
           "damagePerMobPercent": 0.75
         },
         "oceanLight": {
@@ -552,7 +568,7 @@
             "ECR": 10,
             "CDR": 10
           },
-          "description": "For every mob on the field, increase your healing by 0.75%.",
+          "description": "For every mob on the field, increase your healing by {{heal;%}}.",
           "healingPerMobPercent": 0.75
         },
         "bulwark": {
@@ -569,7 +585,10 @@
             "HEALTH": 200,
             "CDR": 10
           },
-          "description": "Allies within 6 blocks take 20% reduced damage. Doubled below 30% health."
+          "description": "Allies within {{blocks}} take {{damageReduction;%}} reduced damage. Doubled below {{heal;%}} health.",
+          "radius": 6,
+          "damageReduction": 20,
+          "healthThreshold": 30
         },
         "omen": {
           "tier": "LEGENDARY",
@@ -587,7 +606,8 @@
             "REGEN": 20,
             "CDR": 10
           },
-          "description": "Increase your max health by 25%."
+          "description": "Increase your max health by {{heal;%}}.",
+          "maxHealthBoost": 25
         },
         "frostveil": {
           "tier": "LEGENDARY",
@@ -600,7 +620,10 @@
             "HEALTH": 90,
             "KB_RES": 10
           },
-          "description": "15% chance to freeze enemies for 3s. Deal 20% more damage to frozen enemies."
+          "description": "{{blue;%}} chance to freeze enemies for {{ticks}}. Deal {{damage;%}} more damage to frozen enemies.",
+          "freezeChance": 15,
+          "duration": 3,
+          "frozenDamageBoost": 20
         },
         "centurion": {
           "tier": "LEGENDARY",
@@ -616,7 +639,8 @@
             "ECR": 10,
             "CDR": 10
           },
-          "description": "+10% cooldown reduction on all abilities."
+          "description": "+{{blue;%}} cooldown reduction on all abilities.",
+          "bonusCDR": 10
         },
         "handOfTheCorpse": {
           "tier": "LEGENDARY",
@@ -628,7 +652,8 @@
             "HEALTH": 60,
             "REGEN": 20
           },
-          "description": "Increase your energy per hit by 8."
+          "description": "Increase your energy per hit by {{energy}}.",
+          "energyPerHit": 8
         },
         "ghostly": {
           "tier": "LEGENDARY",
@@ -645,7 +670,8 @@
             "KB_RES": 10,
             "REGEN": 15
           },
-          "description": "15% chance to dodge attacks. Dodges grant stacking damage and healing bonuses."
+          "description": "{{blue;%}} chance to dodge attacks. Dodges grant stacking damage and healing bonuses.",
+          "dodgeChance": 15
         },
         "sharpshooter": {
           "tier": "LEGENDARY",
@@ -659,7 +685,8 @@
             "ECR": 10,
             "REGEN": 10
           },
-          "description": "Ranged primary attacks have a 1% chance to instantly kill non-boss targets."
+          "description": "Ranged primary attacks have a {{damage;%}} chance to instantly kill non-boss targets.",
+          "instakillChance": 1
         },
         "omamori": {
           "tier": "LEGENDARY",
@@ -671,7 +698,7 @@
             "HEALTH": 20,
             "CDR": 10
           },
-          "description": "Increase the duration of your ultimate ability by 3 seconds.",
+          "description": "Increase the duration of your ultimate ability by {{ticks}}.",
           "ultimateDurationIncreaseSeconds": 3
         },
         "energize": {
@@ -685,7 +712,7 @@
           "attributes": {
             "HEALTH": 25
           },
-          "description": "For every 5 enemies killed, gain 30 energy. Additionally, abilities have a 10% chance to not expend energy.",
+          "description": "For every {{damage}} enemies killed, gain {{energy}}. Additionally, abilities have a {{blue;%}} chance to not expend energy.",
           "energyPerKillThreshold": 5,
           "energyGained": 30,
           "freeAbilityCastChancePercent": 10
@@ -704,7 +731,7 @@
             "HEALTH": 25,
             "REGEN": 20
           },
-          "description": "Healing allies above 90% health converts excess healing into energy (max 20 energy).",
+          "description": "Healing allies above {{heal;%}} health converts excess healing into energy (max {{energy}}).",
           "excessHealingEnergyCap": 20,
           "excessHealingHealthThresholdPercent": 90
         },
@@ -720,7 +747,7 @@
             "HEALTH": 10,
             "CDR": 10
           },
-          "description": "15% of healing you receive is redirected to the lowest ally instead.",
+          "description": "{{heal;%}} of healing you receive is redirected to the lowest ally instead.",
           "healingRedirectPercent": 15
         },
         "pulseOfAeons": {
@@ -734,7 +761,7 @@
             "HEALTH": 55,
             "KB_RES": 15
           },
-          "description": "Every 6 heal instances, you emit a global pulse that heals all for 400 health.",
+          "description": "Every {{heal}} heal instances, you emit a global pulse that heals all for {{heal}} health.",
           "healsPerPulse": 6,
           "pulseHealAmount": 400
         },
@@ -752,7 +779,7 @@
             "HEALTH": 35,
             "CDR": 10
           },
-          "description": "Increase rare loot chance by 25%. Enemies have a 2% chance to drop a spelunker chest.",
+          "description": "Increase rare loot chance by {{blue;%}}. Enemies have a {{blue;%}} chance to drop a spelunker chest.",
           "rareLootChanceIncreasePercent": 25,
           "spelunkerChestDropChancePercent": 2
         },
@@ -768,7 +795,7 @@
             "REGEN": 15,
             "ECR": 10
           },
-          "description": "Increase the effectiveness of your upgrades by 20%. Additionally, gain 3 free ability upgrades.",
+          "description": "Increase the effectiveness of your upgrades by {{blue;%}}. Additionally, gain {{blue}} free ability upgrades.",
           "upgradeEffectivenessIncreasePercent": 20,
           "freeAbilityUpgrades": 3
         },
@@ -784,7 +811,7 @@
             "HEALTH": 40,
             "CDR": 10
           },
-          "description": "When an ally drops below 30% health, they glow and you gain 100% movement speed toward them. Increase healing on that ally by 20%.",
+          "description": "When an ally drops below {{heal;%}} health, they glow and you gain {{speed;%}} movement speed toward them. Increase healing on that ally by {{heal;%}}.",
           "allyHealthThresholdPercent": 30,
           "movementSpeedBonusPercent": 100,
           "healingBonusToAllyPercent": 20
@@ -796,10 +823,9 @@
             "TOME"
           ],
           "attributes": {
-            "HEALTH": 0,
             "KB_RES": -20
           },
-          "description": "Reduce your max health and damage reduction by 80% but increase your damage by 60%.",
+          "description": "Reduce your max health and damage reduction by {{damageReduction;%}} but increase your damage by {{damage;%}}.",
           "maxHealthReductionPercent": 80,
           "damageReductionPenaltyPercent": 80,
           "damageIncreasePercent": 60
@@ -811,9 +837,8 @@
             "TOME"
           ],
           "attributes": {
-            "HEALTH": 0
           },
-          "description": "Increase your damage by 50% but you are no longer able to hit critical hits.",
+          "description": "Increase your damage by {{damage;%}} but you are no longer able to hit critical hits.",
           "damageIncreasePercent": 50,
           "disableCriticalHits": true
         },
@@ -826,7 +851,7 @@
           "attributes": {
             "HEALTH": 200
           },
-          "description": "Increase your damage reduction by 35% but reduce your movement speed by 50%.",
+          "description": "Increase your damage reduction by {{damageReduction;%}} but reduce your movement speed by {{speed;%}}.",
           "damageReductionIncreasePercent": 35,
           "movementSpeedPenaltyPercent": 50
         },
@@ -837,7 +862,6 @@
             "TOME"
           ],
           "attributes": {
-            "HEALTH": 0
           },
           "description": "Heals allies around you when you deal damage, but you constantly lose health over time.",
           "healAlliesOnDamage": true,
@@ -852,7 +876,7 @@
           "attributes": {
             "HEALTH": 50
           },
-          "description": "Reduce your respawn time by 50% but respawn at 15% health and no energy.",
+          "description": "Reduce your respawn time by {{ticks;%}} but respawn at {{heal;%}} health and no energy.",
           "respawnTimeReductionPercent": 50,
           "respawnHealthPercent": 15,
           "respawnEnergy": 0
@@ -864,9 +888,9 @@
             "TOME"
           ],
           "attributes": {
-            "HEALTH": 0
           },
-          "description": "Above 75% health, gain +20 EPS. Below 75% health, energy regeneration is disabled.",
+          "description": "Above {{heal;%}} health, gain {{energy}} EPS. Below {{heal;%}} health, energy regeneration is disabled.",
+          "healthThreshold": 75,
           "energyPerSecondBonus": 20,
           "energyRegenDisabledBelowHealthPercent": 75
         },
@@ -877,9 +901,8 @@
             "TOME"
           ],
           "attributes": {
-            "HEALTH": 0
           },
-          "description": "Gain 100% more insignia from kills but lose 5% of total insignia when hit.",
+          "description": "Gain {{gold;%}} more insignia from kills but lose {{gold;%}} of total insignia when hit.",
           "insigniaGainBonusPercent": 100,
           "insigniaLossOnHitPercent": 5
         },
@@ -892,7 +915,7 @@
           "attributes": {
             "HEALTH": 100
           },
-          "description": "Gain 40% cooldown reduction on non-ultimate skills but your primary attack deals 75% less damage and healing.",
+          "description": "Gain {{blue;%}} cooldown reduction on non-ultimate skills but your primary attack deals {{damage;%}} less damage and {{heal;%}} less healing.",
           "nonUltimateCooldownReductionPercent": 40,
           "primaryDamagePenaltyPercent": 75,
           "primaryHealingPenaltyPercent": 75
@@ -904,9 +927,8 @@
             "TOME"
           ],
           "attributes": {
-            "HEALTH": 0
           },
-          "description": "Shield effectiveness increased by 300% but reduce max health by 99%.",
+          "description": "Shield effectiveness increased by {{damageReduction;%}} but reduce max health by {{heal;%}}.",
           "shieldEffectivenessIncreasePercent": 300,
           "maxHealthReductionPercent": 99
         },
@@ -917,9 +939,8 @@
             "TOME"
           ],
           "attributes": {
-            "HEALTH": 0
           },
-          "description": "Increase crit multiplier by 100% but take 5% max health damage per critical hit.",
+          "description": "Increase crit multiplier by {{damage;%}} but take {{damage;%}} max health damage per critical hit.",
           "critMultiplierIncreasePercent": 100,
           "selfDamageOnCritPercentMaxHealth": 5
         },
@@ -932,7 +953,7 @@
           "attributes": {
             "HEALTH": 100
           },
-          "description": "Every 30 seconds you receive a random effect.",
+          "description": "Every {{ticks}} you receive a random effect.",
           "randomEffectIntervalSeconds": 30,
           "randomEffects": [
             "DOUBLE_DAMAGE_10S",
@@ -964,7 +985,7 @@
           "attributes": {
             "HEALTH": 25
           },
-          "description": "Each kill permanently increases your damage by 0.5%. All stacks are lost on death.",
+          "description": "Each kill permanently increases your damage by {{damage;%}}. All stacks are lost on death.",
           "damagePerKillPercent": 0.5,
           "loseStacksOnDeath": true
         },
@@ -977,7 +998,7 @@
           "attributes": {
             "HEALTH": 25
           },
-          "description": "Gain 25% cooldown reduction but freeze every 15 seconds for 3 seconds.",
+          "description": "Gain {{blue;%}} cooldown reduction but freeze every {{ticks}} for {{ticks}}.",
           "cooldownReductionPercent": 25,
           "freezeIntervalSeconds": 15,
           "freezeDurationSeconds": 3
@@ -991,7 +1012,7 @@
           "attributes": {
             "HEALTH": 25
           },
-          "description": "Upon taking lethal damage, revive at 20% health but reduce an ally to 5% health (30s cooldown).",
+          "description": "Upon taking lethal damage, revive at {{heal;%}} health but reduce an ally to {{heal;%}} health ({{ticks}} cooldown).",
           "selfReviveHealthPercent": 20,
           "allyHealthReductionPercent": 95,
           "reviveCooldownSeconds": 30
@@ -1005,7 +1026,7 @@
           "attributes": {
             "HEALTH": 50
           },
-          "description": "All allies gain 30% more energy per second but you take 60% more damage.",
+          "description": "All allies gain {{energy}} more energy per second but you take {{damage;%}} more damage.",
           "allyEnergyPerSecondBonusPercent": 30,
           "selfDamageTakenIncreasePercent": 60
         },
@@ -1018,7 +1039,7 @@
           "attributes": {
             "HEALTH": 5
           },
-          "description": "+15% ability range on your red rune skill.",
+          "description": "+{{blocks;%}} ability range on your red rune skill.",
           "redRuneAbilityRangeIncreasePercent": 15
         },
         "detonator": {
@@ -1030,7 +1051,7 @@
           "attributes": {
             "HEALTH": 5
           },
-          "description": "+5% ability damage on your red rune skill.",
+          "description": "+{{damage;%}} ability damage on your red rune skill.",
           "redRuneAbilityDamageIncreasePercent": 5
         },
         "vial": {
@@ -1042,7 +1063,7 @@
           "attributes": {
             "HEALTH": 5
           },
-          "description": "+5% ability healing on your red rune skill.",
+          "description": "+{{heal;%}} ability healing on your red rune skill.",
           "redRuneAbilityHealingIncreasePercent": 5
         },
         "battery": {
@@ -1054,7 +1075,7 @@
           "attributes": {
             "HEALTH": 5
           },
-          "description": "-5 ability energy cost on your red rune skill.",
+          "description": "-{{energy}} ability energy cost on your red rune skill.",
           "redRuneAbilityEnergyCostReduction": 5
         },
         "wellspring": {
@@ -1066,7 +1087,7 @@
           "attributes": {
             "HEALTH": 5
           },
-          "description": "-5% cooldown reduction on your blue rune skill.",
+          "description": "-{{blue;%}} cooldown reduction on your blue rune skill.",
           "blueRuneCooldownReductionPercent": 5
         },
         "durable": {
@@ -1078,7 +1099,7 @@
           "attributes": {
             "HEALTH": 5
           },
-          "description": "+2 seconds to your blue rune skill’s ability duration.",
+          "description": "+{{ticks}} to your blue rune skill’s ability duration.",
           "blueRuneDurationIncreaseSeconds": 2
         }
       }

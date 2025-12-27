@@ -66,7 +66,7 @@ public class NewItemsUtils {
         }
 
         if (totalAttributeValues.containsKey(NewItemAttribute.HEALTH)) {
-            components.add(NewItemAttribute.HEALTH.formatValue(totalAttributeValues.get(NewItemAttribute.HEALTH)));
+            components.add(NewItemAttribute.HEALTH.formatValue(totalAttributeValues.get(NewItemAttribute.HEALTH), "+"));
             components.add(Component.empty());
         }
         if (basicAttributeCount > 0) {
@@ -77,7 +77,7 @@ public class NewItemsUtils {
                 }
                 Float value = totalAttributeValues.get(basicAttribute);
                 if (value != null) {
-                    components.add(basicAttribute.formatValue(value));
+                    components.add(basicAttribute.formatValue(value, "+"));
                 }
             }
             components.add(Component.empty());
@@ -87,7 +87,7 @@ public class NewItemsUtils {
             for (NewItemAttribute bonusAttribute : NewItemAttribute.BONUS_ATTRIBUTES) {
                 Float value = totalAttributeValues.get(bonusAttribute);
                 if (value != null) {
-                    components.add(bonusAttribute.formatValue(value));
+                    components.add(bonusAttribute.formatValue(value, "+"));
                 }
             }
             components.add(Component.empty());
@@ -111,14 +111,7 @@ public class NewItemsUtils {
 
     public static List<Component> getTotalSetsStatsComponent(List<NewItem> items) {
         List<Component> components = new ArrayList<>();
-        Map<NewItemsSetBonus, Set<NewItemsSlot>> activeSets = new HashMap<>();
-        for (NewItem item : items) {
-            NewItemsSetBonus setBonus = item.getSetBonus();
-            if (setBonus.isNoBonus()) {
-                continue;
-            }
-            activeSets.computeIfAbsent(setBonus, k -> new HashSet<>()).add(item.getSlot());
-        }
+        Map<NewItemsSetBonus, Set<NewItemsSlot>> activeSets = getActiveSets(items);
         activeSets.forEach((setBonus, slots) -> {
             components.add(Component.text(setBonus.getName() + " Set [" + slots.size() + "/" + slots.size() + "]", NamedTextColor.GRAY));
             for (NewItemsSlot newItemsSlot : setBonus.getSlots()) {
@@ -137,6 +130,19 @@ public class NewItemsUtils {
             components.removeLast();
         }
         return components;
+    }
+
+    @Nonnull
+    public static Map<NewItemsSetBonus, Set<NewItemsSlot>> getActiveSets(List<NewItem> items) {
+        Map<NewItemsSetBonus, Set<NewItemsSlot>> activeSets = new HashMap<>();
+        for (NewItem item : items) {
+            NewItemsSetBonus setBonus = item.getSetBonus();
+            if (setBonus.isNoBonus()) {
+                continue;
+            }
+            activeSets.computeIfAbsent(setBonus, k -> new HashSet<>()).add(item.getSlot());
+        }
+        return activeSets;
     }
 
     public static Component createStarComponent(TextColor textColor, int starCount) {

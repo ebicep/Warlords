@@ -23,10 +23,10 @@ public class CooldownReduction implements Attribute {
     }
 
     @Override
-    public Component formatValue(float value) {
+    public Component formatValue(float value, String prefix) {
         return ComponentBuilder
                 .create()
-                .text("+" + NumberFormat.formatOptionalTenths(value) + "% ", getTextColor())
+                .text(prefix + NumberFormat.formatOptionalTenths(value) + "% ", getTextColor())
                 .text("Cooldown Reduction", NamedTextColor.GRAY)
                 .build();
     }

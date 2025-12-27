@@ -6,6 +6,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.newitems.NewItemsSlot;
 import com.ebicep.warlords.pve.newitems.attributes.NewItemAttribute;
 import com.ebicep.warlords.pve.newitems.tiers.NewItemTier;
+import com.ebicep.warlords.util.java.Pair;
 
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,8 @@ public interface SetBonus extends ConfigBased.ConfigDescription {
     List<NewItemsSlot> getSlots();
 
     Map<NewItemAttribute, Float> getAttributes();
+
+    Map<NewItemAttribute, Pair<Float, Float>> bonusAttributeRanges();
 
     void init();
 

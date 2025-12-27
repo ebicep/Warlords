@@ -2,11 +2,9 @@ package com.ebicep.warlords.pve.newitems.setbonus;
 
 import com.ebicep.warlords.pve.newitems.NewItemsSlot;
 import com.ebicep.warlords.pve.newitems.attributes.NewItemAttribute;
-import com.ebicep.warlords.pve.newitems.setbonus.sets.IlluminatedPrism;
-import com.ebicep.warlords.pve.newitems.setbonus.sets.RandomCommon;
-import com.ebicep.warlords.pve.newitems.setbonus.sets.RandomEpic;
-import com.ebicep.warlords.pve.newitems.setbonus.sets.RandomRare;
+import com.ebicep.warlords.pve.newitems.setbonus.sets.*;
 import com.ebicep.warlords.pve.newitems.tiers.NewItemTier;
+import com.ebicep.warlords.util.java.Pair;
 
 import java.util.List;
 import java.util.Map;
@@ -14,10 +12,63 @@ import java.util.Set;
 
 public enum NewItemsSetBonus implements SetBonus {
 
+    AMBULANCE(new Ambulance()),
+    BATTERY(new Battery()),
+    BLOODLETTING_BLADE(new BloodlettingBlade()),
+    BRITTLE_CROWN(new BrittleCrown()),
+    BULWARK(new Bulwark()),
+    CENTURION(new Centurion()),
+    CHARM(new Charm()),
+    CROWN_OF_THORNS(new CrownOfThorns()),
+    DETONATOR(new Detonator()),
+    DURABLE(new Durable()),
+    ECHO_OF_RUIN(new EchoOfRuin()),
+    ENERGIZE(new Energize()),
+    FORSAKEN_FLUX(new ForsakenFlux()),
+    FROSTVEIL(new Frostveil()),
+    GAMBLER(new Gambler()),
+    GHOSTLY(new Ghostly()),
+    GRAVEMIND(new Gravemind()),
+    HAND_OF_THE_CORPSE(new HandOfTheCorpse()),
+    HEART_OF_GLASS(new HeartOfGlass()),
+    HOURGLASS(new Hourglass()),
     ILLUMINATED_PRISM(new IlluminatedPrism()),
+    INNER_FLAME(new InnerFlame()),
+    IRON_CHAINS(new IronChains()),
+    MADRAKAN(new Madrakan()),
+    MOONVEIL(new Moonveil()),
+    MOURNSONG_VIAL(new MournsongVial()),
+    OATHKEEPER(new Oathkeeper()),
+    OBELISK(new Obelisk()),
+    OCEAN_LIGHT(new OceanLight()),
+    OLYMPIC(new Olympic()),
+    OMAMORI(new Omamori()),
+    OMEN(new Omen()),
+    OVERFLOW(new Overflow()),
+    PHOENIX(new Phoenix()),
+    PULSE_OF_AEONS(new PulseOfAeons()),
     RANDOM_EPIC(new RandomEpic()),
     RANDOM_RARE(new RandomRare()),
-    RANDOM_COMMON(new RandomCommon());
+    RANDOM_COMMON(new RandomCommon()),
+    SACRIFICE(new Sacrifice()),
+    SANGUINEOUS(new Sanguineous()),
+    SHARPSHOOTER(new Sharpshooter()),
+    SHIELD_GATE(new ShieldGate()),
+    SOOTHSAYER(new Soothsayer()),
+    SOULFLAME(new Soulflame()),
+    SOULFORGED(new Soulforged()),
+    SPELUNKER(new Spelunker()),
+    STONELASH(new Stonelash()),
+    STRETCH(new Stretch()),
+    SUMMONER(new Summoner()),
+    SYNAPTIC_OVERLOAD(new SynapticOverload()),
+    THRONE_OF_THE_UNDEAD(new ThroneOfTheUndead()),
+    TRANSFERENCE(new Transference()),
+    VIAL(new Vial()),
+    VOIDCARVER(new Voidcarver()),
+    WELLSPRING(new Wellspring()),
+
+    ;
 
     public static final NewItemsSetBonus[] VALUES = values();
     public static Map<NewItemTier, Set<NewItemsSetBonus>> BY_TIER;
@@ -50,6 +101,11 @@ public enum NewItemsSetBonus implements SetBonus {
     @Override
     public Map<NewItemAttribute, Float> getAttributes() {
         return setBonus.getAttributes();
+    }
+
+    @Override
+    public Map<NewItemAttribute, Pair<Float, Float>> bonusAttributeRanges() {
+        return setBonus.bonusAttributeRanges();
     }
 
     @Override

@@ -56,7 +56,7 @@ public enum NewItemTier implements ItemTier {
     }
 
     @Override
-    public Map<NewItemAttribute, Pair<Short, Short>> bonusAttributeRanges() {
+    public Map<NewItemAttribute, Pair<Float, Float>> bonusAttributeRanges() {
         return itemTier.bonusAttributeRanges();
     }
 

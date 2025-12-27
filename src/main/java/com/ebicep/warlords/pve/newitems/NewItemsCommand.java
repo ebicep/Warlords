@@ -8,6 +8,7 @@ import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.pve.newitems.menu.NewItemEquipMenu;
+import com.ebicep.warlords.pve.newitems.menu.NewItemSetsMenu;
 import com.ebicep.warlords.pve.newitems.setbonus.NewItemsSetBonus;
 import com.ebicep.warlords.pve.newitems.tiers.NewItemTier;
 import com.ebicep.warlords.util.chat.ChatChannels;
@@ -26,6 +27,11 @@ public class NewItemsCommand extends BaseCommand {
     public void menu(Player player) {
         DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
         NewItemEquipMenu.openItemEquipMenuExternal(player, databasePlayer);
+    }
+
+    @Subcommand("sets")
+    public void sets(Player player) {
+        NewItemSetsMenu.open(player);
     }
 
     @Subcommand("generate")

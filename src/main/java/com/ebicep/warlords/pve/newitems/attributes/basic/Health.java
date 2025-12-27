@@ -22,11 +22,11 @@ public class Health implements Attribute {
     }
 
     @Override
-    public Component formatValue(float value) {
+    public Component formatValue(float value, String prefix) {
         return ComponentBuilder
                 .create()
                 .text("✥ Health: ", NamedTextColor.GRAY)
-                .text("+" + NumberFormat.formatOptionalTenths(value), NamedTextColor.DARK_RED)
+                .text(prefix + NumberFormat.formatOptionalTenths(value), NamedTextColor.DARK_RED)
                 .build();
     }
 

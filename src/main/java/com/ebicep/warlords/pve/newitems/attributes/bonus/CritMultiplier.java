@@ -22,10 +22,10 @@ public class CritMultiplier implements Attribute {
     }
 
     @Override
-    public Component formatValue(float value) {
+    public Component formatValue(float value, String prefix) {
         return ComponentBuilder
                 .create()
-                .text("+" + NumberFormat.formatOptionalTenths(value) + "% ", getTextColor())
+                .text(prefix + NumberFormat.formatOptionalTenths(value) + "% ", getTextColor())
                 .text("Crit Multiplier", NamedTextColor.GRAY)
                 .build();
     }

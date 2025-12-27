@@ -17,7 +17,7 @@ public abstract class BaseSet implements SetBonus {
     private String name;
     private List<NewItemsSlot> slots;
     private Map<NewItemAttribute, Float> attributes;
-    private Map<NewItemAttribute, Pair<Short, Short>> bonusAttributeRanges;
+    private Map<NewItemAttribute, Pair<Float, Float>> bonusAttributeRanges;
 
     @Override
     public boolean isNoBonus() {
@@ -45,6 +45,11 @@ public abstract class BaseSet implements SetBonus {
     }
 
     @Override
+    public Map<NewItemAttribute, Pair<Float, Float>> bonusAttributeRanges() {
+        return bonusAttributeRanges;
+    }
+
+    @Override
     public void init() {
         this.noBonus = getValue("noBonus", boolean.class, true);
         this.tier = getValue("tier", NewItemTier.class);
@@ -61,11 +66,11 @@ public abstract class BaseSet implements SetBonus {
             }
         });
         this.attributes = attributeMap;
-        Map<NewItemAttribute, Pair<Short, Short>> bonusAttributeRanges = new EnumMap<>(NewItemAttribute.class);
+        Map<NewItemAttribute, Pair<Float, Float>> bonusAttributeRanges = new EnumMap<>(NewItemAttribute.class);
         for (NewItemAttribute bonusAttribute : NewItemAttribute.BONUS_ATTRIBUTES) {
             bonusAttributeRanges.put(bonusAttribute, new Pair<>(
-                            getValue("bonusAttributeRanges." + bonusAttribute.getDatabaseName() + ".min", short.class, true),
-                            getValue("bonusAttributeRanges." + bonusAttribute.getDatabaseName() + ".max", short.class, true
+                    getValue("bonusAttributeRanges." + bonusAttribute.getDatabaseName() + ".min", float.class, true),
+                    getValue("bonusAttributeRanges." + bonusAttribute.getDatabaseName() + ".max", float.class, true
                             )
                     )
             );

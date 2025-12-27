@@ -11,17 +11,17 @@ public abstract class BaseTier implements ItemTier {
     private String name;
     private int weight;
     private int bonusAttributes;
-    private Map<NewItemAttribute, Pair<Short, Short>> bonusAttributeRanges;
+    private Map<NewItemAttribute, Pair<Float, Float>> bonusAttributeRanges;
 
     @Override
     public void init() {
         this.name = getValue("name", String.class);
         this.weight = getValue("weight", int.class);
-        Map<NewItemAttribute, Pair<Short, Short>> bonusAttributeRanges = new EnumMap<>(NewItemAttribute.class);
+        Map<NewItemAttribute, Pair<Float, Float>> bonusAttributeRanges = new EnumMap<>(NewItemAttribute.class);
         for (NewItemAttribute bonusAttribute : NewItemAttribute.BONUS_ATTRIBUTES) {
             bonusAttributeRanges.put(bonusAttribute, new Pair<>(
-                            getValue("bonusAttributeRanges." + bonusAttribute.getDatabaseName() + ".min", short.class, true),
-                            getValue("bonusAttributeRanges." + bonusAttribute.getDatabaseName() + ".max", short.class, true
+                    getValue("bonusAttributeRanges." + bonusAttribute.getDatabaseName() + ".min", float.class, true),
+                    getValue("bonusAttributeRanges." + bonusAttribute.getDatabaseName() + ".max", float.class, true
                             )
                     )
             );
@@ -46,7 +46,7 @@ public abstract class BaseTier implements ItemTier {
     }
 
     @Override
-    public Map<NewItemAttribute, Pair<Short, Short>> bonusAttributeRanges() {
+    public Map<NewItemAttribute, Pair<Float, Float>> bonusAttributeRanges() {
         return bonusAttributeRanges;
     }
 
