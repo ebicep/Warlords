@@ -21,12 +21,16 @@ import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitInfo;
 import net.citizensnpcs.api.trait.trait.Equipment;
-import net.citizensnpcs.trait.*;
+import net.citizensnpcs.trait.ArmorStandTrait;
+import net.citizensnpcs.trait.LookClose;
+import net.citizensnpcs.trait.SkinTrait;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.*;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.entity.Display;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -65,7 +69,7 @@ public class NPCManager {
                 createSeasonalVendorNPC();
                 createTreasureHuntVendorNPC();
             }
-        };
+        }.runTask(Warlords.getInstance());
 
         registerTrait(ReadyUpOption.ReadyUpTrait.class, "ReadyUpTrait");
     };
