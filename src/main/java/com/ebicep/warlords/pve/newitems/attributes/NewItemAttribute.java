@@ -8,6 +8,7 @@ import net.kyori.adventure.text.format.TextColor;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -38,6 +39,7 @@ public enum NewItemAttribute implements Attribute {
             COOLDOWN_REDUCTION,
             SKILL_ENERGY_COST_REDUCTION,
     };
+    public static final Set<NewItemAttribute> BASIC_ATTRIBUTE_SET = Set.of(BASIC_ATTRIBUTES);
     public static final NewItemAttribute[] BONUS_ATTRIBUTES = {
             DAMAGE_TO_BOSS_ENEMIES,
             SPEED,
@@ -49,6 +51,7 @@ public enum NewItemAttribute implements Attribute {
             ENERGY_PER_HIT,
             THORNS,
     };
+    public static final Set<NewItemAttribute> BONUS_ATTRIBUTE_SET = Set.of(BONUS_ATTRIBUTES);
     private static final Map<String, NewItemAttribute> BY_DB_NAME = Arrays
             .stream(VALUES)
             .collect(Collectors.toUnmodifiableMap(

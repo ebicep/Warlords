@@ -33,7 +33,7 @@ public interface SetBonus extends ConfigBased.ConfigDescription {
 
     List<NewItemsSlot> getSlots();
 
-    Map<NewItemAttribute, Integer> getAttributes();
+    Map<NewItemAttribute, Float> getAttributes();
 
     void init();
 

@@ -24,14 +24,8 @@ public class NewItemLoadout {
 
     public void apply(NewItemsManager itemsManager, WarlordsPlayer warlordsPlayer) {
         List<NewItem> itemList = getActualItems(itemsManager);
-        Map<NewItemAttribute, Float> attributeValues = new HashMap<>();
-        for (NewItem item : itemList) {
-            Map<NewItemAttribute, Float> allAttributeValues = item.getAllAttributeValues();
-            for (Map.Entry<NewItemAttribute, Float> entry : allAttributeValues.entrySet()) {
-                attributeValues.merge(entry.getKey(), entry.getValue(), Float::sum);
-            }
-        }
-        attributeValues.forEach((attribute, value) -> {
+        Map<NewItemAttribute, Float> totalAttributeValues = NewItemsUtils.getTotalAttributeValues(itemList);
+        totalAttributeValues.forEach((attribute, value) -> {
             attribute.apply(warlordsPlayer, value);
         });
         warlordsPlayer.updateInventory(false);
@@ -56,6 +50,10 @@ public class NewItemLoadout {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public List<UUID> getItems() {
         return items;
     }
@@ -64,8 +62,16 @@ public class NewItemLoadout {
         return difficultyMode;
     }
 
+    public void setDifficultyMode(DifficultyMode difficultyMode) {
+        this.difficultyMode = difficultyMode;
+    }
+
     public Specializations getSpec() {
         return spec;
+    }
+
+    public void setSpec(Specializations spec) {
+        this.spec = spec;
     }
 
 }

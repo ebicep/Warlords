@@ -7,6 +7,7 @@ import co.aikar.commands.HelpEntry;
 import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.pve.newitems.menu.NewItemEquipMenu;
 import com.ebicep.warlords.pve.newitems.setbonus.NewItemsSetBonus;
 import com.ebicep.warlords.pve.newitems.tiers.NewItemTier;
 import com.ebicep.warlords.util.chat.ChatChannels;
@@ -24,33 +25,39 @@ public class NewItemsCommand extends BaseCommand {
     @Subcommand("menu")
     public void menu(Player player) {
         DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
-
+        NewItemEquipMenu.openItemEquipMenuExternal(player, databasePlayer);
     }
 
-    @CommandAlias("generate")
-    public static class GenerateItem extends BaseCommand {
+    @Subcommand("generate")
+    public class GenerateItem extends BaseCommand {
 
         @Subcommand("random")
         public void generate(Player player, @Default("1") @Conditions("limits:min=1,max=10") Integer amount) {
             for (int i = 0; i < amount; i++) {
                 NewItem item = NewItemsUtils.generateRandomItem();
-                sendItemGenerateMessage(player, item);
+                addNewGeneratedItem(player, item);
             }
         }
 
-        private static void sendItemGenerateMessage(Player player, NewItem item) {
-            player.getInventory().addItem(item.getItemBuilder().get());
+        private static void addNewGeneratedItem(Player player, NewItem item) {
+            addItem(player, item);
             ChatChannels.playerSendMessage(player, ChatChannels.DEBUG,
                     Component.text("Generated new item: ", NamedTextColor.GRAY)
                              .append(item.getName().hoverEvent(item.getItemBuilder().get().asHoverEvent()))
             );
         }
 
+        private static void addItem(Player player, NewItem item) {
+            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+            NewItemsManager newItemsManager = databasePlayer.getPveStats().getNewItemsManager();
+            newItemsManager.addItem(item);
+        }
+
         @Subcommand("tier")
         public void generate(Player player, NewItemTier tier, @Default("1") @Conditions("limits:min=1,max=10") Integer amount) {
             for (int i = 0; i < amount; i++) {
                 NewItem item = NewItemsUtils.generateRandomItem(tier);
-                sendItemGenerateMessage(player, item);
+                addNewGeneratedItem(player, item);
             }
         }
 
@@ -58,7 +65,7 @@ public class NewItemsCommand extends BaseCommand {
         public void generate(Player player, NewItemsSetBonus setBonus, @Default("1") @Conditions("limits:min=1,max=10") Integer amount) {
             for (int i = 0; i < amount; i++) {
                 NewItem item = new NewItem(setBonus);
-                sendItemGenerateMessage(player, item);
+                addNewGeneratedItem(player, item);
             }
         }
 

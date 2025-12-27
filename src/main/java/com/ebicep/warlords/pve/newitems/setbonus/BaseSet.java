@@ -15,7 +15,7 @@ public abstract class BaseSet implements SetBonus {
     private NewItemTier tier;
     private String name;
     private List<NewItemsSlot> slots;
-    private Map<NewItemAttribute, Integer> attributes;
+    private Map<NewItemAttribute, Float> attributes;
     private Map<NewItemAttribute, Pair<Short, Short>> bonusAttributeRanges;
 
     @Override
@@ -34,7 +34,7 @@ public abstract class BaseSet implements SetBonus {
     }
 
     @Override
-    public Map<NewItemAttribute, Integer> getAttributes() {
+    public Map<NewItemAttribute, Float> getAttributes() {
         return attributes;
     }
 
@@ -43,8 +43,8 @@ public abstract class BaseSet implements SetBonus {
         this.tier = getValue("tier", NewItemTier.class);
         this.name = getValue("name", String.class);
         this.slots = getListValue("slots", NewItemsSlot.class);
-        Map<NewItemAttribute, Integer> attributeMap = new EnumMap<>(NewItemAttribute.class);
-        Map<String, Integer> raw = getMapValue("attributes", Integer.class);
+        Map<NewItemAttribute, Float> attributeMap = new EnumMap<>(NewItemAttribute.class);
+        Map<String, Float> raw = getMapValue("attributes", Float.class);
         raw.forEach((key, value) -> {
             NewItemAttribute attribute = NewItemAttribute.getByDatabaseName(key);
             if (attribute != null) {

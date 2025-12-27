@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.newitems;
 
+import com.ebicep.warlords.pve.newitems.menu.NewItemSearchMenu;
 import org.springframework.data.annotation.TypeAlias;
 
 import java.util.ArrayList;
@@ -12,6 +13,23 @@ public class NewItemsManager {
     private List<NewItemLoadout> loadouts = new ArrayList<>() {{
         add(new NewItemLoadout("Default"));
     }};
+    private NewItemSearchMenu.PlayerItemMenuSettings.PlayerItemMenuFilterSettings menuFilterSettings = new NewItemSearchMenu.PlayerItemMenuSettings.PlayerItemMenuFilterSettings();
+
+    public void addItem(NewItem item) {
+        this.itemInventory.add(item);
+    }
+
+    public void removeItem(NewItem item) {
+        this.itemInventory.remove(item);
+    }
+
+    public NewItemSearchMenu.PlayerItemMenuSettings.PlayerItemMenuFilterSettings getMenuFilterSettings() {
+        return menuFilterSettings;
+    }
+
+    public void setMenuFilterSettings(NewItemSearchMenu.PlayerItemMenuSettings.PlayerItemMenuFilterSettings menuFilterSettings) {
+        this.menuFilterSettings = menuFilterSettings;
+    }
 
     public List<NewItem> getItemInventory() {
         return itemInventory;
