@@ -6,16 +6,16 @@ import com.ebicep.warlords.pve.newitems.setbonus.SetBonus;
 
 import java.util.List;
 
-public class IlluminatedPrismSet extends BaseSet {
+public class IlluminatedPrism extends BaseSet {
 
-    private int meleeDamageIncreasePercent;
-    private int meleeAttackTwiceChancePercent;
+    private int repeatedAttackDamageReduction;
+    private int repeatedAttackMaxDamageReduction;
 
     @Override
     public void init() {
         super.init();
-        this.meleeDamageIncreasePercent = getValue("meleeDamageIncreasePercent", int.class);
-        this.meleeAttackTwiceChancePercent = getValue("meleeAttackTwiceChancePercent", int.class);
+        this.repeatedAttackDamageReduction = getValue("repeatedAttackDamageReduction", int.class);
+        this.repeatedAttackMaxDamageReduction = getValue("repeatedAttackMaxDamageReduction", int.class);
     }
 
     @Override
@@ -30,7 +30,7 @@ public class IlluminatedPrismSet extends BaseSet {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(meleeDamageIncreasePercent, meleeAttackTwiceChancePercent);
+        return List.of(repeatedAttackDamageReduction, repeatedAttackMaxDamageReduction);
     }
 
     public class Bonus implements SetBonus.Bonus {

@@ -12,8 +12,11 @@ import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.newitems.NewItem;
 import com.ebicep.warlords.pve.newitems.NewItemLoadout;
 import com.ebicep.warlords.pve.newitems.NewItemsManager;
+import com.ebicep.warlords.pve.newitems.NewItemsUtils;
+import com.ebicep.warlords.util.bukkit.ComponentUtils;
 import com.ebicep.warlords.util.java.Priority;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
@@ -54,7 +57,7 @@ public class NewItemOption implements Option {
         if (loadouts.isEmpty()) {
             if (nonEmptyLoadouts > 0 && player.getEntity() instanceof Player) {
                 AbstractItem.sendItemMessage((Player) player.getEntity(),
-                        Component.text("No item loadout applied. Make sure your loadout is not overweight or unbinded.", NamedTextColor.RED)
+                        Component.text("No item loadout applied. Make sure your loadout is not unbinded.", NamedTextColor.RED)
                 );
             }
             return;
@@ -64,6 +67,27 @@ public class NewItemOption implements Option {
         List<NewItem> appliedItems = loadout.getActualItems(itemsManager);
 
         loadout.apply(itemsManager, warlordsPlayer);
+
+        List<Component> totalBonusLore = new ArrayList<>();
+        totalBonusLore.add(Component.text("Total Bonuses:", NamedTextColor.AQUA));
+        totalBonusLore.addAll(NewItemsUtils.getTotalStatsComponent(appliedItems));
+        totalBonusLore.add(Component.empty());
+        List<Component> setsStatsComponent = NewItemsUtils.getTotalSetsStatsComponent(appliedItems);
+        for (int i = 0; i < setsStatsComponent.size(); i++) {
+            Component component = setsStatsComponent.get(i);
+            if (component.color() == null) {
+                setsStatsComponent.set(i, component.color(NamedTextColor.GRAY));
+            }
+        }
+        totalBonusLore.addAll(setsStatsComponent);
+
+        if (player.getEntity() instanceof Player) {
+            AbstractItem.sendItemMessage((Player) player.getEntity(),
+                    Component.text("Applied Item Loadout: ", NamedTextColor.GREEN)
+                             .append(Component.text(loadout.getName(), NamedTextColor.GOLD)
+                                              .hoverEvent(HoverEvent.showText(ComponentUtils.flattenComponentWithNewLine(totalBonusLore))))
+            );
+        }
     }
 
 }

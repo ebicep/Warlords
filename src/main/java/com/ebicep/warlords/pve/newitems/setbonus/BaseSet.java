@@ -12,11 +12,17 @@ import java.util.Map;
 
 public abstract class BaseSet implements SetBonus {
 
+    private boolean noBonus;
     private NewItemTier tier;
     private String name;
     private List<NewItemsSlot> slots;
     private Map<NewItemAttribute, Float> attributes;
     private Map<NewItemAttribute, Pair<Short, Short>> bonusAttributeRanges;
+
+    @Override
+    public boolean isNoBonus() {
+        return noBonus;
+    }
 
     @Override
     public NewItemTier getTier() {
@@ -40,6 +46,7 @@ public abstract class BaseSet implements SetBonus {
 
     @Override
     public void init() {
+        this.noBonus = getValue("noBonus", boolean.class, true);
         this.tier = getValue("tier", NewItemTier.class);
         this.name = getValue("name", String.class);
         this.slots = getListValue("slots", NewItemsSlot.class);

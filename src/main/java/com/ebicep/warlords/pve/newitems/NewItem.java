@@ -41,6 +41,10 @@ public class NewItem {
     private NewItemsSetBonus setBonus;
     private boolean isFavorite = false;
 
+    public NewItem() {
+        // for deserialization
+    }
+
     public NewItem(@NotNull NewItemsSetBonus setBonus) {
         this.setBonus = setBonus;
         this.slot = JavaUtils.randomFromList(setBonus.getSlots());
@@ -112,7 +116,7 @@ public class NewItem {
             lore.add(Component.empty());
         }
 
-        if (setBonus != NewItemsSetBonus.RANDOM_COMMON && setBonus != NewItemsSetBonus.RANDOM_RARE && setBonus != NewItemsSetBonus.RANDOM_EPIC) {
+        if (!setBonus.isNoBonus()) {
             List<NewItemsSlot> slots = setBonus.getSlots();
             lore.add(Component.text(setBonus.getName() + " Set [" + "?" + "/" + slots.size() + "]", NamedTextColor.GRAY));
             for (NewItemsSlot newItemsSlot : slots) {

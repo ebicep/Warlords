@@ -27,6 +27,8 @@ public interface SetBonus extends ConfigBased.ConfigDescription {
         return "sets.";
     }
 
+    boolean isNoBonus();
+
     NewItemTier getTier();
 
     String getName();

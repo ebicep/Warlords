@@ -2,7 +2,7 @@ package com.ebicep.warlords.pve.newitems.setbonus;
 
 import com.ebicep.warlords.pve.newitems.NewItemsSlot;
 import com.ebicep.warlords.pve.newitems.attributes.NewItemAttribute;
-import com.ebicep.warlords.pve.newitems.setbonus.sets.IlluminatedPrismSet;
+import com.ebicep.warlords.pve.newitems.setbonus.sets.IlluminatedPrism;
 import com.ebicep.warlords.pve.newitems.setbonus.sets.RandomCommon;
 import com.ebicep.warlords.pve.newitems.setbonus.sets.RandomEpic;
 import com.ebicep.warlords.pve.newitems.setbonus.sets.RandomRare;
@@ -14,7 +14,7 @@ import java.util.Set;
 
 public enum NewItemsSetBonus implements SetBonus {
 
-    ILLUMINATED_PRISM(new IlluminatedPrismSet()),
+    ILLUMINATED_PRISM(new IlluminatedPrism()),
     RANDOM_EPIC(new RandomEpic()),
     RANDOM_RARE(new RandomRare()),
     RANDOM_COMMON(new RandomCommon());
@@ -25,6 +25,11 @@ public enum NewItemsSetBonus implements SetBonus {
 
     NewItemsSetBonus(SetBonus setBonus) {
         this.setBonus = setBonus;
+    }
+
+    @Override
+    public boolean isNoBonus() {
+        return setBonus.isNoBonus();
     }
 
     @Override

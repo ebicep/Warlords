@@ -10,7 +10,7 @@ import com.ebicep.warlords.game.option.cuboid.BoundingBoxOption;
 import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.pve.CurrencyOnEventOption;
-import com.ebicep.warlords.game.option.pve.ItemOption;
+import com.ebicep.warlords.game.option.pve.NewItemOption;
 import com.ebicep.warlords.game.option.pve.rewards.CoinGainOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.EventPointsOption;
@@ -103,7 +103,7 @@ public class CombatantsCavernMode2 extends GameMap {
             }
 
         });
-        options.add(new ItemOption());
+        options.add(new NewItemOption());
         options.add(new WinAfterTimeoutOption(200, 50, "spec"));
         options.add(new SafeZoneOption());
         options.add(new BoltaroBonanzaOption());

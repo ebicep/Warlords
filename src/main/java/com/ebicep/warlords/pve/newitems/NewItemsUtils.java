@@ -92,6 +92,9 @@ public class NewItemsUtils {
             }
             components.add(Component.empty());
         }
+        if (!components.isEmpty()) {
+            components.removeLast();
+        }
         return components;
     }
 
@@ -106,11 +109,15 @@ public class NewItemsUtils {
         return attributeValues;
     }
 
-    public static List<Component> getTotalSetsStatsComponent(NewItemLoadout loadout, List<NewItem> items) {
+    public static List<Component> getTotalSetsStatsComponent(List<NewItem> items) {
         List<Component> components = new ArrayList<>();
         Map<NewItemsSetBonus, Set<NewItemsSlot>> activeSets = new HashMap<>();
         for (NewItem item : items) {
-            activeSets.computeIfAbsent(item.getSetBonus(), k -> new HashSet<>()).add(item.getSlot());
+            NewItemsSetBonus setBonus = item.getSetBonus();
+            if (setBonus.isNoBonus()) {
+                continue;
+            }
+            activeSets.computeIfAbsent(setBonus, k -> new HashSet<>()).add(item.getSlot());
         }
         activeSets.forEach((setBonus, slots) -> {
             components.add(Component.text(setBonus.getName() + " Set [" + slots.size() + "/" + slots.size() + "]", NamedTextColor.GRAY));
@@ -123,9 +130,12 @@ public class NewItemsUtils {
             components.add(Component.empty());
             components.add(Component.text("Set Bonus: ", NamedTextColor.GRAY)
                                     .append(Component.text(setActive ? "[ACTIVE]" : "[INACTIVE]", setActive ? NamedTextColor.GREEN : NamedTextColor.RED)));
+            components.addAll(setBonus.getDescriptionLore());
             components.add(Component.empty());
         });
-
+        if (!components.isEmpty()) {
+            components.removeLast();
+        }
         return components;
     }
 

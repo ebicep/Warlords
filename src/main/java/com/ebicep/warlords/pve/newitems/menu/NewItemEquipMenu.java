@@ -180,7 +180,7 @@ public class NewItemEquipMenu {
                         .get(),
                 (m, e) -> {}
         );
-        List<Component> specialBonusLore = NewItemsUtils.getTotalSetsStatsComponent(possibleLoadout, equippedItems);
+        List<Component> specialBonusLore = NewItemsUtils.getTotalSetsStatsComponent(equippedItems);
         menu.setItem(4, 2,
                 new ItemBuilder(Material.END_CRYSTAL)
                         .name(Component.text("Set Bonuses", NamedTextColor.AQUA))

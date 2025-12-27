@@ -10,7 +10,7 @@ import com.ebicep.warlords.game.option.cuboid.BoundingBoxOption;
 import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.pve.CurrencyOnEventOption;
-import com.ebicep.warlords.game.option.pve.ItemOption;
+import com.ebicep.warlords.game.option.pve.NewItemOption;
 import com.ebicep.warlords.game.option.pve.rewards.CoinGainOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.waves.RandomSpawnWave;
@@ -212,7 +212,7 @@ public class IllusionValleyHard extends GameMap {
                 ),
                 DifficultyIndex.HARD
         ));
-        options.add(new ItemOption());
+        options.add(new NewItemOption());
         options.add(new CoinGainOption()
                 .guildCoinInsigniaConvertBonus(2000)
         );
