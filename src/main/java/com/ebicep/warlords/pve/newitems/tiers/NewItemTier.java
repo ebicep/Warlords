@@ -46,6 +46,11 @@ public enum NewItemTier implements ItemTier {
     }
 
     @Override
+    public int getWeight() {
+        return itemTier.getWeight();
+    }
+
+    @Override
     public int bonusAttributes() {
         return itemTier.bonusAttributes();
     }

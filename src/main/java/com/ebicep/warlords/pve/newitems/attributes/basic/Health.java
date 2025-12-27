@@ -31,7 +31,7 @@ public class Health implements Attribute {
     }
 
     @Override
-    public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value) {
+    public void apply(WarlordsPlayer warlordsPlayer, float value) {
         warlordsPlayer.getHealth().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Item (Base)", value);
     }
 

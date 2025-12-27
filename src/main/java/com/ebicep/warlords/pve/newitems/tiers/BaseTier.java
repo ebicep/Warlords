@@ -9,12 +9,14 @@ import java.util.Map;
 public abstract class BaseTier implements ItemTier {
 
     private String name;
+    private int weight;
     private int bonusAttributes;
     private Map<NewItemAttribute, Pair<Short, Short>> bonusAttributeRanges;
 
     @Override
     public void init() {
         this.name = getValue("name", String.class);
+        this.weight = getValue("weight", int.class);
         Map<NewItemAttribute, Pair<Short, Short>> bonusAttributeRanges = new EnumMap<>(NewItemAttribute.class);
         for (NewItemAttribute bonusAttribute : NewItemAttribute.BONUS_ATTRIBUTES) {
             bonusAttributeRanges.put(bonusAttribute, new Pair<>(
@@ -31,6 +33,11 @@ public abstract class BaseTier implements ItemTier {
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public int getWeight() {
+        return weight;
     }
 
     @Override

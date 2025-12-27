@@ -29,7 +29,7 @@ public class Thorns implements Attribute {
                 .build();
     }
     @Override
-    public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value) {
+    public void apply(WarlordsPlayer warlordsPlayer, float value) {
 
     }
 

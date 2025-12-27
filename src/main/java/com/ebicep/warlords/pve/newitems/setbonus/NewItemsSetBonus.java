@@ -8,8 +8,8 @@ import com.ebicep.warlords.pve.newitems.setbonus.sets.RandomEpic;
 import com.ebicep.warlords.pve.newitems.setbonus.sets.RandomRare;
 import com.ebicep.warlords.pve.newitems.tiers.NewItemTier;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public enum NewItemsSetBonus implements SetBonus {
 
@@ -19,6 +19,13 @@ public enum NewItemsSetBonus implements SetBonus {
     RANDOM_COMMON(new RandomCommon());
 
     public static final NewItemsSetBonus[] VALUES = values();
+    public static final Map<NewItemTier, Set<NewItemsSetBonus>> BY_TIER = Arrays
+            .stream(VALUES)
+            .collect(Collectors.groupingBy(
+                    NewItemsSetBonus::getTier,
+                    () -> new EnumMap<>(NewItemTier.class),
+                    Collectors.toSet()
+            ));
 
     private final SetBonus setBonus;
 

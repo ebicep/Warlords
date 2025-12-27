@@ -32,7 +32,7 @@ public class KnockbackResistance implements Attribute {
     }
 
     @Override
-    public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value) {
+    public void apply(WarlordsPlayer warlordsPlayer, float value) {
         NewItemCooldown.giveCooldown(warlordsPlayer, cd -> cd.addKBRes(value));
     }
 

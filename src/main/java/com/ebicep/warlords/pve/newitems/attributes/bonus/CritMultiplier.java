@@ -30,7 +30,7 @@ public class CritMultiplier implements Attribute {
                 .build();
     }
     @Override
-    public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value) {
+    public void apply(WarlordsPlayer warlordsPlayer, float value) {
         NewItemCooldown.giveCooldown(warlordsPlayer, cd -> cd.addCritMultiplier(value));
     }
 

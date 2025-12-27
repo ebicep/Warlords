@@ -30,7 +30,7 @@ public class HealthRegen implements Attribute {
                 .build();
     }
     @Override
-    public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value) {
+    public void apply(WarlordsPlayer warlordsPlayer, float value) {
         warlordsPlayer.getRegenPerSecond().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Item (Base)", value);
 
     }

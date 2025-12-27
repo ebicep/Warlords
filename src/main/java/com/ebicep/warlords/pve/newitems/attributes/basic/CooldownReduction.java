@@ -32,7 +32,7 @@ public class CooldownReduction implements Attribute {
     }
 
     @Override
-    public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value) {
+    public void apply(WarlordsPlayer warlordsPlayer, float value) {
         float calculatedValue = 1 - value / 100f;
         for (AbstractAbility ability : warlordsPlayer.getAbilities()) {
             ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Item", calculatedValue);

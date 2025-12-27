@@ -35,6 +35,8 @@ public interface ItemTier extends ConfigBased {
 
     String getName();
 
+    int getWeight();
+
     int bonusAttributes();
 
     Map<NewItemAttribute, Pair<Short, Short>> bonusAttributeRanges();

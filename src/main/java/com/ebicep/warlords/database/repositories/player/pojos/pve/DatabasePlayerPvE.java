@@ -45,6 +45,7 @@ import com.ebicep.warlords.pve.events.supplydrop.SupplyDropEntry;
 import com.ebicep.warlords.pve.items.ItemsManager;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.mobs.MobDrop;
+import com.ebicep.warlords.pve.newitems.NewItemsManager;
 import com.ebicep.warlords.pve.quests.Quests;
 import com.ebicep.warlords.pve.rewards.types.BountyReward;
 import com.ebicep.warlords.pve.rewards.types.CompensationReward;
@@ -117,6 +118,8 @@ public class DatabasePlayerPvE implements MultiPvEStats<
     //ITEMS
     @Field("item_manager")
     private ItemsManager itemsManager = new ItemsManager();
+    @Field("new_item_manager")
+    private NewItemsManager newItemsManager = new NewItemsManager();
 
     //CURRENCIES
     private Map<Currencies, Long> currencies = new LinkedHashMap<>() {{
@@ -328,6 +331,10 @@ public class DatabasePlayerPvE implements MultiPvEStats<
 
     public ItemsManager getItemsManager() {
         return itemsManager;
+    }
+
+    public NewItemsManager getNewItemsManager() {
+        return newItemsManager;
     }
 
     public void addMobDrops(MobDrop mobDrop, long amount) {

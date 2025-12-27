@@ -82,8 +82,8 @@ public enum NewItemAttribute implements Attribute {
     }
 
     @Override
-    public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value) {
-        attribute.applyToWarlordsPlayer(warlordsPlayer, value);
+    public void apply(WarlordsPlayer warlordsPlayer, float value) {
+        attribute.apply(warlordsPlayer, value);
     }
 
 }

@@ -12,6 +12,6 @@ public interface Attribute {
 
     Component formatValue(float value);
 
-    void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value);
+    void apply(WarlordsPlayer warlordsPlayer, float value);
 
 }

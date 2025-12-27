@@ -13,16 +13,14 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.data.annotation.TypeAlias;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 @TypeAlias("new_item")
 public class NewItem {
 
     private Instant creationTime = Instant.now();
+    private UUID uuid = UUID.randomUUID();
     private Map<NewItemAttribute, Byte> bonusAttributeDistribution;
     private NewItemsSlot slot;
     private NewItemsSetBonus setBonus;
@@ -108,6 +106,17 @@ public class NewItem {
         return attributeValues;
     }
 
+    public Map<NewItemAttribute, Float> getAllAttributeValues() {
+        Map<NewItemAttribute, Float> attributeValues = new EnumMap<>(NewItemAttribute.class);
+        setBonus.getAttributes().forEach((attribute, value) ->
+                attributeValues.put(attribute, attributeValues.getOrDefault(attribute, 0f) + value)
+        );
+        getBonusAttributeValues().forEach((attribute, value) ->
+                attributeValues.put(attribute, attributeValues.getOrDefault(attribute, 0f) + value)
+        );
+        return attributeValues;
+    }
+
     public ItemStack getItemStack() {
         return slot.getItemStack();
     }
@@ -118,6 +127,10 @@ public class NewItem {
 
     public String getStringName() {
         return setBonus.getName() + " " + slot.getName();
+    }
+
+    public UUID getUUID() {
+        return uuid;
     }
 
 }

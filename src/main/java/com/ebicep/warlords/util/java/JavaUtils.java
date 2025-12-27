@@ -30,6 +30,11 @@ public class JavaUtils {
         return ThreadLocalRandom.current().nextInt(size);
     }
 
+    public static <E> E randomFromSet(Set<E> set) {
+        int index = generateRandomIndexFromListSize(set.size());
+        return set.stream().skip(index).findFirst().orElseThrow();
+    }
+
     public static <T> T[] pickRandom(T[] source, int x) {
         if (x < 0 || x > source.length) {
             throw new IllegalArgumentException("x must be between 0 and source.length");

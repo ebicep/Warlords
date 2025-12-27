@@ -30,7 +30,7 @@ public class MaxEnergy implements Attribute {
                 .build();
     }
     @Override
-    public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value) {
+    public void apply(WarlordsPlayer warlordsPlayer, float value) {
         warlordsPlayer.getEnergy().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Item", value);
     }
 
