@@ -4,6 +4,7 @@ import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.DifficultyMode;
 import com.ebicep.warlords.pve.newitems.attributes.NewItemAttribute;
+import com.ebicep.warlords.pve.newitems.setbonus.NewItemsSetBonus;
 import org.springframework.data.annotation.TypeAlias;
 
 import java.time.Instant;
@@ -28,6 +29,21 @@ public class NewItemLoadout {
         totalAttributeValues.forEach((attribute, value) -> {
             attribute.apply(warlordsPlayer, value);
         });
+
+        Map<NewItemsSetBonus, Set<NewItemsSlot>> activeSets = new HashMap<>();
+        for (NewItem item : itemList) {
+            NewItemsSetBonus setBonus = item.getSetBonus();
+            if (setBonus.isNoBonus()) {
+                continue;
+            }
+            activeSets.computeIfAbsent(setBonus, k -> new HashSet<>()).add(item.getSlot());
+        }
+        activeSets.forEach((setBonus, slots) -> {
+            if (setBonus.getSlots().size() == slots.size()) {
+                setBonus.create().apply(warlordsPlayer);
+            }
+        });
+
         warlordsPlayer.updateInventory(false);
     }
 
