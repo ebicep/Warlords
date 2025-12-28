@@ -23,7 +23,7 @@ public class DamageToBossEnemies implements Attribute {
 
     @Override
     public TextColor getTextColor() {
-        return NamedTextColor.BLUE;
+        return TextColor.color(65, 120, 255);
     }
 
     @Override

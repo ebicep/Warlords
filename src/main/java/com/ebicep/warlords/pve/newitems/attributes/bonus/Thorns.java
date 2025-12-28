@@ -23,7 +23,7 @@ public class Thorns implements Attribute {
 
     @Override
     public TextColor getTextColor() {
-        return NamedTextColor.DARK_BLUE;
+        return TextColor.color(95, 120, 95);
     }
 
     @Override
