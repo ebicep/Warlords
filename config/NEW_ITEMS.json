@@ -95,7 +95,7 @@
         "epic": {
           "name": "Epic",
           "weight": 12,
-          "bonusAttributes": 12,
+          "bonusAttributes": 2,
           "bonusAttributeRanges": {
             "CC": {
               "min": 2,
