@@ -7,7 +7,7 @@ import net.kyori.adventure.text.format.TextColor;
 
 public class Ascendant extends BaseTier {
 
-    private static final Component STAR_COMPONENT = NewItemsUtils.createStarComponent(NamedTextColor.DARK_RED, 6);
+    private static final Component STAR_COMPONENT = NewItemsUtils.createStarComponent(NamedTextColor.RED, 6);
 
     @Override
     public TextColor getTextColor() {
