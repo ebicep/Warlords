@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.newitems.tiers;
 
 import com.ebicep.warlords.pve.newitems.attributes.NewItemAttribute;
+import com.ebicep.warlords.util.java.NamedEnum;
 import com.ebicep.warlords.util.java.Pair;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
@@ -8,7 +9,7 @@ import org.bukkit.Material;
 
 import java.util.Map;
 
-public enum NewItemTier implements ItemTier {
+public enum NewItemTier implements ItemTier, NamedEnum {
 
     COMMON(new Common()),
     RARE(new Rare()),

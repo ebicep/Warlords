@@ -1,9 +1,10 @@
 package com.ebicep.warlords.pve.newitems;
 
+import com.ebicep.warlords.util.java.NamedEnum;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-public enum NewItemsSlot {
+public enum NewItemsSlot implements NamedEnum {
 
     HELMET("Helmet", Material.DIAMOND_HELMET),
     CHESTPLATE("Chestplate", Material.DIAMOND_CHESTPLATE),
@@ -31,6 +32,7 @@ public enum NewItemsSlot {
         return VALUES[(this.ordinal() + 1) % VALUES.length];
     }
 
+    @Override
     public String getName() {
         return name;
     }
