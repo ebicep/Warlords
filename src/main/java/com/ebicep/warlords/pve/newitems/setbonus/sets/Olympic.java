@@ -54,7 +54,7 @@ public class Olympic extends BaseSet {
             warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
                     getName(),
                     null,
-                    AerialAegis.class,
+                    Olympic.class,
                     null,
                     warlordsPlayer,
                     CooldownTypes.ITEM,
