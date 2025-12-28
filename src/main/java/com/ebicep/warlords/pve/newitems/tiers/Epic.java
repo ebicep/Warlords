@@ -7,12 +7,12 @@ import net.kyori.adventure.text.format.TextColor;
 
 public class Epic extends BaseTier {
 
-    private static final Component STAR_COMPONENT = NewItemsUtils.createStarComponent(NamedTextColor.RED, 1);
+    private static final Component STAR_COMPONENT = NewItemsUtils.createStarComponent(NamedTextColor.RED, 3);
 
 
     @Override
     public TextColor getTextColor() {
-        return NamedTextColor.RED;
+        return NamedTextColor.LIGHT_PURPLE;
     }
 
     @Override

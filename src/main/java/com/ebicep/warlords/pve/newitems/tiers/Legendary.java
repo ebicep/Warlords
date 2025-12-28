@@ -7,7 +7,7 @@ import net.kyori.adventure.text.format.TextColor;
 
 public class Legendary extends BaseTier {
 
-    private static final Component STAR_COMPONENT = NewItemsUtils.createStarComponent(NamedTextColor.GOLD, 1);
+    private static final Component STAR_COMPONENT = NewItemsUtils.createStarComponent(NamedTextColor.GOLD, 5);
 
 
     @Override

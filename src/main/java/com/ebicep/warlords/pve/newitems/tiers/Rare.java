@@ -7,7 +7,7 @@ import net.kyori.adventure.text.format.TextColor;
 
 public class Rare extends BaseTier {
 
-    private static final Component STAR_COMPONENT = NewItemsUtils.createStarComponent(NamedTextColor.BLUE, 1);
+    private static final Component STAR_COMPONENT = NewItemsUtils.createStarComponent(NamedTextColor.BLUE, 2);
 
 
     @Override

@@ -7,7 +7,7 @@ import net.kyori.adventure.text.format.TextColor;
 
 public class Sovereign extends BaseTier {
 
-    private static final Component STAR_COMPONENT = NewItemsUtils.createStarComponent(NamedTextColor.DARK_PURPLE, 1);
+    private static final Component STAR_COMPONENT = NewItemsUtils.createStarComponent(NamedTextColor.DARK_PURPLE, 4);
 
     @Override
     public TextColor getTextColor() {
