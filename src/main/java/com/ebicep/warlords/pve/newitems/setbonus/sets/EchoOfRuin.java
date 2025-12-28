@@ -1,8 +1,20 @@
 package com.ebicep.warlords.pve.newitems.setbonus.sets;
 
+import com.ebicep.warlords.abilities.internal.DamageCheck;
+import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.newitems.setbonus.BaseSet;
 import com.ebicep.warlords.pve.newitems.setbonus.SetBonus;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 
 import java.util.List;
 
@@ -40,11 +52,36 @@ public class EchoOfRuin extends BaseSet {
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
-            // Implementation for:
-            // 1. Listening for kill events triggered by the player.
-            // 2. Incrementing 'stacks' and updating the damage multiplier by 0.5% per stack.
-            // 3. Listening for the player's death event.
-            // 4. If loseStacksOnDeath is true, resetting stacks to 0 and recalculating damage.
+            Listener listener = new Listener() {
+
+                @EventHandler
+                private void onEnemyDeath(WarlordsDeathEvent event) {
+                    if (event.getWarlordsEntity().equals(warlordsPlayer) && loseStacksOnDeath) {
+                        stacks = 0;
+                        return;
+                    }
+                    if (event.getWarlordsEntity().getTeam().equals(warlordsPlayer.getTeam())) {
+                        return;
+                    }
+                    stacks++;
+                }
+            };
+            warlordsPlayer.getGame().registerEvents(listener);
+            warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                    "Echo of Ruin",
+                    null,
+                    EchoOfRuin.class,
+                    null,
+                    warlordsPlayer,
+                    CooldownTypes.ITEM,
+                    cooldownManager -> {},
+                    false
+            ).addModifier(
+                    Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE,
+                    (event, currentDamageValue) -> {
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Echo of Ruin", 1 + (damagePerKillPercent * stacks / 100f));
+                    }
+            ));
         }
 
     }
