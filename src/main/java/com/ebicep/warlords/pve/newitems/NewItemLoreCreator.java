@@ -134,6 +134,9 @@ public class NewItemLoreCreator {
         }
 
         public List<Component> build() {
+            if (!components.isEmpty() && components.getLast() == Component.empty()) {
+                components.removeLast();
+            }
             return components;
         }
 

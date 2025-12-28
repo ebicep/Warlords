@@ -79,6 +79,7 @@ public class NewItem {
                 .addBonusAttributes(getBonusAttributeValues())
                 .addSetBonus(itemsManager, loadout)
                 .build();
+        lore.add(Component.empty());
         lore.add(Component.text(getTier().getName() + " " + slot.getName(), getTier().getTextColor()));
         return new ItemBuilder(getItemStack())
                 .name(getName())
