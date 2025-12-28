@@ -1,8 +1,14 @@
 package com.ebicep.warlords.pve.newitems.setbonus.sets;
 
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.newitems.setbonus.BaseSet;
 import com.ebicep.warlords.pve.newitems.setbonus.SetBonus;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.List;
 
@@ -37,10 +43,37 @@ public class BloodlettingBlade extends BaseSet {
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
-            // Implementation for:
-            // 1. Adding 100% to the player's base Critical Multiplier.
-            // 2. Listening for outgoing damage events that result in a Critical Hit.
-            // 3. Applying 5% of the player's Max Health as true damage back to themselves per crit.
+            warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                    "Bloodletting Blade",
+                    null,
+                    BloodlettingBlade.class,
+                    null,
+                    warlordsPlayer,
+                    CooldownTypes.ITEM,
+                    cooldownManager -> {},
+                    false
+            ).addModifier(
+                    Modifier.MODIFY_OUTGOING_CRIT_MULTIPLIER,
+                    (event, currentCritMultiplier) -> {
+                        if (event.getCause().isEmpty() || event.getCause().equals("Time Warp")) {
+                            return;
+                        }
+                        currentCritMultiplier.addModifier(FloatModifiable.ModifierType.ADDITIVE, getName(), 100);
+                    }
+            ).addModifier(
+                    Modifier.ON_OUTGOING_DAMAGE,
+                    (event, currentDamageValue, isCrit) -> {
+                        if (isCrit) {
+                            warlordsPlayer.addInstance(InstanceBuilder
+                                    .damage()
+                                    .cause("Bloodletting Blade")
+                                    .source(warlordsPlayer)
+                                    .value(warlordsPlayer.getMaxHealth() * (selfDamageOnCritPercentMaxHealth / 100f))
+                                    .flags(InstanceFlags.TRUE_DAMAGE, InstanceFlags.NO_MESSAGE)
+                            );
+                        }
+                    }
+            ));
         }
 
     }
