@@ -214,7 +214,7 @@ public class NewItemEquipMenu {
             } else {
                 NewItem item = itemsForSlot.removeFirst();
                 menu.setItem(equipPosition.getA(), equipPosition.getB(),
-                        item.getItemBuilder(itemsManager, possibleLoadout)
+                        item.getItemBuilder(itemsManager, itemLoadout)
                             .addLore(
                                     Component.empty(),
                                     Component.textOfChildren(
