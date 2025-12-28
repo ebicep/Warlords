@@ -1,8 +1,11 @@
 package com.ebicep.warlords.pve.newitems.setbonus.sets;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.newitems.setbonus.BaseSet;
 import com.ebicep.warlords.pve.newitems.setbonus.SetBonus;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.List;
 
@@ -28,7 +31,6 @@ public class Battery extends BaseSet {
 
     @Override
     public List<Object> getVariables() {
-        // Matches the {{energy}} placeholder in your description
         return List.of(redRuneAbilityEnergyCostReduction);
     }
 
@@ -36,10 +38,11 @@ public class Battery extends BaseSet {
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
-            // Implementation for:
-            // 1. Accessing the Red Rune ability (Slot 0).
-            // 2. Subtracting the flat value of redRuneAbilityEnergyCostReduction 
-            //    from the ability's energy cost.
+            for (AbstractAbility ability : warlordsPlayer.getAbilities()) {
+                if (ability instanceof RedAbilityIcon) {
+                    ability.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Battery Item",  -redRuneAbilityEnergyCostReduction);
+                }
+            }
         }
 
     }
