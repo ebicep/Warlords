@@ -1,8 +1,14 @@
 package com.ebicep.warlords.pve.newitems.setbonus.sets;
 
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.newitems.setbonus.BaseSet;
 import com.ebicep.warlords.pve.newitems.setbonus.SetBonus;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.List;
 
@@ -37,11 +43,20 @@ public class Stonelash extends BaseSet {
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
-            // Implementation for:
-            // 1. Setting the player's knockback resistance attribute to 100% 
-            //    (or modifying the velocity handler) if knockbackImmune is true.
-            // 2. Applying a 0.5x multiplier to all sources of energy gain 
-            //    (EPS, EPH, and ability-based restoration).
+            warlordsPlayer.getKnockback().addBaseModifier(knockbackImmune ? 100 : 0);
+            warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                    getName(),
+                    null,
+                    Stonelash.class,
+                    null,
+                    warlordsPlayer,
+                    CooldownTypes.ITEM,
+                    cooldownManager -> {},
+                    false
+            ).addModifier(
+                    Modifier.ENERGY_GAIN_PER_TICK,
+                    (energy) -> energy.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getName(), 1 - (energyGainPenaltyPercent / 100f))
+            ));
         }
 
     }
