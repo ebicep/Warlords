@@ -3,17 +3,16 @@ package com.ebicep.warlords.pve.newitems.menu;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.menu.Menu;
+import com.ebicep.warlords.menu.MenuUtils;
 import com.ebicep.warlords.pve.newitems.NewItemsManager;
 import com.ebicep.warlords.pve.newitems.NewItemsSlot;
 import com.ebicep.warlords.pve.newitems.attributes.NewItemAttribute;
 import com.ebicep.warlords.pve.newitems.tiers.NewItemTier;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
@@ -54,7 +53,7 @@ public class NewItemFilterMenu {
                         )
                         .get(),
                 (m, e) -> {
-                    openAttributeFilterMenu(player, databasePlayer, menuSettings, backAction);
+                    MenuUtils.openEnumSelectorMenu(player, "Attribute Filter", NewItemAttribute.VALUES, attributeFilter, backAction);
                 }
         );
 
@@ -143,42 +142,6 @@ public class NewItemFilterMenu {
         );
 
         menu.setItem(4, 3, Menu.MENU_BACK, backAction);
-        menu.openForPlayer(player);
-    }
-
-    private static void openAttributeFilterMenu(
-            Player player,
-            DatabasePlayer databasePlayer,
-            NewItemSearchMenu.PlayerItemMenuSettings.PlayerItemMenuFilterSettings menuFilterSettings,
-            BiConsumer<Menu, InventoryClickEvent> backAction
-    ) {
-        Menu menu = new Menu("Attribute Filter", 5 * 9);
-
-        EnumSet<NewItemAttribute> statPoolFilter = menuFilterSettings.getAttributeFilter();
-        NewItemAttribute[] values = NewItemAttribute.VALUES;
-        for (int i = 0; i < values.length; i++) {
-            NewItemAttribute attribute = values[i];
-            ItemBuilder itemBuilder = new ItemBuilder(Utils.getWoolFromIndex(i))
-                    .name(Component.text(attribute.getName(), NamedTextColor.GREEN));
-            boolean filtered = statPoolFilter.contains(attribute);
-            if (filtered) {
-                itemBuilder.enchant(Enchantment.RESPIRATION, 1);
-            }
-            menu.setItem(i % 7 + 1, i / 7 + 1,
-                    itemBuilder
-                            .get(),
-                    (m, e) -> {
-                        if (filtered) {
-                            statPoolFilter.remove(attribute);
-                        } else {
-                            statPoolFilter.add(attribute);
-                        }
-                        openAttributeFilterMenu(player, databasePlayer, menuFilterSettings, backAction);
-                    }
-            );
-        }
-
-        menu.setItem(4, 4, Menu.MENU_BACK, (m, e) -> openItemFilterMenu(player, databasePlayer, backAction));
         menu.openForPlayer(player);
     }
 

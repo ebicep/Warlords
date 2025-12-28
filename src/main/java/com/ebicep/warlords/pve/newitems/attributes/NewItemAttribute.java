@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.newitems.attributes;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.newitems.attributes.basic.*;
 import com.ebicep.warlords.pve.newitems.attributes.bonus.*;
+import com.ebicep.warlords.util.java.NamedEnum;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 
@@ -12,7 +13,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public enum NewItemAttribute implements Attribute {
+public enum NewItemAttribute implements Attribute, NamedEnum {
 
     HEALTH(new Health()),
     COOLDOWN_REDUCTION(new CooldownReduction()),
