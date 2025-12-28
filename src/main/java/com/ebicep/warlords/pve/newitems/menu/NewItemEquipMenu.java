@@ -7,7 +7,6 @@ import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.menu.generalmenu.WarlordsNewHotbarMenu;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.DifficultyMode;
-import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.newitems.*;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
@@ -206,7 +205,7 @@ public class NewItemEquipMenu {
             List<NewItem> itemsForSlot = itemSlots.get(slot);
             if (itemsForSlot == null || itemsForSlot.isEmpty()) {
                 menu.setItem(equipPosition.getA(), equipPosition.getB(),
-                        new ItemBuilder(ItemTier.NONE.clayBlock)
+                        new ItemBuilder(Material.WHITE_TERRACOTTA)
                                 .name(Component.text("Click to Equip Item", NamedTextColor.GREEN))
                                 .get(),
                         (m, e) -> openItemEquipMenu(player, databasePlayer, itemLoadout, slot, null)

@@ -17,6 +17,11 @@ public class HealthRegen implements Attribute {
     }
 
     @Override
+    public String getName() {
+        return "Health Regen";
+    }
+
+    @Override
     public TextColor getTextColor() {
         return NamedTextColor.RED;
     }
@@ -26,7 +31,7 @@ public class HealthRegen implements Attribute {
         return ComponentBuilder
                 .create()
                 .text(prefix + NumberFormat.formatOptionalTenths(value) + " ", getTextColor())
-                .text("Health Regen", NamedTextColor.GRAY)
+                .text(getName(), NamedTextColor.GRAY)
                 .build();
     }
     @Override

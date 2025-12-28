@@ -4,10 +4,9 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.Currencies;
-import com.ebicep.warlords.pve.items.ItemLoadout;
-import com.ebicep.warlords.pve.items.menu.util.ItemFilterMenu;
 import com.ebicep.warlords.pve.mobs.MobDrop;
 import com.ebicep.warlords.pve.newitems.NewItem;
+import com.ebicep.warlords.pve.newitems.NewItemLoadout;
 import com.ebicep.warlords.pve.newitems.NewItemsManager;
 import com.ebicep.warlords.pve.newitems.NewItemsSlot;
 import com.ebicep.warlords.pve.newitems.attributes.NewItemAttribute;
@@ -85,10 +84,10 @@ public class NewItemSearchMenu extends Menu {
 
     private void addItems() {
         List<UUID> equippedItems = databasePlayer.getPveStats()
-                                                 .getItemsManager()
+                                                 .getNewItemsManager()
                                                  .getLoadouts()
                                                  .stream()
-                                                 .map(ItemLoadout::getItems)
+                                                 .map(NewItemLoadout::getItems)
                                                  .flatMap(Collection::stream)
                                                  .toList();
         int page = menuSettings.getPage();
@@ -151,13 +150,22 @@ public class NewItemSearchMenu extends Menu {
         PlayerItemMenuSettings.PlayerItemMenuFilterSettings filterSettings = menuSettings.getFilterSettings();
         List<Component> filterLore = new ArrayList<>();
         TextComponent grayDash = Component.text("- ", NamedTextColor.GRAY);
-        if (filterSettings.getTypeFilter() != null) {
-            filterLore.add(grayDash.append(Component.text(filterSettings.getTypeFilter().getName(), NamedTextColor.GRAY)));
+        if (!filterSettings.getAttributeFilter().isEmpty()) {
+            filterLore.add(Component.text("Attributes", NamedTextColor.AQUA));
+            for (NewItemAttribute attribute : filterSettings.getAttributeFilter()) {
+                filterLore.add(grayDash.append(Component.text(attribute.getName(), NamedTextColor.GRAY)));
+            }
+        }
+        if (filterSettings.getSlotFilter() != null) {
+            filterLore.add(Component.text("Slot", NamedTextColor.AQUA));
+            filterLore.add(grayDash.append(Component.text(filterSettings.getSlotFilter().getName(), NamedTextColor.GRAY)));
         }
         if (filterSettings.getTierFilter() != null) {
+            filterLore.add(Component.text("Tier", NamedTextColor.AQUA));
             filterLore.add(grayDash.append(Component.text(filterSettings.getTierFilter().getName(), NamedTextColor.GRAY)));
         }
         if (filterSettings.getFavoriteFilter()) {
+            filterLore.add(Component.text("Modifier", NamedTextColor.AQUA));
             filterLore.add(grayDash.append(Component.text("Only Favorites", NamedTextColor.GRAY)));
         }
         if (filterLore.isEmpty()) {
@@ -174,7 +182,7 @@ public class NewItemSearchMenu extends Menu {
                         .lore(filterLore)
                         .get(),
                 (m, e) -> {
-                    ItemFilterMenu.openItemFilterMenu(player, databasePlayer, (m2, e2) -> open());
+                    NewItemFilterMenu.openItemFilterMenu(player, databasePlayer, (m2, e2) -> open());
                 }
         );
     }
@@ -294,7 +302,7 @@ public class NewItemSearchMenu extends Menu {
             this.page = 1;
             this.filterSettings.attributeFilter = EnumSet.noneOf(NewItemAttribute.class);
             this.filterSettings.tierFilter = null;
-            this.filterSettings.typeFilter = null;
+            this.filterSettings.slotFilter = null;
             this.filterSettings.favoriteFilter = false;
             this.sortOption = SortOptions.DATE;
             this.ascending = true;
@@ -316,8 +324,8 @@ public class NewItemSearchMenu extends Menu {
             if (filterSettings.tierFilter != null) {
                 sortedItemInventory.removeIf(item -> item.getTier() != filterSettings.tierFilter);
             }
-            if (filterSettings.typeFilter != null) {
-                sortedItemInventory.removeIf(item -> item.getSlot() != filterSettings.typeFilter);
+            if (filterSettings.slotFilter != null) {
+                sortedItemInventory.removeIf(item -> item.getSlot() != filterSettings.slotFilter);
             }
             if (filterSettings.favoriteFilter) {
                 sortedItemInventory.removeIf(item -> !item.isFavorite());
@@ -366,7 +374,7 @@ public class NewItemSearchMenu extends Menu {
             @Nullable
             public NewItemTier tierFilter = null;
             @Nullable
-            public NewItemsSlot typeFilter = null;
+            public NewItemsSlot slotFilter = null;
             private boolean favoriteFilter = false;
 
             public PlayerItemMenuFilterSettings() {
@@ -386,12 +394,12 @@ public class NewItemSearchMenu extends Menu {
             }
 
             @Nullable
-            public NewItemsSlot getTypeFilter() {
-                return typeFilter;
+            public NewItemsSlot getSlotFilter() {
+                return slotFilter;
             }
 
-            public void setTypeFilter(@Nullable NewItemsSlot typeFilter) {
-                this.typeFilter = typeFilter;
+            public void setSlotFilter(@Nullable NewItemsSlot slotFilter) {
+                this.slotFilter = slotFilter;
             }
 
             public boolean getFavoriteFilter() {

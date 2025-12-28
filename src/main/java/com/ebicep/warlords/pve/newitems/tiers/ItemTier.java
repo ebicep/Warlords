@@ -6,6 +6,7 @@ import com.ebicep.warlords.pve.newitems.attributes.NewItemAttribute;
 import com.ebicep.warlords.util.java.Pair;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
+import org.bukkit.Material;
 
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,8 @@ public interface ItemTier extends ConfigBased {
     TextColor getTextColor();
 
     Component getStarComponent();
+
+    Material getTerracotaMaterial();
 
     String getName();
 

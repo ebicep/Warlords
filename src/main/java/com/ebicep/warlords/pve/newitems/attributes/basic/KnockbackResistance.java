@@ -18,6 +18,11 @@ public class KnockbackResistance implements Attribute {
     }
 
     @Override
+    public String getName() {
+        return "Knockback Resistance";
+    }
+
+    @Override
     public TextColor getTextColor() {
         return AbilityDescriptionBuilder.COLOR_BROWN;
     }
@@ -27,7 +32,7 @@ public class KnockbackResistance implements Attribute {
         return ComponentBuilder
                 .create()
                 .text(prefix + NumberFormat.formatOptionalTenths(value) + "% ", getTextColor())
-                .text("Knockback Resistance", NamedTextColor.GRAY)
+                .text(getName(), NamedTextColor.GRAY)
                 .build();
     }
 

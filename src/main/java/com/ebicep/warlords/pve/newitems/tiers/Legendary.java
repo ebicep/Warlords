@@ -4,6 +4,7 @@ import com.ebicep.warlords.pve.newitems.NewItemsUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
+import org.bukkit.Material;
 
 public class Legendary extends BaseTier {
 
@@ -18,6 +19,11 @@ public class Legendary extends BaseTier {
     @Override
     public Component getStarComponent() {
         return STAR_COMPONENT;
+    }
+
+    @Override
+    public Material getTerracotaMaterial() {
+        return Material.YELLOW_TERRACOTTA;
     }
 
     @Override

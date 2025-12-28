@@ -8,6 +8,8 @@ public interface Attribute {
 
     String getDatabaseName();
 
+    String getName();
+
     TextColor getTextColor();
 
     Component formatValue(float value, String prefix);

@@ -15,6 +15,8 @@ public enum NewItemsSlot {
 
     ;
 
+    public static final NewItemsSlot[] VALUES = values();
+
     private final String name;
     private final Material material;
     private final ItemStack itemStack;
@@ -23,6 +25,10 @@ public enum NewItemsSlot {
         this.name = name;
         this.material = material;
         this.itemStack = new ItemStack(material);
+    }
+
+    public NewItemsSlot next() {
+        return VALUES[(this.ordinal() + 1) % VALUES.length];
     }
 
     public String getName() {

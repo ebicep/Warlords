@@ -17,6 +17,11 @@ public class DamageToBossEnemies implements Attribute {
     }
 
     @Override
+    public String getName() {
+        return "Damage to Boss Enemies";
+    }
+
+    @Override
     public TextColor getTextColor() {
         return NamedTextColor.BLUE;
     }
@@ -26,7 +31,7 @@ public class DamageToBossEnemies implements Attribute {
         return ComponentBuilder
                 .create()
                 .text(prefix + NumberFormat.formatOptionalTenths(value) + "% ", getTextColor())
-                .text("Damage to Boss Enemies", NamedTextColor.GRAY)
+                .text(getName(), NamedTextColor.GRAY)
                 .build();
     }
     @Override

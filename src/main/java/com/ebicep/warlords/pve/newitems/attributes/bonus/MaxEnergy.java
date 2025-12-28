@@ -17,6 +17,11 @@ public class MaxEnergy implements Attribute {
     }
 
     @Override
+    public String getName() {
+        return "Max Energy";
+    }
+
+    @Override
     public TextColor getTextColor() {
         return NamedTextColor.YELLOW;
     }
@@ -26,7 +31,7 @@ public class MaxEnergy implements Attribute {
         return ComponentBuilder
                 .create()
                 .text(prefix + NumberFormat.formatOptionalTenths(value) + " ", getTextColor())
-                .text("Max Energy", NamedTextColor.GRAY)
+                .text(getName(), NamedTextColor.GRAY)
                 .build();
     }
     @Override

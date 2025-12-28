@@ -17,6 +17,11 @@ public class Damage implements Attribute {
     }
 
     @Override
+    public String getName() {
+        return "Damage";
+    }
+
+    @Override
     public TextColor getTextColor() {
         return NamedTextColor.RED;
     }
@@ -26,7 +31,7 @@ public class Damage implements Attribute {
         return ComponentBuilder
                 .create()
                 .text(prefix + NumberFormat.formatOptionalTenths(value) + "% ", getTextColor())
-                .text("Damage", NamedTextColor.GRAY)
+                .text(getName(), NamedTextColor.GRAY)
                 .build();
     }
     @Override

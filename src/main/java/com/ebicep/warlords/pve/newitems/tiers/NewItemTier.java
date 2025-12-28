@@ -4,6 +4,7 @@ import com.ebicep.warlords.pve.newitems.attributes.NewItemAttribute;
 import com.ebicep.warlords.util.java.Pair;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
+import org.bukkit.Material;
 
 import java.util.Map;
 
@@ -26,6 +27,11 @@ public enum NewItemTier implements ItemTier {
     }
 
     @Override
+    public Material getTerracotaMaterial() {
+        return itemTier.getTerracotaMaterial();
+    }
+
+    @Override
     public void init() {
         itemTier.init();
     }
@@ -38,6 +44,10 @@ public enum NewItemTier implements ItemTier {
     @Override
     public Component getStarComponent() {
         return itemTier.getStarComponent();
+    }
+
+    public NewItemTier next() {
+        return VALUES[this.ordinal() + 1 % VALUES.length];
     }
 
     @Override

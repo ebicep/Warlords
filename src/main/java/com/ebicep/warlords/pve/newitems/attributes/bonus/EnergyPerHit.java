@@ -17,6 +17,11 @@ public class EnergyPerHit implements Attribute {
     }
 
     @Override
+    public String getName() {
+        return "Energy per Hit";
+    }
+
+    @Override
     public TextColor getTextColor() {
         return NamedTextColor.YELLOW;
     }
@@ -26,7 +31,7 @@ public class EnergyPerHit implements Attribute {
         return ComponentBuilder
                 .create()
                 .text(prefix + NumberFormat.formatOptionalTenths(value) + " ", getTextColor())
-                .text("Energy per Hit", NamedTextColor.GRAY)
+                .text(getName(), NamedTextColor.GRAY)
                 .build();
     }
     @Override

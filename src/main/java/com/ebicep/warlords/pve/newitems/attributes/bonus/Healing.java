@@ -17,6 +17,11 @@ public class Healing implements Attribute {
     }
 
     @Override
+    public String getName() {
+        return "Healing";
+    }
+
+    @Override
     public TextColor getTextColor() {
         return NamedTextColor.GREEN;
     }
@@ -26,7 +31,7 @@ public class Healing implements Attribute {
         return ComponentBuilder
                 .create()
                 .text(prefix + NumberFormat.formatOptionalTenths(value) + "% ", getTextColor())
-                .text("Healing", NamedTextColor.GRAY)
+                .text(getName(), NamedTextColor.GRAY)
                 .build();
     }
     @Override

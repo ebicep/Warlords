@@ -75,6 +75,11 @@ public enum NewItemAttribute implements Attribute {
     }
 
     @Override
+    public String getName() {
+        return attribute.getName();
+    }
+
+    @Override
     public TextColor getTextColor() {
         return attribute.getTextColor();
     }

@@ -17,6 +17,11 @@ public class CritMultiplier implements Attribute {
     }
 
     @Override
+    public String getName() {
+        return "Crit Multiplier";
+    }
+
+    @Override
     public TextColor getTextColor() {
         return NamedTextColor.LIGHT_PURPLE;
     }
@@ -26,7 +31,7 @@ public class CritMultiplier implements Attribute {
         return ComponentBuilder
                 .create()
                 .text(prefix + NumberFormat.formatOptionalTenths(value) + "% ", getTextColor())
-                .text("Crit Multiplier", NamedTextColor.GRAY)
+                .text(getName(), NamedTextColor.GRAY)
                 .build();
     }
     @Override

@@ -4,6 +4,7 @@ import com.ebicep.warlords.pve.newitems.NewItemsUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
+import org.bukkit.Material;
 
 public class Ascendant extends BaseTier {
 
@@ -17,6 +18,11 @@ public class Ascendant extends BaseTier {
     @Override
     public Component getStarComponent() {
         return STAR_COMPONENT;
+    }
+
+    @Override
+    public Material getTerracotaMaterial() {
+        return Material.RED_TERRACOTTA;
     }
 
     @Override

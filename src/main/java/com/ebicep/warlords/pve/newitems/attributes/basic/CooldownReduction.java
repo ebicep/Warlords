@@ -18,6 +18,11 @@ public class CooldownReduction implements Attribute {
     }
 
     @Override
+    public String getName() {
+        return "Cooldown Reduction";
+    }
+
+    @Override
     public TextColor getTextColor() {
         return NamedTextColor.AQUA;
     }
@@ -27,7 +32,7 @@ public class CooldownReduction implements Attribute {
         return ComponentBuilder
                 .create()
                 .text(prefix + NumberFormat.formatOptionalTenths(value) + "% ", getTextColor())
-                .text("Cooldown Reduction", NamedTextColor.GRAY)
+                .text(getName(), NamedTextColor.GRAY)
                 .build();
     }
 

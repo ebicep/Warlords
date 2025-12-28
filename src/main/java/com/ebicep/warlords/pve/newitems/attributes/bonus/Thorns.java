@@ -17,6 +17,11 @@ public class Thorns implements Attribute {
     }
 
     @Override
+    public String getName() {
+        return "Thorns";
+    }
+
+    @Override
     public TextColor getTextColor() {
         return NamedTextColor.DARK_BLUE;
     }
@@ -26,7 +31,7 @@ public class Thorns implements Attribute {
         return ComponentBuilder
                 .create()
                 .text(prefix + NumberFormat.formatOptionalTenths(value) + "% ", getTextColor())
-                .text("Thorns", NamedTextColor.GRAY)
+                .text(getName(), NamedTextColor.GRAY)
                 .build();
     }
     @Override

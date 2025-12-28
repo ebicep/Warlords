@@ -18,6 +18,11 @@ public class SkillEnergyCostReduction implements Attribute {
     }
 
     @Override
+    public String getName() {
+        return "Skill Energy Cost Reduction";
+    }
+
+    @Override
     public TextColor getTextColor() {
         return NamedTextColor.YELLOW;
     }
@@ -27,7 +32,7 @@ public class SkillEnergyCostReduction implements Attribute {
         return ComponentBuilder
                 .create()
                 .text(prefix + NumberFormat.formatOptionalTenths(value) + " ", getTextColor())
-                .text("Skill Energy Cost Reduction", NamedTextColor.GRAY)
+                .text(getName(), NamedTextColor.GRAY)
                 .build();
     }
 

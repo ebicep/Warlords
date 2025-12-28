@@ -17,6 +17,11 @@ public class Health implements Attribute {
     }
 
     @Override
+    public String getName() {
+        return "Health";
+    }
+
+    @Override
     public TextColor getTextColor() {
         return NamedTextColor.DARK_RED;
     }
@@ -25,7 +30,7 @@ public class Health implements Attribute {
     public Component formatValue(float value, String prefix) {
         return ComponentBuilder
                 .create()
-                .text("✥ Health: ", NamedTextColor.GRAY)
+                .text("✥ " + getName() + ": ", NamedTextColor.GRAY)
                 .text(prefix + NumberFormat.formatOptionalTenths(value), NamedTextColor.DARK_RED)
                 .build();
     }

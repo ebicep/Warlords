@@ -16,6 +16,11 @@ public class Speed implements Attribute {
     }
 
     @Override
+    public String getName() {
+        return "Speed";
+    }
+
+    @Override
     public TextColor getTextColor() {
         return NamedTextColor.WHITE;
     }
@@ -25,7 +30,7 @@ public class Speed implements Attribute {
         return ComponentBuilder
                 .create()
                 .text(prefix + NumberFormat.formatOptionalTenths(value) + "% ", getTextColor())
-                .text("Speed", NamedTextColor.GRAY)
+                .text(getName(), NamedTextColor.GRAY)
                 .build();
     }
     @Override

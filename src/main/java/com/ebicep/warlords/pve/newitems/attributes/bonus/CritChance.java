@@ -17,6 +17,11 @@ public class CritChance implements Attribute {
     }
 
     @Override
+    public String getName() {
+        return "Crit Chance";
+    }
+
+    @Override
     public TextColor getTextColor() {
         return NamedTextColor.LIGHT_PURPLE;
     }
@@ -26,7 +31,7 @@ public class CritChance implements Attribute {
         return ComponentBuilder
                 .create()
                 .text(prefix + NumberFormat.formatOptionalTenths(value) + "% ", getTextColor())
-                .text("Crit Chance", NamedTextColor.GRAY)
+                .text(getName(), NamedTextColor.GRAY)
                 .build();
     }
     @Override
