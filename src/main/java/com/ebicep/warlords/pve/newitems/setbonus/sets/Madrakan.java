@@ -53,10 +53,10 @@ public class Madrakan extends BaseSet {
                     cooldownManager -> {},
                     false
             ).addModifier(
-                    Modifier.MODIFY_OUTGOING_CRIT_MULTIPLIER,
-                    (event, currentCritMultiplier) -> {
+                    Modifier.MODIFY_OUTGOING_CRIT_CHANCE,
+                    (event, currentCritChance) -> {
                         if (disableCriticalHits) {
-                            currentCritMultiplier.addModifier(FloatModifiable.ModifierType.OVERRIDING, getName(), 0);
+                            currentCritChance.addModifier(FloatModifiable.ModifierType.OVERRIDING, getName(), 0);
                         }
                     }
             ).addModifier(
