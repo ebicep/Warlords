@@ -217,40 +217,40 @@
           "bonusAttributes": 3,
           "bonusAttributeRanges": {
             "CC": {
-              "min": 4,
-              "max": 6
+              "min": 1,
+              "max": 4
             },
             "CM": {
-              "min": 7,
-              "max": 10
+              "min": 1,
+              "max": 4
             },
             "DAMAGE": {
-              "min": 9,
-              "max": 13
+              "min": 1,
+              "max": 4
             },
             "BOSS_DAMAGE": {
-              "min": 8,
-              "max": 12
+              "min": 3,
+              "max": 7
             },
             "EPH": {
-              "min": 6,
-              "max": 9
+              "min": 1,
+              "max": 3
             },
             "HEALING": {
-              "min": 7,
-              "max": 10
+              "min": 1,
+              "max": 4
             },
             "MAX_ENERGY": {
-              "min": 13,
-              "max": 18
+              "min": 8,
+              "max": 15
             },
             "SPEED": {
-              "min": 4,
-              "max": 6
+              "min": 2,
+              "max": 5
             },
             "THORNS": {
-              "min": 6,
-              "max": 9
+              "min": 5,
+              "max": 10
             }
           }
         },
@@ -406,10 +406,10 @@
             "TOME"
           ],
           "attributes": {
-            "HEALTH": 100,
-            "KB_RES": 10,
-            "REGEN": 15,
-            "CDR": 10
+            "HEALTH": 60,
+            "KB_RES": 5,
+            "REGEN": 8,
+            "CDR": 2
           },
           "description": "Increase jump height by {{blocks}}. Take {{damage;%}} less damage while in the air.",
           "jumpHeight": 1,
@@ -425,7 +425,7 @@
           ],
           "attributes": {
             "HEALTH": 25,
-            "ECR": 10
+            "ECR": 2
           },
           "description": "Weapon right clicks have a {{blue;%}} chance to perform {{blue}} random rune.",
           "runeChance": 2,
@@ -442,9 +442,9 @@
             "BOOTS"
           ],
           "attributes": {
-            "HEALTH": 100,
+            "HEALTH": 80,
             "KB_RES": 10,
-            "REGEN": 20
+            "REGEN": 10
           },
           "bonusAttributeRanges": {
           },
@@ -492,7 +492,7 @@
           ],
           "attributes": {
             "HEALTH": 15,
-            "CDR": 10
+            "CDR": 2
           },
           "description": "Allies in within {{blocks}} have their cooldowns reduced by {{blue;%}}.",
           "radius": 10,
@@ -557,7 +557,7 @@
           ],
           "attributes": {
             "HEALTH": 25,
-            "CDR": 10,
+            "CDR": 2,
             "REGEN": 15
           },
           "description": "Increase the damage you deal against bosses by {{damage;%}}. Additionally, take {{damage;%}} less damage from boss attacks.",
@@ -608,7 +608,7 @@
           "attributes": {
             "HEALTH": 50,
             "ECR": 10,
-            "CDR": 10
+            "CDR": 3
           },
           "description": "For every mob on the field, increase your healing by {{heal;%}}.",
           "healingPerMobPercent": 0.75
@@ -625,7 +625,7 @@
           ],
           "attributes": {
             "HEALTH": 200,
-            "CDR": 10
+            "CDR": 2
           },
           "description": "Allies within {{blocks}} take {{damageReduction;%}} reduced damage. Doubled below {{heal;%}} health.",
           "radius": 6,
@@ -643,10 +643,10 @@
             "BOOTS"
           ],
           "attributes": {
-            "HEALTH": 150,
+            "HEALTH": 100,
             "KB_RES": 10,
-            "REGEN": 20,
-            "CDR": 10
+            "REGEN": 10,
+            "CDR": 2
           },
           "description": "Increase your max health by {{heal;%}}.",
           "maxHealthBoost": 25
@@ -857,6 +857,62 @@
           "allyHealthThresholdPercent": 30,
           "movementSpeedBonusPercent": 100,
           "healingBonusToAllyPercent": 20
+        },
+        "bellicose": {
+          "tier": "LEGENDARY",
+          "name": "Bellicose",
+          "slots": [
+            "HELMET",
+            "RING",
+            "RING"
+          ],
+          "attributes": {
+            "HEALTH": 200,
+            "KB_RES": 10,
+            "ECR": 15
+          },
+          "bonusAttributeRanges": {
+          },
+          "description": "For every {{damage}} max health, increase your melee damage by {{damage;%}}.",
+          "maxHealthRequirement": 500,
+          "meleeDamageIncrease": 10
+        },
+        "encumber": {
+          "tier": "LEGENDARY",
+          "name": "Encumber",
+          "slots": [
+            "TOME"
+          ],
+          "attributes": {
+            "HEALTH": 200,
+            "KB_RES": 10,
+            "ECR": 15
+          },
+          "bonusAttributeRanges": {
+          },
+          "description": "Gain {{blue}} extra charge on your purple ability.",
+          "extraCharges": 1
+        },
+        "genesis": {
+          "tier": "LEGENDARY",
+          "name": "Genesis",
+          "slots": [
+            "HELMET",
+            "CHESTPLATE",
+            "LEGGINGS",
+            "BOOTS"
+          ],
+          "attributes": {
+            "HEALTH": 200,
+            "KB_RES": 10,
+            "ECR": 15
+          },
+          "bonusAttributeRanges": {
+          },
+          "description": "When you fall below {{damage;%}} health, charge up for 2 seconds to explode for {{damage;%}} of your max health as damage. Has a cooldown of {{gold}} seconds.",
+          "healthThreshold": 20,
+          "maxHealthDamageMultiplier": 2,
+          "cooldownSeconds": 30
         },
         "heartOfGlass": {
           "tier": "SOVEREIGN",
@@ -1143,6 +1199,24 @@
           },
           "description": "+{{ticks}} to your blue rune skill’s ability duration.",
           "blueRuneDurationIncreaseSeconds": 2
+        },
+        "exergis": {
+          "tier": "ASCENDANT",
+          "name": "Exergis",
+          "slots": [
+            "RING",
+            "RING",
+            "BOOTS"
+          ],
+          "attributes": {
+            "HEALTH": 200,
+            "KB_RES": 10,
+            "ECR": 15
+          },
+          "bonusAttributeRanges": {
+          },
+          "description": "Increase damage by {{damage;%}}.",
+          "placeholder": 300
         }
       }
     }
