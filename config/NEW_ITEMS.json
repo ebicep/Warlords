@@ -924,8 +924,7 @@
             "KB_RES": -20
           },
           "description": "Reduce your max health and damage reduction by {{damageReduction;%}} but increase your damage by {{damage;%}}.",
-          "maxHealthReductionPercent": 80,
-          "damageReductionPenaltyPercent": 80,
+          "defenseStatsPenalty": 80,
           "damageIncreasePercent": 60
         },
         "madrakan": {
@@ -1028,7 +1027,7 @@
           },
           "description": "Shield effectiveness increased by {{damageReduction;%}} but reduce max health by {{heal;%}}.",
           "shieldEffectivenessIncreasePercent": 300,
-          "maxHealthReductionPercent": 99
+          "defenseStatsPenalty": 99
         },
         "bloodlettingBlade": {
           "tier": "SOVEREIGN",
