@@ -422,7 +422,7 @@
             "HEALTH": 100,
             "CDR": 15
           },
-          "description": "Healing done to a target damages nearby enemies for {{healing;%}} of the healing done.",
+          "description": "Healing done to a target damages nearby enemies for {{damage;%}} of the healing done.",
           "healingDamageConversion": 30
         },
         "moonveil": {
@@ -538,8 +538,8 @@
             "REGEN": 15
           },
           "description": "For every player that is above {{heal;%}} health, deal {{damage;%}} more damage.",
-          "damagePerHealthyPlayerPercent": 5,
-          "healthyPlayerThresholdPercent": 75
+          "healthyPlayerThresholdPercent": 75,
+          "damagePerHealthyPlayerPercent": 5
         },
         "phoenix": {
           "tier": "LEGENDARY",
@@ -698,7 +698,7 @@
             "HEALTH": 20,
             "CDR": 10
           },
-          "description": "Increase the duration of your ultimate ability by {{ticks}}.",
+          "description": "Increase the duration of your ultimate ability by {{seconds}}.",
           "ultimateDurationIncreaseSeconds": 3
         },
         "energize": {
@@ -712,7 +712,7 @@
           "attributes": {
             "HEALTH": 25
           },
-          "description": "For every {{damage}} enemies killed, gain {{energy}}. Additionally, abilities have a {{blue;%}} chance to not expend energy.",
+          "description": "For every {{damage}} enemies killed, gain {{energy}} energy. Additionally, abilities have a {{blue;%}} chance to not expend energy.",
           "energyPerKillThreshold": 5,
           "energyGained": 30,
           "freeAbilityCastChancePercent": 10
@@ -732,8 +732,8 @@
             "REGEN": 20
           },
           "description": "Healing allies above {{heal;%}} health converts excess healing into energy (max {{energy}}).",
-          "excessHealingEnergyCap": 20,
-          "excessHealingHealthThresholdPercent": 90
+          "excessHealingHealthThresholdPercent": 90,
+          "excessHealingEnergyCap": 20
         },
         "transference": {
           "tier": "LEGENDARY",
@@ -877,7 +877,7 @@
             "HEALTH": 50
           },
           "description": "Reduce your respawn time by {{ticks;%}} but respawn at {{heal;%}} health and no energy.",
-          "respawnTimeReductionPercent": 50,
+          "respawnTimeReductionPercent": 1000,
           "respawnHealthPercent": 15,
           "respawnEnergy": 0
         },
@@ -1000,8 +1000,8 @@
           },
           "description": "Gain {{blue;%}} cooldown reduction but freeze every {{ticks}} for {{ticks}}.",
           "cooldownReductionPercent": 25,
-          "freezeIntervalSeconds": 15,
-          "freezeDurationSeconds": 3
+          "freezeIntervalSeconds": 300,
+          "freezeDurationSeconds": 60
         },
         "sacrifice": {
           "tier": "SOVEREIGN",
@@ -1015,7 +1015,7 @@
           "description": "Upon taking lethal damage, revive at {{heal;%}} health but reduce an ally to {{heal;%}} health ({{ticks}} cooldown).",
           "selfReviveHealthPercent": 20,
           "allyHealthReductionPercent": 95,
-          "reviveCooldownSeconds": 30
+          "reviveCooldownSeconds": 900
         },
         "mournsongVial": {
           "tier": "SOVEREIGN",
