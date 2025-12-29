@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.newitems.tiers;
 
 import com.ebicep.warlords.database.repositories.config.ConfigBased;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
+import com.ebicep.warlords.pve.newitems.NewItemRerollCost;
 import com.ebicep.warlords.pve.newitems.attributes.NewItemAttribute;
 import com.ebicep.warlords.util.java.Pair;
 import net.kyori.adventure.text.Component;
@@ -11,7 +12,7 @@ import org.bukkit.Material;
 import java.util.List;
 import java.util.Map;
 
-public interface ItemTier extends ConfigBased {
+public interface ItemTier extends ConfigBased, NewItemRerollCost {
 
     @Override
     default ConfigManager.Config getConfig() {

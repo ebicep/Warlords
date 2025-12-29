@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.newitems.tiers;
 
+import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.newitems.attributes.NewItemAttribute;
 import com.ebicep.warlords.util.java.NamedEnum;
 import com.ebicep.warlords.util.java.Pair;
@@ -79,4 +80,25 @@ public enum NewItemTier implements ItemTier, NamedEnum {
     public ItemTier getType() {
         return itemTier;
     }
+
+    @Override
+    public Map<Spendable, Long> rerollCost() {
+        return itemTier.rerollCost();
+    }
+
+    @Override
+    public void setRerollCost(Map<Spendable, Long> rerollCost) {
+        itemTier.setRerollCost(rerollCost);
+    }
+
+    @Override
+    public Map<Spendable, Long> lockScrollRerollCost() {
+        return itemTier.lockScrollRerollCost();
+    }
+
+    @Override
+    public void setLockScrollRerollCost(Map<Spendable, Long> lockScrollRerollCost) {
+        itemTier.setLockScrollRerollCost(lockScrollRerollCost);
+    }
+
 }

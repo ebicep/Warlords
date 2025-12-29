@@ -47,6 +47,13 @@
               "min": 1,
               "max": 2
             }
+          },
+          "rerollCost": {
+            "ETHEREUM_CRYSTAL": 1
+          },
+          "lockScrollRerollCost": {
+            "ITEM_LOCK_SCROLL": 1,
+            "LEGEND_FRAGMENTS": 1250
           }
         },
         "rare": {
@@ -90,6 +97,14 @@
               "min": 2,
               "max": 3
             }
+          },
+          "rerollCost": {
+            "ETHEREUM_CRYSTAL": 2,
+            "ASCENDANT_SHARD": 1
+          },
+          "lockScrollRerollCost": {
+            "ITEM_LOCK_SCROLL": 1,
+            "LEGEND_FRAGMENTS": 2500
           }
         },
         "epic": {
@@ -133,6 +148,15 @@
               "min": 3,
               "max": 5
             }
+          },
+          "rerollCost": {
+            "ETHEREUM_CRYSTAL": 3,
+            "ASCENDANT_SHARD": 1,
+            "ZENITH_STAR": 1
+          },
+          "lockScrollRerollCost": {
+            "ITEM_LOCK_SCROLL": 1,
+            "LEGEND_FRAGMENTS": 5000
           }
         },
         "sovereign": {
@@ -176,6 +200,15 @@
               "min": 4,
               "max": 6
             }
+          },
+          "rerollCost": {
+            "ETHEREUM_CRYSTAL": 4,
+            "ASCENDANT_SHARD": 2,
+            "ZENITH_STAR": 1
+          },
+          "lockScrollRerollCost": {
+            "ITEM_LOCK_SCROLL": 1,
+            "LEGEND_FRAGMENTS": 7500
           }
         },
         "legendary": {
@@ -263,6 +296,15 @@
               "max": 12
             }
           }
+        },
+        "rerollCost": {
+          "ETHEREUM_CRYSTAL": 5,
+          "ASCENDANT_SHARD": 3,
+          "ZENITH_STAR": 1
+        },
+        "lockScrollRerollCost": {
+          "ITEM_LOCK_SCROLL": 1,
+          "LEGEND_FRAGMENTS": 10000
         }
       },
       "sets": {

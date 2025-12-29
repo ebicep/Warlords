@@ -56,6 +56,14 @@ public class NewItem {
         }
     }
 
+    public void reroll(EnumSet<NewItemAttribute> lockedAttributes) {
+        for (NewItemAttribute newItemAttribute : this.bonusAttributeDistribution.keySet()) {
+            if (!lockedAttributes.contains(newItemAttribute)) {
+                this.bonusAttributeDistribution.put(newItemAttribute, (byte) ThreadLocalRandom.current().nextInt(0, 101));
+            }
+        }
+    }
+
     public Component getHoverComponent() {
         return getName().hoverEvent(getItemBuilder().get());
     }

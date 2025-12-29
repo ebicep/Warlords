@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.newitems.setbonus;
 import com.ebicep.warlords.database.repositories.config.ConfigBased;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.newitems.NewItemRerollCost;
 import com.ebicep.warlords.pve.newitems.NewItemsSlot;
 import com.ebicep.warlords.pve.newitems.attributes.NewItemAttribute;
 import com.ebicep.warlords.pve.newitems.tiers.NewItemTier;
@@ -11,7 +12,7 @@ import com.ebicep.warlords.util.java.Pair;
 import java.util.List;
 import java.util.Map;
 
-public interface SetBonus extends ConfigBased.ConfigDescription {
+public interface SetBonus extends ConfigBased.ConfigDescription, NewItemRerollCost {
 
     @Override
     default ConfigManager.Config getConfig() {

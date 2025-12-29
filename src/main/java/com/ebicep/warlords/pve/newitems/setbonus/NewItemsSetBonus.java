@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.newitems.setbonus;
 
+import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.newitems.NewItemsSlot;
 import com.ebicep.warlords.pve.newitems.attributes.NewItemAttribute;
 import com.ebicep.warlords.pve.newitems.setbonus.sets.*;
@@ -131,4 +132,25 @@ public enum NewItemsSetBonus implements SetBonus {
     public SetBonus getSetBonus() {
         return setBonus;
     }
+
+    @Override
+    public Map<Spendable, Long> rerollCost() {
+        return setBonus.rerollCost();
+    }
+
+    @Override
+    public void setRerollCost(Map<Spendable, Long> rerollCost) {
+        setBonus.setRerollCost(rerollCost);
+    }
+
+    @Override
+    public Map<Spendable, Long> lockScrollRerollCost() {
+        return setBonus.lockScrollRerollCost();
+    }
+
+    @Override
+    public void setLockScrollRerollCost(Map<Spendable, Long> lockScrollRerollCost) {
+        setBonus.setLockScrollRerollCost(lockScrollRerollCost);
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.newitems.tiers;
 
+import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.newitems.attributes.NewItemAttribute;
 import com.ebicep.warlords.util.java.Pair;
 
@@ -12,6 +13,8 @@ public abstract class BaseTier implements ItemTier {
     private int weight;
     private int bonusAttributes;
     private Map<NewItemAttribute, Pair<Float, Float>> bonusAttributeRanges;
+    private Map<Spendable, Long> rerollCost;
+    private Map<Spendable, Long> lockScrollRerollCost;
 
     @Override
     public void init() {
@@ -28,6 +31,7 @@ public abstract class BaseTier implements ItemTier {
         }
         this.bonusAttributeRanges = bonusAttributeRanges;
         this.bonusAttributes = getValue("bonusAttributes", int.class);
+        init(getMapValue("rerollCost", long.class), getMapValue("lockScrollRerollCost", long.class));
     }
 
     @Override
@@ -48,6 +52,26 @@ public abstract class BaseTier implements ItemTier {
     @Override
     public Map<NewItemAttribute, Pair<Float, Float>> bonusAttributeRanges() {
         return bonusAttributeRanges;
+    }
+
+    @Override
+    public Map<Spendable, Long> rerollCost() {
+        return rerollCost;
+    }
+
+    @Override
+    public void setRerollCost(Map<Spendable, Long> rerollCost) {
+        this.rerollCost = rerollCost;
+    }
+
+    @Override
+    public Map<Spendable, Long> lockScrollRerollCost() {
+        return lockScrollRerollCost;
+    }
+
+    @Override
+    public void setLockScrollRerollCost(Map<Spendable, Long> lockScrollRerollCost) {
+        this.lockScrollRerollCost = lockScrollRerollCost;
     }
 
 }

@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.newitems.setbonus;
 
+import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.newitems.NewItemsSlot;
 import com.ebicep.warlords.pve.newitems.attributes.NewItemAttribute;
 import com.ebicep.warlords.pve.newitems.tiers.NewItemTier;
@@ -18,6 +19,8 @@ public abstract class BaseSet implements SetBonus {
     private List<NewItemsSlot> slots;
     private Map<NewItemAttribute, Float> attributes;
     private Map<NewItemAttribute, Pair<Float, Float>> bonusAttributeRanges;
+    private Map<Spendable, Long> rerollCost;
+    private Map<Spendable, Long> lockScrollRerollCost;
 
     @Override
     public boolean isNoBonus() {
@@ -76,6 +79,27 @@ public abstract class BaseSet implements SetBonus {
             );
         }
         this.bonusAttributeRanges = bonusAttributeRanges;
+        init(getMapValue("rerollCost", long.class), getMapValue("lockScrollRerollCost", long.class));
+    }
+
+    @Override
+    public Map<Spendable, Long> rerollCost() {
+        return rerollCost;
+    }
+
+    @Override
+    public void setRerollCost(Map<Spendable, Long> rerollCost) {
+        this.rerollCost = rerollCost;
+    }
+
+    @Override
+    public Map<Spendable, Long> lockScrollRerollCost() {
+        return lockScrollRerollCost;
+    }
+
+    @Override
+    public void setLockScrollRerollCost(Map<Spendable, Long> lockScrollRerollCost) {
+        this.lockScrollRerollCost = lockScrollRerollCost;
     }
 
 }
