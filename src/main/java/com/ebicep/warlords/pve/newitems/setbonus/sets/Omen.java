@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.newitems.setbonus.sets;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.newitems.setbonus.BaseSet;
 import com.ebicep.warlords.pve.newitems.setbonus.SetBonus;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.List;
 
@@ -35,8 +36,7 @@ public class Omen extends BaseSet {
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
-            // Implementation for increasing the player's 
-            // maximum health by the maxHealthBoost percentage.
+            warlordsPlayer.getHealth().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getName(), 1 + maxHealthBoost / 100f);
         }
 
     }
