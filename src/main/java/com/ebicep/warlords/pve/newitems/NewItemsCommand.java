@@ -8,6 +8,7 @@ import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.pve.newitems.menu.NewItemEquipMenu;
+import com.ebicep.warlords.pve.newitems.menu.NewItemRerollMenu;
 import com.ebicep.warlords.pve.newitems.menu.NewItemSetsMenu;
 import com.ebicep.warlords.pve.newitems.setbonus.NewItemsSetBonus;
 import com.ebicep.warlords.pve.newitems.tiers.NewItemTier;
@@ -33,6 +34,11 @@ public class NewItemsCommand extends BaseCommand {
     @Subcommand("sets")
     public void sets(Player player) {
         NewItemSetsMenu.open(player);
+    }
+
+    @Subcommand("reroll")
+    public void reroll(Player player) {
+        NewItemRerollMenu.open(player);
     }
 
     @Subcommand("clear")

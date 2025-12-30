@@ -10,6 +10,8 @@ import java.util.Map;
 
 public interface NewItemRerollCost {
 
+    int MAX_REROLLS = 3;
+
     private static Map<Spendable, Long> toSpendableMap(Map<String, Long> map) {
         Map<Spendable, Long> spendableMap = new LinkedHashMap<>();
         for (Map.Entry<String, Long> entry : map.entrySet()) {
@@ -21,7 +23,7 @@ public interface NewItemRerollCost {
     default void init(ConfigBased configBased) {
         Map<Integer, Map<Spendable, Long>> rerollCost = new HashedMap<>();
         Map<Integer, Map<Spendable, Long>> lockScrollRerollCost = new HashedMap<>();
-        for (int i = 1; i <= 3; i++) {
+        for (int i = 1; i <= MAX_REROLLS; i++) {
             Map<String, Long> rerollMap = configBased.getMapValue("rerollCost" + i, long.class);
             Map<String, Long> lockScrollRerollMap = configBased.getMapValue("lockScrollRerollCost" + i, long.class);
 

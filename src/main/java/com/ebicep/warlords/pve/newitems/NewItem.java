@@ -91,6 +91,7 @@ public class NewItem {
                 .build();
         lore.add(Component.empty());
         lore.add(Component.text(getTier().getName() + " " + slot.getName(), getTier().getTextColor()));
+        lore.add(Component.text("REROLL [" + rerollCostsHistory.size() + "]", NamedTextColor.DARK_GRAY)); // TODO ?
         return new ItemBuilder(getItemStack())
                 .name(getName())
                 .lore(lore);
