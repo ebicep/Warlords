@@ -3,16 +3,20 @@ package com.ebicep.warlords.pve.newitems.tiers;
 import com.ebicep.warlords.database.repositories.config.ConfigBased;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.pve.newitems.NewItemRerollCost;
-import com.ebicep.warlords.pve.newitems.attributes.NewItemAttribute;
-import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.pve.newitems.attributes.NewItemBonusAttributeRanges;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Material;
 
 import java.util.List;
-import java.util.Map;
 
-public interface ItemTier extends ConfigBased, NewItemRerollCost {
+public interface ItemTier extends ConfigBased, NewItemRerollCost, NewItemBonusAttributeRanges {
+
+    @Override
+    default void init(ConfigBased configBased) {
+        NewItemRerollCost.super.init(configBased);
+        NewItemBonusAttributeRanges.super.init(configBased);
+    }
 
     @Override
     default ConfigManager.Config getConfig() {
@@ -42,7 +46,5 @@ public interface ItemTier extends ConfigBased, NewItemRerollCost {
     int getWeight();
 
     int bonusAttributes();
-
-    Map<NewItemAttribute, Pair<Float, Float>> bonusAttributeRanges();
 
 }

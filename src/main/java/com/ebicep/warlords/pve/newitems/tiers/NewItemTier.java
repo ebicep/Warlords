@@ -68,8 +68,8 @@ public enum NewItemTier implements ItemTier, NamedEnum {
     }
 
     @Override
-    public Map<NewItemAttribute, Pair<Float, Float>> bonusAttributeRanges() {
-        return itemTier.bonusAttributeRanges();
+    public Map<NewItemAttribute, Pair<Float, Float>> getBonusAttributeRanges() {
+        return itemTier.getBonusAttributeRanges();
     }
 
     @Override

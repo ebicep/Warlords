@@ -99,7 +99,7 @@ public class NewItem {
     public Map<NewItemAttribute, Float> getBonusAttributeValues() {
         Map<NewItemAttribute, Float> attributeValues = new EnumMap<>(NewItemAttribute.class);
         bonusAttributeDistribution.forEach((attribute, distributionPercent) -> {
-            Pair<Float, Float> range = getTier().bonusAttributeRanges().get(attribute);
+            Pair<Float, Float> range = getTier().getBonusAttributeRanges().get(attribute);
             if (range != null) {
                 int bonusValue = (int) Math.ceil(range.getA() + (range.getB() - range.getA()) * (distributionPercent / 100f));
                 attributeValues.put(attribute, attributeValues.getOrDefault(attribute, 0f) + bonusValue);

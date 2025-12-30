@@ -75,10 +75,10 @@ public class NewItemLoreCreator {
     }
 
     private static void addBonusAttributes(List<Component> lore, NewItemsSetBonus setBonus) {
-        Map<NewItemAttribute, Pair<Float, Float>> attributeRanges = setBonus.bonusAttributeRanges();
+        Map<NewItemAttribute, Pair<Float, Float>> attributeRanges = setBonus.getBonusAttributeRanges();
         lore.add(Component.text("Bonus Attributes:", NamedTextColor.GRAY));
         for (NewItemAttribute bonusAttribute : NewItemAttribute.BONUS_ATTRIBUTES) {
-            Pair<Float, Float> defaultRange = setBonus.getTier().bonusAttributeRanges().getOrDefault(bonusAttribute, ZERO_RANGE);
+            Pair<Float, Float> defaultRange = setBonus.getTier().getBonusAttributeRanges().getOrDefault(bonusAttribute, ZERO_RANGE);
             Pair<Float, Float> range = attributeRanges.getOrDefault(bonusAttribute, defaultRange);
             float low = range.getA() != 0 ? range.getA() : defaultRange.getA();
             float high = range.getA() != 0 ? range.getB() : defaultRange.getB();

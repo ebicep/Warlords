@@ -48,8 +48,13 @@ public abstract class BaseSet implements SetBonus {
     }
 
     @Override
-    public Map<NewItemAttribute, Pair<Float, Float>> bonusAttributeRanges() {
+    public Map<NewItemAttribute, Pair<Float, Float>> getBonusAttributeRanges() {
         return bonusAttributeRanges;
+    }
+
+    @Override
+    public void setBonusAttributeRanges(Map<NewItemAttribute, Pair<Float, Float>> bonusAttributeRanges) {
+        this.bonusAttributeRanges = bonusAttributeRanges;
     }
 
     @Override
@@ -69,16 +74,6 @@ public abstract class BaseSet implements SetBonus {
             }
         });
         this.attributes = attributeMap;
-        Map<NewItemAttribute, Pair<Float, Float>> bonusAttributeRanges = new EnumMap<>(NewItemAttribute.class);
-        for (NewItemAttribute bonusAttribute : NewItemAttribute.BONUS_ATTRIBUTES) {
-            bonusAttributeRanges.put(bonusAttribute, new Pair<>(
-                    getValue("bonusAttributeRanges." + bonusAttribute.getDatabaseName() + ".min", float.class, true),
-                    getValue("bonusAttributeRanges." + bonusAttribute.getDatabaseName() + ".max", float.class, true
-                            )
-                    )
-            );
-        }
-        this.bonusAttributeRanges = bonusAttributeRanges;
         init(this);
     }
 

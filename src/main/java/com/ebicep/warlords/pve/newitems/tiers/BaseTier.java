@@ -4,7 +4,6 @@ import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.newitems.attributes.NewItemAttribute;
 import com.ebicep.warlords.util.java.Pair;
 
-import java.util.EnumMap;
 import java.util.Map;
 
 public abstract class BaseTier implements ItemTier {
@@ -20,16 +19,6 @@ public abstract class BaseTier implements ItemTier {
     public void init() {
         this.name = getValue("name", String.class);
         this.weight = getValue("weight", int.class);
-        Map<NewItemAttribute, Pair<Float, Float>> bonusAttributeRanges = new EnumMap<>(NewItemAttribute.class);
-        for (NewItemAttribute bonusAttribute : NewItemAttribute.BONUS_ATTRIBUTES) {
-            bonusAttributeRanges.put(bonusAttribute, new Pair<>(
-                    getValue("bonusAttributeRanges." + bonusAttribute.getDatabaseName() + ".min", float.class, true),
-                    getValue("bonusAttributeRanges." + bonusAttribute.getDatabaseName() + ".max", float.class, true
-                            )
-                    )
-            );
-        }
-        this.bonusAttributeRanges = bonusAttributeRanges;
         this.bonusAttributes = getValue("bonusAttributes", int.class);
         init(this);
     }
@@ -50,8 +39,13 @@ public abstract class BaseTier implements ItemTier {
     }
 
     @Override
-    public Map<NewItemAttribute, Pair<Float, Float>> bonusAttributeRanges() {
+    public Map<NewItemAttribute, Pair<Float, Float>> getBonusAttributeRanges() {
         return bonusAttributeRanges;
+    }
+
+    @Override
+    public void setBonusAttributeRanges(Map<NewItemAttribute, Pair<Float, Float>> bonusAttributeRanges) {
+        this.bonusAttributeRanges = bonusAttributeRanges;
     }
 
     @Override
