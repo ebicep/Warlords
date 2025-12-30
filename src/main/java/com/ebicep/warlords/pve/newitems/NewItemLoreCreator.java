@@ -9,10 +9,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class NewItemLoreCreator {
 
@@ -40,14 +37,20 @@ public class NewItemLoreCreator {
         }
     }
 
-    private static void addBonusAttributes(List<Component> lore, Map<NewItemAttribute, Float> bonusAttributeValues) {
+    private static void addBonusAttributes(NewItemsSetBonus setBonus, List<Component> lore, Map<NewItemAttribute, Float> bonusAttributeValues) {
         if (!bonusAttributeValues.isEmpty()) {
             lore.add(Component.text("Bonus Attributes:", NamedTextColor.GRAY));
             for (NewItemAttribute bonusAttribute : NewItemAttribute.BONUS_ATTRIBUTES) {
+                Pair<Float, Float> ranges = setBonus.getBonusAttributeRanges().get(bonusAttribute);
                 Float value = bonusAttributeValues.get(bonusAttribute);
-                if (value != null) {
-                    lore.add(bonusAttribute.formatValue(value, "+"));
+                if (value == null) {
+                    continue;
                 }
+                Component component = bonusAttribute.formatValue(value, "+");
+                if (ranges != null && Objects.equals(ranges.getB(), value)) { // TODO MAX with floats
+                    component = component.append(Component.text(" [MAX]", NamedTextColor.LIGHT_PURPLE));
+                }
+                lore.add(component);
             }
             lore.add(Component.empty());
         }
@@ -115,7 +118,7 @@ public class NewItemLoreCreator {
         }
 
         public Builder addBonusAttributes(Map<NewItemAttribute, Float> bonusAttributeValues) {
-            NewItemLoreCreator.addBonusAttributes(components, bonusAttributeValues);
+            NewItemLoreCreator.addBonusAttributes(setBonus, components, bonusAttributeValues);
             return this;
         }
 
