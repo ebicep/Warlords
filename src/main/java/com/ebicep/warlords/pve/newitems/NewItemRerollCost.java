@@ -1,33 +1,43 @@
 package com.ebicep.warlords.pve.newitems;
 
-import com.ebicep.warlords.database.configuration.StringToSpendableConverter;
+import com.ebicep.warlords.database.configuration.SpendableParser;
+import com.ebicep.warlords.database.repositories.config.ConfigBased;
 import com.ebicep.warlords.pve.Spendable;
+import org.apache.commons.collections4.map.HashedMap;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public interface NewItemRerollCost {
 
-    default void init(Map<String, Long> rerollMap, Map<String, Long> lockScrollRerollMap) {
-        StringToSpendableConverter spendableConverter = new StringToSpendableConverter();
-        Map<Spendable, Long> rerollCost = new LinkedHashMap<>();
-        for (Map.Entry<String, Long> entry : rerollMap.entrySet()) {
-            rerollCost.put(spendableConverter.convert(entry.getKey()), entry.getValue());
+    private static Map<Spendable, Long> toSpendableMap(Map<String, Long> map) {
+        Map<Spendable, Long> spendableMap = new LinkedHashMap<>();
+        for (Map.Entry<String, Long> entry : map.entrySet()) {
+            spendableMap.put(SpendableParser.parse(entry.getKey()), entry.getValue());
+        }
+        return spendableMap;
+    }
+
+    default void init(ConfigBased configBased) {
+        Map<Integer, Map<Spendable, Long>> rerollCost = new HashedMap<>();
+        Map<Integer, Map<Spendable, Long>> lockScrollRerollCost = new HashedMap<>();
+        for (int i = 1; i <= 3; i++) {
+            Map<String, Long> rerollMap = configBased.getMapValue("rerollCost" + i, long.class);
+            Map<String, Long> lockScrollRerollMap = configBased.getMapValue("lockScrollRerollCost" + i, long.class);
+
+            rerollCost.put(i, toSpendableMap(rerollMap));
+            lockScrollRerollCost.put(i, toSpendableMap(lockScrollRerollMap));
         }
         setRerollCost(rerollCost);
-        Map<Spendable, Long> lockScrollRerollCost = new LinkedHashMap<>();
-        for (Map.Entry<String, Long> entry : lockScrollRerollMap.entrySet()) {
-            lockScrollRerollCost.put(spendableConverter.convert(entry.getKey()), entry.getValue());
-        }
         setLockScrollRerollCost(lockScrollRerollCost);
     }
 
-    Map<Spendable, Long> rerollCost();
+    Map<Integer, Map<Spendable, Long>> rerollCost();
 
-    void setRerollCost(Map<Spendable, Long> rerollCost);
+    void setRerollCost(Map<Integer, Map<Spendable, Long>> rerollCost);
 
-    Map<Spendable, Long> lockScrollRerollCost();
+    Map<Integer, Map<Spendable, Long>> lockScrollRerollCost();
 
-    void setLockScrollRerollCost(Map<Spendable, Long> lockScrollRerollCost);
+    void setLockScrollRerollCost(Map<Integer, Map<Spendable, Long>> lockScrollRerollCost);
 
 }

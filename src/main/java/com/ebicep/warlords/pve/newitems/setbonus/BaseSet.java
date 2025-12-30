@@ -19,8 +19,8 @@ public abstract class BaseSet implements SetBonus {
     private List<NewItemsSlot> slots;
     private Map<NewItemAttribute, Float> attributes;
     private Map<NewItemAttribute, Pair<Float, Float>> bonusAttributeRanges;
-    private Map<Spendable, Long> rerollCost;
-    private Map<Spendable, Long> lockScrollRerollCost;
+    private Map<Integer, Map<Spendable, Long>> rerollCost;
+    private Map<Integer, Map<Spendable, Long>> lockScrollRerollCost;
 
     @Override
     public boolean isNoBonus() {
@@ -79,26 +79,26 @@ public abstract class BaseSet implements SetBonus {
             );
         }
         this.bonusAttributeRanges = bonusAttributeRanges;
-        init(getMapValue("rerollCost", long.class), getMapValue("lockScrollRerollCost", long.class));
+        init(this);
     }
 
     @Override
-    public Map<Spendable, Long> rerollCost() {
+    public Map<Integer, Map<Spendable, Long>> rerollCost() {
         return rerollCost;
     }
 
     @Override
-    public void setRerollCost(Map<Spendable, Long> rerollCost) {
+    public void setRerollCost(Map<Integer, Map<Spendable, Long>> rerollCost) {
         this.rerollCost = rerollCost;
     }
 
     @Override
-    public Map<Spendable, Long> lockScrollRerollCost() {
+    public Map<Integer, Map<Spendable, Long>> lockScrollRerollCost() {
         return lockScrollRerollCost;
     }
 
     @Override
-    public void setLockScrollRerollCost(Map<Spendable, Long> lockScrollRerollCost) {
+    public void setLockScrollRerollCost(Map<Integer, Map<Spendable, Long>> lockScrollRerollCost) {
         this.lockScrollRerollCost = lockScrollRerollCost;
     }
 

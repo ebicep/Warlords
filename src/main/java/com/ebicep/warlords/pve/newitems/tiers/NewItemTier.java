@@ -82,22 +82,22 @@ public enum NewItemTier implements ItemTier, NamedEnum {
     }
 
     @Override
-    public Map<Spendable, Long> rerollCost() {
+    public Map<Integer, Map<Spendable, Long>> rerollCost() {
         return itemTier.rerollCost();
     }
 
     @Override
-    public void setRerollCost(Map<Spendable, Long> rerollCost) {
+    public void setRerollCost(Map<Integer, Map<Spendable, Long>> rerollCost) {
         itemTier.setRerollCost(rerollCost);
     }
 
     @Override
-    public Map<Spendable, Long> lockScrollRerollCost() {
+    public Map<Integer, Map<Spendable, Long>> lockScrollRerollCost() {
         return itemTier.lockScrollRerollCost();
     }
 
     @Override
-    public void setLockScrollRerollCost(Map<Spendable, Long> lockScrollRerollCost) {
+    public void setLockScrollRerollCost(Map<Integer, Map<Spendable, Long>> lockScrollRerollCost) {
         itemTier.setLockScrollRerollCost(lockScrollRerollCost);
     }
 

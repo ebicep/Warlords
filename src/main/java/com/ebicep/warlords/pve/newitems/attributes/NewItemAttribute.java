@@ -64,7 +64,7 @@ public enum NewItemAttribute implements Attribute, NamedEnum {
         return BY_DB_NAME.get(databaseName);
     }
 
-    public final Attribute attribute;
+    private final Attribute attribute;
 
     NewItemAttribute(Attribute attribute) {
         this.attribute = attribute;

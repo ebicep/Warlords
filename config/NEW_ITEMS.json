@@ -49,11 +49,29 @@
             }
           },
           "rerollCost": {
-            "ETHEREUM_CRYSTAL": 1
+            "1": {
+              "ETHEREUM_CRYSTAL": 1
+            },
+            "2": {
+              "ETHEREUM_CRYSTAL": 2
+            },
+            "3": {
+              "ETHEREUM_CRYSTAL": 3
+            }
           },
           "lockScrollRerollCost": {
-            "ITEM_LOCK_SCROLL": 1,
-            "LEGEND_FRAGMENTS": 1250
+            "1": {
+              "ITEM_LOCK_SCROLL": 1,
+              "LEGEND_FRAGMENTS": 1250
+            },
+            "2": {
+              "ITEM_LOCK_SCROLL": 1,
+              "LEGEND_FRAGMENTS": 1750
+            },
+            "3": {
+              "ITEM_LOCK_SCROLL": 1,
+              "LEGEND_FRAGMENTS": 2250
+            }
           }
         },
         "rare": {
@@ -99,12 +117,32 @@
             }
           },
           "rerollCost": {
-            "ETHEREUM_CRYSTAL": 2,
-            "ASCENDANT_SHARD": 1
+            "1": {
+              "ETHEREUM_CRYSTAL": 2,
+              "ASCENDANT_SHARD": 1
+            },
+            "2": {
+              "ETHEREUM_CRYSTAL": 2,
+              "ASCENDANT_SHARD": 2
+            },
+            "3": {
+              "ETHEREUM_CRYSTAL": 4,
+              "ASCENDANT_SHARD": 3
+            }
           },
           "lockScrollRerollCost": {
-            "ITEM_LOCK_SCROLL": 1,
-            "LEGEND_FRAGMENTS": 2500
+            "1": {
+              "ITEM_LOCK_SCROLL": 1,
+              "LEGEND_FRAGMENTS": 2500
+            },
+            "2": {
+              "ITEM_LOCK_SCROLL": 1,
+              "LEGEND_FRAGMENTS": 3000
+            },
+            "3": {
+              "ITEM_LOCK_SCROLL": 1,
+              "LEGEND_FRAGMENTS": 3500
+            }
           }
         },
         "epic": {
@@ -150,13 +188,35 @@
             }
           },
           "rerollCost": {
-            "ETHEREUM_CRYSTAL": 3,
-            "ASCENDANT_SHARD": 1,
-            "ZENITH_STAR": 1
+            "1": {
+              "ETHEREUM_CRYSTAL": 3,
+              "ASCENDANT_SHARD": 1,
+              "ZENITH_STAR": 1
+            },
+            "2": {
+              "ETHEREUM_CRYSTAL": 4,
+              "ASCENDANT_SHARD": 2,
+              "ZENITH_STAR": 2
+            },
+            "3": {
+              "ETHEREUM_CRYSTAL": 5,
+              "ASCENDANT_SHARD": 3,
+              "ZENITH_STAR": 3
+            }
           },
           "lockScrollRerollCost": {
-            "ITEM_LOCK_SCROLL": 1,
-            "LEGEND_FRAGMENTS": 5000
+            "1": {
+              "ITEM_LOCK_SCROLL": 1,
+              "LEGEND_FRAGMENTS": 5000
+            },
+            "2": {
+              "ITEM_LOCK_SCROLL": 1,
+              "LEGEND_FRAGMENTS": 5500
+            },
+            "3": {
+              "ITEM_LOCK_SCROLL": 1,
+              "LEGEND_FRAGMENTS": 6500
+            }
           }
         },
         "sovereign": {
@@ -202,13 +262,35 @@
             }
           },
           "rerollCost": {
-            "ETHEREUM_CRYSTAL": 4,
-            "ASCENDANT_SHARD": 2,
-            "ZENITH_STAR": 1
+            "1": {
+              "ETHEREUM_CRYSTAL": 4,
+              "ASCENDANT_SHARD": 2,
+              "ZENITH_STAR": 1
+            },
+            "2": {
+              "ETHEREUM_CRYSTAL": 5,
+              "ASCENDANT_SHARD": 3,
+              "ZENITH_STAR": 2
+            },
+            "3": {
+              "ETHEREUM_CRYSTAL": 6,
+              "ASCENDANT_SHARD": 4,
+              "ZENITH_STAR": 3
+            }
           },
           "lockScrollRerollCost": {
-            "ITEM_LOCK_SCROLL": 1,
-            "LEGEND_FRAGMENTS": 7500
+            "1": {
+              "ITEM_LOCK_SCROLL": 1,
+              "LEGEND_FRAGMENTS": 7500
+            },
+            "2": {
+              "ITEM_LOCK_SCROLL": 1,
+              "LEGEND_FRAGMENTS": 8500
+            },
+            "3": {
+              "ITEM_LOCK_SCROLL": 1,
+              "LEGEND_FRAGMENTS": 9500
+            }
           }
         },
         "legendary": {
@@ -251,6 +333,37 @@
             "THORNS": {
               "min": 5,
               "max": 10
+            }
+          },
+          "rerollCost": {
+            "1": {
+              "ETHEREUM_CRYSTAL": 5,
+              "ASCENDANT_SHARD": 3,
+              "ZENITH_STAR": 2
+            },
+            "2": {
+              "ETHEREUM_CRYSTAL": 6,
+              "ASCENDANT_SHARD": 4,
+              "ZENITH_STAR": 3
+            },
+            "3": {
+              "ETHEREUM_CRYSTAL": 7,
+              "ASCENDANT_SHARD": 5,
+              "ZENITH_STAR": 4
+            }
+          },
+          "lockScrollRerollCost": {
+            "1": {
+              "ITEM_LOCK_SCROLL": 1,
+              "LEGEND_FRAGMENTS": 8500
+            },
+            "2": {
+              "ITEM_LOCK_SCROLL": 1,
+              "LEGEND_FRAGMENTS": 9500
+            },
+            "3": {
+              "ITEM_LOCK_SCROLL": 1,
+              "LEGEND_FRAGMENTS": 10500
             }
           }
         },
@@ -295,16 +408,38 @@
               "min": 9,
               "max": 12
             }
+          },
+          "rerollCost": {
+            "1": {
+              "ETHEREUM_CRYSTAL": 5,
+              "ASCENDANT_SHARD": 3,
+              "ZENITH_STAR": 2
+            },
+            "2": {
+              "ETHEREUM_CRYSTAL": 6,
+              "ASCENDANT_SHARD": 4,
+              "ZENITH_STAR": 3
+            },
+            "3": {
+              "ETHEREUM_CRYSTAL": 7,
+              "ASCENDANT_SHARD": 5,
+              "ZENITH_STAR": 4
+            }
+          },
+          "lockScrollRerollCost": {
+            "1": {
+              "ITEM_LOCK_SCROLL": 1,
+              "LEGEND_FRAGMENTS": 10000
+            },
+            "2": {
+              "ITEM_LOCK_SCROLL": 1,
+              "LEGEND_FRAGMENTS": 11000
+            },
+            "3": {
+              "ITEM_LOCK_SCROLL": 1,
+              "LEGEND_FRAGMENTS": 12000
+            }
           }
-        },
-        "rerollCost": {
-          "ETHEREUM_CRYSTAL": 5,
-          "ASCENDANT_SHARD": 3,
-          "ZENITH_STAR": 1
-        },
-        "lockScrollRerollCost": {
-          "ITEM_LOCK_SCROLL": 1,
-          "LEGEND_FRAGMENTS": 10000
         }
       },
       "sets": {

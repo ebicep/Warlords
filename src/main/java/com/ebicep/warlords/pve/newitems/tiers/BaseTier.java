@@ -13,8 +13,8 @@ public abstract class BaseTier implements ItemTier {
     private int weight;
     private int bonusAttributes;
     private Map<NewItemAttribute, Pair<Float, Float>> bonusAttributeRanges;
-    private Map<Spendable, Long> rerollCost;
-    private Map<Spendable, Long> lockScrollRerollCost;
+    private Map<Integer, Map<Spendable, Long>> rerollCost;
+    private Map<Integer, Map<Spendable, Long>> lockScrollRerollCost;
 
     @Override
     public void init() {
@@ -31,7 +31,7 @@ public abstract class BaseTier implements ItemTier {
         }
         this.bonusAttributeRanges = bonusAttributeRanges;
         this.bonusAttributes = getValue("bonusAttributes", int.class);
-        init(getMapValue("rerollCost", long.class), getMapValue("lockScrollRerollCost", long.class));
+        init(this);
     }
 
     @Override
@@ -55,22 +55,22 @@ public abstract class BaseTier implements ItemTier {
     }
 
     @Override
-    public Map<Spendable, Long> rerollCost() {
+    public Map<Integer, Map<Spendable, Long>> rerollCost() {
         return rerollCost;
     }
 
     @Override
-    public void setRerollCost(Map<Spendable, Long> rerollCost) {
+    public void setRerollCost(Map<Integer, Map<Spendable, Long>> rerollCost) {
         this.rerollCost = rerollCost;
     }
 
     @Override
-    public Map<Spendable, Long> lockScrollRerollCost() {
+    public Map<Integer, Map<Spendable, Long>> lockScrollRerollCost() {
         return lockScrollRerollCost;
     }
 
     @Override
-    public void setLockScrollRerollCost(Map<Spendable, Long> lockScrollRerollCost) {
+    public void setLockScrollRerollCost(Map<Integer, Map<Spendable, Long>> lockScrollRerollCost) {
         this.lockScrollRerollCost = lockScrollRerollCost;
     }
 

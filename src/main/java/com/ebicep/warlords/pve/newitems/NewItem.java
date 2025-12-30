@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.newitems;
 
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.newitems.attributes.NewItemAttribute;
 import com.ebicep.warlords.pve.newitems.setbonus.NewItemsSetBonus;
 import com.ebicep.warlords.pve.newitems.tiers.NewItemTier;
@@ -40,6 +41,7 @@ public class NewItem {
     private NewItemsSlot slot;
     private NewItemsSetBonus setBonus;
     private boolean isFavorite = false;
+    private List<Map<Spendable, Long>> rerollCostsHistory = new ArrayList<>();
 
     public NewItem() {
         // for deserialization
@@ -157,6 +159,10 @@ public class NewItem {
 
     public UUID getUUID() {
         return uuid;
+    }
+
+    public List<Map<Spendable, Long>> getRerollCostsHistory() {
+        return rerollCostsHistory;
     }
 
 }
