@@ -17,6 +17,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
 import java.util.Comparator;
+import java.util.List;
 
 @CommandAlias("newitems")
 @CommandPermission("group.administrator")
@@ -32,6 +33,22 @@ public class NewItemsCommand extends BaseCommand {
     @Subcommand("sets")
     public void sets(Player player) {
         NewItemSetsMenu.open(player);
+    }
+
+    @Subcommand("clear")
+    public void clear(Player player, @Optional Integer count) {
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+        NewItemsManager newItemsManager = databasePlayer.getPveStats().getNewItemsManager();
+        List<NewItem> itemInventory = newItemsManager.getItemInventory();
+        if (count == null) {
+            itemInventory.clear();
+            ChatChannels.sendDebugMessage(player, Component.text("Cleared all items from your item inventory.", NamedTextColor.GREEN));
+        } else {
+            for (int i = 0; i < count && !itemInventory.isEmpty(); i++) {
+                itemInventory.removeLast();
+            }
+            ChatChannels.sendDebugMessage(player, Component.text("Cleared " + count + " items from your item inventory.", NamedTextColor.GREEN));
+        }
     }
 
     @Subcommand("generate")
