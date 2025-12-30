@@ -200,8 +200,26 @@ public class NewItemRerollMenu {
                 "Confirm Reroll",
                 3,
                 new ArrayList<>() {{
-                    // TODO
-                    addAll(PvEUtils.getCostLore(cost, true));
+                    addAll(new NewItemLoreCreator.Builder(item)
+                            .addBonusAttributes(item.getBonusAttributeValues())
+                            .build());
+                    add(Component.empty());
+                    addAll(new NewItemLoreCreator.Builder(item)
+                            .addBonusAttributes()
+                            .build());
+                    add(Component.empty());
+                    add(Component.text("Locked Attributes:", NamedTextColor.GRAY));
+                    if (lockedAttributes.isEmpty()) {
+                        add(Component.text(" - None", NamedTextColor.GRAY));
+                    } else {
+                        for (NewItemAttribute lockedAttribute : lockedAttributes) {
+                            add(Component.text(" - ", NamedTextColor.GRAY).append(
+                                    Component.text(lockedAttribute.getName(), lockedAttribute.getTextColor())
+                            ));
+                        }
+                    }
+                    add(Component.empty());
+                    addAll(PvEUtils.getCostLore(cost, "Reroll Cost", true));
                 }},
                 Menu.GO_BACK,
                 (m2, e2) -> {
