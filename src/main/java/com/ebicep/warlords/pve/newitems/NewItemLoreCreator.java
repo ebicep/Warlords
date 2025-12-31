@@ -9,10 +9,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class NewItemLoreCreator {
 
@@ -150,7 +147,7 @@ public class NewItemLoreCreator {
         }
 
         public Builder addBonusAttributes(boolean label) {
-            return addBonusAttributes(label, setBonus.getAttributes().keySet());
+            return addBonusAttributes(label, EnumSet.allOf(NewItemAttribute.class));
         }
 
         public Builder addBonusAttributes(boolean label, Set<NewItemAttribute> attributes) {
