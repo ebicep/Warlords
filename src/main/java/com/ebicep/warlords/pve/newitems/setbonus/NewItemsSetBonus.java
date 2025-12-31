@@ -114,6 +114,11 @@ public enum NewItemsSetBonus implements SetBonus {
     }
 
     @Override
+    public void setBonusAttributeRanges(Map<NewItemAttribute, Pair<Float, Float>> bonusAttributeRanges) {
+        setBonus.setBonusAttributeRanges(bonusAttributeRanges);
+    }
+
+    @Override
     public void init() {
         setBonus.init();
     }

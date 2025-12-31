@@ -73,6 +73,11 @@ public enum NewItemTier implements ItemTier, NamedEnum {
     }
 
     @Override
+    public void setBonusAttributeRanges(Map<NewItemAttribute, Pair<Float, Float>> bonusAttributeRanges) {
+        itemTier.setBonusAttributeRanges(bonusAttributeRanges);
+    }
+
+    @Override
     public String getConfigFieldName() {
         return itemTier.getConfigFieldName();
     }
