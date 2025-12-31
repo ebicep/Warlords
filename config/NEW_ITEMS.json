@@ -84,12 +84,12 @@
               "max": 2
             },
             "CM": {
-              "min": 2,
-              "max": 3
+              "min": 1,
+              "max": 2
             },
             "DAMAGE": {
-              "min": 2,
-              "max": 4
+              "min": 1,
+              "max": 2
             },
             "BOSS_DAMAGE": {
               "min": 2,
@@ -97,14 +97,14 @@
             },
             "EPH": {
               "min": 1,
-              "max": 2
+              "max": 1
             },
             "HEALING": {
-              "min": 2,
-              "max": 3
+              "min": 1,
+              "max": 2
             },
             "MAX_ENERGY": {
-              "min": 4,
+              "min": 2,
               "max": 6
             },
             "SPEED": {
@@ -151,35 +151,35 @@
           "bonusAttributes": 2,
           "bonusAttributeRanges": {
             "CC": {
-              "min": 2,
+              "min": 1,
               "max": 3
             },
             "CM": {
-              "min": 3,
-              "max": 5
+              "min": 1,
+              "max": 3
             },
             "DAMAGE": {
-              "min": 4,
-              "max": 6
+              "min": 1,
+              "max": 3
             },
             "BOSS_DAMAGE": {
-              "min": 3,
+              "min": 2,
               "max": 5
             },
             "EPH": {
-              "min": 2,
-              "max": 4
+              "min": 1,
+              "max": 1
             },
             "HEALING": {
-              "min": 3,
-              "max": 5
+              "min": 1,
+              "max": 3
             },
             "MAX_ENERGY": {
-              "min": 6,
-              "max": 9
+              "min": 4,
+              "max": 12
             },
             "SPEED": {
-              "min": 2,
+              "min": 1,
               "max": 3
             },
             "THORNS": {
@@ -225,40 +225,40 @@
           "bonusAttributes": 2,
           "bonusAttributeRanges": {
             "CC": {
-              "min": 3,
-              "max": 4
+              "min": 2,
+              "max": 5
             },
             "CM": {
-              "min": 5,
-              "max": 7
+              "min": 2,
+              "max": 5
             },
             "DAMAGE": {
-              "min": 6,
-              "max": 9
+              "min": 2,
+              "max": 5
             },
             "BOSS_DAMAGE": {
-              "min": 5,
-              "max": 8
+              "min": 2,
+              "max": 10
             },
             "EPH": {
-              "min": 4,
-              "max": 6
-            },
-            "HEALING": {
-              "min": 5,
-              "max": 7
-            },
-            "MAX_ENERGY": {
-              "min": 9,
-              "max": 13
-            },
-            "SPEED": {
-              "min": 3,
+              "min": 1,
               "max": 4
             },
+            "HEALING": {
+              "min": 2,
+              "max": 5
+            },
+            "MAX_ENERGY": {
+              "min": 5,
+              "max": 30
+            },
+            "SPEED": {
+              "min": 2,
+              "max": 15
+            },
             "THORNS": {
-              "min": 4,
-              "max": 6
+              "min": 2,
+              "max": 5
             }
           },
           "rerollCost": {
@@ -311,12 +311,12 @@
               "max": 4
             },
             "BOSS_DAMAGE": {
-              "min": 3,
-              "max": 7
+              "min": 2,
+              "max": 8
             },
             "EPH": {
               "min": 1,
-              "max": 3
+              "max": 2
             },
             "HEALING": {
               "min": 1,
@@ -327,8 +327,8 @@
               "max": 15
             },
             "SPEED": {
-              "min": 2,
-              "max": 5
+              "min": 1,
+              "max": 6
             },
             "THORNS": {
               "min": 5,
@@ -373,39 +373,39 @@
           "bonusAttributes": 3,
           "bonusAttributeRanges": {
             "CC": {
-              "min": 6,
-              "max": 8
+              "min": 2,
+              "max": 5
             },
             "CM": {
-              "min": 10,
-              "max": 14
+              "min": 2,
+              "max": 5
             },
             "DAMAGE": {
-              "min": 13,
-              "max": 18
+              "min": 2,
+              "max": 5
             },
             "BOSS_DAMAGE": {
-              "min": 12,
-              "max": 17
+              "min": 4,
+              "max": 10
             },
             "EPH": {
-              "min": 9,
-              "max": 12
+              "min": 1,
+              "max": 3
             },
             "HEALING": {
-              "min": 10,
-              "max": 14
+              "min": 2,
+              "max": 5
             },
             "MAX_ENERGY": {
-              "min": 18,
-              "max": 25
+              "min": 5,
+              "max": 20
             },
             "SPEED": {
-              "min": 6,
+              "min": 2,
               "max": 8
             },
             "THORNS": {
-              "min": 9,
+              "min": 6,
               "max": 12
             }
           },
@@ -507,8 +507,8 @@
           ],
           "attributes": {
             "HEALTH": 50,
-            "KB_RES": 10,
-            "ECR": 5
+            "KB_RES": 6,
+            "ECR": 2
           },
           "bonusAttributeRanges": {
           },
@@ -525,7 +525,7 @@
           ],
           "attributes": {
             "HEALTH": 50,
-            "KB_RES": 10,
+            "KB_RES": 6,
             "REGEN": 15
           },
           "description": "Targets within {{blocks}} of you take {{damage;%}} more damage and are slowed by {{speed;%}}.",
@@ -578,8 +578,8 @@
           ],
           "attributes": {
             "HEALTH": 80,
-            "KB_RES": 10,
-            "REGEN": 10
+            "KB_RES": 4,
+            "REGEN": 4
           },
           "bonusAttributeRanges": {
           },
@@ -612,8 +612,8 @@
           ],
           "attributes": {
             "HEALTH": 30,
-            "ECR": 10,
-            "REGEN": 15
+            "ECR": 1,
+            "REGEN": 8
           },
           "description": "Increase your crit chance by {{damage;%}} while under damage-preventing effects.",
           "critChanceBoost": 25
@@ -677,7 +677,7 @@
           ],
           "attributes": {
             "HEALTH": 50,
-            "KB_RES": 15
+            "KB_RES": 5
           },
           "description": "Double the thorn damage cap and increase all thorn damage by {{damage;%}}.",
           "thornDamageBoost": 50
@@ -711,7 +711,7 @@
           ],
           "attributes": {
             "HEALTH": 50,
-            "ECR": 10,
+            "ECR": 2,
             "REGEN": 15
           },
           "description": "For every player that is above {{heal;%}} health, deal {{damage;%}} more damage.",
@@ -742,7 +742,7 @@
           ],
           "attributes": {
             "HEALTH": 50,
-            "ECR": 10,
+            "ECR": 2,
             "CDR": 3
           },
           "description": "For every mob on the field, increase your healing by {{heal;%}}.",
@@ -779,8 +779,8 @@
           ],
           "attributes": {
             "HEALTH": 100,
-            "KB_RES": 10,
-            "REGEN": 10,
+            "KB_RES": 4,
+            "REGEN": 25,
             "CDR": 2
           },
           "description": "Increase your max health by {{heal;%}}.",
@@ -795,7 +795,7 @@
           ],
           "attributes": {
             "HEALTH": 90,
-            "KB_RES": 10
+            "KB_RES": 5
           },
           "description": "{{blue;%}} chance to freeze enemies for {{ticks}}. Deal {{damage;%}} more damage to frozen enemies.",
           "freezeChance": 15,
@@ -812,9 +812,9 @@
           ],
           "attributes": {
             "HEALTH": 40,
-            "KB_RES": 10,
-            "ECR": 10,
-            "CDR": 10
+            "KB_RES": 4,
+            "ECR": 2,
+            "CDR": 2
           },
           "description": "+{{blue;%}} cooldown reduction on all abilities.",
           "bonusCDR": 10
@@ -844,7 +844,7 @@
           ],
           "attributes": {
             "HEALTH": 25,
-            "KB_RES": 10,
+            "KB_RES": 5,
             "REGEN": 15
           },
           "description": "{{blue;%}} chance to dodge attacks. Dodges grant stacking damage and healing bonuses.",
@@ -859,7 +859,7 @@
           ],
           "attributes": {
             "HEALTH": 25,
-            "ECR": 10,
+            "ECR": 2,
             "REGEN": 10
           },
           "description": "Ranged primary attacks have a {{damage;%}} chance to instantly kill non-boss targets.",
@@ -873,7 +873,7 @@
           ],
           "attributes": {
             "HEALTH": 20,
-            "CDR": 10
+            "CDR": 3
           },
           "description": "Increase the duration of your ultimate ability by {{seconds}}.",
           "ultimateDurationIncreaseSeconds": 3
@@ -922,7 +922,7 @@
           ],
           "attributes": {
             "HEALTH": 10,
-            "CDR": 10
+            "CDR": 1
           },
           "description": "{{heal;%}} of healing you receive is redirected to the lowest ally instead.",
           "healingRedirectPercent": 15
@@ -936,7 +936,7 @@
           ],
           "attributes": {
             "HEALTH": 55,
-            "KB_RES": 15
+            "KB_RES": 10
           },
           "description": "Every {{heal}} heal instances, you emit a global pulse that heals all for {{heal}} health.",
           "healsPerPulse": 6,
@@ -954,7 +954,7 @@
           ],
           "attributes": {
             "HEALTH": 35,
-            "CDR": 10
+            "CDR": 4
           },
           "description": "Increase rare loot chance by {{blue;%}}. Enemies have a {{blue;%}} chance to drop a spelunker chest.",
           "rareLootChanceIncreasePercent": 25,
@@ -969,8 +969,8 @@
           ],
           "attributes": {
             "HEALTH": 10,
-            "REGEN": 15,
-            "ECR": 10
+            "REGEN": 10,
+            "ECR": 2
           },
           "description": "Increase the effectiveness of your upgrades by {{blue;%}}. Additionally, gain {{blue}} free ability upgrades.",
           "upgradeEffectivenessIncreasePercent": 20,
@@ -986,7 +986,7 @@
           ],
           "attributes": {
             "HEALTH": 40,
-            "CDR": 10
+            "CDR": 2
           },
           "description": "When an ally drops below {{heal;%}} health, they glow and you gain {{speed;%}} movement speed toward them. Increase healing on that ally by {{heal;%}}.",
           "allyHealthThresholdPercent": 30,
@@ -1003,8 +1003,8 @@
           ],
           "attributes": {
             "HEALTH": 200,
-            "KB_RES": 10,
-            "ECR": 15
+            "KB_RES": 6,
+            "ECR": 2
           },
           "bonusAttributeRanges": {
           },
@@ -1020,8 +1020,8 @@
           ],
           "attributes": {
             "HEALTH": 200,
-            "KB_RES": 10,
-            "ECR": 15
+            "KB_RES": 6,
+            "ECR": 4
           },
           "bonusAttributeRanges": {
           },
@@ -1039,8 +1039,8 @@
           ],
           "attributes": {
             "HEALTH": 200,
-            "KB_RES": 10,
-            "ECR": 15
+            "KB_RES": 5,
+            "ECR": 2
           },
           "bonusAttributeRanges": {
           },
