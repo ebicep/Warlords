@@ -11,6 +11,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.EnumSet;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class MenuUtils {
@@ -22,6 +23,28 @@ public class MenuUtils {
             EnumSet<T> filter,
             Function<T, ItemStack> itemStackFunction,
             BiConsumer<Menu, InventoryClickEvent> backAction
+    ) {
+        openEnumSelectorMenu(
+                player,
+                menuName,
+                values,
+                filter,
+                filter.size(),
+                itemStackFunction,
+                backAction,
+                menu -> {}
+        );
+    }
+
+    public static <T extends Enum<T> & NamedEnum> void openEnumSelectorMenu(
+            Player player,
+            String menuName,
+            T[] values,
+            EnumSet<T> filter,
+            int maxSelected,
+            Function<T, ItemStack> itemStackFunction,
+            BiConsumer<Menu, InventoryClickEvent> backAction,
+            Consumer<Menu> additionalSetup
     ) {
         Menu menu = new Menu(menuName, 5 * 9);
 
@@ -40,6 +63,10 @@ public class MenuUtils {
                         if (filtered) {
                             filter.remove(attribute);
                         } else {
+                            if (filter.size() >= maxSelected) {
+                                player.sendMessage(Component.text("You can only select up to " + maxSelected + " options!", NamedTextColor.RED));
+                                return;
+                            }
                             filter.add(attribute);
                         }
                         openEnumSelectorMenu(
@@ -47,14 +74,16 @@ public class MenuUtils {
                                 menuName,
                                 values,
                                 filter,
+                                maxSelected,
                                 itemStackFunction,
-                                backAction
+                                backAction,
+                                additionalSetup
                         );
                     }
             );
         }
-
         menu.setItem(4, 4, Menu.MENU_BACK, backAction);
+        additionalSetup.accept(menu);
         menu.openForPlayer(player);
     }
 

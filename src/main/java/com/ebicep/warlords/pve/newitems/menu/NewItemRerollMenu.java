@@ -28,8 +28,7 @@ import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
-import static com.ebicep.warlords.menu.Menu.ACTION_CLOSE_MENU;
-import static com.ebicep.warlords.menu.Menu.MENU_CLOSE;
+import static com.ebicep.warlords.menu.Menu.*;
 
 public class NewItemRerollMenu {
 
@@ -100,8 +99,7 @@ public class NewItemRerollMenu {
                                     .addBonusAttributes(false, item.getBonusAttributes())
                                     .build())
                             .get(),
-                    (m, e) -> {
-                    }
+                    ACTION_DO_NOTHING
             );
             menu.setItem(4, 2,
                     new ItemBuilder(Material.TRIPWIRE_HOOK)
@@ -130,8 +128,22 @@ public class NewItemRerollMenu {
                                 "Select Locked Attributes",
                                 item.getBonusAttributes().toArray(new NewItemAttribute[0]),
                                 lockedAttributes,
+                                1,
                                 NewItemAttribute::getItemStack,
-                                (m2, e2) -> open(player, item, lockedAttributes)
+                                (m2, e2) -> open(player, item, lockedAttributes),
+                                selectorMenu -> {
+                                    selectorMenu.setItem(4, 0,
+                                            new ItemBuilder(Material.BOOK)
+                                                    .name(Component.text("Information", NamedTextColor.GREEN))
+                                                    .lore(WordWrap.wrap(Component.text(
+                                                                    "You can only select 1 attribute to lock per reroll. Locked attributes will not change when you reroll the item.",
+                                                                    NamedTextColor.GRAY
+                                                            ), 140
+                                                    ))
+                                                    .get(),
+                                            ACTION_DO_NOTHING
+                                    );
+                                }
                         );
                     }
             );
@@ -155,8 +167,7 @@ public class NewItemRerollMenu {
                             .name(Component.text("Reroll Cost", NamedTextColor.GREEN))
                             .lore(PvEUtils.getCostLore(cost, null, false))
                             .get(),
-                    (m, e) -> {
-                    }
+                    ACTION_DO_NOTHING
             );
             menu.setItem(6, 2,
                     new ItemBuilder(Material.ENCHANTING_TABLE)
