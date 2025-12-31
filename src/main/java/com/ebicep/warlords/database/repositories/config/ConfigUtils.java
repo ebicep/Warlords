@@ -5,7 +5,7 @@ import com.ebicep.warlords.util.chat.ChatUtils;
 import org.bson.Document;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -191,7 +191,7 @@ public class ConfigUtils {
             }
 
             if (current != null) {
-                Map<String, T> result = new HashMap<>();
+                Map<String, T> result = new LinkedHashMap<>();
                 for (Map.Entry<String, Object> entry : current.entrySet()) {
                     T casted = cast(entry.getValue(), valueType);
                     if (casted != null) {

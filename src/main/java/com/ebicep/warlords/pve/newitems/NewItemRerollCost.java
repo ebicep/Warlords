@@ -24,8 +24,8 @@ public interface NewItemRerollCost {
         Map<Integer, Map<Spendable, Long>> rerollCost = new HashedMap<>();
         Map<Integer, Map<Spendable, Long>> lockScrollRerollCost = new HashedMap<>();
         for (int i = 1; i <= MAX_REROLLS; i++) {
-            Map<String, Long> rerollMap = configBased.getMapValue("rerollCost" + i, long.class);
-            Map<String, Long> lockScrollRerollMap = configBased.getMapValue("lockScrollRerollCost" + i, long.class);
+            Map<String, Long> rerollMap = configBased.getMapValue("rerollCost." + i, long.class);
+            Map<String, Long> lockScrollRerollMap = configBased.getMapValue("lockScrollRerollCost." + i, long.class);
 
             rerollCost.put(i, toSpendableMap(rerollMap));
             lockScrollRerollCost.put(i, toSpendableMap(lockScrollRerollMap));
@@ -34,11 +34,11 @@ public interface NewItemRerollCost {
         setLockScrollRerollCost(lockScrollRerollCost);
     }
 
-    Map<Integer, Map<Spendable, Long>> rerollCost();
+    Map<Integer, Map<Spendable, Long>> getRerollCost();
 
     void setRerollCost(Map<Integer, Map<Spendable, Long>> rerollCost);
 
-    Map<Integer, Map<Spendable, Long>> lockScrollRerollCost();
+    Map<Integer, Map<Spendable, Long>> getLockScrollRerollCost();
 
     void setLockScrollRerollCost(Map<Integer, Map<Spendable, Long>> lockScrollRerollCost);
 

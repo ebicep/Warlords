@@ -16,18 +16,18 @@ import java.util.stream.Collectors;
 public enum NewItemAttribute implements Attribute, NamedEnum {
 
     HEALTH(new Health()),
-    COOLDOWN_REDUCTION(new CooldownReduction()),
     HEALTH_REGEN(new HealthRegen()),
     KNOCKBACK_RESISTANCE(new KnockbackResistance()),
+    COOLDOWN_REDUCTION(new CooldownReduction()),
     SKILL_ENERGY_COST_REDUCTION(new SkillEnergyCostReduction()),
+    DAMAGE_TO_BOSS_ENEMIES(new DamageToBossEnemies()),
+    SPEED(new Speed()),
+    DAMAGE(new Damage()),
+    HEALING(new Healing()),
     CRIT_CHANCE(new CritChance()),
     CRIT_MULTIPLIER(new CritMultiplier()),
-    DAMAGE(new Damage()),
-    DAMAGE_TO_BOSS_ENEMIES(new DamageToBossEnemies()),
-    ENERGY_PER_HIT(new EnergyPerHit()),
-    HEALING(new Healing()),
     MAX_ENERGY(new MaxEnergy()),
-    SPEED(new Speed()),
+    ENERGY_PER_HIT(new EnergyPerHit()),
     THORNS(new Thorns()),
 
     ;

@@ -138,13 +138,9 @@ public enum NewItemsSetBonus implements SetBonus {
         return setBonus.getVariables();
     }
 
-    public SetBonus getSetBonus() {
-        return setBonus;
-    }
-
     @Override
-    public Map<Integer, Map<Spendable, Long>> rerollCost() {
-        return setBonus.rerollCost();
+    public Map<Integer, Map<Spendable, Long>> getRerollCost() {
+        return setBonus.getRerollCost();
     }
 
     @Override
@@ -153,8 +149,8 @@ public enum NewItemsSetBonus implements SetBonus {
     }
 
     @Override
-    public Map<Integer, Map<Spendable, Long>> lockScrollRerollCost() {
-        return setBonus.lockScrollRerollCost();
+    public Map<Integer, Map<Spendable, Long>> getLockScrollRerollCost() {
+        return setBonus.getLockScrollRerollCost();
     }
 
     @Override

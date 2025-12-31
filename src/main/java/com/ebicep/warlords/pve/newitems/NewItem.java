@@ -70,16 +70,12 @@ public class NewItem {
         return getName().hoverEvent(getItemBuilder().get());
     }
 
-    public NewItemTier getTier() {
-        return setBonus.getTier();
+    public Component getName() {
+        return Component.text(getStringName(), getTier().getTextColor());
     }
 
     public ItemBuilder getItemBuilder() {
         return getItemBuilder(null, null);
-    }
-
-    public Component getName() {
-        return Component.text(getStringName(), getTier().getTextColor());
     }
 
     public ItemBuilder getItemBuilder(NewItemsManager itemsManager, NewItemLoadout loadout) {
@@ -91,26 +87,34 @@ public class NewItem {
                 .build();
         lore.add(Component.empty());
         lore.add(Component.text(getTier().getName() + " " + slot.getName(), getTier().getTextColor()));
-        lore.add(Component.text("REROLL [" + rerollCostsHistory.size() + "]", NamedTextColor.DARK_GRAY)); // TODO ?
+        lore.add(Component.text("REROLL [" + rerollCostsHistory.size() + "/" + NewItemRerollCost.MAX_REROLLS + "]", NamedTextColor.DARK_GRAY)); // TODO ?
         return new ItemBuilder(getItemStack())
                 .name(getName())
                 .lore(lore);
     }
 
-    public Map<NewItemAttribute, Float> getBonusAttributeValues() {
-        Map<NewItemAttribute, Float> attributeValues = new EnumMap<>(NewItemAttribute.class);
+    public Map<NewItemAttribute, Integer> getBonusAttributeValues() {
+        Map<NewItemAttribute, Integer> attributeValues = new EnumMap<>(NewItemAttribute.class);
         bonusAttributeDistribution.forEach((attribute, distributionPercent) -> {
             Pair<Float, Float> range = getTier().getBonusAttributeRanges().get(attribute);
             if (range != null) {
                 int bonusValue = (int) Math.ceil(range.getA() + (range.getB() - range.getA()) * (distributionPercent / 100f));
-                attributeValues.put(attribute, attributeValues.getOrDefault(attribute, 0f) + bonusValue);
+                attributeValues.put(attribute, attributeValues.getOrDefault(attribute, 0) + bonusValue);
             }
         });
         return attributeValues;
     }
 
+    public NewItemTier getTier() {
+        return setBonus.getTier();
+    }
+
     public String getStringName() {
         return setBonus.getName() + " " + slot.getName();
+    }
+
+    public Set<NewItemAttribute> getBonusAttributes() {
+        return bonusAttributeDistribution.keySet();
     }
 
     public ItemStack getItemStack() {

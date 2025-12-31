@@ -15,6 +15,7 @@ import com.ebicep.warlords.pve.newitems.setbonus.NewItemsSetBonus;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import com.ebicep.warlords.util.java.Pair;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -22,7 +23,6 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -39,7 +39,7 @@ public class NewItemRerollMenu {
 
     private static void open(Player player, NewItem item, EnumSet<NewItemAttribute> lockedAttributes) {
         DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
-        Menu menu = new Menu("Reroll Item", 9 * 6);
+        Menu menu = new Menu("Reroll Item", 9 * 5);
 
         menu.setItem(4, 0,
                 new ItemBuilder(Material.BOOK)
@@ -73,22 +73,15 @@ public class NewItemRerollMenu {
             itemSearchMenu.open();
         };
         if (item == null) {
-            menu.setItem(1, 2,
+            menu.setItem(4, 2,
                     new ItemBuilder(Material.WHITE_TERRACOTTA)
                             .name(Component.text("Click to Select Item", NamedTextColor.GREEN))
                             .get(),
                     selectItemToReroll
             );
-            ItemStack selectAnItemFirst = new ItemBuilder(Material.BARRIER)
-                    .name(Component.text("Select an Item first", NamedTextColor.RED))
-                    .get();
-            menu.setItem(2, 2, selectAnItemFirst, (m, e) -> {});
-            menu.setItem(3, 2, selectAnItemFirst, (m, e) -> {});
-            menu.setItem(4, 2, selectAnItemFirst, (m, e) -> {});
-            menu.setItem(7, 2, selectAnItemFirst, (m, e) -> {});
         } else {
             NewItemsSetBonus setBonus = item.getSetBonus();
-            menu.setItem(1, 2,
+            menu.setItem(2, 2,
                     item.getItemBuilder()
                         .addLore(
                                 Component.empty(),
@@ -100,20 +93,22 @@ public class NewItemRerollMenu {
                         .get(),
                     selectItemToReroll
             );
-            menu.setItem(2, 2,
-                    new ItemBuilder(setBonus.getSlots().getFirst().getMaterial())
+            menu.setItem(3, 2,
+                    new ItemBuilder(Material.REPEATER)
                             .name(Component.text("Set Bonus Attribute Ranges", NamedTextColor.GREEN))
                             .lore(new NewItemLoreCreator.Builder(setBonus)
-                                    .addBonusAttributes()
+                                    .addBonusAttributes(false, item.getBonusAttributes())
                                     .build())
                             .get(),
                     (m, e) -> {
                     }
             );
-            menu.setItem(3, 2,
-                    new ItemBuilder(Material.TRIPWIRE)
+            menu.setItem(4, 2,
+                    new ItemBuilder(Material.TRIPWIRE_HOOK)
                             .name(Component.text("Locked Attributes", NamedTextColor.GREEN))
                             .lore(
+                                    lockedAttributes.isEmpty() ?
+                                    List.of(Component.text(" - None", NamedTextColor.GRAY)) :
                                     lockedAttributes.stream()
                                                     .map(value ->
                                                             Component.text(" - ", NamedTextColor.GRAY).append(
@@ -133,7 +128,7 @@ public class NewItemRerollMenu {
                         MenuUtils.openEnumSelectorMenu(
                                 player,
                                 "Select Locked Attributes",
-                                setBonus.getBonusAttributeRanges().keySet().toArray(new NewItemAttribute[0]),
+                                item.getBonusAttributes().toArray(new NewItemAttribute[0]),
                                 lockedAttributes,
                                 (m2, e2) -> open(player, item, lockedAttributes)
                         );
@@ -141,16 +136,12 @@ public class NewItemRerollMenu {
             );
             List<Map<Spendable, Long>> rerollCostsHistory = item.getRerollCostsHistory();
             int newRerollCount = rerollCostsHistory.size() + 1;
-            Map<Spendable, Long> costMap = item.getSetBonus().rerollCost().get(newRerollCount);
-            if (costMap == null) {
-                player.sendMessage(Component.text("This item has reached the maximum amount of rerolls!", NamedTextColor.RED));
-                player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
-                return;
-            }
-            Map<Spendable, Long> cost = new LinkedHashMap<>(costMap);
+            Map<Spendable, Long> cost = new LinkedHashMap<>(item.getTier().getRerollCost().getOrDefault(newRerollCount, Collections.emptyMap()));
+            cost.putAll(item.getSetBonus().getRerollCost().getOrDefault(newRerollCount, Collections.emptyMap()));
             if (!lockedAttributes.isEmpty()) {
-                Map<Spendable, Long> lockScrollRerollMap = item.getSetBonus().lockScrollRerollCost().get(newRerollCount);
-                if (lockScrollRerollMap == null) {
+                Map<Spendable, Long> lockScrollRerollMap = new LinkedHashMap<>(item.getTier().getLockScrollRerollCost().getOrDefault(newRerollCount, Collections.emptyMap()));
+                lockScrollRerollMap.putAll(item.getSetBonus().getLockScrollRerollCost().getOrDefault(newRerollCount, Collections.emptyMap()));
+                if (lockScrollRerollMap.isEmpty()) {
                     ChatUtils.MessageType.NEW_ITEMS.sendErrorMessage("No lock scroll reroll cost found for reroll count " + newRerollCount + ", " + item.getSetBonus());
                 } else {
                     for (var entry : lockScrollRerollMap.entrySet()) {
@@ -158,7 +149,7 @@ public class NewItemRerollMenu {
                     }
                 }
             }
-            menu.setItem(4, 2,
+            menu.setItem(5, 2,
                     new ItemBuilder(Material.CHEST)
                             .name(Component.text("Reroll Cost", NamedTextColor.GREEN))
                             .lore(PvEUtils.getCostLore(cost, null, false))
@@ -166,7 +157,7 @@ public class NewItemRerollMenu {
                     (m, e) -> {
                     }
             );
-            menu.setItem(7, 2,
+            menu.setItem(6, 2,
                     new ItemBuilder(Material.ENCHANTING_TABLE)
                             .name(Component.text("Reroll", NamedTextColor.GREEN))
                             .lore(Component.text("Current Attempts: ", NamedTextColor.GRAY)
@@ -174,12 +165,18 @@ public class NewItemRerollMenu {
                             )
                             .get(),
                     (m, e) -> {
+                        if (cost.isEmpty()) {
+                            player.sendMessage(Component.text("This item cannot be rerolled!", NamedTextColor.RED));
+                            player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
+                            player.closeInventory();
+                            return;
+                        }
                         reroll(player, databasePlayer, item, lockedAttributes, cost);
                     }
             );
         }
 
-        menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
+        menu.setItem(4, 4, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
 
@@ -196,46 +193,63 @@ public class NewItemRerollMenu {
                 return;
             }
         }
+        NewItemsSetBonus setBonus = item.getSetBonus();
+        List<Component> confirmLore = new ArrayList<>();
+        confirmLore.add(Component.text("Current values:", NamedTextColor.GRAY));
+        for (NewItemAttribute bonusAttribute : NewItemAttribute.BONUS_ATTRIBUTES) {
+            Integer value = item.getBonusAttributeValues().get(bonusAttribute);
+            if (value == null) {
+                continue;
+            }
+            Pair<Float, Float> defaultRange = setBonus.getTier().getBonusAttributeRanges().getOrDefault(bonusAttribute, NewItemLoreCreator.ZERO_RANGE);
+            Pair<Float, Float> range = setBonus.getBonusAttributeRanges().getOrDefault(bonusAttribute, defaultRange);
+            float high = range.getA() != 0 ? range.getB() : defaultRange.getB();
+            Component component = bonusAttribute.formatValue(value, "+");
+            if ((int) Math.ceil(high) == value) {
+                component = component.append(Component.text(" [MAX]", NamedTextColor.LIGHT_PURPLE));
+            }
+            if (lockedAttributes.contains(bonusAttribute)) {
+                component = component.append(Component.text(" [LOCKED]", NamedTextColor.RED));
+            }
+            confirmLore.add(component);
+        }
+        confirmLore.add(Component.empty());
+        confirmLore.add(Component.text("Possible value ranges:", NamedTextColor.GRAY));
+        confirmLore.addAll(new NewItemLoreCreator.Builder(item)
+                .addBonusAttributes(false, item.getBonusAttributes())
+                .build());
+        confirmLore.add(Component.empty());
+        confirmLore.add(Component.text("Locked Attributes:", NamedTextColor.GRAY));
+        if (lockedAttributes.isEmpty()) {
+            confirmLore.add(Component.text(" - None", NamedTextColor.GRAY));
+        } else {
+            for (NewItemAttribute lockedAttribute : lockedAttributes) {
+                confirmLore.add(Component.text(" - ", NamedTextColor.GRAY).append(
+                        Component.text(lockedAttribute.getName(), lockedAttribute.getTextColor())
+                ));
+            }
+        }
+        confirmLore.addAll(PvEUtils.getCostLore(cost, "Reroll Cost", true));
         Menu.openConfirmationMenu(player,
                 "Confirm Reroll",
                 3,
-                new ArrayList<>() {{
-                    addAll(new NewItemLoreCreator.Builder(item)
-                            .addBonusAttributes(item.getBonusAttributeValues())
-                            .build());
-                    add(Component.empty());
-                    addAll(new NewItemLoreCreator.Builder(item)
-                            .addBonusAttributes()
-                            .build());
-                    add(Component.empty());
-                    add(Component.text("Locked Attributes:", NamedTextColor.GRAY));
-                    if (lockedAttributes.isEmpty()) {
-                        add(Component.text(" - None", NamedTextColor.GRAY));
-                    } else {
-                        for (NewItemAttribute lockedAttribute : lockedAttributes) {
-                            add(Component.text(" - ", NamedTextColor.GRAY).append(
-                                    Component.text(lockedAttribute.getName(), lockedAttribute.getTextColor())
-                            ));
-                        }
-                    }
-                    add(Component.empty());
-                    addAll(PvEUtils.getCostLore(cost, "Reroll Cost", true));
-                }},
+                confirmLore,
                 Menu.GO_BACK,
                 (m2, e2) -> {
-                    Component component = Component.text("You rerolled your item", NamedTextColor.GRAY)
+                    Component component = Component.text("You rerolled your item ", NamedTextColor.GRAY)
                                                    .append(item.getHoverComponent())
                                                    .append(Component.text(" and it became "));
                     for (Map.Entry<Spendable, Long> spendableLongEntry : cost.entrySet()) {
                         spendableLongEntry.getKey().subtractFromPlayer(databasePlayer, spendableLongEntry.getValue());
                     }
                     item.reroll(lockedAttributes);
+                    item.getRerollCostsHistory().add(cost);
                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                     player.playSound(player.getLocation(), Sound.ENTITY_GENERIC_SPLASH, 2, 0.1f);
                     player.closeInventory();
                     AbstractItem.sendItemMessage(player, component.append(item.getHoverComponent()));
                 },
-                (m2, e2) -> open(player), //TODO
+                (m2, e2) -> open(player, item, lockedAttributes),
                 (m2) -> {
                 }
         );

@@ -49,7 +49,7 @@ public abstract class BaseTier implements ItemTier {
     }
 
     @Override
-    public Map<Integer, Map<Spendable, Long>> rerollCost() {
+    public Map<Integer, Map<Spendable, Long>> getRerollCost() {
         return rerollCost;
     }
 
@@ -59,7 +59,7 @@ public abstract class BaseTier implements ItemTier {
     }
 
     @Override
-    public Map<Integer, Map<Spendable, Long>> lockScrollRerollCost() {
+    public Map<Integer, Map<Spendable, Long>> getLockScrollRerollCost() {
         return lockScrollRerollCost;
     }
 
