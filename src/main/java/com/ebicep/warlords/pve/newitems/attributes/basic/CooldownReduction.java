@@ -9,8 +9,12 @@ import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 public class CooldownReduction implements Attribute {
+
+    private static final ItemStack ITEM_STACK = new ItemStack(Material.GRAY_DYE);
 
     @Override
     public String getDatabaseName() {
@@ -25,6 +29,11 @@ public class CooldownReduction implements Attribute {
     @Override
     public TextColor getTextColor() {
         return NamedTextColor.AQUA;
+    }
+
+    @Override
+    public ItemStack getItemStack() {
+        return ITEM_STACK;
     }
 
     @Override

@@ -9,6 +9,7 @@ import com.ebicep.warlords.pve.newitems.setbonus.NewItemsSetBonus;
 import com.ebicep.warlords.pve.newitems.tiers.NewItemTier;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -121,6 +122,7 @@ public class NewItemSetsMenu {
                             "Attribute Filter",
                             NewItemAttribute.BASIC_ATTRIBUTES,
                             attributeFilter,
+                            NewItemAttribute::getItemStack,
                             backAction
                     );
                 }
@@ -147,6 +149,7 @@ public class NewItemSetsMenu {
                             "Tier Filter",
                             NewItemTier.VALUES,
                             tierFilter,
+                            tier -> Utils.getWoolFromIndex(tier.ordinal()),
                             backAction
                     );
                 }
@@ -173,6 +176,7 @@ public class NewItemSetsMenu {
                             "Slot Filter",
                             NewItemsSlot.VALUES,
                             slotFilter,
+                            slot -> Utils.getWoolFromIndex(slot.ordinal()),
                             backAction
                     );
                 }

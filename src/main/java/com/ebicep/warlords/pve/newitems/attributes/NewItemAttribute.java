@@ -6,6 +6,7 @@ import com.ebicep.warlords.pve.newitems.attributes.bonus.*;
 import com.ebicep.warlords.util.java.NamedEnum;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -83,6 +84,11 @@ public enum NewItemAttribute implements Attribute, NamedEnum {
     @Override
     public TextColor getTextColor() {
         return attribute.getTextColor();
+    }
+
+    @Override
+    public ItemStack getItemStack() {
+        return attribute.getItemStack();
     }
 
     @Override

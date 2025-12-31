@@ -130,6 +130,7 @@ public class NewItemRerollMenu {
                                 "Select Locked Attributes",
                                 item.getBonusAttributes().toArray(new NewItemAttribute[0]),
                                 lockedAttributes,
+                                NewItemAttribute::getItemStack,
                                 (m2, e2) -> open(player, item, lockedAttributes)
                         );
                     }
@@ -195,6 +196,10 @@ public class NewItemRerollMenu {
         }
         NewItemsSetBonus setBonus = item.getSetBonus();
         List<Component> confirmLore = new ArrayList<>();
+        confirmLore.add(Component.text("Attempt: ", NamedTextColor.GRAY).append(
+                Component.text(item.getRerollCostsHistory().size() + 1 + "/" + NewItemRerollCost.MAX_REROLLS, NamedTextColor.YELLOW)
+        ));
+        confirmLore.add(Component.empty());
         confirmLore.add(Component.text("Current values:", NamedTextColor.GRAY));
         for (NewItemAttribute bonusAttribute : NewItemAttribute.BONUS_ATTRIBUTES) {
             Integer value = item.getBonusAttributeValues().get(bonusAttribute);

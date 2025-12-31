@@ -53,7 +53,14 @@ public class NewItemFilterMenu {
                         )
                         .get(),
                 (m, e) -> {
-                    MenuUtils.openEnumSelectorMenu(player, "Attribute Filter", NewItemAttribute.VALUES, attributeFilter, backAction);
+                    MenuUtils.openEnumSelectorMenu(
+                            player,
+                            "Attribute Filter",
+                            NewItemAttribute.VALUES,
+                            attributeFilter,
+                            NewItemAttribute::getItemStack,
+                            backAction
+                    );
                 }
         );
 
