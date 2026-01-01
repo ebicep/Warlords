@@ -11,6 +11,7 @@ import java.util.Map;
 public interface NewItemRerollCost {
 
     int MAX_REROLLS = 3;
+    int MAX_LOCKED_ATTRIBUTES = 1;
 
     private static Map<Spendable, Long> toSpendableMap(Map<String, Long> map) {
         Map<Spendable, Long> spendableMap = new LinkedHashMap<>();

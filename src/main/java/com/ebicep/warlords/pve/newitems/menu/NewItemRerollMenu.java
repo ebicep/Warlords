@@ -16,6 +16,7 @@ import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.java.StringUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -128,7 +129,7 @@ public class NewItemRerollMenu {
                                 "Select Locked Attributes",
                                 item.getBonusAttributes().toArray(new NewItemAttribute[0]),
                                 lockedAttributes,
-                                1,
+                                NewItemRerollCost.MAX_LOCKED_ATTRIBUTES,
                                 NewItemAttribute::getItemStack,
                                 (m2, e2) -> open(player, item, lockedAttributes),
                                 selectorMenu -> {
@@ -136,7 +137,9 @@ public class NewItemRerollMenu {
                                             new ItemBuilder(Material.BOOK)
                                                     .name(Component.text("Information", NamedTextColor.GREEN))
                                                     .lore(WordWrap.wrap(Component.text(
-                                                                    "You can only select 1 attribute to lock per reroll. Locked attributes will not change when you reroll the item.",
+                                                            "You can only select " + NewItemRerollCost.MAX_LOCKED_ATTRIBUTES +
+                                                                    StringUtils.toPlural(" attribute", NewItemRerollCost.MAX_LOCKED_ATTRIBUTES) +
+                                                                    " to lock per reroll. Locked attributes will not change when you reroll the item.",
                                                                     NamedTextColor.GRAY
                                                             ), 140
                                                     ))
