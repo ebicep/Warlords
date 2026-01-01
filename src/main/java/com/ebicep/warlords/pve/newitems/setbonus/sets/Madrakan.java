@@ -65,12 +65,6 @@ public class Madrakan extends BaseSet {
                         currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getName(), 1 + (damageIncreasePercent / 100f));
                     }
             ));
-            // Implementation for:
-            // 1. Increasing the player's base damage by damageIncreasePercent.
-            // 2. Setting the player's Crit Chance or Crit Multiplier to 0
-            //    (or intercepting damage events to cancel crits) if disableCriticalHits is true.
         }
-
     }
-
 }

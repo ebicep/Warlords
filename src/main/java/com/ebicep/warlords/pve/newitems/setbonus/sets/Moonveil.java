@@ -54,7 +54,7 @@ public class Moonveil extends BaseSet {
             warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
                     getName(),
                     null,
-                    OtherworldlyAmulet.class,
+                    Moonveil.class,
                     null,
                     warlordsPlayer,
                     CooldownTypes.ITEM,
