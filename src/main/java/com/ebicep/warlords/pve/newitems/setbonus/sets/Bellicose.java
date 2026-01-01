@@ -8,11 +8,14 @@ import java.util.List;
 
 public class Bellicose extends BaseSet {
 
+    private int maxHealthRequirement;
+    private int meleeDamageIncrease;
 
     @Override
     public void init() {
         super.init();
-
+        this.maxHealthRequirement = getValue("maxHealthRequirement", int.class);
+        this.meleeDamageIncrease = getValue("meleeDamageIncrease", int.class);
     }
 
     @Override
@@ -27,7 +30,7 @@ public class Bellicose extends BaseSet {
 
     @Override
     public List<Object> getVariables() {
-        return List.of();
+        return List.of(maxHealthRequirement, meleeDamageIncrease);
     }
 
     public class Bonus implements SetBonus.Bonus {

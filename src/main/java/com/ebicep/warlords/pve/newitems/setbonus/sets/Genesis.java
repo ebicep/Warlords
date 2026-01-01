@@ -11,11 +11,16 @@ import java.util.List;
 
 public class Genesis extends BaseSet {
 
+    private int healthThreshold;
+    private int maxHealthDamageMultiplier;
+    private int cooldownSeconds;
 
     @Override
     public void init() {
         super.init();
-
+        this.healthThreshold = getValue("healthThreshold", int.class);
+        this.maxHealthDamageMultiplier = getValue("maxHealthDamageMultiplier", int.class);
+        this.cooldownSeconds = getValue("cooldownSeconds", int.class);
     }
 
     @Override
@@ -30,7 +35,7 @@ public class Genesis extends BaseSet {
 
     @Override
     public List<Object> getVariables() {
-        return List.of();
+        return List.of(healthThreshold, maxHealthDamageMultiplier, cooldownSeconds);
     }
 
     public class Bonus implements SetBonus.Bonus {

@@ -8,11 +8,12 @@ import java.util.List;
 
 public class Encumber extends BaseSet {
 
+    private int extraCharges;
 
     @Override
     public void init() {
         super.init();
-
+        this.extraCharges = getValue("extraCharges", int.class);
     }
 
     @Override
@@ -27,7 +28,7 @@ public class Encumber extends BaseSet {
 
     @Override
     public List<Object> getVariables() {
-        return List.of();
+        return List.of(extraCharges);
     }
 
     public class Bonus implements SetBonus.Bonus {
