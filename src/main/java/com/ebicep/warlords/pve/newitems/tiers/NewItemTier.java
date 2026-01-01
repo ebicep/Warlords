@@ -106,4 +106,14 @@ public enum NewItemTier implements ItemTier, NamedEnum {
         itemTier.setLockScrollRerollCost(lockScrollRerollCost);
     }
 
+    @Override
+    public Map<Spendable, Long> getCraftCost() {
+        return itemTier.getCraftCost();
+    }
+
+    @Override
+    public void setCraftCost(Map<Spendable, Long> craftCost) {
+        itemTier.setCraftCost(craftCost);
+    }
+
 }

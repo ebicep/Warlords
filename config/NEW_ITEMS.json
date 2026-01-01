@@ -291,6 +291,9 @@
               "ITEM_LOCK_SCROLL": 1,
               "LEGEND_FRAGMENTS": 9500
             }
+          },
+          "craftCost": {
+            "COIN": 1000
           }
         },
         "legendary": {
@@ -365,6 +368,9 @@
               "ITEM_LOCK_SCROLL": 1,
               "LEGEND_FRAGMENTS": 10500
             }
+          },
+          "craftCost": {
+            "COIN": 1000
           }
         },
         "ascendant": {
@@ -439,6 +445,9 @@
               "ITEM_LOCK_SCROLL": 1,
               "LEGEND_FRAGMENTS": 12000
             }
+          },
+          "craftCost": {
+            "COIN": 1000
           }
         }
       },

@@ -88,6 +88,9 @@ public class NewItem {
         lore.add(Component.empty());
         lore.add(Component.text(getTier().getName() + " " + slot.getName(), getTier().getTextColor()));
         lore.add(Component.text("REROLL [" + rerollCostsHistory.size() + "/" + NewItemRerollCost.MAX_REROLLS + "]", NamedTextColor.DARK_GRAY)); // TODO ?
+        if (isFavorite) {
+            lore.add(Component.text("FAVORITE", NamedTextColor.LIGHT_PURPLE));
+        }
         return new ItemBuilder(getItemStack())
                 .name(getName())
                 .lore(lore);

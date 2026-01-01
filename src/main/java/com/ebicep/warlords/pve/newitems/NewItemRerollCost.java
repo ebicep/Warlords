@@ -13,14 +13,6 @@ public interface NewItemRerollCost {
     int MAX_REROLLS = 3;
     int MAX_LOCKED_ATTRIBUTES = 1;
 
-    private static Map<Spendable, Long> toSpendableMap(Map<String, Long> map) {
-        Map<Spendable, Long> spendableMap = new LinkedHashMap<>();
-        for (Map.Entry<String, Long> entry : map.entrySet()) {
-            spendableMap.put(SpendableParser.parse(entry.getKey()), entry.getValue());
-        }
-        return spendableMap;
-    }
-
     default void init(ConfigBased configBased) {
         Map<Integer, Map<Spendable, Long>> rerollCost = new HashedMap<>();
         Map<Integer, Map<Spendable, Long>> lockScrollRerollCost = new HashedMap<>();
@@ -33,6 +25,17 @@ public interface NewItemRerollCost {
         }
         setRerollCost(rerollCost);
         setLockScrollRerollCost(lockScrollRerollCost);
+    }
+
+    private static Map<Spendable, Long> toSpendableMap(Map<String, Long> map) {
+        Map<Spendable, Long> spendableMap = new LinkedHashMap<>();
+        for (Map.Entry<String, Long> entry : map.entrySet()) {
+            try {
+                spendableMap.put(SpendableParser.parse(entry.getKey()), entry.getValue());
+            } catch (Exception ignored) {
+            }
+        }
+        return spendableMap;
     }
 
     Map<Integer, Map<Spendable, Long>> getRerollCost();

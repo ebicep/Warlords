@@ -76,78 +76,9 @@ public class NewItemEquipMenu {
         NewItemSearchMenu menu = new NewItemSearchMenu(
                 player, "Items",
                 (i, m, e) -> {
-                    if (e.isRightClick()) {
-                        i.setFavorite(!i.isFavorite());
-                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                        NewItem.sendItemMessage(player, Component.text("You " + (i.isFavorite() ? "favorited" : "unfavorited") + " ", NamedTextColor.GRAY)
-                                                                 .append(i.getHoverComponent())
-                        );
-                        openItemEquipMenuExternal(player, databasePlayer);
-                        return;
-                    }
-                    // TODO
-//                    if (i.isFavorite()) {
-//                        player.sendMessage(Component.text("You cannot scrap a favorited item!", NamedTextColor.RED));
-//                        return;
-//                    }
-//                    if (equippedItems.contains(i.getUUID())) {
-//                        player.sendMessage(Component.text("You cannot scrap an equipped item!", NamedTextColor.RED));
-//                        return;
-//                    }
-//                    Pair<Integer, Integer> scrapValue = i.getTier().scrapValue;
-//                    Menu.openConfirmationMenu(player,
-//                            "Confirm Scrap",
-//                            3,
-//                            new ArrayList<>() {{
-//                                add(Component.text("Scrap this item and claim its materials.", NamedTextColor.GRAY));
-//                                add(Component.empty());
-//                                add(Component.textOfChildren(
-//                                        Component.text("Rewards: ", NamedTextColor.GREEN),
-//                                        Component.text(scrapValue.getA() + "-" + scrapValue.getB() + " Scrap Metal.", NamedTextColor.GRAY)
-//                                ));
-//                                add(Component.empty());
-//                                add(Component.textOfChildren(
-//                                        Component.text("WARNING: ", NamedTextColor.RED),
-//                                        Component.text("This action cannot be undone.", NamedTextColor.GRAY)
-//                                ));
-//                            }},
-//                            Menu.GO_BACK,
-//                            (m2, e2) -> {
-//                                DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
-//                                NewItemsManager itemsManager = pveStats.getNewItemsManager();
-//                                int scrapAmount = MathUtils.generateRandomValueBetweenInclusive(scrapValue.getA(), scrapValue.getB());
-//                                pveStats.addCurrency(Currencies.SCRAP_METAL, scrapAmount);
-//                                itemsManager.removeItem(i);
-//                                itemsManager.getLoadouts().forEach(itemLoadout -> itemLoadout.getItems().removeIf(itemUUID -> itemUUID.equals(i.getUUID())));
-//                                DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-//
-//                                Bukkit.getPluginManager().callEvent(new ItemScrapEvent(uuid, i));
-//
-//                                NewItem.sendItemMessage(player,
-//                                        Component.text("You received " + scrapAmount + " Scrap Metal from scrapping ", NamedTextColor.GRAY)
-//                                                 .append(i.getHoverComponent())
-//                                );
-//                                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 2, 2);
-//
-//                                openItemEquipMenuExternal(player, databasePlayer);
-//                            },
-//                            (m2, e2) -> openItemEquipMenuExternal(player, databasePlayer),
-//                            (m2) -> {
-//                            }
-//                    );
+                    NewItemEditorMenu.open(player, i);
                 },
-                itemBuilder -> itemBuilder
-                        .addLore(
-                                Component.empty(),
-                                Component.textOfChildren(
-                                        Component.text("LEFT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
-                                        Component.text("to scrap", NamedTextColor.GREEN)
-                                ),
-                                Component.textOfChildren(
-                                        Component.text("RIGHT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
-                                        Component.text("to favorite", NamedTextColor.GREEN)
-                                )
-                        ),
+                itemBuilder -> itemBuilder,
                 menuSettings,
                 databasePlayer,
                 m -> {

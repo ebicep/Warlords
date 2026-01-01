@@ -7,6 +7,7 @@ import co.aikar.commands.HelpEntry;
 import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.pve.newitems.menu.NewItemCraftMenu;
 import com.ebicep.warlords.pve.newitems.menu.NewItemEquipMenu;
 import com.ebicep.warlords.pve.newitems.menu.NewItemRerollMenu;
 import com.ebicep.warlords.pve.newitems.menu.NewItemSetsMenu;
@@ -39,6 +40,11 @@ public class NewItemsCommand extends BaseCommand {
     @Subcommand("reroll")
     public void reroll(Player player) {
         NewItemRerollMenu.open(player);
+    }
+
+    @Subcommand("craft")
+    public void craft(Player player) {
+        NewItemCraftMenu.open(player);
     }
 
     @Subcommand("clear")

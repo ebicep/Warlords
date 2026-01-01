@@ -20,6 +20,7 @@ public class NewItemsManager {
     }
 
     public void removeItem(NewItem item) {
+        this.loadouts.forEach(loadout -> loadout.getItems().removeIf(uuid -> uuid.equals(item.getUUID())));
         this.itemInventory.remove(item);
     }
 

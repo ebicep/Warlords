@@ -27,6 +27,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 
 import java.util.*;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.menu.Menu.*;
@@ -34,10 +35,17 @@ import static com.ebicep.warlords.menu.Menu.*;
 public class NewItemRerollMenu {
 
     public static void open(Player player) {
-        open(player, null, EnumSet.noneOf(NewItemAttribute.class));
+        open(player, null, EnumSet.noneOf(NewItemAttribute.class), menu -> {
+                    menu.setItem(4, 4, MENU_CLOSE, ACTION_CLOSE_MENU);
+                }
+        );
     }
 
-    private static void open(Player player, NewItem item, EnumSet<NewItemAttribute> lockedAttributes) {
+    public static void open(Player player, NewItem item, Consumer<Menu> additionalSetup) {
+        open(player, item, EnumSet.noneOf(NewItemAttribute.class), additionalSetup);
+    }
+
+    private static void open(Player player, NewItem item, EnumSet<NewItemAttribute> lockedAttributes, Consumer<Menu> additionalSetup) {
         DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
         Menu menu = new Menu("Reroll Item", 9 * 5);
 
@@ -58,7 +66,7 @@ public class NewItemRerollMenu {
                     player,
                     "Select Item to Reroll",
                     (i, m2, e2) -> {
-                        open(player, i, lockedAttributes);
+                        open(player, i, lockedAttributes, additionalSetup);
                     },
                     builder -> builder,
                     new NewItemSearchMenu.PlayerItemMenuSettings(databasePlayer)
@@ -131,7 +139,7 @@ public class NewItemRerollMenu {
                                 lockedAttributes,
                                 NewItemRerollCost.MAX_LOCKED_ATTRIBUTES,
                                 NewItemAttribute::getItemStack,
-                                (m2, e2) -> open(player, item, lockedAttributes),
+                                (m2, e2) -> open(player, item, lockedAttributes, additionalSetup),
                                 selectorMenu -> {
                                     selectorMenu.setItem(4, 0,
                                             new ItemBuilder(Material.BOOK)
@@ -186,16 +194,23 @@ public class NewItemRerollMenu {
                             player.closeInventory();
                             return;
                         }
-                        reroll(player, databasePlayer, item, lockedAttributes, cost);
+                        reroll(player, databasePlayer, item, lockedAttributes, cost, additionalSetup);
                     }
             );
         }
 
-        menu.setItem(4, 4, MENU_CLOSE, ACTION_CLOSE_MENU);
+        additionalSetup.accept(menu);
         menu.openForPlayer(player);
     }
 
-    private static void reroll(Player player, DatabasePlayer databasePlayer, NewItem item, EnumSet<NewItemAttribute> lockedAttributes, Map<Spendable, Long> cost) {
+    private static void reroll(
+            Player player,
+            DatabasePlayer databasePlayer,
+            NewItem item,
+            EnumSet<NewItemAttribute> lockedAttributes,
+            Map<Spendable, Long> cost,
+            Consumer<Menu> additionalSetup
+    ) {
         for (Map.Entry<Spendable, Long> currenciesLongEntry : cost.entrySet()) {
             Spendable spendable = currenciesLongEntry.getKey();
             long value = currenciesLongEntry.getValue();
@@ -268,7 +283,7 @@ public class NewItemRerollMenu {
                     player.closeInventory();
                     AbstractItem.sendItemMessage(player, component.append(item.getHoverComponent()));
                 },
-                (m2, e2) -> open(player, item, lockedAttributes),
+                (m2, e2) -> open(player, item, lockedAttributes, additionalSetup),
                 (m2) -> {
                 }
         );
