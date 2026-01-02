@@ -1,14 +1,17 @@
 package com.ebicep.warlords.pve.newitems;
 
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.newitems.attributes.NewItemAttribute;
 import com.ebicep.warlords.pve.newitems.setbonus.NewItemsSetBonus;
 import com.ebicep.warlords.pve.newitems.tiers.NewItemTier;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
+import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.java.JavaUtils;
 import com.ebicep.warlords.util.java.RandomCollection;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
+import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -111,9 +114,9 @@ public class NewItemsUtils {
 
     public static List<Component> getTotalSetsStatsComponent(List<NewItem> items) {
         List<Component> components = new ArrayList<>();
-        Map<NewItemsSetBonus, Set<NewItemsSlot>> activeSets = getActiveSets(items);
+        Map<NewItemsSetBonus, List<NewItemsSlot>> activeSets = getActiveSets(items);
         activeSets.forEach((setBonus, slots) -> {
-            components.add(Component.text(setBonus.getName() + " Set [" + slots.size() + "/" + slots.size() + "]", NamedTextColor.GRAY));
+            components.add(Component.text(setBonus.getName() + " Set [" + slots.size() + "/" + setBonus.getSlots().size() + "]", NamedTextColor.GRAY));
             for (NewItemsSlot newItemsSlot : setBonus.getSlots()) {
                 components.add(Component.text(" - " + setBonus.getName() + " " + newItemsSlot.getName(),
                         slots.contains(newItemsSlot) ? setBonus.getTier().getTextColor() : NamedTextColor.GRAY
@@ -133,14 +136,14 @@ public class NewItemsUtils {
     }
 
     @Nonnull
-    public static Map<NewItemsSetBonus, Set<NewItemsSlot>> getActiveSets(List<NewItem> items) {
-        Map<NewItemsSetBonus, Set<NewItemsSlot>> activeSets = new HashMap<>();
+    public static Map<NewItemsSetBonus, List<NewItemsSlot>> getActiveSets(List<NewItem> items) {
+        Map<NewItemsSetBonus, List<NewItemsSlot>> activeSets = new HashMap<>();
         for (NewItem item : items) {
             NewItemsSetBonus setBonus = item.getSetBonus();
             if (setBonus.isNoBonus()) {
                 continue;
             }
-            activeSets.computeIfAbsent(setBonus, k -> new HashSet<>()).add(item.getSlot());
+            activeSets.computeIfAbsent(setBonus, k -> new ArrayList<>()).add(item.getSlot());
         }
         return activeSets;
     }
@@ -158,6 +161,18 @@ public class NewItemsUtils {
         }
         builder.text("]", NamedTextColor.GRAY);
         return builder.build();
+    }
+
+    public static void sendItemMessage(Player player, String message) {
+        player.sendMessage(Component.text("Items", NamedTextColor.RED).append(ChatChannels.CHAT_ARROW).append(Component.text(message)));
+    }
+
+    public static void sendItemMessage(Player player, Component message) {
+        player.sendMessage(Component.text("Items", NamedTextColor.RED).append(ChatChannels.CHAT_ARROW).append(message));
+    }
+
+    public static void sendItemMessage(WarlordsEntity player, Component message) {
+        player.sendMessage(Component.text("Items", NamedTextColor.RED).append(ChatChannels.CHAT_ARROW).append(message));
     }
 
 }

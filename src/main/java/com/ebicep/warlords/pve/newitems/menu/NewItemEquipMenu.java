@@ -165,8 +165,8 @@ public class NewItemEquipMenu {
                             if (e.isShiftClick()) {
                                 item.setFavorite(!item.isFavorite());
                                 DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                                NewItem.sendItemMessage(player, Component.text("You " + (item.isFavorite() ? "favorited" : "unfavorited") + " ", NamedTextColor.GRAY)
-                                                                         .append(item.getHoverComponent())
+                                NewItemsUtils.sendItemMessage(player, Component.text("You " + (item.isFavorite() ? "favorited" : "unfavorited") + " ", NamedTextColor.GRAY)
+                                                                               .append(item.getHoverComponent())
                                 );
                                 openItemLoadoutMenu(player, itemLoadout, databasePlayer);
                             } else if (e.isLeftClick()) {

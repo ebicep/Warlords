@@ -24,8 +24,8 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.commands.AbilityTreeCommand;
-import com.ebicep.warlords.pve.items.menu.ItemEquipMenu;
 import com.ebicep.warlords.pve.mobs.MobDrop;
+import com.ebicep.warlords.pve.newitems.menu.NewItemEquipMenu;
 import com.ebicep.warlords.pve.rewards.RewardInventory;
 import com.ebicep.warlords.pve.rewards.types.LevelUpReward;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
@@ -990,7 +990,7 @@ public class WarlordsNewHotbarMenu {
                             .get(),
                     (m, e) -> {}
             );
-            menu.setItem(4, 1, ITEMS_MENU, (m, e) -> ItemEquipMenu.openItemEquipMenuExternal(player, databasePlayer));
+            menu.setItem(4, 1, ITEMS_MENU, (m, e) -> NewItemEquipMenu.openItemEquipMenuExternal(player, databasePlayer));
             menu.setItem(5, 1, REWARD_INVENTORY_MENU, (m, e) -> RewardInventory.openRewardInventory(player, 1));
             menu.setItem(6, 1, ABILITY_TREE_MENU, (m, e) -> AbilityTreeCommand.open(player));
 

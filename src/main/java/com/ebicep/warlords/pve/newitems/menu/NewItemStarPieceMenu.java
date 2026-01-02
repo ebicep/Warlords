@@ -5,7 +5,12 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.PvEUtils;
 import com.ebicep.warlords.pve.Spendable;
+import com.ebicep.warlords.pve.StarPieces;
 import com.ebicep.warlords.pve.newitems.NewItem;
+import com.ebicep.warlords.pve.newitems.NewItemsUtils;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
+import com.ebicep.warlords.util.bukkit.WordWrap;
+import com.ebicep.warlords.util.java.JavaUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Sound;
@@ -17,10 +22,17 @@ import java.util.Map;
 
 public class NewItemStarPieceMenu {
 
-    public static void openNewItemStarPieceMenu(Player player, DatabasePlayer databasePlayer, NewItem item, Map<Spendable, Long> cost) {
+    public static void openNewItemStarPieceMenu(Player player, DatabasePlayer databasePlayer, NewItem item, StarPieces selectedStar, Map<Spendable, Long> cost) {
         List<Component> confirmLore = new ArrayList<>();
-        confirmLore.add(Component.text("Apply a star piece to your item.", NamedTextColor.GRAY));
-        confirmLore.add(Component.text("This will override any previous star piece.", NamedTextColor.GRAY));
+        confirmLore.addAll(WordWrap.wrap(ComponentBuilder
+                                .create()
+                                .text("Apply " + (selectedStar.name.startsWith("a") ? "an " : "a "), NamedTextColor.GRAY)
+                                .text(selectedStar.name, selectedStar.currency.getTextColor())
+                                .text(" star piece to your item. This will override any previous star piece.", NamedTextColor.GRAY)
+                                .build(),
+                        140
+                )
+        );
         confirmLore.addAll(PvEUtils.getCostLore(cost, true));
 
         Menu.openConfirmationMenu(
@@ -34,11 +46,11 @@ public class NewItemStarPieceMenu {
                                                    .append(item.getHoverComponent())
                                                    .append(Component.text(" and it became "));
 
-                    // TODO apply star piece effect to item
+                    item.getStarPieceBonuses().add(new NewItem.StarPieceBonus(selectedStar, JavaUtils.randomFromSet(item.getBonusAttributes())));
                     cost.forEach((spendable, amount) -> spendable.subtractFromPlayer(databasePlayer, amount));
                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
-                    NewItem.sendItemMessage(player, component.append(item.getHoverComponent()).append(Component.text("!")));
+                    NewItemsUtils.sendItemMessage(player, component.append(item.getHoverComponent()).append(Component.text("!")));
                     player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
 
                     NewItemEditorMenu.open(player, item);
