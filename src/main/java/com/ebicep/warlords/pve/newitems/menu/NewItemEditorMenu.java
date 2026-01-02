@@ -129,7 +129,7 @@ public class NewItemEditorMenu {
                                 return;
                             }
                         }
-                        NewItemStarPieceMenu.openNewItemStarPieceMenu(player, databasePlayer, item, starPieceCost);
+                        NewItemStarPieceMenu.openNewItemStarPieceMenu(player, databasePlayer, item, selectedStar, starPieceCost);
                     } else if (e.getClick().isRightClick()) {
                         open(player, item, selectedStar.next());
                     }

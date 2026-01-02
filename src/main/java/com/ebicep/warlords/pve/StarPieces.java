@@ -22,36 +22,42 @@ import java.util.Map;
 
 public enum StarPieces {
 
-    COMMON(Currencies.COMMON_STAR_PIECE,
+    COMMON("Common",
+            Currencies.COMMON_STAR_PIECE,
             10,
             new LinkedHashMap<>()
     ),
-    RARE(Currencies.RARE_STAR_PIECE,
+    RARE("Rare",
+            Currencies.RARE_STAR_PIECE,
             20,
             new LinkedHashMap<>() {{
                 put(Currencies.COMMON_STAR_PIECE, 3L);
                 put(Currencies.COIN, 50_000L);
             }}
     ),
-    EPIC(Currencies.EPIC_STAR_PIECE,
+    EPIC("Epic",
+            Currencies.EPIC_STAR_PIECE,
             30,
             new LinkedHashMap<>() {{
                 put(Currencies.RARE_STAR_PIECE, 3L);
                 put(Currencies.COIN, 250_000L);
             }}
     ),
-    LEGENDARY(Currencies.LEGENDARY_STAR_PIECE,
+    LEGENDARY("Legendary",
+            Currencies.LEGENDARY_STAR_PIECE,
             40,
             new LinkedHashMap<>() {{
                 put(Currencies.EPIC_STAR_PIECE, 3L);
                 put(Currencies.COIN, 1_000_000L);
             }}
     ),
-    ASCENDANT(Currencies.ASCENDANT_STAR_PIECE,
+    ASCENDANT("Ascendant",
+            Currencies.ASCENDANT_STAR_PIECE,
             50,
             new LinkedHashMap<>()
     ),
-    VOID(Currencies.VOID_STAR_PIECE,
+    VOID("Void",
+            Currencies.VOID_STAR_PIECE,
             100,
             new LinkedHashMap<>()
     );
@@ -133,12 +139,14 @@ public enum StarPieces {
         menu.openForPlayer(player);
     }
 
+    public final String name;
     public final Currencies currency;
     public final int starPieceBonusValue;
     @Nonnull
     public final LinkedHashMap<Currencies, Long> synthesisCosts;
 
-    StarPieces(Currencies currency, int starPieceBonusValue, @Nonnull LinkedHashMap<Currencies, Long> synthesisCosts) {
+    StarPieces(String name, Currencies currency, int starPieceBonusValue, @Nonnull LinkedHashMap<Currencies, Long> synthesisCosts) {
+        this.name = name;
         this.currency = currency;
         this.starPieceBonusValue = starPieceBonusValue;
         this.synthesisCosts = synthesisCosts;

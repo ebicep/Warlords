@@ -12,6 +12,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.data.annotation.TypeAlias;
 
 import java.time.Instant;
@@ -28,6 +29,7 @@ public class NewItem {
     private NewItemsSetBonus setBonus;
     private boolean isFavorite = false;
     private List<Map<Spendable, Long>> rerollCostsHistory = new ArrayList<>();
+    private List<StarPieceBonus> starPieceBonuses = new ArrayList<>();
 
     public NewItem() {
         // for deserialization
@@ -68,7 +70,7 @@ public class NewItem {
         List<Component> lore = new NewItemLoreCreator.Builder(this)
                 .addStarComponent()
                 .addBasicAttributes()
-                .addBonusAttributes(getBonusAttributeValues())
+                .addBonusAttributes(getBonusAttributeValues(), getStarPieceBonus())
                 .addSetBonus(itemsManager, loadout)
                 .build();
         lore.add(Component.empty());
@@ -83,11 +85,15 @@ public class NewItem {
     }
 
     public Map<NewItemAttribute, Integer> getBonusAttributeValues() {
+        StarPieceBonus starPieceBonus = getStarPieceBonus();
         Map<NewItemAttribute, Integer> attributeValues = new EnumMap<>(NewItemAttribute.class);
         bonusAttributeDistribution.forEach((attribute, distributionPercent) -> {
             Pair<Float, Float> range = getTier().getBonusAttributeRanges().get(attribute);
             if (range != null) {
                 int bonusValue = (int) Math.ceil(range.getA() + (range.getB() - range.getA()) * (distributionPercent / 100f));
+                if (starPieceBonus != null && starPieceBonus.attribute() == attribute) {
+                    bonusValue = (int) Math.ceil(bonusValue * (1 + starPieceBonus.starPiece().starPieceBonusValue / 100f));
+                }
                 attributeValues.put(attribute, attributeValues.getOrDefault(attribute, 0) + bonusValue);
             }
         });
@@ -157,6 +163,23 @@ public class NewItem {
 
     public List<Map<Spendable, Long>> getRerollCostsHistory() {
         return rerollCostsHistory;
+    }
+
+    @Nullable
+    public StarPieceBonus getStarPieceBonus() {
+        return starPieceBonuses.isEmpty() ? null : starPieceBonuses.getLast();
+    }
+
+    public List<StarPieceBonus> getStarPieceBonuses() {
+        return starPieceBonuses;
+    }
+
+    public record StarPieceBonus(StarPieces starPiece, NewItemAttribute attribute, Instant appliedTime) {
+
+        public StarPieceBonus(StarPieces starPiece, NewItemAttribute attribute) {
+            this(starPiece, attribute, Instant.now());
+        }
+
     }
 
 }

@@ -42,7 +42,13 @@ public class NewItemLoreCreator {
         }
     }
 
-    private static void addBonusAttributes(boolean label, NewItemsSetBonus setBonus, List<Component> lore, Map<NewItemAttribute, Integer> bonusAttributeValues) {
+    private static void addBonusAttributes(
+            boolean label,
+            NewItemsSetBonus setBonus,
+            List<Component> lore,
+            Map<NewItemAttribute, Integer> bonusAttributeValues,
+            NewItem.StarPieceBonus starPieceBonus
+    ) {
         if (bonusAttributeValues.isEmpty()) {
             return;
         }
@@ -60,6 +66,9 @@ public class NewItemLoreCreator {
             Component component = bonusAttribute.formatValue(value, "+");
             if ((int) Math.ceil(high) == value) {
                 component = component.append(Component.text(" [MAX]", NamedTextColor.LIGHT_PURPLE));
+            }
+            if (starPieceBonus != null && starPieceBonus.attribute() == bonusAttribute) {
+                component = component.append(Component.text(" (+" + starPieceBonus.starPiece().starPieceBonusValue + "% ✦)", NamedTextColor.WHITE));
             }
             lore.add(component);
         }
@@ -133,12 +142,12 @@ public class NewItemLoreCreator {
             return this;
         }
 
-        public Builder addBonusAttributes(Map<NewItemAttribute, Integer> bonusAttributeValues) {
-            return addBonusAttributes(true, bonusAttributeValues);
+        public Builder addBonusAttributes(Map<NewItemAttribute, Integer> bonusAttributeValues, NewItem.StarPieceBonus starPieceBonus) {
+            return addBonusAttributes(true, bonusAttributeValues, starPieceBonus);
         }
 
-        public Builder addBonusAttributes(boolean label, Map<NewItemAttribute, Integer> bonusAttributeValues) {
-            NewItemLoreCreator.addBonusAttributes(label, setBonus, components, bonusAttributeValues);
+        public Builder addBonusAttributes(boolean label, Map<NewItemAttribute, Integer> bonusAttributeValues, NewItem.StarPieceBonus starPieceBonus) {
+            NewItemLoreCreator.addBonusAttributes(label, setBonus, components, bonusAttributeValues, starPieceBonus);
             return this;
         }
 
