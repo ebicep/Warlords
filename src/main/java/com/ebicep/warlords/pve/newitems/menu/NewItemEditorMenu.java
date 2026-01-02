@@ -7,10 +7,7 @@ import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.PvEUtils;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.StarPieces;
-import com.ebicep.warlords.pve.newitems.NewItem;
-import com.ebicep.warlords.pve.newitems.NewItemLoreCreator;
-import com.ebicep.warlords.pve.newitems.NewItemRerollCost;
-import com.ebicep.warlords.pve.newitems.NewItemsManager;
+import com.ebicep.warlords.pve.newitems.*;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import net.kyori.adventure.text.Component;
@@ -67,8 +64,8 @@ public class NewItemEditorMenu {
                 (m, e) -> {
                     item.setFavorite(!item.isFavorite());
                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                    NewItem.sendItemMessage(player, Component.text("You " + (item.isFavorite() ? "favorited " : "unfavorited "), NamedTextColor.GRAY)
-                                                             .append(item.getHoverComponent())
+                    NewItemsUtils.sendItemMessage(player, Component.text("You " + (item.isFavorite() ? "favorited " : "unfavorited "), NamedTextColor.GRAY)
+                                                                   .append(item.getHoverComponent())
                     );
                     player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 2, 2);
                     open(player, item);
@@ -174,8 +171,8 @@ public class NewItemEditorMenu {
                                 itemsManager.removeItem(item);
                                 databasePlayer.getPveStats().addCurrency(Currencies.SCRAP_METAL, 25);
                                 DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                                NewItem.sendItemMessage(player, Component.text("You received 25 Scrap Metal from salvaging ", NamedTextColor.GRAY)
-                                                                         .append(item.getHoverComponent())
+                                NewItemsUtils.sendItemMessage(player, Component.text("You received 25 Scrap Metal from salvaging ", NamedTextColor.GRAY)
+                                                                               .append(item.getHoverComponent())
                                 );
                                 player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_BREAK, 2, 0.5f);
                                 NewItemEquipMenu.openItemEquipMenuExternal(player, databasePlayer);

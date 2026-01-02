@@ -77,7 +77,7 @@ public class NewItemCraftMenu {
                     NewItemsManager itemsManager = databasePlayer.getPveStats().getNewItemsManager();
                     itemsManager.addItem(item);
                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                    NewItem.sendItemMessage(player, Component.text("You crafted ", NamedTextColor.GRAY).append(item.getHoverComponent()));
+                    NewItemsUtils.sendItemMessage(player, Component.text("You crafted ", NamedTextColor.GRAY).append(item.getHoverComponent()));
                     player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2, 1);
                     player.closeInventory();
                 },

@@ -6,6 +6,7 @@ import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.PvEUtils;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.newitems.NewItem;
+import com.ebicep.warlords.pve.newitems.NewItemsUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Sound;
@@ -38,7 +39,7 @@ public class NewItemStarPieceMenu {
                     cost.forEach((spendable, amount) -> spendable.subtractFromPlayer(databasePlayer, amount));
                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
-                    NewItem.sendItemMessage(player, component.append(item.getHoverComponent()).append(Component.text("!")));
+                    NewItemsUtils.sendItemMessage(player, component.append(item.getHoverComponent()).append(Component.text("!")));
                     player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
 
                     NewItemEditorMenu.open(player, item);
