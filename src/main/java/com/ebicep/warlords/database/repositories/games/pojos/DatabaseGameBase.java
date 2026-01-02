@@ -137,7 +137,7 @@ public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
                 }
             }
 
-            TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGameBase> createDatabaseGame = game.getGameMode().createDatabaseGame;
+            TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGameBase> createDatabaseGame = game.getGameMode().getCreateDatabaseGame();
             if (createDatabaseGame == null) {
                 ChatUtils.MessageType.GAME_SERVICE.sendMessage("Cannot add game to database - the collection has not been configured");
                 return false;
@@ -182,7 +182,7 @@ public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
             ChatUtils.MessageType.GAME_SERVICE.sendErrorMessage("Error adding game to database");
             ChatUtils.MessageType.GAME_SERVICE.sendErrorMessage(e);
 
-            TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGameBase> createDatabaseGame = game.getGameMode().createDatabaseGame;
+            TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGameBase> createDatabaseGame = game.getGameMode().getCreateDatabaseGame();
             if (createDatabaseGame == null) {
                 ChatUtils.MessageType.GAME_SERVICE.sendMessage("Cannot add game to database - the collection has not been configured");
                 return false;
@@ -509,7 +509,7 @@ public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
             return;
         }
         try {
-            GamesCollections collection = databaseGame.getGameMode().gamesCollections;
+            GamesCollections collection = databaseGame.getGameMode().getGamesCollections();
             databaseGame.gameAddons.remove(GameAddon.CUSTOM_GAME);
             //game in the database
             if (DatabaseManager.gameService.exists(databaseGame, collection)) {
@@ -749,7 +749,7 @@ public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
         if (DatabaseManager.gameService == null) {
             return;
         }
-        GamesCollections collection = databaseGame.getGameMode().gamesCollections;
+        GamesCollections collection = databaseGame.getGameMode().getGamesCollections();
         //game in the database
         if (DatabaseManager.gameService.exists(databaseGame, collection)) {
             //if counted then remove player stats then set counted to false, else do nothing

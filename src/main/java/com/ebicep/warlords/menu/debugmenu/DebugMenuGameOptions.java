@@ -254,7 +254,7 @@ public class DebugMenuGameOptions {
                         .name(Component.text("Game - " + game.getGameId(), NamedTextColor.GREEN))
                         .lore(
                                 Component.text("Map - ", NamedTextColor.DARK_GRAY).append(Component.text(game.getMap().getMapName(), NamedTextColor.RED)),
-                                Component.text("GameMode - ", NamedTextColor.DARK_GRAY).append(Component.text(game.getGameMode().name, NamedTextColor.RED)),
+                                Component.text("GameMode - ", NamedTextColor.DARK_GRAY).append(Component.text(game.getGameMode().getName(), NamedTextColor.RED)),
                                 Component.text("Addons - ", NamedTextColor.DARK_GRAY).append(Component.text(game.getAddons().toString(), NamedTextColor.RED)),
                                 Component.text("Players - ", NamedTextColor.DARK_GRAY).append(Component.text(String.valueOf(game.playersCount()), NamedTextColor.RED))
                         );

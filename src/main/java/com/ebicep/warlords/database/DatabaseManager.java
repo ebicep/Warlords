@@ -277,7 +277,7 @@ public class DatabaseManager {
             return;
         }
         Warlords.newChain().async(() -> gameService.save(databaseGame, GamesCollections.ALL)).execute();
-        Warlords.newChain().async(() -> gameService.save(databaseGame, databaseGame.getGameMode().gamesCollections)).execute();
+        Warlords.newChain().async(() -> gameService.save(databaseGame, databaseGame.getGameMode().getGamesCollections())).execute();
     }
 
     public static ConcurrentHashMap<UUID, DatabasePlayer> getLoadedPlayers(PlayersCollections playersCollections) {

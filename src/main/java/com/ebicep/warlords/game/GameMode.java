@@ -748,13 +748,13 @@ public enum GameMode {
         return mode == WAVE_DEFENSE || mode == EVENT_WAVE_DEFENSE || mode == ONSLAUGHT || mode == TREASURE_HUNT || mode == TOWER_DEFENSE || mode == WHACK_A_MOLE || mode == PVE_DEBUG;
     }
 
-    public final String name;
-    public final String abbreviation;
-    public final ItemStack itemStack;
-    public final TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGameBase> createDatabaseGame;
-    public final GamesCollections gamesCollections;
-    public final int minPlayersToAddToDatabase;
-    public final List<String> namespaces;
+    private final String name;
+    private final String abbreviation;
+    private final ItemStack itemStack;
+    private final TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGameBase> createDatabaseGame;
+    private final GamesCollections gamesCollections;
+    private final int minPlayersToAddToDatabase;
+    private final List<String> namespaces;
     private final boolean isHiddenInMenu;
 
     GameMode(
@@ -786,7 +786,7 @@ public enum GameMode {
         options.add(new PreGameItemOption(1, (g, p) -> {
             DatabasePlayer databasePlayer = DatabaseManager.getPlayer(p);
             Specializations selectedSpec = databasePlayer.getLastSpec();
-            AbstractPlayerClass apc = selectedSpec.create(namespaces);
+            AbstractPlayerClass apc = selectedSpec.create(getNamespaces());
 
             ItemStack weaponSkin = databasePlayer.getSpec(selectedSpec).getWeapon().getItem();
             return new ItemBuilder(apc.getWeapon().getItem(weaponSkin))
@@ -901,5 +901,25 @@ public enum GameMode {
 
     public boolean isHiddenInMenu() {
         return isHiddenInMenu;
+    }
+
+    public List<String> getNamespaces() {
+        return namespaces;
+    }
+
+    public String getAbbreviation() {
+        return abbreviation;
+    }
+
+    public TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGameBase> getCreateDatabaseGame() {
+        return createDatabaseGame;
+    }
+
+    public GamesCollections getGamesCollections() {
+        return gamesCollections;
+    }
+
+    public int getMinPlayersToAddToDatabase() {
+        return minPlayersToAddToDatabase;
     }
 }

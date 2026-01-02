@@ -103,7 +103,7 @@ public final class Game implements Runnable, AutoCloseable {
         this.addons = gameAddons;
         this.map = map;
         this.gameMode = gameMode;
-        this.namespace = gameMode.namespaces;
+        this.namespace = gameMode.getNamespaces();
         this.gameMode.postMapModifyOptions(map, locations, gameAddons, options);
         this.options = new ArrayList<>(options);
         options.forEach(option -> this.cachedOptions.computeIfAbsent(option.getClass(), k -> new ArrayList<>()).add(option));
