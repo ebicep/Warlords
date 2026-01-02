@@ -74,7 +74,7 @@ public class NewItemLoreCreator {
         String suffix = "";
         if (itemsManager != null && loadout != null) {
             List<NewItem> appliedItems = loadout.getActualItems(itemsManager);
-            Map<NewItemsSetBonus, Set<NewItemsSlot>> activeSets = NewItemsUtils.getActiveSets(appliedItems);
+            Map<NewItemsSetBonus, List<NewItemsSlot>> activeSets = NewItemsUtils.getActiveSets(appliedItems);
             suffix = " [" + activeSets.get(setBonus).size() + "/" + slots.size() + "]";
         }
 
