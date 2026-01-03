@@ -1,8 +1,14 @@
 package com.ebicep.warlords.pve.newitems.setbonus.sets;
 
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
+import com.ebicep.warlords.player.ingame.motionsystem.MotionModifier;
+import com.ebicep.warlords.player.ingame.motionsystem.motionaddon.MotionAddon;
 import com.ebicep.warlords.pve.newitems.setbonus.BaseSet;
 import com.ebicep.warlords.pve.newitems.setbonus.SetBonus;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.List;
 
@@ -37,10 +43,27 @@ public class IronChains extends BaseSet {
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
-            // Implementation for:
-            // 1. Increasing the player's damage reduction attribute.
-            // 2. Applying a permanent movement speed debuff (slowness) 
-            //    calculated from movementSpeedPenaltyPercent.
+            warlordsPlayer.getSpeed().addBaseModifier(-50);
+            warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                    getName(),
+                    null,
+                    IronChains.class,
+                    null,
+                    warlordsPlayer,
+                    CooldownTypes.ITEM,
+                    cooldownManager -> {
+                    },
+                    false
+            ).addModifier(
+                    Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE,
+                    (event, currentDamageValue) -> {
+                        currentDamageValue.addModifier(
+                                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                                getName(),
+                                1 - (damageReductionIncreasePercent / 100f)
+                        );
+                    }
+            ));
         }
 
     }
