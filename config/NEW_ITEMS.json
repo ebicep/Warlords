@@ -340,8 +340,8 @@
           },
           "rerollCost": {
             "1": {
-              "ETHEREUM_CRYSTAL": 5,
-              "ASCENDANT_SHARD": 3,
+              "ETHEREUM_CRYSTAL": 4,
+              "ASCENDANT_SHARD": 2,
               "ZENITH_STAR": 2
             },
             "2": {
@@ -350,23 +350,23 @@
               "ZENITH_STAR": 3
             },
             "3": {
-              "ETHEREUM_CRYSTAL": 7,
-              "ASCENDANT_SHARD": 5,
+              "ETHEREUM_CRYSTAL": 8,
+              "ASCENDANT_SHARD": 6,
               "ZENITH_STAR": 4
             }
           },
           "lockScrollRerollCost": {
             "1": {
               "ITEM_LOCK_SCROLL": 1,
-              "LEGEND_FRAGMENTS": 8500
+              "LEGEND_FRAGMENTS": 6000
             },
             "2": {
               "ITEM_LOCK_SCROLL": 1,
-              "LEGEND_FRAGMENTS": 9500
+              "LEGEND_FRAGMENTS": 7500
             },
             "3": {
               "ITEM_LOCK_SCROLL": 1,
-              "LEGEND_FRAGMENTS": 10500
+              "LEGEND_FRAGMENTS": 9000
             }
           },
           "craftCost": {
@@ -376,15 +376,15 @@
         "ascendant": {
           "name": "Ascendant",
           "weight": 0,
-          "bonusAttributes": 3,
+          "bonusAttributes": 4,
           "bonusAttributeRanges": {
             "CC": {
               "min": 2,
               "max": 8
             },
             "CM": {
-              "min": 2,
-              "max": 8
+              "min": 4,
+              "max": 12
             },
             "DAMAGE": {
               "min": 2,
@@ -606,7 +606,7 @@
           ],
           "attributes": {
             "HEALTH": 100,
-            "CDR": 15
+            "CDR": 2
           },
           "description": "Healing done to a target damages nearby enemies for {{damage;%}} of the healing done.",
           "healingDamageConversion": 30
@@ -654,7 +654,7 @@
             "HEALTH": 60,
             "REGEN": 20
           },
-          "description": "Kills have a {{blue;%}} chance to summon an allied mob for {{ticks}}.",
+          "description": "Kills have a {{blue;%}} chance to summon an allied mob for {{gold}} seconds.",
           "summonChance": 5,
           "duration": 30
         },
@@ -790,7 +790,7 @@
             "HEALTH": 100,
             "KB_RES": 4,
             "REGEN": 25,
-            "CDR": 2
+            "CDR": 1
           },
           "description": "Increase your max health by {{heal;%}}.",
           "maxHealthBoost": 25
@@ -806,7 +806,7 @@
             "HEALTH": 90,
             "KB_RES": 5
           },
-          "description": "{{blue;%}} chance to freeze enemies for {{ticks}}. Deal {{damage;%}} more damage to frozen enemies.",
+          "description": "{{blue;%}} chance to freeze enemies for {{gold}} seconds. Deal {{damage;%}} more damage to frozen enemies.",
           "freezeChance": 15,
           "duration": 3,
           "frozenDamageBoost": 20
@@ -884,7 +884,7 @@
             "HEALTH": 20,
             "CDR": 3
           },
-          "description": "Increase the duration of your ultimate ability by {{seconds}}.",
+          "description": "Increase the duration of your ultimate ability by {{gold}} seconds.",
           "ultimateDurationIncreaseSeconds": 3
         },
         "energize": {
@@ -934,7 +934,7 @@
             "CDR": 1
           },
           "description": "{{heal;%}} of healing you receive is redirected to the lowest ally instead.",
-          "healingRedirectPercent": 15
+          "healingRedirectPercent": 6
         },
         "pulseOfAeons": {
           "tier": "LEGENDARY",
@@ -963,7 +963,7 @@
           ],
           "attributes": {
             "HEALTH": 35,
-            "CDR": 4
+            "CDR": 3
           },
           "description": "Increase rare loot chance by {{blue;%}}. Enemies have a {{blue;%}} chance to drop a spelunker chest.",
           "rareLootChanceIncreasePercent": 25,
@@ -1018,7 +1018,7 @@
           "bonusAttributeRanges": {
           },
           "description": "For every {{damage}} max health, increase your melee damage by {{damage;%}}.",
-          "maxHealthRequirement": 500,
+          "maxHealthRequirement": 800,
           "meleeDamageIncrease": 10
         },
         "encumber": {
@@ -1034,7 +1034,7 @@
           },
           "bonusAttributeRanges": {
           },
-          "description": "Gain {{blue}} extra charge on your purple ability.",
+          "description": "Gain {{blue}} extra charge on your blue rune ability.",
           "extraCharges": 1
         },
         "genesis": {
@@ -1157,7 +1157,7 @@
             "HEALTH": 100
           },
           "description": "Gain {{blue;%}} cooldown reduction on non-ultimate skills but your primary attack deals {{damage;%}} less damage and {{heal;%}} less healing.",
-          "nonUltimateCooldownReductionPercent": 40,
+          "nonUltimateCooldownReductionPercent": 30,
           "primaryDamagePenaltyPercent": 75,
           "primaryHealingPenaltyPercent": 75
         },
@@ -1194,7 +1194,7 @@
           "attributes": {
             "HEALTH": 100
           },
-          "description": "Every {{ticks}} you receive a random effect.",
+          "description": "Every {{gold}} seconds you receive a random effect.",
           "randomEffectIntervalSeconds": 30,
           "randomEffects": [
             "DOUBLE_DAMAGE_10S",
@@ -1239,10 +1239,10 @@
           "attributes": {
             "HEALTH": 25
           },
-          "description": "Gain {{blue;%}} cooldown reduction but freeze every {{ticks}} for {{ticks}}.",
+          "description": "Gain {{blue;%}} cooldown reduction but freeze every {{gold}} seconds for {{gold}} seconds.",
           "cooldownReductionPercent": 25,
-          "freezeIntervalSeconds": 300,
-          "freezeDurationSeconds": 60
+          "freezeIntervalSeconds": 15,
+          "freezeDurationSeconds": 3
         },
         "sacrifice": {
           "tier": "SOVEREIGN",
@@ -1253,10 +1253,10 @@
           "attributes": {
             "HEALTH": 25
           },
-          "description": "Upon taking lethal damage, revive at {{heal;%}} health but reduce an ally to {{heal;%}} health ({{ticks}} cooldown).",
+          "description": "Upon taking lethal damage, revive at {{heal;%}} health but reduce an ally to {{heal;%}} health ({{gold}} seconds cooldown).",
           "selfReviveHealthPercent": 20,
           "allyHealthReductionPercent": 95,
-          "reviveCooldownSeconds": 900
+          "reviveCooldownSeconds": 30
         },
         "mournsongVial": {
           "tier": "SOVEREIGN",
@@ -1267,7 +1267,7 @@
           "attributes": {
             "HEALTH": 50
           },
-          "description": "All allies gain {{energy}} more energy per second but you take {{damage;%}} more damage.",
+          "description": "All allies gain {{energy;%}} more energy per second but you take {{damage;%}} more damage.",
           "allyEnergyPerSecondBonusPercent": 30,
           "selfDamageTakenIncreasePercent": 60
         },
@@ -1280,7 +1280,7 @@
           "attributes": {
             "HEALTH": 5
           },
-          "description": "+{{blocks;%}} ability range on your red rune skill.",
+          "description": "+{{blocks;%}} ability range on your red rune skill (if applicable).",
           "redRuneAbilityRangeIncreasePercent": 15
         },
         "detonator": {
@@ -1328,7 +1328,7 @@
           "attributes": {
             "HEALTH": 5
           },
-          "description": "-{{blue;%}} cooldown reduction on your blue rune skill.",
+          "description": "+{{blue;%}} cooldown reduction on your blue rune skill.",
           "blueRuneCooldownReductionPercent": 5
         },
         "durable": {
