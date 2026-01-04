@@ -1,8 +1,13 @@
 package com.ebicep.warlords.pve.newitems.setbonus.sets;
 
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.newitems.setbonus.BaseSet;
 import com.ebicep.warlords.pve.newitems.setbonus.SetBonus;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.List;
 
@@ -37,11 +42,50 @@ public class MournsongVial extends BaseSet {
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
-            // Implementation for:
-            // 1. Increasing the 'damage resistance' attribute of the wearer 
-            //    by -60% (effectively increasing damage taken).
-            // 2. Iterating through all players on the same team (excluding self).
-            // 3. Applying a 30% multiplier to their Energy Per Second (EPS).
+            PlayerFilter.playingGame(warlordsPlayer.getGame())
+                    .excluding(warlordsPlayer)
+                    .forEach(player -> {
+                        player.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                                warlordsPlayer.getName() + "'s" + getName(),
+                                null,
+                                MournsongVial.class,
+                                null,
+                                warlordsPlayer,
+                                CooldownTypes.ITEM,
+                                cooldownManager -> {
+                                },
+                                false
+                        ).addModifier(
+                                Modifier.ENERGY_GAIN_PER_TICK,
+                                (energy) -> {
+                                    energy.addModifier(
+                                            FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                                            getName(),
+                                            1 + (allyEnergyPerSecondBonusPercent / 100f)
+                                    );
+                                }
+                        ));
+            });
+            warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                    getName(),
+                    null,
+                    MournsongVial.class,
+                    null,
+                    warlordsPlayer,
+                    CooldownTypes.ITEM,
+                    cooldownManager -> {
+                    },
+                    false
+            ).addModifier(
+                    Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE,
+                    (event, currentDamageValue) -> {
+                        currentDamageValue.addModifier(
+                                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                                getName(),
+                                1 + (selfDamageTakenIncreasePercent / 100f)
+                        );
+                    }
+            ));
         }
 
     }
