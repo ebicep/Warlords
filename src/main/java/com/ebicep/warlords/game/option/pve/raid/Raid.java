@@ -2,15 +2,15 @@ package com.ebicep.warlords.game.option.pve.raid;
 
 public enum Raid {
 
-    THE_OBSIDIAN_TRAIL(
-            "The Obsidian Trail",
+    REGNUM_OF_TWO_CROWNS(
+            "Regnum of Two Crowns",
             "A long time ago the Envoy king and queen of Illusion, Physira and Mithra reigned over the vanguard's legions." +
                     " During the old war Physira got corrupted by trying to stop an unknown obsidian force from taking his queen." +
                     " All that's left now is a trail of his ashes.",
             70
     ),
-    GROUND_ZERO(
-            "Ground Zero",
+    OATH_OF_THE_FIRST_HEIR(
+            "Oath of the First Heir",
             "PLACEHOLDER",
             75
     ),
@@ -34,8 +34,8 @@ public enum Raid {
             "PLACEHOLDER",
             95
     ),
-    THRONE_OF_THE_CORRUPTED(
-            "Throne of the Corrupted",
+    THE_FINAL_VEIL(
+            "The Final Veil",
             "PLACEHOLDER",
             100
     ),
