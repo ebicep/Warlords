@@ -1,5 +1,7 @@
 package com.ebicep.warlords.pve.newitems.setbonus.sets;
 
+import com.ebicep.warlords.abilities.internal.Duration;
+import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.newitems.setbonus.BaseSet;
 import com.ebicep.warlords.pve.newitems.setbonus.SetBonus;
@@ -8,12 +10,12 @@ import java.util.List;
 
 public class Omamori extends BaseSet {
 
-    private int ultimateDurationIncreaseSeconds;
+    private float ultimateDurationIncreaseSeconds;
 
     @Override
     public void init() {
         super.init();
-        this.ultimateDurationIncreaseSeconds = getValue("ultimateDurationIncreaseSeconds", int.class);
+        this.ultimateDurationIncreaseSeconds = getValue("ultimateDurationIncreaseSeconds", float.class);
     }
 
     @Override
@@ -35,8 +37,11 @@ public class Omamori extends BaseSet {
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
-            // Implementation for increasing the duration of the player's 
-            // ultimate ability by the specified seconds.
+            for (var ability : warlordsPlayer.getAbilities()) {
+                if (ability instanceof OrangeAbilityIcon && ability instanceof Duration duration) {
+                    duration.setTickDuration((int) (duration.getTickDuration() + ultimateDurationIncreaseSeconds * 20));
+                }
+            }
         }
 
     }
