@@ -15,6 +15,8 @@ import com.ebicep.warlords.pve.newitems.setbonus.BaseSet;
 import com.ebicep.warlords.pve.newitems.setbonus.SetBonus;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -81,6 +83,7 @@ public class Energize extends BaseSet {
                     if (ThreadLocalRandom.current().nextDouble() > freeAbilityCastChancePercent / 100.0) {
                         return;
                     }
+                    warlordsPlayer.sendMessage(Component.text("Your energize gave you a free ability cast!", NamedTextColor.GREEN));
                     event.setCancelled(true);
                 }
             };
