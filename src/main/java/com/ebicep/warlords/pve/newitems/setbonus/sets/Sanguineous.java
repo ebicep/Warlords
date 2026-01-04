@@ -13,14 +13,14 @@ import java.util.List;
 
 public class Sanguineous extends BaseSet {
 
-    private int damagePerHealthyPlayerPercent;
     private int healthyPlayerThresholdPercent;
+    private int damagePerHealthyPlayerPercent;
 
     @Override
     public void init() {
         super.init();
-        this.damagePerHealthyPlayerPercent = getValue("damagePerHealthyPlayerPercent", int.class);
         this.healthyPlayerThresholdPercent = getValue("healthyPlayerThresholdPercent", int.class);
+        this.damagePerHealthyPlayerPercent = getValue("damagePerHealthyPlayerPercent", int.class);
     }
 
     @Override
@@ -35,7 +35,7 @@ public class Sanguineous extends BaseSet {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(damagePerHealthyPlayerPercent, healthyPlayerThresholdPercent);
+        return List.of(healthyPlayerThresholdPercent, damagePerHealthyPlayerPercent);
     }
 
     public class Bonus implements SetBonus.Bonus {
