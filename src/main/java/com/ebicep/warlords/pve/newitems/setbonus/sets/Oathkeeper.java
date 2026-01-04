@@ -5,14 +5,17 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.mobs.flags.BossLike;
 import com.ebicep.warlords.pve.newitems.setbonus.BaseSet;
 import com.ebicep.warlords.pve.newitems.setbonus.SetBonus;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
+import org.bukkit.Sound;
 
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Oathkeeper extends BaseSet {
 
@@ -66,20 +69,30 @@ public class Oathkeeper extends BaseSet {
                                 getName(),
                                 1 + (meleeDamageIncreasePercent / 100f)
                         );
+
+                        if (ThreadLocalRandom.current().nextDouble() > meleeAttackTwiceChancePercent / 100.0) {
+                            return;
+                        }
+                        if (event.getFlags().contains(InstanceFlags.RECURSIVE)) {
+                            return;
+                        }
+
                         new GameRunnable(warlordsPlayer.getGame()) {
                             @Override
                             public void run() {
+                                warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 2, 1.5f);
                                 event.getWarlordsEntity().addInstance(InstanceBuilder
                                         .damage()
                                         .cause(event.getCause())
                                         .source(event.getSource())
                                         .min(event.getMin().getCalculatedValue())
                                         .max(event.getMax().getCalculatedValue())
-                                        .critChance(event.getCritChance().getCalculatedValue())
-                                        .critMultiplier(event.getCritMultiplier().getCalculatedValue())
+                                        .critChance(event.getCritChance().getBaseValue())
+                                        .critMultiplier(event.getCritMultiplier().getBaseValue())
+                                        .flags(InstanceFlags.RECURSIVE)
                                 );
                             }
-                        }.runTaskLater(3);
+                        }.runTaskLater(4);
                     }
             ));
         }
