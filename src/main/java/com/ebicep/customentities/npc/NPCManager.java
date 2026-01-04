@@ -66,8 +66,8 @@ public class NPCManager {
                 createPrestigeVendorNPC();
                 createAscendantVendorNPC();
                 createWeeklyItemTraderNPC();
-                createSeasonalVendorNPC();
                 createTreasureHuntVendorNPC();
+                createAscendantWeaponNPC();
             }
         }.runTask(Warlords.getInstance());
 
@@ -284,7 +284,7 @@ public class NPCManager {
     public static void createItemEnyaNPC() {
         registerTrait(ItemEnyaTrait.class, "ItemEnyaTrait");
 
-        NPC npc = NPC_REGISTRY.createNPC(EntityType.VILLAGER, "item-enya");
+        NPC npc = NPC_REGISTRY.createNPC(EntityType.BREEZE, "item-enya");
         npc.addTrait(ItemEnyaTrait.class);
         LookClose lookClose = npc.getOrAddTrait(LookClose.class);
         lookClose.setPerPlayer(true);

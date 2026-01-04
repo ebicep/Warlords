@@ -1,8 +1,13 @@
 package com.ebicep.warlords.pve.newitems.setbonus.sets;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.HitBox;
+import com.ebicep.warlords.abilities.internal.Splash;
+import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.newitems.setbonus.BaseSet;
 import com.ebicep.warlords.pve.newitems.setbonus.SetBonus;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.List;
 
@@ -35,9 +40,24 @@ public class Stretch extends BaseSet {
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
-            // Implementation for:
-            // 1. Identifying the ability bound to the Red Rune slot (usually the first skill).
-            // 2. Applying a 1.15x multiplier to its range or hit-box radius.
+            for (AbstractAbility ability : warlordsPlayer.getAbilities()) {
+                if (ability instanceof RedAbilityIcon) {
+                    if (ability instanceof HitBox hitBox) {
+                        hitBox.getHitBoxRadius().addModifier(
+                                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                                getName(),
+                                1 + redRuneAbilityRangeIncreasePercent / 100f
+                        );
+                    }
+                    if (ability instanceof Splash splash) {
+                        splash.getSplashRadius().addModifier(
+                                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                                getName(),
+                                1 + redRuneAbilityRangeIncreasePercent / 100f
+                        );
+                    }
+                }
+            }
         }
 
     }

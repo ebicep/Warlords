@@ -46,7 +46,5 @@ public class Encumber extends BaseSet {
                 }
             }
         }
-
     }
-
 }

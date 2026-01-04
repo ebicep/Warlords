@@ -43,7 +43,7 @@ public class IronChains extends BaseSet {
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getSpeed().addBaseModifier(-50);
+            warlordsPlayer.getSpeed().addBaseModifier(-movementSpeedPenaltyPercent);
             warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
                     getName(),
                     null,

@@ -1,10 +1,26 @@
 package com.ebicep.warlords.pve.newitems.setbonus.sets;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
+import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
+import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsEnergyUseEvent;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.newitems.setbonus.BaseSet;
 import com.ebicep.warlords.pve.newitems.setbonus.SetBonus;
+import com.ebicep.warlords.util.warlords.GameRunnable;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Energize extends BaseSet {
 
@@ -37,11 +53,38 @@ public class Energize extends BaseSet {
 
     public class Bonus implements SetBonus.Bonus {
 
+        private int kills = 0;
+
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
-            // Implementation for:
-            // 1. Tracking kills and granting energyGained every energyPerKillThreshold kills.
-            // 2. Rolling a chance (freeAbilityCastChancePercent) to bypass energy costs on cast.
+            Listener listener = new Listener() {
+                @EventHandler
+                public void onEnemyDeath(WarlordsDeathEvent event) {
+                    WarlordsEntity entity = event.getWarlordsEntity();
+                    if (entity.equals(warlordsPlayer)) {
+                        return;
+                    }
+                    if (entity.getTeam().equals(warlordsPlayer.getTeam())) {
+                        return;
+                    }
+
+                    kills++;
+
+                    if (kills == 5) {
+                        kills = 0;
+                        warlordsPlayer.addEnergy(warlordsPlayer, getName(), energyGained);
+                    }
+                }
+
+                @EventHandler
+                public void onEnergySpent(WarlordsEnergyUseEvent.Pre event) {
+                    if (ThreadLocalRandom.current().nextDouble() > freeAbilityCastChancePercent / 100.0) {
+                        return;
+                    }
+                    event.setCancelled(true);
+                }
+            };
+            warlordsPlayer.getGame().registerEvents(listener);
         }
 
     }
