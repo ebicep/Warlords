@@ -30,7 +30,10 @@ public enum GameMode implements Mode {
     EVENT_WAVE_DEFENSE(new EventWaveDefense()),
     SIEGE(new Siege()),
     TOWER_DEFENSE(new TowerDefense()),
-    WHACK_A_MOLE(new WhackAMole());
+    WHACK_A_MOLE(new WhackAMole()),
+    EFFIGY_TRIALS(new EffigyTrials()),
+
+    ;
 
     public static final GameMode[] VALUES = values();
 
@@ -39,7 +42,7 @@ public enum GameMode implements Mode {
     }
 
     public static boolean isPvE(GameMode mode) {
-        return mode == WAVE_DEFENSE || mode == EVENT_WAVE_DEFENSE || mode == ONSLAUGHT || mode == TREASURE_HUNT || mode == TOWER_DEFENSE || mode == WHACK_A_MOLE || mode == PVE_DEBUG;
+        return mode == WAVE_DEFENSE || mode == EVENT_WAVE_DEFENSE || mode == ONSLAUGHT || mode == TREASURE_HUNT || mode == TOWER_DEFENSE || mode == WHACK_A_MOLE || mode == PVE_DEBUG || mode == EFFIGY_TRIALS || mode == RAID;
     }
 
     private final Mode mode;
@@ -93,7 +96,7 @@ public enum GameMode implements Mode {
     }
 
     @Override
-    public TriFunction<com.ebicep.warlords.game.Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGameBase> getCreateDatabaseGame() {
+    public TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGameBase> getCreateDatabaseGame() {
         return mode.getCreateDatabaseGame();
     }
 
