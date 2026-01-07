@@ -6,8 +6,8 @@ import com.ebicep.warlords.game.option.whackamole.moles.MoleArmorStand;
 import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.pve.mobs.blaze.BlazingKindle;
-import com.ebicep.warlords.pve.mobs.bosses.Void;
 import com.ebicep.warlords.pve.mobs.bosses.*;
+import com.ebicep.warlords.pve.mobs.bosses.Void;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.*;
 import com.ebicep.warlords.pve.mobs.creaking.SovereignGuardian;
 import com.ebicep.warlords.pve.mobs.creeper.CreepyBomber;
@@ -26,6 +26,8 @@ import com.ebicep.warlords.pve.mobs.events.pharaohsrevenge.EventNarmer;
 import com.ebicep.warlords.pve.mobs.events.pharaohsrevenge.EventNarmerAcolyte;
 import com.ebicep.warlords.pve.mobs.events.spidersburrow.*;
 import com.ebicep.warlords.pve.mobs.husk.SandstriderWraith;
+import com.ebicep.warlords.pve.mobs.husk.UndeadWarrior;
+import com.ebicep.warlords.pve.mobs.irongolem.EnhancerMechan;
 import com.ebicep.warlords.pve.mobs.irongolem.GolemApprentice;
 import com.ebicep.warlords.pve.mobs.magmacube.Illumination;
 import com.ebicep.warlords.pve.mobs.pigzombie.PigAlleviator;
@@ -34,9 +36,13 @@ import com.ebicep.warlords.pve.mobs.pigzombie.PigParticle;
 import com.ebicep.warlords.pve.mobs.pigzombie.PigShaman;
 import com.ebicep.warlords.pve.mobs.player.*;
 import com.ebicep.warlords.pve.mobs.skeleton.*;
+import com.ebicep.warlords.pve.mobs.slime.LurkingSlime;
 import com.ebicep.warlords.pve.mobs.slime.SlimyAnomaly;
 import com.ebicep.warlords.pve.mobs.slime.SlimyChess;
 import com.ebicep.warlords.pve.mobs.spider.ArachnoVenari;
+import com.ebicep.warlords.pve.mobs.stray.FallenStray;
+import com.ebicep.warlords.pve.mobs.stray.Stray;
+import com.ebicep.warlords.pve.mobs.vex.SpectralThief;
 import com.ebicep.warlords.pve.mobs.vindicator.AncientDynasty;
 import com.ebicep.warlords.pve.mobs.witch.WitchDeacon;
 import com.ebicep.warlords.pve.mobs.witherskeleton.CelestialOpus;
@@ -1103,6 +1109,17 @@ public enum Mob {
     ),
     // PVP
     TRICKSTER_DUMMY(EntityType.PLAYER, Decoy.class, Decoy::new, Decoy::new, null),
+
+    // EFFIGY TRIALS
+    GHOUL(EntityType.ZOMBIE, Ghoul.class, Ghoul::new, Ghoul::new, null),
+    FALLEN_GHOUL(EntityType.ZOMBIE, FallenGhoul.class, FallenGhoul::new, FallenGhoul::new, null),
+    STRAY(EntityType.STRAY, Stray.class, Stray::new, Stray::new, null),
+    FALLEN_STRAY(EntityType.STRAY, FallenStray.class, FallenStray::new, FallenStray::new, null),
+    ENHANCER_MECHAN(EntityType.IRON_GOLEM, EnhancerMechan.class, EnhancerMechan::new, EnhancerMechan::new, null),
+    SPECTRAL_THIEF(EntityType.VEX, SpectralThief.class, SpectralThief::new, SpectralThief::new, null),
+    LURKING_SLIME(EntityType.SLIME, LurkingSlime.class, LurkingSlime::new, LurkingSlime::new, null),
+    DESECRATED_PALADIN(EntityType.ZOMBIE, DesecratedPaladin.class, DesecratedPaladin::new, DesecratedPaladin::new, null),
+    UNDEAD_WARRIOR(EntityType.HUSK, UndeadWarrior.class, UndeadWarrior::new, UndeadWarrior::new, null)
 
     ;
 
