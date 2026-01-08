@@ -370,7 +370,9 @@
             }
           },
           "craftCost": {
-            "COIN": 1000
+            "COIN": 1500000,
+            "ZENITH_STAR": 10,
+            "SCRAP_METAL": 500
           }
         },
         "ascendant": {
@@ -447,7 +449,9 @@
             }
           },
           "craftCost": {
-            "COIN": 1000
+            "COIN": 5000000,
+            "ASCENDANT_SHARD": 50,
+            "SCRAP_METAL": 1000
           }
         }
       },
@@ -821,12 +825,10 @@
           ],
           "attributes": {
             "HEALTH": 40,
-            "KB_RES": 4,
-            "ECR": 2,
-            "CDR": 2
+            "KB_RES": 2
           },
           "description": "+{{blue;%}} cooldown reduction on all abilities.",
-          "bonusCDR": 10
+          "bonusCDR": 12
         },
         "handOfTheCorpse": {
           "tier": "LEGENDARY",
@@ -853,7 +855,6 @@
           ],
           "attributes": {
             "HEALTH": 25,
-            "KB_RES": 5,
             "REGEN": 15
           },
           "description": "{{blue;%}} chance to dodge attacks. Dodges grant stacking damage and healing bonuses.",
@@ -869,7 +870,7 @@
           "attributes": {
             "HEALTH": 25,
             "ECR": 2,
-            "REGEN": 10
+            "REGEN": 5
           },
           "description": "Ranged primary attacks have a {{damage;%}} chance to instantly kill non-boss targets.",
           "instakillChance": 1
@@ -882,7 +883,7 @@
           ],
           "attributes": {
             "HEALTH": 20,
-            "CDR": 3
+            "CDR": 2
           },
           "description": "Increase the duration of your ultimate ability by {{gold}} seconds.",
           "ultimateDurationIncreaseSeconds": 3
@@ -945,7 +946,7 @@
           ],
           "attributes": {
             "HEALTH": 55,
-            "KB_RES": 10
+            "KB_RES": 5
           },
           "description": "Every {{heal}} heal instances, you emit a global pulse that heals all for {{heal}} health.",
           "healsPerPulse": 6,
@@ -1029,8 +1030,8 @@
           ],
           "attributes": {
             "HEALTH": 200,
-            "KB_RES": 6,
-            "ECR": 4
+            "KB_RES": 5,
+            "ECR": 3
           },
           "bonusAttributeRanges": {
           },
@@ -1047,9 +1048,8 @@
             "BOOTS"
           ],
           "attributes": {
-            "HEALTH": 200,
-            "KB_RES": 5,
-            "ECR": 2
+            "HEALTH": 50,
+            "KB_RES": 5
           },
           "bonusAttributeRanges": {
           },
@@ -1090,10 +1090,10 @@
             "TOME"
           ],
           "attributes": {
-            "HEALTH": 200
+            "HEALTH": 150
           },
           "description": "Increase your damage reduction by {{damageReduction;%}} but reduce your movement speed by {{speed;%}}.",
-          "damageReductionIncreasePercent": 35,
+          "damageReductionIncreasePercent": 30,
           "movementSpeedPenaltyPercent": 50
         },
         "soulflame": {
@@ -1118,7 +1118,7 @@
             "HEALTH": 50
           },
           "description": "Reduce your respawn time by {{ticks;%}} but respawn at {{heal;%}} health and no energy.",
-          "respawnTimeReductionPercent": 1000,
+          "respawnTimeReductionPercent": 50,
           "respawnHealthPercent": 15,
           "respawnEnergy": 0
         },
@@ -1171,7 +1171,7 @@
           },
           "description": "Shield effectiveness increased by {{damageReduction;%}} but reduce max health by {{heal;%}}.",
           "shieldEffectivenessIncreasePercent": 300,
-          "defenseStatsPenalty": 99
+          "maxHealthReductionPercent": 99
         },
         "bloodlettingBlade": {
           "tier": "SOVEREIGN",
@@ -1239,7 +1239,7 @@
           "attributes": {
             "HEALTH": 25
           },
-          "description": "Gain {{blue;%}} cooldown reduction but freeze every {{gold}} seconds for {{gold}} seconds.",
+          "description": "Gain {{blue;%}} cooldown reduction but freeze every {{ticks}} for {{ticks}}.",
           "cooldownReductionPercent": 25,
           "freezeIntervalSeconds": 15,
           "freezeDurationSeconds": 3
@@ -1253,7 +1253,7 @@
           "attributes": {
             "HEALTH": 25
           },
-          "description": "Upon taking lethal damage, revive at {{heal;%}} health but reduce an ally to {{heal;%}} health ({{gold}} seconds cooldown).",
+          "description": "Upon taking lethal damage, revive at {{heal;%}} health but reduce an ally to {{heal;%}} health ({{ticks}} cooldown).",
           "selfReviveHealthPercent": 20,
           "allyHealthReductionPercent": 95,
           "reviveCooldownSeconds": 30
@@ -1329,7 +1329,7 @@
             "HEALTH": 5
           },
           "description": "+{{blue;%}} cooldown reduction on your blue rune skill.",
-          "blueRuneCooldownReductionPercent": 5
+          "blueRuneCooldownReductionPercent": 15
         },
         "durable": {
           "tier": "EPIC",
@@ -1338,7 +1338,7 @@
             "CHESTPLATE"
           ],
           "attributes": {
-            "HEALTH": 5
+            "HEALTH": 10
           },
           "description": "+{{ticks}} to your blue rune skill’s ability duration.",
           "blueRuneDurationIncreaseSeconds": 2
