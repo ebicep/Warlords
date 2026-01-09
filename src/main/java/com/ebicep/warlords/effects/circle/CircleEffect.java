@@ -6,7 +6,7 @@ import com.ebicep.warlords.effects.GameTeamContainer;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.bukkit.Location;
 
 import javax.annotation.Nonnull;

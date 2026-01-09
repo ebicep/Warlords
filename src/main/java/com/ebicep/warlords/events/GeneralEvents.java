@@ -2,7 +2,7 @@ package com.ebicep.warlords.events;
 
 import com.ebicep.warlords.permissions.Permissions;
 import org.bukkit.GameMode;
-import org.bukkit.GameRule;
+import org.bukkit.GameRules;
 import org.bukkit.block.Sign;
 import org.bukkit.craftbukkit.inventory.*;
 import org.bukkit.entity.*;
@@ -162,8 +162,8 @@ public class GeneralEvents implements Listener {
 
     @EventHandler
     public void onWorldLoad(WorldLoadEvent event) {
-        event.getWorld().setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false);
-        event.getWorld().setGameRule(GameRule.SPECTATORS_GENERATE_CHUNKS, false);
+        event.getWorld().setGameRule(GameRules.SHOW_ADVANCEMENT_MESSAGES, false);
+        event.getWorld().setGameRule(GameRules.SPECTATORS_GENERATE_CHUNKS, false);
     }
 
 }

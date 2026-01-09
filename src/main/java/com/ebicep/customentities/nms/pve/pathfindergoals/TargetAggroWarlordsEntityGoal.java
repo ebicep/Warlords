@@ -78,7 +78,7 @@ public class TargetAggroWarlordsEntityGoal extends TargetGoal {
 
     @Override
     public void start() {
-        this.mob.setTarget(this.targetEntity, EntityTargetEvent.TargetReason.CUSTOM, true);
+        this.mob.setTarget(this.targetEntity, EntityTargetEvent.TargetReason.CUSTOM);
         super.start();
     }
 
