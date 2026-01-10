@@ -43,6 +43,7 @@ public class MournsongVial extends BaseSet {
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             PlayerFilter.playingGame(warlordsPlayer.getGame())
+                    .aliveTeammatesOf(warlordsPlayer)
                     .excluding(warlordsPlayer)
                     .forEach(player -> {
                         player.getCooldownManager().addCooldown(new PermanentCooldown<>(
