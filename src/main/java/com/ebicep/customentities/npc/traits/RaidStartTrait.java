@@ -21,7 +21,11 @@ public class RaidStartTrait extends WarlordsTrait {
     @Override
     public void onAttach() {
         HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
-        hologramTrait.setLine(0, ChatColor.RED + "?????");
+        hologramTrait.setLine(0, ChatColor.GRAY + ChatColor.ITALIC.toString() + "Two crowns claim the same throne. Every step is a lie, and every mistake is final.");
+        hologramTrait.setLine(1, ChatColor.DARK_GRAY + ChatColor.BOLD.toString() + "-ˋˏ ༻❁༺ ˎˊ-");
+        hologramTrait.setLine(2, ChatColor.GOLD + ChatColor.BOLD.toString() + "REGNUM OF TWO CROWNS");
+        hologramTrait.setMargin(1, "bottom", 0.5);
+        hologramTrait.setMargin(2, "bottom", 0.2);
     }
 
     @Override

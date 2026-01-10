@@ -11,12 +11,12 @@ import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.option.win.WinAfterTimeoutOption;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.java.StringUtils;
-import com.onarandombox.MultiverseCore.api.MVWorldManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.entity.Player;
+import org.mvplugins.multiverse.core.world.WorldManager;
 
 import java.util.EnumSet;
 import java.util.OptionalInt;
@@ -82,8 +82,8 @@ public class GameListCommand extends BaseCommand {
     @Subcommand("addgameholder")
     @Description("Adds a game holder")
     public void addGameHolder(CommandIssuer issuer, String mapName, GameMap gameMap) {
-        MVWorldManager mvWorldManager = Warlords.multiverseCore.getMVWorldManager();
-        if (!mvWorldManager.hasUnloadedWorld(mapName, false)) {
+        WorldManager mvWorldManager = Warlords.multiverseCore.getApi().getWorldManager();
+        if (!mvWorldManager.isUnloadedWorld(mapName)) {
             ChatChannels.sendDebugMessage(issuer, Component.text("There is already a game holder for: ", NamedTextColor.GREEN)
                                                            .append(Component.text(mapName, NamedTextColor.YELLOW))
             );

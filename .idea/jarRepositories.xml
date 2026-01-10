@@ -176,5 +176,20 @@
       <option name="name" value="MavenLocal" />
       <option name="url" value="file:/$MAVEN_REPOSITORY$" />
     </remote-repository>
+    <remote-repository>
+      <option name="id" value="MavenLocal" />
+      <option name="name" value="MavenLocal" />
+      <option name="url" value="file:/$USER_HOME$/.m2/repository/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="multiverseMultiverseSnapshots" />
+      <option name="name" value="multiverseMultiverseSnapshots" />
+      <option name="url" value="https://repo.onarandombox.com/multiverse-snapshots" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="maven12" />
+      <option name="name" value="maven12" />
+      <option name="url" value="https://mvn.lib.co.nz/public" />
+    </remote-repository>
   </component>
 </project>

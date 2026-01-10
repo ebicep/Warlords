@@ -33,6 +33,7 @@ public class OrbPassenger extends ExperienceOrb {
                 location.getZ(),
                 2500,
                 org.bukkit.entity.ExperienceOrb.SpawnReason.CUSTOM,
+                null,
                 null
         );
         ArmorStand orbStand = Utils.spawnArmorStand(LocationUtils.getGroundLocation(location).clone().add(0, .5, 0), armorStand -> {

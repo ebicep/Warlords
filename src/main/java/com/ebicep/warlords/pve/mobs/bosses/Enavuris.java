@@ -26,7 +26,6 @@ import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
-import io.papermc.paper.entity.TeleportFlag;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
@@ -329,16 +328,14 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
                 @Override
                 public void run(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile) {
                     armorStand.teleport(projectile.getCurrentLocation().clone().add(0, -.5, 0),
-                            PlayerTeleportEvent.TeleportCause.PLUGIN,
-                            TeleportFlag.EntityState.RETAIN_PASSENGERS
+                            PlayerTeleportEvent.TeleportCause.PLUGIN
                     );
                 }
 
                 @Override
                 public void onDestroy(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile) {
                     armorStand.teleport(projectile.getCurrentLocation().clone().add(0, -.5, 0),
-                            PlayerTeleportEvent.TeleportCause.PLUGIN,
-                            TeleportFlag.EntityState.RETAIN_PASSENGERS
+                            PlayerTeleportEvent.TeleportCause.PLUGIN
                     );
                     new BukkitRunnable() {
                         @Override

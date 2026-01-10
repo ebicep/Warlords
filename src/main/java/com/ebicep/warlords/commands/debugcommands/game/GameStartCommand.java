@@ -17,10 +17,10 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.java.StringUtils;
-import com.onarandombox.MultiverseCore.api.MVWorldManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
+import org.mvplugins.multiverse.core.world.WorldManager;
 
 import java.util.Collections;
 import java.util.List;
@@ -149,10 +149,10 @@ public class GameStartCommand {
         }
         int numberOfMaps = map.getNumberOfMaps();
         String fileName = map.getFileName();
-        MVWorldManager mvWorldManager = Warlords.multiverseCore.getMVWorldManager();
+        WorldManager mvWorldManager = Warlords.multiverseCore.getApi().getWorldManager();
         for (int i = 0; i < numberOfMaps; i++) {
             String mapName = fileName + "-" + i;
-            if (mvWorldManager.hasUnloadedWorld(mapName, false)) {
+            if (mvWorldManager.isUnloadedWorld(mapName)) {
                 ChatUtils.MessageType.GAME.sendErrorMessage("Map " + mapName + " is unloaded. Loading it now.");
                 mvWorldManager.loadWorld(mapName);
                 Warlords.getGameManager().addGameHolder(mapName, map);
