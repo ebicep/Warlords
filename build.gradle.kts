@@ -200,7 +200,7 @@ tasks.withType<JavaCompile>().configureEach {
 paperPluginYaml {
     main = "com.ebicep.warlords.Warlords"
     bootstrapper = "com.ebicep.warlords.WarlordsBootstrap"
-    apiVersion = "1.21.4"
+    apiVersion = "1.21.11"
     load = BukkitPluginYaml.PluginLoadOrder.POSTWORLD
     version = project.version.toString()
     authors = listOf("ebicep", "Plikie")

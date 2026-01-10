@@ -2,6 +2,7 @@ package com.ebicep.warlords.events;
 
 import com.ebicep.warlords.permissions.Permissions;
 import org.bukkit.GameMode;
+import org.bukkit.GameRule;
 import org.bukkit.GameRules;
 import org.bukkit.block.Sign;
 import org.bukkit.craftbukkit.inventory.*;
@@ -164,6 +165,10 @@ public class GeneralEvents implements Listener {
     public void onWorldLoad(WorldLoadEvent event) {
         event.getWorld().setGameRule(GameRules.SHOW_ADVANCEMENT_MESSAGES, false);
         event.getWorld().setGameRule(GameRules.SPECTATORS_GENERATE_CHUNKS, false);
+        event.getWorld().setGameRule(GameRules.MOB_GRIEFING, false);
+        event.getWorld().setGameRule(GameRules.RANDOM_TICK_SPEED, 0);
+        event.getWorld().setGameRule(GameRules.ADVANCE_TIME, false);
+        event.getWorld().setTime(4000);
     }
 
 }

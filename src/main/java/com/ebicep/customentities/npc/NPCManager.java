@@ -355,7 +355,7 @@ public class NPCManager {
     public static void createRaidNPC() {
         registerTrait(RaidStartTrait.class, "RaidStartTrait");
 
-        NPC npc = NPC_REGISTRY.createNPC(EntityType.PLAYER, "raid-start");
+        NPC npc = NPC_REGISTRY.createNPC(EntityType.END_CRYSTAL, "raid-start");
         npc.getOrAddTrait(SkinTrait.class).setSkinPersistent(
                 "archmc-0a4f85b",
                 "Ftv54gQ5wTDf66m2A3OLOLgm27ABCCf6lRlvxvEYAp4E4N8ACPXf85kHufJ8ujIDixZorkr8ZjYWGqbDMvGrw2x8zzI0K07qpcH7A7Cbcet1fSeMNGegsaaI1Dl4GvNllOoyRLcppA9O5YoWBJO7cfCFrbzH9pr8X2114ui2QLHuPIO4uh0UuDbqdhiU48tIdyrOcgHzLyMuCD5Su01x1rkrQ6TY1yl4IM9qfEuAkj6K00urt0cf8NNoxISo57olrCRZm+0WaU8qkkLyIaPiAs929cpcskD0fgDR2Pivy1D+cretD8JJ3TnqpoMgsrFWxhzLsdGBF+esH6EAiWvEXlwrnxzlJfPzKgbQLgooFUSB0UjKxmUqQpGb0qZ5cuLP5JhNx+yz3ruay0Ttg3uvEbDcRcGpgssW3l+kQ/JzD1IH8uMfU6uHDF5by1J2FxAdZfeJjewWMrjDFNAiU4ANhVaOW+19FbaLt+YOePSIOYo72lpy264bP7qG42Lc7TB4j6vjV1AXkRZNNcF7Ir/ko/2b6iWbkzUlG0hd8jWZtm4Asr7va18MZhaxuz3vXP22DO+60AZFYl5+fqp+h8tVyIsaGy1y+R1BV99qPSHO3lgYvMJfYlaYA0x2rGQT6X+xpLm3F+I7dRY3uWezspQXcNnpGZkFb+QOSKalPGmnAjc=",
