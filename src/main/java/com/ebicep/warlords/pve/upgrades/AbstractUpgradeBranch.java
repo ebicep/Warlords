@@ -182,7 +182,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                         .lore(
                                 Component.text("Upgrades Remaining: ", NamedTextColor.GRAY).append(Component.text(maxUpgrades, NamedTextColor.GREEN)),
                                 Component.text("Free Upgrades Available: ", NamedTextColor.GRAY)
-                                         .append(Component.text(freeUpgrades, NamedTextColor.GREEN)),
+                                         .append(Component.text(abilityTree.getFreeUpgrades() + getFreeUpgrades(), NamedTextColor.GREEN)),
                                 Component.empty()
                         )
                         .addLore(WordWrap.wrap(Component.text("Note: Free Upgrades are only available for the first upgrade in each branch.", NamedTextColor.GRAY), 160))
@@ -397,7 +397,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
             }
         }
 
-        boolean isFree = freeUpgrades > 0 && (treeA.indexOf(upgrade) == 0 || treeB.indexOf(upgrade) == 0);
+        boolean isFree = abilityTree.getFreeUpgrades() > 0 || getFreeUpgrades() > 0 && (treeA.indexOf(upgrade) == 0 || treeB.indexOf(upgrade) == 0);
         if (player.getCurrency() < upgrade.getCurrencyCost() && !isFree) {
             player.sendMessage(Component.text("You do not have enough Insignia (❂) to buy this upgrade!", NamedTextColor.RED));
             return;
@@ -413,7 +413,11 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
         upgradesRequiredForMaster--;
 
         if (isFree) {
-            freeUpgrades--;
+            if (abilityTree.getFreeUpgrades() > 0) {
+                abilityTree.setFreeUpgrades(abilityTree.getFreeUpgrades() - 1);
+            } else {
+                setFreeUpgrades(getFreeUpgrades() - 1);
+            }
         } else {
             player.subtractCurrency(upgrade.getCurrencyCost());
         }
@@ -489,7 +493,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                 .name(Component.text(upgrade.getName(), unlocked ? NamedTextColor.GOLD : NamedTextColor.RED))
                 .lore(upgrade.getDescription(unlocked ? NamedTextColor.GREEN : NamedTextColor.GRAY));
         if (!unlocked) {
-            boolean isFree = freeUpgrades > 0 && (treeA.indexOf(upgrade) == 0 || treeB.indexOf(upgrade) == 0);
+            boolean isFree = getFreeUpgrades() > 0 && (treeA.indexOf(upgrade) == 0 || treeB.indexOf(upgrade) == 0);
             itemBuilder.addLore(Component.empty(),
                     Component.text("Cost: ", NamedTextColor.GRAY)
                              .append(Component.text("❂ " + upgrade.getCurrencyCost() + (isFree ? " (Free)" : ""), NamedTextColor.GOLD))

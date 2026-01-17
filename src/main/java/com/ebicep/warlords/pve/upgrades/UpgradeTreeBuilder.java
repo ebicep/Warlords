@@ -13,7 +13,6 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -44,14 +43,15 @@ public class UpgradeTreeBuilder {
         if (level.length == 0) {
             level = new int[]{1, 2, 3, 4};
         }
-        AtomicReference<Float> valueReference = new AtomicReference<>(value);
+        FloatModifiable modifiable = new FloatModifiable(value);
         if (warlordsEntity.getGame() != null) {
-            Bukkit.getPluginManager().callEvent(new WarlordsUpgradeTreeBuilderAddUpgradeEvent(warlordsEntity, this, valueReference));
+            Bukkit.getPluginManager().callEvent(new WarlordsUpgradeTreeBuilderAddUpgradeEvent(warlordsEntity, this, modifiable));
             Bukkit.broadcast(Component.text("event called in upgrade tree builder"));
         }
+        modifiable.refresh();
         for (int i : level) {
             upgradeTypes.computeIfAbsent(i, k -> new ArrayList<>())
-                        .add(new UpgradeTypeHolder(upgradeType, modifier, valueReference.get(), level[0])); // assuming level[0] is lowest level
+                        .add(new UpgradeTypeHolder(upgradeType, modifier, modifiable.getCalculatedValue(), level[0])); // assuming level[0] is lowest level
         }
         return this;
     }

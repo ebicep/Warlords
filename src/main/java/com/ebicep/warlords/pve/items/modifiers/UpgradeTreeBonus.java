@@ -6,10 +6,9 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.util.java.NumberFormat;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-
-import java.util.concurrent.atomic.AtomicReference;
 
 public enum UpgradeTreeBonus {
 
@@ -249,8 +248,7 @@ public enum UpgradeTreeBonus {
                 if (!upgradeTreeBonus.abilityIconClass.isAssignableFrom(event.getBuilder().getUpgradeBranch().getAbility().getClass())) {
                     return;
                 }
-                AtomicReference<Float> value = event.getValue();
-                value.getAndUpdate(aFloat -> aFloat * (1 + bonusCount * .05f));
+                event.getValue().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "UpgradeTreeBonus", .05f * bonusCount);
             }
         };
         warlordsPlayer.getGame().registerEvents(listener);
