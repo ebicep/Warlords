@@ -1,10 +1,15 @@
 package com.ebicep.warlords.pve.newitems.setbonus.sets;
 
+import com.ebicep.warlords.events.player.ingame.WarlordsRespawnEvent;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveRespawnEvent;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.newitems.setbonus.BaseSet;
 import com.ebicep.warlords.pve.newitems.setbonus.SetBonus;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 
 import java.util.List;
+import java.util.Objects;
 
 public class ThroneOfTheUndead extends BaseSet {
 
@@ -39,11 +44,25 @@ public class ThroneOfTheUndead extends BaseSet {
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
-            // Implementation for:
-            // 1. Intercepting the player's death/respawn timer logic to apply 
-            //    respawnTimeReductionPercent.
-            // 2. Setting current health to respawnHealthPercent of max on respawn.
-            // 3. Wiping current energy to respawnEnergy on respawn.
+            warlordsPlayer.getGame().registerEvents(new Listener() {
+                @EventHandler
+                public void onEvent(WarlordsGiveRespawnEvent event) {
+                    if (!Objects.equals(event.getWarlordsEntity(), warlordsPlayer)) {
+                        return;
+                    }
+                    event.getRespawnTimer().set((int) (event.getRespawnTimer().get() * (respawnTimeReductionPercent / 100f)));
+                }
+
+                @EventHandler
+                public void onRespawn(WarlordsRespawnEvent event) {
+                    if (!Objects.equals(event.getWarlordsEntity(), warlordsPlayer)) {
+                        return;
+                    }
+                    event.getWarlordsEntity().setCurrentHealth(event.getWarlordsEntity().getMaxHealth() * (respawnHealthPercent / 100f));
+                    event.getWarlordsEntity().setCurrentEnergy(respawnEnergy);
+                }
+
+            });
         }
 
     }

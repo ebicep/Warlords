@@ -1198,7 +1198,7 @@
           "attributes": {
             "HEALTH": 50
           },
-          "description": "Reduce your respawn time by {{ticks;%}} but respawn at {{heal;%}} health and no energy.",
+          "description": "Reduce your respawn time by {{gold;%}} but respawn at {{heal;%}} health and no energy.",
           "respawnTimeReductionPercent": 50,
           "respawnHealthPercent": 15,
           "respawnEnergy": 0
