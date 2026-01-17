@@ -1122,6 +1122,23 @@
           "activationChance": 35,
           "duration": 3
         },
+        "multiply": {
+          "tier": "LEGENDARY",
+          "name": "Multiply",
+          "slots": [
+            "HELMET",
+            "BOOTS"
+          ],
+          "attributes": {
+            "HEALTH": 20,
+            "ECR": 1
+          },
+          "bonusAttributeRanges": {
+          },
+          "description": "For every {{energy}} max energy, you gain {{damage;%}} crit multiplier.",
+          "maxEnergyRequirement": 100,
+          "critMultiplierIncreasePercent": 10
+        },
         "heartOfGlass": {
           "tier": "SOVEREIGN",
           "name": "Heart of Glass",

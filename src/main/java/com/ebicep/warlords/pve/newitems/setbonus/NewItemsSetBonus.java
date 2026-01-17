@@ -46,6 +46,7 @@ public enum NewItemsSetBonus implements SetBonus {
     MADRAKAN(new Madrakan()),
     MOONVEIL(new Moonveil()),
     MOURNSONG_VIAL(new MournsongVial()),
+    MULTIPLY(new Multiply()),
     OATHKEEPER(new Oathkeeper()),
     OBELISK(new Obelisk()),
     OCEAN_LIGHT(new OceanLight()),
