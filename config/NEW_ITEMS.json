@@ -516,7 +516,7 @@
           "slots": [
             "RING",
             "RING",
-            "BOOTS"
+            "GLOVES"
           ],
           "attributes": {
             "HEALTH": 50,
@@ -1007,12 +1007,12 @@
           "tier": "LEGENDARY",
           "name": "Bellicose",
           "slots": [
-            "HELMET",
             "RING",
-            "RING"
+            "RING",
+            "TOME"
           ],
           "attributes": {
-            "HEALTH": 200,
+            "HEALTH": 100,
             "KB_RES": 6,
             "ECR": 2
           },
@@ -1057,6 +1057,70 @@
           "healthThreshold": 20,
           "maxHealthDamageMultiplier": 2,
           "cooldownSeconds": 30
+        },
+        "golddigger": {
+          "tier": "LEGENDARY",
+          "name": "Gold Digger",
+          "slots": [
+            "GLOVES"
+          ],
+          "attributes": {
+            "HEALTH": 10
+          },
+          "bonusAttributeRanges": {
+          },
+          "description": "Gain {{gold;%}} Insignia from all sources.",
+          "bonusCurrencyPercent": 20
+        },
+        "diabolical": {
+          "tier": "LEGENDARY",
+          "name": "Diabolical",
+          "slots": [
+            "GLOVES"
+          ],
+          "attributes": {
+            "HEALTH": 10,
+            "REGEN": 5
+          },
+          "bonusAttributeRanges": {
+          },
+          "description": "{{gold;%}} chance to deal {damage;%}} more damage when hitting any target.",
+          "bonusDamageChancePercent": 10,
+          "bonusDamagePercent": 30
+        },
+        "pillage": {
+          "tier": "LEGENDARY",
+          "name": "Pillage",
+          "slots": [
+            "HELMET",
+            "CHESTPLATE"
+          ],
+          "attributes": {
+            "HEALTH": 25,
+            "CDR": 1
+          },
+          "bonusAttributeRanges": {
+          },
+          "description": "For every player below {{damage;%}} health, you heal {{heal;%}} more health.",
+          "healthThresholdPercent": 75,
+          "healPercent": 8
+        },
+        "decay": {
+          "tier": "LEGENDARY",
+          "name": "Decay",
+          "slots": [
+            "CHESTPLATE",
+            "LEGGINGS"
+          ],
+          "attributes": {
+            "HEALTH": 30,
+            "ECR": 1
+          },
+          "bonusAttributeRanges": {
+          },
+          "description": "{{gold;%}} chance to inflict a random de-buff on enemies for {{ticks}} when taking damage.",
+          "activationChance": 35,
+          "duration": 3
         },
         "heartOfGlass": {
           "tier": "SOVEREIGN",
