@@ -148,6 +148,7 @@ public class AbilityTree {
     public void setFreeUpgrades(int freeUpgrades) {
         this.freeUpgrades = freeUpgrades;
     }
+    private int freeUpgrades = 0;
 
     private void openAbilityTreeAfterTick() {
         new BukkitRunnable() {
@@ -157,7 +158,6 @@ public class AbilityTree {
             }
         }.runTaskLater(Warlords.getInstance(), 2);
     }
-    private int freeUpgrades = 0;
 
     public void openAbilityTree() {
         if (!(warlordsPlayer.getEntity() instanceof Player player)) {
