@@ -1,23 +1,30 @@
 package com.ebicep.warlords.pve.newitems.setbonus.sets;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.newitems.setbonus.BaseSet;
 import com.ebicep.warlords.pve.newitems.setbonus.SetBonus;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
+import org.bukkit.Particle;
 
 import java.util.List;
 
 public class Hourglass extends BaseSet {
 
     private int cooldownReductionPercent;
-    private int freezeIntervalSeconds;
-    private int freezeDurationSeconds;
+    private float freezeIntervalSeconds;
+    private float freezeDurationSeconds;
 
     @Override
     public void init() {
         super.init();
         this.cooldownReductionPercent = getValue("cooldownReductionPercent", int.class);
-        this.freezeIntervalSeconds = getValue("freezeIntervalSeconds", int.class);
-        this.freezeDurationSeconds = getValue("freezeDurationSeconds", int.class);
+        this.freezeIntervalSeconds = getValue("freezeIntervalSeconds", float.class);
+        this.freezeDurationSeconds = getValue("freezeDurationSeconds", float.class);
     }
 
     @Override
@@ -39,11 +46,25 @@ public class Hourglass extends BaseSet {
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
-            // Implementation for:
-            // 1. Applying a global 25% Cooldown Reduction (CDR) modifier.
-            // 2. Starting a repeating task that triggers every freezeIntervalSeconds (300 ticks).
-            // 3. Applying a "Freeze" effect (no movement/abilities) to the player 
-            //    for freezeDurationSeconds (60 ticks).
+            for (AbstractAbility ability : warlordsPlayer.getAbilities()) {
+                ability.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, getName(), -cooldownReductionPercent / 100f);
+            }
+            warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                    "Hourglass",
+                    null,
+                    Hourglass.class,
+                    null,
+                    warlordsPlayer,
+                    CooldownTypes.ITEM,
+                    cooldownManager -> {},
+                    false,
+                    (cooldown, ticksElapsed) -> {
+                        if (ticksElapsed > 0 && ticksElapsed % (freezeIntervalSeconds * 20) == 0) {
+                            EffectUtils.playCylinderAnimation(warlordsPlayer.getLocation(), 1.05, Particle.ITEM_SNOWBALL, 3);
+                            warlordsPlayer.setStunTicks((int) (freezeDurationSeconds * 20));
+                        }
+                    }
+            ));
         }
 
     }
