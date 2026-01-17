@@ -58,7 +58,7 @@ public class AbilityTree {
             if (upgrade.isUnlocked()) {
                 continue;
             }
-            if (upgradeBranch.getFreeUpgrades() > 0 && upgradeIndex == 0) {
+            if (abilityTree.getFreeUpgrades() > 0 || upgradeBranch.getFreeUpgrades() > 0 && upgradeIndex == 0) {
                 switch (upgradeType) {
                     case A, B -> upgradeBranch.purchaseUpgrade(upgradeList, warlordsPlayer, upgrade, upgradeIndex, true);
                 }
@@ -137,9 +137,27 @@ public class AbilityTree {
     private AutoUpgradeProfile autoUpgradeProfile = null;
     private int maxMasterUpgrades = 3;
 
+    public int getFreeUpgrades() {
+        return freeUpgrades;
+    }
+
     public AbilityTree(WarlordsPlayer warlordsPlayer) {
         this.warlordsPlayer = warlordsPlayer;
     }
+
+    public void setFreeUpgrades(int freeUpgrades) {
+        this.freeUpgrades = freeUpgrades;
+    }
+
+    private void openAbilityTreeAfterTick() {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                openAbilityTree();
+            }
+        }.runTaskLater(Warlords.getInstance(), 2);
+    }
+    private int freeUpgrades = 0;
 
     public void openAbilityTree() {
         if (!(warlordsPlayer.getEntity() instanceof Player player)) {
@@ -156,8 +174,10 @@ public class AbilityTree {
                     new ItemBuilder(upgradeBranch.getItemStack())
                             .name(Component.text(upgradeBranch.getItemName(), NamedTextColor.GOLD))
                             .lore(
-                                    Component.text("Upgrades Remaining: ", NamedTextColor.GRAY).append(Component.text(upgradeBranch.getMaxUpgrades(), NamedTextColor.GREEN)),
-                                    Component.text("Free Upgrades Available: ", NamedTextColor.GRAY).append(Component.text(upgradeBranch.getFreeUpgrades(), NamedTextColor.GREEN)),
+                                    Component.text("Upgrades Remaining: ", NamedTextColor.GRAY)
+                                             .append(Component.text(upgradeBranch.getMaxUpgrades(), NamedTextColor.GREEN)),
+                                    Component.text("Branch Free Upgrades Available: ", NamedTextColor.GRAY)
+                                             .append(Component.text(upgradeBranch.getFreeUpgrades(), NamedTextColor.GREEN)),
                                     Component.empty()
                             )
                             .addLore(getUpgradeTreeInfo(upgradeBranch, upgradeBranch.getTreeA()))
@@ -182,6 +202,8 @@ public class AbilityTree {
                         )
                         .lore(
                                 Component.text("Master Upgrades Remaining: ", NamedTextColor.GRAY).append(Component.text(maxMasterUpgrades, NamedTextColor.GOLD)),
+                                Component.text("Global Free Upgrades Available: ", NamedTextColor.GRAY)
+                                         .append(Component.text(getFreeUpgrades(), NamedTextColor.GREEN)),
                                 Component.empty(),
                                 Component.text("■ Upgrade is locked", NamedTextColor.RED),
                                 Component.text("■ Upgrade is unlocked", NamedTextColor.GREEN),
@@ -405,15 +427,6 @@ public class AbilityTree {
         );
         menu.setItem(4, 4, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
-    }
-
-    private void openAbilityTreeAfterTick() {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                openAbilityTree();
-            }
-        }.runTaskLater(Warlords.getInstance(), 2);
     }
 
     public List<Component> getUpgradeTreeInfo(AbstractUpgradeBranch<?> upgradeBranch, List<Upgrade> upgrades) {

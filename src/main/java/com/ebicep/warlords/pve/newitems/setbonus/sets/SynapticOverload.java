@@ -4,14 +4,11 @@ import com.ebicep.warlords.events.player.ingame.pve.WarlordsUpgradeTreeBuilderAd
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.newitems.setbonus.BaseSet;
 import com.ebicep.warlords.pve.newitems.setbonus.SetBonus;
-import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class SynapticOverload extends BaseSet {
 
@@ -45,20 +42,20 @@ public class SynapticOverload extends BaseSet {
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             Listener listener = new Listener() {
-                @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+                @EventHandler
                 public void onUpgradeAdd(WarlordsUpgradeTreeBuilderAddUpgradeEvent event) {
-                    Bukkit.broadcast(Component.text("event called"));
                     if (!event.getWarlordsEntity().equals(warlordsPlayer)) {
                         return;
                     }
-                    AtomicReference<Float> value = event.getValue();
-                    value.getAndUpdate(aFloat -> aFloat * 1 + (upgradeEffectivenessIncreasePercent / 100f));
+                    event.getValue().addModifier(
+                            FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,
+                            getName() + " " + Integer.toHexString(hashCode()),
+                            upgradeEffectivenessIncreasePercent / 100f
+                    );
                 }
             };
             warlordsPlayer.getGame().registerEvents(listener);
-            // Implementation for:
-            // 1. Modifying the scaling/multipliers of ability upgrades.
-            // 2. Granting the player free upgrade currency or direct ability points.
+            warlordsPlayer.getAbilityTree().setFreeUpgrades(warlordsPlayer.getAbilityTree().getFreeUpgrades() + freeAbilityUpgrades);
         }
 
     }
