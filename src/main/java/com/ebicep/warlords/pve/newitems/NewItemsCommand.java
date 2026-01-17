@@ -22,7 +22,7 @@ import java.util.Comparator;
 import java.util.List;
 
 @CommandAlias("newitems")
-@CommandPermission("group.administrator")
+//@CommandPermission("group.administrator")
 public class NewItemsCommand extends BaseCommand {
 
     @Default

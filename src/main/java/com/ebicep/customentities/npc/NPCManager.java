@@ -66,7 +66,7 @@ public class NPCManager {
                 createPrestigeVendorNPC();
                 createAscendantVendorNPC();
                 createWeeklyItemTraderNPC();
-                createTreasureHuntVendorNPC();
+                //createTreasureHuntVendorNPC();
                 createAscendantWeaponNPC();
             }
         }.runTask(Warlords.getInstance());

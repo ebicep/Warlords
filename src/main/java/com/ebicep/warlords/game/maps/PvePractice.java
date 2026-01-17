@@ -34,7 +34,7 @@ public class PvePractice extends GameMap {
                 1,
                 30 * SECOND,
                 "VoidCrossfire",
-                2,
+                3,
                 GameMode.PVE_DEBUG
         );
     }
