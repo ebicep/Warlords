@@ -1,8 +1,14 @@
 package com.ebicep.warlords.pve.newitems.setbonus.sets;
 
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.newitems.setbonus.BaseSet;
 import com.ebicep.warlords.pve.newitems.setbonus.SetBonus;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 
 import java.util.List;
 
@@ -39,10 +45,49 @@ public class Soulflame extends BaseSet {
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
-            // Implementation for:
-            // 1. A damage-triggered heal (lifesteal-style but for allies).
-            // 2. A repeating task or tick-based logic that reduces the 
-            //    player's health at a fixed rate.
+            warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                    getName(),
+                    null,
+                    Soulflame.class,
+                    null,
+                    warlordsPlayer,
+                    CooldownTypes.ITEM,
+                    cooldownManager -> {
+
+                    },
+                    false,
+                    (cooldown, ticksElapsed) -> {
+                        if (ticksElapsed % 20 == 0) {
+                            warlordsPlayer.addInstance(InstanceBuilder.damage()
+                                    .value(warlordsPlayer.getMaxHealth() * 0.05f)
+                                    .cause("Soulflame")
+                                    .source(warlordsPlayer)
+                                    .flags(InstanceFlags.NO_MESSAGE, InstanceFlags.NO_HIT_SOUND)
+                            );
+                        }
+                    }
+            ).addModifier(Modifier.ON_OUTGOING_DAMAGE, (event, currentDamageValue, isCrit) -> {
+                if (!healAlliesOnDamage) {
+                    return;
+                }
+                if (event.getCause().isEmpty()) {
+                    return;
+                }
+                if (event.getFlags().contains(InstanceFlags.DOT)) {
+                    return;
+                }
+                PlayerFilter.entitiesAround(warlordsPlayer, 6, 6, 6)
+                        .aliveTeammatesOfExcludingSelf(warlordsPlayer)
+                        .forEach(ally -> {
+                            ally.addInstance(InstanceBuilder
+                                    .healing()
+                                    .value(currentDamageValue * 0.01f)
+                                    .cause("Soulflame")
+                                    .source(warlordsPlayer)
+                            );
+                        }
+                );
+            }));
         }
 
     }
