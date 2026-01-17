@@ -9,6 +9,7 @@ import com.ebicep.warlords.pve.mobs.blaze.BlazingKindle;
 import com.ebicep.warlords.pve.mobs.bosses.*;
 import com.ebicep.warlords.pve.mobs.bosses.Void;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.*;
+import com.ebicep.warlords.pve.mobs.bosses.raidbosses.RaidMithra;
 import com.ebicep.warlords.pve.mobs.creaking.SovereignGuardian;
 import com.ebicep.warlords.pve.mobs.creeper.CreepyBomber;
 import com.ebicep.warlords.pve.mobs.enderman.EndermanAnomaly;
@@ -560,6 +561,14 @@ public enum Mob {
             new ItemStack(Material.NETHERITE_BOOTS),
             Weapons.FELFLAME_BLADE.getItem(),
             new ItemStack(Material.SHIELD)
+    )
+    ),
+    RAID_MITHRA(EntityType.WITHER_SKELETON, RaidMithra.class, RaidMithra::new, RaidMithra::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.IRON_QUEEN),
+            new ItemStack(Material.NETHERITE_CHESTPLATE),
+            new ItemStack(Material.NETHERITE_LEGGINGS),
+            new ItemStack(Material.NETHERITE_BOOTS),
+            Weapons.FELFLAME_BLADE.getItem()
     )
     ),
     MAGMATIC_OOZE(EntityType.MAGMA_CUBE, MagmaticOoze.class, MagmaticOoze::new, MagmaticOoze::new, null),

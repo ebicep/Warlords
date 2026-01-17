@@ -3,10 +3,9 @@ package com.ebicep.warlords.player.ingame;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
-import org.bukkit.entity.Display;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.TextDisplay;
-import org.bukkit.entity.Zombie;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.entity.*;
 import org.bukkit.util.Transformation;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -102,9 +101,14 @@ public abstract class MobHologram {
 
         @Override
         protected void update(@Nonnull Entity entity) {
+            AttributeInstance scale = ((LivingEntity) entity).getAttribute(Attribute.SCALE);
+            float displaySize = scale == null ? 1 : (float) scale.getValue();
             Location location = entity.getLocation().clone();
-            location.add(0, entity.getHeight() + 0.275, 0);
-            float displaySize = (entity instanceof Zombie zombie && zombie.isBaby()) ? 0.5f : 1;
+            if (scale != null && scale.getValue() > 1) {
+                location.add(0, entity.getHeight() + (displaySize * 2), 0);
+            } else {
+                location.add(0, entity.getHeight() + 0.275, 0);
+            }
             for (CustomHologramLine customHologramLine : customHologramLines) {
                 Entity lineEntity = customHologramLine.getEntity();
                 if (lineEntity == null || !lineEntity.isValid()) {

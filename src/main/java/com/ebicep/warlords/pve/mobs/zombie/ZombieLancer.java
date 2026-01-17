@@ -5,6 +5,9 @@ import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BasicMob;
 import org.bukkit.Location;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.entity.LivingEntity;
 
 public class ZombieLancer extends AbstractMob implements BasicMob {
 
@@ -49,7 +52,6 @@ public class ZombieLancer extends AbstractMob implements BasicMob {
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
-
     }
 
 }

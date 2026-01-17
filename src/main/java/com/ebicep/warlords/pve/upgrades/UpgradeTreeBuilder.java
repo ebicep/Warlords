@@ -6,6 +6,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.RomanNumber;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 
 import javax.annotation.Nullable;
@@ -46,6 +47,7 @@ public class UpgradeTreeBuilder {
         AtomicReference<Float> valueReference = new AtomicReference<>(value);
         if (warlordsEntity.getGame() != null) {
             Bukkit.getPluginManager().callEvent(new WarlordsUpgradeTreeBuilderAddUpgradeEvent(warlordsEntity, this, valueReference));
+            Bukkit.broadcast(Component.text("event called in upgrade tree builder"));
         }
         for (int i : level) {
             upgradeTypes.computeIfAbsent(i, k -> new ArrayList<>())

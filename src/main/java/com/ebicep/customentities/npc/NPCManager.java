@@ -62,7 +62,7 @@ public class NPCManager {
                 createIllusionVendorNPC();
                 //createSeasonalVendorNPC();
                 createAnomalyNPC();
-                createRaidNPC();
+                createRaidOneNPC();
                 createPrestigeVendorNPC();
                 createAscendantVendorNPC();
                 createWeeklyItemTraderNPC();
@@ -352,29 +352,23 @@ public class NPCManager {
         npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 20.5, 93, 208.5, -90, 0));
     }
 
-    public static void createRaidNPC() {
-        registerTrait(RaidStartTrait.class, "RaidStartTrait");
+    public static void createRaidOneNPC() {
+        registerTrait(RaidOneStartTrait.class, "RaidStartTrait");
 
         NPC npc = NPC_REGISTRY.createNPC(EntityType.END_CRYSTAL, "raid-start");
-        npc.getOrAddTrait(SkinTrait.class).setSkinPersistent(
-                "archmc-0a4f85b",
-                "Ftv54gQ5wTDf66m2A3OLOLgm27ABCCf6lRlvxvEYAp4E4N8ACPXf85kHufJ8ujIDixZorkr8ZjYWGqbDMvGrw2x8zzI0K07qpcH7A7Cbcet1fSeMNGegsaaI1Dl4GvNllOoyRLcppA9O5YoWBJO7cfCFrbzH9pr8X2114ui2QLHuPIO4uh0UuDbqdhiU48tIdyrOcgHzLyMuCD5Su01x1rkrQ6TY1yl4IM9qfEuAkj6K00urt0cf8NNoxISo57olrCRZm+0WaU8qkkLyIaPiAs929cpcskD0fgDR2Pivy1D+cretD8JJ3TnqpoMgsrFWxhzLsdGBF+esH6EAiWvEXlwrnxzlJfPzKgbQLgooFUSB0UjKxmUqQpGb0qZ5cuLP5JhNx+yz3ruay0Ttg3uvEbDcRcGpgssW3l+kQ/JzD1IH8uMfU6uHDF5by1J2FxAdZfeJjewWMrjDFNAiU4ANhVaOW+19FbaLt+YOePSIOYo72lpy264bP7qG42Lc7TB4j6vjV1AXkRZNNcF7Ir/ko/2b6iWbkzUlG0hd8jWZtm4Asr7va18MZhaxuz3vXP22DO+60AZFYl5+fqp+h8tVyIsaGy1y+R1BV99qPSHO3lgYvMJfYlaYA0x2rGQT6X+xpLm3F+I7dRY3uWezspQXcNnpGZkFb+QOSKalPGmnAjc=",
-                "ewogICJ0aW1lc3RhbXAiIDogMTc2MTE2NDY0NDM4NSwKICAicHJvZmlsZUlkIiA6ICJmZjQ3NzI5YmQwZDI0YWYwOThiMTFjMGE3ZTFiMGVlZiIsCiAgInByb2ZpbGVOYW1lIiA6ICJtYXRzY2FuIiwKICAic2lnbmF0dXJlUmVxdWlyZWQiIDogdHJ1ZSwKICAidGV4dHVyZXMiIDogewogICAgIlNLSU4iIDogewogICAgICAidXJsIiA6ICJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlLzlmNzU3Y2IzNTYwOGRiYjMyMThjYWUxNGE1MTAwM2Y3ZjhhMzdkYzYzMDIyYzJiMGQzOTU1ZmQ5ZjI1YmM0NjIiCiAgICB9CiAgfQp9"
-        );
-        npc.addTrait(RaidStartTrait.class);
+        npc.addTrait(RaidOneStartTrait.class);
         LookClose lookClose = npc.getOrAddTrait(LookClose.class);
         lookClose.setPerPlayer(true);
         lookClose.toggle();
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
 
-        Location loc = new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 11.5, 93, 262.5, -180, 0);
+        Location loc = new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 28.5, 94, 262.5, -180, 0);
         npc.spawn(loc);
 
         new BukkitRunnable() {
             @Override
             public void run() {
-                Utils.playGlobalSound(loc, Sound.AMBIENT_CAVE, 0.3f, 0.5f);
                 EffectUtils.displayParticle(Particle.ASH, loc.clone().add(0, 2, 0), 10, 0.5, 0.2, 0.5, 0.001);
             }
         }.runTaskTimer(Warlords.getInstance(), 0, 30);

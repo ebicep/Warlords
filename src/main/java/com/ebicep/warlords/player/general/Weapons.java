@@ -158,7 +158,9 @@ public enum Weapons {
     }
 
     public ItemStack getItem() {
+        ItemMeta itemMeta = item.getItemMeta();
+        itemMeta.setCustomModelData(1001);
+        item.setItemMeta(itemMeta);
         return item;
     }
-
 }

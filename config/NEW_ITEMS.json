@@ -629,7 +629,7 @@
             "REGEN": 8
           },
           "description": "Increase your crit chance by {{damage;%}} while under damage-preventing effects.",
-          "critChanceBoost": 25
+          "critChanceBoost": 40
         },
         "voidcarver": {
           "tier": "LEGENDARY",
@@ -724,8 +724,8 @@
           ],
           "attributes": {
             "HEALTH": 50,
-            "ECR": 2,
-            "REGEN": 15
+            "ECR": 1,
+            "REGEN": 10
           },
           "description": "For every player that is above {{heal;%}} health, deal {{damage;%}} more damage.",
           "healthyPlayerThresholdPercent": 75,
@@ -756,7 +756,7 @@
           "attributes": {
             "HEALTH": 50,
             "ECR": 2,
-            "CDR": 3
+            "CDR": 2
           },
           "description": "For every mob on the field, increase your healing by {{heal;%}}.",
           "healingPerMobPercent": 0.75
@@ -773,7 +773,7 @@
           ],
           "attributes": {
             "HEALTH": 200,
-            "CDR": 2
+            "CDR": 1
           },
           "description": "Allies within {{blocks}} take {{damageReduction;%}} reduced damage. Doubled below {{heal;%}} health.",
           "radius": 6,
@@ -841,7 +841,7 @@
             "REGEN": 20
           },
           "description": "Increase your energy per hit by {{energy}}.",
-          "energyPerHit": 8
+          "energyPerHit": 10
         },
         "ghostly": {
           "tier": "LEGENDARY",
@@ -869,7 +869,7 @@
           ],
           "attributes": {
             "HEALTH": 25,
-            "ECR": 2,
+            "ECR": 1,
             "REGEN": 5
           },
           "description": "Ranged primary attacks have a {{damage;%}} chance to instantly kill non-boss targets.",
@@ -964,7 +964,7 @@
           ],
           "attributes": {
             "HEALTH": 35,
-            "CDR": 3
+            "CDR": 2
           },
           "description": "Increase rare loot chance by {{blue;%}}. Enemies have a {{blue;%}} chance to drop a spelunker chest.",
           "rareLootChanceIncreasePercent": 25,
@@ -1031,7 +1031,7 @@
           "attributes": {
             "HEALTH": 200,
             "KB_RES": 5,
-            "ECR": 3
+            "ECR": 2
           },
           "bonusAttributeRanges": {
           },

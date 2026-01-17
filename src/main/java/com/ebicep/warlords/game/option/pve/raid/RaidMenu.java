@@ -4,7 +4,7 @@ import com.ebicep.warlords.commands.debugcommands.game.GameStartCommand;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.menu.Menu;
-import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import net.kyori.adventure.text.Component;
@@ -13,59 +13,94 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.ebicep.warlords.menu.Menu.*;
 
 public class RaidMenu {
 
-    public static void openRaidMenu(Player player) {
-        Menu menu = new Menu("Raid Menu", 9 * 4);
-        Raid[] index = Raid.VALUES;
-        for (int i = 0; i < index.length; i++) {
-            Raid raid = index[i];
-            int finalI = i;
-            menu.setItem(
-                    i % 7 + 1,
-                    1,
-                    new ItemBuilder(Material.REDSTONE)
-                            .name(Component.text(raid.getName(), NamedTextColor.RED, TextDecoration.BOLD))
-                            .lore(WordWrap.wrap(Component.text(raid.getDescription(), NamedTextColor.DARK_GRAY), 150))
-                            .addLore(
-                                    Component.empty(),
-                                    Component.text("Minimum level: ", NamedTextColor.GRAY).append(Component.text(raid.getMinimumClassLevel(), NamedTextColor.RED)),
-                                    Component.text("Minimum player requirement: ", NamedTextColor.GRAY).append(Component.text("4", NamedTextColor.GOLD)),
-                                    Component.empty(),
-                                    Component.text("Completion Rewards:", NamedTextColor.GRAY),
-                                    Component.text("+300,000 Class Experience", NamedTextColor.DARK_AQUA),
-                                    Currencies.COIN.getCostColoredName(300_000, "+"),
-                                    Currencies.SYNTHETIC_SHARD.getCostColoredName(1000, "+"),
-                                    Component.text("+1 Raid Insignia", NamedTextColor.RED), //TODO put other rewards into spendable enum
-                                    Component.text("+1 Ascendant Fragment", NamedTextColor.DARK_RED),
-                                    Component.empty(),
-                                    Component.text("Possible Bonus Rewards:", NamedTextColor.GRAY),
-                                    Currencies.LEGEND_FRAGMENTS.getCostColoredName(50, "+"),
-                                    Component.text("+1 Legendary Weapon", NamedTextColor.GOLD)
-                            )
-                            .get(),
-                    (m, e) -> {
-                        GameMap map = null;
-                        switch (finalI) {
-                            case 0 -> map = GameMap.THE_OBSIDIAN_TRAIL_RAID;
-                            case 1, 2, 3, 4, 5, 6 -> player.sendMessage(Component.text("WIP", NamedTextColor.RED));
-                        }
+    public static void openRaidMenu(Player player, Raid raid) {
+        Menu menu = new Menu("Raid Menu - " + raid.getName(), 9 * 5);
 
-                        GameMap finalMap = map;
-                        if (finalMap != null) {
-                            GameStartCommand.startGamePvERaid(player, queueEntryBuilder ->
-                                    queueEntryBuilder.setMap(finalMap)
-                                                     .setRequestedGameAddons(GameAddon.PRIVATE_GAME)
+        menu.setItem(4,
+                0,
+                new ItemBuilder(Material.CRYING_OBSIDIAN)
+                        .name(Component.text("Conditions", NamedTextColor.LIGHT_PURPLE))
+                        .addLore(WordWrap.wrap(Component.text("- No respawns in between phases\n\n- All players take 5% of their max health as damage every 5 seconds.\n\n- Having more than 2 of a specialization type will result in a permanent 90% damage de-buff for all players.", NamedTextColor.GRAY), 150))
+                        .get(),
+                ACTION_DO_NOTHING);
 
-                            );
-                        }
-                    }
-            );
-            menu.setItem(3, 3, MENU_BACK, (m, e) -> openRaidMenu(player));
-            menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
+        List<Component> normalRewards = new ArrayList<>();
+        for (Spendable spendable : raid.getNormalRewards().keySet()) {
+            normalRewards.add(spendable.getCostColoredName(raid.getNormalRewards().get(spendable)));
         }
+        menu.setItem(
+                3,
+                2,
+                new ItemBuilder(Material.TRIAL_KEY)
+                        .name(Component.text("Normal", NamedTextColor.GOLD, TextDecoration.BOLD))
+                        .lore(WordWrap.wrap(Component.text(raid.getDescription(), NamedTextColor.DARK_GRAY, TextDecoration.ITALIC), 165))
+                        .addLore(List.of(
+                                Component.empty(),
+                                Component.text("Recommended party size: ", NamedTextColor.GRAY)
+                                        .append(Component.text("4-8 Players", NamedTextColor.YELLOW)),
+                                Component.empty(),
+                                Component.text("All players must have a ", NamedTextColor.GRAY)
+                                        .append(Component.text("Legendary ", NamedTextColor.GOLD)),
+                                Component.text("Weapon", NamedTextColor.GOLD)
+                                        .append(Component.text(" or higher equipped.", NamedTextColor.GRAY))
+                        ))
+                        .addLore(List.of(
+                                Component.empty(),
+                                Component.text("Completion rewards:")
+                        ))
+                        .addLore(normalRewards)
+                        .get(),
+                (m, e) -> {
+                    GameStartCommand.startGamePvERaid(player, queueEntryBuilder ->
+                            queueEntryBuilder.setMap(GameMap.THE_OBSIDIAN_TRAIL_RAID)
+                                             .setRequestedGameAddons(GameAddon.PRIVATE_GAME)
+
+                    );
+                }
+        );
+
+        List<Component> oblivionRewards = new ArrayList<>();
+        for (Spendable spendable : raid.getOblivionRewards().keySet()) {
+            oblivionRewards.add(spendable.getCostColoredName(raid.getOblivionRewards().get(spendable)));
+        }
+        menu.setItem(
+                5,
+                2,
+                new ItemBuilder(Material.OMINOUS_TRIAL_KEY)
+                        .name(Component.text("Oblivion", NamedTextColor.DARK_PURPLE, TextDecoration.BOLD))
+                        .lore(WordWrap.wrap(Component.text("Are you prepared to face your ultimate challenge?", NamedTextColor.DARK_GRAY, TextDecoration.ITALIC), 165))
+                        .addLore(List.of(
+                                Component.empty(),
+                                Component.text("Recommended party size: ", NamedTextColor.GRAY)
+                                        .append(Component.text("4-8 Players", NamedTextColor.YELLOW)),
+                                Component.empty(),
+                                Component.text("All players must have a ", NamedTextColor.GRAY)
+                                        .append(Component.text("Legendary ", NamedTextColor.GOLD)),
+                                Component.text("Weapon", NamedTextColor.GOLD)
+                                        .append(Component.text(" or higher equipped.", NamedTextColor.GRAY))
+                        ))
+                        .addLore(List.of(
+                                Component.empty(),
+                                Component.text("Completion rewards:")
+                        ))
+                        .addLore(oblivionRewards)
+                        .get(),
+                (m, e) -> {
+                    GameStartCommand.startGamePvERaid(player, queueEntryBuilder ->
+                            queueEntryBuilder.setMap(GameMap.THE_OBSIDIAN_TRAIL_RAID)
+                                    .setRequestedGameAddons(GameAddon.PRIVATE_GAME)
+
+                    );
+                }
+        );
+        menu.setItem(4, 4, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
 }

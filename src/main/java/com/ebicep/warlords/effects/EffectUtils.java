@@ -373,7 +373,7 @@ public class EffectUtils {
             return;
         }
         if (player == null) {
-            loc.getWorld().spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed, null, true);
+            loc.getWorld().spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed);
         } else {
             player.spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed);
         }
