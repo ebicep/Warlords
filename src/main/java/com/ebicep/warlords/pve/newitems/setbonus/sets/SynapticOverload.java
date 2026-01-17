@@ -1,8 +1,12 @@
 package com.ebicep.warlords.pve.newitems.setbonus.sets;
 
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsUpgradeTreeBuilderAddUpgradeEvent;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.newitems.setbonus.BaseSet;
 import com.ebicep.warlords.pve.newitems.setbonus.SetBonus;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 
 import java.util.List;
 
@@ -37,9 +41,21 @@ public class SynapticOverload extends BaseSet {
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
-            // Implementation for:
-            // 1. Modifying the scaling/multipliers of ability upgrades.
-            // 2. Granting the player free upgrade currency or direct ability points.
+            Listener listener = new Listener() {
+                @EventHandler
+                public void onUpgradeAdd(WarlordsUpgradeTreeBuilderAddUpgradeEvent event) {
+                    if (!event.getWarlordsEntity().equals(warlordsPlayer)) {
+                        return;
+                    }
+                    event.getValue().addModifier(
+                            FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,
+                            getName() + " " + Integer.toHexString(hashCode()),
+                            upgradeEffectivenessIncreasePercent / 100f
+                    );
+                }
+            };
+            warlordsPlayer.getGame().registerEvents(listener);
+            warlordsPlayer.getAbilityTree().setFreeUpgrades(warlordsPlayer.getAbilityTree().getFreeUpgrades() + freeAbilityUpgrades);
         }
 
     }

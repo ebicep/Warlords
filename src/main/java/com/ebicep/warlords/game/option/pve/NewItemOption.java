@@ -80,6 +80,7 @@ public class NewItemOption implements Option {
             }
         }
         totalBonusLore.addAll(setsStatsComponent);
+        warlordsPlayer.resetAbilityTree();
 
         if (player.getEntity() instanceof Player) {
             AbstractItem.sendItemMessage((Player) player.getEntity(),

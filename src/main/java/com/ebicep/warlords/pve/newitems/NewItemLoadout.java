@@ -32,7 +32,7 @@ public class NewItemLoadout {
 
         Map<NewItemsSetBonus, List<NewItemsSlot>> activeSets = NewItemsUtils.getActiveSets(itemList);
         activeSets.forEach((setBonus, slots) -> {
-            if (setBonus.getSlots().size() == slots.size()) {
+            for (int i = 0; i < slots.size() / setBonus.getSlots().size(); i++) {
                 setBonus.create().apply(warlordsPlayer);
             }
         });

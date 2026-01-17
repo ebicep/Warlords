@@ -122,7 +122,7 @@ public class NewItemsUtils {
                         slots.contains(newItemsSlot) ? setBonus.getTier().getTextColor() : NamedTextColor.GRAY
                 ));
             }
-            boolean setActive = setBonus.getSlots().size() == slots.size();
+            boolean setActive = setBonus.getSlots().size() <= slots.size();
             components.add(Component.empty());
             components.add(Component.text("Set Bonus: ", NamedTextColor.GRAY)
                                     .append(Component.text(setActive ? "[ACTIVE]" : "[INACTIVE]", setActive ? NamedTextColor.GREEN : NamedTextColor.RED)));
