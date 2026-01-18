@@ -105,7 +105,7 @@ public abstract class MobHologram {
             float displaySize = scale == null ? 1 : (float) scale.getValue();
             Location location = entity.getLocation().clone();
             if (scale != null && scale.getValue() > 1) {
-                location.add(0, entity.getHeight() + (displaySize * 2), 0);
+                location.add(0, entity.getHeight() + displaySize - 0.9, 0);
             } else {
                 location.add(0, entity.getHeight() + 0.275, 0);
             }

@@ -63,16 +63,12 @@ public class InnerFlame extends BaseSet {
                                             .cause(getName())
                                             .source(warlordsPlayer)
                                             .value(currentHealValue * (healingDamageConversion / 100f))
-                                            .flags(InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST)
+                                            .flags(InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST, InstanceFlags.NO_HEALING_ORBS, InstanceFlags.NO_HEALING_LEECH)
                                     );
                                 }
                         );
                     }
             ));
-            // Implementation for converting healing done into AoE damage 
-            // for nearby enemies based on healingDamageConversion percentage.
         }
-
     }
-
 }

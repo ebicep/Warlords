@@ -76,7 +76,7 @@ public class Soulflame extends BaseSet {
                 if (event.getFlags().contains(InstanceFlags.DOT)) {
                     return;
                 }
-                PlayerFilter.entitiesAround(warlordsPlayer, 6, 6, 6)
+                PlayerFilter.entitiesAround(warlordsPlayer, 8, 8, 8)
                         .aliveTeammatesOfExcludingSelf(warlordsPlayer)
                         .forEach(ally -> {
                             ally.addInstance(InstanceBuilder

@@ -132,7 +132,11 @@ public class EffectUtils {
         if (loc.getBlock().getType().isOccluding()) {
             return;
         }
-        loc.getWorld().spawnParticle(particle, loc, count, 0, 0, 0, 0, null, true);
+        if (particle == Particle.EFFECT) {
+            loc.getWorld().spawnParticle(particle, loc, count, 0, 0, 0, 0, new Particle.Spell(Color.fromRGB(140, 25, 240), 1));
+        } else {
+            loc.getWorld().spawnParticle(particle, loc, count, 0, 0, 0, 0, null, true);
+        }
     }
 
     /**
@@ -864,7 +868,12 @@ public class EffectUtils {
             double offsetZ,
             double speed
     ) {
-        displayParticle(null, particle, loc, count, offsetX, offsetY, offsetZ, speed);
+        if (particle == Particle.EFFECT) {
+            var data = new Particle.Spell(Color.fromRGB(140, 25, 240), 1);
+            displayParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed, data);
+        } else {
+            displayParticle(null, particle, loc, count, offsetX, offsetY, offsetZ, speed);
+        }
     }
 
     /**

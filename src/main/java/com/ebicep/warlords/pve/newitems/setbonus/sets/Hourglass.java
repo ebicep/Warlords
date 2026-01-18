@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.newitems.setbonus.sets;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
@@ -59,6 +60,9 @@ public class Hourglass extends BaseSet {
                     cooldownManager -> {},
                     false,
                     (cooldown, ticksElapsed) -> {
+                        if (warlordsPlayer.isDead() || warlordsPlayer.getGame().getState() instanceof EndState) {
+                            return;
+                        }
                         if (ticksElapsed > 0 && ticksElapsed % (freezeIntervalSeconds * 20) == 0) {
                             EffectUtils.playCylinderAnimation(warlordsPlayer.getLocation(), 1.05, Particle.ITEM_SNOWBALL, 3);
                             warlordsPlayer.setStunTicks((int) (freezeDurationSeconds * 20));

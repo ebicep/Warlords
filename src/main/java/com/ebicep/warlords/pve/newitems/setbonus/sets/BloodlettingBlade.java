@@ -69,7 +69,7 @@ public class BloodlettingBlade extends BaseSet {
                                     .cause("Bloodletting Blade")
                                     .source(warlordsPlayer)
                                     .value(warlordsPlayer.getMaxHealth() * (selfDamageOnCritPercentMaxHealth / 100f))
-                                    .flags(InstanceFlags.TRUE_DAMAGE, InstanceFlags.NO_MESSAGE)
+                                    .flags(InstanceFlags.NO_MESSAGE)
                             );
                         }
                     }

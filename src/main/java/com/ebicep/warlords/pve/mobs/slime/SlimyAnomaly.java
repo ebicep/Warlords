@@ -85,7 +85,7 @@ public class SlimyAnomaly extends AbstractMob implements BasicMob {
                     warlordsNPC.getLocation(),
                     hitRadius,
                     new CircumferenceEffect(Particle.HAPPY_VILLAGER, Particle.DUST).particlesPerCircumference(0.75),
-                    new DoubleLineEffect(Particle.EFFECT)
+                    new DoubleLineEffect(Particle.WITCH)
             ).playEffects();
         }
     }

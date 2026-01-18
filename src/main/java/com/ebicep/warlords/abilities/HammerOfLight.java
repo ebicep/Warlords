@@ -26,10 +26,7 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
@@ -49,7 +46,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon, Duration, Damages<HammerOfLight.DamageValues>, Heals<HammerOfLight.HealingValues>, AbilityStats<HammerOfLight, HammerOfLight.HammerOfLightStats> {
+public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon, HitBox, Duration, Damages<HammerOfLight.DamageValues>, Heals<HammerOfLight.HealingValues>, AbilityStats<HammerOfLight, HammerOfLight.HammerOfLightStats> {
 
     private final HammerOfLightStats stats = new HammerOfLightStats();
     private final DamageValues damageValues = new DamageValues();
@@ -100,7 +97,7 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                 location,
                 hammerRad,
                 new CircumferenceEffect(Particle.HAPPY_VILLAGER, Particle.DUST),
-                new LineEffect(location.clone().add(0, 2.3, 0), Particle.EFFECT)
+                new LineEffect(location.clone().add(0, 2.3, 0), Particle.WITCH)
         );
         BukkitTask particleTask = wp.getGame().registerGameTask(circleEffect::playEffects, 0, 1);
         ArmorStand hammer = spawnHammer(location);
@@ -281,14 +278,14 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                                 angle += 40;
                                 Vector v = new Vector(x, 2, z);
                                 Location loc = wp.getLocation().clone().add(v);
-                                EffectUtils.displayParticle(Particle.EFFECT, loc, 1, 0, 0, 0, 0);
+                                EffectUtils.displayParticle(Particle.EFFECT, loc, 1, 0, 0, 0, 0, new Particle.Spell(Color.fromRGB(140, 25, 240), 1));
                             }
-                            new CircleEffect(wp.getGame(),
-                                    wp.getTeam(),
-                                    wp.getLocation().add(0, 0.75f, 0),
-                                    hammerRad / 2f,
-                                    new CircumferenceEffect(Particle.EFFECT).particlesPerCircumference(0.5f)
-                            ).playEffects();
+//                            new CircleEffect(wp.getGame(),
+//                                    wp.getTeam(),
+//                                    wp.getLocation().add(0, 0.75f, 0),
+//                                    hammerRad / 2f,
+//                                    new CircumferenceEffect(Particle.EFFECT).particlesPerCircumference(0.5f)
+//                            ).playEffects();
                         }
                     });
                     data.setCrownOfLight(true);
@@ -388,12 +385,12 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                 EffectUtils.strikeLightning(wp.getLocation(), false, delay / 10);
                 float rad = hammerRadius.getCalculatedValue();
                 EffectUtils.playHelixAnimation(wp.getLocation(), rad * radiusMultiplier, Particle.WITCH, 1, 20);
-                new CircleEffect(wp.getGame(),
-                        wp.getTeam(),
-                        wp.getLocation().add(0, 0.75f, 0),
-                        rad * radiusMultiplier,
-                        new CircumferenceEffect(Particle.EFFECT).particlesPerCircumference(1)
-                ).playEffects();
+//                new CircleEffect(wp.getGame(),
+//                        wp.getTeam(),
+//                        wp.getLocation().add(0, 0.75f, 0),
+//                        rad * radiusMultiplier,
+//                        new CircumferenceEffect(Particle.EFFECT).particlesPerCircumference(1)
+//                ).playEffects();
                 for (WarlordsEntity allyTarget : PlayerFilter.entitiesAround(wp.getLocation(), rad * radiusMultiplier, rad * radiusMultiplier, rad * radiusMultiplier)
                                                              .aliveTeammatesOf(wp)) {
                     stats.targetsHealed++;
@@ -472,6 +469,11 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
 
     public void setCrownEnergyReduction(int crownEnergyReduction) {
         this.crownEnergyReduction = crownEnergyReduction;
+    }
+
+    @Override
+    public FloatModifiable getHitBoxRadius() {
+        return hammerRadius;
     }
 
     public static class HammerOfLightData {

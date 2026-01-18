@@ -11,6 +11,7 @@ import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.paladin.crusader.LightInfusionBranchCrusader;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import org.bukkit.Color;
 import org.bukkit.Particle;
 
 import javax.annotation.Nonnull;
@@ -45,7 +46,7 @@ public class LightInfusionCrusader extends AbstractLightInfusion implements CanR
                     infusionTarget.getSpeed().removeModifier(name);
                         }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                             if (ticksElapsed % 4 == 0) {
-                                EffectUtils.displayParticle(Particle.EFFECT, wp.getLocation().add(0, 1.2, 0), 2, 0.3, 0.1, 0.3, 0.2);
+                                EffectUtils.displayParticle(Particle.EFFECT, wp.getLocation().add(0, 1.2, 0), 2, 0.3, 0.1, 0.3, 0.2, new Particle.Spell(Color.fromRGB(140, 25, 240), 1));
                             }
                         })
                 );

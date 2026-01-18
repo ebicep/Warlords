@@ -73,6 +73,9 @@ public class Genesis extends BaseSet {
                         if (cooldownSeconds > 0) {
                             return;
                         }
+                        if (warlordsPlayer.isDead()) {
+                            return;
+                        }
                         float lowHealthThreshold = warlordsPlayer.getMaxHealth() * (healthThreshold / 100f);
                         if (warlordsPlayer.getCurrentHealth() < lowHealthThreshold) {
                             Utils.playGlobalSound(warlordsPlayer.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 5, 0.7f);

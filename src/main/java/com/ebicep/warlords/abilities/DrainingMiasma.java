@@ -31,14 +31,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon, Duration, Damages<DrainingMiasma.DamageValues>, AbilityStats<DrainingMiasma, DrainingMiasma.DrainingMiasmaStats> {
+public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon, Duration, HitBox, Damages<DrainingMiasma.DamageValues>, AbilityStats<DrainingMiasma, DrainingMiasma.DrainingMiasmaStats> {
 
     private final DrainingMiasmaStats stats = new DrainingMiasmaStats();
     private final DamageValues damageValues = new DamageValues();
     private float maxHealthDamage = 3;
     private int tickDuration = 100;
     private int leechTickDuration = 5;
-    private int radius = 8;
+    private FloatModifiable radius = new FloatModifiable(8);
     private int slowness = 25;
     private int slownessDuration = 3;
 
@@ -52,7 +52,7 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
         this.maxHealthDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxHealthDamage"), float.class);
         this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
         this.leechTickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("leechTickDuration"), int.class);
-        this.radius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), int.class);
+        this.radius = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), float.class));
         this.slowness = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("slowness"), int.class);
         this.slownessDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("slownessDuration"), int.class);
     }
@@ -66,12 +66,13 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
 
         if (pveMasterUpgrade) {
             Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_WITHER_SPAWN, 10, 1);
-            EffectUtils.playSphereAnimation(wp.getLocation(), radius, Particle.ITEM_SLIME, 1);
+            EffectUtils.playSphereAnimation(wp.getLocation(), radius.getCalculatedValue(), Particle.ITEM_SLIME, 1);
             EffectUtils.playFirework(wp.getLocation(), FireworkEffect.builder().withColor(Color.WHITE).with(FireworkEffect.Type.BALL_LARGE).build());
         }
 
         DrainingMiasmaData data = new DrainingMiasmaData();
-        for (WarlordsEntity miasmaTarget : PlayerFilter.entitiesAround(wp, getRadius(), getRadius(), getRadius()).isAlive()) {
+        float radius = getHitBoxRadius().getCalculatedValue();
+        for (WarlordsEntity miasmaTarget : PlayerFilter.entitiesAround(wp, radius, radius, radius).isAlive()) {
             stats.targetsHit++;
             if (miasmaTarget.isEnemy(wp)) {
                 miasmaTarget.addSpeedModifier(wp, "Draining Miasma Slow", -slowness, slownessDuration * 20);
@@ -207,7 +208,7 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
                                                .text(" for ")
                                                .durationSeconds(slownessDuration)
                                                .text(" on cast. Has a radius of ")
-                                               .blocks(radius)
+                                               .blocks(radius.getCalculatedValue())
                                                .text(".")
                                                .emptyLine()
                                                .text("Each enemy hit will be afflicted with ")
@@ -223,12 +224,8 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
         return new DrainingMiasmaBranch(abilityTree, this);
     }
 
-    public int getRadius() {
+    public FloatModifiable getRadius() {
         return radius;
-    }
-
-    public void setRadius(int radius) {
-        this.radius = radius;
     }
 
     @Override
@@ -265,6 +262,11 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
 
     public void setMaxHealthDamage(float maxHealthDamage) {
         this.maxHealthDamage = maxHealthDamage;
+    }
+
+    @Override
+    public FloatModifiable getHitBoxRadius() {
+        return radius;
     }
 
     public static class DamageValues implements Value.ValueHolder {

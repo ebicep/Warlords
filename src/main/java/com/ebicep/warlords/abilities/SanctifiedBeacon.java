@@ -141,7 +141,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
                     );
                     shadowGardenCooldown.addModifier(Modifier.MODIFY_OUTGOING_CRIT_MULTIPLIER, (event, currentCritMultiplier) -> {
                         currentCritMultiplier.addModifier(FloatModifiable.ModifierType.ADDITIVE, "Shadow Garden", 30);
-                            }
+                    }
                     );
                     nearBy.addKnockbackModifier(wp, "Shadow Garden", -50, shadowGardenCooldown);
                     nearBy.getCooldownManager().removeCooldownByName("Shadow Garden");
@@ -163,18 +163,19 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
                         if (isCrit) {
                             stats.critsReduced++;
                         }
-                            }
-                    ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                    }).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                                 if (crit[0]) { // TODO unscuff
                                     currentDamageValue.addModifier(
-                                            FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, name,
+                                            FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,
+                                            name,
                                             -critMultiplierReducedBy / 100f,
                                             contribution -> stats.critDamageReduced += Math.abs(contribution)
                                     );
                                 }
                                 if (wp.isInPve()) {
                                     currentDamageValue.addModifier(
-                                            FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name,
+                                            FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                                            name,
                                             convertToDivisionDecimal(damageReductionPve)
                                     );
                                 }
@@ -199,8 +200,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
                                       false
                               ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                                   currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, 0.7f);
-                                      }
-                              ));
+                              }));
                     }
                 }
             }

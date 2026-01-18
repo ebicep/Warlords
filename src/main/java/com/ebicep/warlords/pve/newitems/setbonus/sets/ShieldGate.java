@@ -75,15 +75,11 @@ public class ShieldGate extends BaseSet {
                         return;
                     }
 
-                    shield.setMaxShieldHealth(shield.getMaxShieldHealth() * shieldEffectivenessIncreasePercent);
-                    shield.setShieldHealth(shield.getShieldHealth() * shieldEffectivenessIncreasePercent);
+                    shield.setMaxShieldHealth(shield.getMaxShieldHealth() * shieldEffectivenessIncreasePercent / 100f);
+                    shield.setShieldHealth(shield.getShieldHealth() * shieldEffectivenessIncreasePercent / 100f);
                 }
             };
             warlordsPlayer.getGame().registerEvents(listener);
-
-            // Implementation for:
-            // 1. Reducing the player's Max Health by 99% (forcing reliance on shields).
-            // 2. Applying a 3.0x (300%) multiplier to all incoming/outgoing shield amounts.
         }
 
     }

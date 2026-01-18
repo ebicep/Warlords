@@ -26,7 +26,6 @@ public class EchoOfRuin extends BaseSet {
     @Override
     public void init() {
         super.init();
-        // Using float for the 0.5% decimal value
         this.damagePerKillPercent = getValue("damagePerKillPercent", float.class);
         this.loseStacksOnDeath = getValue("loseStacksOnDeath", boolean.class);
     }
@@ -78,6 +77,11 @@ public class EchoOfRuin extends BaseSet {
                     false
             ).addModifier(
                     Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE,
+                    (event, currentDamageValue) -> {
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Echo of Ruin", 1 + (damagePerKillPercent * stacks / 100f));
+                    }
+            ).addModifier(
+                    Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE,
                     (event, currentDamageValue) -> {
                         currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Echo of Ruin", 1 + (damagePerKillPercent * stacks / 100f));
                     }

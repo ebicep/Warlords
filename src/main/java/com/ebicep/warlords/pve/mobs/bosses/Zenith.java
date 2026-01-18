@@ -33,6 +33,9 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.*;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.entity.LivingEntity;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
@@ -117,6 +120,12 @@ public class Zenith extends AbstractMob implements BossMob {
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
+
+        LivingEntity entity = (LivingEntity) warlordsNPC.getEntity();
+        AttributeInstance scale = entity.getAttribute(Attribute.SCALE);
+        if (scale != null) {
+            scale.setBaseValue(1.3);
+        }
 
         if (option.getDifficulty() == DifficultyIndex.ENDLESS) {
             float newHealth = 52000;

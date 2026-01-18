@@ -13,6 +13,7 @@ import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.paladin.protector.LightInfusionBranchProtector;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
+import org.bukkit.Color;
 import org.bukkit.Particle;
 
 import javax.annotation.Nonnull;
@@ -44,7 +45,7 @@ public class LightInfusionProtector extends AbstractLightInfusion {
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 4 == 0) {
-                        EffectUtils.displayParticle(Particle.EFFECT, wp.getLocation().add(0, 1.2, 0), 2, 0.3, 0.1, 0.3, 0.2);
+                        EffectUtils.displayParticle(Particle.EFFECT, wp.getLocation().add(0, 1.2, 0), 2, 0.3, 0.1, 0.3, 0.2, new Particle.Spell(Color.fromRGB(140, 25, 240), 1));
                     }
                 })
         );
@@ -81,7 +82,7 @@ public class LightInfusionProtector extends AbstractLightInfusion {
             Utils.playGlobalSound(wp.getLocation(), "paladin.infusionoflight.activation", 2, 0.7f);
             AtomicInteger multiplier = new AtomicInteger(0);
             RegularCooldown<LightInfusionProtector> ornamentOfDarknessCooldown = new RegularCooldown<>(
-                    "Ornament of Darkness",
+                    "Ornament of Darkness Init",
                     "DARK",
                     LightInfusionProtector.class,
                     null,
@@ -118,8 +119,9 @@ public class LightInfusionProtector extends AbstractLightInfusion {
             wp.getCooldownManager().addCooldown(ornamentOfDarknessCooldown);
 
             addSecondaryAbility(20, () -> {
+                        wp.getCooldownManager().removeCooldownByName("Ornament of Darkness Init");
                         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
-                                "Ornament of Darkness",
+                                "Ornament of Darkness ",
                                 "CORRUPT " + Math.min(200, multiplier.get()),
                                 LightInfusionProtector.class,
                                 null,

@@ -35,8 +35,11 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.*;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Display;
 import org.bukkit.entity.ItemDisplay;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
@@ -130,6 +133,12 @@ public class OneOfNine extends AbstractMob implements BossMob {
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
 
+        LivingEntity entity = (LivingEntity) warlordsNPC.getEntity();
+        AttributeInstance scale = entity.getAttribute(Attribute.SCALE);
+        if (scale != null) {
+            scale.setBaseValue(1.5);
+        }
+
         mapCenter = new Location(warlordsNPC.getWorld(), 112.5, 13, 62.5);
         mapLeft = new Location(warlordsNPC.getWorld(), 87.5, 24, 87.5);
         mapRight = new Location(warlordsNPC.getWorld(), 137.5, 24, 37.5);
@@ -143,7 +152,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
         EffectUtils.strikeLightningInCylinder(warlordsNPC.getLocation(), 10, false);
         Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ITEM_GOAT_HORN_SOUND_6, 10, 0.5f);
 
-        swordManager = new OrbitingItemManager(() -> warlordsNPC.getLocation(), 6, 2, 3, 4, option, warlordsNPC, Material.NETHERITE_SWORD);
+        swordManager = new OrbitingItemManager(() -> warlordsNPC.getLocation(), 6, 2.5, 3, 5, option, warlordsNPC, Material.NETHERITE_SWORD);
         centerSwordManager = new OrbitingItemManager(() -> mapCenter, 25, 30, 1, 30, option, warlordsNPC, Material.NETHERITE_SWORD);
 
         damageController = new DamagePhaseController(warlordsNPC);

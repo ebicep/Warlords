@@ -58,11 +58,10 @@ public class Multiply extends BaseSet {
                             return;
                         }
 
-                        float perStackMultiplier = critMultiplierIncreasePercent / 100f;
                         currentCritMultiplier.addModifier(
-                                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                                FloatModifiable.ModifierType.ADDITIVE,
                                 getName(),
-                                1 + (stacks * perStackMultiplier)
+                                critMultiplierIncreasePercent
                         );
                     }
             ));

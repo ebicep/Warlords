@@ -63,6 +63,10 @@ public class PulseOfAeons extends BaseSet {
 
                     }
             ).addModifier(Modifier.ON_OUTGOING_HEALING, (event, currentHealValue, isCrit) -> {
+                if (event.getFlags().contains(InstanceFlags.DOT)) {
+                    return;
+                }
+
                 stacks++;
 
                 if (stacks == healsPerPulse) {

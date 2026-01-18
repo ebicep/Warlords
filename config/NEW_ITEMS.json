@@ -949,8 +949,8 @@
             "KB_RES": 5
           },
           "description": "Every {{heal}} heal instances, you emit a global pulse that heals all for {{heal}} health.",
-          "healsPerPulse": 6,
-          "pulseHealAmount": 400
+          "healsPerPulse": 10,
+          "pulseHealAmount": 200
         },
         "spelunker": {
           "tier": "LEGENDARY",
@@ -1084,7 +1084,7 @@
           },
           "bonusAttributeRanges": {
           },
-          "description": "{{gold;%}} chance to deal {damage;%}} more damage when hitting any target.",
+          "description": "{{gold;%}} chance to deal {{damage;%}} more damage when hitting any target.",
           "bonusDamageChancePercent": 10,
           "bonusDamagePercent": 30
         },
@@ -1307,7 +1307,7 @@
           "attributes": {
             "HEALTH": 25
           },
-          "description": "Each kill permanently increases your damage by {{damage;%}}. All stacks are lost on death.",
+          "description": "Each kill permanently increases your damage and damage taken by {{damage;%}}. All stacks are lost on death.",
           "damagePerKillPercent": 0.5,
           "loseStacksOnDeath": true
         },
@@ -1410,7 +1410,7 @@
             "HEALTH": 5
           },
           "description": "+{{blue;%}} cooldown reduction on your blue rune skill.",
-          "blueRuneCooldownReductionPercent": 15
+          "blueRuneCooldownReductionPercent": 10
         },
         "durable": {
           "tier": "EPIC",
@@ -1423,6 +1423,30 @@
           },
           "description": "+{{ticks}} to your blue rune skill’s ability duration.",
           "blueRuneDurationIncreaseSeconds": 2
+        },
+        "cell": {
+          "tier": "EPIC",
+          "name": "Cell",
+          "slots": [
+            "HELMET"
+          ],
+          "attributes": {
+            "HEALTH": 15
+          },
+          "description": "-{{energy}} ability energy cost on your primary skill.",
+          "energyCostReduction": 5
+        },
+        "lean": {
+          "tier": "EPIC",
+          "name": "Lean",
+          "slots": [
+            "TOME"
+          ],
+          "attributes": {
+            "HEALTH": 5
+          },
+          "description": "+{{blocks;%}} ability range on your orange rune skill (if applicable).",
+          "blueRuneAbilityRangeIncreasePercent": 30
         },
         "exergis": {
           "tier": "ASCENDANT",
@@ -1439,7 +1463,7 @@
           },
           "bonusAttributeRanges": {
           },
-          "description": "Increase damage by {{damage;%}}.",
+          "description": "PLACEHOLDER Increase damage by {{damage;%}}.",
           "placeholder": 300
         }
       }

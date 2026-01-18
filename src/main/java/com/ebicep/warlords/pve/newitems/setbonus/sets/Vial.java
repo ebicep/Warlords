@@ -1,8 +1,13 @@
 package com.ebicep.warlords.pve.newitems.setbonus.sets;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Damages;
+import com.ebicep.warlords.abilities.internal.Heals;
+import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.newitems.setbonus.BaseSet;
 import com.ebicep.warlords.pve.newitems.setbonus.SetBonus;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.List;
 
@@ -35,10 +40,18 @@ public class Vial extends BaseSet {
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
-            // Implementation for:
-            // 1. Finding the ability in the Red Rune slot (Index 0).
-            // 2. Modifying the healing min/max values or adding a 
-            //    multiplier to the healing output of that skill.
+            for (AbstractAbility ability : warlordsPlayer.getAbilities()) {
+                if (ability instanceof RedAbilityIcon && ability instanceof Heals<?> heals) {
+                    heals.getHealValues().getValues().forEach(healValue -> {
+                        healValue.forEachAllValues(
+                                value -> value.addModifier(
+                                        FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                                        getName(),
+                                        1 + redRuneAbilityHealingIncreasePercent / 100f)
+                        );
+                    });
+                }
+            }
         }
 
     }

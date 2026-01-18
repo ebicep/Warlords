@@ -50,14 +50,14 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
 
         Utils.playGlobalSound(location, "paladin.consecrate.activation", 2, 1);
         float radius = hitBox.getCalculatedValue();
-        CircleEffect circleEffect = new CircleEffect(
-                wp.getGame(),
-                wp.getTeam(),
-                location,
-                radius,
-                new CircumferenceEffect(Particle.HAPPY_VILLAGER, Particle.DUST).particlesPerCircumference(.075),
-                new DoubleLineEffect(Particle.EFFECT)
-        );
+//        CircleEffect circleEffect = new CircleEffect(
+//                wp.getGame(),
+//                wp.getTeam(),
+//                location,
+//                radius,
+//                new CircumferenceEffect(Particle.HAPPY_VILLAGER, Particle.DUST).particlesPerCircumference(.075),
+//                new DoubleLineEffect(Particle.EFFECT)
+//        );
 
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
@@ -74,7 +74,7 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if ((inPve && ticksElapsed % 7 == 0) || (!inPve && ticksElapsed % 5 == 0)) {
-                        circleEffect.playEffects();
+                        //circleEffect.playEffects();
                     }
                     if (ticksElapsed % 20 == 0) {
                         PlayerFilter.entitiesAround(location, radius, 6, radius)

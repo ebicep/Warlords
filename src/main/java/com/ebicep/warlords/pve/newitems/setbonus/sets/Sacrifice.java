@@ -5,6 +5,8 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.newitems.setbonus.BaseSet;
 import com.ebicep.warlords.pve.newitems.setbonus.SetBonus;
@@ -84,7 +86,13 @@ public class Sacrifice extends BaseSet {
                                 if (ally == null) {
                                     return;
                                 }
-                                ally.setCurrentHealth(ally.getMaxHealth() * 1 - allyHealthReductionPercent / 100f);
+                                ally.addInstance(InstanceBuilder
+                                        .damage()
+                                        .cause("Sacrifice")
+                                        .source(warlordsPlayer)
+                                        .value(warlordsPlayer.getCurrentHealth() * allyHealthReductionPercent / 100f)
+                                        .flags(InstanceFlags.TRUE_DAMAGE)
+                                );
                                 ally.playSound(ally.getLocation(), Sound.ENTITY_WITHER_SPAWN, 1, 0.5f);
                                 warlordsPlayer.sendMessage(Component.text("You have sacrificed " + ally.getName() + " to the unholy gods!", NamedTextColor.RED));
                                 reviveCooldownSeconds = 30 * 20;
