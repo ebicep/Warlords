@@ -1,8 +1,12 @@
 package com.ebicep.warlords.pve.newitems.setbonus.sets;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
+import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.newitems.setbonus.BaseSet;
 import com.ebicep.warlords.pve.newitems.setbonus.SetBonus;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.List;
 
@@ -28,7 +32,6 @@ public class Wellspring extends BaseSet {
 
     @Override
     public List<Object> getVariables() {
-        // Matches the {{blue;%}} placeholder in your description
         return List.of(blueRuneCooldownReductionPercent);
     }
 
@@ -36,9 +39,11 @@ public class Wellspring extends BaseSet {
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
-            // Implementation for:
-            // 1. Locating the ability assigned to the Blue Rune slot (usually Index 1 or 2).
-            // 2. Applying a 5% cooldown reduction multiplier to that specific ability.
+            for (AbstractAbility ability : warlordsPlayer.getAbilities()) {
+                if (ability instanceof BlueAbilityIcon) {
+                    ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getName(),  1 - blueRuneCooldownReductionPercent / 100f);
+                }
+            }
         }
 
     }
