@@ -1,8 +1,12 @@
 package com.ebicep.warlords.pve.newitems.setbonus.sets;
 
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.newitems.setbonus.BaseSet;
 import com.ebicep.warlords.pve.newitems.setbonus.SetBonus;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.List;
 
@@ -39,10 +43,49 @@ public class Soulforged extends BaseSet {
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
-            // Implementation for:
-            // 1. Monitoring the player's health percentage.
-            // 2. If above threshold, add energyPerSecondBonus to base EPS.
-            // 3. If below threshold, set base energy regeneration to 0.
+            warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                    getName(),
+                    null,
+                    Soulforged.class,
+                    null,
+                    warlordsPlayer,
+                    CooldownTypes.ITEM,
+                    cooldownManager -> {
+                    },
+                    false
+            ).addModifier(
+                    Modifier.ENERGY_GAIN_PER_TICK,
+                    energyGainPerTick -> {
+                        if (warlordsPlayer.isDead()) {
+                            return;
+                        }
+
+                        float maxHealth = warlordsPlayer.getMaxHealth();
+                        if (maxHealth <= 0) {
+                            return;
+                        }
+
+                        float healthPercent = warlordsPlayer.getCurrentHealth() / maxHealth * 100f;
+
+                        if (healthPercent < energyRegenDisabledBelowHealthPercent) {
+                            energyGainPerTick.addModifier(
+                                    FloatModifiable.ModifierType.OVERRIDING,
+                                    getName(),
+                                    0
+                            );
+                            return;
+                        }
+
+                        if (healthPercent >= healthThreshold) {
+                            energyGainPerTick.addModifier(
+                                    FloatModifiable.ModifierType.ADDITIVE,
+                                    getName(),
+                                    energyPerSecondBonus / 20f
+                            );
+                        }
+                    }
+            ));
+
         }
 
     }

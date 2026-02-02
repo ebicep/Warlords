@@ -17,6 +17,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import java.util.List;
+import java.util.Objects;
 
 public class EchoOfRuin extends BaseSet {
 
@@ -55,8 +56,11 @@ public class EchoOfRuin extends BaseSet {
 
                 @EventHandler
                 private void onEnemyDeath(WarlordsDeathEvent event) {
-                    if (event.getWarlordsEntity().equals(warlordsPlayer) && loseStacksOnDeath) {
+                    if (event.getWarlordsEntity().equals(warlordsPlayer)) {
                         stacks = 0;
+                        return;
+                    }
+                    if (!Objects.equals(event.getKiller(), warlordsPlayer)) {
                         return;
                     }
                     if (event.getWarlordsEntity().getTeam().equals(warlordsPlayer.getTeam())) {

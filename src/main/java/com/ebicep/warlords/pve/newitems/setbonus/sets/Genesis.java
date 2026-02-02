@@ -101,9 +101,10 @@ public class Genesis extends BaseSet {
                                                         );
                                                     }
                                             );
-                                    cooldownSeconds = 30 * 20;
                                 }
                             }.runTaskLater(40);
+
+                            cooldownSeconds = 30 * 20;
                         }
                     }
             ));

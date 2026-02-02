@@ -44,7 +44,7 @@ public class ChainLightning extends AbstractChain<ChainLightning, ChainLightning
                 giver,
                 CooldownTypes.LOW_LEVEL_DEBUFF,
                 cooldownManager -> {},
-                3 * 20,
+                5 * 20,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 20 == 0) {
                         EffectUtils.displayParticle(Particle.ELECTRIC_SPARK, receiver.getLocation().add(0, 1.2, 0), 5, .25, .25, .25, 0);
@@ -52,7 +52,7 @@ public class ChainLightning extends AbstractChain<ChainLightning, ChainLightning
                 })
         ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                     if (event.getSource().equals(giver)) {
-                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Aftershock", 1.3f);
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Aftershock", 1.2f);
                     }
                 }
         ).addModifier(Modifier.ON_ENEMY_DEATH, (event, currentDamageValue, isCrit, isKiller) -> {

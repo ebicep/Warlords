@@ -658,8 +658,8 @@
             "HEALTH": 60,
             "REGEN": 20
           },
-          "description": "Kills have a {{blue;%}} chance to summon an allied mob for {{gold}} seconds.",
-          "summonChance": 5,
+          "description": "Kills have a {{blue;%}} chance to summon an allied mob for {{ticks}}.",
+          "summonChance": 15,
           "duration": 30
         },
         "summoner": {
@@ -920,7 +920,7 @@
           },
           "description": "Healing allies above {{heal;%}} health converts excess healing into energy (max {{energy}}).",
           "excessHealingHealthThresholdPercent": 90,
-          "excessHealingEnergyCap": 20
+          "excessHealingEnergyCap": 5
         },
         "transference": {
           "tier": "LEGENDARY",
@@ -1138,6 +1138,36 @@
           "description": "For every {{energy}} max energy, you gain {{damage;%}} crit multiplier.",
           "maxEnergyRequirement": 100,
           "critMultiplierIncreasePercent": 10
+        },
+        "immutableWill": {
+          "tier": "LEGENDARY",
+          "name": "Immutable Will",
+          "slots": [
+            "TOME"
+          ],
+          "attributes": {
+            "HEALTH": 25,
+            "CDR": 2
+          },
+          "description": "Deal {{damage;%}} more damage for every {{damage;%}} of missing health.",
+          "extraDamagePercent": 1,
+          "missingHealthPercent": 2
+        },
+        "swift": {
+          "tier": "LEGENDARY",
+          "name": "Swift",
+          "slots": [
+            "LEGGINGS",
+            "BOOTS",
+            "GLOVES"
+          ],
+          "attributes": {
+            "HEALTH": 10,
+            "CDR": 1
+          },
+          "description": "For every {{energy;%}} movement speed, you gain {{damage;%}} crit chance on your primary attack",
+          "movementSpeedPercent": 5,
+          "critChanceIncreasePercent": 1
         },
         "heartOfGlass": {
           "tier": "SOVEREIGN",

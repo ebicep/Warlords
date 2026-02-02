@@ -86,6 +86,7 @@ public class Ability<T extends AbstractAbility> {
     public static final Ability<LightningRod> LIGHTNING_ROD = new Ability<>(LightningRod.class, LightningRod::new);
     public static final Ability<MercifulHex> MERCIFUL_HEX = new Ability<>(MercifulHex.class, MercifulHex::new);
     public static final Ability<MysticalBarrier> MYSTICAL_BARRIER = new Ability<>(MysticalBarrier.class, MysticalBarrier::new);
+    public static final Ability<MirrorBlossom> MIRROR_BLOSSOM = new Ability<>(MirrorBlossom.class, MirrorBlossom::new);
     public static final Ability<NotAShield> NOT_A_SHIELD = new Ability<>(NotAShield.class, NotAShield::new);
     public static final Ability<OrbsOfLife> ORBS_OF_LIFE = new Ability<>(OrbsOfLife.class, OrbsOfLife::new);
     public static final Ability<OrderOfEviscerate> ORDER_OF_EVISCERATE = new Ability<>(OrderOfEviscerate.class, OrderOfEviscerate::new);
@@ -197,6 +198,7 @@ public class Ability<T extends AbstractAbility> {
             LIGHTNING_ROD,
             MERCIFUL_HEX,
             MYSTICAL_BARRIER,
+            MIRROR_BLOSSOM,
             NOT_A_SHIELD,
             ORBS_OF_LIFE,
             ORDER_OF_EVISCERATE,

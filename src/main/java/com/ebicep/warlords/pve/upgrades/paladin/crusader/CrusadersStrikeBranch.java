@@ -37,14 +37,19 @@ public class CrusadersStrikeBranch extends AbstractUpgradeBranch<CrusadersStrike
                 "Crusader’s Slash",
                 "Crusader's Strike - Master Upgrade",
                 """
-                        Double the energy given to allies radius and increase the amount of allies that receive energy by 1 but reduce the energy given by 3.
+                        +25% Damage
+                        
+                        Double the energy given to allies radius and increase the amount of allies that receive energy by 1 but reduce the energy given by 5.
                         
                         Additionally, Crusader's Strike hits 3 additional enemies. (excluding energy given)
                         """,
                 50000,
                 () -> {
+                    Value.RangedValueCritable damage = ability.getDamageValues().getStrikeDamage();
+                    damage.min().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Master Upgrade Branch", .25f);
+                    damage.max().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Master Upgrade Branch", .25f);
                     ability.setEnergyRadius(ability.getEnergyRadius() * 2);
-                    ability.setEnergyGiven(ability.getEnergyGiven() - 3);
+                    ability.setEnergyGiven(ability.getEnergyGiven() - 5);
                     ability.setEnergyMaxAllies(ability.getEnergyMaxAllies() + 1);
                 }
         );

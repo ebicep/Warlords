@@ -59,9 +59,9 @@ public class ZombieEnd extends AbstractMob implements ChampionMob {
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
-        orbitingItemManager = new OrbitingItemManager(() -> warlordsNPC.getLocation(), 3, 2, 1, 1.5f, option, warlordsNPC, Material.END_CRYSTAL);
+        orbitingItemManager = new OrbitingItemManager(() -> warlordsNPC.getLocation(), 3, 2, 1, 1.5f, warlordsNPC, Material.END_CRYSTAL);
 
-        orbitingItemManager.spawnSwords(3);
+        orbitingItemManager.spawnItems(3);
         orbitingItemManager.start();
 
         EffectUtils.playFirework(

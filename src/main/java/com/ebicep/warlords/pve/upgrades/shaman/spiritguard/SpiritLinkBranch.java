@@ -22,7 +22,7 @@ public class SpiritLinkBranch extends AbstractUpgradeBranch<SpiritLink> {
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgradeDamage(ability.getDamageValues().getLinkDamage(), 10f)
+                .addUpgradeEnergy(ability)
                 .addTo(treeA);
 
         UpgradeTreeBuilder

@@ -148,7 +148,6 @@ public class LaserBarrageAbility {
                                         .cause("Death Ray")
                                         .value(1000)
                                         .source(warlordsEntity)
-                                        .flags(InstanceFlags.TRUE_DAMAGE)
                                 );
                             }
                         }

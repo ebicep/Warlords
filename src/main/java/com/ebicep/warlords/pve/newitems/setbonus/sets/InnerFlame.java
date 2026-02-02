@@ -63,7 +63,11 @@ public class InnerFlame extends BaseSet {
                                             .cause(getName())
                                             .source(warlordsPlayer)
                                             .value(currentHealValue * (healingDamageConversion / 100f))
-                                            .flags(InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST, InstanceFlags.NO_HEALING_ORBS, InstanceFlags.NO_HEALING_LEECH)
+                                            .flags(
+                                                    InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST,
+                                                    InstanceFlags.NO_HEALING_ORBS,
+                                                    InstanceFlags.NO_HEALING_LEECH
+                                            )
                                     );
                                 }
                         );

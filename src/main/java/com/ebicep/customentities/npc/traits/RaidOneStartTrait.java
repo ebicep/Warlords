@@ -31,11 +31,11 @@ public class RaidOneStartTrait extends WarlordsTrait {
 
     @Override
     public void rightClick(NPCRightClickEvent event) {
-        RaidMenu.openRaidMenu(event.getClicker(), raid);
+        //RaidMenu.openRaidMenu(event.getClicker(), raid);
     }
 
     @Override
     public void leftClick(NPCLeftClickEvent event) {
-        RaidMenu.openRaidMenu(event.getClicker(), raid);
+        //RaidMenu.openRaidMenu(event.getClicker(), raid);
     }
 }

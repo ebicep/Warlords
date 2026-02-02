@@ -25,7 +25,7 @@ public class SkillEnergyCostReduction implements Attribute {
 
     @Override
     public String getName() {
-        return "Skill Energy Cost Reduction";
+        return "Skill Energy Cost";
     }
 
     @Override
@@ -50,7 +50,7 @@ public class SkillEnergyCostReduction implements Attribute {
     @Override
     public void apply(WarlordsPlayer warlordsPlayer, float value) {
         for (AbstractAbility ability : warlordsPlayer.getAbilities()) {
-            if (ability.getEnergyCost().getCalculatedValue() == 0) {
+            if (ability.getEnergyCost().getCalculatedValue() == 0 || ability.getEnergyCost().getBaseValue() == 0) {
                 continue;
             }
             ability.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Item", -value);

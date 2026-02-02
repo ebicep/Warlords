@@ -34,7 +34,7 @@ public class LegendaryAftershock extends AbstractLegendaryWeapon {
     public static final float SLOW_PERCENT = 25f;
 
     public static final float THRESHOLD_PERCENT_BASE = 15f;
-    public static final float THRESHOLD_PERCENT_DEC_PER_LEVEL = 0.5f;
+    public static final float THRESHOLD_PERCENT_DEC_PER_LEVEL = 1;
 
     public static final float ZONE_DAMAGE_PERCENT_BASE = 30f;
     public static final float ZONE_DAMAGE_INC_PER_LEVEL = 1.5f;

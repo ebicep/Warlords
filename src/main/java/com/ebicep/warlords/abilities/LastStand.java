@@ -94,8 +94,11 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
                 },
                 selfTickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    if ((pveMasterUpgrade || pveMasterUpgrade2) && ticksLeft % 15 == 0) {
-                        for (WarlordsEntity we : PlayerFilter.entitiesAround(wp, radius, radius, radius).aliveEnemiesOf(wp).closestFirst(wp)) {
+                    if (pveMasterUpgrade && ticksLeft % 15 == 0) {
+                        for (WarlordsEntity we : PlayerFilter.entitiesAround(wp, radius, radius, radius)
+                                .aliveEnemiesOf(wp)
+                                .closestFirst(wp)
+                        ) {
                             if (we instanceof WarlordsNPC) {
                                 ((WarlordsNPC) we).getMob().setTarget(wp);
                             }

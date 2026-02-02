@@ -48,7 +48,7 @@ public class ArcaneShieldBranchPyromancer extends AbstractUpgradeBranch<ArcaneSh
                 """
                         +2s Duration
                         
-                        While Arcane Shield is active, summon 3 blazing saw blades around you, dealing 175-250 damage. Each hit increases the damage by 3% (max 300%).
+                        While Arcane Shield is active, summon 3 blazing saw blades around you, dealing 150-225 damage. Each hit increases the damage by 3% (max 300%).
                         """,
                 50000,
                 () -> {

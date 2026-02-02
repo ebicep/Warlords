@@ -17,6 +17,7 @@ import java.util.UUID;
 public class SeismicWaveDefender extends AbstractSeismicWave implements CanReduceCooldowns, Damages<SeismicWaveDefender.DamageValues> {
 
     private final DamageValues damageValues = new DamageValues();
+    private int cooldownReductionHits = 0;
 
     public SeismicWaveDefender() {
         super(AbstractAbilityBuilder.create("seismicWaveDefender").pvp());
@@ -43,12 +44,19 @@ public class SeismicWaveDefender extends AbstractSeismicWave implements CanReduc
                 .uuid(abilityUUID)
         ).ifPresent(event -> {
             onHitFinalEvent(wp, waveTarget);
-            if (pveMasterUpgrade2) {
+            if (pveMasterUpgrade2 && cooldownReductionHits < 10) {
                 float cdReduction = 0.25f;
                 wp.getAbilitiesMatching(LastStand.class).forEach(lastStand -> lastStand.subtractCurrentCooldown(cdReduction));
+                cooldownReductionHits++;
             }
         });
 
+    }
+
+    @Override
+    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        cooldownReductionHits = 0;
+        return super.onActivate(wp);
     }
 
     @Override

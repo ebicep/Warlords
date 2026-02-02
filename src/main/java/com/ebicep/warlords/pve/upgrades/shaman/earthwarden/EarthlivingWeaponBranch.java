@@ -9,6 +9,7 @@ public class EarthlivingWeaponBranch extends AbstractUpgradeBranch<EarthlivingWe
     public void runOnce() {
         ability.setRadius(8);
     }
+
     int weaponDamage = ability.getWeaponDamage();
     int maxHits = ability.getMaxHits();
 
@@ -77,7 +78,7 @@ public class EarthlivingWeaponBranch extends AbstractUpgradeBranch<EarthlivingWe
                 "Earthliving Weapon - Master Upgrade",
                 """
                         +5s Duration
-                                                
+                        
                         EPH is increased by 10 for the duration of Earthliving. Additionally, the first Earthliving proc on each enemy will be a guaranteed crit.
                         """,
                 50000,

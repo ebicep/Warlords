@@ -29,12 +29,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-/**
- * Sky Phase - Crystal Conduits
- * Spawn N crystals at boss-Y. Boss announces a kill order via titles.
- * Players must kill crystals in the exact sequence. If any is killed out of order:
- * If all are killed in order: success VFX/SFX and end.
- */
 public class CrystalConduitsAbility {
 
     private final WarlordsEntity source;

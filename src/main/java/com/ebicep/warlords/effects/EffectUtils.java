@@ -835,6 +835,25 @@ public class EffectUtils {
         }
     }
 
+    public static void playBlossomAnimation(Location location, double radius, Particle particle, int ticksLived) {
+        int petals = 7;
+        double yOffset = 0.05;
+        double rotation = ticksLived * 0.05;
+
+        for (double theta = 0; theta <= Math.PI * 2; theta += 0.03) {
+            double r = Math.sin(petals * theta) * radius;
+
+            double angle = theta + rotation;
+
+            double x = r * Math.cos(angle);
+            double z = r * Math.sin(angle);
+
+            Location point = location.clone().add(x, yOffset, z);
+
+            displayParticle(particle, point, 0, 0, 0, 0, 1);
+        }
+    }
+
     public static void playCrownAnimation(Location loc, Particle particle) {
         double angle = 0;
         for (int i = 0; i < 9; i++) {

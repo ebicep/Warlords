@@ -1488,6 +1488,11 @@
           }
         }
       },
+      "mirrorBlossom": {
+        "name": "Mirror Blossom",
+        "cooldown": 24,
+        "energyCost": 30
+      },
       "spiritLink": {
         "name": "Spirit Link",
         "cooldown": 8.5,
@@ -2820,20 +2825,20 @@
         "tickDuration": 120,
         "tickDurationDot": 120,
         "ticksBetweenDot": 40,
-        "maxEnemiesHit": 2,
+        "maxEnemiesHit": 4,
         "projectileSpeed": 2.5,
         "maxDistance": 40,
         "hitTeammates": false,
         "damageValues": {
           "hexDamage": {
-            "min": 263,
-            "max": 356,
+            "min": 763,
+            "max": 856,
             "critChance": 20,
             "critMultiplier": 175
           },
           "hexDOTDamage": {
-            "min": 25,
-            "max": 35
+            "min": 55,
+            "max": 85
           }
         }
       },

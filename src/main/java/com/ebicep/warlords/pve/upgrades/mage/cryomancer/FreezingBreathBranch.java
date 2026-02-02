@@ -62,6 +62,8 @@ public class FreezingBreathBranch extends AbstractUpgradeBranch<FreezingBreath> 
                 "Cold Front",
                 "Freezing Breath - Master Upgrade",
                 """
+                        +1 Max Charges
+                        
                         Condense the breath into a ball of ice and snow, now a projectile, will explode on impact. Enemies hit will be CHILLED for 5s. Damage increases based on blocks traveled.
                         
                         CHILLED: Become slowed by 50% and deal 40% less damage.
@@ -70,6 +72,7 @@ public class FreezingBreathBranch extends AbstractUpgradeBranch<FreezingBreath> 
                 () -> {
                     ability.getHitBoxRadius().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Master Upgrade Branch", 1.6f);
                     ability.setMaxAnimationTime(ability.getMaxAnimationTime() * 2);
+                    ability.setMaxCharges(ability.getMaxCharges() + 1);
                 }
         );
     }

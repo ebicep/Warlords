@@ -1,6 +1,5 @@
 package com.ebicep.warlords.pve.mobs.bosses.bossabilities;
 
-import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import org.bukkit.Bukkit;
@@ -24,7 +23,6 @@ public class OrbitingItemManager {
     private final double radius, height;
     private final float orbitSpeedDegPerTick;
     private final Vector3f scale;
-    private final PveOption option;
     private final WarlordsEntity entity;
     private final Material orbitMaterial;
 
@@ -39,22 +37,22 @@ public class OrbitingItemManager {
             double radius,
             double height,
             float orbitSpeedDegPerTick,
-            float scaleFactor, PveOption option,
-            WarlordsEntity entity, Material orbitMaterial
+            float scaleFactor,
+            WarlordsEntity entity,
+            Material orbitMaterial
     ) {
         this.centerSupplier = centerSupplier;
         this.radius = radius;
         this.height = height;
         this.orbitSpeedDegPerTick = orbitSpeedDegPerTick;
         this.scale = new Vector3f(scaleFactor, scaleFactor, scaleFactor);
-        this.option = option;
         this.entity = entity;
         this.orbitMaterial = orbitMaterial;
     }
 
     public void start() {
         if (orbitTask != null) return;
-        orbitTask = new GameRunnable(option.getGame()) {
+        orbitTask = new GameRunnable(entity.getGame()) {
             @Override public void run() { tickOrbit(); }
         };
         orbitTask.runTaskTimer(0, 1); // delay=0, period=1 tick
@@ -70,7 +68,7 @@ public class OrbitingItemManager {
         angleOffsets.clear();
     }
 
-    public void spawnSwords(int count) {
+    public void spawnItems(int count) {
         removeAllSwordsImmediate();
         Location center = centerSafe();
         World w = entity.getWorld();
@@ -136,7 +134,7 @@ public class OrbitingItemManager {
 
     private void animateShrinkAndRemove(ItemDisplay d, int ticksShrink) {
         final Vector3f start = d.getTransformation().getScale();
-        new GameRunnable(option.getGame()) {
+        new GameRunnable(entity.getGame()) {
             int t = 0;
             @Override
             public void run() {

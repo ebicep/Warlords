@@ -101,14 +101,24 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
                         if (pveMasterUpgrade) {
                             Utils.playGlobalSound(particleLoc, Sound.BLOCK_GLASS_BREAK, 1, 1.35f);
                             EffectUtils.playHelixAnimation(particleLoc.add(0, -1.25, 0), 6, Particle.FIREWORK, 1, 8);
-                            for (WarlordsEntity we : PlayerFilter.entitiesAround(wp, 6, 6, 6).aliveEnemiesOf(wp).closestFirst(wp)) {
+                            for (WarlordsEntity we : PlayerFilter
+                                    .entitiesAround(wp, 6, 6, 6)
+                                    .aliveEnemiesOf(wp)
+                                    .closestFirst(wp)
+                            ) {
                                 we.setDamageResistance(we.getSpec().getDamageResistance() - 1);
                                 we.addSpeedModifier(wp, "Ice Barrier Slowness", -75, 20);
                             }
                         }
                     }
                     if (wp.isInPve()) {
-                        for (WarlordsEntity we : PlayerFilter.entitiesAround(wp, 15, 15, 15).aliveEnemiesOf(wp).closestFirst(wp)) {
+                        if (pveMasterUpgrade2) {
+                            return;
+                        }
+                        for (WarlordsEntity we : PlayerFilter.entitiesAround(wp, 15, 15, 15)
+                                .aliveEnemiesOf(wp)
+                                .closestFirst(wp)
+                        ) {
                             if (we instanceof WarlordsNPC warlordsNPC) {
                                 warlordsNPC.getMob().setTarget(wp);
                             }

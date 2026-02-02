@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.newitems.setbonus.sets;
 
+import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
@@ -10,19 +11,21 @@ import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.List;
 
-public class CrownOfThorns extends BaseSet {
+public class Swift extends BaseSet {
 
-    private int thornDamageBoost;
+    private int movementSpeedPercent;
+    private int critChanceIncreasePercent;
 
     @Override
     public void init() {
         super.init();
-        this.thornDamageBoost = getValue("thornDamageBoost", int.class);
+        this.movementSpeedPercent = getValue("movementSpeedPercent", int.class);
+        this.critChanceIncreasePercent = getValue("critChanceIncreasePercent", int.class);
     }
 
     @Override
     public String getConfigFieldName() {
-        return "crownOfThorns";
+        return "swift";
     }
 
     @Override
@@ -32,7 +35,7 @@ public class CrownOfThorns extends BaseSet {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(thornDamageBoost);
+        return List.of(movementSpeedPercent, critChanceIncreasePercent);
     }
 
     public class Bonus implements SetBonus.Bonus {
@@ -42,7 +45,7 @@ public class CrownOfThorns extends BaseSet {
             warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
                     getName(),
                     null,
-                    Decay.class,
+                    Swift.class,
                     null,
                     warlordsPlayer,
                     CooldownTypes.ITEM,
@@ -50,20 +53,21 @@ public class CrownOfThorns extends BaseSet {
                     },
                     false
             ).addModifier(
-                    Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE,
-                    (event, currentDamageValue) -> {
-                        if (!event.getCause().contains("Thorns")) {
+                    Modifier.MODIFY_OUTGOING_CRIT_CHANCE,
+                    (event, currentCritChance) -> {
+                        // Only apply to weapon attacks (not abilities)
+                        if (event.getAbility() instanceof WeaponAbilityIcon) {
                             return;
                         }
-                        currentDamageValue.addModifier(
-                                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
-                                getName(),
-                                1 + (thornDamageBoost / 100f)
-                        );
+
+                        float currentSpeed = warlordsPlayer.getSpeed().getLastValue();
+                        float bonusCritChance = (currentSpeed / movementSpeedPercent) * critChanceIncreasePercent;
+
+                        if (bonusCritChance > 0) {
+                            currentCritChance.addModifier(FloatModifiable.ModifierType.ADDITIVE ,getName(), bonusCritChance);
+                        }
                     }
             ));
         }
-
     }
-
 }

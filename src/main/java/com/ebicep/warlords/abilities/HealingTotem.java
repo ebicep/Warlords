@@ -113,8 +113,8 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                                     .damage()
                                     .cause("Void Totem")
                                     .source(wp)
-                                    .min(1000)
-                                    .max(1500)
+                                    .min(1500)
+                                    .max(2000)
                             );
                         }
                     }
@@ -174,8 +174,7 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                                              }, 20
                                      ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                                          currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, 0.5f);
-                                             }
-                                     ));
+                                     }));
                             });
                         }
 
@@ -198,14 +197,14 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                             }
 
                             for (WarlordsEntity enemy : PlayerFilter
-                                    .entitiesAround(totemStand, 4, 4, 4)
+                                    .entitiesAround(totemStand, 4.5, 4.5, 4.5)
                                     .aliveEnemiesOf(wp)
                             ) {
                                 enemy.addInstance(InstanceBuilder
                                         .damage()
                                         .cause("Void Totem")
-                                        .min(500)
-                                        .max(800)
+                                        .min(750)
+                                        .max(900)
                                         .source(wp)
                                 );
                             }

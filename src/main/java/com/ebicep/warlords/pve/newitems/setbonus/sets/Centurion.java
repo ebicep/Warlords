@@ -38,7 +38,7 @@ public class Centurion extends BaseSet {
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             for (AbstractAbility ability : warlordsPlayer.getAbilities()) {
-                ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getName(), -bonusCDR / 100f);
+                ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getName(), 1 - (bonusCDR / 100f));
             }
         }
 

@@ -72,8 +72,8 @@ public class Veilkeeper extends AbstractMob implements BossMob {
         warlordsNPC.setStunTicks(99999);
         mapCenter = new Location(warlordsNPC.getWorld(), 112.5, 11, 62.5);
 
-        oribitingItemManager = new OrbitingItemManager(() -> warlordsNPC.getLocation(), 4, 1, 6, 2, option, warlordsNPC, Material.CRIMSON_ROOTS);
-        oribitingItemManagerUp = new OrbitingItemManager(() -> warlordsNPC.getLocation(), 4, 3, 6, 2, option, warlordsNPC, Material.CRIMSON_ROOTS);
+        oribitingItemManager = new OrbitingItemManager(() -> warlordsNPC.getLocation(), 4, 1, 6, 2, warlordsNPC, Material.CRIMSON_ROOTS);
+        oribitingItemManagerUp = new OrbitingItemManager(() -> warlordsNPC.getLocation(), 4, 3, 6, 2, warlordsNPC, Material.CRIMSON_ROOTS);
 
         new GameRunnable(warlordsNPC.getGame()) {
             @Override
