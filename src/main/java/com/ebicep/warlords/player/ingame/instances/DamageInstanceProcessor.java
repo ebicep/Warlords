@@ -151,12 +151,14 @@ public class DamageInstanceProcessor {
         applyBeforeInterveneModifiers();
 
         if (handleIntervene()) {
+            applyEndModifiers();
             return Optional.ofNullable(finalEvent);
         }
 
         applyAfterInterveneModifiers();
 
         if (handleShield()) {
+            applyEndModifiers();
             return Optional.ofNullable(finalEvent);
         }
 
