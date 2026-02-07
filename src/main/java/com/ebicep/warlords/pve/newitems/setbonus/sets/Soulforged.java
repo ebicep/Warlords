@@ -36,7 +36,7 @@ public class Soulforged extends BaseSet {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(healthThreshold, energyRegenDisabledBelowHealthPercent, energyPerSecondBonus);
+        return List.of(healthThreshold, energyPerSecondBonus, energyRegenDisabledBelowHealthPercent);
     }
 
     public class Bonus implements SetBonus.Bonus {

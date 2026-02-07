@@ -21,6 +21,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -66,6 +67,9 @@ public class Energize extends BaseSet {
                     if (entity.equals(warlordsPlayer)) {
                         return;
                     }
+                    if (!Objects.equals(event.getKiller(), warlordsPlayer)) {
+                        return;
+                    }
                     if (entity.getTeam().equals(warlordsPlayer.getTeam())) {
                         return;
                     }
@@ -80,6 +84,9 @@ public class Energize extends BaseSet {
 
                 @EventHandler
                 public void onEnergySpent(WarlordsEnergyUseEvent.Pre event) {
+                    if (!Objects.equals(event.getWarlordsEntity(), warlordsPlayer)) {
+                        return;
+                    }
                     if (ThreadLocalRandom.current().nextDouble() > freeAbilityCastChancePercent / 100.0) {
                         return;
                     }

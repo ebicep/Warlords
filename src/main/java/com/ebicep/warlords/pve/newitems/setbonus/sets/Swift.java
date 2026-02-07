@@ -56,15 +56,15 @@ public class Swift extends BaseSet {
                     Modifier.MODIFY_OUTGOING_CRIT_CHANCE,
                     (event, currentCritChance) -> {
                         // Only apply to weapon attacks (not abilities)
-                        if (event.getAbility() instanceof WeaponAbilityIcon) {
+                        if (!(event.getAbility() instanceof WeaponAbilityIcon)) {
                             return;
                         }
 
-                        float currentSpeed = warlordsPlayer.getSpeed().getLastValue();
+                        float currentSpeed = (long) warlordsPlayer.getSpeed().getModifiers().size();
                         float bonusCritChance = (currentSpeed / movementSpeedPercent) * critChanceIncreasePercent;
 
                         if (bonusCritChance > 0) {
-                            currentCritChance.addModifier(FloatModifiable.ModifierType.ADDITIVE ,getName(), bonusCritChance);
+                            currentCritChance.addModifier(FloatModifiable.ModifierType.ADDITIVE ,getName(), bonusCritChance * 100f);
                         }
                     }
             ));

@@ -63,18 +63,15 @@ public class ImmutableWill extends BaseSet {
                     (event, currentDamageValue) -> {
                         float currentHealth = warlordsPlayer.getCurrentHealth();
                         float maxHealth = warlordsPlayer.getMaxHealth();
-                        float missingHealthPercent = ((maxHealth - currentHealth) / maxHealth) * 100;
 
-                        float damageBonus = (missingHealthPercent / missingHealthPercent) * extraDamagePercent;
+                        float missingHealthPercentValue = ((maxHealth - currentHealth) / maxHealth) * 100;
+                        float damageBonus = (missingHealthPercentValue / missingHealthPercent) * extraDamagePercent;
 
                         if (damageBonus > 0) {
                             currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getName(), 1 + (damageBonus / 100f));
                         }
                     }
             ));
-
         }
-
     }
-
 }

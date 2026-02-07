@@ -1053,7 +1053,7 @@
           },
           "bonusAttributeRanges": {
           },
-          "description": "When you fall below {{damage;%}} health, charge up for 2 seconds to explode for {{damage;%}} of your max health as damage. Has a cooldown of {{ticks}} seconds.",
+          "description": "When you fall below {{damage;%}} health, charge up for 2 seconds to explode for {{damage;%}} of your max health as damage. Has a cooldown of {{ticks}}",
           "healthThreshold": 20,
           "maxHealthDamageMultiplier": 2,
           "cooldownSeconds": 30
@@ -1069,8 +1069,8 @@
           },
           "bonusAttributeRanges": {
           },
-          "description": "Gain {{gold;%}} Insignia from all sources.",
-          "bonusCurrencyPercent": 20
+          "description": "Gain {{gold;%}} more Insignia from all sources.",
+          "bonusCurrencyPercent": 10
         },
         "diabolical": {
           "tier": "LEGENDARY",
@@ -1179,8 +1179,8 @@
             "KB_RES": -20
           },
           "description": "Reduce your max health and damage reduction by {{damageReduction;%}} but increase your damage by {{damage;%}}.",
-          "defenseStatsPenalty": 80,
-          "damageIncreasePercent": 60
+          "defenseStatsPenalty": 75,
+          "damageIncreasePercent": 50
         },
         "madrakan": {
           "tier": "SOVEREIGN",
