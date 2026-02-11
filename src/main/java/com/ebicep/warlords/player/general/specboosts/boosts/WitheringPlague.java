@@ -59,7 +59,7 @@ public class WitheringPlague implements SpecBoostManager.SpecBoost<WitheringPlag
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(PoisonousHex.class).forEach(poisonousHex -> {
-                poisonousHex.setTickDurationDot(poisonousHex.getTickDurationDot() + (poisonousHex.getTicksBetweenDot() * poisonousHexDamagingTicksIncrease));
+                poisonousHex.setTickDuration(poisonousHex.getTickDuration() + (poisonousHex.getTicksBetweenDot() * poisonousHexDamagingTicksIncrease));
             });
         }
 
