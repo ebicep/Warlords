@@ -50,12 +50,10 @@ public class MarkedForDeath implements SpecBoostManager.SpecBoost<MarkedForDeath
         return List.of(
                 avengerMarkDamage,
                 avengerMarkSlowPercent,
-                avengerMarkIncreaseDamagePercent,
                 avengerMarkDebuffTickDuration,
                 strikeMarkDurationIncreaseTicks,
-                maxStrikeMarkDurationIncreaseTicks,
-                holyRadianceCooldownReductionTicks,
-                holyRadianceEnergyCost
+                maxStrikeMarkDurationIncreaseTicks
+
         );
     }
 

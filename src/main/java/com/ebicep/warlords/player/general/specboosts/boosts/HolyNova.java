@@ -21,12 +21,14 @@ public class HolyNova implements SpecBoostManager.SpecBoost<HolyNova> {
     private float divineBlessingFarRangeBlocks;
     private float divineBlessingHealingIncreasePercentFar;
     private int divineBlessingDamageToEnemies;
+    private int divineBlessingEnemiesHit;
 
     @Override
     public void init() {
         this.divineBlessingFarRangeBlocks = getValue("divineBlessingFarRangeBlocks", float.class);
         this.divineBlessingHealingIncreasePercentFar = getValue("divineBlessingHealingIncreasePercentFar", float.class);
         this.divineBlessingDamageToEnemies = getValue("divineBlessingDamageToEnemies", int.class);
+        this.divineBlessingEnemiesHit = getValue("divineBlessingEnemiesHit", int.class);
     }
 
     @Override
@@ -39,7 +41,8 @@ public class HolyNova implements SpecBoostManager.SpecBoost<HolyNova> {
         return List.of(
                 divineBlessingFarRangeBlocks,
                 divineBlessingHealingIncreasePercentFar,
-                divineBlessingDamageToEnemies
+                divineBlessingDamageToEnemies,
+                divineBlessingEnemiesHit
         );
     }
 
@@ -87,7 +90,7 @@ public class HolyNova implements SpecBoostManager.SpecBoost<HolyNova> {
             );
             regularCooldown.addTriConsumer((cd, ticksLeft, ticksElapsed) -> {
                 if (ticksElapsed == data.getDivineBlessing().getPostHealthTickDelay()) {
-                    PlayerFilter.playingGame(warlordsEntity.getGame()).aliveEnemiesOf(warlordsEntity).forEach(teammate -> {
+                    PlayerFilter.playingGame(warlordsEntity.getGame()).aliveEnemiesOf(warlordsEntity).closestFirst(warlordsEntity).limit(divineBlessingEnemiesHit).forEach(teammate -> {
                         teammate.playSound(teammate.getLocation(), "shaman.earthlivingweapon.impact", 1, 0.55f);
                         teammate.playSound(teammate.getLocation(), "arcanist.divineblessing.impact", 0.2f, 1.75f);
                         teammate.addInstance(InstanceBuilder

@@ -1,13 +1,15 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
-import com.ebicep.warlords.abilities.Berserk;
-import com.ebicep.warlords.abilities.WoundingStrikeBerserker;
-import com.ebicep.warlords.abilities.internal.WoundingCooldown;
+import com.ebicep.warlords.abilities.*;
+import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
-import com.ebicep.warlords.events.player.ingame.WarlordsPlayerWoundedEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.event.EventHandler;
 
@@ -15,19 +17,16 @@ import java.util.List;
 
 public class MightyFists implements SpecBoostManager.SpecBoost<MightyFists> {
 
-    private float woundingIncreasePercent;
-    private float consecutiveStrikeWoundingIncreasePercent;
-    private float maxConsecutiveStrikeWoundingIncreasePercent;
-    private float seismicWaveGroundSlamWoundingPercent;
-    private int seismicWaveGroundSlamWoundingDurationTicks;
+    private float meleeIncreasePercent;
+    private float baseMeleePercent;
+    private float consecutiveHitIncreasePercent;
+    private float maxIncreasePercent;
 
     @Override
     public void init() {
-        this.woundingIncreasePercent = getValue("woundingIncreasePercent", float.class);
-        this.consecutiveStrikeWoundingIncreasePercent = getValue("consecutiveStrikeWoundingIncreasePercent", float.class);
-        this.maxConsecutiveStrikeWoundingIncreasePercent = getValue("maxConsecutiveStrikeWoundingIncreasePercent", float.class);
-        this.seismicWaveGroundSlamWoundingPercent = getValue("seismicWaveGroundSlamWoundingPercent", float.class);
-        this.seismicWaveGroundSlamWoundingDurationTicks = getValue("seismicWaveGroundSlamWoundingDurationTicks", int.class);
+        this.baseMeleePercent = getValue("baseMeleePercent", float.class);
+        this.consecutiveHitIncreasePercent = getValue("consecutiveHitIncreasePercent", float.class);
+        this.maxIncreasePercent = getValue("maxIncreasePercent", float.class);
     }
 
     @Override
@@ -37,11 +36,9 @@ public class MightyFists implements SpecBoostManager.SpecBoost<MightyFists> {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(woundingIncreasePercent,
-                consecutiveStrikeWoundingIncreasePercent,
-                maxConsecutiveStrikeWoundingIncreasePercent,
-                seismicWaveGroundSlamWoundingPercent,
-                seismicWaveGroundSlamWoundingDurationTicks
+        return List.of(baseMeleePercent,
+                consecutiveHitIncreasePercent,
+                maxIncreasePercent
         );
     }
 
@@ -62,10 +59,38 @@ public class MightyFists implements SpecBoostManager.SpecBoost<MightyFists> {
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
+            meleeIncreasePercent = baseMeleePercent;
+            warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                    getStringName(),
+                    null,
+                    MightyFists.class,
+                    null,
+                    warlordsPlayer,
+                    CooldownTypes.SPEC_BOOST,
+                    cooldownManager -> {
 
-            warlordsPlayer.getAbilitiesMatching(WoundingStrikeBerserker.class).forEach(woundingStrike -> {
-                woundingStrike.getWounding().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", woundingIncreasePercent);
-            });
+                    },
+                    false
+            ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                        if (event.getCause().isEmpty()) {
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, getConfigFieldName(), meleeIncreasePercent / 100);
+                        }
+                    }
+            ));
+        }
+        @EventHandler
+        public void onWarlordsAbilityActivateEventPost(WarlordsAbilityActivateEvent.Post event) {
+            if (!warlordsEntity.equals(event.getWarlordsEntity())) {
+                return;
+            }
+            if (!(event.getAbility() instanceof WoundingStrikeBerserker ||
+                    event.getAbility() instanceof SeismicWaveBerserker ||
+                    event.getAbility() instanceof GroundSlamBerserker ||
+                    event.getAbility() instanceof BloodLust ||
+                    event.getAbility() instanceof Berserk)) {
+                return;
+            }
+            meleeIncreasePercent = baseMeleePercent;
         }
 
         @EventHandler
@@ -73,46 +98,11 @@ public class MightyFists implements SpecBoostManager.SpecBoost<MightyFists> {
             if (!event.getSource().equals(warlordsEntity)) {
                 return;
             }
-            if (!event.getCause().equals("Seismic Wave") && !event.getCause().equals("Ground Slam")) {
+            if (!event.getInstanceFlags().contains(InstanceFlags.NO_HIT_SOUND)){
                 return;
             }
-            if (!warlordsEntity.getCooldownManager().hasCooldown(Berserk.class)) {
-                return;
-            }
-            WarlordsEntity target = event.getWarlordsEntity();
-            WoundingCooldown.addWoundingCooldown(
-                    target,
-                    getStringName(),
-                    warlordsEntity,
-                    seismicWaveGroundSlamWoundingPercent,
-                    seismicWaveGroundSlamWoundingDurationTicks
-            );
+            meleeIncreasePercent = Math.min(meleeIncreasePercent + consecutiveHitIncreasePercent, maxIncreasePercent);
         }
-
-        @EventHandler
-        public void onPlayerWoundedEvent(WarlordsPlayerWoundedEvent event) {
-            if (!event.getFrom().equals(warlordsEntity)) {
-                return;
-            }
-            if (!event.getName().equals("Wounding Strike")) {
-                return;
-            }
-            WoundingCooldown woundingCooldown = event.getWoundingCooldown();
-            if (woundingCooldown == null) {
-                return;
-            }
-            WoundingCooldown.WoundingData woundingData = woundingCooldown.getCooldownObject();
-            for (WoundingCooldown.WoundingData.WoundingInstance instance : woundingData.instances()) {
-                if (instance.getFrom().equals(warlordsEntity) && instance.getName().equals("Wounding Strike")) {
-                    instance.setAmount(Math.min(maxConsecutiveStrikeWoundingIncreasePercent, instance.getAmount() + consecutiveStrikeWoundingIncreasePercent));
-                    instance.setTicksLeft(event.getTickDuration());
-                    woundingCooldown.updateTicksLeft();
-                    event.setCancelled(true);
-                    return;
-                }
-            }
-        }
-
     }
 
 }
