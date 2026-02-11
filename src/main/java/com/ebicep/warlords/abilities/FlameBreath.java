@@ -99,7 +99,7 @@ public class FlameBreath extends AbstractAbility implements RedAbilityIcon, Dama
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder.create("Breathe flames in a cone in front of you, knocking back enemies, dealing ")
                                                .damage(damageValues.flameBreathDamage)
-                                               .text(" damage to enemies hit.")
+                                               .text(" damage to enemies hit. ")
                                                .build();
     }
 

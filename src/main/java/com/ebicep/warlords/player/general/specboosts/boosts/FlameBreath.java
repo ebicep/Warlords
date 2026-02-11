@@ -12,8 +12,11 @@ import java.util.List;
 
 public class FlameBreath implements SpecBoostManager.SpecBoost<FlameBreath> {
 
+    private int maxAbilityCharges;
+
     @Override
     public void init() {
+        this.maxAbilityCharges = getValue("maxAbilityCharges", int.class);
     }
 
     @Override
@@ -31,7 +34,7 @@ public class FlameBreath implements SpecBoostManager.SpecBoost<FlameBreath> {
 
     @Override
     public List<Object> getVariables() {
-        return List.of();
+        return List.of(maxAbilityCharges);
     }
 
     @Override
@@ -55,7 +58,9 @@ public class FlameBreath implements SpecBoostManager.SpecBoost<FlameBreath> {
             for (int i = 0; i < abilities.size(); i++) {
                 if (abilities.get(i) instanceof FlameBurst) {
                     com.ebicep.warlords.abilities.FlameBreath flameBreath = new com.ebicep.warlords.abilities.FlameBreath();
+                    flameBreath.setMaxCharges(maxAbilityCharges);
                     flameBreath.init(flameBreath.getBuilder());
+                    flameBreath.setCurrentCooldown(1);
                     abilities.set(i, flameBreath);
                 } else if (abilities.get(i) instanceof TimeWarpPyromancer) {
                     TimeSurge timeSurge = new TimeSurge();

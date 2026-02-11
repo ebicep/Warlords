@@ -17,26 +17,26 @@ import java.util.List;
 
 public class DivineEffulgence implements SpecBoostManager.SpecBoost<DivineEffulgence> {
 
-    public static boolean isCustomProjectile(String cause) {
-        return cause.equals("Chain Lightning") ||
-                cause.equals("Spirit Link") ||
-                cause.equals("Soulfire Beam") ||
-                cause.equals("Guardian Beam") ||
-                cause.equals("Ray of Light") ||
-                cause.equals("Incendiary Curse") ||
-                cause.equals("Boulder");
-    }
+//    public static boolean isCustomProjectile(String cause) {
+//        return cause.equals("Chain Lightning") ||
+//                cause.equals("Spirit Link") ||
+//                cause.equals("Soulfire Beam") ||
+//                cause.equals("Guardian Beam") ||
+//                cause.equals("Ray of Light") ||
+//                cause.equals("Incendiary Curse") ||
+//                cause.equals("Boulder");
+//    }
     private float holyRadianceHealingIncreasePercent;
     private float holyRadianceTravelSpeedPercentIncrease;
-    private float rangedDamageReductionPercent;
-    private int rangedDamageReductionDurationTicks;
+    private float primaryAbilityDamageReductionPercent;
+    private int primaryAbilityDamageReductionDurationTicks;
 
     @Override
     public void init() {
         this.holyRadianceHealingIncreasePercent = getValue("holyRadianceHealingIncreasePercent", float.class);
         this.holyRadianceTravelSpeedPercentIncrease = getValue("holyRadianceTravelSpeedPercentIncrease", float.class);
-        this.rangedDamageReductionPercent = getValue("rangedDamageReductionPercent", float.class);
-        this.rangedDamageReductionDurationTicks = getValue("rangedDamageReductionDurationTicks", int.class);
+        this.primaryAbilityDamageReductionPercent = getValue("primaryAbilityDamageReductionPercent", float.class);
+        this.primaryAbilityDamageReductionDurationTicks = getValue("primaryAbilityDamageReductionDurationTicks", int.class);
     }
 
     @Override
@@ -46,7 +46,7 @@ public class DivineEffulgence implements SpecBoostManager.SpecBoost<DivineEffulg
 
     @Override
     public List<Object> getVariables() {
-        return List.of(holyRadianceHealingIncreasePercent, holyRadianceTravelSpeedPercentIncrease, rangedDamageReductionPercent, rangedDamageReductionDurationTicks);
+        return List.of(holyRadianceHealingIncreasePercent, holyRadianceTravelSpeedPercentIncrease, primaryAbilityDamageReductionPercent, primaryAbilityDamageReductionDurationTicks);
     }
 
     @Override
@@ -93,12 +93,12 @@ public class DivineEffulgence implements SpecBoostManager.SpecBoost<DivineEffulg
                     warlordsEntity,
                     CooldownTypes.SPEC_BOOST,
                     cooldownManager -> {},
-                    rangedDamageReductionDurationTicks
+                    primaryAbilityDamageReductionDurationTicks
             ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (e, currentDamageValue) -> {
-                        if (Utils.isProjectile(e.getCause()) || isCustomProjectile(e.getCause())) {
+                        if (Utils.isPrimaryProjectile(e.getCause()) || Utils.isStrikeSlashSpike(e.getCause())) {
                             currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLICATIVE,
                                     getStringName(),
-                                    AbstractAbility.convertToDivisionDecimal(rangedDamageReductionPercent)
+                                    AbstractAbility.convertToDivisionDecimal(primaryAbilityDamageReductionPercent)
                             );
                         }
                     }

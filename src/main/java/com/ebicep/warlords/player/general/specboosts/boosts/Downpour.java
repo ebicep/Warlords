@@ -76,6 +76,8 @@ public class Downpour implements SpecBoostManager.SpecBoost<Downpour> {
                 );
                 healingRain.setTickDuration(Math.round(healingRain.getTickDuration() * (1 - healingRainDurationDecreasePercent / 100)));
                 healingRain.getHitBoxRadius().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", -healingRainRadiusDecreaseBlocks);
+                healingRain.setCurrentCooldown(0);
+                healingRain.setCurrentCooldown(0);
             });
         }
 
