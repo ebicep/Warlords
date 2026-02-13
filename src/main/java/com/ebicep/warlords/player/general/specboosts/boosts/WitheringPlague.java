@@ -1,6 +1,7 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
 import com.ebicep.warlords.abilities.AstralPlague;
+import com.ebicep.warlords.abilities.ContagiousFacade;
 import com.ebicep.warlords.abilities.PoisonousHex;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
@@ -19,13 +20,13 @@ import java.util.List;
 
 public class WitheringPlague implements SpecBoostManager.SpecBoost<WitheringPlague> {
 
-    private float damageIncrease;
     private int poisonousHexTicksIncrease;
+    private float damageIncrease;
 
     @Override
     public void init() {
-        this.damageIncrease = getValue("damageIncrease", float.class);
         this.poisonousHexTicksIncrease = getValue("poisonousHexTicksIncrease", int.class);
+        this.damageIncrease = getValue("damageIncrease", float.class);
     }
 
     @Override
@@ -36,8 +37,8 @@ public class WitheringPlague implements SpecBoostManager.SpecBoost<WitheringPlag
     @Override
     public List<Object> getVariables() {
         return List.of(
-                damageIncrease,
-                poisonousHexTicksIncrease
+                poisonousHexTicksIncrease,
+                damageIncrease
         );
     }
 
