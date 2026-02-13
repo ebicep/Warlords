@@ -4,7 +4,7 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.util.java.RandomCollection;
-import net.citizensnpcs.api.ai.GoalController;
+import net.citizensnpcs.api.ai.BehaviorController;
 import net.citizensnpcs.trait.ArmorStandTrait;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -95,7 +95,7 @@ public class EventCalamityCore extends AbstractEventCore {
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
-        GoalController goalController = npc.getDefaultGoalController();
+        BehaviorController goalController = npc.getDefaultBehaviorController();
         goalController.clear();
         ArmorStandTrait armorStandTrait = warlordsNPC.getNpc().getOrAddTrait(ArmorStandTrait.class);
         armorStandTrait.setVisible(false);

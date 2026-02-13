@@ -9,7 +9,7 @@ import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import net.citizensnpcs.api.ai.EntityTarget;
-import net.citizensnpcs.api.ai.tree.BehaviorGoalAdapter;
+import net.citizensnpcs.api.ai.tree.Behavior;
 import net.citizensnpcs.api.ai.tree.BehaviorStatus;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Location;
@@ -20,7 +20,8 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class NPCTowerDefensePathfindGoal extends BehaviorGoalAdapter {
+public class NPCTowerDefensePathfindGoal implements Behavior
+{
 
     private final NPC npc;
     private final TowerDefenseSpawner towerDefenseSpawner;

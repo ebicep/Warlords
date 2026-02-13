@@ -425,7 +425,7 @@ public class NPCManager {
 
     public static void registerTrait(Class<? extends Trait> trait, String traitName) {
         if (CitizensAPI.getTraitFactory().getTrait(traitName) != null) {
-            CitizensAPI.getTraitFactory().deregisterTrait(TraitInfo.create(trait).withName(traitName));
+            CitizensAPI.getTraitFactory().getRegisteredTraits().remove(TraitInfo.create(trait).withName(traitName));
         }
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(trait).withName(traitName));
     }
