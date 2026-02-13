@@ -91,7 +91,10 @@ public class MightyFists implements SpecBoostManager.SpecBoost<MightyFists> {
             if (!event.getSource().equals(warlordsEntity)) {
                 return;
             }
-            if (event.isDamageInstance() && event.getCause().contains("melee")) {
+            if (!event.isDamageInstance()) {
+                return;
+            }
+            if (!event.getCause().isEmpty()) {
                 return;
             }
             meleeIncreasePercent = Math.min(meleeIncreasePercent + consecutiveHitIncreasePercent, maxIncreasePercent);
