@@ -1532,7 +1532,7 @@
         "name": "Time Surge",
         "cooldown": 28,
         "energyCost": 30,
-        "healPercentage": 30
+        "healPercentage": 35
       },
       "timeWarpAquamancer": {
         "name": "Time Warp",

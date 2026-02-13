@@ -1,6 +1,7 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
 import com.ebicep.warlords.abilities.AstralPlague;
+import com.ebicep.warlords.abilities.ContagiousFacade;
 import com.ebicep.warlords.abilities.PoisonousHex;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
@@ -19,10 +20,12 @@ import java.util.List;
 
 public class WitheringPlague implements SpecBoostManager.SpecBoost<WitheringPlague> {
 
+    private int poisonousHexTicksIncrease;
     private float damageIncrease;
 
     @Override
     public void init() {
+        this.poisonousHexTicksIncrease = getValue("poisonousHexTicksIncrease", int.class);
         this.damageIncrease = getValue("damageIncrease", float.class);
     }
 
@@ -33,7 +36,10 @@ public class WitheringPlague implements SpecBoostManager.SpecBoost<WitheringPlag
 
     @Override
     public List<Object> getVariables() {
-        return List.of(damageIncrease);
+        return List.of(
+                poisonousHexTicksIncrease,
+                damageIncrease
+        );
     }
 
     @Override
@@ -53,6 +59,9 @@ public class WitheringPlague implements SpecBoostManager.SpecBoost<WitheringPlag
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
+            warlordsPlayer.getAbilitiesMatching(PoisonousHex.class).forEach(poisonousHex -> {
+                poisonousHex.setTickDuration(poisonousHex.getTickDuration() + poisonousHexTicksIncrease);
+            });
         }
 
         @EventHandler(ignoreCancelled = true)

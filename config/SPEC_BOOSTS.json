@@ -14,10 +14,11 @@
       "flameBreath": {
         "difficulty": 4,
         "name": "Shotgun Pyro",
-        "description": "Replace {{aqua:Flame Burst}} with {{aqua:Flame Breath}}. Replace {{aqua:Time Warp}} with {{aqua:Time Surge}}.",
+        "description": "Replace {{aqua:Flame Burst}} with {{aqua:Flame Breath}}, which has 2 charges. Replace {{aqua:Time Warp}} with {{aqua:Time Surge}}.",
         "cooldownReductionPercent": 30,
         "energyCostReductionPercent": 50,
-        "damageIncrease": -10
+        "damageIncrease": -10,
+        "maxAbilityCharges": 2
       },
       "burstChain": {
         "difficulty": 2,
@@ -100,9 +101,9 @@
         "difficulty": 1,
         "name": "Chilly Aura",
         "description": "{{aqua:Ice Barrier}} now slows enemies within {{blocks}} by {{speed;%}} and deals {{damage;%}} of their maximum health every {{ticks}}. Ice Barrier reduces melee attackers' speed by an additional {{speed;%}}.",
-        "rangeBlocks": 6,
+        "rangeBlocks": 8,
         "slowAmountPercent": 15,
-        "healthLossPercent": 1.5,
+        "healthLossPercent": 3,
         "healthLossTickPeriod": 20,
         "meleeSpeedReductionPercent": 30
       },
@@ -144,7 +145,7 @@
       "divinePurification": {
         "difficulty": 1,
         "name": "Divine Purification",
-        "description": "{{aqua:Water Breath}} now cleanses strong debuffs and grants those healed immunity to all debuffs for {{ticks}}, and reduce its cooldown by {{ticks;%}} and the energy cost by {{energy;%}}. {{aqua:Arcane Shield}} costs {{energy}} energy.",
+        "description": "{{aqua:Water Breath}} now cleanses strong debuffs and grants those healed immunity to all debuffs for {{ticks}}. Reduce its cooldown by {{ticks;%}} and the energy cost by {{energy;%}}. {{aqua:Arcane Shield}} costs {{energy}} energy.",
         "waterBreathImmunityDurationTicks": 20,
         "waterBreathCooldownReductionPercent": 15,
         "waterBreathEnergyCostReductionPercent": 50,
@@ -203,36 +204,33 @@
       "mightyFists": {
         "difficulty": 3,
         "name": "Mighty Fists",
-        "description": "Increase the wounding inflicted by {{aqua:Wounding Strike}} by {{damage;%}}. Each consecutive strike on a target increases the wounding by an additional {{damage;%}}, up to {{damage;%}}. While {{aqua:Berserk}} is active, {{aqua:Seismic Wave}} and {{aqua:Ground Slam}} inflict {{damage;%}} wounding for {{ticks}}.",
-        "woundingIncreasePercent": 10,
-        "consecutiveStrikeWoundingIncreasePercent": 5,
-        "maxConsecutiveStrikeWoundingIncreasePercent": 60,
-        "seismicWaveGroundSlamWoundingPercent": 30,
-        "seismicWaveGroundSlamWoundingDurationTicks": 60
+        "description": "Increase melee damage by {{damage;%}}. Every melee hit increases damage by another {{damage;%}}, up to {{damage;%}}. Activating any ability resets the bonus damage.",
+        "baseMeleePercent": 10,
+        "consecutiveHitIncreasePercent": 10,
+        "maxIncreasePercent": 50
       },
       "seismicShift": {
         "difficulty": 2,
         "name": "Seismic Shift",
         "description": "Reduce the cooldown of {{aqua:Seismic Wave}} by {{ticks}} and it now applies {{damage;%}} wounding for {{ticks}}.",
         "seismicWaveCooldownReductionTicks": 50,
-        "seismicWaveWoundingPercent": 40,
+        "seismicWaveWoundingPercent": 60,
         "seismicWaveWoundingTickDuration": 60
       },
       "bloodFrenzy": {
         "difficulty": 4,
         "name": "Blood Frenzy",
-        "description": "Reduce the cooldown of {{aqua:Bloodlust}} by {{ticks}}, the duration by {{ticks}}, and the energy cost by {{energy}}. Reduce its damage converted to healing by {{heal;%}} but it now heals an additional {{heal;%}} based on damage before any reductions. {{aqua:Berserk}} resets the cooldown of {{aqua:Bloodlust}}.",
-        "bloodLustCooldownReductionTicks": 400,
-        "bloodLustDurationReductionTicks": 180,
+        "description": "Reduce the cooldown of {{aqua:Bloodlust}} by {{ticks}}, the duration by {{ticks}}, and the energy cost by {{energy}}. Reduce its damage converted to healing by {{heal;%}} but it now heals an additional {{heal;%}} based on damage before any reductions. {{aqua:Berserk}} resets the cooldown of {{aqua:Bloodlust}}.",        "bloodLustCooldownReductionTicks": 400,
+        "bloodLustDurationReductionTicks": 140,
         "bloodLustEnergyCostReduction": 20,
-        "bloodLustHealingPercent": 20,
+        "bloodLustHealingPercent": 15,
         "bloodLustHealingPiercePercent": 25
       },
       "goliath": {
         "difficulty": 2,
         "name": "Goliath",
         "description": "Gain {{heal}} max health and {{energy}} max energy. Increase the cooldown of {{aqua:Berserk}} by {{ticks}}; it heals you for {{heal}} true healing upon activation.",
-        "healthIncrease": 1200,
+        "healthIncrease": 800,
         "maxEnergyIncrease": 100,
         "berserkCooldownIncreaseTicks": 360,
         "berserkActivationHeal": 1800
@@ -242,7 +240,7 @@
         "name": "Vitality Boost",
         "description": "Gain {{heal}} max health. Passively regenerate {{heal}} health per second, stacks with natural regen.",
         "healthIncrease": 600,
-        "passiveRegen": 30
+        "passiveRegen": 60
       },
       "striker": {
         "difficulty": 1,
@@ -261,9 +259,8 @@
       "heroicIntervention": {
         "difficulty": 1,
         "name": "Heroic Intervention",
-        "description": "Increase the max damage redirected by {{aqua:Intervene}} by {{damageReduction;}}, the duration by {{ticks}}, and the cast and break range by {{blocks}}.",
+        "description": "Increase the max damage redirected by {{aqua:Intervene}} by {{damageReduction;}}, and the cast and break range by {{blocks}}.",
         "interveneCapIncrease": 1100,
-        "interveneDurationIncreaseTicks": 20,
         "interveneCastAndRangeIncrease": 8
       },
       "solitary": {
@@ -332,22 +329,19 @@
         "name": "Unstoppable Surge",
         "description": "{{aqua:Light Infusion}} heals you for {{heal}} health, increase the speed granted by {{speed;%}} and the duration by {{ticks}}. Heal an additional {{heal}} health if Avenger's Strike was not used for {{ticks}} after activating Light Infusion. Gain permanent {{speed;%}} slow resistance and {{damageReduction;%}} knockback resistance.",
         "lightInfusionHealing": 800,
-        "lightInfusionSpeedIncreasePercent": 5,
+        "lightInfusionSpeedIncreasePercent": 15,
         "lightInfusionDurationIncreaseTicks": 40,
         "postLightInfusionHealing": 600,
         "postLightInfusionHealingDelay": 60,
         "slowResistancePercent": 15,
-        "knockbackResistancePercent": 20
+        "knockbackResistancePercent": 30
       },
       "markedForDeath": {
         "difficulty": 3,
         "name": "Marked for Death",
-        "description": "{{aqua:Avenger's Mark}} deals {{damage}} damage, slows by {{speed;%}}, and increases damage taken by {{damage;%}} for {{ticks}}. Each {{aqua:Avenger's Strike}} on the Marked target increases the duration of {{aqua:Avenger's Mark}} by {{ticks}}, up to {{ticks}}. Reduce the cooldown of {{aqua:Holy Radiance}} by {{ticks}} and the energy cost to {{energy}}.",
+        "description": "{{aqua:Avenger's Mark}} deals {{damage}} damage and slows by {{speed;%}}. Each {{aqua:Avenger's Strike}} on the Marked target increases the duration of {{aqua:Avenger's Mark}} by {{ticks}}, up to {{ticks}}. Remove the energy cost of {{aqua:Holy Radiance}}.",
         "avengerMarkDamage": 100,
         "avengerMarkSlowPercent": 10,
-        "avengerMarkIncreaseDamagePercent": 10,
-        "holyRadianceCooldownReductionTicks": 40,
-        "holyRadianceEnergyCost": 0,
         "strikeMarkDurationIncreaseTicks": 20,
         "maxStrikeMarkDurationIncreaseTicks": 60,
         "avengerMarkDebuffTickDuration": 100
@@ -364,7 +358,7 @@
         "difficulty": 1,
         "name": "Crusader's Might",
         "description": "Increase the damage of {{aqua:Crusader's Strike}} by {{damage;%}}.",
-        "damageIncreasePercent": 25
+        "damageIncreasePercent": 30
       },
       "parry": {
         "difficulty": 4,
@@ -415,18 +409,18 @@
         "difficulty": 1,
         "name": "Eco Drive",
         "description": "Reduce the cooldown of {{aqua:Light Infusion}} by {{ticks}}. Reduce the energy cost of {{aqua:Holy Radiance}} by {{energy}}. If {{aqua:Protector's Strike}} heals only one ally, you are both healed for an additional {{heal;%}}.",
-        "lightInfusionCooldownReductionTicks": 50,
+        "lightInfusionCooldownReductionTicks": 70,
         "holyRadianceEnergyCost": 40,
-        "singleAllyHealBonusPercent": 20
+        "singleAllyHealBonusPercent": 40
       },
       "divineEffulgence": {
         "difficulty": 3,
         "name": "Divine Effulgence",
-        "description": "Increase the healing of {{aqua:Holy Radiance}} by {{heal;%}} and the travel speed by {{speed;%}}. Allies healed by {{aqua:Holy Radiance}} gain {{damageReduction;%}} damage reduction against ranged damage for {{ticks}}.",
+        "description": "Increase the healing of {{aqua:Holy Radiance}} by {{heal;%}} and the travel speed by {{speed;%}}. Allies healed by {{aqua:Holy Radiance}} gain {{damageReduction;%}} damage reduction against primary abilities for {{ticks}}.",
         "holyRadianceHealingIncreasePercent": 20,
         "holyRadianceTravelSpeedPercentIncrease": 200,
-        "rangedDamageReductionPercent": 30,
-        "rangedDamageReductionDurationTicks": 60
+        "primaryAbilityDamageReductionPercent": 20,
+        "primaryAbilityDamageReductionDurationTicks": 60
       },
       "lustrousCrown": {
         "difficulty": 1,
@@ -470,19 +464,19 @@
         "windfuryExtraGuaranteedHits": 1,
         "slowKbResistancePercent": 100,
         "speedIncreasePercent": 40,
-        "speedDurationTicks": 40
+        "speedDurationTicks": 80
       },
       "galvanizedSpark": {
         "difficulty": 2,
         "name": "Galvanized Spark",
-        "description": "Increase the charges of {{aqua:Lightning Rod}} to {{blue}}, reduce the cooldown by {{ticks}}, the healing by {{heal;%}}, the energy granted by {{energy}}, and the knockback inflicted. {{aqua:Lightning Rod}} resets the cooldown of {{aqua:Chain Lightning}} and grants {{speed;%}} speed for {{ticks}}. Reduce the damage of {{aqua:Capacitor Totem}} by {{damage}}.",
+        "description": "Increase the charges of {{aqua:Lightning Rod}} to {{blue}}, reduce the cooldown by {{ticks}}, the healing by {{heal;%}}, the energy granted by {{energy}}, and the knockback inflicted. {{aqua:Lightning Rod}} resets the cooldown of {{aqua:Chain Lightning}} and grants {{speed;%}} speed for {{ticks}}. Reduce the damage of {{aqua:Capacitor Totem}} by {{damage;%}}.",
         "lightningRodMaxAbilityCharges": 2,
         "lightningRodCooldownDecreaseSeconds": 16.5,
         "lightningRodHealingDecreasePercent": 5,
         "lightningRodEnergyRestoreDecrease": 120,
-        "lightningRodSpeedIncreasePercent": 70,
+        "lightningRodSpeedIncreasePercent": 60,
         "lightningRodSpeedDurationTicks": 20,
-        "capacitorTotemDamageDecreasePercent": 15,
+        "capacitorTotemDamageDecreasePercent": 20,
         "lightningRodMagnitude": 1.25,
         "lightningRodY": 0.3
       },
@@ -490,7 +484,7 @@
         "difficulty": 4,
         "name": "Eye of the Storm",
         "description": "Reduce the range of {{aqua:Lightning Bolt}} to {{blocks}}, but increase the speed by {{speed;%}} and it will violently explode upon expiration or ground contact, with a {{blocks}} splash radius. Increase the {{aqua:Chain Lightning}} cooldown reduction from {{aqua:Lightning Bolt}} by {{ticks}}. {{aqua:Capacitor Totem}} can be casted to where you are looking (up to {{blocks}}), instantly procs on cast, and {{aqua:Lightning Rod}} always procs it.",
-        "maxTravelBlocks": 10,
+        "maxTravelBlocks": 15,
         "velocityIncreasePercentage": 100,
         "splashRadiusBlocks": 4,
         "chainCooldownReductionIncrease": 0.5,
@@ -534,8 +528,8 @@
         "maxEnergyIncrease": 50,
         "travelSpeedIncreasePercent": 50,
         "castRangeIncrease": 10,
-        "hitRadiusIncrease": 3.5,
-        "damageIncreasePercent": 25
+        "hitRadiusIncrease": 2,
+        "damageIncreasePercent": 40
       },
       "megalithicBoulder": {
         "difficulty": 1,
@@ -742,8 +736,9 @@
       "witheringPlague": {
         "difficulty": 3,
         "name": "Withering Plague",
-        "description": "For the duration of {{aqua:Astral Plague}}, increase the damage dealt to non-Tank enemies with max stacks of {{dark_red:PHEX}} by {{damage;%}}.",
-        "damageIncrease": 30
+        "description": "Increase the duration of {{dark_red:PHEX}} by {{ticks}}. For the duration of {{aqua:Astral Plague}}, increase the damage dealt to non-Tank enemies with max stacks of {{dark_red:PHEX}} by {{damage;%}}.",
+        "poisonousHexTicksIncrease": 80,
+        "damageIncrease": 30,
       },
       "airStrike": {
         "difficulty": 5,
@@ -855,10 +850,11 @@
       "holyNova": {
         "difficulty": 3,
         "name": "Holy Nova",
-        "description": "{{aqua:Divine Blessing}} heals allies more than {{blocks}} from you for an additional {{heal;%}} and deals {{damage}} damage to all enemies as it heals.",
+        "description": "{{aqua:Divine Blessing}} heals allies more than {{blocks}} from you for an additional {{heal;%}} and deals {{damage}} damage the closest {{blue}} enemies as it heals.",
         "divineBlessingFarRangeBlocks": 50,
         "divineBlessingHealingIncreasePercentFar": 50,
-        "divineBlessingDamageToEnemies": 400
+        "divineBlessingDamageToEnemies": 400,
+        "divineBlessingEnemiesHit": 5
       }
     }
   }
