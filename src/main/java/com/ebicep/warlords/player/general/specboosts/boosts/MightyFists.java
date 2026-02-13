@@ -83,13 +83,6 @@ public class MightyFists implements SpecBoostManager.SpecBoost<MightyFists> {
             if (!warlordsEntity.equals(event.getWarlordsEntity())) {
                 return;
             }
-            if (!(event.getAbility() instanceof WoundingStrikeBerserker ||
-                    event.getAbility() instanceof SeismicWaveBerserker ||
-                    event.getAbility() instanceof GroundSlamBerserker ||
-                    event.getAbility() instanceof BloodLust ||
-                    event.getAbility() instanceof Berserk)) {
-                return;
-            }
             meleeIncreasePercent = baseMeleePercent;
         }
 
@@ -98,7 +91,7 @@ public class MightyFists implements SpecBoostManager.SpecBoost<MightyFists> {
             if (!event.getSource().equals(warlordsEntity)) {
                 return;
             }
-            if (!event.getInstanceFlags().contains(InstanceFlags.NO_HIT_SOUND)){
+            if (event.isDamageInstance() && event.getCause().contains("melee")) {
                 return;
             }
             meleeIncreasePercent = Math.min(meleeIncreasePercent + consecutiveHitIncreasePercent, maxIncreasePercent);

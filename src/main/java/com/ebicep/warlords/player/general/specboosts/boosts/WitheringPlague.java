@@ -20,12 +20,12 @@ import java.util.List;
 public class WitheringPlague implements SpecBoostManager.SpecBoost<WitheringPlague> {
 
     private float damageIncrease;
-    private int poisonousHexDamagingTicksIncrease;
+    private int poisonousHexTicksIncrease;
 
     @Override
     public void init() {
         this.damageIncrease = getValue("damageIncrease", float.class);
-        this.poisonousHexDamagingTicksIncrease = getValue("poisonousHexDamagingTicksIncrease", int.class);
+        this.poisonousHexTicksIncrease = getValue("poisonousHexTicksIncrease", int.class);
     }
 
     @Override
@@ -37,7 +37,7 @@ public class WitheringPlague implements SpecBoostManager.SpecBoost<WitheringPlag
     public List<Object> getVariables() {
         return List.of(
                 damageIncrease,
-                poisonousHexDamagingTicksIncrease
+                poisonousHexTicksIncrease
         );
     }
 
@@ -59,7 +59,7 @@ public class WitheringPlague implements SpecBoostManager.SpecBoost<WitheringPlag
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(PoisonousHex.class).forEach(poisonousHex -> {
-                poisonousHex.setTickDuration(poisonousHex.getTickDuration() + (poisonousHex.getTicksBetweenDot() * poisonousHexDamagingTicksIncrease));
+                poisonousHex.setTickDuration(poisonousHex.getTickDuration() + poisonousHexTicksIncrease);
             });
         }
 

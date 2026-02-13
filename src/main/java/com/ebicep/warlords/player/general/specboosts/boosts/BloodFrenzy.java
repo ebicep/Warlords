@@ -20,6 +20,7 @@ public class BloodFrenzy implements SpecBoostManager.SpecBoost<BloodFrenzy> {
     private int bloodLustCooldownReductionTicks;
     private int bloodLustDurationReductionTicks;
     private int bloodLustEnergyCostReduction;
+    private float bloodLustHealingPercent;
     private float bloodLustHealingPiercePercent;
 
     @Override
@@ -27,6 +28,7 @@ public class BloodFrenzy implements SpecBoostManager.SpecBoost<BloodFrenzy> {
         this.bloodLustCooldownReductionTicks = getValue("bloodLustCooldownReductionTicks", int.class);
         this.bloodLustDurationReductionTicks = getValue("bloodLustDurationReductionTicks", int.class);
         this.bloodLustEnergyCostReduction = getValue("bloodLustEnergyCostReduction", int.class);
+        this.bloodLustHealingPercent = getValue("bloodLustHealingPercent", float.class);
         this.bloodLustHealingPiercePercent = getValue("bloodLustHealingPiercePercent", float.class);
     }
 
@@ -37,7 +39,7 @@ public class BloodFrenzy implements SpecBoostManager.SpecBoost<BloodFrenzy> {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(bloodLustCooldownReductionTicks, bloodLustDurationReductionTicks, bloodLustEnergyCostReduction, bloodLustHealingPiercePercent);
+        return List.of(bloodLustCooldownReductionTicks, bloodLustDurationReductionTicks, bloodLustEnergyCostReduction, bloodLustHealingPercent, bloodLustHealingPiercePercent);
     }
 
     @Override
@@ -61,6 +63,7 @@ public class BloodFrenzy implements SpecBoostManager.SpecBoost<BloodFrenzy> {
                 bloodLust.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", -bloodLustCooldownReductionTicks / 20f);
                 bloodLust.setTickDuration(bloodLust.getTickDuration() - bloodLustDurationReductionTicks);
                 bloodLust.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", -bloodLustEnergyCostReduction);
+                bloodLust.setDamageConvertPercent(bloodLust.getDamageConvertPercent() - (int) bloodLustHealingPercent);
             });
         }
 

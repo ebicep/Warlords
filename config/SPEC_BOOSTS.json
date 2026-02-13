@@ -220,11 +220,11 @@
       "bloodFrenzy": {
         "difficulty": 4,
         "name": "Blood Frenzy",
-        "description": "Reduce the cooldown of {{aqua:Bloodlust}} by {{ticks}}, the duration by {{ticks}}, and the energy cost by {{energy}}. Heals an additional {{heal;%}} based on damage before any reductions. {{aqua:Berserk}} resets the cooldown of {{aqua:Bloodlust}}.",
-        "bloodLustCooldownReductionTicks": 400,
+        "description": "Reduce the cooldown of {{aqua:Bloodlust}} by {{ticks}}, the duration by {{ticks}}, and the energy cost by {{energy}}. Reduce its damage converted to healing by {{heal;%}} but it now heals an additional {{heal;%}} based on damage before any reductions. {{aqua:Berserk}} resets the cooldown of {{aqua:Bloodlust}}.",        "bloodLustCooldownReductionTicks": 400,
         "bloodLustDurationReductionTicks": 140,
         "bloodLustEnergyCostReduction": 20,
-        "bloodLustHealingPiercePercent": 10
+        "bloodLustHealingPercent": 15,
+        "bloodLustHealingPiercePercent": 25
       },
       "goliath": {
         "difficulty": 2,
@@ -736,9 +736,9 @@
       "witheringPlague": {
         "difficulty": 3,
         "name": "Withering Plague",
-        "description": "For the duration of {{aqua:Astral Plague}}, increase the damage dealt to non-Tank enemies with max stacks of {{dark_red:PHEX}} by {{damage;%}} and increase its damaging ticks by {{blue}}.",
+        "description": "For the duration of {{aqua:Astral Plague}}, increase the damage dealt to non-Tank enemies with max stacks of {{dark_red:PHEX}} by {{damage;%}} and increase phex duration by {{ticks}}.",
         "damageIncrease": 30,
-        "poisonousHexDamagingTicksIncrease": 2
+        "poisonousHexTicksIncrease": 80
       },
       "airStrike": {
         "difficulty": 5,
