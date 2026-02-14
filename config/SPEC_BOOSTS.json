@@ -738,7 +738,7 @@
         "name": "Withering Plague",
         "description": "Increase the duration of {{dark_red:PHEX}} by {{ticks}}. For the duration of {{aqua:Astral Plague}}, increase the damage dealt to non-Tank enemies with max stacks of {{dark_red:PHEX}} by {{damage;%}}.",
         "poisonousHexTicksIncrease": 80,
-        "damageIncrease": 30,
+        "damageIncrease": 30
       },
       "airStrike": {
         "difficulty": 5,
