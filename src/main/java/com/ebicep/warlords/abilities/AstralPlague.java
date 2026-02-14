@@ -59,7 +59,6 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_ZOMBIE_VILLAGER_CONVERTED, 2, 0.7f);
         EffectUtils.playCircularShieldAnimation(wp.getLocation(), Particle.SOUL, 8, 3, 1);
         EffectUtils.playCircularEffectAround(wp.getGame(), wp.getLocation(), Particle.FLAME, 1, 1, 0.25, 1, 1, 2);
-        List<FloatModifiable.FloatModifier> modifiers;
 
         wp.getCooldownManager().removeCooldown(AstralPlague.class, false);
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
@@ -85,7 +84,7 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
                         AbstractCooldown<?> cooldown = event.getAbstractCooldown();
                         if (Objects.equals(cooldown.getFrom(),
                                 wp
-                        ) && cooldown instanceof RegularCooldown<?> regularCooldown && cooldown.getCooldownObject() instanceof PoisonousHex) {
+                        ) && cooldown instanceof RegularCooldown<?> regularCooldown && cooldown.getCooldownClass().equals(PoisonousHex.class)) {
                             regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + hexTickDurationIncrease);
                             stats.hexesProlonged++;
                         }
