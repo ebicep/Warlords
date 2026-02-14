@@ -175,6 +175,10 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance implements Heals<H
         this.energyDrainPerSecond = energyDrainPerSecond;
     }
 
+    public void setMarkDuration(int markDuration) {
+        this.markDuration = markDuration;
+    }
+
     public static class HealingValues implements Value.ValueHolder {
 
         private Value.RangedValueCritable radianceHealing = new Value.RangedValueCritable(582, 760, 15, 175);

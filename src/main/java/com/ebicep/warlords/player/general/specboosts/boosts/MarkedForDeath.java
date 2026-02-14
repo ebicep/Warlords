@@ -71,6 +71,7 @@ public class MarkedForDeath implements SpecBoostManager.SpecBoost<MarkedForDeath
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(HolyRadianceAvenger.class).forEach(holyRadiance -> {
                 holyRadiance.getEnergyCost().addModifier(FloatModifiable.ModifierType.OVERRIDING, "Spec Boost", holyRadianceEnergyCost);
+                holyRadiance.setMarkDuration(avengerMarkDebuffTickDuration);
             });
         }
 
@@ -83,14 +84,13 @@ public class MarkedForDeath implements SpecBoostManager.SpecBoost<MarkedForDeath
             if (!cooldown.getName().equals("Avenger's Mark") || !cooldown.getFrom().equals(warlordsEntity)) {
                 return;
             }
-            regularCooldown.setTicksLeft(avengerMarkDebuffTickDuration);
             regularCooldown.setCooldownType(CooldownTypes.TRUE_DEBUFF);
             WarlordsEntity target = event.getWarlordsEntity();
             target.addInstance(InstanceBuilder
                     .damage()
                     .cause(getStringName())
                     .source(warlordsEntity)
-                    .value(100)
+                    .value(avengerMarkDamage)
             );
             target.addSpeedModifier(warlordsEntity, getStringName(), -avengerMarkSlowPercent, regularCooldown);
             final int[] ticksIncreased = {0};

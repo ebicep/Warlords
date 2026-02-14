@@ -339,7 +339,7 @@
       "markedForDeath": {
         "difficulty": 3,
         "name": "Marked for Death",
-        "description": "{{aqua:Avenger's Mark}} deals {{damage}} damage and slows by {{speed;%}}. Each {{aqua:Avenger's Strike}} on the Marked target increases the duration of {{aqua:Avenger's Mark}} by {{ticks}}, up to {{ticks}}. Remove the energy cost of {{aqua:Holy Radiance}}.",
+        "description": "{{aqua:Avenger's Mark}} now deals {{damage}} damage and slows by {{speed;%}} for {{ticks}}. Each {{aqua:Avenger's Strike}} on the Marked target increases the duration of {{aqua:Avenger's Mark}} by {{ticks}}, up to {{ticks}}. Remove the energy cost of {{aqua:Holy Radiance}}.",
         "avengerMarkDamage": 100,
         "avengerMarkSlowPercent": 10,
         "strikeMarkDurationIncreaseTicks": 20,
