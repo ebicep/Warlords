@@ -71,7 +71,7 @@ public class MightyFists implements SpecBoostManager.SpecBoost<MightyFists> {
                     false
             ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                         if (event.getCause().isEmpty()) {
-                            currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, getConfigFieldName(), meleeDamageBoost / 100);
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, getStringName(), meleeDamageBoost / 100);
                         }
                     }
             ));
