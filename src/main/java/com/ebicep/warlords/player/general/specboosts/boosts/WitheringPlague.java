@@ -1,7 +1,6 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
 import com.ebicep.warlords.abilities.AstralPlague;
-import com.ebicep.warlords.abilities.ContagiousFacade;
 import com.ebicep.warlords.abilities.PoisonousHex;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
@@ -61,6 +60,7 @@ public class WitheringPlague implements SpecBoostManager.SpecBoost<WitheringPlag
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(PoisonousHex.class).forEach(poisonousHex -> {
                 poisonousHex.setTickDuration(poisonousHex.getTickDuration() + poisonousHexTicksIncrease);
+                poisonousHex.setTickDurationDot(poisonousHex.getTickDurationDot() + poisonousHexTicksIncrease);
             });
         }
 
