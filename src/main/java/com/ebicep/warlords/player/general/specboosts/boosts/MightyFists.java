@@ -1,6 +1,5 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
-import com.ebicep.warlords.abilities.*;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
@@ -8,7 +7,6 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
-import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.event.EventHandler;
@@ -55,11 +53,11 @@ public class MightyFists implements SpecBoostManager.SpecBoost<MightyFists> {
     public class Boost implements SpecBoostManager.Boost {
 
         private WarlordsEntity warlordsEntity;
+        private float meleeDamageBoost = baseMeleePercent;
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
-            meleeIncreasePercent = baseMeleePercent;
             warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
                     getStringName(),
                     null,
@@ -73,7 +71,7 @@ public class MightyFists implements SpecBoostManager.SpecBoost<MightyFists> {
                     false
             ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                         if (event.getCause().isEmpty()) {
-                            currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, getConfigFieldName(), meleeIncreasePercent / 100);
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, getConfigFieldName(), meleeDamageBoost / 100);
                         }
                     }
             ));
@@ -83,7 +81,7 @@ public class MightyFists implements SpecBoostManager.SpecBoost<MightyFists> {
             if (!warlordsEntity.equals(event.getWarlordsEntity())) {
                 return;
             }
-            meleeIncreasePercent = baseMeleePercent;
+            meleeDamageBoost = baseMeleePercent;
         }
 
         @EventHandler
@@ -97,7 +95,7 @@ public class MightyFists implements SpecBoostManager.SpecBoost<MightyFists> {
             if (!event.getCause().isEmpty()) {
                 return;
             }
-            meleeIncreasePercent = Math.min(meleeIncreasePercent + consecutiveHitIncreasePercent, maxIncreasePercent);
+            meleeDamageBoost = Math.min(meleeDamageBoost + consecutiveHitIncreasePercent, maxIncreasePercent);
         }
     }
 
