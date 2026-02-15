@@ -205,9 +205,9 @@
         "difficulty": 3,
         "name": "Mighty Fists",
         "description": "Increase melee damage by {{damage;%}}. Every melee hit increases damage by another {{damage;%}}, up to {{damage;%}}. Activating any ability resets the bonus damage.",
-        "baseMeleePercent": 10,
-        "consecutiveHitIncreasePercent": 10,
-        "maxIncreasePercent": 50
+        "baseMeleePercent": 25,
+        "consecutiveHitIncreasePercent": 15,
+        "maxIncreasePercent": 70
       },
       "seismicShift": {
         "difficulty": 2,
