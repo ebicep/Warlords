@@ -71,7 +71,7 @@ public class MarkedForDeath implements SpecBoostManager.SpecBoost<MarkedForDeath
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(HolyRadianceAvenger.class).forEach(holyRadiance -> {
                 holyRadiance.getEnergyCost().addModifier(FloatModifiable.ModifierType.OVERRIDING, "Spec Boost", holyRadianceEnergyCost);
-                holyRadiance.setMarkDuration(avengerMarkDebuffTickDuration);
+                holyRadiance.setMarkDuration(avengerMarkDebuffTickDuration / 20);
             });
         }
 
