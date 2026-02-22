@@ -523,11 +523,11 @@
         "maxAnimationTime": 12,
         "maxAnimationEffects": 4,
         "hitbox": 10,
-        "velocity": 1.1,
+        "velocity": 1,
         "damageValues": {
           "flameBreathDamage": {
-            "min": 557,
-            "max": 753,
+            "min": 390,
+            "max": 527,
             "critChance": 25,
             "critMultiplier": 185
           }
@@ -1537,7 +1537,7 @@
         "name": "Time Surge",
         "cooldown": 28,
         "energyCost": 30,
-        "healPercentage": 30
+        "healPercentage": 35
       },
       "timeWarpAquamancer": {
         "name": "Time Warp",

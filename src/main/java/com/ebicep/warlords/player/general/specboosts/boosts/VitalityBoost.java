@@ -4,7 +4,8 @@ import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
-import com.ebicep.warlords.util.java.MathUtils;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.List;
@@ -57,12 +58,12 @@ public class VitalityBoost implements SpecBoostManager.SpecBoost<VitalityBoost> 
                     false,
                     (cooldown, ticksElapsed) -> {
                         if (ticksElapsed % 20 == 0) {
-                            int healthIncrease = passiveRegen;
-                            warlordsPlayer.setCurrentHealth(MathUtils.clamp(
-                                    warlordsPlayer.getCurrentHealth() + healthIncrease,
-                                    warlordsPlayer.getCurrentHealth(),
-                                    warlordsPlayer.getMaxHealth()
-                            ));
+                            warlordsPlayer.addInstance(InstanceBuilder
+                                    .healing()
+                                    .source(warlordsPlayer)
+                                    .value(passiveRegen)
+                                    .flags(InstanceFlags.NO_MESSAGE,InstanceFlags.NO_HIT_SOUND, InstanceFlags.TRUE_HEALING)
+                            );
                         }
                     }
             ));

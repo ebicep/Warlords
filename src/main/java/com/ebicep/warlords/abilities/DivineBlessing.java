@@ -310,6 +310,9 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
         @Field("lethal_damge_healed")
         private int lethalDamgeHealed = 0;
 
+        @Field("number_of_dismounts")
+        private int numberOfDismounts = 0;
+
         @Override
         public Class<DivineBlessingStats> getClazz() {
             return DivineBlessingStats.class;
@@ -321,6 +324,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
             statsDisplay.add(new AbilityStatDisplay("Hexes Prolonged", hexesProlonged));
             statsDisplay.add(new AbilityStatDisplay("Hexes Not Consumed", hexesNotConsumed));
             statsDisplay.add(new AbilityStatDisplay("Healing Increased", Math.round(healingIncreased)));
+            statsDisplay.add(new AbilityStatDisplay("Number of Dismounts", numberOfDismounts));
             return statsDisplay;
         }
 
@@ -331,6 +335,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
             stats.hexesNotConsumed = this.hexesNotConsumed + other.hexesNotConsumed * multiplier;
             stats.healingIncreased = this.healingIncreased + other.healingIncreased * multiplier;
             stats.lethalDamgeHealed = this.lethalDamgeHealed + other.lethalDamgeHealed * multiplier;
+            stats.numberOfDismounts = this.numberOfDismounts + other.numberOfDismounts * multiplier;
             return stats;
         }
 
@@ -347,6 +352,13 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
             this.hexesNotConsumed = hexesNotConsumed;
         }
 
+        public int getNumberOfDismounts() {
+            return numberOfDismounts;
+        }
+
+        public void setNumberOfDismounts(int numberOfDismounts) {
+            this.numberOfDismounts = numberOfDismounts;
+        }
     }
 
 }

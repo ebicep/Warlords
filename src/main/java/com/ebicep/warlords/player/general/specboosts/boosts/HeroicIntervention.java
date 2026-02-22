@@ -9,13 +9,11 @@ import java.util.List;
 public class HeroicIntervention implements SpecBoostManager.SpecBoost<HeroicIntervention> {
 
     private int interveneCapIncrease;
-    private int interveneDurationIncreaseTicks;
     private float interveneCastAndRangeIncrease;
 
     @Override
     public void init() {
         this.interveneCapIncrease = getValue("interveneCapIncrease", int.class);
-        this.interveneDurationIncreaseTicks = getValue("interveneDurationIncreaseTicks", int.class);
         this.interveneCastAndRangeIncrease = getValue("interveneCastAndRangeIncrease", float.class);
     }
 
@@ -26,7 +24,7 @@ public class HeroicIntervention implements SpecBoostManager.SpecBoost<HeroicInte
 
     @Override
     public List<Object> getVariables() {
-        return List.of(interveneCapIncrease, interveneDurationIncreaseTicks, interveneCastAndRangeIncrease);
+        return List.of(interveneCapIncrease, interveneCastAndRangeIncrease);
     }
 
     @Override
@@ -45,7 +43,6 @@ public class HeroicIntervention implements SpecBoostManager.SpecBoost<HeroicInte
         public void apply(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getAbilitiesMatching(Intervene.class).forEach(intervene -> {
                 intervene.setMaxDamagePrevented(intervene.getMaxDamagePrevented() + interveneCapIncrease);
-                intervene.setTickDuration(intervene.getTickDuration() + interveneDurationIncreaseTicks);
                 intervene.setRadius(intervene.getRadius() + interveneCastAndRangeIncrease);
                 intervene.setBreakRadius(intervene.getBreakRadius() + interveneCastAndRangeIncrease);
             });
