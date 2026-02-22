@@ -24,6 +24,7 @@ public class TotemicBoon implements SpecBoostManager.SpecBoost<TotemicBoon> {
     private float healingTotemSpeedMultiplier;
     private float healingTotemRadiusIncrease;
     private float healthTransferThresholdPercent;
+    private float healthTransferEffectivenessPercent;
 
     @Override
     public void init() {
@@ -34,6 +35,7 @@ public class TotemicBoon implements SpecBoostManager.SpecBoost<TotemicBoon> {
         this.healingTotemSpeedMultiplier = getValue("healingTotemSpeedMultiplier", float.class);
         this.healingTotemRadiusIncrease = getValue("healingTotemRadiusIncrease", float.class);
         this.healthTransferThresholdPercent = getValue("healthTransferThresholdPercent", float.class);
+        this.healthTransferEffectivenessPercent = getValue("healthTransferEffectivenessPercent", float.class);
     }
 
     @Override
@@ -49,7 +51,8 @@ public class TotemicBoon implements SpecBoostManager.SpecBoost<TotemicBoon> {
                 healingTotemMaxAbilityCharges,
                 healingTotemSpeedMultiplier,
                 healingTotemRadiusIncrease,
-                healthTransferThresholdPercent
+                healthTransferThresholdPercent,
+                healthTransferEffectivenessPercent
         );
     }
 
@@ -104,7 +107,11 @@ public class TotemicBoon implements SpecBoostManager.SpecBoost<TotemicBoon> {
                 if (customFlag instanceof CustomInstanceFlags.PlayersEffectedInstanceFlag(List<WarlordsEntity> players)) {
                     players.stream()
                            .min(Comparator.comparingDouble(WarlordsEntity::getCurrentHealth))
-                           .ifPresent(event::setPlayer);
+                           .ifPresent(lowestHealthPlayer -> {
+                               event.setPlayer(lowestHealthPlayer);
+                               event.getMin().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Spec Boost", healthTransferEffectivenessPercent / 100f);
+                               event.getMax().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Spec Boost", healthTransferEffectivenessPercent / 100f);
+                           });
                     return;
                 }
             }
