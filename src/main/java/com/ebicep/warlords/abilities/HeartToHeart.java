@@ -88,6 +88,7 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
         } else if (targetEnemies) {
             for (WarlordsEntity heartTarget : PlayerFilter
                     .entitiesAround(wp, radius, verticalRadius, radius)
+                    .isAlive()
                     .excluding(wp)
                     .requireLineOfSight(wp)
                     .lookingAtFirst(wp)
