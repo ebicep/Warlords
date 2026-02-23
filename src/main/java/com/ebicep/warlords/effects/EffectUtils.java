@@ -617,7 +617,7 @@ public class EffectUtils {
 
             @Override
             public void run() {
-                location.getWorld().getNearbyPlayers(location, 50).forEach(player -> {
+                location.getWorld().getPlayers().forEach(player -> {
                     player.stopSound(Sound.ENTITY_LIGHTNING_BOLT_THUNDER, SoundCategory.WEATHER);
                 });
             }
