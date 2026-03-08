@@ -1,7 +1,6 @@
 package com.ebicep.warlords.game;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
@@ -131,12 +130,11 @@ public enum GameMode {
                             "ctf.spawnDamageTickDuration",
                             Integer.class
                     ),
-                    AbstractAbility.convertToMultiplicationDecimal(
-                            ConfigManager.getGameConfigValue(
-                                    ConfigManager.DEFAULT_NAMESPACES,
-                                    "ctf.spawnDamageBoost",
-                                    Float.class
-                            ))
+                    ConfigManager.getGameConfigValue(
+                            ConfigManager.DEFAULT_NAMESPACES,
+                            "ctf.spawnDamageBoost",
+                            Float.class
+                    )
             ));
 
             return options;
