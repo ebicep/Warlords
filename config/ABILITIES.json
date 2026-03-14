@@ -2040,6 +2040,7 @@
         "name": "Prism Guard",
         "cooldown": 26,
         "energyCost": 40,
+        "damageReductionActive": 5,
         "damageReduction": 3,
         "bubbleRadius": 4,
         "tickDuration": 200,
