@@ -1,6 +1,11 @@
 # Project exclude paths
 /out/
 
+# Gradle
+/build/
+/.gradle/
+/gradle/wrapper/gradle-wrapper.jar
+
 # Maven output files
 /target/
 /dependency-reduced-pom.xml
@@ -9,9 +14,9 @@
 /nb-configuration.xml
 /nbproject/
 
-### Intellij ###
+### IntelliJ ###
 
-# User-specific stuff:
+# User-specific stuff
 .idea/workspace.xml
 .idea/tasks.xml
 .idea/dictionaries
@@ -19,9 +24,28 @@
 .idea/jsLibraryMappings.xml
 .idea/kotlinScripting.xml
 .idea/jarRepositories.xml
+.idea/dataSources.local.xml
+.idea/httpRequests/
+.idea/usage.statistics.xml
+.idea/shelf/
 
 # Maven
 .idea/libraries
 
+### VS Code ###
+.vscode/
+
+### Java ###
+*.class
+*.jar
+*.war
+*.ear
+hs_err_pid*
+replay_pid*
+
+### Logs ###
+*.log
+
+# Paper / Minecraft
 .paper-nms
 /run
