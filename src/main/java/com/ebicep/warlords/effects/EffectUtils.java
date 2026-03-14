@@ -24,7 +24,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.BiConsumer;
 
 import static java.lang.Math.cos;
@@ -105,16 +105,19 @@ public class EffectUtils {
 
     public static void playSphereAnimation(Location loc, double sphereRadius, Particle effect, int particleCount, float density) {
         float dens = 10 * density;
-        loc.add(0, 1, 0);
-        for (double i = 0; i <= Math.PI; i += Math.PI / dens) {
+        double baseX = loc.getX();
+        double baseY = loc.getY() + 1;
+        double baseZ = loc.getZ();
+        Location particleLoc = new Location(loc.getWorld(), 0, 0, 0);
+        double step = Math.PI / dens;
+        for (double i = 0; i <= Math.PI; i += step) {
             double radius = sin(i) * sphereRadius + 0.5;
             double y = cos(i) * sphereRadius;
-            for (double a = 0; a < Math.PI * 2; a += Math.PI / dens) {
-                double x = cos(a) * radius;
-                double z = sin(a) * radius;
-                loc.add(x, y, z);
-                displayParticle(effect, loc, particleCount);
-                loc.subtract(x, y, z);
+            for (double a = 0; a < Math.PI * 2; a += step) {
+                particleLoc.setX(baseX + cos(a) * radius);
+                particleLoc.setY(baseY + y);
+                particleLoc.setZ(baseZ + sin(a) * radius);
+                displayParticle(effect, particleLoc, particleCount);
             }
         }
     }
@@ -147,16 +150,22 @@ public class EffectUtils {
         int particles = 40;
         int strands = 8;
         int curve = 10;
+        Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(red, green, blue), 1);
+        Location particleLoc = new Location(loc.getWorld(), 0, 0, 0);
+        double baseX = loc.getX();
+        double baseY = loc.getY();
+        double baseZ = loc.getZ();
         for (int i = 1; i <= strands; i++) {
+            double strandAngle = 2 * Math.PI * i / strands + rotation;
             for (int j = 1; j <= particles; j++) {
                 float ratio = (float) j / particles;
-                double angle = curve * ratio * 2 * Math.PI / strands + (2 * Math.PI * i / strands) + rotation;
+                double angle = curve * ratio * 2 * Math.PI / strands + strandAngle;
                 double x = cos(angle) * ratio * helixRadius;
                 double z = sin(angle) * ratio * helixRadius;
-                loc.add(x, 0, z);
-                Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(red, green, blue), 1);
-                displayParticle(Particle.DUST, loc, 1, dustOptions);
-                loc.subtract(x, 0, z);
+                particleLoc.setX(baseX + x);
+                particleLoc.setY(baseY);
+                particleLoc.setZ(baseZ + z);
+                displayParticle(Particle.DUST, particleLoc, 1, dustOptions);
             }
         }
     }
@@ -171,15 +180,21 @@ public class EffectUtils {
         double rotation = Math.PI / 4;
         int strands = 8;
         int curve = 10;
+        Location particleLoc = new Location(loc.getWorld(), 0, 0, 0);
+        double baseX = loc.getX();
+        double baseY = loc.getY();
+        double baseZ = loc.getZ();
         for (int i = 1; i <= strands; i++) {
+            double strandAngle = 2 * Math.PI * i / strands + rotation;
             for (int j = 1; j <= helixDots; j++) {
                 float ratio = (float) j / helixDots;
-                double angle = curve * ratio * 2 * Math.PI / strands + (2 * Math.PI * i / strands) + rotation;
+                double angle = curve * ratio * 2 * Math.PI / strands + strandAngle;
                 double x = cos(angle) * ratio * helixRadius;
                 double z = sin(angle) * ratio * helixRadius;
-                loc.add(x, 0, z);
-                displayParticle(effect, loc, particleCount);
-                loc.subtract(x, 0, z);
+                particleLoc.setX(baseX + x);
+                particleLoc.setY(baseY);
+                particleLoc.setZ(baseZ + z);
+                displayParticle(effect, particleLoc, particleCount);
             }
         }
     }
@@ -343,19 +358,17 @@ public class EffectUtils {
             double zOffset,
             double speed
     ) {
-        Location loc = location.clone();
+        double baseX = location.getX();
+        double baseY = location.getY();
+        double baseZ = location.getZ();
+        Location particleLoc = new Location(location.getWorld(), 0, 0, 0);
+        double angleStep = Math.PI * 2 / amountOfParticles;
         for (int i = 0; i < amountOfParticles; i++) {
-            double angle = (double) i / amountOfParticles * Math.PI * 2;
-            displayParticle(
-                    player,
-                    particle,
-                    loc.clone().add(sin(angle) * circleRadius, 0, cos(angle) * circleRadius),
-                    1,
-                    xOffset,
-                    yOffset,
-                    zOffset,
-                    speed
-            );
+            double angle = i * angleStep;
+            particleLoc.setX(baseX + sin(angle) * circleRadius);
+            particleLoc.setY(baseY);
+            particleLoc.setZ(baseZ + cos(angle) * circleRadius);
+            displayParticle(player, particle, particleLoc, 1, xOffset, yOffset, zOffset, speed);
         }
     }
 
@@ -410,19 +423,21 @@ public class EffectUtils {
         float spikeHeight = 3.5f;
         int particles = 30;
         float radius = 3 * starRadius / 1.73205f;
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        Location particleLoc = new Location(loc.getWorld(), 0, 0, 0);
         for (int i = 0; i < spikesHalf * 2; i++) {
             double xRotation = i * Math.PI / spikesHalf;
             for (int x = 0; x < particles; x++) {
                 double angle = 2 * Math.PI * x / particles;
-                final Random random = new Random(System.nanoTime());
                 float height = random.nextFloat() * spikeHeight;
                 Vector v = new Vector(cos(angle), 0, sin(angle));
                 v.multiply((spikeHeight - height) * radius / spikeHeight);
                 v.setY(starRadius + height);
-                EffectUtils.rotateAroundAxisY(v, xRotation);
-                loc.add(v);
-                displayParticle(effect, loc, 1);
-                loc.subtract(v);
+                rotateAroundAxisY(v, xRotation);
+                particleLoc.setX(loc.getX() + v.getX());
+                particleLoc.setY(loc.getY() + v.getY());
+                particleLoc.setZ(loc.getZ() + v.getZ());
+                displayParticle(effect, particleLoc, 1);
             }
         }
     }
@@ -470,7 +485,7 @@ public class EffectUtils {
 
             @Override
             public void run() {
-                if (chains.size() == 0) {
+                if (chains.isEmpty()) {
                     this.cancel();
                 }
 
@@ -582,26 +597,23 @@ public class EffectUtils {
         Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(red, green, blue), size);
         Location current = end.clone();
         for (int i = 0; i < steps; i++) {
-            for (int j = 0; j < amount; j++) {
-                displayParticle(Particle.DUST, current, 0, dustOptions);
-            }
+            displayParticle(Particle.DUST, current, amount, dustOptions);
             current.subtract(direction);
         }
     }
 
     public static void playRandomHitEffect(Location loc, int red, int green, int blue, int amount) {
+        Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(red, green, blue), 1);
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        Location particleLoc = new Location(loc.getWorld(), 0, 0, 0);
+        double baseX = loc.getX();
+        double baseY = loc.getY();
+        double baseZ = loc.getZ();
         for (int i = 0; i < amount; i++) {
-            Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(red, green, blue), 1);
-            displayParticle(
-                    Particle.DUST,
-                    loc.clone().add(
-                            (Math.random() * 2) - 1,
-                            1.2 + (Math.random() * 2) - 1,
-                            (Math.random() * 2) - 1
-                    ),
-                    amount,
-                    dustOptions
-            );
+            particleLoc.setX(baseX + random.nextDouble(-1, 1));
+            particleLoc.setY(baseY + 1.2 + random.nextDouble(-1, 1));
+            particleLoc.setZ(baseZ + random.nextDouble(-1, 1));
+            displayParticle(Particle.DUST, particleLoc, amount, dustOptions);
         }
     }
 
@@ -832,17 +844,17 @@ public class EffectUtils {
     }
 
     public static void playCrownAnimation(Location loc, Particle particle) {
+        Location particleLoc = new Location(loc.getWorld(), 0, 0, 0);
+        double baseX = loc.getX();
+        double baseY = loc.getY() + 2;
+        double baseZ = loc.getZ();
         double angle = 0;
         for (int i = 0; i < 9; i++) {
-            double x = .4 * cos(angle);
-            double z = .4 * sin(angle);
+            particleLoc.setX(baseX + .4 * cos(angle));
+            particleLoc.setY(baseY);
+            particleLoc.setZ(baseZ + .4 * sin(angle));
             angle += 40;
-            Vector v = new Vector(x, 2, z);
-            displayParticle(
-                    particle,
-                    loc.clone().add(v),
-                    1
-            );
+            displayParticle(particle, particleLoc, 1);
         }
     }
 
@@ -999,13 +1011,15 @@ public class EffectUtils {
     public static void drawRing(Location center, double radius, double step, Particle particle) {
         if (radius <= 0) return;
         double twoPi = Math.PI * 2.0;
-        // step is arc-length; convert to angle step = step / radius
         double angStep = Math.max(0.02, step / Math.max(0.1, radius));
+        double baseX = center.getX();
+        double y = center.getY() + 1;
+        double baseZ = center.getZ();
+        Location particleLoc = new Location(center.getWorld(), 0, y, 0);
         for (double a = 0; a < twoPi; a += angStep) {
-            double x = center.getX() + Math.cos(a) * radius;
-            double z = center.getZ() + Math.sin(a) * radius;
-            Location p = new Location(center.getWorld(), x, center.getY() + 1, z);
-            EffectUtils.displayParticle(particle, p, 1);
+            particleLoc.setX(baseX + cos(a) * radius);
+            particleLoc.setZ(baseZ + sin(a) * radius);
+            displayParticle(particle, particleLoc, 1);
         }
     }
 }
