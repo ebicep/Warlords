@@ -105,7 +105,9 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
                     if (ticksElapsed % 10 == 0) { // TODO update based on ability updateItem
                         cooldownData.cooldowns.update(warlordsEntity, entityDataByID, forcePacketUpdate);
                     }
-                    cooldownData.cooldowns.teleport(warlordsEntity);
+                    if (ticksElapsed % 2 == 0) {
+                        cooldownData.cooldowns.teleport(warlordsEntity);
+                    }
                 });
                 if (ticksElapsed % 10 == 0 && forcePacketUpdate) {
                     forcePacketUpdate = false;
@@ -276,13 +278,16 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
                 }
                 boolean onCooldown = !ab.anyCharges();
                 ItemDisplay itemDisplay = cooldownEntity.itemDisplay;
-                if (itemDisplay.getItemStack() == null || itemDisplay.getItemStack().getType() != ab.getAbilityIcon().getType()) {
-                    itemDisplay.setItemStack(onCooldown ? GRAY_DYE : ab.getAbilityIcon());
-                } else if (onCooldown) {
-                    itemDisplay.setItemStack(GRAY_DYE);
+                ItemStack desiredItem = onCooldown ? GRAY_DYE : ab.getAbilityIcon();
+                ItemStack currentItem = itemDisplay.getItemStack();
+                if (currentItem.getType() != desiredItem.getType()) {
+                    itemDisplay.setItemStack(desiredItem);
                 }
                 TextDisplay textDisplay = cooldownEntity.textDisplay;
-                textDisplay.text(onCooldown ? Component.text(ab.getCurrentCooldownItem()) : null);
+                Component desiredText = onCooldown ? Component.text(ab.getCurrentCooldownItem()) : null;
+                if (!Objects.equals(textDisplay.text(), desiredText)) {
+                    textDisplay.text(desiredText);
+                }
                 if (forcePacketUpdate) {
                     itemDisplay.setTransformation(new Transformation(
                             new Vector3f(),
@@ -391,6 +396,9 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
 
             public void translateX(float translation) {
                 Transformation itemDisplayTransformation = itemDisplay.getTransformation();
+                if (itemDisplayTransformation.getTranslation().x() == translation) {
+                    return;
+                }
                 itemDisplay.setTransformation(new Transformation(
                         new Vector3f(translation, 0, 0),
                         itemDisplayTransformation.getLeftRotation(),
