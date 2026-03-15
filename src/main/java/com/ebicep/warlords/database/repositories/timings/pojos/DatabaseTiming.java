@@ -11,10 +11,8 @@ import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
-import com.ebicep.warlords.player.general.ExperienceManager;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.DateUtil;
-import com.mongodb.client.MongoCollection;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.springframework.data.annotation.Id;
@@ -215,16 +213,16 @@ public class DatabaseTiming {
         }
         if (RESET_WEEKLY.get()) {
             RESET_WEEKLY.set(false);
-            try {
-                //adding new document with top weekly players
-                org.bson.Document topPlayers = getTopPlayersOnLeaderboard();
-                MongoCollection<org.bson.Document> weeklyLeaderboards = DatabaseManager.warlordsDatabase.getCollection("Weekly_Leaderboards");
-                weeklyLeaderboards.insertOne(topPlayers);
-
-                ExperienceManager.awardWeeklyExperience(topPlayers);
-            } catch (Exception e) {
-                ChatUtils.MessageType.TIMINGS.sendErrorMessage("ERROR DOING WEEKLY EXP THINGY - COMPS DIDNT HAPPEN?");
-            }
+//            try {
+//                //adding new document with top weekly players
+//                org.bson.Document topPlayers = getTopPlayersOnLeaderboard();
+//                MongoCollection<org.bson.Document> weeklyLeaderboards = DatabaseManager.warlordsDatabase.getCollection("Weekly_Leaderboards");
+//                weeklyLeaderboards.insertOne(topPlayers);
+//
+//                ExperienceManager.awardWeeklyExperience(topPlayers);
+//            } catch (Exception e) {
+//                ChatUtils.MessageType.TIMINGS.sendErrorMessage("ERROR DOING WEEKLY EXP THINGY - COMPS DIDNT HAPPEN?");
+//            }
             try {
                 //clearing weekly
                 Warlords.newChain()

@@ -71,7 +71,8 @@ public class GuildLeaderboardManager {
                                         .compareTo(o1.getEventStats().getOrDefault(event, new HashMap<>()).getOrDefault(startDateSecond, 0L)));
 
         List<HologramDataText> pageHologramData = new ArrayList<>();
-        for (int i = 0; i < sortedGuilds.size() / MAX_PAGES; i++) {
+        int totalPages = Math.min(MAX_PAGES, (int) Math.ceil((double) sortedGuilds.size() / GUILDS_PER_PAGE));
+        for (int i = 0; i < totalPages; i++) {
             pageHologramData.add(getPagedHologramData(event, sortedGuilds, i));
         }
         if (pageHologramData.isEmpty()) {
@@ -82,7 +83,7 @@ public class GuildLeaderboardManager {
                 EVENT_LEADERBOARD_LOCATION,
                 p -> {
                     PlayerLeaderboardInfo playerInfo = StatsLeaderboardManager.getPlayerInfo(p);
-                    int page = playerInfo.getPage();
+                    int page = Math.min(playerInfo.getPage(), pageHologramData.size() - 1);
                     return pageHologramData.get(page);
                 }
         ).build();

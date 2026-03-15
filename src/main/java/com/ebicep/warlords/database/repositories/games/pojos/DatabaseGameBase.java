@@ -683,7 +683,7 @@ public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
                                 databaseGameBase = previousGames.get(gameHologram + 1);
                             }
                         }
-                        boolean isLatestGame = databaseGameBase == previousGames.getFirst();
+                        boolean isLatestGame = databaseGameBase == previousGames.getLast();
                         return new HologramDataText.Builder<>(ComponentBuilder
                                 .create(isLatestGame ? "Latest Game" : (gameNumber + 1) + ". " + previousGames.get(gameNumber).getDate(), color)
                                 .build()

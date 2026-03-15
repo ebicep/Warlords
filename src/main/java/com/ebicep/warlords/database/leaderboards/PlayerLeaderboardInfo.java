@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class PlayerLeaderboardInfo {
 
-    private int gameHologram = 0;
+    private int gameHologram = Math.max(0, DatabaseGameBase.previousGames.size() - 1);
     private Map<DatabaseGameBase, Integer> gameHologramPlayerAbilityStats = new HashMap<>();
     @Nonnull
     private StatsLeaderboardManager.GameType statsGameType = StatsLeaderboardManager.GameType.PVE;

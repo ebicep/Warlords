@@ -105,7 +105,9 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
                     if (ticksElapsed % 10 == 0) { // TODO update based on ability updateItem
                         cooldownData.cooldowns.update(warlordsEntity, entityDataByID, forcePacketUpdate);
                     }
-                    cooldownData.cooldowns.teleport(warlordsEntity);
+                    if (ticksElapsed % 2 == 0) {
+                        cooldownData.cooldowns.teleport(warlordsEntity);
+                    }
                 });
                 if (ticksElapsed % 10 == 0 && forcePacketUpdate) {
                     forcePacketUpdate = false;
@@ -244,8 +246,14 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
     static class Cooldowns {
 
         private static final double SPACE_BETWEEN_COOLDOWN = .5;
+        private static final double TELEPORT_THRESHOLD_SQ = 0.01; // ~0.1 block movement threshold
 
         private final List<CooldownEntities> cooldownEntities = new ArrayList<>();
+        private final Location cachedLocation = new Location(null, 0, 0, 0);
+        private final Location reusableTeleportLocation = new Location(null, 0, 0, 0);
+        private double lastX = Double.NaN;
+        private double lastY = Double.NaN;
+        private double lastZ = Double.NaN;
 
         public void update(WarlordsEntity warlordsEntity, Map<Integer, EntityData> entityDataByID, boolean forcePacketUpdate) {
             if (warlordsEntity.isDead()) {
@@ -270,13 +278,16 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
                 }
                 boolean onCooldown = !ab.anyCharges();
                 ItemDisplay itemDisplay = cooldownEntity.itemDisplay;
-                if (itemDisplay.getItemStack() == null || itemDisplay.getItemStack().getType() != ab.getAbilityIcon().getType()) {
-                    itemDisplay.setItemStack(onCooldown ? GRAY_DYE : ab.getAbilityIcon());
-                } else if (onCooldown) {
-                    itemDisplay.setItemStack(GRAY_DYE);
+                ItemStack desiredItem = onCooldown ? GRAY_DYE : ab.getAbilityIcon();
+                ItemStack currentItem = itemDisplay.getItemStack();
+                if (currentItem.getType() != desiredItem.getType()) {
+                    itemDisplay.setItemStack(desiredItem);
                 }
                 TextDisplay textDisplay = cooldownEntity.textDisplay;
-                textDisplay.text(onCooldown ? Component.text(ab.getCurrentCooldownItem()) : null);
+                Component desiredText = onCooldown ? Component.text(ab.getCurrentCooldownItem()) : null;
+                if (!Objects.equals(textDisplay.text(), desiredText)) {
+                    textDisplay.text(desiredText);
+                }
                 if (forcePacketUpdate) {
                     itemDisplay.setTransformation(new Transformation(
                             new Vector3f(),
@@ -292,11 +303,9 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
                     ));
                 }
             }
-            // remove any extra cooldown entities
             for (int i = cooldownEntities.size() - 1; i >= warlordsEntity.getAbilities().size() - 1; i--) {
                 CooldownEntities cooldownEntity = cooldownEntities.remove(i);
                 cooldownEntity.remove(entityDataByID);
-//                cooldownEntity.removeFrom(entityDataByID);
             }
         }
 
@@ -340,13 +349,16 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
                         d.setViewRange(.4f);
                     }
             );
+            lastX = Double.NaN;
             return new CooldownEntities(ability, itemDisplay, textDisplay);
         }
 
         private void teleport(WarlordsEntity warlordsEntity) {
-            Location location = warlordsEntity.getLocation();
-            int halfSize = cooldownEntities.size() / 2;
-            double y = warlordsEntity.getLocation().getY() + 3;
+            if (cooldownEntities.isEmpty()) {
+                return;
+            }
+            warlordsEntity.getLocation(cachedLocation);
+            double y = cachedLocation.getY() + 3;
             Entity vehicle = warlordsEntity.getEntity().getVehicle();
             if (vehicle != null) {
                 if (vehicle instanceof Horse) {
@@ -355,11 +367,28 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
                     y += vehicle.getHeight();
                 }
             }
-            double x = -((halfSize * .375) + ((halfSize - 1) * SPACE_BETWEEN_COOLDOWN)) + .5;
+            double dx = cachedLocation.getX() - lastX;
+            double dy = y - lastY;
+            double dz = cachedLocation.getZ() - lastZ;
+            if (dx * dx + dy * dy + dz * dz < TELEPORT_THRESHOLD_SQ) {
+                return;
+            }
+            lastX = cachedLocation.getX();
+            lastY = y;
+            lastZ = cachedLocation.getZ();
+
+            int halfSize = cooldownEntities.size() / 2;
+            double xOffset = -((halfSize * .375) + ((halfSize - 1) * SPACE_BETWEEN_COOLDOWN)) + .5;
+            reusableTeleportLocation.setWorld(cachedLocation.getWorld());
+            reusableTeleportLocation.setX(cachedLocation.getX());
+            reusableTeleportLocation.setY(y);
+            reusableTeleportLocation.setZ(cachedLocation.getZ());
+            reusableTeleportLocation.setYaw(0);
+            reusableTeleportLocation.setPitch(0);
             for (CooldownEntities cooldownEntity : cooldownEntities) {
-                cooldownEntity.translateX((float) x);
-                cooldownEntity.teleport(new Location(location.getWorld(), location.getX(), y, location.getZ()));
-                x += SPACE_BETWEEN_COOLDOWN;
+                cooldownEntity.translateX((float) xOffset);
+                cooldownEntity.teleport(reusableTeleportLocation);
+                xOffset += SPACE_BETWEEN_COOLDOWN;
             }
         }
 
@@ -367,7 +396,9 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
 
             public void translateX(float translation) {
                 Transformation itemDisplayTransformation = itemDisplay.getTransformation();
-//                float random = ThreadLocalRandom.current().nextFloat(.0001f);
+                if (itemDisplayTransformation.getTranslation().x() == translation) {
+                    return;
+                }
                 itemDisplay.setTransformation(new Transformation(
                         new Vector3f(translation, 0, 0),
                         itemDisplayTransformation.getLeftRotation(),
@@ -385,7 +416,9 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
 
             public void teleport(Location location) {
                 itemDisplay.teleport(location);
-                textDisplay.teleport(location.clone().add(0, .25f, 0));
+                location.setY(location.getY() + .25);
+                textDisplay.teleport(location);
+                location.setY(location.getY() - .25);
             }
 
             public void addTo(WarlordsEntity displayFor, Map<Integer, EntityData> entityDataByID) {

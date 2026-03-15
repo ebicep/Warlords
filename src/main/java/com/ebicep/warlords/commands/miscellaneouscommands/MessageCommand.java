@@ -36,16 +36,14 @@ public class MessageCommand extends BaseCommand {
         }
         DatabasePlayer databasePlayer = DatabaseManager.getPlayer(target);
         List<UUID> ignored = databasePlayer.getIgnored();
-        if (ignored.contains(player.getUniqueId())) {
-            player.sendMessage(Component.text("This user has you ignored.", NamedTextColor.RED));
-            return;
-        }
-
         player.sendMessage(Component.empty()
                                     .append(Component.text("To ", NamedTextColor.DARK_PURPLE))
                                     .append(Component.text(target.getName(), NamedTextColor.AQUA))
                                     .append(Component.text(": ", NamedTextColor.WHITE))
                                     .append(Component.text(message, NamedTextColor.LIGHT_PURPLE)));
+        if (ignored.contains(player.getUniqueId())) {
+            return;
+        }
         target.sendMessage(Component.empty()
                                     .append(Component.text("From ", NamedTextColor.DARK_PURPLE))
                                     .append(Component.text(player.getName(), NamedTextColor.AQUA))
@@ -73,11 +71,14 @@ public class MessageCommand extends BaseCommand {
                                             .append(Component.text(otherPlayer.getName(), NamedTextColor.AQUA))
                                             .append(Component.text(": ", NamedTextColor.WHITE))
                                             .append(Component.text(message, NamedTextColor.LIGHT_PURPLE)));
-                otherPlayer.sendMessage(Component.empty()
-                                                 .append(Component.text("From ", NamedTextColor.DARK_PURPLE))
-                                                 .append(Component.text(player.getName(), NamedTextColor.AQUA))
-                                                 .append(Component.text(": ", NamedTextColor.WHITE))
-                                                 .append(Component.text(message, NamedTextColor.LIGHT_PURPLE)));
+                DatabasePlayer databasePlayer = DatabaseManager.getPlayer(otherPlayer);
+                if (!databasePlayer.getIgnored().contains(player.getUniqueId())) {
+                    otherPlayer.sendMessage(Component.empty()
+                                                     .append(Component.text("From ", NamedTextColor.DARK_PURPLE))
+                                                     .append(Component.text(player.getName(), NamedTextColor.AQUA))
+                                                     .append(Component.text(": ", NamedTextColor.WHITE))
+                                                     .append(Component.text(message, NamedTextColor.LIGHT_PURPLE)));
+                }
                 PlayerMessage newPlayerMessage = new PlayerMessage(player.getUniqueId(), otherPlayer.getUniqueId());
                 LAST_PLAYER_MESSAGES.put(newPlayerMessage, Instant.now());
             } else {

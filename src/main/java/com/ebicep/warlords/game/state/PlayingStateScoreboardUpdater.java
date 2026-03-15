@@ -117,7 +117,8 @@ public class PlayingStateScoreboardUpdater {
     private void updateHealth(@Nonnull CustomScoreboard customScoreboard) {
         Scoreboard scoreboard = customScoreboard.getScoreboard();
         Objective health = customScoreboard.getHealth();
-        if (health == null || scoreboard.getObjective("health") == null) {
+        boolean newHealth = health == null || scoreboard.getObjective("health") == null;
+        if (newHealth) {
             health = scoreboard.registerNewObjective("health", Criteria.DUMMY, Component.text("❤", NamedTextColor.RED));
             health.setDisplaySlot(DisplaySlot.BELOW_NAME);
             customScoreboard.setHealth(health);
@@ -127,7 +128,7 @@ public class PlayingStateScoreboardUpdater {
             if (gamePlayer.getWarlordsPlayer() == null) {
                 return;
             }
-            if (!gamePlayer.isUpdateHealth()) {
+            if (!newHealth && !gamePlayer.isUpdateHealth()) {
                 return;
             }
             finalHealth.getScore(gamePlayer.getWarlordsPlayer().getName()).setScore(gamePlayer.getHealth());

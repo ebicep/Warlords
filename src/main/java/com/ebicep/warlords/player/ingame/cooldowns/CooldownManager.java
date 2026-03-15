@@ -65,11 +65,13 @@ public class CooldownManager {
                 cooldown.expire(this);
             }
         }
-        Set<AbstractCooldown<?>> snapshot = Set.copyOf(cooldownsToRemove);
-        synchronized (abstractCooldowns) {
-            abstractCooldowns.removeIf(snapshot::contains);
+        if (!cooldownsToRemove.isEmpty()) {
+            Set<AbstractCooldown<?>> snapshot = Set.copyOf(cooldownsToRemove);
+            synchronized (abstractCooldowns) {
+                abstractCooldowns.removeAll(snapshot);
+            }
+            cooldownsToRemove.removeAll(snapshot);
         }
-        cooldownsToRemove.removeAll(snapshot);
     }
 
     public void updatePlayerNames(AbstractCooldown<?> abstractCooldown) {

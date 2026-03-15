@@ -15,7 +15,6 @@ import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.guilds.GuildPlayer;
 import com.ebicep.warlords.guilds.GuildTag;
 import com.ebicep.warlords.permissions.Permissions;
-import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.util.java.Pair;
 import net.kyori.adventure.text.Component;
@@ -163,6 +162,9 @@ public class CustomScoreboard {
 
     public static void updateLobbyPlayerNames() {
         for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+            if (Warlords.getGameManager().getPlayerGame(onlinePlayer.getUniqueId()).isPresent()) {
+                continue;
+            }
             CustomScoreboard.getPlayerScoreboard(onlinePlayer).updateLobbyPlayerNamesInternal();
         }
     }
@@ -172,10 +174,11 @@ public class CustomScoreboard {
         if (player == null) {
             return;
         }
-        WarlordsEntity warlordsEntity = Warlords.getPlayer(uuid);
+        if (Warlords.getGameManager().getPlayerGame(uuid).isPresent()) {
+            return;
+        }
         for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-            WarlordsEntity onlinePlayerWE = Warlords.getPlayer(onlinePlayer);
-            if (warlordsEntity != null && onlinePlayerWE != null && warlordsEntity.getGame().equals(onlinePlayerWE.getGame())) {
+            if (Warlords.getGameManager().getPlayerGame(onlinePlayer.getUniqueId()).isPresent()) {
                 continue;
             }
             String name = onlinePlayer.getName();

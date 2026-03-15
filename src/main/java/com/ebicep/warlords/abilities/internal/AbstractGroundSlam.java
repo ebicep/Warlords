@@ -110,20 +110,24 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
 
         fallingBlockLocations.get(0).add(wp.getLocation());
 
+        int totalRings = fallingBlockLocations.size();
         new GameRunnable(wp.getGame()) {
 
             final ThreadLocalRandom random = ThreadLocalRandom.current();
+            int ringIndex = 0;
 
             @Override
             public void run() {
                 for (List<Location> fallingBlockLocation : fallingBlockLocations) {
+                    float hitWidth = ringIndex == totalRings - 1 ? 0.6f : 0.7f;
+                    ringIndex++;
                     for (Location location : fallingBlockLocation) {
                         if (random.nextDouble() < 0.7) {
                             Utils.addFallingBlock(location);
                         }
                         // Damage
                         for (WarlordsEntity slamTarget : PlayerFilter
-                                .entitiesAroundRectangle(location.clone().add(0, -.75, 0), 0.6, 4.5, 0.6)
+                                .entitiesAroundRectangle(location.clone().add(0, -.75, 0), hitWidth, 4.5, hitWidth)
                                 .aliveEnemiesOf(wp)
                                 .excluding(currentPlayersHit)
                         ) {

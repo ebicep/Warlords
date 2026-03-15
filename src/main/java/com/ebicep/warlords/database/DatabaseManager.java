@@ -243,16 +243,19 @@ public class DatabaseManager {
     }
 
     public static DatabasePlayer getPlayer(UUID uuid, PlayersCollections playersCollections) {
+        ConcurrentHashMap<UUID, DatabasePlayer> concurrentHashMap = DatabaseManager.CACHED_PLAYERS.get(playersCollections);
         if (!enabled) {
-            ConcurrentHashMap<UUID, DatabasePlayer> concurrentHashMap = DatabaseManager.CACHED_PLAYERS.get(playersCollections);
             return concurrentHashMap.computeIfAbsent(uuid, k -> new DatabasePlayer(uuid, Bukkit.getOfflinePlayer(uuid).getName()));
+        }
+        DatabasePlayer cached = concurrentHashMap.get(uuid);
+        if (cached != null) {
+            return cached;
         }
         Optional<DatabasePlayer> databasePlayer = DatabaseManager.playerService.findByUUID(uuid, playersCollections);
         if (databasePlayer.isPresent()) {
             return databasePlayer.get();
         } else {
             ChatUtils.MessageType.WARLORDS.sendErrorMessage(new Throwable("Tried to get uncached player"));
-            ConcurrentHashMap<UUID, DatabasePlayer> concurrentHashMap = DatabaseManager.CACHED_PLAYERS.get(playersCollections);
             return concurrentHashMap.computeIfAbsent(uuid, k -> new DatabasePlayer(uuid, Bukkit.getOfflinePlayer(uuid).getName()));
         }
     }
