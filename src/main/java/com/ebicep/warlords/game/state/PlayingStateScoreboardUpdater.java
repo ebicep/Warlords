@@ -138,11 +138,11 @@ public class PlayingStateScoreboardUpdater {
     public void updateNames(@Nonnull CustomScoreboard customScoreboard, @Nullable WarlordsEntity warlordsPlayer) {
         GamePlayer gamePlayer = gamePlayers.get(customScoreboard.getUuid());
         Scoreboard scoreboard = customScoreboard.getScoreboard();
-        List<AbstractCooldown<?>> cooldowns;
+        Collection<AbstractCooldown<?>> cooldowns;
         if (warlordsPlayer != null) {
             cooldowns = warlordsPlayer.getCooldownManager().getCooldowns();
         } else {
-            cooldowns = new ArrayList<>();
+            cooldowns = List.of();
         }
         gamePlayers.values().forEach(otherGamePlayer -> {
             WarlordsPlayer otherWarlordsPlayer = otherGamePlayer.getWarlordsPlayer();
@@ -152,7 +152,7 @@ public class PlayingStateScoreboardUpdater {
             WarlordsPlayerName name = cachedNames.computeIfAbsent(otherWarlordsPlayer, k -> new WarlordsPlayerName(otherWarlordsPlayer));
             Entity entity = otherWarlordsPlayer.getEntity();
             UUID uuid = otherWarlordsPlayer.getUuid();
-            List<AbstractCooldown<?>> otherPlayerCooldowns = otherWarlordsPlayer.getCooldownManager().getCooldowns();
+            Collection<AbstractCooldown<?>> otherPlayerCooldowns = otherWarlordsPlayer.getCooldownManager().getCooldowns();
             Team playerTeam = scoreboard.getEntityTeam(entity);
             boolean noTeam = playerTeam == null;
             if (noTeam) {

@@ -108,7 +108,7 @@ public class LegendaryEnhanced extends AbstractLegendaryWeapon {
                 warlordsEntities.stream()
                                 .filter(warlordsEntity -> warlordsEntity.isTeammate(player))
                                 .forEach(warlordsEntity -> {
-                                    List<AbstractCooldown<?>> abstractCooldowns = warlordsEntity.getCooldownManager().getCooldowns();
+                                    Collection<AbstractCooldown<?>> abstractCooldowns = warlordsEntity.getCooldownManager().getCooldowns();
                                     abstractCooldowns.stream()
                                                      .filter(abstractCooldown -> abstractCooldown.getCooldownType() == CooldownTypes.ABILITY)
                                                      .filter(RegularCooldown.class::isInstance)
