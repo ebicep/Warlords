@@ -469,7 +469,7 @@ public class IllusionCrossfire extends GameMap {
                         .add(0.002, Mob.CREEPY_BOMBER)
                 )
                 .add(60, new RandomSpawnWave(1, 10 * SECOND, Component.text("Boss"))
-                        .add(Mob.MAGMATIC_OOZE)
+                        .add(Mob.ILLUMINA)
                 )
                 .add(61, new RandomSpawnWave(25, 5 * SECOND, null)
                         //basic
@@ -548,7 +548,7 @@ public class IllusionCrossfire extends GameMap {
                         .add(0.001, Mob.CREEPY_BOMBER)
                 )
                 .add(70, new RandomSpawnWave(1, 10 * SECOND, Component.text("Boss"))
-                        .add(Mob.ILLUMINA)
+                        .add(Mob.VOID)
                 )
                 .add(71, new RandomSpawnWave(25, 5 * SECOND, null)
                         //basic
@@ -627,7 +627,7 @@ public class IllusionCrossfire extends GameMap {
                         .add(0.02, Mob.CELESTIAL_OPUS)
                 )
                 .add(80, new RandomSpawnWave(1, 10 * SECOND, Component.text("Boss"))
-                        .add(Mob.VOID)
+                        .add(Mob.TORMENT)
                 )
                 .add(81, new RandomSpawnWave(25, 5 * SECOND, null)
                         //basic
@@ -708,7 +708,7 @@ public class IllusionCrossfire extends GameMap {
                         .add(0.003, Mob.CREEPY_BOMBER)
                 )
                 .add(90, new RandomSpawnWave(1, 10 * SECOND, Component.text("Boss"))
-                        .add(Mob.TORMENT)
+                        .add(Mob.ORBYZ)
                 )
                 .add(91, new RandomSpawnWave(30, 5 * SECOND, null)
                         //basic
@@ -806,7 +806,7 @@ public class IllusionCrossfire extends GameMap {
                         .add(0.01, Mob.SKELETAL_SORCERER)
                 )
                 .add(110, new RandomSpawnWave(1, 10 * SECOND, Component.text("Boss"))
-                        .add(Mob.ORBYZ)
+                        .add(Mob.LILIUM)
                 )
                 .add(111, new RandomSpawnWave(45, 5 * SECOND, null)
                         .add(0.04, Mob.ILLUMINATION)
