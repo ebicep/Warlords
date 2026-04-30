@@ -66,7 +66,7 @@ public class NPCManager {
                 createPrestigeVendorNPC();
                 createAscendantVendorNPC();
                 createWeeklyItemTraderNPC();
-                //createTreasureHuntVendorNPC();
+                createTreasureHuntVendorNPC();
                 createAscendantWeaponNPC();
             }
         }.runTask(Warlords.getInstance());
@@ -86,7 +86,7 @@ public class NPCManager {
     }
 
     private static void createSiegeNPC() {
-        registerTrait(SiegeTrait.class, "GameStartTrait");
+        registerTrait(SiegeTrait.class, "SiegeStartTrait");
 
         NPC npc = NPC_REGISTRY.createNPC(EntityType.PLAYER, "siege");
         npc.addTrait(SiegeTrait.class);
