@@ -62,7 +62,7 @@ public class NPCManager {
 //                    createItemMichaelNPC();
                 createItemEnyaNPC();
                 createIllusionVendorNPC();
-                //createSeasonalVendorNPC();
+                createSeasonalVendorNPC();
                 registerTrait(ReadyUpOption.ReadyUpTrait.class, "ReadyUpTrait");
                 ChatUtils.MessageType.GAME.sendMessage("Done adding game join NPCs");
             }
@@ -296,7 +296,7 @@ public class NPCManager {
     public static void createSeasonalVendorNPC() {
         registerTrait(SeasonalTraderTrait.class, "SeasonalVendorTrait");
 
-        NPC npc = NPC_REGISTRY.createNPC(EntityType.SNOW_GOLEM, "seasonal-vendor");
+        NPC npc = NPC_REGISTRY.createNPC(EntityType.ARMADILLO, "seasonal-vendor");
         npc.addTrait(SeasonalTraderTrait.class);
         LookClose lookClose = npc.getOrAddTrait(LookClose.class);
         lookClose.setPerPlayer(true);

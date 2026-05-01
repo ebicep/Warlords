@@ -12,7 +12,7 @@ plugins {
 }
 
 group = "com.ebicep"
-version = "Echoes of Demise"
+version = "Prelude to Chaos"
 description = "Warlords"
 
 java {
@@ -33,9 +33,9 @@ repositories {
         url = uri("https://repo.infernalsuite.com/repository/maven-snapshots/")
     }
 
-    maven {
-        url = uri("https://repo.rapture.pw/repository/maven-releases/")
-    }
+//    maven {
+//        url = uri("https://repo.rapture.pw/repository/maven-releases/")
+//    }
 
     maven {
         url = uri("https://repo.codemc.io/repository/maven-public/")

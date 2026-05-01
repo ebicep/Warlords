@@ -65,8 +65,8 @@ public class FortifyingHexBranch extends AbstractUpgradeBranch<FortifyingHex> {
     @Override
     public void runOnce() {
         Value.RangedValueCritable damage = ability.getDamageValues().getHexDamage();
-        damage.min().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "PvE", .3f);
-        damage.max().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "PvE", .3f);
+        damage.min().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "PvE", .15f);
+        damage.max().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "PvE", .15f);
         ability.setMaxEnemiesHit(2);
         ability.setMaxAlliesHit(3);
     }

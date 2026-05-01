@@ -28,16 +28,15 @@ import java.util.UUID;
 public class SeasonalTraderTrait extends WarlordsTrait {
 
     private static final List<SpendableBuyShopDistinct> SHOP = List.of(
-            new SpendableBuyShopDistinct(1, MobDrop.ZENITH_STAR, 5, 10, Currencies.ASCENDANT_SHARD),
-            new SpendableBuyShopDistinct(4000, Currencies.SYNTHETIC_SHARD, 2, 20, Currencies.ASCENDANT_SHARD),
-            new SpendableBuyShopDistinct(1, Currencies.ASCENDANT_STAR_PIECE, 1, 25, Currencies.ASCENDANT_SHARD),
-            new SpendableBuyShopDistinct(1, Currencies.LEGENDARY_STAR_PIECE, 5, 250, Currencies.ILLUSION_SHARD),
+            new SpendableBuyShopDistinct(1, MobDrop.ZENITH_STAR, 5, 4_000_000, Currencies.COIN),
+            new SpendableBuyShopDistinct(2000, Currencies.SYNTHETIC_SHARD, 2, 20, Currencies.ASCENDANT_SHARD),
+            new SpendableBuyShopDistinct(1, Currencies.LEGENDARY_STAR_PIECE, 3, 250, Currencies.ILLUSION_SHARD),
             new SpendableBuyShopDistinct(1, Currencies.LIMIT_BREAKER, 3, 250, Currencies.ILLUSION_SHARD),
-            new SpendableBuyShopDistinct(1, Currencies.TITLE_TOKEN_BANE_OF_IMPURITIES, 1, 800, Currencies.ILLUSION_SHARD),
-            new SpendableBuyShopDistinct(1, Currencies.TITLE_TOKEN_GARDEN_OF_HESPERIDES, 1, 800, Currencies.ILLUSION_SHARD),
-            new SpendableBuyShopDistinct(1, Currencies.TITLE_TOKEN_SPIDERS_BURROW, 1, 800, Currencies.ILLUSION_SHARD),
-            new SpendableBuyShopDistinct(1, Currencies.TITLE_TOKEN_JUGGERNAUT, 1, 800, Currencies.ILLUSION_SHARD),
-            new SpendableBuyShopDistinct(1, Currencies.TITLE_TOKEN_PHARAOHS_REVENGE, 1, 800, Currencies.ILLUSION_SHARD)
+            new SpendableBuyShopDistinct(1, Currencies.TITLE_TOKEN_BANE_OF_IMPURITIES, 1, 500, Currencies.ILLUSION_SHARD),
+            new SpendableBuyShopDistinct(1, Currencies.TITLE_TOKEN_GARDEN_OF_HESPERIDES, 1, 500, Currencies.ILLUSION_SHARD),
+            new SpendableBuyShopDistinct(1, Currencies.TITLE_TOKEN_SPIDERS_BURROW, 1, 500, Currencies.ILLUSION_SHARD),
+            new SpendableBuyShopDistinct(1, Currencies.TITLE_TOKEN_JUGGERNAUT, 1, 500, Currencies.ILLUSION_SHARD),
+            new SpendableBuyShopDistinct(1, Currencies.TITLE_TOKEN_PHARAOHS_REVENGE, 1, 500, Currencies.ILLUSION_SHARD)
     );
 
     public static void openSeasonalVendor(Player player, DatabasePlayer databasePlayer, DatabasePlayer databasePlayerMonthly) {
@@ -134,7 +133,7 @@ public class SeasonalTraderTrait extends WarlordsTrait {
     @Override
     public void onAttach() {
         HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
-        hologramTrait.setLine(0, ChatColor.GOLD + "Allegedly a Snowman");
+        hologramTrait.setLine(0, ChatColor.GOLD + "Spring Cleaner");
     }
 
     @Override

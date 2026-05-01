@@ -24,8 +24,8 @@ import java.util.UUID;
 
 public class LegendaryVigorous extends AbstractLegendaryWeapon {
 
-    public static final int EPS = 25;
-    public static final int EPS_PER_UPGRADE = 3;
+    public static final int EPS = 35;
+    public static final int EPS_PER_UPGRADE = 5;
     public static final int DURATION = 10;
     public static final int DURATION_PER_UPGRADE = 1;
 
@@ -71,7 +71,7 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
 
     @Override
     protected float getHealthBonusValue() {
-        return 600;
+        return 500;
     }
 
     @Override

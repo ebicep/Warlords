@@ -39,7 +39,7 @@ public class LegendaryValiant extends AbstractLegendaryWeapon implements EventTi
 
     @Override
     public TextComponent getPassiveEffect() {
-        return Component.text("While you are at max health", NamedTextColor.GRAY)
+        return Component.text("While you are above 90% health", NamedTextColor.GRAY)
                         .append(Component.text(", your EPS and EPH are increased by "))
                         .append(formatTitleUpgrade(EPS_INCREASE + EPS_INCREASE_PER_UPGRADE * getTitleLevel(), "%"))
                         .append(Component.text("."));
@@ -91,7 +91,7 @@ public class LegendaryValiant extends AbstractLegendaryWeapon implements EventTi
                 },
                 false
         ).addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> {
-                    if (player.getCurrentHealth() == player.getMaxHealth()) {
+                    if (player.getCurrentHealth() >= player.getMaxHealth() * 0.9f) {
                         energyGainPerTick.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
                                 getTitleName(),
                                 (1 + (EPS_INCREASE + EPS_INCREASE_PER_UPGRADE * getTitleLevel()) / 100f)
@@ -99,7 +99,7 @@ public class LegendaryValiant extends AbstractLegendaryWeapon implements EventTi
                     }
                 }
         ).addModifier(Modifier.ENERGY_GAIN_PER_HIT, energyGainPerHit -> {
-                    if (player.getCurrentHealth() == player.getMaxHealth()) {
+                    if (player.getCurrentHealth() >= player.getMaxHealth() * 0.9f) {
                         energyGainPerHit.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
                                 getTitleName(),
                                 (1 + (EPS_INCREASE + EPS_INCREASE_PER_UPGRADE * getTitleLevel()) / 100f)
