@@ -58,6 +58,9 @@ public class WeaponTitleMenu {
             int titleIndex = ((page - 1) * 9) + i;
             if (titleIndex < titles.length) {
                 LegendaryTitles title = titles[titleIndex];
+                if (!title.isEnabled) {
+                    continue;
+                }
                 AbstractLegendaryWeapon titledWeapon = title.titleWeapon.apply(weapon);
                 ItemBuilder itemBuilder = new ItemBuilder(titledWeapon.generateItemStack(false));
 
