@@ -297,10 +297,6 @@ public class Orbyz extends AbstractMob implements BossMob {
             }
         }
 
-        if (ticksElapsed % 1600 == 0 && ticksElapsed > 0) {
-            summoningCirclesAbility.start(warlordsNPC.getGame());
-        }
-
         if (ticksElapsed % 470 == 0 && ticksElapsed > 0 && !preventMarkForDeath) {
             heavenlySpearAbilityInterval.start(warlordsNPC.getGame());
         }
