@@ -12,6 +12,9 @@ import com.ebicep.warlords.pve.bountysystem.costs.EventCost;
 import com.ebicep.warlords.pve.bountysystem.rewards.events.LibraryArchives2;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksDuringGame;
 import com.ebicep.warlords.pve.mobs.events.libraryarchives.EventInquisiteur;
+import com.ebicep.warlords.pve.mobs.events.libraryarchives.EventInquisiteurEGA;
+import com.ebicep.warlords.pve.mobs.events.libraryarchives.EventInquisiteurEWA;
+import com.ebicep.warlords.pve.mobs.events.libraryarchives.EventInquisiteurVPA;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.java.NumberFormat;
 import net.kyori.adventure.text.Component;
@@ -108,11 +111,13 @@ public class ForgottenSlayerI extends AbstractBounty implements TracksDuringGame
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onKill(WarlordsDeathEvent event) {
-        if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof EventInquisiteur) {
-            switch (warlordsNPC.getMob().getMobRegistry()) {
-                case EVENT_INQUISITEUR_EGA -> newInquisiteursDefeated[0]++;
-                case EVENT_INQUISITEUR_EWA -> newInquisiteursDefeated[1]++;
-                case EVENT_INQUISITEUR_VPA -> newInquisiteursDefeated[2]++;
+        if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC) {
+            if (warlordsNPC.getMob() instanceof EventInquisiteurEGA) {
+                newInquisiteursDefeated[0]++;
+            } else if (warlordsNPC.getMob() instanceof EventInquisiteurEWA) {
+                newInquisiteursDefeated[1]++;
+            } else if (warlordsNPC.getMob() instanceof EventInquisiteurVPA){
+                newInquisiteursDefeated[2]++;
             }
         }
     }
