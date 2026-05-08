@@ -44,7 +44,7 @@ public enum LegendaryTitles {
     CONDUIT("Conduit", LegendaryConduit.class, LegendaryConduit::new, LegendaryConduit::new, Material.LIGHT_BLUE_STAINED_GLASS_PANE, true),
     FLUX("Flux", LegendaryFlux.class, LegendaryFlux::new, LegendaryFlux::new, Material.YELLOW_STAINED_GLASS_PANE, true),
     BASTION("Bastion", LegendaryBastion.class, LegendaryBastion::new, LegendaryBastion::new, Material.ORANGE_STAINED_GLASS_PANE, true),
-    FRACTURED("Fractured", LegendaryFractured.class, LegendaryFractured::new, LegendaryFractured::new, Material.RED_STAINED_GLASS_PANE, false),
+    FRACTURED("Fractured", LegendaryFractured.class, LegendaryFractured::new, LegendaryFractured::new, Material.RED_STAINED_GLASS_PANE, true),
     OVERGROWTH("Overgrowth", LegendaryOvergrowth.class, LegendaryOvergrowth::new, LegendaryOvergrowth::new, Material.GREEN_STAINED_GLASS_PANE, true),
 
     ;
