@@ -26,7 +26,9 @@ public class QueueListener extends ListenerAdapter {
         if (event.getMember() == null) {
             return;
         }
-        if (BotManager.DISCORD_SERVERS.stream().noneMatch(discordServer -> Objects.equals(discordServer.getQueueChannel(), event.getChannel().getName()))) {
+        if (BotManager.DISCORD_SERVERS.stream().noneMatch(discordServer -> discordServer.getChannelName(BotManager.BotChannel.QUEUE)
+                .map(name -> name.equals(event.getChannel().getName()))
+                .orElse(false))) {
             return;
         }
         //event.deferReply().queue();

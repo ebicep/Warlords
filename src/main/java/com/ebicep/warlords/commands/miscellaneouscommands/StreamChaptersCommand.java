@@ -75,9 +75,12 @@ public class StreamChaptersCommand extends BaseCommand {
         if (player != null) {
             player.sendMessage(Component.text(chapters.toString(), NamedTextColor.GREEN));
         }
-        BotManager.getTextChannelCompsByName("bot-testing").ifPresent(textChannel -> {
-            textChannel.sendMessage(chapters.toString()).queue();
-        });
+        BotManager.DiscordServer comps = BotManager.getServer("comps");
+        if (comps != null) {
+            comps.getChannel(BotManager.BotChannel.BOT_TESTING).ifPresent(textChannel -> {
+                textChannel.sendMessage(chapters.toString()).queue();
+            });
+        }
     }
 
     public static void appendTime(StringBuilder chapters, Instant start, Instant end) {

@@ -93,10 +93,23 @@ public class BotListener extends ListenerAdapter implements Listener {
 
     private void readBalanceStatuses(MessageReceivedEvent event, Message message) {
         TextChannel textChannel = event.getTextChannel();
-        switch (textChannel.getName().toLowerCase()) {
-            case "gs-teams", "bot-teams" -> readOnGoingBalance(message);
-            case "teams" -> readNewTeamPosted(message);
+        BotManager.DiscordServer comps = BotManager.getServer("comps");
+        if (comps == null) {
+            return;
         }
+        String channelName = textChannel.getName();
+        if (matchesChannel(comps, BotManager.BotChannel.GS_TEAMS, channelName)
+                || matchesChannel(comps, BotManager.BotChannel.BOT_TEAMS, channelName)) {
+            readOnGoingBalance(message);
+        } else if (matchesChannel(comps, BotManager.BotChannel.TEAMS, channelName)) {
+            readNewTeamPosted(message);
+        }
+    }
+
+    private static boolean matchesChannel(BotManager.DiscordServer server, BotManager.BotChannel channel, String actualName) {
+        return server.getChannelName(channel)
+                     .map(configured -> configured.equalsIgnoreCase(actualName))
+                     .orElse(false);
     }
 
     private void readOnGoingBalance(Message message) {

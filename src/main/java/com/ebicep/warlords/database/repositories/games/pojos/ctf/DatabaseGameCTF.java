@@ -107,10 +107,14 @@ public class DatabaseGameCTF extends DatabaseGameBase<DatabaseGamePlayerCTF> {
     }
 
     public static void sendGamesBacklogJson(DatabaseGameCTF databaseGame) {
+        BotManager.DiscordServer comps = BotManager.getServer("comps");
+        if (comps == null) {
+            return;
+        }
         if (BotManager.numberOfMessagesSentLast30Sec > 15) {
             if (BotManager.numberOfMessagesSentLast30Sec < 20) {
-                BotManager.getTextChannelCompsByName("games-backlog")
-                          .ifPresent(textChannel -> textChannel.sendMessage("SOMETHING BROKEN DETECTED <@239929120035700737> <@253971614998331393>").queue());
+                comps.getChannel(BotManager.BotChannel.GAMES_BACKLOG)
+                     .ifPresent(textChannel -> textChannel.sendMessage("SOMETHING BROKEN DETECTED <@239929120035700737> <@253971614998331393>").queue());
             }
             return;
         }
@@ -120,8 +124,8 @@ public class DatabaseGameCTF extends DatabaseGameBase<DatabaseGamePlayerCTF> {
         String json = buildGamesBacklogJson(databaseGame);
         byte[] jsonBytes = json.getBytes(StandardCharsets.UTF_8);
         String fileName = databaseGame.getId() + ".json";
-        BotManager.getTextChannelCompsByName("games-backlog")
-                  .ifPresent(textChannel -> textChannel.sendFile(jsonBytes, fileName).queue());
+        comps.getChannel(BotManager.BotChannel.GAMES_BACKLOG)
+             .ifPresent(textChannel -> textChannel.sendFile(jsonBytes, fileName).queue());
     }
 
     public static String buildGamesBacklogJson(DatabaseGameCTF databaseGame) {
