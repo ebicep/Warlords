@@ -1,5 +1,6 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
+import com.ebicep.jda.BalanceThreadContext;
 import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.repositories.games.pojos.ctf.DatabaseGameCTF;
@@ -25,26 +26,26 @@ public class OldTestCommand implements BasicCommand {
             return;
         }
         Player playerSender = commandSender instanceof Player player ? player : null;
-        if (BotManager.jda != null) {
-            for (BotManager.DiscordServer discordServer : BotManager.DISCORD_SERVERS) {
-                for (BotManager.BotChannel botChannel : BotManager.BotChannel.values()) {
-                    if (discordServer.getChannelName(botChannel).isEmpty()) {
-                        continue;
-                    }
-                    discordServer.getChannel(botChannel).ifPresent(textChannel ->
-                            textChannel.sendMessage("TEST").queue()
-                    );
-                }
-            }
-        } else {
-            ChatChannels.sendDebugMessage(playerSender, Component.text("Discord bot not connected", NamedTextColor.RED));
-        }
+
         if (commandSender instanceof Player player) {
+            long balanceThreadId = BalanceThreadContext.getLatestBalanceThreadId();
             DatabaseGameCTF mockGame = createMockBacklogTestGame();
-            Warlords.newChain()
-                    .async(() -> DatabaseGameCTF.sendGamesBacklogJson(mockGame))
-                    .execute();
-            player.sendMessage(Component.text("Sent mock games-backlog JSON (" + mockGame.getId() + ".json)", NamedTextColor.GREEN));
+            if (balanceThreadId == 0 || BotManager.jda == null) {
+                player.sendMessage(Component.text(
+                        BotManager.jda == null
+                                ? "Discord bot not connected; cannot post test JSON to balance thread"
+                                : "No balance thread tracked yet (post a balance embed in a bot-teams thread first)",
+                        NamedTextColor.RED
+                ));
+            } else {
+                Warlords.newChain()
+                        .async(() -> DatabaseGameCTF.sendGamesBacklogJsonToLatestBalanceThread(mockGame))
+                        .execute();
+                player.sendMessage(Component.text(
+                        "Sent mock games-backlog JSON (" + mockGame.getId() + ".json) to balance thread " + balanceThreadId,
+                        NamedTextColor.GREEN
+                ));
+            }
         }
         ChatChannels.sendDebugMessage(commandSender instanceof Player player ? player : null, "Executed OldTestCommand");
     }

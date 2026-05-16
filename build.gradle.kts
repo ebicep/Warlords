@@ -87,7 +87,7 @@ dependencies {
 
     implementation("co.aikar:taskchain-bukkit:3.7.2")
 
-    implementation("net.dv8tion:JDA:4.4.0_350")
+    implementation("net.dv8tion:JDA:5.0.0-beta.24")
 
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb:3.0.4")
 

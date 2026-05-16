@@ -2,7 +2,9 @@ package com.ebicep.warlords.database.repositories.games.pojos.ctf;
 
 import com.ebicep.holograms.Hologram;
 import com.ebicep.holograms.HologramDataText;
+import com.ebicep.jda.BalanceThreadContext;
 import com.ebicep.jda.BotManager;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
@@ -19,6 +21,8 @@ import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.StringUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
+import net.dv8tion.jda.api.utils.FileUpload;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -125,7 +129,37 @@ public class DatabaseGameCTF extends DatabaseGameBase<DatabaseGamePlayerCTF> {
         byte[] jsonBytes = json.getBytes(StandardCharsets.UTF_8);
         String fileName = databaseGame.getId() + ".json";
         comps.getChannel(BotManager.BotChannel.GAMES_BACKLOG)
-             .ifPresent(textChannel -> textChannel.sendFile(jsonBytes, fileName).queue());
+             .ifPresent(textChannel -> textChannel.sendFiles(FileUpload.fromData(jsonBytes, fileName)).queue());
+        sendGamesBacklogJsonToBalanceThread(jsonBytes, fileName);
+    }
+
+    public static void sendGamesBacklogJsonToLatestBalanceThread(DatabaseGameCTF databaseGame) {
+        if (databaseGame.getId() == null) {
+            databaseGame.setId(new ObjectId().toHexString());
+        }
+        String json = buildGamesBacklogJson(databaseGame);
+        byte[] jsonBytes = json.getBytes(StandardCharsets.UTF_8);
+        sendGamesBacklogJsonToBalanceThread(jsonBytes, databaseGame.getId() + ".json");
+    }
+
+    private static void sendGamesBacklogJsonToBalanceThread(byte[] jsonBytes, String fileName) {
+        long threadId = BalanceThreadContext.getLatestBalanceThreadId();
+        if (threadId == 0 || BotManager.jda == null) {
+            return;
+        }
+        ThreadChannel threadChannel = BotManager.jda.getThreadChannelById(threadId);
+        if (threadChannel == null) {
+            ChatUtils.MessageType.DISCORD_BOT.sendMessage("Balance thread " + threadId + " not found for games-backlog JSON");
+            BalanceThreadContext.clearActiveBalanceThreadId();
+            return;
+        }
+        threadChannel.sendFiles(FileUpload.fromData(jsonBytes, fileName)).queue(
+                success -> BalanceThreadContext.clearActiveBalanceThreadId(),
+                failure -> {
+                    ChatUtils.MessageType.DISCORD_BOT.sendErrorMessage(failure);
+                    BalanceThreadContext.clearActiveBalanceThreadId();
+                }
+        );
     }
 
     public static String buildGamesBacklogJson(DatabaseGameCTF databaseGame) {

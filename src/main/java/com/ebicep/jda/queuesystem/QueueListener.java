@@ -4,8 +4,8 @@ import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import org.bukkit.Bukkit;
@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 public class QueueListener extends ListenerAdapter {
 
     @Override
-    public void onSlashCommand(@Nonnull SlashCommandEvent event) {
+    public void onSlashCommandInteraction(@Nonnull SlashCommandInteractionEvent event) {
         if (event.getMember() == null) {
             return;
         }
@@ -35,7 +35,7 @@ public class QueueListener extends ListenerAdapter {
 
         if (event.getName().equals("queue")) {
             Member member = event.getMember();
-            TextChannel textChannel = event.getTextChannel();
+            TextChannel textChannel = event.getChannel().asTextChannel();
 
             String playerName = event.getMember().getEffectiveName();
             OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayerIfCached(playerName);
@@ -55,12 +55,12 @@ public class QueueListener extends ListenerAdapter {
         }
     }
 
-    private void refreshQueue(@Nonnull SlashCommandEvent event) {
+    private void refreshQueue(@Nonnull SlashCommandInteractionEvent event) {
         event.reply("Refreshing the Queue").queue();
         QueueManager.sendQueue();
     }
 
-    private void joinQueue(@Nonnull SlashCommandEvent event, Member member, TextChannel textChannel, String playerName, UUID playerUUID) {
+    private void joinQueue(@Nonnull SlashCommandInteractionEvent event, Member member, TextChannel textChannel, String playerName, UUID playerUUID) {
         if (QueueManager.QUEUE.stream().anyMatch(uuid -> uuid.equals(playerUUID))) {
             event.reply("You are already in the queue").queue();
             return;
@@ -128,7 +128,7 @@ public class QueueListener extends ListenerAdapter {
         QueueManager.sendQueue();
     }
 
-    private void leaveQueue(@Nonnull SlashCommandEvent event, String playerName, UUID playerUUID) {
+    private void leaveQueue(@Nonnull SlashCommandInteractionEvent event, String playerName, UUID playerUUID) {
         try {
             if (QueueManager.QUEUE.stream().anyMatch(uuid -> uuid.equals(playerUUID))) {
                 QueueManager.removePlayerFromQueue(playerName);

@@ -37,6 +37,10 @@ public class ConfigUtil {
         }
     }
 
+    /**
+     * Loads guild/channel names from {@code bot.yml}. For main-server balance threads,
+     * configure {@code main.channels.botTeams} to the parent text channel name (e.g. bot-teams).
+     */
     public static void readBotConfig(Warlords instance) {
         try {
             BotManager.DISCORD_SERVERS.clear();

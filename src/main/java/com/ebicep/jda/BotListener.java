@@ -17,7 +17,10 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.ChannelType;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.kyori.adventure.text.Component;
@@ -32,6 +35,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+import org.jetbrains.annotations.Unmodifiable;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -49,9 +53,10 @@ public class BotListener extends ListenerAdapter implements Listener {
         }
         Member member = event.getMember();
         Message message = event.getMessage();
-        switch (event.getChannelType()) {
-            case PRIVATE -> parsePrivateLinkMessage(event, message);
-            case TEXT -> readBalanceStatuses(event, message);
+        if (event.getChannelType() == ChannelType.PRIVATE) {
+            parsePrivateLinkMessage(event, message);
+        } else if (event.isFromGuild()) {
+            readBalanceStatuses(event, message);
         }
     }
 
@@ -66,7 +71,7 @@ public class BotListener extends ListenerAdapter implements Listener {
                 DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid);
                 Long id = event.getAuthor().getIdLong();
                 databasePlayer.setDiscordID(id);
-                event.getPrivateChannel()
+                event.getChannel().asPrivateChannel()
                      .sendMessage("You linked **" + Bukkit.getOfflinePlayer(uuid).getName() + "** to your discord account (" + id + ").")
                      .queue();
                 Player player = Bukkit.getOfflinePlayer(uuid).getPlayer();
@@ -92,18 +97,46 @@ public class BotListener extends ListenerAdapter implements Listener {
     }
 
     private void readBalanceStatuses(MessageReceivedEvent event, Message message) {
-        TextChannel textChannel = event.getTextChannel();
-        BotManager.DiscordServer comps = BotManager.getServer("comps");
-        if (comps == null) {
+        Optional<String> parentChannelName = resolveParentChannelName(event);
+        if (parentChannelName.isEmpty()) {
             return;
         }
-        String channelName = textChannel.getName();
-        if (matchesChannel(comps, BotManager.BotChannel.GS_TEAMS, channelName)
-                || matchesChannel(comps, BotManager.BotChannel.BOT_TEAMS, channelName)) {
+        String channelName = parentChannelName.get();
+        boolean fromThread = event.isFromThread();
+
+        for (BotManager.DiscordServer discordServer : BotManager.DISCORD_SERVERS) {
+            if (!fromThread && matchesChannel(discordServer, BotManager.BotChannel.TEAMS, channelName)) {
+                readNewTeamPosted(message);
+                return;
+            }
+            if (!matchesBalanceChannel(discordServer, channelName)) {
+                continue;
+            }
+            if (fromThread) {
+                BalanceThreadContext.setActiveBalanceThreadId(event.getChannel().getIdLong());
+            } else {
+                BalanceThreadContext.clearActiveBalanceThreadId();
+            }
             readOnGoingBalance(message);
-        } else if (matchesChannel(comps, BotManager.BotChannel.TEAMS, channelName)) {
-            readNewTeamPosted(message);
+            return;
         }
+    }
+
+    private static Optional<String> resolveParentChannelName(MessageReceivedEvent event) {
+        MessageChannel channel = event.getChannel();
+        if (channel instanceof ThreadChannel threadChannel) {
+            if (threadChannel.getParentChannel() != null) {
+                return Optional.of(threadChannel.getParentChannel().getName());
+            }
+            if (threadChannel.getParentMessageChannel() != null) {
+                return Optional.of(threadChannel.getParentMessageChannel().getName());
+            }
+            return Optional.empty();
+        }
+        if (channel instanceof TextChannel textChannel) {
+            return Optional.of(textChannel.getName());
+        }
+        return Optional.empty();
     }
 
     private static boolean matchesChannel(BotManager.DiscordServer server, BotManager.BotChannel channel, String actualName) {
@@ -112,71 +145,23 @@ public class BotListener extends ListenerAdapter implements Listener {
                      .orElse(false);
     }
 
-    private void readOnGoingBalance(Message message) {
-        if (message.getContentRaw().contains(", Balance Cancelled")) {
-            cancelOnGoingBalance();
-        } else if (!message.getEmbeds().isEmpty() && message.getEmbeds().get(0).getFields().size() >= 2) {
-            cancelOnGoingBalance();
-            MessageEmbed embed = message.getEmbeds().get(0);
-            List<String> playerNames = new ArrayList<>();
-            for (MessageEmbed.Field field : embed.getFields()) {
-                String fieldName = field.getName();
-                String fieldValue = field.getValue();
-                if (fieldName != null && fieldValue != null) {
-                    String[] players = fieldValue
-                            .replace("```", "")
-                            .replace(" ", "")
-                            .split("\n");
-                    if (fieldName.contains("Blue Team") || fieldName.contains("Red Team")) {
-                        for (String player : players) {
-                            playerNames.add(player.substring(0, player.indexOf('-')));
-                        }
-                    }
-                }
-            }
-            onGoingBalance = new BukkitRunnable() {
-                int counter = 0;
-
-                @Override
-                public void run() {
-                    if (counter % 2 == 0) {
-                        playerNames.forEach(name -> {
-                            Player player = Bukkit.getPlayer(name);
-                            if (player != null) {
-                                Random random = new Random();
-                                TextComponent subtitle = random.nextInt(2) == 0 ?
-                                                         Component.text("BLUE", NamedTextColor.BLUE) :
-                                                         Component.text("RED", NamedTextColor.RED);
-                                player.showTitle(Title.title(
-                                        Component.text(Utils.SPECS_ORDERED[random.nextInt(Utils.SPECS_ORDERED.length)], NamedTextColor.GREEN),
-                                        subtitle,
-                                        Title.Times.times(Ticks.duration(0), Ticks.duration(5), Ticks.duration(0))
-                                ));
-                            }
-                        });
-                    }
-                    //auto cancel after 15 seconds
-                    if (counter++ > 20 * 15) {
-                        this.cancel();
-                    }
-                }
-            }.runTaskTimer(Warlords.getInstance(), 10, 0);
-
-        }
-    }
-
     private void readNewTeamPosted(Message message) {
-        if (!message.getEmbeds().isEmpty() && message.getEmbeds().get(0).getFields().size() == 2) {
+        if (!message.getEmbeds().isEmpty() && message.getEmbeds().get(0).getFields().size() >= 2) {
             cancelOnGoingBalance();
             MessageEmbed embed = message.getEmbeds().get(0);
             boolean isExperimental = embed.getTitle().contains("*");
             List<TeamBalance> blueTeam = new ArrayList<>();
             List<TeamBalance> redTeam = new ArrayList<>();
-            for (MessageEmbed.Field field : embed.getFields()) {
+            @Unmodifiable List<MessageEmbed.Field> fields = embed.getFields();
+            for (int i = 0; i < 2; i++) {
+                MessageEmbed.Field field = fields.get(i);
                 String fieldName = field.getName();
                 String fieldValue = field.getValue();
                 if (fieldName != null && fieldValue != null) {
                     for (String player : fieldValue.replace("```", "").split("\n")) {
+                        if (player.indexOf('-') == -1) {
+                            continue;
+                        }
                         String name = player.substring(0, player.indexOf('-'));
                         String spec = player.substring(player.indexOf('-') + 1);
                         if (fieldName.contains("Blue Team")) {
@@ -188,7 +173,8 @@ public class BotListener extends ListenerAdapter implements Listener {
                 }
             }
             AtomicBoolean resetMenu = new AtomicBoolean(true);
-            for (MessageEmbed.Field field : embed.getFields()) {
+            for (int i = 0; i < 2; i++) {
+                MessageEmbed.Field field = fields.get(i);
                 String fieldName = field.getName();
                 String fieldValue = field.getValue();
                 String[] players;
@@ -204,6 +190,9 @@ public class BotListener extends ListenerAdapter implements Listener {
                 try {
                     Bukkit.getScheduler().callSyncMethod(Warlords.getInstance(), () -> {
                                 for (String player : players) {
+                                    if (player.indexOf('-') == -1) {
+                                        continue;
+                                    }
                                     String name = player.substring(0, player.indexOf('-'));
                                     String spec = player.substring(player.indexOf('-') + 1);
                                     OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayerIfCached(name);
@@ -303,6 +292,74 @@ public class BotListener extends ListenerAdapter implements Listener {
                     ChatUtils.MessageType.DISCORD_BOT.sendErrorMessage(e);
                 }
             }
+        }
+    }
+
+    private static boolean matchesBalanceChannel(BotManager.DiscordServer server, String channelName) {
+        return matchesChannel(server, BotManager.BotChannel.GS_TEAMS, channelName)
+                || matchesChannel(server, BotManager.BotChannel.BOT_TEAMS, channelName);
+    }
+
+    private void readOnGoingBalance(Message message) {
+        if (message.getContentRaw().contains(", Balance Cancelled")) {
+            cancelOnGoingBalance();
+            BalanceThreadContext.clearActiveBalanceThreadId();
+            BalanceThreadContext.clearLatestBalanceThreadId();
+        } else {
+            Optional<MessageEmbed> balanceEmbed = message.getEmbeds().stream()
+                                                         .filter(embed -> embed.getFields().size() >= 2)
+                                                         .findFirst();
+            if (balanceEmbed.isEmpty()) {
+                return;
+            }
+            cancelOnGoingBalance();
+            MessageEmbed embed = balanceEmbed.get();
+            List<String> playerNames = new ArrayList<>();
+            for (MessageEmbed.Field field : embed.getFields()) {
+                String fieldName = field.getName();
+                String fieldValue = field.getValue();
+                if (fieldName != null && fieldValue != null) {
+                    String[] players = fieldValue
+                            .replace("```", "")
+                            .replace(" ", "")
+                            .split("\n");
+                    if (fieldName.contains("Blue Team") || fieldName.contains("Red Team")) {
+                        for (String player : players) {
+                            if (player.indexOf('-') == -1) {
+                                continue;
+                            }
+                            playerNames.add(player.substring(0, player.indexOf('-')));
+                        }
+                    }
+                }
+            }
+            onGoingBalance = new BukkitRunnable() {
+                int counter = 0;
+
+                @Override
+                public void run() {
+                    if (counter % 2 == 0) {
+                        playerNames.forEach(name -> {
+                            Player player = Bukkit.getPlayer(name);
+                            if (player != null) {
+                                Random random = new Random();
+                                TextComponent subtitle = random.nextInt(2) == 0 ?
+                                                         Component.text("BLUE", NamedTextColor.BLUE) :
+                                                         Component.text("RED", NamedTextColor.RED);
+                                player.showTitle(Title.title(
+                                        Component.text(Utils.SPECS_ORDERED[random.nextInt(Utils.SPECS_ORDERED.length)], NamedTextColor.GREEN),
+                                        subtitle,
+                                        Title.Times.times(Ticks.duration(0), Ticks.duration(5), Ticks.duration(0))
+                                ));
+                            }
+                        });
+                    }
+                    //auto cancel after 15 seconds
+                    if (counter++ > 20 * 15) {
+                        this.cancel();
+                    }
+                }
+            }.runTaskTimer(Warlords.getInstance(), 10, 0);
         }
     }
 
