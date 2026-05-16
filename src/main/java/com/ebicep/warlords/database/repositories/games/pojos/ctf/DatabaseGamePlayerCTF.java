@@ -7,6 +7,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.List;
+import java.util.UUID;
 
 public class DatabaseGamePlayerCTF extends DatabaseGamePlayerBase {
 
@@ -30,6 +31,15 @@ public class DatabaseGamePlayerCTF extends DatabaseGamePlayerBase {
 
 
     public DatabaseGamePlayerCTF() {
+    }
+
+    public static DatabaseGamePlayerCTF forTest(UUID uuid, String name, int kills, int deaths) {
+        DatabaseGamePlayerCTF player = new DatabaseGamePlayerCTF();
+        player.uuid = uuid;
+        player.name = name;
+        player.totalKills = kills;
+        player.totalDeaths = deaths;
+        return player;
     }
 
     public DatabaseGamePlayerCTF(WarlordsPlayer warlordsPlayer, WarlordsGameTriggerWinEvent gameWinEvent, boolean counted) {

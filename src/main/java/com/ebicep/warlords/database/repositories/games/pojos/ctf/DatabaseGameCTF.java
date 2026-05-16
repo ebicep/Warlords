@@ -8,8 +8,10 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerB
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
-import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.Team;
+import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.SerializedName;
+import org.bson.types.ObjectId;
 import com.ebicep.warlords.game.option.win.WinAfterTimeoutOption;
 import com.ebicep.warlords.game.option.win.WinByPointsOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -28,6 +30,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -99,22 +102,69 @@ public class DatabaseGameCTF extends DatabaseGameBase<DatabaseGamePlayerCTF> {
             }
         }
         output.setLength(output.length() - 1);
+        lastWarlordsPlusString = output.toString();
+        return output.toString();
+    }
+
+    public static void sendGamesBacklogJson(DatabaseGameCTF databaseGame) {
         if (BotManager.numberOfMessagesSentLast30Sec > 15) {
             if (BotManager.numberOfMessagesSentLast30Sec < 20) {
                 BotManager.getTextChannelCompsByName("games-backlog")
                           .ifPresent(textChannel -> textChannel.sendMessage("SOMETHING BROKEN DETECTED <@239929120035700737> <@253971614998331393>").queue());
             }
-        } else {
-            if (game.getAddons().contains(GameAddon.PRIVATE_GAME)) {
-                BotManager.getTextChannelCompsByName("games-backlog").ifPresent(textChannel -> textChannel.sendMessage(output.toString()).queue());
-            }
+            return;
         }
-        lastWarlordsPlusString = output.toString();
-        return output.toString();
+        if (databaseGame.getId() == null) {
+            databaseGame.setId(new ObjectId().toHexString());
+        }
+        String json = buildGamesBacklogJson(databaseGame);
+        byte[] jsonBytes = json.getBytes(StandardCharsets.UTF_8);
+        String fileName = databaseGame.getId() + ".json";
+        BotManager.getTextChannelCompsByName("games-backlog")
+                  .ifPresent(textChannel -> textChannel.sendFile(jsonBytes, fileName).queue());
+    }
+
+    public static String buildGamesBacklogJson(DatabaseGameCTF databaseGame) {
+        Team winnerTeam;
+        Team loserTeam;
+        if (databaseGame.getWinner() != null) {
+            winnerTeam = databaseGame.getWinner();
+            loserTeam = winnerTeam == Team.BLUE ? Team.RED : Team.BLUE;
+        } else if (databaseGame.getBluePoints() > databaseGame.getRedPoints()) {
+            winnerTeam = Team.BLUE;
+            loserTeam = Team.RED;
+        } else if (databaseGame.getRedPoints() > databaseGame.getBluePoints()) {
+            winnerTeam = Team.RED;
+            loserTeam = Team.BLUE;
+        } else {
+            winnerTeam = Team.BLUE;
+            loserTeam = Team.RED;
+        }
+        List<BacklogPlayer> winners = toBacklogPlayers(databaseGame.getPlayers().getOrDefault(winnerTeam, List.of()));
+        List<BacklogPlayer> losers = toBacklogPlayers(databaseGame.getPlayers().getOrDefault(loserTeam, List.of()));
+        BacklogPayload payload = new BacklogPayload(winners, losers, databaseGame.getId());
+        return new GsonBuilder().setPrettyPrinting().create().toJson(payload);
+    }
+
+    private static List<BacklogPlayer> toBacklogPlayers(List<DatabaseGamePlayerCTF> players) {
+        return players.stream()
+                    .map(player -> new BacklogPlayer(
+                            player.getUuid().toString(),
+                            player.getName(),
+                            player.getTotalKills(),
+                            player.getTotalDeaths()
+                    ))
+                    .toList();
     }
 
     public static String getLastWarlordsPlusString() {
         return lastWarlordsPlusString;
+    }
+
+    private record BacklogPlayer(String uuid, String name, int kills, int deaths) {
+    }
+
+    private record BacklogPayload(List<BacklogPlayer> winners, List<BacklogPlayer> losers, @SerializedName("game_id") String gameId) {
     }
 
     @Field("time_left")
