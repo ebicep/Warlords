@@ -108,7 +108,7 @@ public class StatsLeaderboardManager {
                             if (value == PlayersCollections.LIFETIME && lessThan20Plays && noCurrentEventPlays) {
                                 continue;
                             }
-                            if (value == PlayersCollections.SEASON_10 && lessThan20Plays) {
+                            if (value == PlayersCollections.SEASON_11 && lessThan20Plays) {
                                 continue;
                             }
                             DatabasePlayer cachedPlayer = concurrentHashMap.get(databasePlayer.getUuid());
