@@ -36,6 +36,28 @@ import java.util.*;
 
 public class BotManager {
 
+    public enum BotChannel {
+        STATUS("status"),
+        QUEUE("queue"),
+        GAMES_BACKLOG("gamesBacklog"),
+        BOT_TEAMS("botTeams"),
+        GS_TEAMS("gsTeams"),
+        TEAMS("teams"),
+        BOT_TESTING("botTesting"),
+        ADMIN_LOG("adminLog"),
+        ERRORS("errors");
+
+        private final String configKey;
+
+        BotChannel(String configKey) {
+            this.configKey = configKey;
+        }
+
+        public String getConfigKey() {
+            return configKey;
+        }
+    }
+
     public static final List<DiscordServer> DISCORD_SERVERS = new ArrayList<>();
     public static JDA jda;
     public static String botToken;
@@ -63,11 +85,11 @@ public class BotManager {
                 }
                 if (counter == 0) {
                     for (DiscordServer discordServer : DISCORD_SERVERS) {
-                        discordServer.setServer(jda.getGuildById(discordServer.getId()));
-                        if (discordServer.getQueueChannel() == null) {
+                        discordServer.rebindGuild(jda);
+                        if (discordServer.getChannelName(BotChannel.QUEUE).isEmpty()) {
                             continue;
                         }
-                        discordServer.getTextChannelByName(discordServer.getQueueChannel()).ifPresent(textChannel -> {
+                        discordServer.getChannel(BotChannel.QUEUE).ifPresent(textChannel -> {
                             textChannel.getIterableHistory()
                                        .takeAsync(1000)
                                        .thenAccept(textChannel::purgeMessages)
@@ -151,11 +173,11 @@ public class BotManager {
         MessageEmbed messageEmbed = eb.build();
 
         for (DiscordServer discordServer : DISCORD_SERVERS) {
-            if (discordServer.getStatusChannel() == null) {
+            if (discordServer.getChannelName(BotChannel.STATUS).isEmpty()) {
                 continue;
             }
             Message statusMessage = discordServer.getStatusMessage();
-            discordServer.getTextChannelByName(discordServer.getStatusChannel()).ifPresent(textChannel -> {
+            discordServer.getChannel(BotChannel.STATUS).ifPresent(textChannel -> {
                 try {
                     textChannel.getLatestMessageId();
                 } catch (Exception e) {
@@ -174,10 +196,6 @@ public class BotManager {
         }
     }
 
-    public static Optional<TextChannel> getTextChannelCompsByName(String name) {
-        return getServer("comps").getTextChannelByName(name);
-    }
-
     public static DiscordServer getServer(String name) {
         return DISCORD_SERVERS.stream()
                               .filter(discordServer -> discordServer.getName().equals(name))
@@ -189,18 +207,22 @@ public class BotManager {
         if (jda == null) {
             return;
         }
-        getTextChannelGeneralByName("admin-log").ifPresent(textChannel -> textChannel.sendMessage(message).queue());
-    }
-
-    public static Optional<TextChannel> getTextChannelGeneralByName(String name) {
-        return getServer("main").getTextChannelByName(name);
+        DiscordServer main = getServer("main");
+        if (main == null) {
+            return;
+        }
+        main.getChannel(BotChannel.ADMIN_LOG).ifPresent(textChannel -> textChannel.sendMessage(message).queue());
     }
 
     public static void sendDebugMessage(MessageEmbed embed) {
         if (jda == null) {
             return;
         }
-        getTextChannelGeneralByName("admin-log").ifPresent(textChannel -> textChannel.sendMessageEmbeds(embed).queue());
+        DiscordServer main = getServer("main");
+        if (main == null) {
+            return;
+        }
+        main.getChannel(BotChannel.ADMIN_LOG).ifPresent(textChannel -> textChannel.sendMessageEmbeds(embed).queue());
     }
 
     public static void sendMessageToStatusChannel(String message) {
@@ -211,10 +233,10 @@ public class BotManager {
             return;
         }
         for (DiscordServer discordServer : DISCORD_SERVERS) {
-            if (discordServer.getStatusChannel() == null) {
+            if (discordServer.getChannelName(BotChannel.STATUS).isEmpty()) {
                 continue;
             }
-            discordServer.getTextChannelByName(discordServer.getStatusChannel()).ifPresent(textChannel -> {
+            discordServer.getChannel(BotChannel.STATUS).ifPresent(textChannel -> {
                 textChannel.sendMessage(message).queue();
                 numberOfMessagesSentLast30Sec++;
             });
@@ -234,17 +256,15 @@ public class BotManager {
 
         private final String name;
         private final String id;
-        private final String statusChannel;
-        private final String queueChannel;
+        private final Map<BotChannel, String> channels;
         private final HashMap<String, TextChannel> channelCache = new HashMap<>();
         private Guild server;
         private Message statusMessage;
 
-        public DiscordServer(String name, String id, String statusChannel, String queueChannel) {
+        public DiscordServer(String name, String id, Map<BotChannel, String> channels) {
             this.name = name;
             this.id = id;
-            this.statusChannel = statusChannel;
-            this.queueChannel = queueChannel;
+            this.channels = channels;
         }
 
         public String getName() {
@@ -263,16 +283,16 @@ public class BotManager {
             return id;
         }
 
-        public String getStatusChannel() {
-            return statusChannel;
+        public Map<BotChannel, String> getChannels() {
+            return channels;
         }
 
-        public String getQueueChannel() {
-            return queueChannel;
+        public Optional<String> getChannelName(BotChannel channel) {
+            return Optional.ofNullable(channels.get(channel)).filter(s -> !s.isEmpty());
         }
 
-        public HashMap<String, TextChannel> getChannelCache() {
-            return channelCache;
+        public Optional<TextChannel> getChannel(BotChannel channel) {
+            return getChannelName(channel).flatMap(this::getTextChannelByName);
         }
 
         public Message getStatusMessage() {
@@ -283,6 +303,15 @@ public class BotManager {
             this.statusMessage = statusMessage;
         }
 
+        public void clearChannelCache() {
+            channelCache.clear();
+        }
+
+        public void rebindGuild(JDA jda) {
+            setServer(jda.getGuildById(id));
+            clearChannelCache();
+        }
+
         public Optional<TextChannel> getTextChannelByName(String name) {
             if (jda == null) {
                 return Optional.empty();
@@ -290,7 +319,12 @@ public class BotManager {
             if (channelCache.containsKey(name)) {
                 return Optional.of(channelCache.get(name));
             }
-            Optional<TextChannel> textChannel = jda.getTextChannelsByName(name, true).stream().findFirst();
+            Optional<TextChannel> textChannel;
+            if (server != null) {
+                textChannel = server.getTextChannelsByName(name, true).stream().findFirst();
+            } else {
+                textChannel = jda.getTextChannelsByName(name, true).stream().findFirst();
+            }
             textChannel.ifPresent(channel -> channelCache.put(name, channel));
             return textChannel;
         }

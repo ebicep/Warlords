@@ -42,28 +42,34 @@ public class ConfigUtil {
             BotManager.DISCORD_SERVERS.clear();
             YamlConfiguration config = YamlConfiguration.loadConfiguration(new File(instance.getDataFolder(), "bot.yml"));
             for (String key : config.getKeys(false)) {
-                BotManager.DiscordServer discordServer = new BotManager.DiscordServer(
-                        key,
-                        config.getString(key + ".id"),
-                        config.getString(key + ".statusChannel"),
-                        config.getString(key + ".queueChannel")
-                );
+                String guildId = config.getString(key + ".id");
+                if (guildId == null || guildId.isEmpty()) {
+                    ChatUtils.MessageType.DISCORD_BOT.sendMessage("WARN: bot.yml guild '" + key + "' is missing id");
+                    continue;
+                }
+                java.util.Map<BotManager.BotChannel, String> channels = new java.util.EnumMap<>(BotManager.BotChannel.class);
+                for (BotManager.BotChannel botChannel : BotManager.BotChannel.values()) {
+                    String channelName = config.getString(key + ".channels." + botChannel.getConfigKey());
+                    if (channelName != null && !channelName.isEmpty()) {
+                        channels.put(botChannel, channelName);
+                    }
+                }
+                BotManager.DiscordServer discordServer = new BotManager.DiscordServer(key, guildId, channels);
                 BotManager.DISCORD_SERVERS.add(discordServer);
-                ChatUtils.MessageType.DISCORD_BOT.sendMessage("Added server " + key + " = " + discordServer.getId() + ", " + discordServer.getStatusChannel() + ", " + discordServer.getQueueChannel());
+                ChatUtils.MessageType.DISCORD_BOT.sendMessage("Added server " + key + " = " + guildId + ", channels=" + channels);
             }
-            /*
-            server1
-                id
-                statusChannel
-                waitingChannel
-            server2
-                id
-                statusChannel
-                waitingChannel
-             */
             ChatUtils.MessageType.DISCORD_BOT.sendMessage("Loaded file bot config.");
         } catch (Exception e) {
             ChatUtils.MessageType.DISCORD_BOT.sendErrorMessage(e);
+        }
+    }
+
+    public static void reloadBotConfig(Warlords instance) {
+        readBotConfig(instance);
+        if (BotManager.jda != null) {
+            for (BotManager.DiscordServer discordServer : BotManager.DISCORD_SERVERS) {
+                discordServer.rebindGuild(BotManager.jda);
+            }
         }
     }
 

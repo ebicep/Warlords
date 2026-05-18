@@ -19,10 +19,14 @@ public class BotCommand extends BaseCommand {
 
     @Default
     public void sendBal(@Conditions("party:true") Player player, PartyPlayerWrapper partyPlayerWrapper, String command) {
-        java.util.Optional<TextChannel> botTeams = BotManager.getTextChannelCompsByName("bot-teams");
-        java.util.Optional<TextChannel> gsTeams = BotManager.getTextChannelCompsByName("gs-teams");
+        BotManager.DiscordServer comps = BotManager.getServer("comps");
+        if (comps == null) {
+            player.sendMessage(Component.text("Discord comps server not configured!", NamedTextColor.RED));
+            return;
+        }
+        java.util.Optional<TextChannel> botTeams = comps.getChannel(BotManager.BotChannel.BOT_TEAMS);
         if (botTeams.isEmpty()) {
-            player.sendMessage(Component.text("Could not find bot-teams!", NamedTextColor.RED));
+            player.sendMessage(Component.text("Could not find bot-teams channel!", NamedTextColor.RED));
             return;
         }
         StringBuilder players = new StringBuilder();

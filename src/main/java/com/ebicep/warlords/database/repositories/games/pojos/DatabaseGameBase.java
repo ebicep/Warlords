@@ -148,6 +148,13 @@ public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
                 return false;
             }
 
+            if (databaseGame instanceof DatabaseGameCTF databaseGameCTF
+                    && game.getAddons().contains(GameAddon.PRIVATE_GAME)) {
+                Warlords.newChain()
+                        .async(() -> DatabaseGameCTF.sendGamesBacklogJson(databaseGameCTF))
+                        .execute();
+            }
+
             if (previousGames.size() >= MAX_GAMES) {
                 previousGames.get(0).deleteHolograms();
                 previousGames.remove(0);
@@ -897,6 +904,10 @@ public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
 
     public String getId() {
         return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
 }

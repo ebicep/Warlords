@@ -23,10 +23,10 @@ public class QueueManager {
 
     public static void sendNewQueue() {
         for (BotManager.DiscordServer discordServer : BotManager.DISCORD_SERVERS) {
-            if (discordServer.getQueueChannel() == null) {
+            if (discordServer.getChannelName(BotManager.BotChannel.QUEUE).isEmpty()) {
                 continue;
             }
-            discordServer.getTextChannelByName(discordServer.getQueueChannel()).ifPresent(textChannel -> {
+            discordServer.getChannel(BotManager.BotChannel.QUEUE).ifPresent(textChannel -> {
                 try {
                     textChannel.getLatestMessageId();
                 } catch (Exception e) {
