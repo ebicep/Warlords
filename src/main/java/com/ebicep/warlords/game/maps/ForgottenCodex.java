@@ -197,9 +197,9 @@ public class ForgottenCodex extends GameMap {
                     put("Bleue Grimoire", 1000L);
                     put("Orange Grimoire", 1000L);
                     put("Necronomicon Grimoire", 1000L);
-                    put("Inquisiteur-EWA", 15000L);
-                    put("Inquisiteur-EGA", 15000L);
-                    put("Inquisiteur-VPA", 15000L);
+                    put("Inquisiteur-EWA", 10000L);
+                    put("Inquisiteur-EGA", 10000L);
+                    put("Inquisiteur-VPA", 10000L);
                 }})
                 .playerCoinPerXSec(150, 10)
                 .guildCoinInsigniaConvertBonus(1000)

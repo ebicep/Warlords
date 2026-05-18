@@ -9,13 +9,14 @@ import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.bosses.bossabilities.OrbitingItemManager;
 import com.ebicep.warlords.pve.mobs.tiers.ChampionMob;
+import com.ebicep.warlords.pve.mobs.tiers.EliteMob;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
 
 import javax.annotation.Nonnull;
 
-public class ZombieEnd extends AbstractMob implements ChampionMob {
+public class ZombieEnd extends AbstractMob implements EliteMob {
 
     private OrbitingItemManager orbitingItemManager;
 

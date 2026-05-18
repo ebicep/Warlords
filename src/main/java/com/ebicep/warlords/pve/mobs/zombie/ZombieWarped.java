@@ -20,7 +20,7 @@ public class ZombieWarped extends AbstractMob implements EliteMob {
                 "Warped Guardian",
                 11000,
                 0.28f,
-                30,
+                20,
                 600,
                 800
         );

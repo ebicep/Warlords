@@ -21,7 +21,7 @@ import org.springframework.data.annotation.Transient;
 
 import java.util.*;
 
-public class LegendaryFractured extends AbstractLegendaryWeapon {
+public class LegendaryFractured extends AbstractLegendaryWeapon implements LibraryArchivesTitle {
 
     public static final float CRIT_BONUS_PER_STACK = 2.5f;
     public static final int BASE_MAX_STACKS = 10;

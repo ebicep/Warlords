@@ -28,13 +28,9 @@ public class BarnacleBrute extends AbstractMob implements ChampionMob {
     private static final int HOOK_COOLDOWN_TICKS = 10 * 20;
     private static final int INITIAL_HOOK_DELAY_TICKS = 4 * 20;
     private static final int HOOK_WINDUP_TICKS = 30;
-    private static final double HOOK_PULL_STRENGTH = 1.35;
+    private static final double HOOK_PULL_STRENGTH = 1.6;
 
     private static final int CRUSHING_GRIP_WINDOW_TICKS = 4 * 20;
-    private static final int CRUSHING_GRIP_DAMAGE = 2000;
-    private static final int CRUSHING_GRIP_RANGE = 4;
-    private static final int CRUSHING_GRIP_SLOW_PERCENT = -35;
-    private static final int CRUSHING_GRIP_SLOW_TICKS = 2 * 20;
 
     private int hookCooldownTicks = INITIAL_HOOK_DELAY_TICKS;
     private int hookWindupTicks = 0;
@@ -49,7 +45,7 @@ public class BarnacleBrute extends AbstractMob implements ChampionMob {
                 "Barnacle Brute",
                 6000,
                 0.18f,
-                15,
+                10,
                 450,
                 650
         );
@@ -232,19 +228,7 @@ public class BarnacleBrute extends AbstractMob implements ChampionMob {
             clearCrushingGrip();
             return;
         }
-        if (receiver.getLocation().distanceSquared(warlordsNPC.getLocation()) > CRUSHING_GRIP_RANGE * CRUSHING_GRIP_RANGE) {
-            return;
-        }
 
-        receiver.addInstance(InstanceBuilder
-                .damage()
-                .cause("Crushing Grip")
-                .source(warlordsNPC)
-                .value(CRUSHING_GRIP_DAMAGE)
-        );
-
-        receiver.addSpeedModifier(warlordsNPC, "Crushing Grip", CRUSHING_GRIP_SLOW_PERCENT, CRUSHING_GRIP_SLOW_TICKS);
-        receiver.sendMessage(Component.text("The Barnacle Brute crushes you in its grip.", NamedTextColor.RED));
         Utils.playGlobalSound(receiver.getLocation(), Sound.ENTITY_DROWNED_HURT, 2, 0.6f);
 
         clearCrushingGrip();

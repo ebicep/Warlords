@@ -8,6 +8,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.ChampionMob;
+import com.ebicep.warlords.pve.mobs.tiers.EliteMob;
 import com.ebicep.warlords.pve.mobs.vindicator.AncientDynasty;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
@@ -20,7 +21,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SovereignGuardian extends AbstractMob implements ChampionMob {
+public class SovereignGuardian extends AbstractMob implements EliteMob {
 
     public SovereignGuardian(Location spawnLocation) {
         super(

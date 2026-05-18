@@ -78,6 +78,11 @@ public class LanternDredger extends AbstractMob implements ChampionMob {
     }
 
     @Override
+    public double getMobScale() {
+        return 1.1;
+    }
+
+    @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
         Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.BLOCK_SOUL_SAND_PLACE, 2, 0.6f);

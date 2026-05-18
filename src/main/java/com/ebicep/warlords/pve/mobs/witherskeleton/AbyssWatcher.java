@@ -28,7 +28,7 @@ public class AbyssWatcher extends AbstractMob implements ChampionMob, Listener {
     private static final int WATCH_DURATION_TICKS = 5 * 20;  // 5sec
     private static final int INITIAL_WATCH_DELAY_TICKS = 3 * 20;
     private static final int CASTS_BEFORE_PUNISH = 3;
-    private static final int PUNISH_DAMAGE = 2500;
+    private static final int PUNISH_DAMAGE = 5000;
     private static final int ENERGY_DRAIN = 100;
     private static final int WATCH_RANGE = 25;
 
