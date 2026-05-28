@@ -2,7 +2,9 @@ package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
+import com.ebicep.warlords.player.ingame.MobHologram;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
@@ -23,9 +25,11 @@ import java.util.*;
 
 public class LegendaryFractured extends AbstractLegendaryWeapon implements LibraryArchivesTitle {
 
-    public static final float CRIT_BONUS_PER_STACK = 2.5f;
-    public static final int BASE_MAX_STACKS = 10;
-    public static final int MAX_STACKS_PER_UPGRADE = 2;
+    public static final float BASE_CRIT_CHANCE_BONUS_PER_STACK = 2.5f;
+    public static final float CRIT_CHANCE_BONUS_PER_STACK_PER_UPGRADE = .5f;
+    public static final float BASE_CRIT_MULTIPLIER_BONUS_PER_STACK = 5f;
+    public static final float CRIT_MULTIPLIER_BONUS_PER_STACK_PER_UPGRADE = 1f;
+    public static final int MAX_STACKS = 10;
     public static final int STACK_DURATION_SECONDS = 3;
 
     @Transient
@@ -45,18 +49,24 @@ public class LegendaryFractured extends AbstractLegendaryWeapon implements Libra
     @Override
     public TextComponent getPassiveEffect() {
         return Component.text("Critical hits apply Fractured to enemies for " + STACK_DURATION_SECONDS + "s, stacking up to ", NamedTextColor.GRAY)
-                .append(formatTitleUpgrade(getMaxStacks(), ""))
-                .append(Component.text(" times. Each stack increases your crit chance and crit multiplier against that target by "))
-                .append(formatTitleUpgrade(CRIT_BONUS_PER_STACK, "%"))
-                .append(Component.text(". Applying Fractured refreshes its duration."));
+                .append(formatTitleUpgrade(MAX_STACKS, ""))
+                .append(Component.text(" times. Each stack increases your crit chance by "))
+                .append(formatTitleUpgrade(getCritChanceBonusPerStack(), "%"))
+                .append(Component.text(" and crit multiplier by "))
+                .append(formatTitleUpgrade(getCritMultiplierBonusPerStack(), "%"))
+                .append(Component.text(" against that target. Applying Fractured refreshes its duration."));
     }
 
     @Override
     public List<Pair<Component, Component>> getPassiveEffectUpgrade() {
         return Arrays.asList(
                 new Pair<>(
-                        formatTitleUpgrade(getMaxStacks(), ""),
-                        formatTitleUpgrade(getMaxStacksUpgraded(), "")
+                        formatTitleUpgrade(getCritChanceBonusPerStack(), "%"),
+                        formatTitleUpgrade(getCritChanceBonusPerStackUpgraded(), "%")
+                ),
+                new Pair<>(
+                        formatTitleUpgrade(getCritMultiplierBonusPerStack(), "%"),
+                        formatTitleUpgrade(getCritMultiplierBonusPerStackUpgraded(), "%")
                 )
         );
     }
@@ -83,10 +93,10 @@ public class LegendaryFractured extends AbstractLegendaryWeapon implements Libra
                         (cooldown, ticksElapsed) -> tickFracturedTargets()
                 ).addModifier(
                         Modifier.MODIFY_OUTGOING_CRIT_CHANCE,
-                        (event, currentCritChance) -> applyFracturedCritBonus(player, event, currentCritChance)
+                        (event, currentCritChance) -> applyFracturedCritBonus(player, event, currentCritChance, getCritChanceBonusPerStack())
                 ).addModifier(
                         Modifier.MODIFY_OUTGOING_CRIT_MULTIPLIER,
-                        (event, currentCritMultiplier) -> applyFracturedCritBonus(player, event, currentCritMultiplier)
+                        (event, currentCritMultiplier) -> applyFracturedCritBonus(player, event, currentCritMultiplier, getCritMultiplierBonusPerStack())
                 ).addModifier(
                         Modifier.ON_OUTGOING_DAMAGE,
                         (event, currentDamageValue, isCrit) -> {
@@ -101,8 +111,9 @@ public class LegendaryFractured extends AbstractLegendaryWeapon implements Libra
                             }
 
                             WarlordsEntity target = event.getWarlordsEntity();
-                            FracturedData fracturedData = fracturedTargets.computeIfAbsent(target.getUuid(), uuid -> new FracturedData());
-                            fracturedData.addStack(getMaxStacks());
+                            FracturedData fracturedData = fracturedTargets.computeIfAbsent(target.getUuid(), uuid -> new FracturedData(target));
+                            fracturedData.addStack();
+                            fracturedData.updateHologram();
 
                             player.playSound(target.getLocation(), Sound.BLOCK_AMETHYST_BLOCK_HIT, 1, 1.4f);
                         })
@@ -111,11 +122,12 @@ public class LegendaryFractured extends AbstractLegendaryWeapon implements Libra
 
     @Override
     public void cleanup() {
+        fracturedTargets.values().forEach(FracturedData::removeHologram);
         fracturedTargets.clear();
         super.cleanup();
     }
 
-    private void applyFracturedCritBonus(WarlordsPlayer player, WarlordsDamageHealingEvent event, FloatModifiable modifiable) {
+    private void applyFracturedCritBonus(WarlordsPlayer player, WarlordsDamageHealingEvent event, FloatModifiable modifiable, float bonusPerStack) {
         if (!isValidFracturedEvent(player, event)) {
             return;
         }
@@ -125,7 +137,11 @@ public class LegendaryFractured extends AbstractLegendaryWeapon implements Libra
             return;
         }
 
-        modifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE, getTitleName(), fracturedData.stacks * CRIT_BONUS_PER_STACK);
+        modifiable.addModifier(
+                FloatModifiable.ModifierType.ADDITIVE,
+                getTitleName(),
+                fracturedData.stacks * bonusPerStack
+        );
     }
 
     private boolean isValidFracturedEvent(WarlordsPlayer player, WarlordsDamageHealingEvent event) {
@@ -149,18 +165,28 @@ public class LegendaryFractured extends AbstractLegendaryWeapon implements Libra
         while (iterator.hasNext()) {
             FracturedData fracturedData = iterator.next().getValue();
             fracturedData.ticksLeft--;
+
             if (fracturedData.ticksLeft <= 0) {
+                fracturedData.removeHologram();
                 iterator.remove();
             }
         }
     }
 
-    private int getMaxStacks() {
-        return BASE_MAX_STACKS + MAX_STACKS_PER_UPGRADE * getTitleLevel();
+    private float getCritChanceBonusPerStack() {
+        return BASE_CRIT_CHANCE_BONUS_PER_STACK + CRIT_CHANCE_BONUS_PER_STACK_PER_UPGRADE * getTitleLevel();
     }
 
-    private int getMaxStacksUpgraded() {
-        return BASE_MAX_STACKS + MAX_STACKS_PER_UPGRADE * getTitleLevelUpgraded();
+    private float getCritChanceBonusPerStackUpgraded() {
+        return BASE_CRIT_CHANCE_BONUS_PER_STACK + CRIT_CHANCE_BONUS_PER_STACK_PER_UPGRADE * getTitleLevelUpgraded();
+    }
+
+    private float getCritMultiplierBonusPerStack() {
+        return BASE_CRIT_MULTIPLIER_BONUS_PER_STACK + CRIT_MULTIPLIER_BONUS_PER_STACK_PER_UPGRADE * getTitleLevel();
+    }
+
+    private float getCritMultiplierBonusPerStackUpgraded() {
+        return BASE_CRIT_MULTIPLIER_BONUS_PER_STACK + CRIT_MULTIPLIER_BONUS_PER_STACK_PER_UPGRADE * getTitleLevelUpgraded();
     }
 
     @Override
@@ -198,14 +224,56 @@ public class LegendaryFractured extends AbstractLegendaryWeapon implements Libra
         return 30;
     }
 
-    private static class FracturedData {
+    private class FracturedData {
 
+        private final WarlordsEntity target;
+        private final WarlordsNPC targetMob;
+        private MobHologram.CustomHologramLine hologramLine;
         private int stacks;
         private int ticksLeft;
 
-        private void addStack(int maxStacks) {
-            stacks = Math.min(maxStacks, stacks + 1);
+        private FracturedData(WarlordsEntity target) {
+            this.target = target;
+            this.targetMob = target instanceof WarlordsNPC warlordsNPC ? warlordsNPC : null;
+        }
+
+        private void addStack() {
+            stacks = Math.min(MAX_STACKS, stacks + 1);
             ticksLeft = STACK_DURATION_SECONDS * 20;
+        }
+
+        private void updateHologram() {
+            if (targetMob == null) {
+                return;
+            }
+
+            if (hologramLine == null) {
+                hologramLine = new MobHologram.CustomHologramLine(this::getHologramText);
+                targetMob.getMobHologram().getCustomHologramLines().add(hologramLine);
+            }
+
+            targetMob.getMobHologram().update();
+        }
+
+        private Component getHologramText() {
+            return Component.text("Fractured: ", NamedTextColor.RED)
+                    .append(Component.text(stacks, NamedTextColor.GRAY))
+                    .append(Component.text("/", NamedTextColor.DARK_GRAY))
+                    .append(Component.text(MAX_STACKS, NamedTextColor.GRAY));
+        }
+
+        private void removeHologram() {
+            if (hologramLine == null) {
+                return;
+            }
+
+            hologramLine.setDelete(true);
+
+            if (targetMob != null) {
+                targetMob.getMobHologram().update();
+            }
+
+            hologramLine = null;
         }
 
     }
