@@ -71,7 +71,7 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon implements PassiveC
 
     @Override
     protected float getHealthBonusValue() {
-        return 300;
+        return 600;
     }
 
     @Override

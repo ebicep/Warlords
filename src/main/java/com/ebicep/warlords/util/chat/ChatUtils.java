@@ -228,7 +228,7 @@ public class ChatUtils {
                 return;
             }
             ERRORS.add(error);
-            admin.getTextChannelByName("errors").ifPresent(textChannel -> {
+            admin.getChannel(BotManager.BotChannel.ERRORS).ifPresent(textChannel -> {
                 textChannel.sendMessage("```" + error + "```").queue();
                 BotManager.numberOfMessagesSentLast30Sec++;
             });

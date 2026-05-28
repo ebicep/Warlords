@@ -429,6 +429,14 @@
         "min_melee_damage": 1600.0,
         "max_melee_damage": 2000.0
       },
+      "ORBYZ": {
+        "name": "Orbyz",
+        "max_health": 160000,
+        "walk_speed": 0.28,
+        "damage_resistance": 30.0,
+        "min_melee_damage": 1200.0,
+        "max_melee_damage": 2000.0
+      },
       "ONE_OF_NINE": {
         "name": "One of Nine",
         "max_health": 200000,
@@ -436,14 +444,6 @@
         "damage_resistance": 40.0,
         "min_melee_damage": 1200.0,
         "max_melee_damage": 2500.0
-      },
-      "ORBYZ": {
-        "name": "Orbyz",
-        "max_health": 220000,
-        "walk_speed": 0.28,
-        "damage_resistance": 30.0,
-        "min_melee_damage": 1200.0,
-        "max_melee_damage": 2000.0
       },
       "LILIUM": {
         "name": "Lilium",

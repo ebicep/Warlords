@@ -2,14 +2,18 @@ package com.ebicep.warlords.database.repositories.games.pojos.ctf;
 
 import com.ebicep.holograms.Hologram;
 import com.ebicep.holograms.HologramDataText;
+import com.ebicep.jda.BalanceThreadContext;
 import com.ebicep.jda.BotManager;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
-import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.Team;
+import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.SerializedName;
+import org.bson.types.ObjectId;
 import com.ebicep.warlords.game.option.win.WinAfterTimeoutOption;
 import com.ebicep.warlords.game.option.win.WinByPointsOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -17,6 +21,8 @@ import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.StringUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
+import net.dv8tion.jda.api.utils.FileUpload;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -28,6 +34,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -99,22 +106,103 @@ public class DatabaseGameCTF extends DatabaseGameBase<DatabaseGamePlayerCTF> {
             }
         }
         output.setLength(output.length() - 1);
-        if (BotManager.numberOfMessagesSentLast30Sec > 15) {
-            if (BotManager.numberOfMessagesSentLast30Sec < 20) {
-                BotManager.getTextChannelCompsByName("games-backlog")
-                          .ifPresent(textChannel -> textChannel.sendMessage("SOMETHING BROKEN DETECTED <@239929120035700737> <@253971614998331393>").queue());
-            }
-        } else {
-            if (game.getAddons().contains(GameAddon.PRIVATE_GAME)) {
-                BotManager.getTextChannelCompsByName("games-backlog").ifPresent(textChannel -> textChannel.sendMessage(output.toString()).queue());
-            }
-        }
         lastWarlordsPlusString = output.toString();
         return output.toString();
     }
 
+    public static void sendGamesBacklogJson(DatabaseGameCTF databaseGame) {
+        BotManager.DiscordServer comps = BotManager.getServer("comps");
+        if (comps == null) {
+            return;
+        }
+        if (BotManager.numberOfMessagesSentLast30Sec > 15) {
+            if (BotManager.numberOfMessagesSentLast30Sec < 20) {
+                comps.getChannel(BotManager.BotChannel.GAMES_BACKLOG)
+                     .ifPresent(textChannel -> textChannel.sendMessage("SOMETHING BROKEN DETECTED <@239929120035700737> <@253971614998331393>").queue());
+            }
+            return;
+        }
+        if (databaseGame.getId() == null) {
+            databaseGame.setId(new ObjectId().toHexString());
+        }
+        String json = buildGamesBacklogJson(databaseGame);
+        byte[] jsonBytes = json.getBytes(StandardCharsets.UTF_8);
+        String fileName = databaseGame.getId() + ".json";
+        comps.getChannel(BotManager.BotChannel.GAMES_BACKLOG)
+             .ifPresent(textChannel -> textChannel.sendFiles(FileUpload.fromData(jsonBytes, fileName)).queue());
+        sendGamesBacklogJsonToBalanceThread(jsonBytes, fileName);
+    }
+
+    public static void sendGamesBacklogJsonToLatestBalanceThread(DatabaseGameCTF databaseGame) {
+        if (databaseGame.getId() == null) {
+            databaseGame.setId(new ObjectId().toHexString());
+        }
+        String json = buildGamesBacklogJson(databaseGame);
+        byte[] jsonBytes = json.getBytes(StandardCharsets.UTF_8);
+        sendGamesBacklogJsonToBalanceThread(jsonBytes, databaseGame.getId() + ".json");
+    }
+
+    private static void sendGamesBacklogJsonToBalanceThread(byte[] jsonBytes, String fileName) {
+        long threadId = BalanceThreadContext.getLatestBalanceThreadId();
+        if (threadId == 0 || BotManager.jda == null) {
+            return;
+        }
+        ThreadChannel threadChannel = BotManager.jda.getThreadChannelById(threadId);
+        if (threadChannel == null) {
+            ChatUtils.MessageType.DISCORD_BOT.sendMessage("Balance thread " + threadId + " not found for games-backlog JSON");
+            BalanceThreadContext.clearActiveBalanceThreadId();
+            return;
+        }
+        threadChannel.sendFiles(FileUpload.fromData(jsonBytes, fileName)).queue(
+                success -> BalanceThreadContext.clearActiveBalanceThreadId(),
+                failure -> {
+                    ChatUtils.MessageType.DISCORD_BOT.sendErrorMessage(failure);
+                    BalanceThreadContext.clearActiveBalanceThreadId();
+                }
+        );
+    }
+
+    public static String buildGamesBacklogJson(DatabaseGameCTF databaseGame) {
+        Team winnerTeam;
+        Team loserTeam;
+        if (databaseGame.getWinner() != null) {
+            winnerTeam = databaseGame.getWinner();
+            loserTeam = winnerTeam == Team.BLUE ? Team.RED : Team.BLUE;
+        } else if (databaseGame.getBluePoints() > databaseGame.getRedPoints()) {
+            winnerTeam = Team.BLUE;
+            loserTeam = Team.RED;
+        } else if (databaseGame.getRedPoints() > databaseGame.getBluePoints()) {
+            winnerTeam = Team.RED;
+            loserTeam = Team.BLUE;
+        } else {
+            winnerTeam = Team.BLUE;
+            loserTeam = Team.RED;
+        }
+        List<BacklogPlayer> winners = toBacklogPlayers(databaseGame.getPlayers().getOrDefault(winnerTeam, List.of()));
+        List<BacklogPlayer> losers = toBacklogPlayers(databaseGame.getPlayers().getOrDefault(loserTeam, List.of()));
+        BacklogPayload payload = new BacklogPayload(winners, losers, databaseGame.getId());
+        return new GsonBuilder().setPrettyPrinting().create().toJson(payload);
+    }
+
+    private static List<BacklogPlayer> toBacklogPlayers(List<DatabaseGamePlayerCTF> players) {
+        return players.stream()
+                    .map(player -> new BacklogPlayer(
+                            player.getUuid().toString(),
+                            player.getName(),
+                            player.getTotalKills(),
+                            player.getTotalDeaths()
+                    ))
+                    .toList();
+    }
+
     public static String getLastWarlordsPlusString() {
         return lastWarlordsPlusString;
+    }
+
+    private record BacklogPlayer(String uuid, String name, int kills, int deaths) {
+    }
+
+    private record BacklogPayload(List<BacklogPlayer> winners, List<BacklogPlayer> losers, @SerializedName("game_id") String gameId) {
     }
 
     @Field("time_left")

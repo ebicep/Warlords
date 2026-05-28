@@ -50,6 +50,8 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.entity.Entity;
@@ -199,6 +201,12 @@ public abstract class AbstractMob implements Mob {
         if (npc.getEntity() instanceof Player player) {
             player.setNoDamageTicks(0);
         }
+
+        LivingEntity entity = (LivingEntity) this.npc.getEntity();
+        AttributeInstance scale = entity.getAttribute(Attribute.SCALE);
+        if (scale != null) {
+            scale.setBaseValue(getMobScale());
+        }
 //
 //        if (getMobRegistry().entityType == EntityType.SLIME) {
 //            this.npc.setUseMinecraftAI(true); //TODO
@@ -262,6 +270,10 @@ public abstract class AbstractMob implements Mob {
         }
 
         return warlordsNPC;
+    }
+
+    public double getMobScale() {
+        return 1;
     }
 
     public double getDefaultAttackRange() {

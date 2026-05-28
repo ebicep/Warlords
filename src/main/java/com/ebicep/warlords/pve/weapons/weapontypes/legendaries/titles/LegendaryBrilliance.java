@@ -58,7 +58,7 @@ public class LegendaryBrilliance extends AbstractLegendaryWeapon implements Pass
                                .append(formatTitleUpgrade(threshold, "%"))
                                .text(", incoming and outgoing healing increases by ")
                                .append(formatTitleUpgrade(outgoingHealingBoost, "%"))
-                               .text(" for 10s. Can be triggered once every " + COOLDOWN + " seconds.")
+                               .text(" for 15s. Can be triggered once every " + COOLDOWN + " seconds.")
                                .build();
     }
 

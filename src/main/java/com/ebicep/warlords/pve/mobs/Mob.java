@@ -46,8 +46,7 @@ import com.ebicep.warlords.pve.mobs.stray.Stray;
 import com.ebicep.warlords.pve.mobs.vex.SpectralThief;
 import com.ebicep.warlords.pve.mobs.vindicator.AncientDynasty;
 import com.ebicep.warlords.pve.mobs.witch.WitchDeacon;
-import com.ebicep.warlords.pve.mobs.witherskeleton.CelestialOpus;
-import com.ebicep.warlords.pve.mobs.witherskeleton.ObsidianSentinel;
+import com.ebicep.warlords.pve.mobs.witherskeleton.*;
 import com.ebicep.warlords.pve.mobs.wolf.Hound;
 import com.ebicep.warlords.pve.mobs.zombie.*;
 import com.ebicep.warlords.pve.mobs.zombie.berserkzombie.AdvancedWarriorBerserker;
@@ -351,6 +350,14 @@ public enum Mob {
             Weapons.NETHERSTEEL_KATANA.getItem()
     )
     ),
+    BOUND_ARCHER(EntityType.SKELETON, BoundArcher.class, BoundArcher::new, BoundArcher::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.DEEP_DARK_CRAWLER),
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 45, 20, 75),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 35, 15, 60),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 25, 10, 45),
+            new ItemStack(Material.BOW)
+    )
+    ),
 
     // Champion
     NIGHTMARE_ZOMBIE(EntityType.ZOMBIE, NightmareZombie.class, NightmareZombie::new, NightmareZombie::new, new Utils.SimpleEntityEquipment(
@@ -436,6 +443,64 @@ public enum Mob {
     )
     ),
     SOVEREIGN_GUARDIAN(EntityType.CREAKING, SovereignGuardian.class, SovereignGuardian::new, SovereignGuardian::new, null),
+    ABYSS_WATCHER(EntityType.WITHER_SKELETON, AbyssWatcher.class, AbyssWatcher::new, AbyssWatcher::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.SCULK_CORRUPTION),
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 25, 15, 45),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 20, 10, 35),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 15, 5, 25),
+            Weapons.VOID_TWIG.getItem()
+    )
+    ),
+    LANTERN_DREDGER(EntityType.WITHER_SKELETON, LanternDredger.class, LanternDredger::new, LanternDredger::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.LANTERN),
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 15, 35, 45),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 10, 25, 35),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 5, 15, 25),
+            Weapons.SILVER_PHANTASM_STAFF_2.getItem()
+    )
+    ),
+    BARNACLE_BRUTE(EntityType.DROWNED, BarnacleBrute.class, BarnacleBrute::new, BarnacleBrute::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.DARK_CAGE),
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 20, 45, 55),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 15, 35, 45),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 10, 25, 35),
+            new ItemStack(Material.FISHING_ROD)
+    )
+    ),
+    SILTSTALKER(EntityType.DROWNED, Siltstalker.class, Siltstalker::new, Siltstalker::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.BLUE_ASSASSIN),
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 65, 45, 45),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 65, 35, 35),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 60, 25, 25),
+            Weapons.DEMONBLADE.getItem()
+    )
+    ),
+    VOID_JAILER(EntityType.WITHER_SKELETON, VoidJailer.class, VoidJailer::new, VoidJailer::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.VOID_KNIGHT),
+            new ItemStack(Material.NETHERITE_CHESTPLATE),
+            new ItemStack(Material.NETHERITE_LEGGINGS),
+            new ItemStack(Material.NETHERITE_BOOTS),
+            new ItemStack(Material.AMETHYST_CLUSTER),
+            new ItemStack(Material.AMETHYST_CLUSTER)
+    )
+    ),
+    SOULBINDER(EntityType.WITHER_SKELETON, Soulbinder.class, Soulbinder::new, Soulbinder::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.SPIDER_SPIRIT),
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 25, 5, 45),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 20, 5, 35),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 15, 0, 25),
+            Weapons.TIDEBREAKER.getItem(),
+            new ItemStack(Material.FILLED_MAP)
+    )
+    ),
+    DEVOURING_IDOL(EntityType.WITHER_SKELETON, DevouringIdol.class, DevouringIdol::new, DevouringIdol::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.TALISMAN),
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 30, 95, 105),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 20, 95, 105),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 10, 95, 105),
+            new ItemStack(Material.RESPAWN_ANCHOR)
+    )
+    ),
 
     // Boss
     BOLTARO(EntityType.ZOMBIE, Boltaro.class, Boltaro::new, Boltaro::new, new Utils.SimpleEntityEquipment(
@@ -1169,8 +1234,9 @@ public enum Mob {
             SKELETAL_SORCERER,
             CELESTIAL_OPUS,
             OBSIDIAN_SENTINEL,
-            SANDSTRIDER_WRAITH,
-            SLIMY_CHESS
+            SLIMY_CHESS,
+            SOVEREIGN_GUARDIAN,
+            ABYSS_WATCHER
     };
     public static final Mob[] BOSS_MINIONS = {
             BOLTARO_SHADOW,

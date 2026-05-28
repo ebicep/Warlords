@@ -24,7 +24,7 @@ import java.util.function.Predicate;
 public class CooldownManager {
 
     private final WarlordsEntity warlordsEntity;
-    private final List<AbstractCooldown<?>> abstractCooldowns = new ArrayList<>();
+    private final Set<AbstractCooldown<?>> abstractCooldowns = new LinkedHashSet<>();
     private final Set<AbstractCooldown<?>> cooldownsToRemove = ConcurrentHashMap.newKeySet();
     private int totalCooldowns = 0;
     private boolean updatePlayerNames = false;
@@ -466,7 +466,7 @@ public class CooldownManager {
         });
     }
 
-    public List<AbstractCooldown<?>> getCooldowns() {
+    public Collection<AbstractCooldown<?>> getCooldowns() {
         return abstractCooldowns;
     }
 

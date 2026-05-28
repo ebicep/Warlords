@@ -200,7 +200,17 @@ public enum SkullID implements Skull {
     // https://minecraft-heads.com/custom-heads/head/119823-pink-metal
     PINK_METAL("MmM3ZjI4ZTY4MmNkNTA0ZmU0NWI1M2VjNWMyYmNmZGZiMjBjYmJkMTg5M2E5NzRiYThiOTI4ZTMwNGM0NjQxMyJ9fX0="),
     // https://minecraft-heads.com/index.php/custom-heads/head/122529-rotten-astronaut
-    ROTTEN_CORPSE("NzVhYTlkYWQ2MTUzOTljNjUzMDE2ODk2NDUxY2VmYmJlMmI3ODI4MDYzZjYzZjA5ZmYwYjhkMjAxZDZhMjE3YiJ9fX0=")
+    ROTTEN_CORPSE("NzVhYTlkYWQ2MTUzOTljNjUzMDE2ODk2NDUxY2VmYmJlMmI3ODI4MDYzZjYzZjA5ZmYwYjhkMjAxZDZhMjE3YiJ9fX0="),
+    // https://minecraft-heads.com/custom-heads/head/119055-lantern
+    LANTERN("Mjc3ODYxZGI4NDQzZWNjNzg3NTc3N2U1MzA4MWUxYzI1OGY3NzJlYzFhZDFhN2M3NTIxOTI4YWFmYmY2Nzc1OSJ9fX0="),
+    // https://minecraft-heads.com/custom-heads/head/128094-cage-light-off
+    DARK_CAGE("ZTRmNDhiZDlmZThkN2U3NTc3ZTFhN2VmMTljNjZkOGJhZjExYTVlODMwMmE5YzlkOTZiZTRlYmRkMDA1YTgwYyJ9fX0="),
+    // https://minecraft-heads.com/custom-heads/head/46140-shadow-assassin-admiral-skin
+    BLUE_ASSASSIN("ZDdmY2ZhNWIwYWY4NTVmMzE0NjA2YTVjZDJiNTk3NDc1Mjg2YTE1MmQxZWUwOGQ5OTQ5YTYzODZjYmM0NmE4ZSJ9fX0="),
+    // https://minecraft-heads.com/custom-heads/head/79604-void-knight
+    VOID_KNIGHT("MTFhM2Y4ZjFiZjk1MDFlOGY4ZDRiYmMzMTJhNjEzNGVjMjEwOWZmMTkxZWJhOTRiMDYwNzhkMjNhYzYyZDg5NCJ9fX0="),
+    // https://minecraft-heads.com/custom-heads/head/127570-gratitude-talisman
+    TALISMAN("NzBlMTJlYzg1NDdhNTQ1MDMzMjY1N2I1ZDJlODU1MDRjODQxMzg2Y2NlMmE2YTI0MzRjY2EzZDMxMGQxNGEyIn19fQ==")
 
     ;
 

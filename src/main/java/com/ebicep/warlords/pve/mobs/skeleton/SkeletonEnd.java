@@ -9,12 +9,13 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.ChampionMob;
+import com.ebicep.warlords.pve.mobs.tiers.EliteMob;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
 
 import javax.annotation.Nonnull;
 
-public class SkeletonEnd extends AbstractMob implements ChampionMob {
+public class SkeletonEnd extends AbstractMob implements EliteMob {
 
     public SkeletonEnd(Location spawnLocation) {
         super(
@@ -22,7 +23,7 @@ public class SkeletonEnd extends AbstractMob implements ChampionMob {
                 "Sculk Huntsman",
                 8000,
                 0.05f,
-                30,
+                20,
                 0,
                 0,
                 new PoisonousHex(AbstractAbilityBuilder.create("skeletonEndPoisonousHex").pve())

@@ -22,7 +22,7 @@ import java.util.UUID;
 
 public class LegendaryMomentum extends AbstractLegendaryWeapon implements PassiveCounter {
 
-    public static final float DMG_PER_STACK_PERCENT = 1.5f;
+    public static final float DMG_PER_STACK_PERCENT = 1.25f;
     public static final float DR_PER_STACK_PERCENT = .75f;
 
     public static final int BASE_MAX_STACKS = 20;

@@ -130,6 +130,11 @@ public class OneOfNine extends AbstractMob implements BossMob {
     }
 
     @Override
+    public double getMobScale() {
+        return 1.3;
+    }
+
+    @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
 
@@ -582,17 +587,14 @@ public class OneOfNine extends AbstractMob implements BossMob {
                     CooldownTypes.BUFF,
                     cooldownManager -> {},
                     true
-            ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
-                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, 0.7f);
-                    }
-            ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, 1.5f);
-                    }
+            ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) ->
+                    currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, 0.7f)
+            ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) ->
+                    currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, 1.5f)
             ));
 
             phaseTransition();
-        }
-        );
+        });
     }
 
     public void phaseTransition() {

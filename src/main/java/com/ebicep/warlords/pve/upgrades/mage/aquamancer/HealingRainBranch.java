@@ -32,7 +32,7 @@ public class HealingRainBranch extends AbstractUpgradeBranch<HealingRain> {
                 "Electrifying Storm",
                 "Healing Rain - Master Upgrade",
                 """
-                        +4s Additional duration
+                        +4s Duration
 
                         Up to 8 enemies in Healing Rain will be struck with lightning for 336 - 565 (+1% of their max health) damage every 2 seconds.""",
                 50000,

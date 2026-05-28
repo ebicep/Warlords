@@ -9,6 +9,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.AdvancedMob;
+import com.ebicep.warlords.pve.mobs.tiers.EliteMob;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
@@ -16,7 +17,7 @@ import org.bukkit.Location;
 
 import javax.annotation.Nonnull;
 
-public class ZombieKnight extends AbstractMob implements AdvancedMob {
+public class ZombieKnight extends AbstractMob implements EliteMob {
 
     public ZombieKnight(Location spawnLocation) {
         super(

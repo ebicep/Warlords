@@ -11,8 +11,13 @@ import com.ebicep.warlords.pve.bountysystem.Bounty;
 import com.ebicep.warlords.pve.bountysystem.costs.EventCost;
 import com.ebicep.warlords.pve.bountysystem.rewards.events.LibraryArchives2;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksDuringGame;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.events.libraryarchives.EventInquisiteur;
+import com.ebicep.warlords.pve.mobs.events.libraryarchives.EventInquisiteurEGA;
+import com.ebicep.warlords.pve.mobs.events.libraryarchives.EventInquisiteurEWA;
+import com.ebicep.warlords.pve.mobs.events.libraryarchives.EventInquisiteurVPA;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -42,21 +47,25 @@ public class ForgottenSlayerI extends AbstractBounty implements TracksDuringGame
         return List.of(
                 ComponentBuilder.create("Progress: ", NamedTextColor.GRAY).build(),
                 ComponentBuilder.create("  EGA: ", NamedTextColor.GRAY)
-                                .text(NumberFormat.addCommaAndRound(inquisiteursDefeated[0]), NamedTextColor.GOLD)
-                                .text("/", NamedTextColor.AQUA)
-                                .text("5", NamedTextColor.GOLD)
-                                .build(),
+                        .text(NumberFormat.addCommaAndRound(getDefeated(0)), NamedTextColor.GOLD)
+                        .text("/", NamedTextColor.AQUA)
+                        .text("5", NamedTextColor.GOLD)
+                        .build(),
                 ComponentBuilder.create("  EWA: ", NamedTextColor.GRAY)
-                                .text(NumberFormat.addCommaAndRound(inquisiteursDefeated[1]), NamedTextColor.GOLD)
-                                .text("/", NamedTextColor.AQUA)
-                                .text("5", NamedTextColor.GOLD)
-                                .build(),
+                        .text(NumberFormat.addCommaAndRound(getDefeated(1)), NamedTextColor.GOLD)
+                        .text("/", NamedTextColor.AQUA)
+                        .text("5", NamedTextColor.GOLD)
+                        .build(),
                 ComponentBuilder.create("  VPA: ", NamedTextColor.GRAY)
-                                .text(NumberFormat.addCommaAndRound(inquisiteursDefeated[2]), NamedTextColor.GOLD)
-                                .text("/", NamedTextColor.AQUA)
-                                .text("5", NamedTextColor.GOLD)
-                                .build()
+                        .text(NumberFormat.addCommaAndRound(getDefeated(2)), NamedTextColor.GOLD)
+                        .text("/", NamedTextColor.AQUA)
+                        .text("5", NamedTextColor.GOLD)
+                        .build()
         );
+    }
+
+    private int getDefeated(int index) {
+        return inquisiteursDefeated[index] + newInquisiteursDefeated[index];
     }
 
     @Override
@@ -82,7 +91,7 @@ public class ForgottenSlayerI extends AbstractBounty implements TracksDuringGame
     @Override
     public void reset() {
         for (int i = 0; i < 3; i++) {
-            inquisiteursDefeated[i] = 0;
+            newInquisiteursDefeated[i] = 0;
         }
     }
 
@@ -103,16 +112,18 @@ public class ForgottenSlayerI extends AbstractBounty implements TracksDuringGame
 
     @Override
     public long getNewValue() {
-        return Arrays.stream(inquisiteursDefeated).allMatch(integer -> integer >= 5) ? 1 : 0;
+        return getDefeated(0) >= 5 && getDefeated(1) >= 5 && getDefeated(2) >= 5 ? 1 : 0;
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onKill(WarlordsDeathEvent event) {
-        if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof EventInquisiteur) {
-            switch (warlordsNPC.getMob().getMobRegistry()) {
-                case EVENT_INQUISITEUR_EGA -> newInquisiteursDefeated[0]++;
-                case EVENT_INQUISITEUR_EWA -> newInquisiteursDefeated[1]++;
-                case EVENT_INQUISITEUR_VPA -> newInquisiteursDefeated[2]++;
+        if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC) {
+            if (warlordsNPC.getMob() instanceof EventInquisiteurEGA) {
+                newInquisiteursDefeated[0]++;
+            } else if (warlordsNPC.getMob() instanceof EventInquisiteurEWA) {
+                newInquisiteursDefeated[1]++;
+            } else if (warlordsNPC.getMob() instanceof EventInquisiteurVPA){
+                newInquisiteursDefeated[2]++;
             }
         }
     }

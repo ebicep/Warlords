@@ -173,7 +173,7 @@ public class LegendaryChaotic extends AbstractLegendaryWeapon implements Listene
                         cooldown = null;
                         stacks = 0;
                     },
-                    5 * 20
+                    8 * 20
             );
             cooldown.addModifier(Modifier.MODIFY_OUTGOING_CRIT_CHANCE, (e, currentCritChance) -> {
                         if (!abilityNames.contains(e.getCause())) {
@@ -194,7 +194,7 @@ public class LegendaryChaotic extends AbstractLegendaryWeapon implements Listene
             );
             warlordsPlayer.getCooldownManager().addCooldown(cooldown);
         } else {
-            cooldown.setTicksLeft(5 * 20);
+            cooldown.setTicksLeft(8 * 20);
             cooldown.setName(getTitleName() + " " + stacks);
             cooldown.setNameAbbreviation("CHAOTIC " + stacks);
         }

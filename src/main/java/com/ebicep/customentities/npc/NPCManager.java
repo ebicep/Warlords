@@ -60,7 +60,7 @@ public class NPCManager {
                 createStarPieceSynthesizerNPC();
                 createItemEnyaNPC();
                 createIllusionVendorNPC();
-                //createSeasonalVendorNPC();
+                createSeasonalVendorNPC();
                 createAnomalyNPC();
                 createRaidOneNPC();
                 createPrestigeVendorNPC();
@@ -68,11 +68,11 @@ public class NPCManager {
                 createWeeklyItemTraderNPC();
                 createTreasureHuntVendorNPC();
                 createAscendantWeaponNPC();
+                registerTrait(ReadyUpOption.ReadyUpTrait.class, "ReadyUpTrait");
+                ChatUtils.MessageType.GAME.sendMessage("Done adding game join NPCs");
             }
         }.runTask(Warlords.getInstance());
-
-        registerTrait(ReadyUpOption.ReadyUpTrait.class, "ReadyUpTrait");
-    };
+    }
 
     private static void createCTFNPC() {
         registerTrait(CaptureTheFlagTrait.class, "GameStartTrait");
@@ -327,7 +327,7 @@ public class NPCManager {
     public static void createSeasonalVendorNPC() {
         registerTrait(SeasonalTraderTrait.class, "SeasonalVendorTrait");
 
-        NPC npc = NPC_REGISTRY.createNPC(EntityType.SNOW_GOLEM, "seasonal-vendor");
+        NPC npc = NPC_REGISTRY.createNPC(EntityType.ARMADILLO, "seasonal-vendor");
         npc.addTrait(SeasonalTraderTrait.class);
         LookClose lookClose = npc.getOrAddTrait(LookClose.class);
         lookClose.setPerPlayer(true);

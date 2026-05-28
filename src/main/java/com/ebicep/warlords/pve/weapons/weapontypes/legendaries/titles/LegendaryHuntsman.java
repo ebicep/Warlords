@@ -29,10 +29,10 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class LegendaryHuntsman extends AbstractLegendaryWeapon implements PassiveCounter {
 
-    public static final int RANGED_MIN_DISTANCE_BLOCKS = 14;
+    public static final int RANGED_MIN_DISTANCE_BLOCKS = 12;
 
     public static final float RANGED_BONUS_PERCENT = 20f;
-    public static final float RANGED_BONUS_INC_PER_LEVEL = 5f;
+    public static final float RANGED_BONUS_INC_PER_LEVEL = 7.5f;
 
     public static final float MELEE_GUARD_DR_PERCENT = 25f;
     public static final float MELEE_GUARD_DR_INC_PER_LEVEL = 2.5f;
@@ -63,7 +63,7 @@ public class LegendaryHuntsman extends AbstractLegendaryWeapon implements Passiv
     public TextComponent getPassiveEffect() {
         return Component.text("Deal ", NamedTextColor.GRAY)
                         .append(formatTitleUpgrade(getRangedBonusPercent(), "%"))
-                        .append(Component.text(" increased damage to enemies 14+ blocks away. Landing a melee hit grants ", NamedTextColor.GRAY))
+                        .append(Component.text(" increased damage to enemies 12+ blocks away. Landing a melee hit grants ", NamedTextColor.GRAY))
                         .append(formatTitleUpgrade(getMeleeGuardDrPercent(), "%"))
                         .append(Component.text(" damage reduction for " + MELEE_GUARD_DURATION_SECONDS + "s", NamedTextColor.GRAY))
                         .append(Component.text(" (refreshes). ", NamedTextColor.GRAY))
