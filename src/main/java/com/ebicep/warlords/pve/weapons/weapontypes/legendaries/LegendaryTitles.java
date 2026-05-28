@@ -46,7 +46,7 @@ public enum LegendaryTitles {
     BASTION("Bastion", LegendaryBastion.class, LegendaryBastion::new, LegendaryBastion::new, Material.ORANGE_STAINED_GLASS_PANE, true),
     FRACTURED("Fractured", LegendaryFractured.class, LegendaryFractured::new, LegendaryFractured::new, Material.RED_STAINED_GLASS_PANE, true),
     OVERGROWTH("Overgrowth", LegendaryOvergrowth.class, LegendaryOvergrowth::new, LegendaryOvergrowth::new, Material.GREEN_STAINED_GLASS_PANE, true),
-    AFTERSHOCK("Aftershock", LegendaryAftershock.class, LegendaryAftershock::new, LegendaryAftershock::new, Material.MAGENTA_STAINED_GLASS_PANE),
+    AFTERSHOCK("Aftershock", LegendaryAftershock.class, LegendaryAftershock::new, LegendaryAftershock::new, Material.MAGENTA_STAINED_GLASS_PANE, true),
 
     ;
 
