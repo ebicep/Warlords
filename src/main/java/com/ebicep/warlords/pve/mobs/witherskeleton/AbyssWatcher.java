@@ -41,7 +41,7 @@ public class AbyssWatcher extends AbstractMob implements ChampionMob, Listener {
         super(
                 spawnLocation,
                 "Abyss Watcher",
-                12000,
+                11000,
                 0.01f,
                 10,
                 350,
