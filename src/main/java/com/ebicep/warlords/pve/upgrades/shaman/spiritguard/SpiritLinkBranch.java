@@ -53,26 +53,32 @@ public class SpiritLinkBranch extends AbstractUpgradeBranch<SpiritLink> {
                 .addTo(treeB);
 
         masterUpgrade = new Upgrade(
-                "Phantasmic Bond",
+                "Court of Spirits",
                 "Spirit Link - Master Upgrade",
-                "Damage reduction and speed duration have been doubled. Additionally, Spirit Link will bounce 3 times instead of 2 and the damage reduction has been increased by 10%.",
+                """
+                        Spirit Link Judges enemies hit for 3 seconds.
+        
+                        Judged enemies are punished based on their actions: damaging you causes 1000 additional damage, damaging allies applies BOUND and damaging nobody slows them by 50% for 3 seconds.
+        
+                        Judging 4 or more enemies grants Tribunal Guard for 5 seconds. Granting you 20% damage reduction and 40% knockback resistance.
+                        """,
                 50000,
                 () -> {
                     ability.setAdditionalBounces(ability.getAdditionalBounces() + 1);
-                    ability.setDamageReductionDuration(ability.getDamageReductionDuration() * 2);
-                    ability.setSpeedDuration(ability.getSpeedDuration() * 2);
-                    ability.setDamageReduction(ability.getDamageReduction() + 10);
                 }
         );
         masterUpgrade2 = new Upgrade(
                 "Puppet Strings",
                 "Spirit Link - Master Upgrade",
                 """
+                        Duration of the damage reduction is doubled.
+                        
                         Spirit Link now pulls the aggro of targets hit. Additionally, Spirit Link will bounce 4 more times instead of 2, and Soulbound targets no longer count as a bounce.
                         """,
                 50000,
                 () -> {
                     ability.setAdditionalBounces(ability.getAdditionalBounces() + 2);
+                    ability.setDamageReductionDuration(ability.getDamageReductionDuration() * 2);
                 }
         );
     }
