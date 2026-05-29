@@ -63,6 +63,7 @@ public class NPCManager {
                 createItemEnyaNPC();
                 createIllusionVendorNPC();
                 createSeasonalVendorNPC();
+                createTutorialGuideNPC();
                 registerTrait(ReadyUpOption.ReadyUpTrait.class, "ReadyUpTrait");
                 ChatUtils.MessageType.GAME.sendMessage("Done adding game join NPCs");
             }
@@ -178,8 +179,7 @@ public class NPCManager {
         lookClose.toggle();
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
-        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), -14.5, 145, 220.5, -180, 0));
-
+        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 51.5, 81, 157.5, 180, 0));
     }
 
     public static void createSupplyDropFairNPC() {
@@ -439,5 +439,20 @@ public class NPCManager {
         npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), -2532.5, 48.5, 746.8, 90, 0));
     }
 
+    public static void createTutorialGuideNPC() {
+        registerTrait(TutorialGuideTrait.class, "TutorialGuideTrait");
 
+        NPC npc = NPC_REGISTRY.createNPC(EntityType.VILLAGER, "tutorial-guide");
+        npc.getOrAddTrait(VillagerProfession.class).setProfession(Villager.Profession.LIBRARIAN);
+        npc.addTrait(TutorialGuideTrait.class);
+
+        LookClose lookClose = npc.getOrAddTrait(LookClose.class);
+        lookClose.setPerPlayer(true);
+        lookClose.toggle();
+
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
+
+        Location location = new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 11.5, 82, 155.5, 180, 0);
+        npc.spawn(location);
+    }
 }
