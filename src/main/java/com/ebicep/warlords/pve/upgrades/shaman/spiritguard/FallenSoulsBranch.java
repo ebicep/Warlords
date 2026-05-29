@@ -28,19 +28,23 @@ public class FallenSoulsBranch extends AbstractUpgradeBranch<FallenSouls> {
                 .addTo(treeB);
 
         masterUpgrade = new Upgrade(
-                "Soul Swarm",
+                "Grave Compass",
                 "Fallen Souls - Master Upgrade",
-                "Fallen Souls shoots two additional projectiles.",
+                """
+                        Fallen Souls bends toward enemies targeting your allies within a 20 block radius.
+        
+                        Enemies hit by Fallen Souls are forced to target you.
+                        """,
                 50000,
                 () -> {
-                    ability.setShotsFiredAtATime(5);
                 }
         );
+
         masterUpgrade2 = new Upgrade(
                 "Soul Feast",
                 "Fallen Souls - Master Upgrade",
                 """
-                        Enemies struck by Fallen Souls will have their damage dealt permanently reduced by 1.5%, stacking up to 15%.
+                        Enemies struck by Fallen Souls will have their damage dealt permanently reduced by 2.5%, stacking up to 35%.
                         """,
                 50000,
                 () -> {
@@ -49,14 +53,14 @@ public class FallenSoulsBranch extends AbstractUpgradeBranch<FallenSouls> {
     }
 
     public static class SoulFeast {
-        private float damageMultiplier = 0.985f;
+        private float damageMultiplier = 0.975f;
 
         public float getDamageMultiplier() {
             return damageMultiplier;
         }
 
         public void reduce() {
-            damageMultiplier = Math.max(0.85f, damageMultiplier - 0.015f);
+            damageMultiplier = Math.max(0.65f, damageMultiplier - 0.025f);
         }
     }
 }
