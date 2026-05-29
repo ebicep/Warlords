@@ -44,25 +44,50 @@ public abstract class MobHologram {
     }
 
     public void update() {
+        removeDeletedLines();
+
         if (hidden) {
             return;
         }
+
         Entity entity = getEntity();
-        if (entity == null) {
+        if (entity == null || !entity.isValid()) {
             return;
         }
-        customHologramLines.removeIf(customHologramLine -> {
-            if (customHologramLine.isDelete()) {
-                Entity hologramLineEntity = customHologramLine.getEntity();
-                if (hologramLineEntity == null || !hologramLineEntity.isValid()) {
-                    return true;
-                }
-                hologramLineEntity.remove();
-                return true;
-            }
-            return false;
-        });
+
         update(entity);
+    }
+
+    private void removeDeletedLines() {
+        customHologramLines.removeIf(customHologramLine -> {
+            if (!customHologramLine.isDelete()) {
+                return false;
+            }
+
+            Entity hologramLineEntity = customHologramLine.getEntity();
+            if (hologramLineEntity != null) {
+                hologramLineEntity.remove();
+            }
+
+            return true;
+        });
+    }
+
+    public void removeLine(CustomHologramLine customHologramLine) {
+        if (customHologramLine == null) {
+            return;
+        }
+
+        Entity lineEntity = customHologramLine.getEntity();
+        if (lineEntity != null) {
+            lineEntity.remove();
+        }
+
+        customHologramLines.remove(customHologramLine);
+    }
+
+    public void clearLines() {
+        new ArrayList<>(customHologramLines).forEach(this::removeLine);
     }
 
     protected void update(@Nonnull Entity entity) {
