@@ -352,6 +352,7 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
         }
 
         public void tickSoulBoundPlayers(WarlordsEntity owner) {
+            List<SoulBoundPlayer> custodyTransfers = new ArrayList<>();
             Iterator<SoulBoundPlayer> iterator = soulBindedPlayers.iterator();
 
             while (iterator.hasNext()) {
@@ -362,13 +363,17 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
 
                 if (boundPlayer.isDead()) {
                     iterator.remove();
-                    soulbinding.triggerChainOfCustody(owner, this, soulBoundPlayer);
+                    custodyTransfers.add(soulBoundPlayer);
                     continue;
                 }
 
                 if (soulBoundPlayer.getTimeLeft() == 0 || soulBoundPlayer.isHitWithSoul() && soulBoundPlayer.isHitWithLink()) {
                     iterator.remove();
                 }
+            }
+
+            for (SoulBoundPlayer soulBoundPlayer : custodyTransfers) {
+                soulbinding.triggerChainOfCustody(owner, this, soulBoundPlayer);
             }
         }
 
