@@ -36,23 +36,30 @@ public class SoulbindingWeaponBranch extends AbstractUpgradeBranch<Soulbinding> 
         masterUpgrade = new Upgrade(
                 "Curse Binding",
                 "Soulbinding Weapon - Master Upgrade",
-                "Gain 1 energy for each soulbound target hit by Fallen Souls and Spirit Link, increase your own and the allied ability cooldown reduction by 0.25s",
-                50000,
-                () -> {
-                    ability.setSelfCooldownReduction(ability.getSelfCooldownReduction() + 0.25f);
-                    ability.setAllyCooldownReduction(ability.getAllyCooldownReduction() + 0.25f);
-                }
-        );
-        masterUpgrade2 = new Upgrade(
-                "Free Spirit",
-                "Soulbinding Weapon - Master Upgrade",
                 """
-                        The range of Soulbinding buffs is doubled, and increases the amount of allies affected by 2.
+                        Soulbinding weapon's buffs affect 2 additional allies.
+                        
+                        Gain 1 energy for each soulbound target hit by Fallen Souls and Spirit Link, increase your own and the allied ability cooldown reduction by 0.3s
                         """,
                 50000,
                 () -> {
-                    ability.setRadius(ability.getRadius() * 2);
+                    ability.setSelfCooldownReduction(ability.getSelfCooldownReduction() + 0.3f);
+                    ability.setAllyCooldownReduction(ability.getAllyCooldownReduction() + 0.3f);
                     ability.setMaxAlliesHit(ability.getMaxAlliesHit() + 2);
+                }
+        );
+        masterUpgrade2 = new Upgrade(
+                "Chain of Custody",
+                "Soulbinding Weapon - Master Upgrade",
+                """
+                        When a BOUND enemy dies, BOUND jumps to the nearest unbound enemy within 6 blocks.
+        
+                        Each jump releases a spirit wave from the fallen enemy, reducing nearby allies' cooldowns by 0.1s and slowing nearby enemies by 25% for 3s.
+        
+                        BOUND can jump up to 3 times per Soulbinding cast.
+                        """,
+                50000,
+                () -> {
                 }
         );
     }

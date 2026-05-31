@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
@@ -7,10 +8,12 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
@@ -25,15 +28,18 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Transformation;
+import org.bukkit.util.Vector;
 import org.joml.AxisAngle4f;
 import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -59,6 +65,64 @@ public class FallenSouls extends AbstractPiercingProjectile<FallenSouls, FallenS
     public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.cooldownReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("cooldownReduction"), int.class);
+    }
+
+    @Override
+    protected void updateSpeed(InternalProjectile projectile) {
+        if (!pveMasterUpgrade) {
+            return;
+        }
+
+        WarlordsEntity target = findGraveCompassTarget(projectile);
+
+        if (target == null) {
+            keepProjectileAtBaseSpeed(projectile);
+            return;
+        }
+
+        Vector currentSpeed = projectile.getSpeed();
+        double baseSpeed = projectileSpeed.getCalculatedValue();
+
+        if (baseSpeed <= 0 || currentSpeed.lengthSquared() == 0) {
+            return;
+        }
+
+        Vector desiredSpeed = target.getLocation()
+                .clone()
+                .add(0, 1, 0)
+                .toVector()
+                .subtract(projectile.getCurrentLocation().toVector());
+
+        if (desiredSpeed.lengthSquared() == 0) {
+            keepProjectileAtBaseSpeed(projectile);
+            return;
+        }
+
+        desiredSpeed.normalize();
+
+        Vector newDirection = currentSpeed.clone()
+                .normalize()
+                .multiply(1 - .16f)
+                .add(desiredSpeed.multiply(.16f));
+
+        if (newDirection.lengthSquared() == 0) {
+            keepProjectileAtBaseSpeed(projectile);
+            return;
+        }
+
+        currentSpeed.copy(newDirection.normalize().multiply(baseSpeed));
+    }
+
+    // for homing master upgrade
+    private void keepProjectileAtBaseSpeed(InternalProjectile projectile) {
+        Vector currentSpeed = projectile.getSpeed();
+        double baseSpeed = projectileSpeed.getCalculatedValue();
+
+        if (baseSpeed <= 0 || currentSpeed.lengthSquared() == 0) {
+            return;
+        }
+
+        currentSpeed.normalize().multiply(baseSpeed);
     }
 
     @Override
@@ -148,6 +212,10 @@ public class FallenSouls extends AbstractPiercingProjectile<FallenSouls, FallenS
     }
 
     private Optional<WarlordsDamageHealingFinalEvent> hit(WarlordsEntity wp, WarlordsEntity enemy) {
+        if (pveMasterUpgrade) {
+            applyGraveCompass(wp, enemy);
+        }
+
         if (pveMasterUpgrade2) {
             if (enemy.getCooldownManager().hasCooldown(FallenSoulsBranch.SoulFeast.class)) {
                 new CooldownFilter<>(enemy, PermanentCooldown.class)
@@ -165,7 +233,7 @@ public class FallenSouls extends AbstractPiercingProjectile<FallenSouls, FallenS
                         cooldownManager -> {},
                         false
                 ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                    currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, soulFeast.getDamageMultiplier());
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, soulFeast.getDamageMultiplier());
                         }
                 ));
             }
@@ -308,6 +376,65 @@ public class FallenSouls extends AbstractPiercingProjectile<FallenSouls, FallenS
             return new FallenSoulsStats();
         }
 
+    }
+
+    private WarlordsEntity findGraveCompassTarget(InternalProjectile projectile) {
+        WarlordsEntity shooter = projectile.getShooter();
+        Location currentLocation = projectile.getCurrentLocation();
+
+        List<WarlordsEntity> targets = PlayerFilter.entitiesAround(currentLocation, 20, 20, 20)
+                .aliveEnemiesOf(shooter)
+                .excluding(projectile.getHit())
+                .filter(target -> target instanceof WarlordsNPC warlordsNPC && isTargetingAlly(warlordsNPC, shooter))
+                .toList();
+
+        return targets.stream()
+                .min(Comparator.comparingDouble(target -> target.getLocation().distanceSquared(currentLocation)))
+                .orElse(null);
+    }
+
+    private boolean isTargetingAlly(WarlordsNPC warlordsNPC, WarlordsEntity shooter) {
+        Entity target = warlordsNPC.getMob().getTarget();
+
+        if (target == null) {
+            return false;
+        }
+
+        WarlordsEntity targetEntity = Warlords.getPlayer(target);
+        if (targetEntity == shooter) {
+            return false;
+        }
+
+        return shooter.isTeammateAlive(targetEntity);
+    }
+
+    private void applyGraveCompass(WarlordsEntity wp, WarlordsEntity enemy) {
+        if (enemy instanceof WarlordsNPC warlordsNPC) {
+            warlordsNPC.getMob().setTarget(wp);
+        }
+
+        EffectUtils.displayParticle(
+                Particle.WITCH,
+                enemy.getLocation().clone().add(0, 1.2, 0),
+                5,
+                .25,
+                .25,
+                .25,
+                .05f
+        );
+    }
+
+    @SuppressWarnings("unchecked")
+    private Optional<RegularCooldown<GraveCompassData>> getGraveCompassDebuff(WarlordsEntity wp, WarlordsEntity enemy) {
+        return (Optional<RegularCooldown<GraveCompassData>>) (Optional<?>) new CooldownFilter<>(enemy, RegularCooldown.class)
+                .filterCooldownClass(GraveCompassData.class)
+                .filterCooldownFrom(wp)
+                .filterName("Grave Compass")
+                .filter(RegularCooldown::hasTicksLeft)
+                .findFirst();
+    }
+
+    private static class GraveCompassData {
     }
 
 }

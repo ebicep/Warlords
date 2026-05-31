@@ -12,12 +12,14 @@ import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.spiritguard.SoulbindingWeaponBranch;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -27,6 +29,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, Duration, CanReduceCooldowns, Heals<Soulbinding.HealingValues>, AbilityStats<Soulbinding, Soulbinding.SoulbindingStats> {
@@ -137,9 +140,7 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
                         location.add(0, 1.2, 0);
                         EffectUtils.displayParticle(Particle.WITCH, location, 2, 0.2, 0, 0.2, 0.1);
                     }
-                    data.getSoulBindedPlayers().forEach(SoulBoundPlayer::decrementTimeLeft);
-                    data.getSoulBindedPlayers()
-                        .removeIf(soulBoundPlayer -> soulBoundPlayer.getTimeLeft() == 0 || (soulBoundPlayer.isHitWithSoul() && soulBoundPlayer.isHitWithLink()));
+                    data.tickSoulBoundPlayers(wp);
                 })
         ) {
             @Override
@@ -264,6 +265,78 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
         this.maxAlliesHit = maxAlliesHit;
     }
 
+    private void triggerChainOfCustody(WarlordsEntity owner, SoulbindingData data, SoulBoundPlayer soulBoundPlayer) {
+        if (!pveMasterUpgrade2) {
+            return;
+        }
+
+        if (soulBoundPlayer.getCustodyJumps() >= 3) {
+            return;
+        }
+
+        WarlordsEntity fallenEnemy = soulBoundPlayer.getBoundPlayer();
+        Location origin = fallenEnemy.getDeathLocation() != null ? fallenEnemy.getDeathLocation() : fallenEnemy.getLocation();
+        WarlordsEntity nextTarget = findChainOfCustodyTarget(owner, data, fallenEnemy, origin);
+
+        if (nextTarget == null) {
+            return;
+        }
+
+        data.bindPlayerFromCustody(owner, nextTarget, soulBoundPlayer.getCustodyJumps() + 1);
+        releaseCustodyWave(owner, origin);
+    }
+
+    private WarlordsEntity findChainOfCustodyTarget(WarlordsEntity owner, SoulbindingData data, WarlordsEntity fallenEnemy, Location origin) {
+        return PlayerFilter.entitiesAround(origin, 6, 6, 6)
+                .aliveEnemiesOf(owner)
+                .excluding(fallenEnemy)
+                .filter(target -> !data.hasBoundPlayer(target))
+                .closestFirst(origin)
+                .findFirst()
+                .orElse(null);
+    }
+
+    private void releaseCustodyWave(WarlordsEntity owner, Location origin) {
+        Utils.playGlobalSound(origin, Sound.BLOCK_RESPAWN_ANCHOR_CHARGE, 2, .7f);
+
+        origin.getWorld().spawnParticle(
+                Particle.WITCH,
+                origin.clone().add(0, 1.1, 0),
+                32,
+                .7,
+                .5,
+                .7,
+                .05
+        );
+
+        origin.getWorld().spawnParticle(
+                Particle.SOUL_FIRE_FLAME,
+                origin.clone().add(0, .8, 0),
+                28,
+                .7,
+                .35,
+                .7,
+                .04
+        );
+
+        PlayerFilter.entitiesAround(origin, 6, 6, 6)
+                .aliveTeammatesOf(owner)
+                .forEach(this::reduceCustodyAllyCooldowns);
+
+        PlayerFilter.entitiesAround(origin, 6, 6, 6)
+                .aliveEnemiesOf(owner)
+                .forEach(enemy -> enemy.addSpeedModifier(owner, "Chain of Custody", 25, 3 * 20));
+    }
+
+    private void reduceCustodyAllyCooldowns(WarlordsEntity ally) {
+        ally.getAbilities().forEach(ability -> {
+            if (ability.getCurrentCooldown() > 0) {
+                ability.subtractCurrentCooldownForce(0.1f);
+                playCooldownReductionEffect(ally);
+            }
+        });
+    }
+
     public static class SoulbindingData {
 
         private final Soulbinding soulbinding;
@@ -276,6 +349,57 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
 
         public SoulbindingData(Soulbinding soulbinding) {
             this.soulbinding = soulbinding;
+        }
+
+        public void tickSoulBoundPlayers(WarlordsEntity owner) {
+            List<SoulBoundPlayer> custodyTransfers = new ArrayList<>();
+            Iterator<SoulBoundPlayer> iterator = soulBindedPlayers.iterator();
+
+            while (iterator.hasNext()) {
+                SoulBoundPlayer soulBoundPlayer = iterator.next();
+                WarlordsEntity boundPlayer = soulBoundPlayer.getBoundPlayer();
+
+                soulBoundPlayer.decrementTimeLeft();
+
+                if (boundPlayer.isDead()) {
+                    iterator.remove();
+                    custodyTransfers.add(soulBoundPlayer);
+                    continue;
+                }
+
+                if (soulBoundPlayer.getTimeLeft() == 0 || soulBoundPlayer.isHitWithSoul() && soulBoundPlayer.isHitWithLink()) {
+                    iterator.remove();
+                }
+            }
+
+            for (SoulBoundPlayer soulBoundPlayer : custodyTransfers) {
+                soulbinding.triggerChainOfCustody(owner, this, soulBoundPlayer);
+            }
+        }
+
+        public void bindPlayerFromCustody(WarlordsEntity wpAttacker, WarlordsEntity wpVictim, int custodyJumps) {
+            soulbinding.addPlayersBinded();
+
+            if (hasBoundPlayer(wpVictim)) {
+                getSoulBindedPlayers().stream().filter(p -> p.getBoundPlayer() == wpVictim).forEach(boundPlayer -> {
+                    boundPlayer.setHitWithSoul(false);
+                    boundPlayer.setHitWithLink(false);
+                    boundPlayer.setTicksLeft(soulbinding.bindDuration);
+                    boundPlayer.setCustodyJumps(custodyJumps);
+                });
+                return;
+            }
+
+            wpVictim.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED.append(Component.text(" You have been chained by " + wpAttacker.getName() + "'s ", NamedTextColor.GRAY))
+                    .append(Component.text("Chain of Custody", NamedTextColor.LIGHT_PURPLE))
+                    .append(Component.text("!", NamedTextColor.GRAY)));
+
+            wpAttacker.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" Your ", NamedTextColor.GRAY))
+                    .append(Component.text("Chain of Custody", NamedTextColor.LIGHT_PURPLE))
+                    .append(Component.text(" has bound " + wpVictim.getName() + "!", NamedTextColor.GRAY)));
+
+            getSoulBindedPlayers().add(new SoulBoundPlayer(wpVictim, soulbinding.bindDuration, custodyJumps));
+            Utils.playGlobalSound(wpVictim.getLocation(), "shaman.earthlivingweapon.activation", 2, 1);
         }
 
         public void bindPlayer(WarlordsEntity wpAttacker, WarlordsEntity wpVictim) {
@@ -372,9 +496,25 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
 
         private boolean hitWithSoul;
 
+        private int custodyJumps;
+
         public SoulBoundPlayer(WarlordsEntity boundPlayer, int timeLeft) {
+            this(boundPlayer, timeLeft, 0);
+        }
+
+        // pve
+        public SoulBoundPlayer(WarlordsEntity boundPlayer, int timeLeft, int custodyJumps) {
             this.boundPlayer = boundPlayer;
             this.ticksLeft = timeLeft;
+            this.custodyJumps = custodyJumps;
+        }
+
+        public int getCustodyJumps() {
+            return custodyJumps;
+        }
+
+        public void setCustodyJumps(int custodyJumps) {
+            this.custodyJumps = custodyJumps;
         }
 
         public WarlordsEntity getBoundPlayer() {

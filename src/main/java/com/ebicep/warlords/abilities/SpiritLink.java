@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.player.ingame.MobHologram;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
@@ -18,6 +19,7 @@ import com.ebicep.warlords.pve.upgrades.shaman.spiritguard.SpiritLinkBranch;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -66,11 +68,22 @@ public class SpiritLink extends AbstractChain<SpiritLink, SpiritLink.SpiritLinkS
                 chain(wp.getLocation(), nearPlayer.getLocation());
                 nearPlayer.addInstance(InstanceBuilder.damage().ability(this).source(wp).value(damageValues.linkDamage));
                 hitCounter.add(nearPlayer);
+
+                if (pveMasterUpgrade) {
+                    applyCourtOfSpirits(wp, nearPlayer);
+                }
+
                 List<Soulbinding.SoulbindingData> soulbindings = wp.getCooldownManager().getNumberOfBoundPlayersLink(nearPlayer);
                 for (Soulbinding.SoulbindingData data : soulbindings) {
                     healNearPlayers(wp, nearPlayer, data);
                 }
+
                 additionalBounce(wp, hitCounter, nearPlayer, new ArrayList<>(Arrays.asList(wp, nearPlayer)), pveMasterUpgrade2 && !soulbindings.isEmpty() ? -1 : 0);
+
+                if (pveMasterUpgrade && hitCounter.size() >= 4) {
+                    applyTribunalGuard(wp);
+                }
+
                 if (pveMasterUpgrade2 && nearPlayer instanceof WarlordsNPC warlordsNPC) {
                     warlordsNPC.getMob().setTarget(wp);
                     EffectUtils.displayParticle(Particle.INSTANT_EFFECT, warlordsNPC.getLocation().add(0, 1.2, 0), 5, .25, .25, .25, 0);
@@ -183,6 +196,11 @@ public class SpiritLink extends AbstractChain<SpiritLink, SpiritLink.SpiritLinkS
                     .crit(damageValues.linkDamage)
             );
             hitCounter.add(bounceTarget);
+
+            if (pveMasterUpgrade) {
+                applyCourtOfSpirits(wp, bounceTarget);
+            }
+
             List<Soulbinding.SoulbindingData> soulbindings = wp.getCooldownManager().getNumberOfBoundPlayersLink(bounceTarget);
             for (Soulbinding.SoulbindingData data : soulbindings) {
                 healNearPlayers(wp, bounceTarget, data);
@@ -290,4 +308,284 @@ public class SpiritLink extends AbstractChain<SpiritLink, SpiritLink.SpiritLinkS
 
     }
 
+    private void applyCourtOfSpirits(WarlordsEntity judge, WarlordsEntity target) {
+        Optional<RegularCooldown> existingJudgement = getCourtOfSpiritsCooldown(judge, target);
+
+        if (existingJudgement.isPresent()) {
+            RegularCooldown cooldown = existingJudgement.get();
+            cooldown.setTicksLeft(3 * 20);
+
+            Object cooldownObject = cooldown.getCooldownObject();
+            if (cooldownObject instanceof CourtOfSpiritsData courtOfSpiritsData) {
+                courtOfSpiritsData.reset();
+            }
+
+            return;
+        }
+
+        CourtOfSpiritsData data = new CourtOfSpiritsData(judge, target);
+
+        RegularCooldown<CourtOfSpiritsData> cooldown = new RegularCooldown<>(
+                "Court of Spirits",
+                "JUDGE",
+                CourtOfSpiritsData.class,
+                data,
+                judge,
+                CooldownTypes.LOW_LEVEL_DEBUFF,
+                cooldownManager -> data.resolve(),
+                cooldownManager -> data.removeHologramLine(),
+                3 * 20
+        );
+
+        cooldown.addModifier(Modifier.ON_OUTGOING_DAMAGE, (event, currentDamageValue, isCrit) -> {
+            data.recordDamage(event.getWarlordsEntity());
+        });
+
+        target.getCooldownManager().addCooldown(cooldown);
+
+        EffectUtils.displayParticle(
+                Particle.WITCH,
+                target.getLocation().clone().add(0, 1.2, 0),
+                8,
+                .25,
+                .25,
+                .25,
+                .05f
+        );
+    }
+
+    private Optional<RegularCooldown> getCourtOfSpiritsCooldown(WarlordsEntity judge, WarlordsEntity target) {
+        return new CooldownFilter<>(target, RegularCooldown.class)
+                .filterCooldownClass(CourtOfSpiritsData.class)
+                .filterCooldownFrom(judge)
+                .filterName("Court of Spirits")
+                .filter(RegularCooldown::hasTicksLeft)
+                .findFirst();
+    }
+
+    private void applyTribunalGuard(WarlordsEntity wp) {
+        Optional<RegularCooldown> existingGuard = new CooldownFilter<>(wp, RegularCooldown.class)
+                .filterCooldownClass(TribunalGuardData.class)
+                .filterCooldownFrom(wp)
+                .filterName("Tribunal Guard")
+                .filter(RegularCooldown::hasTicksLeft)
+                .findFirst();
+
+        if (existingGuard.isPresent()) {
+            existingGuard.get().setTicksLeft(5 * 20);
+            return;
+        }
+
+        RegularCooldown<TribunalGuardData> tribunalGuard = new RegularCooldown<>(
+                "Tribunal Guard",
+                "TRIB",
+                TribunalGuardData.class,
+                new TribunalGuardData(),
+                wp,
+                CooldownTypes.BUFF,
+                cooldownManager -> {
+                },
+                5 * 20
+        );
+
+        tribunalGuard.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
+            currentDamageValue.addModifier(
+                    FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                    "Tribunal Guard",
+                    0.8f
+            );
+        });
+
+        wp.getCooldownManager().addCooldown(tribunalGuard);
+        wp.addKnockbackModifier(wp, "Tribunal Guard", -40, tribunalGuard);
+
+        EffectUtils.displayParticle(
+                Particle.SOUL_FIRE_FLAME,
+                wp.getLocation().clone().add(0, 1.2, 0),
+                24,
+                .45,
+                .45,
+                .45,
+                .05f
+        );
+    }
+
+    private void applyCourtBound(WarlordsEntity judge, WarlordsEntity target) {
+        List<Soulbinding.SoulbindingData> activeBindings = new CooldownFilter<>(judge, PersistentCooldown.class)
+                .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.SoulbindingData.class)
+                .toList();
+
+        if (!activeBindings.isEmpty()) {
+            activeBindings.getFirst().bindPlayer(judge, target);
+            return;
+        }
+
+        List<Soulbinding> soulbindings = judge.getAbilitiesMatching(Soulbinding.class);
+
+        Soulbinding soulbinding;
+        if (soulbindings.isEmpty()) {
+            soulbinding = new Soulbinding();
+            soulbinding.init(soulbinding.getBuilder());
+        } else {
+            soulbinding = soulbindings.getFirst();
+        }
+
+        soulbinding.activeSoulbinding(judge).bindPlayer(judge, target);
+    }
+
+    private boolean isValidCourtTarget(WarlordsEntity judge, WarlordsEntity target) {
+        if (target == null || target.isDead() || !target.isActive()) {
+            return false;
+        }
+        if (judge == null || judge.isDead() || !judge.isActive()) {
+            return false;
+        }
+        if (target.getWorld() != judge.getWorld()) {
+            return false;
+        }
+        return judge.isEnemyAlive(target);
+    }
+
+    private class CourtOfSpiritsData {
+
+        private final WarlordsEntity judge;
+        private final WarlordsEntity target;
+        private final WarlordsNPC targetMob;
+        private MobHologram.CustomHologramLine hologramLine;
+
+        private boolean damagedJudge;
+        private boolean damagedAlly;
+
+        private CourtOfSpiritsData(WarlordsEntity judge, WarlordsEntity target) {
+            this.judge = judge;
+            this.target = target;
+            this.targetMob = target instanceof WarlordsNPC warlordsNPC ? warlordsNPC : null;
+            addHologramLine();
+        }
+
+        private void recordDamage(WarlordsEntity receiver) {
+            if (receiver == null || receiver.isDead()) {
+                return;
+            }
+
+            if (receiver == judge) {
+                damagedJudge = true;
+                updateHologram();
+                return;
+            }
+
+            if (judge.isTeammateAlive(receiver)) {
+                damagedAlly = true;
+                updateHologram();
+            }
+        }
+
+        private void reset() {
+            damagedJudge = false;
+            damagedAlly = false;
+            updateHologram();
+        }
+
+        private void resolve() {
+            removeHologramLine();
+
+            if (!isValidCourtTarget(judge, target)) {
+                return;
+            }
+
+            if (damagedAlly) {
+                applyCourtBound(judge, target);
+                EffectUtils.displayParticle(
+                        Particle.ENCHANT,
+                        target.getLocation().clone().add(0, 1.2, 0),
+                        16,
+                        .35,
+                        .35,
+                        .35,
+                        .05f
+                );
+            }
+
+            if (damagedJudge) {
+                target.addInstance(InstanceBuilder
+                        .damage()
+                        .cause("Court of Spirits")
+                        .source(judge)
+                        .value(1000)
+                );
+                EffectUtils.displayParticle(
+                        Particle.SOUL_FIRE_FLAME,
+                        target.getLocation().clone().add(0, 1.2, 0),
+                        16,
+                        .35,
+                        .35,
+                        .35,
+                        .05f
+                );
+            }
+
+            if (!damagedJudge && !damagedAlly) {
+                target.addSpeedModifier(judge, "Court of Spirits", 50, 40);
+                EffectUtils.displayParticle(
+                        Particle.SMOKE,
+                        target.getLocation().clone().add(0, 1.2, 0),
+                        12,
+                        .35,
+                        .35,
+                        .35,
+                        .02f
+                );
+            }
+        }
+
+        private void addHologramLine() {
+            if (targetMob == null) {
+                return;
+            }
+
+            hologramLine = new MobHologram.CustomHologramLine(this::getHologramText);
+            targetMob.getMobHologram().getCustomHologramLines().add(hologramLine);
+            targetMob.getMobHologram().update();
+        }
+
+        private void updateHologram() {
+            if (targetMob != null) {
+                targetMob.getMobHologram().update();
+            }
+        }
+
+        private void removeHologramLine() {
+            if (hologramLine == null) {
+                return;
+            }
+
+            hologramLine.setDelete(true);
+
+            if (targetMob != null) {
+                targetMob.getMobHologram().update();
+            }
+
+            hologramLine = null;
+        }
+
+        private Component getHologramText() {
+            if (damagedJudge && damagedAlly) {
+                return Component.text("⚖ JUDGED: CONDEMNED ⚖", NamedTextColor.LIGHT_PURPLE);
+            }
+
+            if (damagedAlly) {
+                return Component.text("⚖ JUDGED: HARMED ALLY ⚖", NamedTextColor.RED);
+            }
+
+            if (damagedJudge) {
+                return Component.text("⚖ JUDGED: STRUCK YOU ⚖", NamedTextColor.GOLD);
+            }
+
+            return Component.text("⚖ JUDGED ⚖", NamedTextColor.AQUA);
+        }
+
+    }
+
+    private static class TribunalGuardData {
+    }
 }

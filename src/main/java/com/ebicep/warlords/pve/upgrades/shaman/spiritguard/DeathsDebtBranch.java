@@ -52,28 +52,31 @@ public class DeathsDebtBranch extends AbstractUpgradeBranch<DeathsDebt> {
                 .addTo(treeB);
 
         masterUpgrade = new Upgrade(
-                "Ghoul’s Gamble",
+                "Rite of the Unpaid",
                 "Death's Debt - Master Upgrade",
-                "Double the damage dealt based on damage taken after Death's Debt ends. Additionally, " +
-                        "gain 80% knockback resistance while Spirit's Respite is active and reduce damage taken by an additional 40%",
+                """
+                        Death's Debt summons an infernal ritual. Death's Debt no longer deals damage but you take significantly reduced damage.
+        
+                        For every 10,000 damage you take while Spirit's Respite is active, the totem releases a ritual wave, reducing nearby allies' cooldowns by 2 seconds and increasing their melee attack speed by 200% for 5s.
+                        """,
                 50000,
                 () -> {
-
-                    ability.setDamagePercent(ability.getDamagePercent() * 2);
-                    ability.setDelayedDamageTaken(ability.getDelayedDamageTaken() - 40);
+                    ability.setDamagePercent(0);
+                    ability.setDelayedDamageTaken(1);
                 }
         );
         masterUpgrade2 = new Upgrade(
                 "Death Parade",
                 "Death's Debt - Master Upgrade",
                 """
-                        Reduce damage taken by 20%
+                        Reduce damage taken by 40% and increase damage dealt based on damage taken by 50%.
                         
                         All enemies struck by Death's Debt are afflicted with Soulbinding, max 10. For every enemy Soulbound by Death's Debt, gain 2.5% damage reduction for 5 seconds.
                         """,
                 50000,
                 () -> {
-                    ability.setDelayedDamageTaken(ability.getDelayedDamageTaken() - 20);
+                    ability.setDelayedDamageTaken(ability.getDelayedDamageTaken() - 40);
+                    ability.setDamagePercent(ability.getDamagePercent() * 1.5f);
                 }
         );
     }

@@ -202,10 +202,18 @@ public abstract class AbstractMob implements Mob {
             player.setNoDamageTicks(0);
         }
 
-        LivingEntity entity = (LivingEntity) this.npc.getEntity();
-        AttributeInstance scale = entity.getAttribute(Attribute.SCALE);
-        if (scale != null) {
-            scale.setBaseValue(getMobScale());
+        LivingEntity entity;
+        if (this.npc.getEntity() instanceof LivingEntity livingEntity) {
+            entity = livingEntity;
+        } else {
+            entity = null;
+        }
+
+        if (entity != null) {
+            AttributeInstance scale = entity.getAttribute(Attribute.SCALE);
+            if (scale != null) {
+                scale.setBaseValue(getMobScale());
+            }
         }
 //
 //        if (getMobRegistry().entityType == EntityType.SLIME) {

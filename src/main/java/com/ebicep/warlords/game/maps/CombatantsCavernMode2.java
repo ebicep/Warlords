@@ -114,11 +114,11 @@ public class CombatantsCavernMode2 extends GameMap {
         );
         options.add(new CurrencyOnEventOption()
                 .startWith(120000)
-                .onKill(10000)
+                .onKill(3000)
         );
         options.add(new CoinGainOption()
                 .noPlayerCoinWavesClearedBonus()
-                .playerCoinPerKill(20)
+                .playerCoinPerKill(10)
                 .guildCoinInsigniaConvertBonus(1000)
                 .guildCoinPerXSec(1, 1)
         );
