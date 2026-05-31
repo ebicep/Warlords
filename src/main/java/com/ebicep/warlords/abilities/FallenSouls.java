@@ -76,13 +76,14 @@ public class FallenSouls extends AbstractPiercingProjectile<FallenSouls, FallenS
         WarlordsEntity target = findGraveCompassTarget(projectile);
 
         if (target == null) {
+            keepProjectileAtBaseSpeed(projectile);
             return;
         }
 
         Vector currentSpeed = projectile.getSpeed();
-        double speed = currentSpeed.length();
+        double baseSpeed = projectileSpeed.getCalculatedValue();
 
-        if (speed == 0) {
+        if (baseSpeed <= 0 || currentSpeed.lengthSquared() == 0) {
             return;
         }
 
@@ -93,13 +94,35 @@ public class FallenSouls extends AbstractPiercingProjectile<FallenSouls, FallenS
                 .subtract(projectile.getCurrentLocation().toVector());
 
         if (desiredSpeed.lengthSquared() == 0) {
+            keepProjectileAtBaseSpeed(projectile);
             return;
         }
 
-        desiredSpeed.normalize().multiply(speed);
+        desiredSpeed.normalize();
 
-        currentSpeed.multiply(1 - .16f)
+        Vector newDirection = currentSpeed.clone()
+                .normalize()
+                .multiply(1 - .16f)
                 .add(desiredSpeed.multiply(.16f));
+
+        if (newDirection.lengthSquared() == 0) {
+            keepProjectileAtBaseSpeed(projectile);
+            return;
+        }
+
+        currentSpeed.copy(newDirection.normalize().multiply(baseSpeed));
+    }
+
+    // for homing master upgrade
+    private void keepProjectileAtBaseSpeed(InternalProjectile projectile) {
+        Vector currentSpeed = projectile.getSpeed();
+        double baseSpeed = projectileSpeed.getCalculatedValue();
+
+        if (baseSpeed <= 0 || currentSpeed.lengthSquared() == 0) {
+            return;
+        }
+
+        currentSpeed.normalize().multiply(baseSpeed);
     }
 
     @Override
