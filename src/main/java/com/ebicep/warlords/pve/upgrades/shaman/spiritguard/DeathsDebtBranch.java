@@ -55,15 +55,14 @@ public class DeathsDebtBranch extends AbstractUpgradeBranch<DeathsDebt> {
                 "Rite of the Unpaid",
                 "Death's Debt - Master Upgrade",
                 """
-                        Death's Debt summons an infernal ritual. Spirit's Respite lasts twice as long but you take nor deal no damage when Death's Debt ends.
+                        Death's Debt summons an infernal ritual. Death's Debt no longer deals damage but you take significantly reduced damage.
         
                         For every 10,000 damage you take while Spirit's Respite is active, the totem releases a ritual wave, reducing nearby allies' cooldowns by 2 seconds and increasing their melee attack speed by 200% for 5s.
                         """,
                 50000,
                 () -> {
-                    ability.setTickDuration(ability.getTickDuration() * 2);
                     ability.setDamagePercent(0);
-                    ability.setDelayedDamageTaken(0);
+                    ability.setDelayedDamageTaken(1);
                 }
         );
         masterUpgrade2 = new Upgrade(

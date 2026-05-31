@@ -89,6 +89,7 @@ public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<
         if (pveMasterUpgrade) {
             data.spawnRiteTotemVisual();
         }
+        wp.getCooldownManager().limitCooldowns(RegularCooldown.class, DeathsDebtData.class, 2);
         RegularCooldown<DeathsDebtData> spiritsRespiteCooldown = new RegularCooldown<>(
                 "Spirits' Respite",
                 "RESP",
@@ -245,9 +246,11 @@ public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<
                                                                                        .append(Component.text(Math.round(ticksLeft / 20f), NamedTextColor.GOLD))
                                                                                        .append(Component.text(" seconds left.", NamedTextColor.GRAY))));
                         if (wp.isInPve()) {
-                            for (WarlordsEntity we : PlayerFilter.entitiesAround(totemStand.getLocation(), respiteRadius, respiteRadius, respiteRadius)
-                                                                 .aliveEnemiesOf(wp)
-                                                                 .closestFirst(wp)) {
+                            for (WarlordsEntity we : PlayerFilter
+                                    .entitiesAround(totemStand.getLocation(), respiteRadius, respiteRadius, respiteRadius)
+                                    .aliveEnemiesOf(wp)
+                                    .closestFirst(wp)
+                            ) {
                                 if (we instanceof WarlordsNPC) {
                                     ((WarlordsNPC) we).getMob().setTarget(wp);
                                 }
@@ -388,7 +391,7 @@ public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<
     private void reduceAllyCooldowns(WarlordsEntity ally) {
         ally.getAbilities().forEach(ability -> {
             if (ability.getCurrentCooldown() > 0) {
-                ability.subtractCurrentCooldownForce(2);
+                ability.subtractCurrentCooldownForce(1);
                 AbstractAbility.playCooldownReductionEffect(ally);
             }
         });
@@ -415,11 +418,13 @@ public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<
                 wp,
                 CooldownTypes.BUFF,
                 cooldownManager -> {
+                    ally.setPveHitCooldown(13);
+                    ally.setHitCooldown(13);
                 },
                 5 * 20,
                 List.of((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ally.getPveHitCooldown() > 0) {
-                        ally.setPveHitCooldown(Math.max(0, ally.getPveHitCooldown() - 2));
+                        ally.setPveHitCooldown(6);
                     }
                 })
         ));
