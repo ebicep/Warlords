@@ -49,6 +49,21 @@
         "speedIncrease": 90,
         "damageIncrease": 10
       },
+      "infernoExplosion": {
+        "difficulty": 4,
+        "name": "Immolation Inferno",
+        "description": "Shorten the duration of {{aqua:Inferno}} by {{ticks}} and gain {{speed;%}} speed. Upon {{aqua:Inferno}} ending, lose {{damage;%}} of your health, deal {{damage}} + {{damage;%}} of that as damage within {{blue}} blocks, and gain {{damageReduction;%}} damage reduction for {{ticks}}.",
+        "infernoDurationReductionTicks": 220,
+        "infernoSpeedPercent": 25,
+        "healthLossPercent": 95,
+        "explosionDamageBase": 300,
+        "healthToDamagePercent": 20,
+        "explosionRadius": 5,
+        "damageReductionPercent": 99,
+        "damageReductionDurationTicks": 20,
+        "explosionCritChance": 20,
+        "explosionCritMultiplier": 110
+      },
       "portal": {
         "difficulty": 5,
         "disabled": true,
