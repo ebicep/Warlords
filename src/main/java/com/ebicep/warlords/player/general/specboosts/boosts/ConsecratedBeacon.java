@@ -12,12 +12,14 @@ public class ConsecratedBeacon implements SpecBoostManager.SpecBoost<Consecrated
     private float sanctifiedBeaconEnergyCostDecrease;
     private float sanctifiedBeaconCooldownReductionPercent;
     private int sanctifiedBeaconAdditionalHexStacks;
+    private int maxAbilityCharges;
 
     @Override
     public void init() {
         this.sanctifiedBeaconEnergyCostDecrease = getValue("sanctifiedBeaconEnergyCostDecrease", float.class);
         this.sanctifiedBeaconCooldownReductionPercent = getValue("sanctifiedBeaconCooldownReductionPercent", float.class);
         this.sanctifiedBeaconAdditionalHexStacks = getValue("sanctifiedBeaconAdditionalHexStacks", int.class);
+        this.maxAbilityCharges = getValue("maxAbilityCharges", int.class);
     }
 
     @Override
@@ -27,7 +29,7 @@ public class ConsecratedBeacon implements SpecBoostManager.SpecBoost<Consecrated
 
     @Override
     public List<Object> getVariables() {
-        return List.of(sanctifiedBeaconEnergyCostDecrease, sanctifiedBeaconCooldownReductionPercent, sanctifiedBeaconAdditionalHexStacks);
+        return List.of(sanctifiedBeaconEnergyCostDecrease, sanctifiedBeaconCooldownReductionPercent, sanctifiedBeaconAdditionalHexStacks, maxAbilityCharges);
     }
 
     @Override
@@ -48,6 +50,8 @@ public class ConsecratedBeacon implements SpecBoostManager.SpecBoost<Consecrated
                 sanctifiedBeacon.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", -sanctifiedBeaconEnergyCostDecrease);
                 sanctifiedBeacon.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", -sanctifiedBeaconCooldownReductionPercent / 100);
                 sanctifiedBeacon.setStacksGranted(sanctifiedBeacon.getStacksGranted() + sanctifiedBeaconAdditionalHexStacks);
+                sanctifiedBeacon.setMaxCharges(maxAbilityCharges);
+                sanctifiedBeacon.setCurrentCooldown(0);
             });
         }
 

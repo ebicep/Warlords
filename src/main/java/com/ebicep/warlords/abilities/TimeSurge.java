@@ -17,6 +17,8 @@ public class TimeSurge extends AbstractAbility implements PurpleAbilityIcon, Abi
 
     private TimeSurgeStats stats = new TimeSurgeStats();
     protected float healPercentage = 30;
+    protected float speedPercentage = 30;
+    protected int speedTickDuration = 50;
 
     public TimeSurge() {
         super(AbstractAbilityBuilder.create("timeSurge").pvp());
@@ -26,6 +28,8 @@ public class TimeSurge extends AbstractAbility implements PurpleAbilityIcon, Abi
     public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.healPercentage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("healPercentage"), float.class);
+        this.speedPercentage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("speedPercentage"), float.class);
+        this.speedTickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("speedTickDuration"), int.class);
     }
 
     @Override
@@ -33,7 +37,11 @@ public class TimeSurge extends AbstractAbility implements PurpleAbilityIcon, Abi
         description = AbilityDescriptionBuilder
                 .create("Restore ")
                 .percent(healPercentage, NamedTextColor.GREEN)
-                .text(" of your health.")
+                .text(" of your health and gain ")
+                .percent(speedPercentage, NamedTextColor.YELLOW)
+                .text(" for ")
+                .durationTicks(speedTickDuration)
+                .text(".")
                 .build();
     }
 
@@ -41,6 +49,7 @@ public class TimeSurge extends AbstractAbility implements PurpleAbilityIcon, Abi
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "mage.timewarp.activation", 3, 1);
+        wp.addSpeedModifier(wp, name, speedPercentage, speedTickDuration);
         wp.addInstance(InstanceBuilder
                 .healing()
                 .ability(this)
@@ -61,6 +70,22 @@ public class TimeSurge extends AbstractAbility implements PurpleAbilityIcon, Abi
 
     public void setHealPercentage(float healPercentage) {
         this.healPercentage = healPercentage;
+    }
+
+    public float getSpeedPercentage() {
+        return speedPercentage;
+    }
+
+    public void setSpeedPercentage(float speedPercentage) {
+        this.speedPercentage = speedPercentage;
+    }
+
+    public int getSpeedTickDuration() {
+        return speedTickDuration;
+    }
+
+    public void setSpeedTickDuration() {
+        this.speedTickDuration = speedTickDuration;
     }
 
     public static class TimeSurgeStats extends AbstractAbilityStats<TimeSurge, TimeSurge.TimeSurgeStats> {

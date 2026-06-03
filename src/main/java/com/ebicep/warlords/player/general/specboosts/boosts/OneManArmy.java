@@ -15,12 +15,10 @@ import java.util.function.BiConsumer;
 
 public class OneManArmy implements SpecBoostManager.SpecBoost<OneManArmy> {
 
-    private int undyingArmyTickDurationIncrease;
     private int undyingArmyTickDurationCaster;
 
     @Override
     public void init() {
-        this.undyingArmyTickDurationIncrease = getValue("undyingArmyTickDurationIncrease", int.class);
         this.undyingArmyTickDurationCaster = getValue("undyingArmyTickDurationCaster", int.class);
     }
 
@@ -31,7 +29,7 @@ public class OneManArmy implements SpecBoostManager.SpecBoost<OneManArmy> {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(undyingArmyTickDurationIncrease, undyingArmyTickDurationCaster);
+        return List.of(undyingArmyTickDurationCaster);
     }
 
     @Override
@@ -51,9 +49,6 @@ public class OneManArmy implements SpecBoostManager.SpecBoost<OneManArmy> {
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
-            warlordsPlayer.getAbilitiesMatching(UndyingArmy.class).forEach(undyingArmy -> {
-                undyingArmy.setTickDuration(undyingArmy.getTickDuration() + undyingArmyTickDurationIncrease);
-            });
         }
 
         @EventHandler(ignoreCancelled = true)
@@ -75,12 +70,13 @@ public class OneManArmy implements SpecBoostManager.SpecBoost<OneManArmy> {
                     oldOnPop.accept(cd, we);
                 } else {
                     cd.setTicksLeft(1);
+                    for (OrbsOfLife orbsOfLife : warlordsEntity.getAbilitiesMatching(OrbsOfLife.class)) {
+                        orbsOfLife.setCurrentCooldown(0);
+                    }
                 }
             });
             regularCooldown.getConsumers().clear();
-            for (OrbsOfLife orbsOfLife : warlordsEntity.getAbilitiesMatching(OrbsOfLife.class)) {
-                orbsOfLife.setCurrentCooldown(0);
-            }
+
         }
 
     }

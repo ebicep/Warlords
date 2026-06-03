@@ -15,9 +15,6 @@
         "difficulty": 3,
         "name": "Shotgun Pyro",
         "description": "Replace {{aqua:Flame Burst}} with {{aqua:Flame Breath}}, which has 2 charges. Replace {{aqua:Time Warp}} with {{aqua:Time Surge}}.",
-        "cooldownReductionPercent": 30,
-        "energyCostReductionPercent": 50,
-        "damageIncrease": -10,
         "maxAbilityCharges": 2
       },
       "burstChain": {
@@ -82,9 +79,10 @@
       "blizzardBreath": {
         "difficulty": 4,
         "name": "Blizzard Breath",
-        "description": "{{aqua:Freezing Breath}} reduces the cooldown of all your skills by {{ticks;%}} for each enemy hit and grants immunity to knockback and stun for {{ticks}}. Replace {{aqua:Time Warp}} with {{aqua:Time Surge}}. Reduce the cooldowns, energy costs, and healing/shield granted by {{aqua:Time Surge}} and {{aqua:Arcane Shield}} by {{blue;%}}",
+        "description": "{{aqua:Freezing Breath}} reduces all cooldowns by {{ticks;%}} per enemy hit and grants knockback and stun immunity for {{ticks}}. Each direct hit with {{aqua:Frostbolt}} reduces its cooldown by {{ticks}}. \n Replace {{aqua:Time Warp}} with {{aqua:Time Surge}}. {{aqua:Time Surge}} and {{aqua:Arcane Shield}} have reduced cooldowns, energy costs, and healing/shield by {{blue;%}}.",
         "cooldownReductionPerEnemyHitPercent": 2,
         "immunityDurationTicks": 40,
+        "frostboltDirectHitCooldownReductionTicks": 10,
         "productionValuesDecreasePercent": 30
       },
       "steadfastWarp": {
@@ -204,10 +202,9 @@
       "mightyFists": {
         "difficulty": 4,
         "name": "Mighty Fists",
-        "description": "Increase melee damage by {{damage;%}}. Every melee hit increases damage by another {{damage;%}}, up to {{damage;%}}. Activating any ability resets the bonus damage.",
-        "baseMeleePercent": 20,
-        "consecutiveHitIncreasePercent": 35,
-        "maxIncreasePercent": 90
+        "description": "Every melee hit gives damage stacks. Each stack increases damage by {{damage;%}}, up to {{damage;%}}. Activating any ability removes 1 stack.",
+        "consecutiveHitIncreasePercent": 20,
+        "maxIncreasePercent": 100
       },
       "seismicShift": {
         "difficulty": 2,
@@ -285,7 +282,7 @@
         "travelDistanceIncrease": 2,
         "damageReductionPercent": 15,
         "damageReductionDurationTicks": 40,
-        "verticalAscentDamage": 2000,
+        "verticalAscentDamage": 1500,
         "bonusVerticalBlocks": 1.5
       },
       "healingLink": {
@@ -303,9 +300,8 @@
       "oneManArmy": {
         "difficulty": 3,
         "name": "One Man Army",
-        "description": "Increase the duration of {{aqua:Undying Army}} by {{ticks}}, {{ticks}} for the caster. {{aqua:Undying Army}} will no longer heal nor damage you after being revived and resets the cooldown of {{aqua:Orbs of Life}}.",
-        "undyingArmyTickDurationIncrease": 40,
-        "undyingArmyTickDurationCaster": 360
+        "description": "Increase the duration of {{aqua:Undying Army}} by {{ticks}} for the caster. {{aqua:Undying Army}} will no longer damage you after being revived and resets the cooldown of {{aqua:Orbs of Life}} on revive.",
+        "undyingArmyTickDurationCaster": 200
       },
       "conduit": {
         "difficulty": 1,
@@ -484,7 +480,7 @@
         "difficulty": 4,
         "name": "Eye of the Storm",
         "description": "Reduce the range of {{aqua:Lightning Bolt}} to {{blocks}}, but increase the speed by {{speed;%}} and it will violently explode upon expiration or ground contact, with a {{blocks}} splash radius. Increase the {{aqua:Chain Lightning}} cooldown reduction from {{aqua:Lightning Bolt}} by {{ticks}}. {{aqua:Capacitor Totem}} can be casted to where you are looking (up to {{blocks}}), instantly procs on cast, and {{aqua:Lightning Rod}} always procs it.",
-        "maxTravelBlocks": 15,
+        "maxTravelBlocks": 20,
         "velocityIncreasePercentage": 100,
         "splashRadiusBlocks": 4,
         "chainCooldownReductionIncrease": 0.5,
@@ -592,8 +588,7 @@
       "riftAmbush": {
         "difficulty": 3,
         "name": "Rift Ambush",
-        "description": "Increase the range of {{aqua:Soul Switch}} by {{blocks}} and the damage reduction granted by {{damageReduction;%}}. {{aqua:Soul Switch}} will now only teleport you to your target, deal {{damage}} damage, and trap the target in a {{blocks}} radius for {{ticks}}.",
-        "soulSwitchRadiusIncrease": 5,
+        "description": "Increase the damage reduction of {{aqua:Soul Switch}} by {{damageReduction;%}}. {{aqua:Soul Switch}} will now only teleport you to your target, deal {{damage}} damage, and trap the target in a {{blocks}} radius for {{ticks}}.",
         "soulSwitchDamageReductionIncreasePercent": 15,
         "soulSwitchDamage": 400,
         "tetherRadius": 2,
@@ -616,12 +611,13 @@
       "abyssalGrasp": {
         "difficulty": 4,
         "name": "Abyssal Grasp",
-        "description": "Increase the damage of {{aqua:Soul Shackle}} by {{damage;%}} but increase the cooldown by {{ticks}} and reduce the range by {{blocks}}. {{aqua:Soul Shackle}} now pulls the target directly in front of you. Has reduced effect on flag carriers.",
+        "description": "Increase the damage of {{aqua:Soul Shackle}} by {{damage;%}} but increase the cooldown by {{ticks}} and reduce the range by {{blocks}}. {{aqua:Soul Shackle}} now pulls the target directly in front of you, while no longer silencing the target. Has reduced effect on flag carriers.",
         "soulShackleDamageIncreasePercent": 40,
         "soulShackleCooldownIncreaseTicks": 40,
         "soulShackleRangeDecrease": 4,
         "normalPullRange": 9,
-        "flagCarrierPullRange": 6
+        "flagCarrierPullRange": 6,
+        "silenceDurationTicks": 0
       },
       "vitalPulse": {
         "difficulty": 1,
@@ -738,8 +734,8 @@
         "difficulty": 2,
         "name": "Withering Plague",
         "description": "Increase the duration of {{dark_red:PHEX}} by {{ticks}}. For the duration of {{aqua:Astral Plague}}, increase the damage dealt to non-Tank enemies with max stacks of {{dark_red:PHEX}} by {{damage;%}}.",
-        "poisonousHexTicksIncrease": 80,
-        "damageIncrease": 30
+        "poisonousHexTicksIncrease": 40,
+        "damageIncrease": 20
       },
       "airStrike": {
         "difficulty": 5,
@@ -843,10 +839,11 @@
       "consecratedBeacon": {
         "difficulty": 2,
         "name": "Consecrated Beacon",
-        "description": "Reduce the energy cost of {{aqua:Sanctified Beacon}} by {{energy}}, the cooldown by {{ticks;%}}, and increase the {{dark_green:MHEX}} stacks granted by {{blue}}.",
+        "description": "Reduce the energy cost of {{aqua:Sanctified Beacon}} by {{energy}}, the cooldown by {{ticks;%}}, and increase the {{dark_green:MHEX}} stacks granted by {{blue}}. {{aqua:Sanctified Beacon}} now has {{blue}} charges",
         "sanctifiedBeaconEnergyCostDecrease": 10,
         "sanctifiedBeaconCooldownReductionPercent": 50,
-        "sanctifiedBeaconAdditionalHexStacks": 1
+        "sanctifiedBeaconAdditionalHexStacks": 1,
+        "maxAbilityCharges": 2
       },
       "holyNova": {
         "difficulty": 3,

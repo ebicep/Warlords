@@ -15,14 +15,12 @@ import java.util.List;
 
 public class MightyFists implements SpecBoostManager.SpecBoost<MightyFists> {
 
-    private float meleeIncreasePercent;
-    private float baseMeleePercent;
+    private float baseMeleePercent = 0;
     private float consecutiveHitIncreasePercent;
     private float maxIncreasePercent;
 
     @Override
     public void init() {
-        this.baseMeleePercent = getValue("baseMeleePercent", float.class);
         this.consecutiveHitIncreasePercent = getValue("consecutiveHitIncreasePercent", float.class);
         this.maxIncreasePercent = getValue("maxIncreasePercent", float.class);
     }
@@ -34,8 +32,7 @@ public class MightyFists implements SpecBoostManager.SpecBoost<MightyFists> {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(baseMeleePercent,
-                consecutiveHitIncreasePercent,
+        return List.of(consecutiveHitIncreasePercent,
                 maxIncreasePercent
         );
     }
@@ -81,7 +78,7 @@ public class MightyFists implements SpecBoostManager.SpecBoost<MightyFists> {
             if (!warlordsEntity.equals(event.getWarlordsEntity())) {
                 return;
             }
-            meleeDamageBoost = baseMeleePercent;
+            meleeDamageBoost = Math.max(meleeDamageBoost - consecutiveHitIncreasePercent, baseMeleePercent);;
         }
 
         @EventHandler

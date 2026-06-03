@@ -22,6 +22,7 @@ public class AbyssalGrasp implements SpecBoostManager.SpecBoost<AbyssalGrasp> {
     private int soulShackleRangeDecrease;
     private float normalPullRange;
     private float flagCarrierPullRange;
+    private int silenceDurationTicks;
 
     @Override
     public void init() {
@@ -30,6 +31,7 @@ public class AbyssalGrasp implements SpecBoostManager.SpecBoost<AbyssalGrasp> {
         this.soulShackleRangeDecrease = getValue("soulShackleRangeDecrease", int.class);
         this.normalPullRange = getValue("normalPullRange", float.class);
         this.flagCarrierPullRange = getValue("flagCarrierPullRange", float.class);
+        this.silenceDurationTicks = getValue("silenceDurationTicks", int.class);
     }
 
     @Override
@@ -39,7 +41,7 @@ public class AbyssalGrasp implements SpecBoostManager.SpecBoost<AbyssalGrasp> {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(soulShackleDamageIncreasePercent, soulShackleCooldownIncreaseTicks, soulShackleRangeDecrease, normalPullRange, flagCarrierPullRange);
+        return List.of(soulShackleDamageIncreasePercent, soulShackleCooldownIncreaseTicks, soulShackleRangeDecrease, normalPullRange, flagCarrierPullRange, silenceDurationTicks);
     }
 
     @Override
@@ -69,6 +71,7 @@ public class AbyssalGrasp implements SpecBoostManager.SpecBoost<AbyssalGrasp> {
                 soulShackle.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", soulShackleCooldownIncreaseTicks / 20f);
                 this.soulShackleRange = soulShackle.getShackleRange() - soulShackleRangeDecrease;
                 soulShackle.setShackleRange(soulShackleRange);
+                soulShackle.setSilenceDurationInTicks(silenceDurationTicks);
             });
         }
 

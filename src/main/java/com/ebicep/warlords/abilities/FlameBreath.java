@@ -82,7 +82,7 @@ public class FlameBreath extends AbstractAbility implements RedAbilityIcon, Dama
                     .value(damageValues.flameBreathDamage)
             ).ifPresent(finalEvent -> {
                 Location loc = breathTarget.getLocation();
-                Vector v = wp.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-velocity).setY(0.2);
+                Vector v = wp.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-velocity).setY(0.15);
                 new GameRunnable(wp.getGame()) {
                     @Override
                     public void run() {
