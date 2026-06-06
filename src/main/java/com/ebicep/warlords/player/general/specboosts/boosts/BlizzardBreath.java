@@ -1,6 +1,7 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
 import com.ebicep.warlords.abilities.FreezingBreath;
+import com.ebicep.warlords.abilities.FrostBolt;
 import com.ebicep.warlords.abilities.TimeSurge;
 import com.ebicep.warlords.abilities.TimeWarpCryomancer;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
@@ -118,14 +119,17 @@ public class BlizzardBreath implements SpecBoostManager.SpecBoost<BlizzardBreath
             if (!damageHealingEvent.getSource().equals(warlordsEntity)) {
                 return;
             }
-            if (!damageHealingEvent.getCause().equals("Frostbolt")) {
+            if (!damageHealingEvent.isDamageInstance()) {
+                return;
+            }
+            if (!(damageHealingEvent.getAbility() instanceof FrostBolt)) {
                 return;
             }
             if (!damageHealingEvent.getFlags().contains(InstanceFlags.DIRECT_HIT)) {
                 return;
             }
             warlordsEntity.getAbilitiesMatching(FreezingBreath.class).forEach(freezingBreath -> {
-                freezingBreath.subtractCurrentCooldown(frostboltDirectHitCooldownReductionTicks);
+                freezingBreath.subtractCurrentCooldown(frostboltDirectHitCooldownReductionTicks / 20f);
             });
         }
 

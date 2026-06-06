@@ -518,7 +518,7 @@
       },
       "flameBreath": {
         "name": "Flame Breath",
-        "cooldown": 9.5,
+        "cooldown": 8,
         "energyCost": 60,
         "maxAnimationTime": 12,
         "maxAnimationEffects": 4,
@@ -528,8 +528,8 @@
           "flameBreathDamage": {
             "min": 557,
             "max": 753,
-            "critChance": 20,
-            "critMultiplier": 175
+            "critChance": 25,
+            "critMultiplier": 185
           }
         }
       },

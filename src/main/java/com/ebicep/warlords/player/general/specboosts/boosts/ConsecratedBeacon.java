@@ -51,7 +51,7 @@ public class ConsecratedBeacon implements SpecBoostManager.SpecBoost<Consecrated
                 sanctifiedBeacon.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", -sanctifiedBeaconCooldownReductionPercent / 100);
                 sanctifiedBeacon.setStacksGranted(sanctifiedBeacon.getStacksGranted() + sanctifiedBeaconAdditionalHexStacks);
                 sanctifiedBeacon.setMaxCharges(maxAbilityCharges);
-                sanctifiedBeacon.setCurrentCooldown(0);
+                sanctifiedBeacon.setCurrentCharges(maxAbilityCharges);
             });
         }
 

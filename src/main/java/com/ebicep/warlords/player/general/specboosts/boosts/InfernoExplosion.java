@@ -88,15 +88,11 @@ public class InfernoExplosion implements SpecBoostManager.SpecBoost<InfernoExplo
             if (!(cooldown instanceof RegularCooldown<?> regularCooldown)) {
                 return;
             }
-            if (!cooldown.getCooldownClass().equals(Inferno.class) || !cooldown.getFrom().equals(warlordsEntity)) {
+            if (!cooldown.getCooldownClass().equals(Inferno.class)) {
                 return;
             }
             warlordsEntity.addSpeedModifier(warlordsEntity, cooldown.getName(), infernoSpeedPercent, regularCooldown.getTicksLeft());
-            regularCooldown.addTriConsumer((cd, ticksLeft, ticksElapsed) -> {
-                if (ticksLeft <= 1) {
-                    triggerExplosion();
-                }
-            });
+            regularCooldown.setOnRemove((cooldownManager) -> triggerExplosion());
         }
 
         private void triggerExplosion() {

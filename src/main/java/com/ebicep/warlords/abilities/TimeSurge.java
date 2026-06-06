@@ -84,10 +84,6 @@ public class TimeSurge extends AbstractAbility implements PurpleAbilityIcon, Abi
         return speedTickDuration;
     }
 
-    public void setSpeedTickDuration() {
-        this.speedTickDuration = speedTickDuration;
-    }
-
     public static class TimeSurgeStats extends AbstractAbilityStats<TimeSurge, TimeSurge.TimeSurgeStats> {
 
         @Override

@@ -70,14 +70,13 @@ public class Downpour implements SpecBoostManager.SpecBoost<Downpour> {
             });
             warlordsPlayer.getAbilitiesMatching(HealingRain.class).forEach(healingRain -> {
                 healingRain.setMaxCharges(healingRainMaxCharges);
+                healingRain.setCurrentCharges(healingRainMaxCharges);
                 healingRain.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", -healingRainCooldownReductionPercent / 100);
                 healingRain.getHealValues().getRainHealing().forEachValue(floatModifiable ->
                         floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", healingRainHealingIncreasePercent / 100)
                 );
                 healingRain.setTickDuration(Math.round(healingRain.getTickDuration() * (1 - healingRainDurationDecreasePercent / 100)));
                 healingRain.getHitBoxRadius().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", -healingRainRadiusDecreaseBlocks);
-                healingRain.setCurrentCooldown(0);
-                healingRain.setCurrentCooldown(0);
             });
         }
 

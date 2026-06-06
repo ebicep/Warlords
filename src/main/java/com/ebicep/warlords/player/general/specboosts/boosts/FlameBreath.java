@@ -59,8 +59,8 @@ public class FlameBreath implements SpecBoostManager.SpecBoost<FlameBreath> {
                 if (abilities.get(i) instanceof FlameBurst) {
                     com.ebicep.warlords.abilities.FlameBreath flameBreath = new com.ebicep.warlords.abilities.FlameBreath();
                     flameBreath.setMaxCharges(maxAbilityCharges);
+                    flameBreath.setMaxCharges(maxAbilityCharges);
                     flameBreath.init(flameBreath.getBuilder());
-                    flameBreath.setCurrentCooldown(1);
                     abilities.set(i, flameBreath);
                 } else if (abilities.get(i) instanceof TimeWarpPyromancer) {
                     TimeSurge timeSurge = new TimeSurge();
