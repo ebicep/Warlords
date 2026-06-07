@@ -21,7 +21,6 @@ import java.util.List;
 
 public class RiftAmbush implements SpecBoostManager.SpecBoost<RiftAmbush> {
 
-    private float soulSwitchRadiusIncrease;
     private int soulSwitchDamageReductionIncreasePercent;
     private float soulSwitchDamage;
     private float tetherRadius;
@@ -30,7 +29,6 @@ public class RiftAmbush implements SpecBoostManager.SpecBoost<RiftAmbush> {
 
     @Override
     public void init() {
-        this.soulSwitchRadiusIncrease = getValue("soulSwitchRadiusIncrease", float.class);
         this.soulSwitchDamageReductionIncreasePercent = getValue("soulSwitchDamageReductionIncreasePercent", int.class);
         this.soulSwitchDamage = getValue("soulSwitchDamage", float.class);
         this.tetherRadius = getValue("tetherRadius", float.class);
@@ -45,7 +43,7 @@ public class RiftAmbush implements SpecBoostManager.SpecBoost<RiftAmbush> {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(soulSwitchRadiusIncrease, soulSwitchDamageReductionIncreasePercent, soulSwitchDamage, tetherRadius, tetherTickDuration);
+        return List.of(soulSwitchDamageReductionIncreasePercent, soulSwitchDamage, tetherRadius, tetherTickDuration);
     }
 
     @Override
@@ -66,7 +64,6 @@ public class RiftAmbush implements SpecBoostManager.SpecBoost<RiftAmbush> {
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(SoulSwitch.class).forEach(soulSwitch -> {
-                soulSwitch.getHitBoxRadius().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", soulSwitchRadiusIncrease);
                 soulSwitch.setVerticalLimit(soulSwitchVerticalLimit);
                 soulSwitch.setDamageReduction(soulSwitch.getDamageReduction() + soulSwitchDamageReductionIncreasePercent);
                 soulSwitch.setCanSwitchToCarrier(true);

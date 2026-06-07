@@ -52,8 +52,8 @@ public class Blink implements SpecBoostManager.SpecBoost<Blink> {
                 if (ability instanceof SoulSwitch) {
                     com.ebicep.warlords.abilities.Blink blink = new com.ebicep.warlords.abilities.Blink();
                     blink.setMaxCharges(maxAbilityCharges);
+                    blink.setCurrentCharges(maxAbilityCharges);
                     blink.init(blink.getBuilder());
-                    blink.setCurrentCooldown(1);
                     abilities.set(i, blink);
                 }
             }
