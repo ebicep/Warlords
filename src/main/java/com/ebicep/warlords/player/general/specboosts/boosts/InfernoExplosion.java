@@ -6,16 +6,18 @@ import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
-import com.ebicep.warlords.util.warlords.PlayerFilter;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
-import java.util.Collections;
 import org.bukkit.event.EventHandler;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class InfernoExplosion implements SpecBoostManager.SpecBoost<InfernoExplosion>{
 
@@ -92,7 +94,11 @@ public class InfernoExplosion implements SpecBoostManager.SpecBoost<InfernoExplo
                 return;
             }
             warlordsEntity.addSpeedModifier(warlordsEntity, cooldown.getName(), infernoSpeedPercent, regularCooldown.getTicksLeft());
-            regularCooldown.setOnRemove((cooldownManager) -> triggerExplosion());
+            Consumer<CooldownManager> oldOnRemove = regularCooldown.getOnRemove();
+            regularCooldown.setOnRemove((cooldownManager) -> {
+                oldOnRemove.accept(cooldownManager);
+                triggerExplosion();
+            });
         }
 
         private void triggerExplosion() {
