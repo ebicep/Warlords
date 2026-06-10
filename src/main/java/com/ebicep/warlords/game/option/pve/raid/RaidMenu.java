@@ -59,7 +59,7 @@ public class RaidMenu {
                         .get(),
                 (m, e) -> {
                     GameStartCommand.startGamePvERaid(player, queueEntryBuilder ->
-                            queueEntryBuilder.setMap(GameMap.THE_OBSIDIAN_TRAIL_RAID)
+                            queueEntryBuilder.setMap(GameMap.RAID_ONE)
                                              .setRequestedGameAddons(GameAddon.PRIVATE_GAME)
 
                     );
@@ -94,7 +94,7 @@ public class RaidMenu {
                         .get(),
                 (m, e) -> {
                     GameStartCommand.startGamePvERaid(player, queueEntryBuilder ->
-                            queueEntryBuilder.setMap(GameMap.THE_OBSIDIAN_TRAIL_RAID)
+                            queueEntryBuilder.setMap(GameMap.RAID_ONE)
                                     .setRequestedGameAddons(GameAddon.PRIVATE_GAME)
 
                     );

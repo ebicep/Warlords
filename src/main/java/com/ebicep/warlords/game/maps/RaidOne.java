@@ -11,6 +11,7 @@ import com.ebicep.warlords.game.option.SpawnpointOption;
 import com.ebicep.warlords.game.option.cuboid.BoundingBoxOption;
 import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
+import com.ebicep.warlords.game.option.pve.raid.Raid;
 import com.ebicep.warlords.game.option.pve.raid.RaidOption;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 
@@ -19,15 +20,15 @@ import java.util.List;
 
 import static com.ebicep.warlords.util.warlords.GameRunnable.SECOND;
 
-public class TheObsidianTrailRaid extends GameMap {
+public class RaidOne extends GameMap {
 
-    public TheObsidianTrailRaid() {
+    public RaidOne() {
         super(
-                "§c§lThe Obsidian Trail",
+                "Regnum of Two Crowns",
                 8,
-                4,
+                1,
                 60 * SECOND,
-                "TheObsidianTrail",
+                "RaidOne",
                 1,
                 GameMode.RAID
         );
@@ -38,13 +39,13 @@ public class TheObsidianTrailRaid extends GameMap {
         List<Option> options = category.initMap(this, loc, addons);
 
         options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
-        options.add(LobbyLocationMarker.create(loc.addXYZ(711.5, 7, 179.5), Team.BLUE).asOption());
-        options.add(LobbyLocationMarker.create(loc.addXYZ(711.5, 7, 179.5), Team.RED).asOption());
+        options.add(LobbyLocationMarker.create(loc.addXYZ(-50.5, 25, -450.5), Team.BLUE).asOption());
+        options.add(LobbyLocationMarker.create(loc.addXYZ(-50.5, 25, -450.5), Team.RED).asOption());
 
-        options.add(SpawnpointOption.forTeam(loc.addXYZ(711.5, 7, 179.5), Team.BLUE));
-        options.add(SpawnpointOption.forTeam(loc.addXYZ(711.5, 7, 179.5), Team.RED));
+        options.add(SpawnpointOption.forTeam(loc.addXYZ(-50.5, 25, -450.5), Team.BLUE));
+        options.add(SpawnpointOption.forTeam(loc.addXYZ(-50.5, 25, -450.5), Team.RED));
 
-        options.add(new RaidOption());
+        //options.add(new RaidOption(Raid.REGNUM_OF_TWO_CROWNS));
         options.add(new GraveOption());
 
         options.add(new BasicScoreboardOption());

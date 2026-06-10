@@ -59,7 +59,7 @@ public abstract class GameMap {
     public static final GameMap SUN_AND_MOON = new SunAndMoon();
     public static final GameMap SUN_AND_MOON_2 = new SunAndMoon2();
     public static final GameMap TARTARUS = new Tartarus();
-    public static final GameMap THE_OBSIDIAN_TRAIL_RAID = new TheObsidianTrailRaid();
+    public static final GameMap RAID_ONE = new RaidOne();
     public static final GameMap DUAL_DESCENT = new DualDescent();
     public static final GameMap TUTORIAL_MAP = new Tutorial();
     public static final GameMap VALLEY = new Valley();
@@ -116,7 +116,7 @@ public abstract class GameMap {
             SUN_AND_MOON,
             SUN_AND_MOON_2,
             TARTARUS,
-            THE_OBSIDIAN_TRAIL_RAID,
+            RAID_ONE,
             DUAL_DESCENT,
             TUTORIAL_MAP,
             VALLEY,
