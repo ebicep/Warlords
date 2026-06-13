@@ -112,6 +112,15 @@ public class InfernoExplosion implements SpecBoostManager.SpecBoost<InfernoExplo
                     .source(warlordsEntity)
                     .value(healthLost)
             );
+            warlordsEntity.getCooldownManager().addCooldown(new RegularCooldown<>(
+                    "Inferno Shield", null, InfernoExplosion.class, null, warlordsEntity,
+                    CooldownTypes.BUFF,
+                    cooldownManager -> {},
+                    damageReductionDurationTicks,
+                    Collections.emptyList()
+            ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE , (event, currentDamageValue) -> {
+                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Inferno Shield", 1 - damageReductionPercent / 100);
+            }));
             for (WarlordsEntity target : PlayerFilter
                     .entitiesAround(warlordsEntity, explosionRadius, explosionRadius, explosionRadius)
                     .aliveEnemiesOf(warlordsEntity)
@@ -125,15 +134,6 @@ public class InfernoExplosion implements SpecBoostManager.SpecBoost<InfernoExplo
                         .critMultiplier(explosionCritMultiplier)
                 );
             }
-            warlordsEntity.getCooldownManager().addCooldown(new RegularCooldown<>(
-                    "Inferno Shield", null, InfernoExplosion.class, null, warlordsEntity,
-                    CooldownTypes.BUFF,
-                    cooldownManager -> {},
-                    damageReductionDurationTicks,
-                    Collections.emptyList()
-            ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE , (event, currentDamageValue) -> {
-                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Inferno Shield", 1 - damageReductionPercent / 100);
-            }));
         }
     }
 }
