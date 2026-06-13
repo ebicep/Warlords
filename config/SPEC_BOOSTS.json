@@ -57,10 +57,10 @@
         "infernoSpeedPercent": 25,
         "healthLossPercent": 95,
         "explosionDamageBase": 300,
-        "healthToDamagePercent": 20,
+        "healthToDamagePercent": 30,
         "explosionRadius": 5,
         "damageReductionPercent": 99,
-        "damageReductionDurationTicks": 20,
+        "damageReductionDurationTicks": 40,
         "explosionCritChance": 20,
         "explosionCritMultiplier": 110
       },
