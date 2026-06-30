@@ -128,6 +128,9 @@ public class BlizzardBreath implements SpecBoostManager.SpecBoost<BlizzardBreath
             if (!damageHealingEvent.getFlags().contains(InstanceFlags.DIRECT_HIT)) {
                 return;
             }
+            if (damageHealingEvent.getFlags().contains(InstanceFlags.OVERFLOW)) {
+                return;
+            }
             warlordsEntity.getAbilitiesMatching(FreezingBreath.class).forEach(freezingBreath -> {
                 freezingBreath.subtractCurrentCooldown(frostboltDirectHitCooldownReductionTicks / 20f);
             });
