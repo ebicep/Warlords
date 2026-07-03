@@ -79,7 +79,7 @@ public class ElectromagneticChains implements SpecBoostManager.SpecBoost<Electro
             }
             WarlordsEntity target = event.getWarlordsEntity();
             target.getCooldownManager().limitCooldowns(RegularCooldown.class, Boost.class, maxStacks);
-            target.getCooldownManager().addCooldown(new RegularCooldown<>(
+            RegularCooldown<Boost> cd = new RegularCooldown<>(
                     getStringName(),
                     "CHAIN",
                     Boost.class,
@@ -88,13 +88,15 @@ public class ElectromagneticChains implements SpecBoostManager.SpecBoost<Electro
                     CooldownTypes.HIGH_LEVEL_DEBUFF,
                     cooldownManager -> {},
                     chainLightningDurationTicks
-            ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
+            );
+            cd.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
                 currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
-                        getStringName(),
+                        getStringName() + " " + Integer.toHexString(cd.hashCode()),
                         AbstractAbility.convertToDivisionDecimal(chainLightningDamageReductionPercent)
                 );
                     }
-            ));
+            );
+            target.getCooldownManager().addCooldown(cd);
         }
 
     }

@@ -149,7 +149,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
                 } else {
                     nearBy.getCooldownManager().removeCooldownByObject(beacon);
                     boolean[] crit = {false};
-                    nearBy.getCooldownManager().addCooldown(new RegularCooldown<>(
+                    RegularCooldown<SanctifiedBeaconData> enemyCooldown = new RegularCooldown<>(
                             name,
                             null,
                             SanctifiedBeaconData.class,
@@ -158,28 +158,32 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
                             CooldownTypes.ABILITY,
                             cooldownManager -> {},
                             6 // a little longer to make sure there's no gaps in the effect
-                    ).addModifier(Modifier.MODIFY_OUTGOING_CRIT_MULTIPLIER_POST_CALC, (event, currentDamageValue, isCrit, critChance, critMultiplier) -> {
+                    );
+                    enemyCooldown.addModifier(Modifier.MODIFY_OUTGOING_CRIT_MULTIPLIER_POST_CALC, (event, currentDamageValue, isCrit, critChance, critMultiplier) -> {
                         crit[0] = isCrit;
                         if (isCrit) {
                             stats.critsReduced++;
                         }
                             }
-                    ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                    );
+                    String modifierName = name + " " + Integer.toHexString(enemyCooldown.hashCode());
+                    enemyCooldown.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                                 if (crit[0]) { // TODO unscuff
                                     currentDamageValue.addModifier(
-                                            FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, name,
+                                            FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, modifierName,
                                             -critMultiplierReducedBy / 100f,
                                             contribution -> stats.critDamageReduced += Math.abs(contribution)
                                     );
                                 }
                                 if (wp.isInPve()) {
                                     currentDamageValue.addModifier(
-                                            FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name,
+                                            FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, modifierName,
                                             convertToDivisionDecimal(damageReductionPve)
                                     );
                                 }
                             }
-                    ));
+                    );
+                    nearBy.getCooldownManager().addCooldown(enemyCooldown);
                     if (pveMasterUpgrade2) {
                         if (nearBy instanceof WarlordsNPC npc && npc.getMob() instanceof BossLike) {
                             return;
