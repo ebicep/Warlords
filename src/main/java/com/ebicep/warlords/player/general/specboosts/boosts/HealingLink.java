@@ -12,11 +12,11 @@ import java.util.List;
 
 public class HealingLink implements SpecBoostManager.SpecBoost<HealingLink> {
 
-    private int groundSlamCooldownReductionTicks;
+    private int chargeCooldownReductionTicks;
 
     @Override
     public void init() {
-        this.groundSlamCooldownReductionTicks = getValue("groundSlamCooldownReductionTicks", int.class);
+        this.chargeCooldownReductionTicks = getValue("chargeCooldownReductionTicks", int.class);
     }
 
     @Override
@@ -31,7 +31,7 @@ public class HealingLink implements SpecBoostManager.SpecBoost<HealingLink> {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(groundSlamCooldownReductionTicks);
+        return List.of(chargeCooldownReductionTicks);
     }
 
     @Override
@@ -51,12 +51,12 @@ public class HealingLink implements SpecBoostManager.SpecBoost<HealingLink> {
             List<AbstractAbility> abilities = warlordsPlayer.getAbilities();
             for (int i = 0; i < abilities.size(); i++) {
                 AbstractAbility ability = abilities.get(i);
-                if (ability instanceof RecklessCharge) {
+                if (ability instanceof GroundSlamRevenant) {
                     com.ebicep.warlords.abilities.HealingLink healingLink = new com.ebicep.warlords.abilities.HealingLink();
                     healingLink.init(healingLink.getBuilder());
                     abilities.set(i, healingLink);
-                } else if (ability instanceof GroundSlamRevenant groundSlam) {
-                    groundSlam.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", -groundSlamCooldownReductionTicks / 20f);
+                } else if (ability instanceof RecklessCharge recklessCharge) {
+                    recklessCharge.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", -chargeCooldownReductionTicks / 20f);
                 }
             }
             warlordsPlayer.resetAbilityTree();

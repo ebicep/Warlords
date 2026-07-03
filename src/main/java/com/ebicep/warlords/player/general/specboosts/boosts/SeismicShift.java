@@ -1,5 +1,6 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
+import com.ebicep.warlords.abilities.GroundSlamBerserker;
 import com.ebicep.warlords.abilities.SeismicWaveBerserker;
 import com.ebicep.warlords.abilities.internal.WoundingCooldown;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
@@ -14,12 +15,14 @@ import java.util.List;
 public class SeismicShift implements SpecBoostManager.SpecBoost<SeismicShift> {
 
     private int seismicWaveCooldownReductionTicks;
+    private int groundSlamCooldownReductionTicks;
     private int seismicWaveWoundingPercent;
     private int seismicWaveWoundingTickDuration;
 
     @Override
     public void init() {
         this.seismicWaveCooldownReductionTicks = getValue("seismicWaveCooldownReductionTicks", int.class);
+        this.groundSlamCooldownReductionTicks = getValue("groundSlamCooldownReductionTicks", int.class);
         this.seismicWaveWoundingPercent = getValue("seismicWaveWoundingPercent", int.class);
         this.seismicWaveWoundingTickDuration = getValue("seismicWaveWoundingTickDuration", int.class);
     }
@@ -33,6 +36,7 @@ public class SeismicShift implements SpecBoostManager.SpecBoost<SeismicShift> {
     public List<Object> getVariables() {
         return List.of(
                 seismicWaveCooldownReductionTicks,
+                groundSlamCooldownReductionTicks,
                 seismicWaveWoundingPercent,
                 seismicWaveWoundingTickDuration
         );
@@ -57,6 +61,9 @@ public class SeismicShift implements SpecBoostManager.SpecBoost<SeismicShift> {
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(SeismicWaveBerserker.class).forEach(seismicWave -> {
                 seismicWave.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", -seismicWaveCooldownReductionTicks / 20f);
+            });
+            warlordsPlayer.getAbilitiesMatching(GroundSlamBerserker.class).forEach(groundSlam -> {
+                groundSlam.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", -groundSlamCooldownReductionTicks / 20f);
             });
         }
 
