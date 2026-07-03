@@ -151,6 +151,7 @@ tasks {
     }
 
     shadowJar {
+        archiveVersion.set(project.version.toString().replace(" ", "-"))
         relocate("co.aikar.commands", "com.ebicep.warlords.acf.acf")
         relocate("co.aikar.locales", "com.ebicep.warlords.acf.locales")
     }
@@ -161,11 +162,12 @@ tasks {
 
 
     reobfJar {
-        // This is an example of how you might change the output location for reobfJar. It's recommended not to do this
-        // for a variety of reasons, however it's asked frequently enough that an example of how to do it is included here.
+        val safeVersion = project.version.toString().replace(" ", "-")
         val output = System.getProperty("outputDirectory")
         if (output != null) {
-            outputJar.set(layout.buildDirectory.file("${output}${project.name}-${project.version}.jar"))
+            outputJar.set(layout.buildDirectory.file("${output}${project.name}-${safeVersion}.jar"))
+        } else {
+            outputJar.set(layout.buildDirectory.file("libs/${project.name}-${safeVersion}.jar"))
         }
     }
 
