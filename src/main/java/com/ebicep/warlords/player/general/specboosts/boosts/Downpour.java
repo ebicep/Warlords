@@ -14,7 +14,6 @@ public class Downpour implements SpecBoostManager.SpecBoost<Downpour> {
     private float waterBoltSpeedIncreasePercent;
     private float waterBreathKnockbackIncrease;
     private int healingRainMaxCharges;
-    private float healingRainHealingIncreasePercent;
     private float healingRainCooldownReductionPercent;
     private float healingRainDurationDecreasePercent;
     private float healingRainRadiusDecreaseBlocks;
@@ -25,7 +24,6 @@ public class Downpour implements SpecBoostManager.SpecBoost<Downpour> {
         this.waterBreathKnockbackIncrease = getValue("waterBreathKnockbackIncrease", float.class);
         this.healingRainMaxCharges = getValue("healingRainMaxCharges", int.class);
         this.healingRainCooldownReductionPercent = getValue("healingRainCooldownReductionPercent", float.class);
-        this.healingRainHealingIncreasePercent = getValue("healingRainHealingIncreasePercent", float.class);
         this.healingRainDurationDecreasePercent = getValue("healingRainDurationDecreasePercent", float.class);
         this.healingRainRadiusDecreaseBlocks = getValue("healingRainRadiusDecreaseBlocks", float.class);
     }
@@ -41,7 +39,6 @@ public class Downpour implements SpecBoostManager.SpecBoost<Downpour> {
                 waterBoltSpeedIncreasePercent,
                 healingRainMaxCharges,
                 healingRainCooldownReductionPercent,
-                healingRainHealingIncreasePercent,
                 healingRainDurationDecreasePercent,
                 healingRainRadiusDecreaseBlocks
         );
@@ -72,9 +69,7 @@ public class Downpour implements SpecBoostManager.SpecBoost<Downpour> {
                 healingRain.setMaxCharges(healingRainMaxCharges);
                 healingRain.setCurrentCharges(healingRainMaxCharges);
                 healingRain.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", -healingRainCooldownReductionPercent / 100);
-                healingRain.getHealValues().getRainHealing().forEachValue(floatModifiable ->
-                        floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", healingRainHealingIncreasePercent / 100)
-                );
+                healingRain.getHealValues().getRainHealing().critChance().addModifier(FloatModifiable.ModifierType.OVERRIDING, "Spec Boost", 100);
                 healingRain.setTickDuration(Math.round(healingRain.getTickDuration() * (1 - healingRainDurationDecreasePercent / 100)));
                 healingRain.getHitBoxRadius().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", -healingRainRadiusDecreaseBlocks);
             });

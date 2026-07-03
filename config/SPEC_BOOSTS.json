@@ -54,11 +54,11 @@
         "name": "Immolation Inferno",
         "description": "Shorten the duration of {{aqua:Inferno}} by {{ticks}} and gain {{speed;%}} speed. Upon {{aqua:Inferno}} ending, lose {{damage;%}} of your health, deal {{damage}} + {{damage;%}} of that as damage within {{blue}} blocks, and gain {{damageReduction;%}} damage reduction for {{ticks}}.",
         "infernoDurationReductionTicks": 220,
-        "infernoSpeedPercent": 25,
-        "healthLossPercent": 95,
+        "infernoSpeedPercent": 35,
+        "healthLossPercent": 75,
         "explosionDamageBase": 300,
-        "healthToDamagePercent": 30,
-        "explosionRadius": 5,
+        "healthToDamagePercent": 45,
+        "explosionRadius": 7,
         "damageReductionPercent": 99,
         "damageReductionDurationTicks": 40,
         "explosionCritChance": 20,
@@ -175,11 +175,10 @@
       "downpour": {
         "difficulty": 2,
         "name": "Downpour",
-        "description": "Increase the speed of {{aqua:Water Bolt}} by {{speed;%}} and remove the optimal range. Increase the knockback of {{aqua:Water Breath}}. Increase the number of charges of {{aqua:Healing Rain}} to {{blue}} and the healing by {{heal;%}}, but reduce the cooldown by {{ticks;%}}, the duration by {{ticks;%}}, and the radius by {{blocks}}.",
+        "description": "Increase the speed of {{aqua:Water Bolt}} by {{speed;%}} and remove the optimal range. Increase the knockback of {{aqua:Water Breath}}. Increase the number of charges of {{aqua:Healing Rain}} to {{blue}} and guarantee critical hits, but reduce the cooldown by {{ticks;%}}, the duration by {{ticks;%}}, and the radius by {{blocks}}.",
         "waterBoltSpeedIncreasePercent": 100,
         "waterBreathKnockbackIncrease": 0.15,
         "healingRainMaxCharges": 3,
-        "healingRainHealingIncreasePercent": 20,
         "healingRainCooldownReductionPercent": 60,
         "healingRainDurationDecreasePercent": 60,
         "healingRainRadiusDecreaseBlocks": 4
@@ -218,8 +217,8 @@
         "difficulty": 4,
         "name": "Mighty Fists",
         "description": "Every melee hit gives damage stacks. Each stack increases damage by {{damage;%}}, up to {{damage;%}}. Activating any ability removes 1 stack.",
-        "consecutiveHitIncreasePercent": 20,
-        "maxIncreasePercent": 100
+        "consecutiveHitIncreasePercent": 30,
+        "maxIncreasePercent": 120
       },
       "seismicShift": {
         "difficulty": 2,
@@ -475,7 +474,7 @@
         "windfuryExtraGuaranteedHits": 1,
         "slowKbResistancePercent": 100,
         "speedIncreasePercent": 40,
-        "speedDurationTicks": 80
+        "speedDurationTicks": 60
       },
       "galvanizedSpark": {
         "difficulty": 2,
@@ -580,7 +579,7 @@
         "healingTotemSpeedMultiplier": 2,
         "healingTotemRadiusIncrease": 2,
         "healthTransferThresholdPercent": 90,
-        "healthTransferEffectivenessPercent": 70
+        "healthTransferEffectivenessPercent": 60
       },
       "trickster": {
         "difficulty": 3,
