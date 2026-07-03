@@ -37,5 +37,5 @@ jobs:
           password: ${{ secrets.SFTP_PASSWORD }}
           port: ${{ secrets.SFTP_PORT || '22' }}
           local_path: ${{ env.JAR_PATH }}
-          remote_path: '/__VDS__Datastore-DefaultDatastore/Warlords2DockerClone01/Minecraft/plugins/test'
+          remote_path: ${{ secrets.SFTP_REMOTE_PATH }}
           sftp_only: true
