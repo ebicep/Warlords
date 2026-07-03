@@ -150,6 +150,10 @@ tasks {
         filteringCharset = Charsets.UTF_8.name() // We want UTF-8 for everything
     }
 
+    jar {
+        archiveVersion.set(project.version.toString().replace(" ", "-"))
+    }
+
     shadowJar {
         archiveVersion.set(project.version.toString().replace(" ", "-"))
         relocate("co.aikar.commands", "com.ebicep.warlords.acf.acf")
