@@ -3,38 +3,34 @@ package com.ebicep.warlords.player.general.specboosts.boosts;
 import com.ebicep.warlords.abilities.CrusadersStrike;
 import com.ebicep.warlords.abilities.InspiringPresence;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.events.game.WarlordsFlagUpdatedEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
-import com.ebicep.warlords.game.flags.PlayerFlagLocation;
+import com.ebicep.warlords.events.player.ingame.WarlordsStrikeEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
-import com.ebicep.warlords.player.ingame.motionsystem.MotionModifierBuilder;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.event.EventHandler;
 
 import java.util.List;
+import java.util.Objects;
 
 public class RallyingPresence implements SpecBoostManager.SpecBoost<RallyingPresence> {
 
     private int energyPerSecondIncrease;
     private int speedIncreasePercent;
-    private float inspiringPresenceDamageReductionPercent;
-    private float flagSpeedIncreasePercent;
-    private float flagKnockbackResistancePercent;
-    private int crusaderStrikeEnergyIncrease;
+    private float damagePerAllyHitPercent;
+    private int inspiringPresenceDurationIncreasePerStrikeTicks;
 
     @Override
     public void init() {
         this.energyPerSecondIncrease = getValue("energyPerSecondIncrease", int.class);
         this.speedIncreasePercent = getValue("speedIncreasePercent", int.class);
-        this.inspiringPresenceDamageReductionPercent = getValue("inspiringPresenceDamageReductionPercent", float.class);
-        this.flagSpeedIncreasePercent = getValue("flagSpeedIncreasePercent", float.class);
-        this.flagKnockbackResistancePercent = getValue("flagKnockbackResistancePercent", float.class);
-        this.crusaderStrikeEnergyIncrease = getValue("crusaderStrikeEnergyIncrease", int.class);
+        this.damagePerAllyHitPercent = getValue("damagePerAllyHitPercent", float.class);
+        this.inspiringPresenceDurationIncreasePerStrikeTicks = getValue("inspiringPresenceDurationIncreasePerStrikeTicks", int.class);
     }
 
     @Override
@@ -47,10 +43,9 @@ public class RallyingPresence implements SpecBoostManager.SpecBoost<RallyingPres
         return List.of(
                 energyPerSecondIncrease,
                 speedIncreasePercent,
-                inspiringPresenceDamageReductionPercent,
-                flagSpeedIncreasePercent,
-                flagKnockbackResistancePercent,
-                crusaderStrikeEnergyIncrease);
+                damagePerAllyHitPercent,
+                inspiringPresenceDurationIncreasePerStrikeTicks
+        );
     }
 
     @Override
@@ -78,46 +73,46 @@ public class RallyingPresence implements SpecBoostManager.SpecBoost<RallyingPres
 
         @EventHandler
         public void onCooldownAddEvent(WarlordsAddCooldownEvent event) {
-            if (!warlordsEntity.equals(event.getWarlordsEntity())) {
+            AbstractCooldown<?> cooldown = event.getAbstractCooldown();
+            if (!Objects.equals(cooldown.getFrom(), warlordsEntity)) {
                 return;
             }
-            AbstractCooldown<?> cooldown = event.getAbstractCooldown();
             if (!(cooldown instanceof RegularCooldown<?> regularCooldown)) {
                 return;
             }
-            if (!cooldown.getCooldownClass().equals(InspiringPresence.InspiringPresenceData.class) || !cooldown.getFrom().equals(warlordsEntity)) {
+            if (!(regularCooldown.getCooldownObject() instanceof InspiringPresence.InspiringPresenceData data)) {
                 return;
             }
-            regularCooldown.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (e, currentDamageValue) -> {
-                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
-                        getStringName(),
-                        AbstractAbility.convertToDivisionDecimal(inspiringPresenceDamageReductionPercent)
-                );
+            int alliesHitCount = data.getAlliesHitCount();
+            if (alliesHitCount == 0) {
+                return;
+            }
+            regularCooldown.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                                getStringName(),
+                                AbstractAbility.convertToMultiplicationDecimal(alliesHitCount * damagePerAllyHitPercent)
+                        );
                     }
             );
         }
 
-        @EventHandler
-        public void onWarlordsFlagUpdated(WarlordsFlagUpdatedEvent event) {
-            if (event.getNew() instanceof PlayerFlagLocation playerFlagLocation && playerFlagLocation.getPlayer().equals(warlordsEntity)) {
-                warlordsEntity.getKnockback().addModifier(new MotionModifierBuilder()
-                        .setFrom(warlordsEntity)
-                        .setName(getStringName())
-                        .setModifier(-flagKnockbackResistancePercent)
-                        .setDuration(-1)
-                        .build()
-                );
-                warlordsEntity.addSpeedModifier(warlordsEntity, getStringName(), flagSpeedIncreasePercent, -1);
-                warlordsEntity.getAbilitiesMatching(CrusadersStrike.class).forEach(crusadersStrike -> {
-                    crusadersStrike.setEnergyGiven(crusadersStrike.getEnergyGiven() + crusaderStrikeEnergyIncrease);
-                });
-            } else if (event.getOld() instanceof PlayerFlagLocation playerFlagLocation && playerFlagLocation.getPlayer().equals(warlordsEntity)) {
-                warlordsEntity.getKnockback().removeModifier(getStringName());
-                warlordsEntity.getSpeed().removeModifier(getStringName());
-                warlordsEntity.getAbilitiesMatching(CrusadersStrike.class).forEach(crusadersStrike -> {
-                    crusadersStrike.setEnergyGiven(crusadersStrike.getEnergyGiven() - crusaderStrikeEnergyIncrease);
-                });
+        @EventHandler(ignoreCancelled = true)
+        public void onWarlordsStrikeEvent(WarlordsStrikeEvent event) {
+            if (!warlordsEntity.equals(event.getWarlordsEntity())) {
+                return;
             }
+            if (!(event.getStrikeAbility() instanceof CrusadersStrike)) {
+                return;
+            }
+            new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
+                    .filterCooldownClass(InspiringPresence.InspiringPresenceData.class)
+                    .filterCooldownFrom(warlordsEntity)
+                    .forEach(regularCooldown -> regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + inspiringPresenceDurationIncreasePerStrikeTicks));
+            warlordsEntity.getAbilitiesMatching(InspiringPresence.class).forEach(inspiringPresence -> {
+                warlordsEntity.getSpeed().getModifiers().stream()
+                              .filter(modifier -> modifier.getName().equals(inspiringPresence.getName()))
+                              .forEach(modifier -> modifier.setTicksLeft(modifier.getTicksLeft() + inspiringPresenceDurationIncreasePerStrikeTicks));
+            });
         }
 
     }
