@@ -1,7 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.*;
-import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
+import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -15,10 +15,13 @@ import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-public class HealingLink extends AbstractAbility implements RedAbilityIcon, Duration, Heals<HealingLink.HealingValues>, AbilityStats<HealingLink, HealingLink.HealingLinkStats> {
+public class HealingLink extends AbstractAbility implements PurpleAbilityIcon, Duration, Heals<HealingLink.HealingValues>, AbilityStats<HealingLink, HealingLink.HealingLinkStats> {
 
     private final HealingLinkStats stats = new HealingLinkStats();
     private final HealingValues healingValues = new HealingValues();
