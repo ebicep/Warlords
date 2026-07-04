@@ -390,7 +390,7 @@
       "sovereignSolitude": {
         "difficulty": 4,
         "name": "Solo Support",
-        "description": "A Marked ally gains {{speed;%}} movement speed during the Mark. The marked ally is the only one that receives {{aqua:Crusader's Strike}} energy at any range until a new ally is Marked or either player dies; the energy link persists after the Mark expires. Gain {{heal}} max health while carrying the flag. Reduce the cooldown of {{aqua:Holy Radiance}} by {{ticks}}.",
+        "description": "A Marked ally gains {{speed;%}} movement speed during the Mark. The marked ally always receives {{aqua:Crusader's Strike}} energy at any range until a new ally is Marked or either player dies; the energy link persists after the Mark expires. Nearby allies within range can still receive energy up to the normal ally limit. Gain {{heal}} max health while carrying the flag. Reduce the cooldown of {{aqua:Holy Radiance}} by {{ticks}}.",
         "markedAllySpeedPercent": 40,
         "radianceCooldownReductionTicks": 80,
         "flagHealthIncrease": 1000
