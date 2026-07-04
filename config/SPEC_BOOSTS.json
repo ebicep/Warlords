@@ -223,9 +223,9 @@
       "seismicShift": {
         "difficulty": 2,
         "name": "Seismic Shift",
-        "description": "Reduce the cooldown of {{aqua:Seismic Wave}} by {{ticks}} and {{aqua:Ground Slam}} by {{ticks}}. {{aqua:Seismic Wave}} now applies {{damage;%}} wounding for {{ticks}}.",
+        "description": "Reduce the cooldown of {{aqua:Seismic Wave}} by {{ticks}}. Increase the damage of {{aqua:Seismic Wave}} by {{damage;%}}. {{aqua:Seismic Wave}} now applies {{damage;%}} wounding for {{ticks}}.",
         "seismicWaveCooldownReductionTicks": 50,
-        "groundSlamCooldownReductionTicks": 50,
+        "seismicWaveDamageIncreasePercent": 20,
         "seismicWaveWoundingPercent": 60,
         "seismicWaveWoundingTickDuration": 60
       },
