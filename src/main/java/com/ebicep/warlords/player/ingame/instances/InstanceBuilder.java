@@ -92,7 +92,9 @@ public class InstanceBuilder {
 
     public InstanceBuilder ability(AbstractAbility ability) {
         this.ability = ability;
-        this.cause = ability.getName();
+        if (ability != null) {
+            this.cause = ability.getName();
+        }
         return this;
     }
 
