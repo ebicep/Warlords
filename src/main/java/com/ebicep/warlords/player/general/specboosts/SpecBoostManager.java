@@ -85,6 +85,7 @@ public class SpecBoostManager {
     public static final SpecBoost<RallyingPresence> RALLYING_PRESENCE = new RallyingPresence();
     public static final SpecBoost<RecklessAscent> RECKLESS_ASCENT = new RecklessAscent();
     public static final SpecBoost<RiftAmbush> RIFT_AMBUSH = new RiftAmbush();
+    public static final SpecBoost<SacrificialStand> SACRIFICIAL_STAND = new SacrificialStand();
     public static final SpecBoost<SanctionBurst> SANCTION_BURST = new SanctionBurst();
     public static final SpecBoost<SanctuaryOfRetribution> SANCTUARY_OF_RETRIBUTION = new SanctuaryOfRetribution();
     public static final SpecBoost<SeismicShift> SEISMIC_SHIFT = new SeismicShift();
@@ -125,7 +126,7 @@ public class SpecBoostManager {
         SPEC_BOOSTS.put(Specializations.CRYOMANCER, List.of(FROST_MISSILE, BLIZZARD_BREATH, STEADFAST_WARP, CHILLY_AURA, ICE_BLOCK));
         SPEC_BOOSTS.put(Specializations.AQUAMANCER, List.of(TYPHOON_BOLT, SYRINGE, DIVINE_PURIFICATION, CLAIRVOYANCE, DOWNPOUR));
         SPEC_BOOSTS.put(Specializations.BERSERKER, List.of(EFFICIENT_STRIKES, MIGHTY_FISTS, SEISMIC_SHIFT, BLOOD_FRENZY, GOLIATH));
-        SPEC_BOOSTS.put(Specializations.DEFENDER, List.of(VITALITY_BOOST, STRIKER, FERVENT_FORCE, HEROIC_INTERVENTION, SOLITARY));
+        SPEC_BOOSTS.put(Specializations.DEFENDER, List.of(VITALITY_BOOST, STRIKER, FERVENT_FORCE, HEROIC_INTERVENTION, SACRIFICIAL_STAND));
         SPEC_BOOSTS.put(Specializations.REVENANT, List.of(UNDYING_STEED, RECKLESS_ASCENT, HEALING_LINK, VIBRANT_ORBS, ONE_MAN_ARMY));
         SPEC_BOOSTS.put(Specializations.AVENGER, List.of(CONDUIT, ARM_OF_THE_ALMIGHTY, UNSTOPPABLE_SURGE, MARKED_FOR_DEATH, WARDING_WRATH));
         SPEC_BOOSTS.put(Specializations.CRUSADER, List.of(CRUSADERS_MIGHT, PARRY, VIGOROUS_INFUSION, SOVEREIGN_SOLITUDE, RALLYING_PRESENCE));

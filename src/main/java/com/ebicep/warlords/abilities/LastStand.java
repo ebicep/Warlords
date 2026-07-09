@@ -62,9 +62,52 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
         );
     }
 
+    public static void playActivationSound(WarlordsEntity wp) {
+        Utils.playGlobalSound(wp.getLocation(), "warrior.laststand.activation", 2, 1);
+    }
+
+    public static void playActivationParticles(WarlordsEntity wp, int radius) {
+        Location loc = wp.getEyeLocation();
+        loc.setPitch(0);
+        loc.setYaw(0);
+        Matrix4d matrix = new Matrix4d();
+        int distance = radius / 2;
+        for (int i = 0; i < distance; i++) {
+            loc.setYaw(loc.getYaw() + 360F / distance);
+            matrix.updateFromLocation(loc);
+            for (int c = 0; c < 20; c++) {
+                double angle = c / 20D * Math.PI * 2;
+                double width = 1.2;
+                EffectUtils.displayParticle(
+                        Particle.FLAME,
+                        matrix.translateVector(wp.getWorld(), distance, Math.sin(angle) * width, Math.cos(angle) * width),
+                        1,
+                        0,
+                        0,
+                        0,
+                        0
+                );
+            }
+            for (int c = 0; c < 10; c++) {
+                double width = 0.6;
+                double angle = c / 10D * Math.PI * 2;
+                EffectUtils.displayParticle(
+                        Particle.DUST,
+                        matrix.translateVector(wp.getWorld(), distance, Math.sin(angle) * width, Math.cos(angle) * width),
+                        1,
+                        0,
+                        0,
+                        0,
+                        0,
+                        new Particle.DustOptions(Color.fromRGB(255, 0, 0), 1)
+                );
+            }
+        }
+    }
+
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
-        Utils.playGlobalSound(wp.getLocation(), "warrior.laststand.activation", 2, 1);
+        playActivationSound(wp);
         LastStandData data = new LastStandData();
         List<FloatModifiable.FloatModifier> modifiers = new ArrayList<>();
         if (pveMasterUpgrade2) {
@@ -166,42 +209,7 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
                                                                       .append(Component.text(format(allyTickDuration / 20f), NamedTextColor.GOLD))
                                                                       .append(Component.text(" seconds!", NamedTextColor.GRAY)));
         }
-        Location loc = wp.getEyeLocation();
-        loc.setPitch(0);
-        loc.setYaw(0);
-        Matrix4d matrix = new Matrix4d();
-        int distance = radius / 2;
-        for (int i = 0; i < distance; i++) {
-            loc.setYaw(loc.getYaw() + 360F / distance);
-            matrix.updateFromLocation(loc);
-            for (int c = 0; c < 20; c++) {
-                double angle = c / 20D * Math.PI * 2;
-                double width = 1.2;
-                EffectUtils.displayParticle(
-                        Particle.FLAME,
-                        matrix.translateVector(wp.getWorld(), distance, Math.sin(angle) * width, Math.cos(angle) * width),
-                        1,
-                        0,
-                        0,
-                        0,
-                        0
-                );
-            }
-            for (int c = 0; c < 10; c++) {
-                double width = 0.6;
-                double angle = c / 10D * Math.PI * 2;
-                EffectUtils.displayParticle(
-                        Particle.DUST,
-                        matrix.translateVector(wp.getWorld(), distance, Math.sin(angle) * width, Math.cos(angle) * width),
-                        1,
-                        0,
-                        0,
-                        0,
-                        0,
-                        new Particle.DustOptions(Color.fromRGB(255, 0, 0), 1)
-                );
-            }
-        }
+        playActivationParticles(wp, radius);
         return true;
     }
 

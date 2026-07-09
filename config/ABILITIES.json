@@ -1307,6 +1307,15 @@
         "tickDuration": 240,
         "lethalDamageHealing": 25
       },
+      "sacrificialStand": {
+        "name": "Sacrificial Stand",
+        "cooldown": 57,
+        "energyCost": 40,
+        "radius": 7,
+        "tickDuration": 120,
+        "damageReductionPercent": 40,
+        "allyHealMultiplierPercent": 100
+      },
       "seismicWaveBerserker": {
         "name": "Seismic Wave",
         "cooldown": 11.5,

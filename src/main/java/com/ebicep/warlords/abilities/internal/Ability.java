@@ -99,6 +99,7 @@ public class Ability<T extends AbstractAbility> {
     public static final Ability<RemedicChains> REMEDIC_CHAINS = new Ability<>(RemedicChains.class, RemedicChains::new);
     public static final Ability<Repentance> REPENTANCE = new Ability<>(Repentance.class, Repentance::new);
     public static final Ability<RighteousStrike> RIGHTEOUS_STRIKE = new Ability<>(RighteousStrike.class, RighteousStrike::new);
+    public static final Ability<SacrificialStand> SACRIFICIAL_STAND = new Ability<>(SacrificialStand.class, SacrificialStand::new);
     public static final Ability<SanctifiedBeacon> SANCTIFIED_BEACON = new Ability<>(SanctifiedBeacon.class, SanctifiedBeacon::new);
     public static final Ability<Sanctuary> SANCTUARY = new Ability<>(Sanctuary.class, Sanctuary::new);
     public static final Ability<SeismicWaveBerserker> SEISMIC_WAVE_BERSERKER = new Ability<>(SeismicWaveBerserker.class, SeismicWaveBerserker::new);
@@ -211,6 +212,7 @@ public class Ability<T extends AbstractAbility> {
             REMEDIC_CHAINS,
             REPENTANCE,
             RIGHTEOUS_STRIKE,
+            SACRIFICIAL_STAND,
             SANCTIFIED_BEACON,
             SANCTUARY,
             SEISMIC_WAVE_BERSERKER,

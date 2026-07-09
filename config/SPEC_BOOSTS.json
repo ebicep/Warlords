@@ -33,6 +33,7 @@
           "Ice Block",
           "Intervene",
           "Last Stand",
+          "Sacrificial Stand",
           "Solitary",
           "Prism Guard",
           "Contagious Facade",
@@ -274,6 +275,11 @@
         "description": "Increase the max damage redirected by {{aqua:Intervene}} by {{damageReduction;}}, and the cast and break range by {{blocks}}.",
         "interveneCapIncrease": 1100,
         "interveneCastAndRangeIncrease": 8
+      },
+      "sacrificialStand": {
+        "difficulty": 3,
+        "name": "Sacrificial Stand",
+        "description": "Replace {{aqua:Last Stand}} with {{aqua:Sacrificial Stand}}."
       },
       "solitary": {
         "difficulty": 3,
