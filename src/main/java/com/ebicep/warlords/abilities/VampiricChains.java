@@ -183,6 +183,14 @@ public class VampiricChains extends AbstractAbility implements BlueAbilityIcon, 
         this.linkBreakRadius = linkBreakRadius;
     }
 
+    public float getMaxHealthDamage() {
+        return maxHealthDamage;
+    }
+
+    public void setMaxHealthDamage(float maxHealthDamage) {
+        this.maxHealthDamage = maxHealthDamage;
+    }
+
     public static class VampiricChainsStats extends AbstractAbilityStats<VampiricChains, VampiricChainsStats> {
 
         @Field("targets_linked")

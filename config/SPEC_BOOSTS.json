@@ -704,8 +704,14 @@
         "name": "BOGO Bomb",
         "description": "Both effects of {{aqua:Volatile Brew}} activate when it explodes."
       },
+      "vampiricChains": {
+        "difficulty": 2,
+        "name": "Vampiric Chains",
+        "description": "Replace {{aqua:Remedic Chains}} and {{aqua:Volatile Brew}} with {{aqua:Vampiric Chains}}."
+      },
       "drainingMiasma": {
         "difficulty": 2,
+        "disabled": true,
         "name": "Draining Miasma",
         "description": "Replace {{aqua:Volatile Brew}} with {{aqua:Draining Miasma}}. Reduce the cooldown of {{aqua:Draining Miasma}} by {{ticks;%}}.",
         "drainingMiasmaCooldownReductionPercent": 20
