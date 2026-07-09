@@ -532,12 +532,15 @@
       "acceleratedSpike": {
         "difficulty": 2,
         "name": "Dirt Torpedo",
-        "description": "Gain {{energy}} max energy. Remove the knockback from {{aqua:Earthen Spike}}, but increase the speed by {{speed;%}}, the cast range by {{blocks}} farther, the hit radius to {{blocks}}, and the damage by {{damage;%}}.",
+        "description": "Gain {{energy}} max energy. Increase the speed of {{aqua:Earthen Spike}} by {{speed;%}} and cast range by {{blocks}} blocks. Send a torpedo through the ground at an enemy. Enemies the torpedo passes under, within {{blocks}} are hit for half the damage and knocked sideways. The targeted enemy takes full damage and stronger knockback along the torpedo's path.",
         "maxEnergyIncrease": 50,
         "travelSpeedIncreasePercent": 50,
         "castRangeIncrease": 10,
-        "hitRadiusIncrease": 2,
-        "damageIncreasePercent": 40
+        "torpedoHitRadius": 2,
+        "passThroughKnockbackHorizontal": 0.175,
+        "passThroughKnockbackY": 0.075,
+        "impactKnockbackHorizontal": 0.5,
+        "impactKnockbackY": 0.16
       },
       "megalithicBoulder": {
         "difficulty": 1,

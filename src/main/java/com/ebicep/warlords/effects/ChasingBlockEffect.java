@@ -14,7 +14,7 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
 public class ChasingBlockEffect {
@@ -26,7 +26,7 @@ public class ChasingBlockEffect {
     @Nullable
     private final BlockData blockState;
     private final Supplier<Location> destination;
-    private final Consumer<Integer> onTick;
+    private final BiConsumer<Integer, Location> onTick;
     private final Runnable onDestinationReached;
     private final int maxTicks;
 
@@ -39,7 +39,7 @@ public class ChasingBlockEffect {
             @Nullable BlockData blockState,
             Supplier<Location> destination,
             Runnable onDestinationReached,
-            Consumer<Integer> onTick,
+            BiConsumer<Integer, Location> onTick,
             int maxTicks
     ) {
         this.game = game;
@@ -85,7 +85,7 @@ public class ChasingBlockEffect {
             cancel();
             return;
         }
-        onTick.accept(ticksElapsed);
+        onTick.accept(ticksElapsed, currentLocation.clone());
         Vector change = destinationLocation.toVector().subtract(currentLocation.toVector());
         change.setY(0);
         double length = change.lengthSquared();
@@ -147,7 +147,7 @@ public class ChasingBlockEffect {
         private float speed = 1;
         private @Nullable BlockData block = null;
         private Supplier<Location> destination;
-        private Consumer<Integer> onTick = i -> {};
+        private BiConsumer<Integer, Location> onTick = (i, loc) -> {};
         private Runnable onDestinationReached = () -> {};
         private int maxTicks = 200;
 
@@ -171,7 +171,7 @@ public class ChasingBlockEffect {
             return this;
         }
 
-        public Builder setOnTick(Consumer<Integer> onTick) {
+        public Builder setOnTick(BiConsumer<Integer, Location> onTick) {
             this.onTick = onTick;
             return this;
         }
