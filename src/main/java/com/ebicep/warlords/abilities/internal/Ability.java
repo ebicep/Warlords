@@ -119,6 +119,7 @@ public class Ability<T extends AbstractAbility> {
     public static final Ability<Triage> TRIAGE = new Ability<>(Triage.class, Triage::new);
     public static final Ability<UndyingArmy> UNDYING_ARMY = new Ability<>(UndyingArmy.class, UndyingArmy::new);
     public static final Ability<Vindicate> VINDICATE = new Ability<>(Vindicate.class, Vindicate::new);
+    public static final Ability<VampiricChains> VAMPIRIC_CHAINS = new Ability<>(VampiricChains.class, VampiricChains::new);
     public static final Ability<VitalityConcoction> VITALITY_CONCOCTION = new Ability<>(VitalityConcoction.class, VitalityConcoction::new);
     public static final Ability<VitalityLiquor> VITALITY_LIQUOR = new Ability<>(VitalityLiquor.class, VitalityLiquor::new);
     public static final Ability<VolatileBrew> VOLATILE_BREW = new Ability<>(VolatileBrew.class, VolatileBrew::new);
@@ -230,6 +231,7 @@ public class Ability<T extends AbstractAbility> {
             TRIAGE,
             UNDYING_ARMY,
             VINDICATE,
+            VAMPIRIC_CHAINS,
             VITALITY_CONCOCTION,
             VITALITY_LIQUOR,
             VOLATILE_BREW,

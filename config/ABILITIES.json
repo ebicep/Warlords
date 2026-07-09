@@ -1596,6 +1596,18 @@
         "vindicateDamageReduction": 30,
         "knockbackResistance": 35
       },
+      "vampiricChains": {
+        "name": "Vampiric Chains",
+        "cooldown": 18,
+        "energyCost": 60,
+        "tickDuration": 160,
+        "enemiesAffected": 3,
+        "linkBreakRadius": 18,
+        "castRange": 12,
+        "maxHealthDamage": 2,
+        "leechStacks": 3,
+        "leechAmount": 7
+      },
       "vitalityConcoction": {
         "name": "Vitality Concoction",
         "cooldown": 10,
