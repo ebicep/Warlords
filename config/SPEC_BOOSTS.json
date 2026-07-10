@@ -545,8 +545,8 @@
         "torpedoHitRadius": 2,
         "passThroughKnockbackHorizontal": 0.175,
         "passThroughKnockbackY": 0.075,
-        "impactKnockbackHorizontal": 0.5,
-        "impactKnockbackY": 0.16
+        "impactKnockbackHorizontal": 0.6,
+        "impactKnockbackY": 0.2
       },
       "megalithicBoulder": {
         "difficulty": 1,
@@ -716,7 +716,7 @@
       "vampiricChains": {
         "difficulty": 2,
         "name": "Vampiric Chains",
-        "description": "Replace {{aqua:Remedic Chains}} and {{aqua:Volatile Brew}} with {{aqua:Vampiric Chains}}."
+        "description": "Replace {{aqua:Remedic Chains}} with {{aqua:Vampiric Chains}}."
       },
       "drainingMiasma": {
         "difficulty": 2,
@@ -819,7 +819,7 @@
         "difficulty": 1,
         "name": "Divine Shields",
         "description": "Increase the shield health granted by {{aqua:Guardian Beam}} by {{damageReduction;%}}.",
-        "guardianBeamShieldIncreasePercent": 20
+        "guardianBeamShieldIncreasePercent": 30
       },
       "pactOfProtection": {
         "difficulty": 4,

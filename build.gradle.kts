@@ -151,6 +151,7 @@ tasks {
     }
 
     jar {
+        enabled = false
         archiveVersion.set(project.version.toString().replace(" ", "-"))
     }
 
@@ -159,11 +160,6 @@ tasks {
         relocate("co.aikar.commands", "com.ebicep.warlords.acf.acf")
         relocate("co.aikar.locales", "com.ebicep.warlords.acf.locales")
     }
-
-    build {
-        dependsOn(shadowJar)
-    }
-
 
     reobfJar {
         val safeVersion = project.version.toString().replace(" ", "-")
@@ -177,6 +173,13 @@ tasks {
 
     runServer {
         version.set("1.21.4")
+    }
+
+    register("printReobfJarPath") {
+        dependsOn(reobfJar)
+        doLast {
+            println(reobfJar.get().outputJar.get().asFile.absolutePath)
+        }
     }
 
 }
