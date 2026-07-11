@@ -133,6 +133,11 @@ tasks.withType<JavaCompile>().configureEach {
     options.release.set(21)
 }
 
+tasks.withType<AbstractArchiveTask>().configureEach {
+    isPreserveFileTimestamps = false
+    isReproducibleFileOrder = true
+}
+
 paperPluginYaml {
     main = "com.ebicep.warlords.Warlords"
     bootstrapper = "com.ebicep.warlords.WarlordsBootstrap"
