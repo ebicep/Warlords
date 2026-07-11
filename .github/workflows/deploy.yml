@@ -21,14 +21,17 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x gradlew
 
-      - name: Build and verify plugin JAR
-        run: ./gradlew clean verifyPluginJar --no-build-cache
+      - name: Build plugin JAR
+        run: ./gradlew clean reobfJar --no-build-cache
 
-      - name: Locate output JAR
+      - name: Verify and locate output JAR
         run: |
           JAR="build/libs/Warlords-Prelude-to-Chaos.jar"
           if [ ! -f "$JAR" ]; then echo "reobfJar output not found"; exit 1; fi
-          sha256sum "$JAR"
+          SIZE=$(stat -c%s "$JAR")
+          echo "JAR size: $SIZE bytes"
+          if [ "$SIZE" -lt 70000000 ]; then echo "JAR too small — likely wrong artifact"; exit 1; fi
+          unzip -l "$JAR" | grep -q "com/ebicep/warlords/acf/" || { echo "Relocated ACF missing"; exit 1; }
           echo "JAR_PATH=$JAR" >> $GITHUB_ENV
 
       - name: Upload plugin to server

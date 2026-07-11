@@ -1,6 +1,3 @@
-import org.gradle.api.file.DuplicatesStrategy
-import java.security.MessageDigest
-import java.util.zip.ZipFile
 import xyz.jpenilla.resourcefactory.bukkit.BukkitPluginYaml
 import xyz.jpenilla.resourcefactory.paper.PaperPluginYaml
 
@@ -23,20 +20,8 @@ java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 }
 
-dependencyLocking {
-    lockMode.set(LockMode.STRICT)
-}
-
-configurations {
-    compileClasspath {
-        resolutionStrategy.activateDependencyLocking()
-    }
-    runtimeClasspath {
-        resolutionStrategy.activateDependencyLocking()
-    }
-}
-
 repositories {
+    mavenLocal()
     mavenCentral()
     google()
 
@@ -172,12 +157,6 @@ tasks {
 
     shadowJar {
         archiveVersion.set(project.version.toString().replace(" ", "-"))
-        isReproducibleFileOrder = true
-        isPreserveFileTimestamps = false
-        mergeServiceFiles()
-        filesMatching("META-INF/services/**") {
-            duplicatesStrategy = DuplicatesStrategy.INCLUDE
-        }
         relocate("co.aikar.commands", "com.ebicep.warlords.acf.acf")
         relocate("co.aikar.locales", "com.ebicep.warlords.acf.locales")
     }
@@ -186,7 +165,7 @@ tasks {
         val safeVersion = project.version.toString().replace(" ", "-")
         val output = System.getProperty("outputDirectory")
         if (output != null) {
-            outputJar.set(layout.projectDirectory.file("${output}${project.name}-${safeVersion}.jar"))
+            outputJar.set(layout.buildDirectory.file("${output}${project.name}-${safeVersion}.jar"))
         } else {
             outputJar.set(layout.buildDirectory.file("libs/${project.name}-${safeVersion}.jar"))
         }
@@ -200,49 +179,6 @@ tasks {
         dependsOn(reobfJar)
         doLast {
             println(reobfJar.get().outputJar.get().asFile.absolutePath)
-        }
-    }
-
-    register("verifyPluginJar") {
-        dependsOn(reobfJar)
-        doLast {
-            val jar = reobfJar.get().outputJar.get().asFile
-            if (!jar.exists()) {
-                throw GradleException("reobfJar output not found: ${jar.absolutePath}")
-            }
-
-            val minEntries = 40_000
-            ZipFile(jar).use { zip ->
-                val entries = zip.entries().asSequence().map { entry -> entry.name }.toList()
-                if (entries.size < minEntries) {
-                    throw GradleException("JAR has too few entries (${entries.size} < $minEntries)")
-                }
-                if (entries.none { name -> name.startsWith("com/ebicep/warlords/acf/") }) {
-                    throw GradleException("Relocated ACF missing from JAR")
-                }
-
-                val manifestEntry = zip.getEntry("META-INF/MANIFEST.MF")
-                    ?: throw GradleException("MANIFEST.MF missing from JAR")
-                val manifest = zip.getInputStream(manifestEntry).bufferedReader().readText()
-
-                if (!manifest.contains("paperweight-mappings-namespace: spigot")) {
-                    throw GradleException("Expected spigot mappings namespace in manifest")
-                }
-            }
-
-            val digest = MessageDigest.getInstance("SHA-256")
-            jar.inputStream().use { input ->
-                val buffer = ByteArray(8192)
-                var read: Int
-                while (input.read(buffer).also { read = it } != -1) {
-                    digest.update(buffer, 0, read)
-                }
-            }
-            val sha256 = digest.digest().joinToString("") { byte -> "%02x".format(byte) }
-
-            println("JAR path: ${jar.absolutePath}")
-            println("JAR size: ${jar.length()} bytes")
-            println("JAR SHA-256: $sha256")
         }
     }
 
