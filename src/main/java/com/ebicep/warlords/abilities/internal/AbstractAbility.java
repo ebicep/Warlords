@@ -472,7 +472,7 @@ public abstract class AbstractAbility implements AbilityIcon {
     public List<Component> getItemComponent() {
         List<Component> lore = new ArrayList<>();
         lore.add(getItemName());
-        lore.add(Component.empty());
+//        lore.add(Component.empty());
 
         if (this instanceof TDAbility) {
 
