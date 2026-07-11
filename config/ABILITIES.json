@@ -1614,8 +1614,8 @@
         "linkBreakRadius": 18,
         "castRange": 12,
         "maxHealthDamage": 2,
-        "leechStacks": 3,
-        "leechAmount": 7
+        "healRadius": 6,
+        "healCap": 500
       },
       "vitalityConcoction": {
         "name": "Vitality Concoction",

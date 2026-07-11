@@ -30,8 +30,8 @@ public class VampiricChains extends AbstractAbility implements BlueAbilityIcon, 
     private int linkBreakRadius = 18;
     private int castRange = 12;
     private float maxHealthDamage = 2;
-    private int leechStacks = 3;
-    private float leechAmount = 7;
+    private int healRadius = 6;
+    private float healCap = 500;
 
     public VampiricChains() {
         super(AbstractAbilityBuilder.create("vampiricChains").pvp());
@@ -45,8 +45,8 @@ public class VampiricChains extends AbstractAbility implements BlueAbilityIcon, 
         this.linkBreakRadius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("linkBreakRadius"), int.class);
         this.castRange = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("castRange"), int.class);
         this.maxHealthDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxHealthDamage"), float.class);
-        this.leechStacks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("leechStacks"), int.class);
-        this.leechAmount = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("leechAmount"), float.class);
+        this.healRadius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("healRadius"), int.class);
+        this.healCap = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("healCap"), float.class);
     }
 
     @Override
@@ -65,6 +65,7 @@ public class VampiricChains extends AbstractAbility implements BlueAbilityIcon, 
         stats.targetsLinked += enemiesNear.size();
         Utils.playGlobalSound(wp.getLocation(), "rogue.remedicchains.activation", 2, 0.1f);
         wp.setRegenTickTimer(1);
+        VampiricChainsData data = new VampiricChainsData();
         enemiesNear.forEach(enemy -> {
             wp.sendMessage(WarlordsEntity.GIVE_ARROW_RED
                     .append(Component.text(" Your Vampiric Chains is now draining ", NamedTextColor.GRAY))
@@ -76,15 +77,11 @@ public class VampiricChains extends AbstractAbility implements BlueAbilityIcon, 
                     .append(Component.text(" is now draining your health for ", NamedTextColor.GRAY))
                     .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
                     .append(Component.text(" seconds!", NamedTextColor.GRAY)));
-            Leech.giveLeechCooldown(Leech.LeechInstance.create(wp, enemy)
-                    .withLeechAmount(leechAmount)
-                    .withLeechTickDuration(tickDuration)
-                    .withInitialStacks(leechStacks));
         });
-        LinkedCooldown<VampiricChains> vampiricChainsCooldown = new LinkedCooldown<>(name,
+        LinkedCooldown<VampiricChainsData> vampiricChainsCooldown = new LinkedCooldown<>(name,
                 "VAMP",
-                VampiricChains.class,
-                null,
+                VampiricChainsData.class,
+                data,
                 wp,
                 CooldownTypes.ABILITY,
                 (cooldownManager, linkedCooldown) -> {
@@ -92,6 +89,9 @@ public class VampiricChains extends AbstractAbility implements BlueAbilityIcon, 
                 (cooldownManager, linkedCooldown) -> {
                     if (!Objects.equals(cooldownManager.getWarlordsEntity(), wp)) {
                         return;
+                    }
+                    if (!data.recasted) {
+                        healStoredDamage(wp, data);
                     }
                 },
                 tickDuration,
@@ -105,7 +105,11 @@ public class VampiricChains extends AbstractAbility implements BlueAbilityIcon, 
                                     .damage()
                                     .ability(this)
                                     .source(wp)
-                                    .value(healthDamage));
+                                    .value(healthDamage))
+                                    .ifPresent(finalEvent -> {
+                                        data.storedDamage += finalEvent.getValue();
+                                        stats.totalDamageStored += finalEvent.getValue();
+                                    });
                         }
                     }
                     if (ticksElapsed % 8 != 0) {
@@ -132,12 +136,41 @@ public class VampiricChains extends AbstractAbility implements BlueAbilityIcon, 
                 }),
                 enemiesNear
         );
-        wp.getCooldownManager().removeCooldown(VampiricChains.class, false);
+        wp.getCooldownManager().removeCooldown(VampiricChainsData.class, false);
         wp.getCooldownManager().addCooldown(vampiricChainsCooldown);
-        enemiesNear.forEach(entity -> entity.getCooldownManager().removeCooldown(VampiricChains.class, false));
+        enemiesNear.forEach(entity -> entity.getCooldownManager().removeCooldown(VampiricChainsData.class, false));
         enemiesNear.forEach(entity -> entity.getCooldownManager().addCooldown(vampiricChainsCooldown));
+        addSecondaryAbility(
+                1,
+                () -> {
+                    data.recasted = true;
+                    healStoredDamage(wp, data);
+                },
+                false,
+                secondaryAbility -> !wp.getCooldownManager().hasCooldown(vampiricChainsCooldown)
+        );
         Bukkit.getPluginManager().callEvent(new WarlordsAbilityTargetEvent.WarlordsBlueAbilityTargetEvent(wp, name, enemiesNear));
         return true;
+    }
+
+    private void healStoredDamage(WarlordsEntity wp, VampiricChainsData data) {
+        if (data.storedDamage <= 0) {
+            return;
+        }
+        float healAmount = Math.min(data.storedDamage, healCap);
+        for (WarlordsEntity ally : PlayerFilter.entitiesAround(wp, healRadius, healRadius, healRadius)
+                .aliveTeammatesOf(wp)
+                .toList()) {
+            stats.damageHealed += healAmount;
+            ally.addInstance(InstanceBuilder
+                    .healing()
+                    .ability(this)
+                    .source(wp)
+                    .value(healAmount));
+            EffectUtils.displayParticle(Particle.HEART, ally.getLocation().add(0, 1, 0), 10, 0.5, 0.5, 0.5, 1);
+        }
+        data.storedDamage = 0;
+        Utils.playGlobalSound(wp.getLocation(), "rogue.remedicchains.impact", 0.1f, 1.4f);
     }
 
     @Override
@@ -145,13 +178,17 @@ public class VampiricChains extends AbstractAbility implements BlueAbilityIcon, 
         description = AbilityDescriptionBuilder
                 .create("Bind yourself to up to ")
                 .text(enemiesAffected, NamedTextColor.BLUE)
-                .text(" enemies near you, inflicting them with ")
-                .text(leechStacks + " LEECH", NamedTextColor.DARK_GREEN)
-                .text(" stacks for ")
-                .durationTicks(tickDuration)
-                .text(" and dealing ")
+                .text(" enemies near you, dealing ")
                 .percent(maxHealthDamage, NamedTextColor.RED)
-                .text(" of their max health as damage per second while the link is active.")
+                .text(" of their max health as damage per second for ")
+                .durationTicks(tickDuration)
+                .text(" while the link is active.")
+                .emptyLine()
+                .text("Recast once to heal yourself and all allies within ")
+                .blocks(healRadius)
+                .text(" for all stored drain damage, up to ")
+                .heal(new Value.SetValue(healCap))
+                .text(" per ally. If you do not recast, unclaimed damage heals nearby allies when the link ends.")
                 .emptyLine()
                 .text("The link instantly activates natural regeneration and will break if you are more than ")
                 .blocks(linkBreakRadius)
@@ -191,6 +228,21 @@ public class VampiricChains extends AbstractAbility implements BlueAbilityIcon, 
         this.maxHealthDamage = maxHealthDamage;
     }
 
+    public static class VampiricChainsData {
+
+        private float storedDamage = 0;
+        private boolean recasted = false;
+
+        public float getStoredDamage() {
+            return storedDamage;
+        }
+
+        public boolean hasRecasted() {
+            return recasted;
+        }
+
+    }
+
     public static class VampiricChainsStats extends AbstractAbilityStats<VampiricChains, VampiricChainsStats> {
 
         @Field("targets_linked")
@@ -198,6 +250,12 @@ public class VampiricChains extends AbstractAbility implements BlueAbilityIcon, 
 
         @Field("number_of_broken_links")
         private int numberOfBrokenLinks = 0;
+
+        @Field("total_damage_stored")
+        private float totalDamageStored = 0;
+
+        @Field("damage_healed")
+        private float damageHealed = 0;
 
         @Override
         public Class<VampiricChainsStats> getClazz() {
@@ -209,6 +267,8 @@ public class VampiricChains extends AbstractAbility implements BlueAbilityIcon, 
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
             statsDisplay.add(new AbilityStatDisplay("Targets Linked", targetsLinked));
             statsDisplay.add(new AbilityStatDisplay("Times Link Broken", numberOfBrokenLinks));
+            statsDisplay.add(new AbilityStatDisplay("Total Damage Stored", totalDamageStored));
+            statsDisplay.add(new AbilityStatDisplay("Damage Healed", damageHealed));
             return statsDisplay;
         }
 
@@ -217,6 +277,8 @@ public class VampiricChains extends AbstractAbility implements BlueAbilityIcon, 
             VampiricChainsStats stats = super.merge(other, multiplier);
             stats.targetsLinked = this.targetsLinked + other.targetsLinked * multiplier;
             stats.numberOfBrokenLinks = this.numberOfBrokenLinks + other.numberOfBrokenLinks * multiplier;
+            stats.totalDamageStored = this.totalDamageStored + other.totalDamageStored * multiplier;
+            stats.damageHealed = this.damageHealed + other.damageHealed * multiplier;
             return stats;
         }
 
