@@ -1,0 +1,39 @@
+name: Build Artifact
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew build
+
+      - name: Locate output JAR
+        run: |
+          JAR=$(find build/libs -maxdepth 1 -name 'Warlords-*.jar' ! -name '*-all.jar')
+          if [ -z "$JAR" ]; then echo "Plugin JAR not found"; exit 1; fi
+          echo "JAR_PATH=$JAR" >> $GITHUB_ENV
+          sha256sum "$JAR"
+
+      - name: Upload plugin artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: warlords-plugin
+          path: ${{ env.JAR_PATH }}
+          retention-days: 30
