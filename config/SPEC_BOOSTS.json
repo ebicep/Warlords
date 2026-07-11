@@ -545,8 +545,8 @@
         "torpedoHitRadius": 2,
         "passThroughKnockbackHorizontal": 0.175,
         "passThroughKnockbackY": 0.075,
-        "impactKnockbackHorizontal": 0.6,
-        "impactKnockbackY": 0.2
+        "impactKnockbackHorizontal": 0.55,
+        "impactKnockbackY": 0.175
       },
       "megalithicBoulder": {
         "difficulty": 1,
