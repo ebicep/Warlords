@@ -95,6 +95,9 @@ public class ArmOfTheAlmighty implements SpecBoostManager.SpecBoost<ArmOfTheAlmi
             if (event.getInstanceFlags().contains(InstanceFlags.RECURSIVE)) {
                 return;
             }
+            if (event.getInstanceFlags().contains(InstanceFlags.OVERFLOW)) {
+                return;
+            }
             boolean wrathActive = warlordsEntity.getCooldownManager().hasCooldown(AvengersWrath.AvengersWrathData.class);
             if (wrathActive) {
                 return;

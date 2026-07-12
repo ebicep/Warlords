@@ -85,6 +85,9 @@ public class AuraOfRestoration implements SpecBoostManager.SpecBoost<AuraOfResto
             EnumSet<InstanceFlags> flags = event.getFlags();
             boolean initialHeal = !flags.contains(InstanceFlags.DOT);
             if (initialHeal) {
+                if (flags.contains(InstanceFlags.OVERFLOW)) {
+                    return;
+                }
                 target.getCooldownManager().addCooldown(new RegularCooldown<>(
                         getStringName(),
                         null,

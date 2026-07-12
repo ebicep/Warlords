@@ -1,6 +1,7 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
-import com.ebicep.warlords.abilities.SoulSwitch;
+import com.ebicep.warlords.abilities.RemedicChains;
+import com.ebicep.warlords.abilities.VolatileBrew;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -8,28 +9,25 @@ import net.kyori.adventure.text.TextComponent;
 
 import java.util.List;
 
-public class Blink implements SpecBoostManager.SpecBoost<Blink> {
-
-    private int maxAbilityCharges;
+public class VampiricChains implements SpecBoostManager.SpecBoost<VampiricChains> {
 
     @Override
     public void init() {
-        this.maxAbilityCharges = getValue("maxAbilityCharges", int.class);
     }
 
     @Override
     public String getConfigFieldName() {
-        return "blink";
+        return "vampiricChains";
     }
 
     @Override
     public TextComponent getDescription() {
-        return appendAbility(getTextDescription(), new com.ebicep.warlords.abilities.Blink());
+        return appendAbility(getTextDescription(), new com.ebicep.warlords.abilities.VampiricChains());
     }
 
     @Override
     public List<Object> getVariables() {
-        return List.of(maxAbilityCharges);
+        return List.of();
     }
 
     @Override
@@ -38,7 +36,7 @@ public class Blink implements SpecBoostManager.SpecBoost<Blink> {
     }
 
     @Override
-    public Blink get() {
+    public VampiricChains get() {
         return this;
     }
 
@@ -49,12 +47,10 @@ public class Blink implements SpecBoostManager.SpecBoost<Blink> {
             List<AbstractAbility> abilities = warlordsPlayer.getAbilities();
             for (int i = 0; i < abilities.size(); i++) {
                 AbstractAbility ability = abilities.get(i);
-                if (ability instanceof SoulSwitch) {
-                    com.ebicep.warlords.abilities.Blink blink = new com.ebicep.warlords.abilities.Blink();
-                    blink.setMaxCharges(maxAbilityCharges);
-                    blink.setCurrentCharges(maxAbilityCharges);
-                    blink.init(blink.getBuilder());
-                    abilities.set(i, blink);
+                if (ability instanceof RemedicChains) {
+                    com.ebicep.warlords.abilities.VampiricChains vampiricChains = new com.ebicep.warlords.abilities.VampiricChains();
+                    vampiricChains.init(vampiricChains.getBuilder());
+                    abilities.set(i, vampiricChains);
                 }
             }
             warlordsPlayer.resetAbilityTree();

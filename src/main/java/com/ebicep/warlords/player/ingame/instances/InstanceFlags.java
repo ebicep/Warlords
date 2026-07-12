@@ -14,6 +14,7 @@ public enum InstanceFlags {
     CAN_OVERHEAL_OTHERS,
     CAN_OVERHEAL_SELF,
     RECURSIVE,
+    OVERFLOW, // damage carried over from a broken shield or intervene absorber; ability is propagated from the original hit
     DOT, // damage over time
     REFLECTIVE_DAMAGE,
     CANT_KILL,

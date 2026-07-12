@@ -90,8 +90,8 @@ public class EventPoseidon extends AbstractMob implements BossMob, God, Unsilenc
                     }
 
                     @Override
-                    protected void onSpikeTarget(WarlordsEntity caster, WarlordsEntity spikeTarget, UUID uuid) {
-                        super.onSpikeTarget(caster, spikeTarget, uuid);
+                    public void applySpikeDamage(WarlordsEntity caster, WarlordsEntity spikeTarget, UUID uuid) {
+                        super.applySpikeDamage(caster, spikeTarget, uuid);
                         Optional<CripplingStrike.CripplingStrikeData> optionalCripplingStrike = new CooldownFilter<>(spikeTarget, RegularCooldown.class)
                                 .filterCooldownClassAndMapToObjectsOfClass(CripplingStrike.CripplingStrikeData.class)
                                 .findAny();

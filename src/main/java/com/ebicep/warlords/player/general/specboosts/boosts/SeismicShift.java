@@ -14,12 +14,14 @@ import java.util.List;
 public class SeismicShift implements SpecBoostManager.SpecBoost<SeismicShift> {
 
     private int seismicWaveCooldownReductionTicks;
+    private float seismicWaveDamageIncreasePercent;
     private int seismicWaveWoundingPercent;
     private int seismicWaveWoundingTickDuration;
 
     @Override
     public void init() {
         this.seismicWaveCooldownReductionTicks = getValue("seismicWaveCooldownReductionTicks", int.class);
+        this.seismicWaveDamageIncreasePercent = getValue("seismicWaveDamageIncreasePercent", float.class);
         this.seismicWaveWoundingPercent = getValue("seismicWaveWoundingPercent", int.class);
         this.seismicWaveWoundingTickDuration = getValue("seismicWaveWoundingTickDuration", int.class);
     }
@@ -33,6 +35,7 @@ public class SeismicShift implements SpecBoostManager.SpecBoost<SeismicShift> {
     public List<Object> getVariables() {
         return List.of(
                 seismicWaveCooldownReductionTicks,
+                seismicWaveDamageIncreasePercent,
                 seismicWaveWoundingPercent,
                 seismicWaveWoundingTickDuration
         );
@@ -57,6 +60,9 @@ public class SeismicShift implements SpecBoostManager.SpecBoost<SeismicShift> {
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(SeismicWaveBerserker.class).forEach(seismicWave -> {
                 seismicWave.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", -seismicWaveCooldownReductionTicks / 20f);
+                seismicWave.getDamageValues().getWaveDamage().forEachValue(floatModifiable ->
+                        floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", seismicWaveDamageIncreasePercent / 100)
+                );
             });
         }
 
@@ -82,4 +88,3 @@ public class SeismicShift implements SpecBoostManager.SpecBoost<SeismicShift> {
     }
 
 }
-

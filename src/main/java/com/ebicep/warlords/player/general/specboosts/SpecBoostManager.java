@@ -49,7 +49,7 @@ public class SpecBoostManager {
     public static final SpecBoost<DivinePurification> DIVINE_PURIFICATION = new DivinePurification();
     public static final SpecBoost<DivineShields> DIVINE_SHIELDS = new DivineShields();
     public static final SpecBoost<Downpour> DOWNPOUR = new Downpour();
-    public static final SpecBoost<DrainingMiasma> DRAINING_MIASMA = new DrainingMiasma();
+    public static final SpecBoost<VampiricChains> VAMPIRIC_CHAINS = new VampiricChains();
     public static final SpecBoost<EarthboundInfusion> EARTHBOUND_INFUSION = new EarthboundInfusion();
     public static final SpecBoost<EcoDrive> ECO_DRIVE = new EcoDrive();
     public static final SpecBoost<EfficientStrikes> EFFICIENT_STRIKES = new EfficientStrikes();
@@ -87,6 +87,7 @@ public class SpecBoostManager {
     public static final SpecBoost<RallyingPresence> RALLYING_PRESENCE = new RallyingPresence();
     public static final SpecBoost<RecklessAscent> RECKLESS_ASCENT = new RecklessAscent();
     public static final SpecBoost<RiftAmbush> RIFT_AMBUSH = new RiftAmbush();
+    public static final SpecBoost<SacrificialStand> SACRIFICIAL_STAND = new SacrificialStand();
     public static final SpecBoost<SanctionBurst> SANCTION_BURST = new SanctionBurst();
     public static final SpecBoost<SanctuaryOfRetribution> SANCTUARY_OF_RETRIBUTION = new SanctuaryOfRetribution();
     public static final SpecBoost<SeismicShift> SEISMIC_SHIFT = new SeismicShift();
@@ -97,6 +98,7 @@ public class SpecBoostManager {
     public static final SpecBoost<StackulatorMax> STACKULATOR_MAX = new StackulatorMax();
     public static final SpecBoost<SteadfastWarp> STEADFAST_WARP = new SteadfastWarp();
     public static final SpecBoost<Striker> STRIKER = new Striker();
+    public static final SpecBoost<InfernoExplosion> INFERNO_EXPLOSION = new InfernoExplosion();
     public static final SpecBoost<SuperBrew> SUPER_BREW = new SuperBrew();
     public static final SpecBoost<SustainedOnslaught> SUSTAINED_ONSLAUGHT = new SustainedOnslaught();
     public static final SpecBoost<SwiftJustice> SWIFT_JUSTICE = new SwiftJustice();
@@ -122,11 +124,11 @@ public class SpecBoostManager {
     private static final Map<Specializations, List<SpecBoost<?>>> SPEC_BOOSTS = new HashMap<>();
 
     static {
-        SPEC_BOOSTS.put(Specializations.PYROMANCER, List.of(METEOR, FLAME_BREATH, BURST_CHAIN, DIMENSIONAL_WARP, PORTAL));
+        SPEC_BOOSTS.put(Specializations.PYROMANCER, List.of(METEOR, FLAME_BREATH, BURST_CHAIN, DIMENSIONAL_WARP, INFERNO_EXPLOSION));
         SPEC_BOOSTS.put(Specializations.CRYOMANCER, List.of(FROST_MISSILE, BLIZZARD_BREATH, STEADFAST_WARP, CHILLY_AURA, ICE_BLOCK));
         SPEC_BOOSTS.put(Specializations.AQUAMANCER, List.of(TYPHOON_BOLT, SYRINGE, DIVINE_PURIFICATION, CLAIRVOYANCE, DOWNPOUR));
         SPEC_BOOSTS.put(Specializations.BERSERKER, List.of(EFFICIENT_STRIKES, MIGHTY_FISTS, SEISMIC_SHIFT, BLOOD_FRENZY, GOLIATH));
-        SPEC_BOOSTS.put(Specializations.DEFENDER, List.of(VITALITY_BOOST, STRIKER, FERVENT_FORCE, HEROIC_INTERVENTION, SOLITARY));
+        SPEC_BOOSTS.put(Specializations.DEFENDER, List.of(VITALITY_BOOST, STRIKER, FERVENT_FORCE, HEROIC_INTERVENTION, SACRIFICIAL_STAND));
         SPEC_BOOSTS.put(Specializations.REVENANT, List.of(UNDYING_STEED, RECKLESS_ASCENT, HEALING_LINK, VIBRANT_ORBS, ONE_MAN_ARMY));
         SPEC_BOOSTS.put(Specializations.AVENGER, List.of(CONDUIT, ARM_OF_THE_ALMIGHTY, UNSTOPPABLE_SURGE, MARKED_FOR_DEATH, WARDING_WRATH));
         SPEC_BOOSTS.put(Specializations.CRUSADER, List.of(CRUSADERS_MIGHT, PARRY, VIGOROUS_INFUSION, SOVEREIGN_SOLITUDE, RALLYING_PRESENCE));
@@ -136,7 +138,7 @@ public class SpecBoostManager {
         SPEC_BOOSTS.put(Specializations.EARTHWARDEN, List.of(ACCELERATED_SPIKE, MEGALITHIC_BOULDER, EARTHBOUND_INFUSION, AUGMENTED_CHAINS, TOTEMIC_BOON));
         SPEC_BOOSTS.put(Specializations.ASSASSIN, List.of(TRICKSTER, BLINK, RIFT_AMBUSH, TORRENTIAL_SOUL, HAZE));
         SPEC_BOOSTS.put(Specializations.VINDICATOR, List.of(ABYSSAL_GRASP, VITAL_PULSE, SANCTION_BURST, RIGHTEOUS_RAMPAGE, SWIFT_JUSTICE));
-        SPEC_BOOSTS.put(Specializations.APOTHECARY, List.of(AURA_OF_RESTORATION, ALCHEMISTS_FURY, SUSTAINED_ONSLAUGHT, DETONATION_CATALYST, DRAINING_MIASMA));
+        SPEC_BOOSTS.put(Specializations.APOTHECARY, List.of(AURA_OF_RESTORATION, ALCHEMISTS_FURY, SUSTAINED_ONSLAUGHT, DETONATION_CATALYST, VAMPIRIC_CHAINS));
         SPEC_BOOSTS.put(Specializations.CONJURER, List.of(STACKULATOR_MAX, HOUSE_OF_LIFE, CONTAGION, WITHERING_PLAGUE, AIR_STRIKE));
         SPEC_BOOSTS.put(Specializations.SENTINEL, List.of(RUINOUS_HEX, HEAVY_SHIELDS, DIVINE_SHIELDS, PACT_OF_PROTECTION, SANCTUARY_OF_RETRIBUTION));
         SPEC_BOOSTS.put(Specializations.LUMINARY, List.of(UNMERCIFUL_HEX, RADIANT_LIGHT, ENERGY_OVERSURGE, CONSECRATED_BEACON, HOLY_NOVA));

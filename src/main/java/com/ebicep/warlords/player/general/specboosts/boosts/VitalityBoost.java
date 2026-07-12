@@ -60,9 +60,10 @@ public class VitalityBoost implements SpecBoostManager.SpecBoost<VitalityBoost> 
                         if (ticksElapsed % 20 == 0) {
                             warlordsPlayer.addInstance(InstanceBuilder
                                     .healing()
+                                    .cause(getConfigFieldName())
                                     .source(warlordsPlayer)
                                     .value(passiveRegen)
-                                    .flags(InstanceFlags.NO_MESSAGE,InstanceFlags.NO_HIT_SOUND, InstanceFlags.TRUE_HEALING)
+                                    .flags(InstanceFlags.NO_MESSAGE, InstanceFlags.NO_HIT_SOUND, InstanceFlags.TRUE_HEALING)
                             );
                         }
                     }

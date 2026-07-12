@@ -519,15 +519,15 @@
       "flameBreath": {
         "name": "Flame Breath",
         "cooldown": 8,
-        "energyCost": 30,
+        "energyCost": 60,
         "maxAnimationTime": 12,
         "maxAnimationEffects": 4,
         "hitbox": 10,
         "velocity": 1,
         "damageValues": {
           "flameBreathDamage": {
-            "min": 390,
-            "max": 527,
+            "min": 557,
+            "max": 753,
             "critChance": 25,
             "critMultiplier": 185
           }
@@ -1307,6 +1307,15 @@
         "tickDuration": 240,
         "lethalDamageHealing": 25
       },
+      "sacrificialStand": {
+        "name": "Sacrificial Stand",
+        "cooldown": 57,
+        "energyCost": 40,
+        "radius": 7,
+        "tickDuration": 120,
+        "damageReductionPercent": 40,
+        "allyHealMultiplierPercent": 100
+      },
       "seismicWaveBerserker": {
         "name": "Seismic Wave",
         "cooldown": 11.5,
@@ -1537,7 +1546,9 @@
         "name": "Time Surge",
         "cooldown": 28,
         "energyCost": 30,
-        "healPercentage": 35
+        "healPercentage": 20,
+        "speedPercentage": 30,
+        "speedTickDuration": 50
       },
       "timeWarpAquamancer": {
         "name": "Time Warp",
@@ -1598,6 +1609,18 @@
         "damageReductionTickDuration": 160,
         "vindicateDamageReduction": 30,
         "knockbackResistance": 35
+      },
+      "vampiricChains": {
+        "name": "Vampiric Chains",
+        "cooldown": 18,
+        "energyCost": 60,
+        "tickDuration": 160,
+        "enemiesAffected": 3,
+        "linkBreakRadius": 18,
+        "castRange": 12,
+        "maxHealthDamage": 2,
+        "healRadius": 6,
+        "healCap": 500
       },
       "vitalityConcoction": {
         "name": "Vitality Concoction",

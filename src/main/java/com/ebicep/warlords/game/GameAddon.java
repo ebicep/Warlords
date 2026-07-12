@@ -5,6 +5,7 @@ import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.game.option.PreGameItemOption;
 import com.ebicep.warlords.game.option.freeze.AFKDetectionOption;
 import com.ebicep.warlords.game.option.freeze.GameFreezeWhenOfflineOption;
+import com.ebicep.warlords.game.option.pvp.AbilityChangeOption;
 import com.ebicep.warlords.game.option.pvp.ImposterModeOption;
 import com.ebicep.warlords.game.option.pvp.InterchangeModeOption;
 import com.ebicep.warlords.game.state.ClosedState;
@@ -151,6 +152,26 @@ public enum GameAddon {
             game.addOption(new GameFreezeWhenOfflineOption());
         }
 
+    },
+    ABILITY_CHANGE_RANDOM(
+            "Ability Change (Random)",
+            null,
+            "Randomly changes all players' abilities at random intervals."
+    ) {
+        @Override
+        public void modifyGame(@Nonnull Game game) {
+            game.addOption(new AbilityChangeOption(AbilityChangeOption.Mode.RANDOM));
+        }
+    },
+    ABILITY_CHANGE_ON_DEATH(
+            "Ability Change (On Death)",
+            null,
+            "Randomly changes a player's abilities when they respawn."
+    ) {
+        @Override
+        public void modifyGame(@Nonnull Game game) {
+            game.addOption(new AbilityChangeOption(AbilityChangeOption.Mode.ON_DEATH));
+        }
     },
     TOURNAMENT_MODE(
             "Tournament Mode",

@@ -39,6 +39,7 @@ public class CrusadersStrike extends AbstractStrike<CrusadersStrike, CrusadersSt
     private int allySpeedBoost = 40;
     private int allySpeedBoostDurationInTicks = 20;
     private boolean blockedByArcaneShield = true;
+    private boolean grantEnergyToLinkedAllyRegardlessOfRange = false;
 
     public CrusadersStrike() {
         super(AbstractAbilityBuilder.create("crusadersStrike").pvp());
@@ -102,22 +103,28 @@ public class CrusadersStrike extends AbstractStrike<CrusadersStrike, CrusadersSt
                 return true;
             }
             float previousEnergyGiven = stats.totalEnergyGiven;
-            // Give energy to nearby allies and check if they have mark active
-            for (WarlordsEntity energyTarget : PlayerFilter
-                    .entitiesAround(wp, energyRadius, energyRadius, energyRadius)
-                    .aliveTeammatesOfExcludingSelf(wp)
-                    .sorted(Comparator
-                            .comparing((WarlordsEntity p) ->
-                                    new CooldownFilter<>(p, AbstractCooldown.class)
-                                            .filterCooldownClass(HolyRadianceCrusader.class)
-                                            .filterCooldownFrom(wp)
-                                            .stream()
-                                            .findAny()
-                                            .isPresent() ? -1 : 1
-                            )
-                            .thenComparing(LocationUtils.sortClosestBy(WarlordsEntity::getLocation, wp.getLocation())))
-                    .limit(energyMaxAllies)
-            ) {
+            List<WarlordsEntity> energyTargets;
+            if (grantEnergyToLinkedAllyRegardlessOfRange) {
+                Optional<WarlordsEntity> linkedAlly = findLinkedMarkedAlly(wp);
+                if (linkedAlly.isPresent()) {
+                    WarlordsEntity linked = linkedAlly.get();
+                    List<WarlordsEntity> targets = new ArrayList<>();
+                    targets.add(linked);
+                    int remaining = energyMaxAllies - 1;
+                    if (remaining > 0) {
+                        getNearbyEnergyTargets(wp).stream()
+                                .filter(ally -> !ally.equals(linked))
+                                .limit(remaining)
+                                .forEach(targets::add);
+                    }
+                    energyTargets = targets;
+                } else {
+                    energyTargets = getNearbyEnergyTargets(wp);
+                }
+            } else {
+                energyTargets = getNearbyEnergyTargets(wp);
+            }
+            for (WarlordsEntity energyTarget : energyTargets) {
                 if (energyTarget.getCooldownManager().hasCooldown(HolyRadianceCrusader.class)) {
                     // 20 ticks
                     energyTarget.addSpeedModifier(wp, "CRUSADER MARK", allySpeedBoost, allySpeedBoostDurationInTicks);
@@ -209,6 +216,44 @@ public class CrusadersStrike extends AbstractStrike<CrusadersStrike, CrusadersSt
 
     public void setEnergyRadius(int energyRadius) {
         this.energyRadius = energyRadius;
+    }
+
+    public boolean isGrantEnergyToLinkedAllyRegardlessOfRange() {
+        return grantEnergyToLinkedAllyRegardlessOfRange;
+    }
+
+    public void setGrantEnergyToLinkedAllyRegardlessOfRange(boolean grantEnergyToLinkedAllyRegardlessOfRange) {
+        this.grantEnergyToLinkedAllyRegardlessOfRange = grantEnergyToLinkedAllyRegardlessOfRange;
+    }
+
+    private Optional<WarlordsEntity> findLinkedMarkedAlly(@Nonnull WarlordsEntity wp) {
+        return PlayerFilter.playingGame(wp.getGame())
+                .aliveTeammatesOfExcludingSelf(wp)
+                .filter(teammate -> new CooldownFilter<>(teammate, AbstractCooldown.class)
+                        .filterCooldownClass(HolyRadianceCrusader.class)
+                        .filterCooldownFrom(wp)
+                        .stream()
+                        .findAny()
+                        .isPresent())
+                .findFirst();
+    }
+
+    private List<WarlordsEntity> getNearbyEnergyTargets(@Nonnull WarlordsEntity wp) {
+        return PlayerFilter
+                .entitiesAround(wp, energyRadius, energyRadius, energyRadius)
+                .aliveTeammatesOfExcludingSelf(wp)
+                .sorted(Comparator
+                        .comparing((WarlordsEntity p) ->
+                                new CooldownFilter<>(p, AbstractCooldown.class)
+                                        .filterCooldownClass(HolyRadianceCrusader.class)
+                                        .filterCooldownFrom(wp)
+                                        .stream()
+                                        .findAny()
+                                        .isPresent() ? -1 : 1
+                        )
+                        .thenComparing(LocationUtils.sortClosestBy(WarlordsEntity::getLocation, wp.getLocation())))
+                .limit(energyMaxAllies)
+                .toList();
     }
 
     public static class DamageValues implements Value.ValueHolder {

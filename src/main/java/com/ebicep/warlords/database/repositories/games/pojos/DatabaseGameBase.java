@@ -112,7 +112,8 @@ public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
                     break;
                 }
                 switch (addon) {
-                    case CUSTOM_GAME, IMPOSTER_MODE, COOLDOWN_MODE, TRIPLE_HEALTH, INTERCHANGE_MODE -> {
+                    case CUSTOM_GAME, IMPOSTER_MODE, COOLDOWN_MODE, TRIPLE_HEALTH, INTERCHANGE_MODE,
+                         ABILITY_CHANGE_RANDOM, ABILITY_CHANGE_ON_DEATH -> {
                         ChatUtils.MessageType.WARLORDS.sendMessage("NOT UPDATING PLAYER STATS - Some addon detected");
                         updatePlayerStats = false;
                     }

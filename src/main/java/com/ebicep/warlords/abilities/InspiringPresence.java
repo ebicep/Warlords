@@ -57,10 +57,11 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "paladin.inspiringpresence.activation", 2, 1);
         wp.addSpeedModifier(wp, name, speedBuff, tickDuration);
-        String uuid = Integer.toHexString((int) (System.nanoTime() ^ wp.hashCode()));
+        String uuid = " " + Integer.toHexString((int) (System.nanoTime() ^ wp.hashCode()));
         float rad = radius.getCalculatedValue();
         List<WarlordsEntity> teammatesNear = PlayerFilter.entitiesAround(wp, rad, rad, rad).aliveTeammatesOfExcludingSelf(wp).toList();
         InspiringPresenceData data = new InspiringPresenceData();
+        data.setAlliesHitCount(teammatesNear.size());
         RegularCooldown<InspiringPresenceData> presenceCooldown = new RegularCooldown<>(
                 name + uuid,
                 "PRES",
@@ -215,6 +216,8 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
 
         private final List<WarlordsEntity> playersAffected = new ArrayList<>();
 
+        private int alliesHitCount;
+
         private double energyGivenFromStrikeAndPresence = 0;
 
         public void addEnergyGivenFromStrikeAndPresence(double energyGivenFromStrikeAndPresence) {
@@ -223,6 +226,14 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
 
         public List<WarlordsEntity> getPlayersAffected() {
             return playersAffected;
+        }
+
+        public int getAlliesHitCount() {
+            return alliesHitCount;
+        }
+
+        public void setAlliesHitCount(int alliesHitCount) {
+            this.alliesHitCount = alliesHitCount;
         }
 
         public double getEnergyGivenFromStrikeAndPresence() {

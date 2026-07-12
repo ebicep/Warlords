@@ -100,6 +100,7 @@ public class Ability<T extends AbstractAbility> {
     public static final Ability<RemedicChains> REMEDIC_CHAINS = new Ability<>(RemedicChains.class, RemedicChains::new);
     public static final Ability<Repentance> REPENTANCE = new Ability<>(Repentance.class, Repentance::new);
     public static final Ability<RighteousStrike> RIGHTEOUS_STRIKE = new Ability<>(RighteousStrike.class, RighteousStrike::new);
+    public static final Ability<SacrificialStand> SACRIFICIAL_STAND = new Ability<>(SacrificialStand.class, SacrificialStand::new);
     public static final Ability<SanctifiedBeacon> SANCTIFIED_BEACON = new Ability<>(SanctifiedBeacon.class, SanctifiedBeacon::new);
     public static final Ability<Sanctuary> SANCTUARY = new Ability<>(Sanctuary.class, Sanctuary::new);
     public static final Ability<SeismicWaveBerserker> SEISMIC_WAVE_BERSERKER = new Ability<>(SeismicWaveBerserker.class, SeismicWaveBerserker::new);
@@ -120,6 +121,7 @@ public class Ability<T extends AbstractAbility> {
     public static final Ability<Triage> TRIAGE = new Ability<>(Triage.class, Triage::new);
     public static final Ability<UndyingArmy> UNDYING_ARMY = new Ability<>(UndyingArmy.class, UndyingArmy::new);
     public static final Ability<Vindicate> VINDICATE = new Ability<>(Vindicate.class, Vindicate::new);
+    public static final Ability<VampiricChains> VAMPIRIC_CHAINS = new Ability<>(VampiricChains.class, VampiricChains::new);
     public static final Ability<VitalityConcoction> VITALITY_CONCOCTION = new Ability<>(VitalityConcoction.class, VitalityConcoction::new);
     public static final Ability<VitalityLiquor> VITALITY_LIQUOR = new Ability<>(VitalityLiquor.class, VitalityLiquor::new);
     public static final Ability<VolatileBrew> VOLATILE_BREW = new Ability<>(VolatileBrew.class, VolatileBrew::new);
@@ -212,6 +214,7 @@ public class Ability<T extends AbstractAbility> {
             REMEDIC_CHAINS,
             REPENTANCE,
             RIGHTEOUS_STRIKE,
+            SACRIFICIAL_STAND,
             SANCTIFIED_BEACON,
             SANCTUARY,
             SEISMIC_WAVE_BERSERKER,
@@ -232,6 +235,7 @@ public class Ability<T extends AbstractAbility> {
             TRIAGE,
             UNDYING_ARMY,
             VINDICATE,
+            VAMPIRIC_CHAINS,
             VITALITY_CONCOCTION,
             VITALITY_LIQUOR,
             VOLATILE_BREW,

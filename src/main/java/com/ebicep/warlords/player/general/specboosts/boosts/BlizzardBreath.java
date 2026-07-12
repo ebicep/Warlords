@@ -1,6 +1,7 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
 import com.ebicep.warlords.abilities.FreezingBreath;
+import com.ebicep.warlords.abilities.FrostBolt;
 import com.ebicep.warlords.abilities.TimeSurge;
 import com.ebicep.warlords.abilities.TimeWarpCryomancer;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
@@ -14,6 +15,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.event.EventHandler;
@@ -28,12 +30,14 @@ public class BlizzardBreath implements SpecBoostManager.SpecBoost<BlizzardBreath
 
     private float cooldownReductionPerEnemyHitPercent;
     private int immunityDurationTicks;
+    private int frostboltDirectHitCooldownReductionTicks;
     private int productionValuesDecreasePercent;
 
     @Override
     public void init() {
         this.cooldownReductionPerEnemyHitPercent = getValue("cooldownReductionPerEnemyHitPercent", float.class);
         this.immunityDurationTicks = getValue("immunityDurationTicks", int.class);
+        this.frostboltDirectHitCooldownReductionTicks = getValue("frostboltDirectHitCooldownReductionTicks", int.class);
         this.productionValuesDecreasePercent = getValue("productionValuesDecreasePercent", int.class);
     }
 
@@ -49,7 +53,7 @@ public class BlizzardBreath implements SpecBoostManager.SpecBoost<BlizzardBreath
 
     @Override
     public List<Object> getVariables() {
-        return List.of(cooldownReductionPerEnemyHitPercent, immunityDurationTicks, productionValuesDecreasePercent);
+        return List.of(cooldownReductionPerEnemyHitPercent, immunityDurationTicks, frostboltDirectHitCooldownReductionTicks, productionValuesDecreasePercent);
     }
 
     @Override
@@ -107,6 +111,29 @@ public class BlizzardBreath implements SpecBoostManager.SpecBoost<BlizzardBreath
             } else {
                 breathTargetsHit.put(uuid, 1);
             }
+        }
+
+        @EventHandler
+        public void onFrostboltDirectHit(WarlordsDamageHealingFinalEvent event) {
+            WarlordsDamageHealingEvent damageHealingEvent = event.getWarlordsDamageHealingEvent();
+            if (!damageHealingEvent.getSource().equals(warlordsEntity)) {
+                return;
+            }
+            if (!damageHealingEvent.isDamageInstance()) {
+                return;
+            }
+            if (!(damageHealingEvent.getAbility() instanceof FrostBolt)) {
+                return;
+            }
+            if (!damageHealingEvent.getFlags().contains(InstanceFlags.DIRECT_HIT)) {
+                return;
+            }
+            if (damageHealingEvent.getFlags().contains(InstanceFlags.OVERFLOW)) {
+                return;
+            }
+            warlordsEntity.getAbilitiesMatching(FreezingBreath.class).forEach(freezingBreath -> {
+                freezingBreath.subtractCurrentCooldown(frostboltDirectHitCooldownReductionTicks / 20f);
+            });
         }
 
         @EventHandler

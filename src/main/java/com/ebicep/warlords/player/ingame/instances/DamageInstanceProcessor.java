@@ -569,9 +569,10 @@ public class DamageInstanceProcessor {
                 .damage()
                 .cause(cause)
                 .source(source)
+                .ability(ability)
                 .value(overVeneDamage)
                 .showAsCrit(isCrit)
-                .flags(InstanceFlags.TRUE_DAMAGE)
+                .flags(InstanceFlags.TRUE_DAMAGE, InstanceFlags.OVERFLOW)
         ).ifPresent(e -> finalEvent = e);
     }
 
@@ -774,10 +775,12 @@ public class DamageInstanceProcessor {
         finalEvent = addDamageInstance(
                 new InstanceDebugHoverable(),
                 new WarlordsDamageHealingEvent(
-                        target, source, cause, newDamage, newDamage,
-                        isCrit ? 100 : 0, 100, true,
-                        InstanceFlags.TRUE_DAMAGE_IGNORE_CRIT,
-                        newCustomFlags, debugMessages
+                        InstanceBuilder.InstanceType.DAMAGE,
+                        target, source, ability, cause,
+                        newDamage, newDamage,
+                        isCrit ? 100 : 0, 100,
+                        EnumSet.of(InstanceFlags.TRUE_DAMAGE, InstanceFlags.IGNORE_CRIT_MODIFIERS, InstanceFlags.OVERFLOW),
+                        newCustomFlags, debugMessages, null
                 )
         ).orElse(null);
     }

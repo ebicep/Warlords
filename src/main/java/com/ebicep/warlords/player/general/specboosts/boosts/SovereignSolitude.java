@@ -2,7 +2,10 @@ package com.ebicep.warlords.player.general.specboosts.boosts;
 
 import com.ebicep.warlords.abilities.CrusadersStrike;
 import com.ebicep.warlords.abilities.HolyRadianceCrusader;
+import com.ebicep.warlords.events.game.WarlordsFlagUpdatedEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
+import com.ebicep.warlords.game.flags.PlayerFlagLocation;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -18,17 +21,15 @@ import java.util.Objects;
 
 public class SovereignSolitude implements SpecBoostManager.SpecBoost<SovereignSolitude> {
 
-    private int crusaderStrikeEnergyGrant;
-    private int allyCount;
     private int markedAllySpeedPercent;
     private int radianceCooldownReductionTicks;
+    private int flagHealthIncrease;
 
     @Override
     public void init() {
-        this.crusaderStrikeEnergyGrant = getValue("crusaderStrikeEnergyGrant", int.class);
-        this.allyCount = getValue("allyCount", int.class);
         this.markedAllySpeedPercent = getValue("markedAllySpeedPercent", int.class);
         this.radianceCooldownReductionTicks = getValue("radianceCooldownReductionTicks", int.class);
+        this.flagHealthIncrease = getValue("flagHealthIncrease", int.class);
     }
 
     @Override
@@ -38,7 +39,7 @@ public class SovereignSolitude implements SpecBoostManager.SpecBoost<SovereignSo
 
     @Override
     public List<Object> getVariables() {
-        return List.of(crusaderStrikeEnergyGrant, allyCount, markedAllySpeedPercent, radianceCooldownReductionTicks);
+        return List.of(markedAllySpeedPercent, flagHealthIncrease, radianceCooldownReductionTicks);
     }
 
     @Override
@@ -59,15 +60,20 @@ public class SovereignSolitude implements SpecBoostManager.SpecBoost<SovereignSo
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
-            warlordsPlayer.getAbilitiesMatching(CrusadersStrike.class).forEach(crusadersStrike -> {
-                crusadersStrike.setEnergyGiven(crusadersStrike.getEnergyGiven() + crusaderStrikeEnergyGrant);
-                crusadersStrike.setEnergyMaxAllies(allyCount);
-                crusadersStrike.setBlockedByArcaneShield(false);
-            });
+            warlordsPlayer.getAbilitiesMatching(CrusadersStrike.class).forEach(crusadersStrike ->
+                    crusadersStrike.setGrantEnergyToLinkedAllyRegardlessOfRange(true)
+            );
             warlordsPlayer.getAbilitiesMatching(HolyRadianceCrusader.class).forEach(holyRadiance -> {
                 holyRadiance.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", -radianceCooldownReductionTicks / 20f);
                 holyRadiance.setMarkSpeed(markedAllySpeedPercent);
             });
+        }
+
+        private void breakLink() {
+            if (lastMarked != null) {
+                lastMarked.getCooldownManager().removeCooldownByName(warlordsEntity.getName() + " - " + getStringName());
+                lastMarked = null;
+            }
         }
 
         @EventHandler(ignoreCancelled = true)
@@ -76,16 +82,14 @@ public class SovereignSolitude implements SpecBoostManager.SpecBoost<SovereignSo
             if (!Objects.equals(cooldown.getFrom(), warlordsEntity)) {
                 return;
             }
-            if (!(cooldown instanceof RegularCooldown<?> regularCooldown) || !(cooldown.getCooldownClass().equals(HolyRadianceCrusader.class))) {
+            if (!(cooldown instanceof RegularCooldown<?>) || !(cooldown.getCooldownClass().equals(HolyRadianceCrusader.class))) {
                 return;
             }
             String cooldownName = warlordsEntity.getName() + " - " + getStringName();
             if (cooldown.getName().equals(cooldownName)) {
                 return;
             }
-            if (lastMarked != null) {
-                lastMarked.getCooldownManager().removeCooldownByName(cooldownName);
-            }
+            breakLink();
             lastMarked = event.getWarlordsEntity();
             lastMarked.getCooldownManager().addCooldown(new PermanentCooldown<>(
                     cooldownName,
@@ -95,8 +99,24 @@ public class SovereignSolitude implements SpecBoostManager.SpecBoost<SovereignSo
                     warlordsEntity,
                     CooldownTypes.SPEC_BOOST,
                     cooldownManager -> {},
-                    false
+                    true
             ));
+        }
+
+        @EventHandler(ignoreCancelled = true)
+        public void onDeath(WarlordsDeathEvent event) {
+            if (event.getWarlordsEntity().equals(warlordsEntity) || event.getWarlordsEntity().equals(lastMarked)) {
+                breakLink();
+            }
+        }
+
+        @EventHandler
+        public void onWarlordsFlagUpdated(WarlordsFlagUpdatedEvent event) {
+            if (event.getNew() instanceof PlayerFlagLocation playerFlagLocation && playerFlagLocation.getPlayer().equals(warlordsEntity)) {
+                warlordsEntity.getHealth().addModifier(FloatModifiable.ModifierType.ADDITIVE, getStringName(), flagHealthIncrease);
+            } else if (event.getOld() instanceof PlayerFlagLocation playerFlagLocation && playerFlagLocation.getPlayer().equals(warlordsEntity)) {
+                warlordsEntity.getHealth().removeModifier(getStringName());
+            }
         }
 
     }

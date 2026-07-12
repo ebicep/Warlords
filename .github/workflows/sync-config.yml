@@ -1,0 +1,26 @@
+name: Sync Config to MongoDB
+
+on:
+  push:
+    branches: [dev]
+    paths:
+      - 'config/**.json'
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install pymongo
+
+      - name: Sync config to MongoDB
+        run: python scripts/sync_config.py
+        env:
+          MONGO_URI: ${{ secrets.MONGO_URI }}

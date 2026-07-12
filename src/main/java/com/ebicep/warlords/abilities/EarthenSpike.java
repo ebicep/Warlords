@@ -69,17 +69,23 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
 
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
-        List<WarlordsEntity> spiked = new ArrayList<>();
+        Optional<WarlordsEntity> target = findSpikeTarget(wp);
+        if (target.isEmpty()) {
+            return false;
+        }
+        spikeTarget(wp, target.get());
+        return true;
+    }
+
+    public Optional<WarlordsEntity> findSpikeTarget(WarlordsEntity wp) {
         float rad = radius.getCalculatedValue() + PacketUtils.pingCompensationAmount(wp);
         for (WarlordsEntity spikeTarget : PlayerFilter.entitiesAround(wp, rad, rad, rad).aliveEnemiesOf(wp).lookingAtFirst(wp)) {
             if (!LocationUtils.isLookingAt(wp, spikeTarget) || !LocationUtils.hasLineOfSight(wp, spikeTarget)) {
                 continue;
             }
-            spiked.add(spikeTarget);
-            spikeTarget(wp, spikeTarget);
-            break;
+            return Optional.of(spikeTarget);
         }
-        return !spiked.isEmpty();
+        return Optional.empty();
     }
 
     @Override
@@ -101,30 +107,30 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
         spikeTarget(wp, spikeTarget, wp, new ArrayList<>());
     }
 
-    protected void spikeTarget(@Nonnull WarlordsEntity wp, WarlordsEntity spikeTarget, @Nonnull WarlordsEntity startEntity,  List<WarlordsEntity> spiked) {
+    protected void spikeTarget(@Nonnull WarlordsEntity wp, WarlordsEntity spikeTarget, @Nonnull WarlordsEntity startEntity, List<WarlordsEntity> spiked) {
         Location startLocation = startEntity.getLocation();
+        UUID spikeUuid = UUID.randomUUID();
         new ChasingBlockEffect.Builder()
                 .setGame(wp.getGame())
                 .setSpeed(speed)
                 .setDestination(() -> spikeTarget.isDead() ? null : spikeTarget.getLocation())
-                .setOnTick(ticksElapsed -> {
+                .setOnTick((ticksElapsed, currentLocation) -> {
                     if (ticksElapsed % 5 == 1) {
                         Utils.playGlobalSound(startLocation, REPEATING_SOUND[(ticksElapsed / 5) % 4], 2, 1);
                     }
                 })
                 .setOnDestinationReached(() -> {
-                    UUID spikeUUID = UUID.randomUUID();
                     Location targetLocation = spikeTarget.getLocation();
                     if (pveMasterUpgrade2) {
                         spiked.add(spikeTarget);
-                        onSpikeTarget(wp, spikeTarget, spikeUUID);
+                        applySpikeDamage(wp, spikeTarget, spikeUuid);
                         chainNextSpike(wp, spikeTarget, spiked, radius.getCalculatedValue());
                     } else {
                         for (WarlordsEntity nearSpikeTarget : PlayerFilter
                                 .entitiesAround(targetLocation, spikeHitbox, spikeHitbox, spikeHitbox)
                                 .aliveEnemiesOf(wp)
                         ) {
-                            onSpikeTarget(wp, nearSpikeTarget, spikeUUID);
+                            applySpikeDamage(wp, nearSpikeTarget, spikeUuid);
                         }
                     }
                     if (pveMasterUpgrade) {
@@ -146,56 +152,29 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
                             }
                         }.runTaskLater(15);
                     }
-                    Utils.playGlobalSound(wp.getLocation(), "shaman.earthenspike.impact", 2, 1);
-                    targetLocation.setYaw(0);
-                    for (int i = 0; i < 100; i++) {
-                        if (targetLocation.clone().add(0, -1, 0).getBlock().getType() == Material.AIR) {
-                            targetLocation.add(0, -1, 0);
-                        } else {
-                            break;
-                        }
-                    }
-                    ArmorStand stand = Utils.spawnArmorStand(targetLocation.add(0, -.6, 0), armorStand -> {
-                                armorStand.getEquipment().setHelmet(new ItemStack(Material.BROWN_MUSHROOM));
-                                armorStand.setMarker(true);
-                            }
-                    );
-                    new BukkitRunnable() {
-
-                        @Override
-                        public void run() {
-                            stand.remove();
-                            this.cancel();
-                        }
-                    }.runTaskTimer(Warlords.getInstance(), 10, 0);
+                    playSpikeImpactEffects(wp, targetLocation);
                 })
                 .setMaxTicks(30)
                 .create()
                 .start(new LocationBuilder(startLocation).y(startLocation.getBlockY()));
     }
 
-    protected void onSpikeTarget(WarlordsEntity caster, WarlordsEntity spikeTarget, UUID uuid) {
+    public void applySpikeDamage(WarlordsEntity caster, WarlordsEntity target, UUID uuid) {
+        applySpikeDamageOnly(caster, target, uuid);
+        applyVerticalLaunch(caster, target);
+    }
+
+    public void applySpikeDamageOnly(WarlordsEntity caster, WarlordsEntity target, UUID uuid) {
         stats.targetsSpiked++;
-        if (spikeTarget.hasFlag()) {
+        if (target.hasFlag()) {
             stats.carrierSpiked++;
         }
-        spikeTarget.addInstance(InstanceBuilder
+        target.addInstance(InstanceBuilder
                 .damage().ability(this)
                 .source(caster)
                 .value(damageValues.spikeDamage)
                 .uuid(uuid)
         ).ifPresent(finalEvent -> {
-            boolean closeToGround = LocationUtils.getDistance(spikeTarget.getEntity(), .1) < 1.82;
-            boolean offSpikeCooldown = PLAYER_SPIKE_COOLDOWN.get(spikeTarget.getUuid()) == null || PLAYER_SPIKE_COOLDOWN.get(spikeTarget.getUuid()) + 750 < System.currentTimeMillis();
-            if (closeToGround && offSpikeCooldown) {
-                PLAYER_SPIKE_COOLDOWN.put(spikeTarget.getUuid(), System.currentTimeMillis());
-                new GameRunnable(caster.getGame()) {
-                    @Override
-                    public void run() {
-                        spikeTarget.setVelocity(name, new Vector(0, verticalVelocity, 0), false);
-                    }
-                }.runTaskLater(1);
-            }
             if (!pveMasterUpgrade2) {
                 return;
             }
@@ -211,10 +190,50 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
             }
         });
         if (pveMasterUpgrade2) {
-            spikeTarget.getCooldownManager().removeCooldownByName("Earthen Verdancy");
-            CripplingStrike.cripple(caster, spikeTarget, "Earthen Verdancy", 5 * 20);
+            target.getCooldownManager().removeCooldownByName("Earthen Verdancy");
+            CripplingStrike.cripple(caster, target, "Earthen Verdancy", 5 * 20);
         }
     }
+
+    public void applyVerticalLaunch(WarlordsEntity caster, WarlordsEntity spikeTarget) {
+        boolean closeToGround = LocationUtils.getDistance(spikeTarget.getEntity(), .1) < 1.82;
+        boolean offSpikeCooldown = PLAYER_SPIKE_COOLDOWN.get(spikeTarget.getUuid()) == null || PLAYER_SPIKE_COOLDOWN.get(spikeTarget.getUuid()) + 750 < System.currentTimeMillis();
+        if (closeToGround && offSpikeCooldown) {
+            PLAYER_SPIKE_COOLDOWN.put(spikeTarget.getUuid(), System.currentTimeMillis());
+            new GameRunnable(caster.getGame()) {
+                @Override
+                public void run() {
+                    spikeTarget.setVelocity(name, new Vector(0, verticalVelocity, 0), false);
+                }
+            }.runTaskLater(1);
+        }
+    }
+
+    public void playSpikeImpactEffects(WarlordsEntity caster, Location targetLocation) {
+        Utils.playGlobalSound(caster.getLocation(), "shaman.earthenspike.impact", 2, 1);
+        targetLocation.setYaw(0);
+        for (int i = 0; i < 100; i++) {
+            if (targetLocation.clone().add(0, -1, 0).getBlock().getType() == Material.AIR) {
+                targetLocation.add(0, -1, 0);
+            } else {
+                break;
+            }
+        }
+        ArmorStand stand = Utils.spawnArmorStand(targetLocation.add(0, -.6, 0), armorStand -> {
+                    armorStand.getEquipment().setHelmet(new ItemStack(Material.BROWN_MUSHROOM));
+                    armorStand.setMarker(true);
+                }
+        );
+        new BukkitRunnable() {
+
+            @Override
+            public void run() {
+                stand.remove();
+                this.cancel();
+            }
+        }.runTaskTimer(Warlords.getInstance(), 10, 0);
+    }
+
     // recursive spike chaining
     private void chainNextSpike(WarlordsEntity caster, WarlordsEntity lastTarget, List<WarlordsEntity> spiked, float radius) {
         int spikeHits = spiked.size(); // number of spike hits
@@ -299,7 +318,7 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
 
     }
 
-    public static class EarthenSpikeStats extends AbstractAbilityStats<EarthenSpike, EarthenSpikeStats> {
+    public static class EarthenSpikeStats extends AbstractAbilityStats<EarthenSpike, EarthenSpike.EarthenSpikeStats> {
 
         @Field("targets_spiked")
         private int targetsSpiked = 0;
