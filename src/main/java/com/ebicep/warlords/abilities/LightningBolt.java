@@ -141,16 +141,20 @@ public class LightningBolt extends AbstractPiercingProjectile<LightningBolt, Lig
             if (playersHit == 1) {
                 damageMultiplier = 1.4f;
             } else {
-                damageMultiplier = playersHit * 0.10f + 1.4f;
+                // soft cap of 200 consecutive hits
+                damageMultiplier = Math.clamp(playersHit, 0, 200) * 0.10f + 1.4f;
             }
             EffectUtils.displayParticle(Particle.ENCHANTED_HIT, hit.getLocation().add(0, 1.2, 0), 5, .25, .25, .25, 0);
         }
-        return hit.addInstance(InstanceBuilder.damage()
-                                              .ability(this)
-                                              .source(wp)
-                                              .min(damageValues.boltDamage.getMinValue() * damageMultiplier)
-                                              .max(damageValues.boltDamage.getMaxValue() * damageMultiplier)
-                                              .crit(damageValues.boltDamage));
+
+        return hit.addInstance(InstanceBuilder
+                .damage()
+                .ability(this)
+                .source(wp)
+                .min(damageValues.boltDamage.getMinValue() * damageMultiplier)
+                .max(damageValues.boltDamage.getMaxValue() * damageMultiplier)
+                .crit(damageValues.boltDamage)
+        );
     }
 
     @Override

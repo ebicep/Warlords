@@ -122,7 +122,7 @@ public class LegendaryBrilliance extends AbstractLegendaryWeapon implements Pass
                         CooldownTypes.WEAPON,
                         cooldownManager -> {
                         },
-                        200
+                        300
                 ).addModifier(Modifier.MODIFY_INCOMING_HEALING, (event, currentHealValue) -> {
                     currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getTitleName(), healBoost);
                         }

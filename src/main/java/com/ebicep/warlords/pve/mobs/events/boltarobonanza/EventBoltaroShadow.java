@@ -83,8 +83,13 @@ public class EventBoltaroShadow extends AbstractMob implements BossMinionMob {
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
-        float newHealth = (float) (warlordsNPC.getMaxHealth() * (1 + split * .025));
+        // by 5% per split
+        float newHealth = (float) (warlordsNPC.getMaxHealth() * (1 + split * .05));
+        // by 1% per split
+        float damageMultiplier = 1 + (split * .01f);
         warlordsNPC.setMaxHealthAndHeal(newHealth);
+        warlordsNPC.setMinMeleeDamage((int) (warlordsNPC.getMinMeleeDamage() * damageMultiplier));
+        warlordsNPC.setMaxMeleeDamage((int) (warlordsNPC.getMaxMeleeDamage() * damageMultiplier));
     }
 
     @Override
@@ -99,7 +104,7 @@ public class EventBoltaroShadow extends AbstractMob implements BossMinionMob {
 
         int nextSplit = split + 1;
         option.spawnNewMob(new EventBoltaroShadow(warlordsNPC.getLocation(), nextSplit));
-        if (forceSplit || ThreadLocalRandom.current().nextDouble(0, 1) < (0.95 / nextSplit)) {
+        if (forceSplit || ThreadLocalRandom.current().nextDouble(0, 1) < (0.85 / nextSplit)) {
             option.spawnNewMob(new EventBoltaroShadow(warlordsNPC.getLocation(), nextSplit));
         }
     }
@@ -110,6 +115,6 @@ public class EventBoltaroShadow extends AbstractMob implements BossMinionMob {
 
     @Override
     public double weaponDropRate() {
-        return 1.5;
+        return 1;
     }
 }

@@ -225,7 +225,7 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
                                                .percent(teammateDamageReductionPercent, AbilityDescriptionBuilder.COLOR_BROWN)
                                                .text(" for ")
                                                .durationTicks(allyTickDuration)
-                                               .text(". You are healed for the amount of damage prevented on allies." + (inPve ? "Additionally, constantly take aggro of nearby mobs." : ""))
+                                               .text(". You are healed for the amount of damage prevented on allies.")
                                                .build();
     }
 
