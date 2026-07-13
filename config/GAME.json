@@ -35,6 +35,8 @@
         "overtimeSeconds": 300,
         "gateDelaySeconds": 10,
         "respawnWaveDelayTicks": 0,
+        "respawnWavePeriodSeconds": 12,
+        "respawnWaveMinTimerSeconds": 4,
         "additionalPowerupCooldownSeconds": 1
       },
       "addons": {
