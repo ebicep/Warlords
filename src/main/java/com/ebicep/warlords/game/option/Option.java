@@ -16,6 +16,10 @@ import java.util.List;
  */
 public interface Option {
 
+    default boolean isEnabled(@Nonnull Game game) {
+        return true;
+    }
+
     /**
      * Registers this option to a game. An Option can only be registered to one
      * game, attempting to register an option to multiple game instances may

@@ -34,6 +34,11 @@ public class ApplySpecBoostsOption implements Option {
     }
 
     @Override
+    public boolean isEnabled(@Nonnull Game game) {
+        return game.getOption(AbilityChangeOption.class).isEmpty();
+    }
+
+    @Override
     public void start(@Nonnull Game game) {
         if (random) {
             try {
