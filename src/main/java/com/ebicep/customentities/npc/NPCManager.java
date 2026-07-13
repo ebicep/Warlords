@@ -64,6 +64,7 @@ public class NPCManager {
                 createIllusionVendorNPC();
                 createSeasonalVendorNPC();
                 createTutorialGuideNPC();
+                createMainLobbySetupNPC();
                 registerTrait(ReadyUpOption.ReadyUpTrait.class, "ReadyUpTrait");
                 ChatUtils.MessageType.GAME.sendMessage("Done adding game join NPCs");
             }
@@ -454,5 +455,15 @@ public class NPCManager {
 
         Location location = new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 11.5, 82, 155.5, 180, 0);
         npc.spawn(location);
+    }
+
+    public static void createMainLobbySetupNPC() {
+        registerTrait(MainLobbySetupTrait.class, "MainLobbySetupTrait");
+
+        NPC npc = NPC_REGISTRY.createNPC(EntityType.PLAYER, "main-lobby-setup");
+        npc.addTrait(MainLobbySetupTrait.class);
+
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
+        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), -58.5, 61, 83, 113, 0));
     }
 }

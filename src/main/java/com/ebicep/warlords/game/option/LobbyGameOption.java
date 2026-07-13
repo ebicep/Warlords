@@ -97,15 +97,18 @@ public class LobbyGameOption implements Option {
 
     private static void addPlayerToGame(Player player, UUID uniqueId, @Nonnull Game game) {
         DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
-        databasePlayer.setWantedTeam(Team.BLUE);
+        Team team = databasePlayer.getWantedTeam();
+        if (team == null || (team != Team.RED && team != Team.BLUE)) {
+            team = Team.BLUE;
+        }
         Warlords.SPAWN_POINTS.put(uniqueId, player.getLocation());
         Warlords.addPlayer(new WarlordsPlayer(
                 player,
                 game,
-                Team.BLUE
+                team
         ));
         game.addPlayer(player, false);
-        game.setPlayerTeam(uniqueId, Team.BLUE);
+        game.setPlayerTeam(uniqueId, team);
         Utils.resetPlayerMovementStatistics(player);
     }
 
