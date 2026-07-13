@@ -2,12 +2,7 @@ package com.ebicep.warlords.game.option.pvp;
 
 import com.ebicep.warlords.abilities.internal.Ability;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.icon.AbilityIcon;
-import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
-import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
-import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
-import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
-import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
+import com.ebicep.warlords.abilities.internal.icon.*;
 import com.ebicep.warlords.events.player.ingame.WarlordsRespawnEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
@@ -26,14 +21,7 @@ import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class AbilityChangeOption implements Option {
@@ -206,6 +194,7 @@ public class AbilityChangeOption implements Option {
             if (player.getEntity() instanceof Player p) {
                 newAbility.updateDescription(p);
             }
+            newAbility.updateCustomStats(warlordsPlayer);
             abilities.set(i, newAbility);
             newAbility.setCurrentCooldown(oldCooldown);
             if (wasOnCooldown) {
