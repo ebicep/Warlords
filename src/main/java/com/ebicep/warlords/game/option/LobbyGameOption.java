@@ -11,6 +11,7 @@ import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.citizensnpcs.api.CitizensAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -66,6 +67,9 @@ public class LobbyGameOption implements Option {
             public void run() {
                 assert mainLobby != null;
                 mainLobby.getPlayers().forEach(player -> {
+                    if (Warlords.citizensEnabled && CitizensAPI.getNPCRegistry().isNPC(player)) {
+                        return;
+                    }
                     UUID uniqueId = player.getUniqueId();
                     LocationBuilder locationToCheck = new LocationBuilder(player.getLocation()).y(Y_CHECK);
                     boolean inPlayingArea = player.getWorld().getBlockAt(locationToCheck).getType() == Material.BEDROCK && player.getLocation().getY() < 70;
