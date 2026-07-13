@@ -3,10 +3,12 @@ package com.ebicep.warlords.game.option.pvp;
 import com.ebicep.warlords.abilities.internal.Ability;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.icon.*;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.events.player.ingame.WarlordsRespawnEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.state.EndState;
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.ComponentUtils;
@@ -55,9 +57,10 @@ public class AbilityChangeOption implements Option {
         pools.put(OrangeAbilityIcon.class, new ArrayList<>());
 
         Set<Ability<?>> seen = new HashSet<>();
-        for (Ability<?>[] specAbilities : Ability.SPEC_ABILITIES.values()) {
-            for (Ability<?> ability : specAbilities) {
-                if (seen.add(ability)) {
+        for (Specializations spec : Specializations.VALUES) {
+            for (AbstractAbility abstractAbility : spec.create(ConfigManager.DEFAULT_NAMESPACES).getAbilities()) {
+                Ability<?> ability = Ability.getAbility(abstractAbility.getClass());
+                if (ability != null && seen.add(ability)) {
                     Class<? extends AbilityIcon> iconType = getIconType(ability.clazz);
                     if (iconType != null) {
                         pools.get(iconType).add(ability);
