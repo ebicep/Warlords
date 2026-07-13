@@ -2,16 +2,13 @@ package com.ebicep.warlords.game.option.pvp;
 
 import com.ebicep.warlords.abilities.internal.Ability;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.icon.AbilityIcon;
-import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
-import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
-import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
-import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
-import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
+import com.ebicep.warlords.abilities.internal.icon.*;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.events.player.ingame.WarlordsRespawnEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.state.EndState;
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.ComponentUtils;
@@ -26,14 +23,7 @@ import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class AbilityChangeOption implements Option {
@@ -67,9 +57,10 @@ public class AbilityChangeOption implements Option {
         pools.put(OrangeAbilityIcon.class, new ArrayList<>());
 
         Set<Ability<?>> seen = new HashSet<>();
-        for (Ability<?>[] specAbilities : Ability.SPEC_ABILITIES.values()) {
-            for (Ability<?> ability : specAbilities) {
-                if (seen.add(ability)) {
+        for (Specializations spec : Specializations.VALUES) {
+            for (AbstractAbility abstractAbility : spec.create(ConfigManager.DEFAULT_NAMESPACES).getAbilities()) {
+                Ability<?> ability = Ability.getAbility(abstractAbility.getClass());
+                if (ability != null && seen.add(ability)) {
                     Class<? extends AbilityIcon> iconType = getIconType(ability.clazz);
                     if (iconType != null) {
                         pools.get(iconType).add(ability);
@@ -206,6 +197,7 @@ public class AbilityChangeOption implements Option {
             if (player.getEntity() instanceof Player p) {
                 newAbility.updateDescription(p);
             }
+            newAbility.updateCustomStats(warlordsPlayer);
             abilities.set(i, newAbility);
             newAbility.setCurrentCooldown(oldCooldown);
             if (wasOnCooldown) {

@@ -115,6 +115,7 @@ public class Warlords extends JavaPlugin {
 
         new ArrayList<>(warlordsEntity.getGame().getOptions())
                 .stream()
+                .filter(option -> warlordsEntity.getGame().isOptionEnabled(option))
                 .sorted((o1, o2) -> {
                     try {
                         Priority o1Priority = o1.getClass()

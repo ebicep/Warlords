@@ -11,6 +11,7 @@ import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.citizensnpcs.api.CitizensAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -66,6 +67,9 @@ public class LobbyGameOption implements Option {
             public void run() {
                 assert mainLobby != null;
                 mainLobby.getPlayers().forEach(player -> {
+                    if (Warlords.citizensEnabled && CitizensAPI.getNPCRegistry().isNPC(player)) {
+                        return;
+                    }
                     UUID uniqueId = player.getUniqueId();
                     LocationBuilder locationToCheck = new LocationBuilder(player.getLocation()).y(Y_CHECK);
                     boolean inPlayingArea = player.getWorld().getBlockAt(locationToCheck).getType() == Material.BEDROCK && player.getLocation().getY() < 70;
@@ -97,15 +101,18 @@ public class LobbyGameOption implements Option {
 
     private static void addPlayerToGame(Player player, UUID uniqueId, @Nonnull Game game) {
         DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
-        databasePlayer.setWantedTeam(Team.BLUE);
+        Team team = databasePlayer.getWantedTeam();
+        if (team == null || (team != Team.RED && team != Team.BLUE)) {
+            team = Team.BLUE;
+        }
         Warlords.SPAWN_POINTS.put(uniqueId, player.getLocation());
         Warlords.addPlayer(new WarlordsPlayer(
                 player,
                 game,
-                Team.BLUE
+                team
         ));
         game.addPlayer(player, false);
-        game.setPlayerTeam(uniqueId, Team.BLUE);
+        game.setPlayerTeam(uniqueId, team);
         Utils.resetPlayerMovementStatistics(player);
     }
 

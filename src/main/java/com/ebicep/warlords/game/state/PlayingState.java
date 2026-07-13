@@ -113,9 +113,7 @@ public class PlayingState implements State, TimerDebugAble {
             }
         });
 
-        for (Option option : game.getOptions()) {
-            option.start(game);
-        }
+        game.forEachEnabledOption(option -> option.start(game));
         ChatUtils.MessageType.GAME_DEBUG.sendMessage("Game options added");
 
         List<WarlordsEntity> warlordsEntities = new ArrayList<>();
@@ -138,9 +136,7 @@ public class PlayingState implements State, TimerDebugAble {
             }
             Utils.resetPlayerMovementStatistics(player);
         });
-        for (Option option : game.getOptions()) {
-            option.afterAllWarlordsEntitiesCreated(warlordsEntities);
-        }
+        game.forEachEnabledOption(option -> option.afterAllWarlordsEntitiesCreated(warlordsEntities));
 
         game.registerEvents(new Listener() {
             @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
@@ -290,9 +286,7 @@ public class PlayingState implements State, TimerDebugAble {
         if (wp instanceof WarlordsPlayer warlordsPlayer) {
             updater.updateBasedOnGameState(CustomScoreboard.getPlayerScoreboard(player), warlordsPlayer);
         }
-        for (Option option : game.getOptions()) {
-            option.onPlayerReJoinGame(player);
-        }
+        game.forEachEnabledOption(option -> option.onPlayerReJoinGame(player));
     }
 
     @Override

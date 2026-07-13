@@ -210,9 +210,7 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
         if (entity instanceof Player player) {
             player.getInventory().clear();
 
-            for (Option option : game.getOptions()) {
-                option.updateInventory(this, player);
-            }
+            game.forEachEnabledOption(option -> option.updateInventory(this, player));
             for (AbstractAbility ability : this.spec.getAbilities()) {
                 ability.updateDescription(player);
             }
@@ -392,9 +390,7 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
         Player player = Bukkit.getPlayer(uuid);
 
         ArmorManager.resetArmor(player, this);
-        for (Option option : game.getOptions()) {
-            option.onSpecChange(this, oldSpec);
-        }
+        game.forEachEnabledOption(option -> option.onSpecChange(this, oldSpec));
         updateInventory(true);
         queueUpdateTabName();
     }

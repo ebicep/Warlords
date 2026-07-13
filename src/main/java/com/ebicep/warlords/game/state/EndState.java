@@ -88,9 +88,7 @@ public class EndState implements State, TimerDebugAble {
         WarlordsPlayer.STUNNED_PLAYERS.removeAll(game.getPlayers().keySet());
 
         List<Option> options = game.getOptions();
-        for (Option option : options) {
-            option.onGameEnding(game);
-        }
+        game.forEachEnabledOption(option -> option.onGameEnding(game));
 
         ChatUtils.MessageType.GAME_DEBUG.sendMessage("Game options onGameEnding done");
 
@@ -762,9 +760,7 @@ public class EndState implements State, TimerDebugAble {
                 );
             }
 
-            for (Option option : game.getOptions()) {
-                option.sendEventStatsMessage(game, player);
-            }
+            game.forEachEnabledOption(option -> option.sendEventStatsMessage(game, player));
         }
         sendGlobalMessage(game, Component.empty(), false);
     }

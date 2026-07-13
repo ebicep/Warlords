@@ -123,9 +123,7 @@ public final class Game implements Runnable, AutoCloseable {
         }
         this.options = Collections.unmodifiableList(options);
         state = this.map.initialState(this);
-        for (Option option : options) {
-            option.register(this);
-        }
+        forEachEnabledOption(option -> option.register(this));
         for (Team team : TeamMarker.getTeams(this)) {
             this.points.put(team, 0);
         }
@@ -239,6 +237,18 @@ public final class Game implements Runnable, AutoCloseable {
     public void addOption(Option option) {
         this.options.add(option);
         this.cachedOptions.computeIfAbsent(option.getClass(), k -> new ArrayList<>()).add(option);
+    }
+
+    public boolean isOptionEnabled(@Nonnull Option option) {
+        return option.isEnabled(this);
+    }
+
+    public void forEachEnabledOption(@Nonnull Consumer<Option> action) {
+        for (Option option : options) {
+            if (option.isEnabled(this)) {
+                action.accept(option);
+            }
+        }
     }
 
     /**
@@ -423,9 +433,7 @@ public final class Game implements Runnable, AutoCloseable {
             if (p != null) {
                 p.getInventory().setHeldItemSlot(0);
                 Warlords.getInstance().hideAndUnhidePeople(p);
-                for (Option option : options) {
-                    option.onPlayerQuit(p);
-                }
+                forEachEnabledOption(option -> option.onPlayerQuit(p));
             }
             return true;
         }
@@ -750,13 +758,13 @@ public final class Game implements Runnable, AutoCloseable {
         } catch (Throwable e) {
             exceptions.add(e);
         }
-        for (Option option : options) {
+        forEachEnabledOption(option -> {
             try {
                 option.onGameCleanup(this);
             } catch (Throwable e) {
                 exceptions.add(e);
             }
-        }
+        });
         this.acceptsPlayers = false;
         this.acceptsSpectators = false;
         this.nextState = null;
