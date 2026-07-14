@@ -43,6 +43,8 @@ public class AbilityChangeOption implements Option {
             Component.text("---------------------------------------", NamedTextColor.DARK_GRAY);
 
     private static final Map<Class<? extends AbilityIcon>, List<Ability<?>>> ABILITY_POOLS = buildAbilityPools();
+    private static final Map<Class<? extends AbstractAbility>, Specializations> ABILITY_SPEC_MAP = buildAbilitySpecMap();
+    private static final Set<String> AMBIGUOUS_ABILITY_NAMES = buildAmbiguousAbilityNames();
 
     private final Mode mode;
     private Game game;
@@ -78,6 +80,34 @@ public class AbilityChangeOption implements Option {
             immutablePools.put(entry.getKey(), Collections.unmodifiableList(entry.getValue()));
         }
         return Collections.unmodifiableMap(immutablePools);
+    }
+
+    private static Map<Class<? extends AbstractAbility>, Specializations> buildAbilitySpecMap() {
+        Map<Class<? extends AbstractAbility>, Specializations> map = new HashMap<>();
+        for (Map.Entry<Specializations, Ability<?>[]> entry : Ability.SPEC_ABILITIES.entrySet()) {
+            for (Ability<?> ability : entry.getValue()) {
+                if (ability != null) {
+                    map.put(ability.clazz, entry.getKey());
+                }
+            }
+        }
+        return Collections.unmodifiableMap(map);
+    }
+
+    private static Set<String> buildAmbiguousAbilityNames() {
+        Map<String, Integer> counts = new HashMap<>();
+        for (Ability<?> ability : Ability.VALUES) {
+            AbstractAbility instance = ability.create.get();
+            instance.init(instance.getBuilder());
+            counts.merge(instance.getName(), 1, Integer::sum);
+        }
+        Set<String> ambiguous = new HashSet<>();
+        for (Map.Entry<String, Integer> entry : counts.entrySet()) {
+            if (entry.getValue() > 1) {
+                ambiguous.add(entry.getKey());
+            }
+        }
+        return Collections.unmodifiableSet(ambiguous);
     }
 
     @Nullable
@@ -214,7 +244,7 @@ public class AbilityChangeOption implements Option {
             if (newRegistry == null) {
                 continue;
             }
-            Component oldComponent = formatAbility(oldAbility);
+            Component oldComponent = formatAbility(oldAbility, false);
             float oldCooldown = oldAbility.getCurrentCooldown();
             boolean wasOnCooldown = !oldAbility.anyCharges();
             oldAbility.cleanup();
@@ -233,7 +263,7 @@ public class AbilityChangeOption implements Option {
             changeLines.add(Component.textOfChildren(
                     oldComponent,
                     Component.text(" > ", NamedTextColor.DARK_GRAY),
-                    formatAbility(newAbility)
+                    formatAbility(newAbility, true)
             ));
         }
         warlordsPlayer.resetAbilityTree();
@@ -267,11 +297,20 @@ public class AbilityChangeOption implements Option {
                 .build());
     }
 
-    private static Component formatAbility(AbstractAbility ability) {
-        return Component.text(ability.getName(), ability.getAbilityColor())
-                        .hoverEvent(HoverEvent.showText(
-                                ComponentUtils.flattenComponentWithNewLine(ability.getItemComponent())
-                        ));
+    private static Component formatAbility(AbstractAbility ability, boolean showSpecSuffix) {
+        Component nameComponent = Component.text(ability.getName(), ability.getAbilityColor());
+        if (showSpecSuffix && AMBIGUOUS_ABILITY_NAMES.contains(ability.getName())) {
+            Specializations spec = ABILITY_SPEC_MAP.get(ability.getClass());
+            if (spec != null) {
+                nameComponent = Component.textOfChildren(
+                        nameComponent,
+                        Component.text(" (" + spec.name + ")", NamedTextColor.GRAY)
+                );
+            }
+        }
+        return nameComponent.hoverEvent(HoverEvent.showText(
+                ComponentUtils.flattenComponentWithNewLine(ability.getItemComponent())
+        ));
     }
 
     @Nullable
