@@ -11,6 +11,7 @@ import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.motionsystem.MotionModifierBuilder;
 import com.ebicep.warlords.util.bukkit.ComponentUtils;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -35,6 +36,9 @@ public class AbilityChangeOption implements Option {
 
     private static final int MIN_SWAP_TIME = 50;
     private static final int MAX_SWAP_TIME = 80;
+    private static final float BASE_HEALTH = 5500f;
+    private static final float BASE_SPEED_MODIFIER = 13f;
+    private static final float BASE_KNOCKBACK_MODIFIER = 0f;
     private static final Component MESSAGE_DIVIDER =
             Component.text("---------------------------------------", NamedTextColor.DARK_GRAY);
 
@@ -136,6 +140,25 @@ public class AbilityChangeOption implements Option {
     }
 
     @Override
+    public void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
+        if (player instanceof WarlordsPlayer warlordsPlayer) {
+            applyBaseStats(warlordsPlayer, true);
+        }
+    }
+
+    @Override
+    public void onSpecChange(@Nonnull WarlordsEntity player, Specializations oldSpec) {
+        if (player instanceof WarlordsPlayer warlordsPlayer) {
+            applyBaseStats(warlordsPlayer, false);
+        }
+    }
+
+    @Override
+    public void afterAllWarlordsEntitiesCreated(List<WarlordsEntity> players) {
+        players.forEach(player -> swapAbilities(player, true));
+    }
+
+    @Override
     public void start(@Nonnull Game game) {
         if (mode != Mode.RANDOM) {
             return;
@@ -167,6 +190,10 @@ public class AbilityChangeOption implements Option {
     }
 
     private void swapAbilities(WarlordsEntity player) {
+        swapAbilities(player, false);
+    }
+
+    private void swapAbilities(WarlordsEntity player, boolean healBaseStats) {
         if (!(player instanceof WarlordsPlayer warlordsPlayer)) {
             return;
         }
@@ -218,6 +245,26 @@ public class AbilityChangeOption implements Option {
             );
             warlordsPlayer.sendMessage(MESSAGE_DIVIDER);
         }
+        applyBaseStats(warlordsPlayer, healBaseStats);
+    }
+
+    private static void applyBaseStats(WarlordsPlayer player, boolean heal) {
+        if (heal) {
+            player.setMaxHealthAndHeal(BASE_HEALTH);
+        } else {
+            player.getHealth().setBaseValue(BASE_HEALTH);
+            if (player.getCurrentHealth() > player.getMaxHealth()) {
+                player.setCurrentHealth(player.getMaxHealth());
+            }
+            player.updateHealth();
+        }
+        player.getSpeed().modifyBase(modifier -> modifier.setModifier(BASE_SPEED_MODIFIER));
+        player.getKnockback().addModifier(new MotionModifierBuilder()
+                .setFrom(player)
+                .setName("BASE")
+                .setModifier(BASE_KNOCKBACK_MODIFIER)
+                .setDuration(-1)
+                .build());
     }
 
     private static Component formatAbility(AbstractAbility ability) {
