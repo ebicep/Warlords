@@ -1,6 +1,5 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
-import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.Shield;
@@ -23,7 +22,6 @@ import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Effect;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -34,14 +32,14 @@ import java.util.*;
 
 public class LegendaryOvergrowth extends AbstractLegendaryWeapon implements LibraryArchivesTitle {
 
-    public static final int LINK_RANGE = 20;
-    public static final int RELINK_COOLDOWN_SECONDS = 60;
+    public static final int LINK_RANGE = 24;
+    public static final int RELINK_COOLDOWN_SECONDS = 40;
 
-    public static final float DAMAGE_BONUS_PER_200_SHIELD = 5f;
-    public static final float DAMAGE_BONUS_PER_200_SHIELD_PER_UPGRADE = 1f;
+    public static final float DAMAGE_BONUS_PER_150_SHIELD = 5f;
+    public static final float DAMAGE_BONUS_PER_150_SHIELD_PER_UPGRADE = 1f;
 
-    public static final float SHIELD_FROM_DAMAGE_PERCENT = .5f;
-    public static final float SHIELD_FROM_DAMAGE_PERCENT_PER_UPGRADE = .1f;
+    public static final float SHIELD_FROM_DAMAGE_PERCENT = 0.75f;
+    public static final float SHIELD_FROM_DAMAGE_PERCENT_PER_UPGRADE = .25f;
 
     public static final int SHIELD_HEALTH_INTERVAL = 150;
     public static final int MAX_SHIELD_PERCENT_OF_LINKED_ALLY_HEALTH = 15;
@@ -363,11 +361,11 @@ public class LegendaryOvergrowth extends AbstractLegendaryWeapon implements Libr
     }
 
     private float getDamageBonusPerShieldInterval() {
-        return DAMAGE_BONUS_PER_200_SHIELD + DAMAGE_BONUS_PER_200_SHIELD_PER_UPGRADE * getTitleLevel();
+        return DAMAGE_BONUS_PER_150_SHIELD + DAMAGE_BONUS_PER_150_SHIELD_PER_UPGRADE * getTitleLevel();
     }
 
     private float getDamageBonusPerShieldIntervalUpgraded() {
-        return DAMAGE_BONUS_PER_200_SHIELD + DAMAGE_BONUS_PER_200_SHIELD_PER_UPGRADE * getTitleLevelUpgraded();
+        return DAMAGE_BONUS_PER_150_SHIELD + DAMAGE_BONUS_PER_150_SHIELD_PER_UPGRADE * getTitleLevelUpgraded();
     }
 
     private float getShieldFromDamagePercent() {
