@@ -52,6 +52,12 @@ public class BucklerPiece extends SpecialDeltaBuckler implements CraftsInto {
                 },
                 false
         ).addModifier(Modifier.ON_OUTGOING_HEALING, (event, currentHealValue, isCrit) -> {
+                    if (event.getWarlordsEntity().equals(warlordsPlayer)) {
+                        return;
+                    }
+                    if (event.getFlags().contains(InstanceFlags.RECURSIVE)) {
+                        return;
+                    }
                     float damageAmount = currentHealValue * .1f;
                     PlayerFilter.entitiesAround(event.getWarlordsEntity(), 3, 3, 3)
                                 .aliveEnemiesOf(warlordsPlayer)
@@ -62,7 +68,12 @@ public class BucklerPiece extends SpecialDeltaBuckler implements CraftsInto {
                                             .source(warlordsPlayer)
                                             .value(damageAmount)
                                             .showAsCrit(isCrit)
-                                            .flags(InstanceFlags.RECURSIVE)
+                                            .flags(
+                                                    InstanceFlags.RECURSIVE,
+                                                    InstanceFlags.NO_HEALING_ORBS,
+                                                    InstanceFlags.NO_LUST_HEALING,
+                                                    InstanceFlags.REFLECTIVE_DAMAGE
+                                            )
                                     );
                                 });
                 }
