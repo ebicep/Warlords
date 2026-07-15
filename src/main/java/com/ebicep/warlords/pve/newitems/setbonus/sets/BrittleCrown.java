@@ -74,10 +74,6 @@ public class BrittleCrown extends BaseSet {
                         warlordsPlayer.sendMessage(Component.text("You lost " + loss + " ❂ insignia!", NamedTextColor.RED));
                     }
             ));
-            // Implementation for:
-            // 1. Modifying the insignia multiplier for every kill made by the player.
-            // 2. Registering a listener for when the player takes damage.
-            // 3. Calculating 5% of current total insignia and removing it on hit.
         }
 
     }

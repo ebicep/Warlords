@@ -88,11 +88,6 @@ public class Bulwark extends BaseSet {
 
                     }
             ));
-            // Implementation for a protective aura that reduces damage for nearby allies.
-            // Logic should include a check to double the effect if the user's health 
-            // is below healthThreshold.
         }
-
     }
-
 }

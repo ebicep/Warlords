@@ -58,11 +58,6 @@ public class Ghostly extends BaseSet {
                     }
                 }
             });
-            // Implementation for:
-            // 1. Roll for dodgeChance when taking damage.
-            // 2. On successful dodge, apply/increment stacking damage and healing buffs.
         }
-
     }
-
 }

@@ -1309,6 +1309,7 @@
           "randomEffectIntervalSeconds": 30,
           "randomEffects": [
             "DOUBLE_DAMAGE_10S",
+            "DOUBLE_HEALING_10S",
             "TRIPLE_ENERGY_GAIN_10S",
             "NO_ENERGY_REGEN_10S",
             "SLOW_90_PERCENT_10S",
