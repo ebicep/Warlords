@@ -170,6 +170,11 @@ paperPluginYaml {
                 required = true
                 load = PaperPluginYaml.Load.BEFORE
             }
+            register("LibsDisguises") {
+                joinClasspath = true
+                required = true
+                load = PaperPluginYaml.Load.BEFORE
+            }
         }
     }
 }

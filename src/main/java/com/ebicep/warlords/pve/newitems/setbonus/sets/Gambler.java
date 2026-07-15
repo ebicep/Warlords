@@ -9,12 +9,15 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.newitems.setbonus.BaseSet;
 import com.ebicep.warlords.pve.newitems.setbonus.SetBonus;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -83,11 +86,9 @@ public class Gambler extends BaseSet {
                             return;
                         }
 
-                        int intervalTicks =
-                                randomEffectIntervalSeconds * 20;
+                        int intervalTicks = randomEffectIntervalSeconds * 20;
 
-                        if (ticksElapsed <= 0 ||
-                                ticksElapsed % intervalTicks != 0) {
+                        if (ticksElapsed <= 0 || ticksElapsed % intervalTicks != 0) {
                             return;
                         }
 
@@ -133,7 +134,8 @@ public class Gambler extends BaseSet {
                         applyFrogDisguise(warlordsPlayer, effect);
             }
 
-            warlordsPlayer.sendMessage(Component.text("Gambler rolled: ", NamedTextColor.GRAY)
+            warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 2, 0.5f);
+            warlordsPlayer.sendMessage(Component.text("Gambler rolled: ", NamedTextColor.GRAY, TextDecoration.BOLD)
                             .append(Component.text(
                                     effect.displayName,
                                     effect.color
@@ -206,8 +208,7 @@ public class Gambler extends BaseSet {
                     createEffectCooldown(
                             warlordsPlayer,
                             effect,
-                            () -> {
-                            }
+                            () -> {}
                     );
 
             cooldown.addModifier(
@@ -239,8 +240,7 @@ public class Gambler extends BaseSet {
                     createEffectCooldown(
                             warlordsPlayer,
                             effect,
-                            () -> {
-                            }
+                            () -> {}
                     );
 
             cooldown.addModifier(
@@ -268,7 +268,7 @@ public class Gambler extends BaseSet {
             warlordsPlayer.addSpeedModifier(
                     warlordsPlayer,
                     effect.displayName,
-                    -90,
+                    -95,
                     cooldown
             );
 
@@ -332,37 +332,37 @@ public class Gambler extends BaseSet {
 
         DOUBLE_DAMAGE_10S(
                 "Double Damage",
-                "G-DMG",
+                "DOUBLE DMG",
                 10,
                 NamedTextColor.RED
         ),
         DOUBLE_HEALING_10S(
                 "Double Healing",
-                "G-HEAL",
+                "DOUBLE HEAL",
                 10,
                 NamedTextColor.GREEN
         ),
         TRIPLE_ENERGY_GAIN_10S(
                 "Triple Energy Gain",
-                "G-ENERGY",
+                "TRIPLE ENERGY",
                 10,
                 NamedTextColor.AQUA
         ),
         NO_ENERGY_REGEN_10S(
                 "No Energy Regeneration",
-                "G-NO-EPS",
+                "NO EPS",
                 10,
                 NamedTextColor.DARK_RED
         ),
         SLOW_90_PERCENT_10S(
-                "90% Slow",
-                "G-SLOW",
+                "95% Slow",
+                "SLOW",
                 10,
                 NamedTextColor.GRAY
         ),
         TURN_INTO_FROG_15S(
                 "Frog",
-                "G-FROG",
+                "FROGGED",
                 15,
                 NamedTextColor.GREEN
         );
