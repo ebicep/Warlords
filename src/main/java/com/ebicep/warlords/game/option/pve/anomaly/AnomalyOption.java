@@ -8,16 +8,18 @@ import com.ebicep.warlords.events.game.pve.WarlordsMobSpawnEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
+import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.option.pve.rewards.PveRewards;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.commands.MobCommand;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
-import com.ebicep.warlords.pve.newitems.NewItem;
-import com.ebicep.warlords.pve.newitems.NewItemsUtils;
 import com.ebicep.warlords.pve.newitems.setbonus.NewItemsSetBonus;
+import com.ebicep.warlords.pve.rewards.RewardInventory;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -28,6 +30,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -39,6 +42,7 @@ public class AnomalyOption implements PveOption {
 
     public static final int OBJECTIVE_COUNT = 3;
     public static final int OBJECTIVE_DURATION_TICKS = 120 * GameRunnable.SECOND;
+    private static final int START_DELAY_TICKS = 10 * GameRunnable.SECOND;
     private static final int MOB_SPAWN_INTERVAL = 2 * GameRunnable.SECOND;
     private static final int BASE_RELIC_HEALTH = 25_000;
 
@@ -49,10 +53,12 @@ public class AnomalyOption implements PveOption {
     private Game game;
     private AnomalyRewards rewards;
     private Anomalies currentAnomaly;
-    private NewItemsSetBonus guaranteedLegendarySet;
+    private NewItemsSetBonus featuredLegendarySet;
     private AnomalyRelic activeRelic;
+    private long rotationStart;
     private int activeObjective = -1;
     private int objectiveTicks;
+    private int preparationTicks = START_DELAY_TICKS;
     private boolean completed;
 
     @Override
@@ -65,7 +71,8 @@ public class AnomalyOption implements PveOption {
                 break;
             }
         }
-        this.guaranteedLegendarySet = AnomalyRotation.getGuaranteedLegendarySet();
+        this.rotationStart = AnomalyRotation.getRotationStart().getEpochSecond();
+        this.featuredLegendarySet = AnomalyRotation.getGuaranteedLegendarySet();
         this.rewards = new AnomalyRewards(this);
         game.registerEvents(getBaseListener());
         game.registerEvents(new Listener() {
@@ -92,11 +99,31 @@ public class AnomalyOption implements PveOption {
                 }.runTaskLater(1);
             }
         });
+        game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(5, "anomaly_objective") {
+            @Nonnull
+            @Override
+            public List<Component> computeLines(@Nullable WarlordsPlayer player) {
+                return getObjectiveScoreboard();
+            }
+        });
+        game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(6, "anomaly_players") {
+            @Nonnull
+            @Override
+            public List<Component> computeLines(@Nullable WarlordsPlayer player) {
+                return healthScoreboard(game);
+            }
+        });
     }
 
     @Override
     public void start(@Nonnull Game game) {
-        beginObjective(0);
+        new GameRunnable(game) {
+            @Override
+            public void run() {
+                beginObjective(0);
+            }
+        }.runTaskLater(START_DELAY_TICKS);
+
         new GameRunnable(game) {
             @Override
             public void run() {
@@ -105,10 +132,13 @@ public class AnomalyOption implements PveOption {
                     return;
                 }
                 ticksElapsed.incrementAndGet();
-                mobTick();
+                if (preparationTicks > 0) {
+                    preparationTicks--;
+                }
                 if (activeRelic == null) {
                     return;
                 }
+                mobTick();
                 objectiveTicks++;
                 if (objectiveTicks % MOB_SPAWN_INTERVAL == 0 && mobCount() < getMaximumMobCount()) {
                     spawnPressureMob();
@@ -149,7 +179,7 @@ public class AnomalyOption implements PveOption {
             return;
         }
         objectiveSuccess[activeObjective] = true;
-        announce(Component.text("Relic " + (activeObjective + 1) + " secured. Reward pool unlocked!", NamedTextColor.GREEN));
+        announce(Component.text("Relic " + (activeObjective + 1) + " secured. Reward cache unlocked!", NamedTextColor.GREEN));
         removeActiveRelic();
         scheduleNextObjective();
     }
@@ -159,7 +189,7 @@ public class AnomalyOption implements PveOption {
             return;
         }
         objectiveSuccess[activeObjective] = false;
-        announce(Component.text("Relic " + (activeObjective + 1) + " was lost. Its reward pool is forfeited.", NamedTextColor.RED));
+        announce(Component.text("Relic " + (activeObjective + 1) + " was lost. Its reward cache is forfeited.", NamedTextColor.RED));
         removeActiveRelic();
         scheduleNextObjective();
     }
@@ -177,28 +207,62 @@ public class AnomalyOption implements PveOption {
     private void completeAnomaly() {
         completed = true;
         clearHostileMobs();
-        NewItem guaranteedPreview = new NewItem(guaranteedLegendarySet);
         game.warlordsPlayers().forEach(warlordsPlayer -> {
             DatabasePlayer databasePlayer = DatabaseManager.getPlayer(warlordsPlayer.getUuid());
-            int poolsGranted = 0;
+            int cachesGranted = 0;
             for (int i = 0; i < OBJECTIVE_COUNT; i++) {
                 if (!objectiveSuccess[i]) {
                     continue;
                 }
-                poolsGranted++;
-                NewItem item = currentAnomaly.getRewardPools().get(i).grant(databasePlayer);
-                if (item != null) {
-                    NewItemsUtils.sendItemMessage(warlordsPlayer, Component.text("Your " + currentAnomaly.getRewardPools().get(i).getName() + " contained ", NamedTextColor.GRAY).append(item.getHoverComponent()));
-                }
+                AnomalyRewardCache cache = currentAnomaly.getRewardPools().get(i)
+                        .createCache(featuredLegendarySet, rotationStart);
+                databasePlayer.getPveStats().getGameEventRewards().add(cache);
+                cachesGranted++;
             }
-            NewItem guaranteedItem = new NewItem(guaranteedPreview);
-            databasePlayer.getPveStats().getNewItemsManager().addItem(guaranteedItem);
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-            warlordsPlayer.sendMessage(Component.text("Anomaly complete: " + poolsGranted + "/3 reward pools claimed.", NamedTextColor.GREEN));
-            NewItemsUtils.sendItemMessage(warlordsPlayer, Component.text("Guaranteed anomaly set reward: ", NamedTextColor.GOLD).append(guaranteedItem.getHoverComponent()));
+            warlordsPlayer.sendMessage(Component.text("Anomaly complete: " + cachesGranted + "/3 reward caches added to your Reward Inventory.", NamedTextColor.GREEN));
+            if (cachesGranted > 0) {
+                RewardInventory.sendRewardMessage(
+                        warlordsPlayer.getUuid(),
+                        Component.text(cachesGranted + " Anomaly Reward " + (cachesGranted == 1 ? "Cache is" : "Caches are") + " ready to claim.", NamedTextColor.AQUA)
+                );
+            }
             warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 2, 1);
         });
         Bukkit.getPluginManager().callEvent(new WarlordsGameTriggerWinEvent(game, this, Team.BLUE));
+    }
+
+    private List<Component> getObjectiveScoreboard() {
+        List<Component> lines = new ArrayList<>();
+        if (completed) {
+            lines.add(Component.text("Anomaly Complete", NamedTextColor.GREEN));
+            return lines;
+        }
+        if (activeRelic == null) {
+            if (activeObjective < 0) {
+                int seconds = Math.max(0, (preparationTicks + GameRunnable.SECOND - 1) / GameRunnable.SECOND);
+                lines.add(Component.text("Anomaly starts in: ", NamedTextColor.GRAY)
+                        .append(Component.text(seconds + "s", NamedTextColor.YELLOW)));
+            } else {
+                lines.add(Component.text("Preparing Relic " + Math.min(activeObjective + 2, OBJECTIVE_COUNT) + "...", NamedTextColor.YELLOW));
+            }
+            return lines;
+        }
+
+        lines.add(Component.text("Relic: ", NamedTextColor.GRAY)
+                .append(Component.text((activeObjective + 1) + "/" + OBJECTIVE_COUNT, NamedTextColor.AQUA)));
+        lines.add(Component.text("Defend for: ", NamedTextColor.GRAY)
+                .append(Component.text(getSecondsRemaining() + "s", NamedTextColor.YELLOW)));
+
+        WarlordsNPC relicNpc = activeRelic.getWarlordsNPC();
+        float healthRatio = relicNpc.getCurrentHealth() / relicNpc.getMaxHealth();
+        NamedTextColor healthColor = healthRatio >= .5f
+                ? NamedTextColor.GREEN
+                : healthRatio >= .25f ? NamedTextColor.YELLOW : NamedTextColor.RED;
+        lines.add(Component.text("Relic Health: ", NamedTextColor.GRAY)
+                .append(Component.text("❤ " + Math.round(relicNpc.getCurrentHealth()), healthColor))
+                .append(Component.text(" / " + Math.round(relicNpc.getMaxHealth()), NamedTextColor.GRAY)));
+        return lines;
     }
 
     private void spawnPressureMob() {
