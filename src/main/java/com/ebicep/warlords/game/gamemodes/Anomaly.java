@@ -5,11 +5,16 @@ import com.ebicep.warlords.database.repositories.games.GamesCollections;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.Team;
-import com.ebicep.warlords.game.option.*;
+import com.ebicep.warlords.game.option.DieOnLogoutOption;
+import com.ebicep.warlords.game.option.NoRespawnIfOfflineOption;
+import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.game.option.PlayerCooldownDisplayOption;
+import com.ebicep.warlords.game.option.PreGameItemOption;
+import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
+import com.ebicep.warlords.game.option.TextOption;
+import com.ebicep.warlords.game.option.WeaponOption;
 import com.ebicep.warlords.game.option.freeze.GameFreezeOption;
 import com.ebicep.warlords.game.option.pve.BountyOption;
-import com.ebicep.warlords.game.option.respawn.DieOnLogoutOption;
-import com.ebicep.warlords.game.option.respawn.NoRespawnIfOfflineOption;
 import com.ebicep.warlords.game.option.win.WinByAllDeathOption;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.menu.generalmenu.WarlordsNewHotbarMenu;
@@ -31,16 +36,16 @@ public class Anomaly implements Mode {
         List<Option> options = new ArrayList<>();
         Component base = Component.text("", NamedTextColor.YELLOW, TextDecoration.BOLD);
         options.add(TextOption.Type.CHAT_CENTERED.create(
-                Component.text("Warlords", NamedTextColor.WHITE, TextDecoration.BOLD),
+                Component.text("Anomaly", NamedTextColor.AQUA, TextDecoration.BOLD),
                 Component.empty(),
-                base.append(Component.text("Survive against waves of")),
-                base.append(Component.text("monsters!")),
+                base.append(Component.text("Defend three relics for 120 seconds each.")),
+                base.append(Component.text("Every surviving relic unlocks one reward pool.")),
                 Component.empty()
         ));
         options.add(TextOption.Type.TITLE.create(
                 10,
-                Component.text("GO!", NamedTextColor.GREEN),
-                Component.text("Let the wave defense commence.", NamedTextColor.YELLOW)
+                Component.text("DEFEND!", NamedTextColor.GREEN),
+                Component.text("Protect the anomaly relics.", NamedTextColor.YELLOW)
         ));
         options.add(new PreGameItemOption(4, PlayerHotBarItemListener.SELECTION_MENU, (g, p) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(p)));
         options.add(new RecordTimeElapsedOption());
@@ -66,12 +71,12 @@ public class Anomaly implements Mode {
 
     @Override
     public String getAbbreviation() {
-        return "PVE";
+        return "ANOMALY";
     }
 
     @Override
     public ItemStack getItemStack() {
-        return new ItemStack(Material.ZOMBIE_HEAD);
+        return new ItemStack(Material.RESPAWN_ANCHOR);
     }
 
     @Override
@@ -86,8 +91,6 @@ public class Anomaly implements Mode {
 
     @Override
     public int getMinPlayersToAddToDatabase() {
-        return 4;
+        return 1;
     }
-
 }
-
