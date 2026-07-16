@@ -46,6 +46,29 @@ public class NewItem {
         }
     }
 
+    public NewItem(@NotNull NewItemsSetBonus setBonus, @NotNull Random random) {
+        this.setBonus = setBonus;
+        this.slot = setBonus.getSlots().get(random.nextInt(setBonus.getSlots().size()));
+        NewItemTier tier = setBonus.getTier();
+        List<NewItemAttribute> bonusAttributes = new ArrayList<>(Arrays.asList(NewItemAttribute.BONUS_ATTRIBUTES));
+        Collections.shuffle(bonusAttributes, random);
+        this.bonusAttributeDistribution = new EnumMap<>(NewItemAttribute.class);
+        for (int i = 0; i < tier.bonusAttributes(); i++) {
+            this.bonusAttributeDistribution.put(bonusAttributes.get(i), (byte) random.nextInt(0, 101));
+        }
+    }
+
+    public NewItem(@NotNull NewItem source) {
+        this.bonusAttributeDistribution = new EnumMap<>(source.bonusAttributeDistribution);
+        this.slot = source.slot;
+        this.setBonus = source.setBonus;
+        this.rerollCostsHistory = new ArrayList<>();
+        for (Map<Spendable, Long> rerollCost : source.rerollCostsHistory) {
+            this.rerollCostsHistory.add(new HashMap<>(rerollCost));
+        }
+        this.starPieceBonuses = new ArrayList<>(source.starPieceBonuses);
+    }
+
     public void reroll(EnumSet<NewItemAttribute> lockedAttributes) {
         for (NewItemAttribute newItemAttribute : this.bonusAttributeDistribution.keySet()) {
             if (!lockedAttributes.contains(newItemAttribute)) {
