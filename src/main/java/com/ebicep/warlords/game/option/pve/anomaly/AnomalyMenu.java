@@ -23,7 +23,7 @@ public class AnomalyMenu {
     public static void openAnomalyMenu(Player player) {
         Menu menu = new Menu("Anomaly", 9 * 6);
         Anomalies currentAnomaly = AnomalyRotation.getCurrentAnomaly();
-        NewItemsSetBonus guaranteedSet = AnomalyRotation.getGuaranteedLegendarySet();
+        NewItemsSetBonus featuredSet = AnomalyRotation.getGuaranteedLegendarySet();
         String timeTill = DateUtil.getTimeTill(AnomalyRotation.getNextRotation(), false, true, true, true);
 
         menu.setItem(
@@ -34,7 +34,7 @@ public class AnomalyMenu {
                                 .append(Component.text(timeTill, NamedTextColor.YELLOW)))
                         .lore(
                                 Component.text("The active map, reward pools and", NamedTextColor.GRAY),
-                                Component.text("guaranteed Legendary set rotate hourly.", NamedTextColor.GRAY)
+                                Component.text("featured Legendary set rotate hourly.", NamedTextColor.GRAY)
                         )
                         .get(),
                 Menu.ACTION_DO_NOTHING
@@ -63,8 +63,8 @@ public class AnomalyMenu {
         for (int i = 0; i < currentAnomaly.getRewardPools().size(); i++) {
             AnomalyRewardPool rewardPool = currentAnomaly.getRewardPools().get(i);
             List<Component> lore = new ArrayList<>();
-            lore.add(Component.text("Defend Relic " + (i + 1) + " to draw", NamedTextColor.GRAY));
-            lore.add(Component.text("from this pool after the anomaly.", NamedTextColor.GRAY));
+            lore.add(Component.text("Defend Relic " + (i + 1) + " to earn", NamedTextColor.GRAY));
+            lore.add(Component.text("this cache in your Reward Inventory.", NamedTextColor.GRAY));
             lore.add(Component.empty());
             lore.addAll(rewardPool.getLore());
             menu.setItem(
@@ -82,12 +82,13 @@ public class AnomalyMenu {
                 4,
                 5,
                 new ItemBuilder(Material.GOLDEN_CHESTPLATE)
-                        .name(Component.text("Guaranteed Legendary Set", NamedTextColor.GOLD))
+                        .name(Component.text("Featured Legendary Set", NamedTextColor.GOLD))
                         .lore(
-                                Component.text(guaranteedSet.getName(), guaranteedSet.getTier().getTextColor()),
+                                Component.text(featuredSet.getName(), featuredSet.getTier().getTextColor()),
                                 Component.empty(),
-                                Component.text("One item from this set is guaranteed", NamedTextColor.GRAY),
-                                Component.text("when the anomaly is completed.", NamedTextColor.GRAY)
+                                Component.text("If a cache's NewItem roll lands on", NamedTextColor.GRAY),
+                                Component.text("the 2.5% Legendary outcome, its item", NamedTextColor.GRAY),
+                                Component.text("will come from this featured set.", NamedTextColor.GRAY)
                         )
                         .glow()
                         .get(),
