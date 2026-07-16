@@ -4,8 +4,7 @@ import com.ebicep.customentities.npc.WarlordsTrait;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.option.pve.anomaly.AnomalyMenu;
-import com.ebicep.warlords.game.option.pve.anomaly.AnomalyOption;
-import com.ebicep.warlords.pve.OnslaughtMenu;
+import com.ebicep.warlords.game.option.pve.anomaly.AnomalyRotation;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.trait.HologramTrait;
@@ -13,9 +12,10 @@ import org.bukkit.ChatColor;
 
 public class AnomalyStartTrait extends WarlordsTrait {
 
-    private int ticks = 0;
-    private long lastPlayerCount = 0;
-    private long lastPlayerCountInLobby = 0;
+    private int ticks;
+    private long lastPlayerCount;
+    private long lastPlayerCountInLobby;
+    private long lastRotationHour = Long.MIN_VALUE;
 
     public AnomalyStartTrait() {
         super("AnomalyStartTrait");
@@ -31,23 +31,22 @@ public class AnomalyStartTrait extends WarlordsTrait {
         if (ticks++ % 20 != 0) {
             return;
         }
-
         updateHologram(false);
     }
 
     private void updateHologram(boolean init) {
-        long playerCount = Warlords.getGameManager().getPlayerCount(GameMode.ONSLAUGHT);
-        long playerCountInLobby = Warlords.getGameManager().getPlayerCountInLobby(GameMode.ONSLAUGHT);
-        if (init || playerCount != lastPlayerCount || playerCountInLobby != lastPlayerCountInLobby) {
+        long playerCount = Warlords.getGameManager().getPlayerCount(GameMode.ANOMALY);
+        long playerCountInLobby = Warlords.getGameManager().getPlayerCountInLobby(GameMode.ANOMALY);
+        long rotationHour = AnomalyRotation.getRotationStart().getEpochSecond();
+        if (init || playerCount != lastPlayerCount || playerCountInLobby != lastPlayerCountInLobby || rotationHour != lastRotationHour) {
             lastPlayerCount = playerCount;
             lastPlayerCountInLobby = playerCountInLobby;
+            lastRotationHour = rotationHour;
             HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
             hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + playerCount + " Players");
-            hologramTrait.setLine(1, ChatColor.GRAY.toString() + playerCountInLobby + " in Lobby");
-            if (init) {
-                hologramTrait.setLine(2, ChatColor.GREEN + ChatColor.BOLD.toString() + "Anomaly");
-                hologramTrait.setLine(3, ChatColor.GRAY + "CURRENT ANOMALY: " + ChatColor.GOLD + AnomalyOption.getDailyAnomaly().getName());
-            }
+            hologramTrait.setLine(1, ChatColor.GRAY + String.valueOf(playerCountInLobby) + " in Lobby");
+            hologramTrait.setLine(2, ChatColor.GREEN + ChatColor.BOLD.toString() + "Anomaly");
+            hologramTrait.setLine(3, ChatColor.GRAY + "CURRENT ANOMALY: " + ChatColor.GOLD + AnomalyRotation.getCurrentAnomaly().getName());
         }
     }
 
