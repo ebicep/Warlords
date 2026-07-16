@@ -35,15 +35,15 @@ public class WeeklyItemTraderTrait extends WarlordsTrait {
     private static final String PURCHASE_KEY_PREFIX = "ECHELON_TRADER_";
     private static final int[] ITEM_POSITIONS = {2, 4, 6};
     private static final Map<Currencies, Long> SOVEREIGN_COST = createCost(
-            1_000_000,
-            10,
+            2_000_000,
+            20,
             3,
             5_000
     );
     private static final Map<Currencies, Long> LEGENDARY_COST = createCost(
-            2_500_000,
-            25,
-            5,
+            4_000_000,
+            20,
+            10,
             10_000
     );
 
@@ -108,7 +108,9 @@ public class WeeklyItemTraderTrait extends WarlordsTrait {
             ItemBuilder itemBuilder = item.getItemBuilder()
                     .addLore(Component.empty())
                     .addLore(Component.text("Click to purchase", NamedTextColor.GREEN))
+                    .addLore(Component.empty())
                     .addLore(PvEUtils.getCostLore(cost, "Price", false))
+                    .addLore(Component.empty())
                     .addLore(Component.text("Tier purchases this week: ", NamedTextColor.GRAY)
                             .append(Component.text(purchases + "/" + WEEKLY_TIER_PURCHASE_LIMIT, NamedTextColor.YELLOW)));
             menu.setItem(ITEM_POSITIONS[i], row, itemBuilder.get(),

@@ -3,19 +3,29 @@ package com.ebicep.warlords.game.option.pve.raid;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
+import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.option.pve.raid.rooms.RaidRoom;
+import com.ebicep.warlords.game.option.pve.rewards.PveRewards;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class RaidOption implements PveOption {
+public class RaidOption implements PveOption {
 
     private final RaidDefinition raidDefinition;
+    private final ConcurrentHashMap<AbstractMob, MobData> mobs = new ConcurrentHashMap<>();
     private final List<RaidRoom> rooms = new ArrayList<>();
 
     private Game game;
@@ -26,7 +36,7 @@ public abstract class RaidOption implements PveOption {
     private int transitionTicksLeft;
     private int ticksElapsed;
 
-    protected RaidOption(RaidDefinition raidDefinition) {
+    public RaidOption(RaidDefinition raidDefinition) {
         this.raidDefinition = raidDefinition;
     }
 
@@ -42,6 +52,15 @@ public abstract class RaidOption implements PveOption {
         }
 
         game.registerEvents(getBaseListener());
+
+        game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(6, "kills") {
+                    @Nonnull
+                    @Override
+                    public List<Component> computeLines(@Nullable WarlordsPlayer player) {
+                        return healthScoreboard(game);
+                    }
+                }
+        );
     }
 
     @Override
@@ -147,6 +166,16 @@ public abstract class RaidOption implements PveOption {
     }
 
     @Override
+    public Set<AbstractMob> getMobs() {
+        return mobs.keySet();
+    }
+
+    @Override
+    public ConcurrentHashMap<AbstractMob, ? extends MobData> getMobsMap() {
+        return mobs;
+    }
+
+    @Override
     public Game getGame() {
         return game;
     }
@@ -154,6 +183,16 @@ public abstract class RaidOption implements PveOption {
     @Override
     public int getTicksElapsed() {
         return ticksElapsed;
+    }
+
+    @Override
+    public void spawnNewMob(AbstractMob mob, Team team) {
+
+    }
+
+    @Override
+    public PveRewards<?> getRewards() {
+        return null;
     }
 
     public RaidDefinition getRaidDefinition() {
