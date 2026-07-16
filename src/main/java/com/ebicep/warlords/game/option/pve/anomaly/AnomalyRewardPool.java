@@ -1,10 +1,11 @@
 package com.ebicep.warlords.game.option.pve.anomaly;
 
-import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.PvEUtils;
+import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.newitems.NewItem;
 import com.ebicep.warlords.pve.newitems.NewItemsUtils;
+import com.ebicep.warlords.pve.newitems.setbonus.NewItemsSetBonus;
 import com.ebicep.warlords.pve.newitems.tiers.NewItemTier;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -33,15 +34,22 @@ public final class AnomalyRewardPool {
         this.currencies = Collections.unmodifiableMap(rewards);
     }
 
+    public AnomalyRewardCache createCache(NewItemsSetBonus featuredLegendarySet, long rotationStart) {
+        LinkedHashMap<Spendable, Long> cacheCurrencies = new LinkedHashMap<>();
+        currencies.forEach(cacheCurrencies::put);
+        return new AnomalyRewardCache(cacheCurrencies, name, rotationStart, rollNewItem(featuredLegendarySet));
+    }
+
     @Nullable
-    public NewItem grant(DatabasePlayer databasePlayer) {
-        currencies.forEach((currency, amount) -> currency.addToPlayer(databasePlayer, amount));
+    private NewItem rollNewItem(NewItemsSetBonus featuredLegendarySet) {
         if (ThreadLocalRandom.current().nextDouble() >= NEW_ITEM_CHANCE) {
             return null;
         }
-        NewItem item = NewItemsUtils.generateRandomItem(rollItemTier());
-        databasePlayer.getPveStats().getNewItemsManager().addItem(item);
-        return item;
+        NewItemTier tier = rollItemTier();
+        if (tier == NewItemTier.LEGENDARY) {
+            return new NewItem(featuredLegendarySet);
+        }
+        return NewItemsUtils.generateRandomItem(tier);
     }
 
     private NewItemTier rollItemTier() {
