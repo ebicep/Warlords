@@ -1,82 +1,73 @@
 package com.ebicep.warlords.game.option.pve.anomaly;
 
-import com.ebicep.warlords.pve.Currencies;
-import com.ebicep.warlords.pve.Spendable;
+import com.ebicep.warlords.game.GameMap;
+import com.ebicep.warlords.pve.mobs.Mob;
 import net.kyori.adventure.text.Component;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 
 public enum Anomalies {
 
-    OPEX_ANOMALY("Opex Anomaly",
-            List.of(Component.text("Test"))
-    ) {
-        @Override
-        public LinkedHashMap<Spendable, Long> getRewards() {
-            return new LinkedHashMap<>() {{
-                put(Currencies.COIN, 120_000L);
-                put(Currencies.ETHEREUM_CRYSTAL, 3L);
-                put(Currencies.ASCENDANT_STAR_PIECE, 1L);
-                put(Currencies.LIMIT_BREAKER, 1L);
-            }};
-        }
-    },
-    PLAINS_OF_DUNESTAR("Plains of Dunestar",
+    OPEX_ANOMALY(
+            "Opex Anomaly",
             List.of(
-                    Component.text("A new threat emerges along the borders"),
-                    Component.text("of Plains of Dunestar. Investigate it!")
-            )
-    ) {
-        @Override
-        public LinkedHashMap<Spendable, Long> getRewards() {
-            return new LinkedHashMap<>() {{
-                put(Currencies.COIN, 120_000L);
-                put(Currencies.ETHEREUM_CRYSTAL, 3L);
-                put(Currencies.ASCENDANT_STAR_PIECE, 1L);
-                put(Currencies.LIMIT_BREAKER, 1L);
-            }};
-        }
-    },
-    WHAT_ONCE_WAS( "What Once Was",
-            List.of(Component.text("Test"))
-    ) {
-        @Override
-        public LinkedHashMap<Spendable, Long> getRewards() {
-            return new LinkedHashMap<>() {{
-                put(Currencies.COIN, 120_000L);
-                put(Currencies.ETHEREUM_CRYSTAL, 3L);
-                put(Currencies.ASCENDANT_STAR_PIECE, 1L);
-                put(Currencies.LIMIT_BREAKER, 1L);
-            }};
-        }
-    },
-    ENDLESS_PARADOX( "Endless Paradox",
-            List.of(Component.text("Test"))
-    ) {
-        @Override
-        public LinkedHashMap<Spendable, Long> getRewards() {
-            return new LinkedHashMap<>() {{
-                put(Currencies.COIN, 120_000L);
-                put(Currencies.ETHEREUM_CRYSTAL, 3L);
-                put(Currencies.ASCENDANT_STAR_PIECE, 1L);
-                put(Currencies.LIMIT_BREAKER, 1L);
-            }};
-        }
-    }
+                    Component.text("Stabilize the fractured Opex conduits."),
+                    Component.text("Defend each relic for 120 seconds.")
+            ),
+            List.of(
+                    new AnomalyRewardPool("Opex Cache I", 40_000, 200, 1),
+                    new AnomalyRewardPool("Opex Cache II", 60_000, 300, 1),
+                    new AnomalyRewardPool("Opex Cache III", 90_000, 450, 2)
+            ),
+            new Mob[]{Mob.ZOMBIE_LANCER, Mob.SKELETAL_MAGE, Mob.SLIMY_ANOMALY, Mob.HOUND}
+    ),
+    PLAINS_OF_DUNESTAR(
+            "Plains of Dunestar",
+            List.of(
+                    Component.text("A new threat emerges along Dunestar's borders."),
+                    Component.text("Recover all three exposed relics.")
+            ),
+            List.of(
+                    new AnomalyRewardPool("Dunestar Cache I", 45_000, 180, 1),
+                    new AnomalyRewardPool("Dunestar Cache II", 70_000, 320, 1),
+                    new AnomalyRewardPool("Dunestar Cache III", 100_000, 500, 2)
+            ),
+            new Mob[]{Mob.PIG_DISCIPLE, Mob.ARACHNO_VENARI, Mob.INTERMEDIATE_WARRIOR_BERSERKER, Mob.BLAZING_KINDLE}
+    ),
+    WHAT_ONCE_WAS(
+            "What Once Was",
+            List.of(
+                    Component.text("Defend the remnants of a drowned civilization."),
+                    Component.text("Every lost relic removes one reward draw.")
+            ),
+            List.of(
+                    new AnomalyRewardPool("Remnant Cache I", 50_000, 225, 1),
+                    new AnomalyRewardPool("Remnant Cache II", 75_000, 350, 1),
+                    new AnomalyRewardPool("Remnant Cache III", 110_000, 550, 2)
+            ),
+            new Mob[]{Mob.STRAY, Mob.FALLEN_STRAY, Mob.LURKING_SLIME, Mob.SPECTRAL_THIEF}
+    );
 
-    ;
+    public static final Anomalies[] ROTATING = values();
 
     private final String name;
     private final List<Component> description;
+    private final List<AnomalyRewardPool> rewardPools;
+    private final Mob[] spawnableMobs;
 
-    public static final Anomalies[] VALUES = values();
-
-    public abstract LinkedHashMap<Spendable, Long> getRewards();
-
-    Anomalies(String name, List<Component> description) {
+    Anomalies(String name, List<Component> description, List<AnomalyRewardPool> rewardPools, Mob[] spawnableMobs) {
         this.name = name;
         this.description = description;
+        this.rewardPools = rewardPools;
+        this.spawnableMobs = spawnableMobs;
+    }
+
+    public GameMap getMap() {
+        return switch (this) {
+            case OPEX_ANOMALY -> GameMap.OPEX_ANOMALY;
+            case PLAINS_OF_DUNESTAR -> GameMap.PLAINS_OF_DUNESTAR;
+            case WHAT_ONCE_WAS -> GameMap.WHAT_ONCE_WAS;
+        };
     }
 
     public String getName() {
@@ -85,5 +76,13 @@ public enum Anomalies {
 
     public List<Component> getDescription() {
         return description;
+    }
+
+    public List<AnomalyRewardPool> getRewardPools() {
+        return rewardPools;
+    }
+
+    public Mob[] getSpawnableMobs() {
+        return spawnableMobs;
     }
 }
