@@ -4,8 +4,8 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
-import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.events.game.pve.WarlordsMobSpawnEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.pve.PveOption;
@@ -17,6 +17,7 @@ import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.newitems.NewItem;
 import com.ebicep.warlords.pve.newitems.NewItemsUtils;
+import com.ebicep.warlords.pve.newitems.setbonus.NewItemsSetBonus;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -28,7 +29,6 @@ import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -45,10 +45,11 @@ public class AnomalyOption implements PveOption {
     private final ConcurrentHashMap<AbstractMob, MobData> mobs = new ConcurrentHashMap<>();
     private final AtomicInteger ticksElapsed = new AtomicInteger();
     private final boolean[] objectiveSuccess = new boolean[OBJECTIVE_COUNT];
-    private final Anomalies currentAnomaly = AnomalyRotation.getCurrentAnomaly();
 
     private Game game;
     private AnomalyRewards rewards;
+    private Anomalies currentAnomaly;
+    private NewItemsSetBonus guaranteedLegendarySet;
     private AnomalyRelic activeRelic;
     private int activeObjective = -1;
     private int objectiveTicks;
@@ -57,6 +58,14 @@ public class AnomalyOption implements PveOption {
     @Override
     public void register(@Nonnull Game game) {
         this.game = game;
+        this.currentAnomaly = AnomalyRotation.getCurrentAnomaly();
+        for (Anomalies anomaly : Anomalies.VALUES) {
+            if (anomaly.getMap() == game.getMap()) {
+                this.currentAnomaly = anomaly;
+                break;
+            }
+        }
+        this.guaranteedLegendarySet = AnomalyRotation.getGuaranteedLegendarySet();
         this.rewards = new AnomalyRewards(this);
         game.registerEvents(getBaseListener());
         game.registerEvents(new Listener() {
@@ -142,13 +151,7 @@ public class AnomalyOption implements PveOption {
         objectiveSuccess[activeObjective] = true;
         announce(Component.text("Relic " + (activeObjective + 1) + " secured. Reward pool unlocked!", NamedTextColor.GREEN));
         removeActiveRelic();
-        int nextObjective = activeObjective + 1;
-        new GameRunnable(game) {
-            @Override
-            public void run() {
-                beginObjective(nextObjective);
-            }
-        }.runTaskLater(3 * GameRunnable.SECOND);
+        scheduleNextObjective();
     }
 
     private void failCurrentObjective() {
@@ -158,6 +161,10 @@ public class AnomalyOption implements PveOption {
         objectiveSuccess[activeObjective] = false;
         announce(Component.text("Relic " + (activeObjective + 1) + " was lost. Its reward pool is forfeited.", NamedTextColor.RED));
         removeActiveRelic();
+        scheduleNextObjective();
+    }
+
+    private void scheduleNextObjective() {
         int nextObjective = activeObjective + 1;
         new GameRunnable(game) {
             @Override
@@ -170,7 +177,7 @@ public class AnomalyOption implements PveOption {
     private void completeAnomaly() {
         completed = true;
         clearHostileMobs();
-        NewItem guaranteedPreview = new NewItem(AnomalyRotation.getGuaranteedLegendarySet());
+        NewItem guaranteedPreview = new NewItem(guaranteedLegendarySet);
         game.warlordsPlayers().forEach(warlordsPlayer -> {
             DatabasePlayer databasePlayer = DatabaseManager.getPlayer(warlordsPlayer.getUuid());
             int poolsGranted = 0;
@@ -224,12 +231,13 @@ public class AnomalyOption implements PveOption {
         if (activeRelic == null) {
             return;
         }
-        WarlordsNPC npc = activeRelic.getWarlordsNPC();
-        activeRelic.cleanup(this);
+        AnomalyRelic relic = activeRelic;
+        activeRelic = null;
+        WarlordsNPC npc = relic.getWarlordsNPC();
+        relic.cleanup(this);
         npc.cleanup();
         game.getPlayers().remove(npc.getUuid());
         Warlords.removePlayer(npc.getUuid());
-        activeRelic = null;
     }
 
     private void clearHostileMobs() {
