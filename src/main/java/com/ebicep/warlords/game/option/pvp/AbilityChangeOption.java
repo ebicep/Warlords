@@ -6,6 +6,7 @@ import com.ebicep.warlords.abilities.internal.icon.*;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.events.player.ingame.WarlordsRespawnEvent;
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.general.Specializations;
@@ -15,6 +16,7 @@ import com.ebicep.warlords.player.ingame.motionsystem.MotionModifierBuilder;
 import com.ebicep.warlords.util.bukkit.ComponentUtils;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -163,7 +165,10 @@ public class AbilityChangeOption implements Option {
                 if (!event.getWarlordsEntity().getGame().equals(game)) {
                     return;
                 }
-                swapAbilities(event.getWarlordsEntity());
+                WarlordsEntity entity = event.getWarlordsEntity();
+                if (swapAbilities(entity, false) && entity instanceof WarlordsPlayer warlordsPlayer) {
+                    notifyTeammatesSingle(warlordsPlayer);
+                }
             }
 
         });
@@ -185,7 +190,13 @@ public class AbilityChangeOption implements Option {
 
     @Override
     public void afterAllWarlordsEntitiesCreated(List<WarlordsEntity> players) {
-        players.forEach(player -> swapAbilities(player, true));
+        List<WarlordsPlayer> swapped = new ArrayList<>();
+        for (WarlordsEntity player : players) {
+            if (swapAbilities(player, true) && player instanceof WarlordsPlayer warlordsPlayer) {
+                swapped.add(warlordsPlayer);
+            }
+        }
+        notifyTeammatesBatch(swapped);
     }
 
     @Override
@@ -204,7 +215,13 @@ public class AbilityChangeOption implements Option {
                     return;
                 }
                 if (secondsPast >= secondsUntilNextSwap) {
-                    game.warlordsPlayers().forEach(AbilityChangeOption.this::swapAbilities);
+                    List<WarlordsPlayer> swapped = new ArrayList<>();
+                    game.warlordsPlayers().forEach(player -> {
+                        if (swapAbilities(player, false)) {
+                            swapped.add(player);
+                        }
+                    });
+                    notifyTeammatesBatch(swapped);
                     generateNextSwapTime();
                     secondsPast = 0;
                 }
@@ -219,13 +236,9 @@ public class AbilityChangeOption implements Option {
         ChatUtils.MessageType.WARLORDS.sendMessage("Abilities changing in " + secondsUntilNextSwap + " seconds");
     }
 
-    private void swapAbilities(WarlordsEntity player) {
-        swapAbilities(player, false);
-    }
-
-    private void swapAbilities(WarlordsEntity player, boolean healBaseStats) {
+    private boolean swapAbilities(WarlordsEntity player, boolean healBaseStats) {
         if (!(player instanceof WarlordsPlayer warlordsPlayer)) {
-            return;
+            return false;
         }
         List<AbstractAbility> abilities = player.getAbilities();
         List<Component> changeLines = new ArrayList<>();
@@ -276,6 +289,56 @@ public class AbilityChangeOption implements Option {
             warlordsPlayer.sendMessage(MESSAGE_DIVIDER);
         }
         applyBaseStats(warlordsPlayer, healBaseStats);
+        return !changeLines.isEmpty();
+    }
+
+    private Component buildTeammateAbilityLine(WarlordsPlayer player) {
+        List<Component> parts = new ArrayList<>();
+        parts.add(player.getColoredName());
+        parts.add(Component.text(": ", NamedTextColor.GRAY));
+        List<AbstractAbility> abilities = player.getAbilities();
+        for (int i = 0; i < abilities.size(); i++) {
+            if (i > 0) {
+                parts.add(Component.text(" | ", NamedTextColor.GRAY));
+            }
+            parts.add(formatAbility(abilities.get(i), true));
+        }
+        return Component.textOfChildren(parts.toArray(Component[]::new));
+    }
+
+    private void notifyTeammatesSingle(WarlordsPlayer player) {
+        Component line = buildTeammateAbilityLine(player);
+        PlayerFilter.playingGame(game).teammatesOfExcludingSelf(player).forEach(teammate -> {
+            teammate.sendMessage(MESSAGE_DIVIDER);
+            teammate.sendMessage(line);
+            teammate.sendMessage(MESSAGE_DIVIDER);
+        });
+    }
+
+    private void notifyTeammatesBatch(List<WarlordsPlayer> players) {
+        if (players.isEmpty()) {
+            return;
+        }
+        Map<Team, List<WarlordsPlayer>> byTeam = new HashMap<>();
+        for (WarlordsPlayer player : players) {
+            byTeam.computeIfAbsent(player.getTeam(), team -> new ArrayList<>()).add(player);
+        }
+        for (List<WarlordsPlayer> teamPlayers : byTeam.values()) {
+            PlayerFilter.playingGame(game)
+                    .teammatesOf(teamPlayers.get(0))
+                    .forEach(recipient -> {
+                        List<Component> lines = teamPlayers.stream()
+                                .filter(member -> member != recipient)
+                                .map(this::buildTeammateAbilityLine)
+                                .toList();
+                        if (lines.isEmpty()) {
+                            return;
+                        }
+                        recipient.sendMessage(MESSAGE_DIVIDER);
+                        lines.forEach(recipient::sendMessage);
+                        recipient.sendMessage(MESSAGE_DIVIDER);
+                    });
+        }
     }
 
     private static void applyBaseStats(WarlordsPlayer player, boolean heal) {
