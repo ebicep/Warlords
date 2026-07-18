@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.pve.anomaly;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
@@ -17,16 +18,19 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -51,10 +55,12 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
 
     private List<DunestarRouteMarker> routeMarkers = List.of();
     private WarlordsPlayer carrier;
+    private Item relicDrop;
     private ItemStack previousSlotEight;
     private int preparationTicks = START_DELAY_TICKS;
     private int nextRouteIndex = 1;
     private int escortTicks;
+    private boolean relicSpawned;
 
     @Override
     public void register(@Nonnull Game game) {
@@ -82,6 +88,26 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
                 }
                 event.setCancelled(true);
                 event.getPlayer().sendActionBar(Component.text("The relic prevents you from using abilities.", NamedTextColor.RED));
+            }
+
+            @EventHandler(priority = EventPriority.HIGHEST)
+            public void onRelicPickup(EntityPickupItemEvent event) {
+                if (relicDrop == null || !event.getItem().getUniqueId().equals(relicDrop.getUniqueId())) {
+                    return;
+                }
+                event.setCancelled(true);
+                if (!(event.getEntity() instanceof Player player)) {
+                    return;
+                }
+                WarlordsEntity warlordsEntity = Warlords.getPlayer(player);
+                if (!(warlordsEntity instanceof WarlordsPlayer warlordsPlayer)
+                        || warlordsPlayer.getGame() != game
+                        || warlordsPlayer.isDead()
+                        || completed
+                        || carrier != null) {
+                    return;
+                }
+                assignCarrier(warlordsPlayer, player);
             }
 
             @EventHandler(ignoreCancelled = true)
@@ -132,7 +158,7 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
         new GameRunnable(game) {
             @Override
             public void run() {
-                beginEscort();
+                spawnRelic();
             }
         }.runTaskLater(START_DELAY_TICKS);
 
@@ -148,6 +174,12 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
                     preparationTicks--;
                 }
                 if (carrier == null) {
+                    if (relicSpawned && (relicDrop == null || !relicDrop.isValid()) && getTicksElapsed() % GameRunnable.SECOND == 0) {
+                        spawnRelic();
+                    }
+                    if (relicDrop != null && relicDrop.isValid() && getTicksElapsed() % 10 == 0) {
+                        showRelicParticles();
+                    }
                     return;
                 }
                 if (carrier.isDead() || !(carrier.getEntity() instanceof Player)) {
@@ -168,25 +200,38 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
         }.runTaskTimer(0, 1);
     }
 
-    private void beginEscort() {
-        List<WarlordsPlayer> candidates = game.warlordsPlayers()
-                .filter(warlordsPlayer -> !warlordsPlayer.isDead() && warlordsPlayer.getEntity() instanceof Player)
-                .toList();
-        if (candidates.isEmpty()) {
-            finishAnomaly(cacheEligibility, "No relic carrier was available.");
+    private void spawnRelic() {
+        if (completed || carrier != null || relicDrop != null && relicDrop.isValid()) {
             return;
         }
+        relicSpawned = true;
+        Location location = routeMarkers.get(0).getLocation().clone();
+        relicDrop = location.getWorld().dropItem(location, RELIC_ITEM.clone());
+        relicDrop.setVelocity(new Vector());
+        relicDrop.setGravity(false);
+        relicDrop.setPickupDelay(0);
+        relicDrop.setGlowing(true);
+        relicDrop.setInvulnerable(true);
 
-        carrier = candidates.get(ThreadLocalRandom.current().nextInt(candidates.size()));
-        Player player = (Player) carrier.getEntity();
-        player.teleport(routeMarkers.get(0).getLocation());
+        announce(Component.text("The Dunestar Relic has appeared at the starting pedestal.", NamedTextColor.GOLD));
+        announce(Component.text("Choose a carrier by picking up the relic.", NamedTextColor.AQUA));
+        game.forEachOnlinePlayer((player, team) -> player.playSound(player.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 2, 1));
+    }
+
+    private void assignCarrier(WarlordsPlayer warlordsPlayer, Player player) {
+        if (completed || carrier != null) {
+            return;
+        }
+        removeRelicDrop();
+        carrier = warlordsPlayer;
+        escortTicks = 0;
         previousSlotEight = player.getInventory().getItem(8) == null ? null : player.getInventory().getItem(8).clone();
         player.getInventory().setItem(8, RELIC_ITEM.clone());
         player.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, Integer.MAX_VALUE, 0, false, false, true));
 
-        announce(Component.text(carrier.getName() + " is carrying the Dunestar Relic!", NamedTextColor.GOLD));
+        announce(Component.text(carrier.getName() + " picked up the Dunestar Relic!", NamedTextColor.GOLD));
         announce(Component.text("Protect the carrier through two checkpoints and into the sanctuary.", NamedTextColor.AQUA));
-        game.forEachOnlinePlayer((onlinePlayer, team) -> onlinePlayer.playSound(onlinePlayer.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 2, 1));
+        game.forEachOnlinePlayer((onlinePlayer, team) -> onlinePlayer.playSound(onlinePlayer.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2, 1));
     }
 
     private void checkRouteProgress() {
@@ -222,6 +267,12 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
         spawnCurrentAnomalyMob(new Location(world, x, y, z));
     }
 
+    private void showRelicParticles() {
+        Location location = relicDrop.getLocation().clone().add(0, .5, 0);
+        location.getWorld().spawnParticle(Particle.END_ROD, location, 8, .4, .6, .4, .02);
+        location.getWorld().spawnParticle(Particle.ENCHANT, location, 8, .5, .7, .5, .02);
+    }
+
     private void showRouteParticles() {
         if (carrier == null || nextRouteIndex >= routeMarkers.size()) {
             return;
@@ -242,9 +293,17 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
             return List.of(Component.text("Escort Complete", NamedTextColor.GREEN));
         }
         if (carrier == null) {
-            int seconds = Math.max(0, (preparationTicks + GameRunnable.SECOND - 1) / GameRunnable.SECOND);
-            return List.of(Component.text("Escort starts in: ", NamedTextColor.GRAY)
-                    .append(Component.text(seconds + "s", NamedTextColor.YELLOW)));
+            if (preparationTicks > 0) {
+                int seconds = Math.max(0, (preparationTicks + GameRunnable.SECOND - 1) / GameRunnable.SECOND);
+                return List.of(Component.text("Relic appears in: ", NamedTextColor.GRAY)
+                        .append(Component.text(seconds + "s", NamedTextColor.YELLOW)));
+            }
+            return List.of(
+                    Component.text("Relic: ", NamedTextColor.GRAY).append(Component.text("Awaiting Carrier", NamedTextColor.GOLD)),
+                    Component.text("Location: ", NamedTextColor.GRAY).append(Component.text("Starting Pedestal", NamedTextColor.AQUA)),
+                    Component.text("Action: ", NamedTextColor.GRAY).append(Component.text("Pick up the relic", NamedTextColor.GREEN)),
+                    Component.text("Caches: ", NamedTextColor.GRAY).append(Component.text("0/3", NamedTextColor.GREEN))
+            );
         }
 
         String targetName = nextRouteIndex >= routeMarkers.size() - 1
@@ -269,8 +328,17 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
     }
 
     private void finishEscort(String summary) {
+        removeRelicDrop();
         clearCarrierState();
         finishAnomaly(cacheEligibility, summary);
+    }
+
+    private void removeRelicDrop() {
+        if (relicDrop == null) {
+            return;
+        }
+        relicDrop.remove();
+        relicDrop = null;
     }
 
     private void clearCarrierState() {
@@ -308,6 +376,7 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
 
     @Override
     public void onGameCleanup(@Nonnull Game game) {
+        removeRelicDrop();
         clearCarrierState();
         super.onGameCleanup(game);
     }
