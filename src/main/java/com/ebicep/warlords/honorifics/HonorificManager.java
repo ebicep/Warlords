@@ -12,7 +12,6 @@ import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.ReplaceOptions;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bson.Document;
@@ -29,10 +28,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Projections.include;
+import static com.mongodb.client.model.Updates.set;
 
 public final class HonorificManager {
 
-    private static final String COLLECTION_NAME = "Player_Honorifics";
+    private static final String PLAYER_COLLECTION_NAME = "Players_Information";
+    private static final String LEGACY_COLLECTION_NAME = "Player_Honorifics";
+    private static final String HONORIFICS_FIELD = "honorifics";
     private static final long REFRESH_INTERVAL_MILLIS = 15_000;
     private static final ConcurrentHashMap<UUID, HonorificProfile> PROFILES = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<UUID, Long> LAST_CHALLENGE_REFRESH = new ConcurrentHashMap<>();
@@ -79,6 +82,10 @@ public final class HonorificManager {
         return getProfile(player.getUniqueId());
     }
 
+    public static HonorificProfile getProfile(DatabasePlayer databasePlayer) {
+        return getProfile(databasePlayer.getUuid());
+    }
+
     public static void preload(UUID uuid) {
         init();
         PROFILES.computeIfAbsent(uuid, HonorificManager::loadProfile);
@@ -88,7 +95,7 @@ public final class HonorificManager {
         HonorificProfile profile = PROFILES.remove(uuid);
         LAST_CHALLENGE_REFRESH.remove(uuid);
         if (profile != null) {
-            saveSnapshotAsync(uuid, profile.toDocument(uuid));
+            saveSnapshotAsync(uuid, profile.toEmbeddedDocument());
         }
     }
 
@@ -138,7 +145,7 @@ public final class HonorificManager {
     }
 
     public static String getProgressText(Honorific honorific, DatabasePlayer databasePlayer) {
-        HonorificProfile profile = getProfile(databasePlayer.getUuid());
+        HonorificProfile profile = getProfile(databasePlayer);
         DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
         return switch (honorific) {
             case THE_MIGHTY_ROLLER -> progress(profile.getItemRerolls(), 90);
@@ -191,7 +198,7 @@ public final class HonorificManager {
     public static void saveAsync(UUID uuid) {
         HonorificProfile profile = PROFILES.get(uuid);
         if (profile != null) {
-            saveSnapshotAsync(uuid, profile.toDocument(uuid));
+            saveSnapshotAsync(uuid, profile.toEmbeddedDocument());
         }
     }
 
@@ -302,7 +309,22 @@ public final class HonorificManager {
             return new HonorificProfile();
         }
         try {
-            return HonorificProfile.fromDocument(getCollection().find(eq("_id", uuid.toString())).first());
+            Document playerDocument = getPlayerCollection().find(eq("uuid", uuid))
+                    .projection(include(HONORIFICS_FIELD))
+                    .first();
+            if (playerDocument != null) {
+                Object embedded = playerDocument.get(HONORIFICS_FIELD);
+                if (embedded instanceof Document honorificDocument) {
+                    return HonorificProfile.fromDocument(honorificDocument);
+                }
+            }
+
+            Document legacyDocument = getLegacyCollection().find(eq("_id", uuid.toString())).first();
+            HonorificProfile migrated = HonorificProfile.fromDocument(legacyDocument);
+            if (legacyDocument != null && !migrated.isEmptyExceptDefaults()) {
+                saveSnapshotAsync(uuid, migrated.toEmbeddedDocument());
+            }
+            return migrated;
         } catch (Exception exception) {
             ChatUtils.MessageType.WARLORDS.sendErrorMessage(exception);
             return new HonorificProfile();
@@ -315,15 +337,28 @@ public final class HonorificManager {
         }
         Warlords.newChain().async(() -> {
             try {
-                getCollection().replaceOne(eq("_id", uuid.toString()), snapshot, new ReplaceOptions().upsert(true));
+                DatabasePlayer databasePlayer = DatabaseManager.inCache(uuid, PlayersCollections.LIFETIME)
+                        ? DatabaseManager.getPlayer(uuid)
+                        : null;
+                if (databasePlayer == null) {
+                    getPlayerCollection().updateOne(eq("uuid", uuid), set(HONORIFICS_FIELD, snapshot));
+                } else {
+                    synchronized (databasePlayer) {
+                        getPlayerCollection().updateOne(eq("uuid", uuid), set(HONORIFICS_FIELD, snapshot));
+                    }
+                }
             } catch (Exception exception) {
                 ChatUtils.MessageType.WARLORDS.sendErrorMessage(exception);
             }
         }).execute();
     }
 
-    private static MongoCollection<Document> getCollection() {
-        return DatabaseManager.warlordsDatabase.getCollection(COLLECTION_NAME);
+    private static MongoCollection<Document> getPlayerCollection() {
+        return DatabaseManager.warlordsDatabase.getCollection(PLAYER_COLLECTION_NAME);
+    }
+
+    private static MongoCollection<Document> getLegacyCollection() {
+        return DatabaseManager.warlordsDatabase.getCollection(LEGACY_COLLECTION_NAME);
     }
 
     private static void notifyUnlock(@Nullable Player player, Honorific honorific) {
