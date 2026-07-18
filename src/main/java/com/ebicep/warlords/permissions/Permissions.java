@@ -62,11 +62,11 @@ public enum Permissions {
     }
 
     private static Component createPlayerPrefix(Permissions permission, UUID uuid, String name, boolean includeName) {
-        Component component = Component.empty().color(permission.prefixColor);
+        Component component = Component.empty().color(permission.prefixColor)
+                .append(HonorificManager.getHonorificComponent(uuid));
         if (permission != DEFAULT && !permission.prefix.isEmpty()) {
             component = component.append(Component.text("[" + permission.prefix + "] ", permission.prefixColor));
         }
-        component = component.append(HonorificManager.getHonorificComponent(uuid));
         if (includeName) {
             component = component.append(Component.text(name, permission.prefixColor));
         }
