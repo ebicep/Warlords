@@ -2,6 +2,9 @@ package com.ebicep.warlords.util.bukkit;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import io.papermc.paper.datacomponent.DataComponentType;
+import io.papermc.paper.datacomponent.DataComponentTypes;
+import io.papermc.paper.datacomponent.item.TooltipDisplay;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -18,6 +21,8 @@ import org.bukkit.potion.PotionType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -25,6 +30,8 @@ import java.util.stream.Collectors;
 public class ItemBuilder {
 
     public static final NamespacedKey ON_USE_NAMESPACED_KEY = new NamespacedKey(Warlords.getInstance(), "on_use");
+    private static final Set<DataComponentType> HIDDEN_VANILLA_TOOLTIP_COMPONENTS = createHiddenTooltipComponents();
+
     @Nonnull
     private final ItemStack item;
     @Nullable
@@ -238,7 +245,38 @@ public class ItemBuilder {
             this.item.setItemMeta(meta);
             this.meta = null;
         }
+        hideVanillaTooltip();
         return this.item;
+    }
+
+    private void hideVanillaTooltip() {
+        if (item.getType() == Material.AIR) {
+            return;
+        }
+        item.setData(DataComponentTypes.TOOLTIP_DISPLAY, TooltipDisplay.tooltipDisplay()
+                .hiddenComponents(HIDDEN_VANILLA_TOOLTIP_COMPONENTS)
+                .build());
+    }
+
+    private static Set<DataComponentType> createHiddenTooltipComponents() {
+        Set<DataComponentType> hiddenComponents = new HashSet<>();
+        for (Field field : DataComponentTypes.class.getFields()) {
+            if (!Modifier.isStatic(field.getModifiers()) || !DataComponentType.class.isAssignableFrom(field.getType())) {
+                continue;
+            }
+            try {
+                DataComponentType componentType = (DataComponentType) field.get(null);
+                if (componentType != DataComponentTypes.CUSTOM_NAME
+                        && componentType != DataComponentTypes.ITEM_NAME
+                        && componentType != DataComponentTypes.LORE
+                        && componentType != DataComponentTypes.ENCHANTMENT_GLINT_OVERRIDE
+                        && componentType != DataComponentTypes.TOOLTIP_DISPLAY) {
+                    hiddenComponents.add(componentType);
+                }
+            } catch (IllegalAccessException ignored) {
+            }
+        }
+        return Set.copyOf(hiddenComponents);
     }
 
 }
