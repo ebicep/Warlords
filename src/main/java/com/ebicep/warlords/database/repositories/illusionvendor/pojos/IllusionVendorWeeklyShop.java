@@ -68,9 +68,7 @@ public class IllusionVendorWeeklyShop {
         boolean migratedToNewItems = weeklyShop.ensureNewItems();
         ChatUtils.MessageType.ILLUSION_VENDOR.sendMessage("Initialized Illusion Vendor - " + weeklyShop);
         if (migratedToNewItems && weeklyShop.id != null) {
-            Warlords.newChain()
-                    .async(() -> DatabaseManager.illusionVendorService.update(weeklyShop))
-                    .execute();
+            weeklyShop.persistNewItems();
         }
     }
 
@@ -88,7 +86,7 @@ public class IllusionVendorWeeklyShop {
     public IllusionVendorWeeklyShop() {
     }
 
-    private boolean ensureNewItems() {
+    private synchronized boolean ensureNewItems() {
         if (newItems != null
                 && newItems.size() == ITEM_COSTS.size()
                 && newItems.keySet().containsAll(ITEM_COSTS.keySet())
@@ -99,6 +97,15 @@ public class IllusionVendorWeeklyShop {
         return true;
     }
 
+    private void persistNewItems() {
+        if (!DatabaseManager.enabled || DatabaseManager.illusionVendorService == null || id == null) {
+            return;
+        }
+        Warlords.newChain()
+                .async(() -> DatabaseManager.illusionVendorService.update(this))
+                .execute();
+    }
+
     @Override
     public String toString() {
         return "IllusionVendorWeeklyShop{" +
@@ -107,7 +114,10 @@ public class IllusionVendorWeeklyShop {
                 '}';
     }
 
-    public Map<String, NewItem> getNewItems() {
+    public synchronized Map<String, NewItem> getNewItems() {
+        if (ensureNewItems()) {
+            persistNewItems();
+        }
         return newItems;
     }
 
