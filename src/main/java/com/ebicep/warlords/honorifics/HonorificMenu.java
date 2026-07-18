@@ -156,7 +156,7 @@ public final class HonorificMenu {
         lore.add(Component.text(honorific.getRequirement(), NamedTextColor.GRAY));
         lore.add(Component.text("Progress: ", NamedTextColor.GRAY)
                 .append(Component.text(HonorificManager.getProgressText(honorific, databasePlayer), NamedTextColor.YELLOW)));
-        if (honorific.getCost() != null) {
+        if (!unlocked && honorific.getCost() != null) {
             lore.add(Component.empty());
             lore.addAll(honorific.getCost().getLore());
         }
