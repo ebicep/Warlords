@@ -24,8 +24,9 @@ public enum Anomalies {
     PLAINS_OF_DUNESTAR(
             "Plains of Dunestar",
             List.of(
-                    Component.text("A new threat emerges along Dunestar's borders."),
-                    Component.text("Recover all three exposed relics.")
+                    Component.text("Escort a relic carrier across the open plains."),
+                    Component.text("The carrier cannot attack or use abilities."),
+                    Component.text("Reach two checkpoints and the sanctuary.")
             ),
             List.of(
                     new AnomalyRewardPool("Dunestar Cache I", 45_000, 180, 1),
@@ -37,8 +38,9 @@ public enum Anomalies {
     WHAT_ONCE_WAS(
             "What Once Was",
             List.of(
-                    Component.text("Defend the remnants of a drowned civilization."),
-                    Component.text("Every lost relic removes one reward draw.")
+                    Component.text("Decipher the rune sequences of a lost civilization."),
+                    Component.text("Activate each vault's pedestals in the correct order."),
+                    Component.text("Wrong inputs summon additional defenders.")
             ),
             List.of(
                     new AnomalyRewardPool("Remnant Cache I", 50_000, 225, 1),
@@ -48,6 +50,7 @@ public enum Anomalies {
             new Mob[]{Mob.STRAY, Mob.FALLEN_STRAY, Mob.LURKING_SLIME, Mob.SPECTRAL_THIEF}
     );
 
+    public static final Anomalies[] VALUES = values();
     public static final Anomalies[] ROTATING = values();
 
     private final String name;
@@ -67,6 +70,16 @@ public enum Anomalies {
             case OPEX_ANOMALY -> GameMap.OPEX_ANOMALY;
             case PLAINS_OF_DUNESTAR -> GameMap.PLAINS_OF_DUNESTAR;
             case WHAT_ONCE_WAS -> GameMap.WHAT_ONCE_WAS;
+        };
+    }
+
+    public String getCacheObjective(int cacheIndex) {
+        return switch (this) {
+            case OPEX_ANOMALY -> "Defend Relic " + (cacheIndex + 1);
+            case PLAINS_OF_DUNESTAR -> cacheIndex < 2
+                    ? "Reach Checkpoint " + (cacheIndex + 1)
+                    : "Deliver the relic to the sanctuary";
+            case WHAT_ONCE_WAS -> "Unlock Vault " + (cacheIndex + 1);
         };
     }
 
