@@ -10,8 +10,8 @@ import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.SpendableBuyShop;
-import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.mobs.MobDrop;
+import com.ebicep.warlords.pve.newitems.NewItem;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.DateUtil;
@@ -53,7 +53,6 @@ public class IllusionVendorTrait extends WarlordsTrait {
                         .name(Currencies.ILLUSION_SHARD.getCostColoredName(pveStats.getCurrencyValue(Currencies.ILLUSION_SHARD)))
                         .get(),
                 (m, e) -> {
-
                 }
         );
         for (int i = 0; i < SHOP.size(); i++) {
@@ -119,24 +118,24 @@ public class IllusionVendorTrait extends WarlordsTrait {
         if (weeklyShop != null) {
             Map<String, IllusionVendorWeeklyShop.PurchasableItem> itemCosts = IllusionVendorWeeklyShop.ITEM_COSTS;
             AtomicInteger x = new AtomicInteger(1);
-            weeklyShop.getItems()
+            weeklyShop.getNewItems()
                       .entrySet()
                       .stream()
-                      .sorted(Comparator.comparing(o -> o.getValue().getTier())).forEachOrdered(entry -> {
+                      .sorted(Comparator.comparing(entry -> entry.getValue().getTier()))
+                      .forEachOrdered(entry -> {
                           String mapName = entry.getKey();
-                          AbstractItem item = entry.getValue();
-                          Component itemName = item.getItemName();
+                          NewItem item = entry.getValue();
+                          Component itemName = item.getName();
                           IllusionVendorWeeklyShop.PurchasableItem purchasableItem = itemCosts.get(mapName);
-                          AbstractItem clone = item.clone();
-                          if (purchasableItem == null || clone == null) {
-                              ChatUtils.MessageType.ILLUSION_VENDOR.sendErrorMessage("Invalid item in weekly shop, report this!");
+                          if (purchasableItem == null) {
+                              ChatUtils.MessageType.ILLUSION_VENDOR.sendErrorMessage("Invalid new item in weekly shop, report this!");
                               return;
                           }
+                          NewItem clone = new NewItem(item);
                           long cost = purchasableItem.getCost();
                           Long purchasedAmount = weeklyRewardsPurchased.getOrDefault(mapName, 0L);
                           menu.setItem(x.get(), 2,
-                                  new ItemBuilder(item.generateItemStack())
-                                          .name(itemName)
+                                  item.getItemBuilder()
                                           .addLore(
                                                   Component.empty(),
                                                   Component.text("Cost: ", NamedTextColor.GRAY).append(Currencies.ILLUSION_SHARD.getCostColoredName(cost)),
@@ -158,7 +157,7 @@ public class IllusionVendorTrait extends WarlordsTrait {
                                           return;
                                       }
                                       pveStats.subtractCurrency(Currencies.ILLUSION_SHARD, cost);
-                                      pveStats.getItemsManager().addItem(clone);
+                                      pveStats.getNewItemsManager().addItem(clone);
 
                                       pveStats.getIllusionVendorRewardsPurchased().merge(mapName, 1L, Long::sum);
                                       weeklyRewardsPurchased.merge(mapName, 1L, Long::sum);
@@ -193,7 +192,6 @@ public class IllusionVendorTrait extends WarlordsTrait {
     @Override
     public void onAttach() {
         HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
-//        hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK");
         hologramTrait.setLine(0, ChatColor.GREEN + "Illusion Vendor");
     }
 
