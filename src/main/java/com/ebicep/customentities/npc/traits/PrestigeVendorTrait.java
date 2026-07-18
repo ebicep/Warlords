@@ -2,17 +2,16 @@ package com.ebicep.customentities.npc.traits;
 
 import com.ebicep.customentities.npc.WarlordsTrait;
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.repositories.illusionvendor.pojos.IllusionVendorWeeklyShop;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
+import com.ebicep.warlords.honorifics.HonorificManager;
+import com.ebicep.warlords.honorifics.HonorificMenu;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.SpendableBuyShop;
-import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import com.ebicep.warlords.util.chat.ChatUtils;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.trait.HologramTrait;
 import net.kyori.adventure.text.Component;
@@ -22,11 +21,9 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class PrestigeVendorTrait extends WarlordsTrait {
 
@@ -37,71 +34,60 @@ public class PrestigeVendorTrait extends WarlordsTrait {
 
     public static void openPrestigeVendor(Player player, DatabasePlayer databasePlayer, DatabasePlayer databasePlayerWeekly) {
         Menu menu = new Menu("The Artificer", 9 * 4);
-
         DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
         DatabasePlayerPvE weeklyPveStats = databasePlayerWeekly.getPveStats();
         Map<String, Long> weeklyRewardsPurchased = weeklyPveStats.getIllusionVendorRewardsPurchased();
 
-        menu.setItem(4, 0,
-                new ItemBuilder(Material.HEART_OF_THE_SEA)
-                        .name(Currencies.PRESTIGE_ORB.getCostColoredName(pveStats.getCurrencyValue(Currencies.PRESTIGE_ORB)))
-                        .get(),
-                (m, e) -> {
+        menu.setItem(4, 0, new ItemBuilder(Material.HEART_OF_THE_SEA)
+                .name(Currencies.PRESTIGE_ORB.getCostColoredName(pveStats.getCurrencyValue(Currencies.PRESTIGE_ORB)))
+                .get(), Menu.ACTION_DO_NOTHING);
 
-                }
-        );
         for (int i = 0; i < SHOP.size(); i++) {
             SpendableBuyShop reward = SHOP.get(i);
             int rewardAmount = reward.amount();
             Spendable rewardSpendable = reward.spendable();
             int rewardPrice = reward.price();
             String mapName = reward.getMapName();
-            Long purchasedAmount = weeklyRewardsPurchased.getOrDefault(mapName, 0L);
-
-            String stock;
-            if (reward.stock() == -1) {
-                stock = "Unlimited";
-            } else {
-                stock = "" + (reward.stock() - purchasedAmount);
-            }
-            menu.setItem(i + 1, 1,
-                    new ItemBuilder(rewardSpendable.getItem())
-                            .name(rewardSpendable.getCostColoredName(rewardAmount))
-                            .lore(
-                                    Component.text("Cost: ", NamedTextColor.GRAY).append(Currencies.PRESTIGE_ORB.getCostColoredName(rewardPrice)),
-                                    Component.text("Stock: ", NamedTextColor.GRAY).append(Component.text(stock, NamedTextColor.YELLOW))
-                            )
-                            .get(),
-                    (m, e) -> {
-                        if (pveStats.getCurrencyValue(Currencies.PRESTIGE_ORB) < rewardPrice) {
-                            player.sendMessage(Component.text("You need ", NamedTextColor.RED)
-                                    .append(Currencies.PRESTIGE_ORB.getCostColoredName(rewardPrice))
-                                    .append(Component.text(" to purchase this item!"))
-                            );
-                            player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
-                            return;
-                        }
-                        if (reward.stock() != -1 && purchasedAmount >= reward.stock()) {
-                            player.sendMessage(Component.text("This item is out of stock!", NamedTextColor.RED));
-                            player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
-                            return;
-                        }
-                        pveStats.subtractCurrency(Currencies.PRESTIGE_ORB, rewardPrice);
-                        rewardSpendable.addToPlayer(databasePlayer, rewardAmount);
-
-                        player.sendMessage(Component.text("Purchased ", NamedTextColor.GREEN)
-                                .append(rewardSpendable.getCostColoredName(rewardAmount))
-                                .append(Component.text(" for "))
-                                .append(Currencies.PRESTIGE_ORB.getCostColoredName(rewardPrice))
-                                .append(Component.text("!")));
-                        player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2f);
-                        openPrestigeVendor(player, databasePlayer, databasePlayerWeekly);
-
-                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                        DatabaseManager.queueUpdatePlayerAsync(databasePlayerWeekly, PlayersCollections.WEEKLY);
-                    }
-            );
+            long purchasedAmount = weeklyRewardsPurchased.getOrDefault(mapName, 0L);
+            String stock = reward.stock() == -1 ? "Unlimited" : String.valueOf(reward.stock() - purchasedAmount);
+            menu.setItem(i + 1, 1, new ItemBuilder(rewardSpendable.getItem())
+                    .name(rewardSpendable.getCostColoredName(rewardAmount))
+                    .lore(Component.text("Cost: ", NamedTextColor.GRAY).append(Currencies.PRESTIGE_ORB.getCostColoredName(rewardPrice)),
+                            Component.text("Stock: ", NamedTextColor.GRAY).append(Component.text(stock, NamedTextColor.YELLOW)))
+                    .get(), (m, e) -> {
+                if (pveStats.getCurrencyValue(Currencies.PRESTIGE_ORB) < rewardPrice) {
+                    player.sendMessage(Component.text("You need ", NamedTextColor.RED)
+                            .append(Currencies.PRESTIGE_ORB.getCostColoredName(rewardPrice))
+                            .append(Component.text(" to purchase this item!")));
+                    player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
+                    return;
+                }
+                if (reward.stock() != -1 && purchasedAmount >= reward.stock()) {
+                    player.sendMessage(Component.text("This item is out of stock!", NamedTextColor.RED));
+                    player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
+                    return;
+                }
+                pveStats.subtractCurrency(Currencies.PRESTIGE_ORB, rewardPrice);
+                rewardSpendable.addToPlayer(databasePlayer, rewardAmount);
+                weeklyRewardsPurchased.merge(mapName, 1L, Long::sum);
+                player.sendMessage(Component.text("Purchased ", NamedTextColor.GREEN)
+                        .append(rewardSpendable.getCostColoredName(rewardAmount))
+                        .append(Component.text(" for "))
+                        .append(Currencies.PRESTIGE_ORB.getCostColoredName(rewardPrice))
+                        .append(Component.text("!")));
+                player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2f);
+                DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                DatabaseManager.queueUpdatePlayerAsync(databasePlayerWeekly, PlayersCollections.WEEKLY);
+                openPrestigeVendor(player, databasePlayer, databasePlayerWeekly);
+            });
         }
+
+        menu.setItem(7, 1, new ItemBuilder(Material.NAME_TAG)
+                .name(Component.text("Honorifics", NamedTextColor.GOLD))
+                .lore(Component.text("View, purchase, and equip name titles.", NamedTextColor.GRAY),
+                        Component.text("Customize unlocked colors and fonts.", NamedTextColor.GRAY),
+                        Component.empty(), Component.text("Click to open", NamedTextColor.YELLOW))
+                .get(), (m, e) -> HonorificMenu.open(player));
         menu.setItem(4, 3, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU);
         menu.addBorder(Menu.GRAY_EMPTY_PANE, true);
         menu.openForPlayer(player);
@@ -117,12 +103,11 @@ public class PrestigeVendorTrait extends WarlordsTrait {
     public void rightClick(NPCRightClickEvent event) {
         Player player = event.getClicker();
         UUID uuid = player.getUniqueId();
-        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid);
-        DatabasePlayer databasePlayerWeekly = DatabaseManager.getPlayer(uuid, PlayersCollections.WEEKLY);
-        openPrestigeVendor(player, databasePlayer, databasePlayerWeekly);
+        openPrestigeVendor(player, DatabaseManager.getPlayer(uuid), DatabaseManager.getPlayer(uuid, PlayersCollections.WEEKLY));
     }
 
     public PrestigeVendorTrait() {
         super("PrestigeVendorTrait");
+        HonorificManager.init();
     }
 }
