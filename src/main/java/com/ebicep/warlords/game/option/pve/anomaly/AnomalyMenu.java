@@ -63,8 +63,8 @@ public class AnomalyMenu {
         for (int i = 0; i < currentAnomaly.getRewardPools().size(); i++) {
             AnomalyRewardPool rewardPool = currentAnomaly.getRewardPools().get(i);
             List<Component> lore = new ArrayList<>();
-            lore.add(Component.text("Defend Relic " + (i + 1) + " to earn", NamedTextColor.GRAY));
-            lore.add(Component.text("this cache in your Reward Inventory.", NamedTextColor.GRAY));
+            lore.add(Component.text(currentAnomaly.getCacheObjective(i), NamedTextColor.GRAY));
+            lore.add(Component.text("to earn this cache in your Reward Inventory.", NamedTextColor.GRAY));
             lore.add(Component.empty());
             lore.addAll(rewardPool.getLore());
             menu.setItem(
