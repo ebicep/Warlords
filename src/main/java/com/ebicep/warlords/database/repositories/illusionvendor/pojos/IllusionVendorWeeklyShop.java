@@ -3,9 +3,9 @@ package com.ebicep.warlords.database.repositories.illusionvendor.pojos;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.timings.pojos.DatabaseTiming;
-import com.ebicep.warlords.pve.items.ItemTier;
-import com.ebicep.warlords.pve.items.types.AbstractItem;
-import com.ebicep.warlords.pve.items.types.ItemType;
+import com.ebicep.warlords.pve.newitems.NewItem;
+import com.ebicep.warlords.pve.newitems.NewItemsUtils;
+import com.ebicep.warlords.pve.newitems.tiers.NewItemTier;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.DateUtil;
 import org.springframework.data.annotation.Id;
@@ -29,7 +29,7 @@ public class IllusionVendorWeeklyShop {
     public static void loadWeeklyIllusionVendor() {
         ChatUtils.MessageType.WEEKLY_BLESSINGS.sendMessage("Loading Weekly Illusion Vendor - " + DatabaseTiming.RESET_WEEKLY.get());
         if (DatabaseTiming.RESET_WEEKLY.get()) {
-            currentIllusionVendorWeeklyShop = new IllusionVendorWeeklyShop();
+            currentIllusionVendorWeeklyShop = createNewShop();
             onInitialize();
             createNewWeeklyBlessings();
         } else {
@@ -37,7 +37,7 @@ public class IllusionVendorWeeklyShop {
                     .asyncFirst(() -> DatabaseManager.illusionVendorService.findAll())
                     .syncLast(weeklyBlessings -> {
                         if (weeklyBlessings.isEmpty()) {
-                            currentIllusionVendorWeeklyShop = new IllusionVendorWeeklyShop();
+                            currentIllusionVendorWeeklyShop = createNewShop();
                             createNewWeeklyBlessings();
                         } else {
                             currentIllusionVendorWeeklyShop = weeklyBlessings.get(weeklyBlessings.size() - 1);
@@ -48,8 +48,30 @@ public class IllusionVendorWeeklyShop {
         }
     }
 
+    private static IllusionVendorWeeklyShop createNewShop() {
+        IllusionVendorWeeklyShop weeklyShop = new IllusionVendorWeeklyShop();
+        weeklyShop.newItems = generateNewItems();
+        return weeklyShop;
+    }
+
+    private static Map<String, NewItem> generateNewItems() {
+        Map<String, NewItem> generatedItems = new HashMap<>();
+        generatedItems.put("RANDOM_ALPHA_ITEM", NewItemsUtils.generateRandomItem(NewItemTier.COMMON));
+        generatedItems.put("RANDOM_ALPHA_ITEM_2", NewItemsUtils.generateRandomItem(NewItemTier.COMMON));
+        generatedItems.put("RANDOM_BETA_ITEM", NewItemsUtils.generateRandomItem(NewItemTier.RARE));
+        generatedItems.put("RANDOM_BETA_ITEM_2", NewItemsUtils.generateRandomItem(NewItemTier.RARE));
+        return generatedItems;
+    }
+
     private static void onInitialize() {
-        ChatUtils.MessageType.ILLUSION_VENDOR.sendMessage("Initialized Illusion Vendor - " + currentIllusionVendorWeeklyShop);
+        IllusionVendorWeeklyShop weeklyShop = currentIllusionVendorWeeklyShop;
+        boolean migratedToNewItems = weeklyShop.ensureNewItems();
+        ChatUtils.MessageType.ILLUSION_VENDOR.sendMessage("Initialized Illusion Vendor - " + weeklyShop);
+        if (migratedToNewItems && weeklyShop.id != null) {
+            Warlords.newChain()
+                    .async(() -> DatabaseManager.illusionVendorService.update(weeklyShop))
+                    .execute();
+        }
     }
 
     private static void createNewWeeklyBlessings() {
@@ -61,26 +83,32 @@ public class IllusionVendorWeeklyShop {
     @Id
     protected String id;
     private Instant week = DateUtil.getResetDateLatestMonday();
-    private Map<String, AbstractItem> items = new HashMap<>() {{
-        put("RANDOM_ALPHA_ITEM", ItemType.getRandom().create(ItemTier.ALPHA));
-        put("RANDOM_ALPHA_ITEM_2", ItemType.getRandom().create(ItemTier.ALPHA));
-        put("RANDOM_BETA_ITEM", ItemType.getRandom().create(ItemTier.BETA));
-        put("RANDOM_BETA_ITEM_2", ItemType.getRandom().create(ItemTier.BETA));
-    }};
+    private Map<String, NewItem> newItems;
 
     public IllusionVendorWeeklyShop() {
+    }
+
+    private boolean ensureNewItems() {
+        if (newItems != null
+                && newItems.size() == ITEM_COSTS.size()
+                && newItems.keySet().containsAll(ITEM_COSTS.keySet())
+                && !newItems.containsValue(null)) {
+            return false;
+        }
+        newItems = generateNewItems();
+        return true;
     }
 
     @Override
     public String toString() {
         return "IllusionVendorWeeklyShop{" +
                 "week=" + week +
-                ", items=" + items +
+                ", newItems=" + newItems +
                 '}';
     }
 
-    public Map<String, AbstractItem> getItems() {
-        return items;
+    public Map<String, NewItem> getNewItems() {
+        return newItems;
     }
 
     public static class PurchasableItem {
