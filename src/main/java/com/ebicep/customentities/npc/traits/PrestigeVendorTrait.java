@@ -69,7 +69,6 @@ public class PrestigeVendorTrait extends WarlordsTrait {
                 }
                 pveStats.subtractCurrency(Currencies.PRESTIGE_ORB, rewardPrice);
                 rewardSpendable.addToPlayer(databasePlayer, rewardAmount);
-                weeklyRewardsPurchased.merge(mapName, 1L, Long::sum);
                 player.sendMessage(Component.text("Purchased ", NamedTextColor.GREEN)
                         .append(rewardSpendable.getCostColoredName(rewardAmount))
                         .append(Component.text(" for "))
