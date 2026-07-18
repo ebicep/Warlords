@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.honorifics.HonorificManager;
 import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import net.kyori.adventure.text.Component;
@@ -30,9 +31,7 @@ public enum Permissions {
     GAME_STARTER("GS", NamedTextColor.YELLOW, "group.gamestarter"),
     PATREON("P", NamedTextColor.GREEN, "group.patreon"),
     STREAMER("", NamedTextColor.AQUA, "group.streamer"),
-    DEFAULT("", NamedTextColor.AQUA, "group.default"),
-
-    ;
+    DEFAULT("", NamedTextColor.AQUA, "group.default");
 
     public static final Permissions[] VALUES = values();
 
@@ -41,10 +40,7 @@ public enum Permissions {
             @Override
             public void run() {
                 User user = event.getUser();
-                List<String> permissions = user.getNodes()
-                                               .stream()
-                                               .map(Node::getKey)
-                                               .collect(Collectors.toList());
+                List<String> permissions = user.getNodes().stream().map(Node::getKey).collect(Collectors.toList());
                 permissions.remove("group.default");
                 for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
                     DatabasePlayer databasePlayer = DatabaseManager.getPlayer(user.getUniqueId(), activeCollection);
@@ -57,46 +53,50 @@ public enum Permissions {
     }
 
     public static Component getPrefixWithColor(Player player, boolean includeName) {
-        String name = includeName ? player.getName() : "";
-        for (Permissions value : VALUES) {
-            if (player.hasPermission(value.permission)) {
-                return value == DEFAULT ?
-                       Component.text(name, NamedTextColor.AQUA) :
-                       Component.text("[" + value.prefix + "] " + name, value.prefixColor);
-            }
-        }
-        return Component.text(name, NamedTextColor.AQUA);
+        return createPlayerPrefix(getPermission(player), player.getUniqueId(), includeName ? player.getName() : "", includeName);
     }
 
     public static Component getPrefixWithColor(UUID uuid, boolean includeName) {
         DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid);
-        String name = includeName ? databasePlayer.getName() : "";
+        return createPlayerPrefix(getPermission(databasePlayer), uuid, includeName ? databasePlayer.getName() : "", includeName);
+    }
+
+    private static Component createPlayerPrefix(Permissions permission, UUID uuid, String name, boolean includeName) {
+        Component component = Component.empty().color(permission.prefixColor);
+        if (permission != DEFAULT && !permission.prefix.isEmpty()) {
+            component = component.append(Component.text("[" + permission.prefix + "] ", permission.prefixColor));
+        }
+        component = component.append(HonorificManager.getHonorificComponent(uuid));
+        if (includeName) {
+            component = component.append(Component.text(name, permission.prefixColor));
+        }
+        return component;
+    }
+
+    private static Permissions getPermission(Player player) {
         for (Permissions value : VALUES) {
-            if (databasePlayer.getPermissions().contains(value.permission)) {
-                return value == DEFAULT ?
-                       Component.text(name, NamedTextColor.AQUA) :
-                       Component.text("[" + value.prefix + "] " + name, value.prefixColor);
+            if (player.hasPermission(value.permission)) {
+                return value;
             }
         }
-        return Component.text(name, NamedTextColor.AQUA);
+        return DEFAULT;
+    }
+
+    private static Permissions getPermission(DatabasePlayer databasePlayer) {
+        for (Permissions value : VALUES) {
+            if (databasePlayer.getPermissions().contains(value.permission)) {
+                return value;
+            }
+        }
+        return DEFAULT;
     }
 
     public static NamedTextColor getColor(Player player) {
-        for (Permissions value : VALUES) {
-            if (player.hasPermission(value.permission)) {
-                return value.prefixColor;
-            }
-        }
-        return NamedTextColor.AQUA;
+        return getPermission(player).prefixColor;
     }
 
     public static NamedTextColor getColor(DatabasePlayer databasePlayer) {
-        for (Permissions value : VALUES) {
-            if (databasePlayer.hasPermission(value.permission)) {
-                return value.prefixColor;
-            }
-        }
-        return NamedTextColor.AQUA;
+        return getPermission(databasePlayer).prefixColor;
     }
 
     public static boolean isAdmin(Player player) {
@@ -146,6 +146,4 @@ public enum Permissions {
     public boolean contains(Player player) {
         return player.hasPermission(permission);
     }
-
 }
-
