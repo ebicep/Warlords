@@ -27,7 +27,13 @@ public enum Honorific {
     SUPPLIER("Supplier", "Roll 50,000 Supply Drop Tokens.", Material.FIREWORK_STAR, null),
     CHARM_OF_ZENITH("Charm of Zenith", "Purchased from The Artificer.", Material.WIND_CHARGE, HonorificCost.of(MobDrop.ZENITH_STAR, 1_000)),
     LIMITLESS("Limitless", "Purchased from The Artificer.", Material.CLOCK, HonorificCost.of(Currencies.LIMIT_BREAKER, 500)),
-    PRESTIGIOUS("Prestigious", "Reach prestige 30 on any class.", Material.NETHERITE_UPGRADE_SMITHING_TEMPLATE, null);
+    PRESTIGIOUS("Prestigious", "Reach prestige 30 on any class.", Material.NETHERITE_UPGRADE_SMITHING_TEMPLATE, null),
+    SKELETRON("Skeletron", "Defeat 50,000 Skeletons.", Material.SKELETON_SKULL, null),
+    CHAMPION("Champion", "Defeat 10,000 Champion-tier mobs.", Material.TOTEM_OF_UNDYING, null),
+    COLATORAL("Colatoral", "Deal 1 billion damage in a single game.", Material.TNT, null),
+    TWO_FATES("Two Fates", "Complete the Regnum of Two Crowns raid.", Material.GOLDEN_SWORD, null),
+    CROWNED_HEIR("Crowned Heir", "Complete Regnum of Two Crowns on Oblivion with only 4 players.", Material.GOLDEN_HELMET, null),
+    ASCENDED("Ascended", "Purchased from The Artificer.", Material.ECHO_SHARD, HonorificCost.of(Currencies.ASCENDANT_SHARD, 5_000));
 
     public static final Honorific[] VALUES = values();
 
