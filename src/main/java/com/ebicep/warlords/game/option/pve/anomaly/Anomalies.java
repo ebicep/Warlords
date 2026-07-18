@@ -24,7 +24,7 @@ public enum Anomalies {
     PLAINS_OF_DUNESTAR(
             "Plains of Dunestar",
             List.of(
-                    Component.text("Escort a relic carrier across the open plains."),
+                    Component.text("Pick up the relic to choose its carrier."),
                     Component.text("The carrier cannot attack or use abilities."),
                     Component.text("Reach two checkpoints and the sanctuary.")
             ),
