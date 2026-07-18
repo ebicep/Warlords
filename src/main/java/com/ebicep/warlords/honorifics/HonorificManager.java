@@ -9,6 +9,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.onslaught.Onsl
 import com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.WaveDefenseStats;
 import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.mongodb.client.MongoCollection;
@@ -17,12 +18,15 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -165,6 +169,11 @@ public final class HonorificManager {
             case STAR_GUIDE -> progress(profile.getStarPiecesUsed(), 1_000);
             case SUPPLIER -> progress(profile.getSupplyDropsRolled(), 50_000);
             case PRESTIGIOUS -> progress(getHighestPrestige(databasePlayer), 30);
+            case SKELETRON -> progress(getSkeletonKills(pveStats), 50_000);
+            case CHAMPION -> progress(getChampionKills(pveStats), 10_000);
+            case COLATORAL -> progress(profile.getHighestSingleGameDamage(), 1_000_000_000L);
+            case TWO_FATES -> profile.hasCompletedRegnumOfTwoCrowns() ? "Completed" : "Not completed";
+            case CROWNED_HEIR -> profile.hasCompletedRegnumOblivionWithFourPlayers() ? "Completed" : "Not completed";
             default -> honorific.isPurchasable() ? "Purchasable" : "Challenge";
         };
     }
@@ -193,6 +202,18 @@ public final class HonorificManager {
             getProfile(uuid).recordAncientRenegadesFloor(floor);
             refreshAndSave(uuid);
         }
+    }
+
+    public static void recordSingleGameDamage(UUID uuid, long damage) {
+        if (damage > 0) {
+            getProfile(uuid).recordSingleGameDamage(damage);
+            refreshAndSave(uuid);
+        }
+    }
+
+    public static void recordRegnumCompletion(UUID uuid, boolean oblivion, int playerCount) {
+        getProfile(uuid).recordRegnumCompletion(oblivion, playerCount);
+        refreshAndSave(uuid);
     }
 
     public static void saveAsync(UUID uuid) {
@@ -257,6 +278,11 @@ public final class HonorificManager {
             case STAR_GUIDE -> profile.getStarPiecesUsed() >= 1_000;
             case SUPPLIER -> profile.getSupplyDropsRolled() >= 50_000;
             case PRESTIGIOUS -> getHighestPrestige(databasePlayer) >= 30;
+            case SKELETRON -> getSkeletonKills(pveStats) >= 50_000;
+            case CHAMPION -> getChampionKills(pveStats) >= 10_000;
+            case COLATORAL -> profile.getHighestSingleGameDamage() >= 1_000_000_000L;
+            case TWO_FATES -> profile.hasCompletedRegnumOfTwoCrowns();
+            case CROWNED_HEIR -> profile.hasCompletedRegnumOblivionWithFourPlayers();
             default -> false;
         };
     }
@@ -265,6 +291,33 @@ public final class HonorificManager {
         return pveStats.getMobKills().entrySet().stream()
                 .filter(entry -> compact(entry.getKey()).contains(target))
                 .mapToLong(entry -> entry.getValue() == null ? 0 : entry.getValue()).sum();
+    }
+
+    private static long getSkeletonKills(DatabasePlayerPvE pveStats) {
+        Mob[] skeletonMobs = Arrays.stream(Mob.VALUES)
+                .filter(mob -> mob.entityType == EntityType.SKELETON
+                        || mob.entityType == EntityType.WITHER_SKELETON
+                        || mob.entityType == EntityType.STRAY)
+                .toArray(Mob[]::new);
+        return getMobGroupKills(pveStats, skeletonMobs);
+    }
+
+    private static long getChampionKills(DatabasePlayerPvE pveStats) {
+        return getMobGroupKills(pveStats, Mob.CHAMPION);
+    }
+
+    private static long getMobGroupKills(DatabasePlayerPvE pveStats, Mob[] mobs) {
+        Set<String> aliases = new HashSet<>();
+        for (Mob mob : mobs) {
+            aliases.add(compact(mob.name()));
+            if (mob.name != null) {
+                aliases.add(compact(mob.name));
+            }
+        }
+        return pveStats.getMobKills().entrySet().stream()
+                .filter(entry -> aliases.contains(compact(entry.getKey())))
+                .mapToLong(entry -> entry.getValue() == null ? 0 : entry.getValue())
+                .sum();
     }
 
     private static long getTotalMobKills(DatabasePlayerPvE pveStats) {
