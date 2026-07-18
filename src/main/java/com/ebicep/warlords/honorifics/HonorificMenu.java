@@ -154,11 +154,13 @@ public final class HonorificMenu {
         List<Component> lore = new ArrayList<>();
         lore.add(Component.empty());
         lore.add(Component.text(honorific.getRequirement(), NamedTextColor.GRAY));
-        lore.add(Component.text("Progress: ", NamedTextColor.GRAY)
-                .append(Component.text(HonorificManager.getProgressText(honorific, databasePlayer), NamedTextColor.YELLOW)));
-        if (!unlocked && honorific.getCost() != null) {
-            lore.add(Component.empty());
-            lore.addAll(honorific.getCost().getLore());
+        if (!unlocked) {
+            lore.add(Component.text("Progress: ", NamedTextColor.GRAY)
+                    .append(Component.text(HonorificManager.getProgressText(honorific, databasePlayer), NamedTextColor.YELLOW)));
+            if (honorific.getCost() != null) {
+                lore.add(Component.empty());
+                lore.addAll(honorific.getCost().getLore());
+            }
         }
         lore.add(Component.empty());
         if (equipped) {
