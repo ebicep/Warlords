@@ -4,15 +4,14 @@ import com.ebicep.warlords.game.option.pve.rewards.PveRewards;
 
 import java.util.LinkedHashMap;
 
-public class AnomalyRewards extends PveRewards<AnomalyOption> {
+public class AnomalyRewards extends PveRewards<AbstractAnomalyOption> {
 
-    public AnomalyRewards(AnomalyOption pveOption) {
+    public AnomalyRewards(AbstractAnomalyOption pveOption) {
         super(pveOption);
     }
 
     @Override
     protected void storeCustomBaseCoinSummary(LinkedHashMap<String, Long> cachedBaseCoinSummary) {
-
     }
 
     @Override
@@ -22,11 +21,9 @@ public class AnomalyRewards extends PveRewards<AnomalyOption> {
 
     @Override
     protected void storeWeaponFragmentGainInternal() {
-
     }
 
     @Override
     protected void storeIllusionShardGainInternal() {
-
     }
 }
