@@ -1,0 +1,213 @@
+package com.ebicep.warlords.game.option.pve.anomaly;
+
+import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
+import com.ebicep.warlords.events.game.pve.WarlordsMobSpawnEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
+import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
+import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
+import com.ebicep.warlords.game.option.pve.PveOption;
+import com.ebicep.warlords.game.option.pve.rewards.PveRewards;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.commands.MobCommand;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
+import com.ebicep.warlords.pve.mobs.Mob;
+import com.ebicep.warlords.pve.newitems.setbonus.NewItemsSetBonus;
+import com.ebicep.warlords.pve.rewards.RewardInventory;
+import com.ebicep.warlords.util.warlords.GameRunnable;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Sound;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicInteger;
+
+public abstract class AbstractAnomalyOption implements PveOption {
+
+    protected static final int START_DELAY_TICKS = 10 * GameRunnable.SECOND;
+
+    private final ConcurrentHashMap<AbstractMob, MobData> mobs = new ConcurrentHashMap<>();
+    private final AtomicInteger ticksElapsed = new AtomicInteger();
+
+    protected Game game;
+    protected AnomalyRewards rewards;
+    protected Anomalies currentAnomaly;
+    protected NewItemsSetBonus featuredLegendarySet;
+    protected long rotationStart;
+    protected boolean completed;
+
+    @Override
+    public void register(@Nonnull Game game) {
+        this.game = game;
+        this.currentAnomaly = AnomalyRotation.getCurrentAnomaly();
+        for (Anomalies anomaly : Anomalies.VALUES) {
+            if (anomaly.getMap() == game.getMap()) {
+                this.currentAnomaly = anomaly;
+                break;
+            }
+        }
+        this.rotationStart = AnomalyRotation.getRotationStart().getEpochSecond();
+        this.featuredLegendarySet = AnomalyRotation.getGuaranteedLegendarySet();
+        this.rewards = new AnomalyRewards(this);
+
+        game.registerEvents(getBaseListener());
+        game.registerEvents(new Listener() {
+            @EventHandler(ignoreCancelled = true)
+            public void onDeath(WarlordsDeathEvent event) {
+                if (handleSpecialDeath(event)) {
+                    return;
+                }
+                WarlordsEntity dead = event.getWarlordsEntity();
+                if (!(dead instanceof WarlordsNPC warlordsNPC)) {
+                    return;
+                }
+                AbstractMob mob = warlordsNPC.getMob();
+                if (mob == null || !mobs.containsKey(mob)) {
+                    return;
+                }
+                mob.onDeath(event.getKiller(), dead.getLocation(), AbstractAnomalyOption.this);
+                new GameRunnable(game) {
+                    @Override
+                    public void run() {
+                        removeHostileMob(mob);
+                    }
+                }.runTaskLater(1);
+            }
+        });
+
+        game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(6, "anomaly_players") {
+            @Nonnull
+            @Override
+            public java.util.List<Component> computeLines(@Nullable WarlordsPlayer player) {
+                return healthScoreboard(game);
+            }
+        });
+    }
+
+    protected boolean handleSpecialDeath(WarlordsDeathEvent event) {
+        return false;
+    }
+
+    protected void incrementTicks() {
+        ticksElapsed.incrementAndGet();
+    }
+
+    protected Mob getRandomAnomalyMob() {
+        Mob[] spawnableMobs = currentAnomaly.getSpawnableMobs();
+        return spawnableMobs[ThreadLocalRandom.current().nextInt(spawnableMobs.length)];
+    }
+
+    protected void spawnCurrentAnomalyMob(Location location) {
+        spawnNewMob(getRandomAnomalyMob().createMob(location), Team.RED);
+    }
+
+    protected void finishAnomaly(boolean[] cacheEligibility, String summary) {
+        if (completed) {
+            return;
+        }
+        completed = true;
+        clearHostileMobs();
+
+        game.warlordsPlayers().forEach(warlordsPlayer -> {
+            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(warlordsPlayer.getUuid());
+            int cachesGranted = 0;
+            for (int i = 0; i < Math.min(cacheEligibility.length, currentAnomaly.getRewardPools().size()); i++) {
+                if (!cacheEligibility[i]) {
+                    continue;
+                }
+                AnomalyRewardCache cache = currentAnomaly.getRewardPools().get(i)
+                        .createCache(featuredLegendarySet, rotationStart);
+                databasePlayer.getPveStats().getGameEventRewards().add(cache);
+                cachesGranted++;
+            }
+            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+            warlordsPlayer.sendMessage(Component.text(summary + " " + cachesGranted + "/3 reward caches were added to your Reward Inventory.", NamedTextColor.GREEN));
+            if (cachesGranted > 0) {
+                RewardInventory.sendRewardMessage(
+                        warlordsPlayer.getUuid(),
+                        Component.text(cachesGranted + " Anomaly Reward " + (cachesGranted == 1 ? "Cache is" : "Caches are") + " ready to claim.", NamedTextColor.AQUA)
+                );
+            }
+            warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 2, 1);
+        });
+
+        Bukkit.getPluginManager().callEvent(new WarlordsGameTriggerWinEvent(game, this, Team.BLUE));
+    }
+
+    protected void announce(Component component) {
+        game.forEachOnlinePlayer((player, team) -> player.sendMessage(component));
+    }
+
+    protected void clearHostileMobs() {
+        for (AbstractMob mob : new ArrayList<>(mobs.keySet())) {
+            removeHostileMob(mob);
+        }
+    }
+
+    protected void removeHostileMob(AbstractMob mob) {
+        if (!mobs.containsKey(mob)) {
+            return;
+        }
+        WarlordsNPC npc = mob.getWarlordsNPC();
+        mob.cleanup(this);
+        npc.cleanup();
+        mobs.remove(mob);
+        game.getPlayers().remove(npc.getUuid());
+        Warlords.removePlayer(npc.getUuid());
+        MobCommand.SPAWNED_MOBS.remove(mob);
+    }
+
+    @Override
+    public Set<AbstractMob> getMobs() {
+        return mobs.keySet();
+    }
+
+    @Override
+    public ConcurrentHashMap<AbstractMob, ? extends MobData> getMobsMap() {
+        return mobs;
+    }
+
+    @Override
+    public Game getGame() {
+        return game;
+    }
+
+    @Override
+    public int getTicksElapsed() {
+        return ticksElapsed.get();
+    }
+
+    @Override
+    public void spawnNewMob(AbstractMob mob, Team team) {
+        WarlordsNPC npc = mob.toNPC(game, team, warlordsNPC -> mob.onSpawn(this));
+        game.addNPC(npc);
+        mobs.put(mob, new MobData(ticksElapsed.get()));
+        Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, mob));
+    }
+
+    @Override
+    public PveRewards<?> getRewards() {
+        return rewards;
+    }
+
+    @Override
+    public void onGameCleanup(@Nonnull Game game) {
+        clearHostileMobs();
+        PveOption.super.onGameCleanup(game);
+    }
+}
