@@ -1,22 +1,38 @@
 package com.ebicep.warlords.game.maps;
 
+import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.game.option.pve.anomaly.AnomalyObjectiveMarker;
+import com.ebicep.warlords.game.option.pve.anomaly.AnomalyOption;
+import com.ebicep.warlords.game.option.pve.anomaly.AnomalySpawnMarker;
+import com.ebicep.warlords.util.bukkit.LocationFactory;
+
+import java.util.List;
+
 public class OpexAnomaly extends AbstractAnomalyMap {
 
+    private static final double[][] OBJECTIVE_LOCATIONS = {
+            {18.5, 90, 0.5},
+            {0.5, 90, 18.5},
+            {-17.5, 90, 0.5}
+    };
+    private static final double[][][] ENEMY_SPAWN_LOCATIONS = {
+            {{32.5, 90, 0.5}, {27.5, 90, 12.5}, {27.5, 90, -11.5}},
+            {{0.5, 90, 32.5}, {12.5, 90, 27.5}, {-11.5, 90, 27.5}},
+            {{-31.5, 90, 0.5}, {-26.5, 90, 12.5}, {-26.5, 90, -11.5}}
+    };
+
     public OpexAnomaly() {
-        super(
-                "Opex Anomaly",
-                "OpexAnomaly",
-                new double[]{0.5, 90, 0.5},
-                new double[][]{
-                        {18.5, 90, 0.5},
-                        {0.5, 90, 18.5},
-                        {-17.5, 90, 0.5}
-                },
-                new double[][][]{
-                        {{32.5, 90, 0.5}, {27.5, 90, 12.5}, {27.5, 90, -11.5}},
-                        {{0.5, 90, 32.5}, {12.5, 90, 27.5}, {-11.5, 90, 27.5}},
-                        {{-31.5, 90, 0.5}, {-26.5, 90, 12.5}, {-26.5, 90, -11.5}}
-                }
-        );
+        super("Opex Anomaly", "OpexAnomaly", new double[]{0.5, 90, 0.5});
+    }
+
+    @Override
+    protected void addAnomalyOptions(List<Option> options, LocationFactory loc) {
+        for (int objectiveIndex = 0; objectiveIndex < OBJECTIVE_LOCATIONS.length; objectiveIndex++) {
+            options.add(AnomalyObjectiveMarker.create(objectiveIndex, location(loc, OBJECTIVE_LOCATIONS[objectiveIndex])).asOption());
+            for (double[] spawn : ENEMY_SPAWN_LOCATIONS[objectiveIndex]) {
+                options.add(AnomalySpawnMarker.create(objectiveIndex, location(loc, spawn)).asOption());
+            }
+        }
+        options.add(new AnomalyOption());
     }
 }
