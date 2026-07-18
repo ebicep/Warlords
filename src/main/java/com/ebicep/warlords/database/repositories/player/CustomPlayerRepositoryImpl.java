@@ -3,6 +3,7 @@ package com.ebicep.warlords.database.repositories.player;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.mongodb.MongoNamespace;
+import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.RenameCollectionOptions;
 import org.bson.Document;
 import org.springframework.data.mongodb.core.BulkOperations;
@@ -17,11 +18,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Projections.include;
+import static com.mongodb.client.model.Updates.set;
+
 @Repository
 public class CustomPlayerRepositoryImpl implements CustomPlayerRepository {
 
-    final
-    MongoTemplate mongoTemplate;
+    final MongoTemplate mongoTemplate;
 
     public CustomPlayerRepositoryImpl(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
@@ -34,7 +38,20 @@ public class CustomPlayerRepositoryImpl implements CustomPlayerRepository {
 
     @Override
     public DatabasePlayer save(DatabasePlayer player, PlayersCollections collection) {
-        return mongoTemplate.save(player, collection.collectionName);
+        if (collection != PlayersCollections.LIFETIME) {
+            return mongoTemplate.save(player, collection.collectionName);
+        }
+        synchronized (player) {
+            MongoCollection<Document> mongoCollection = mongoTemplate.getCollection(collection.collectionName);
+            Document existing = mongoCollection.find(eq("uuid", player.getUuid()))
+                    .projection(include("honorifics"))
+                    .first();
+            DatabasePlayer saved = mongoTemplate.save(player, collection.collectionName);
+            if (existing != null && existing.containsKey("honorifics")) {
+                mongoCollection.updateOne(eq("uuid", player.getUuid()), set("honorifics", existing.get("honorifics")));
+            }
+            return saved;
+        }
     }
 
     @Override
@@ -85,10 +102,10 @@ public class CustomPlayerRepositoryImpl implements CustomPlayerRepository {
     @Override
     public List<DatabasePlayer> getPlayersSorted(Aggregation aggregation, PlayersCollections collections) {
         return mongoTemplate.aggregate(aggregation,
-                                    collections.collectionName,
-                                    DatabasePlayer.class
-                            )
-                            .getMappedResults();
+                        collections.collectionName,
+                        DatabasePlayer.class
+                )
+                .getMappedResults();
     }
 
     @Override
@@ -103,5 +120,4 @@ public class CustomPlayerRepositoryImpl implements CustomPlayerRepository {
                 new RenameCollectionOptions().dropTarget(dropTarget)
         );
     }
-
 }
