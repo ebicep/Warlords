@@ -3,9 +3,11 @@ package com.ebicep.warlords.honorifics;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.events.player.AddCurrencyEvent;
 import com.ebicep.warlords.events.player.DatabasePlayerFirstLoadEvent;
 import com.ebicep.warlords.events.player.SupplyDropCallEvent;
+import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.events.StarPieceSynthesizedEvent;
 import org.bukkit.event.EventHandler;
@@ -46,6 +48,19 @@ public class HonorificListener implements Listener {
             return;
         }
         HonorificManager.recordStarPiecesUsed(databasePlayer.getUuid(), -event.getAmount());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onGameWin(WarlordsGameTriggerWinEvent event) {
+        if (event.getGame().getAddons().contains(GameAddon.CUSTOM_GAME)) {
+            return;
+        }
+        event.getGame().warlordsPlayers().forEach(warlordsPlayer ->
+                HonorificManager.recordSingleGameDamage(
+                        warlordsPlayer.getUuid(),
+                        warlordsPlayer.getMinuteStats().total().getDamage()
+                )
+        );
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
