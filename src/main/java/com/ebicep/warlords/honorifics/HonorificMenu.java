@@ -4,29 +4,19 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import io.papermc.paper.datacomponent.DataComponentType;
-import io.papermc.paper.datacomponent.DataComponentTypes;
-import io.papermc.paper.datacomponent.item.TooltipDisplay;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.function.BooleanSupplier;
 
 public final class HonorificMenu {
-
-    private static final Set<DataComponentType> HIDDEN_VANILLA_TOOLTIP_COMPONENTS = createHiddenTooltipComponents();
 
     private HonorificMenu() {
     }
@@ -53,7 +43,7 @@ public final class HonorificMenu {
             if (equipped) {
                 builder.glow();
             }
-            menu.setItem(x, y, hideVanillaTooltip(builder.get()), (m, event) -> {
+            menu.setItem(x, y, builder.get(), (m, event) -> {
                 if (unlocked) {
                     profile.equip(equipped ? null : honorific);
                     saveAndRefresh(player);
@@ -103,7 +93,7 @@ public final class HonorificMenu {
             if (selected) {
                 builder.glow();
             }
-            menu.setItem(i + 1, 1, hideVanillaTooltip(builder.get()), (m, event) -> {
+            menu.setItem(i + 1, 1, builder.get(), (m, event) -> {
                 if (unlocked) {
                     profile.selectColor(color);
                     saveAndRefresh(player);
@@ -133,7 +123,7 @@ public final class HonorificMenu {
             if (selected) {
                 builder.glow();
             }
-            menu.setItem(2 + i * 2, 1, hideVanillaTooltip(builder.get()), (m, event) -> {
+            menu.setItem(2 + i * 2, 1, builder.get(), (m, event) -> {
                 if (unlocked) {
                     profile.selectFont(font);
                     saveAndRefresh(player);
@@ -147,33 +137,6 @@ public final class HonorificMenu {
         menu.setItem(4, 3, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU);
         menu.addBorder(Menu.GRAY_EMPTY_PANE, true);
         menu.openForPlayer(player);
-    }
-
-    private static ItemStack hideVanillaTooltip(ItemStack itemStack) {
-        itemStack.setData(DataComponentTypes.TOOLTIP_DISPLAY, TooltipDisplay.tooltipDisplay()
-                .hiddenComponents(HIDDEN_VANILLA_TOOLTIP_COMPONENTS)
-                .build());
-        return itemStack;
-    }
-
-    private static Set<DataComponentType> createHiddenTooltipComponents() {
-        Set<DataComponentType> hiddenComponents = new HashSet<>();
-        for (Field field : DataComponentTypes.class.getFields()) {
-            if (!Modifier.isStatic(field.getModifiers()) || !DataComponentType.class.isAssignableFrom(field.getType())) {
-                continue;
-            }
-            try {
-                DataComponentType componentType = (DataComponentType) field.get(null);
-                if (componentType != DataComponentTypes.CUSTOM_NAME
-                        && componentType != DataComponentTypes.ITEM_NAME
-                        && componentType != DataComponentTypes.LORE
-                        && componentType != DataComponentTypes.ENCHANTMENT_GLINT_OVERRIDE) {
-                    hiddenComponents.add(componentType);
-                }
-            } catch (IllegalAccessException ignored) {
-            }
-        }
-        return Set.copyOf(hiddenComponents);
     }
 
     private static List<Component> getPreviewLore(HonorificProfile profile) {
