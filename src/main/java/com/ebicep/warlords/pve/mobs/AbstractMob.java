@@ -28,6 +28,7 @@ import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.mobs.tiers.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.PlayerMob;
+import com.ebicep.warlords.pve.newitems.NewItem;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
@@ -413,7 +414,7 @@ public abstract class AbstractMob implements Mob {
         }
         dropWeapon(killer);
         dropMobDrop(killer);
-        dropItem(killer);
+        //dropItem(killer);
     }
 
     /**

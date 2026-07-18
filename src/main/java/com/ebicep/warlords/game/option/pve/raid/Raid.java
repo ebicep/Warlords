@@ -30,12 +30,13 @@ public enum Raid {
         @Override
         public LinkedHashMap<Spendable, Long> getOblivionRewards() {
             return new LinkedHashMap<>() {{
-                put(Currencies.COIN, 500_000L);
-                put(GuildSpendable.GUILD_COIN, 15_000L);
-                put(Currencies.LEGEND_FRAGMENTS, 5000L);
-                put(Currencies.ETHEREUM_CRYSTAL, 8L);
-                put(Currencies.ASCENDANT_STAR_PIECE, 1L);
-                put(Currencies.LIMIT_BREAKER, 2L);
+                put(Currencies.COIN, 800_000L);
+                put(GuildSpendable.GUILD_COIN, 20_000L);
+                put(Currencies.ASCENDANT_SHARD, 20L);
+                put(Currencies.LEGEND_FRAGMENTS, 10000L);
+                put(Currencies.ETHEREUM_CRYSTAL, 10L);
+                put(Currencies.ASCENDANT_STAR_PIECE, 3L);
+                put(Currencies.LIMIT_BREAKER, 3L);
             }};
         }
     },

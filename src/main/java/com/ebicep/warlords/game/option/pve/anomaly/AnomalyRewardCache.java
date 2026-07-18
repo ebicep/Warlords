@@ -43,9 +43,9 @@ public class AnomalyRewardCache extends GameEventReward {
         List<Component> lore = new ArrayList<>(super.getLore());
         lore.add(Component.empty());
         if (newItem == null) {
-            lore.add(Component.text("NewItem: None", NamedTextColor.GRAY));
+            lore.add(Component.text("Item: None", NamedTextColor.GRAY));
         } else {
-            lore.add(Component.text("NewItem: ", NamedTextColor.GRAY).append(newItem.getHoverComponent()));
+            lore.add(Component.text("Item: ", NamedTextColor.GRAY).append(newItem.getHoverComponent()));
         }
         return lore;
     }

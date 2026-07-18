@@ -147,11 +147,12 @@ public final class HonorificMenu {
         return List.of(Component.text("Current:", NamedTextColor.GRAY),
                 Component.text("[", NamedTextColor.DARK_GRAY)
                         .append(profile.getSelectedFont().createComponent(equipped.getDisplayName(), profile.getSelectedColor().getTextColor()))
-                        .append(Component.text("] PlayerName", NamedTextColor.DARK_GRAY)));
+                        .append(Component.text("] Player", NamedTextColor.DARK_GRAY)));
     }
 
     private static List<Component> getHonorificLore(Honorific honorific, DatabasePlayer databasePlayer, boolean unlocked, boolean equipped) {
         List<Component> lore = new ArrayList<>();
+        lore.add(Component.empty());
         lore.add(Component.text(honorific.getRequirement(), NamedTextColor.GRAY));
         lore.add(Component.text("Progress: ", NamedTextColor.GRAY)
                 .append(Component.text(HonorificManager.getProgressText(honorific, databasePlayer), NamedTextColor.YELLOW)));

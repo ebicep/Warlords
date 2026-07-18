@@ -38,7 +38,7 @@ public class Anomaly implements Mode {
         options.add(TextOption.Type.CHAT_CENTERED.create(
                 Component.text("Anomaly", NamedTextColor.AQUA, TextDecoration.BOLD),
                 Component.empty(),
-                base.append(Component.text("Defend three relics for 120 seconds each.")),
+                base.append(Component.text("Defend three relics for 2 minutes each.")),
                 base.append(Component.text("Every surviving relic unlocks one reward pool.")),
                 Component.empty()
         ));

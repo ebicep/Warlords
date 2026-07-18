@@ -31,7 +31,7 @@ import java.util.Map;
 
 public class WeeklyItemTraderTrait extends WarlordsTrait {
 
-    private static final int WEEKLY_TIER_PURCHASE_LIMIT = 2;
+    private static final int WEEKLY_TIER_PURCHASE_LIMIT = 1;
     private static final String PURCHASE_KEY_PREFIX = "ECHELON_TRADER_";
     private static final int[] ITEM_POSITIONS = {2, 4, 6};
     private static final Map<Currencies, Long> SOVEREIGN_COST = createCost(
