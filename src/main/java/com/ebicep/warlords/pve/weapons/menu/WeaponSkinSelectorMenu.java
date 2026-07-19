@@ -65,7 +65,7 @@ public class WeaponSkinSelectorMenu {
                 );
             } else {
                 boolean isUnlocked = unlockedWeaponSkins.contains(weaponSkin);
-                WeaponSkinCost skinCost = WeaponSkinCost.get(weaponSkin);
+                WeaponSkinCost skinCost = WeaponSkinCost.get(weaponSkin, weapon.getRarity());
                 Spendable currency = skinCost.currency();
                 long amount = skinCost.amount();
                 LinkedHashMap<Spendable, Long> cost = new LinkedHashMap<>();
@@ -164,7 +164,7 @@ public class WeaponSkinSelectorMenu {
 
         Set<Spendable> skinCurrencies = new LinkedHashSet<>();
         for (Weapons weaponSkin : Weapons.VALUES) {
-            skinCurrencies.add(WeaponSkinCost.get(weaponSkin).currency());
+            skinCurrencies.add(WeaponSkinCost.getCurrency(weaponSkin));
         }
         List<Component> currencyBalances = skinCurrencies.stream()
                                                           .map(currency -> currency.getCostColoredName(currency.getFromPlayer(databasePlayer)))
@@ -198,7 +198,7 @@ public class WeaponSkinSelectorMenu {
             return true;
         }
 
-        WeaponSkinCost skinCost = WeaponSkinCost.get(weaponSkin);
+        WeaponSkinCost skinCost = WeaponSkinCost.get(weaponSkin, weapon.getRarity());
         Spendable currency = skinCost.currency();
         long amount = skinCost.amount();
         if (currency.getFromPlayer(databasePlayer) < amount) {
