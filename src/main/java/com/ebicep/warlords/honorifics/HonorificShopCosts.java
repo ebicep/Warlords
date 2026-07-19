@@ -1,5 +1,6 @@
 package com.ebicep.warlords.honorifics;
 
+import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.mobs.MobDrop;
 
 public final class HonorificShopCosts {
@@ -18,22 +19,19 @@ public final class HonorificShopCosts {
     public static HonorificCost getColorCost(HonorificColor color) {
         return switch (color) {
             case AQUA -> null;
-            case GOLD -> HonorificCost.of(MobDrop.ZENITH_STAR, 5);
-            case RED -> HonorificCost.of(MobDrop.ZENITH_STAR, 8);
-            case GREEN -> HonorificCost.of(MobDrop.ZENITH_STAR, 10);
-            case BLUE -> HonorificCost.of(MobDrop.ZENITH_STAR, 12);
-            case LIGHT_PURPLE -> HonorificCost.of(MobDrop.ZENITH_STAR, 15);
-            case WHITE -> HonorificCost.of(MobDrop.ZENITH_STAR, 20);
-            case DARK_PURPLE -> HonorificCost.of(MobDrop.ZENITH_STAR, 25);
+            case RED, GREEN, BLUE -> HonorificCost.of(Currencies.PRESTIGE_ORB, 2);
+            case LIGHT_PURPLE, WHITE -> HonorificCost.of(Currencies.PRESTIGE_ORB, 4);
+            case GOLD, DARK_PURPLE -> HonorificCost.of(Currencies.PRESTIGE_ORB, 6);
+            case DARK_RED, BLACK -> HonorificCost.of(Currencies.PRESTIGE_ORB, 8);
         };
     }
 
     public static HonorificCost getFontCost(HonorificFont font) {
         return switch (font) {
             case STANDARD -> null;
-            case BOLD -> HonorificCost.of(MobDrop.ZENITH_STAR, 10);
-            case ITALIC -> HonorificCost.of(MobDrop.ZENITH_STAR, 15);
-            case SMALL_CAPS -> HonorificCost.of(MobDrop.ZENITH_STAR, 25);
+            case BOLD -> HonorificCost.of(Currencies.PRESTIGE_ORB, 5);
+            case ITALIC -> HonorificCost.of(Currencies.PRESTIGE_ORB, 10);
+            case SMALL_CAPS -> HonorificCost.of(Currencies.PRESTIGE_ORB, 15);
         };
     }
 }

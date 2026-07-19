@@ -6,13 +6,17 @@ import org.bukkit.Material;
 public enum HonorificColor {
 
     AQUA("Aqua", TextColor.color(85, 255, 255), Material.CYAN_DYE),
-    GOLD("Gold", TextColor.color(255, 170, 0), Material.ORANGE_DYE),
     RED("Red", TextColor.color(255, 85, 85), Material.RED_DYE),
     GREEN("Green", TextColor.color(85, 255, 85), Material.LIME_DYE),
     BLUE("Blue", TextColor.color(85, 85, 255), Material.BLUE_DYE),
     LIGHT_PURPLE("Light Purple", TextColor.color(255, 85, 255), Material.MAGENTA_DYE),
     WHITE("White", TextColor.color(255, 255, 255), Material.WHITE_DYE),
-    DARK_PURPLE("Dark Purple", TextColor.color(170, 0, 170), Material.PURPLE_DYE);
+    DARK_PURPLE("Dark Purple", TextColor.color(150, 0, 170), Material.PURPLE_DYE),
+    GOLD("Gold", TextColor.color(255, 170, 0), Material.ORANGE_DYE),
+    DARK_RED("Dark Red", TextColor.color(125, 35, 35), Material.DANDELION),
+    BLACK("Black", TextColor.color(25, 25, 25), Material.INK_SAC)
+
+    ;
 
     public static final HonorificColor[] VALUES = values();
 

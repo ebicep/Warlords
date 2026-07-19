@@ -74,11 +74,7 @@ public class WeaponSkinSelectorMenu {
                 ItemBuilder itemBuilder = new ItemBuilder(weaponSkin.getItem())
                         .name(Component.text(weaponSkin.getName(), NamedTextColor.GREEN))
                         .lore(WordWrap.wrap(Component.text("This change is cosmetic only and has no effect on gameplay.", NamedTextColor.GRAY), 150))
-                        .addLore(
-                                Component.text("Currency: ", NamedTextColor.GRAY)
-                                         .append(Component.text(currency.getName(), currency.getTextColor())),
-                                Component.empty()
-                        );
+                        .addLore(Component.empty());
                 if (isUnlocked) {
                     itemBuilder.addLore(
                             Component.text("Cost: ", NamedTextColor.AQUA).append(Component.text("Unlocked", NamedTextColor.GREEN))

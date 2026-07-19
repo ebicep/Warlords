@@ -171,7 +171,7 @@ public final class HonorificManager {
             case PRESTIGIOUS -> progress(getHighestPrestige(databasePlayer), 30);
             case SKELETRON -> progress(getSkeletonKills(pveStats), 50_000);
             case CHAMPION -> progress(getChampionKills(pveStats), 10_000);
-            case COLATORAL -> progress(profile.getHighestSingleGameDamage(), 1_000_000_000L);
+            case COLLATERAL -> progress(profile.getHighestSingleGameDamage(), 1_000_000_000L);
             case TWO_FATES -> profile.hasCompletedRegnumOfTwoCrowns() ? "Completed" : "Not completed";
             case CROWNED_HEIR -> profile.hasCompletedRegnumOblivionWithFourPlayers() ? "Completed" : "Not completed";
             default -> honorific.isPurchasable() ? "Purchasable" : "Challenge";
@@ -280,7 +280,7 @@ public final class HonorificManager {
             case PRESTIGIOUS -> getHighestPrestige(databasePlayer) >= 30;
             case SKELETRON -> getSkeletonKills(pveStats) >= 50_000;
             case CHAMPION -> getChampionKills(pveStats) >= 10_000;
-            case COLATORAL -> profile.getHighestSingleGameDamage() >= 1_000_000_000L;
+            case COLLATERAL -> profile.getHighestSingleGameDamage() >= 1_000_000_000L;
             case TWO_FATES -> profile.hasCompletedRegnumOfTwoCrowns();
             case CROWNED_HEIR -> profile.hasCompletedRegnumOblivionWithFourPlayers();
             default -> false;

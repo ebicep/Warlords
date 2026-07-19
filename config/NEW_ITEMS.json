@@ -950,7 +950,7 @@
           },
           "description": "Every {{heal}} heal instances, you emit a global pulse that heals all for {{heal}} health.",
           "healsPerPulse": 10,
-          "pulseHealAmount": 200
+          "pulseHealAmount": 100
         },
         "spelunker": {
           "tier": "LEGENDARY",

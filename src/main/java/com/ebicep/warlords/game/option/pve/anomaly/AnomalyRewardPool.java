@@ -63,7 +63,7 @@ public final class AnomalyRewardPool {
         if (roll < 95) {
             return NewItemTier.EPIC;
         }
-        if (roll < 97.5) {
+        if (roll < 98.5) {
             return NewItemTier.SOVEREIGN;
         }
         return NewItemTier.LEGENDARY;
@@ -75,9 +75,9 @@ public final class AnomalyRewardPool {
         lore.add(Component.text("Item chance: 20%", NamedTextColor.AQUA));
         lore.add(Component.text(" - Common: 50%", NewItemTier.COMMON.getTextColor()));
         lore.add(Component.text(" - Rare: 30%", NewItemTier.RARE.getTextColor()));
-        lore.add(Component.text(" - Epic: 15%", NewItemTier.EPIC.getTextColor()));
-        lore.add(Component.text(" - Sovereign: 2.5%", NewItemTier.SOVEREIGN.getTextColor()));
-        lore.add(Component.text(" - Legendary: 2.5%", NewItemTier.LEGENDARY.getTextColor()));
+        lore.add(Component.text(" - Epic: 17%", NewItemTier.EPIC.getTextColor()));
+        lore.add(Component.text(" - Sovereign: 1.5%", NewItemTier.SOVEREIGN.getTextColor()));
+        lore.add(Component.text(" - Legendary: 1.5%", NewItemTier.LEGENDARY.getTextColor()));
         return lore;
     }
 

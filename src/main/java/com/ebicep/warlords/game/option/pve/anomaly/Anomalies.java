@@ -12,7 +12,7 @@ public enum Anomalies {
             "Opex Anomaly",
             List.of(
                     Component.text("Stabilize the fractured Opex conduits."),
-                    Component.text("Defend each relic for 120 seconds.")
+                    Component.text("Defend each relic for 2 minutes.")
             ),
             List.of(
                     new AnomalyRewardPool("Opex Cache I", 40_000, 200, 1),

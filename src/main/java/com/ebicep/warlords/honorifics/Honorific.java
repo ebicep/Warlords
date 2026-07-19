@@ -30,7 +30,7 @@ public enum Honorific {
     PRESTIGIOUS("Prestigious", "Reach prestige 30 on any class.", Material.NETHERITE_UPGRADE_SMITHING_TEMPLATE, null),
     SKELETRON("Skeletron", "Defeat 50,000 Skeletons.", Material.SKELETON_SKULL, null),
     CHAMPION("Champion", "Defeat 10,000 Champion-tier mobs.", Material.TOTEM_OF_UNDYING, null),
-    COLATORAL("Colatoral", "Deal 1 billion damage in a single game.", Material.TNT, null),
+    COLLATERAL("Collateral", "Deal 1 billion damage in a single game.", Material.TNT, null),
     TWO_FATES("Two Fates", "Complete the Regnum of Two Crowns raid.", Material.GOLDEN_SWORD, null),
     CROWNED_HEIR("Crowned Heir", "Complete Regnum of Two Crowns on Oblivion with only 4 players.", Material.GOLDEN_HELMET, null),
     ASCENDED("Ascended", "Purchased from The Artificer.", Material.ECHO_SHARD, HonorificCost.of(Currencies.ASCENDANT_SHARD, 5_000));
