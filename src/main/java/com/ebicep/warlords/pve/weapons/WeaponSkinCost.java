@@ -10,15 +10,9 @@ import java.util.Objects;
 
 public record WeaponSkinCost(Spendable currency, long amount) {
 
-    private static final Map<Weapons, WeaponSkinCost> COSTS = new EnumMap<>(Weapons.class);
+    private static final Map<Weapons, WeaponSkinCost> OVERRIDES = new EnumMap<>(Weapons.class);
 
     static {
-        for (Weapons weaponSkin : Weapons.VALUES) {
-            COSTS.put(
-                    weaponSkin,
-                    new WeaponSkinCost(Currencies.FAIRY_ESSENCE, weaponSkin.weaponsPvE.fairyEssenceCost)
-            );
-        }
         registerOverrides();
     }
 
@@ -33,10 +27,22 @@ public record WeaponSkinCost(Spendable currency, long amount) {
     }
 
     public static void set(Weapons weaponSkin, Spendable currency, long amount) {
-        COSTS.put(Objects.requireNonNull(weaponSkin, "weaponSkin"), new WeaponSkinCost(currency, amount));
+        OVERRIDES.put(Objects.requireNonNull(weaponSkin, "weaponSkin"), new WeaponSkinCost(currency, amount));
     }
 
-    public static WeaponSkinCost get(Weapons weaponSkin) {
-        return Objects.requireNonNull(COSTS.get(weaponSkin), "No weapon skin cost configured for " + weaponSkin);
+    public static WeaponSkinCost get(Weapons weaponSkin, WeaponsPvE weaponRarity) {
+        WeaponSkinCost override = OVERRIDES.get(Objects.requireNonNull(weaponSkin, "weaponSkin"));
+        if (override != null) {
+            return override;
+        }
+        return new WeaponSkinCost(
+                Currencies.FAIRY_ESSENCE,
+                Objects.requireNonNull(weaponRarity, "weaponRarity").fairyEssenceCost
+        );
+    }
+
+    public static Spendable getCurrency(Weapons weaponSkin) {
+        WeaponSkinCost override = OVERRIDES.get(Objects.requireNonNull(weaponSkin, "weaponSkin"));
+        return override == null ? Currencies.FAIRY_ESSENCE : override.currency();
     }
 }
