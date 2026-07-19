@@ -5,10 +5,10 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.general.Weapons;
-import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.PvEUtils;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
+import com.ebicep.warlords.pve.weapons.WeaponSkinCost;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
@@ -18,7 +18,13 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 import static com.ebicep.warlords.menu.Menu.MENU_BACK;
 import static com.ebicep.warlords.pve.weapons.menu.WeaponManagerMenu.openWeaponEditor;
@@ -26,7 +32,7 @@ import static com.ebicep.warlords.pve.weapons.menu.WeaponManagerMenu.openWeaponE
 public class WeaponSkinSelectorMenu {
 
     public static void openWeaponSkinSelectorMenu(Player player, DatabasePlayer databasePlayer, AbstractWeapon weapon, int pageNumber) {
-        Menu menu = new Menu("Bind Weapons", 9 * 6);
+        Menu menu = new Menu("Weapon Skins", 9 * 6);
 
         menu.setItem(
                 4,
@@ -38,13 +44,9 @@ public class WeaponSkinSelectorMenu {
 
         List<Weapons> weaponSkins = new ArrayList<>(Arrays.asList(Weapons.VALUES));
         List<Weapons> unlockedWeaponSkins = weapon.getUnlockedWeaponSkins();
-        int weaponSkinCost = weapon.getRarity().fairyEssenceCost;
-        LinkedHashMap<Spendable, Long> cost = new LinkedHashMap<>();
-        cost.put(Currencies.FAIRY_ESSENCE, (long) weaponSkinCost);
 
         for (int i = (pageNumber - 1) * 21; i < pageNumber * 21 && i < weaponSkins.size(); i++) {
             Weapons weaponSkin = weaponSkins.get(i);
-            //cant reskin weapon to higher rarity than current weapon
             WeaponsPvE weaponsPvE = weaponSkin.weaponsPvE;
             if (weapon.getRarity().compareTo(weaponsPvE) < 0) {
                 menu.setItem(
@@ -63,14 +65,18 @@ public class WeaponSkinSelectorMenu {
                 );
             } else {
                 boolean isUnlocked = unlockedWeaponSkins.contains(weaponSkin);
+                WeaponSkinCost skinCost = WeaponSkinCost.get(weaponSkin);
+                Spendable currency = skinCost.currency();
+                long amount = skinCost.amount();
+                LinkedHashMap<Spendable, Long> cost = new LinkedHashMap<>();
+                cost.put(currency, amount);
+
                 ItemBuilder itemBuilder = new ItemBuilder(weaponSkin.getItem())
                         .name(Component.text(weaponSkin.getName(), NamedTextColor.GREEN))
                         .lore(WordWrap.wrap(Component.text("This change is cosmetic only and has no effect on gameplay.", NamedTextColor.GRAY), 150))
                         .addLore(
-                                Component.text("Obtain ", NamedTextColor.GRAY)
-                                         .append(Component.text("Fairy Essence", NamedTextColor.LIGHT_PURPLE))
-                                         .append(Component.text(" through "))
-                                         .append(Component.text(" different rewards.")),
+                                Component.text("Currency: ", NamedTextColor.GRAY)
+                                         .append(Component.text(currency.getName(), currency.getTextColor())),
                                 Component.empty()
                         );
                 if (isUnlocked) {
@@ -97,35 +103,37 @@ public class WeaponSkinSelectorMenu {
                                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                                     openWeaponSkinSelectorMenu(player, databasePlayer, weapon, pageNumber);
                                 }
-                            } else {
-                                if (databasePlayer.getPveStats().getCurrencyValue(Currencies.FAIRY_ESSENCE) < weaponSkinCost) {
-                                    player.sendMessage(Component.text("You need ", NamedTextColor.RED)
-                                                                .append(Currencies.FAIRY_ESSENCE.getCostColoredName(weaponSkinCost))
-                                                                .append(Component.text(" to unlock this skin."))
-                                    );
-                                    return;
-                                }
-                                Menu.openConfirmationMenu(
-                                        player,
-                                        "Unlock Weapon Skin",
-                                        3,
-                                        new ArrayList<>() {{
-                                            add(Component.text("Unlock ", NamedTextColor.GRAY)
-                                                         .append(Component.text(weaponSkin.getName(), NamedTextColor.LIGHT_PURPLE))
-                                                         .append(Component.text(" Weapon Skin")));
-                                            add(Component.empty());
-                                            addAll(PvEUtils.getCostLore(cost, false));
-                                        }},
-                                        Collections.singletonList(Component.text("Go back", NamedTextColor.GRAY)),
-                                        (m2, e2) -> {
-                                            unlockWeaponSkin(player, databasePlayer, weapon, weaponSkin, pageNumber);
-                                            openWeaponSkinSelectorMenu(player, databasePlayer, weapon, pageNumber);
-                                        },
-                                        (m2, e2) -> openWeaponSkinSelectorMenu(player, databasePlayer, weapon, pageNumber),
-                                        (m2) -> {
-                                        }
-                                );
+                                return;
                             }
+                            if (currency.getFromPlayer(databasePlayer) < amount) {
+                                player.sendMessage(Component.text("You need ", NamedTextColor.RED)
+                                                            .append(currency.getCostColoredName(amount))
+                                                            .append(Component.text(" to unlock this skin."))
+                                );
+                                player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
+                                return;
+                            }
+                            Menu.openConfirmationMenu(
+                                    player,
+                                    "Unlock Weapon Skin",
+                                    3,
+                                    new ArrayList<>() {{
+                                        add(Component.text("Unlock ", NamedTextColor.GRAY)
+                                                     .append(Component.text(weaponSkin.getName(), NamedTextColor.LIGHT_PURPLE))
+                                                     .append(Component.text(" Weapon Skin")));
+                                        add(Component.empty());
+                                        addAll(PvEUtils.getCostLore(cost, false));
+                                    }},
+                                    Collections.singletonList(Component.text("Go back", NamedTextColor.GRAY)),
+                                    (m2, e2) -> {
+                                        if (unlockWeaponSkin(player, databasePlayer, weapon, weaponSkin)) {
+                                            openWeaponSkinSelectorMenu(player, databasePlayer, weapon, pageNumber);
+                                        }
+                                    },
+                                    (m2, e2) -> openWeaponSkinSelectorMenu(player, databasePlayer, weapon, pageNumber),
+                                    (m2) -> {
+                                    }
+                            );
                         }
                 );
             }
@@ -154,14 +162,19 @@ public class WeaponSkinSelectorMenu {
             );
         }
 
-        DatabasePlayerPvE databasePlayerPvE = databasePlayer.getPveStats();
+        Set<Spendable> skinCurrencies = new LinkedHashSet<>();
+        for (Weapons weaponSkin : Weapons.VALUES) {
+            skinCurrencies.add(WeaponSkinCost.get(weaponSkin).currency());
+        }
+        List<Component> currencyBalances = skinCurrencies.stream()
+                                                          .map(currency -> currency.getCostColoredName(currency.getFromPlayer(databasePlayer)))
+                                                          .toList();
         menu.setItem(
                 4,
                 4,
                 new ItemBuilder(Material.BOOKSHELF)
-                        .name(Component.text("Total Fairy Essence: ", NamedTextColor.LIGHT_PURPLE)
-                                       .append(Component.text(databasePlayerPvE.getCurrencyValue(Currencies.FAIRY_ESSENCE), NamedTextColor.AQUA))
-                        )
+                        .name(Component.text("Skin Currency Balances", NamedTextColor.LIGHT_PURPLE))
+                        .lore(currencyBalances)
                         .get(),
                 (m, e) -> openWeaponEditor(player, databasePlayer, weapon)
         );
@@ -170,24 +183,45 @@ public class WeaponSkinSelectorMenu {
         menu.openForPlayer(player);
     }
 
-    public static void unlockWeaponSkin(Player player, DatabasePlayer databasePlayer, AbstractWeapon weapon, Weapons weaponSkin, int page) {
+    public static boolean unlockWeaponSkin(Player player, DatabasePlayer databasePlayer, AbstractWeapon weapon, Weapons weaponSkin) {
         DatabasePlayerPvE databasePlayerPvE = databasePlayer.getPveStats();
-        if (databasePlayerPvE.getWeaponInventory().contains(weapon)) {
-            weapon.setSelectedWeaponSkin(weaponSkin);
-            weapon.getUnlockedWeaponSkins().add(weaponSkin);
-            databasePlayerPvE.subtractCurrency(Currencies.FAIRY_ESSENCE, weapon.getRarity().fairyEssenceCost);
-            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-
-            player.sendMessage(Component.text("You unlocked ", NamedTextColor.GRAY)
-                                        .append(Component.text(weaponSkin.getName(), NamedTextColor.LIGHT_PURPLE))
-                                        .append(Component.text(" for ")
-                                                         .append(weapon.getHoverComponent(false))
-                                        )
-            );
-            player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
-
-            openWeaponSkinSelectorMenu(player, databasePlayer, weapon, page);
+        if (!databasePlayerPvE.getWeaponInventory().contains(weapon)) {
+            return false;
         }
-    }
+        if (weapon.getRarity().compareTo(weaponSkin.weaponsPvE) < 0) {
+            return false;
+        }
 
+        if (weapon.getUnlockedWeaponSkins().contains(weaponSkin)) {
+            weapon.setSelectedWeaponSkin(weaponSkin);
+            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+            return true;
+        }
+
+        WeaponSkinCost skinCost = WeaponSkinCost.get(weaponSkin);
+        Spendable currency = skinCost.currency();
+        long amount = skinCost.amount();
+        if (currency.getFromPlayer(databasePlayer) < amount) {
+            player.sendMessage(Component.text("You need ", NamedTextColor.RED)
+                                        .append(currency.getCostColoredName(amount))
+                                        .append(Component.text(" to unlock this skin."))
+            );
+            player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
+            return false;
+        }
+
+        currency.subtractFromPlayer(databasePlayer, amount);
+        weapon.setSelectedWeaponSkin(weaponSkin);
+        weapon.getUnlockedWeaponSkins().add(weaponSkin);
+        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+
+        player.sendMessage(Component.text("You unlocked ", NamedTextColor.GRAY)
+                                    .append(Component.text(weaponSkin.getName(), NamedTextColor.LIGHT_PURPLE))
+                                    .append(Component.text(" for ")
+                                                     .append(weapon.getHoverComponent(false))
+                                    )
+        );
+        player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
+        return true;
+    }
 }
