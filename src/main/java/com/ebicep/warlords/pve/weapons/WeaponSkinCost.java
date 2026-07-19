@@ -24,6 +24,11 @@ public record WeaponSkinCost(Spendable currency, long amount) {
     }
 
     private static void registerOverrides() {
+        set(Weapons.WARLORDS_II_REQUIEM_OF_THE_NINTH_ABYSS, Currencies.VEILKEEPER_INSIGNIA, 1);
+        set(Weapons.WARLORDS_II_ARCANETHYST, Currencies.VEILKEEPER_INSIGNIA, 1);
+        set(Weapons.WARLORDS_II_TRUE_EXCALIBUR, Currencies.VEILKEEPER_INSIGNIA, 1);
+        set(Weapons.WARLORDS_II_AWAKENED_LICHBLADE, Currencies.VEILKEEPER_INSIGNIA, 1);
+        set(Weapons.WARLORDS_II_CREATION_SPLITTER, Currencies.VEILKEEPER_INSIGNIA, 1);
     }
 
     public static void set(Weapons weaponSkin, Spendable currency, long amount) {
