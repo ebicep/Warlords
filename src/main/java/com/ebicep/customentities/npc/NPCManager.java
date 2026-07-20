@@ -12,7 +12,6 @@ import com.ebicep.warlords.game.option.pve.ReadyUpOption;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
-import com.ebicep.warlords.util.warlords.Utils;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.npc.MemoryNPCDataStore;
@@ -29,7 +28,6 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
-import org.bukkit.Sound;
 import org.bukkit.entity.Display;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
@@ -60,7 +58,7 @@ public class NPCManager {
                 createSupplyDropFairNPC();
                 createBountyMenuNPC();
                 createStarPieceSynthesizerNPC();
-                createItemEnyaNPC();
+                createItemCrafterNPC();
                 createIllusionVendorNPC();
                 createSeasonalVendorNPC();
                 createAnomalyNPC();
@@ -284,11 +282,11 @@ public class NPCManager {
         npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 40.5, 74, 169, 0, 0));
     }
 
-    public static void createItemEnyaNPC() {
-        registerTrait(ItemEnyaTrait.class, "ItemEnyaTrait");
+    public static void createItemCrafterNPC() {
+        registerTrait(ItemCrafterTrait.class, "ItemCrafterTrait");
 
-        NPC npc = NPC_REGISTRY.createNPC(EntityType.BREEZE, "item-enya");
-        npc.addTrait(ItemEnyaTrait.class);
+        NPC npc = NPC_REGISTRY.createNPC(EntityType.BREEZE, "item-crafter");
+        npc.addTrait(ItemCrafterTrait.class);
         LookClose lookClose = npc.getOrAddTrait(LookClose.class);
         lookClose.setPerPlayer(true);
         lookClose.toggle();

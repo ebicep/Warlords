@@ -223,7 +223,7 @@ public enum Currencies implements Spendable {
     ),
     VEILKEEPER_INSIGNIA(
             "Veilkeeper's Insignia",
-            TextColor.color(95, 15, 15),
+            TextColor.color(105, 25, 25),
             new ItemStack(Material.RESPAWN_ANCHOR)
     ),
 
