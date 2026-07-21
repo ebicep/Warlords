@@ -205,7 +205,7 @@ public final class HonorificMenu {
                                                          boolean patreonExclusive, boolean hasPatreon) {
         List<Component> lore = new ArrayList<>();
         if (patreonExclusive) {
-            lore.add(Component.text("PATREON EXCLUSIVE", NamedTextColor.GOLD, TextDecoration.BOLD));
+            lore.add(Component.text("PATREON EXCLUSIVE", NamedTextColor.LIGHT_PURPLE, TextDecoration.BOLD));
             lore.add(Component.empty());
             if (selected) {
                 lore.add(Component.text("SELECTED", NamedTextColor.GREEN, TextDecoration.BOLD));
