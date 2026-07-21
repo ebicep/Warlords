@@ -1,7 +1,6 @@
 package com.ebicep.warlords.honorifics;
 
 import com.ebicep.warlords.pve.Currencies;
-import com.ebicep.warlords.pve.mobs.MobDrop;
 
 public final class HonorificShopCosts {
 
@@ -18,20 +17,17 @@ public final class HonorificShopCosts {
 
     public static HonorificCost getColorCost(HonorificColor color) {
         return switch (color) {
-            case AQUA -> null;
+            case AQUA, GOLD, DARK_RED, BLACK -> null;
             case RED, GREEN, BLUE -> HonorificCost.of(Currencies.PRESTIGE_ORB, 2);
             case LIGHT_PURPLE, WHITE -> HonorificCost.of(Currencies.PRESTIGE_ORB, 4);
-            case GOLD, DARK_PURPLE -> HonorificCost.of(Currencies.PRESTIGE_ORB, 6);
-            case DARK_RED, BLACK -> HonorificCost.of(Currencies.PRESTIGE_ORB, 8);
+            case DARK_PURPLE -> HonorificCost.of(Currencies.PRESTIGE_ORB, 6);
         };
     }
 
     public static HonorificCost getFontCost(HonorificFont font) {
         return switch (font) {
-            case STANDARD -> null;
-            case BOLD -> HonorificCost.of(Currencies.PRESTIGE_ORB, 5);
+            case STANDARD, BOLD, SMALL_CAPS -> null;
             case ITALIC -> HonorificCost.of(Currencies.PRESTIGE_ORB, 10);
-            case SMALL_CAPS -> HonorificCost.of(Currencies.PRESTIGE_ORB, 15);
         };
     }
 }
