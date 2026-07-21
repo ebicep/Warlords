@@ -74,7 +74,9 @@ public class WeeklyItemTraderTrait extends WarlordsTrait {
                 new ItemBuilder(Material.CLOCK)
                         .name(Component.text("Weekly Echelon Stock", NamedTextColor.AQUA))
                         .lore(
+                                Component.empty(),
                                 Component.text("Refreshes every Friday at 6 PM Eastern.", NamedTextColor.GRAY),
+                                Component.empty(),
                                 Component.text("Sovereign purchases: ", NamedTextColor.GRAY)
                                         .append(Component.text(sovereignPurchases + "/" + WEEKLY_TIER_PURCHASE_LIMIT, NamedTextColor.YELLOW)),
                                 Component.text("Legendary purchases: ", NamedTextColor.GRAY)

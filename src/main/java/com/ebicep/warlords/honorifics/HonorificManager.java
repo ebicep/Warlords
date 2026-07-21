@@ -113,9 +113,9 @@ public final class HonorificManager {
                 honorific.getDisplayName(),
                 profile.getSelectedColor().getTextColor()
         );
-        return Component.text("[", NamedTextColor.DARK_GRAY)
+        return Component.text("{", NamedTextColor.DARK_GRAY)
                 .append(title)
-                .append(Component.text("] ", NamedTextColor.DARK_GRAY));
+                .append(Component.text("} ", NamedTextColor.DARK_GRAY));
     }
 
     public static void forceChallengeRefresh(DatabasePlayer databasePlayer, @Nullable Player player) {

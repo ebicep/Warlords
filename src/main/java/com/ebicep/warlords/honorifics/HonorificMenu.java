@@ -97,7 +97,7 @@ public final class HonorificMenu {
             if (selected) {
                 builder.glow();
             }
-            menu.setItem(i + 1, 1, builder.get(), (m, event) -> {
+            menu.setItem(1 + i % 7, 1 + i / 2, builder.get(), (m, event) -> {
                 if (color.isPatreonExclusive()) {
                     if (Permissions.isPatreon(player)) {
                         profile.selectColor(color, true);
@@ -137,7 +137,7 @@ public final class HonorificMenu {
             if (selected) {
                 builder.glow();
             }
-            menu.setItem(2 + i * 2, 1, builder.get(), (m, event) -> {
+            menu.setItem(1 + i * 2, 1, builder.get(), (m, event) -> {
                 if (font.isPatreonExclusive()) {
                     if (Permissions.isPatreon(player)) {
                         profile.selectFont(font, true);
@@ -205,6 +205,7 @@ public final class HonorificMenu {
                                                          boolean patreonExclusive, boolean hasPatreon) {
         List<Component> lore = new ArrayList<>();
         if (patreonExclusive) {
+            lore.add(Component.empty());
             lore.add(Component.text("PATREON EXCLUSIVE", NamedTextColor.LIGHT_PURPLE, TextDecoration.BOLD));
             lore.add(Component.empty());
             if (selected) {

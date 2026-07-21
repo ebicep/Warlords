@@ -5,16 +5,17 @@ import org.bukkit.Material;
 
 public enum HonorificColor {
 
-    AQUA("Aqua", TextColor.color(85, 255, 255), Material.CYAN_DYE, false),
-    RED("Red", TextColor.color(255, 85, 85), Material.RED_DYE, false),
-    GREEN("Green", TextColor.color(85, 255, 85), Material.LIME_DYE, false),
-    BLUE("Blue", TextColor.color(85, 85, 255), Material.BLUE_DYE, false),
-    LIGHT_PURPLE("Light Purple", TextColor.color(255, 85, 255), Material.MAGENTA_DYE, false),
-    WHITE("White", TextColor.color(255, 255, 255), Material.WHITE_DYE, false),
-    DARK_PURPLE("Dark Purple", TextColor.color(150, 0, 170), Material.PURPLE_DYE, false),
-    GOLD("Gold", TextColor.color(255, 170, 0), Material.ORANGE_DYE, true),
-    DARK_RED("Dark Red", TextColor.color(125, 35, 35), Material.DANDELION, true),
-    BLACK("Black", TextColor.color(25, 25, 25), Material.INK_SAC, true)
+    AQUA("Aqua", TextColor.color(85, 255, 255), Material.BLUE_BANNER, false),
+    YELLOW("Yellow", TextColor.color(255, 255, 50), Material.YELLOW_BANNER, false),
+    RED("Red", TextColor.color(255, 85, 85), Material.RED_BANNER, false),
+    GREEN("Green", TextColor.color(85, 255, 85), Material.GREEN_BANNER, false),
+    BLUE("Blue", TextColor.color(85, 85, 255), Material.LIGHT_BLUE_BANNER, false),
+    LIGHT_PURPLE("Light Purple", TextColor.color(255, 85, 255), Material.PURPLE_BANNER, false),
+    WHITE("White", TextColor.color(255, 255, 255), Material.WHITE_BANNER, false),
+    DARK_PURPLE("Dark Purple", TextColor.color(150, 0, 170), Material.CRYING_OBSIDIAN, true),
+    GOLD("Gold", TextColor.color(255, 170, 0), Material.GOLD_INGOT, true),
+    DARK_RED("Dark Red", TextColor.color(125, 35, 35), Material.NETHER_WART_BLOCK, true),
+    BLACK("Black", TextColor.color(25, 25, 25), Material.OBSIDIAN, true)
 
     ;
 

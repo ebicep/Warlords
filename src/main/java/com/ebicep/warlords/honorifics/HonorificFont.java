@@ -12,8 +12,8 @@ import java.util.Map;
 public enum HonorificFont {
 
     STANDARD("Standard", Material.PAPER, false, false, false, false),
-    BOLD("Bold", Material.ANVIL, true, false, false, true),
     ITALIC("Italic", Material.FEATHER, false, true, false, false),
+    BOLD("Bold", Material.ANVIL, true, false, false, true),
     SMALL_CAPS("Small Caps", Material.WRITABLE_BOOK, false, false, true, true);
 
     public static final HonorificFont[] VALUES = values();
