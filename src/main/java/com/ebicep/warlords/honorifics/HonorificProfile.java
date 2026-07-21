@@ -97,10 +97,16 @@ public class HonorificProfile {
     }
 
     public synchronized boolean unlock(HonorificColor color) {
+        if (color.isPatreonExclusive()) {
+            return false;
+        }
         return unlockedColors.add(color);
     }
 
     public synchronized boolean unlock(HonorificFont font) {
+        if (font.isPatreonExclusive()) {
+            return false;
+        }
         return unlockedFonts.add(font);
     }
 
@@ -110,12 +116,12 @@ public class HonorificProfile {
 
     public synchronized boolean isUnlocked(HonorificColor color) {
         ensureDefaults();
-        return unlockedColors.contains(color);
+        return !color.isPatreonExclusive() && unlockedColors.contains(color);
     }
 
     public synchronized boolean isUnlocked(HonorificFont font) {
         ensureDefaults();
-        return unlockedFonts.contains(font);
+        return !font.isPatreonExclusive() && unlockedFonts.contains(font);
     }
 
     public synchronized Set<Honorific> getUnlockedHonorifics() {
@@ -147,8 +153,13 @@ public class HonorificProfile {
     }
 
     public synchronized boolean selectColor(HonorificColor color) {
+        return selectColor(color, false);
+    }
+
+    public synchronized boolean selectColor(HonorificColor color, boolean hasPatreon) {
         ensureDefaults();
-        if (!unlockedColors.contains(color) || selectedColor == color) {
+        boolean available = color.isPatreonExclusive() ? hasPatreon : unlockedColors.contains(color);
+        if (!available || selectedColor == color) {
             return false;
         }
         selectedColor = color;
@@ -161,12 +172,32 @@ public class HonorificProfile {
     }
 
     public synchronized boolean selectFont(HonorificFont font) {
+        return selectFont(font, false);
+    }
+
+    public synchronized boolean selectFont(HonorificFont font, boolean hasPatreon) {
         ensureDefaults();
-        if (!unlockedFonts.contains(font) || selectedFont == font) {
+        boolean available = font.isPatreonExclusive() ? hasPatreon : unlockedFonts.contains(font);
+        if (!available || selectedFont == font) {
             return false;
         }
         selectedFont = font;
         return true;
+    }
+
+    public synchronized boolean validatePatreonAccess(boolean hasPatreon) {
+        ensureDefaults();
+        boolean changed = unlockedColors.removeIf(HonorificColor::isPatreonExclusive);
+        changed |= unlockedFonts.removeIf(HonorificFont::isPatreonExclusive);
+        if (!hasPatreon && selectedColor.isPatreonExclusive()) {
+            selectedColor = HonorificColor.AQUA;
+            changed = true;
+        }
+        if (!hasPatreon && selectedFont.isPatreonExclusive()) {
+            selectedFont = HonorificFont.STANDARD;
+            changed = true;
+        }
+        return changed;
     }
 
     public synchronized long getItemRerolls() {
@@ -246,12 +277,14 @@ public class HonorificProfile {
         if (unlockedFonts == null) {
             unlockedFonts = new HashSet<>();
         }
+        unlockedColors.removeIf(HonorificColor::isPatreonExclusive);
+        unlockedFonts.removeIf(HonorificFont::isPatreonExclusive);
         unlockedColors.add(HonorificColor.AQUA);
         unlockedFonts.add(HonorificFont.STANDARD);
-        if (selectedColor == null || !unlockedColors.contains(selectedColor)) {
+        if (selectedColor == null || (!selectedColor.isPatreonExclusive() && !unlockedColors.contains(selectedColor))) {
             selectedColor = HonorificColor.AQUA;
         }
-        if (selectedFont == null || !unlockedFonts.contains(selectedFont)) {
+        if (selectedFont == null || (!selectedFont.isPatreonExclusive() && !unlockedFonts.contains(selectedFont))) {
             selectedFont = HonorificFont.STANDARD;
         }
     }
