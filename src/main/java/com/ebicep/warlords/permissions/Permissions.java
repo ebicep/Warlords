@@ -5,6 +5,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.honorifics.HonorificManager;
+import com.ebicep.warlords.honorifics.HonorificProfile;
 import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import net.kyori.adventure.text.Component;
@@ -12,6 +13,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.luckperms.api.event.user.UserDataRecalculateEvent;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.node.Node;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -47,17 +49,20 @@ public enum Permissions {
                     databasePlayer.setPermissions(permissions);
                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer, activeCollection);
                 }
+                validateHonorificPatreonAccess(user.getUniqueId(), permissions.contains(PATREON.permission));
                 CustomScoreboard.updateLobbyPlayerNames();
             }
         }.runTaskLater(Warlords.getInstance(), 60);
     }
 
     public static Component getPrefixWithColor(Player player, boolean includeName) {
+        validateHonorificPatreonAccess(player.getUniqueId(), isPatreon(player));
         return createPlayerPrefix(getPermission(player), player.getUniqueId(), includeName ? player.getName() : "", includeName);
     }
 
     public static Component getPrefixWithColor(UUID uuid, boolean includeName) {
         DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid);
+        validateHonorificPatreonAccess(uuid, isPatreon(databasePlayer));
         return createPlayerPrefix(getPermission(databasePlayer), uuid, includeName ? databasePlayer.getName() : "", includeName);
     }
 
@@ -123,8 +128,21 @@ public enum Permissions {
         return player.hasPermission(PATREON.permission);
     }
 
+    public static boolean isPatreon(DatabasePlayer databasePlayer) {
+        return databasePlayer.getPermissions().contains(PATREON.permission);
+    }
+
     public static boolean isDefault(Player player) {
         return player.hasPermission(DEFAULT.permission);
+    }
+
+    private static void validateHonorificPatreonAccess(UUID uuid, boolean hasPatreon) {
+        HonorificProfile profile = HonorificManager.getProfile(uuid);
+        if (!profile.validatePatreonAccess(hasPatreon)) {
+            return;
+        }
+        HonorificManager.saveAsync(uuid);
+        HonorificManager.refreshDisplays(Bukkit.getPlayer(uuid));
     }
 
     public static void sendMessageToDebug(WarlordsEntity player, Component message) {
