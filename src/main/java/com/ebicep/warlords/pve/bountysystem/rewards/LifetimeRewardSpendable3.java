@@ -3,7 +3,7 @@ package com.ebicep.warlords.pve.bountysystem.rewards;
 import com.ebicep.warlords.guilds.GuildSpendable;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.Spendable;
-import com.ebicep.warlords.pve.items.types.SpendableRandomItem;
+import com.ebicep.warlords.pve.newitems.SpendableRandomNewItem;
 
 import java.util.LinkedHashMap;
 
@@ -14,7 +14,7 @@ public interface LifetimeRewardSpendable3 extends RewardSpendable {
         put(Currencies.SYNTHETIC_SHARD, 4000L);
         put(Currencies.LEGEND_FRAGMENTS, 1500L);
         put(Currencies.RARE_STAR_PIECE, 3L);
-        put(SpendableRandomItem.DELTA, 1L);
+        put(SpendableRandomNewItem.SOVEREIGN, 1L);
         put(GuildSpendable.GUILD_COIN, 5000L);
         put(GuildSpendable.GUILD_EXPERIENCE, 5000L);
     }};
