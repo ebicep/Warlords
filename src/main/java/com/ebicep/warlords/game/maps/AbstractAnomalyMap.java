@@ -11,6 +11,7 @@ import com.ebicep.warlords.game.option.SpawnpointOption;
 import com.ebicep.warlords.game.option.cuboid.BoundingBoxOption;
 import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
+import com.ebicep.warlords.game.option.pve.NewItemOption;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 import org.bukkit.Location;
 
@@ -39,10 +40,13 @@ public abstract class AbstractAnomalyMap extends GameMap {
         options.add(SpawnpointOption.forTeam(lobby, Team.BLUE));
         options.add(SpawnpointOption.forTeam(lobby, Team.RED));
 
-        options.add(new BoundingBoxOption(new Location(loc.getWorld(), -512, 0, -512), new Location(loc.getWorld(), 512, 255, 512)));
+        options.add(new BoundingBoxOption(new Location(loc.getWorld(), -1024, 0, -1024), new Location(loc.getWorld(), 1024, 319, 1024)));
         options.add(new GraveOption());
         options.add(new BasicScoreboardOption());
+        options.add(new NewItemOption());
+
         addAnomalyOptions(options, loc);
+
         return options;
     }
 

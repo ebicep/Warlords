@@ -10,10 +10,10 @@ import java.util.List;
 public class PlainsOfDunestar extends AbstractAnomalyMap {
 
     private static final double[][] ROUTE_LOCATIONS = {
-            {0.5, 80, 0.5},
-            {30.5, 80, 5.5},
-            {60.5, 80, -8.5},
-            {90.5, 80, 0.5}
+            {666.5, 243, 282.5},
+            {667.5, 248, 444.5},
+            {667.5, 255, 627.5},
+            {667.5, 266, 841.5}
     };
 
     public PlainsOfDunestar() {
