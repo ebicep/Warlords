@@ -21,6 +21,7 @@ public enum NewItemsSetBonus implements SetBonus {
     BULWARK(new Bulwark()),
     CENTURION(new Centurion()),
     CHARM(new Charm()),
+    CROSSfire(new Crossfire()),
     CROWN_OF_THORNS(new CrownOfThorns()),
     CELL(new Cell()),
     DETONATOR(new Detonator()),
