@@ -36,7 +36,7 @@ public class Crossfire extends BaseSet {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(energyRegenIncreasePercent, damageIncreasePercent);
+        return List.of(energyRegenIncreasePercent, damageIncreasePercent, allyRadius);
     }
 
     private boolean isIsolated(WarlordsPlayer warlordsPlayer) {
