@@ -3,6 +3,7 @@ package com.ebicep.warlords.game.option.pve.anomaly;
 import com.ebicep.warlords.pve.newitems.setbonus.NewItemsSetBonus;
 import com.ebicep.warlords.pve.newitems.tiers.NewItemTier;
 
+import javax.annotation.Nullable;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
@@ -12,6 +13,8 @@ import java.util.Random;
 public final class AnomalyRotation {
 
     private static final long ROTATION_SEED_SALT = 0x414E4F4D414C594CL;
+
+    private static volatile Anomalies testAnomalyOverride;
 
     private AnomalyRotation() {
     }
@@ -25,8 +28,29 @@ public final class AnomalyRotation {
     }
 
     public static Anomalies getCurrentAnomaly() {
+        Anomalies override = testAnomalyOverride;
+        if (override != null) {
+            return override;
+        }
         long hour = getRotationStart().getEpochSecond() / 3600;
         return Anomalies.ROTATING[(int) Math.floorMod(hour, Anomalies.ROTATING.length)];
+    }
+
+    public static void setTestAnomalyOverride(Anomalies anomaly) {
+        testAnomalyOverride = anomaly;
+    }
+
+    public static void clearTestAnomalyOverride() {
+        testAnomalyOverride = null;
+    }
+
+    @Nullable
+    public static Anomalies getTestAnomalyOverride() {
+        return testAnomalyOverride;
+    }
+
+    public static boolean hasTestAnomalyOverride() {
+        return testAnomalyOverride != null;
     }
 
     public static NewItemsSetBonus getGuaranteedLegendarySet() {
