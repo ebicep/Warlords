@@ -27,11 +27,11 @@ import static com.ebicep.warlords.util.chat.ChatChannels.DEBUG;
 public enum Permissions {
 
     ADMIN("ADMIN", NamedTextColor.DARK_AQUA, "group.administrator"),
-    COORDINATOR("HGS", NamedTextColor.GOLD, "group.coordinator"),
+    COORDINATOR("HGS", NamedTextColor.BLUE, "group.coordinator"),
     CONTENT_CREATOR("CT", NamedTextColor.LIGHT_PURPLE, "group.contentcreator"),
     BUILDER("BUILDER", NamedTextColor.DARK_GREEN, "group.builder"),
     GAME_STARTER("GS", NamedTextColor.YELLOW, "group.gamestarter"),
-    PATREON("P", NamedTextColor.GREEN, "group.patreon"),
+    SUPPORTER("S", NamedTextColor.GOLD, "group.patreon"),
     STREAMER("", NamedTextColor.AQUA, "group.streamer"),
     DEFAULT("", NamedTextColor.AQUA, "group.default");
 
@@ -49,20 +49,20 @@ public enum Permissions {
                     databasePlayer.setPermissions(permissions);
                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer, activeCollection);
                 }
-                validateHonorificPatreonAccess(user.getUniqueId(), permissions.contains(PATREON.permission));
+                validateHonorificSupporterAccess(user.getUniqueId(), permissions.contains(SUPPORTER.permission));
                 CustomScoreboard.updateLobbyPlayerNames();
             }
         }.runTaskLater(Warlords.getInstance(), 60);
     }
 
     public static Component getPrefixWithColor(Player player, boolean includeName) {
-        validateHonorificPatreonAccess(player.getUniqueId(), isPatreon(player));
+        validateHonorificSupporterAccess(player.getUniqueId(), isPatreon(player));
         return createPlayerPrefix(getPermission(player), player.getUniqueId(), includeName ? player.getName() : "", includeName);
     }
 
     public static Component getPrefixWithColor(UUID uuid, boolean includeName) {
         DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid);
-        validateHonorificPatreonAccess(uuid, isPatreon(databasePlayer));
+        validateHonorificSupporterAccess(uuid, isPatreon(databasePlayer));
         return createPlayerPrefix(getPermission(databasePlayer), uuid, includeName ? databasePlayer.getName() : "", includeName);
     }
 
@@ -125,18 +125,18 @@ public enum Permissions {
     }
 
     public static boolean isPatreon(Player player) {
-        return player.hasPermission(PATREON.permission);
+        return player.hasPermission(SUPPORTER.permission);
     }
 
     public static boolean isPatreon(DatabasePlayer databasePlayer) {
-        return databasePlayer.getPermissions().contains(PATREON.permission);
+        return databasePlayer.getPermissions().contains(SUPPORTER.permission);
     }
 
     public static boolean isDefault(Player player) {
         return player.hasPermission(DEFAULT.permission);
     }
 
-    private static void validateHonorificPatreonAccess(UUID uuid, boolean hasPatreon) {
+    private static void validateHonorificSupporterAccess(UUID uuid, boolean hasPatreon) {
         HonorificProfile profile = HonorificManager.getProfile(uuid);
         if (!profile.validatePatreonAccess(hasPatreon)) {
             return;
