@@ -4,6 +4,7 @@ import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.pve.mobs.Mob;
 import net.kyori.adventure.text.Component;
 
+import java.util.Arrays;
 import java.util.List;
 
 public enum Anomalies {
@@ -19,21 +20,36 @@ public enum Anomalies {
                     new AnomalyRewardPool("Opex Cache II", 60_000, 300, 1),
                     new AnomalyRewardPool("Opex Cache III", 90_000, 450, 2)
             ),
-            new Mob[]{Mob.ZOMBIE_LANCER, Mob.SKELETAL_MAGE, Mob.SLIMY_ANOMALY, Mob.HOUND}
+            new AnomalyMobSet()
+                    .add(Mob.ZOMBIE_LANCER)
+                    .add(Mob.SKELETAL_MAGE)
+                    .add(Mob.SLIMY_ANOMALY)
+                    .add(Mob.HOUND)
     ),
     PLAINS_OF_DUNESTAR(
             "Plains of Dunestar",
             List.of(
                     Component.text("Pick up the relic to choose its carrier."),
                     Component.text("The carrier cannot attack or use abilities."),
-                    Component.text("Reach two checkpoints and the sanctuary.")
+                    Component.text("Reach each destination within 2 minutes.")
             ),
             List.of(
                     new AnomalyRewardPool("Dunestar Cache I", 45_000, 180, 1),
                     new AnomalyRewardPool("Dunestar Cache II", 70_000, 320, 1),
                     new AnomalyRewardPool("Dunestar Cache III", 100_000, 500, 2)
             ),
-            new Mob[]{Mob.PIG_DISCIPLE, Mob.ARACHNO_VENARI, Mob.INTERMEDIATE_WARRIOR_BERSERKER, Mob.BLAZING_KINDLE}
+            new AnomalyMobSet()
+                    .add(Mob.PIG_DISCIPLE)
+                    .add(Mob.ARACHNO_VENARI),
+            new AnomalyMobSet()
+                    .add(Mob.PIG_DISCIPLE)
+                    .add(Mob.ARACHNO_VENARI)
+                    .add(Mob.INTERMEDIATE_WARRIOR_BERSERKER),
+            new AnomalyMobSet()
+                    .add(Mob.PIG_DISCIPLE)
+                    .add(Mob.ARACHNO_VENARI)
+                    .add(Mob.INTERMEDIATE_WARRIOR_BERSERKER)
+                    .add(Mob.BLAZING_KINDLE)
     ),
     WHAT_ONCE_WAS(
             "What Once Was",
@@ -47,7 +63,11 @@ public enum Anomalies {
                     new AnomalyRewardPool("Remnant Cache II", 75_000, 350, 1),
                     new AnomalyRewardPool("Remnant Cache III", 110_000, 550, 2)
             ),
-            new Mob[]{Mob.STRAY, Mob.FALLEN_STRAY, Mob.LURKING_SLIME, Mob.SPECTRAL_THIEF}
+            new AnomalyMobSet()
+                    .add(Mob.STRAY)
+                    .add(Mob.FALLEN_STRAY)
+                    .add(Mob.LURKING_SLIME)
+                    .add(Mob.SPECTRAL_THIEF)
     );
 
     public static final Anomalies[] VALUES = values();
@@ -56,13 +76,13 @@ public enum Anomalies {
     private final String name;
     private final List<Component> description;
     private final List<AnomalyRewardPool> rewardPools;
-    private final Mob[] spawnableMobs;
+    private final List<AnomalyMobSet> mobSets;
 
-    Anomalies(String name, List<Component> description, List<AnomalyRewardPool> rewardPools, Mob[] spawnableMobs) {
+    Anomalies(String name, List<Component> description, List<AnomalyRewardPool> rewardPools, AnomalyMobSet... mobSets) {
         this.name = name;
         this.description = description;
         this.rewardPools = rewardPools;
-        this.spawnableMobs = spawnableMobs;
+        this.mobSets = List.copyOf(Arrays.asList(mobSets));
     }
 
     public GameMap getMap() {
@@ -83,6 +103,10 @@ public enum Anomalies {
         };
     }
 
+    public AnomalyMobSet getMobSet(int index) {
+        return mobSets.get(Math.min(Math.max(index, 0), mobSets.size() - 1));
+    }
+
     public String getName() {
         return name;
     }
@@ -96,6 +120,9 @@ public enum Anomalies {
     }
 
     public Mob[] getSpawnableMobs() {
-        return spawnableMobs;
+        return mobSets.stream()
+                .flatMap(mobSet -> mobSet.getMobs().stream())
+                .distinct()
+                .toArray(Mob[]::new);
     }
 }
