@@ -8,6 +8,7 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import javax.annotation.Nonnull;
 
@@ -45,7 +46,9 @@ public class DunestarRelicSlowOption implements Option {
         if (itemStack == null || itemStack.getType() != Material.HEART_OF_THE_SEA || !itemStack.hasItemMeta()) {
             return false;
         }
-        return RELIC_NAME.equals(PlainTextComponentSerializer.plainText().serialize(itemStack.getItemMeta().displayName()));
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        return itemMeta.hasDisplayName()
+                && RELIC_NAME.equals(PlainTextComponentSerializer.plainText().serialize(itemMeta.displayName()));
     }
 
     private void removeSlow(WarlordsPlayer warlordsPlayer) {
