@@ -4,6 +4,7 @@ import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.pve.anomaly.AnomalyObjectiveMarker;
 import com.ebicep.warlords.game.option.pve.anomaly.AnomalyOption;
 import com.ebicep.warlords.game.option.pve.anomaly.AnomalySpawnMarker;
+import com.ebicep.warlords.game.option.pve.anomaly.OpexCurrencyOption;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 
 import java.util.List;
@@ -33,6 +34,7 @@ public class OpexAnomaly extends AbstractAnomalyMap {
                 options.add(AnomalySpawnMarker.create(objectiveIndex, location(loc, spawn)).asOption());
             }
         }
+        options.add(new OpexCurrencyOption());
         options.add(new AnomalyOption());
     }
 }
