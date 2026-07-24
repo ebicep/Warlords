@@ -1,6 +1,7 @@
 package com.ebicep.warlords.game.maps;
 
 import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.game.option.pve.anomaly.DunestarCurrencyOption;
 import com.ebicep.warlords.game.option.pve.anomaly.DunestarEscortOption;
 import com.ebicep.warlords.game.option.pve.anomaly.DunestarRelicSlowOption;
 import com.ebicep.warlords.game.option.pve.anomaly.DunestarRouteMarker;
@@ -28,5 +29,6 @@ public class PlainsOfDunestar extends AbstractAnomalyMap {
         }
         options.add(new DunestarEscortOption());
         options.add(new DunestarRelicSlowOption());
+        options.add(new DunestarCurrencyOption());
     }
 }
