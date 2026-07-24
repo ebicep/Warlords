@@ -15,7 +15,7 @@ import javax.annotation.Nonnull;
 public class DunestarRelicSlowOption implements Option {
 
     private static final String MODIFIER_NAME = "Dunestar Relic Carrier";
-    private static final float SPEED_REDUCTION = -20;
+    private static final float SPEED_REDUCTION = -40;
     private static final String RELIC_NAME = "Dunestar Relic";
 
     @Override
