@@ -2,6 +2,10 @@ package com.ebicep.warlords.game.gamemodes;
 
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.database.repositories.games.GamesCollections;
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.anomaly.DatabaseGamePvEAnomaly;
+import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
+import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.Team;
@@ -19,6 +23,7 @@ import com.ebicep.warlords.game.option.win.WinByAllDeathOption;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.menu.generalmenu.WarlordsNewHotbarMenu;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
+import com.ebicep.warlords.util.java.TriFunction;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -82,6 +87,11 @@ public class Anomaly implements Mode {
     @Override
     public boolean isHiddenInMenu() {
         return true;
+    }
+
+    @Override
+    public TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGameBase> getCreateDatabaseGame() {
+        return DatabaseGamePvEAnomaly::createValidated;
     }
 
     @Override
