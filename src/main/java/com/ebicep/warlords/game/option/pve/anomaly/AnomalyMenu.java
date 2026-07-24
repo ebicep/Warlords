@@ -78,18 +78,21 @@ public class AnomalyMenu {
             );
         }
 
+        List<Component> featuredSetLore = new ArrayList<>();
+        featuredSetLore.add(Component.text(featuredSet.getName(), featuredSet.getTier().getTextColor()));
+        featuredSetLore.add(Component.empty());
+        featuredSetLore.addAll(featuredSet.getDescriptionLore());
+        featuredSetLore.add(Component.empty());
+        featuredSetLore.add(Component.text("If a cache's NewItem roll lands on", NamedTextColor.GRAY));
+        featuredSetLore.add(Component.text("the 1.5% Legendary outcome, its item", NamedTextColor.GRAY));
+        featuredSetLore.add(Component.text("will come from this featured set.", NamedTextColor.GRAY));
+
         menu.setItem(
                 4,
                 5,
                 new ItemBuilder(Material.GOLDEN_CHESTPLATE)
                         .name(Component.text("Featured Legendary Set", NamedTextColor.GOLD))
-                        .lore(
-                                Component.text(featuredSet.getName(), featuredSet.getTier().getTextColor()),
-                                Component.empty(),
-                                Component.text("If a cache's NewItem roll lands on", NamedTextColor.GRAY),
-                                Component.text("the 2.5% Legendary outcome, its item", NamedTextColor.GRAY),
-                                Component.text("will come from this featured set.", NamedTextColor.GRAY)
-                        )
+                        .lore(featuredSetLore)
                         .glow()
                         .get(),
                 Menu.ACTION_DO_NOTHING
