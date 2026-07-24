@@ -50,6 +50,7 @@ public abstract class AbstractAnomalyOption implements PveOption {
     protected NewItemsSetBonus featuredLegendarySet;
     protected long rotationStart;
     protected boolean completed;
+    private int objectivesCompleted;
 
     @Override
     public void register(@Nonnull Game game) {
@@ -121,12 +122,19 @@ public abstract class AbstractAnomalyOption implements PveOption {
             return;
         }
         completed = true;
+        objectivesCompleted = 0;
+        int eligibleObjectiveCount = Math.min(cacheEligibility.length, currentAnomaly.getRewardPools().size());
+        for (int i = 0; i < eligibleObjectiveCount; i++) {
+            if (cacheEligibility[i]) {
+                objectivesCompleted++;
+            }
+        }
         clearHostileMobs();
 
         game.warlordsPlayers().forEach(warlordsPlayer -> {
             DatabasePlayer databasePlayer = DatabaseManager.getPlayer(warlordsPlayer.getUuid());
             int cachesGranted = 0;
-            for (int i = 0; i < Math.min(cacheEligibility.length, currentAnomaly.getRewardPools().size()); i++) {
+            for (int i = 0; i < eligibleObjectiveCount; i++) {
                 if (!cacheEligibility[i]) {
                     continue;
                 }
@@ -170,6 +178,18 @@ public abstract class AbstractAnomalyOption implements PveOption {
         game.getPlayers().remove(npc.getUuid());
         Warlords.removePlayer(npc.getUuid());
         MobCommand.SPAWNED_MOBS.remove(mob);
+    }
+
+    public Anomalies getCurrentAnomaly() {
+        return currentAnomaly;
+    }
+
+    public int getObjectivesCompleted() {
+        return objectivesCompleted;
+    }
+
+    public boolean isCompleted() {
+        return completed;
     }
 
     @Override
