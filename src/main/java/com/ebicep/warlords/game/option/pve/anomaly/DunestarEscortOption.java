@@ -5,14 +5,18 @@ import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -36,12 +40,23 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class DunestarEscortOption extends AbstractAnomalyOption {
 
+    private static final int SEGMENT_DURATION_TICKS = 120 * GameRunnable.SECOND;
     private static final int MOB_SPAWN_INTERVAL = 2 * GameRunnable.SECOND;
+    private static final int LASER_INTERVAL_TICKS = 15 * GameRunnable.SECOND;
+    private static final int LASER_TELEGRAPH_TICKS = 2 * GameRunnable.SECOND;
     private static final double CHECKPOINT_RADIUS_SQUARED = 25;
+    private static final double LASER_RANGE = 22;
+    private static final double LASER_WIDTH = 1.25;
+    private static final double LASER_VERTICAL_HALF = 3;
+    private static final double LASER_MAX_OFFSET = 4;
+    private static final Particle.DustOptions LASER_TELEGRAPH_DUST = new Particle.DustOptions(Color.fromRGB(255, 70, 70), 1.5f);
     private static final ItemStack RELIC_ITEM = new ItemBuilder(Material.HEART_OF_THE_SEA)
             .name(Component.text("Dunestar Relic", NamedTextColor.AQUA))
             .lore(
@@ -52,6 +67,7 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
             .get();
 
     private final boolean[] cacheEligibility = new boolean[3];
+    private final Set<GameRunnable> laserTasks = ConcurrentHashMap.newKeySet();
 
     private List<DunestarRouteMarker> routeMarkers = List.of();
     private WarlordsPlayer carrier;
@@ -60,6 +76,8 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
     private int preparationTicks = START_DELAY_TICKS;
     private int nextRouteIndex = 1;
     private int escortTicks;
+    private int segmentTicksRemaining;
+    private int laserTicksRemaining;
     private boolean relicSpawned;
 
     @Override
@@ -189,12 +207,32 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
 
                 escortTicks++;
                 mobTick();
-                if (escortTicks % MOB_SPAWN_INTERVAL == 0 && mobCount() < getMaximumMobCount()) {
-                    spawnAroundCarrier();
-                }
-                if (escortTicks % 10 == 0) {
+
+                if (escortTicks % 5 == 0) {
                     showRouteParticles();
                     checkRouteProgress();
+                    if (completed || carrier == null) {
+                        return;
+                    }
+                }
+
+                segmentTicksRemaining--;
+                if (segmentTicksRemaining <= 0) {
+                    finishEscort("The relic did not reach " + getNextDestinationName() + " in time.");
+                    return;
+                }
+                if (segmentTicksRemaining % (30 * GameRunnable.SECOND) == 0) {
+                    announce(Component.text(getSecondsRemaining() + " seconds remain to reach " + getNextDestinationName() + ".", NamedTextColor.YELLOW));
+                }
+
+                laserTicksRemaining--;
+                if (laserTicksRemaining <= 0) {
+                    startLaserHazard();
+                    laserTicksRemaining = LASER_INTERVAL_TICKS;
+                }
+
+                if (escortTicks % MOB_SPAWN_INTERVAL == 0 && mobCount() < getMaximumMobCount()) {
+                    spawnAroundCarrier();
                 }
             }
         }.runTaskTimer(0, 1);
@@ -225,12 +263,14 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
         removeRelicDrop();
         carrier = warlordsPlayer;
         escortTicks = 0;
+        segmentTicksRemaining = SEGMENT_DURATION_TICKS;
+        laserTicksRemaining = LASER_INTERVAL_TICKS;
         previousSlotEight = player.getInventory().getItem(8) == null ? null : player.getInventory().getItem(8).clone();
         player.getInventory().setItem(8, RELIC_ITEM.clone());
         player.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, Integer.MAX_VALUE, 0, false, false, true));
 
         announce(Component.text(carrier.getName() + " picked up the Dunestar Relic!", NamedTextColor.GOLD));
-        announce(Component.text("Protect the carrier through two checkpoints and into the sanctuary.", NamedTextColor.AQUA));
+        announce(Component.text("Protect the carrier and reach each destination within 120 seconds.", NamedTextColor.AQUA));
         game.forEachOnlinePlayer((onlinePlayer, team) -> onlinePlayer.playSound(onlinePlayer.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2, 1));
     }
 
@@ -249,6 +289,8 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
             announce(Component.text("Checkpoint " + nextRouteIndex + " reached. Dunestar Cache " + (cacheIndex + 1) + " unlocked!", NamedTextColor.GREEN));
             game.forEachOnlinePlayer((player, team) -> player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 2, 1));
             nextRouteIndex++;
+            segmentTicksRemaining = SEGMENT_DURATION_TICKS;
+            announce(Component.text("You have 120 seconds to reach " + getNextDestinationName() + ".", NamedTextColor.AQUA));
             return;
         }
 
@@ -264,7 +306,120 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
         double x = center.getX() + Math.cos(angle) * distance;
         double z = center.getZ() + Math.sin(angle) * distance;
         int y = world.getHighestBlockYAt((int) Math.floor(x), (int) Math.floor(z)) + 1;
-        spawnCurrentAnomalyMob(new Location(world, x, y, z));
+        spawnNewMob(currentAnomaly.getMobSet(nextRouteIndex - 1)
+                .createMob(new Location(world, x, y, z)), Team.RED);
+    }
+
+    private void startLaserHazard() {
+        if (carrier == null || completed) {
+            return;
+        }
+        Location center = carrier.getLocation().clone().add(0, 1, 0);
+        List<LaserLine> lines = List.of(createLaserLine(center), createLaserLine(center));
+        announce(Component.text("Dunestar lasers are locking around the relic carrier!", NamedTextColor.RED));
+        game.forEachOnlinePlayer((player, team) -> player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 2, 1.2f));
+
+        GameRunnable task = new GameRunnable(game) {
+            private int ticks;
+
+            @Override
+            public void run() {
+                if (completed || carrier == null) {
+                    laserTasks.remove(this);
+                    cancel();
+                    return;
+                }
+                ticks++;
+                lines.forEach(line -> drawLaser(line, false));
+                if (ticks < LASER_TELEGRAPH_TICKS) {
+                    return;
+                }
+                lines.forEach(line -> drawLaser(line, true));
+                fireLasers(lines);
+                laserTasks.remove(this);
+                cancel();
+            }
+
+            @Override
+            public void cancel() {
+                laserTasks.remove(this);
+                super.cancel();
+            }
+        };
+        laserTasks.add(task);
+        task.runTaskTimer(0, 1);
+    }
+
+    private LaserLine createLaserLine(Location center) {
+        double angle = ThreadLocalRandom.current().nextDouble(Math.PI * 2);
+        Vector direction = new Vector(Math.cos(angle), 0, Math.sin(angle)).normalize();
+        Vector perpendicular = new Vector(-direction.getZ(), 0, direction.getX());
+        double offset = ThreadLocalRandom.current().nextDouble(-LASER_MAX_OFFSET, LASER_MAX_OFFSET);
+        Location lineCenter = center.clone().add(perpendicular.multiply(offset));
+        Location start = lineCenter.clone().subtract(direction.clone().multiply(LASER_RANGE));
+        Location end = lineCenter.clone().add(direction.multiply(LASER_RANGE));
+        return new LaserLine(start, end);
+    }
+
+    private void drawLaser(LaserLine line, boolean firing) {
+        World world = line.start().getWorld();
+        Vector direction = line.end().toVector().subtract(line.start().toVector());
+        double length = direction.length();
+        Vector unit = direction.normalize();
+        double step = firing ? .35 : .7;
+        for (double distance = 0; distance <= length; distance += step) {
+            Location point = line.start().clone().add(unit.clone().multiply(distance));
+            if (firing) {
+                world.spawnParticle(Particle.ELECTRIC_SPARK, point, 2, .05, .05, .05, 0);
+            } else {
+                world.spawnParticle(Particle.DUST, point, 0, LASER_TELEGRAPH_DUST);
+            }
+        }
+        if (firing) {
+            world.playSound(line.start(), Sound.ENTITY_WARDEN_SONIC_BOOM, 4, .8f);
+        }
+    }
+
+    private void fireLasers(List<LaserLine> lines) {
+        Set<UUID> hitPlayers = ConcurrentHashMap.newKeySet();
+        game.warlordsPlayers().forEach(player -> {
+            if (player == carrier || player.isDead() || !player.isOnline()) {
+                return;
+            }
+            for (LaserLine line : lines) {
+                if (!isInsideLaser(player.getLocation().clone().add(0, 1, 0), line)) {
+                    continue;
+                }
+                if (!hitPlayers.add(player.getUuid())) {
+                    return;
+                }
+                player.addInstance(InstanceBuilder
+                        .damage()
+                        .cause("Dunestar Laser")
+                        .source(player)
+                        .value(player.getMaxHealth() * .25f)
+                        .flags(InstanceFlags.TRUE_DAMAGE, InstanceFlags.IGNORE_CRIT_MODIFIERS)
+                );
+                return;
+            }
+        });
+    }
+
+    private boolean isInsideLaser(Location point, LaserLine line) {
+        if (point.getWorld() != line.start().getWorld()) {
+            return false;
+        }
+        if (Math.abs(point.getY() - line.start().getY()) > LASER_VERTICAL_HALF) {
+            return false;
+        }
+        Vector start = line.start().toVector();
+        Vector end = line.end().toVector();
+        Vector segment = end.clone().subtract(start);
+        Vector toPoint = point.toVector().subtract(start);
+        double lengthSquared = segment.lengthSquared();
+        double projection = lengthSquared == 0 ? 0 : Math.max(0, Math.min(1, toPoint.dot(segment) / lengthSquared));
+        Vector closest = start.add(segment.multiply(projection));
+        return point.toVector().distanceSquared(closest) <= LASER_WIDTH * LASER_WIDTH;
     }
 
     private void showRelicParticles() {
@@ -286,6 +441,16 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
 
     private int getMaximumMobCount() {
         return 6 + playerCount() * 4 + nextRouteIndex * 2;
+    }
+
+    private String getNextDestinationName() {
+        return nextRouteIndex >= routeMarkers.size() - 1
+                ? "the sanctuary"
+                : "Checkpoint " + nextRouteIndex;
+    }
+
+    private int getSecondsRemaining() {
+        return Math.max(0, (segmentTicksRemaining + GameRunnable.SECOND - 1) / GameRunnable.SECOND);
     }
 
     private List<Component> getEscortScoreboard() {
@@ -322,15 +487,24 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
         return List.of(
                 Component.text("Carrier: ", NamedTextColor.GRAY).append(Component.text(carrier.getName(), NamedTextColor.GOLD)),
                 Component.text("Next: ", NamedTextColor.GRAY).append(Component.text(targetName, NamedTextColor.AQUA)),
+                Component.text("Time: ", NamedTextColor.GRAY).append(Component.text(getSecondsRemaining() + "s", NamedTextColor.YELLOW)),
                 Component.text("Distance: ", NamedTextColor.GRAY).append(Component.text(distance + "m", NamedTextColor.YELLOW)),
                 Component.text("Caches: ", NamedTextColor.GRAY).append(Component.text(caches + "/3", NamedTextColor.GREEN))
         );
     }
 
     private void finishEscort(String summary) {
+        cancelLaserTasks();
         removeRelicDrop();
         clearCarrierState();
         finishAnomaly(cacheEligibility, summary);
+    }
+
+    private void cancelLaserTasks() {
+        for (GameRunnable task : List.copyOf(laserTasks)) {
+            task.cancel();
+        }
+        laserTasks.clear();
     }
 
     private void removeRelicDrop() {
@@ -376,8 +550,12 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
 
     @Override
     public void onGameCleanup(@Nonnull Game game) {
+        cancelLaserTasks();
         removeRelicDrop();
         clearCarrierState();
         super.onGameCleanup(game);
+    }
+
+    private record LaserLine(Location start, Location end) {
     }
 }
