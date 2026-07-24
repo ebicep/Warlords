@@ -97,7 +97,7 @@ public final class HonorificMenu {
             if (selected) {
                 builder.glow();
             }
-            menu.setItem(1 + i % 7, 1 + i / 2, builder.get(), (m, event) -> {
+            menu.setItem(1 + i % 7, 1 + i / 7, builder.get(), (m, event) -> {
                 if (color.isPatreonExclusive()) {
                     if (Permissions.isPatreon(player)) {
                         profile.selectColor(color, true);
@@ -206,7 +206,7 @@ public final class HonorificMenu {
         List<Component> lore = new ArrayList<>();
         if (patreonExclusive) {
             lore.add(Component.empty());
-            lore.add(Component.text("PATREON EXCLUSIVE", NamedTextColor.LIGHT_PURPLE, TextDecoration.BOLD));
+            lore.add(Component.text("SUPPORTER EXCLUSIVE", NamedTextColor.LIGHT_PURPLE, TextDecoration.BOLD));
             lore.add(Component.empty());
             if (selected) {
                 lore.add(Component.text("SELECTED", NamedTextColor.GREEN, TextDecoration.BOLD));
@@ -214,7 +214,7 @@ public final class HonorificMenu {
                 lore.add(Component.text("AVAILABLE", NamedTextColor.AQUA, TextDecoration.BOLD));
                 lore.add(Component.text("Click to select", NamedTextColor.YELLOW));
             } else {
-                lore.add(Component.text("Requires the Patreon rank", NamedTextColor.RED));
+                lore.add(Component.text("Requires the Supporter rank", NamedTextColor.RED));
             }
             return lore;
         }

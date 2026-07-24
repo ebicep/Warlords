@@ -61,6 +61,7 @@ public enum NewItemsSetBonus implements SetBonus {
     PHOENIX(new Phoenix()),
     PULSE_OF_AEONS(new PulseOfAeons()),
     PILLAGE(new Pillage()),
+    REGENERATE(new Regenerate()),
     RANDOM_EPIC(new RandomEpic()),
     RANDOM_RARE(new RandomRare()),
     RANDOM_COMMON(new RandomCommon()),

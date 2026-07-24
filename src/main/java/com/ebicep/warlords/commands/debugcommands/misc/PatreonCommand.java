@@ -36,13 +36,13 @@ public class PatreonCommand extends BaseCommand {
                 ChatChannels.sendDebugMessage(issuer,
                         Component.text("Gave ", NamedTextColor.GREEN)
                                  .append(Component.text(finalYear.getValue() + " " + month.getDisplayName(TextStyle.FULL, Locale.ENGLISH), NamedTextColor.LIGHT_PURPLE))
-                                 .append(Component.text(" Patreon reward to "))
+                                 .append(Component.text(" Supporter reward to "))
                                  .append(Component.text(databasePlayer.getName(), NamedTextColor.AQUA))
                 );
             } else {
                 ChatChannels.sendDebugMessage(issuer,
                         Component.text(databasePlayer.getName(), NamedTextColor.AQUA)
-                                 .append(Component.text(" has already received their monthly Patreon reward", NamedTextColor.RED))
+                                 .append(Component.text(" has already received their monthly Supporter reward", NamedTextColor.RED))
                 );
             }
             PatreonReward.givePatreonFutureMessage(databasePlayer, month, finalYear);

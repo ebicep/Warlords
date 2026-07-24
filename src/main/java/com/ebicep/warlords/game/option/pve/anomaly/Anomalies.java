@@ -16,9 +16,9 @@ public enum Anomalies {
                     Component.text("Defend each relic for 2 minutes.")
             ),
             List.of(
-                    new AnomalyRewardPool("Opex Cache I", 40_000, 200, 1),
-                    new AnomalyRewardPool("Opex Cache II", 60_000, 300, 1),
-                    new AnomalyRewardPool("Opex Cache III", 90_000, 450, 2)
+                    new AnomalyRewardPool("Opex Cache I", 6_000, 150, 1),
+                    new AnomalyRewardPool("Opex Cache II", 12_000, 200, 1),
+                    new AnomalyRewardPool("Opex Cache III", 18_000, 250, 2)
             ),
             new AnomalyMobSet()
                     .add(Mob.ZOMBIE_LANCER)
@@ -26,17 +26,17 @@ public enum Anomalies {
                     .add(Mob.SLIMY_ANOMALY)
                     .add(Mob.HOUND)
     ),
-    PLAINS_OF_DUNESTAR(
-            "Plains of Dunestar",
+    BRIDGE_OF_DUNESTAR(
+            "Bridge of Dunestar",
             List.of(
                     Component.text("Pick up the relic to choose its carrier."),
                     Component.text("The carrier cannot attack or use abilities."),
                     Component.text("Reach each destination within 2 minutes.")
             ),
             List.of(
-                    new AnomalyRewardPool("Dunestar Cache I", 45_000, 180, 1),
-                    new AnomalyRewardPool("Dunestar Cache II", 70_000, 320, 1),
-                    new AnomalyRewardPool("Dunestar Cache III", 100_000, 500, 2)
+                    new AnomalyRewardPool("Dunestar Cache I", 10_000, 150, 1),
+                    new AnomalyRewardPool("Dunestar Cache II", 20_000, 350, 1),
+                    new AnomalyRewardPool("Dunestar Cache III", 30_000, 500, 2)
             ),
             new AnomalyMobSet()
                     .add(Mob.PIG_DISCIPLE)
@@ -59,9 +59,9 @@ public enum Anomalies {
                     Component.text("Wrong inputs summon additional defenders.")
             ),
             List.of(
-                    new AnomalyRewardPool("Remnant Cache I", 50_000, 225, 1),
-                    new AnomalyRewardPool("Remnant Cache II", 75_000, 350, 1),
-                    new AnomalyRewardPool("Remnant Cache III", 110_000, 550, 2)
+                    new AnomalyRewardPool("Remnant Cache I", 8_000, 225, 1),
+                    new AnomalyRewardPool("Remnant Cache II", 15_000, 350, 1),
+                    new AnomalyRewardPool("Remnant Cache III", 25_000, 450, 2)
             ),
             new AnomalyMobSet()
                     .add(Mob.STRAY)
@@ -88,7 +88,7 @@ public enum Anomalies {
     public GameMap getMap() {
         return switch (this) {
             case OPEX_ANOMALY -> GameMap.OPEX_ANOMALY;
-            case PLAINS_OF_DUNESTAR -> GameMap.PLAINS_OF_DUNESTAR;
+            case BRIDGE_OF_DUNESTAR -> GameMap.PLAINS_OF_DUNESTAR;
             case WHAT_ONCE_WAS -> GameMap.WHAT_ONCE_WAS;
         };
     }
@@ -96,7 +96,7 @@ public enum Anomalies {
     public String getCacheObjective(int cacheIndex) {
         return switch (this) {
             case OPEX_ANOMALY -> "Defend Relic " + (cacheIndex + 1);
-            case PLAINS_OF_DUNESTAR -> cacheIndex < 2
+            case BRIDGE_OF_DUNESTAR -> cacheIndex < 2
                     ? "Reach Checkpoint " + (cacheIndex + 1)
                     : "Deliver the relic to the sanctuary";
             case WHAT_ONCE_WAS -> "Unlock Vault " + (cacheIndex + 1);

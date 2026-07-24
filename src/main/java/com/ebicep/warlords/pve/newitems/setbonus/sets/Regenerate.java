@@ -39,7 +39,10 @@ public class Regenerate extends BaseSet {
             new GameRunnable(warlordsPlayer.getGame()) {
                 @Override
                 public void run() {
-                    if (warlordsPlayer.getRegenTickTimer() > 0) {
+                    if (warlordsPlayer.isDead()) {
+                        return;
+                    }
+                    if (warlordsPlayer.getRegenTickTimer() > 1) {
                         warlordsPlayer.setRegenTickTimer(1);
                     }
                 }
