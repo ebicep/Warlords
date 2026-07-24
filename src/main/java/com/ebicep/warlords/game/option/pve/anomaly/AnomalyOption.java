@@ -11,6 +11,7 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
@@ -131,6 +132,7 @@ public class AnomalyOption extends AbstractAnomalyOption {
             return;
         }
         objectiveSuccess[activeObjective] = false;
+        Utils.playGlobalSound(activeRelic.getSpawnLocation(), "raid.church.dingalt", 2, 0.5f);
         announce(Component.text("Relic " + (activeObjective + 1) + " was lost. Its reward cache is forfeited.", NamedTextColor.RED));
         removeActiveRelic();
         clearHostileMobs();
@@ -147,6 +149,7 @@ public class AnomalyOption extends AbstractAnomalyOption {
         game.forEachOnlinePlayer((player, team) -> {
             player.teleport(destination);
             player.playSound(destination, Sound.ENTITY_ENDERMAN_TELEPORT, 1.5f, 1.1f);
+            player.playSound(destination, "raid.church.ding", 1, 0.5f);
         });
         announce(Component.text("The party has been transported to Relic " + (nextObjective + 1) + ".", NamedTextColor.LIGHT_PURPLE));
     }

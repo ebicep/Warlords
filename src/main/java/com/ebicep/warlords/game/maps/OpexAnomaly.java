@@ -17,13 +17,13 @@ public class OpexAnomaly extends AbstractAnomalyMap {
             {-110.5, 156, -556.5}
     };
     private static final double[][][] ENEMY_SPAWN_LOCATIONS = {
-            {{32.5, 90, 0.5}, {27.5, 90, 12.5}, {27.5, 90, -11.5}},
-            {{0.5, 90, 32.5}, {12.5, 90, 27.5}, {-11.5, 90, 27.5}},
-            {{-31.5, 90, 0.5}, {-26.5, 90, 12.5}, {-26.5, 90, -11.5}}
+            {{-15.5, 12, 70.5}, {-1.5, 12, 38.5}, {-29.5, 12, 38.5}},
+            {{-235.5, 66, 32.5}, {-250.5, 66, 27.5}, {-221.5, 66, 94.5}},
+            {{-124.5, 158, -542.5}, {-124.5, 158, -570.5}, {-96.5, 158, -570.5}}
     };
 
     public OpexAnomaly() {
-        super("Opex Anomaly", "OpexAnomaly", new double[]{0.5, 90, 0.5});
+        super("Opex Anomaly", "OpexAnomaly", new double[]{-15.5, 12, 52.5});
     }
 
     @Override
