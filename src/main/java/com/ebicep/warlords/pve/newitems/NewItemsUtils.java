@@ -6,6 +6,7 @@ import com.ebicep.warlords.pve.newitems.setbonus.NewItemsSetBonus;
 import com.ebicep.warlords.pve.newitems.tiers.NewItemTier;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.chat.ChatChannels;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.JavaUtils;
 import com.ebicep.warlords.util.java.RandomCollection;
 import net.kyori.adventure.text.Component;
@@ -25,6 +26,7 @@ public class NewItemsUtils {
         }
         NewItemsSetBonus.BY_TIER = Arrays
                 .stream(NewItemsSetBonus.VALUES)
+                .filter(NewItemsUtils::isConfiguredForGeneration)
                 .collect(Collectors.groupingBy(
                         NewItemsSetBonus::getTier,
                         () -> new EnumMap<>(NewItemTier.class),
@@ -33,6 +35,21 @@ public class NewItemsUtils {
         for (NewItemTier value : NewItemTier.VALUES) {
             value.init();
         }
+    }
+
+    private static boolean isConfiguredForGeneration(NewItemsSetBonus setBonus) {
+        if (hasConfiguredSlots(setBonus)) {
+            return true;
+        }
+        ChatUtils.MessageType.NEW_ITEMS.sendErrorMessage(
+                "Excluding NewItem set '" + setBonus.name() + "' (config field '" + setBonus.getConfigFieldName() +
+                        "') from item generation because it has no configured slots."
+        );
+        return false;
+    }
+
+    private static boolean hasConfiguredSlots(NewItemsSetBonus setBonus) {
+        return setBonus.getSlots() != null && !setBonus.getSlots().isEmpty();
     }
 
     @Nonnull
@@ -48,10 +65,13 @@ public class NewItemsUtils {
     @Nonnull
     public static NewItem generateRandomItem(NewItemTier tier) {
         Set<NewItemsSetBonus> setBonuses = NewItemsSetBonus.BY_TIER.get(tier);
-        if (setBonuses == null || setBonuses.isEmpty()) {
-            throw new IllegalStateException("No set bonuses found for tier: " + tier);
+        List<NewItemsSetBonus> rollableSetBonuses = setBonuses == null
+                ? List.of()
+                : setBonuses.stream().filter(NewItemsUtils::hasConfiguredSlots).toList();
+        if (rollableSetBonuses.isEmpty()) {
+            throw new IllegalStateException("No rollable set bonuses found for tier: " + tier);
         }
-        NewItemsSetBonus setBonus = JavaUtils.randomFromSet(setBonuses);
+        NewItemsSetBonus setBonus = JavaUtils.randomFromList(rollableSetBonuses);
         return new NewItem(setBonus);
     }
 
@@ -125,7 +145,7 @@ public class NewItemsUtils {
             boolean setActive = setBonus.getSlots().size() <= slots.size();
             components.add(Component.empty());
             components.add(Component.text("Set Bonus: ", NamedTextColor.GRAY)
-                                    .append(Component.text(setActive ? "[ACTIVE]" : "[INACTIVE]", setActive ? NamedTextColor.GREEN : NamedTextColor.RED)));
+                                     .append(Component.text(setActive ? "[ACTIVE]" : "[INACTIVE]", setActive ? NamedTextColor.GREEN : NamedTextColor.RED)));
             components.addAll(setBonus.getDescriptionLore());
             components.add(Component.empty());
         });
