@@ -104,11 +104,7 @@ public class AnomalyOption extends AbstractAnomalyOption {
         activeObjective = objectiveIndex;
         objectiveTicks = 0;
         clearHostileMobs();
-        AnomalyObjectiveMarker marker = game.getMarkers(AnomalyObjectiveMarker.class)
-                .stream()
-                .filter(objective -> objective.getObjectiveIndex() == objectiveIndex)
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException("Missing anomaly objective marker " + objectiveIndex + " for " + game.getMap().getMapName()));
+        AnomalyObjectiveMarker marker = getObjectiveMarker(objectiveIndex);
         int relicHealth = BASE_RELIC_HEALTH + Math.max(0, playerCount() - 1) * 10_000;
         activeRelic = new AnomalyRelic(marker.getLocation().clone(), objectiveIndex, relicHealth);
         WarlordsNPC relicNpc = activeRelic.toNPC(game, Team.BLUE, npc -> activeRelic.onSpawn(this));
@@ -123,7 +119,10 @@ public class AnomalyOption extends AbstractAnomalyOption {
         }
         objectiveSuccess[activeObjective] = true;
         announce(Component.text("Relic " + (activeObjective + 1) + " secured. Reward cache unlocked!", NamedTextColor.GREEN));
+        OpexCurrencyOption.grantRelicReward(game);
         removeActiveRelic();
+        clearHostileMobs();
+        teleportToNextObjective();
         scheduleNextObjective();
     }
 
@@ -134,7 +133,30 @@ public class AnomalyOption extends AbstractAnomalyOption {
         objectiveSuccess[activeObjective] = false;
         announce(Component.text("Relic " + (activeObjective + 1) + " was lost. Its reward cache is forfeited.", NamedTextColor.RED));
         removeActiveRelic();
+        clearHostileMobs();
+        teleportToNextObjective();
         scheduleNextObjective();
+    }
+
+    private void teleportToNextObjective() {
+        int nextObjective = activeObjective + 1;
+        if (nextObjective >= OBJECTIVE_COUNT) {
+            return;
+        }
+        Location destination = getObjectiveMarker(nextObjective).getLocation().clone().add(0, 1, 0);
+        game.forEachOnlinePlayer((player, team) -> {
+            player.teleport(destination);
+            player.playSound(destination, Sound.ENTITY_ENDERMAN_TELEPORT, 1.5f, 1.1f);
+        });
+        announce(Component.text("The party has been transported to Relic " + (nextObjective + 1) + ".", NamedTextColor.LIGHT_PURPLE));
+    }
+
+    private AnomalyObjectiveMarker getObjectiveMarker(int objectiveIndex) {
+        return game.getMarkers(AnomalyObjectiveMarker.class)
+                .stream()
+                .filter(objective -> objective.getObjectiveIndex() == objectiveIndex)
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Missing anomaly objective marker " + objectiveIndex + " for " + game.getMap().getMapName()));
     }
 
     private void scheduleNextObjective() {
