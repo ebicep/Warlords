@@ -27,12 +27,16 @@ public final class AnomalyMobSet {
         return this;
     }
 
-    public AbstractMob createMob(Location location) {
+    public Mob getRandomMob() {
         Mob mob = randomCollection.next();
         if (mob == null) {
             throw new IllegalStateException("An anomaly mob set cannot be empty");
         }
-        return mob.createMob(location);
+        return mob;
+    }
+
+    public AbstractMob createMob(Location location) {
+        return getRandomMob().createMob(location);
     }
 
     public List<Mob> getMobs() {
