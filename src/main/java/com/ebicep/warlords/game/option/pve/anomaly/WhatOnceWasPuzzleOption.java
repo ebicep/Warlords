@@ -1,41 +1,60 @@
 package com.ebicep.warlords.game.option.pve.anomaly;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.util.Ticks;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
-import org.bukkit.block.Block;
+import org.bukkit.entity.Display;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Interaction;
+import org.bukkit.entity.ItemDisplay;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Transformation;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
 
     private static final int VAULT_COUNT = 3;
-    private static final int VAULT_DURATION_TICKS = 120 * GameRunnable.SECOND;
+    private static final int VAULT_DURATION_TICKS = 30 * GameRunnable.SECOND;
     private static final int CODE_REVEAL_TICKS = 8 * GameRunnable.SECOND;
     private static final int MOB_SPAWN_INTERVAL = 3 * GameRunnable.SECOND;
+    private static final int INSIGNIA_PER_VAULT = 50_000;
+    private static final double RUNE_DISPLAY_Y_OFFSET = 1.5;
+    private static final float RUNE_DISPLAY_SCALE = 1.4f;
+    private static final float RUNE_INTERACTION_WIDTH = 1.75f;
+    private static final float RUNE_INTERACTION_HEIGHT = 2.5f;
 
     private final boolean[] cacheEligibility = new boolean[VAULT_COUNT];
+    private final List<Entity> runeEntities = new ArrayList<>();
+    private final Map<UUID, AncientRune> runeInteractions = new HashMap<>();
 
     private List<AncientVaultMarker> vaultMarkers = List.of();
     private int preparationTicks = START_DELAY_TICKS;
@@ -44,6 +63,7 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
     private int revealTicks;
     private int codeProgress;
     private boolean vaultRunning;
+    private boolean failed;
     private List<AncientRune> activeCode = List.of();
 
     @Override
@@ -69,20 +89,22 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
 
         game.registerEvents(new Listener() {
             @EventHandler(ignoreCancelled = true)
-            public void onInteract(PlayerInteractEvent event) {
-                if (event.getAction() != Action.RIGHT_CLICK_BLOCK || event.getClickedBlock() == null || !vaultRunning) {
+            public void onInteract(PlayerInteractEntityEvent event) {
+                if (!vaultRunning
+                        || event.getHand() != EquipmentSlot.HAND
+                        || !(event.getRightClicked() instanceof Interaction interaction)) {
                     return;
                 }
                 WarlordsEntity warlordsEntity = Warlords.getPlayer(event.getPlayer());
                 if (warlordsEntity == null || warlordsEntity.getGame() != game) {
                     return;
                 }
-                AncientRuneMarker marker = findRuneMarker(event.getClickedBlock());
-                if (marker == null) {
+                AncientRune rune = runeInteractions.get(interaction.getUniqueId());
+                if (rune == null) {
                     return;
                 }
                 event.setCancelled(true);
-                enterRune(event.getPlayer(), marker.getRune());
+                enterRune(event.getPlayer(), rune);
             }
         });
 
@@ -138,7 +160,11 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
     }
 
     private void beginVault(int vaultIndex) {
+        if (completed) {
+            return;
+        }
         if (vaultIndex >= VAULT_COUNT) {
+            removeRuneEntities();
             finishAnomaly(cacheEligibility, "The ancient code was deciphered.");
             return;
         }
@@ -150,6 +176,7 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
         vaultRunning = true;
         clearHostileMobs();
         activeCode = generateCode(vaultIndex);
+        spawnRuneEntities(vaultIndex);
 
         Component code = buildCodeComponent();
         game.forEachOnlinePlayer((player, team) -> {
@@ -160,7 +187,50 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
             ));
             player.playSound(player.getLocation(), Sound.BLOCK_ENCHANTMENT_TABLE_USE, 2, 0.8f);
         });
-        announce(Component.text("Memorize the ancient code, then activate the rune pedestals in order.", NamedTextColor.AQUA));
+        announce(Component.text("Memorize the ancient code, then right-click the floating runes in order.", NamedTextColor.AQUA));
+    }
+
+    private void spawnRuneEntities(int vaultIndex) {
+        removeRuneEntities();
+        game.getMarkers(AncientRuneMarker.class)
+                .stream()
+                .filter(marker -> marker.getVaultIndex() == vaultIndex)
+                .sorted(Comparator.comparingInt(marker -> marker.getRune().ordinal()))
+                .forEach(marker -> {
+                    Location markerLocation = marker.getLocation().clone();
+                    Location displayLocation = markerLocation.clone().add(0, RUNE_DISPLAY_Y_OFFSET, 0);
+
+                    ItemDisplay display = markerLocation.getWorld().spawn(displayLocation, ItemDisplay.class);
+                    display.setItemStack(new ItemStack(marker.getRune().getMaterial()));
+                    display.setItemDisplayTransform(ItemDisplay.ItemDisplayTransform.FIXED);
+                    display.setBillboard(Display.Billboard.CENTER);
+                    display.setBrightness(new Display.Brightness(15, 15));
+                    display.setGlowing(true);
+                    display.setGravity(false);
+                    display.setInvulnerable(true);
+                    display.setPersistent(false);
+                    Transformation transformation = display.getTransformation();
+                    transformation.getScale().set(RUNE_DISPLAY_SCALE);
+                    display.setTransformation(transformation);
+
+                    Interaction interaction = markerLocation.getWorld().spawn(markerLocation.clone().add(0, .25, 0), Interaction.class);
+                    interaction.setInteractionWidth(RUNE_INTERACTION_WIDTH);
+                    interaction.setInteractionHeight(RUNE_INTERACTION_HEIGHT);
+                    interaction.setResponsive(true);
+                    interaction.setGravity(false);
+                    interaction.setInvulnerable(true);
+                    interaction.setPersistent(false);
+
+                    runeEntities.add(display);
+                    runeEntities.add(interaction);
+                    runeInteractions.put(interaction.getUniqueId(), marker.getRune());
+                });
+    }
+
+    private void removeRuneEntities() {
+        runeEntities.forEach(Entity::remove);
+        runeEntities.clear();
+        runeInteractions.clear();
     }
 
     private List<AncientRune> generateCode(int vaultIndex) {
@@ -205,11 +275,21 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
             return;
         }
         vaultRunning = false;
+        removeRuneEntities();
         cacheEligibility[activeVault] = true;
         clearHostileMobs();
+        grantVaultInsignia();
         announce(Component.text("Vault " + (activeVault + 1) + " opened. Reward cache unlocked!", NamedTextColor.GREEN));
         game.forEachOnlinePlayer((player, team) -> player.playSound(player.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 2, 1.2f));
         scheduleNextVault();
+    }
+
+    private void grantVaultInsignia() {
+        game.warlordsPlayers().forEach(warlordsPlayer -> {
+            warlordsPlayer.addCurrency(INSIGNIA_PER_VAULT);
+            warlordsPlayer.sendMessage(Component.text("Vault reward: ", NamedTextColor.GREEN)
+                    .append(Component.text("❂ " + NumberFormat.addCommas(INSIGNIA_PER_VAULT), NamedTextColor.GOLD)));
+        });
     }
 
     private void failVault() {
@@ -217,9 +297,20 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
             return;
         }
         vaultRunning = false;
+        failed = true;
+        completed = true;
+        removeRuneEntities();
         clearHostileMobs();
-        announce(Component.text("Vault " + (activeVault + 1) + " sealed itself. Its reward cache was lost.", NamedTextColor.RED));
-        scheduleNextVault();
+        announce(Component.text("Vault " + (activeVault + 1) + " sealed itself. The anomaly has failed.", NamedTextColor.RED));
+        game.forEachOnlinePlayer((player, team) -> {
+            player.showTitle(Title.title(
+                    Component.text("VAULT FAILED", NamedTextColor.RED),
+                    Component.text("The anomaly has ended.", NamedTextColor.GRAY),
+                    Title.Times.times(Ticks.duration(5), Ticks.duration(60), Ticks.duration(10))
+            ));
+            player.playSound(player.getLocation(), Sound.ENTITY_WITHER_DEATH, 2, 0.8f);
+        });
+        Bukkit.getPluginManager().callEvent(new WarlordsGameTriggerWinEvent(game, this, Team.RED));
     }
 
     private void scheduleNextVault() {
@@ -230,22 +321,6 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
                 beginVault(nextVault);
             }
         }.runTaskLater(5 * GameRunnable.SECOND);
-    }
-
-    private AncientRuneMarker findRuneMarker(Block block) {
-        return game.getMarkers(AncientRuneMarker.class)
-                .stream()
-                .filter(marker -> marker.getVaultIndex() == activeVault)
-                .filter(marker -> sameBlock(marker.getLocation(), block.getLocation()))
-                .findFirst()
-                .orElse(null);
-    }
-
-    private boolean sameBlock(Location first, Location second) {
-        return first.getWorld().equals(second.getWorld())
-                && first.getBlockX() == second.getBlockX()
-                && first.getBlockY() == second.getBlockY()
-                && first.getBlockZ() == second.getBlockZ();
     }
 
     private void spawnPuzzleMob() {
@@ -285,7 +360,7 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
             if (marker.getVaultIndex() != activeVault) {
                 continue;
             }
-            Location runeLocation = marker.getLocation().clone().add(0, 1, 0);
+            Location runeLocation = marker.getLocation().clone().add(0, RUNE_DISPLAY_Y_OFFSET, 0);
             runeLocation.getWorld().spawnParticle(Particle.ENCHANT, runeLocation, 4, .3, .5, .3, .02);
         }
     }
@@ -297,7 +372,7 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
     private List<Component> getPuzzleScoreboard() {
         List<Component> lines = new ArrayList<>();
         if (completed) {
-            lines.add(Component.text("Vaults Complete", NamedTextColor.GREEN));
+            lines.add(Component.text(failed ? "Vault Failed" : "Vaults Complete", failed ? NamedTextColor.RED : NamedTextColor.GREEN));
             return lines;
         }
         if (activeVault < 0) {
@@ -350,5 +425,11 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
             }
         }
         return unlocked;
+    }
+
+    @Override
+    public void onGameCleanup(@Nonnull Game game) {
+        removeRuneEntities();
+        super.onGameCleanup(game);
     }
 }
