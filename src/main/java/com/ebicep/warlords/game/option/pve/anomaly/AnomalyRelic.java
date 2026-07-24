@@ -2,6 +2,7 @@ package com.ebicep.warlords.game.option.pve.anomaly;
 
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.EggSac;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -45,11 +46,23 @@ public class AnomalyRelic extends EggSac {
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
         spawnRelicVisuals();
+        new GameRunnable(option.getGame()) {
+            private int animationTicks;
+
+            @Override
+            public void run() {
+                if (visualCenter == null || warlordsNPC == null || warlordsNPC.isDead()) {
+                    cancel();
+                    return;
+                }
+                animateRelic(animationTicks++);
+            }
+        }.runTaskTimer(0, 1);
     }
 
     private void spawnRelicVisuals() {
         cleanupVisuals();
-        visualCenter = spawnLocation.clone().add(0, 1.15, 0);
+        visualCenter = spawnLocation.clone().add(0, .35, 0);
 
         ItemDisplay core = spawnDisplay(getCoreMaterial(), visualCenter, 1.65f);
         core.setGlowing(true);
@@ -82,11 +95,7 @@ public class AnomalyRelic extends EggSac {
         return display;
     }
 
-    @Override
-    public void whileAlive(int ticksElapsed, PveOption option) {
-        if (visualCenter == null) {
-            return;
-        }
+    private void animateRelic(int ticksElapsed) {
         double rotation = ticksElapsed * .045;
         for (int i = 0; i < orbitingFragments.size(); i++) {
             double angle = rotation + Math.PI * 2 * i / orbitingFragments.size();
