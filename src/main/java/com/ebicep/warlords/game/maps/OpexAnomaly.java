@@ -11,9 +11,9 @@ import java.util.List;
 public class OpexAnomaly extends AbstractAnomalyMap {
 
     private static final double[][] OBJECTIVE_LOCATIONS = {
-            {18.5, 90, 0.5},
-            {0.5, 90, 18.5},
-            {-17.5, 90, 0.5}
+            {-15.5, 12, 52.5},
+            {-236.5, 67, 109.5},
+            {-110.5, 156, -556.5}
     };
     private static final double[][][] ENEMY_SPAWN_LOCATIONS = {
             {{32.5, 90, 0.5}, {27.5, 90, 12.5}, {27.5, 90, -11.5}},

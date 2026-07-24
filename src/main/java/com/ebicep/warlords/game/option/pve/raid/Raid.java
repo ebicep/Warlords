@@ -10,15 +10,13 @@ public enum Raid {
 
     REGNUM_OF_TWO_CROWNS(
             "Regnum of Two Crowns",
-            "A long time ago the Envoy king and queen of Illusion, Physira and Mithra reigned over the vanguard's legions." +
-                    " During the old war Physira got corrupted by trying to stop an unknown obsidian force from taking his queen." +
-                    " All that's left now is a trail of his ashes.",
+            "Conquer the Heir of Two Crowns.",
             70
     ) {
         @Override
         public LinkedHashMap<Spendable, Long> getNormalRewards() {
             return new LinkedHashMap<>() {{
-                put(Currencies.COIN, 300_000L);
+                put(Currencies.COIN, 200_000L);
                 put(GuildSpendable.GUILD_COIN, 10_000L);
                 put(Currencies.LEGEND_FRAGMENTS, 3000L);
                 put(Currencies.ETHEREUM_CRYSTAL, 5L);
@@ -30,13 +28,14 @@ public enum Raid {
         @Override
         public LinkedHashMap<Spendable, Long> getOblivionRewards() {
             return new LinkedHashMap<>() {{
-                put(Currencies.COIN, 800_000L);
-                put(GuildSpendable.GUILD_COIN, 20_000L);
+                put(Currencies.COIN, 400_000L);
+                put(GuildSpendable.GUILD_COIN, 15_000L);
                 put(Currencies.ASCENDANT_SHARD, 20L);
                 put(Currencies.LEGEND_FRAGMENTS, 10000L);
                 put(Currencies.ETHEREUM_CRYSTAL, 10L);
                 put(Currencies.ASCENDANT_STAR_PIECE, 3L);
                 put(Currencies.LIMIT_BREAKER, 3L);
+                put(Currencies.ITEM_LOCK_SCROLL, 1L);
             }};
         }
     },
