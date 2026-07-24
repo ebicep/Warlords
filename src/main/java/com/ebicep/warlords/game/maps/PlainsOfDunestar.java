@@ -19,7 +19,7 @@ public class PlainsOfDunestar extends AbstractAnomalyMap {
     };
 
     public PlainsOfDunestar() {
-        super("Plains of Dunestar", "PlainsOfDunestar", ROUTE_LOCATIONS[0]);
+        super("Bridge of Dunestar", "PlainsOfDunestar", ROUTE_LOCATIONS[0]);
     }
 
     @Override

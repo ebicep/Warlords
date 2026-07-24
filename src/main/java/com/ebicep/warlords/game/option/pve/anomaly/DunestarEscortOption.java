@@ -52,11 +52,11 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
     private static final int LASER_INTERVAL_TICKS = 15 * GameRunnable.SECOND;
     private static final int LASER_TELEGRAPH_TICKS = 2 * GameRunnable.SECOND;
     private static final double CHECKPOINT_RADIUS_SQUARED = 25;
-    private static final double LASER_RANGE = 22;
-    private static final double LASER_WIDTH = 1.25;
+    private static final double LASER_RANGE = 40;
+    private static final double LASER_WIDTH = 2;
     private static final double LASER_VERTICAL_HALF = 3;
     private static final double LASER_MAX_OFFSET = 4;
-    private static final Particle.DustOptions LASER_TELEGRAPH_DUST = new Particle.DustOptions(Color.fromRGB(255, 70, 70), 1.5f);
+    private static final Particle.DustOptions LASER_TELEGRAPH_DUST = new Particle.DustOptions(Color.fromRGB(255, 70, 70), 2f);
     private static final ItemStack RELIC_ITEM = new ItemBuilder(Material.HEART_OF_THE_SEA)
             .name(Component.text("Dunestar Relic", NamedTextColor.AQUA))
             .lore(
@@ -461,14 +461,14 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
         if (carrier == null) {
             if (preparationTicks > 0) {
                 int seconds = Math.max(0, (preparationTicks + GameRunnable.SECOND - 1) / GameRunnable.SECOND);
-                return List.of(Component.text("Relic appears in: ", NamedTextColor.GRAY)
+                return List.of(Component.text("Relic appears in: ", NamedTextColor.WHITE)
                         .append(Component.text(seconds + "s", NamedTextColor.YELLOW)));
             }
             return List.of(
-                    Component.text("Relic: ", NamedTextColor.GRAY).append(Component.text("Awaiting Carrier", NamedTextColor.GOLD)),
-                    Component.text("Location: ", NamedTextColor.GRAY).append(Component.text("Starting Pedestal", NamedTextColor.AQUA)),
-                    Component.text("Action: ", NamedTextColor.GRAY).append(Component.text("Pick up the relic", NamedTextColor.GREEN)),
-                    Component.text("Caches: ", NamedTextColor.GRAY).append(Component.text("0/3", NamedTextColor.GREEN))
+                    Component.text("Relic: ", NamedTextColor.WHITE).append(Component.text("Awaiting Carrier", NamedTextColor.GOLD)),
+                    Component.text("Location: ", NamedTextColor.WHITE).append(Component.text("Starting Pedestal", NamedTextColor.AQUA)),
+                    Component.text("Action: ", NamedTextColor.WHITE).append(Component.text("Pick up the relic", NamedTextColor.GREEN)),
+                    Component.text("Caches: ", NamedTextColor.WHITE).append(Component.text("0/3", NamedTextColor.GREEN))
             );
         }
 
@@ -486,11 +486,11 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
         }
 
         return List.of(
-                Component.text("Carrier: ", NamedTextColor.GRAY).append(Component.text(carrier.getName(), NamedTextColor.GOLD)),
-                Component.text("Next: ", NamedTextColor.GRAY).append(Component.text(targetName, NamedTextColor.AQUA)),
-                Component.text("Time: ", NamedTextColor.GRAY).append(Component.text(getSecondsRemaining() + "s", NamedTextColor.YELLOW)),
-                Component.text("Distance: ", NamedTextColor.GRAY).append(Component.text(distance + "m", NamedTextColor.YELLOW)),
-                Component.text("Caches: ", NamedTextColor.GRAY).append(Component.text(caches + "/3", NamedTextColor.GREEN))
+                Component.text("Carrier: ", NamedTextColor.WHITE).append(Component.text(carrier.getName(), NamedTextColor.GOLD)),
+                Component.text("Next: ", NamedTextColor.WHITE).append(Component.text(targetName, NamedTextColor.AQUA)),
+                Component.text("Time: ", NamedTextColor.WHITE).append(Component.text(getSecondsRemaining() + "s", NamedTextColor.YELLOW)),
+                Component.text("Distance: ", NamedTextColor.WHITE).append(Component.text(distance + "m", NamedTextColor.YELLOW)),
+                Component.text("Caches: ", NamedTextColor.WHITE).append(Component.text(caches + "/3", NamedTextColor.GREEN))
         );
     }
 

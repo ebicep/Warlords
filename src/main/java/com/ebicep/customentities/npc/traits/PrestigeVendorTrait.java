@@ -29,7 +29,7 @@ public class PrestigeVendorTrait extends WarlordsTrait {
 
     private static final List<SpendableBuyShop> SHOP = List.of(
             new SpendableBuyShop(10, Currencies.ETHEREUM_CRYSTAL, -1, 1),
-            new SpendableBuyShop(25, Currencies.ASCENDANT_SHARD, -1, 1),
+            new SpendableBuyShop(10, Currencies.ASCENDANT_SHARD, -1, 1),
             new SpendableBuyShop(1, Currencies.VEILKEEPER_INSIGNIA, -1, 10)
     );
 
