@@ -286,6 +286,7 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
         int cacheIndex = nextRouteIndex - 1;
         cacheEligibility[cacheIndex] = true;
         if (nextRouteIndex < routeMarkers.size() - 1) {
+            DunestarCurrencyOption.grantCheckpointReward(game);
             announce(Component.text("Checkpoint " + nextRouteIndex + " reached. Dunestar Cache " + (cacheIndex + 1) + " unlocked!", NamedTextColor.GREEN));
             game.forEachOnlinePlayer((player, team) -> player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 2, 1));
             nextRouteIndex++;
