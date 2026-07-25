@@ -404,11 +404,12 @@
       "rallyingPresence": {
         "difficulty": 2,
         "name": "Rallying Presence",
-        "description": "Increase the energy per second granted by {{aqua:Inspiring Presence}} by {{energy}} and the speed granted by {{speed;%}}. Inspiring Presence grants all allies {{damage;%}} damage for every ally hit by presence. Each {{aqua:Crusader's Strike}} will increase the duration of your own Inspiring Presence effect by {{ticks}}.",
+        "description": "Increase the energy per second granted by {{aqua:Inspiring Presence}} by {{energy}} and the speed granted by {{speed;%}}. Inspiring Presence grants all allies {{damage;%}} damage for every ally hit by presence, up to {{damage;%}}. Each {{aqua:Crusader's Strike}} will increase the duration of your own Inspiring Presence effect by {{ticks}}.",
         "energyPerSecondIncrease": 3,
         "speedIncreasePercent": 15,
-        "damagePerAllyHitPercent": 1,
-        "inspiringPresenceDurationIncreasePerStrikeTicks": 10
+        "damagePerAllyHitPercent": 2,
+        "inspiringPresenceDurationIncreasePerStrikeTicks": 10,
+        "damageCapPercent": 12.5
       },
       "bigGuy": {
         "difficulty": 1,
