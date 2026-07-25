@@ -126,17 +126,18 @@ public class AcceleratedSpike implements SpecBoostManager.SpecBoost<AcceleratedS
                     .setSpeed(spike.getSpeed())
                     .setDestination(() -> spikeTarget.isDead() ? null : spikeTarget.getLocation())
                     .setOnTick((ticksElapsed, currentLocation) -> {
+                        Location loc = currentLocation.clone().add(0, 1, 0);
                         if (ticksElapsed % 5 == 1) {
                             Utils.playGlobalSound(startLocation, REPEATING_SOUND[(ticksElapsed / 5) % 4], 2, 1);
                         }
-                        Vector travelDir = spikeTarget.getLocation().toVector().subtract(currentLocation.toVector());
+                        Vector travelDir = spikeTarget.getLocation().toVector().subtract(loc.toVector());
                         travelDir.setY(0);
                         if (travelDir.lengthSquared() > 0) {
                             travelDir.normalize();
                             travelDirection[0] = travelDir;
                         }
                         for (WarlordsEntity enemy : PlayerFilter
-                                .entitiesAround(currentLocation, torpedoHitRadius, torpedoHitRadius, torpedoHitRadius)
+                                .entitiesAround(loc, torpedoHitRadius, torpedoHitRadius, torpedoHitRadius)
                                 .aliveEnemiesOf(caster)
                         ) {
                             if (enemy.equals(spikeTarget)) {
@@ -153,7 +154,7 @@ public class AcceleratedSpike implements SpecBoostManager.SpecBoost<AcceleratedS
                                     .critMultiplier(spikeDamage.getCritMultiplierValue())
                                     .uuid(spikeUuid)
                             );
-                            applyTorpedoKnockback(caster, enemy, travelDirection[0], currentLocation, passThroughKnockbackHorizontal, passThroughKnockbackY, true);
+                            applyTorpedoKnockback(caster, enemy, travelDirection[0], loc, passThroughKnockbackHorizontal, passThroughKnockbackY, true);
                         }
                     })
                     .setOnDestinationReached(() -> {
