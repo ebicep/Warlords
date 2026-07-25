@@ -49,6 +49,7 @@ public class WarlordsNPC extends WarlordsEntity {
     private float maxMeleeDamage;
     private ArmorStand playerHealthDisplay; // used for player entity type npcs
     private int stunTicks;
+    private int lastDisplayedHealth = Integer.MIN_VALUE;
 
     public WarlordsNPC(
             String name,
@@ -231,6 +232,11 @@ public class WarlordsNPC extends WarlordsEntity {
         if (isDead() || entity == null || !entity.isValid()) {
             return;
         }
+        int rounded = Math.round(getCurrentHealth());
+        if (rounded == lastDisplayedHealth && getGame().getLoopTickCounter() % 2 != 0) {
+            return;
+        }
+        lastDisplayedHealth = rounded;
         mobHologram.update();
         if (entity instanceof Player player) {
             double healthDisplayY = player.getEyeHeight() + 0.15;
