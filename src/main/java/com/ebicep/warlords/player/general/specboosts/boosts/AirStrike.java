@@ -61,8 +61,7 @@ public class AirStrike implements SpecBoostManager.SpecBoost<AirStrike> {
                 soulfireBeamRangeDecrease,
                 soulfireBeamHitboxIncrease,
                 airStrikeDurationTicks,
-                maxBeamCastsNormal,
-                maxBeamCastsOnCooldown
+                maxBeamCastsNormal
         );
     }
 
