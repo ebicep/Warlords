@@ -38,6 +38,8 @@ import java.util.stream.Stream;
 
 public class Utils {
 
+    public static final double SOUND_RANGE = 50.0;
+    public static final double SOUND_RANGE_SQ = SOUND_RANGE * SOUND_RANGE;
     public static final String[] SPECS_ORDERED = {
             "Pyromancer",
             "Cryomancer",
@@ -285,13 +287,27 @@ public class Utils {
     }
 
     public static void playGlobalSound(@Nonnull Location location, Sound sound, float volume, float pitch) {
+        playGlobalSound(location, sound, volume, pitch, false);
+    }
+
+    public static void playGlobalSound(@Nonnull Location location, Sound sound, float volume, float pitch, boolean forceGlobal) {
         for (Player p : location.getWorld().getPlayers()) {
+            if (!forceGlobal && p.getLocation().distanceSquared(location) > SOUND_RANGE_SQ) {
+                continue;
+            }
             p.playSound(location, sound, volume, pitch);
         }
     }
 
     public static void playGlobalSound(@Nonnull Location location, String soundString, float volume, float pitch) {
+        playGlobalSound(location, soundString, volume, pitch, false);
+    }
+
+    public static void playGlobalSound(@Nonnull Location location, String soundString, float volume, float pitch, boolean forceGlobal) {
         for (Player p : location.getWorld().getPlayers()) {
+            if (!forceGlobal && p.getLocation().distanceSquared(location) > SOUND_RANGE_SQ) {
+                continue;
+            }
             p.playSound(location, soundString, volume, pitch);
         }
     }
