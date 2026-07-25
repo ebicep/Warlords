@@ -8,10 +8,13 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.Random;
+import java.util.stream.Stream;
 
 public class CircleEffect extends AbstractBaseAreaEffect<EffectPlayer<? super CircleEffect>> {
 
@@ -61,11 +64,13 @@ public class CircleEffect extends AbstractBaseAreaEffect<EffectPlayer<? super Ci
     @Override
     public void playEffects() {
         LOCATION_CACHE.setWorld(center.getWorld());
+        List<Player> allies = Stream.concat(players.getAllyPlayers(), players.getSpectators()).toList();
+        List<Player> enemies = players.getEnemyPlayers().toList();
         for (EffectPlayer<? super CircleEffect> effect : this) {
             if (effect.needsUpdate()) {
                 effect.updateCachedData(this);
             }
-            effect.playEffect(this);
+            effect.playEffect(this, allies, enemies);
         }
     }
 

@@ -4,8 +4,10 @@ import com.ebicep.warlords.effects.AbstractEffectPlayer;
 import com.ebicep.warlords.effects.TeamBasedEffect;
 import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 import java.util.function.DoubleUnaryOperator;
 
 import static com.ebicep.warlords.effects.circle.CircleEffect.LOCATION_CACHE;
@@ -40,7 +42,7 @@ public final class AreaEffect extends AbstractEffectPlayer<CircleEffect> {
     }
 
     @Override
-    public void playEffect(CircleEffect baseData) {
+    public void playEffect(CircleEffect baseData, List<Player> allies, List<Player> enemies) {
         Location center = baseData.getCenter();
         double radius = baseData.getRadius();
         LOCATION_CACHE.setY(center.getY() + yOffset);
@@ -60,7 +62,7 @@ public final class AreaEffect extends AbstractEffectPlayer<CircleEffect> {
 
             LOCATION_CACHE.setX(x + center.getX());
             LOCATION_CACHE.setZ(z + center.getZ());
-            this.effect.display(baseData.players, 0, 0, 0, 0.01F, 1, LOCATION_CACHE);
+            this.effect.display(allies, enemies, 0, 0, 0, 0.01F, 1, LOCATION_CACHE);
         }
     }
 

@@ -9,7 +9,6 @@ import org.bukkit.util.Vector;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class TeamBasedEffect {
 
@@ -41,11 +40,9 @@ public class TeamBasedEffect {
         this.enemyTeamData = enemyTeam == Particle.DUST && enemyTeamData == null ? new Particle.DustOptions(Color.fromRGB(255, 0, 0), 1) : enemyTeamData;
     }
 
-    public void display(GameTeamContainer teams, float offsetX, float offsetY, float offsetZ, float speed, int amount, Location center) {
-        List<Player> allies = teams.getAllyPlayers().collect(Collectors.toList());
-        allies.addAll(teams.getSpectators().toList());
+    public void display(List<Player> allies, List<Player> enemies, float offsetX, float offsetY, float offsetZ, float speed, int amount, Location center) {
         display(ownTeam, ownTeamData, offsetX, offsetY, offsetZ, speed, amount, center, allies);
-        display(enemyTeam, enemyTeamData, offsetX, offsetY, offsetZ, speed, amount, center, teams.getEnemyPlayers().toList());
+        display(enemyTeam, enemyTeamData, offsetX, offsetY, offsetZ, speed, amount, center, enemies);
     }
 
     private static <T> void display(
@@ -64,11 +61,9 @@ public class TeamBasedEffect {
         }
     }
 
-    public void display(GameTeamContainer teams, Vector direction, float speed, Location center) {
-        List<Player> allies = teams.getAllyPlayers().collect(Collectors.toList());
-        allies.addAll(teams.getSpectators().toList());
+    public void display(List<Player> allies, List<Player> enemies, Vector direction, float speed, Location center) {
         display(ownTeam, ownTeamData, direction.getX(), direction.getY(), direction.getZ(), speed, 0, center, allies);
-        display(enemyTeam, enemyTeamData, direction.getX(), direction.getY(), direction.getZ(), speed, 0, center, teams.getEnemyPlayers().toList());
+        display(enemyTeam, enemyTeamData, direction.getX(), direction.getY(), direction.getZ(), speed, 0, center, enemies);
     }
 
     @Override
