@@ -818,8 +818,9 @@
       "divineShields": {
         "difficulty": 1,
         "name": "Divine Shields",
-        "description": "Increase the shield health granted by {{aqua:Guardian Beam}} by {{damageReduction;%}}.",
-        "guardianBeamShieldIncreasePercent": 30
+        "description": "Increase the shield health granted by {{aqua:Guardian Beam}} by {{damageReduction;%}} and its duration by {{ticks}}.",
+        "guardianBeamShieldIncreasePercent": 30,
+        "guardianBeamShieldDurationIncreaseTicks": 30
       },
       "pactOfProtection": {
         "difficulty": 4,
