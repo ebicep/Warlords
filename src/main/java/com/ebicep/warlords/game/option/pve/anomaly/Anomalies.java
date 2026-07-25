@@ -21,10 +21,31 @@ public enum Anomalies {
                     new AnomalyRewardPool("Opex Cache III", 18_000, 250, 2)
             ),
             new AnomalyMobSet()
-                    .add(Mob.ZOMBIE_LANCER)
-                    .add(Mob.SKELETAL_MAGE)
-                    .add(Mob.SLIMY_ANOMALY)
-                    .add(Mob.HOUND)
+                    //basic
+                    .add(0.4, Mob.ZOMBIE_LANCER)
+                    .add(0.2, Mob.SLIMY_ANOMALY)
+                    .add(0.2, Mob.ARACHNO_VENARI)
+                    //elite
+                    .add(0.5, Mob.ZOMBIE_SWORDSMAN)
+                    .add(0.1, Mob.SKELETAL_WARLOCK)
+                    .add(0.2, Mob.PIG_SHAMAN)
+                    .add(0.02, Mob.ILLUMINATION)
+                    .add(0.15, Mob.GOLEM_APPRENTICE)
+                    .add(0.06, Mob.WITCH_DEACON)
+                    .add(0.02, Mob.ADVANCED_WARRIOR_BERSERKER)
+                    //envoy
+                    .add(0.05, Mob.ZOMBIE_VANGUARD)
+                    .add(0.05, Mob.SKELETAL_ENTROPY)
+                    .add(0.01, Mob.PIG_ALLEVIATOR)
+                    //elite
+                    .add(0.04, Mob.VOID_ZOMBIE)
+                    .add(0.04, Mob.SKELETAL_MESMER)
+                    .add(0.04, Mob.FIRE_SPLITTER)
+                    .add(0.02, Mob.RIFT_WALKER)
+                    // champion
+                    .add(0.01, Mob.LANTERN_DREDGER)
+                    .add(0.01, Mob.BARNACLE_BRUTE)
+                    .add(0.01, Mob.ABYSS_WATCHER)
     ),
     BRIDGE_OF_DUNESTAR(
             "Bridge of Dunestar",
@@ -46,10 +67,31 @@ public enum Anomalies {
                     .add(Mob.ARACHNO_VENARI)
                     .add(Mob.INTERMEDIATE_WARRIOR_BERSERKER),
             new AnomalyMobSet()
-                    .add(Mob.PIG_DISCIPLE)
-                    .add(Mob.ARACHNO_VENARI)
-                    .add(Mob.INTERMEDIATE_WARRIOR_BERSERKER)
-                    .add(Mob.BLAZING_KINDLE)
+                    //basic
+                    .add(0.4, Mob.ZOMBIE_LANCER)
+                    .add(0.2, Mob.SLIMY_ANOMALY)
+                    .add(0.2, Mob.ARACHNO_VENARI)
+                    //elite
+                    .add(0.5, Mob.ZOMBIE_SWORDSMAN)
+                    .add(0.1, Mob.SKELETAL_WARLOCK)
+                    .add(0.2, Mob.PIG_SHAMAN)
+                    .add(0.02, Mob.ILLUMINATION)
+                    .add(0.15, Mob.GOLEM_APPRENTICE)
+                    .add(0.06, Mob.WITCH_DEACON)
+                    .add(0.02, Mob.ADVANCED_WARRIOR_BERSERKER)
+                    //envoy
+                    .add(0.05, Mob.ZOMBIE_VANGUARD)
+                    .add(0.05, Mob.SKELETAL_ENTROPY)
+                    .add(0.01, Mob.PIG_ALLEVIATOR)
+                    //elite
+                    .add(0.04, Mob.VOID_ZOMBIE)
+                    .add(0.04, Mob.SKELETAL_MESMER)
+                    .add(0.04, Mob.FIRE_SPLITTER)
+                    .add(0.02, Mob.RIFT_WALKER)
+                    // champion
+                    .add(0.01, Mob.LANTERN_DREDGER)
+                    .add(0.01, Mob.BARNACLE_BRUTE)
+                    .add(0.01, Mob.ABYSS_WATCHER)
     ),
     WHAT_ONCE_WAS(
             "What Once Was",
@@ -64,10 +106,21 @@ public enum Anomalies {
                     new AnomalyRewardPool("Remnant Cache III", 25_000, 450, 2)
             ),
             new AnomalyMobSet()
-                    .add(Mob.STRAY)
-                    .add(Mob.FALLEN_STRAY)
-                    .add(Mob.LURKING_SLIME)
-                    .add(Mob.SPECTRAL_THIEF)
+                    //basic
+                    .add(0.4, Mob.ZOMBIE_LANCER)
+                    .add(0.2, Mob.SLIMY_ANOMALY)
+                    .add(0.2, Mob.ARACHNO_VENARI)
+                    //elite
+                    .add(0.5, Mob.ZOMBIE_SWORDSMAN)
+                    .add(0.1, Mob.SKELETAL_WARLOCK)
+                    .add(0.2, Mob.PIG_SHAMAN)
+                    .add(0.15, Mob.GOLEM_APPRENTICE)
+                    .add(0.06, Mob.WITCH_DEACON)
+                    .add(0.02, Mob.ADVANCED_WARRIOR_BERSERKER)
+                    //envoy
+                    .add(0.05, Mob.ZOMBIE_VANGUARD)
+                    .add(0.05, Mob.SKELETAL_ENTROPY)
+                    .add(0.01, Mob.PIG_ALLEVIATOR)
     );
 
     public static final Anomalies[] VALUES = values();

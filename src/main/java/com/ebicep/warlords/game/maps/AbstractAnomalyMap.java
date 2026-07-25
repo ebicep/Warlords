@@ -9,6 +9,7 @@ import com.ebicep.warlords.game.option.cuboid.BoundingBoxOption;
 import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.pve.NewItemOption;
+import com.ebicep.warlords.game.option.pve.rewards.CoinGainOption;
 import com.ebicep.warlords.game.option.respawn.RespawnWaveOption;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 import org.bukkit.Location;
@@ -43,6 +44,16 @@ public abstract class AbstractAnomalyMap extends GameMap {
         options.add(new BasicScoreboardOption());
         options.add(new NewItemOption());
         options.add(new RespawnWaveOption(20, 20, 10));
+
+        options.add(new CoinGainOption()
+                .guildCoinInsigniaConvertBonus(100)
+        );
+        options.add(new ExperienceGainOption()
+                .playerExpPer(32)
+                .playerExpGameWinBonus(1000)
+                .guildExpPer(4)
+                .guildExpMaxGameWinBonus(200)
+        );
 
         addAnomalyOptions(options, loc);
 

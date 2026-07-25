@@ -35,16 +35,16 @@ public class WeeklyItemTraderTrait extends WarlordsTrait {
     private static final String PURCHASE_KEY_PREFIX = "ECHELON_TRADER_";
     private static final int[] ITEM_POSITIONS = {2, 4, 6};
     private static final Map<Currencies, Long> SOVEREIGN_COST = createCost(
-            2_000_000,
-            20,
+            1_000_000,
+            5,
             3,
-            5_000
+            3_000
     );
     private static final Map<Currencies, Long> LEGENDARY_COST = createCost(
-            4_000_000,
-            20,
+            2_000_000,
             10,
-            10_000
+            10,
+            6_000
     );
 
     private int ticksElapsed;

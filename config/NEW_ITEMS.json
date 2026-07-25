@@ -207,15 +207,15 @@
           "lockScrollRerollCost": {
             "1": {
               "ITEM_LOCK_SCROLL": 1,
-              "LEGEND_FRAGMENTS": 5000
+              "LEGEND_FRAGMENTS": 2000
             },
             "2": {
               "ITEM_LOCK_SCROLL": 1,
-              "LEGEND_FRAGMENTS": 5500
+              "LEGEND_FRAGMENTS": 3000
             },
             "3": {
               "ITEM_LOCK_SCROLL": 1,
-              "LEGEND_FRAGMENTS": 6500
+              "LEGEND_FRAGMENTS": 4000
             }
           }
         },
@@ -372,7 +372,7 @@
           "craftCost": {
             "COIN": 1500000,
             "ZENITH_STAR": 10,
-            "SCRAP_METAL": 500
+            "SCRAP_METAL": 1000
           }
         },
         "ascendant": {
@@ -449,7 +449,7 @@
             }
           },
           "craftCost": {
-            "COIN": 5000000,
+            "COIN": 1000000,
             "ASCENDANT_SHARD": 50,
             "SCRAP_METAL": 1000
           }
@@ -1044,7 +1044,7 @@
           "bonusAttributeRanges": {},
           "description": "When you fall below {{damage;%}} health, charge up for 2 seconds to explode for {{damage;%}} of your max health as damage. Has a cooldown of {{ticks}}",
           "healthThreshold": 20,
-          "maxHealthDamageMultiplier": 2,
+          "maxHealthDamageMultiplier": 200,
           "cooldownSeconds": 30
         },
         "golddigger": {
@@ -1278,7 +1278,7 @@
           ],
           "attributes": {},
           "description": "Shield effectiveness increased by {{damageReduction;%}} but reduce max health by {{heal;%}}.",
-          "shieldEffectivenessIncreasePercent": 300,
+          "shieldEffectivenessIncreasePercent": 250,
           "maxHealthReductionPercent": 99
         },
         "bloodlettingBlade": {
@@ -1361,7 +1361,7 @@
           "attributes": {
             "HEALTH": 25
           },
-          "description": "Upon taking lethal damage, revive at {{heal;%}} health but reduce an ally to {{heal;%}} health ({{ticks}} cooldown).",
+          "description": "Upon taking lethal damage, revive at {{heal;%}} health but reduce an allies' health by {{heal;%}} ({{ticks}} cooldown).",
           "selfReviveHealthPercent": 20,
           "allyHealthReductionPercent": 95,
           "reviveCooldownSeconds": 30

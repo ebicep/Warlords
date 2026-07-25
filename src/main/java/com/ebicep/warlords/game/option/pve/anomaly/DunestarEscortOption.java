@@ -48,7 +48,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class DunestarEscortOption extends AbstractAnomalyOption {
 
     private static final int SEGMENT_DURATION_TICKS = 120 * GameRunnable.SECOND;
-    private static final int MOB_SPAWN_INTERVAL = 2 * GameRunnable.SECOND;
+    private static final int MOB_SPAWN_INTERVAL = GameRunnable.SECOND;
     private static final int LASER_INTERVAL_TICKS = 15 * GameRunnable.SECOND;
     private static final int LASER_TELEGRAPH_TICKS = 2 * GameRunnable.SECOND;
     private static final double CHECKPOINT_RADIUS_SQUARED = 25;
@@ -303,7 +303,7 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
         Location center = carrier.getLocation();
         World world = center.getWorld();
         double angle = ThreadLocalRandom.current().nextDouble(Math.PI * 2);
-        double distance = ThreadLocalRandom.current().nextDouble(12, 20);
+        double distance = ThreadLocalRandom.current().nextDouble(10, 16);
         double x = center.getX() + Math.cos(angle) * distance;
         double z = center.getZ() + Math.sin(angle) * distance;
         int y = world.getHighestBlockYAt((int) Math.floor(x), (int) Math.floor(z)) + 1;

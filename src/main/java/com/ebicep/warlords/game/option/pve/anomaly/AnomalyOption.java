@@ -27,7 +27,7 @@ public class AnomalyOption extends AbstractAnomalyOption {
 
     public static final int OBJECTIVE_COUNT = 3;
     public static final int OBJECTIVE_DURATION_TICKS = 120 * GameRunnable.SECOND;
-    private static final int MOB_SPAWN_INTERVAL = 2 * GameRunnable.SECOND;
+    private static final int MOB_SPAWN_INTERVAL = GameRunnable.SECOND;
     private static final int BASE_RELIC_HEALTH = 25_000;
 
     private final boolean[] objectiveSuccess = new boolean[OBJECTIVE_COUNT];
@@ -195,7 +195,7 @@ public class AnomalyOption extends AbstractAnomalyOption {
     }
 
     private int getMaximumMobCount() {
-        return 8 + playerCount() * 4 + activeObjective * 2;
+        return 8 + (playerCount() * 6) + activeObjective * 2;
     }
 
     private List<Component> getObjectiveScoreboard() {
@@ -207,7 +207,7 @@ public class AnomalyOption extends AbstractAnomalyOption {
         if (activeRelic == null) {
             if (activeObjective < 0) {
                 int seconds = Math.max(0, (preparationTicks + GameRunnable.SECOND - 1) / GameRunnable.SECOND);
-                lines.add(Component.text("Anomaly starts in: ", NamedTextColor.GRAY)
+                lines.add(Component.text("Anomaly starts in: ", NamedTextColor.WHITE)
                         .append(Component.text(seconds + "s", NamedTextColor.YELLOW)));
             } else {
                 lines.add(Component.text("Preparing Relic " + Math.min(activeObjective + 2, OBJECTIVE_COUNT) + "...", NamedTextColor.YELLOW));
@@ -215,9 +215,9 @@ public class AnomalyOption extends AbstractAnomalyOption {
             return lines;
         }
 
-        lines.add(Component.text("Relic: ", NamedTextColor.GRAY)
+        lines.add(Component.text("Relic: ", NamedTextColor.WHITE)
                 .append(Component.text((activeObjective + 1) + "/" + OBJECTIVE_COUNT, NamedTextColor.AQUA)));
-        lines.add(Component.text("Defend for: ", NamedTextColor.GRAY)
+        lines.add(Component.text("Defend for: ", NamedTextColor.WHITE)
                 .append(Component.text(getSecondsRemaining() + "s", NamedTextColor.YELLOW)));
 
         WarlordsNPC relicNpc = activeRelic.getWarlordsNPC();
@@ -225,9 +225,9 @@ public class AnomalyOption extends AbstractAnomalyOption {
         NamedTextColor healthColor = healthRatio >= .5f
                 ? NamedTextColor.GREEN
                 : healthRatio >= .25f ? NamedTextColor.YELLOW : NamedTextColor.RED;
-        lines.add(Component.text("Relic Health: ", NamedTextColor.GRAY)
+        lines.add(Component.text("Relic Health: ", NamedTextColor.WHITE)
                 .append(Component.text("❤ " + Math.round(relicNpc.getCurrentHealth()), healthColor))
-                .append(Component.text(" / " + Math.round(relicNpc.getMaxHealth()), NamedTextColor.GRAY)));
+                .append(Component.text(" / " + Math.round(relicNpc.getMaxHealth()), NamedTextColor.WHITE)));
         return lines;
     }
 

@@ -377,7 +377,7 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
         }
         if (activeVault < 0) {
             int seconds = Math.max(0, (preparationTicks + GameRunnable.SECOND - 1) / GameRunnable.SECOND);
-            lines.add(Component.text("Puzzle starts in: ", NamedTextColor.GRAY)
+            lines.add(Component.text("Puzzle starts in: ", NamedTextColor.WHITE)
                     .append(Component.text(seconds + "s", NamedTextColor.YELLOW)));
             return lines;
         }
@@ -386,18 +386,18 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
             return lines;
         }
 
-        lines.add(Component.text("Vault: ", NamedTextColor.GRAY)
+        lines.add(Component.text("Vault: ", NamedTextColor.WHITE)
                 .append(Component.text((activeVault + 1) + "/" + VAULT_COUNT, NamedTextColor.GOLD)));
-        lines.add(Component.text("Seals in: ", NamedTextColor.GRAY)
+        lines.add(Component.text("Seals in: ", NamedTextColor.WHITE)
                 .append(Component.text(getSecondsRemaining() + "s", NamedTextColor.YELLOW)));
         if (revealTicks > 0) {
-            lines.add(Component.text("Code: ", NamedTextColor.GRAY).append(buildCodeComponent()));
+            lines.add(Component.text("Code: ", NamedTextColor.WHITE).append(buildCodeComponent()));
         } else {
             lines.add(Component.text("Code: Hidden", NamedTextColor.DARK_GRAY));
         }
-        lines.add(Component.text("Input: ", NamedTextColor.GRAY)
+        lines.add(Component.text("Input: ", NamedTextColor.WHITE)
                 .append(Component.text(codeProgress + "/" + activeCode.size(), NamedTextColor.AQUA)));
-        lines.add(Component.text("Caches: ", NamedTextColor.GRAY)
+        lines.add(Component.text("Caches: ", NamedTextColor.WHITE)
                 .append(Component.text(getCachesUnlocked() + "/3", NamedTextColor.GREEN)));
         return lines;
     }

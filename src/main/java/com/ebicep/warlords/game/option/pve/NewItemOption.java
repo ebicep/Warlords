@@ -58,7 +58,7 @@ public class NewItemOption implements Option {
         if (loadouts.isEmpty()) {
             if (nonEmptyLoadouts > 0 && player.getEntity() instanceof Player) {
                 AbstractItem.sendItemMessage((Player) player.getEntity(),
-                        Component.text("No item loadout applied. Make sure your loadout is not unbinded.", NamedTextColor.RED)
+                        Component.text("No item loadout applied. Make sure your loadout is not unbound.", NamedTextColor.RED)
                 );
             }
             return;
@@ -92,9 +92,6 @@ public class NewItemOption implements Option {
                              .append(Component.text(loadout.getName(), NamedTextColor.GOLD)
                                               .hoverEvent(HoverEvent.showText(ComponentUtils.flattenComponentWithNewLine(totalBonusLore))))
             );
-            ChatChannels.sendDebugMessage(warlordsPlayer, Component.text(warlordsPlayer.getName() + "'s Applied Item Loadout for ", NamedTextColor.GREEN)
-                    .append(Component.text(loadout.getName(), NamedTextColor.GOLD)
-                            .hoverEvent(HoverEvent.showText(ComponentUtils.flattenComponentWithNewLine(totalBonusLore)))));
         }
     }
 

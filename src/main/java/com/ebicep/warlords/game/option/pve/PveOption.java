@@ -186,9 +186,7 @@ public interface PveOption extends Option {
     int getTicksElapsed();
 
     default int playerCount() {
-        return (int) getGame().warlordsPlayers()
-                .filter(p -> p instanceof Player)
-                .count();
+        return (int) getGame().warlordsPlayers().count();
     }
 
     default int getWaveCounter() {
