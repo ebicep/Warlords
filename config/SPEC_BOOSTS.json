@@ -245,7 +245,7 @@
         "description": "Gain {{heal}} max health and {{energy}} max energy. Increase the cooldown of {{aqua:Berserk}} by {{ticks}}; it heals you for {{heal}} true healing upon activation.",
         "healthIncrease": 800,
         "maxEnergyIncrease": 100,
-        "berserkCooldownIncreaseTicks": 360,
+        "berserkCooldownIncreaseTicks": 240,
         "berserkActivationHeal": 1800
       },
       "vitalityBoost": {
@@ -253,7 +253,7 @@
         "name": "Vitality Boost",
         "description": "Gain {{heal}} max health. Passively heal for {{heal}} health per second.",
         "healthIncrease": 600,
-        "passiveRegen": 60
+        "passiveRegen": 50
       },
       "striker": {
         "difficulty": 1,
@@ -833,7 +833,7 @@
         "difficulty": 2,
         "name": "Sanctuary of Retribution",
         "description": "Increase the damage reduction per {{yellow:FHEX}} granted by {{aqua:Sanctuary}} by {{damageReduction;%}}. During {{aqua:Sanctuary}}, allies with max stacks of {{yellow:FHEX}} now reflect damage reduced by {{yellow:FHEX}} back to the dealer.",
-        "sanctuaryDamageReductionPerHexStack": 6
+        "sanctuaryDamageReductionPerHexStack": 5
       },
       "loneSentinel": {
         "difficulty": 1,
