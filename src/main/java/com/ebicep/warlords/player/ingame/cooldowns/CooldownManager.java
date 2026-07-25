@@ -26,6 +26,8 @@ public class CooldownManager {
     private final WarlordsEntity warlordsEntity;
     private final Set<AbstractCooldown<?>> abstractCooldowns = new LinkedHashSet<>();
     private final Set<AbstractCooldown<?>> cooldownsToRemove = ConcurrentHashMap.newKeySet();
+    private List<AbstractCooldown<?>> distinctCache = List.of();
+    private boolean distinctDirty = true;
     private int totalCooldowns = 0;
     private boolean updatePlayerNames = false;
 
@@ -68,7 +70,9 @@ public class CooldownManager {
         if (!cooldownsToRemove.isEmpty()) {
             Set<AbstractCooldown<?>> snapshot = Set.copyOf(cooldownsToRemove);
             synchronized (abstractCooldowns) {
-                abstractCooldowns.removeAll(snapshot);
+                if (abstractCooldowns.removeAll(snapshot)) {
+                    markDistinctDirty();
+                }
             }
             cooldownsToRemove.removeAll(snapshot);
         }
@@ -152,6 +156,7 @@ public class CooldownManager {
 
     public void markForRemoval(AbstractCooldown<?> abstractCooldown) {
         cooldownsToRemove.add(abstractCooldown);
+        markDistinctDirty();
     }
 
     public void subtractTicksOnRegularCooldowns(int ticks, CooldownTypes... cooldownTypes) {
@@ -212,6 +217,7 @@ public class CooldownManager {
             abstractCooldown.getOnRemoveForce().accept(this);
         }
         cooldownsToRemove.add(abstractCooldown);
+        markDistinctDirty();
         updatePlayerNames(abstractCooldown);
     }
 
@@ -245,6 +251,9 @@ public class CooldownManager {
     }
 
     public List<AbstractCooldown<?>> getCooldownsDistinct() {
+        if (!distinctDirty) {
+            return distinctCache;
+        }
         List<AbstractCooldown<?>> cooldowns = new ArrayList<>();
         List<Pair<Class<?>, String>> previousCooldowns = new ArrayList<>();
         for (AbstractCooldown<?> abstractCooldown : abstractCooldowns) {
@@ -259,7 +268,13 @@ public class CooldownManager {
                 previousCooldowns.add(new Pair<>(abstractCooldown.getCooldownClass(), abstractCooldown.getName()));
             }
         }
-        return cooldowns;
+        distinctCache = List.copyOf(cooldowns);
+        distinctDirty = false;
+        return distinctCache;
+    }
+
+    private void markDistinctDirty() {
+        distinctDirty = true;
     }
 
     public void removeAbilityCooldowns() {
@@ -384,7 +399,9 @@ public class CooldownManager {
             return;
         }
         this.totalCooldowns++;
-        abstractCooldowns.add(abstractCooldown);
+        if (abstractCooldowns.add(abstractCooldown)) {
+            markDistinctDirty();
+        }
         updatePlayerNames(abstractCooldown);
     }
 

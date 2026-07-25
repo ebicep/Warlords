@@ -6,14 +6,17 @@ import com.ebicep.warlords.abilities.internal.icon.*;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.events.player.ingame.WarlordsRespawnEvent;
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.motionsystem.MotionModifierBuilder;
 import com.ebicep.warlords.util.bukkit.ComponentUtils;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -35,10 +38,15 @@ public class AbilityChangeOption implements Option {
 
     private static final int MIN_SWAP_TIME = 50;
     private static final int MAX_SWAP_TIME = 80;
+    private static final float BASE_HEALTH = 5500f;
+    private static final float BASE_SPEED_MODIFIER = 13f;
+    private static final float BASE_KNOCKBACK_MODIFIER = 0f;
     private static final Component MESSAGE_DIVIDER =
             Component.text("---------------------------------------", NamedTextColor.DARK_GRAY);
 
     private static final Map<Class<? extends AbilityIcon>, List<Ability<?>>> ABILITY_POOLS = buildAbilityPools();
+    private static final Map<Class<? extends AbstractAbility>, Specializations> ABILITY_SPEC_MAP = buildAbilitySpecMap();
+    private static final Set<String> AMBIGUOUS_ABILITY_NAMES = buildAmbiguousAbilityNames();
 
     private final Mode mode;
     private Game game;
@@ -74,6 +82,34 @@ public class AbilityChangeOption implements Option {
             immutablePools.put(entry.getKey(), Collections.unmodifiableList(entry.getValue()));
         }
         return Collections.unmodifiableMap(immutablePools);
+    }
+
+    private static Map<Class<? extends AbstractAbility>, Specializations> buildAbilitySpecMap() {
+        Map<Class<? extends AbstractAbility>, Specializations> map = new HashMap<>();
+        for (Map.Entry<Specializations, Ability<?>[]> entry : Ability.SPEC_ABILITIES.entrySet()) {
+            for (Ability<?> ability : entry.getValue()) {
+                if (ability != null) {
+                    map.put(ability.clazz, entry.getKey());
+                }
+            }
+        }
+        return Collections.unmodifiableMap(map);
+    }
+
+    private static Set<String> buildAmbiguousAbilityNames() {
+        Map<String, Integer> counts = new HashMap<>();
+        for (Ability<?> ability : Ability.VALUES) {
+            AbstractAbility instance = ability.create.get();
+            instance.init(instance.getBuilder());
+            counts.merge(instance.getName(), 1, Integer::sum);
+        }
+        Set<String> ambiguous = new HashSet<>();
+        for (Map.Entry<String, Integer> entry : counts.entrySet()) {
+            if (entry.getValue() > 1) {
+                ambiguous.add(entry.getKey());
+            }
+        }
+        return Collections.unmodifiableSet(ambiguous);
     }
 
     @Nullable
@@ -129,10 +165,38 @@ public class AbilityChangeOption implements Option {
                 if (!event.getWarlordsEntity().getGame().equals(game)) {
                     return;
                 }
-                swapAbilities(event.getWarlordsEntity());
+                WarlordsEntity entity = event.getWarlordsEntity();
+                if (swapAbilities(entity, false) && entity instanceof WarlordsPlayer warlordsPlayer) {
+                    notifyTeammatesSingle(warlordsPlayer);
+                }
             }
 
         });
+    }
+
+    @Override
+    public void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
+        if (player instanceof WarlordsPlayer warlordsPlayer) {
+            applyBaseStats(warlordsPlayer, true);
+        }
+    }
+
+    @Override
+    public void onSpecChange(@Nonnull WarlordsEntity player, Specializations oldSpec) {
+        if (player instanceof WarlordsPlayer warlordsPlayer) {
+            applyBaseStats(warlordsPlayer, false);
+        }
+    }
+
+    @Override
+    public void afterAllWarlordsEntitiesCreated(List<WarlordsEntity> players) {
+        List<WarlordsPlayer> swapped = new ArrayList<>();
+        for (WarlordsEntity player : players) {
+            if (swapAbilities(player, true) && player instanceof WarlordsPlayer warlordsPlayer) {
+                swapped.add(warlordsPlayer);
+            }
+        }
+        notifyTeammatesBatch(swapped);
     }
 
     @Override
@@ -151,7 +215,13 @@ public class AbilityChangeOption implements Option {
                     return;
                 }
                 if (secondsPast >= secondsUntilNextSwap) {
-                    game.warlordsPlayers().forEach(AbilityChangeOption.this::swapAbilities);
+                    List<WarlordsPlayer> swapped = new ArrayList<>();
+                    game.warlordsPlayers().forEach(player -> {
+                        if (swapAbilities(player, false)) {
+                            swapped.add(player);
+                        }
+                    });
+                    notifyTeammatesBatch(swapped);
                     generateNextSwapTime();
                     secondsPast = 0;
                 }
@@ -166,9 +236,9 @@ public class AbilityChangeOption implements Option {
         ChatUtils.MessageType.WARLORDS.sendMessage("Abilities changing in " + secondsUntilNextSwap + " seconds");
     }
 
-    private void swapAbilities(WarlordsEntity player) {
+    private boolean swapAbilities(WarlordsEntity player, boolean healBaseStats) {
         if (!(player instanceof WarlordsPlayer warlordsPlayer)) {
-            return;
+            return false;
         }
         List<AbstractAbility> abilities = player.getAbilities();
         List<Component> changeLines = new ArrayList<>();
@@ -187,7 +257,7 @@ public class AbilityChangeOption implements Option {
             if (newRegistry == null) {
                 continue;
             }
-            Component oldComponent = formatAbility(oldAbility);
+            Component oldComponent = formatAbility(oldAbility, false);
             float oldCooldown = oldAbility.getCurrentCooldown();
             boolean wasOnCooldown = !oldAbility.anyCharges();
             oldAbility.cleanup();
@@ -206,7 +276,7 @@ public class AbilityChangeOption implements Option {
             changeLines.add(Component.textOfChildren(
                     oldComponent,
                     Component.text(" > ", NamedTextColor.DARK_GRAY),
-                    formatAbility(newAbility)
+                    formatAbility(newAbility, true)
             ));
         }
         warlordsPlayer.resetAbilityTree();
@@ -218,13 +288,92 @@ public class AbilityChangeOption implements Option {
             );
             warlordsPlayer.sendMessage(MESSAGE_DIVIDER);
         }
+        applyBaseStats(warlordsPlayer, healBaseStats);
+        return !changeLines.isEmpty();
     }
 
-    private static Component formatAbility(AbstractAbility ability) {
-        return Component.text(ability.getName(), ability.getAbilityColor())
-                        .hoverEvent(HoverEvent.showText(
-                                ComponentUtils.flattenComponentWithNewLine(ability.getItemComponent())
-                        ));
+    private Component buildTeammateAbilityLine(WarlordsPlayer player) {
+        List<Component> parts = new ArrayList<>();
+        parts.add(player.getColoredName());
+        parts.add(Component.text(": ", NamedTextColor.GRAY));
+        List<AbstractAbility> abilities = player.getAbilities();
+        for (int i = 0; i < abilities.size(); i++) {
+            if (i > 0) {
+                parts.add(Component.text(" | ", NamedTextColor.GRAY));
+            }
+            parts.add(formatAbility(abilities.get(i), true));
+        }
+        return Component.textOfChildren(parts.toArray(Component[]::new));
+    }
+
+    private void notifyTeammatesSingle(WarlordsPlayer player) {
+        Component line = buildTeammateAbilityLine(player);
+        PlayerFilter.playingGame(game).teammatesOfExcludingSelf(player).forEach(teammate -> {
+            teammate.sendMessage(MESSAGE_DIVIDER);
+            teammate.sendMessage(line);
+            teammate.sendMessage(MESSAGE_DIVIDER);
+        });
+    }
+
+    private void notifyTeammatesBatch(List<WarlordsPlayer> players) {
+        if (players.isEmpty()) {
+            return;
+        }
+        Map<Team, List<WarlordsPlayer>> byTeam = new HashMap<>();
+        for (WarlordsPlayer player : players) {
+            byTeam.computeIfAbsent(player.getTeam(), team -> new ArrayList<>()).add(player);
+        }
+        for (List<WarlordsPlayer> teamPlayers : byTeam.values()) {
+            PlayerFilter.playingGame(game)
+                    .teammatesOf(teamPlayers.get(0))
+                    .forEach(recipient -> {
+                        List<Component> lines = teamPlayers.stream()
+                                .filter(member -> member != recipient)
+                                .map(this::buildTeammateAbilityLine)
+                                .toList();
+                        if (lines.isEmpty()) {
+                            return;
+                        }
+                        recipient.sendMessage(MESSAGE_DIVIDER);
+                        lines.forEach(recipient::sendMessage);
+                        recipient.sendMessage(MESSAGE_DIVIDER);
+                    });
+        }
+    }
+
+    private static void applyBaseStats(WarlordsPlayer player, boolean heal) {
+        if (heal) {
+            player.setMaxHealthAndHeal(BASE_HEALTH);
+        } else {
+            player.getHealth().setBaseValue(BASE_HEALTH);
+            if (player.getCurrentHealth() > player.getMaxHealth()) {
+                player.setCurrentHealth(player.getMaxHealth());
+            }
+            player.updateHealth();
+        }
+        player.getSpeed().modifyBase(modifier -> modifier.setModifier(BASE_SPEED_MODIFIER));
+        player.getKnockback().addModifier(new MotionModifierBuilder()
+                .setFrom(player)
+                .setName("BASE")
+                .setModifier(BASE_KNOCKBACK_MODIFIER)
+                .setDuration(-1)
+                .build());
+    }
+
+    private static Component formatAbility(AbstractAbility ability, boolean showSpecSuffix) {
+        Component nameComponent = Component.text(ability.getName(), ability.getAbilityColor());
+        if (showSpecSuffix && AMBIGUOUS_ABILITY_NAMES.contains(ability.getName())) {
+            Specializations spec = ABILITY_SPEC_MAP.get(ability.getClass());
+            if (spec != null) {
+                nameComponent = Component.textOfChildren(
+                        nameComponent,
+                        Component.text(" (" + spec.name + ")", NamedTextColor.GRAY)
+                );
+            }
+        }
+        return nameComponent.hoverEvent(HoverEvent.showText(
+                ComponentUtils.flattenComponentWithNewLine(ability.getItemComponent())
+        ));
     }
 
     @Nullable

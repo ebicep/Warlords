@@ -17,7 +17,6 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.DatabaseUpdater;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
-import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.GeneralEvents;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.game.*;
@@ -517,8 +516,7 @@ public class Warlords extends JavaPlugin {
                                     .filter(Objects::nonNull)
                                     .forEach(p -> {
                                         if (Objects.equals(p.getSpectatorTarget(), player)) {
-                                            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
-                                            p.sendActionBar(we.getActionBar(databasePlayer));
+                                            p.sendActionBar(we.getActionBar(we.getDatabasePlayer()));
                                         } else {
                                             p.sendActionBar(Component.empty());
                                         }

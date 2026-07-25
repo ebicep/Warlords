@@ -9,10 +9,12 @@ import java.util.List;
 public class DivineShields implements SpecBoostManager.SpecBoost<DivineShields> {
 
     private float guardianBeamShieldIncreasePercent;
+    private int guardianBeamShieldDurationIncreaseTicks;
 
     @Override
     public void init() {
         this.guardianBeamShieldIncreasePercent = getValue("guardianBeamShieldIncreasePercent", float.class);
+        this.guardianBeamShieldDurationIncreaseTicks = getValue("guardianBeamShieldDurationIncreaseTicks", int.class);
     }
 
     @Override
@@ -22,7 +24,7 @@ public class DivineShields implements SpecBoostManager.SpecBoost<DivineShields> 
 
     @Override
     public List<Object> getVariables() {
-        return List.of(guardianBeamShieldIncreasePercent);
+        return List.of(guardianBeamShieldIncreasePercent, guardianBeamShieldDurationIncreaseTicks);
     }
 
     @Override
@@ -43,6 +45,7 @@ public class DivineShields implements SpecBoostManager.SpecBoost<DivineShields> 
                 guardianBeam.getShieldValues().replaceAll(
                         value -> (int) (value + (value * guardianBeamShieldIncreasePercent / 100))
                 );
+                guardianBeam.setTickDuration(guardianBeam.getTickDuration() + guardianBeamShieldDurationIncreaseTicks);
             });
         }
 

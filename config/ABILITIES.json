@@ -1546,7 +1546,7 @@
         "name": "Time Surge",
         "cooldown": 28,
         "energyCost": 30,
-        "healPercentage": 20,
+        "healPercentage": 30,
         "speedPercentage": 30,
         "speedTickDuration": 50
       },

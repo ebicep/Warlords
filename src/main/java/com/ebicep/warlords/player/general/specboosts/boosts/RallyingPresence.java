@@ -23,6 +23,7 @@ public class RallyingPresence implements SpecBoostManager.SpecBoost<RallyingPres
     private int energyPerSecondIncrease;
     private int speedIncreasePercent;
     private float damagePerAllyHitPercent;
+    private float damageCapPercent;
     private int inspiringPresenceDurationIncreasePerStrikeTicks;
 
     @Override
@@ -30,6 +31,7 @@ public class RallyingPresence implements SpecBoostManager.SpecBoost<RallyingPres
         this.energyPerSecondIncrease = getValue("energyPerSecondIncrease", int.class);
         this.speedIncreasePercent = getValue("speedIncreasePercent", int.class);
         this.damagePerAllyHitPercent = getValue("damagePerAllyHitPercent", float.class);
+        this.damageCapPercent = getValue("damageCapPercent", float.class);
         this.inspiringPresenceDurationIncreasePerStrikeTicks = getValue("inspiringPresenceDurationIncreasePerStrikeTicks", int.class);
     }
 
@@ -44,6 +46,7 @@ public class RallyingPresence implements SpecBoostManager.SpecBoost<RallyingPres
                 energyPerSecondIncrease,
                 speedIncreasePercent,
                 damagePerAllyHitPercent,
+                damageCapPercent,
                 inspiringPresenceDurationIncreasePerStrikeTicks
         );
     }
@@ -87,10 +90,11 @@ public class RallyingPresence implements SpecBoostManager.SpecBoost<RallyingPres
             if (alliesHitCount == 0) {
                 return;
             }
+            float damagePercent = Math.min(alliesHitCount * damagePerAllyHitPercent, damageCapPercent);
             regularCooldown.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
                         currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
                                 getStringName(),
-                                AbstractAbility.convertToMultiplicationDecimal(alliesHitCount * damagePerAllyHitPercent)
+                                AbstractAbility.convertToMultiplicationDecimal(damagePercent)
                         );
                     }
             );

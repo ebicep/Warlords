@@ -32,6 +32,9 @@ import static java.lang.Math.sin;
 
 public class EffectUtils {
 
+    public static final double PARTICLE_RANGE = 100.0;
+    public static final double PARTICLE_RANGE_SQ = PARTICLE_RANGE * PARTICLE_RANGE;
+
     /**
      * @param center       what location should the sphere be around.
      * @param sphereRadius is how big the sphere should be.
@@ -90,7 +93,12 @@ public class EffectUtils {
         if (loc.getBlock().getType().isOccluding()) {
             return;
         }
-        loc.getWorld().spawnParticle(particle, loc, count, 0, 0, 0, 0, data, true);
+        for (Player player : loc.getWorld().getPlayers()) {
+            if (!isWithinParticleRange(player, loc)) {
+                continue;
+            }
+            player.spawnParticle(particle, loc, count, 0, 0, 0, 0, data, true);
+        }
     }
 
     /**
@@ -135,10 +143,15 @@ public class EffectUtils {
         if (loc.getBlock().getType().isOccluding()) {
             return;
         }
-        if (particle == Particle.EFFECT) {
-            loc.getWorld().spawnParticle(particle, loc, count, 0, 0, 0, 0, new Particle.Spell(Color.fromRGB(140, 25, 240), 1));
-        } else {
-            loc.getWorld().spawnParticle(particle, loc, count, 0, 0, 0, 0, null, true);
+        for (Player player : loc.getWorld().getPlayers()) {
+            if (!isWithinParticleRange(player, loc)) {
+                continue;
+            }
+            if (particle == Particle.EFFECT) {
+                player.spawnParticle(particle, loc, count, 0, 0, 0, 0, new Particle.Spell(Color.fromRGB(140, 25, 240), 1));
+            } else {
+                player.spawnParticle(particle, loc, count, 0, 0, 0, 0, null, true);
+            }
         }
     }
 
@@ -390,9 +403,14 @@ public class EffectUtils {
             return;
         }
         if (player == null) {
-            loc.getWorld().spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed);
-        } else {
-            player.spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed);
+            for (Player receiver : loc.getWorld().getPlayers()) {
+                if (!isWithinParticleRange(receiver, loc)) {
+                    continue;
+                }
+                receiver.spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed, null, true);
+            }
+        } else if (isWithinParticleRange(player, loc)) {
+            player.spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed, null, true);
         }
     }
 
@@ -411,9 +429,14 @@ public class EffectUtils {
             return;
         }
         if (player == null) {
-            loc.getWorld().spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed, data, true);
-        } else {
-            player.spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed, data);
+            for (Player receiver : loc.getWorld().getPlayers()) {
+                if (!isWithinParticleRange(receiver, loc)) {
+                    continue;
+                }
+                receiver.spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed, data, true);
+            }
+        } else if (isWithinParticleRange(player, loc)) {
+            player.spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed, data, true);
         }
     }
 
@@ -930,7 +953,17 @@ public class EffectUtils {
         if (loc.getBlock().getType().isOccluding()) {
             return;
         }
-        loc.getWorld().spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed, data, true);
+        for (Player player : loc.getWorld().getPlayers()) {
+            if (!isWithinParticleRange(player, loc)) {
+                continue;
+            }
+            player.spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed, data, true);
+        }
+    }
+
+    private static boolean isWithinParticleRange(Player player, Location loc) {
+        return player.getWorld().equals(loc.getWorld()) &&
+                player.getLocation().distanceSquared(loc) <= PARTICLE_RANGE_SQ;
     }
 
     /**
