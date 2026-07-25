@@ -127,19 +127,19 @@ public class CooldownManager {
     }
 
     public boolean hasCooldown(AbstractCooldown<?> abstractCooldown) {
-        return abstractCooldowns.contains(abstractCooldown);
+        return new ArrayList<>(abstractCooldowns).contains(abstractCooldown);
     }
 
     public boolean hasCooldown(Class<?> cooldownClass) {
-        return abstractCooldowns.stream().anyMatch(cooldown -> cooldown.getCooldownClass() != null && cooldown.getCooldownClass().equals(cooldownClass));
+        return new ArrayList<>(abstractCooldowns).stream().anyMatch(cooldown -> cooldown.getCooldownClass() != null && cooldown.getCooldownClass().equals(cooldownClass));
     }
 
     public boolean hasCooldownExtends(Class<?> cooldownClass) {
-        return abstractCooldowns.stream().anyMatch(cooldown -> cooldown.getCooldownClass() != null && cooldownClass.isAssignableFrom(cooldown.getCooldownClass()));
+        return new ArrayList<>(abstractCooldowns).stream().anyMatch(cooldown -> cooldown.getCooldownClass() != null && cooldownClass.isAssignableFrom(cooldown.getCooldownClass()));
     }
 
     public boolean hasCooldown(Object cooldownObject) {
-        return abstractCooldowns.stream().anyMatch(cooldown -> cooldown.getCooldownObject() != null && cooldown.getCooldownObject() == cooldownObject);
+        return new ArrayList<>(abstractCooldowns).stream().anyMatch(cooldown -> cooldown.getCooldownObject() != null && cooldown.getCooldownObject() == cooldownObject);
     }
 
     public void tick() {
@@ -406,11 +406,11 @@ public class CooldownManager {
     }
 
     public boolean hasCooldownFromName(String name) {
-        return abstractCooldowns.stream().anyMatch(cooldown -> cooldown.getName() != null && cooldown.getName().equalsIgnoreCase(name));
+        return new ArrayList<>(abstractCooldowns).stream().anyMatch(cooldown -> cooldown.getName() != null && cooldown.getName().equalsIgnoreCase(name));
     }
 
     public boolean hasCooldownFromActionBarName(String name) {
-        return abstractCooldowns.stream().anyMatch(cooldown -> cooldown.getActionBarName() != null && cooldown.getActionBarName().equalsIgnoreCase(name));
+        return new ArrayList<>(abstractCooldowns).stream().anyMatch(cooldown -> cooldown.getActionBarName() != null && cooldown.getActionBarName().equalsIgnoreCase(name));
     }
 
     public final <T> void addRegularCooldown(
