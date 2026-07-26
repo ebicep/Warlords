@@ -236,7 +236,16 @@ public final class Game implements Runnable, AutoCloseable {
 
     public void addOption(Option option) {
         this.options.add(option);
-        this.cachedOptions.computeIfAbsent(option.getClass(), k -> new ArrayList<>()).add(option);
+        List<Option> exact = this.cachedOptions.get(option.getClass());
+        if (exact == null || exact.isEmpty()) {
+            List<Option> list = new ArrayList<>();
+            list.add(option);
+            this.cachedOptions.put(option.getClass(), list);
+        } else {
+            exact.add(option);
+        }
+        // Invalidate superclass/interface lookups that may have cached incomplete/empty results
+        this.cachedOptions.keySet().removeIf(clazz -> clazz != option.getClass() && clazz.isInstance(option));
     }
 
     public boolean isOptionEnabled(@Nonnull Option option) {
@@ -589,18 +598,19 @@ public final class Game implements Runnable, AutoCloseable {
     // TODO convert option calls to use this
     @Nonnull
     public <T extends Option> List<T> getOption(@Nonnull Class<T> clazz) {
-        if (!cachedOptions.containsKey(clazz)) {
-            List<Option> newList = new ArrayList<>();
-            for (Option option : options) {
-                if (clazz.isInstance(option)) {
-                    newList.add(option);
-                }
-            }
-            if (!newList.isEmpty()) {
-                cachedOptions.put(clazz, newList);
+        List<Option> cached = cachedOptions.get(clazz);
+        if (cached != null) {
+            return (List<T>) cached;
+        }
+        List<Option> newList = new ArrayList<>();
+        for (Option option : options) {
+            if (clazz.isInstance(option)) {
+                newList.add(option);
             }
         }
-        return (List<T>) cachedOptions.getOrDefault(clazz, Collections.emptyList());
+        List<Option> stored = newList.isEmpty() ? Collections.emptyList() : newList;
+        cachedOptions.put(clazz, stored);
+        return (List<T>) stored;
     }
 
     @Deprecated
@@ -905,11 +915,10 @@ public final class Game implements Runnable, AutoCloseable {
     }
 
     public <T extends Option> void doOnOption(Class<T> clazz, Consumer<T> consumer) {
-        options.stream()
-               .filter(clazz::isInstance)
-               .map(clazz::cast)
-               .findFirst()
-               .ifPresent(consumer);
+        List<T> list = getOption(clazz);
+        if (!list.isEmpty()) {
+            consumer.accept(list.get(0));
+        }
     }
 
     public boolean isFrozen() {

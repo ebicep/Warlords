@@ -3,7 +3,6 @@ package com.ebicep.warlords.util.warlords;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
-import com.ebicep.warlords.game.option.freeze.GameFreezeOption;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
@@ -131,20 +130,18 @@ public abstract class GameRunnable implements Runnable {
             return this;
         } else {
             return () -> {
-                game.doOnOption(GameFreezeOption.class, gameFreezeOption -> {
-                    if (gameFreezeOption.isFrozen()) {
-                        return;
-                    }
-                    ticksElapsed++;
-                    long delayCheck = period <= 0 ? delay : delay / period;
-                    if (ticksElapsed - 1 < delayCheck) {
-                        return;
-                    }
-                    run();
-                    if (shouldCancel) {
-                        cancel();
-                    }
-                });
+                if (game.isFrozen()) {
+                    return;
+                }
+                ticksElapsed++;
+                long delayCheck = period <= 0 ? delay : delay / period;
+                if (ticksElapsed - 1 < delayCheck) {
+                    return;
+                }
+                run();
+                if (shouldCancel) {
+                    cancel();
+                }
             };
         }
     }
