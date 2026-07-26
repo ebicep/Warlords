@@ -20,7 +20,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -239,8 +238,9 @@ public class WarlordsNPC extends WarlordsEntity {
         }
         lastDisplayedHealth = rounded;
         mobHologram.update();
-        Component health = Component.text(NumberFormat.addCommaAndRound(rounded) + "❤", NamedTextColor.RED);
+        String healthText = NumberFormat.addCommaAndRound(rounded) + "❤";
         if (entity instanceof Player player) {
+            Component health = Component.text(healthText, NamedTextColor.RED);
             double healthDisplayY = player.getEyeHeight() + 0.15;
             if (playerHealthDisplay == null) {
                 playerHealthDisplay = Utils.spawnArmorStand(getLocation().add(0, healthDisplayY, 0), armorStand -> {
@@ -254,7 +254,7 @@ public class WarlordsNPC extends WarlordsEntity {
                 playerHealthDisplay.teleport(entity.getLocation().add(0, healthDisplayY, 0));
             }
         } else {
-            String citizensName = LegacyComponentSerializer.legacySection().serialize(health);
+            String citizensName = "§c" + healthText;
             if (!citizensName.equals(npc.getName())) {
                 npc.setName(citizensName);
             }
