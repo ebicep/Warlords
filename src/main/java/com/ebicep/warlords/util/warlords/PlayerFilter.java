@@ -267,7 +267,7 @@ public class PlayerFilter implements Iterable<WarlordsEntity> {
 
     @Nonnull
     public static PlayerFilter entitiesAround(@Nonnull WarlordsEntity entity, double x, double y, double z) {
-        return entitiesAroundInGame(entity, x, y, z);
+        return entitiesAround(entity.getLocation(LOCATION_CACHE_ENTITIES_AROUND), x, y, z);
     }
 
     @Nonnull
@@ -281,22 +281,12 @@ public class PlayerFilter implements Iterable<WarlordsEntity> {
     }
 
     @Nonnull
-    public static PlayerFilter entitiesAround(
-            @Nonnull Game game,
-            @Nonnull Location location,
-            double x, double y, double z
-    ) {
-        return entitiesAroundInGame(game, location, x, y, z);
-    }
-
-    @Nonnull
     public static PlayerFilter entitiesAroundInGame(
             @Nonnull Game game,
             @Nonnull Location location,
             double x, double y, double z
     ) {
-        return new PlayerFilter(
-                game.warlordsEntities()
+        return new PlayerFilter(game.warlordsEntities()
                     .filter(radiusAround(WarlordsEntity::getLocation, location, x, y, z))
         );
     }
