@@ -123,7 +123,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
         SanctifiedBeaconData beacon = cooldown.getCooldownObject();
         float rad = beacon.getRadius().getCalculatedValue();
         if (ticksElapsed % 5 == 0) {
-            for (WarlordsEntity nearBy : PlayerFilter.entitiesAroundInGame(wp.getGame(), beacon.getGroundLocation(), rad, rad, rad)) {
+            for (WarlordsEntity nearBy : PlayerFilter.entitiesAround(wp.getGame(), beacon.getGroundLocation(), rad, rad, rad)) {
                 if (nearBy.isTeammate(wp)) {
                     if (!pveMasterUpgrade2) {
                         continue;
@@ -233,7 +233,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
             crystal.teleport(crystalLocation);
         }
         if (ticksElapsed % hexIntervalTicks == 0) {
-            for (WarlordsEntity ally : PlayerFilter.entitiesAroundInGame(wp.getGame(), beacon.getGroundLocation(), rad, rad, rad)
+            for (WarlordsEntity ally : PlayerFilter.entitiesAround(wp.getGame(), beacon.getGroundLocation(), rad, rad, rad)
                                                    .aliveTeammatesOf(wp)
                                                    .closestFirst(beacon.getGroundLocation())
                                                    .limit(maxAllies)) {

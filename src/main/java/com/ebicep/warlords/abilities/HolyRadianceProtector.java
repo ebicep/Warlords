@@ -120,7 +120,7 @@ public class HolyRadianceProtector extends AbstractHolyRadiance implements Heals
                     }
                     if (pveMasterUpgrade2) {
                         if (ticksElapsed % 20 == 0 && ticksElapsed != 0) {
-                            PlayerFilter.entitiesAroundInGame(target, 10, 10, 10).aliveTeammatesOf(giver).forEach(warlordsEntity -> {
+                            PlayerFilter.entitiesAround(target, 10, 10, 10).aliveTeammatesOf(giver).forEach(warlordsEntity -> {
                                 warlordsEntity.addInstance(InstanceBuilder.healing().ability(this).source(giver).value(healingValues.unrivalledRadianceHealing));
                             });
                         }

@@ -158,7 +158,7 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                     }
                     if (ticksElapsed % 3 == 0) {
                         isInsideBubble.clear();
-                        for (WarlordsEntity nearby : PlayerFilter.entitiesAroundInGame(wp, bubbleRadius, bubbleRadius, bubbleRadius)) {
+                        for (WarlordsEntity nearby : PlayerFilter.entitiesAround(wp, bubbleRadius, bubbleRadius, bubbleRadius)) {
                             if (nearby.isEnemy(wp)) {
                                 if (!nearby.isDead()) {
                                     isInsideBubble.add(nearby);
@@ -225,7 +225,7 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                     }
                     if (ticksElapsed % 10 == 0) {
                         if (pveMasterUpgrade) {
-                            for (WarlordsEntity we : PlayerFilter.entitiesAroundInGame(wp, 15, 15, 15).aliveEnemiesOf(wp).closestFirst(wp)) {
+                            for (WarlordsEntity we : PlayerFilter.entitiesAround(wp, 15, 15, 15).aliveEnemiesOf(wp).closestFirst(wp)) {
                                 if (we instanceof WarlordsNPC) {
                                     ((WarlordsNPC) we).getMob().setTarget(wp);
                                 }
