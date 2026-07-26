@@ -1,10 +1,8 @@
 package com.ebicep.customentities.npc.traits;
 
+import com.ebicep.customentities.npc.HasNPCLabelHologram;
+import com.ebicep.customentities.npc.NPCLabelHologram;
 import com.ebicep.customentities.npc.WarlordsTrait;
-import com.ebicep.holograms.Hologram;
-import com.ebicep.holograms.HologramDataText;
-import com.ebicep.holograms.HologramManager;
-import com.ebicep.holograms.VisibilityType;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
@@ -17,33 +15,36 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.entity.Display;
 import org.bukkit.entity.Player;
 
-public class GameEventTrait extends WarlordsTrait {
+public class GameEventTrait extends WarlordsTrait implements HasNPCLabelHologram {
 
+    private final NPCLabelHologram labelHologram = new NPCLabelHologram("eventHologram");
     private int ticks = 0;
-    private Hologram hologram = null;
-    private HologramDataText hologramDataText = null;
 
     public GameEventTrait() {
         super("GameEventTrait");
     }
 
     @Override
+    public NPCLabelHologram getLabelHologram() {
+        return labelHologram;
+    }
+
+    @Override
+    public void onSpawn() {
+        updateHologram();
+    }
+
+    @Override
     public void run() {
-        Location location = this.getNPC().getStoredLocation();
-        if (location == null) {
-            return;
-        }
         if (ticks % 600 == 0) {
-            updateHologram(location);
+            updateHologram();
         }
         ticks++;
     }
 
-    private void updateHologram(Location location) {
+    private void updateHologram() {
         DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
         if (ticks != 0 && !currentGameEvent.isActive()) {
             return;
@@ -77,30 +78,19 @@ public class GameEventTrait extends WarlordsTrait {
                     .async(() -> DatabaseManager.gameEventsService.update(currentGameEvent))
                     .execute();
         }
-        ComponentBuilder componentBuilder = ComponentBuilder.create(
-                ended ? "Event has ended!" : "Ends in " + timeTill,
-                NamedTextColor.GOLD,
-                TextDecoration.BOLD
+        labelHologram.update(
+                npc,
+                ComponentBuilder.create(
+                                ended ? "Event has ended!" : "Ends in " + timeTill,
+                                NamedTextColor.GOLD,
+                                TextDecoration.BOLD
+                        )
+                        .newLine(currentGameEvent.getEvent().name, NamedTextColor.RED)
+                        .newLine(playerCountInLobby + " in Lobby", NamedTextColor.GRAY)
+                        .newLine(playerCount + " Players", NamedTextColor.YELLOW, TextDecoration.BOLD)
+                        .build()
         );
-        componentBuilder.newLine(currentGameEvent.getEvent().name, NamedTextColor.RED);
-        componentBuilder.newLine(playerCountInLobby + " in Lobby", NamedTextColor.GRAY);
-        componentBuilder.newLine(playerCount + " Players", NamedTextColor.YELLOW, TextDecoration.BOLD);
-        if (hologram == null) {
-            hologramDataText = new HologramDataText.Builder<>(componentBuilder.build())
-                    .setBillboard(Display.Billboard.FIXED)
-                    .build();
-            hologram = new Hologram.Builder(
-                    "eventHologram",
-                    location.clone().add(0, 2.5, 0),
-                    player -> hologramDataText
-            ).setVisibility(VisibilityType.ALL).build();
-            HologramManager.addHologram(hologram);
-        } else if (hologramDataText != null) {
-            hologramDataText.setComponent(componentBuilder.build());
-            HologramManager.updateHologram(hologram);
-        }
     }
-
 
     @Override
     public void rightClick(NPCRightClickEvent event) {

@@ -16,6 +16,16 @@ public abstract class WarlordsTrait extends Trait {
         super(name);
     }
 
+    @Override
+    public void onRemove() {
+        if (this instanceof HasNPCLabelHologram labeled) {
+            NPCLabelHologram hologram = labeled.getLabelHologram();
+            if (hologram != null) {
+                hologram.delete();
+            }
+        }
+    }
+
     @EventHandler
     @Deprecated // Use #rightClick instead
     public void rightClickEventImplementation(NPCRightClickEvent event) {

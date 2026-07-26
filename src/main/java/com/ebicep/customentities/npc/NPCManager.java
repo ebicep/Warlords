@@ -21,7 +21,6 @@ import net.citizensnpcs.api.trait.TraitInfo;
 import net.citizensnpcs.api.trait.trait.Equipment;
 import net.citizensnpcs.trait.*;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Display;
@@ -405,13 +404,21 @@ public class NPCManager {
         NPC npc = NPC_REGISTRY.createNPC(EntityType.VILLAGER, "quest-menu");
         npc.getOrAddTrait(VillagerProfession.class).setProfession(Villager.Profession.LIBRARIAN);
         npc.addTrait(QuestMenuTrait.class);
-        HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
-//        hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK");
-        hologramTrait.setLine(0, ChatColor.AQUA + "Quest Lord");
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
-        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), -2574.5, 50, 758.5, -90, 0));
+        Location location = new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), -2574.5, 50, 758.5, -90, 0);
+        npc.spawn(location);
 
+        HologramDataText hologramDataText = new HologramDataText.Builder<>(ComponentBuilder.create(
+                "Quest Lord",
+                NamedTextColor.AQUA
+        ).build()).setBillboard(Display.Billboard.CENTER).build();
+        HologramManager.addHologram(new Hologram.Builder(
+                        "questLord",
+                        location.clone().add(0, 2.1, 0),
+                        player -> hologramDataText
+                ).setVisibility(VisibilityType.ALL).build()
+        );
     }
 
     public static void destroyNPCs() {
@@ -453,7 +460,7 @@ public class NPCManager {
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
 
-        Location location = new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 11.5, 82, 155.5, 180, 0);
+        Location location = new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 11.5, 81, 155.5, 180, 0);
         npc.spawn(location);
     }
 
@@ -464,6 +471,6 @@ public class NPCManager {
         npc.addTrait(MainLobbySetupTrait.class);
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
-        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), -58.5, 61, 83, 113, 0));
+        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), -58.5, 60, 83, 113, 0));
     }
 }

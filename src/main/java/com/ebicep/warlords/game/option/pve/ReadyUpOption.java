@@ -1,5 +1,7 @@
 package com.ebicep.warlords.game.option.pve;
 
+import com.ebicep.customentities.npc.HasNPCLabelHologram;
+import com.ebicep.customentities.npc.NPCLabelHologram;
 import com.ebicep.customentities.npc.WarlordsTrait;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
@@ -9,20 +11,19 @@ import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.trait.HologramTrait;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
@@ -255,8 +256,9 @@ public class ReadyUpOption implements Option {
         return game;
     }
 
-    public static class ReadyUpTrait extends WarlordsTrait {
+    public static class ReadyUpTrait extends WarlordsTrait implements HasNPCLabelHologram {
 
+        private NPCLabelHologram labelHologram;
         private ReadyUpOption readyUpOption;
 
         public ReadyUpTrait() {
@@ -264,10 +266,19 @@ public class ReadyUpOption implements Option {
         }
 
         @Override
-        public void run() {
-            HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
-            hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + "FERRYMAN");
-            hologramTrait.setLine(1, ChatColor.RED + "Charon");
+        public NPCLabelHologram getLabelHologram() {
+            return labelHologram;
+        }
+
+        @Override
+        public void onSpawn() {
+            labelHologram = new NPCLabelHologram("ready-up-charon-" + npc.getUniqueId());
+            labelHologram.update(
+                    npc,
+                    ComponentBuilder.create("Charon", NamedTextColor.RED)
+                            .newLine("FERRYMAN", NamedTextColor.YELLOW, TextDecoration.BOLD)
+                            .build()
+            );
         }
 
         @Override
