@@ -331,7 +331,9 @@ public abstract class AbstractAbility implements AbilityIcon {
                 int previousCooldown = (int) currentCooldown;
                 currentCooldown -= cooldown;
                 if (previousCooldown != (int) currentCooldown) { // only update if second changed
-                    queueUpdateItem();
+                    if (currentCooldown <= 10 || (int) currentCooldown % 2 == 0) { // every 2s when above 10s
+                        queueUpdateItem();
+                    }
                 }
             }
         }
