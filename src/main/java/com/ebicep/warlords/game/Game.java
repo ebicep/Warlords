@@ -596,7 +596,7 @@ public final class Game implements Runnable, AutoCloseable {
                     newList.add(option);
                 }
             }
-            if (newList.size() > 0) {
+            if (!newList.isEmpty()) {
                 cachedOptions.put(clazz, newList);
             }
         }

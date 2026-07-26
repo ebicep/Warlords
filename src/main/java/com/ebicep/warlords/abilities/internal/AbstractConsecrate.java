@@ -77,7 +77,7 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
                         circleEffect.playEffects();
                     }
                     if (ticksElapsed % 20 == 0) {
-                        PlayerFilter.entitiesAround(location, radius, 6, radius)
+                        PlayerFilter.entitiesAroundInGame(wp.getGame(), location, radius, 6, radius)
                                     .aliveEnemiesOf(wp)
                                     .forEach(enemy -> {
                                         enemy.addInstance(InstanceBuilder
