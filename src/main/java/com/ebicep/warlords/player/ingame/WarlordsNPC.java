@@ -20,6 +20,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -238,21 +239,25 @@ public class WarlordsNPC extends WarlordsEntity {
         }
         lastDisplayedHealth = rounded;
         mobHologram.update();
+        Component health = Component.text(NumberFormat.addCommaAndRound(rounded) + "❤", NamedTextColor.RED);
         if (entity instanceof Player player) {
             double healthDisplayY = player.getEyeHeight() + 0.15;
             if (playerHealthDisplay == null) {
                 playerHealthDisplay = Utils.spawnArmorStand(getLocation().add(0, healthDisplayY, 0), armorStand -> {
                             armorStand.setMarker(true);
-                            armorStand.customName(getNameComponent());
+                            armorStand.customName(health);
                             armorStand.setCustomNameVisible(true);
                         }
                 );
             } else {
-                playerHealthDisplay.customName(Component.text(NumberFormat.addCommaAndRound(this.getCurrentHealth()) + "❤", NamedTextColor.RED));
+                playerHealthDisplay.customName(health);
                 playerHealthDisplay.teleport(entity.getLocation().add(0, healthDisplayY, 0));
             }
         } else {
-            entity.customName(Component.text(NumberFormat.addCommaAndRound(this.getCurrentHealth()) + "❤", NamedTextColor.RED));
+            String citizensName = LegacyComponentSerializer.legacySection().serialize(health);
+            if (!citizensName.equals(npc.getName())) {
+                npc.setName(citizensName);
+            }
         }
     }
 
