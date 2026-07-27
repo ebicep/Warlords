@@ -20,7 +20,7 @@ import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.trait.Gravity;
-import net.citizensnpcs.trait.HologramTrait;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -135,18 +135,18 @@ public abstract class AbstractTower {
     protected NPC createNPC() {
         NPC npc = NPCManager.NPC_REGISTRY.createNPC(EntityType.TEXT_DISPLAY, getName());
         npc.data().set(NPC.Metadata.COLLIDABLE, false);
-        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, true);
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
 
         npc.getDefaultBehaviorController().clear();
         npc.getNavigator().setPaused(true);
 
         npc.getOrAddTrait(Gravity.class).setHasGravity(false);
-        npc.getOrAddTrait(HologramTrait.class);
 
         npc.spawn(topCenterLocation);
 
         if (npc.getEntity() instanceof TextDisplay textDisplay) {
             textDisplay.setBillboard(Display.Billboard.CENTER);
+            textDisplay.text(Component.text(getName()));
         }
         npc.getEntity().setInvulnerable(true);
 

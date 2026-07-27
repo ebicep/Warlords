@@ -470,7 +470,7 @@ public class NPCManager {
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
 
-        Location location = new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 11.5, 82, 155.5, 180, 0);
+        Location location = new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 11.5, 81, 155.5, 180, 0);
         npc.spawn(location);
     }
 
@@ -481,6 +481,6 @@ public class NPCManager {
         npc.addTrait(MainLobbySetupTrait.class);
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
-        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), -58.5, 61, 83, 113, 0));
+        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), -58.5, 60, 83, 113, 0));
     }
 }

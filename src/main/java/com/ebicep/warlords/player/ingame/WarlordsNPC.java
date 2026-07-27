@@ -238,21 +238,26 @@ public class WarlordsNPC extends WarlordsEntity {
         }
         lastDisplayedHealth = rounded;
         mobHologram.update();
+        String healthText = NumberFormat.addCommaAndRound(rounded) + "❤";
         if (entity instanceof Player player) {
+            Component health = Component.text(healthText, NamedTextColor.RED);
             double healthDisplayY = player.getEyeHeight() + 0.15;
             if (playerHealthDisplay == null) {
                 playerHealthDisplay = Utils.spawnArmorStand(getLocation().add(0, healthDisplayY, 0), armorStand -> {
                             armorStand.setMarker(true);
-                            armorStand.customName(getNameComponent());
+                            armorStand.customName(health);
                             armorStand.setCustomNameVisible(true);
                         }
                 );
             } else {
-                playerHealthDisplay.customName(Component.text(NumberFormat.addCommaAndRound(this.getCurrentHealth()) + "❤", NamedTextColor.RED));
+                playerHealthDisplay.customName(health);
                 playerHealthDisplay.teleport(entity.getLocation().add(0, healthDisplayY, 0));
             }
         } else {
-            entity.customName(Component.text(NumberFormat.addCommaAndRound(this.getCurrentHealth()) + "❤", NamedTextColor.RED));
+            String citizensName = "§c" + healthText;
+            if (!citizensName.equals(npc.getName())) {
+                npc.setName(citizensName);
+            }
         }
     }
 

@@ -1,5 +1,7 @@
 package com.ebicep.customentities.npc.traits;
 
+import com.ebicep.customentities.npc.HasNPCLabelHologram;
+import com.ebicep.customentities.npc.NPCLabelHologram;
 import com.ebicep.customentities.npc.WarlordsTrait;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.illusionvendor.pojos.IllusionVendorWeeklyShop;
@@ -12,14 +14,14 @@ import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.SpendableBuyShop;
 import com.ebicep.warlords.pve.mobs.MobDrop;
 import com.ebicep.warlords.pve.newitems.NewItem;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.DateUtil;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
-import net.citizensnpcs.trait.HologramTrait;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -30,7 +32,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class IllusionVendorTrait extends WarlordsTrait {
+public class IllusionVendorTrait extends WarlordsTrait implements HasNPCLabelHologram {
 
     private static final List<SpendableBuyShop> SHOP = List.of(
             new SpendableBuyShop(1, MobDrop.ZENITH_STAR, 3, 30),
@@ -183,6 +185,7 @@ public class IllusionVendorTrait extends WarlordsTrait {
         menu.openForPlayer(player);
     }
 
+    private final NPCLabelHologram labelHologram = new NPCLabelHologram("lobby-illusion-vendor");
     private int ticksElapsed = 0;
 
     public IllusionVendorTrait() {
@@ -190,9 +193,13 @@ public class IllusionVendorTrait extends WarlordsTrait {
     }
 
     @Override
-    public void onAttach() {
-        HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
-        hologramTrait.setLine(0, ChatColor.GREEN + "Illusion Vendor");
+    public NPCLabelHologram getLabelHologram() {
+        return labelHologram;
+    }
+
+    @Override
+    public void onSpawn() {
+        updateHologram(null);
     }
 
     @Override
@@ -200,7 +207,6 @@ public class IllusionVendorTrait extends WarlordsTrait {
         if (ticksElapsed++ % 100 != 0) {
             return;
         }
-        HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
         String timeTill = DateUtil.getTimeTill(DateUtil.getResetDateLatestMonday(),
                 true,
                 true,
@@ -208,8 +214,19 @@ public class IllusionVendorTrait extends WarlordsTrait {
                 false
         );
         if (!timeTill.equals("0 seconds")) {
-            hologramTrait.setLine(1, ChatColor.GOLD.toString() + ChatColor.BOLD + "Next Shipment in " + timeTill);
+            updateHologram(timeTill);
         }
+    }
+
+    private void updateHologram(String timeTill) {
+        ComponentBuilder componentBuilder;
+        if (timeTill != null) {
+            componentBuilder = ComponentBuilder.create("Next Shipment in " + timeTill, NamedTextColor.GOLD, TextDecoration.BOLD)
+                    .newLine("Illusion Vendor", NamedTextColor.GREEN);
+        } else {
+            componentBuilder = ComponentBuilder.create("Illusion Vendor", NamedTextColor.GREEN);
+        }
+        labelHologram.update(npc, componentBuilder.build());
     }
 
     @Override
