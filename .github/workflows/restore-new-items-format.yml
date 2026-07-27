@@ -1,0 +1,209 @@
+name: Restore NEW_ITEMS formatting
+
+on:
+  push:
+    branches:
+      - drowned-realms-update
+    paths:
+      - .github/workflows/restore-new-items-format.yml
+
+permissions:
+  contents: write
+
+jobs:
+  restore-formatting:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: drowned-realms-update
+
+      - name: Restore original formatting with targeted set changes
+        run: |
+          python3 - <<'PY'
+          import json
+          import re
+          import subprocess
+          from pathlib import Path
+
+          ORIGINAL_COMMIT = "0bb995a7b7311e1dd936971c7cf8ac874336c739"
+          CONFIG_PATH = Path("config/NEW_ITEMS.json")
+
+          desired_text = CONFIG_PATH.read_text(encoding="utf-8")
+          desired_data = json.loads(desired_text)
+          original_text = subprocess.check_output(
+              ["git", "show", f"{ORIGINAL_COMMIT}:config/NEW_ITEMS.json"],
+              text=True,
+              encoding="utf-8",
+          )
+          original_data = json.loads(original_text)
+
+          def matching_bracket(text: str, start: int) -> int:
+              pairs = {"{": "}", "[": "]"}
+              opener = text[start]
+              closer = pairs[opener]
+              depth = 0
+              in_string = False
+              escaped = False
+              for index in range(start, len(text)):
+                  char = text[index]
+                  if in_string:
+                      if escaped:
+                          escaped = False
+                      elif char == "\\":
+                          escaped = True
+                      elif char == '"':
+                          in_string = False
+                      continue
+                  if char == '"':
+                      in_string = True
+                  elif char == opener:
+                      depth += 1
+                  elif char == closer:
+                      depth -= 1
+                      if depth == 0:
+                          return index
+              raise ValueError("Unmatched JSON bracket")
+
+          def string_end(text: str, start: int) -> int:
+              escaped = False
+              for index in range(start + 1, len(text)):
+                  char = text[index]
+                  if escaped:
+                      escaped = False
+                  elif char == "\\":
+                      escaped = True
+                  elif char == '"':
+                      return index + 1
+              raise ValueError("Unterminated JSON string")
+
+          def parse_direct_object_members(text: str, open_index: int, close_index: int):
+              members = {}
+              index = open_index + 1
+              while index < close_index:
+                  while index < close_index and text[index].isspace():
+                      index += 1
+                  if index >= close_index:
+                      break
+
+                  line_start = text.rfind("\n", open_index, index) + 1
+                  key_start = index
+                  key_end = string_end(text, key_start)
+                  key = json.loads(text[key_start:key_end])
+
+                  index = key_end
+                  while text[index].isspace():
+                      index += 1
+                  if text[index] != ":":
+                      raise ValueError(f"Expected colon after {key}")
+                  index += 1
+                  while text[index].isspace():
+                      index += 1
+
+                  value_start = index
+                  if text[index] in "{[":
+                      value_end = matching_bracket(text, index) + 1
+                  elif text[index] == '"':
+                      value_end = string_end(text, index)
+                  else:
+                      value_end = index
+                      while value_end < close_index and text[value_end] not in ",}":
+                          value_end += 1
+                      while value_end > value_start and text[value_end - 1].isspace():
+                          value_end -= 1
+
+                  members[key] = {
+                      "raw": text[line_start:value_end],
+                      "value": json.loads(text[value_start:value_end]),
+                      "indent": text[line_start:key_start],
+                  }
+
+                  index = value_end
+                  while index < close_index and text[index].isspace():
+                      index += 1
+                  if index < close_index and text[index] == ",":
+                      index += 1
+
+              return members
+
+          def preserve_key_order(desired, original):
+              if isinstance(desired, dict) and isinstance(original, dict):
+                  ordered = {}
+                  for key in original:
+                      if key in desired:
+                          ordered[key] = preserve_key_order(desired[key], original[key])
+                  for key in desired:
+                      if key not in ordered:
+                          ordered[key] = desired[key]
+                  return ordered
+              if isinstance(desired, list) and isinstance(original, list):
+                  return desired
+              return desired
+
+          match = re.search(r'(?m)^      "sets": \{', original_text)
+          if match is None:
+              raise ValueError("Could not locate data.pve.sets")
+
+          sets_open = original_text.index("{", match.start())
+          sets_close = matching_bracket(original_text, sets_open)
+          original_members = parse_direct_object_members(original_text, sets_open, sets_close)
+          desired_sets = desired_data["data"]["pve"]["sets"]
+          original_sets = original_data["data"]["pve"]["sets"]
+
+          member_indent = next(iter(original_members.values()))["indent"]
+          closing_line_start = original_text.rfind("\n", sets_open, sets_close) + 1
+          closing_indent = original_text[closing_line_start:sets_close]
+
+          rendered_members = []
+          changed_keys = []
+          for key, desired_value in desired_sets.items():
+              original_member = original_members.get(key)
+              if original_member is not None and original_member["value"] == desired_value:
+                  rendered_members.append(original_member["raw"])
+                  continue
+
+              changed_keys.append(key)
+              ordered_value = preserve_key_order(
+                  desired_value,
+                  original_sets.get(key, {}),
+              )
+              rendered_value = json.dumps(
+                  ordered_value,
+                  ensure_ascii=False,
+                  indent=2,
+              ).replace("\n", "\n" + member_indent)
+              rendered_key = json.dumps(key, ensure_ascii=False)
+              rendered_members.append(
+                  f"{member_indent}{rendered_key}: {rendered_value}"
+              )
+
+          removed_keys = [key for key in original_sets if key not in desired_sets]
+          changed_keys.extend(removed_keys)
+
+          rebuilt_sets = "{\n" + ",\n".join(rendered_members) + "\n" + closing_indent + "}"
+          restored_text = (
+              original_text[:sets_open]
+              + rebuilt_sets
+              + original_text[sets_close + 1:]
+          )
+
+          restored_data = json.loads(restored_text)
+          if restored_data != desired_data:
+              raise AssertionError("Formatting restoration changed config semantics")
+          if restored_text[:sets_open] != original_text[:sets_open]:
+              raise AssertionError("Text before the sets object changed")
+          restored_sets_close = sets_open + len(rebuilt_sets) - 1
+          if restored_text[restored_sets_close + 1:] != original_text[sets_close + 1:]:
+              raise AssertionError("Text after the sets object changed")
+
+          CONFIG_PATH.write_text(restored_text, encoding="utf-8")
+          print("Changed set keys:", ", ".join(changed_keys))
+          PY
+
+          git rm .github/workflows/restore-new-items-format.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add config/NEW_ITEMS.json
+          git commit -m "Restore original NEW_ITEMS formatting"
+          git push origin HEAD:drowned-realms-update
