@@ -35,6 +35,7 @@ public class Axe extends BaseSet {
     }
 
     public class Bonus implements SetBonus.Bonus {
+
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             for (AbstractAbility ability : warlordsPlayer.getAbilities()) {
@@ -47,5 +48,7 @@ public class Axe extends BaseSet {
                 }
             }
         }
+
     }
+
 }

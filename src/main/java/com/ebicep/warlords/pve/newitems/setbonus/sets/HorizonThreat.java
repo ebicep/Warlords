@@ -43,19 +43,29 @@ public class HorizonThreat extends BaseSet {
     }
 
     private boolean isWithinDistance(WarlordsEntity first, WarlordsEntity second, int distance) {
-        return first.getWorld() == second.getWorld() && first.getLocation().distanceSquared(second.getLocation()) < distance * distance;
+        return first.getWorld() == second.getWorld() &&
+                first.getLocation().distanceSquared(second.getLocation()) < distance * distance;
     }
 
     public class Bonus implements SetBonus.Bonus {
+
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
-                    getName(), null, HorizonThreat.class, null, warlordsPlayer, CooldownTypes.ITEM,
-                    cooldownManager -> {}, false
+                    getName(),
+                    null,
+                    HorizonThreat.class,
+                    null,
+                    warlordsPlayer,
+                    CooldownTypes.ITEM,
+                    cooldownManager -> {
+                    },
+                    false
             ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                 WarlordsEntity target = event.getWarlordsEntity();
                 if (warlordsPlayer.getWorld() != target.getWorld() ||
-                        warlordsPlayer.getLocation().distanceSquared(target.getLocation()) <= farDistance * farDistance) {
+                        warlordsPlayer.getLocation().distanceSquared(target.getLocation()) <= farDistance * farDistance
+                ) {
                     return;
                 }
                 currentDamageValue.addModifier(
@@ -75,5 +85,7 @@ public class HorizonThreat extends BaseSet {
                 );
             }));
         }
+
     }
+
 }

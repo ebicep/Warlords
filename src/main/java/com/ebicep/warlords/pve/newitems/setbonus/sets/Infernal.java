@@ -24,8 +24,11 @@ public class Infernal extends BaseSet {
     }
 
     public class Bonus implements SetBonus.Bonus {
+
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
         }
+
     }
+
 }

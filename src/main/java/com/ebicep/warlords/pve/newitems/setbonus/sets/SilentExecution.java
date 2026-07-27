@@ -42,7 +42,11 @@ public class SilentExecution extends BaseSet {
             return false;
         }
         Vector facing = target.getLocation().getDirection().setY(0);
-        Vector toAttacker = attacker.getLocation().toVector().subtract(target.getLocation().toVector()).setY(0);
+        Vector toAttacker = attacker
+                .getLocation()
+                .toVector()
+                .subtract(target.getLocation().toVector())
+                .setY(0);
         if (facing.lengthSquared() == 0 || toAttacker.lengthSquared() == 0) {
             return false;
         }
@@ -50,11 +54,19 @@ public class SilentExecution extends BaseSet {
     }
 
     public class Bonus implements SetBonus.Bonus {
+
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
-                    getName(), null, SilentExecution.class, null, warlordsPlayer, CooldownTypes.ITEM,
-                    cooldownManager -> {}, false
+                    getName(),
+                    null,
+                    SilentExecution.class,
+                    null,
+                    warlordsPlayer,
+                    CooldownTypes.ITEM,
+                    cooldownManager -> {
+                    },
+                    false
             ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                 if (!isBehind(warlordsPlayer, event.getWarlordsEntity())) {
                     return;
@@ -66,5 +78,7 @@ public class SilentExecution extends BaseSet {
                 );
             }));
         }
+
     }
+
 }

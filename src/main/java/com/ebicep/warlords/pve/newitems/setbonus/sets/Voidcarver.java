@@ -6,16 +6,70 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.pve.newitems.setbonus.BaseSet;
 import com.ebicep.warlords.pve.newitems.setbonus.SetBonus;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+
 import java.util.List;
 
 public class Voidcarver extends BaseSet {
-    private int radius,cdrBoost;
-    @Override public void init(){super.init();radius=getValue("radius",int.class);cdrBoost=getValue("cdrBoost",int.class);}
-    @Override public String getConfigFieldName(){return "voidcarver";}
-    @Override public Bonus create(){return new Bonus();}
-    @Override public List<Object> getVariables(){return List.of(radius,cdrBoost);}
-    public class Bonus implements SetBonus.Bonus{
-        private float extraCooldownTicks;
-        @Override public void apply(WarlordsPlayer player){player.getCooldownManager().addCooldown(new PermanentCooldown<>(getName(),null,Voidcarver.class,null,player,CooldownTypes.ITEM,m->{},false,(cooldown,ticks)->{extraCooldownTicks+=cdrBoost/100f;int subtract=(int)extraCooldownTicks;if(subtract<=0)return;extraCooldownTicks-=subtract;PlayerFilter.entitiesAround(player,radius,radius,radius).aliveTeammatesOfExcludingSelf(player).forEach(ally->ally.getCooldownManager().subtractTicksOnRegularCooldowns(subtract,CooldownTypes.ABILITY));}));}
+
+    private int radius;
+    private int cdrBoost;
+
+    @Override
+    public void init() {
+        super.init();
+        this.radius = getValue("radius", int.class);
+        this.cdrBoost = getValue("cdrBoost", int.class);
     }
+
+    @Override
+    public String getConfigFieldName() {
+        return "voidcarver";
+    }
+
+    @Override
+    public Bonus create() {
+        return new Bonus();
+    }
+
+    @Override
+    public List<Object> getVariables() {
+        return List.of(radius, cdrBoost);
+    }
+
+    public class Bonus implements SetBonus.Bonus {
+
+        private float extraCooldownTicks;
+
+        @Override
+        public void apply(WarlordsPlayer warlordsPlayer) {
+            warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                    getName(),
+                    null,
+                    Voidcarver.class,
+                    null,
+                    warlordsPlayer,
+                    CooldownTypes.ITEM,
+                    cooldownManager -> {
+                    },
+                    false,
+                    (cooldown, ticks) -> {
+                        extraCooldownTicks += cdrBoost / 100f;
+                        int ticksToSubtract = (int) extraCooldownTicks;
+                        if (ticksToSubtract <= 0) {
+                            return;
+                        }
+                        extraCooldownTicks -= ticksToSubtract;
+                        PlayerFilter
+                                .entitiesAround(warlordsPlayer, radius, radius, radius)
+                                .aliveTeammatesOfExcludingSelf(warlordsPlayer)
+                                .forEach(ally -> ally.getCooldownManager().subtractTicksOnRegularCooldowns(
+                                        ticksToSubtract,
+                                        CooldownTypes.ABILITY
+                                ));
+                    }
+            ));
+        }
+
+    }
+
 }

@@ -15,16 +15,103 @@ import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Sound;
+
 import java.util.List;
 
 public class Genesis extends BaseSet {
-    private int healthThreshold,maxHealthDamageMultiplier,cooldownSeconds;
-    @Override public void init(){super.init();healthThreshold=getValue("healthThreshold",int.class);maxHealthDamageMultiplier=getValue("maxHealthDamageMultiplier",int.class);cooldownSeconds=getValue("cooldownSeconds",int.class);}
-    @Override public String getConfigFieldName(){return "genesis";}
-    @Override public Bonus create(){return new Bonus();}
-    @Override public List<Object> getVariables(){return List.of(healthThreshold,maxHealthDamageMultiplier,cooldownSeconds);}
-    public class Bonus implements SetBonus.Bonus{
-        private int cooldownTicks;
-        @Override public void apply(WarlordsPlayer player){player.getCooldownManager().addCooldown(new PermanentCooldown<>(getName(),null,Genesis.class,null,player,CooldownTypes.ITEM,m->{},false,(cooldown,ticks)->{if(cooldownTicks>0)cooldownTicks--;}).addModifier(Modifier.ON_INCOMING_DAMAGE,(event,damage,crit)->{if(cooldownTicks>0||player.isDead())return;float threshold=player.getMaxHealth()*healthThreshold/100f,predicted=player.getCurrentHealth()-damage;if(player.getCurrentHealth()<=threshold||predicted>=threshold)return;cooldownTicks=cooldownSeconds*20;Utils.playGlobalSound(player.getLocation(),Sound.BLOCK_BEACON_ACTIVATE,5,.7f);new GameRunnable(player.getGame()){@Override public void run(){if(player.isDead())return;EffectUtils.playFirework(player.getLocation(),FireworkEffect.builder().with(FireworkEffect.Type.BALL_LARGE).withColor(Color.WHITE).withTrail().build());EffectUtils.strikeLightningInCylinder(player.getLocation(),10,false);PlayerFilter.entitiesAround(player,10,10,10).aliveEnemiesOf(player).forEach(enemy->enemy.addInstance(InstanceBuilder.damage().cause(getName()).source(player).value(player.getMaxHealth()*maxHealthDamageMultiplier/100f).flags(InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST)));}}.runTaskLater(40);}));}
+
+    private int healthThreshold;
+    private int maxHealthDamageMultiplier;
+    private int cooldownSeconds;
+
+    @Override
+    public void init() {
+        super.init();
+        this.healthThreshold = getValue("healthThreshold", int.class);
+        this.maxHealthDamageMultiplier = getValue("maxHealthDamageMultiplier", int.class);
+        this.cooldownSeconds = getValue("cooldownSeconds", int.class);
     }
+
+    @Override
+    public String getConfigFieldName() {
+        return "genesis";
+    }
+
+    @Override
+    public Bonus create() {
+        return new Bonus();
+    }
+
+    @Override
+    public List<Object> getVariables() {
+        return List.of(healthThreshold, maxHealthDamageMultiplier, cooldownSeconds);
+    }
+
+    public class Bonus implements SetBonus.Bonus {
+
+        private int cooldownTicks;
+
+        @Override
+        public void apply(WarlordsPlayer warlordsPlayer) {
+            warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                    getName(),
+                    null,
+                    Genesis.class,
+                    null,
+                    warlordsPlayer,
+                    CooldownTypes.ITEM,
+                    cooldownManager -> {
+                    },
+                    false,
+                    (cooldown, ticks) -> {
+                        if (cooldownTicks > 0) {
+                            cooldownTicks--;
+                        }
+                    }
+            ).addModifier(Modifier.ON_INCOMING_DAMAGE, (event, currentDamageValue, isCrit) -> {
+                if (cooldownTicks > 0 || warlordsPlayer.isDead()) {
+                    return;
+                }
+                float threshold = warlordsPlayer.getMaxHealth() * healthThreshold / 100f;
+                float predictedHealth = warlordsPlayer.getCurrentHealth() - currentDamageValue;
+                if (warlordsPlayer.getCurrentHealth() <= threshold || predictedHealth >= threshold) {
+                    return;
+                }
+                cooldownTicks = cooldownSeconds * 20;
+                Utils.playGlobalSound(warlordsPlayer.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 5, .7f);
+                new GameRunnable(warlordsPlayer.getGame()) {
+
+                    @Override
+                    public void run() {
+                        if (warlordsPlayer.isDead()) {
+                            return;
+                        }
+                        EffectUtils.playFirework(
+                                warlordsPlayer.getLocation(),
+                                FireworkEffect
+                                        .builder()
+                                        .with(FireworkEffect.Type.BALL_LARGE)
+                                        .withColor(Color.WHITE)
+                                        .withTrail()
+                                        .build()
+                        );
+                        EffectUtils.strikeLightningInCylinder(warlordsPlayer.getLocation(), 10, false);
+                        PlayerFilter
+                                .entitiesAround(warlordsPlayer, 10, 10, 10)
+                                .aliveEnemiesOf(warlordsPlayer)
+                                .forEach(enemy -> enemy.addInstance(InstanceBuilder
+                                        .damage()
+                                        .cause(getName())
+                                        .source(warlordsPlayer)
+                                        .value(warlordsPlayer.getMaxHealth() * maxHealthDamageMultiplier / 100f)
+                                        .flags(InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST)
+                                ));
+                    }
+
+                }.runTaskLater(40);
+            }));
+        }
+
+    }
+
 }
