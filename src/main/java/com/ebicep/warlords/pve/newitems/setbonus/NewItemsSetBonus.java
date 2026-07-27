@@ -14,6 +14,7 @@ import java.util.Set;
 public enum NewItemsSetBonus implements SetBonus {
 
     AMBULANCE(new Ambulance()),
+    AXE(new Axe()),
     BATTERY(new Battery()),
     BELLICOSE(new Bellicose()),
     BLOODLETTING_BLADE(new BloodlettingBlade()),
@@ -31,7 +32,6 @@ public enum NewItemsSetBonus implements SetBonus {
     ECHO_OF_RUIN(new EchoOfRuin()),
     ENERGIZE(new Energize()),
     ENCUMBER(new Encumber()),
-    EXERGIES(new Exergis()),
     FORSAKEN_FLUX(new ForsakenFlux()),
     FROSTVEIL(new Frostveil()),
     GAMBLER(new Gambler()),
@@ -41,8 +41,10 @@ public enum NewItemsSetBonus implements SetBonus {
     GRAVEMIND(new Gravemind()),
     HAND_OF_THE_CORPSE(new HandOfTheCorpse()),
     HEART_OF_GLASS(new HeartOfGlass()),
+    HORIZON_THREAT(new HorizonThreat()),
     HOURGLASS(new Hourglass()),
     ILLUMINATED_PRISM(new IlluminatedPrism()),
+    INFERNAL(new Infernal()),
     INNER_FLAME(new InnerFlame()),
     IRON_CHAINS(new IronChains()),
     IMMUTABLE_WILL(new ImmutableWill()),
@@ -69,6 +71,7 @@ public enum NewItemsSetBonus implements SetBonus {
     SANGUINEOUS(new Sanguineous()),
     SHARPSHOOTER(new Sharpshooter()),
     SHIELD_GATE(new ShieldGate()),
+    SILENT_EXECUTION(new SilentExecution()),
     SOOTHSAYER(new Soothsayer()),
     SOULFLAME(new Soulflame()),
     SOULFORGED(new Soulforged()),
@@ -91,83 +94,20 @@ public enum NewItemsSetBonus implements SetBonus {
     public static Map<NewItemTier, Set<NewItemsSetBonus>> BY_TIER;
     private final SetBonus setBonus;
 
-    NewItemsSetBonus(SetBonus setBonus) {
-        this.setBonus = setBonus;
-    }
-
-    @Override
-    public boolean isNoBonus() {
-        return setBonus.isNoBonus();
-    }
-
-    @Override
-    public NewItemTier getTier() {
-        return setBonus.getTier();
-    }
-
-    @Override
-    public String getName() {
-        return setBonus.getName();
-    }
-
-    @Override
-    public List<NewItemsSlot> getSlots() {
-        return setBonus.getSlots();
-    }
-
-    @Override
-    public Map<NewItemAttribute, Float> getAttributes() {
-        return setBonus.getAttributes();
-    }
-
-    @Override
-    public Map<NewItemAttribute, Pair<Float, Float>> getBonusAttributeRanges() {
-        return setBonus.getBonusAttributeRanges();
-    }
-
-    @Override
-    public void setBonusAttributeRanges(Map<NewItemAttribute, Pair<Float, Float>> bonusAttributeRanges) {
-        setBonus.setBonusAttributeRanges(bonusAttributeRanges);
-    }
-
-    @Override
-    public void init() {
-        setBonus.init();
-    }
-
-    @Override
-    public Bonus create() {
-        return setBonus.create();
-    }
-
-    @Override
-    public String getConfigFieldName() {
-        return setBonus.getConfigFieldName();
-    }
-
-    @Override
-    public List<Object> getVariables() {
-        return setBonus.getVariables();
-    }
-
-    @Override
-    public Map<Integer, Map<Spendable, Long>> getRerollCost() {
-        return setBonus.getRerollCost();
-    }
-
-    @Override
-    public void setRerollCost(Map<Integer, Map<Spendable, Long>> rerollCost) {
-        setBonus.setRerollCost(rerollCost);
-    }
-
-    @Override
-    public Map<Integer, Map<Spendable, Long>> getLockScrollRerollCost() {
-        return setBonus.getLockScrollRerollCost();
-    }
-
-    @Override
-    public void setLockScrollRerollCost(Map<Integer, Map<Spendable, Long>> lockScrollRerollCost) {
-        setBonus.setLockScrollRerollCost(lockScrollRerollCost);
-    }
-
+    NewItemsSetBonus(SetBonus setBonus) { this.setBonus = setBonus; }
+    @Override public boolean isNoBonus() { return setBonus.isNoBonus(); }
+    @Override public NewItemTier getTier() { return setBonus.getTier(); }
+    @Override public String getName() { return setBonus.getName(); }
+    @Override public List<NewItemsSlot> getSlots() { return setBonus.getSlots(); }
+    @Override public Map<NewItemAttribute, Float> getAttributes() { return setBonus.getAttributes(); }
+    @Override public Map<NewItemAttribute, Pair<Float, Float>> getBonusAttributeRanges() { return setBonus.getBonusAttributeRanges(); }
+    @Override public void setBonusAttributeRanges(Map<NewItemAttribute, Pair<Float, Float>> value) { setBonus.setBonusAttributeRanges(value); }
+    @Override public void init() { setBonus.init(); }
+    @Override public Bonus create() { return setBonus.create(); }
+    @Override public String getConfigFieldName() { return setBonus.getConfigFieldName(); }
+    @Override public List<Object> getVariables() { return setBonus.getVariables(); }
+    @Override public Map<Integer, Map<Spendable, Long>> getRerollCost() { return setBonus.getRerollCost(); }
+    @Override public void setRerollCost(Map<Integer, Map<Spendable, Long>> value) { setBonus.setRerollCost(value); }
+    @Override public Map<Integer, Map<Spendable, Long>> getLockScrollRerollCost() { return setBonus.getLockScrollRerollCost(); }
+    @Override public void setLockScrollRerollCost(Map<Integer, Map<Spendable, Long>> value) { setBonus.setLockScrollRerollCost(value); }
 }
