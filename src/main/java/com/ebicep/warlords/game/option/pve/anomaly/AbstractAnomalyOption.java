@@ -6,6 +6,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.events.game.pve.WarlordsMobSpawnEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsAddCurrencyFinalEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
@@ -20,6 +21,7 @@ import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.newitems.setbonus.NewItemsSetBonus;
 import com.ebicep.warlords.pve.rewards.RewardInventory;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -88,6 +90,15 @@ public abstract class AbstractAnomalyOption implements PveOption {
                         removeHostileMob(mob);
                     }
                 }.runTaskLater(1);
+            }
+
+            @EventHandler
+            public void onAddCurrency(WarlordsAddCurrencyFinalEvent event) {
+                WarlordsEntity player = event.getWarlordsEntity();
+                if (player.getGame() != game) {
+                    return;
+                }
+                AbilityTree.handleAutoUpgrade(player);
             }
         });
 
