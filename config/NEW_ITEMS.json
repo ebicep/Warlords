@@ -842,8 +842,8 @@
           ],
           "attributes": {
             "HEALTH": 25,
-            "KB_RES": 5,
-            "REGEN": 15
+            "REGEN": 15,
+            "KB_RES": 5
           },
           "description": "{{blue;%}} of attacks are dodged. Each dodge grants {{damage;%}} damage and healing for {{ticks}}, up to {{blue}} stacks.",
           "dodgeChance": 15,
