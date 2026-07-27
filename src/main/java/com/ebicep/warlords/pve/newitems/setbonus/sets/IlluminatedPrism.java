@@ -6,7 +6,6 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
-import com.ebicep.warlords.pve.items.types.specialitems.buckler.omega.BreastplateBuckler;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.newitems.setbonus.BaseSet;
 import com.ebicep.warlords.pve.newitems.setbonus.SetBonus;
@@ -14,7 +13,6 @@ import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class IlluminatedPrism extends BaseSet {
@@ -65,21 +63,27 @@ public class IlluminatedPrism extends BaseSet {
                     false,
                     (cooldown, ticksElapsed) -> {
                         if (ticksElapsed % 40 == 0) {
-                            repeatedAttacks.entrySet().removeIf(warlordsEntityIntegerEntry -> !pveOption.getMobs().contains(warlordsEntityIntegerEntry.getKey()));
+                            repeatedAttacks.entrySet().removeIf(entry -> !pveOption.getMobs().contains(entry.getKey()));
                         }
                     }
             ).addModifier(
                     Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE,
                     (event, currentDamageValue) -> {
-                        if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC) {
-                            AbstractMob mob = warlordsNPC.getMob();
-                            float damageReduction = Math.max(
-                                    1 - (repeatedAttacks.getOrDefault(mob, 0) * repeatedAttackDamageReduction / 100f),
-                                    repeatedAttackMaxDamageReduction / 100f
-                            );
-                            repeatedAttacks.merge(mob, 1, Integer::sum);
-                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getName(), damageReduction);
+                        if (!(event.getSource() instanceof WarlordsNPC warlordsNPC) || warlordsNPC.getMob() == null) {
+                            return;
                         }
+                        AbstractMob mob = warlordsNPC.getMob();
+                        int repeatedAttackCount = repeatedAttacks.getOrDefault(mob, 0);
+                        float damageReduction = Math.min(
+                                repeatedAttackCount * repeatedAttackDamageReduction,
+                                repeatedAttackMaxDamageReduction
+                        ) / 100f;
+                        repeatedAttacks.merge(mob, 1, Integer::sum);
+                        currentDamageValue.addModifier(
+                                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                                getName(),
+                                1 - damageReduction
+                        );
                     }
             ));
         }

@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.newitems.setbonus.sets;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
@@ -38,8 +39,6 @@ public class Voidcarver extends BaseSet {
 
     public class Bonus implements SetBonus.Bonus {
 
-        private float extraCooldownTicks;
-
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
@@ -52,21 +51,17 @@ public class Voidcarver extends BaseSet {
                     cooldownManager -> {
                     },
                     false,
-                    (cooldown, ticks) -> {
-                        extraCooldownTicks += cdrBoost / 100f;
-                        int ticksToSubtract = (int) extraCooldownTicks;
-                        if (ticksToSubtract <= 0) {
-                            return;
-                        }
-                        extraCooldownTicks -= ticksToSubtract;
-                        PlayerFilter
-                                .entitiesAround(warlordsPlayer, radius, radius, radius)
-                                .aliveTeammatesOfExcludingSelf(warlordsPlayer)
-                                .forEach(ally -> ally.getCooldownManager().subtractTicksOnRegularCooldowns(
-                                        ticksToSubtract,
-                                        CooldownTypes.ABILITY
-                                ));
-                    }
+                    (cooldown, ticks) -> PlayerFilter
+                            .entitiesAround(warlordsPlayer, radius, radius, radius)
+                            .aliveTeammatesOfExcludingSelf(warlordsPlayer)
+                            .forEach(ally -> {
+                                for (AbstractAbility ability : ally.getSpec().getAbilities()) {
+                                    float extraCooldownReduction = ability
+                                            .getCooldownReductionPerTick()
+                                            .getCalculatedValue() * cdrBoost / 100f;
+                                    ability.subtractCurrentCooldownForce(extraCooldownReduction);
+                                }
+                            })
             ));
         }
 
