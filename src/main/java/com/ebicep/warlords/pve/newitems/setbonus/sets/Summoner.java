@@ -17,6 +17,9 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Summoner extends BaseSet {
 
+    private static int configuredMinionDamage;
+    private static int configuredMinionSpeed;
+
     private int minionDamage;
     private int minionSpeed;
 
@@ -32,8 +35,31 @@ public class Summoner extends BaseSet {
                 if (npc == null) {
                     return;
                 }
-                Summoner summoner = (Summoner) NewItemsSetBonus.SUMMONER.getSetBonus();
-                summoner.applyBonuses(owner, mob, npc);
+                if (mob.getAspect() == null) {
+                    Aspect[] aspects = Aspect.values();
+                    Aspect aspect = aspects[ThreadLocalRandom.current().nextInt(aspects.length)];
+                    mob.setAspect(aspect);
+                    aspect.apply(npc);
+                }
+                npc.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                        "Summoner - Damage",
+                        null,
+                        Summoner.class,
+                        null,
+                        npc,
+                        CooldownTypes.BUFF,
+                        cooldownManager -> {
+                        },
+                        false
+                ).addModifier(
+                        Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE,
+                        (damageEvent, currentDamageValue) -> currentDamageValue.addModifier(
+                                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                                "Summoner - Damage",
+                                1 + configuredMinionDamage / 100f
+                        )
+                ));
+                npc.addSpeedModifier(owner, "Summoner - Speed", configuredMinionSpeed, Integer.MAX_VALUE);
             }
 
         }.runTaskLater(1);
@@ -44,6 +70,8 @@ public class Summoner extends BaseSet {
         super.init();
         this.minionDamage = getValue("minionDamage", int.class);
         this.minionSpeed = getValue("minionSpeed", int.class);
+        configuredMinionDamage = minionDamage;
+        configuredMinionSpeed = minionSpeed;
     }
 
     @Override
@@ -59,34 +87,6 @@ public class Summoner extends BaseSet {
     @Override
     public List<Object> getVariables() {
         return List.of(minionDamage, minionSpeed);
-    }
-
-    private void applyBonuses(WarlordsPlayer owner, AbstractMob mob, WarlordsNPC npc) {
-        if (mob.getAspect() == null) {
-            Aspect[] aspects = Aspect.values();
-            Aspect aspect = aspects[ThreadLocalRandom.current().nextInt(aspects.length)];
-            mob.setAspect(aspect);
-            aspect.apply(npc);
-        }
-        npc.getCooldownManager().addCooldown(new PermanentCooldown<>(
-                getName() + " - Damage",
-                null,
-                Summoner.class,
-                null,
-                npc,
-                CooldownTypes.BUFF,
-                cooldownManager -> {
-                },
-                false
-        ).addModifier(
-                Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE,
-                (damageEvent, currentDamageValue) -> currentDamageValue.addModifier(
-                        FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
-                        getName() + " - Damage",
-                        1 + minionDamage / 100f
-                )
-        ));
-        npc.addSpeedModifier(owner, getName() + " - Speed", minionSpeed, Integer.MAX_VALUE);
     }
 
     public class Bonus implements SetBonus.Bonus {
