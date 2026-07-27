@@ -71,6 +71,12 @@ public enum DifficultyMode {
             return gameMode == GameMode.ONSLAUGHT;
         }
     },
+    ANOMALY("Anomaly") {
+        @Override
+        public boolean validGameMode(GameMode gameMode) {
+            return gameMode == GameMode.ANOMALY;
+        }
+    },
     EVENT("Event") {
         @Override
         public boolean validGameMode(GameMode gameMode) {
