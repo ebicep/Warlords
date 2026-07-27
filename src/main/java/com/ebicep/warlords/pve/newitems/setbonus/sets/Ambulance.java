@@ -11,117 +11,20 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-
+import org.bukkit.util.Vector;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 public class Ambulance extends BaseSet {
-
-    private int allyHealthThresholdPercent;
-    private int movementSpeedBonusPercent;
-    private int healingBonusToAllyPercent;
-
-    @Override
-    public void init() {
-        super.init();
-        this.allyHealthThresholdPercent = getValue("allyHealthThresholdPercent", int.class);
-        this.movementSpeedBonusPercent = getValue("movementSpeedBonusPercent", int.class);
-        this.healingBonusToAllyPercent = getValue("healingBonusToAllyPercent", int.class);
+    private int allyHealthThresholdPercent,movementSpeedBonusPercent,healingBonusToAllyPercent;
+    @Override public void init(){super.init();allyHealthThresholdPercent=getValue("allyHealthThresholdPercent",int.class);movementSpeedBonusPercent=getValue("movementSpeedBonusPercent",int.class);healingBonusToAllyPercent=getValue("healingBonusToAllyPercent",int.class);}
+    @Override public String getConfigFieldName(){return "ambulance";}
+    @Override public Bonus create(){return new Bonus();}
+    @Override public List<Object> getVariables(){return List.of(allyHealthThresholdPercent,movementSpeedBonusPercent,healingBonusToAllyPercent);}
+    public class Bonus implements SetBonus.Bonus{
+        private final Set<WarlordsEntity> lowHealthAllies=new HashSet<>();
+        @Override public void apply(WarlordsPlayer player){String speedName=getName()+" Speed";player.getCooldownManager().addCooldown(new PermanentCooldown<>(getName(),null,Ambulance.class,null,player,CooldownTypes.ITEM,m->{},false,(cooldown,ticks)->{if(ticks%10!=0)return;lowHealthAllies.forEach(a->a.removePotionEffect(PotionEffectType.GLOWING));lowHealthAllies.clear();PlayerFilter.entitiesAround(player,100,100,100).aliveTeammatesOfExcludingSelf(player).filter(a->a.getCurrentHealth()/a.getMaxHealth()*100f<=allyHealthThresholdPercent).forEach(a->{lowHealthAllies.add(a);a.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING,15,1,false,false,false));});WarlordsEntity closest=PlayerFilter.entitiesAround(player,100,100,100).aliveTeammatesOfExcludingSelf(player).filter(lowHealthAllies::contains).closestFirst(player).findFirstOrNull();player.getSpeed().removeModifier(speedName);if(closest!=null&&isMovingToward(player,closest))player.addSpeedModifier(player,speedName,movementSpeedBonusPercent,15);}).addModifier(Modifier.MODIFY_OUTGOING_HEALING,(event,value)->{if(lowHealthAllies.contains(event.getWarlordsEntity()))value.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,getName(),1+healingBonusToAllyPercent/100f);}));}
+        private boolean isMovingToward(WarlordsPlayer player,WarlordsEntity ally){Vector movement=player.getEntity().getVelocity().setY(0),toAlly=ally.getLocation().toVector().subtract(player.getLocation().toVector()).setY(0);return movement.lengthSquared()>=0.0001&&toAlly.lengthSquared()>0&&movement.normalize().dot(toAlly.normalize())>0.25;}
     }
-
-    @Override
-    public String getConfigFieldName() {
-        return "ambulance";
-    }
-
-    @Override
-    public Bonus create() {
-        return new Bonus();
-    }
-
-    @Override
-    public List<Object> getVariables() {
-        return List.of(allyHealthThresholdPercent, movementSpeedBonusPercent, healingBonusToAllyPercent);
-    }
-
-    public class Bonus implements SetBonus.Bonus {
-
-        private final Set<WarlordsEntity> lowHealthAllies = new HashSet<>();
-
-        @Override
-        public void apply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
-                    getName(),
-                    null,
-                    Ambulance.class,
-                    null,
-                    warlordsPlayer,
-                    CooldownTypes.ITEM,
-                    cooldownManager -> {},
-                    false,
-                    (cooldown, ticksElapsed) -> {
-                        if (ticksElapsed % 10 != 0) {
-                            return;
-                        }
-
-                        lowHealthAllies.forEach(ally -> {
-                            ally.removePotionEffect(PotionEffectType.GLOWING);
-                        });
-                        lowHealthAllies.clear();
-
-                        for (WarlordsEntity ally : PlayerFilter
-                                .entitiesAround(warlordsPlayer, 100, 100, 100)
-                                .aliveTeammatesOfExcludingSelf(warlordsPlayer)
-                        ) {
-                            float healthPercent = (ally.getCurrentHealth() / ally.getMaxHealth()) * 100f;
-
-                            if (healthPercent <= allyHealthThresholdPercent) {
-                                lowHealthAllies.add(ally);
-                                ally.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 15, 1, false, false, false));
-                            }
-                        }
-
-                        if (!lowHealthAllies.isEmpty()) {
-                            WarlordsEntity closestLowHealthAlly = PlayerFilter
-                                    .entitiesAround(warlordsPlayer, 100, 100, 100)
-                                    .aliveTeammatesOfExcludingSelf(warlordsPlayer)
-                                    .filter(lowHealthAllies::contains)
-                                    .closestFirst(warlordsPlayer)
-                                    .findFirstOrNull();
-
-                            if (closestLowHealthAlly != null) {
-                                double distance = warlordsPlayer.getLocation().distance(closestLowHealthAlly.getLocation());
-                                if (distance > 0) {
-                                    // apply speed modifier
-                                    warlordsPlayer.getCooldownManager().removeCooldownByName(getName() + " Speed");
-                                    warlordsPlayer.addSpeedModifier(
-                                            warlordsPlayer,
-                                            getName() + " Speed",
-                                            movementSpeedBonusPercent,
-                                            25
-                                    );
-                                }
-                            }
-                        } else {
-                            warlordsPlayer.getSpeed().removeModifier(getName() + " Speed");
-                        }
-                    }
-            ).addModifier(
-                    Modifier.MODIFY_OUTGOING_HEALING,
-                    (event, currentHealingValue) -> {
-                        if (lowHealthAllies.contains(event.getWarlordsEntity())) {
-                            currentHealingValue.addModifier(
-                                    FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
-                                    getName(),
-                                    1 + (healingBonusToAllyPercent / 100f)
-                            );
-                        }
-                    }
-            ));
-
-        }
-
-    }
-
 }
