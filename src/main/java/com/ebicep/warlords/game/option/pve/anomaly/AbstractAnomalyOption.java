@@ -13,6 +13,10 @@ import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.option.pve.rewards.PveRewards;
+import com.ebicep.warlords.guilds.Guild;
+import com.ebicep.warlords.guilds.GuildManager;
+import com.ebicep.warlords.guilds.GuildPlayer;
+import com.ebicep.warlords.guilds.upgrades.AbstractGuildUpgrade;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -33,8 +37,16 @@ import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -107,6 +119,28 @@ public abstract class AbstractAnomalyOption implements PveOption {
             @Override
             public java.util.List<Component> computeLines(@Nullable WarlordsPlayer player) {
                 return healthScoreboard(game);
+            }
+        });
+    }
+
+    @Override
+    public void afterAllWarlordsEntitiesCreated(List<WarlordsEntity> players) {
+        if (DatabaseManager.guildService == null) {
+            return;
+        }
+        HashMap<Guild, HashSet<UUID>> guilds = new HashMap<>();
+        List<UUID> uuids = game.playersWithoutSpectators().map(Map.Entry::getKey).toList();
+        for (Guild guild : GuildManager.GUILDS) {
+            for (UUID uuid : uuids) {
+                Optional<GuildPlayer> guildPlayer = guild.getPlayerMatchingUUID(uuid);
+                if (guildPlayer.isPresent() && guildPlayer.get().getJoinDate().isBefore(Instant.now().minus(2, ChronoUnit.DAYS))) {
+                    guilds.computeIfAbsent(guild, key -> new HashSet<>()).add(uuid);
+                }
+            }
+        }
+        guilds.forEach((guild, validUUIDs) -> {
+            for (AbstractGuildUpgrade<?> upgrade : guild.getUpgrades()) {
+                upgrade.getUpgrade().onGame(game, validUUIDs, upgrade.getTier());
             }
         });
     }
