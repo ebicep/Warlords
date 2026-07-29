@@ -232,33 +232,39 @@ public class WarlordsNPC extends WarlordsEntity {
         if (isDead() || entity == null || !entity.isValid()) {
             return;
         }
-        int rounded = Math.round(getCurrentHealth());
-        if (rounded == lastDisplayedHealth && getGame().getLoopTickCounter() % 2 != 0) {
-            return;
-        }
-        lastDisplayedHealth = rounded;
+
         mobHologram.update();
-        String healthText = NumberFormat.addCommaAndRound(rounded) + "❤";
+
+        int rounded = Math.round(getCurrentHealth());
+        boolean shouldUpdateName = rounded != lastDisplayedHealth && getGame().getLoopTickCounter() % 2 == 0;
+
         if (entity instanceof Player player) {
-            Component health = Component.text(healthText, NamedTextColor.RED);
             double healthDisplayY = player.getEyeHeight() + 0.15;
             if (playerHealthDisplay == null) {
                 playerHealthDisplay = Utils.spawnArmorStand(getLocation().add(0, healthDisplayY, 0), armorStand -> {
-                            armorStand.setMarker(true);
-                            armorStand.customName(health);
-                            armorStand.setCustomNameVisible(true);
-                        }
-                );
+                    armorStand.setMarker(true);
+                    armorStand.setCustomNameVisible(true);
+                });
+                shouldUpdateName = true;
             } else {
-                playerHealthDisplay.customName(health);
                 playerHealthDisplay.teleport(entity.getLocation().add(0, healthDisplayY, 0));
             }
+        }
+
+        if (!shouldUpdateName) {
+            return;
+        }
+
+        String healthText = NumberFormat.addCommaAndRound(rounded) + "❤";
+        if (entity instanceof Player) {
+            playerHealthDisplay.customName(Component.text(healthText, NamedTextColor.RED));
         } else {
             String citizensName = "§c" + healthText;
             if (!citizensName.equals(npc.getName())) {
                 npc.setName(citizensName);
             }
         }
+        lastDisplayedHealth = rounded;
     }
 
     @Override
