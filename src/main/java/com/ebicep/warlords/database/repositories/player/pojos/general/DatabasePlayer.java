@@ -29,6 +29,7 @@ import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.items.ItemsManager;
 import com.ebicep.warlords.pve.items.menu.ItemMichaelMenu;
 import com.ebicep.warlords.pve.rewards.types.CompensationReward;
+import com.ebicep.warlords.pve.rewards.types.LevelUpReward;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -756,6 +757,32 @@ public class DatabasePlayer implements MultiStatsGeneral, TracksMultiAbilityStat
                     }
                 }
 
+                return true;
+            }
+        },
+        LEVEL_UP_REWARDS {
+            @Override
+            public boolean run(UUID uuid, DatabasePlayer databasePlayer) {
+                LinkedHashMap<Spendable, Long> rewards = new LinkedHashMap<>();
+                for (Specializations spec : Specializations.VALUES) {
+                    DatabaseSpecialization databaseSpec = databasePlayer.getSpec(spec);
+                    int maxClaimable = databaseSpec.getMaxLevelUpRewardsClaimable();
+                    for (int index = 1; index <= maxClaimable; index++) {
+                        int level = ((index - 1) % 100) + 1;
+                        int prestige = (index - 1) / 100;
+                        if (databaseSpec.hasLevelUpReward(level, prestige)) {
+                            continue;
+                        }
+                        LevelUpReward.getRewardForLevel(level)
+                                     .forEach((spendable, amount) -> rewards.merge(spendable, amount, Long::sum));
+                    }
+                    databaseSpec.getLevelUpRewards().clear();
+                    databaseSpec.setLevelUpRewardsClaimed(maxClaimable);
+                }
+                if (!rewards.isEmpty()) {
+                    databasePlayer.getPveStats().getCompensationRewards().add(new CompensationReward.LevelUpPatch(rewards));
+                    CompensationReward.LevelUpPatch.giveLevelUpPatchFutureMessage(databasePlayer);
+                }
                 return true;
             }
         },
