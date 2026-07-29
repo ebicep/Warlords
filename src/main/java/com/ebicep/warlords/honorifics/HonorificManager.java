@@ -166,7 +166,7 @@ public final class HonorificManager {
             case EXPLORER -> progress(profile.getHighestAncientRenegadesFloor(), 30);
             case TREASURER -> progress(profile.getHighestAncientRenegadesFloor(), 100);
             case SLAUGHTERER -> formatTicks(getLongestOnslaughtTicks(pveStats)) + " / 180:00";
-            case STAR_GUIDE -> progress(profile.getStarPiecesUsed(), 1_000);
+            case STAR_GUIDE -> progress(profile.getStarPiecesUsed(), 5000);
             case SUPPLIER -> progress(profile.getSupplyDropsRolled(), 50_000);
             case PRESTIGIOUS -> progress(getHighestPrestige(databasePlayer), 30);
             case SKELETRON -> progress(getSkeletonKills(pveStats), 50_000);
@@ -275,7 +275,7 @@ public final class HonorificManager {
             case EXPLORER -> profile.getHighestAncientRenegadesFloor() >= 30;
             case TREASURER -> profile.getHighestAncientRenegadesFloor() >= 100;
             case SLAUGHTERER -> getLongestOnslaughtTicks(pveStats) >= 180L * 60 * 20;
-            case STAR_GUIDE -> profile.getStarPiecesUsed() >= 1_000;
+            case STAR_GUIDE -> profile.getStarPiecesUsed() >= 500;
             case SUPPLIER -> profile.getSupplyDropsRolled() >= 50_000;
             case PRESTIGIOUS -> getHighestPrestige(databasePlayer) >= 30;
             case SKELETRON -> getSkeletonKills(pveStats) >= 50_000;

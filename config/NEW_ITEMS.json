@@ -560,6 +560,7 @@
           "name": "Soothsayer",
           "slots": [
             "RING",
+            "RING",
             "TOME"
           ],
           "attributes": {
@@ -778,7 +779,7 @@
             "BOOTS"
           ],
           "attributes": {
-            "HEALTH": 150,
+            "HEALTH": 100,
             "KB_RES": 4,
             "REGEN": 25,
             "CDR": 1

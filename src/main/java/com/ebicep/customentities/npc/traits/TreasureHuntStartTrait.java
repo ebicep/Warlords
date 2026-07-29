@@ -5,6 +5,7 @@ import com.ebicep.customentities.npc.NPCLabelHologram;
 import com.ebicep.customentities.npc.WarlordsTrait;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.GameMode;
+import com.ebicep.warlords.game.option.pve.treasurehunt.TreasureHuntMenu;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
