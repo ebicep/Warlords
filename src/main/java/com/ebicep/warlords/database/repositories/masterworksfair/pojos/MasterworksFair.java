@@ -103,7 +103,7 @@ public class MasterworksFair {
                 continue;
             }
             List<MasterworksFairPlayerEntry> playerEntries = rarity.getPlayerEntries.apply(this);
-            playerEntries.sort(Comparator.comparingDouble(o -> ((WeaponScore) o.getWeapon()).getWeaponScore()).reversed());
+            playerEntries.sort(Comparator.comparingDouble((MasterworksFairPlayerEntry entry) -> ((WeaponScore) entry.getWeapon()).getWeaponScore()).reversed());
             for (int i = 0; i < playerEntries.size(); i++) {
                 MasterworksFairPlayerEntry entry = playerEntries.get(i);
                 MasterworksFairEntry playerRecordEntry = new MasterworksFairEntry(
@@ -118,7 +118,7 @@ public class MasterworksFair {
         }
 
         List<MasterworksFairPlayerEntry> itemEntries = getItemPlayerEntries();
-        itemEntries.sort(Comparator.comparingDouble(o -> o.getItem().getItemScore()).reversed());
+        itemEntries.sort(Comparator.comparingDouble((MasterworksFairPlayerEntry entry) -> entry.getItem().getItemScore()).reversed());
         for (int i = 0; i < itemEntries.size(); i++) {
             MasterworksFairPlayerEntry entry = itemEntries.get(i);
             MasterworksFairEntry playerRecordEntry = new MasterworksFairEntry(
