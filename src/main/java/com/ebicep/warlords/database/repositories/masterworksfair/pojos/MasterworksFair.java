@@ -8,6 +8,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayer
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairEntry;
+import com.ebicep.warlords.pve.newitems.tiers.NewItemTier;
 import com.ebicep.warlords.pve.rewards.types.MasterworksFairReward;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.pve.weapons.weaponaddons.WeaponScore;
@@ -25,6 +26,12 @@ import java.util.*;
 @Document(collection = "Masterworks_Fair")
 public class MasterworksFair {
 
+    private static final NewItemTier[] FAIR_ITEM_TIERS = {
+            NewItemTier.COMMON,
+            NewItemTier.RARE,
+            NewItemTier.EPIC
+    };
+
     @Id
     protected String id;
 
@@ -36,8 +43,15 @@ public class MasterworksFair {
     private List<MasterworksFairPlayerEntry> rarePlayerEntries = new ArrayList<>();
     @Field("epic_entries")
     private List<MasterworksFairPlayerEntry> epicPlayerEntries = new ArrayList<>();
+    @Field("common_item_entries")
+    private List<MasterworksFairPlayerEntry> commonItemPlayerEntries = new ArrayList<>();
+    @Field("rare_item_entries")
+    private List<MasterworksFairPlayerEntry> rareItemPlayerEntries = new ArrayList<>();
+    @Field("epic_item_entries")
+    private List<MasterworksFairPlayerEntry> epicItemPlayerEntries = new ArrayList<>();
+    @Deprecated
     @Field("item_entries")
-    private List<MasterworksFairPlayerEntry> itemPlayerEntries = new ArrayList<>();
+    private List<MasterworksFairPlayerEntry> legacyItemPlayerEntries = new ArrayList<>();
     @Field("ended")
     private boolean ended = false;
     @Field("fair_number")
@@ -48,11 +62,14 @@ public class MasterworksFair {
 
     @Override
     public String toString() {
+        migrateLegacyItemEntries();
         return "MasterworksFair{startDate=" + startDate +
                 ", commonPlayerEntries=" + commonPlayerEntries.size() +
                 ", rarePlayerEntries=" + rarePlayerEntries.size() +
                 ", epicPlayerEntries=" + epicPlayerEntries.size() +
-                ", itemPlayerEntries=" + getItemPlayerEntries().size() + '}';
+                ", commonItemPlayerEntries=" + getCommonItemPlayerEntries().size() +
+                ", rareItemPlayerEntries=" + getRareItemPlayerEntries().size() +
+                ", epicItemPlayerEntries=" + getEpicItemPlayerEntries().size() + '}';
     }
 
     public void sendRewards(boolean throughRewardsInventory) {
@@ -75,11 +92,10 @@ public class MasterworksFair {
                                         pveStats.addMasterworksFairEntry(masterworksFairEntry);
                                         LinkedHashMap<Spendable, Long> rewards = getRewards(masterworksFairEntry);
                                         if (throughRewardsInventory) {
-                                            pveStats.addReward(new MasterworksFairReward(
-                                                    rewards,
-                                                    now,
-                                                    masterworksFairEntry.isItemSubmission() ? "Item" : masterworksFairEntry.getRarity().name
-                                            ));
+                                            String category = masterworksFairEntry.isItemSubmission()
+                                                    ? masterworksFairEntry.getItemTier().getName() + " Item"
+                                                    : masterworksFairEntry.getRarity().name;
+                                            pveStats.addReward(new MasterworksFairReward(rewards, now, category));
                                         } else {
                                             rewards.forEach((spendable, amount) -> spendable.addToPlayer(databasePlayer, amount));
                                         }
@@ -117,19 +133,20 @@ public class MasterworksFair {
             }
         }
 
-        List<MasterworksFairPlayerEntry> itemEntries = getItemPlayerEntries();
-        itemEntries.sort(Comparator.comparingDouble((MasterworksFairPlayerEntry entry) -> entry.getItem().getItemScore()).reversed());
-        for (int i = 0; i < itemEntries.size(); i++) {
-            MasterworksFairPlayerEntry entry = itemEntries.get(i);
-            MasterworksFairEntry playerRecordEntry = new MasterworksFairEntry(
-                    time,
-                    null,
-                    true,
-                    i + 1,
-                    roundedScore(entry.getItem().getItemScore()),
-                    fairNumber
-            );
-            playerFairResults.computeIfAbsent(entry.getUuid(), k -> new ArrayList<>()).add(playerRecordEntry);
+        for (NewItemTier itemTier : FAIR_ITEM_TIERS) {
+            List<MasterworksFairPlayerEntry> itemEntries = getItemPlayerEntries(itemTier);
+            itemEntries.sort(Comparator.comparingDouble((MasterworksFairPlayerEntry entry) -> entry.getItem().getItemScore()).reversed());
+            for (int i = 0; i < itemEntries.size(); i++) {
+                MasterworksFairPlayerEntry entry = itemEntries.get(i);
+                MasterworksFairEntry playerRecordEntry = new MasterworksFairEntry(
+                        time,
+                        itemTier,
+                        i + 1,
+                        roundedScore(entry.getItem().getItemScore()),
+                        fairNumber
+                );
+                playerFairResults.computeIfAbsent(entry.getUuid(), k -> new ArrayList<>()).add(playerRecordEntry);
+            }
         }
         return playerFairResults;
     }
@@ -139,12 +156,11 @@ public class MasterworksFair {
     }
 
     public LinkedHashMap<Spendable, Long> getRewards(MasterworksFairEntry masterworksFairEntry) {
-        if (masterworksFairEntry.isItemSubmission()) {
-            return getItemRewards(masterworksFairEntry);
-        }
+        WeaponsPvE rarity = masterworksFairEntry.isItemSubmission()
+                ? getWeaponRarity(masterworksFairEntry.getItemTier())
+                : masterworksFairEntry.getRarity();
         int placement = masterworksFairEntry.getPlacement();
         float score = masterworksFairEntry.getScore();
-        WeaponsPvE rarity = masterworksFairEntry.getRarity();
         LinkedHashMap<Spendable, Long> rewards = new LinkedHashMap<>();
         if (placement <= 3) {
             rewards.put(rarity.starPieceCurrency, 1L);
@@ -171,54 +187,40 @@ public class MasterworksFair {
                     }
                 }
             }
+        } else if (placement <= 10 ||
+                (rarity == WeaponsPvE.COMMON && score > 90) ||
+                (rarity == WeaponsPvE.RARE && score > 85) ||
+                (rarity == WeaponsPvE.EPIC && score > 75)
+        ) {
+            switch (rarity) {
+                case COMMON -> rewards.put(Currencies.SUPPLY_DROP_TOKEN, 20L);
+                case RARE -> rewards.put(Currencies.SUPPLY_DROP_TOKEN, 35L);
+                case EPIC -> rewards.put(Currencies.SUPPLY_DROP_TOKEN, 50L);
+            }
+        } else if (placement <= 20) {
+            switch (rarity) {
+                case COMMON -> rewards.put(Currencies.SUPPLY_DROP_TOKEN, 10L);
+                case RARE -> rewards.put(Currencies.SUPPLY_DROP_TOKEN, 20L);
+                case EPIC -> rewards.put(Currencies.SUPPLY_DROP_TOKEN, 30L);
+            }
         } else {
-            if (placement <= 10 ||
-                    (rarity == WeaponsPvE.COMMON && score > 90) ||
-                    (rarity == WeaponsPvE.RARE && score > 85) ||
-                    (rarity == WeaponsPvE.EPIC && score > 75)
-            ) {
-                switch (rarity) {
-                    case COMMON -> rewards.put(Currencies.SUPPLY_DROP_TOKEN, 20L);
-                    case RARE -> rewards.put(Currencies.SUPPLY_DROP_TOKEN, 35L);
-                    case EPIC -> rewards.put(Currencies.SUPPLY_DROP_TOKEN, 50L);
-                }
-            } else if (placement <= 20) {
-                switch (rarity) {
-                    case COMMON -> rewards.put(Currencies.SUPPLY_DROP_TOKEN, 10L);
-                    case RARE -> rewards.put(Currencies.SUPPLY_DROP_TOKEN, 20L);
-                    case EPIC -> rewards.put(Currencies.SUPPLY_DROP_TOKEN, 30L);
-                }
-            } else {
-                switch (rarity) {
-                    case COMMON -> rewards.put(Currencies.SUPPLY_DROP_TOKEN, 5L);
-                    case RARE -> rewards.put(Currencies.SUPPLY_DROP_TOKEN, 10L);
-                    case EPIC -> rewards.put(Currencies.SUPPLY_DROP_TOKEN, 20L);
-                }
+            switch (rarity) {
+                case COMMON -> rewards.put(Currencies.SUPPLY_DROP_TOKEN, 5L);
+                case RARE -> rewards.put(Currencies.SUPPLY_DROP_TOKEN, 10L);
+                case EPIC -> rewards.put(Currencies.SUPPLY_DROP_TOKEN, 20L);
             }
         }
         applyFairMultiplier(rewards);
         return rewards;
     }
 
-    private LinkedHashMap<Spendable, Long> getItemRewards(MasterworksFairEntry masterworksFairEntry) {
-        int placement = masterworksFairEntry.getPlacement();
-        float score = masterworksFairEntry.getScore();
-        LinkedHashMap<Spendable, Long> rewards = new LinkedHashMap<>();
-        if (placement == 1) {
-            rewards.put(Currencies.SUPPLY_DROP_TOKEN, 100L);
-        } else if (placement == 2) {
-            rewards.put(Currencies.SUPPLY_DROP_TOKEN, 50L);
-        } else if (placement == 3) {
-            rewards.put(Currencies.SUPPLY_DROP_TOKEN, 30L);
-        } else if (placement <= 10 || score > 90) {
-            rewards.put(Currencies.SUPPLY_DROP_TOKEN, 20L);
-        } else if (placement <= 20) {
-            rewards.put(Currencies.SUPPLY_DROP_TOKEN, 10L);
-        } else {
-            rewards.put(Currencies.SUPPLY_DROP_TOKEN, 5L);
-        }
-        applyFairMultiplier(rewards);
-        return rewards;
+    private WeaponsPvE getWeaponRarity(NewItemTier itemTier) {
+        return switch (itemTier) {
+            case COMMON -> WeaponsPvE.COMMON;
+            case RARE -> WeaponsPvE.RARE;
+            case EPIC -> WeaponsPvE.EPIC;
+            default -> throw new IllegalArgumentException("Unsupported Masterworks Fair item tier: " + itemTier);
+        };
     }
 
     private void applyFairMultiplier(LinkedHashMap<Spendable, Long> rewards) {
@@ -246,15 +248,20 @@ public class MasterworksFair {
                                 if (rarity.getPlayerEntries == null) {
                                     continue;
                                 }
-                                Optional<MasterworksFairEntry> masterworksFairEntry = masterworksFairEntries.stream()
-                                                                                                             .filter(entry -> !entry.isItemSubmission() && entry.getRarity() == rarity)
-                                                                                                             .findAny();
-                                message.add(getResultComponent(rarity.getTextColoredName(), masterworksFairEntry));
+                                Optional<MasterworksFairEntry> weaponEntry = masterworksFairEntries.stream()
+                                                                                                  .filter(entry -> !entry.isItemSubmission() && entry.getRarity() == rarity)
+                                                                                                  .findAny();
+                                message.add(getResultComponent(rarity.getTextColoredName().append(Component.text(" Weapon")), weaponEntry));
                             }
-                            Optional<MasterworksFairEntry> itemEntry = masterworksFairEntries.stream()
-                                                                                           .filter(MasterworksFairEntry::isItemSubmission)
-                                                                                           .findAny();
-                            message.add(getResultComponent(Component.text("Item", NamedTextColor.LIGHT_PURPLE), itemEntry));
+                            for (NewItemTier itemTier : FAIR_ITEM_TIERS) {
+                                Optional<MasterworksFairEntry> itemEntry = masterworksFairEntries.stream()
+                                                                                                .filter(entry -> entry.isItemSubmission() && entry.getItemTier() == itemTier)
+                                                                                                .findAny();
+                                message.add(getResultComponent(
+                                        Component.text(itemTier.getName() + " Item", itemTier.getTextColor()),
+                                        itemEntry
+                                ));
+                            }
                             message.add(Component.empty());
                             message.add(Component.text("Claim your rewards through your", NamedTextColor.GREEN));
                             message.add(Component.text("Reward Inventory!", NamedTextColor.GREEN));
@@ -288,6 +295,51 @@ public class MasterworksFair {
         sendResults(createResults(null), inCaseYouMissedIt);
     }
 
+    private void migrateLegacyItemEntries() {
+        if (legacyItemPlayerEntries == null || legacyItemPlayerEntries.isEmpty()) {
+            return;
+        }
+        for (MasterworksFairPlayerEntry entry : legacyItemPlayerEntries) {
+            if (entry.getItem() == null) {
+                continue;
+            }
+            NewItemTier tier = entry.getItem().getTier();
+            if (tier == NewItemTier.COMMON || tier == NewItemTier.RARE || tier == NewItemTier.EPIC) {
+                getItemPlayerEntriesInternal(tier).add(entry);
+            }
+        }
+        legacyItemPlayerEntries.clear();
+    }
+
+    private List<MasterworksFairPlayerEntry> getItemPlayerEntriesInternal(NewItemTier tier) {
+        return switch (tier) {
+            case COMMON -> {
+                if (commonItemPlayerEntries == null) {
+                    commonItemPlayerEntries = new ArrayList<>();
+                }
+                yield commonItemPlayerEntries;
+            }
+            case RARE -> {
+                if (rareItemPlayerEntries == null) {
+                    rareItemPlayerEntries = new ArrayList<>();
+                }
+                yield rareItemPlayerEntries;
+            }
+            case EPIC -> {
+                if (epicItemPlayerEntries == null) {
+                    epicItemPlayerEntries = new ArrayList<>();
+                }
+                yield epicItemPlayerEntries;
+            }
+            default -> throw new IllegalArgumentException("Unsupported Masterworks Fair item tier: " + tier);
+        };
+    }
+
+    public List<MasterworksFairPlayerEntry> getItemPlayerEntries(NewItemTier tier) {
+        migrateLegacyItemEntries();
+        return getItemPlayerEntriesInternal(tier);
+    }
+
     public String getId() {
         return id;
     }
@@ -312,11 +364,16 @@ public class MasterworksFair {
         return epicPlayerEntries;
     }
 
-    public List<MasterworksFairPlayerEntry> getItemPlayerEntries() {
-        if (itemPlayerEntries == null) {
-            itemPlayerEntries = new ArrayList<>();
-        }
-        return itemPlayerEntries;
+    public List<MasterworksFairPlayerEntry> getCommonItemPlayerEntries() {
+        return getItemPlayerEntries(NewItemTier.COMMON);
+    }
+
+    public List<MasterworksFairPlayerEntry> getRareItemPlayerEntries() {
+        return getItemPlayerEntries(NewItemTier.RARE);
+    }
+
+    public List<MasterworksFairPlayerEntry> getEpicItemPlayerEntries() {
+        return getItemPlayerEntries(NewItemTier.EPIC);
     }
 
     public boolean isEnded() {
