@@ -7,6 +7,7 @@ import com.ebicep.warlords.pve.newitems.setbonus.NewItemsSetBonus;
 import com.ebicep.warlords.pve.newitems.tiers.NewItemTier;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.java.JavaUtils;
+import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Pair;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -97,6 +98,9 @@ public class NewItem {
                 .addSetBonus(itemsManager, loadout)
                 .build();
         lore.add(Component.empty());
+        lore.add(Component.text("Score: ", NamedTextColor.GRAY)
+                          .append(Component.text(NumberFormat.formatOptionalHundredths(getItemScore()), NamedTextColor.YELLOW))
+                          .append(Component.text("/100", NamedTextColor.GRAY)));
         lore.add(Component.text(getTier().getName() + " " + slot.getName(), getTier().getTextColor()));
         lore.add(Component.text("REROLL [" + rerollCostsHistory.size() + "/" + NewItemRerollCost.MAX_REROLLS + "]", NamedTextColor.DARK_GRAY)); // TODO ?
         if (isFavorite) {
@@ -121,6 +125,18 @@ public class NewItem {
             }
         });
         return attributeValues;
+    }
+
+    public float getItemScore() {
+        if (bonusAttributeDistribution == null || bonusAttributeDistribution.isEmpty()) {
+            return 0;
+        }
+        double average = bonusAttributeDistribution.values()
+                                                   .stream()
+                                                   .mapToInt(Byte::intValue)
+                                                   .average()
+                                                   .orElse(0);
+        return Math.round(average * 100) / 100f;
     }
 
     public NewItemTier getTier() {
