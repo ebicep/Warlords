@@ -17,6 +17,9 @@ public class MasterworksFairEntry {
     @Field("fair_number")
     private Integer fairNumber;
 
+    public MasterworksFairEntry() {
+    }
+
     public MasterworksFairEntry(Instant time, WeaponsPvE rarity, int placement, float score, Integer fairNumber) {
         this(time, rarity, false, placement, score, fairNumber);
     }
