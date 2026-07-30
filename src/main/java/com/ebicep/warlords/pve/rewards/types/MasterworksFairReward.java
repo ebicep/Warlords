@@ -17,7 +17,11 @@ public class MasterworksFairReward extends AbstractReward {
     }
 
     public MasterworksFairReward(LinkedHashMap<Spendable, Long> rewards, Instant timeGiven, WeaponsPvE rarity) {
-        super(rewards, "Masterworks Fair " + rarity.name);
+        this(rewards, timeGiven, rarity.name);
+    }
+
+    public MasterworksFairReward(LinkedHashMap<Spendable, Long> rewards, Instant timeGiven, String category) {
+        super(rewards, "Masterworks Fair " + category);
         this.timeGiven = timeGiven;
     }
 
