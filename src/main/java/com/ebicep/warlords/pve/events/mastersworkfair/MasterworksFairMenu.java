@@ -10,6 +10,7 @@ import com.ebicep.warlords.pve.newitems.NewItem;
 import com.ebicep.warlords.pve.newitems.NewItemLoadout;
 import com.ebicep.warlords.pve.newitems.NewItemsManager;
 import com.ebicep.warlords.pve.newitems.menu.NewItemSearchMenu;
+import com.ebicep.warlords.pve.newitems.tiers.NewItemTier;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.pve.weapons.menu.WeaponManagerMenu;
@@ -17,6 +18,7 @@ import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.java.JavaUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -25,6 +27,17 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class MasterworksFairMenu {
+
+    private static final WeaponsPvE[] FAIR_WEAPON_TIERS = {
+            WeaponsPvE.COMMON,
+            WeaponsPvE.RARE,
+            WeaponsPvE.EPIC
+    };
+    private static final NewItemTier[] FAIR_ITEM_TIERS = {
+            NewItemTier.COMMON,
+            NewItemTier.RARE,
+            NewItemTier.EPIC
+    };
 
     public static void openMasterworksFairMenu(Player player) {
         if (MasterworksFairManager.currentFair == null) {
@@ -40,74 +53,77 @@ public class MasterworksFairMenu {
         UUID uuid = player.getUniqueId();
         DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
         DatabasePlayerPvE databasePlayerPvE = databasePlayer.getPveStats();
+        List<MasterworksFairEntry> fairEntries = databasePlayerPvE.getMasterworksFairEntries();
 
-        WeaponsPvE[] values = WeaponsPvE.VALUES;
-        int column = 1;
-        for (WeaponsPvE value : values) {
-            if (value.getPlayerEntries == null) {
-                continue;
-            }
-            List<MasterworksFairPlayerEntry> weaponPlayerEntries = value.getPlayerEntries.apply(MasterworksFairManager.currentFair);
-            Optional<MasterworksFairPlayerEntry> playerEntry = getPlayerEntry(weaponPlayerEntries, uuid);
+        for (int i = 0; i < FAIR_WEAPON_TIERS.length; i++) {
+            WeaponsPvE weaponTier = FAIR_WEAPON_TIERS[i];
+            NewItemTier itemTier = FAIR_ITEM_TIERS[i];
+            int column = 2 + i * 2;
 
-            ItemBuilder itemBuilder;
-            if (playerEntry.isEmpty()) {
-                itemBuilder = new ItemBuilder(value.glassItem);
-                itemBuilder.name(Component.text("Click to submit a " + value.name + " weapon", NamedTextColor.GREEN));
+            List<MasterworksFairPlayerEntry> weaponEntries = weaponTier.getPlayerEntries.apply(MasterworksFairManager.currentFair);
+            Optional<MasterworksFairPlayerEntry> weaponEntry = getPlayerEntry(weaponEntries, uuid);
+            ItemBuilder weaponBuilder;
+            if (weaponEntry.isEmpty()) {
+                weaponBuilder = new ItemBuilder(weaponTier.glassItem)
+                        .name(Component.text("Click to submit a " + weaponTier.name + " weapon", NamedTextColor.GREEN));
             } else {
-                itemBuilder = new ItemBuilder(playerEntry.get().getWeapon().generateItemStack(false));
-                addChangeSubmissionLore(itemBuilder);
+                weaponBuilder = new ItemBuilder(weaponEntry.get().getWeapon().generateItemStack(false));
+                addChangeSubmissionLore(weaponBuilder);
             }
+            menu.setItem(column, 1, weaponBuilder.get(),
+                    (m, e) -> openWeaponSubmissionMenu(player, databasePlayer, weaponTier, 1));
             menu.setItem(column, 2,
-                    itemBuilder.get(),
-                    (m, e) -> openSubmissionMenu(player, databasePlayer, value, 1)
-            );
-
-            List<MasterworksFairEntry> masterworksFairEntries = databasePlayerPvE.getMasterworksFairEntries();
-            menu.setItem(column, 3,
-                    getRecentPlacementsItem(masterworksFairEntries.stream()
-                                                                    .filter(entry -> !entry.isItemSubmission() && entry.getRarity() == value)
-                                                                    .toList(), value.textColor),
+                    getRecentPlacementsItem(
+                            fairEntries.stream()
+                                       .filter(entry -> !entry.isItemSubmission() && entry.getRarity() == weaponTier)
+                                       .toList(),
+                            weaponTier.textColor
+                    ),
                     (m, e) -> {}
             );
-            column += 2;
-        }
 
-        List<MasterworksFairPlayerEntry> itemPlayerEntries = MasterworksFairManager.currentFair.getItemPlayerEntries();
-        Optional<MasterworksFairPlayerEntry> itemPlayerEntry = getPlayerEntry(itemPlayerEntries, uuid);
-        ItemBuilder itemSubmissionBuilder;
-        if (itemPlayerEntry.isEmpty()) {
-            itemSubmissionBuilder = new ItemBuilder(Material.PURPLE_STAINED_GLASS);
-            itemSubmissionBuilder.name(Component.text("Click to submit an item", NamedTextColor.GREEN));
-        } else {
-            itemSubmissionBuilder = itemPlayerEntry.get().getItem().getItemBuilder();
-            addChangeSubmissionLore(itemSubmissionBuilder);
+            List<MasterworksFairPlayerEntry> itemEntries = MasterworksFairManager.currentFair.getItemPlayerEntries(itemTier);
+            Optional<MasterworksFairPlayerEntry> itemEntry = getPlayerEntry(itemEntries, uuid);
+            ItemBuilder itemBuilder;
+            if (itemEntry.isEmpty()) {
+                itemBuilder = new ItemBuilder(itemTier.getTerracotaMaterial())
+                        .name(Component.text("Click to submit a " + itemTier.getName() + " item", NamedTextColor.GREEN));
+            } else {
+                itemBuilder = itemEntry.get().getItem().getItemBuilder();
+                addChangeSubmissionLore(itemBuilder);
+            }
+            menu.setItem(column, 3, itemBuilder.get(),
+                    (m, e) -> openItemSubmissionMenu(player, databasePlayer, itemTier));
+            menu.setItem(column, 4,
+                    getRecentPlacementsItem(
+                            fairEntries.stream()
+                                       .filter(entry -> entry.isItemSubmission() && entry.getItemTier() == itemTier)
+                                       .toList(),
+                            itemTier.getTextColor()
+                    ),
+                    (m, e) -> {}
+            );
         }
-        menu.setItem(7, 2, itemSubmissionBuilder.get(), (m, e) -> openItemSubmissionMenu(player, databasePlayer));
-        menu.setItem(7, 3,
-                getRecentPlacementsItem(databasePlayerPvE.getMasterworksFairEntries()
-                                                          .stream()
-                                                          .filter(MasterworksFairEntry::isItemSubmission)
-                                                          .toList(), NamedTextColor.LIGHT_PURPLE),
-                (m, e) -> {}
-        );
 
         ItemBuilder infoItemBuilder = new ItemBuilder(Material.FIREWORK_ROCKET)
                 .name(Component.text("Current Submissions", NamedTextColor.GREEN));
         List<Component> infoLore = new ArrayList<>();
-        for (WeaponsPvE value : values) {
-            if (value.getPlayerEntries != null) {
-                List<MasterworksFairPlayerEntry> weaponPlayerEntries = value.getPlayerEntries.apply(MasterworksFairManager.currentFair);
-                infoLore.add(value.getTextColoredName()
-                                  .append(Component.text(": "))
-                                  .append(Component.text(weaponPlayerEntries.size(), NamedTextColor.AQUA))
-                );
-            }
+        for (int i = 0; i < FAIR_WEAPON_TIERS.length; i++) {
+            WeaponsPvE weaponTier = FAIR_WEAPON_TIERS[i];
+            NewItemTier itemTier = FAIR_ITEM_TIERS[i];
+            infoLore.add(weaponTier.getTextColoredName()
+                                   .append(Component.text(" Weapons: ", NamedTextColor.GRAY))
+                                   .append(Component.text(
+                                           weaponTier.getPlayerEntries.apply(MasterworksFairManager.currentFair).size(),
+                                           NamedTextColor.AQUA
+                                   )));
+            infoLore.add(Component.text(itemTier.getName() + " Items", itemTier.getTextColor())
+                                  .append(Component.text(": ", NamedTextColor.GRAY))
+                                  .append(Component.text(
+                                          MasterworksFairManager.currentFair.getItemPlayerEntries(itemTier).size(),
+                                          NamedTextColor.AQUA
+                                  )));
         }
-        infoLore.add(Component.text("Items", NamedTextColor.LIGHT_PURPLE)
-                              .append(Component.text(": "))
-                              .append(Component.text(itemPlayerEntries.size(), NamedTextColor.AQUA))
-        );
         infoItemBuilder.lore(infoLore);
         menu.setItem(4, 0, infoItemBuilder.get(), (m, e) -> {});
 
@@ -129,7 +145,7 @@ public class MasterworksFairMenu {
         );
     }
 
-    private static org.bukkit.inventory.ItemStack getRecentPlacementsItem(List<MasterworksFairEntry> entries, NamedTextColor placementColor) {
+    private static org.bukkit.inventory.ItemStack getRecentPlacementsItem(List<MasterworksFairEntry> entries, TextColor placementColor) {
         return new ItemBuilder(Material.BOOK)
                 .name(Component.text("Your most recent placements", NamedTextColor.GREEN))
                 .lore(entries.stream()
@@ -145,7 +161,7 @@ public class MasterworksFairMenu {
                 .get();
     }
 
-    public static void openSubmissionMenu(Player player, DatabasePlayer databasePlayer, WeaponsPvE weaponType, int page) {
+    public static void openWeaponSubmissionMenu(Player player, DatabasePlayer databasePlayer, WeaponsPvE weaponType, int page) {
         Menu menu = new Menu("Choose a weapon", 9 * 6);
         UUID uuid = player.getUniqueId();
         List<AbstractWeapon> weaponInventory = databasePlayer.getPveStats().getWeaponInventory();
@@ -201,7 +217,7 @@ public class MasterworksFairMenu {
                                 );
                                 openMasterworksFairMenu(player);
                             },
-                            (m2, e2) -> openSubmissionMenu(player, databasePlayer, weaponType, page),
+                            (m2, e2) -> openWeaponSubmissionMenu(player, databasePlayer, weaponType, page),
                             m2 -> m2.setItem(4, 1, weapon.generateItemStack(false), (m3, e3) -> {})
                     );
                 });
@@ -214,7 +230,7 @@ public class MasterworksFairMenu {
                             .name(Component.text("Previous Page", NamedTextColor.GREEN))
                             .lore(Component.text("Page " + (page - 1), NamedTextColor.YELLOW))
                             .get(),
-                    (m, e) -> openSubmissionMenu(player, databasePlayer, weaponType, page - 1)
+                    (m, e) -> openWeaponSubmissionMenu(player, databasePlayer, weaponType, page - 1)
             );
         }
         if (filteredWeaponInventory.size() > (page * 45)) {
@@ -223,7 +239,7 @@ public class MasterworksFairMenu {
                             .name(Component.text("Next Page", NamedTextColor.GREEN))
                             .lore(Component.text("Page " + (page + 1), NamedTextColor.YELLOW))
                             .get(),
-                    (m, e) -> openSubmissionMenu(player, databasePlayer, weaponType, page + 1)
+                    (m, e) -> openWeaponSubmissionMenu(player, databasePlayer, weaponType, page + 1)
             );
         }
 
@@ -231,17 +247,22 @@ public class MasterworksFairMenu {
         menu.openForPlayer(player);
     }
 
-    public static void openItemSubmissionMenu(Player player, DatabasePlayer databasePlayer) {
+    public static void openItemSubmissionMenu(Player player, DatabasePlayer databasePlayer, NewItemTier itemTier) {
         NewItemsManager itemsManager = databasePlayer.getPveStats().getNewItemsManager();
+        List<NewItem> filteredItems = itemsManager.getItemInventory()
+                                                  .stream()
+                                                  .filter(item -> item.getTier() == itemTier)
+                                                  .toList();
         NewItemSearchMenu.PlayerItemMenuSettings menuSettings = new NewItemSearchMenu.PlayerItemMenuSettings(databasePlayer)
-                .setItemInventory(new ArrayList<>(itemsManager.getItemInventory()));
+                .setItemInventory(new ArrayList<>(filteredItems));
         menuSettings.setSortOption(NewItemSearchMenu.SortOptions.ITEM_SCORE);
         menuSettings.setAscending(false);
+        menuSettings.sort();
 
         NewItemSearchMenu menu = new NewItemSearchMenu(
                 player,
-                "Choose an item",
-                (item, m, e) -> submitItem(player, databasePlayer, item),
+                "Choose a " + itemTier.getName() + " item",
+                (item, m, e) -> submitItem(player, databasePlayer, itemTier, item),
                 itemBuilder -> itemBuilder.addLore(
                         Component.empty(),
                         Component.textOfChildren(
@@ -256,7 +277,13 @@ public class MasterworksFairMenu {
         menu.open();
     }
 
-    private static void submitItem(Player player, DatabasePlayer databasePlayer, NewItem item) {
+    private static void submitItem(Player player, DatabasePlayer databasePlayer, NewItemTier itemTier, NewItem item) {
+        if (item.getTier() != itemTier) {
+            MasterworksFairManager.sendMasterworksFairMessage(player,
+                    Component.text("That item does not match this submission tier!", NamedTextColor.RED)
+            );
+            return;
+        }
         NewItemsManager itemsManager = databasePlayer.getPveStats().getNewItemsManager();
         boolean equipped = itemsManager.getLoadouts()
                                        .stream()
@@ -276,17 +303,17 @@ public class MasterworksFairMenu {
                 3,
                 Arrays.asList(
                         Component.text("Submit ", NamedTextColor.GRAY).append(item.getName()),
-                        Component.text("to the Masterworks Fair?", NamedTextColor.GRAY),
+                        Component.text("as your " + itemTier.getName() + " item?", NamedTextColor.GRAY),
                         Component.empty(),
                         Component.textOfChildren(
                                 Component.text("WARNING: ", NamedTextColor.RED),
-                                Component.text("This will override any previous", NamedTextColor.GRAY)
+                                Component.text("This will override your previous", NamedTextColor.GRAY)
                         ),
-                        Component.text("item and you cannot get this item back!", NamedTextColor.GRAY)
+                        Component.text(itemTier.getName() + " item and cannot be undone!", NamedTextColor.GRAY)
                 ),
                 Menu.GO_BACK,
                 (m, e) -> {
-                    List<MasterworksFairPlayerEntry> itemPlayerEntries = MasterworksFairManager.currentFair.getItemPlayerEntries();
+                    List<MasterworksFairPlayerEntry> itemPlayerEntries = MasterworksFairManager.currentFair.getItemPlayerEntries(itemTier);
                     Optional<MasterworksFairPlayerEntry> playerEntry = getPlayerEntry(itemPlayerEntries, player.getUniqueId());
                     MasterworksFairPlayerEntry masterworksFairPlayerEntry = playerEntry.orElseGet(() -> new MasterworksFairPlayerEntry(player.getUniqueId()));
                     if (playerEntry.isEmpty()) {
@@ -299,11 +326,11 @@ public class MasterworksFairMenu {
                     MasterworksFairManager.sendMasterworksFairMessage(player,
                             Component.text("Submitted ", NamedTextColor.GRAY)
                                      .append(item.getHoverComponent())
-                                     .append(Component.text(" to the Masterworks Fair!"))
+                                     .append(Component.text(" as your " + itemTier.getName() + " item!"))
                     );
                     openMasterworksFairMenu(player);
                 },
-                (m, e) -> openItemSubmissionMenu(player, databasePlayer),
+                (m, e) -> openItemSubmissionMenu(player, databasePlayer, itemTier),
                 m -> m.setItem(4, 1, item.getItemBuilder().get(), (m2, e2) -> {})
         );
     }
