@@ -27,10 +27,6 @@ public class MasterworksFairEntry {
         this(time, rarity, false, null, placement, score, fairNumber);
     }
 
-    public MasterworksFairEntry(Instant time, WeaponsPvE rarity, boolean itemSubmission, int placement, float score, Integer fairNumber) {
-        this(time, rarity, itemSubmission, null, placement, score, fairNumber);
-    }
-
     public MasterworksFairEntry(Instant time, NewItemTier itemTier, int placement, float score, Integer fairNumber) {
         this(time, null, true, itemTier, placement, score, fairNumber);
     }
