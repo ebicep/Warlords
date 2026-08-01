@@ -49,9 +49,6 @@ public class MasterworksFair {
     private List<MasterworksFairPlayerEntry> rareItemPlayerEntries = new ArrayList<>();
     @Field("epic_item_entries")
     private List<MasterworksFairPlayerEntry> epicItemPlayerEntries = new ArrayList<>();
-    @Deprecated
-    @Field("item_entries")
-    private List<MasterworksFairPlayerEntry> legacyItemPlayerEntries = new ArrayList<>();
     @Field("ended")
     private boolean ended = false;
     @Field("fair_number")
@@ -62,7 +59,6 @@ public class MasterworksFair {
 
     @Override
     public String toString() {
-        migrateLegacyItemEntries();
         return "MasterworksFair{startDate=" + startDate +
                 ", commonPlayerEntries=" + commonPlayerEntries.size() +
                 ", rarePlayerEntries=" + rarePlayerEntries.size() +
@@ -295,23 +291,7 @@ public class MasterworksFair {
         sendResults(createResults(null), inCaseYouMissedIt);
     }
 
-    private void migrateLegacyItemEntries() {
-        if (legacyItemPlayerEntries == null || legacyItemPlayerEntries.isEmpty()) {
-            return;
-        }
-        for (MasterworksFairPlayerEntry entry : legacyItemPlayerEntries) {
-            if (entry.getItem() == null) {
-                continue;
-            }
-            NewItemTier tier = entry.getItem().getTier();
-            if (tier == NewItemTier.COMMON || tier == NewItemTier.RARE || tier == NewItemTier.EPIC) {
-                getItemPlayerEntriesInternal(tier).add(entry);
-            }
-        }
-        legacyItemPlayerEntries.clear();
-    }
-
-    private List<MasterworksFairPlayerEntry> getItemPlayerEntriesInternal(NewItemTier tier) {
+    public List<MasterworksFairPlayerEntry> getItemPlayerEntries(NewItemTier tier) {
         return switch (tier) {
             case COMMON -> {
                 if (commonItemPlayerEntries == null) {
@@ -333,11 +313,6 @@ public class MasterworksFair {
             }
             default -> throw new IllegalArgumentException("Unsupported Masterworks Fair item tier: " + tier);
         };
-    }
-
-    public List<MasterworksFairPlayerEntry> getItemPlayerEntries(NewItemTier tier) {
-        migrateLegacyItemEntries();
-        return getItemPlayerEntriesInternal(tier);
     }
 
     public String getId() {
