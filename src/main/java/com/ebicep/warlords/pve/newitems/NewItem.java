@@ -101,6 +101,7 @@ public class NewItem {
         lore.add(Component.text("Score: ", NamedTextColor.GRAY)
                           .append(Component.text(NumberFormat.formatOptionalHundredths(getItemScore()), NamedTextColor.YELLOW))
                           .append(Component.text("/100", NamedTextColor.GRAY)));
+        lore.add(Component.empty());
         lore.add(Component.text(getTier().getName() + " " + slot.getName(), getTier().getTextColor()));
         lore.add(Component.text("REROLL [" + rerollCostsHistory.size() + "/" + NewItemRerollCost.MAX_REROLLS + "]", NamedTextColor.DARK_GRAY)); // TODO ?
         if (isFavorite) {

@@ -13,19 +13,19 @@
           "bonusAttributeRanges": {
             "CC": {
               "min": 1,
-              "max": 1
+              "max": 3
             },
             "CM": {
               "min": 1,
-              "max": 1
+              "max": 3
             },
             "DAMAGE": {
               "min": 1,
-              "max": 1
+              "max": 3
             },
             "BOSS_DAMAGE": {
               "min": 1,
-              "max": 1
+              "max": 3
             },
             "EPH": {
               "min": 1,
@@ -33,19 +33,19 @@
             },
             "HEALING": {
               "min": 1,
-              "max": 1
+              "max": 3
             },
             "MAX_ENERGY": {
               "min": 2,
-              "max": 4
+              "max": 6
             },
             "SPEED": {
               "min": 1,
-              "max": 1
+              "max": 3
             },
             "THORNS": {
               "min": 1,
-              "max": 2
+              "max": 5
             }
           },
           "rerollCost": {
@@ -62,58 +62,58 @@
           "lockScrollRerollCost": {
             "1": {
               "ITEM_LOCK_SCROLL": 1,
-              "LEGEND_FRAGMENTS": 1250
+              "LEGEND_FRAGMENTS": 500
             },
             "2": {
               "ITEM_LOCK_SCROLL": 1,
-              "LEGEND_FRAGMENTS": 1750
+              "LEGEND_FRAGMENTS": 1000
             },
             "3": {
               "ITEM_LOCK_SCROLL": 1,
-              "LEGEND_FRAGMENTS": 2250
+              "LEGEND_FRAGMENTS": 1500
             }
           }
         },
         "rare": {
           "name": "Rare",
           "weight": 25,
-          "bonusAttributes": 1,
+          "bonusAttributes": 2,
           "bonusAttributeRanges": {
             "CC": {
               "min": 1,
-              "max": 2
+              "max": 3
             },
             "CM": {
               "min": 1,
-              "max": 2
+              "max": 3
             },
             "DAMAGE": {
               "min": 1,
-              "max": 2
+              "max": 3
             },
             "BOSS_DAMAGE": {
-              "min": 2,
+              "min": 1,
               "max": 3
             },
             "EPH": {
               "min": 1,
-              "max": 1
+              "max": 2
             },
             "HEALING": {
               "min": 1,
-              "max": 2
+              "max": 3
             },
             "MAX_ENERGY": {
               "min": 2,
-              "max": 6
+              "max": 8
             },
             "SPEED": {
               "min": 1,
-              "max": 2
+              "max": 3
             },
             "THORNS": {
-              "min": 2,
-              "max": 3
+              "min": 1,
+              "max": 5
             }
           },
           "rerollCost": {
@@ -225,15 +225,15 @@
           "bonusAttributes": 2,
           "bonusAttributeRanges": {
             "CC": {
-              "min": 2,
+              "min": 1,
               "max": 5
             },
             "CM": {
-              "min": 2,
+              "min": 1,
               "max": 5
             },
             "DAMAGE": {
-              "min": 2,
+              "min": 1,
               "max": 5
             },
             "BOSS_DAMAGE": {
@@ -245,7 +245,7 @@
               "max": 4
             },
             "HEALING": {
-              "min": 2,
+              "min": 1,
               "max": 5
             },
             "MAX_ENERGY": {
@@ -281,15 +281,15 @@
           "lockScrollRerollCost": {
             "1": {
               "ITEM_LOCK_SCROLL": 1,
-              "LEGEND_FRAGMENTS": 7500
+              "LEGEND_FRAGMENTS": 5000
             },
             "2": {
               "ITEM_LOCK_SCROLL": 1,
-              "LEGEND_FRAGMENTS": 8500
+              "LEGEND_FRAGMENTS": 6000
             },
             "3": {
               "ITEM_LOCK_SCROLL": 1,
-              "LEGEND_FRAGMENTS": 9500
+              "LEGEND_FRAGMENTS": 7000
             }
           },
           "craftCost": {
@@ -311,7 +311,7 @@
             },
             "DAMAGE": {
               "min": 1,
-              "max": 4
+              "max": 5
             },
             "BOSS_DAMAGE": {
               "min": 2,
@@ -323,19 +323,19 @@
             },
             "HEALING": {
               "min": 1,
-              "max": 4
+              "max": 5
             },
             "MAX_ENERGY": {
-              "min": 8,
-              "max": 15
+              "min": 4,
+              "max": 20
             },
             "SPEED": {
               "min": 1,
-              "max": 6
+              "max": 8
             },
             "THORNS": {
-              "min": 5,
-              "max": 10
+              "min": 2,
+              "max": 15
             }
           },
           "rerollCost": {
@@ -358,15 +358,15 @@
           "lockScrollRerollCost": {
             "1": {
               "ITEM_LOCK_SCROLL": 1,
-              "LEGEND_FRAGMENTS": 6000
+              "LEGEND_FRAGMENTS": 4000
             },
             "2": {
               "ITEM_LOCK_SCROLL": 1,
-              "LEGEND_FRAGMENTS": 7500
+              "LEGEND_FRAGMENTS": 5000
             },
             "3": {
               "ITEM_LOCK_SCROLL": 1,
-              "LEGEND_FRAGMENTS": 9000
+              "LEGEND_FRAGMENTS": 6000
             }
           },
           "craftCost": {
@@ -1465,8 +1465,13 @@
         "infernal": {
           "tier": "LEGENDARY",
           "name": "Infernal",
-          "slots": [],
-          "attributes": {},
+          "slots": [
+            "LEGGINGS",
+            "BOOTS"
+          ],
+          "attributes": {
+            "HEALTH": 10
+          },
           "description": "T.B.D."
         },
         "silentExecution": {
@@ -1480,7 +1485,7 @@
             "HEALTH": 10
           },
           "description": "Attacking an enemy from behind causes your hits to deal {{damage;%}} more damage.",
-          "damageIncreasePercent": 20
+          "damageIncreasePercent": 40
         },
         "regenerate": {
           "tier": "SOVEREIGN",

@@ -64,7 +64,7 @@ public class NPCManager {
                 createAnomalyNPC();
                 createRaidOneNPC();
                 createPrestigeVendorNPC();
-                createAscendantVendorNPC();
+                //createAscendantVendorNPC();
                 createWeeklyItemTraderNPC();
                 createTreasureHuntVendorNPC();
                 createAscendantWeaponNPC();
