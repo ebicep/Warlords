@@ -1,0 +1,40 @@
+name: Guild rework validation
+
+on:
+  pull_request:
+    branches:
+      - dev
+    types: [opened, reopened, synchronize]
+
+permissions:
+  contents: write
+
+jobs:
+  implement:
+    if: github.head_ref == 'drowned-realms-update'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: drowned-realms-update
+          fetch-depth: 0
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Apply integrations
+        run: python .github/guild-rework-integrate.py
+      - name: Compile
+        run: |
+          chmod +x gradlew
+          ./gradlew compileJava --no-daemon
+      - name: Commit implementation
+        run: |
+          git config user.name "OpenAI"
+          git config user.email "openai@users.noreply.github.com"
+          rm -rf .github/guild-rework-parts
+          rm -f .github/guild-rework-integrate.py
+          rm -f .github/workflows/implement-guild-blessing-rework.yml
+          git add -A
+          git commit -m "Implement guild shop, vials, and guild bounties"
+          git push origin HEAD:drowned-realms-update
