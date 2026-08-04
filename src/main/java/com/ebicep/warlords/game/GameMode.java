@@ -5,10 +5,12 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.gamemodes.*;
 import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.guilds.bounty.GuildBountyOption;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 import com.ebicep.warlords.util.java.TriFunction;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -61,12 +63,10 @@ public enum GameMode implements Mode {
     }
 
     @Override
-    public List<Option> initMap(
-            GameMap map,
-            LocationFactory loc,
-            EnumSet<GameAddon> addons
-    ) {
-        return mode.initMap(map, loc, addons);
+    public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
+        List<Option> options = new ArrayList<>(mode.initMap(map, loc, addons));
+        options.add(new GuildBountyOption());
+        return options;
     }
 
     @Override
@@ -75,12 +75,7 @@ public enum GameMode implements Mode {
     }
 
     @Override
-    public List<Option> postMapModifyOptions(
-            GameMap map,
-            LocationFactory loc,
-            EnumSet<GameAddon> addons,
-            List<Option> options
-    ) {
+    public List<Option> postMapModifyOptions(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons, List<Option> options) {
         return mode.postMapModifyOptions(map, loc, addons, options);
     }
 
