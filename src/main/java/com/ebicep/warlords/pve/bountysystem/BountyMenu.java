@@ -6,6 +6,7 @@ import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
+import com.ebicep.warlords.guilds.bounty.GuildBountyMenu;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.PvEUtils;
@@ -35,6 +36,7 @@ public class BountyMenu {
         DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
         Menu menu = new Menu("Bounties", 9 * 6);
 
+        GuildBountyMenu.addGuildBountiesToMenu(player, menu, 0);
         addBountiesToMenu(player, databasePlayer, PlayersCollections.DAILY, menu, 1, true);
         addBountiesToMenu(player, databasePlayer, PlayersCollections.WEEKLY, menu, 2, true);
         addBountiesToMenu(player, databasePlayer, PlayersCollections.LIFETIME, menu, 3, false);
@@ -50,15 +52,7 @@ public class BountyMenu {
         addBountiesToMenu(player, lifetimeDatabasePlayer, collection, menu, y, claimAll, collection.name);
     }
 
-    private static void addBountiesToMenu(
-            Player player,
-            DatabasePlayer lifetimeDatabasePlayer,
-            PlayersCollections collection,
-            Menu menu,
-            int y,
-            boolean claimAll,
-            String bountyInfoName
-    ) {
+    private static void addBountiesToMenu(Player player, DatabasePlayer lifetimeDatabasePlayer, PlayersCollections collection, Menu menu, int y, boolean claimAll, String bountyInfoName) {
         if (BountyUtils.BOUNTY_COLLECTION_INFO.get(bountyInfoName) == null) {
             return;
         }
@@ -113,9 +107,7 @@ public class BountyMenu {
             }
             menu.setItem(i + 2, y,
                     bounty.getItemWithProgress().get(),
-                    (m, e) -> {
-                        onBountyClick(player, lifetimeDatabasePlayer, collection, bountyInfoName, databasePlayer, bountiesStarted, bounty);
-                    }
+                    (m, e) -> onBountyClick(player, lifetimeDatabasePlayer, collection, bountyInfoName, databasePlayer, bountiesStarted, bounty)
             );
         }
         if (claimAll && canBeClaimed) {
@@ -136,15 +128,7 @@ public class BountyMenu {
         }
     }
 
-    private static void onBountyClick(
-            Player player,
-            DatabasePlayer lifetimeDatabasePlayer,
-            PlayersCollections collection,
-            String bountyInfoName,
-            DatabasePlayer databasePlayer,
-            int bountiesStarted,
-            AbstractBounty bounty
-    ) {
+    private static void onBountyClick(Player player, DatabasePlayer lifetimeDatabasePlayer, PlayersCollections collection, String bountyInfoName, DatabasePlayer databasePlayer, int bountiesStarted, AbstractBounty bounty) {
         if (bounty.isStarted()) {
             if (bounty.getProgress() == null) {
                 claimBounty(player, collection, databasePlayer, bounty, bountyInfoName);
@@ -159,8 +143,7 @@ public class BountyMenu {
                             addAll(WordWrap.wrap(Component.text(bounty.getDescription(), NamedTextColor.GRAY), 160));
                             add(Component.empty());
                             add(Component.text("Rewards:", NamedTextColor.GRAY));
-                            bounty.getCurrencyReward()
-                                  .forEach((currencies, aLong) -> add(Component.text(" +", NamedTextColor.DARK_GRAY).append(currencies.getCostColoredName(aLong))));
+                            bounty.getCurrencyReward().forEach((currencies, aLong) -> add(Component.text(" +", NamedTextColor.DARK_GRAY).append(currencies.getCostColoredName(aLong))));
                             add(Component.empty());
                             addAll(WordWrap.wrap(Component.text("Click to CANCEL this bounty. This will also reset its progress.", NamedTextColor.RED), 140));
                         }},
@@ -173,8 +156,7 @@ public class BountyMenu {
                             BountyUtils.sendBountyMessage(
                                     player,
                                     Component.text("You cancelled the " + bountyInfoName + " bounty ", NamedTextColor.GRAY)
-                                             .append(Component.text(bounty.getName(), NamedTextColor.GREEN)
-                                                              .hoverEvent(bounty.getItem().get().asHoverEvent()))
+                                             .append(Component.text(bounty.getName(), NamedTextColor.GREEN).hoverEvent(bounty.getItem().get().asHoverEvent()))
                                              .append(Component.text("!"))
                             );
                             Bukkit.getPluginManager().callEvent(new BountyCancelEvent(databasePlayer, bounty));
@@ -183,7 +165,7 @@ public class BountyMenu {
                             DatabaseManager.queueUpdatePlayerAsync(databasePlayer, collection);
                         },
                         (m2, e2) -> openBountyMenu(player),
-                        (m2) -> {
+                        m2 -> {
                         }
                 );
             }
@@ -192,22 +174,19 @@ public class BountyMenu {
         BountyUtils.BountyInfo bountyInfo = BountyUtils.BOUNTY_COLLECTION_INFO.get(bountyInfoName);
         if (bountiesStarted >= bountyInfo.maxBountiesStarted()) {
             player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
-            player.sendMessage(Component.text("You can only accept " + bountyInfo.maxBountiesStarted() + " " + bountyInfoName + " bounties at a time!",
-                    NamedTextColor.RED
-            ));
+            player.sendMessage(Component.text("You can only accept " + bountyInfo.maxBountiesStarted() + " " + bountyInfoName + " bounties at a time!", NamedTextColor.RED));
             player.closeInventory();
             return;
         }
         LinkedHashMap<Currencies, Long> bountyCost = bounty.getCost();
-        for (Map.Entry<Currencies, Long> currenciesLongEntry : bountyCost.entrySet()) {
-            Currencies currency = currenciesLongEntry.getKey();
-            Long cost = currenciesLongEntry.getValue();
+        for (Map.Entry<Currencies, Long> entry : bountyCost.entrySet()) {
+            Currencies currency = entry.getKey();
+            Long cost = entry.getValue();
             if (lifetimeDatabasePlayer.getPveStats().getCurrencyValue(currency) < cost) {
                 player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
                 player.sendMessage(Component.text("You need ", NamedTextColor.RED)
                                             .append(currency.getCostColoredName(cost))
-                                            .append(Component.text(" to start this bounty!"))
-                );
+                                            .append(Component.text(" to start this bounty!")));
                 return;
             }
         }
@@ -220,28 +199,23 @@ public class BountyMenu {
                     addAll(WordWrap.wrap(Component.text(bounty.getDescription(), NamedTextColor.GRAY), 160));
                     add(Component.empty());
                     add(Component.text("Rewards:", NamedTextColor.GRAY));
-                    bounty.getCurrencyReward()
-                          .forEach((currencies, aLong) -> add(Component.text(" +", NamedTextColor.DARK_GRAY).append(currencies.getCostColoredName(aLong))));
+                    bounty.getCurrencyReward().forEach((currencies, aLong) -> add(Component.text(" +", NamedTextColor.DARK_GRAY).append(currencies.getCostColoredName(aLong))));
                     addAll(PvEUtils.getCostLore(bountyCost, true));
                     add(Component.empty());
-                    addAll(WordWrap.wrap(Component.text("You can only have " + bountyInfo.maxBountiesStarted() + " " + bountyInfoName + " bounties active at a time. You can cancel a bounty at any time.",
-                                    NamedTextColor.GRAY
-                            ), 160
-                    ));
+                    addAll(WordWrap.wrap(Component.text("You can only have " + bountyInfo.maxBountiesStarted() + " " + bountyInfoName + " bounties active at a time. You can cancel a bounty at any time.", NamedTextColor.GRAY), 160));
                 }},
                 Component.text("Cancel", NamedTextColor.RED),
                 Collections.singletonList(Component.text("Go back", NamedTextColor.GRAY)),
                 (m2, e2) -> {
-                    for (Map.Entry<Currencies, Long> currenciesLongEntry : bountyCost.entrySet()) {
-                        lifetimeDatabasePlayer.getPveStats().subtractCurrency(currenciesLongEntry.getKey(), currenciesLongEntry.getValue());
+                    for (Map.Entry<Currencies, Long> entry : bountyCost.entrySet()) {
+                        lifetimeDatabasePlayer.getPveStats().subtractCurrency(entry.getKey(), entry.getValue());
                     }
                     player.playSound(player, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
                     bounty.setStarted(true);
                     BountyUtils.sendBountyMessage(
                             player,
                             Component.text("You started the " + bountyInfoName + " bounty ", NamedTextColor.GRAY)
-                                     .append(Component.text(bounty.getName(), NamedTextColor.GREEN)
-                                                      .hoverEvent(bounty.getItem().get().asHoverEvent()))
+                                     .append(Component.text(bounty.getName(), NamedTextColor.GREEN).hoverEvent(bounty.getItem().get().asHoverEvent()))
                                      .append(Component.text("!"))
                     );
                     Bukkit.getPluginManager().callEvent(new BountyStartEvent(databasePlayer, bounty));
@@ -250,7 +224,7 @@ public class BountyMenu {
                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer, collection);
                 },
                 (m2, e2) -> openBountyMenu(player),
-                (m2) -> {
+                m2 -> {
                 }
         );
     }
@@ -261,8 +235,7 @@ public class BountyMenu {
         BountyUtils.sendBountyMessage(
                 player,
                 Component.text("You claimed the " + collection.name.toLowerCase() + " bounty ", NamedTextColor.GRAY)
-                         .append(Component.text(bounty.getName(), NamedTextColor.GREEN)
-                                          .hoverEvent(bounty.getItem().get().asHoverEvent()))
+                         .append(Component.text(bounty.getName(), NamedTextColor.GREEN).hoverEvent(bounty.getItem().get().asHoverEvent()))
                          .append(Component.text(". The reward has been added to your "))
                          .append(Component.text("Reward Inventory", NamedTextColor.YELLOW, TextDecoration.BOLD, TextDecoration.UNDERLINED)
                                           .clickEvent(ClickEvent.callback(audience -> RewardInventory.openRewardInventory(player, 1))))
@@ -270,5 +243,4 @@ public class BountyMenu {
         );
         Bukkit.getPluginManager().callEvent(new BountyClaimEvent(databasePlayer, bounty));
     }
-
 }
