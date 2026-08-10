@@ -16,9 +16,9 @@ public enum Anomalies {
                     Component.text("Defend each relic for 2 minutes.")
             ),
             List.of(
-                    new AnomalyRewardPool("Opex Cache I", 6_000, 150, 1),
-                    new AnomalyRewardPool("Opex Cache II", 12_000, 200, 1),
-                    new AnomalyRewardPool("Opex Cache III", 18_000, 250, 2)
+                    new AnomalyRewardPool("Opex Cache I", 4_000, 150, 1),
+                    new AnomalyRewardPool("Opex Cache II", 8_000, 200, 1),
+                    new AnomalyRewardPool("Opex Cache III", 12_000, 250, 2)
             ),
             new AnomalyMobSet()
                     //basic
@@ -55,17 +55,62 @@ public enum Anomalies {
                     Component.text("Reach each destination within 2 minutes.")
             ),
             List.of(
-                    new AnomalyRewardPool("Dunestar Cache I", 10_000, 150, 1),
-                    new AnomalyRewardPool("Dunestar Cache II", 20_000, 350, 1),
-                    new AnomalyRewardPool("Dunestar Cache III", 30_000, 500, 2)
+                    new AnomalyRewardPool("Dunestar Cache I", 4_000, 150, 1),
+                    new AnomalyRewardPool("Dunestar Cache II", 8_000, 300, 1),
+                    new AnomalyRewardPool("Dunestar Cache III", 12_000, 400, 2)
             ),
             new AnomalyMobSet()
-                    .add(Mob.PIG_DISCIPLE)
-                    .add(Mob.ARACHNO_VENARI),
+                    //basic
+                    .add(0.4, Mob.ZOMBIE_LANCER)
+                    .add(0.2, Mob.SLIMY_ANOMALY)
+                    .add(0.2, Mob.ARACHNO_VENARI)
+                    //elite
+                    .add(0.5, Mob.ZOMBIE_SWORDSMAN)
+                    .add(0.1, Mob.SKELETAL_WARLOCK)
+                    .add(0.2, Mob.PIG_SHAMAN)
+                    .add(0.02, Mob.ILLUMINATION)
+                    .add(0.15, Mob.GOLEM_APPRENTICE)
+                    .add(0.06, Mob.WITCH_DEACON)
+                    .add(0.02, Mob.ADVANCED_WARRIOR_BERSERKER)
+                    //envoy
+                    .add(0.05, Mob.ZOMBIE_VANGUARD)
+                    .add(0.05, Mob.SKELETAL_ENTROPY)
+                    .add(0.01, Mob.PIG_ALLEVIATOR)
+                    //elite
+                    .add(0.04, Mob.VOID_ZOMBIE)
+                    .add(0.04, Mob.SKELETAL_MESMER)
+                    .add(0.04, Mob.FIRE_SPLITTER)
+                    .add(0.02, Mob.RIFT_WALKER)
+                    // champion
+                    .add(0.01, Mob.LANTERN_DREDGER)
+                    .add(0.01, Mob.BARNACLE_BRUTE)
+                    .add(0.01, Mob.ABYSS_WATCHER),
             new AnomalyMobSet()
-                    .add(Mob.PIG_DISCIPLE)
-                    .add(Mob.ARACHNO_VENARI)
-                    .add(Mob.INTERMEDIATE_WARRIOR_BERSERKER),
+                    //basic
+                    .add(0.4, Mob.ZOMBIE_LANCER)
+                    .add(0.2, Mob.SLIMY_ANOMALY)
+                    .add(0.2, Mob.ARACHNO_VENARI)
+                    //elite
+                    .add(0.5, Mob.ZOMBIE_SWORDSMAN)
+                    .add(0.1, Mob.SKELETAL_WARLOCK)
+                    .add(0.2, Mob.PIG_SHAMAN)
+                    .add(0.02, Mob.ILLUMINATION)
+                    .add(0.15, Mob.GOLEM_APPRENTICE)
+                    .add(0.06, Mob.WITCH_DEACON)
+                    .add(0.02, Mob.ADVANCED_WARRIOR_BERSERKER)
+                    //envoy
+                    .add(0.05, Mob.ZOMBIE_VANGUARD)
+                    .add(0.05, Mob.SKELETAL_ENTROPY)
+                    .add(0.01, Mob.PIG_ALLEVIATOR)
+                    //elite
+                    .add(0.04, Mob.VOID_ZOMBIE)
+                    .add(0.04, Mob.SKELETAL_MESMER)
+                    .add(0.04, Mob.FIRE_SPLITTER)
+                    .add(0.02, Mob.RIFT_WALKER)
+                    // champion
+                    .add(0.01, Mob.LANTERN_DREDGER)
+                    .add(0.01, Mob.BARNACLE_BRUTE)
+                    .add(0.01, Mob.ABYSS_WATCHER),
             new AnomalyMobSet()
                     //basic
                     .add(0.4, Mob.ZOMBIE_LANCER)
@@ -101,9 +146,9 @@ public enum Anomalies {
                     Component.text("Wrong inputs summon additional defenders.")
             ),
             List.of(
-                    new AnomalyRewardPool("Remnant Cache I", 8_000, 225, 1),
-                    new AnomalyRewardPool("Remnant Cache II", 15_000, 350, 1),
-                    new AnomalyRewardPool("Remnant Cache III", 25_000, 450, 2)
+                    new AnomalyRewardPool("Remnant Cache I", 2_000, 225, 1),
+                    new AnomalyRewardPool("Remnant Cache II", 6_000, 350, 1),
+                    new AnomalyRewardPool("Remnant Cache III", 10_000, 450, 2)
             ),
             new AnomalyMobSet()
                     //basic

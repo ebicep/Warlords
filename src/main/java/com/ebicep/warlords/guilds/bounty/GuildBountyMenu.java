@@ -62,11 +62,6 @@ public final class GuildBountyMenu {
             menu.setItem(i + 2, y, getBountyItem(progress), (m, e) -> {
             });
         }
-
-        menu.setItem(7, y, new ItemBuilder(Material.CHEST)
-                .name(Component.text("Guild Shop", NamedTextColor.GREEN))
-                .lore(Component.text("Purchase Guild Bounty slots.", NamedTextColor.GRAY))
-                .get(), (m, e) -> GuildShopMenu.openGuildShopMenu(guild, player));
     }
 
     private static ItemStack getLockedItem(int slotIndex, boolean noGuild) {
@@ -77,8 +72,8 @@ public final class GuildBountyMenu {
         } else {
             itemBuilder.lore(
                     Component.text("Locked", NamedTextColor.RED),
-                    Component.text("Unlock in the Guild Shop for ", NamedTextColor.GRAY)
-                             .append(Component.text(NumberFormat.addCommas(GuildBountyManager.SLOT_COSTS[slotIndex]) + " Guild Coins", NamedTextColor.YELLOW))
+                    Component.empty(),
+                    Component.text("Your guild needs to unlock this slot first.", NamedTextColor.GRAY)
             );
         }
         return itemBuilder.get();

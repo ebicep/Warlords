@@ -72,9 +72,6 @@ public class NewItemOption implements Option {
         List<Component> totalBonusLore = new ArrayList<>();
         totalBonusLore.add(Component.text("Total Bonuses:", NamedTextColor.AQUA));
         totalBonusLore.addAll(NewItemsUtils.getTotalStatsComponent(appliedItems));
-        for (Component component : totalBonusLore) {
-            ChatChannels.sendDebugMessage(warlordsPlayer, Component.text("loadout: " + loadout.getName(), NamedTextColor.GRAY).append(component));
-        }
         totalBonusLore.add(Component.empty());
         List<Component> setsStatsComponent = NewItemsUtils.getTotalSetsStatsComponent(appliedItems);
         for (int i = 0; i < setsStatsComponent.size(); i++) {

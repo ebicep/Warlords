@@ -50,7 +50,7 @@ public class AnomalyStartTrait extends WarlordsTrait implements HasNPCLabelHolog
         long playerCount = Warlords.getGameManager().getPlayerCount(GameMode.ANOMALY);
         long playerCountInLobby = Warlords.getGameManager().getPlayerCountInLobby(GameMode.ANOMALY);
         long rotationHour = AnomalyRotation.getRotationStart().getEpochSecond();
-        if (!init && playerCount == lastPlayerCount && playerCountInLobby == lastPlayerCountInLobby || rotationHour != lastRotationHour) {
+        if (!init && playerCount == lastPlayerCount && playerCountInLobby == lastPlayerCountInLobby) {
             return;
         }
         lastPlayerCount = playerCount;
@@ -58,7 +58,7 @@ public class AnomalyStartTrait extends WarlordsTrait implements HasNPCLabelHolog
         lastRotationHour = rotationHour;
         labelHologram.update(
                 npc,
-                ComponentBuilder.create("CURRENT ANOMALY: ", NamedTextColor.RED).append(Component.text(AnomalyRotation.getCurrentAnomaly().getName(), NamedTextColor.GOLD))
+                ComponentBuilder.create("CURRENT ANOMALY: ", NamedTextColor.GRAY).append(Component.text(AnomalyRotation.getCurrentAnomaly().getName(), NamedTextColor.GOLD))
                         .newLine("Anomaly", NamedTextColor.GREEN, TextDecoration.BOLD)
                         .newLine(playerCountInLobby + " in Lobby", NamedTextColor.GRAY)
                         .newLine(playerCount + " Players", NamedTextColor.YELLOW, TextDecoration.BOLD)

@@ -9,13 +9,15 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import javax.annotation.Nonnull;
 
 public class DunestarRelicSlowOption implements Option {
 
     private static final String MODIFIER_NAME = "Dunestar Relic Carrier";
-    private static final float SPEED_REDUCTION = -40;
+    private static final float SPEED_REDUCTION = -60;
     private static final String RELIC_NAME = "Dunestar Relic";
 
     @Override
