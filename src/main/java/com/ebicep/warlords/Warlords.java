@@ -31,6 +31,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksOutsideGame;
+import com.ebicep.warlords.pve.consumables.ConsumableListener;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
 import com.ebicep.warlords.pve.mobs.tiers.PlayerMob;
 import com.ebicep.warlords.pve.rewards.types.PatreonReward;
@@ -297,7 +298,7 @@ public class Warlords extends JavaPlugin {
             server.getEntityMetadata().invalidateAll(this);
             server.getWorldMetadata().invalidateAll(this);
             server.getPlayerMetadata().invalidateAll(this);
-            server.getWorlds().forEach(world -> ((CraftWorld) world).getBlockMetadata().invalidateAll(this));
+            server.getWorlds().forEach(world -> ((CraftWorld) world).getHandle().getEntityManager().getEntityLookup());
         } catch (Exception e) {
             ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
         }
@@ -364,6 +365,7 @@ public class Warlords extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new WarlordsPlayer(), this);
         getServer().getPluginManager().registerEvents(new PlayerHotBarItemListener(), this);
         getServer().getPluginManager().registerEvents(new GuildListener(), this);
+        getServer().getPluginManager().registerEvents(new ConsumableListener(), this);
         getServer().getPluginManager().registerEvents(new PatreonReward(), this);
         getServer().getPluginManager().registerEvents(new MemoryManager(), this);
         getServer().getPluginManager().registerEvents(new Shield(), this);
@@ -387,7 +389,7 @@ public class Warlords extends JavaPlugin {
 //                Action action = event.getAction();
 //                if(action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
 //                    playerClicks.merge(event.getPlayer().getUniqueId(), 1, Integer::sum);
-////                    System.out.println("Left click: " + playerClicks.get(event.getPlayer().getUniqueId()));
+////                    System.out.println("Left click: " + playerClicks.get(player.getUniqueId()));
 //                }
 //            }
 //        }, this);
