@@ -9,7 +9,6 @@ import com.ebicep.warlords.guilds.*;
 import com.ebicep.warlords.guilds.logs.AbstractGuildLog;
 import com.ebicep.warlords.guilds.logs.types.oneplayer.GuildLogCoinsConverted;
 import com.ebicep.warlords.guilds.upgrades.permanent.GuildUpgradesPermanent;
-import com.ebicep.warlords.guilds.upgrades.temporary.GuildUpgradesTemporary;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
@@ -64,14 +63,14 @@ public class GuildMenu {
                 }
         );
         menu.setItem(2, 0,
-                new ItemBuilder(Material.GOLDEN_HORSE_ARMOR)
-                        .name(Component.text("Temporary Blessings", NamedTextColor.GREEN))
+                new ItemBuilder(Material.POTION)
+                        .name(Component.text("Vial Unlocks", NamedTextColor.GREEN))
                         .lore(
-                                grayBase.content("These upgrades last 24 hours and "),
-                                grayBase.content("will only affect players in the guild.")
+                                grayBase.content("Permanently unlock Vials and consumables "),
+                                grayBase.content("for every guild member's personal shop.")
                         )
                         .get(),
-                (m, e) -> GuildUpgradeMenu.openGuildUpgradeTypeMenu(player, guild, "Temporary Blessings", GuildUpgradesTemporary.VALUES)
+                (m, e) -> GuildConsumableUnlockMenu.open(player, guild)
         );
         menu.setItem(3, 0,
                 new ItemBuilder(Material.DIAMOND_HORSE_ARMOR)
