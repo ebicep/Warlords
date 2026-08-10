@@ -57,6 +57,7 @@ public class NPCManager {
                 createLegendaryWeaponNPC();
                 createSupplyDropFairNPC();
                 createBountyMenuNPC();
+                createSupporterShopNPC();
                 createStarPieceSynthesizerNPC();
                 createItemCrafterNPC();
                 createIllusionVendorNPC();
@@ -266,6 +267,33 @@ public class NPCManager {
         ).build()).setBillboard(Display.Billboard.CENTER).build();
         HologramManager.addHologram(new Hologram.Builder(
                         "bountyHunter",
+                        location.clone().add(0, 2.1, 0),
+                        player -> hologramDataText
+                ).setVisibility(VisibilityType.ALL).build()
+        );
+    }
+
+    public static void createSupporterShopNPC() {
+        registerTrait(SupporterShopTrait.class, "SupporterShopTrait");
+
+        NPC npc = NPC_REGISTRY.createNPC(EntityType.VILLAGER, "supporter-shop");
+        npc.addTrait(SupporterShopTrait.class);
+        npc.getOrAddTrait(VillagerProfession.class).setProfession(Villager.Profession.CLERIC);
+
+        LookClose lookClose = npc.getOrAddTrait(LookClose.class);
+        lookClose.setPerPlayer(true);
+        lookClose.toggle();
+
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
+        Location location = new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 29.5, 81, 163.5, 90, 0);
+        npc.spawn(location);
+
+        HologramDataText hologramDataText = new HologramDataText.Builder<>(ComponentBuilder.create(
+                "Supporter Shop",
+                NamedTextColor.GOLD
+        ).build()).setBillboard(Display.Billboard.CENTER).build();
+        HologramManager.addHologram(new Hologram.Builder(
+                        "supporterShop",
                         location.clone().add(0, 2.1, 0),
                         player -> hologramDataText
                 ).setVisibility(VisibilityType.ALL).build()
