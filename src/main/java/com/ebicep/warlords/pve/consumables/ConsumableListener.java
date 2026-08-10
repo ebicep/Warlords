@@ -4,6 +4,7 @@ import com.ebicep.warlords.events.player.ingame.pve.WarlordsAddCurrencyEvent;
 import com.ebicep.warlords.events.player.ingame.pve.drops.AbstractWarlordsDropRewardEvent;
 import com.ebicep.warlords.events.player.ingame.pve.drops.WarlordsDropNewItemEvent;
 import com.ebicep.warlords.events.player.ingame.pve.drops.WarlordsDropWeaponEvent;
+import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.consumables.vials.VialEffect;
 import com.ebicep.warlords.pve.consumables.vials.VialManager;
@@ -15,7 +16,8 @@ public class ConsumableListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onInsigniaGain(WarlordsAddCurrencyEvent event) {
-        if (!(event.getWarlordsEntity() instanceof WarlordsPlayer warlordsPlayer) || !warlordsPlayer.isInPve()) {
+        if (!(event.getWarlordsEntity() instanceof WarlordsPlayer warlordsPlayer)
+                || !GameMode.isPvE(warlordsPlayer.getGame().getGameMode())) {
             return;
         }
         double multiplier = VialManager.getMultiplier(warlordsPlayer.getDatabasePlayer(), VialEffect.INSIGNIA_GAIN);
@@ -33,7 +35,8 @@ public class ConsumableListener implements Listener {
     }
 
     private void applyDropMultiplier(AbstractWarlordsDropRewardEvent event, VialEffect effect) {
-        if (!(event.getWarlordsEntity() instanceof WarlordsPlayer warlordsPlayer) || !warlordsPlayer.isInPve()) {
+        if (!(event.getWarlordsEntity() instanceof WarlordsPlayer warlordsPlayer)
+                || !GameMode.isPvE(warlordsPlayer.getGame().getGameMode())) {
             return;
         }
         double multiplier = VialManager.getMultiplier(warlordsPlayer.getDatabasePlayer(), effect);
