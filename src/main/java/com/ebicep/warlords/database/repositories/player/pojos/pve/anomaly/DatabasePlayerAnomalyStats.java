@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class DatabasePlayerAnomalyStats implements AnomalyStatsWarlordsClasses, TracksAbilityStats {
+public class DatabasePlayerAnomalyStats implements MultiPvEAnomalyStats, TracksAbilityStats {
 
     @Field("player_count_stats")
     private Map<Integer, DatabasePlayerPvEAnomalyPlayerCountStats> playerCountStats = new LinkedHashMap<>() {{
@@ -32,12 +32,6 @@ public class DatabasePlayerAnomalyStats implements AnomalyStatsWarlordsClasses, 
     @Override
     public Map<Ability<?>, AbstractAbilityStats<?, ?>> getAbilityStats() {
         return abilityStats;
-    }
-
-    @Override
-    public AnomalyStatsWarlordsSpecs getClass(com.ebicep.warlords.player.general.Classes classes) {
-        DatabasePlayerPvEAnomalyPlayerCountStats stats = getPlayerCountStats(1);
-        return stats == null ? null : stats.getClass(classes);
     }
 
     @Override
