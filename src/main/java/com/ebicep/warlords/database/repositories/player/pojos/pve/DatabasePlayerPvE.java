@@ -39,6 +39,7 @@ import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
 import com.ebicep.warlords.pve.bountysystem.Bounty;
 import com.ebicep.warlords.pve.bountysystem.BountyUtils;
+import com.ebicep.warlords.pve.consumables.ConsumableManager;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairEntry;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
 import com.ebicep.warlords.pve.events.supplydrop.SupplyDropEntry;
@@ -120,6 +121,8 @@ public class DatabasePlayerPvE implements MultiPvEStats<
     private ItemsManager itemsManager = new ItemsManager();
     @Field("new_item_manager")
     private NewItemsManager newItemsManager = new NewItemsManager();
+    @Field("consumable_manager")
+    private ConsumableManager consumableManager = new ConsumableManager();
 
     //CURRENCIES
     private Map<Currencies, Long> currencies = new LinkedHashMap<>() {{
@@ -335,6 +338,13 @@ public class DatabasePlayerPvE implements MultiPvEStats<
 
     public NewItemsManager getNewItemsManager() {
         return newItemsManager;
+    }
+
+    public ConsumableManager getConsumableManager() {
+        if (consumableManager == null) {
+            consumableManager = new ConsumableManager();
+        }
+        return consumableManager;
     }
 
     public void addMobDrops(MobDrop mobDrop, long amount) {
