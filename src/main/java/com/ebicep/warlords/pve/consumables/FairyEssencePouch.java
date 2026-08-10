@@ -31,7 +31,7 @@ public enum FairyEssencePouch implements Consumable {
 
     @Override
     public Material getMaterial() {
-        return Material.MAGENTA_BUNDLE;
+        return Material.BUNDLE;
     }
 
     @Override
