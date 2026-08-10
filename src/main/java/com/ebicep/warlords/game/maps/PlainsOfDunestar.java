@@ -3,6 +3,7 @@ package com.ebicep.warlords.game.maps;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.pve.anomaly.DunestarCurrencyOption;
 import com.ebicep.warlords.game.option.pve.anomaly.DunestarEscortOption;
+import com.ebicep.warlords.game.option.pve.anomaly.DunestarMovingWallOption;
 import com.ebicep.warlords.game.option.pve.anomaly.DunestarRelicSlowOption;
 import com.ebicep.warlords.game.option.pve.anomaly.DunestarRouteMarker;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
@@ -28,6 +29,7 @@ public class PlainsOfDunestar extends AbstractAnomalyMap {
             options.add(DunestarRouteMarker.create(routeIndex, location(loc, ROUTE_LOCATIONS[routeIndex])).asOption());
         }
         options.add(new DunestarEscortOption());
+        options.add(new DunestarMovingWallOption());
         options.add(new DunestarRelicSlowOption());
         options.add(new DunestarCurrencyOption());
     }
