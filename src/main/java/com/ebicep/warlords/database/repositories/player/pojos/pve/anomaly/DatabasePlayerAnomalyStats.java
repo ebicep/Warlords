@@ -1,0 +1,77 @@
+package com.ebicep.warlords.database.repositories.player.pojos.pve.anomaly;
+
+import com.ebicep.warlords.abilities.internal.Ability;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityStats;
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.anomaly.DatabaseGamePlayerPvEAnomaly;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.anomaly.DatabaseGamePvEAnomaly;
+import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.TracksAbilityStats;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.game.GameMode;
+import com.ebicep.warlords.util.chat.ChatUtils;
+import org.springframework.data.mongodb.core.mapping.Field;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+public class DatabasePlayerAnomalyStats implements AnomalyStatsWarlordsClasses, TracksAbilityStats {
+
+    @Field("player_count_stats")
+    private Map<Integer, DatabasePlayerPvEAnomalyPlayerCountStats> playerCountStats = new LinkedHashMap<>() {{
+        put(1, new DatabasePlayerPvEAnomalyPlayerCountStats());
+        put(2, new DatabasePlayerPvEAnomalyPlayerCountStats());
+        put(3, new DatabasePlayerPvEAnomalyPlayerCountStats());
+        put(4, new DatabasePlayerPvEAnomalyPlayerCountStats());
+    }};
+    @Field("ability_stats")
+    private Map<Ability<?>, AbstractAbilityStats<?, ?>> abilityStats = new HashMap<>();
+
+    @Override
+    public Map<Ability<?>, AbstractAbilityStats<?, ?>> getAbilityStats() {
+        return abilityStats;
+    }
+
+    @Override
+    public AnomalyStatsWarlordsSpecs getClass(com.ebicep.warlords.player.general.Classes classes) {
+        DatabasePlayerPvEAnomalyPlayerCountStats stats = getPlayerCountStats(1);
+        return stats == null ? null : stats.getClass(classes);
+    }
+
+    @Override
+    public void updateStats(
+            DatabasePlayer databasePlayer,
+            DatabaseGamePvEAnomaly databaseGame,
+            GameMode gameMode,
+            DatabaseGamePlayerPvEAnomaly gamePlayer,
+            DatabaseGamePlayerResult result,
+            int multiplier,
+            PlayersCollections playersCollection
+    ) {
+        int playerCount = databaseGame.getBasePlayers().size();
+        DatabasePlayerPvEAnomalyPlayerCountStats countStats = getPlayerCountStats(playerCount);
+        if (countStats != null) {
+            countStats.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+        } else {
+            ChatUtils.MessageType.GAME_SERVICE.sendErrorMessage("Invalid player count = " + playerCount);
+        }
+        updateAbilityStats(gamePlayer, multiplier);
+    }
+
+    public DatabasePlayerPvEAnomalyPlayerCountStats getPlayerCountStats(int playerCount) {
+        if (playerCount < 1) {
+            return null;
+        }
+        return playerCountStats.computeIfAbsent(playerCount, k -> new DatabasePlayerPvEAnomalyPlayerCountStats());
+    }
+
+    @Override
+    public Collection<AnomalyStatsWarlordsClasses> getStats() {
+        return playerCountStats.values()
+                               .stream()
+                               .map(AnomalyStatsWarlordsClasses.class::cast)
+                               .toList();
+    }
+}
