@@ -20,7 +20,7 @@ import java.time.format.TextStyle;
 import java.util.Locale;
 import java.util.concurrent.CompletionStage;
 
-@CommandAlias("patreon")
+@CommandAlias("supporterreward|patreon")
 @CommandPermission("group.administrator")
 public class PatreonCommand extends BaseCommand {
 
