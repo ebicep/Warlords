@@ -298,7 +298,7 @@ public class Warlords extends JavaPlugin {
             server.getEntityMetadata().invalidateAll(this);
             server.getWorldMetadata().invalidateAll(this);
             server.getPlayerMetadata().invalidateAll(this);
-            server.getWorlds().forEach(world -> ((CraftWorld) world).getHandle().getEntityManager().getEntityLookup());
+            server.getWorlds().forEach(world -> ((CraftWorld) world).getBlockMetadata().invalidateAll(this));
         } catch (Exception e) {
             ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
         }
@@ -389,7 +389,7 @@ public class Warlords extends JavaPlugin {
 //                Action action = event.getAction();
 //                if(action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
 //                    playerClicks.merge(event.getPlayer().getUniqueId(), 1, Integer::sum);
-////                    System.out.println("Left click: " + playerClicks.get(player.getUniqueId()));
+////                    System.out.println("Left click: " + playerClicks.get(event.getPlayer().getUniqueId()));
 //                }
 //            }
 //        }, this);
