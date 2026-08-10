@@ -6,9 +6,11 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.events.game.pve.WarlordsMobSpawnEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsGiveExperienceEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsAddCurrencyFinalEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.game.option.ExperienceGainOption;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.game.option.pve.PveOption;
@@ -111,6 +113,32 @@ public abstract class AbstractAnomalyOption implements PveOption {
                     return;
                 }
                 AbilityTree.handleAutoUpgrade(player);
+            }
+
+            @EventHandler
+            public void onGiveExperience(WarlordsGiveExperienceEvent event) {
+                WarlordsEntity player = event.getWarlordsEntity();
+                if (player.getGame() != game) {
+                    return;
+                }
+                ExperienceGainOption experienceGainOption = game.getOptions()
+                        .stream()
+                        .filter(ExperienceGainOption.class::isInstance)
+                        .map(ExperienceGainOption.class::cast)
+                        .findAny()
+                        .orElse(null);
+                if (experienceGainOption == null) {
+                    return;
+                }
+                if (experienceGainOption.getPlayerExpPer() != 0 && objectivesCompleted > 0) {
+                    event.getExperienceSummary().put("Objectives Completed", experienceGainOption.getPlayerExpPer() * objectivesCompleted);
+                }
+                if (experienceGainOption.getPlayerExpGameWinBonus() != 0 && completed) {
+                    event.getExperienceSummary().put(
+                            "Anomaly Completion Bonus",
+                            (long) (experienceGainOption.getPlayerExpGameWinBonus() * getDifficulty().getRewardsMultiplier())
+                    );
+                }
             }
         });
 
