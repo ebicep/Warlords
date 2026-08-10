@@ -15,6 +15,7 @@ public class CustomHorse extends Horse {
     public CustomHorse(Location location) {
         super(EntityType.HORSE, ((CraftWorld) location.getWorld()).getHandle());
         setPos(location.getX(), location.getY(), location.getZ());
+        setRot(location.getYaw(), location.getPitch());
     }
 
     @Override
