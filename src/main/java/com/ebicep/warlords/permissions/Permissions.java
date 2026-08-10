@@ -31,10 +31,12 @@ public enum Permissions {
     CONTENT_CREATOR("CT", NamedTextColor.LIGHT_PURPLE, "group.contentcreator"),
     BUILDER("BUILDER", NamedTextColor.DARK_GREEN, "group.builder"),
     GAME_STARTER("GS", NamedTextColor.YELLOW, "group.gamestarter"),
-    SUPPORTER("S", NamedTextColor.GOLD, "group.patreon"),
+    SUPPORTER("S", NamedTextColor.GOLD, "group.supporter"),
     STREAMER("", NamedTextColor.AQUA, "group.streamer"),
     DEFAULT("", NamedTextColor.AQUA, "group.default");
 
+    public static final String LEGACY_PATREON_PERMISSION = "group.patreon";
+    public static final String TEBEX_SUPPORTER_PERMISSION_PREFIX = "warlords.supporter.";
     public static final Permissions[] VALUES = values();
 
     public static void listenToNewPatreons(UserDataRecalculateEvent event) {
@@ -44,25 +46,29 @@ public enum Permissions {
                 User user = event.getUser();
                 List<String> permissions = user.getNodes().stream().map(Node::getKey).collect(Collectors.toList());
                 permissions.remove("group.default");
+                boolean supporter = isSupporterPermissionList(permissions);
+                if (supporter && !permissions.contains(LEGACY_PATREON_PERMISSION)) {
+                    permissions.add(LEGACY_PATREON_PERMISSION);
+                }
                 for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
                     DatabasePlayer databasePlayer = DatabaseManager.getPlayer(user.getUniqueId(), activeCollection);
                     databasePlayer.setPermissions(permissions);
                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer, activeCollection);
                 }
-                validateHonorificSupporterAccess(user.getUniqueId(), permissions.contains(SUPPORTER.permission));
+                validateHonorificSupporterAccess(user.getUniqueId(), supporter);
                 CustomScoreboard.updateLobbyPlayerNames();
             }
         }.runTaskLater(Warlords.getInstance(), 60);
     }
 
     public static Component getPrefixWithColor(Player player, boolean includeName) {
-        validateHonorificSupporterAccess(player.getUniqueId(), isPatreon(player));
+        validateHonorificSupporterAccess(player.getUniqueId(), isSupporter(player));
         return createPlayerPrefix(getPermission(player), player.getUniqueId(), includeName ? player.getName() : "", includeName);
     }
 
     public static Component getPrefixWithColor(UUID uuid, boolean includeName) {
         DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid);
-        validateHonorificSupporterAccess(uuid, isPatreon(databasePlayer));
+        validateHonorificSupporterAccess(uuid, isSupporter(databasePlayer));
         return createPlayerPrefix(getPermission(databasePlayer), uuid, includeName ? databasePlayer.getName() : "", includeName);
     }
 
@@ -80,7 +86,7 @@ public enum Permissions {
 
     private static Permissions getPermission(Player player) {
         for (Permissions value : VALUES) {
-            if (player.hasPermission(value.permission)) {
+            if (value == SUPPORTER ? isSupporter(player) : player.hasPermission(value.permission)) {
                 return value;
             }
         }
@@ -89,7 +95,7 @@ public enum Permissions {
 
     private static Permissions getPermission(DatabasePlayer databasePlayer) {
         for (Permissions value : VALUES) {
-            if (databasePlayer.getPermissions().contains(value.permission)) {
+            if (value == SUPPORTER ? isSupporter(databasePlayer) : databasePlayer.getPermissions().contains(value.permission)) {
                 return value;
             }
         }
@@ -124,21 +130,45 @@ public enum Permissions {
         return player.hasPermission(GAME_STARTER.permission);
     }
 
-    public static boolean isPatreon(Player player) {
-        return player.hasPermission(SUPPORTER.permission);
+    public static boolean isSupporter(Player player) {
+        if (player.hasPermission(SUPPORTER.permission)
+                || player.hasPermission(LEGACY_PATREON_PERMISSION)
+                || player.hasPermission(CONTENT_CREATOR.permission)) {
+            return true;
+        }
+        return player.getEffectivePermissions().stream()
+                .anyMatch(permission -> permission.getValue()
+                        && permission.getPermission().startsWith(TEBEX_SUPPORTER_PERMISSION_PREFIX));
     }
 
+    public static boolean isSupporter(DatabasePlayer databasePlayer) {
+        return isSupporterPermissionList(databasePlayer.getPermissions());
+    }
+
+    @Deprecated
+    public static boolean isPatreon(Player player) {
+        return isSupporter(player);
+    }
+
+    @Deprecated
     public static boolean isPatreon(DatabasePlayer databasePlayer) {
-        return databasePlayer.getPermissions().contains(SUPPORTER.permission);
+        return isSupporter(databasePlayer);
     }
 
     public static boolean isDefault(Player player) {
         return player.hasPermission(DEFAULT.permission);
     }
 
-    private static void validateHonorificSupporterAccess(UUID uuid, boolean hasPatreon) {
+    private static boolean isSupporterPermissionList(List<String> permissions) {
+        return permissions.contains(SUPPORTER.permission)
+                || permissions.contains(LEGACY_PATREON_PERMISSION)
+                || permissions.contains(CONTENT_CREATOR.permission)
+                || permissions.stream().anyMatch(permission -> permission.startsWith(TEBEX_SUPPORTER_PERMISSION_PREFIX));
+    }
+
+    private static void validateHonorificSupporterAccess(UUID uuid, boolean hasSupporter) {
         HonorificProfile profile = HonorificManager.getProfile(uuid);
-        if (!profile.validatePatreonAccess(hasPatreon)) {
+        if (!profile.validatePatreonAccess(hasSupporter)) {
             return;
         }
         HonorificManager.saveAsync(uuid);
@@ -162,6 +192,6 @@ public enum Permissions {
     }
 
     public boolean contains(Player player) {
-        return player.hasPermission(permission);
+        return this == SUPPORTER ? isSupporter(player) : player.hasPermission(permission);
     }
 }
