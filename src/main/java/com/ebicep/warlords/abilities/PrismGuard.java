@@ -10,6 +10,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsAbilityTargetEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
@@ -157,62 +158,74 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                     }
                     if (ticksElapsed % 3 == 0) {
                         isInsideBubble.clear();
-                        for (WarlordsEntity enemyInsideBubble : PlayerFilter.entitiesAround(wp, bubbleRadius, bubbleRadius, bubbleRadius).aliveEnemiesOf(wp)) {
-                            isInsideBubble.add(enemyInsideBubble);
-                            if (pveMasterUpgrade2) {
-                                boolean silenced = enemyInsideBubble.getCooldownManager().hasCooldown(SoulShackle.class);
-                                if (silenced) {
-                                    enemyInsideBubble.getCooldownManager().removeCooldownByName("Bubble Silence Debuff");
-                                    enemyInsideBubble.getCooldownManager().addCooldown(new RegularCooldown<>(
-                                            "Bubble Silence Debuff",
-                                            "BUBBLE DEBUFF",
-                                            PrismGuard.class,
-                                            null,
+                        for (WarlordsEntity nearby : PlayerFilter.entitiesAroundInGame(wp, bubbleRadius, bubbleRadius, bubbleRadius)) {
+                            if (nearby.isEnemy(wp)) {
+                                if (!nearby.isDead()) {
+                                    isInsideBubble.add(nearby);
+                                }
+                                if (pveMasterUpgrade2 && nearby.getCooldownManager().hasCooldown(SoulShackle.class)) {
+                                    Optional<RegularCooldown> existing = new CooldownFilter<>(nearby, RegularCooldown.class)
+                                            .filterName("Bubble Silence Debuff")
+                                            .findFirst();
+                                    if (existing.isPresent()) {
+                                        existing.get().setTicksLeft(6);
+                                    } else {
+                                        nearby.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                                "Bubble Silence Debuff",
+                                                "BUBBLE DEBUFF",
+                                                PrismGuard.class,
+                                                null,
+                                                wp,
+                                                CooldownTypes.LOW_LEVEL_DEBUFF,
+                                                cooldownManager -> {},
+                                                6
+                                        ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, 1.1f);
+                                                }
+                                        ));
+                                    }
+                                }
+                            } else if (nearby != wp && nearby.isTeammate(wp) && !nearby.isDead()) {
+                                if (!playersHit.contains(nearby)) {
+                                    Bukkit.getPluginManager().callEvent(new WarlordsAbilityTargetEvent.WarlordsBlueAbilityTargetEvent(wp, name, Set.of(nearby)));
+                                }
+                                playersHit.add(nearby);
+                                Optional<RegularCooldown> existing = new CooldownFilter<>(nearby, RegularCooldown.class)
+                                        .filterCooldownObject(data)
+                                        .findFirst();
+                                if (existing.isPresent()) {
+                                    existing.get().setTicksLeft(4);
+                                } else {
+                                    nearby.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                            "Prism Guard Bubble",
+                                            "GUARD",
+                                            PrismGuardData.class,
+                                            data,
                                             wp,
-                                            CooldownTypes.LOW_LEVEL_DEBUFF,
-                                            cooldownManager -> {},
-                                            6
-                                    ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, 1.1f);
+                                            CooldownTypes.ABILITY,
+                                            cooldownManager -> {
+                                            },
+                                            4
+                                    ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
+                                                if (Utils.isProjectile(event.getCause())) {
+                                                    if (!isInsideBubble.contains(event.getSource())) {
+                                                        stats.timesProjectilesReduced++;
+                                                        currentDamageValue.addModifier(
+                                                                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name,
+                                                                (100 - projectileDamageReduction) / 100f,
+                                                                contribution -> data.totalDamageReduced += Math.abs(contribution)
+                                                        );
+                                                    }
+                                                }
                                             }
                                     ));
                                 }
                             }
                         }
-                        for (WarlordsEntity bubblePlayer : PlayerFilter.entitiesAround(wp, bubbleRadius, bubbleRadius, bubbleRadius).aliveTeammatesOfExcludingSelf(wp)) {
-                            if (!playersHit.contains(bubblePlayer)) {
-                                Bukkit.getPluginManager().callEvent(new WarlordsAbilityTargetEvent.WarlordsBlueAbilityTargetEvent(wp, name, Set.of(bubblePlayer)));
-                            }
-                            playersHit.add(bubblePlayer);
-                            bubblePlayer.getCooldownManager().removeCooldownByObject(data);
-                            bubblePlayer.getCooldownManager().addCooldown(new RegularCooldown<>(
-                                    "Prism Guard Bubble",
-                                    "GUARD",
-                                    PrismGuardData.class,
-                                    data,
-                                    wp,
-                                    CooldownTypes.ABILITY,
-                                    cooldownManager -> {
-                                    },
-                                    4
-                            ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
-                                        if (Utils.isProjectile(event.getCause())) {
-                                            if (!isInsideBubble.contains(event.getSource())) {
-                                                stats.timesProjectilesReduced++;
-                                                currentDamageValue.addModifier(
-                                                        FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name,
-                                                        (100 - projectileDamageReduction) / 100f,
-                                                        contribution -> data.totalDamageReduced += Math.abs(contribution)
-                                                );
-                                            }
-                                        }
-                                    }
-                            ));
-                        }
                     }
                     if (ticksElapsed % 10 == 0) {
                         if (pveMasterUpgrade) {
-                            for (WarlordsEntity we : PlayerFilter.entitiesAround(wp, 15, 15, 15).aliveEnemiesOf(wp).closestFirst(wp)) {
+                            for (WarlordsEntity we : PlayerFilter.entitiesAroundInGame(wp, 15, 15, 15).aliveEnemiesOf(wp).closestFirst(wp)) {
                                 if (we instanceof WarlordsNPC) {
                                     ((WarlordsNPC) we).getMob().setTarget(wp);
                                 }

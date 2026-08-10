@@ -9,6 +9,7 @@ import com.ebicep.warlords.effects.circle.LineEffect;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -33,6 +34,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, SanctifiedBeacon.SanctifiedBeaconData> implements BlueAbilityIcon, AbilityStats<SanctifiedBeacon, SanctifiedBeacon.SanctifiedBeaconStats> {
 
@@ -121,89 +123,101 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
         SanctifiedBeaconData beacon = cooldown.getCooldownObject();
         float rad = beacon.getRadius().getCalculatedValue();
         if (ticksElapsed % 5 == 0) {
-            for (WarlordsEntity nearBy : PlayerFilter.entitiesAround(beacon.getGroundLocation(), rad, rad, rad)) {
+            for (WarlordsEntity nearBy : PlayerFilter.entitiesAroundInGame(wp.getGame(), beacon.getGroundLocation(), rad, rad, rad)) {
                 if (nearBy.isTeammate(wp)) {
                     if (!pveMasterUpgrade2) {
                         continue;
                     }
-                    nearBy.getCooldownManager().removeCooldownByObject(beacon.getM2Object());
-                    RegularCooldown<Object> shadowGardenCooldown = new RegularCooldown<>(
-                            "Shadow Garden",
-                            null,
-                            Object.class,
-                            beacon.getM2Object(),
-                            wp,
-                            CooldownTypes.ABILITY,
-                            cooldownManager -> {
-                            },
-                            // a little longer to make sure there's no gaps in the effect
-                            6
-                    );
-                    shadowGardenCooldown.addModifier(Modifier.MODIFY_OUTGOING_CRIT_MULTIPLIER, (event, currentCritMultiplier) -> {
-                        currentCritMultiplier.addModifier(FloatModifiable.ModifierType.ADDITIVE, "Shadow Garden", 30);
+                    Optional<RegularCooldown> existing = new CooldownFilter<>(nearBy, RegularCooldown.class)
+                            .filterCooldownObject(beacon.getM2Object())
+                            .findFirst();
+                    if (existing.isPresent()) {
+                        existing.get().setTicksLeft(6);
+                    } else {
+                        RegularCooldown<Object> shadowGardenCooldown = new RegularCooldown<>(
+                                "Shadow Garden",
+                                null,
+                                Object.class,
+                                beacon.getM2Object(),
+                                wp,
+                                CooldownTypes.ABILITY,
+                                cooldownManager -> {
+                                },
+                                // a little longer to make sure there's no gaps in the effect
+                                6
+                        );
+                        shadowGardenCooldown.addModifier(Modifier.MODIFY_OUTGOING_CRIT_MULTIPLIER, (event, currentCritMultiplier) -> {
+                            currentCritMultiplier.addModifier(FloatModifiable.ModifierType.ADDITIVE, "Shadow Garden", 30);
+                                }
+                        );
+                        nearBy.addKnockbackModifier(wp, "Shadow Garden", -50, shadowGardenCooldown);
+                        nearBy.getCooldownManager().addCooldown(shadowGardenCooldown);
                     }
-                    );
-                    nearBy.addKnockbackModifier(wp, "Shadow Garden", -50, shadowGardenCooldown);
-                    nearBy.getCooldownManager().removeCooldownByName("Shadow Garden");
-                    nearBy.getCooldownManager().addCooldown(shadowGardenCooldown);
                 } else {
-                    nearBy.getCooldownManager().removeCooldownByObject(beacon);
-                    boolean[] crit = {false};
-                    RegularCooldown<SanctifiedBeaconData> enemyCooldown = new RegularCooldown<>(
-                            name,
-                            null,
-                            SanctifiedBeaconData.class,
-                            beacon,
-                            wp,
-                            CooldownTypes.ABILITY,
-                            cooldownManager -> {},
-                            6 // a little longer to make sure there's no gaps in the effect
-                    );
-                    enemyCooldown.addModifier(Modifier.MODIFY_OUTGOING_CRIT_MULTIPLIER_POST_CALC, (event, currentDamageValue, isCrit, critChance, critMultiplier) -> {
-                        crit[0] = isCrit;
-                        if (isCrit) {
-                            stats.critsReduced++;
-                        }
+                    Optional<RegularCooldown> existing = new CooldownFilter<>(nearBy, RegularCooldown.class)
+                            .filterCooldownObject(beacon)
+                            .findFirst();
+                    if (existing.isPresent()) {
+                        existing.get().setTicksLeft(6);
+                    } else {
+                        boolean[] crit = {false};
+                        RegularCooldown<SanctifiedBeaconData> enemyCooldown = new RegularCooldown<>(
+                                name,
+                                null,
+                                SanctifiedBeaconData.class,
+                                beacon,
+                                wp,
+                                CooldownTypes.ABILITY,
+                                cooldownManager -> {},
+                                6 // a little longer to make sure there's no gaps in the effect
+                        );
+                        enemyCooldown.addModifier(Modifier.MODIFY_OUTGOING_CRIT_MULTIPLIER_POST_CALC, (event, currentDamageValue, isCrit, critChance, critMultiplier) -> {
+                            crit[0] = isCrit;
+                            if (isCrit) {
+                                stats.critsReduced++;
                             }
-                    );
-                    String modifierName = name + " " + Integer.toHexString(enemyCooldown.hashCode());
-                    enemyCooldown.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                                if (crit[0]) { // TODO unscuff
-                                    currentDamageValue.addModifier(
-                                            FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, modifierName,
-                                            -critMultiplierReducedBy / 100f,
-                                            contribution -> stats.critDamageReduced += Math.abs(contribution)
-                                    );
                                 }
-                                if (wp.isInPve()) {
-                                    currentDamageValue.addModifier(
-                                            FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, modifierName,
-                                            convertToDivisionDecimal(damageReductionPve)
-                                    );
+                        );
+                        String modifierName = name + " " + Integer.toHexString(enemyCooldown.hashCode());
+                        enemyCooldown.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                                    if (crit[0]) { // TODO unscuff
+                                        currentDamageValue.addModifier(
+                                                FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, modifierName,
+                                                -critMultiplierReducedBy / 100f,
+                                                contribution -> stats.critDamageReduced += Math.abs(contribution)
+                                        );
+                                    }
+                                    if (wp.isInPve()) {
+                                        currentDamageValue.addModifier(
+                                                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, modifierName,
+                                                convertToDivisionDecimal(damageReductionPve)
+                                        );
+                                    }
                                 }
+                        );
+                        nearBy.getCooldownManager().addCooldown(enemyCooldown);
+                        if (pveMasterUpgrade2) {
+                            if (nearBy instanceof WarlordsNPC npc && npc.getMob() instanceof BossLike) {
+                                return;
                             }
-                    );
-                    nearBy.getCooldownManager().addCooldown(enemyCooldown);
-                    if (pveMasterUpgrade2) {
-                        if (nearBy instanceof WarlordsNPC npc && npc.getMob() instanceof BossLike) {
-                            return;
+                            nearBy.getSpeed().removeModifier(name);
+                            nearBy.addSpeedModifier(wp, name, -30, 9999);
+                            nearBy.getCooldownManager().removeCooldownByName("Shadow Garden");
+                            nearBy.getCooldownManager()
+                                  .addCooldown(new PermanentCooldown<>(
+                                          "Shadow Garden",
+                                          "GARDEN",
+                                          SanctifiedBeacon.class,
+                                          null,
+                                          wp,
+                                          CooldownTypes.ABILITY,
+                                          cooldownManager -> {},
+                                          false
+                                  ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                                      currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, 0.7f);
+                                          }
+                                  ));
                         }
-                        nearBy.getSpeed().removeModifier(name);
-                        nearBy.addSpeedModifier(wp, name, -30, 9999);
-                        nearBy.getCooldownManager().removeCooldownByName("Shadow Garden");
-                        nearBy.getCooldownManager()
-                              .addCooldown(new PermanentCooldown<>(
-                                      "Shadow Garden",
-                                      "GARDEN",
-                                      SanctifiedBeacon.class,
-                                      null,
-                                      wp,
-                                      CooldownTypes.ABILITY,
-                                      cooldownManager -> {},
-                                      false
-                              ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                                  currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, 0.7f);
-                              }));
                     }
                 }
             }
@@ -219,7 +233,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
             crystal.teleport(crystalLocation);
         }
         if (ticksElapsed % hexIntervalTicks == 0) {
-            for (WarlordsEntity ally : PlayerFilter.entitiesAround(beacon.getGroundLocation(), rad, rad, rad)
+            for (WarlordsEntity ally : PlayerFilter.entitiesAroundInGame(wp.getGame(), beacon.getGroundLocation(), rad, rad, rad)
                                                    .aliveTeammatesOf(wp)
                                                    .closestFirst(beacon.getGroundLocation())
                                                    .limit(maxAllies)) {
