@@ -1,6 +1,5 @@
 package com.ebicep.customentities.npc.traits;
 
-import com.ebicep.customentities.npc.SupporterShopNPC;
 import com.ebicep.customentities.npc.WarlordsTrait;
 import com.ebicep.warlords.pve.bountysystem.BountyMenu;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
@@ -9,7 +8,6 @@ public class BountyMenuTrait extends WarlordsTrait {
 
     public BountyMenuTrait() {
         super("BountyMenuTrait");
-        SupporterShopNPC.create();
     }
 
     @Override
