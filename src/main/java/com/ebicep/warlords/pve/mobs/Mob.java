@@ -618,10 +618,10 @@ public enum Mob {
     LILIUM(EntityType.WITHER_SKELETON, Lilium.class, Lilium::new, Lilium::new, new Utils.SimpleEntityEquipment(
             SkullUtils.getSkullFrom(SkullID.LILIUM_HAT),
             Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 220, 20, 120),
-            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 120, 20, 220),
-            Utils.applyColorTo(Material.LEATHER_BOOTS, 220, 20, 220),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 220, 20, 120),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 220, 20, 120),
             Weapons.SILVER_PHANTASM_SWORD_4.getItem(),
-            new ItemStack(Material.SHIELD)
+            Weapons.SILVER_PHANTASM_SWORD_4.getItem()
     )
     ),
     VEILKEEPER(EntityType.WITHER_SKELETON, Veilkeeper.class, Veilkeeper::new, Veilkeeper::new, new Utils.SimpleEntityEquipment(
@@ -925,7 +925,7 @@ public enum Mob {
     EVENT_MITHRA_POISONOUS_SPIDER(EntityType.ZOMBIE, EventPoisonousSpider.class, EventPoisonousSpider::new, EventPoisonousSpider::new, new Utils.SimpleEntityEquipment(
             SkullUtils.getSkullFrom(SkullID.CAVE_SPIDER),
             Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 0, 0, 0),
-            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 0, 0, 0),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 0, 0, 0),
             Utils.applyColorTo(Material.LEATHER_BOOTS, 0, 0, 0),
             null
     )
@@ -1176,7 +1176,7 @@ public enum Mob {
     TD_PHANTOM(EntityType.PHANTOM, TDPhantom.class, TDPhantom::new, TDPhantom::new, null),
     TD_DROWNED(EntityType.DROWNED, TDDrowned.class, TDDrowned::new, TDDrowned::new, null),
     TD_GUARDIAN(EntityType.GUARDIAN, TDGuardian.class, TDGuardian::new, TDGuardian::new, null),
-    TD_ELDER_GUARDIAN(EntityType.ELDER_GUARDIAN, TDElderGuardian.class, TDElderGuardian::new, TDElderGuardian::new, null),
+    TD_ELDER_GUARDIAN(EntityType.ELDER_GUARDIAN, TDElderGuardian.class, TDElder_GUARDIAN::new, TDElder_GUARDIAN::new, null),
     TD_WARDEN(EntityType.WARDEN, TDWarden.class, TDWarden::new, TDWarden::new, null),
     TD_ENDER_DRAGON(EntityType.ENDER_DRAGON, TDEnderDragon.class, TDEnderDragon::new, TDEnderDragon::new, null),
     TD_WITHER(EntityType.WITHER, TDWither.class, TDWither::new, TDWither::new, null),
