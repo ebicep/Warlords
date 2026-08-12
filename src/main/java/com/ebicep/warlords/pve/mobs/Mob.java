@@ -109,7 +109,7 @@ public enum Mob {
     SLIMY_ANOMALY(EntityType.SLIME, SlimyAnomaly.class, SlimyAnomaly::new, SlimyAnomaly::new, null),
     ARACHNO_VENARI(EntityType.SPIDER, ArachnoVenari.class, ArachnoVenari::new, ArachnoVenari::new, null),
     IVORY_KNIGHT(EntityType.SKELETON, IvoryKnight.class, IvoryKnight::new, IvoryKnight::new, new Utils.SimpleEntityEquipment(
-            SkullUtils.getSkullFrom("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNmM1Yzg2Y2Y2YzdhOGNhNmFkNzkzMzNlMGE4ZGI1ZmUyNGJmZTEwMTY1MzQ4ZGJiOGIxY2ZhMmM1ZDY2ODNmIn19fQ=="),
+            SkullUtils.getSkullFrom(SkullID.WHITE_KNIGHT),
             Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 245, 245, 245),
             Utils.applyColorTo(Material.LEATHER_LEGGINGS, 235, 235, 235),
             Utils.applyColorTo(Material.LEATHER_BOOTS, 225, 225, 225),
@@ -182,7 +182,7 @@ public enum Mob {
     )
     ),
     IVORY_RONIN(EntityType.SKELETON, IvoryRonin.class, IvoryRonin::new, IvoryRonin::new, new Utils.SimpleEntityEquipment(
-            SkullUtils.getSkullFrom("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGM2YTRkMjJkNDA3ZTc0YTg4YjJiMzQzMGZjYjg0OTM0NGU4ZTg4NDVlNjk3YzgwNDdhYmQwM2IzZDkxOGQ1YiJ9fX0="),
+            SkullUtils.getSkullFrom(SkullID.WHITE_SAMURAI),
             Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 250, 250, 250),
             Utils.applyColorTo(Material.LEATHER_LEGGINGS, 238, 238, 238),
             Utils.applyColorTo(Material.LEATHER_BOOTS, 225, 225, 225),
@@ -283,7 +283,7 @@ public enum Mob {
     )
     ),
     PALE_SERAPH(EntityType.WITHER_SKELETON, PaleSeraph.class, PaleSeraph::new, PaleSeraph::new, new Utils.SimpleEntityEquipment(
-            SkullUtils.getSkullFrom("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMWUxNjU0NjA5MWI1ZWZiYTY4ZmFkZWQ2ZmI1NDhjNWRkNzg4ZGEzOGFkOWRhNGExMTM2ZGY3MTUwYzUwNThiZCJ9fX0="),
+            SkullUtils.getSkullFrom(SkullID.GRAY_ANGEL),
             Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 245, 245, 255),
             Utils.applyColorTo(Material.LEATHER_LEGGINGS, 235, 235, 245),
             Utils.applyColorTo(Material.LEATHER_BOOTS, 225, 225, 235),
