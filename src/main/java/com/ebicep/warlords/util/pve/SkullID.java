@@ -209,6 +209,12 @@ public enum SkullID implements Skull {
     BLUE_ASSASSIN("ZDdmY2ZhNWIwYWY4NTVmMzE0NjA2YTVjZDJiNTk3NDc1Mjg2YTE1MmQxZWUwOGQ5OTQ5YTYzODZjYmM0NmE4ZSJ9fX0="),
     // https://minecraft-heads.com/custom-heads/head/79604-void-knight
     VOID_KNIGHT("MTFhM2Y4ZjFiZjk1MDFlOGY4ZDRiYmMzMTJhNjEzNGVjMjEwOWZmMTkxZWJhOTRiMDYwNzhkMjNhYzYyZDg5NCJ9fX0="),
+    // https://minecraft-heads.com/custom-heads/head/104808-white-knight
+    WHITE_KNIGHT("NmM1Yzg2Y2Y2YzdhOGNhNmFkNzkzMzNlMGE4ZGI1ZmUyNGJmZTEwMTY1MzQ4ZGJiOGIxY2ZhMmM1ZDY2ODNmIn19fQ=="),
+    // https://minecraft-heads.com/custom-heads/head/37375-white-samurai
+    WHITE_SAMURAI("ZGM2YTRkMjJkNDA3ZTc0YTg4YjJiMzQzMGZjYjg0OTM0NGU4ZTg4NDVlNjk3YzgwNDdhYmQwM2IzZDkxOGQ1YiJ9fX0="),
+    // https://minecraft-heads.com/custom-heads/head/108020-angel
+    GRAY_ANGEL("MWUxNjU0NjA5MWI1ZWZiYTY4ZmFkZWQ2ZmI1NDhjNWRkNzg4ZGEzOGFkOWRhNGExMTM2ZGY3MTUwYzUwNThiZCJ9fX0="),
     // https://minecraft-heads.com/custom-heads/head/127570-gratitude-talisman
     TALISMAN("NzBlMTJlYzg1NDdhNTQ1MDMzMjY1N2I1ZDJlODU1MDRjODQxMzg2Y2NlMmE2YTI0MzRjY2EzZDMxMGQxNGEyIn19fQ==")
 
