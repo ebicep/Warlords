@@ -8,28 +8,21 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.RaidBossMob;
-import com.ebicep.warlords.util.pve.SkullID;
-import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.citizensnpcs.api.trait.trait.Equipment;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Display;
 import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Transformation;
 import org.bukkit.util.Vector;
 import org.joml.Quaternionf;
@@ -97,7 +90,6 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
             scale.setBaseValue(3);
         }
 
-        equipRoyalRegalia(entity);
         spawnRoyalCrown(entity);
         playQueenMoveSet(warlordsNPC.getLocation());
 
@@ -188,46 +180,6 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
         }
         royalCrown = null;
         previousLocation = null;
-    }
-
-    private void equipRoyalRegalia(LivingEntity entity) {
-        ItemStack helmet = SkullUtils.getSkullFrom(SkullID.IRON_QUEEN);
-        ItemStack chestplate = createRoyalArmor(Material.LEATHER_CHESTPLATE, 240, 240, 250);
-        ItemStack leggings = createRoyalArmor(Material.LEATHER_LEGGINGS, 35, 28, 48);
-        ItemStack boots = createRoyalArmor(Material.LEATHER_BOOTS, 225, 225, 238);
-        ItemStack weapon = createRequiem();
-
-        Equipment equipmentTrait = npc.getOrAddTrait(Equipment.class);
-        equipmentTrait.set(Equipment.EquipmentSlot.HELMET, helmet);
-        equipmentTrait.set(Equipment.EquipmentSlot.CHESTPLATE, chestplate);
-        equipmentTrait.set(Equipment.EquipmentSlot.LEGGINGS, leggings);
-        equipmentTrait.set(Equipment.EquipmentSlot.BOOTS, boots);
-        equipmentTrait.set(Equipment.EquipmentSlot.HAND, weapon);
-
-        entity.getEquipment().setHelmet(helmet);
-        entity.getEquipment().setChestplate(chestplate);
-        entity.getEquipment().setLeggings(leggings);
-        entity.getEquipment().setBoots(boots);
-        entity.getEquipment().setItemInMainHand(weapon);
-    }
-
-    private ItemStack createRoyalArmor(Material material, int red, int green, int blue) {
-        ItemStack armor = Utils.applyColorTo(material, red, green, blue);
-        armor.addUnsafeEnchantment(Enchantment.UNBREAKING, 1);
-        return armor;
-    }
-
-    private ItemStack createRequiem() {
-        ItemStack weapon = Weapons.WARLORDS_II_ANCIENT_ROYAL_GREAT_SWORD.getItem().clone();
-        weapon.addUnsafeEnchantment(Enchantment.UNBREAKING, 1);
-
-        ItemMeta meta = weapon.getItemMeta();
-        meta.displayName(
-                Component.text("Requiem of the Ninth Abyss", TextColor.color(220, 205, 255))
-                         .decoration(TextDecoration.ITALIC, false)
-        );
-        weapon.setItemMeta(meta);
-        return weapon;
     }
 
     private void spawnRoyalCrown(LivingEntity entity) {
