@@ -108,6 +108,14 @@ public enum Mob {
     ),
     SLIMY_ANOMALY(EntityType.SLIME, SlimyAnomaly.class, SlimyAnomaly::new, SlimyAnomaly::new, null),
     ARACHNO_VENARI(EntityType.SPIDER, ArachnoVenari.class, ArachnoVenari::new, ArachnoVenari::new, null),
+    IVORY_KNIGHT(EntityType.SKELETON, IvoryKnight.class, IvoryKnight::new, IvoryKnight::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNmM1Yzg2Y2Y2YzdhOGNhNmFkNzkzMzNlMGE4ZGI1ZmUyNGJmZTEwMTY1MzQ4ZGJiOGIxY2ZhMmM1ZDY2ODNmIn19fQ=="),
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 245, 245, 245),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 235, 235, 235),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 225, 225, 225),
+            Weapons.WARLORDS_II_DIVINE_JUSTICE.getItem()
+    )
+    ),
 
     // Intermediate
     HOUND(EntityType.WOLF, Hound.class, Hound::new, Hound::new, null),
@@ -171,6 +179,14 @@ public enum Mob {
             Utils.applyColorTo(Material.LEATHER_LEGGINGS, 0, 69, 176),
             Utils.applyColorTo(Material.LEATHER_BOOTS, 0, 69, 176),
             Weapons.SILVER_PHANTASM_STAFF_2.getItem()
+    )
+    ),
+    IVORY_RONIN(EntityType.SKELETON, IvoryRonin.class, IvoryRonin::new, IvoryRonin::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGM2YTRkMjJkNDA3ZTc0YTg4YjJiMzQzMGZjYjg0OTM0NGU4ZTg4NDVlNjk3YzgwNDdhYmQwM2IzZDkxOGQ1YiJ9fX0="),
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 250, 250, 250),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 238, 238, 238),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 225, 225, 225),
+            Weapons.WARLORDS_II_ASHURA_S_BLADE.getItem()
     )
     ),
 
@@ -264,6 +280,14 @@ public enum Mob {
             Utils.applyColorTo(Material.LEATHER_LEGGINGS, 252, 170, 53),
             Utils.applyColorTo(Material.LEATHER_BOOTS, 252, 170, 53),
             Weapons.SILVER_PHANTASM_SWORD_2.getItem()
+    )
+    ),
+    PALE_SERAPH(EntityType.WITHER_SKELETON, PaleSeraph.class, PaleSeraph::new, PaleSeraph::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMWUxNjU0NjA5MWI1ZWZiYTY4ZmFkZWQ2ZmI1NDhjNWRkNzg4ZGEzOGFkOWRhNGExMTM2ZGY3MTUwYzUwNThiZCJ9fX0="),
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 245, 245, 255),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 235, 235, 245),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 225, 225, 235),
+            Weapons.WARLORDS_II_DIVINE_REAPER.getItem()
     )
     ),
 
@@ -639,9 +663,6 @@ public enum Mob {
     MAGMATIC_OOZE(EntityType.MAGMA_CUBE, MagmaticOoze.class, MagmaticOoze::new, MagmaticOoze::new, null),
     ENAVURIS(EntityType.ENDERMAN, Enavuris.class, Enavuris::new, Enavuris::new, null),
 
-
-
-
     // Boss minions
     BOLTARO_SHADOW(EntityType.ZOMBIE, BoltaroShadow.class, BoltaroShadow::new, BoltaroShadow::new, new Utils.SimpleEntityEquipment(
             SkullUtils.getSkullFrom(SkullID.END_MONSTER),
@@ -788,7 +809,6 @@ public enum Mob {
     CURSED_PSION(EntityType.WITHER_SKELETON, CursedPsion.class, CursedPsion::new, CursedPsion::new, null),
     ENAVURITE(EntityType.ENDERMITE, Enavurite.class, Enavurite::new, Enavurite::new, null),
     VANISHING_ENAVURITE(EntityType.ENDERMITE, VanishingEnavurite.class, VanishingEnavurite::new, VanishingEnavurite::new, null),
-
 
     //EVENTS
     EVENT_BOLTARO(EntityType.ZOMBIE, EventBoltaro.class, EventBoltaro::new, EventBoltaro::new, new Utils.SimpleEntityEquipment(
@@ -1200,16 +1220,16 @@ public enum Mob {
     public static final Mob[] VALUES = values();
     public static final Mob[] BASIC = {
             ZOMBIE_LANCER, BASIC_WARRIOR_BERSERKER, SKELETAL_MAGE, PIG_DISCIPLE, SLIMY_ANOMALY,
-            ARACHNO_VENARI
+            ARACHNO_VENARI, IVORY_KNIGHT
     };
     public static final Mob[] INTERMEDIATE = {
             HOUND, INTERMEDIATE_WARRIOR_BERSERKER, SKELETAL_WARLOCK, PIG_SHAMAN,
-            BLAZING_KINDLE, WANDER_KNIGHTS, ZOMBIE_SWORDSMAN, ZOMBIE_LAMENT
+            BLAZING_KINDLE, WANDER_KNIGHTS, ZOMBIE_SWORDSMAN, ZOMBIE_LAMENT, IVORY_RONIN
     };
     public static final Mob[] ADVANCED = {
             ILLUMINATION, GOLEM_APPRENTICE, SCRUPULOUS_ZOMBIE, CELESTIAL_BOW_WIELDER,
             ZOMBIE_VANGUARD, ADVANCED_WARRIOR_BERSERKER,
-            ZOMBIE_RAIDER, SKELETAL_ENTROPY, WITCH_DEACON, PIG_ALLEVIATOR
+            ZOMBIE_RAIDER, SKELETAL_ENTROPY, WITCH_DEACON, PIG_ALLEVIATOR, PALE_SERAPH
     };
     public static final Mob[] ELITE = {
             CELESTIAL_SWORD_WIELDER,
