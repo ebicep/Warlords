@@ -32,8 +32,20 @@ import javax.annotation.Nonnull;
 
 public class RaidMithra extends AbstractMob implements RaidBossMob {
 
-    private static final Particle.DustOptions WHITE_DUST = new Particle.DustOptions(Color.fromRGB(245, 245, 255), 1.25f);
-    private static final Particle.DustOptions ABYSS_DUST = new Particle.DustOptions(Color.fromRGB(88, 52, 130), 1.25f);
+    private static final float MITHRA_SCALE = 1.4f;
+    private static final float CROWN_SCALE = 1.15f * MITHRA_SCALE;
+    private static final float CROWN_ATTACK_SCALE = 1.35f * MITHRA_SCALE;
+    private static final double CROWN_OFFSET = 0.42 * MITHRA_SCALE;
+    private static final double CROWN_BOB = 0.12 * MITHRA_SCALE;
+    private static final double QUEEN_MOVE_START = 0.55 * MITHRA_SCALE;
+    private static final double QUEEN_MOVE_RANGE = 4.5 * MITHRA_SCALE;
+    private static final double QUEEN_MOVE_STEP = 0.4 * MITHRA_SCALE;
+    private static final double CHESS_TILE_HALF_SIZE = 0.55 * MITHRA_SCALE;
+    private static final double CHESS_TILE_STEP = 0.22 * MITHRA_SCALE;
+    private static final double SLASH_WIDTH = 1.45 * MITHRA_SCALE;
+    private static final double SLASH_HEIGHT = 0.75 * MITHRA_SCALE;
+    private static final Particle.DustOptions WHITE_DUST = new Particle.DustOptions(Color.fromRGB(245, 245, 255), 0.9f * MITHRA_SCALE);
+    private static final Particle.DustOptions ABYSS_DUST = new Particle.DustOptions(Color.fromRGB(88, 52, 130), 0.9f * MITHRA_SCALE);
 
     private ItemDisplay royalCrown;
     private Location previousLocation;
@@ -87,7 +99,7 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
         LivingEntity entity = (LivingEntity) warlordsNPC.getEntity();
         AttributeInstance scale = entity.getAttribute(Attribute.SCALE);
         if (scale != null) {
-            scale.setBaseValue(3);
+            scale.setBaseValue(MITHRA_SCALE);
         }
 
         spawnRoyalCrown(entity);
@@ -97,7 +109,7 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
         Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 3, 0.75f);
         Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.BLOCK_AMETHYST_BLOCK_CHIME, 3, 0.5f);
         EffectUtils.playFirework(
-                warlordsNPC.getLocation().clone().add(0, 2, 0),
+                warlordsNPC.getLocation().clone().add(0, 1.5 * MITHRA_SCALE, 0),
                 FireworkEffect.builder()
                               .withColor(Color.WHITE, Color.fromRGB(90, 45, 135), Color.BLACK)
                               .with(FireworkEffect.Type.BALL_LARGE)
@@ -126,11 +138,11 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
         if (ticksElapsed % 8 == 0) {
             current.getWorld().spawnParticle(
                     Particle.END_ROD,
-                    current.clone().add(0, 3.5, 0),
+                    current.clone().add(0, 2.25 * MITHRA_SCALE, 0),
                     4,
-                    1.4,
-                    1.8,
-                    1.4,
+                    0.7 * MITHRA_SCALE,
+                    0.9 * MITHRA_SCALE,
+                    0.7 * MITHRA_SCALE,
                     0
             );
         }
@@ -161,7 +173,7 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
         super.onDeath(killer, deathLocation, option);
 
         EffectUtils.playFirework(
-                deathLocation.clone().add(0, 2, 0),
+                deathLocation.clone().add(0, 1.5 * MITHRA_SCALE, 0),
                 FireworkEffect.builder()
                               .withColor(Color.WHITE, Color.fromRGB(90, 45, 135), Color.BLACK)
                               .with(FireworkEffect.Type.STAR)
@@ -184,7 +196,7 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
 
     private void spawnRoyalCrown(LivingEntity entity) {
         ItemStack crownItem = Weapons.WARLORDS_II_ROYAL_CHAKRAM.getItem().clone();
-        Location location = warlordsNPC.getLocation().clone().add(0, entity.getHeight() + 0.75, 0);
+        Location location = warlordsNPC.getLocation().clone().add(0, entity.getHeight() + CROWN_OFFSET, 0);
 
         royalCrown = warlordsNPC.getWorld().spawn(location, ItemDisplay.class, display -> {
             display.setItemStack(crownItem);
@@ -194,7 +206,7 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
             display.setTransformation(new Transformation(
                     new Vector3f(0, 0, 0),
                     new Quaternionf().rotateX((float) Math.toRadians(90)),
-                    new Vector3f(2.4f, 2.4f, 2.4f),
+                    new Vector3f(CROWN_SCALE, CROWN_SCALE, CROWN_SCALE),
                     new Quaternionf()
             ));
         });
@@ -206,11 +218,11 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
         }
 
         LivingEntity entity = (LivingEntity) warlordsNPC.getEntity();
-        double bob = Math.sin(ticksElapsed * 0.09) * 0.18;
-        royalCrown.teleport(location.clone().add(0, entity.getHeight() + 0.75 + bob, 0));
+        double bob = Math.sin(ticksElapsed * 0.09) * CROWN_BOB;
+        royalCrown.teleport(location.clone().add(0, entity.getHeight() + CROWN_OFFSET + bob, 0));
 
         crownRotation += attackAnimationTicks > 0 ? 20 : moving ? 5 : 1.75f;
-        float scale = attackAnimationTicks > 0 ? 2.8f : 2.4f;
+        float scale = attackAnimationTicks > 0 ? CROWN_ATTACK_SCALE : CROWN_SCALE;
         float attackTilt = attackAnimationTicks > 0 ? 18 : 0;
 
         royalCrown.setTransformation(new Transformation(
@@ -235,7 +247,7 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
 
     private void playQueenMoveSet(Location center) {
         World world = center.getWorld();
-        Location origin = center.clone().add(0, 0.12, 0);
+        Location origin = center.clone().add(0, 0.08 * MITHRA_SCALE, 0);
         Vector[] directions = {
                 new Vector(1, 0, 0),
                 new Vector(-1, 0, 0),
@@ -251,32 +263,31 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
             Vector direction = directions[directionIndex];
             Particle.DustOptions dust = directionIndex % 2 == 0 ? WHITE_DUST : ABYSS_DUST;
 
-            for (double distance = 0.75; distance <= 7.5; distance += 0.55) {
+            for (double distance = QUEEN_MOVE_START; distance <= QUEEN_MOVE_RANGE; distance += QUEEN_MOVE_STEP) {
                 Location point = origin.clone().add(direction.clone().multiply(distance));
                 world.spawnParticle(Particle.DUST, point, 1, 0, 0, 0, 0, dust);
             }
 
-            Location endpoint = origin.clone().add(direction.clone().multiply(7.5));
-            world.spawnParticle(Particle.END_ROD, endpoint.clone().add(0, 0.2, 0), 1, 0, 0, 0, 0);
+            Location endpoint = origin.clone().add(direction.clone().multiply(QUEEN_MOVE_RANGE));
+            world.spawnParticle(Particle.END_ROD, endpoint.clone().add(0, 0.14 * MITHRA_SCALE, 0), 1, 0, 0, 0, 0);
         }
     }
 
     private void playChessStep(Location center) {
         World world = center.getWorld();
         Particle.DustOptions dust = chessStep++ % 2 == 0 ? WHITE_DUST : ABYSS_DUST;
-        Location origin = center.clone().add(0, 0.08, 0);
-        double half = 0.75;
+        Location origin = center.clone().add(0, 0.06 * MITHRA_SCALE, 0);
 
-        for (double offset = -half; offset <= half; offset += 0.3) {
-            world.spawnParticle(Particle.DUST, origin.clone().add(offset, 0, half), 1, 0, 0, 0, 0, dust);
-            world.spawnParticle(Particle.DUST, origin.clone().add(offset, 0, -half), 1, 0, 0, 0, 0, dust);
-            world.spawnParticle(Particle.DUST, origin.clone().add(half, 0, offset), 1, 0, 0, 0, 0, dust);
-            world.spawnParticle(Particle.DUST, origin.clone().add(-half, 0, offset), 1, 0, 0, 0, 0, dust);
+        for (double offset = -CHESS_TILE_HALF_SIZE; offset <= CHESS_TILE_HALF_SIZE; offset += CHESS_TILE_STEP) {
+            world.spawnParticle(Particle.DUST, origin.clone().add(offset, 0, CHESS_TILE_HALF_SIZE), 1, 0, 0, 0, 0, dust);
+            world.spawnParticle(Particle.DUST, origin.clone().add(offset, 0, -CHESS_TILE_HALF_SIZE), 1, 0, 0, 0, 0, dust);
+            world.spawnParticle(Particle.DUST, origin.clone().add(CHESS_TILE_HALF_SIZE, 0, offset), 1, 0, 0, 0, 0, dust);
+            world.spawnParticle(Particle.DUST, origin.clone().add(-CHESS_TILE_HALF_SIZE, 0, offset), 1, 0, 0, 0, 0, dust);
         }
     }
 
     private void playRoyalSlash(WarlordsEntity receiver) {
-        Location center = receiver.getLocation().clone().add(0, 1.1, 0);
+        Location center = receiver.getLocation().clone().add(0, 0.8 * MITHRA_SCALE, 0);
         World world = center.getWorld();
 
         Vector forward = center.toVector().subtract(warlordsNPC.getLocation().toVector()).setY(0);
@@ -288,17 +299,41 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
 
         for (int i = -10; i <= 10; i++) {
             double progress = i / 10d;
-            Vector side = right.clone().multiply(progress * 2.4);
+            Vector side = right.clone().multiply(progress * SLASH_WIDTH);
 
-            Location firstSlash = center.clone().add(side).add(0, progress * 1.2, 0);
-            Location secondSlash = center.clone().add(side).add(0, -progress * 1.2, 0);
+            Location firstSlash = center.clone().add(side).add(0, progress * SLASH_HEIGHT, 0);
+            Location secondSlash = center.clone().add(side).add(0, -progress * SLASH_HEIGHT, 0);
 
             world.spawnParticle(Particle.DUST, firstSlash, 1, 0, 0, 0, 0, WHITE_DUST);
             world.spawnParticle(Particle.DUST, secondSlash, 1, 0, 0, 0, 0, ABYSS_DUST);
         }
 
-        world.spawnParticle(Particle.SWEEP_ATTACK, center, 3, 0.7, 0.7, 0.7, 0);
-        world.spawnParticle(Particle.END_ROD, center, 14, 0.8, 0.8, 0.8, 0.02);
-        world.spawnParticle(Particle.CRIT, center, 18, 0.9, 0.9, 0.9, 0.12);
+        world.spawnParticle(
+                Particle.SWEEP_ATTACK,
+                center,
+                3,
+                0.5 * MITHRA_SCALE,
+                0.5 * MITHRA_SCALE,
+                0.5 * MITHRA_SCALE,
+                0
+        );
+        world.spawnParticle(
+                Particle.END_ROD,
+                center,
+                14,
+                0.55 * MITHRA_SCALE,
+                0.55 * MITHRA_SCALE,
+                0.55 * MITHRA_SCALE,
+                0.02
+        );
+        world.spawnParticle(
+                Particle.CRIT,
+                center,
+                18,
+                0.65 * MITHRA_SCALE,
+                0.65 * MITHRA_SCALE,
+                0.65 * MITHRA_SCALE,
+                0.12
+        );
     }
 }
