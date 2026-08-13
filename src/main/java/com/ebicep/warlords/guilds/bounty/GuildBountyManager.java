@@ -25,7 +25,7 @@ import java.util.Set;
 public final class GuildBountyManager {
 
     public static final int MAX_SLOTS = 2;
-    public static final long[] SLOT_COSTS = {500_000, 1_000_000};
+    public static final long[] SLOT_COSTS = {1, 1};
 
     private GuildBountyManager() {
     }

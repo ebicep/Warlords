@@ -27,6 +27,7 @@ public class Infernal extends BaseSet {
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
+
         }
 
     }

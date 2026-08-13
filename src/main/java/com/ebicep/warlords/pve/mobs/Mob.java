@@ -656,7 +656,8 @@ public enum Mob {
             Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 240, 240, 250),
             Utils.applyColorTo(Material.LEATHER_LEGGINGS, 35, 28, 48),
             Utils.applyColorTo(Material.LEATHER_BOOTS, 225, 225, 238),
-            Weapons.WARLORDS_II_REQUIEM_OF_THE_NINTH_ABYSS.getItem()
+            Weapons.WARLORDS_II_AWAKENED_LICHBLADE.getItem(),
+            new ItemStack(Material.SHIELD)
     )
     ),
     MAGMATIC_OOZE(EntityType.MAGMA_CUBE, MagmaticOoze.class, MagmaticOoze::new, MagmaticOoze::new, null),

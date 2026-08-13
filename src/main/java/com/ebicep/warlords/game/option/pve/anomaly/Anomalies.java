@@ -16,9 +16,9 @@ public enum Anomalies {
                     Component.text("Defend each relic for 2 minutes.")
             ),
             List.of(
-                    new AnomalyRewardPool("Opex Cache I", 4_000, 150, 1),
-                    new AnomalyRewardPool("Opex Cache II", 8_000, 200, 1),
-                    new AnomalyRewardPool("Opex Cache III", 12_000, 250, 2)
+                    new AnomalyRewardPool("Opex Cache I", 4_000, 50, 1),
+                    new AnomalyRewardPool("Opex Cache II", 5_000, 100, 1),
+                    new AnomalyRewardPool("Opex Cache III", 6_000, 150, 2)
             ),
             new AnomalyMobSet()
                     //basic
@@ -55,9 +55,9 @@ public enum Anomalies {
                     Component.text("Reach each destination within 2 minutes.")
             ),
             List.of(
-                    new AnomalyRewardPool("Dunestar Cache I", 4_000, 150, 1),
-                    new AnomalyRewardPool("Dunestar Cache II", 8_000, 300, 1),
-                    new AnomalyRewardPool("Dunestar Cache III", 12_000, 400, 2)
+                    new AnomalyRewardPool("Dunestar Cache I", 3_000, 50, 1),
+                    new AnomalyRewardPool("Dunestar Cache II", 5_000, 100, 1),
+                    new AnomalyRewardPool("Dunestar Cache III", 7_000, 200, 2)
             ),
             new AnomalyMobSet()
                     //basic
@@ -146,9 +146,9 @@ public enum Anomalies {
                     Component.text("Wrong inputs summon additional defenders.")
             ),
             List.of(
-                    new AnomalyRewardPool("Remnant Cache I", 2_000, 225, 1),
-                    new AnomalyRewardPool("Remnant Cache II", 6_000, 350, 1),
-                    new AnomalyRewardPool("Remnant Cache III", 10_000, 450, 2)
+                    new AnomalyRewardPool("Remnant Cache I", 2_000, 100, 1),
+                    new AnomalyRewardPool("Remnant Cache II", 4_000, 150, 1),
+                    new AnomalyRewardPool("Remnant Cache III", 6_000, 200, 2)
             ),
             new AnomalyMobSet()
                     //basic

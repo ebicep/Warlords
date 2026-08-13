@@ -32,7 +32,8 @@ import javax.annotation.Nonnull;
 
 public class RaidMithra extends AbstractMob implements RaidBossMob {
 
-    private static final float MITHRA_SCALE = 1.4f;
+    private static final float MITHRA_SCALE = 1.5f;
+
     private static final float CROWN_SCALE = 1.15f * MITHRA_SCALE;
     private static final float CROWN_ATTACK_SCALE = 1.35f * MITHRA_SCALE;
     private static final double CROWN_OFFSET = 0.42 * MITHRA_SCALE;
@@ -41,8 +42,8 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
     private static final double QUEEN_MOVE_RANGE = 4.5 * MITHRA_SCALE;
     private static final double QUEEN_MOVE_STEP = 0.4 * MITHRA_SCALE;
     private static final double CHESS_TILE_HALF_SIZE = 0.55 * MITHRA_SCALE;
-    private static final double CHESS_TILE_STEP = 0.22 * MITHRA_SCALE;
-    private static final double SLASH_WIDTH = 1.45 * MITHRA_SCALE;
+    private static final double CHESS_TILE_STEP = 0.32 * MITHRA_SCALE;
+    private static final double SLASH_WIDTH = 2.45 * MITHRA_SCALE;
     private static final double SLASH_HEIGHT = 0.75 * MITHRA_SCALE;
     private static final Particle.DustOptions WHITE_DUST = new Particle.DustOptions(Color.fromRGB(245, 245, 255), 0.9f * MITHRA_SCALE);
     private static final Particle.DustOptions ABYSS_DUST = new Particle.DustOptions(Color.fromRGB(88, 52, 130), 0.9f * MITHRA_SCALE);
