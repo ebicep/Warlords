@@ -467,6 +467,7 @@
             "GLOVES",
             "BOOTS",
             "RING",
+            "BRACELET",
             "TOME"
           ],
           "attributes": {},
@@ -483,6 +484,7 @@
             "GLOVES",
             "BOOTS",
             "RING",
+            "BRACELET",
             "TOME"
           ],
           "attributes": {},
@@ -499,6 +501,7 @@
             "GLOVES",
             "BOOTS",
             "RING",
+            "BRACELET",
             "TOME"
           ],
           "attributes": {},
@@ -509,7 +512,7 @@
           "name": "Oathkeeper",
           "slots": [
             "RING",
-            "RING",
+            "BRACELET",
             "GLOVES"
           ],
           "attributes": {
@@ -527,7 +530,7 @@
           "name": "Charm",
           "slots": [
             "RING",
-            "RING"
+            "BRACELET"
           ],
           "attributes": {
             "HEALTH": 50,
@@ -560,7 +563,7 @@
           "name": "Soothsayer",
           "slots": [
             "RING",
-            "RING",
+            "BRACELET",
             "TOME"
           ],
           "attributes": {
@@ -611,7 +614,7 @@
           "name": "Moonveil",
           "slots": [
             "RING",
-            "RING",
+            "BRACELET",
             "TOME"
           ],
           "attributes": {
@@ -642,7 +645,7 @@
           "name": "Gravemind",
           "slots": [
             "RING",
-            "RING"
+            "BRACELET"
           ],
           "attributes": {
             "HEALTH": 60,
@@ -689,7 +692,7 @@
           "name": "Obelisk",
           "slots": [
             "RING",
-            "RING",
+            "BRACELET",
             "GLOVES"
           ],
           "attributes": {
@@ -725,7 +728,7 @@
           "name": "Phoenix",
           "slots": [
             "RING",
-            "RING",
+            "BRACELET",
             "TOME"
           ],
           "attributes": {
@@ -808,7 +811,7 @@
           "name": "Centurion",
           "slots": [
             "RING",
-            "RING",
+            "BRACELET",
             "TOME"
           ],
           "attributes": {
@@ -857,7 +860,7 @@
           "name": "Sharpshooter",
           "slots": [
             "RING",
-            "RING"
+            "BRACELET"
           ],
           "attributes": {
             "HEALTH": 25,
@@ -885,7 +888,7 @@
           "name": "Energize",
           "slots": [
             "RING",
-            "RING",
+            "BRACELET",
             "TOME"
           ],
           "attributes": {
@@ -919,7 +922,7 @@
           "name": "Transference",
           "slots": [
             "RING",
-            "RING",
+            "BRACELET",
             "TOME"
           ],
           "attributes": {
@@ -934,7 +937,7 @@
           "name": "Pulse of Aeons",
           "slots": [
             "RING",
-            "RING"
+            "BRACELET"
           ],
           "attributes": {
             "HEALTH": 55,
@@ -1000,7 +1003,7 @@
           "name": "Bellicose",
           "slots": [
             "RING",
-            "RING",
+            "BRACELET",
             "TOME"
           ],
           "attributes": {
@@ -1479,7 +1482,7 @@
           "name": "Silent Execution",
           "slots": [
             "RING",
-            "RING"
+            "BRACELET"
           ],
           "attributes": {
             "HEALTH": 10
