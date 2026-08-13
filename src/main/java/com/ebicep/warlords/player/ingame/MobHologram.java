@@ -10,9 +10,6 @@ import org.bukkit.entity.Zombie;
 import org.bukkit.util.Transformation;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeInstance;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.util.BoundingBox;
 
 import javax.annotation.Nonnull;
@@ -24,7 +21,7 @@ import java.util.function.Supplier;
 
 public abstract class MobHologram {
 
-    protected final List<CustomHologramLine> customHologramLines = new ArrayList<>(); // lines to add on top of default health and name
+    protected final List<CustomHologramLine> customHologramLines = new ArrayList<>();
     protected boolean hidden = false;
 
     @Nullable
@@ -124,9 +121,6 @@ public abstract class MobHologram {
     public static abstract class TextDisplayHologram extends MobHologram {
 
         private static final double BASE_HEALTH_NAME_CLEARANCE = .525;
-        private static final double SCALE_HEIGHT_CLEARANCE_MULTIPLIER = 1.5;
-        private static final double MIN_HEALTH_NAME_CLEARANCE = .12;
-        private static final double MAX_HEALTH_NAME_CLEARANCE = 2.25;
         private static final double BASE_LINE_SPACING = .31;
 
         protected float viewRange;
@@ -137,11 +131,8 @@ public abstract class MobHologram {
 
         @Override
         protected void update(@Nonnull Entity entity) {
-            double entityScale = getEntityScale(entity);
-            double scaledHeight = getBoundingBoxHeight(entity);
-            double unscaledHeight = scaledHeight / entityScale;
             float displaySize = getDisplaySize(entity);
-            double verticalClearance = getVerticalClearance(scaledHeight, unscaledHeight, displaySize);
+            double verticalClearance = BASE_HEALTH_NAME_CLEARANCE * displaySize;
             double lineSpacing = BASE_LINE_SPACING * Math.max(.5, displaySize);
             Location bottomLineLocation = getBottomLineLocation(entity, verticalClearance);
 
@@ -172,39 +163,11 @@ public abstract class MobHologram {
             return new Location(entity.getWorld(), x, y, z, entity.getLocation().getYaw(), entity.getLocation().getPitch());
         }
 
-        private double getVerticalClearance(double scaledHeight, double unscaledHeight, float displaySize) {
-            double scaledExtraHeight = scaledHeight - unscaledHeight;
-            double clearance = BASE_HEALTH_NAME_CLEARANCE * displaySize + scaledExtraHeight * SCALE_HEIGHT_CLEARANCE_MULTIPLIER;
-            return clamp(clearance, MIN_HEALTH_NAME_CLEARANCE, MAX_HEALTH_NAME_CLEARANCE);
-        }
-
-        private double getBoundingBoxHeight(Entity entity) {
-            BoundingBox boundingBox = entity.getBoundingBox();
-            return Math.max(.1, boundingBox.getMaxY() - boundingBox.getMinY());
-        }
-
-        private double getEntityScale(Entity entity) {
-            if (!(entity instanceof LivingEntity livingEntity)) {
-                return 1;
-            }
-
-            AttributeInstance scaleAttribute = livingEntity.getAttribute(Attribute.SCALE);
-            if (scaleAttribute == null) {
-                return 1;
-            }
-
-            return Math.max(.1, scaleAttribute.getValue());
-        }
-
         protected float getDisplaySize(Entity entity) {
             if (entity instanceof Zombie zombie && zombie.isBaby()) {
                 return .5f;
             }
             return 1;
-        }
-
-        private double clamp(double value, double min, double max) {
-            return Math.max(min, Math.min(max, value));
         }
 
         private void applyTextDisplaySettings(TextDisplay textDisplay, CustomHologramLine customHologramLine, float displaySize) {
