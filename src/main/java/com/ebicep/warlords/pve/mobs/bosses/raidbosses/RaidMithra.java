@@ -8,12 +8,8 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.RaidBossMob;
-import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.npc.NPC;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -23,12 +19,9 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Display;
 import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.TextDisplay;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Transformation;
 import org.bukkit.util.Vector;
@@ -39,20 +32,15 @@ import javax.annotation.Nonnull;
 
 public class RaidMithra extends AbstractMob implements RaidBossMob {
 
-    private static final int RAID_HEALTH_BAR_LENGTH = 30;
-    private static final float RAID_HEALTH_DISPLAY_SCALE = 0.9f;
-    private static final double RAID_HEALTH_DISPLAY_OFFSET = 1.45;
-
     private static final Particle.DustOptions WHITE_DUST = new Particle.DustOptions(Color.fromRGB(245, 245, 255), 1.25f);
     private static final Particle.DustOptions ABYSS_DUST = new Particle.DustOptions(Color.fromRGB(88, 52, 130), 1.25f);
 
     private ItemDisplay royalCrown;
-    private TextDisplay raidHealthDisplay;
+    private RaidBossUtils.RaidBossHealthBar raidHealthBar;
     private Location previousLocation;
     private float crownRotation;
     private int attackAnimationTicks;
     private int chessStep;
-    private int lastDisplayedRaidHealth = Integer.MIN_VALUE;
 
     public RaidMithra(Location spawnLocation) {
         this(spawnLocation, "Mithra", 4_000_000, 0.35f, 20, 1200, 1600);
@@ -103,13 +91,14 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
         super.onSpawn(option);
 
         spawnRoyalCrown(warlordsNPC);
-
-        LivingEntity entity = (LivingEntity) warlordsNPC.getEntity();
-        warlordsNPC.getMobHologram().setHidden(true);
-        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
-        entity.setCustomNameVisible(false);
-
-        spawnRaidHealthDisplay(entity);
+        raidHealthBar = RaidBossUtils.createHealthBar(
+                warlordsNPC,
+                0.9f,
+                1.45,
+                "MITHRA",
+                getDescription(),
+                NamedTextColor.RED
+        );
         playQueenMoveSet(warlordsNPC.getLocation());
 
         Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_WITHER_SPAWN, 3, 0.65f);
@@ -133,7 +122,9 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
         boolean moving = isMoving(current);
 
         updateRoyalCrown(current, ticksElapsed, moving);
-        updateRaidHealthDisplay();
+        if (raidHealthBar != null) {
+            raidHealthBar.update();
+        }
 
         if (ticksElapsed % 30 == 0 && !moving) {
             playQueenMoveSet(current);
@@ -198,11 +189,11 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
         if (royalCrown != null && !royalCrown.isDead()) {
             royalCrown.remove();
         }
-        if (raidHealthDisplay != null && !raidHealthDisplay.isDead()) {
-            raidHealthDisplay.remove();
+        if (raidHealthBar != null) {
+            raidHealthBar.remove();
         }
         royalCrown = null;
-        raidHealthDisplay = null;
+        raidHealthBar = null;
         previousLocation = null;
     }
 
@@ -245,88 +236,6 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
                 new Vector3f(scale, scale, scale),
                 new Quaternionf()
         ));
-    }
-
-    private void spawnRaidHealthDisplay(LivingEntity entity) {
-        Location location = getRaidHealthDisplayLocation(entity);
-
-        raidHealthDisplay = warlordsNPC.getWorld().spawn(location, TextDisplay.class, display -> {
-            display.setBillboard(Display.Billboard.CENTER);
-            display.setAlignment(TextDisplay.TextAlignment.CENTER);
-            display.setDefaultBackground(true);
-            display.setShadowed(true);
-            display.setSeeThrough(false);
-            display.setLineWidth(320);
-            display.setViewRange(1.5f);
-            display.setTeleportDuration(1);
-            display.setPersistent(false);
-            display.setTransformation(new Transformation(
-                    new Vector3f(0, 0, 0),
-                    new Quaternionf(),
-                    new Vector3f(RAID_HEALTH_DISPLAY_SCALE, RAID_HEALTH_DISPLAY_SCALE, RAID_HEALTH_DISPLAY_SCALE),
-                    new Quaternionf()
-            ));
-            display.text(buildRaidHealthComponent());
-        });
-
-        lastDisplayedRaidHealth = Math.round(warlordsNPC.getCurrentHealth());
-    }
-
-    private void updateRaidHealthDisplay() {
-        if (raidHealthDisplay == null || raidHealthDisplay.isDead()) {
-            return;
-        }
-        if (!(warlordsNPC.getEntity() instanceof LivingEntity entity)) {
-            return;
-        }
-
-        raidHealthDisplay.teleport(getRaidHealthDisplayLocation(entity));
-
-        int currentHealth = Math.round(warlordsNPC.getCurrentHealth());
-        if (currentHealth != lastDisplayedRaidHealth) {
-            raidHealthDisplay.text(buildRaidHealthComponent());
-            lastDisplayedRaidHealth = currentHealth;
-        }
-    }
-
-    private Location getRaidHealthDisplayLocation(LivingEntity entity) {
-        return new Location(
-                entity.getWorld(),
-                (entity.getBoundingBox().getMinX() + entity.getBoundingBox().getMaxX()) / 2,
-                entity.getBoundingBox().getMaxY() + RAID_HEALTH_DISPLAY_OFFSET,
-                (entity.getBoundingBox().getMinZ() + entity.getBoundingBox().getMaxZ()) / 2
-        );
-    }
-
-    private Component buildRaidHealthComponent() {
-        double healthPercent = Math.max(0, Math.min(1, warlordsNPC.getCurrentHealth() / warlordsNPC.getMaxHealth()));
-        int filled = (int) Math.round(RAID_HEALTH_BAR_LENGTH * healthPercent);
-        filled = Math.max(0, Math.min(RAID_HEALTH_BAR_LENGTH, filled));
-
-        String fullBar = "█".repeat(filled);
-        String emptyBar = "█".repeat(RAID_HEALTH_BAR_LENGTH - filled);
-        int percent = (int) Math.round(healthPercent * 100);
-
-        TextComponent.Builder builder = Component.text();
-        builder.append(
-                Component.text("MITHRA", TextColor.color(245, 225, 245))
-                         .decorate(TextDecoration.BOLD)
-        );
-        builder.append(Component.newline());
-        builder.append(this.getDescription());
-        builder.append(Component.newline());
-        builder.append(Component.text(fullBar, NamedTextColor.RED));
-        builder.append(Component.text(emptyBar, NamedTextColor.DARK_GRAY));
-        builder.append(Component.newline());
-        builder.append(Component.text(
-                NumberFormat.addCommaAndRound(Math.round(warlordsNPC.getCurrentHealth())) +
-                        " / " +
-                        NumberFormat.addCommaAndRound(Math.round(warlordsNPC.getMaxHealth())) +
-                        "  -  " +
-                        percent + "%",
-                NamedTextColor.WHITE
-        ));
-        return builder.build();
     }
 
     private boolean isMoving(Location current) {
