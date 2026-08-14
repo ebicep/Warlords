@@ -11,6 +11,7 @@ import com.ebicep.warlords.pve.mobs.tiers.RaidBossMob;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.npc.NPC;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -84,29 +85,30 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
 
     @Override
     public Component getDescription() {
-        return Component.text("Queen of the Chessboard", TextColor.color(225, 215, 255));
+        return Component.text("♦ RAID BOSS ♦", TextColor.color(225, 85, 115), TextDecoration.BOLD);
     }
 
     @Override
     public TextColor getColor() {
-        return TextColor.color(235, 225, 255);
+        return TextColor.color(105, 225, 255);
+    }
+
+    @Override
+    public double getMobScale() {
+        return 1.4;
     }
 
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
 
-        LivingEntity entity = (LivingEntity) warlordsNPC.getEntity();
-        AttributeInstance scale = entity.getAttribute(Attribute.SCALE);
-        if (scale != null) {
-            scale.setBaseValue(3);
-        }
+        spawnRoyalCrown(warlordsNPC);
 
+        LivingEntity entity = (LivingEntity) warlordsNPC.getEntity();
         warlordsNPC.getMobHologram().setHidden(true);
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
         entity.setCustomNameVisible(false);
 
-        spawnRoyalCrown(entity);
         spawnRaidHealthDisplay(entity);
         playQueenMoveSet(warlordsNPC.getLocation());
 
@@ -204,9 +206,9 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
         previousLocation = null;
     }
 
-    private void spawnRoyalCrown(LivingEntity entity) {
+    private void spawnRoyalCrown(WarlordsEntity we) {
         ItemStack crownItem = Weapons.WARLORDS_II_ROYAL_CHAKRAM.getItem().clone();
-        Location location = warlordsNPC.getLocation().clone().add(0, entity.getHeight() + 0.75, 0);
+        Location location = warlordsNPC.getLocation().clone().add(0, we.getEntity().getHeight() + 0.75, 0);
 
         royalCrown = warlordsNPC.getWorld().spawn(location, ItemDisplay.class, display -> {
             display.setItemStack(crownItem);
@@ -301,25 +303,19 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
         int filled = (int) Math.round(RAID_HEALTH_BAR_LENGTH * healthPercent);
         filled = Math.max(0, Math.min(RAID_HEALTH_BAR_LENGTH, filled));
 
-        TextColor barColor = healthPercent > 0.5
-                ? TextColor.color(196, 165, 255)
-                : healthPercent > 0.2
-                ? TextColor.color(134, 80, 190)
-                : NamedTextColor.RED;
-
         String fullBar = "█".repeat(filled);
         String emptyBar = "█".repeat(RAID_HEALTH_BAR_LENGTH - filled);
         int percent = (int) Math.round(healthPercent * 100);
 
         TextComponent.Builder builder = Component.text();
         builder.append(
-                Component.text("MITHRA", TextColor.color(235, 225, 255))
+                Component.text("MITHRA", TextColor.color(245, 225, 245))
                          .decorate(TextDecoration.BOLD)
         );
         builder.append(Component.newline());
-        builder.append(Component.text("QUEEN OF THE CHESSBOARD", TextColor.color(170, 150, 205)));
+        builder.append(this.getDescription());
         builder.append(Component.newline());
-        builder.append(Component.text(fullBar, barColor));
+        builder.append(Component.text(fullBar, NamedTextColor.RED));
         builder.append(Component.text(emptyBar, NamedTextColor.DARK_GRAY));
         builder.append(Component.newline());
         builder.append(Component.text(
