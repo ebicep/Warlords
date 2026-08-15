@@ -1,7 +1,9 @@
 package com.ebicep.warlords.game.option.pve.anomaly;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsRespawnEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
@@ -15,8 +17,11 @@ import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -45,14 +50,33 @@ public class AnomalyOption extends AbstractAnomalyOption {
 
     private AnomalyRelic activeRelic;
     private AbstractMob activeBoss;
+    private Location playerRespawnLocation;
     private int activeObjective = -1;
     private int objectiveTicks;
     private int bossPhasesStarted;
     private int preparationTicks = START_DELAY_TICKS;
+    private boolean defeated;
 
     @Override
     public void register(@Nonnull Game game) {
         super.register(game);
+        game.registerEvents(new Listener() {
+            @EventHandler(ignoreCancelled = true)
+            public void onRespawn(WarlordsRespawnEvent event) {
+                WarlordsEntity warlordsEntity = event.getWarlordsEntity();
+                if (!(warlordsEntity instanceof WarlordsPlayer) || warlordsEntity.getGame() != game || playerRespawnLocation == null) {
+                    return;
+                }
+
+                Location respawnLocation = event.getRespawnLocation();
+                respawnLocation.setWorld(playerRespawnLocation.getWorld());
+                respawnLocation.setX(playerRespawnLocation.getX());
+                respawnLocation.setY(playerRespawnLocation.getY());
+                respawnLocation.setZ(playerRespawnLocation.getZ());
+                respawnLocation.setYaw(playerRespawnLocation.getYaw());
+                respawnLocation.setPitch(playerRespawnLocation.getPitch());
+            }
+        });
         game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(5, "anomaly_objective") {
             @Nonnull
             @Override
@@ -68,7 +92,7 @@ public class AnomalyOption extends AbstractAnomalyOption {
         if (!(dead instanceof WarlordsNPC warlordsNPC) || warlordsNPC.getMob() != activeRelic) {
             return false;
         }
-        failCurrentObjective();
+        failAnomaly();
         return true;
     }
 
@@ -84,7 +108,7 @@ public class AnomalyOption extends AbstractAnomalyOption {
         new GameRunnable(game) {
             @Override
             public void run() {
-                if (completed) {
+                if (completed || defeated) {
                     cancel();
                     return;
                 }
@@ -130,6 +154,7 @@ public class AnomalyOption extends AbstractAnomalyOption {
         activeBoss = null;
         clearHostileMobs();
         AnomalyObjectiveMarker marker = getObjectiveMarker(objectiveIndex);
+        playerRespawnLocation = marker.getLocation().clone().add(0, 1, 0);
         int relicHealth = BASE_RELIC_HEALTH + Math.max(0, playerCount() - 1) * 10_000;
         activeRelic = new AnomalyRelic(marker.getLocation().clone(), objectiveIndex, relicHealth);
         WarlordsNPC relicNpc = activeRelic.toNPC(game, Team.BLUE, npc -> activeRelic.onSpawn(this));
@@ -152,18 +177,19 @@ public class AnomalyOption extends AbstractAnomalyOption {
         scheduleNextObjective();
     }
 
-    private void failCurrentObjective() {
-        if (activeRelic == null) {
+    private void failAnomaly() {
+        if (activeRelic == null || defeated) {
             return;
         }
+        defeated = true;
         objectiveSuccess[activeObjective] = false;
         activeBoss = null;
-        Utils.playGlobalSound(activeRelic.getSpawnLocation(), "raid.church.dingalt", 2, 0.5f);
-        announce(Component.text("Relic " + (activeObjective + 1) + " was lost. Its reward cache is forfeited.", NamedTextColor.RED));
+        Location relicLocation = activeRelic.getSpawnLocation().clone();
+        Utils.playGlobalSound(relicLocation, "raid.church.dingalt", 2, 0.5f);
+        announce(Component.text("Relic " + (activeObjective + 1) + " was destroyed. Opex has fallen!", NamedTextColor.RED));
         removeActiveRelic();
         clearHostileMobs();
-        teleportToNextObjective();
-        scheduleNextObjective();
+        Bukkit.getPluginManager().callEvent(new WarlordsGameTriggerWinEvent(game, this, Team.RED));
     }
 
     private boolean shouldStartBossPhase() {
@@ -218,6 +244,7 @@ public class AnomalyOption extends AbstractAnomalyOption {
             return;
         }
         Location destination = getObjectiveMarker(nextObjective).getLocation().clone().add(0, 1, 0);
+        playerRespawnLocation = destination.clone();
         game.forEachOnlinePlayer((player, team) -> {
             player.teleport(destination);
             player.playSound(destination, Sound.ENTITY_ENDERMAN_TELEPORT, 1.5f, 1.1f);
@@ -276,6 +303,10 @@ public class AnomalyOption extends AbstractAnomalyOption {
 
     private List<Component> getObjectiveScoreboard() {
         List<Component> lines = new ArrayList<>();
+        if (defeated) {
+            lines.add(Component.text("Anomaly Failed", NamedTextColor.RED));
+            return lines;
+        }
         if (completed) {
             lines.add(Component.text("Anomaly Complete", NamedTextColor.GREEN));
             return lines;
@@ -342,6 +373,7 @@ public class AnomalyOption extends AbstractAnomalyOption {
     @Override
     public void onGameCleanup(@Nonnull Game game) {
         activeBoss = null;
+        playerRespawnLocation = null;
         removeActiveRelic();
         super.onGameCleanup(game);
     }
