@@ -122,6 +122,8 @@ public class DatabasePlayerPvE implements MultiPvEStats<
     //WEAPONS
     @Field("weapon_inventory")
     private List<AbstractWeapon> weaponInventory = new ArrayList<>();
+    @Field("favorite_weapon_titles")
+    private List<String> favoriteWeaponTitles = new ArrayList<>();
     //ITEMS
     @Field("item_manager")
     private ItemsManager itemsManager = new ItemsManager();
@@ -239,7 +241,7 @@ public class DatabasePlayerPvE implements MultiPvEStats<
                 //need to search by uuid incase weapon got upgraded or changed
                 for (AbstractWeapon weapon : weaponsFound) {
                     boolean removed = weaponInventory.removeIf(abstractWeapon -> abstractWeapon.getUUID().equals(weapon.getUUID()));
-                    if (!removed && weapon instanceof Salvageable) {
+                    if (!removed && weapon instanceof Salvageable salvageable) {
                         MasterworksFair fair = MasterworksFairManager.currentFair;
                         if (!fair.getCommonPlayerEntries().removeIf(entry -> entry.getWeapon().getUUID().equals(weapon.getUUID())) &&
                                 !fair.getRarePlayerEntries().removeIf(entry -> entry.getWeapon().getUUID().equals(weapon.getUUID())) &&
@@ -247,7 +249,7 @@ public class DatabasePlayerPvE implements MultiPvEStats<
                         ) {
                             ChatChannels.sendDebugMessage((CommandIssuer) null, gamePlayer.getName() + " - Subtracted currency");
                             subtractCurrency(Currencies.SYNTHETIC_SHARD,
-                                    (((Salvageable) weapon).getMaxSalvageAmount() + ((Salvageable) weapon).getMinSalvageAmount()) / 2
+                                    (salvageable.getMaxSalvageAmount() + salvageable.getMinSalvageAmount()) / 2
                             );
                         } else {
                             ChatChannels.sendDebugMessage((CommandIssuer) null, gamePlayer.getName() + " - Removed weapon from fair");
@@ -407,6 +409,13 @@ public class DatabasePlayerPvE implements MultiPvEStats<
 
     public List<AbstractWeapon> getWeaponInventory() {
         return weaponInventory;
+    }
+
+    public List<String> getFavoriteWeaponTitles() {
+        if (favoriteWeaponTitles == null) {
+            favoriteWeaponTitles = new ArrayList<>();
+        }
+        return favoriteWeaponTitles;
     }
 
     public List<MasterworksFairEntry> getMasterworksFairEntries() {
