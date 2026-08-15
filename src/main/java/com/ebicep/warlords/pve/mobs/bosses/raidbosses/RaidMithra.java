@@ -16,6 +16,7 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
@@ -29,12 +30,19 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RaidMithra extends AbstractMob implements RaidBossMob {
 
+    private static final int CRYSTAL_COUNT = 6;
+    private static final double CRYSTAL_ORBIT_RADIUS = 1.2;
+    private static final double CRYSTAL_ORBIT_SPEED = 0.75;
+    private static final double CRYSTAL_VERTICAL_AMPLITUDE = 0.45;
     private static final Particle.DustOptions WHITE_DUST = new Particle.DustOptions(Color.fromRGB(245, 245, 255), 1.25f);
     private static final Particle.DustOptions ABYSS_DUST = new Particle.DustOptions(Color.fromRGB(88, 52, 130), 1.25f);
 
+    private final List<ItemDisplay> orbitingCrystals = new ArrayList<>();
     private ItemDisplay royalCrown;
     private RaidBossUtils.RaidBossHealthBar raidHealthBar;
     private Location previousLocation;
@@ -91,6 +99,7 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
         super.onSpawn(option);
 
         spawnRoyalCrown(warlordsNPC);
+        spawnOrbitingCrystals();
         raidHealthBar = RaidBossUtils.createHealthBar(
                 warlordsNPC,
                 0.9f,
@@ -122,6 +131,7 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
         boolean moving = isMoving(current);
 
         updateRoyalCrown(current, ticksElapsed, moving);
+        updateOrbitingCrystals(ticksElapsed);
         if (raidHealthBar != null) {
             raidHealthBar.update();
         }
@@ -189,6 +199,12 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
         if (royalCrown != null && !royalCrown.isDead()) {
             royalCrown.remove();
         }
+        for (ItemDisplay crystal : orbitingCrystals) {
+            if (crystal != null && !crystal.isDead()) {
+                crystal.remove();
+            }
+        }
+        orbitingCrystals.clear();
         if (raidHealthBar != null) {
             raidHealthBar.remove();
         }
@@ -236,6 +252,77 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
                 new Vector3f(scale, scale, scale),
                 new Quaternionf()
         ));
+    }
+
+    private void spawnOrbitingCrystals() {
+        ItemStack crystalItem = new ItemStack(Material.AMETHYST_SHARD);
+        Location spawn = warlordsNPC.getLocation();
+
+        for (int i = 0; i < CRYSTAL_COUNT; i++) {
+            int index = i;
+            ItemDisplay crystal = warlordsNPC.getWorld().spawn(spawn, ItemDisplay.class, display -> {
+                float scale = 0.54f + index % 3 * 0.05f;
+                display.setItemStack(crystalItem.clone());
+                display.setBillboard(Display.Billboard.FIXED);
+                display.setInterpolationDuration(2);
+                display.setTeleportDuration(2);
+                display.setPersistent(false);
+                display.setTransformation(new Transformation(
+                        new Vector3f(0, 0, 0),
+                        new Quaternionf()
+                                .rotateX((float) Math.toRadians(55))
+                                .rotateZ((float) Math.toRadians(index * (360d / CRYSTAL_COUNT))),
+                        new Vector3f(scale, scale, scale),
+                        new Quaternionf()
+                ));
+            });
+            orbitingCrystals.add(crystal);
+        }
+
+        updateOrbitingCrystals(0);
+    }
+
+    private void updateOrbitingCrystals(int ticksElapsed) {
+        if (!(warlordsNPC.getEntity() instanceof LivingEntity entity)) {
+            return;
+        }
+
+        double centerX = (entity.getBoundingBox().getMinX() + entity.getBoundingBox().getMaxX()) / 2;
+        double centerZ = (entity.getBoundingBox().getMinZ() + entity.getBoundingBox().getMaxZ()) / 2;
+        double height = entity.getBoundingBox().getMaxY() - entity.getBoundingBox().getMinY();
+        double centerY = entity.getBoundingBox().getMinY() + height * 0.52;
+        double baseAngle = Math.toRadians(ticksElapsed * CRYSTAL_ORBIT_SPEED);
+
+        for (int i = 0; i < orbitingCrystals.size(); i++) {
+            ItemDisplay crystal = orbitingCrystals.get(i);
+            if (crystal == null || crystal.isDead()) {
+                continue;
+            }
+
+            double phase = Math.PI * 2 * i / CRYSTAL_COUNT;
+            double angle = baseAngle + phase;
+            double radius = CRYSTAL_ORBIT_RADIUS + Math.sin(angle * 3 + phase) * 0.08;
+            double y = centerY + Math.sin(angle * 2 + phase * 0.5) * CRYSTAL_VERTICAL_AMPLITUDE;
+
+            crystal.teleport(new Location(
+                    entity.getWorld(),
+                    centerX + Math.cos(angle) * radius,
+                    y,
+                    centerZ + Math.sin(angle) * radius
+            ));
+
+            float scale = 0.54f + i % 3 * 0.05f;
+            float spin = (float) Math.toRadians(ticksElapsed * 1.25 + i * 45);
+            crystal.setTransformation(new Transformation(
+                    new Vector3f(0, 0, 0),
+                    new Quaternionf()
+                            .rotateX((float) Math.toRadians(55))
+                            .rotateY(spin)
+                            .rotateZ((float) angle),
+                    new Vector3f(scale, scale, scale),
+                    new Quaternionf()
+            ));
+        }
     }
 
     private boolean isMoving(Location current) {
