@@ -20,18 +20,18 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public final class AnomalyRewardPool {
 
-    public static final double NEW_ITEM_CHANCE = 0.20;
-
     private final String name;
     private final Map<Currencies, Long> currencies;
+    private final double newItemChance;
 
-    public AnomalyRewardPool(String name, long coins, long syntheticShards, long ethereumCrystals) {
+    public AnomalyRewardPool(String name, long coins, long syntheticShards, long ethereumCrystals, double newItemChance) {
         this.name = name;
         LinkedHashMap<Currencies, Long> rewards = new LinkedHashMap<>();
         rewards.put(Currencies.COIN, coins);
         rewards.put(Currencies.SYNTHETIC_SHARD, syntheticShards);
         rewards.put(Currencies.ETHEREUM_CRYSTAL, ethereumCrystals);
         this.currencies = Collections.unmodifiableMap(rewards);
+        this.newItemChance = newItemChance;
     }
 
     public AnomalyRewardCache createCache(NewItemsSetBonus featuredLegendarySet, long rotationStart) {
@@ -42,7 +42,7 @@ public final class AnomalyRewardPool {
 
     @Nullable
     private NewItem rollNewItem(NewItemsSetBonus featuredLegendarySet) {
-        if (ThreadLocalRandom.current().nextDouble() >= NEW_ITEM_CHANCE) {
+        if (ThreadLocalRandom.current().nextDouble() >= newItemChance) {
             return null;
         }
         NewItemTier tier = rollItemTier();
@@ -72,7 +72,7 @@ public final class AnomalyRewardPool {
     public List<Component> getLore() {
         List<Component> lore = new ArrayList<>(PvEUtils.getCostLore(currencies, "Guaranteed", false));
         lore.add(Component.empty());
-        lore.add(Component.text("Item chance: 20%", NamedTextColor.AQUA));
+        lore.add(Component.text("Item chance: " + Math.round(newItemChance * 100) + "%", NamedTextColor.AQUA));
         lore.add(Component.text(" - Common: 50%", NewItemTier.COMMON.getTextColor()));
         lore.add(Component.text(" - Rare: 30%", NewItemTier.RARE.getTextColor()));
         lore.add(Component.text(" - Epic: 17%", NewItemTier.EPIC.getTextColor()));
