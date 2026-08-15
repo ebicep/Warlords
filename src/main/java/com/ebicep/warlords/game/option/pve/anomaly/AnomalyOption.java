@@ -9,6 +9,7 @@ import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -29,12 +30,24 @@ public class AnomalyOption extends AbstractAnomalyOption {
     public static final int OBJECTIVE_DURATION_TICKS = 120 * GameRunnable.SECOND;
     private static final int MOB_SPAWN_INTERVAL = GameRunnable.SECOND;
     private static final int BASE_RELIC_HEALTH = 25_000;
+    private static final int[] BOSS_TRIGGER_TICKS = {
+            30 * GameRunnable.SECOND,
+            60 * GameRunnable.SECOND,
+            90 * GameRunnable.SECOND
+    };
+    private static final Mob[] RELIC_BOSSES = {
+            Mob.GHOULCALLER,
+            Mob.MITHRA,
+            Mob.ZENITH
+    };
 
     private final boolean[] objectiveSuccess = new boolean[OBJECTIVE_COUNT];
 
     private AnomalyRelic activeRelic;
+    private AbstractMob activeBoss;
     private int activeObjective = -1;
     private int objectiveTicks;
+    private int bossPhasesStarted;
     private int preparationTicks = START_DELAY_TICKS;
 
     @Override
@@ -82,8 +95,17 @@ public class AnomalyOption extends AbstractAnomalyOption {
                 if (activeRelic == null) {
                     return;
                 }
+
                 mobTick();
+                if (handleActiveBossPhase()) {
+                    return;
+                }
+
                 objectiveTicks++;
+                if (shouldStartBossPhase()) {
+                    startBossPhase();
+                    return;
+                }
                 if (objectiveTicks % MOB_SPAWN_INTERVAL == 0 && mobCount() < getMaximumMobCount()) {
                     spawnPressureMob();
                 }
@@ -104,6 +126,8 @@ public class AnomalyOption extends AbstractAnomalyOption {
         }
         activeObjective = objectiveIndex;
         objectiveTicks = 0;
+        bossPhasesStarted = 0;
+        activeBoss = null;
         clearHostileMobs();
         AnomalyObjectiveMarker marker = getObjectiveMarker(objectiveIndex);
         int relicHealth = BASE_RELIC_HEALTH + Math.max(0, playerCount() - 1) * 10_000;
@@ -119,6 +143,7 @@ public class AnomalyOption extends AbstractAnomalyOption {
             return;
         }
         objectiveSuccess[activeObjective] = true;
+        activeBoss = null;
         announce(Component.text("Relic " + (activeObjective + 1) + " secured. Reward cache unlocked!", NamedTextColor.GREEN));
         OpexCurrencyOption.grantRelicReward(game);
         removeActiveRelic();
@@ -132,12 +157,59 @@ public class AnomalyOption extends AbstractAnomalyOption {
             return;
         }
         objectiveSuccess[activeObjective] = false;
+        activeBoss = null;
         Utils.playGlobalSound(activeRelic.getSpawnLocation(), "raid.church.dingalt", 2, 0.5f);
         announce(Component.text("Relic " + (activeObjective + 1) + " was lost. Its reward cache is forfeited.", NamedTextColor.RED));
         removeActiveRelic();
         clearHostileMobs();
         teleportToNextObjective();
         scheduleNextObjective();
+    }
+
+    private boolean shouldStartBossPhase() {
+        return bossPhasesStarted < BOSS_TRIGGER_TICKS.length && objectiveTicks >= BOSS_TRIGGER_TICKS[bossPhasesStarted];
+    }
+
+    private void startBossPhase() {
+        clearHostileMobs();
+
+        Mob bossType = RELIC_BOSSES[(activeObjective + bossPhasesStarted) % RELIC_BOSSES.length];
+        Location spawnLocation = getBossSpawnLocation();
+        activeBoss = bossType.createMob(spawnLocation);
+        bossPhasesStarted++;
+        spawnNewMob(activeBoss, Team.RED);
+
+        String bossName = activeBoss.getWarlordsNPC().getName();
+        announce(Component.text("Relic stabilization halted! ", NamedTextColor.RED)
+                .append(Component.text("Defeat " + bossName + " to continue.", NamedTextColor.GOLD)));
+        announce(Component.text("The defense timer is frozen at " + getSecondsRemaining() + " seconds.", NamedTextColor.YELLOW));
+        Utils.playGlobalSound(spawnLocation, Sound.ENTITY_WITHER_SPAWN, 2, 0.75f);
+    }
+
+    private boolean handleActiveBossPhase() {
+        if (activeBoss == null) {
+            return false;
+        }
+
+        WarlordsNPC bossNpc = activeBoss.getWarlordsNPC();
+        if (bossNpc != null && bossNpc.isAlive()) {
+            return true;
+        }
+
+        String bossName = bossNpc == null ? "Boss" : bossNpc.getName();
+        activeBoss = null;
+        clearHostileMobs();
+        announce(Component.text(bossName + " defeated. Relic stabilization resumed.", NamedTextColor.GREEN));
+        game.forEachOnlinePlayer((player, team) -> player.playSound(player.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 1.5f, 1.2f));
+        return false;
+    }
+
+    private Location getBossSpawnLocation() {
+        List<AnomalySpawnMarker> spawnMarkers = getActiveSpawnMarkers();
+        if (!spawnMarkers.isEmpty()) {
+            return spawnMarkers.get(ThreadLocalRandom.current().nextInt(spawnMarkers.size())).getLocation().clone();
+        }
+        return activeRelic.getSpawnLocation().clone().add(4, 0, 0);
     }
 
     private void teleportToNextObjective() {
@@ -172,11 +244,15 @@ public class AnomalyOption extends AbstractAnomalyOption {
         }.runTaskLater(3 * GameRunnable.SECOND);
     }
 
-    private void spawnPressureMob() {
-        List<AnomalySpawnMarker> spawnMarkers = game.getMarkers(AnomalySpawnMarker.class)
+    private List<AnomalySpawnMarker> getActiveSpawnMarkers() {
+        return game.getMarkers(AnomalySpawnMarker.class)
                 .stream()
                 .filter(marker -> marker.getObjectiveIndex() == activeObjective)
                 .toList();
+    }
+
+    private void spawnPressureMob() {
+        List<AnomalySpawnMarker> spawnMarkers = getActiveSpawnMarkers();
         if (spawnMarkers.isEmpty()) {
             return;
         }
@@ -217,8 +293,15 @@ public class AnomalyOption extends AbstractAnomalyOption {
 
         lines.add(Component.text("Relic: ", NamedTextColor.WHITE)
                 .append(Component.text((activeObjective + 1) + "/" + OBJECTIVE_COUNT, NamedTextColor.AQUA)));
+
+        boolean bossPhase = isActiveBossAlive();
         lines.add(Component.text("Defend for: ", NamedTextColor.WHITE)
-                .append(Component.text(getSecondsRemaining() + "s", NamedTextColor.YELLOW)));
+                .append(Component.text(getSecondsRemaining() + "s", NamedTextColor.YELLOW))
+                .append(bossPhase ? Component.text("  PAUSED", NamedTextColor.RED) : Component.empty()));
+        if (bossPhase) {
+            lines.add(Component.text("Boss: ", NamedTextColor.WHITE)
+                    .append(Component.text(activeBoss.getWarlordsNPC().getName(), NamedTextColor.RED)));
+        }
 
         WarlordsNPC relicNpc = activeRelic.getWarlordsNPC();
         float healthRatio = relicNpc.getCurrentHealth() / relicNpc.getMaxHealth();
@@ -229,6 +312,14 @@ public class AnomalyOption extends AbstractAnomalyOption {
                 .append(Component.text("❤ " + Math.round(relicNpc.getCurrentHealth()), healthColor))
                 .append(Component.text(" / " + Math.round(relicNpc.getMaxHealth()), NamedTextColor.WHITE)));
         return lines;
+    }
+
+    private boolean isActiveBossAlive() {
+        if (activeBoss == null) {
+            return false;
+        }
+        WarlordsNPC bossNpc = activeBoss.getWarlordsNPC();
+        return bossNpc != null && bossNpc.isAlive();
     }
 
     private int getSecondsRemaining() {
@@ -250,6 +341,7 @@ public class AnomalyOption extends AbstractAnomalyOption {
 
     @Override
     public void onGameCleanup(@Nonnull Game game) {
+        activeBoss = null;
         removeActiveRelic();
         super.onGameCleanup(game);
     }
