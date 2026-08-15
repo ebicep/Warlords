@@ -36,9 +36,9 @@ import java.util.List;
 public class RaidMithra extends AbstractMob implements RaidBossMob {
 
     private static final int CRYSTAL_COUNT = 6;
-    private static final double CRYSTAL_ORBIT_RADIUS = 1.2;
+    private static final double CRYSTAL_ORBIT_RADIUS = 2;
     private static final double CRYSTAL_ORBIT_SPEED = 0.75;
-    private static final double CRYSTAL_VERTICAL_AMPLITUDE = 0.45;
+    private static final double CRYSTAL_VERTICAL_AMPLITUDE = 0.6;
     private static final Particle.DustOptions WHITE_DUST = new Particle.DustOptions(Color.fromRGB(245, 245, 255), 1.25f);
     private static final Particle.DustOptions ABYSS_DUST = new Particle.DustOptions(Color.fromRGB(88, 52, 130), 1.25f);
 
@@ -51,7 +51,7 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
     private int chessStep;
 
     public RaidMithra(Location spawnLocation) {
-        this(spawnLocation, "Mithra", 4_000_000, 0.35f, 20, 1200, 1600);
+        this(spawnLocation, "Mithra", 4_000_000, 0.18f, 20, 1200, 1600);
     }
 
     public RaidMithra(
@@ -91,7 +91,7 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
 
     @Override
     public double getMobScale() {
-        return 1.4;
+        return 2;
     }
 
     @Override
@@ -102,9 +102,9 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
         spawnOrbitingCrystals();
         raidHealthBar = RaidBossUtils.createHealthBar(
                 warlordsNPC,
-                0.9f,
-                1.45,
-                "MITHRA",
+                1.3f,
+                this.getMobScale() + 0.5,
+                getName(),
                 getDescription(),
                 NamedTextColor.RED
         );
@@ -261,7 +261,7 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
         for (int i = 0; i < CRYSTAL_COUNT; i++) {
             int index = i;
             ItemDisplay crystal = warlordsNPC.getWorld().spawn(spawn, ItemDisplay.class, display -> {
-                float scale = 0.54f + index % 3 * 0.05f;
+                float scale = (float) (getMobScale() + index % 3 * 0.05f);
                 display.setItemStack(crystalItem.clone());
                 display.setBillboard(Display.Billboard.FIXED);
                 display.setInterpolationDuration(2);
@@ -290,7 +290,7 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
         double centerX = (entity.getBoundingBox().getMinX() + entity.getBoundingBox().getMaxX()) / 2;
         double centerZ = (entity.getBoundingBox().getMinZ() + entity.getBoundingBox().getMaxZ()) / 2;
         double height = entity.getBoundingBox().getMaxY() - entity.getBoundingBox().getMinY();
-        double centerY = entity.getBoundingBox().getMinY() + height * 0.52;
+        double centerY = entity.getBoundingBox().getMinY() + height * 0.9;
         double baseAngle = Math.toRadians(ticksElapsed * CRYSTAL_ORBIT_SPEED);
 
         for (int i = 0; i < orbitingCrystals.size(); i++) {
@@ -311,7 +311,7 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
                     centerZ + Math.sin(angle) * radius
             ));
 
-            float scale = 0.54f + i % 3 * 0.05f;
+            float scale = (float) (getMobScale() + i % 3 * 0.05f);
             float spin = (float) Math.toRadians(ticksElapsed * 1.25 + i * 45);
             crystal.setTransformation(new Transformation(
                     new Vector3f(0, 0, 0),

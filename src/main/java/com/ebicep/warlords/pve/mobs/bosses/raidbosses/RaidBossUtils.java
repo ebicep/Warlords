@@ -137,9 +137,9 @@ public final class RaidBossUtils {
         }
 
         private Component buildHealthComponent() {
-            double healthPercent = Math.max(0, Math.min(1, boss.getCurrentHealth() / boss.getMaxHealth()));
+            double healthPercent = Math.clamp(boss.getCurrentHealth() / boss.getMaxHealth(), 0, 1);
             int filled = (int) Math.round(HEALTH_BAR_LENGTH * healthPercent);
-            filled = Math.max(0, Math.min(HEALTH_BAR_LENGTH, filled));
+            filled = Math.clamp(filled, 0, HEALTH_BAR_LENGTH);
 
             String fullBar = "█".repeat(filled);
             String emptyBar = "█".repeat(HEALTH_BAR_LENGTH - filled);
@@ -161,7 +161,8 @@ public final class RaidBossUtils {
                             NumberFormat.addCommaAndRound(Math.round(boss.getMaxHealth())) +
                             "  -  " +
                             percent + "%",
-                    NamedTextColor.WHITE
+                    NamedTextColor.WHITE,
+                    TextDecoration.BOLD
             ));
             return builder.build();
         }
