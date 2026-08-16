@@ -70,7 +70,7 @@ public class WitchDeacon extends AbstractMob implements IntermediateMob {
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-        if (ticksElapsed % 4 == 0) {
+        if (ticksElapsed % 8 == 0) {
             new CircleEffect(
                     warlordsNPC.getGame(),
                     warlordsNPC.getTeam(),

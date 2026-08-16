@@ -98,7 +98,7 @@ public class Illumination extends AbstractMob implements AdvancedMob {
             }
         }
 
-        FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
+        EffectUtils.playFirework(deathLocation, FireworkEffect.builder()
                                                                        .withColor(Color.RED)
                                                                        .with(FireworkEffect.Type.BALL_LARGE)
                                                                        .withTrail()

@@ -98,7 +98,7 @@ public class GuildBountyOption implements Option, Listener {
                 GuildBountyManager.addProgress(guild, GuildBounty.COMPLETE_ANOMALIES, 1);
             }
             if (successfulCompletion && game.getMap() instanceof RaidOne && largestGuildParty >= 4) {
-                GuildBountyManager.addProgress(guild, GuildBounty.COMPLETE_REGNUM, 1);
+                //GuildBountyManager.addProgress(guild, GuildBounty.COMPLETE_REGNUM, 1);
             }
             if (largestGuildParty >= 4) {
                 BountyUtils.getOptionFromGame(game, WaveDefenseOption.class).ifPresent(waveDefenseOption -> {

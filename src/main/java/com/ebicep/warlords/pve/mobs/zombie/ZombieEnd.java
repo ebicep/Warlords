@@ -82,7 +82,7 @@ public class ZombieEnd extends AbstractMob implements EliteMob {
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-        if (ticksElapsed % 20 == 0) {
+        if (ticksElapsed % 40 == 0) {
             for (WarlordsEntity we : PlayerFilterGeneric
                     .entitiesAround(warlordsNPC, 3.5, 4, 3.5)
                     .aliveEnemiesOf(warlordsNPC)
