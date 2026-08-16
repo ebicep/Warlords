@@ -37,6 +37,8 @@ import java.util.function.Consumer;
 
 public class WarlordsNPC extends WarlordsEntity {
 
+    private static final int HOLOGRAM_UPDATE_INTERVAL = 4;
+
     protected float meleeCritChance;
     protected float meleeCritMultiplier;
     protected NPC npc;
@@ -45,6 +47,7 @@ public class WarlordsNPC extends WarlordsEntity {
     @Nonnull
     protected TextColor nameColor = NamedTextColor.GRAY;
     private final MobHologram mobHologram;
+    private final int hologramUpdateOffset;
     private float minMeleeDamage;
     private float maxMeleeDamage;
     private ArmorStand playerHealthDisplay; // used for player entity type npcs
@@ -71,6 +74,7 @@ public class WarlordsNPC extends WarlordsEntity {
         this.npc.data().set(WARLORDS_ENTITY_METADATA, this);
         this.mob = warlordsMob;
         this.mobHologram = mobHologram;
+        this.hologramUpdateOffset = Math.floorMod(npc.getUniqueId().hashCode(), HOLOGRAM_UPDATE_INTERVAL);
         if (warlordsMob != null && warlordsMob.getInternalLevel() > 1) {
             mobNamePrefix = Component.textOfChildren(
                     Component.text("[", NamedTextColor.GRAY),
@@ -96,6 +100,7 @@ public class WarlordsNPC extends WarlordsEntity {
         setMaxHealthAndHeal(maxHealth);
 
         mobHologram.getCustomHologramLines().add(new MobHologram.CustomHologramLine(this::getNameComponent));
+        mobHologram.update();
     }
 
     @Nonnull
@@ -233,7 +238,10 @@ public class WarlordsNPC extends WarlordsEntity {
             return;
         }
 
-        mobHologram.update();
+        boolean hologramUpdateTick = Math.floorMod(getGame().getLoopTickCounter() + hologramUpdateOffset, HOLOGRAM_UPDATE_INTERVAL) == 0;
+        if (hologramUpdateTick) {
+            mobHologram.updatePosition();
+        }
 
         int rounded = Math.round(getCurrentHealth());
         boolean shouldUpdateName = rounded != lastDisplayedHealth && getGame().getLoopTickCounter() % 2 == 0;
@@ -246,7 +254,7 @@ public class WarlordsNPC extends WarlordsEntity {
                     armorStand.setCustomNameVisible(true);
                 });
                 shouldUpdateName = true;
-            } else {
+            } else if (hologramUpdateTick) {
                 playerHealthDisplay.teleport(entity.getLocation().add(0, healthDisplayY, 0));
             }
         }
@@ -285,6 +293,8 @@ public class WarlordsNPC extends WarlordsEntity {
     @Override
     public void setDamageResistance(float damageResistance) {
         getSpec().setDamageResistance(Math.max(0, damageResistance));
+        mobHologram.markTextDirty();
+        mobHologram.update();
         updateHealth();
     }
 
@@ -350,6 +360,8 @@ public class WarlordsNPC extends WarlordsEntity {
 
     public void setNameColor(@Nonnull TextColor nameColor) {
         this.nameColor = nameColor;
+        mobHologram.markTextDirty();
+        mobHologram.update();
     }
 
     public float getMinMeleeDamage() {
