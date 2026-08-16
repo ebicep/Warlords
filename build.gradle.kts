@@ -12,7 +12,7 @@ plugins {
 }
 
 group = "com.ebicep"
-version = "Prelude to Chaos"
+version = "D.-O.._D R-..M.S"
 description = "Warlords"
 
 val archiveVersionSuffix: String

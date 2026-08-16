@@ -28,8 +28,8 @@ import java.util.Map;
 public class WeaponLegendaryCraftMenu {
 
     public static final LinkedHashMap<Currencies, Long> COST = new LinkedHashMap<>() {{
-        put(Currencies.COIN, 600000L);
-        put(Currencies.SYNTHETIC_SHARD, 6000L);
+        put(Currencies.COIN, 450000L);
+        put(Currencies.SYNTHETIC_SHARD, 4500L);
     }};
     public static final List<Component> COST_LORE = PvEUtils.getCostLore(COST, "Craft Cost", true);
 
@@ -37,7 +37,7 @@ public class WeaponLegendaryCraftMenu {
         DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
         for (Map.Entry<Currencies, Long> currenciesLongEntry : COST.entrySet()) {
             if (pveStats.getCurrencyValue(currenciesLongEntry.getKey()) < currenciesLongEntry.getValue()) {
-                player.sendMessage(Component.text("You are not worthy of crafting a legendary weapon yet, bring me 6.000 Synthetic Shards and 600.000 Coins first!", NamedTextColor.RED));
+                player.sendMessage(Component.text("You are not worthy of crafting a legendary weapon yet, bring me 4.500 Synthetic Shards and 450.000 Coins first!", NamedTextColor.RED));
                 return;
             }
         }
@@ -48,6 +48,10 @@ public class WeaponLegendaryCraftMenu {
                 new ItemBuilder(Material.GUNPOWDER)
                         .name(Component.text("Craft Legendary Weapon", NamedTextColor.GREEN))
                         .lore(COST_LORE)
+                        .addLore(
+                                Component.empty(),
+                                Component.text("25% OFF MATERIALS!", NamedTextColor.GOLD)
+                        )
                         .get(),
                 (m, e) -> {
                     List<Component> confirmLore = new ArrayList<>();
