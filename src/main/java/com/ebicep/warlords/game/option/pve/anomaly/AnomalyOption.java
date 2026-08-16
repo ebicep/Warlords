@@ -159,7 +159,7 @@ public class AnomalyOption extends AbstractAnomalyOption {
         activeRelic = new AnomalyRelic(marker.getLocation().clone(), objectiveIndex, relicHealth);
         WarlordsNPC relicNpc = activeRelic.toNPC(game, Team.BLUE, npc -> activeRelic.onSpawn(this));
         game.addNPC(relicNpc);
-        announce(Component.text("Defend Relic " + (objectiveIndex + 1) + " for 120 seconds!", NamedTextColor.AQUA));
+        announce(Component.text("Defend Relic " + (objectiveIndex + 1) + " for 2 minutes!", NamedTextColor.YELLOW));
         game.forEachOnlinePlayer((player, team) -> player.playSound(player.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 2, 1));
     }
 
@@ -186,7 +186,7 @@ public class AnomalyOption extends AbstractAnomalyOption {
         activeBoss = null;
         Location relicLocation = activeRelic.getSpawnLocation().clone();
         Utils.playGlobalSound(relicLocation, "raid.church.dingalt", 2, 0.5f);
-        announce(Component.text("Relic " + (activeObjective + 1) + " was destroyed. Opex has fallen!", NamedTextColor.RED));
+        announce(Component.text("Relic " + (activeObjective + 1) + " was destroyed. The Opex has fallen!", NamedTextColor.RED));
         removeActiveRelic();
         clearHostileMobs();
         Bukkit.getPluginManager().callEvent(new WarlordsGameTriggerWinEvent(game, this, Team.RED));
@@ -250,7 +250,7 @@ public class AnomalyOption extends AbstractAnomalyOption {
             player.playSound(destination, Sound.ENTITY_ENDERMAN_TELEPORT, 1.5f, 1.1f);
             player.playSound(destination, "raid.church.ding", 1, 0.5f);
         });
-        announce(Component.text("The party has been transported to Relic " + (nextObjective + 1) + ".", NamedTextColor.LIGHT_PURPLE));
+        announce(Component.text("The party has been transported to Relic " + (nextObjective + 1) + ".", NamedTextColor.YELLOW));
     }
 
     private AnomalyObjectiveMarker getObjectiveMarker(int objectiveIndex) {
