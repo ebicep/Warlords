@@ -43,10 +43,10 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
     private static final Particle.DustOptions ABYSS_DUST = new Particle.DustOptions(Color.fromRGB(88, 52, 130), 1.25f);
 
     private final List<ItemDisplay> orbitingCrystals = new ArrayList<>();
-    private ItemDisplay royalCrown;
+    private final List<ItemDisplay> royalHaloDisplays = new ArrayList<>();
     private RaidBossUtils.RaidBossHealthBar raidHealthBar;
     private Location previousLocation;
-    private float crownRotation;
+    private float haloRotation;
     private int attackAnimationTicks;
     private int chessStep;
 
@@ -98,7 +98,7 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
 
-        spawnRoyalCrown(warlordsNPC);
+        spawnRoyalHalo();
         spawnOrbitingCrystals();
         raidHealthBar = RaidBossUtils.createHealthBar(
                 warlordsNPC,
@@ -130,7 +130,7 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
         Location current = warlordsNPC.getLocation();
         boolean moving = isMoving(current);
 
-        updateRoyalCrown(current, ticksElapsed, moving);
+        updateRoyalHalo(ticksElapsed, moving);
         updateOrbitingCrystals(ticksElapsed);
         if (raidHealthBar != null) {
             raidHealthBar.update();
@@ -196,9 +196,12 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
 
     @Override
     public void cleanup(PveOption pveOption) {
-        if (royalCrown != null && !royalCrown.isDead()) {
-            royalCrown.remove();
+        for (ItemDisplay display : royalHaloDisplays) {
+            if (display != null && !display.isDead()) {
+                display.remove();
+            }
         }
+        royalHaloDisplays.clear();
         for (ItemDisplay crystal : orbitingCrystals) {
             if (crystal != null && !crystal.isDead()) {
                 crystal.remove();
@@ -208,47 +211,128 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
         if (raidHealthBar != null) {
             raidHealthBar.remove();
         }
-        royalCrown = null;
         raidHealthBar = null;
         previousLocation = null;
     }
 
-    private void spawnRoyalCrown(WarlordsEntity we) {
-        ItemStack crownItem = Weapons.WARLORDS_II_ROYAL_CHAKRAM.getItem().clone();
-        Location location = warlordsNPC.getLocation().clone().add(0, we.getEntity().getHeight() + 0.75, 0);
+    private void spawnRoyalHalo() {
+        ItemStack chakram = Weapons.WARLORDS_II_ROYAL_CHAKRAM.getItem().clone();
+        ItemStack royalJewel = new ItemStack(Material.NETHER_STAR);
+        Location location = warlordsNPC.getLocation();
 
-        royalCrown = warlordsNPC.getWorld().spawn(location, ItemDisplay.class, display -> {
-            display.setItemStack(crownItem);
+        royalHaloDisplays.add(spawnRoyalHaloDisplay(chakram.clone(), location, 2.7f));
+        royalHaloDisplays.add(spawnRoyalHaloDisplay(chakram.clone(), location, 1.35f));
+        royalHaloDisplays.add(spawnRoyalHaloDisplay(chakram.clone(), location, 1.35f));
+        royalHaloDisplays.add(spawnRoyalHaloDisplay(royalJewel, location, 0.85f));
+
+        updateRoyalHalo(0, false);
+    }
+
+    private ItemDisplay spawnRoyalHaloDisplay(ItemStack item, Location location, float scale) {
+        return warlordsNPC.getWorld().spawn(location, ItemDisplay.class, display -> {
+            display.setItemStack(item);
             display.setBillboard(Display.Billboard.FIXED);
-            display.setInterpolationDuration(1);
+            display.setInterpolationDuration(2);
+            display.setTeleportDuration(2);
             display.setPersistent(false);
             display.setTransformation(new Transformation(
                     new Vector3f(0, 0, 0),
-                    new Quaternionf().rotateX((float) Math.toRadians(90)),
-                    new Vector3f(2.4f, 2.4f, 2.4f),
+                    new Quaternionf(),
+                    new Vector3f(scale, scale, scale),
                     new Quaternionf()
             ));
         });
     }
 
-    private void updateRoyalCrown(Location location, int ticksElapsed, boolean moving) {
-        if (royalCrown == null || royalCrown.isDead()) {
+    private void updateRoyalHalo(int ticksElapsed, boolean moving) {
+        if (royalHaloDisplays.size() < 4 || !(warlordsNPC.getEntity() instanceof LivingEntity entity)) {
             return;
         }
 
-        LivingEntity entity = (LivingEntity) warlordsNPC.getEntity();
-        double bob = Math.sin(ticksElapsed * 0.09) * 0.18;
-        royalCrown.teleport(location.clone().add(0, entity.getHeight() + 0.75 + bob, 0));
+        ItemDisplay mainHalo = royalHaloDisplays.get(0);
+        ItemDisplay firstWing = royalHaloDisplays.get(1);
+        ItemDisplay secondWing = royalHaloDisplays.get(2);
+        ItemDisplay royalJewel = royalHaloDisplays.get(3);
+        if (mainHalo.isDead() || firstWing.isDead() || secondWing.isDead() || royalJewel.isDead()) {
+            return;
+        }
 
-        crownRotation += attackAnimationTicks > 0 ? 20 : moving ? 5 : 1.75f;
-        float scale = attackAnimationTicks > 0 ? 2.8f : 2.4f;
-        float attackTilt = attackAnimationTicks > 0 ? 18 : 0;
+        double centerX = (entity.getBoundingBox().getMinX() + entity.getBoundingBox().getMaxX()) / 2;
+        double centerZ = (entity.getBoundingBox().getMinZ() + entity.getBoundingBox().getMaxZ()) / 2;
+        double bob = Math.sin(ticksElapsed * 0.09) * 0.16;
+        double baseY = entity.getBoundingBox().getMaxY() + 0.72 + bob;
+        boolean attacking = attackAnimationTicks > 0;
 
-        royalCrown.setTransformation(new Transformation(
+        haloRotation += attacking ? 16 : moving ? 4.5f : 1.5f;
+        double rotation = Math.toRadians(haloRotation);
+        float attackTilt = attacking ? 18 : 0;
+        float mainScale = attacking ? 3.15f : 2.7f;
+
+        mainHalo.teleport(new Location(entity.getWorld(), centerX, baseY, centerZ));
+        mainHalo.setTransformation(new Transformation(
                 new Vector3f(0, 0, 0),
                 new Quaternionf()
                         .rotateX((float) Math.toRadians(90 + attackTilt))
-                        .rotateZ((float) Math.toRadians(crownRotation)),
+                        .rotateZ((float) rotation),
+                new Vector3f(mainScale, mainScale, mainScale),
+                new Quaternionf()
+        ));
+
+        double wingRadius = attacking ? 1.65 : 1.28;
+        double wingBob = Math.sin(ticksElapsed * 0.13) * 0.12;
+        updateRoyalWing(firstWing, entity, centerX, centerZ, baseY + wingBob, rotation, wingRadius, attacking, 1);
+        updateRoyalWing(secondWing, entity, centerX, centerZ, baseY - wingBob, rotation + Math.PI, wingRadius, attacking, -1);
+
+        double jewelBob = Math.sin(ticksElapsed * 0.16) * 0.12;
+        float jewelScale = attacking ? 1.1f : 0.85f;
+        royalJewel.teleport(new Location(entity.getWorld(), centerX, baseY + 1.15 + jewelBob, centerZ));
+        royalJewel.setTransformation(new Transformation(
+                new Vector3f(0, 0, 0),
+                new Quaternionf()
+                        .rotateY((float) -rotation * 1.5f)
+                        .rotateZ((float) Math.toRadians(45)),
+                new Vector3f(jewelScale, jewelScale, jewelScale),
+                new Quaternionf()
+        ));
+
+        if (ticksElapsed % 4 == 0) {
+            entity.getWorld().spawnParticle(
+                    Particle.END_ROD,
+                    new Location(entity.getWorld(), centerX, baseY, centerZ),
+                    attacking ? 5 : 2,
+                    attacking ? 1.4 : 0.8,
+                    0.2,
+                    attacking ? 1.4 : 0.8,
+                    0
+            );
+        }
+    }
+
+    private void updateRoyalWing(
+            ItemDisplay wing,
+            LivingEntity entity,
+            double centerX,
+            double centerZ,
+            double y,
+            double angle,
+            double radius,
+            boolean attacking,
+            int tiltDirection
+    ) {
+        wing.teleport(new Location(
+                entity.getWorld(),
+                centerX + Math.cos(angle) * radius,
+                y,
+                centerZ + Math.sin(angle) * radius
+        ));
+
+        float scale = attacking ? 1.65f : 1.35f;
+        wing.setTransformation(new Transformation(
+                new Vector3f(0, 0, 0),
+                new Quaternionf()
+                        .rotateX((float) Math.toRadians(62))
+                        .rotateY((float) Math.toRadians(tiltDirection * 24))
+                        .rotateZ((float) angle),
                 new Vector3f(scale, scale, scale),
                 new Quaternionf()
         ));
