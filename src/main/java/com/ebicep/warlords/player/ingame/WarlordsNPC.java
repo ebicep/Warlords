@@ -10,7 +10,9 @@ import com.ebicep.warlords.player.ingame.motionsystem.MotionModifierBuilder;
 import com.ebicep.warlords.player.ingame.motionsystem.speed.BaseToWalkingSpeedValueModifier;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Aspect;
+import com.ebicep.warlords.pve.mobs.bosses.raidbosses.RaidBossUtils;
 import com.ebicep.warlords.pve.mobs.flags.BossLike;
+import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -48,6 +50,7 @@ public class WarlordsNPC extends WarlordsEntity {
     protected TextColor nameColor = NamedTextColor.GRAY;
     private final MobHologram mobHologram;
     private final int hologramUpdateOffset;
+    private final RaidBossUtils.RaidBossHealthBar bossHealthBar;
     private float minMeleeDamage;
     private float maxMeleeDamage;
     private ArmorStand playerHealthDisplay; // used for player entity type npcs
@@ -101,6 +104,19 @@ public class WarlordsNPC extends WarlordsEntity {
 
         mobHologram.getCustomHologramLines().add(new MobHologram.CustomHologramLine(this::getNameComponent));
         mobHologram.update();
+
+        if (warlordsMob instanceof BossMob) {
+            bossHealthBar = RaidBossUtils.createHealthBar(
+                    this,
+                    1.3f,
+                    warlordsMob.getMobScale() + 0.5,
+                    warlordsMob.getName(),
+                    warlordsMob.getDescription(),
+                    NamedTextColor.RED
+            );
+        } else {
+            bossHealthBar = null;
+        }
     }
 
     @Nonnull
@@ -224,6 +240,9 @@ public class WarlordsNPC extends WarlordsEntity {
             this.entity = updatedEntity;
         }
         super.runEveryTick();
+        if (bossHealthBar != null) {
+            bossHealthBar.update();
+        }
         if (stunTicks > 0) {
             stunTicks--;
             if (stunTicks == 0) {
@@ -338,6 +357,9 @@ public class WarlordsNPC extends WarlordsEntity {
     }
 
     public void cleanup() {
+        if (bossHealthBar != null) {
+            bossHealthBar.remove();
+        }
         if (entity != null) {
             entity.removeMetadata(WarlordsEntity.WARLORDS_ENTITY_METADATA, Warlords.getInstance());
             entity.remove();
