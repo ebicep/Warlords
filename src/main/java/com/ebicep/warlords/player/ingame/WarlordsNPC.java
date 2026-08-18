@@ -108,8 +108,8 @@ public class WarlordsNPC extends WarlordsEntity {
         if (warlordsMob instanceof BossMob) {
             bossHealthBar = RaidBossUtils.createHealthBar(
                     this,
-                    1.3f,
-                    warlordsMob.getMobScale() + 0.5,
+                    1f,
+                    warlordsMob.getMobScale() + 0.1,
                     warlordsMob.getName(),
                     warlordsMob.getDescription(),
                     NamedTextColor.RED

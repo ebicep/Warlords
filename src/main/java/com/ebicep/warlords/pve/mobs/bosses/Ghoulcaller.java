@@ -80,6 +80,11 @@ public class Ghoulcaller extends AbstractMob implements BossMob {
     }
 
     @Override
+    public double getMobScale() {
+        return 1.1;
+    }
+
+    @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
 

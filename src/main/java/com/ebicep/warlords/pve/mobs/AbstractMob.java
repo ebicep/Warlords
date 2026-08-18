@@ -71,7 +71,7 @@ import java.util.function.Function;
 
 public abstract class AbstractMob implements Mob {
 
-    private static final double NEW_ITEM_DROP_CHANCE = 0.001148125;
+    private static final double NEW_ITEM_DROP_CHANCE = 0.001;
 
     protected final String name;
     protected final int maxHealth;
