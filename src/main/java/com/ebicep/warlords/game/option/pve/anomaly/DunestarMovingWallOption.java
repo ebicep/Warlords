@@ -37,14 +37,14 @@ public class DunestarMovingWallOption implements Option, Listener {
 
     private static final int PANEL_COUNT = 7;
     private static final int DISPLAY_UPDATE_INTERVAL = 2;
-    private static final int DAMAGE_INTERVAL = GameRunnable.SECOND;
+    private static final int DAMAGE_INTERVAL = GameRunnable.SECOND / 2;
     private static final double START_DISTANCE = -18;
     private static final double SPEED_PER_TICK = 0.0675;
     private static final double WALL_WIDTH = 35;
     private static final double WALL_HEIGHT = 14;
     private static final double WALL_THICKNESS = 0.7;
     private static final double WALL_DAMAGE_MARGIN = 1.5;
-    private static final double WALL_DAMAGE = 0.10;
+    private static final float WALL_DAMAGE = 1_000;
     private static final double RELIC_PICKUP_RADIUS_SQUARED = 36;
 
     private final List<ItemDisplay> displays = new ArrayList<>();
@@ -208,7 +208,7 @@ public class DunestarMovingWallOption implements Option, Listener {
                     .damage()
                     .cause("Dunestar Storm Wall")
                     .source(player)
-                    .value(player.getMaxHealth() * (float) WALL_DAMAGE)
+                    .value(WALL_DAMAGE)
                     .flags(InstanceFlags.TRUE_DAMAGE, InstanceFlags.IGNORE_CRIT_MODIFIERS)
             );
         });
