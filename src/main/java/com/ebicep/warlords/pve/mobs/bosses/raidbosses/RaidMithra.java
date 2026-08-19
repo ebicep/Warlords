@@ -36,6 +36,7 @@ import java.util.List;
 public class RaidMithra extends AbstractMob implements RaidBossMob {
 
     private static final int CRYSTAL_COUNT = 6;
+    private static final int ATTACK_ANIMATION_DURATION = 18;
     private static final double CRYSTAL_ORBIT_RADIUS = 2;
     private static final double CRYSTAL_ORBIT_SPEED = 0.75;
     private static final double CRYSTAL_VERTICAL_AMPLITUDE = 0.6;
@@ -46,8 +47,11 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
     private final List<ItemDisplay> royalHaloDisplays = new ArrayList<>();
     private RaidBossUtils.RaidBossHealthBar raidHealthBar;
     private Location previousLocation;
+    private Location royalAttackImpact;
+    private Vector royalAttackForward;
     private float haloRotation;
     private int attackAnimationTicks;
+    private int royalAttackSequenceTicks = -1;
     private int chessStep;
 
     public RaidMithra(Location spawnLocation) {
@@ -132,6 +136,7 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
 
         updateRoyalHalo(ticksElapsed, moving);
         updateOrbitingCrystals(ticksElapsed);
+        updateRoyalAttackSequence();
         if (raidHealthBar != null) {
             raidHealthBar.update();
         }
@@ -169,12 +174,8 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-        attackAnimationTicks = 12;
-        playRoyalSlash(receiver);
-
-        Utils.playGlobalSound(receiver.getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, 2, 0.55f);
-        Utils.playGlobalSound(receiver.getLocation(), Sound.ENTITY_WITHER_SHOOT, 1.25f, 1.65f);
-        Utils.playGlobalSound(receiver.getLocation(), Sound.BLOCK_AMETHYST_BLOCK_CHIME, 1.5f, 0.8f);
+        attackAnimationTicks = ATTACK_ANIMATION_DURATION;
+        startRoyalAttackSequence(receiver);
     }
 
     @Override
@@ -212,6 +213,9 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
             raidHealthBar.remove();
         }
         raidHealthBar = null;
+        royalAttackImpact = null;
+        royalAttackForward = null;
+        royalAttackSequenceTicks = -1;
         previousLocation = null;
     }
 
@@ -262,11 +266,12 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
         double bob = Math.sin(ticksElapsed * 0.09) * 0.16;
         double baseY = entity.getBoundingBox().getMaxY() + 0.72 + bob;
         boolean attacking = attackAnimationTicks > 0;
+        double attackPulse = getAttackPulse();
 
         haloRotation += attacking ? 16 : moving ? 4.5f : 1.5f;
         double rotation = Math.toRadians(haloRotation);
-        float attackTilt = attacking ? 18 : 0;
-        float mainScale = attacking ? 3.15f : 2.7f;
+        float attackTilt = (float) (attackPulse * 24);
+        float mainScale = (float) (2.7 + attackPulse * 0.9);
 
         mainHalo.teleport(new Location(entity.getWorld(), centerX, baseY, centerZ));
         mainHalo.setTransformation(new Transformation(
@@ -278,14 +283,14 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
                 new Quaternionf()
         ));
 
-        double wingRadius = attacking ? 1.65 : 1.28;
+        double wingRadius = 1.28 + attackPulse * 0.9;
         double wingBob = Math.sin(ticksElapsed * 0.13) * 0.12;
-        updateRoyalWing(firstWing, entity, centerX, centerZ, baseY + wingBob, rotation, wingRadius, attacking, 1);
-        updateRoyalWing(secondWing, entity, centerX, centerZ, baseY - wingBob, rotation + Math.PI, wingRadius, attacking, -1);
+        updateRoyalWing(firstWing, entity, centerX, centerZ, baseY + wingBob, rotation, wingRadius, attackPulse, 1);
+        updateRoyalWing(secondWing, entity, centerX, centerZ, baseY - wingBob, rotation + Math.PI, wingRadius, attackPulse, -1);
 
         double jewelBob = Math.sin(ticksElapsed * 0.16) * 0.12;
-        float jewelScale = attacking ? 1.1f : 0.85f;
-        royalJewel.teleport(new Location(entity.getWorld(), centerX, baseY + 1.15 + jewelBob, centerZ));
+        float jewelScale = (float) (0.85 + attackPulse * 0.55);
+        royalJewel.teleport(new Location(entity.getWorld(), centerX, baseY + 1.15 + jewelBob + attackPulse * 0.25, centerZ));
         royalJewel.setTransformation(new Transformation(
                 new Vector3f(0, 0, 0),
                 new Quaternionf()
@@ -316,22 +321,22 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
             double y,
             double angle,
             double radius,
-            boolean attacking,
+            double attackPulse,
             int tiltDirection
     ) {
         wing.teleport(new Location(
                 entity.getWorld(),
                 centerX + Math.cos(angle) * radius,
-                y,
+                y + attackPulse * 0.18,
                 centerZ + Math.sin(angle) * radius
         ));
 
-        float scale = attacking ? 1.65f : 1.35f;
+        float scale = (float) (1.35 + attackPulse * 0.5);
         wing.setTransformation(new Transformation(
                 new Vector3f(0, 0, 0),
                 new Quaternionf()
-                        .rotateX((float) Math.toRadians(62))
-                        .rotateY((float) Math.toRadians(tiltDirection * 24))
+                        .rotateX((float) Math.toRadians(62 + attackPulse * 12))
+                        .rotateY((float) Math.toRadians(tiltDirection * (24 + attackPulse * 16)))
                         .rotateZ((float) angle),
                 new Vector3f(scale, scale, scale),
                 new Quaternionf()
@@ -371,11 +376,12 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
             return;
         }
 
+        double attackPulse = getAttackPulse();
         double centerX = (entity.getBoundingBox().getMinX() + entity.getBoundingBox().getMaxX()) / 2;
         double centerZ = (entity.getBoundingBox().getMinZ() + entity.getBoundingBox().getMaxZ()) / 2;
         double height = entity.getBoundingBox().getMaxY() - entity.getBoundingBox().getMinY();
-        double centerY = entity.getBoundingBox().getMinY() + height * 0.9;
-        double baseAngle = Math.toRadians(ticksElapsed * CRYSTAL_ORBIT_SPEED);
+        double centerY = entity.getBoundingBox().getMinY() + height * 0.9 + attackPulse * 0.25;
+        double baseAngle = Math.toRadians(ticksElapsed * (CRYSTAL_ORBIT_SPEED + attackPulse * 2.5));
 
         for (int i = 0; i < orbitingCrystals.size(); i++) {
             ItemDisplay crystal = orbitingCrystals.get(i);
@@ -385,8 +391,8 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
 
             double phase = Math.PI * 2 * i / CRYSTAL_COUNT;
             double angle = baseAngle + phase;
-            double radius = CRYSTAL_ORBIT_RADIUS + Math.sin(angle * 3 + phase) * 0.08;
-            double y = centerY + Math.sin(angle * 2 + phase * 0.5) * CRYSTAL_VERTICAL_AMPLITUDE;
+            double radius = CRYSTAL_ORBIT_RADIUS + attackPulse * 0.5 + Math.sin(angle * 3 + phase) * 0.08;
+            double y = centerY + Math.sin(angle * 2 + phase * 0.5) * (CRYSTAL_VERTICAL_AMPLITUDE + attackPulse * 0.15);
 
             crystal.teleport(new Location(
                     entity.getWorld(),
@@ -395,18 +401,158 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
                     centerZ + Math.sin(angle) * radius
             ));
 
-            float scale = (float) (getMobScale() + i % 3 * 0.05f);
-            float spin = (float) Math.toRadians(ticksElapsed * 1.25 + i * 45);
+            float scale = (float) (getMobScale() + i % 3 * 0.05f + attackPulse * 0.3);
+            float spin = (float) Math.toRadians(ticksElapsed * (1.25 + attackPulse * 3) + i * 45);
             crystal.setTransformation(new Transformation(
                     new Vector3f(0, 0, 0),
                     new Quaternionf()
-                            .rotateX((float) Math.toRadians(55))
+                            .rotateX((float) Math.toRadians(55 + attackPulse * 15))
                             .rotateY(spin)
                             .rotateZ((float) angle),
                     new Vector3f(scale, scale, scale),
                     new Quaternionf()
             ));
         }
+    }
+
+    private double getAttackPulse() {
+        if (attackAnimationTicks <= 0) {
+            return 0;
+        }
+        double progress = 1 - attackAnimationTicks / (double) ATTACK_ANIMATION_DURATION;
+        return Math.sin(progress * Math.PI);
+    }
+
+    private void startRoyalAttackSequence(WarlordsEntity receiver) {
+        royalAttackImpact = receiver.getLocation().clone().add(0, 1.1, 0);
+        royalAttackForward = royalAttackImpact.toVector().subtract(warlordsNPC.getLocation().toVector()).setY(0);
+        if (royalAttackForward.lengthSquared() < 0.001) {
+            royalAttackForward = new Vector(0, 0, 1);
+        }
+        royalAttackForward.normalize();
+        royalAttackSequenceTicks = 0;
+
+        playRoyalWindup();
+        playRoyalCleave(royalAttackImpact, royalAttackForward, 0);
+
+        Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 2.2f, 1.35f);
+        Utils.playGlobalSound(royalAttackImpact, Sound.ENTITY_PLAYER_ATTACK_SWEEP, 2.5f, 0.45f);
+        Utils.playGlobalSound(royalAttackImpact, Sound.ENTITY_WITHER_SHOOT, 1.6f, 1.5f);
+    }
+
+    private void updateRoyalAttackSequence() {
+        if (royalAttackSequenceTicks < 0 || royalAttackImpact == null || royalAttackForward == null) {
+            return;
+        }
+
+        royalAttackSequenceTicks++;
+        if (royalAttackSequenceTicks == 2) {
+            playRoyalCleave(royalAttackImpact, royalAttackForward, Math.PI / 4);
+            Utils.playGlobalSound(royalAttackImpact, Sound.ENTITY_PLAYER_ATTACK_CRIT, 2.2f, 0.65f);
+            Utils.playGlobalSound(royalAttackImpact, Sound.BLOCK_AMETHYST_BLOCK_CHIME, 1.8f, 0.7f);
+        } else if (royalAttackSequenceTicks == 4) {
+            playRoyalImpact(royalAttackImpact, royalAttackForward);
+            Utils.playGlobalSound(royalAttackImpact, Sound.ENTITY_WITHER_SHOOT, 2.2f, 0.55f);
+            Utils.playGlobalSound(royalAttackImpact, Sound.BLOCK_AMETHYST_BLOCK_CHIME, 2.5f, 0.35f);
+            Utils.playGlobalSound(royalAttackImpact, Sound.ENTITY_PLAYER_ATTACK_STRONG, 2.5f, 0.5f);
+        } else if (royalAttackSequenceTicks >= 6) {
+            royalAttackImpact = null;
+            royalAttackForward = null;
+            royalAttackSequenceTicks = -1;
+        }
+    }
+
+    private void playRoyalWindup() {
+        if (!(warlordsNPC.getEntity() instanceof LivingEntity entity)) {
+            return;
+        }
+
+        World world = entity.getWorld();
+        Location center = new Location(
+                world,
+                (entity.getBoundingBox().getMinX() + entity.getBoundingBox().getMaxX()) / 2,
+                entity.getBoundingBox().getMaxY() + 0.35,
+                (entity.getBoundingBox().getMinZ() + entity.getBoundingBox().getMaxZ()) / 2
+        );
+
+        for (int i = 0; i < 32; i++) {
+            double angle = Math.PI * 2 * i / 32;
+            double radius = 2.15;
+            Location point = center.clone().add(Math.cos(angle) * radius, 0, Math.sin(angle) * radius);
+            world.spawnParticle(Particle.DUST, point, 1, 0, 0, 0, 0, i % 2 == 0 ? WHITE_DUST : ABYSS_DUST);
+            if (i % 4 == 0) {
+                world.spawnParticle(Particle.END_ROD, point, 1, 0, 0, 0, 0);
+            }
+        }
+
+        for (int i = 0; i < 8; i++) {
+            double angle = Math.PI * 2 * i / 8;
+            Vector direction = new Vector(Math.cos(angle), 0, Math.sin(angle));
+            for (double distance = 0.5; distance <= 2.4; distance += 0.45) {
+                Location point = center.clone().add(direction.clone().multiply(distance));
+                world.spawnParticle(Particle.DUST, point, 1, 0, 0, 0, 0, i % 2 == 0 ? WHITE_DUST : ABYSS_DUST);
+            }
+        }
+    }
+
+    private void playRoyalCleave(Location center, Vector forward, double angleOffset) {
+        World world = center.getWorld();
+        Vector slashForward = rotateHorizontal(forward, angleOffset);
+        Vector right = new Vector(-slashForward.getZ(), 0, slashForward.getX());
+
+        for (int i = -14; i <= 14; i++) {
+            double progress = i / 14d;
+            Vector side = right.clone().multiply(progress * 3.1);
+            Vector bow = slashForward.clone().multiply((1 - Math.abs(progress)) * 0.5);
+
+            Location firstSlash = center.clone().add(side).add(bow).add(0, progress * 1.7, 0);
+            Location secondSlash = center.clone().add(side).subtract(bow).add(0, -progress * 1.7, 0);
+
+            world.spawnParticle(Particle.DUST, firstSlash, 1, 0, 0, 0, 0, WHITE_DUST);
+            world.spawnParticle(Particle.DUST, secondSlash, 1, 0, 0, 0, 0, ABYSS_DUST);
+            if (i % 4 == 0) {
+                world.spawnParticle(Particle.END_ROD, firstSlash, 1, 0, 0, 0, 0);
+                world.spawnParticle(Particle.END_ROD, secondSlash, 1, 0, 0, 0, 0);
+            }
+        }
+
+        world.spawnParticle(Particle.SWEEP_ATTACK, center, 4, 0.9, 0.9, 0.9, 0);
+        world.spawnParticle(Particle.CRIT, center, 16, 1.1, 1.1, 1.1, 0.15);
+    }
+
+    private void playRoyalImpact(Location center, Vector forward) {
+        World world = center.getWorld();
+
+        for (int ring = 0; ring < 2; ring++) {
+            double radius = ring == 0 ? 1.8 : 3.2;
+            for (int i = 0; i < 40; i++) {
+                double angle = Math.PI * 2 * i / 40;
+                Location point = center.clone().add(Math.cos(angle) * radius, -0.85 + ring * 0.12, Math.sin(angle) * radius);
+                world.spawnParticle(Particle.DUST, point, 1, 0, 0, 0, 0, (i + ring) % 2 == 0 ? WHITE_DUST : ABYSS_DUST);
+            }
+        }
+
+        for (int i = 0; i < 8; i++) {
+            Vector direction = rotateHorizontal(forward, Math.PI * 2 * i / 8);
+            for (double distance = 0.5; distance <= 3.8; distance += 0.45) {
+                Location point = center.clone().add(direction.clone().multiply(distance)).add(0, -0.85, 0);
+                world.spawnParticle(Particle.DUST, point, 1, 0, 0, 0, 0, i % 2 == 0 ? WHITE_DUST : ABYSS_DUST);
+            }
+        }
+
+        world.spawnParticle(Particle.SWEEP_ATTACK, center, 7, 1.3, 1.1, 1.3, 0);
+        world.spawnParticle(Particle.END_ROD, center, 28, 1.4, 1.3, 1.4, 0.035);
+        world.spawnParticle(Particle.CRIT, center, 32, 1.5, 1.4, 1.5, 0.18);
+    }
+
+    private Vector rotateHorizontal(Vector vector, double angle) {
+        double cos = Math.cos(angle);
+        double sin = Math.sin(angle);
+        return new Vector(
+                vector.getX() * cos - vector.getZ() * sin,
+                0,
+                vector.getX() * sin + vector.getZ() * cos
+        ).normalize();
     }
 
     private boolean isMoving(Location current) {
@@ -459,32 +605,5 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
             world.spawnParticle(Particle.DUST, origin.clone().add(half, 0, offset), 1, 0, 0, 0, 0, dust);
             world.spawnParticle(Particle.DUST, origin.clone().add(-half, 0, offset), 1, 0, 0, 0, 0, dust);
         }
-    }
-
-    private void playRoyalSlash(WarlordsEntity receiver) {
-        Location center = receiver.getLocation().clone().add(0, 1.1, 0);
-        World world = center.getWorld();
-
-        Vector forward = center.toVector().subtract(warlordsNPC.getLocation().toVector()).setY(0);
-        if (forward.lengthSquared() < 0.001) {
-            forward = new Vector(0, 0, 1);
-        }
-        forward.normalize();
-        Vector right = new Vector(-forward.getZ(), 0, forward.getX());
-
-        for (int i = -10; i <= 10; i++) {
-            double progress = i / 10d;
-            Vector side = right.clone().multiply(progress * 2.4);
-
-            Location firstSlash = center.clone().add(side).add(0, progress * 1.2, 0);
-            Location secondSlash = center.clone().add(side).add(0, -progress * 1.2, 0);
-
-            world.spawnParticle(Particle.DUST, firstSlash, 1, 0, 0, 0, 0, WHITE_DUST);
-            world.spawnParticle(Particle.DUST, secondSlash, 1, 0, 0, 0, 0, ABYSS_DUST);
-        }
-
-        world.spawnParticle(Particle.SWEEP_ATTACK, center, 3, 0.7, 0.7, 0.7, 0);
-        world.spawnParticle(Particle.END_ROD, center, 14, 0.8, 0.8, 0.8, 0.02);
-        world.spawnParticle(Particle.CRIT, center, 18, 0.9, 0.9, 0.9, 0.12);
     }
 }
