@@ -273,7 +273,7 @@ public class WarlordsNPC extends WarlordsEntity {
                     armorStand.setCustomNameVisible(true);
                 });
                 shouldUpdateName = true;
-            } else if (hologramUpdateTick) {
+            } else {
                 playerHealthDisplay.teleport(entity.getLocation().add(0, healthDisplayY, 0));
             }
         }

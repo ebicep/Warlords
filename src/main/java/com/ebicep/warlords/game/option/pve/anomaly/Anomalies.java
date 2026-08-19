@@ -16,9 +16,9 @@ public enum Anomalies {
                     Component.text("Defend each relic for 2 minutes.")
             ),
             List.of(
-                    new AnomalyRewardPool("Opex Cache I", 4_000, 50, 1, 0.10),
-                    new AnomalyRewardPool("Opex Cache II", 5_000, 100, 1, 0.20),
-                    new AnomalyRewardPool("Opex Cache III", 6_000, 150, 2, 0.30)
+                    new AnomalyRewardPool("Opex Cache I", 3_000, 50, 1, 0.10),
+                    new AnomalyRewardPool("Opex Cache II", 4_000, 100, 1, 0.20),
+                    new AnomalyRewardPool("Opex Cache III", 5_000, 150, 2, 0.30)
             ),
             new AnomalyMobSet()
                     //basic
@@ -55,9 +55,9 @@ public enum Anomalies {
                     Component.text("Reach each destination within 2 minutes.")
             ),
             List.of(
-                    new AnomalyRewardPool("Dunestar Cache I", 3_000, 50, 1, 0.10),
-                    new AnomalyRewardPool("Dunestar Cache II", 5_000, 100, 1, 0.20),
-                    new AnomalyRewardPool("Dunestar Cache III", 7_000, 200, 2, 0.30)
+                    new AnomalyRewardPool("Dunestar Cache I", 1_000, 50, 1, 0.10),
+                    new AnomalyRewardPool("Dunestar Cache II", 3_000, 100, 1, 0.20),
+                    new AnomalyRewardPool("Dunestar Cache III", 5_000, 150, 2, 0.30)
             ),
             new AnomalyMobSet()
                     //basic
@@ -147,8 +147,8 @@ public enum Anomalies {
             ),
             List.of(
                     new AnomalyRewardPool("Remnant Cache I", 2_000, 100, 1, 0.10),
-                    new AnomalyRewardPool("Remnant Cache II", 4_000, 150, 1, 0.20),
-                    new AnomalyRewardPool("Remnant Cache III", 6_000, 200, 2, 0.30)
+                    new AnomalyRewardPool("Remnant Cache II", 3_000, 150, 1, 0.20),
+                    new AnomalyRewardPool("Remnant Cache III", 4_000, 200, 2, 0.30)
             ),
             new AnomalyMobSet()
                     //basic

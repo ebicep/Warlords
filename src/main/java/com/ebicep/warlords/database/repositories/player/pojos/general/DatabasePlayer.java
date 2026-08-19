@@ -840,7 +840,7 @@ public class DatabasePlayer implements MultiStatsGeneral, TracksMultiAbilityStat
 
                 List<net.kyori.adventure.text.Component> summary = new ArrayList<>();
                 summary.add(net.kyori.adventure.text.Component.text("Legacy Item Compensation", net.kyori.adventure.text.format.NamedTextColor.GOLD));
-                summary.add(net.kyori.adventure.text.Component.text("Your old Alpha-Omega items were counted and left untouched.", net.kyori.adventure.text.format.NamedTextColor.GRAY));
+                summary.add(net.kyori.adventure.text.Component.text("This is your compensation for the removal of the old item system. You will only receive these rewards once.", net.kyori.adventure.text.format.NamedTextColor.GRAY));
 
                 boolean hasRewards = zenithStars > 0 || syntheticShards > 0 || legendFragments > 0 || scrapMetal > 0 ||
                         legendaryItems > 0 || sovereignItems > 0 || epicItems > 0;

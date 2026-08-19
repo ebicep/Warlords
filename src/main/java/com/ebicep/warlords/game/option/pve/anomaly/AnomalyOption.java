@@ -292,7 +292,7 @@ public class AnomalyOption extends AbstractAnomalyOption {
             pool = ThreadLocalRandom.current().nextBoolean() ? Mob.BASIC : Mob.INTERMEDIATE;
         } else {
             int roll = ThreadLocalRandom.current().nextInt(3);
-            pool = roll == 0 ? Mob.BASIC : roll == 1 ? Mob.INTERMEDIATE : Mob.ADVANCED;
+            pool = roll == 0 ? Mob.BASIC : roll == 1 ? Mob.ADVANCED : Mob.ELITE;
         }
         spawnNewMob(pool[ThreadLocalRandom.current().nextInt(pool.length)].createMob(location), Team.RED);
     }

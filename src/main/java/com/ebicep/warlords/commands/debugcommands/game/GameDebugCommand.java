@@ -208,6 +208,7 @@ public class GameDebugCommand extends BaseCommand {
     }
 
     @CommandAlias("anomalytest|anomalyoverride")
+    @CommandPermission("group.administrator")
     @CommandCompletion("OPEX_ANOMALY|BRIDGE_OF_DUNESTAR|WHAT_ONCE_WAS|clear")
     @Description("Temporarily overrides the active Anomaly for testing")
     public void anomalyTest(Player player, @Optional String anomalyInput) {

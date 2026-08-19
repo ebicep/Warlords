@@ -23,7 +23,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @CommandAlias("admin")
-//@CommandPermission("group.administrator")
+@CommandPermission("group.administrator")
 public class AdminCommand extends BaseCommand {
 
     public static final Set<DatabasePlayerPvE> BYPASSED_PLAYER_CURRENCIES = new HashSet<>();

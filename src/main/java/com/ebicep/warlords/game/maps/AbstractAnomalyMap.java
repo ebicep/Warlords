@@ -24,7 +24,7 @@ public abstract class AbstractAnomalyMap extends GameMap {
     private final double[] playerSpawn;
 
     protected AbstractAnomalyMap(String mapName, String fileName, double[] playerSpawn) {
-        super(mapName, 4, 1, 30 * SECOND, fileName, 3, GameMode.ANOMALY);
+        super(mapName, 6, 2, 30 * SECOND, fileName, 3, GameMode.ANOMALY);
         this.playerSpawn = playerSpawn;
     }
 
