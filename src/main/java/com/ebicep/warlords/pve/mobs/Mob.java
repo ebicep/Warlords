@@ -57,7 +57,6 @@ import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.pve.VanillaHeads;
-import com.ebicep.warlords.util.pve.VariantSkullID;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.mojang.datafixers.util.Function7;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -119,7 +118,7 @@ public enum Mob {
     )
     ),
     BRINEBOUND(EntityType.DROWNED, Brinebound.class, Brinebound::new, Brinebound::new, new Utils.SimpleEntityEquipment(
-            SkullUtils.getSkullFrom(VariantSkullID.DROWNED_VARIANT),
+            SkullUtils.getSkullFrom(SkullID.DROWNED_VARIANT),
             Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 35, 95, 105),
             Utils.applyColorTo(Material.LEATHER_LEGGINGS, 25, 75, 85),
             Utils.applyColorTo(Material.LEATHER_BOOTS, 20, 60, 70),
@@ -127,7 +126,7 @@ public enum Mob {
     )
     ),
     SALTBLOOD_CORSAIR(EntityType.ZOMBIE, SaltbloodCorsair.class, SaltbloodCorsair::new, SaltbloodCorsair::new, new Utils.SimpleEntityEquipment(
-            SkullUtils.getSkullFrom(VariantSkullID.PIRATE_CAPTAIN),
+            SkullUtils.getSkullFrom(SkullID.PIRATE_CAPTAIN),
             Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 92, 58, 38),
             Utils.applyColorTo(Material.LEATHER_LEGGINGS, 60, 38, 28),
             Utils.applyColorTo(Material.LEATHER_BOOTS, 40, 25, 20),
@@ -135,7 +134,7 @@ public enum Mob {
     )
     ),
     FUNGAL_HUSK(EntityType.HUSK, FungalHusk.class, FungalHusk::new, FungalHusk::new, new Utils.SimpleEntityEquipment(
-            SkullUtils.getSkullFrom(VariantSkullID.MUSHROOM_CREATURE),
+            SkullUtils.getSkullFrom(SkullID.MUSHROOM_CREATURE),
             Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 88, 105, 55),
             Utils.applyColorTo(Material.LEATHER_LEGGINGS, 78, 82, 42),
             Utils.applyColorTo(Material.LEATHER_BOOTS, 65, 55, 30),
@@ -143,7 +142,7 @@ public enum Mob {
     )
     ),
     FROSTBONE_STALKER(EntityType.STRAY, FrostboneStalker.class, FrostboneStalker::new, FrostboneStalker::new, new Utils.SimpleEntityEquipment(
-            SkullUtils.getSkullFrom(VariantSkullID.FROZEN_SKELETON),
+            SkullUtils.getSkullFrom(SkullID.FROZEN_SKELETON),
             Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 180, 225, 240),
             Utils.applyColorTo(Material.LEATHER_LEGGINGS, 150, 205, 225),
             Utils.applyColorTo(Material.LEATHER_BOOTS, 130, 185, 210),
@@ -224,7 +223,7 @@ public enum Mob {
     )
     ),
     GRAVE_KNIGHT(EntityType.SKELETON, GraveKnight.class, GraveKnight::new, GraveKnight::new, new Utils.SimpleEntityEquipment(
-            SkullUtils.getSkullFrom(VariantSkullID.SKULL_KNIGHT),
+            SkullUtils.getSkullFrom(SkullID.SKULL_KNIGHT),
             new ItemStack(Material.CHAINMAIL_CHESTPLATE),
             new ItemStack(Material.CHAINMAIL_LEGGINGS),
             new ItemStack(Material.CHAINMAIL_BOOTS),
@@ -232,7 +231,7 @@ public enum Mob {
     )
     ),
     ASHEN_PHYSICIAN(EntityType.WITHER_SKELETON, AshenPhysician.class, AshenPhysician::new, AshenPhysician::new, new Utils.SimpleEntityEquipment(
-            SkullUtils.getSkullFrom(VariantSkullID.PLAGUE_DOCTOR),
+            SkullUtils.getSkullFrom(SkullID.PLAGUE_DOCTOR),
             Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 25, 30, 30),
             Utils.applyColorTo(Material.LEATHER_LEGGINGS, 20, 24, 24),
             Utils.applyColorTo(Material.LEATHER_BOOTS, 15, 18, 18),
@@ -240,7 +239,7 @@ public enum Mob {
     )
     ),
     VEILED_CULTIST(EntityType.VINDICATOR, VeiledCultist.class, VeiledCultist::new, VeiledCultist::new, new Utils.SimpleEntityEquipment(
-            SkullUtils.getSkullFrom(VariantSkullID.CULTIST),
+            SkullUtils.getSkullFrom(SkullID.CULTIST),
             Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 45, 25, 65),
             Utils.applyColorTo(Material.LEATHER_LEGGINGS, 35, 20, 50),
             Utils.applyColorTo(Material.LEATHER_BOOTS, 25, 15, 40),
@@ -248,7 +247,7 @@ public enum Mob {
     )
     ),
     SUNKEN_DELVER(EntityType.PILLAGER, SunkenDelver.class, SunkenDelver::new, SunkenDelver::new, new Utils.SimpleEntityEquipment(
-            SkullUtils.getSkullFrom(VariantSkullID.DIVER_HELMET),
+            SkullUtils.getSkullFrom(SkullID.DIVER_HELMET),
             Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 105, 75, 45),
             Utils.applyColorTo(Material.LEATHER_LEGGINGS, 80, 60, 40),
             Utils.applyColorTo(Material.LEATHER_BOOTS, 55, 45, 35),
@@ -357,7 +356,7 @@ public enum Mob {
     )
     ),
     DUNE_JACKAL(EntityType.PIGLIN, DuneJackal.class, DuneJackal::new, DuneJackal::new, new Utils.SimpleEntityEquipment(
-            SkullUtils.getSkullFrom(VariantSkullID.ANUBIS),
+            SkullUtils.getSkullFrom(SkullID.ANUBIS),
             new ItemStack(Material.GOLDEN_CHESTPLATE),
             new ItemStack(Material.GOLDEN_LEGGINGS),
             new ItemStack(Material.GOLDEN_BOOTS),
@@ -365,7 +364,7 @@ public enum Mob {
     )
     ),
     ROTVEIL_MARAUDER(EntityType.ZOMBIFIED_PIGLIN, RotveilMarauder.class, RotveilMarauder::new, RotveilMarauder::new, new Utils.SimpleEntityEquipment(
-            SkullUtils.getSkullFrom(VariantSkullID.GLOWING_ZOMBIE),
+            SkullUtils.getSkullFrom(SkullID.GLOWING_ZOMBIE),
             Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 85, 30, 30),
             Utils.applyColorTo(Material.LEATHER_LEGGINGS, 65, 20, 20),
             Utils.applyColorTo(Material.LEATHER_BOOTS, 45, 15, 15),
