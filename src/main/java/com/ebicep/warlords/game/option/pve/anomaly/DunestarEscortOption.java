@@ -48,6 +48,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class DunestarEscortOption extends AbstractAnomalyOption {
 
     private static final int SEGMENT_DURATION_TICKS = 120 * GameRunnable.SECOND;
+    private static final int CHECKPOINT_CHARGE_TICKS = 30 * GameRunnable.SECOND;
     private static final int MOB_SPAWN_INTERVAL = GameRunnable.SECOND;
     private static final int LASER_INTERVAL_TICKS = 15 * GameRunnable.SECOND;
     private static final int LASER_TELEGRAPH_TICKS = 2 * GameRunnable.SECOND;
@@ -78,7 +79,9 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
     private int escortTicks;
     private int segmentTicksRemaining;
     private int laserTicksRemaining;
+    private int checkpointChargeTicks;
     private boolean relicSpawned;
+    private boolean chargingCheckpoint;
 
     @Override
     public void register(@Nonnull Game game) {
@@ -210,19 +213,22 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
 
                 if (escortTicks % 5 == 0) {
                     showRouteParticles();
-                    checkRouteProgress();
-                    if (completed || carrier == null) {
-                        return;
-                    }
                 }
 
-                segmentTicksRemaining--;
-                if (segmentTicksRemaining <= 0) {
-                    finishEscort("The relic did not reach " + getNextDestinationName() + " in time.");
+                handleCheckpointCharge();
+                if (completed || carrier == null) {
                     return;
                 }
-                if (segmentTicksRemaining % (30 * GameRunnable.SECOND) == 0) {
-                    announce(Component.text(getSecondsRemaining() + " seconds remain to reach " + getNextDestinationName() + ".", NamedTextColor.YELLOW));
+
+                if (!chargingCheckpoint) {
+                    segmentTicksRemaining--;
+                    if (segmentTicksRemaining <= 0) {
+                        finishEscort("The relic did not reach " + getNextDestinationName() + " in time.");
+                        return;
+                    }
+                    if (segmentTicksRemaining % (30 * GameRunnable.SECOND) == 0) {
+                        announce(Component.text(getSecondsRemaining() + " seconds remain to reach " + getNextDestinationName() + ".", NamedTextColor.YELLOW));
+                    }
                 }
 
                 laserTicksRemaining--;
@@ -265,37 +271,79 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
         escortTicks = 0;
         segmentTicksRemaining = SEGMENT_DURATION_TICKS;
         laserTicksRemaining = LASER_INTERVAL_TICKS;
+        checkpointChargeTicks = 0;
+        chargingCheckpoint = false;
         previousSlotEight = player.getInventory().getItem(8) == null ? null : player.getInventory().getItem(8).clone();
         player.getInventory().setItem(8, RELIC_ITEM.clone());
         player.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, Integer.MAX_VALUE, 0, false, false, true));
 
         announce(Component.text(carrier.getName() + " picked up the Dunestar Relic!", NamedTextColor.GOLD));
-        announce(Component.text("Protect the carrier and reach each destination within 120 seconds.", NamedTextColor.AQUA));
+        announce(Component.text("Reach each destination within 120 seconds, then charge the relic there for 30 seconds.", NamedTextColor.AQUA));
         game.forEachOnlinePlayer((onlinePlayer, team) -> onlinePlayer.playSound(onlinePlayer.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2, 1));
     }
 
-    private void checkRouteProgress() {
+    private void handleCheckpointCharge() {
         if (carrier == null || nextRouteIndex >= routeMarkers.size()) {
             return;
         }
+
         Location target = routeMarkers.get(nextRouteIndex).getLocation();
-        if (!target.getWorld().equals(carrier.getLocation().getWorld()) || carrier.getLocation().distanceSquared(target) > CHECKPOINT_RADIUS_SQUARED) {
+        boolean insideCheckpoint = target.getWorld().equals(carrier.getLocation().getWorld())
+                && carrier.getLocation().distanceSquared(target) <= CHECKPOINT_RADIUS_SQUARED;
+
+        if (!chargingCheckpoint) {
+            if (!insideCheckpoint) {
+                return;
+            }
+            chargingCheckpoint = true;
+            checkpointChargeTicks = 0;
+            announce(Component.text(getNextDestinationName() + " reached. Hold the relic here for 30 seconds to restore maximum power!", NamedTextColor.GOLD));
+            game.forEachOnlinePlayer((player, team) -> player.playSound(player.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 2, 1.15f));
+        }
+
+        if (!insideCheckpoint) {
+            if (checkpointChargeTicks > 0) {
+                checkpointChargeTicks = 0;
+                announce(Component.text("Relic charge interrupted! Return to " + getNextDestinationName() + " and hold the position.", NamedTextColor.RED));
+                game.forEachOnlinePlayer((player, team) -> player.playSound(player.getLocation(), Sound.BLOCK_RESPAWN_ANCHOR_DEPLETE, 1.5f, .8f));
+            }
             return;
         }
 
-        int cacheIndex = nextRouteIndex - 1;
+        checkpointChargeTicks++;
+        if (escortTicks % 5 == 0) {
+            showCheckpointChargeParticles();
+        }
+        if (checkpointChargeTicks % (5 * GameRunnable.SECOND) == 0 && checkpointChargeTicks < CHECKPOINT_CHARGE_TICKS) {
+            int secondsRemaining = getCheckpointChargeSecondsRemaining();
+            game.forEachOnlinePlayer((player, team) -> player.sendActionBar(
+                    Component.text("Relic charging: ", NamedTextColor.AQUA)
+                            .append(Component.text(secondsRemaining + "s remaining", NamedTextColor.YELLOW))
+            ));
+        }
+        if (checkpointChargeTicks >= CHECKPOINT_CHARGE_TICKS) {
+            completeCheckpointCharge();
+        }
+    }
+
+    private void completeCheckpointCharge() {
+        int completedRouteIndex = nextRouteIndex;
+        int cacheIndex = completedRouteIndex - 1;
         cacheEligibility[cacheIndex] = true;
-        if (nextRouteIndex < routeMarkers.size() - 1) {
+        chargingCheckpoint = false;
+        checkpointChargeTicks = 0;
+
+        if (completedRouteIndex < routeMarkers.size() - 1) {
             DunestarCurrencyOption.grantCheckpointReward(game);
-            announce(Component.text("Checkpoint " + nextRouteIndex + " reached. Dunestar Cache " + (cacheIndex + 1) + " unlocked!", NamedTextColor.GREEN));
-            game.forEachOnlinePlayer((player, team) -> player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 2, 1));
+            announce(Component.text("Checkpoint " + completedRouteIndex + " fully charged. Dunestar Cache " + (cacheIndex + 1) + " unlocked!", NamedTextColor.GREEN));
+            game.forEachOnlinePlayer((player, team) -> player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2, 1.25f));
             nextRouteIndex++;
             segmentTicksRemaining = SEGMENT_DURATION_TICKS;
-            announce(Component.text("You have 120 seconds to reach " + getNextDestinationName() + ".", NamedTextColor.AQUA));
+            announce(Component.text("Relic power restored. You have 120 seconds to reach " + getNextDestinationName() + ".", NamedTextColor.AQUA));
             return;
         }
 
-        announce(Component.text("The Dunestar Relic reached the sanctuary!", NamedTextColor.GREEN));
+        announce(Component.text("The Dunestar Relic is fully charged at the sanctuary!", NamedTextColor.GREEN));
         finishEscort("Escort completed.");
     }
 
@@ -440,6 +488,22 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
         target.getWorld().spawnParticle(Particle.END_ROD, target, 6, .8, .8, .8, .02);
     }
 
+    private void showCheckpointChargeParticles() {
+        if (nextRouteIndex >= routeMarkers.size()) {
+            return;
+        }
+        Location target = routeMarkers.get(nextRouteIndex).getLocation().clone().add(0, 1, 0);
+        World world = target.getWorld();
+        double progress = checkpointChargeTicks / (double) CHECKPOINT_CHARGE_TICKS;
+        double radius = 1.4 + progress * .8;
+        for (int i = 0; i < 12; i++) {
+            double angle = Math.PI * 2 * i / 12.0 + escortTicks * .04;
+            Location point = target.clone().add(Math.cos(angle) * radius, .15, Math.sin(angle) * radius);
+            world.spawnParticle(Particle.END_ROD, point, 1, 0, 0, 0, 0);
+        }
+        world.spawnParticle(Particle.ENCHANT, target, 8, .7, .8, .7, .05);
+    }
+
     private int getMaximumMobCount() {
         return 6 + playerCount() * 4 + nextRouteIndex * 2;
     }
@@ -452,6 +516,10 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
 
     private int getSecondsRemaining() {
         return Math.max(0, (segmentTicksRemaining + GameRunnable.SECOND - 1) / GameRunnable.SECOND);
+    }
+
+    private int getCheckpointChargeSecondsRemaining() {
+        return Math.max(0, (CHECKPOINT_CHARGE_TICKS - checkpointChargeTicks + GameRunnable.SECOND - 1) / GameRunnable.SECOND);
     }
 
     private List<Component> getEscortScoreboard() {
@@ -483,6 +551,17 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
             if (earned) {
                 caches++;
             }
+        }
+
+        if (chargingCheckpoint) {
+            int chargePercent = Math.min(100, (int) Math.floor(checkpointChargeTicks * 100.0 / CHECKPOINT_CHARGE_TICKS));
+            return List.of(
+                    Component.text("Carrier: ", NamedTextColor.WHITE).append(Component.text(carrier.getName(), NamedTextColor.GOLD)),
+                    Component.text("Charging: ", NamedTextColor.WHITE).append(Component.text(targetName, NamedTextColor.AQUA)),
+                    Component.text("Charge: ", NamedTextColor.WHITE).append(Component.text(chargePercent + "%", NamedTextColor.GREEN)),
+                    Component.text("Hold for: ", NamedTextColor.WHITE).append(Component.text(getCheckpointChargeSecondsRemaining() + "s", NamedTextColor.YELLOW)),
+                    Component.text("Caches: ", NamedTextColor.WHITE).append(Component.text(caches + "/3", NamedTextColor.GREEN))
+            );
         }
 
         return List.of(
