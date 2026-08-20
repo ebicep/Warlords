@@ -26,11 +26,18 @@ import com.ebicep.warlords.player.general.settings.*;
 import com.ebicep.warlords.player.general.settings.actionbar.ActionBarSettings;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.Spendable;
+import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.ItemsManager;
 import com.ebicep.warlords.pve.items.menu.ItemMichaelMenu;
+import com.ebicep.warlords.pve.mobs.MobDrop;
+import com.ebicep.warlords.pve.newitems.NewItem;
+import com.ebicep.warlords.pve.newitems.NewItemsUtils;
+import com.ebicep.warlords.pve.newitems.tiers.NewItemTier;
 import com.ebicep.warlords.pve.rewards.types.CompensationReward;
 import com.ebicep.warlords.pve.rewards.types.LevelUpReward;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.springframework.data.annotation.Id;
@@ -786,18 +793,18 @@ public class DatabasePlayer implements MultiStatsGeneral, TracksMultiAbilityStat
             @Override
             public boolean run(UUID uuid, DatabasePlayer databasePlayer) {
                 DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
-                EnumMap<com.ebicep.warlords.pve.items.ItemTier, Integer> tierCounts = new EnumMap<>(com.ebicep.warlords.pve.items.ItemTier.class);
+                EnumMap<ItemTier, Integer> tierCounts = new EnumMap<>(ItemTier.class);
                 pveStats.getItemsManager().getItemInventory().forEach(item -> {
                     if (item != null && item.getTier() != null) {
                         tierCounts.merge(item.getTier(), 1, Integer::sum);
                     }
                 });
 
-                long alpha = tierCounts.getOrDefault(com.ebicep.warlords.pve.items.ItemTier.ALPHA, 0);
-                long beta = tierCounts.getOrDefault(com.ebicep.warlords.pve.items.ItemTier.BETA, 0);
-                long gamma = tierCounts.getOrDefault(com.ebicep.warlords.pve.items.ItemTier.GAMMA, 0);
-                long delta = tierCounts.getOrDefault(com.ebicep.warlords.pve.items.ItemTier.DELTA, 0);
-                long omega = tierCounts.getOrDefault(com.ebicep.warlords.pve.items.ItemTier.OMEGA, 0);
+                long alpha = tierCounts.getOrDefault(ItemTier.ALPHA, 0);
+                long beta = tierCounts.getOrDefault(ItemTier.BETA, 0);
+                long gamma = tierCounts.getOrDefault(ItemTier.GAMMA, 0);
+                long delta = tierCounts.getOrDefault(ItemTier.DELTA, 0);
+                long omega = tierCounts.getOrDefault(ItemTier.OMEGA, 0);
 
                 long zenithStars = omega * 2L;
                 long syntheticShards = omega * 5_000L + delta * 1_000L;
@@ -807,16 +814,16 @@ public class DatabasePlayer implements MultiStatsGeneral, TracksMultiAbilityStat
                 long sovereignItems = delta / 5L;
                 long epicItems = gamma / 5L;
 
-                List<com.ebicep.warlords.pve.newitems.NewItem> generatedItems = new ArrayList<>();
+                List<NewItem> generatedItems = new ArrayList<>();
                 try {
                     for (long i = 0; i < legendaryItems; i++) {
-                        generatedItems.add(com.ebicep.warlords.pve.newitems.NewItemsUtils.generateRandomItem(com.ebicep.warlords.pve.newitems.tiers.NewItemTier.LEGENDARY));
+                        generatedItems.add(NewItemsUtils.generateRandomItem(NewItemTier.LEGENDARY));
                     }
                     for (long i = 0; i < sovereignItems; i++) {
-                        generatedItems.add(com.ebicep.warlords.pve.newitems.NewItemsUtils.generateRandomItem(com.ebicep.warlords.pve.newitems.tiers.NewItemTier.SOVEREIGN));
+                        generatedItems.add(NewItemsUtils.generateRandomItem(NewItemTier.SOVEREIGN));
                     }
                     for (long i = 0; i < epicItems; i++) {
-                        generatedItems.add(com.ebicep.warlords.pve.newitems.NewItemsUtils.generateRandomItem(com.ebicep.warlords.pve.newitems.tiers.NewItemTier.EPIC));
+                        generatedItems.add(NewItemsUtils.generateRandomItem(NewItemTier.EPIC));
                     }
                 } catch (RuntimeException exception) {
                     ChatUtils.MessageType.WARLORDS.sendErrorMessage("Failed to generate legacy item compensation for " + uuid);
@@ -825,7 +832,7 @@ public class DatabasePlayer implements MultiStatsGeneral, TracksMultiAbilityStat
                 }
 
                 if (zenithStars > 0) {
-                    pveStats.addMobDrops(com.ebicep.warlords.pve.mobs.MobDrop.ZENITH_STAR, zenithStars);
+                    pveStats.addMobDrops(MobDrop.ZENITH_STAR, zenithStars);
                 }
                 if (syntheticShards > 0) {
                     pveStats.addCurrency(Currencies.SYNTHETIC_SHARD, syntheticShards);
@@ -838,51 +845,51 @@ public class DatabasePlayer implements MultiStatsGeneral, TracksMultiAbilityStat
                 }
                 generatedItems.forEach(pveStats.getNewItemsManager()::addItem);
 
-                List<net.kyori.adventure.text.Component> summary = new ArrayList<>();
-                summary.add(net.kyori.adventure.text.Component.text("Legacy Item Compensation", net.kyori.adventure.text.format.NamedTextColor.GOLD));
-                summary.add(net.kyori.adventure.text.Component.text("This is your compensation for the removal of the old item system. You will only receive these rewards once.", net.kyori.adventure.text.format.NamedTextColor.GRAY));
+                List<Component> summary = new ArrayList<>();
+                summary.add(Component.text("Legacy Item Compensation", NamedTextColor.GOLD));
+                summary.add(Component.text("This is your compensation for the removal of the old item system. You will only receive these rewards once.", NamedTextColor.GRAY));
 
                 boolean hasRewards = zenithStars > 0 || syntheticShards > 0 || legendFragments > 0 || scrapMetal > 0 ||
                         legendaryItems > 0 || sovereignItems > 0 || epicItems > 0;
                 if (!hasRewards) {
-                    summary.add(net.kyori.adventure.text.Component.text("No compensation rewards were generated from your legacy item totals.", net.kyori.adventure.text.format.NamedTextColor.YELLOW));
+                    summary.add(Component.text("No compensation rewards were generated from your legacy item totals.", NamedTextColor.YELLOW));
                 } else {
                     if (zenithStars > 0) {
-                        summary.add(net.kyori.adventure.text.Component.text(" • ", net.kyori.adventure.text.format.NamedTextColor.DARK_GRAY)
-                                .append(com.ebicep.warlords.pve.mobs.MobDrop.ZENITH_STAR.getCostColoredName(zenithStars)));
+                        summary.add(Component.text(" • ", NamedTextColor.DARK_GRAY)
+                                .append(MobDrop.ZENITH_STAR.getCostColoredName(zenithStars)));
                     }
                     if (syntheticShards > 0) {
-                        summary.add(net.kyori.adventure.text.Component.text(" • ", net.kyori.adventure.text.format.NamedTextColor.DARK_GRAY)
+                        summary.add(Component.text(" • ", NamedTextColor.DARK_GRAY)
                                 .append(Currencies.SYNTHETIC_SHARD.getCostColoredName(syntheticShards)));
                     }
                     if (legendFragments > 0) {
-                        summary.add(net.kyori.adventure.text.Component.text(" • ", net.kyori.adventure.text.format.NamedTextColor.DARK_GRAY)
+                        summary.add(Component.text(" • ", NamedTextColor.DARK_GRAY)
                                 .append(Currencies.LEGEND_FRAGMENTS.getCostColoredName(legendFragments)));
                     }
                     if (scrapMetal > 0) {
-                        summary.add(net.kyori.adventure.text.Component.text(" • ", net.kyori.adventure.text.format.NamedTextColor.DARK_GRAY)
+                        summary.add(Component.text(" • ", NamedTextColor.DARK_GRAY)
                                 .append(Currencies.SCRAP_METAL.getCostColoredName(scrapMetal)));
                     }
                     if (legendaryItems > 0) {
-                        summary.add(net.kyori.adventure.text.Component.text(
+                        summary.add(Component.text(
                                 " • " + legendaryItems + " random Legendary item" + (legendaryItems == 1 ? "" : "s"),
-                                com.ebicep.warlords.pve.newitems.tiers.NewItemTier.LEGENDARY.getTextColor()
+                                NewItemTier.LEGENDARY.getTextColor()
                         ));
                     }
                     if (sovereignItems > 0) {
-                        summary.add(net.kyori.adventure.text.Component.text(
+                        summary.add(Component.text(
                                 " • " + sovereignItems + " random Sovereign item" + (sovereignItems == 1 ? "" : "s"),
-                                com.ebicep.warlords.pve.newitems.tiers.NewItemTier.SOVEREIGN.getTextColor()
+                                NewItemTier.SOVEREIGN.getTextColor()
                         ));
                     }
                     if (epicItems > 0) {
-                        summary.add(net.kyori.adventure.text.Component.text(
+                        summary.add(Component.text(
                                 " • " + epicItems + " random Epic item" + (epicItems == 1 ? "" : "s"),
-                                com.ebicep.warlords.pve.newitems.tiers.NewItemTier.EPIC.getTextColor()
+                                NewItemTier.EPIC.getTextColor()
                         ));
                     }
                 }
-                summary.add(net.kyori.adventure.text.Component.text("This one-time compensation has now been applied to your account.", net.kyori.adventure.text.format.NamedTextColor.DARK_GRAY));
+                summary.add(Component.text("This one-time compensation has now been applied to your account.", NamedTextColor.DARK_GRAY));
                 databasePlayer.addFutureMessage(FutureMessage.create(summary, false));
 
                 ChatUtils.MessageType.WARLORDS.sendMessage(
