@@ -51,6 +51,9 @@ public class AnomalyMenu {
                                 Component.text("Map: ", NamedTextColor.GRAY)
                                         .append(Component.text(currentAnomaly.getMap().getMapName(), NamedTextColor.AQUA)),
                                 Component.empty(),
+                                Component.text("Max players: ", NamedTextColor.GRAY)
+                                        .append(Component.text("2-6", NamedTextColor.AQUA)),
+                                Component.empty(),
                                 Component.text("Click to begin", NamedTextColor.GREEN)
                         )
                         .get(),

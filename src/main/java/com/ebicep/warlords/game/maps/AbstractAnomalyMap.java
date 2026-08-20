@@ -46,6 +46,7 @@ public abstract class AbstractAnomalyMap extends GameMap {
         options.add(new RespawnWaveOption(20, 20, 10));
 
         options.add(new CoinGainOption()
+                .playerCoinPerXSec(20, 10)
                 .guildCoinInsigniaConvertBonus(100)
         );
         options.add(new ExperienceGainOption()

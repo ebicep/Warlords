@@ -43,7 +43,7 @@ public class AnomalyOption extends AbstractAnomalyOption {
     private static final Mob[] RELIC_BOSSES = {
             Mob.GHOULCALLER,
             Mob.MITHRA,
-            Mob.ZENITH
+            Mob.BOLTARO
     };
 
     private final boolean[] objectiveSuccess = new boolean[OBJECTIVE_COUNT];

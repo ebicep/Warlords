@@ -295,7 +295,7 @@
         },
         "legendary": {
           "name": "Legendary",
-          "weight": 3,
+          "weight": 0,
           "bonusAttributes": 3,
           "bonusAttributeRanges": {
             "CC": {
@@ -553,7 +553,7 @@
           },
           "description": "Increase jump height by {{blocks}}. Take {{damage;%}} less damage while in the air.",
           "jumpHeight": 1,
-          "airResist": 20
+          "airResist": 25
         },
         "soothsayer": {
           "tier": "LEGENDARY",
@@ -620,7 +620,7 @@
             "REGEN": 8
           },
           "description": "Increase your crit chance by {{damage;%}} while under damage-preventing effects.",
-          "critChanceBoost": 30
+          "critChanceBoost": 25
         },
         "voidcarver": {
           "tier": "LEGENDARY",
@@ -796,7 +796,7 @@
           ],
           "attributes": {
             "HEALTH": 90,
-            "KB_RES": 5
+            "KB_RES": 4
           },
           "description": "{{blue;%}} chance to freeze enemies for {{gold}} seconds. Deal {{damage;%}} more damage to frozen enemies.",
           "freezeChance": 15,
@@ -942,7 +942,7 @@
           },
           "description": "Every {{heal}} heal instances, you emit a global pulse that heals all for {{heal}} health.",
           "healsPerPulse": 10,
-          "pulseHealAmount": 100
+          "pulseHealAmount": 80
         },
         "spelunker": {
           "tier": "LEGENDARY",
@@ -1324,7 +1324,7 @@
             "HEALTH": 25
           },
           "description": "Each kill permanently increases your damage and damage taken by {{damage;%}}. All stacks are lost on death.",
-          "damagePerKillPercent": 0.5,
+          "damagePerKillPercent": 0.4,
           "loseStacksOnDeath": true
         },
         "hourglass": {

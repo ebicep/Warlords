@@ -24,6 +24,13 @@ public record WeaponSkinCost(Spendable currency, long amount) {
     }
 
     private static void registerOverrides() {
+        set(Weapons.WARLORDS_II_HERO, Currencies.VEILKEEPER_INSIGNIA, 1);
+        set(Weapons.WARLORDS_II_PLAGUE_LONGSWORD, Currencies.VEILKEEPER_INSIGNIA, 1);
+        set(Weapons.WARLORDS_II_FRACTALIZE, Currencies.VEILKEEPER_INSIGNIA, 1);
+        set(Weapons.WARLORDS_II_STAR_S_EDGE, Currencies.VEILKEEPER_INSIGNIA, 1);
+        set(Weapons.WARLORDS_II_EMBERBLADE, Currencies.VEILKEEPER_INSIGNIA, 1);
+        set(Weapons.WARLORDS_II_SOULRENDER, Currencies.VEILKEEPER_INSIGNIA, 1);
+        set(Weapons.WARLORDS_II_EDGE_OF_THE_ASTRAL_PLANE, Currencies.VEILKEEPER_INSIGNIA, 1);
         set(Weapons.WARLORDS_II_REQUIEM_OF_THE_NINTH_ABYSS, Currencies.VEILKEEPER_INSIGNIA, 1);
         set(Weapons.WARLORDS_II_ARCANETHYST, Currencies.VEILKEEPER_INSIGNIA, 1);
         set(Weapons.WARLORDS_II_TRUE_EXCALIBUR, Currencies.VEILKEEPER_INSIGNIA, 1);

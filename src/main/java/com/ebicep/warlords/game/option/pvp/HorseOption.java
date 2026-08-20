@@ -288,7 +288,7 @@ public class HorseOption implements Option, Listener {
                 horse.setAdult();
                 horse.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(speed);
                 ((CraftWorld) player.getWorld()).getHandle().addFreshEntity(customHorse, CreatureSpawnEvent.SpawnReason.CUSTOM);
-                horse.setRotation(player.getLocation().getYaw(), 0);
+                horse.setRotation(player.getLocation().getYaw(), player.getLocation().getPitch());
                 horse.addPassenger(player); // not sure if including this in function above will cause issues
             }
             updateHealthDisplay();

@@ -405,24 +405,9 @@ public class WarlordsEvents implements Listener {
         wpVictim.updateHealth();
     }
 
-    private static boolean isAbilityItemInteraction(Player player, EquipmentSlot hand) {
-        if (hand != EquipmentSlot.HAND || Warlords.getPlayer(player) == null) {
-            return false;
-        }
-        int heldItemSlot = player.getInventory().getHeldItemSlot();
-        return heldItemSlot >= 1 && heldItemSlot <= 4;
-    }
-
     @EventHandler
     public void onPlayerItemConsume(PlayerItemConsumeEvent e) {
-        if (isAbilityItemInteraction(e.getPlayer(), e.getHand())) {
-            e.setCancelled(true);
-        }
-    }
-
-    @EventHandler
-    public void onPlayerInteractEntity(PlayerInteractEntityEvent e) {
-        if (isAbilityItemInteraction(e.getPlayer(), e.getHand())) {
+        if (e.getHand().equals(EquipmentSlot.HAND) || e.getPlayer().getInventory().getHeldItemSlot() == 0) {
             e.setCancelled(true);
         }
     }
@@ -438,10 +423,6 @@ public class WarlordsEvents implements Listener {
 
         if (wp == null || !wp.isAlive() || wp.getGame().isFrozen()) {
             return;
-        }
-
-        if (isAbilityItemInteraction(player, e.getHand())) {
-            e.setCancelled(true);
         }
 
         int heldItemSlot = player.getInventory().getHeldItemSlot();

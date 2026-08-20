@@ -56,7 +56,7 @@ public enum Weapons {
     ZWEIREAPER("Zweireaper", new ItemStack(Material.WOODEN_HOE), EPIC, WeaponsPvE.EPIC),
 
     // legendary
-    VOID_EDGE("Void Edge", new ItemStack(Material.GOLDEN_CARROT), LEGENDARY, WeaponsPvE.LEGENDARY),
+    VOID_EDGE("Void Edge", new ItemStack(Material.VILLAGER_SPAWN_EGG), LEGENDARY, WeaponsPvE.LEGENDARY),
     FELFLAME_BLADE("Felflame Blade", new ItemStack(Material.COOKED_SALMON), LEGENDARY, WeaponsPvE.LEGENDARY),
     AMARANTH("Amaranth", new ItemStack(Material.COOKED_MUTTON), LEGENDARY, WeaponsPvE.LEGENDARY),
     ARMBLADE("Armblade", new ItemStack(Material.COOKED_BEEF), LEGENDARY, WeaponsPvE.LEGENDARY),
@@ -93,7 +93,7 @@ public enum Weapons {
     LUNAR_JUSTICE("Lunar Justice", new ItemStack(Material.MAGMA_CREAM), LEGENDARY, WeaponsPvE.LEGENDARY),
     VORPAL_SWORD("Vorpal Sword", new ItemStack(Material.FERMENTED_SPIDER_EYE), LEGENDARY, WeaponsPvE.LEGENDARY),
     VIRIDIAN_BLADE("Viridian Blade", new ItemStack(Material.COOKIE), LEGENDARY, WeaponsPvE.LEGENDARY),
-    SEVENTH("Seventh", new ItemStack(Material.SUSPICIOUS_STEW), LEGENDARY, WeaponsPvE.LEGENDARY),
+    SEVENTH("Seventh", new ItemStack(Material.SKELETON_SPAWN_EGG), LEGENDARY, WeaponsPvE.LEGENDARY),
 
     SUMSMASH_ACTION_FIGURE("sumSmash Action Figure", new ItemStack(Material.NETHERITE_HOE), LEGENDARY, WeaponsPvE.LEGENDARY, true),
     SITH_LIGHTSABER("Sith Lightsaber", new ItemStack(Material.NETHERITE_AXE), LEGENDARY, WeaponsPvE.LEGENDARY),

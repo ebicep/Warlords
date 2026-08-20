@@ -15,6 +15,7 @@ import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.option.pve.rewards.PveRewards;
+import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.guilds.GuildPlayer;
@@ -22,9 +23,12 @@ import com.ebicep.warlords.guilds.upgrades.AbstractGuildUpgrade;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.commands.MobCommand;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
+import com.ebicep.warlords.pve.mobs.flags.BossLike;
+import com.ebicep.warlords.pve.mobs.tiers.PlayerMob;
 import com.ebicep.warlords.pve.newitems.setbonus.NewItemsSetBonus;
 import com.ebicep.warlords.pve.rewards.RewardInventory;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
@@ -287,10 +291,48 @@ public abstract class AbstractAnomalyOption implements PveOption {
 
     @Override
     public void spawnNewMob(AbstractMob mob, Team team) {
-        WarlordsNPC npc = mob.toNPC(game, team, warlordsNPC -> mob.onSpawn(this));
+        WarlordsNPC npc = mob.toNPC(game, team, AbstractAnomalyOption.this::modifyStats);
         game.addNPC(npc);
         mobs.put(mob, new MobData(ticksElapsed.get()));
         Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, mob));
+    }
+
+    protected void modifyStats(WarlordsNPC warlordsNPC) {
+        warlordsNPC.getMob().onSpawn(AbstractAnomalyOption.this);
+
+        int playerCount = 6;//playerCount();
+        boolean isNotSolo = playerCount > 1;
+        /*
+         * Base scale of 600
+         *
+         * The higher the scale is the longer it takes to increase per interval.
+         */
+        double scale = 800;
+        // Flag check whether mob is a boss.
+        boolean bossFlagCheck = isNotSolo && warlordsNPC.getMob() instanceof BossLike;
+        // Reduce base scale by 75 for each player after 2 or more players in game instance.
+        double modifiedScale = scale - (isNotSolo ? 75 * Math.min(6, playerCount) : 0);
+        // Divide scale based on wave count.
+        double modifier = ((double) ticksElapsed.get() / 1000) / modifiedScale + 1;
+        // Multiply health & min/max melee damage by waveCounter + 1 ^ base damage.
+        int minMeleeDamage = (int) Math.pow(warlordsNPC.getMinMeleeDamage(), modifier);
+        int maxMeleeDamage = (int) Math.pow(warlordsNPC.getMaxMeleeDamage(), modifier);
+        float health = (float) Math.pow(warlordsNPC.getMaxBaseHealth(), modifier);
+        // Increase boss health by 25% for each player in game instance.
+        float bossMultiplier = 1 + (0.25f * playerCount);
+
+        if (warlordsNPC.getMob() instanceof PlayerMob) {
+            warlordsNPC.setMaxHealthAndHeal(health);
+            warlordsNPC.setMinMeleeDamage(minMeleeDamage);
+            warlordsNPC.setMaxMeleeDamage(maxMeleeDamage);
+            return;
+        }
+
+        // Final health value after applying all modifiers.
+        float finalHealth = health * (bossFlagCheck ? bossMultiplier : 1);
+        warlordsNPC.setMaxHealthAndHeal(finalHealth);
+        warlordsNPC.setMinMeleeDamage(minMeleeDamage);
+        warlordsNPC.setMaxMeleeDamage(maxMeleeDamage);
     }
 
     @Override

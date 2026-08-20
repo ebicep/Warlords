@@ -170,7 +170,7 @@ public class GeneralEvents implements Listener {
     @EventHandler
     public void onPlayerInteractEntity(PlayerInteractEntityEvent e) {
         // prevent wolf eating item
-        if (e.getRightClicked() instanceof Wolf) {
+        if (e.getRightClicked() instanceof Wolf || e.getRightClicked() instanceof Horse) {
             e.setCancelled(true);
         }
     }
