@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.pve.anomaly;
 
+import com.destroystokyo.paper.event.player.PlayerJumpEvent;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -109,6 +110,13 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
                 }
                 event.setCancelled(true);
                 event.getPlayer().sendActionBar(Component.text("The relic prevents you from using abilities.", NamedTextColor.RED));
+            }
+
+            @EventHandler(ignoreCancelled = true)
+            public void onJump(PlayerJumpEvent event) {
+                if (isCarrier(event.getPlayer())) {
+                    event.setCancelled(true);
+                }
             }
 
             @EventHandler(priority = EventPriority.HIGHEST)
