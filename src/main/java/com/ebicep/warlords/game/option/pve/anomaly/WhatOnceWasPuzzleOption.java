@@ -42,7 +42,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
 
-    private static final int VAULT_COUNT = 9;
+    private static final int VAULT_COUNT = 6;
     private static final int VAULT_DURATION_TICKS = 30 * GameRunnable.SECOND;
     private static final int CODE_REVEAL_TICKS = 8 * GameRunnable.SECOND;
     private static final int MOB_SPAWN_INTERVAL = 3 * GameRunnable.SECOND;
