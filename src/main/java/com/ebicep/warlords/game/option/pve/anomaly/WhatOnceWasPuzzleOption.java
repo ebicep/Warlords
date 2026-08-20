@@ -52,7 +52,7 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
     private static final float RUNE_INTERACTION_WIDTH = 1.75f;
     private static final float RUNE_INTERACTION_HEIGHT = 2.5f;
 
-    private final boolean[] cacheEligibility = new boolean[VAULT_COUNT];
+    private final boolean[] cacheEligibility = new boolean[VAULT_COUNT / 2];
     private final List<Entity> runeEntities = new ArrayList<>();
     private final Map<UUID, AncientRune> runeInteractions = new HashMap<>();
 
@@ -273,10 +273,14 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
         }
         vaultRunning = false;
         removeRuneEntities();
-        cacheEligibility[activeVault] = true;
+        int completedVault = activeVault + 1;
+        boolean cacheUnlocked = completedVault % 2 == 0;
+        if (cacheUnlocked) {
+            cacheEligibility[activeVault / 2] = true;
+        }
         clearHostileMobs();
         grantVaultInsignia();
-        announce(Component.text("Vault " + (activeVault + 1) + " opened. Reward cache unlocked!", NamedTextColor.GREEN));
+        announce(Component.text("Vault " + completedVault + " opened." + (cacheUnlocked ? " Reward cache unlocked!" : ""), NamedTextColor.GREEN));
         game.forEachOnlinePlayer((player, team) -> player.playSound(player.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 2, 1.2f));
         scheduleNextVault();
     }
