@@ -811,8 +811,8 @@ public class DatabasePlayer implements MultiStatsGeneral, TracksMultiAbilityStat
                 long legendFragments = delta * 500L;
                 long scrapMetal = (alpha + beta) * 25L;
                 long legendaryItems = omega / 3L;
-                long sovereignItems = delta / 5L;
-                long epicItems = gamma / 5L;
+                long sovereignItems = delta / 7L;
+                long epicItems = gamma / 10L;
 
                 List<NewItem> generatedItems = new ArrayList<>();
                 try {
