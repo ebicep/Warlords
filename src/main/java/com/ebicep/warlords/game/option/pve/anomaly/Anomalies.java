@@ -197,7 +197,7 @@ public enum Anomalies {
             case BRIDGE_OF_DUNESTAR -> cacheIndex < 2
                     ? "Reach Checkpoint " + (cacheIndex + 1)
                     : "Deliver the relic to the sanctuary";
-            case WHAT_ONCE_WAS -> "Unlock Vault " + (cacheIndex + 1);
+            case WHAT_ONCE_WAS -> "Unlock Vault " + ((cacheIndex + 1) * 2);
         };
     }
 
