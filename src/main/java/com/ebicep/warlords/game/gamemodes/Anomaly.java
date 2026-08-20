@@ -44,14 +44,13 @@ public class Anomaly implements Mode {
         options.add(TextOption.Type.CHAT_CENTERED.create(
                 Component.text("Anomaly", NamedTextColor.AQUA, TextDecoration.BOLD),
                 Component.empty(),
-                base.append(Component.text("Defend three relics for 2 minutes each.")),
-                base.append(Component.text("Every surviving relic unlocks one reward pool.")),
+                base.append(Component.text("Investigate the anomaly and complete the objective.")),
                 Component.empty()
         ));
         options.add(TextOption.Type.TITLE.create(
                 10,
                 Component.text("DEFEND!", NamedTextColor.GREEN),
-                Component.text("Protect the anomaly relics.", NamedTextColor.YELLOW)
+                Component.text("Complete the anomaly.", NamedTextColor.YELLOW)
         ));
         options.add(new PreGameItemOption(4, PlayerHotBarItemListener.SELECTION_MENU, (g, p) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(p)));
         options.add(new RecordTimeElapsedOption());

@@ -2,6 +2,7 @@ package com.ebicep.warlords.game.option.pve.anomaly;
 
 import com.destroystokyo.paper.event.player.PlayerJumpEvent;
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
@@ -17,12 +18,7 @@ import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Color;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -58,7 +54,7 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
     private static final double LASER_WIDTH = 2;
     private static final double LASER_VERTICAL_HALF = 3;
     private static final double LASER_MAX_OFFSET = 4;
-    private static final Particle.DustOptions LASER_TELEGRAPH_DUST = new Particle.DustOptions(Color.fromRGB(255, 70, 70), 2f);
+    private static final Particle.DustOptions LASER_TELEGRAPH_DUST = new Particle.DustOptions(Color.fromRGB(255, 70, 70), 3f);
     private static final ItemStack RELIC_ITEM = new ItemBuilder(Material.HEART_OF_THE_SEA)
             .name(Component.text("Dunestar Relic", NamedTextColor.AQUA))
             .lore(
@@ -286,7 +282,7 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
         player.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, Integer.MAX_VALUE, 0, false, false, true));
 
         announce(Component.text(carrier.getName() + " picked up the Dunestar Relic!", NamedTextColor.GOLD));
-        announce(Component.text("Reach each destination within 120 seconds, then charge the relic there for 30 seconds.", NamedTextColor.AQUA));
+        announce(Component.text("Reach each destination within 2 minutes, then charge the relic energy for 30 seconds.", NamedTextColor.AQUA));
         game.forEachOnlinePlayer((onlinePlayer, team) -> onlinePlayer.playSound(onlinePlayer.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2, 1));
     }
 
@@ -493,7 +489,7 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
         carrierLocation.getWorld().spawnParticle(Particle.ENCHANT, carrierLocation, 5, .4, .7, .4, .02);
 
         Location target = routeMarkers.get(nextRouteIndex).getLocation().clone().add(0, 1, 0);
-        target.getWorld().spawnParticle(Particle.END_ROD, target, 6, .8, .8, .8, .02);
+        EffectUtils.displayParticle(Particle.END_ROD, target, 6, .8, .8, .8, .02);
     }
 
     private void showCheckpointChargeParticles() {
@@ -503,13 +499,13 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
         Location target = routeMarkers.get(nextRouteIndex).getLocation().clone().add(0, 1, 0);
         World world = target.getWorld();
         double progress = checkpointChargeTicks / (double) CHECKPOINT_CHARGE_TICKS;
-        double radius = 1.4 + progress * .8;
+        double radius = 2.5 + progress * .8;
         for (int i = 0; i < 12; i++) {
             double angle = Math.PI * 2 * i / 12.0 + escortTicks * .04;
             Location point = target.clone().add(Math.cos(angle) * radius, .15, Math.sin(angle) * radius);
-            world.spawnParticle(Particle.END_ROD, point, 1, 0, 0, 0, 0);
+            EffectUtils.displayParticle(Particle.END_ROD, point, 1, 0, 0, 0, 0);
         }
-        world.spawnParticle(Particle.ENCHANT, target, 8, .7, .8, .7, .05);
+        EffectUtils.displayParticle(Particle.ENCHANT, target, 8, .7, .8, .7, .05);
     }
 
     private int getMaximumMobCount() {
