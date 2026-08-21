@@ -37,8 +37,15 @@ public class NewItem {
     }
 
     public NewItem(@NotNull NewItemsSetBonus setBonus) {
+        this(setBonus, JavaUtils.randomFromList(setBonus.getSlots()));
+    }
+
+    public NewItem(@NotNull NewItemsSetBonus setBonus, @NotNull NewItemsSlot slot) {
+        if (!setBonus.getSlots().contains(slot)) {
+            throw new IllegalArgumentException(slot + " is not part of set " + setBonus);
+        }
         this.setBonus = setBonus;
-        this.slot = JavaUtils.randomFromList(setBonus.getSlots());
+        this.slot = slot;
         NewItemTier tier = setBonus.getTier();
         NewItemAttribute[] bonusAttributes = JavaUtils.pickRandom(NewItemAttribute.BONUS_ATTRIBUTES, tier.bonusAttributes());
         this.bonusAttributeDistribution = new EnumMap<>(NewItemAttribute.class);
