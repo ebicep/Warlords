@@ -8,15 +8,18 @@ import com.ebicep.warlords.events.player.ingame.pve.drops.WarlordsDropNewItemEve
 import com.ebicep.warlords.events.player.ingame.pve.drops.WarlordsDropWeaponEvent;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.mobs.MobDrop;
-import com.ebicep.warlords.pve.newitems.NewItemsUtils;
 import com.ebicep.warlords.pve.newitems.setbonus.BaseSet;
 import com.ebicep.warlords.pve.newitems.setbonus.SetBonus;
+import com.ebicep.warlords.pve.rewards.RewardInventory;
+import com.ebicep.warlords.pve.rewards.types.CompensationReward;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -98,7 +101,7 @@ public class Spelunker extends BaseSet {
             } else if (roll < 90) {
                 currency = Currencies.SUPPLY_DROP_TOKEN;
                 amount = 2;
-            } else if (roll < 95) {
+            } else if (roll < 99) {
                 currency = Currencies.ETHEREUM_CRYSTAL;
                 amount = 1;
             } else {
@@ -106,16 +109,16 @@ public class Spelunker extends BaseSet {
                 amount = 1;
             }
 
+            LinkedHashMap<Spendable, Long> rewards = new LinkedHashMap<>();
+            rewards.put(currency, amount);
+
             DatabasePlayer databasePlayer = warlordsPlayer.getDatabasePlayer();
-            currency.addToPlayer(databasePlayer, amount);
+            databasePlayer.getPveStats().getCompensationRewards().add(new CompensationReward(rewards, "Spelunker Chest"));
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
-            NewItemsUtils.sendItemMessage(
-                    warlordsPlayer,
-                    Component.text("You found a Spelunker Chest containing ", NamedTextColor.GOLD)
-                             .append(Component.text(amount + " "))
-                             .append(currency.getColoredName())
-                             .append(Component.text(amount == 1 ? "!" : "s!"))
+            RewardInventory.sendRewardMessage(
+                    warlordsPlayer.getUuid(),
+                    Component.text("A Spelunker Chest was added to your Reward Inventory!", NamedTextColor.GOLD)
             );
         }
 
