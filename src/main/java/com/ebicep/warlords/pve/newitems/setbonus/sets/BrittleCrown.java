@@ -67,7 +67,7 @@ public class BrittleCrown extends BaseSet {
                             killWindow.set(false);
                         }
 
-                    }.runTaskLater(1);
+                    }.runTaskLater(60);
                 }
 
                 @EventHandler

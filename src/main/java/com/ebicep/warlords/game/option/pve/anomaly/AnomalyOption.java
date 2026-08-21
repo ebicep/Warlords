@@ -33,7 +33,7 @@ public class AnomalyOption extends AbstractAnomalyOption {
 
     public static final int OBJECTIVE_COUNT = 3;
     public static final int OBJECTIVE_DURATION_TICKS = 120 * GameRunnable.SECOND;
-    private static final int MOB_SPAWN_INTERVAL = GameRunnable.SECOND;
+    private static final int MOB_SPAWN_INTERVAL = 10; // ticks
     private static final int BASE_RELIC_HEALTH = 25_000;
     private static final int[] BOSS_TRIGGER_TICKS = {
             30 * GameRunnable.SECOND,
@@ -155,7 +155,7 @@ public class AnomalyOption extends AbstractAnomalyOption {
         clearHostileMobs();
         AnomalyObjectiveMarker marker = getObjectiveMarker(objectiveIndex);
         playerRespawnLocation = marker.getLocation().clone().add(0, 1, 0);
-        int relicHealth = BASE_RELIC_HEALTH + Math.max(0, playerCount() - 1) * 10_000;
+        int relicHealth = BASE_RELIC_HEALTH + Math.max(0, playerCount() - 1) * 5_000;
         activeRelic = new AnomalyRelic(marker.getLocation().clone(), objectiveIndex, relicHealth);
         WarlordsNPC relicNpc = activeRelic.toNPC(game, Team.BLUE, npc -> activeRelic.onSpawn(this));
         game.addNPC(relicNpc);
@@ -298,7 +298,7 @@ public class AnomalyOption extends AbstractAnomalyOption {
     }
 
     private int getMaximumMobCount() {
-        return 8 + (playerCount() * 6) + activeObjective * 2;
+        return 10 + (playerCount() * 10) + activeObjective * 2;
     }
 
     private List<Component> getObjectiveScoreboard() {
