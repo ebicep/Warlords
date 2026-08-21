@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.pve.anomaly;
 
+import com.ebicep.warlords.events.player.ingame.WarlordsRespawnEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -7,10 +8,11 @@ import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import javax.annotation.Nonnull;
 
@@ -19,6 +21,23 @@ public class DunestarRelicSlowOption implements Option {
     private static final String MODIFIER_NAME = "Dunestar Relic Carrier";
     private static final float SPEED_REDUCTION = -60;
     private static final String RELIC_NAME = "Dunestar Relic";
+
+    @Override
+    public void register(@Nonnull Game game) {
+        game.registerEvents(new Listener() {
+            @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+            public void onRespawn(WarlordsRespawnEvent event) {
+                if (event.getWarlordsEntity().getGame() != game) {
+                    return;
+                }
+                game.warlordsPlayers()
+                    .filter(warlordsPlayer -> !warlordsPlayer.isDead())
+                    .filter(warlordsPlayer -> warlordsPlayer.getEntity() instanceof Player player && isHoldingRelic(player.getInventory().getItem(8)))
+                    .findFirst()
+                    .ifPresent(carrier -> event.setRespawnLocation(carrier.getLocation().clone()));
+            }
+        });
+    }
 
     @Override
     public void start(@Nonnull Game game) {
