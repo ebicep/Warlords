@@ -21,7 +21,7 @@ import org.bukkit.entity.Player;
 import java.util.Comparator;
 import java.util.List;
 
-@CommandAlias("newitems")
+@CommandAlias("items")
 @CommandPermission("group.administrator")
 public class NewItemsCommand extends BaseCommand {
 
