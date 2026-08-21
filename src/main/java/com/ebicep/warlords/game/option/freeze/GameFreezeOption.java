@@ -12,6 +12,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.util.Ticks;
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -61,14 +62,15 @@ public class GameFreezeOption implements Option, Listener {
 
             @Override
             public void run() {
-                game.forEachOnlinePlayerWithoutSpectators((p, team) ->
-                        p.showTitle(Title.title(
-                                Component.text("Resuming in... ", NamedTextColor.BLUE)
-                                         .append(Component.text(timer, NamedTextColor.GREEN)),
-                                Component.empty(),
-                                Title.Times.times(Ticks.duration(0), Ticks.duration(40), Ticks.duration(0))
-                        ))
-                );
+                game.forEachOnlinePlayerWithoutSpectators((p, team) -> {
+                    p.showTitle(Title.title(
+                            Component.text("Resuming in... ", NamedTextColor.BLUE)
+                                     .append(Component.text(timer, NamedTextColor.GREEN)),
+                            Component.empty(),
+                            Title.Times.times(Ticks.duration(0), Ticks.duration(40), Ticks.duration(0))
+                    ));
+                    p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 500, 1);
+                });
                 if (timer == 0) {
                     clearFrozenCauses();
                     setUnfreezeCooldown(false);
