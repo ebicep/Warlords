@@ -63,6 +63,7 @@ public interface ConfigBased {
                 Queue<Object> variables = new LinkedList<>(getVariables());
                 String descriptionFormat = getConfig().getValue(getConfigNamespaces(), getPrefix() + getConfigFieldName() + ".description", String.class);
                 AbilityDescriptionBuilder abilityDescriptionBuilder = AbilityDescriptionBuilder.create("", NamedTextColor.GRAY);
+                String leadingSign = "";
                 for (int i = 0; i < descriptionFormat.length(); i++) {
                     int nextCustomIndex = descriptionFormat.indexOf("{{");
                     if (nextCustomIndex == -1) {
@@ -71,7 +72,13 @@ public interface ConfigBased {
                     }
                     if (nextCustomIndex != 0) {
                         String text = descriptionFormat.substring(0, nextCustomIndex);
-                        abilityDescriptionBuilder.text(text);
+                        if (text.endsWith("+") || text.endsWith("-")) {
+                            leadingSign = text.substring(text.length() - 1);
+                            text = text.substring(0, text.length() - 1);
+                        }
+                        if (!text.isEmpty()) {
+                            abilityDescriptionBuilder.text(text);
+                        }
                         descriptionFormat = descriptionFormat.substring(nextCustomIndex);
                     } else {
                         int endIndex = descriptionFormat.indexOf("}}");
@@ -88,10 +95,11 @@ public interface ConfigBased {
                             String type = customValue.substring(0, customValue.indexOf(":"));
                             String value = customValue.substring(customValue.indexOf(":") + 1);
                             // {{type:value;prefix}}
-                            abilityDescriptionBuilder.autoFormat(type, prefix, value.isEmpty() ? variables.poll() : value);
+                            abilityDescriptionBuilder.autoFormat(type, prefix, value.isEmpty() ? variables.poll() : value, leadingSign);
                         } else {
-                            abilityDescriptionBuilder.autoFormat(customValue, prefix, variables.poll());
+                            abilityDescriptionBuilder.autoFormat(customValue, prefix, variables.poll(), leadingSign);
                         }
+                        leadingSign = "";
                         descriptionFormat = descriptionFormat.substring(endIndex + 2);
                     }
                     i--;
