@@ -72,7 +72,7 @@ public class Vanguard extends AbstractMob implements BossMob {
 
     @Override
     public TextColor getColor() {
-        return TextColor.color(210, 150, 30);
+        return TextColor.color(245, 90, 90);
     }
 
     @Override

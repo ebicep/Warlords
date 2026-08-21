@@ -5,6 +5,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.database.repositories.player.pojos.general.FutureMessage;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.events.player.DatabasePlayerFirstLoadEvent;
+import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.rewards.AbstractReward;
@@ -67,14 +68,14 @@ public class PatreonReward extends AbstractReward implements Listener {
         super(PATREON_REWARDS,
                 Year.from(timeGiven.atZone(ZoneOffset.UTC)).getValue() + " " +
                         Month.from(timeGiven.atZone(ZoneOffset.UTC)).getDisplayName(TextStyle.FULL, Locale.ENGLISH) +
-                        " Patreon"
+                        " Supporter"
         );
         this.timeGiven = timeGiven;
     }
 
     @EventHandler
     public void onDatabasePlayerFirstLoad(DatabasePlayerFirstLoadEvent event) {
-        if (!event.getPlayer().hasPermission("group.patreon") || !event.getPlayer().hasPermission("group.contentcreator")) {
+        if (!Permissions.isSupporter(event.getPlayer())) {
             return;
         }
         DatabasePlayer databasePlayer = event.getDatabasePlayer();
@@ -93,7 +94,7 @@ public class PatreonReward extends AbstractReward implements Listener {
                         Component.text("------------------------------------------------", NamedTextColor.LIGHT_PURPLE),
                         Component.text("You received your ", NamedTextColor.GREEN)
                                  .append(Component.text(month.getDisplayName(TextStyle.FULL, Locale.ENGLISH) + " " + year.getValue(), NamedTextColor.LIGHT_PURPLE))
-                                 .append(Component.text(" Patreon reward!", NamedTextColor.GREEN)),
+                                 .append(Component.text(" Supporter reward!", NamedTextColor.GREEN)),
                         Component.text("Claim it in your Rewards Inventory", NamedTextColor.GREEN),
                         Component.text("------------------------------------------------", NamedTextColor.LIGHT_PURPLE)
                 ),

@@ -147,7 +147,11 @@ public class EffectUtils {
             if (!isWithinParticleRange(player, loc)) {
                 continue;
             }
-            player.spawnParticle(particle, loc, count, 0, 0, 0, 0, null, true);
+            if (particle == Particle.EFFECT) {
+                player.spawnParticle(particle, loc, count, 0, 0, 0, 0, new Particle.Spell(Color.fromRGB(140, 25, 240), 1));
+            } else {
+                player.spawnParticle(particle, loc, count, 0, 0, 0, 0, null, true);
+            }
         }
     }
 
@@ -866,6 +870,25 @@ public class EffectUtils {
         }
     }
 
+    public static void playBlossomAnimation(Location location, double radius, Particle particle, int ticksLived) {
+        int petals = 7;
+        double yOffset = 0.05;
+        double rotation = ticksLived * 0.05;
+
+        for (double theta = 0; theta <= Math.PI * 2; theta += 0.03) {
+            double r = Math.sin(petals * theta) * radius;
+
+            double angle = theta + rotation;
+
+            double x = r * Math.cos(angle);
+            double z = r * Math.sin(angle);
+
+            Location point = location.clone().add(x, yOffset, z);
+
+            displayParticle(particle, point, 0, 0, 0, 0, 1);
+        }
+    }
+
     public static void playCrownAnimation(Location loc, Particle particle) {
         Location particleLoc = new Location(loc.getWorld(), 0, 0, 0);
         double baseX = loc.getX();
@@ -899,7 +922,12 @@ public class EffectUtils {
             double offsetZ,
             double speed
     ) {
-        displayParticle(null, particle, loc, count, offsetX, offsetY, offsetZ, speed);
+        if (particle == Particle.EFFECT) {
+            var data = new Particle.Spell(Color.fromRGB(140, 25, 240), 1);
+            displayParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed, data);
+        } else {
+            displayParticle(null, particle, loc, count, offsetX, offsetY, offsetZ, speed);
+        }
     }
 
     /**

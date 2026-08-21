@@ -23,7 +23,7 @@ import org.bukkit.entity.Player;
 import java.util.Comparator;
 import java.util.concurrent.ThreadLocalRandom;
 
-@CommandAlias("items")
+@CommandAlias("olditems")
 @CommandPermission("group.administrator")
 public class ItemsCommand extends BaseCommand {
 

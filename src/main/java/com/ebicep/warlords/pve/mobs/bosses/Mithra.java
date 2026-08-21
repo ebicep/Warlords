@@ -25,6 +25,9 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.*;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
@@ -39,7 +42,7 @@ public class Mithra extends AbstractMob implements BossMob {
     private boolean preventBarrage = false;
 
     public Mithra(Location spawnLocation) {
-        this(spawnLocation, "Mithra", 20000, 0.28f, 20, 1200, 1600);
+        this(spawnLocation, "Echo of Mithra", 20000, 0.28f, 20, 1200, 1600);
     }
 
     public Mithra(
@@ -76,12 +79,17 @@ public class Mithra extends AbstractMob implements BossMob {
 
     @Override
     public Component getDescription() {
-        return Component.text("The Envoy Queen of Illusion", NamedTextColor.WHITE);
+        return Component.text("Vessel of the Queen", NamedTextColor.WHITE);
     }
 
     @Override
     public TextColor getColor() {
         return NamedTextColor.LIGHT_PURPLE;
+    }
+
+    @Override
+    public double getMobScale() {
+        return 1.1;
     }
 
     @Override

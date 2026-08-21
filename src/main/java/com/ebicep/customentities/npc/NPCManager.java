@@ -7,6 +7,7 @@ import com.ebicep.holograms.HologramManager;
 import com.ebicep.holograms.VisibilityType;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.option.pve.ReadyUpOption;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
@@ -19,10 +20,14 @@ import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitInfo;
 import net.citizensnpcs.api.trait.trait.Equipment;
-import net.citizensnpcs.trait.*;
+import net.citizensnpcs.trait.ArmorStandTrait;
+import net.citizensnpcs.trait.LookClose;
+import net.citizensnpcs.trait.SkinTrait;
+import net.citizensnpcs.trait.VillagerProfession;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.entity.Display;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
@@ -44,24 +49,26 @@ public class NPCManager {
                 ChatUtils.MessageType.GAME.sendMessage("Adding game join NPCs...");
                 createCTFNPC();
                 createSiegeNPC();
-//                    createTeamDeathmatchNPC();
-//                    createInterceptionNPC();
                 createWaveDefenseNPC();
                 createOnslaughtNPC();
                 createTreasureHuntNPC();
-//                    createBossRushNPC();
                 createMasterworksFairNPC();
                 createWeaponsManagerNPC();
                 createLegendaryWeaponNPC();
                 createSupplyDropFairNPC();
-//                    createQuestMenuNPC();
                 createBountyMenuNPC();
+                //createSupporterShopNPC();
                 createStarPieceSynthesizerNPC();
-//                    createMysteriousTokenNPC();
-//                    createItemMichaelNPC();
-                createItemEnyaNPC();
+                createItemCrafterNPC();
                 createIllusionVendorNPC();
-                createSeasonalVendorNPC();
+                //createSeasonalVendorNPC();
+                createAnomalyNPC();
+                createRaidOneNPC();
+                createPrestigeVendorNPC();
+                //createAscendantVendorNPC();
+                createWeeklyItemTraderNPC();
+                createTreasureHuntVendorNPC();
+                //createAscendantWeaponNPC();
                 createTutorialGuideNPC();
                 createMainLobbySetupNPC();
                 registerTrait(ReadyUpOption.ReadyUpTrait.class, "ReadyUpTrait");
@@ -82,7 +89,7 @@ public class NPCManager {
     }
 
     private static void createSiegeNPC() {
-        registerTrait(SiegeTrait.class, "GameStartTrait");
+        registerTrait(SiegeTrait.class, "SiegeStartTrait");
 
         NPC npc = NPC_REGISTRY.createNPC(EntityType.PLAYER, "siege");
         npc.addTrait(SiegeTrait.class);
@@ -119,6 +126,17 @@ public class NPCManager {
 
         NPC npc = NPC_REGISTRY.createNPC(EntityType.PLAYER, "treasure-hunt-mode");
         npc.addTrait(TreasureHuntStartTrait.class);
+//        npc.getOrAddTrait(SkinTrait.class).setSkinName("Alexred2522");
+
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
+        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 67.5, 93, 212.5, -180, 0));
+    }
+
+    private static void createAnomalyNPC() {
+        registerTrait(AnomalyStartTrait.class, "AnomalyStartTrait");
+
+        NPC npc = NPC_REGISTRY.createNPC(EntityType.PLAYER, "anomaly-mode");
+        npc.addTrait(AnomalyStartTrait.class);
 //        npc.getOrAddTrait(SkinTrait.class).setSkinName("Alexred2522");
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
@@ -182,6 +200,21 @@ public class NPCManager {
         npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 51.5, 81, 157.5, 180, 0));
     }
 
+    public static void createAscendantWeaponNPC() {
+        registerTrait(AscendantWeaponTrait.class, "AscendantWeaponTrait");
+
+        NPC npc = NPC_REGISTRY.createNPC(EntityType.PLAYER, "ascendant-weapon");
+        npc.getOrAddTrait(SkinTrait.class).setSkinName("Plikie");
+        npc.addTrait(AscendantWeaponTrait.class);
+        LookClose lookClose = npc.getOrAddTrait(LookClose.class);
+        lookClose.setPerPlayer(true);
+        lookClose.toggle();
+
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
+        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 67.5, 93, 212.5, -180, 0));
+
+    }
+
     public static void createSupplyDropFairNPC() {
         registerTrait(SupplyDropTrait.class, "SupplyDropTrait");
 
@@ -240,6 +273,33 @@ public class NPCManager {
         );
     }
 
+    public static void createSupporterShopNPC() {
+        registerTrait(SupporterShopTrait.class, "SupporterShopTrait");
+
+        NPC npc = NPC_REGISTRY.createNPC(EntityType.VILLAGER, "supporter-shop");
+        npc.addTrait(SupporterShopTrait.class);
+        npc.getOrAddTrait(VillagerProfession.class).setProfession(Villager.Profession.CLERIC);
+
+        LookClose lookClose = npc.getOrAddTrait(LookClose.class);
+        lookClose.setPerPlayer(true);
+        lookClose.toggle();
+
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
+        Location location = new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 29.5, 81, 163.5, 90, 0);
+        npc.spawn(location);
+
+        HologramDataText hologramDataText = new HologramDataText.Builder<>(ComponentBuilder.create(
+                "Supporter Shop",
+                NamedTextColor.GOLD
+        ).build()).setBillboard(Display.Billboard.CENTER).build();
+        HologramManager.addHologram(new Hologram.Builder(
+                        "supporterShop",
+                        location.clone().add(0, 2.1, 0),
+                        player -> hologramDataText
+                ).setVisibility(VisibilityType.ALL).build()
+        );
+    }
+
     public static void createStarPieceSynthesizerNPC() {
         registerTrait(StarPieceSynthesizerTrait.class, "StarPieceSynthesizerTrait");
 
@@ -250,33 +310,19 @@ public class NPCManager {
         npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 40.5, 74, 169, 0, 0));
     }
 
-    public static void createItemEnyaNPC() {
-        registerTrait(ItemEnyaTrait.class, "ItemEnyaTrait");
+    public static void createItemCrafterNPC() {
+        registerTrait(ItemCrafterTrait.class, "ItemCrafterTrait");
 
-        NPC npc = NPC_REGISTRY.createNPC(EntityType.BLAZE, "item-enya");
-        npc.data().set("swim", false);
-        npc.addTrait(ItemEnyaTrait.class);
-        npc.getOrAddTrait(Gravity.class)
-           .setHasGravity(false);
+        NPC npc = NPC_REGISTRY.createNPC(EntityType.BREEZE, "item-crafter");
+        npc.addTrait(ItemCrafterTrait.class);
         LookClose lookClose = npc.getOrAddTrait(LookClose.class);
         lookClose.setPerPlayer(true);
         lookClose.toggle();
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
 
-        Location location = new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 64, 81, 154.5, 90, 0);
+        Location location = new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 24.5, 93, 208.5, 90, 0);
         npc.spawn(location);
-
-        HologramDataText hologramDataText = new HologramDataText.Builder<>(ComponentBuilder.create(
-                "Ethical Enya",
-                NamedTextColor.GREEN
-        ).build()).setBillboard(Display.Billboard.CENTER).build();
-        HologramManager.addHologram(new Hologram.Builder(
-                        "ethicalEnya",
-                        location.clone().add(0, 2.1, 0),
-                        player -> hologramDataText
-                ).setVisibility(VisibilityType.ALL).build()
-        );
     }
 
     public static void createIllusionVendorNPC() {
@@ -293,6 +339,20 @@ public class NPCManager {
         npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), -9.5, 74, 97.5, -180, 0));
     }
 
+    public static void createPrestigeVendorNPC() {
+        registerTrait(PrestigeVendorTrait.class, "PrestigeVendorTrait");
+
+        NPC npc = NPC_REGISTRY.createNPC(EntityType.CREAKING, "prestige-vendor");
+        npc.addTrait(PrestigeVendorTrait.class);
+        LookClose lookClose = npc.getOrAddTrait(LookClose.class);
+        lookClose.setPerPlayer(true);
+        lookClose.toggle();
+
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
+
+        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), -21.5, 88, 183.5, 90, 0));
+    }
+
     public static void createSeasonalVendorNPC() {
         registerTrait(SeasonalTraderTrait.class, "SeasonalVendorTrait");
 
@@ -307,118 +367,96 @@ public class NPCManager {
         npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), -3, 81, 135, -45, 0));
     }
 
+    public static void createAscendantVendorNPC() {
+        registerTrait(AscendantVendorTrait.class, "AscendantVendorTrait");
+
+        NPC npc = NPC_REGISTRY.createNPC(EntityType.PLAYER, "ascendant-vendor");
+        npc.addTrait(AscendantVendorTrait.class);
+        LookClose lookClose = npc.getOrAddTrait(LookClose.class);
+        lookClose.setPerPlayer(true);
+        lookClose.toggle();
+
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
+
+        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 20.5, 93, 208.5, -90, 0));
+    }
+
+    public static void createRaidOneNPC() {
+        registerTrait(RaidOneStartTrait.class, "RaidStartTrait");
+
+        NPC npc = NPC_REGISTRY.createNPC(EntityType.END_CRYSTAL, "raid-start");
+        npc.addTrait(RaidOneStartTrait.class);
+        LookClose lookClose = npc.getOrAddTrait(LookClose.class);
+        lookClose.setPerPlayer(true);
+        lookClose.toggle();
+
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
+
+        Location loc = new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 28.5, 94, 262.5, -180, 0);
+        npc.spawn(loc);
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                EffectUtils.displayParticle(Particle.ASH, loc.clone().add(0, 2, 0), 10, 0.5, 0.2, 0.5, 0.001);
+            }
+        }.runTaskTimer(Warlords.getInstance(), 0, 30);
+    }
+
+    public static void createTreasureHuntVendorNPC() {
+        registerTrait(TreasureHuntVendorTrait.class, "TreasureHuntVendorTrait");
+
+        NPC npc = NPC_REGISTRY.createNPC(EntityType.PLAYER, "treasure-vendor");
+        npc.getOrAddTrait(SkinTrait.class).setSkinPersistent(
+                "Oral Chocolate Coyote",
+                "rsVlglpqxqTzn0QwBD5vJagR2jxugEo8f4eamaoAgdZwKBhEIflOvHzgl/a575TeUML8C8S7cL6xy/eoYJIyBdvK7jQxaukxXRaYVIZeZKtI8iiMMfvyTMzLsCZyuPtATlglXNeaukB3EXztINdBXp3XBTkNAZBVUgPmesZnv+hMAMKQTDuCQDzW6f7yTYtLRb3OfhgzgF5nInTVx+DGhf0vr5z6OcHha4+c16VNf27uLPbhFrx+F6HsCYZs6iEALkJNPuNjff5v5kjMUKIeLy9+sCGOe4BwizxZnNOV9FqBbXkk4ii2qTr+4OI6JtaIXc3xcKOCmhKIctGhv0xHMGWws6xDXbcL7hNIzpZKw6lt1A/FyeH6VtCIDPWqZHoe933x325MZuFOp/pvndZHjAatAXMygCXeTCmBZ+jKzOksPHqKWvSJBnJG7AqirgFP1TuysD005kLG5oChOID247HWtN+Z89LdhasIE5RmYM7P3F8qfxahkAgoIdG1yzGzpV2jaC3qMjrO0sMFiSyaftBjrMMQELwXhrl/dRSrU3fZMNDFszHhiuWLzFPPWXvJB20mmeb9PeRlJ0BYZhZPe1DGKJb5+FKfbSa9E68NtIGRK3qbuFMoVWDZa6s16fdr4CWSCHU40z8gWuVM+4tTNVI7KKFP1MaU0SFr/zhzPE0=",
+                "ewogICJ0aW1lc3RhbXAiIDogMTczMzk2MjY4MDc0OCwKICAicHJvZmlsZUlkIiA6ICJlMjc5NjliODYyNWY0NDg1YjkyNmM5NTBhMDljMWMwMSIsCiAgInByb2ZpbGVOYW1lIiA6ICJNaVp6YVhQIiwKICAic2lnbmF0dXJlUmVxdWlyZWQiIDogdHJ1ZSwKICAidGV4dHVyZXMiIDogewogICAgIlNLSU4iIDogewogICAgICAidXJsIiA6ICJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlL2JmMjk1ZjE3OTc4MjQ1ZDc3MmQ4OTZlZTFmZmZhMWQ2NWEwYWRjNDU2NzJhNmQ1MjA5OTg4OTkxZjVhNTVmNWMiCiAgICB9CiAgfQp9"
+        );
+
+        npc.addTrait(TreasureHuntVendorTrait.class);
+        LookClose lookClose = npc.getOrAddTrait(LookClose.class);
+        lookClose.setPerPlayer(true);
+        lookClose.toggle();
+
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
+
+        Location loc = new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 71.5, 93, 198.5, 90, 0);
+        npc.spawn(loc);
+    }
+
+    public static void createWeeklyItemTraderNPC() {
+        registerTrait(WeeklyItemTraderTrait.class, "WeeklyItemTraderTrait");
+
+        NPC npc = NPC_REGISTRY.createNPC(EntityType.PLAYER, "weekly-item-vendor");
+        npc.getOrAddTrait(SkinTrait.class).setSkinPersistent(
+                "evil",
+                "TLWnAAA8hBVKnVmPG8CsPCqvpwbpSEzejp7+EjHFwZp7nHBlaOLGI0DOn3XApwETtaHKMmuuMRlokpF3YqY1kLxugSr5VqXjCKnA793hye6ANR3jsqHeIAktdpT+zbTxCQ2VHP3VqHGh8G6xyiMYyzk2d6eblxCwnhnZ9bjERE+A8KD/QeL6ufPlpjJaFC/qSSdrMjM/tyW641q9w4rlRCt4UGvyTE9GAt3U/LWKUQLMX4r6cBkG/VNhQpkWyev0vsRsL/19eFQQujJdJa0xUeX0J62cOwd2kc/dzJ/5ZJoim3l1Din8bjzjQfbqfspgU8h5I8v/irUsG5r600/2cqnhYZI8O/ROy+/OkPa5kk9yX5vYu6J3c3i3RIGCiQ8jNbUGrV0rfIoCZhidplsp7V2HzcqNPb3A4fenIKMjlOdb/eSL8AIIgSSccS2GTSDVdCgbL/FXItyvAkUnPCb0tn8kSukiBdqXUaUIo6mjyQ8W6IhDG8H7l5KTznUZwn8gj/ZZ0pCDkrUfFeUKpB+0Drq3AS3lLKbZbDBZPSs3K/WnqmpJ+E2/uTnkQFug69Xy4c1N/7tFPmd81Vcrvz+NUvaPa+kPczbKLRDZXbBB2OzZanFlk6pUL5cRHzDEisWz1pU2OUHUo1TJg0EqkgP5A3U3Vj9CRNYKu4FyZfCuRmw=",
+                "ewogICJ0aW1lc3RhbXAiIDogMTY0NTIzODI0MjA4MSwKICAicHJvZmlsZUlkIiA6ICIxNmFkYTc5YjFjMDk0MjllOWEyOGQ5MjgwZDNjNjE5ZiIsCiAgInByb2ZpbGVOYW1lIiA6ICJMYXp1bGl0ZV9adG9uZSIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS9mOWU4MWNlYmQ2MjBlNjcyZWJjYTRjYjZiNDg4YTIyNjE1YTU2NTlmYjNkZjdhZjU0YjhkMDc4MGZiZWYzMzQ4IiwKICAgICAgIm1ldGFkYXRhIiA6IHsKICAgICAgICAibW9kZWwiIDogInNsaW0iCiAgICAgIH0KICAgIH0KICB9Cn0="
+        );
+
+        npc.addTrait(WeeklyItemTraderTrait.class);
+        LookClose lookClose = npc.getOrAddTrait(LookClose.class);
+        lookClose.setPerPlayer(true);
+        lookClose.toggle();
+
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
+
+        Location loc = new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 65.5, 81, 146.5, 75, 0);
+        npc.spawn(loc);
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                EffectUtils.displayParticle(Particle.SOUL_FIRE_FLAME, loc.clone().add(0, 1.2, 0), 3, 0.5, 0.2, 0.5, 0.001);
+            }
+        }.runTaskTimer(Warlords.getInstance(), 0, 60);
+    }
+
     public static void registerTrait(Class<? extends Trait> trait, String traitName) {
         if (CitizensAPI.getTraitFactory().getTrait(traitName) != null) {
-            CitizensAPI.getTraitFactory().deregisterTrait(TraitInfo.create(trait).withName(traitName));
+            CitizensAPI.getTraitFactory().getRegisteredTraits().remove(TraitInfo.create(trait).withName(traitName));
         }
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(trait).withName(traitName));
-    }
-
-    public static void createTeamDeathmatchNPC() {
-        registerTrait(TeamDeathmatchTrait.class, "TeamDeathmatchTrait");
-
-        NPC npc = NPC_REGISTRY.createNPC(EntityType.PLAYER, "team-deathmatch");
-        npc.addTrait(TeamDeathmatchTrait.class);
-//        npc.getOrAddTrait(SkinTrait.class).setSkinName("Richdragon123");
-
-        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
-
-        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 2.5, 82, 140.5, -45, 0));
-    }
-
-    public static void createInterceptionNPC() {
-        registerTrait(InterceptionTrait.class, "InterceptionTrait");
-
-        NPC npc = NPC_REGISTRY.createNPC(EntityType.PLAYER, "interception");
-        npc.addTrait(InterceptionTrait.class);
-//        npc.getOrAddTrait(SkinTrait.class).setSkinName("AwesomeRaki");
-
-        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
-
-        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 5.5, 82, 138.5, -45, 0));
-    }
-
-    private static void createBossRushNPC() {
-        registerTrait(BossRushStartTrait.class, "BossRushStartTrait");
-
-        NPC npc = NPC_REGISTRY.createNPC(EntityType.PLAYER, "boss-rush-mode");
-        npc.addTrait(BossRushStartTrait.class);
-//        npc.getOrAddTrait(SkinTrait.class).setSkinName("Stratfull");
-
-        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
-        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), -2.5, 82, 136.5, -45, 0));
-    }
-
-    public static void createDatabaseRequiredNPCs() {
-        if (!Warlords.citizensEnabled) {
-            return;
-        }
-
-        Warlords.newChain()
-                .sync(() -> {
-                    createMasterworksFairNPC();
-                    createWeaponsManagerNPC();
-                    createLegendaryWeaponNPC();
-                    createSupplyDropFairNPC();
-//                    createQuestMenuNPC();
-                    createBountyMenuNPC();
-                    createStarPieceSynthesizerNPC();
-//                    createMysteriousTokenNPC();
-//                    createItemMichaelNPC();
-                    createItemEnyaNPC();
-                    createIllusionVendorNPC();
-                    createSeasonalVendorNPC();
-                })
-                .execute();
-    }
-
-    public static void createItemMichaelNPC() {
-        registerTrait(ItemMichaelTrait.class, "ItemMichaelTrait");
-
-        NPC npc = NPC_REGISTRY.createNPC(EntityType.VILLAGER, "item-michael");
-        npc.getOrAddTrait(VillagerProfession.class).setProfession(Villager.Profession.TOOLSMITH);
-        npc.addTrait(ItemMichaelTrait.class);
-        npc.getOrAddTrait(LookClose.class)
-           .toggle();
-
-        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
-
-        Location location = new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), -2528, 50, 770, 125, 0);
-        npc.spawn(location);
-
-        HologramDataText hologramDataText = new HologramDataText.Builder<>(ComponentBuilder.create(
-                "Mysterious Michael",
-                NamedTextColor.GREEN
-        ).build()).setBillboard(Display.Billboard.CENTER).build();
-        HologramManager.addHologram(new Hologram.Builder(
-                        "mysteriousMichael",
-                        location.clone().add(0, 2.1, 0),
-                        player -> hologramDataText
-                ).setVisibility(VisibilityType.ALL).build()
-        );
-    }
-
-    public static void createQuestMenuNPC() {
-        registerTrait(QuestMenuTrait.class, "QuestMenuTrait");
-
-        NPC npc = NPC_REGISTRY.createNPC(EntityType.VILLAGER, "quest-menu");
-        npc.getOrAddTrait(VillagerProfession.class).setProfession(Villager.Profession.LIBRARIAN);
-        npc.addTrait(QuestMenuTrait.class);
-
-        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
-        Location location = new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), -2574.5, 50, 758.5, -90, 0);
-        npc.spawn(location);
-
-        HologramDataText hologramDataText = new HologramDataText.Builder<>(ComponentBuilder.create(
-                "Quest Lord",
-                NamedTextColor.AQUA
-        ).build()).setBillboard(Display.Billboard.CENTER).build();
-        HologramManager.addHologram(new Hologram.Builder(
-                        "questLord",
-                        location.clone().add(0, 2.1, 0),
-                        player -> hologramDataText
-                ).setVisibility(VisibilityType.ALL).build()
-        );
     }
 
     public static void destroyNPCs() {

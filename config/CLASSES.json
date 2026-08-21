@@ -340,6 +340,15 @@
           "REMEDIC_CHAINS",
           "DRAINING_MIASMA"
         ]
+      },
+      "assassin": {
+        "abilities": [
+          "JUDGEMENT_STRIKE",
+          "INCENDIARY_CURSE",
+          "SHADOW_STEP",
+          "MIRROR_BLOSSOM",
+          "ORDER_OF_EVISCERATE"
+        ]
       }
     }
   }

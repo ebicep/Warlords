@@ -9,10 +9,9 @@ import com.ebicep.warlords.util.chat.ChatUtils;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public abstract class GameMap {
 
@@ -59,13 +58,18 @@ public abstract class GameMap {
     public static final GameMap SUN_AND_MOON = new SunAndMoon();
     public static final GameMap SUN_AND_MOON_2 = new SunAndMoon2();
     public static final GameMap TARTARUS = new Tartarus();
-    public static final GameMap THE_OBSIDIAN_TRAIL_RAID = new TheObsidianTrailRaid();
+    public static final GameMap RAID_ONE = new RaidOne();
     public static final GameMap DUAL_DESCENT = new DualDescent();
     public static final GameMap TUTORIAL_MAP = new Tutorial();
     public static final GameMap VALLEY = new Valley();
     public static final GameMap PVE_DEBUG = new PvePractice();
     public static final GameMap WARSONG = new Warsong();
     public static final GameMap TD_TEST = new TowerDefenseTest();
+    public static final GameMap OPEX_ANOMALY = new OpexAnomaly();
+    public static final GameMap PLAINS_OF_DUNESTAR = new PlainsOfDunestar();
+    public static final GameMap WHAT_ONCE_WAS = new WhatOnceWas();
+    public static final GameMap ENDLESS_PARADOX = new EndlessParadox();
+
 
     public static final GameMap[] VALUES = {
             ACROPOLIS,
@@ -111,13 +115,17 @@ public abstract class GameMap {
             SUN_AND_MOON,
             SUN_AND_MOON_2,
             TARTARUS,
-            THE_OBSIDIAN_TRAIL_RAID,
+            RAID_ONE,
             DUAL_DESCENT,
             TUTORIAL_MAP,
             VALLEY,
             PVE_DEBUG,
             WARSONG,
-            TD_TEST
+            TD_TEST,
+            ENDLESS_PARADOX,
+            WHAT_ONCE_WAS,
+            PLAINS_OF_DUNESTAR,
+            OPEX_ANOMALY
     };
 
     public static GameMap getGameMap(String mapName) {
@@ -130,28 +138,34 @@ public abstract class GameMap {
     }
 
     /**
+     * Registers always-on lobby holders at startup. Other map world instances are loaded
+     * lazily via {@link GameManager#ensureGameHoldersLoaded(GameMap)}.
      * <p>Each map instance presents a game server, every map can hold up to 3 games at once.</p>
      * <p>Adding a new map must start with -0 at the end and increment from there on out.</p>
-     * <p>Adding additional game servers will require a config update in @see MultiWorld Plugin</p>
+     * <p>Map world folders must exist under the server world container (e.g. {@code valley-0}).</p>
      *
      * @param gameManager The game manager to add gameholders to.
      */
     public static void addGameHolders(GameManager gameManager) {
-        Set<String> addedMaps = new HashSet<>();
-        for (GameMap map : VALUES) {
-            if (map == MAIN_LOBBY || map == MAIN_LOBBY_WHACK_A_MOLE) {
-                gameManager.addGameHolder(map.fileName, map);
-                continue;
-            }
-            for (int i = 0; i < map.numberOfMaps; i++) {
-                String mapName = map.fileName + "-" + i;
-                if (addedMaps.contains(mapName)) {
-                    continue;
-                }
-                addedMaps.add(mapName);
-                gameManager.addGameHolder(mapName, map);
-            }
+        // Lobbies share a world name but need distinct holders per GameMap
+        gameManager.addGameHolder(MAIN_LOBBY.getFileName(), MAIN_LOBBY);
+        gameManager.addGameHolder(MAIN_LOBBY_WHACK_A_MOLE.getFileName(), MAIN_LOBBY_WHACK_A_MOLE);
+    }
+
+    /**
+     * World names for this map's game holders.
+     * Lobbies use the bare file name; all other maps use {@code fileName-0} .. {@code fileName-(n-1)}.
+     */
+    @Nonnull
+    public List<String> getWorldInstanceNames() {
+        if (this == MAIN_LOBBY || this == MAIN_LOBBY_WHACK_A_MOLE) {
+            return List.of(fileName);
         }
+        List<String> names = new ArrayList<>(numberOfMaps);
+        for (int i = 0; i < numberOfMaps; i++) {
+            names.add(fileName + "-" + i);
+        }
+        return names;
     }
 
     private final @Nonnull String mapName;

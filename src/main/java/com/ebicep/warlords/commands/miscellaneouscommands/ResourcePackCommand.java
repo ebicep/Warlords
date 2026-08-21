@@ -5,6 +5,7 @@ import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.Description;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.entity.Player;
@@ -15,7 +16,8 @@ public class ResourcePackCommand extends BaseCommand {
     @Default
     @Description("Prints the resourcepack link")
     public void resource(Player player) {
-        player.sendMessage(Component.text("Download Link: https://bit.ly/47lZHGz", NamedTextColor.GREEN, TextDecoration.BOLD));
+        player.sendMessage(Component.text("Download Link: https://bit.ly/wlresourcepack", NamedTextColor.GREEN, TextDecoration.BOLD)
+                .clickEvent(ClickEvent.openUrl("https://bit.ly/wlresourcepack")));
     }
 
 }

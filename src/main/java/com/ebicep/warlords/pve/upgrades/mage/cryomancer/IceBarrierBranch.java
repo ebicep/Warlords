@@ -22,7 +22,7 @@ public class IceBarrierBranch extends AbstractUpgradeBranch<IceBarrier> {
                     public void run(float value) {
                         ability.setDamageReductionPercent(damageReductionPercent + value);
                     }
-                }, 7.5f)
+                }, 3.75f)
                 .addUpgradeCooldown(ability, 0.1f, 4)
                 .addTo(treeA);
 

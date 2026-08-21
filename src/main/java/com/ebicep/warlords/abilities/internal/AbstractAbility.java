@@ -317,6 +317,10 @@ public abstract class AbstractAbility implements AbilityIcon {
         this.maxCharges = maxCharges;
     }
 
+    public int getMaxCharges() {
+        return maxCharges;
+    }
+
     public float getCooldownValue() {
         return cooldown.getCalculatedValue();
     }

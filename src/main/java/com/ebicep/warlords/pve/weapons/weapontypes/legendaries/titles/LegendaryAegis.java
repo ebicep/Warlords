@@ -128,27 +128,25 @@ public class LegendaryAegis extends AbstractLegendaryWeapon implements PassiveCo
                         float cap = max * (getBarrierCapPercent() / 100f);
                         barrierPool = Math.min(cap, barrierPool + gained);
                         barrierExpireAt.set(Instant.now().plus(BARRIER_TIMEOUT_SECONDS, ChronoUnit.SECONDS));
-                        player.playSound(player.getLocation(), Sound.ITEM_SHIELD_BLOCK, 2, 1.4f);
+                        player.playSound(player.getLocation(), Sound.ITEM_SHIELD_BLOCK, 1, 1.4f);
                     }
                 }
         ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
             if (barrierActive()) {
                 currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getTitleName(), 1f + DMG_BONUS_WHILE_BARRIER_PERCENT / 100f);
             }
-                }
-        ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
-                    if (!barrierActive()) {
-                        return;
-                    }
-                    // replace with actual Shield class
-                    float absorb = Math.min(barrierPool, currentDamageValue.getCalculatedValue());
-                    barrierPool -= absorb;
-                    if (barrierPool <= 0f) {
-                        tryTriggerPulse(player);
-                    }
+        }).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
+            if (!barrierActive()) {
+                return;
+            }
+            // replace with actual Shield class
+            float absorb = Math.min(barrierPool, currentDamageValue.getCalculatedValue());
+            barrierPool -= absorb;
+            if (barrierPool <= 0f) {
+                tryTriggerPulse(player);
+            }
             currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE, getTitleName(), -absorb);
-                }
-        ));
+        }));
         new GameRunnable(player.getGame()) {
             @Override
             public void run() {

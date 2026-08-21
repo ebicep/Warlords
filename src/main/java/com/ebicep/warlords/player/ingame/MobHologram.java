@@ -7,13 +7,10 @@ import org.bukkit.entity.Display;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.TextDisplay;
 import org.bukkit.entity.Zombie;
+import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Transformation;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeInstance;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.util.BoundingBox;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -24,7 +21,7 @@ import java.util.function.Supplier;
 
 public abstract class MobHologram {
 
-    protected final List<CustomHologramLine> customHologramLines = new ArrayList<>(); // lines to add on top of default health and name
+    protected final List<CustomHologramLine> customHologramLines = new ArrayList<>();
     protected boolean hidden = false;
 
     @Nullable
@@ -44,6 +41,18 @@ public abstract class MobHologram {
     }
 
     public void update() {
+        update(true);
+    }
+
+    public void updatePosition() {
+        update(false);
+    }
+
+    public void markTextDirty() {
+        customHologramLines.forEach(CustomHologramLine::markTextDirty);
+    }
+
+    private void update(boolean refreshText) {
         removeDeletedLines();
 
         if (hidden) {
@@ -55,7 +64,7 @@ public abstract class MobHologram {
             return;
         }
 
-        update(entity);
+        update(entity, refreshText);
     }
 
     private void removeDeletedLines() {
@@ -93,6 +102,10 @@ public abstract class MobHologram {
     protected void update(@Nonnull Entity entity) {
     }
 
+    protected void update(@Nonnull Entity entity, boolean refreshText) {
+        update(entity);
+    }
+
     public List<CustomHologramLine> getCustomHologramLines() {
         return customHologramLines;
     }
@@ -124,12 +137,17 @@ public abstract class MobHologram {
     public static abstract class TextDisplayHologram extends MobHologram {
 
         private static final double BASE_HEALTH_NAME_CLEARANCE = .525;
-        private static final double SCALE_HEIGHT_CLEARANCE_MULTIPLIER = 1.5;
-        private static final double MIN_HEALTH_NAME_CLEARANCE = .12;
-        private static final double MAX_HEALTH_NAME_CLEARANCE = 2.25;
         private static final double BASE_LINE_SPACING = .31;
+        private static final double POSITION_EPSILON_SQUARED = .000001;
 
         protected float viewRange;
+
+        private final Location lineLocation = new Location(null, 0, 0, 0);
+        private boolean hasLastPosition;
+        private double lastX;
+        private double lastY;
+        private double lastZ;
+        private org.bukkit.World lastWorld;
 
         public TextDisplayHologram(float viewRange) {
             this.viewRange = viewRange;
@@ -137,63 +155,68 @@ public abstract class MobHologram {
 
         @Override
         protected void update(@Nonnull Entity entity) {
-            double entityScale = getEntityScale(entity);
-            double scaledHeight = getBoundingBoxHeight(entity);
-            double unscaledHeight = scaledHeight / entityScale;
-            float displaySize = getDisplaySize(entity);
-            double verticalClearance = getVerticalClearance(scaledHeight, unscaledHeight, displaySize);
-            double lineSpacing = BASE_LINE_SPACING * Math.max(.5, displaySize);
-            Location bottomLineLocation = getBottomLineLocation(entity, verticalClearance);
-
-            for (int i = 0; i < customHologramLines.size(); i++) {
-                CustomHologramLine customHologramLine = customHologramLines.get(i);
-                Location lineLocation = bottomLineLocation.clone().add(0, i * lineSpacing, 0);
-                Entity lineEntity = customHologramLine.getEntity();
-
-                if (lineEntity == null || !lineEntity.isValid()) {
-                    TextDisplay textDisplay = lineLocation.getWorld().spawn(lineLocation, TextDisplay.class, display -> {
-                        applyTextDisplaySettings(display, customHologramLine, displaySize);
-                    });
-                    customHologramLine.setEntity(textDisplay);
-                } else if (lineEntity instanceof TextDisplay textDisplay) {
-                    applyTextDisplaySettings(textDisplay, customHologramLine, displaySize);
-                    textDisplay.teleport(lineLocation);
-                }
-            }
+            update(entity, true);
         }
 
-        private Location getBottomLineLocation(Entity entity, double verticalClearance) {
+        @Override
+        protected void update(@Nonnull Entity entity, boolean refreshText) {
+            float displaySize = getDisplaySize(entity);
+            double verticalClearance = BASE_HEALTH_NAME_CLEARANCE * displaySize;
+            double lineSpacing = BASE_LINE_SPACING * Math.max(.5, displaySize);
             BoundingBox boundingBox = entity.getBoundingBox();
-
             double x = (boundingBox.getMinX() + boundingBox.getMaxX()) / 2;
             double y = boundingBox.getMaxY() + verticalClearance;
             double z = (boundingBox.getMinZ() + boundingBox.getMaxZ()) / 2;
+            boolean moved = hasMoved(entity, x, y, z);
 
-            return new Location(entity.getWorld(), x, y, z, entity.getLocation().getYaw(), entity.getLocation().getPitch());
-        }
+            lineLocation.setWorld(entity.getWorld());
+            lineLocation.setX(x);
+            lineLocation.setY(y);
+            lineLocation.setZ(z);
+            lineLocation.setYaw(0);
+            lineLocation.setPitch(0);
 
-        private double getVerticalClearance(double scaledHeight, double unscaledHeight, float displaySize) {
-            double scaledExtraHeight = scaledHeight - unscaledHeight;
-            double clearance = BASE_HEALTH_NAME_CLEARANCE * displaySize + scaledExtraHeight * SCALE_HEIGHT_CLEARANCE_MULTIPLIER;
-            return clamp(clearance, MIN_HEALTH_NAME_CLEARANCE, MAX_HEALTH_NAME_CLEARANCE);
-        }
+            for (int i = 0; i < customHologramLines.size(); i++) {
+                CustomHologramLine customHologramLine = customHologramLines.get(i);
+                lineLocation.setY(y + i * lineSpacing);
+                Entity lineEntity = customHologramLine.getEntity();
 
-        private double getBoundingBoxHeight(Entity entity) {
-            BoundingBox boundingBox = entity.getBoundingBox();
-            return Math.max(.1, boundingBox.getMaxY() - boundingBox.getMinY());
-        }
-
-        private double getEntityScale(Entity entity) {
-            if (!(entity instanceof LivingEntity livingEntity)) {
-                return 1;
+                if (lineEntity == null || !lineEntity.isValid()) {
+                    TextDisplay textDisplay = lineLocation.getWorld().spawn(lineLocation, TextDisplay.class, display -> configureTextDisplay(
+                            display,
+                            customHologramLine,
+                            displaySize
+                    ));
+                    customHologramLine.setEntity(textDisplay);
+                } else if (lineEntity instanceof TextDisplay textDisplay) {
+                    if (customHologramLine.getDisplaySize() != displaySize) {
+                        applyDisplaySize(textDisplay, displaySize);
+                        customHologramLine.setDisplaySize(displaySize);
+                    }
+                    if (refreshText || customHologramLine.isTextDirty()) {
+                        updateText(textDisplay, customHologramLine);
+                    }
+                    if (moved) {
+                        textDisplay.teleport(lineLocation);
+                    }
+                }
             }
 
-            AttributeInstance scaleAttribute = livingEntity.getAttribute(Attribute.SCALE);
-            if (scaleAttribute == null) {
-                return 1;
-            }
+            lastWorld = entity.getWorld();
+            lastX = x;
+            lastY = y;
+            lastZ = z;
+            hasLastPosition = true;
+        }
 
-            return Math.max(.1, scaleAttribute.getValue());
+        private boolean hasMoved(Entity entity, double x, double y, double z) {
+            if (!hasLastPosition || lastWorld != entity.getWorld()) {
+                return true;
+            }
+            double deltaX = x - lastX;
+            double deltaY = y - lastY;
+            double deltaZ = z - lastZ;
+            return deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ > POSITION_EPSILON_SQUARED;
         }
 
         protected float getDisplaySize(Entity entity) {
@@ -203,29 +226,32 @@ public abstract class MobHologram {
             return 1;
         }
 
-        private double clamp(double value, double min, double max) {
-            return Math.max(min, Math.min(max, value));
-        }
-
-        private void applyTextDisplaySettings(TextDisplay textDisplay, CustomHologramLine customHologramLine, float displaySize) {
-            Component text = customHologramLine.getText();
-
+        private void configureTextDisplay(TextDisplay textDisplay, CustomHologramLine customHologramLine, float displaySize) {
             textDisplay.setBillboard(Display.Billboard.CENTER);
             textDisplay.setCustomNameVisible(false);
             textDisplay.setSeeThrough(false);
-            textDisplay.setTeleportDuration(3);
+            textDisplay.setTeleportDuration(4);
             textDisplay.setViewRange(viewRange);
+            applyDisplaySize(textDisplay, displaySize);
+            customHologramLine.setDisplaySize(displaySize);
+            updateText(textDisplay, customHologramLine);
+        }
 
-            if (!Objects.equals(textDisplay.text(), text)) {
-                textDisplay.text(text);
-            }
-
+        private void applyDisplaySize(TextDisplay textDisplay, float displaySize) {
             textDisplay.setTransformation(new Transformation(
                     new Vector3f(0, 0, 0),
                     new Quaternionf(),
                     new Vector3f(displaySize, displaySize, displaySize),
                     new Quaternionf()
             ));
+        }
+
+        private void updateText(TextDisplay textDisplay, CustomHologramLine customHologramLine) {
+            Component text = customHologramLine.getText();
+            if (!Objects.equals(textDisplay.text(), text)) {
+                textDisplay.text(text);
+            }
+            customHologramLine.markTextClean();
         }
 
     }
@@ -235,7 +261,9 @@ public abstract class MobHologram {
         private Component text;
         private Supplier<Component> textSupplier = null;
         private boolean delete;
+        private boolean textDirty = true;
         private Entity entity;
+        private float displaySize = Float.NaN;
 
         public CustomHologramLine(Component text) {
             this.text = text;
@@ -264,10 +292,24 @@ public abstract class MobHologram {
 
         public void setText(Component text) {
             this.text = text;
+            markTextDirty();
         }
 
         public void setTextSupplier(Supplier<Component> textSupplier) {
             this.textSupplier = textSupplier;
+            markTextDirty();
+        }
+
+        public void markTextDirty() {
+            textDirty = true;
+        }
+
+        public void markTextClean() {
+            textDirty = false;
+        }
+
+        public boolean isTextDirty() {
+            return textDirty;
         }
 
         public boolean isDelete() {
@@ -284,6 +326,14 @@ public abstract class MobHologram {
 
         public void setEntity(Entity entity) {
             this.entity = entity;
+        }
+
+        public float getDisplaySize() {
+            return displaySize;
+        }
+
+        public void setDisplaySize(float displaySize) {
+            this.displaySize = displaySize;
         }
     }
 }

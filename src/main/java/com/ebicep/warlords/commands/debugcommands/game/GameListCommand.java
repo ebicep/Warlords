@@ -11,7 +11,6 @@ import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.option.win.WinAfterTimeoutOption;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.java.StringUtils;
-import com.onarandombox.MultiverseCore.api.MVWorldManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -82,15 +81,18 @@ public class GameListCommand extends BaseCommand {
     @Subcommand("addgameholder")
     @Description("Adds a game holder")
     public void addGameHolder(CommandIssuer issuer, String mapName, GameMap gameMap) {
-        MVWorldManager mvWorldManager = Warlords.multiverseCore.getMVWorldManager();
-        if (!mvWorldManager.hasUnloadedWorld(mapName, false)) {
+        if (Warlords.getGameManager().getGames().stream().anyMatch(holder -> holder.getName().equals(mapName) && holder.getMap() == gameMap)) {
             ChatChannels.sendDebugMessage(issuer, Component.text("There is already a game holder for: ", NamedTextColor.GREEN)
                                                            .append(Component.text(mapName, NamedTextColor.YELLOW))
             );
             return;
         }
-        mvWorldManager.loadWorld(mapName);
-        Warlords.getGameManager().addGameHolder(mapName, gameMap);
+        if (!Warlords.getGameManager().ensureGameHolderLoaded(mapName, gameMap)) {
+            ChatChannels.sendDebugMessage(issuer, Component.text("Failed to create game holder for: ", NamedTextColor.RED)
+                                                           .append(Component.text(mapName, NamedTextColor.YELLOW))
+            );
+            return;
+        }
         ChatChannels.sendDebugMessage(issuer, Component.text("Created game holder for: ", NamedTextColor.GREEN)
                                                        .append(Component.text(mapName, NamedTextColor.YELLOW))
         );

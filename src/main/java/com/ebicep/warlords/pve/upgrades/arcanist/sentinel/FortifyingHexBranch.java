@@ -37,7 +37,7 @@ public class FortifyingHexBranch extends AbstractUpgradeBranch<FortifyingHex> {
                 "Bolstering Hex",
                 "Fortifying Hex - Master Upgrade",
                 """
-                        -15 Additional energy cost.
+                        -10 Energy cost.
                        
                         Fortifying Hex can now pierce through infinite targets. Additionally, increase the damage reduction of Fortifying Hex by 3%.
                         """,
@@ -45,7 +45,7 @@ public class FortifyingHexBranch extends AbstractUpgradeBranch<FortifyingHex> {
                 () -> {
                     ability.setMaxEnemiesHit(200);
                     ability.setMaxAlliesHit(200);
-                    ability.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Bolstering Hex", -15);
+                    ability.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Bolstering Hex", -10);
                     ability.getDamageReduction().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Bolstering Hex", 3);
                 }
         );

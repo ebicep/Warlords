@@ -56,7 +56,7 @@ public class SkeletalArcher extends AbstractMob implements EliteMob {
         mountNPC.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
         Controllable controllable = mountNPC.getOrAddTrait(Controllable.class);
         controllable.setOwnerRequired(false);
-        mountNPC.getDefaultGoalController().addBehavior(new NPCFleeWarlordsEntityGoal(mountNPC, team), 2);
+        mountNPC.getDefaultBehaviorController().addBehavior(new NPCFleeWarlordsEntityGoal(mountNPC, team));
         mountNPC.getNavigator().getDefaultParameters().speedModifier(1.5f);
         mountNPC.spawn(spawnLocation);
 

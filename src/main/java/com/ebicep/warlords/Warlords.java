@@ -31,6 +31,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksOutsideGame;
+import com.ebicep.warlords.pve.consumables.ConsumableListener;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
 import com.ebicep.warlords.pve.mobs.tiers.PlayerMob;
 import com.ebicep.warlords.pve.rewards.types.PatreonReward;
@@ -41,11 +42,11 @@ import com.ebicep.warlords.util.java.DateUtil;
 import com.ebicep.warlords.util.java.MemoryManager;
 import com.ebicep.warlords.util.java.Priority;
 import com.ebicep.warlords.util.warlords.ConfigUtil;
-import com.onarandombox.MultiverseCore.MultiverseCore;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.event.EventBus;
 import net.luckperms.api.event.user.UserDataRecalculateEvent;
@@ -82,11 +83,11 @@ public class Warlords extends JavaPlugin {
     public static final AtomicBoolean SENT_FIFTEEN_MINUTE_REMINDER = new AtomicBoolean(false);
     private static final ConcurrentHashMap<UUID, WarlordsEntity> PLAYERS = new ConcurrentHashMap<>();
     public static String VERSION = "";
-    public static NamedTextColor VERSION_COLOR = NamedTextColor.DARK_AQUA;
+    //public static TextColor VERSION_COLOR = TextColor.color(105, 0, 0);
+    public static TextColor VERSION_COLOR = TextColor.color(51, 171, 249);
     public static String serverIP;
     public static boolean hologramsEnabled = true;
     public static boolean citizensEnabled;
-    public static MultiverseCore multiverseCore;
     private static Warlords instance;
     private static TaskChainFactory taskChainFactory;
 
@@ -362,6 +363,7 @@ public class Warlords extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new WarlordsPlayer(), this);
         getServer().getPluginManager().registerEvents(new PlayerHotBarItemListener(), this);
         getServer().getPluginManager().registerEvents(new GuildListener(), this);
+        getServer().getPluginManager().registerEvents(new ConsumableListener(), this);
         getServer().getPluginManager().registerEvents(new PatreonReward(), this);
         getServer().getPluginManager().registerEvents(new MemoryManager(), this);
         getServer().getPluginManager().registerEvents(new Shield(), this);
@@ -410,7 +412,6 @@ public class Warlords extends JavaPlugin {
         ConfigUtil.loadConfigs(this);
 
         TimeZone.setDefault(TimeZone.getTimeZone("America/New_York"));
-        multiverseCore = (MultiverseCore) Bukkit.getServer().getPluginManager().getPlugin("Multiverse-Core");
         citizensEnabled = Bukkit.getPluginManager().isPluginEnabled("Citizens");
         ChatUtils.MessageType.WARLORDS.sendMessage("citizensEnabled: " + citizensEnabled);
         new BukkitRunnable() {

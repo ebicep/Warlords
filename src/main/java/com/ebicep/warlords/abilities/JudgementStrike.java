@@ -91,6 +91,17 @@ public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementSt
                 for (AbstractAbility ability : wp.getAbilitiesImplementing(OrderOfEviscerateLike.class)) {
                     ability.subtractCurrentCooldown(orderCooldownReduction);
                 }
+
+                if (finalEvent.getWarlordsEntity().getCooldownManager().hasCooldown(MirrorBlossom.class)) {
+                    additionalHit(2, wp, finalEvent.getWarlordsEntity(), enemy -> {
+                        enemy.addInstance(InstanceBuilder
+                                .damage()
+                                .ability(this)
+                                .source(wp)
+                                .value(damageValues.strikeDamage)
+                        );
+                    });
+                }
             });
         }
         return true;

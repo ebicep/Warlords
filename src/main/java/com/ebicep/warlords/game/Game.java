@@ -27,7 +27,7 @@ import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -103,7 +103,7 @@ public final class Game implements Runnable, AutoCloseable {
         this.addons = gameAddons;
         this.map = map;
         this.gameMode = gameMode;
-        this.namespace = gameMode.namespaces;
+        this.namespace = gameMode.getNamespaces();
         this.gameMode.postMapModifyOptions(map, locations, gameAddons, options);
         this.options = new ArrayList<>(options);
         options.forEach(option -> this.cachedOptions.computeIfAbsent(option.getClass(), k -> new ArrayList<>()).add(option));
@@ -800,6 +800,7 @@ public final class Game implements Runnable, AutoCloseable {
                         Component.text("Closed Game: " + gameHolder.getGame().getMap().getMapName() + " - " + gameHolder.getName(), NamedTextColor.LIGHT_PURPLE)
                 );
                 gameHolder.setGame(null);
+                Warlords.getGameManager().scheduleIdleWorldUnload(gameHolder);
                 break;
             }
         }

@@ -118,6 +118,7 @@ public abstract class WarlordsEntity {
     protected FloatModifiable energy;
     protected FloatModifiable energyPerSec;
     protected FloatModifiable energyPerHit;
+    protected FloatModifiable regenPerSecond = new FloatModifiable(0);
     private final FloatModifiable energyGainPerTickMod = new FloatModifiable(0);
     protected FloatModifiableFilter maxBaseHealthFilter = new HealthFilter();
     private final List<Float> recordDamage = new ArrayList<>();
@@ -305,6 +306,10 @@ public abstract class WarlordsEntity {
         if (this.getCooldownManager().hasCooldown(HealingPowerup.class)) {
             this.getCooldownManager().removeCooldown(HealingPowerup.class, false);
         }
+    }
+
+    public FloatModifiable getRegenPerSecond() {
+        return regenPerSecond;
     }
 
     public CooldownManager getCooldownManager() {

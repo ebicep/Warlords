@@ -4,6 +4,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.game.option.ExperienceGainOption;
 import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
 import com.ebicep.warlords.game.option.pve.PveOption;
+import com.ebicep.warlords.game.option.pve.anomaly.AbstractAnomalyOption;
 import com.ebicep.warlords.game.option.pve.onslaught.OnslaughtOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -74,6 +75,8 @@ public class GuildExperienceUtils {
                 expSummary.put("Waves Cleared", experienceGainOption.getGuildExpPer() * waveDefenseOption.getWavesCleared());
             } else if (pveOption instanceof OnslaughtOption onslaughtOption) {
                 expSummary.put("Minutes Elapsed", experienceGainOption.getGuildExpPer() * onslaughtOption.getTicksElapsed() / 20 / 60);
+            } else if (pveOption instanceof AbstractAnomalyOption anomalyOption) {
+                expSummary.put("Objectives Completed", experienceGainOption.getGuildExpPer() * anomalyOption.getObjectivesCompleted());
             }
         }
         if (experienceGainOption.getGuildExpGameWinBonus() != 0) {
@@ -83,6 +86,8 @@ public class GuildExperienceUtils {
                 if (experienceGainOption.getGuildExpGameWinBonus() != 0 && wavesCleared == maxWaves) {
                     expSummary.put("Wave " + maxWaves + " Clear Bonus", experienceGainOption.getGuildExpGameWinBonus());
                 }
+            } else if (pveOption instanceof AbstractAnomalyOption anomalyOption && anomalyOption.isCompleted()) {
+                expSummary.put("Anomaly Completion Bonus", experienceGainOption.getGuildExpGameWinBonus());
             }
         }
         if (experienceGainOption.getGuildExpPerXSec() != null) {

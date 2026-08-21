@@ -181,6 +181,9 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
                     updateMobEquipment(mob, player);
                     allSpawnedMobs.add(mob);
                     spawnedMobs.add(mob);
+                    if (warlordsPlayer.getTeam() == null) {
+                        return;
+                    }
                     pveOption.spawnNewMob(mob, warlordsPlayer.getTeam());
                 }
                 new GameRunnable(game) {

@@ -19,8 +19,39 @@ public class JavaUtils {
         return clazz.getEnumConstants()[x];
     }
 
+    public static <T> T randomFromList(List<T> list) {
+        if (list.isEmpty()) {
+            throw new IllegalArgumentException("List must not be empty");
+        }
+        return list.get(generateRandomIndexFromListSize(list.size()));
+    }
+
     public static int generateRandomIndexFromListSize(int size) {
         return ThreadLocalRandom.current().nextInt(size);
+    }
+
+    public static <E> E randomFromSet(Set<E> set) {
+        int index = generateRandomIndexFromListSize(set.size());
+        return set.stream().skip(index).findFirst().orElseThrow();
+    }
+
+    public static <T> T[] pickRandom(T[] source, int x) {
+        if (x < 0 || x > source.length) {
+            throw new IllegalArgumentException("x must be between 0 and source.length");
+        }
+
+        T[] copy = source.clone();
+        ThreadLocalRandom rnd = ThreadLocalRandom.current();
+
+        // Partial Fisher–Yates shuffle
+        for (int i = 0; i < x; i++) {
+            int j = rnd.nextInt(i, copy.length);
+            T tmp = copy[i];
+            copy[i] = copy[j];
+            copy[j] = tmp;
+        }
+
+        return Arrays.copyOf(copy, x);
     }
 
     public static <T> Collector<T, ?, List<T>> lastN(int n) {

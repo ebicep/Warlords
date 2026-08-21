@@ -9,7 +9,7 @@ import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.game.option.pve.CurrencyOnEventOption;
-import com.ebicep.warlords.game.option.pve.ItemOption;
+import com.ebicep.warlords.game.option.pve.NewItemOption;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.option.pve.rewards.CoinGainOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
@@ -339,7 +339,7 @@ public class GrimoiresGraveyard extends GameMap {
                 ));
             }
         });
-        options.add(new ItemOption());
+        options.add(new NewItemOption());
         options.add(new WinAfterTimeoutOption(900, 50, "spec"));
         options.add(new WinByMaxWaveClearOption());
         options.add(new GrimoiresGraveyardOption());

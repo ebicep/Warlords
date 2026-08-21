@@ -44,14 +44,13 @@ public class HammerOfLightBranch extends AbstractUpgradeBranch<HammerOfLight> {
                 "Hammer of Disillusion",
                 "Hammer of Light - Master Upgrade",
                 """
-                        +20% Cooldown Reduction
-                        +5 Block Radius
+                        +8s Duration
                         
                         Hammer of Light/Crown of Light now grants de-buff immunity. Additionally, enemies within the radius will take 15% more damage and the energy cost of Protector's Strike is reduced by an additional 15 energy.
                         """,
                 50000,
                 () -> {
-                    ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Master Upgrade Branch", 0.8f);
+                    ability.setTickDuration(ability.getTickDuration() + 160);
                     ability.getHammerRadius().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade Branch", 5);
                     ability.setCrownEnergyReduction(ability.getCrownEnergyReduction() + 15);
                 }

@@ -32,6 +32,9 @@ import static com.ebicep.warlords.pve.weapons.menu.WeaponManagerMenu.openWeaponE
 
 public class WeaponTitleMenu {
 
+    private static final int MAX_FAVORITE_TITLES = 5;
+    private static final int[] FAVORITE_SLOTS = {2, 3, 4, 5, 6};
+
     public static void openWeaponTitleMenu(Player player, DatabasePlayer databasePlayer, AbstractLegendaryWeapon weapon, LegendaryTitles[] titles, int page) {
         Menu menu = new Menu("Apply Title to Weapon", 9 * 6);
 
@@ -53,6 +56,8 @@ public class WeaponTitleMenu {
                 }
         );
 
+        DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+        List<String> favoriteTitleIds = pveStats.getFavoriteWeaponTitles();
         Map<LegendaryTitles, LegendaryWeaponTitleInfo> unlockedTitles = weapon.getTitles();
         for (int i = 0; i < 9; i++) {
             int titleIndex = ((page - 1) * 9) + i;
@@ -64,25 +69,34 @@ public class WeaponTitleMenu {
                 AbstractLegendaryWeapon titledWeapon = title.titleWeapon.apply(weapon);
                 ItemBuilder itemBuilder = new ItemBuilder(titledWeapon.generateItemStack(false));
 
-                Set<Map.Entry<Currencies, Long>> cost = titledWeapon.getCost().entrySet();
                 List<Component> loreCost = titledWeapon.getCostLore();
 
                 boolean equals = Objects.equals(weapon.getTitle(), title);
                 boolean titleIsLocked = !unlockedTitles.containsKey(title);
+                boolean favorite = favoriteTitleIds.contains(title.name());
                 if (equals) {
                     itemBuilder.addLore(
                             Component.empty(),
                             Component.text("Selected", NamedTextColor.GREEN)
                     );
                     itemBuilder.enchant(Enchantment.RESPIRATION, 1);
+                } else if (titleIsLocked) {
+                    itemBuilder.addLore(loreCost);
                 } else {
-                    if (titleIsLocked) {
-                        itemBuilder.addLore(loreCost);
-                    } else {
-                        itemBuilder.addLore(
-                                Component.empty(),
-                                Component.text("Click to Select", NamedTextColor.GREEN)
-                        );
+                    itemBuilder.addLore(
+                            Component.empty(),
+                            Component.text("Click to Select", NamedTextColor.GREEN)
+                    );
+                }
+                if (title != LegendaryTitles.NONE) {
+                    itemBuilder.addLore(
+                            Component.empty(),
+                            favorite
+                                    ? Component.text("★ Favorite", NamedTextColor.GOLD)
+                                    : Component.text("Right-Click to Favorite", NamedTextColor.YELLOW)
+                    );
+                    if (favorite) {
+                        itemBuilder.addLore(Component.text("Right-Click to Remove Favorite", NamedTextColor.RED));
                     }
                 }
                 for (int k = 0; k < 1; k++) {
@@ -101,58 +115,17 @@ public class WeaponTitleMenu {
                 menu.setItem(i, 2,
                         itemBuilder.get(),
                         (m, e) -> {
-                            if (equals) {
-                                player.sendMessage(Component.text("You already have this title on your weapon!", NamedTextColor.RED));
+                            if (e.isRightClick() && title != LegendaryTitles.NONE) {
+                                toggleFavoriteTitle(player, databasePlayer, weapon, titles, page, title);
                                 return;
                             }
-                            if (titleIsLocked) {
-                                DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
-                                for (Map.Entry<Currencies, Long> currenciesLongEntry : cost) {
-                                    Currencies currency = currenciesLongEntry.getKey();
-                                    Long currencyCost = currenciesLongEntry.getValue();
-                                    if (pveStats.getCurrencyValue(currency) < currencyCost) {
-                                        player.sendMessage(Component.text("You need ", NamedTextColor.RED)
-                                                                    .append(currency.getCostColoredName(currencyCost))
-                                                                    .append(Component.text(" to apply this title!"))
-                                        );
-                                        return;
-                                    }
-                                }
-                            }
-                            List<Component> confirmLore = new ArrayList<>();
-                            String titleName = titledWeapon.getTitleName();
-                            if (titleName.isEmpty()) {
-                                confirmLore.add(Component.text("Remove ", NamedTextColor.GRAY)
-                                                         .append(Component.text(weapon.getTitleName(), NamedTextColor.GREEN))
-                                                         .append(Component.text(" title"))
-                                );
-                            } else {
-                                confirmLore.add(Component.text("Apply ", NamedTextColor.GRAY)
-                                                         .append(Component.text(titleName, NamedTextColor.GREEN))
-                                                         .append(Component.text(" title"))
-                                );
-                            }
-                            if (titleIsLocked) {
-                                confirmLore.addAll(loreCost);
-                            }
-                            Menu.openConfirmationMenu(
-                                    player,
-                                    "Apply Title",
-                                    3,
-                                    confirmLore,
-                                    Menu.GO_BACK,
-                                    (m2, e2) -> {
-                                        AbstractLegendaryWeapon newTitledWeapon = titleWeapon(player, databasePlayer, weapon, title);
-                                        openWeaponTitleMenu(player, databasePlayer, newTitledWeapon, titles, page);
-                                    },
-                                    (m2, e2) -> openWeaponTitleMenu(player, databasePlayer, weapon, titles, page),
-                                    (m2) -> {
-                                    }
-                            );
+                            openTitleConfirmation(player, databasePlayer, weapon, titles, page, title);
                         }
                 );
             }
         }
+
+        addFavoriteTitlesRow(menu, player, databasePlayer, weapon, titles, page);
 
         if (page - 1 > 0) {
             menu.setItem(0, 5,
@@ -214,6 +187,202 @@ public class WeaponTitleMenu {
                 }
         );
         menu.openForPlayer(player);
+    }
+
+    private static void addFavoriteTitlesRow(
+            Menu menu,
+            Player player,
+            DatabasePlayer databasePlayer,
+            AbstractLegendaryWeapon weapon,
+            LegendaryTitles[] titles,
+            int page
+    ) {
+        List<LegendaryTitles> favoriteTitles = databasePlayer.getPveStats()
+                                                              .getFavoriteWeaponTitles()
+                                                              .stream()
+                                                              .map(WeaponTitleMenu::getTitleById)
+                                                              .filter(Objects::nonNull)
+                                                              .filter(title -> title != LegendaryTitles.NONE && title.isEnabled)
+                                                              .limit(MAX_FAVORITE_TITLES)
+                                                              .toList();
+
+        menu.setItem(
+                0,
+                4,
+                new ItemBuilder(Material.NETHER_STAR)
+                        .name(Component.text("Favorite Titles", NamedTextColor.GOLD))
+                        .lore(
+                                Component.text(favoriteTitles.size() + "/" + MAX_FAVORITE_TITLES + " favorites", NamedTextColor.GRAY),
+                                Component.empty(),
+                                Component.text("Right-click a title above", NamedTextColor.YELLOW),
+                                Component.text("to add or remove a favorite.", NamedTextColor.YELLOW)
+                        )
+                        .get(),
+                Menu.ACTION_DO_NOTHING
+        );
+
+        for (int i = 0; i < FAVORITE_SLOTS.length; i++) {
+            int slot = FAVORITE_SLOTS[i];
+            if (i >= favoriteTitles.size()) {
+                menu.setItem(
+                        slot,
+                        4,
+                        new ItemBuilder(Material.LIGHT_GRAY_STAINED_GLASS_PANE)
+                                .name(Component.text("Empty Favorite Slot", NamedTextColor.GRAY))
+                                .lore(Component.text("Right-click a title above to favorite it.", NamedTextColor.DARK_GRAY))
+                                .get(),
+                        Menu.ACTION_DO_NOTHING
+                );
+                continue;
+            }
+
+            LegendaryTitles title = favoriteTitles.get(i);
+            AbstractLegendaryWeapon titledWeapon = title.titleWeapon.apply(weapon);
+            ItemBuilder itemBuilder = new ItemBuilder(titledWeapon.generateItemStack(false));
+            boolean equals = Objects.equals(weapon.getTitle(), title);
+            boolean titleIsLocked = !weapon.getTitles().containsKey(title);
+
+            if (equals) {
+                itemBuilder.addLore(
+                        Component.empty(),
+                        Component.text("Selected", NamedTextColor.GREEN)
+                );
+                itemBuilder.enchant(Enchantment.RESPIRATION, 1);
+            } else if (titleIsLocked) {
+                itemBuilder.addLore(titledWeapon.getCostLore());
+            } else {
+                itemBuilder.addLore(
+                        Component.empty(),
+                        Component.text("Click to Select", NamedTextColor.GREEN)
+                );
+            }
+            itemBuilder.addLore(
+                    Component.empty(),
+                    Component.text("★ Favorite", NamedTextColor.GOLD),
+                    Component.text("Right-Click to Remove Favorite", NamedTextColor.RED)
+            );
+
+            menu.setItem(
+                    slot,
+                    4,
+                    itemBuilder.get(),
+                    (m, e) -> {
+                        if (e.isRightClick()) {
+                            toggleFavoriteTitle(player, databasePlayer, weapon, titles, page, title);
+                            return;
+                        }
+                        openTitleConfirmation(player, databasePlayer, weapon, titles, page, title);
+                    }
+            );
+        }
+    }
+
+    private static void toggleFavoriteTitle(
+            Player player,
+            DatabasePlayer databasePlayer,
+            AbstractLegendaryWeapon weapon,
+            LegendaryTitles[] titles,
+            int page,
+            LegendaryTitles title
+    ) {
+        List<String> favoriteTitles = databasePlayer.getPveStats().getFavoriteWeaponTitles();
+        String titleId = title.name();
+        if (favoriteTitles.remove(titleId)) {
+            player.sendMessage(Component.text("Removed ", NamedTextColor.GRAY)
+                                        .append(Component.text(title.name, NamedTextColor.GOLD))
+                                        .append(Component.text(" from your favorite titles.", NamedTextColor.GRAY))
+            );
+        } else {
+            if (favoriteTitles.size() >= MAX_FAVORITE_TITLES) {
+                player.sendMessage(Component.text("You can only have up to " + MAX_FAVORITE_TITLES + " favorite titles.", NamedTextColor.RED));
+                return;
+            }
+            favoriteTitles.add(titleId);
+            player.sendMessage(Component.text("Added ", NamedTextColor.GRAY)
+                                        .append(Component.text(title.name, NamedTextColor.GOLD))
+                                        .append(Component.text(" to your favorite titles.", NamedTextColor.GRAY))
+            );
+        }
+
+        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+        player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1.2f);
+        openWeaponTitleMenu(player, databasePlayer, weapon, titles, page);
+    }
+
+    private static LegendaryTitles getTitleById(String titleId) {
+        if (titleId == null) {
+            return null;
+        }
+        try {
+            return LegendaryTitles.valueOf(titleId);
+        } catch (IllegalArgumentException ignored) {
+            return null;
+        }
+    }
+
+    private static void openTitleConfirmation(
+            Player player,
+            DatabasePlayer databasePlayer,
+            AbstractLegendaryWeapon weapon,
+            LegendaryTitles[] titles,
+            int page,
+            LegendaryTitles title
+    ) {
+        AbstractLegendaryWeapon titledWeapon = title.titleWeapon.apply(weapon);
+        boolean equals = Objects.equals(weapon.getTitle(), title);
+        boolean titleIsLocked = !weapon.getTitles().containsKey(title);
+        Set<Map.Entry<Currencies, Long>> cost = titledWeapon.getCost().entrySet();
+        List<Component> loreCost = titledWeapon.getCostLore();
+
+        if (equals) {
+            player.sendMessage(Component.text("You already have this title on your weapon!", NamedTextColor.RED));
+            return;
+        }
+        if (titleIsLocked) {
+            DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+            for (Map.Entry<Currencies, Long> currenciesLongEntry : cost) {
+                Currencies currency = currenciesLongEntry.getKey();
+                Long currencyCost = currenciesLongEntry.getValue();
+                if (pveStats.getCurrencyValue(currency) < currencyCost) {
+                    player.sendMessage(Component.text("You need ", NamedTextColor.RED)
+                                                .append(currency.getCostColoredName(currencyCost))
+                                                .append(Component.text(" to apply this title!"))
+                    );
+                    return;
+                }
+            }
+        }
+
+        List<Component> confirmLore = new ArrayList<>();
+        String titleName = titledWeapon.getTitleName();
+        if (titleName.isEmpty()) {
+            confirmLore.add(Component.text("Remove ", NamedTextColor.GRAY)
+                                     .append(Component.text(weapon.getTitleName(), NamedTextColor.GREEN))
+                                     .append(Component.text(" title"))
+            );
+        } else {
+            confirmLore.add(Component.text("Apply ", NamedTextColor.GRAY)
+                                     .append(Component.text(titleName, NamedTextColor.GREEN))
+                                     .append(Component.text(" title"))
+            );
+        }
+        if (titleIsLocked) {
+            confirmLore.addAll(loreCost);
+        }
+        Menu.openConfirmationMenu(
+                player,
+                "Apply Title",
+                3,
+                confirmLore,
+                Menu.GO_BACK,
+                (m2, e2) -> {
+                    AbstractLegendaryWeapon newTitledWeapon = titleWeapon(player, databasePlayer, weapon, title);
+                    openWeaponTitleMenu(player, databasePlayer, newTitledWeapon, titles, page);
+                },
+                (m2, e2) -> openWeaponTitleMenu(player, databasePlayer, weapon, titles, page),
+                (m2) -> {
+                }
+        );
     }
 
     private static void openWeaponEditorAfterTick(Player player, DatabasePlayer databasePlayer, AbstractLegendaryWeapon weapon) {

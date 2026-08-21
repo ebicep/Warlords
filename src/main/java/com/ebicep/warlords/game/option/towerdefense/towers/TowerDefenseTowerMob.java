@@ -138,7 +138,7 @@ public abstract class TowerDefenseTowerMob extends AbstractMob implements Mob {
 
     @Override
     public void giveGoals() {
-        npc.getDefaultGoalController().addGoal(new NPCTowerDefenseDefenderGoal(this, 3), 2);
+        npc.getDefaultBehaviorController().addBehavior(new NPCTowerDefenseDefenderGoal(this, 3));
     }
 
     @Override

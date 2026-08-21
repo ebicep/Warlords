@@ -78,14 +78,14 @@ public class SlimyAnomaly extends AbstractMob implements BasicMob {
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-        if (ticksElapsed % 4 == 0) {
+        if (ticksElapsed % 8 == 0) {
             new CircleEffect(
                     warlordsNPC.getGame(),
                     warlordsNPC.getTeam(),
                     warlordsNPC.getLocation(),
                     hitRadius,
                     new CircumferenceEffect(Particle.HAPPY_VILLAGER, Particle.DUST).particlesPerCircumference(0.75),
-                    new DoubleLineEffect(Particle.EFFECT)
+                    new DoubleLineEffect(Particle.WITCH)
             ).playEffects();
         }
     }

@@ -36,7 +36,13 @@ public class FutureMessage {
                 }
             });
         } else {
-            messages.forEach(player::sendMessage);
+            messages.forEach(message -> {
+                if (message.contains("§")) {
+                    player.sendMessage(LegacyComponentSerializer.legacySection().deserialize(message));
+                } else {
+                    player.sendMessage(MiniMessage.miniMessage().deserialize(message));
+                }
+            });
         }
         player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
     }

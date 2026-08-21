@@ -106,4 +106,9 @@ public class StringUtils {
 
         return result.toString();
     }
+
+    public static String toPlural(String str, int count) {
+        return count == 1 ? str : str + "s";
+    }
+
 }

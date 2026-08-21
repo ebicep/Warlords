@@ -5,13 +5,17 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.FutureMess
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.mobs.MobDrop;
+import com.ebicep.warlords.pve.newitems.NewItem;
 import com.ebicep.warlords.pve.rewards.AbstractReward;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
+import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 public class CompensationReward extends AbstractReward {
 
@@ -27,6 +31,20 @@ public class CompensationReward extends AbstractReward {
         return NamedTextColor.DARK_AQUA;
     }
 
+    public static class SpelunkerChest extends CompensationReward {
+        public SpelunkerChest() {
+        }
+
+        public SpelunkerChest(LinkedHashMap<Spendable, Long> rewards) {
+            super(rewards, "Spelunker Chest");
+        }
+
+        @Override
+        public TextColor getNameColor() {
+            return NamedTextColor.GOLD;
+        }
+    }
+
     public static class AscendantShardPrestigePatch extends CompensationReward {
         public AscendantShardPrestigePatch() {
         }
@@ -35,6 +53,12 @@ public class CompensationReward extends AbstractReward {
             super(new LinkedHashMap<>() {{
                 put(Currencies.ASCENDANT_SHARD, totalPrestige);
             }}, "Ascendant Shard");
+        }
+    }
+
+    public static class PrestigeOrbLoginPatch extends CompensationReward {
+        public PrestigeOrbLoginPatch() {
+            super(new LinkedHashMap<>(), "Prestige Orb Login Patch");
         }
     }
 
@@ -81,5 +105,37 @@ public class CompensationReward extends AbstractReward {
         }
     }
 
+    public static class LegacyItemPatch extends CompensationReward {
+
+        @Field("items")
+        private List<NewItem> items = new ArrayList<>();
+
+        public LegacyItemPatch() {
+        }
+
+        public LegacyItemPatch(LinkedHashMap<Spendable, Long> rewards, List<NewItem> items) {
+            super(rewards, "Legacy Item Compensation");
+            this.items = items;
+        }
+
+        @Override
+        public void giveToPlayer(DatabasePlayer databasePlayer) {
+            super.giveToPlayer(databasePlayer);
+            items.forEach(databasePlayer.getPveStats().getNewItemsManager()::addItem);
+        }
+
+        @Override
+        public List<Component> getLore() {
+            List<Component> lore = new ArrayList<>(super.getLore());
+            for (NewItem item : items) {
+                lore.add(item.getName());
+            }
+            return lore;
+        }
+
+        public List<NewItem> getItems() {
+            return items;
+        }
+    }
 
 }

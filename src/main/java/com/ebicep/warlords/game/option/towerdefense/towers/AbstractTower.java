@@ -137,7 +137,7 @@ public abstract class AbstractTower {
         npc.data().set(NPC.Metadata.COLLIDABLE, false);
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
 
-        npc.getDefaultGoalController().clear();
+        npc.getDefaultBehaviorController().clear();
         npc.getNavigator().setPaused(true);
 
         npc.getOrAddTrait(Gravity.class).setHasGravity(false);

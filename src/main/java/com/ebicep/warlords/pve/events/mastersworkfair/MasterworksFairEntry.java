@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.events.mastersworkfair;
 
+import com.ebicep.warlords.pve.newitems.tiers.NewItemTier;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -10,13 +11,38 @@ public class MasterworksFairEntry {
     private Instant time;
     @Field("rarity")
     private WeaponsPvE rarity;
+    @Field("item_submission")
+    private boolean itemSubmission;
+    @Field("item_tier")
+    private NewItemTier itemTier;
     private int placement;
     private float score;
     @Field("fair_number")
     private Integer fairNumber;
 
+    public MasterworksFairEntry() {
+    }
+
     public MasterworksFairEntry(Instant time, WeaponsPvE rarity, int placement, float score, Integer fairNumber) {
+        this(time, rarity, false, null, placement, score, fairNumber);
+    }
+
+    public MasterworksFairEntry(Instant time, NewItemTier itemTier, int placement, float score, Integer fairNumber) {
+        this(time, null, true, itemTier, placement, score, fairNumber);
+    }
+
+    private MasterworksFairEntry(
+            Instant time,
+            WeaponsPvE rarity,
+            boolean itemSubmission,
+            NewItemTier itemTier,
+            int placement,
+            float score,
+            Integer fairNumber
+    ) {
         this.rarity = rarity;
+        this.itemSubmission = itemSubmission;
+        this.itemTier = itemTier;
         this.placement = placement;
         this.time = time;
         this.score = score;
@@ -26,27 +52,12 @@ public class MasterworksFairEntry {
         this.fairNumber = fairNumber;
     }
 
-//    @Override
-//    public boolean equals(Object o) {
-//        if (this == o) {
-//            return true;
-//        }
-//        if (o == null || getClass() != o.getClass()) {
-//            return false;
-//        }
-//        MasterworksFairEntry that = (MasterworksFairEntry) o;
-//        return time.equals(that.time) && rarity == that.rarity && fairNumber.equals(that.fairNumber);
-//    }
-//
-//    @Override
-//    public int hashCode() {
-//        return Objects.hash(time, rarity, fairNumber);
-//    }
-
     @Override
     public String toString() {
         return "MasterworksFairEntry{" +
                 "rarity=" + rarity +
+                ", itemSubmission=" + itemSubmission +
+                ", itemTier=" + itemTier +
                 ", placement=" + placement +
                 ", score=" + score +
                 ", fairNumber=" + fairNumber +
@@ -59,6 +70,14 @@ public class MasterworksFairEntry {
 
     public WeaponsPvE getRarity() {
         return rarity;
+    }
+
+    public boolean isItemSubmission() {
+        return itemSubmission;
+    }
+
+    public NewItemTier getItemTier() {
+        return itemTier;
     }
 
     public int getPlacement() {

@@ -54,7 +54,7 @@ public class CustomGuardian extends Guardian {
 
     @Override
     public void setTarget(@Nullable LivingEntity target) {
-        setTarget(target, EntityTargetEvent.TargetReason.CUSTOM, true);
+        setTarget(target, EntityTargetEvent.TargetReason.CUSTOM);
     }
 
     @Override
@@ -93,7 +93,6 @@ public class CustomGuardian extends Guardian {
         @Override
         public boolean canUse() {
             LivingEntity entityLiving = this.guardian.getTarget();
-
             return entityLiving != null && entityLiving.isAlive();
         }
 
@@ -112,7 +111,7 @@ public class CustomGuardian extends Guardian {
                 this.guardian.getLookControl().setLookAt(entityLiving, 90.0F, 90.0F);
             }
 
-            this.guardian.hasImpulse = true;
+            this.guardian.needsSync = true;
         }
 
         @Override

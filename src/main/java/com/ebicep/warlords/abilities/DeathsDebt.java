@@ -71,7 +71,7 @@ public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<
         CircleEffect circleEffect = new CircleEffect(wp,
                 totemStand.getLocation().clone().add(0, 1.25, 0),
                 respiteRadius,
-                new CircumferenceEffect(Particle.EFFECT),
+                new CircumferenceEffect(Particle.WITCH),
                 new DoubleLineEffect(Particle.DUST)
         );
         if (wp.isInPve()) {

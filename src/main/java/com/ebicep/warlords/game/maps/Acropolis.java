@@ -9,7 +9,7 @@ import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.game.option.pve.CurrencyOnEventOption;
-import com.ebicep.warlords.game.option.pve.ItemOption;
+import com.ebicep.warlords.game.option.pve.NewItemOption;
 import com.ebicep.warlords.game.option.pve.rewards.CoinGainOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.EventPointsOption;
@@ -240,7 +240,7 @@ public class Acropolis extends GameMap {
                 ));
             }
         });
-        options.add(new ItemOption());
+        options.add(new NewItemOption());
         options.add(new WinAfterTimeoutOption(600, 50, "spec"));
         options.add(new TheAcropolisOption());
         options.add(new EventPointsOption()

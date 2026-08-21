@@ -10,8 +10,6 @@ import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 public class BoulderBranch extends AbstractUpgradeBranch<Boulder> {
 
-    double hitbox = ability.getHitbox();
-
     public BoulderBranch(AbilityTree abilityTree, Boulder ability) {
         super(abilityTree, ability);
 
@@ -36,7 +34,7 @@ public class BoulderBranch extends AbstractUpgradeBranch<Boulder> {
                     Value.RangedValueCritable damage = ability.getDamageValues().getBoulderDamage();
                     damage.min().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Master Upgrade Branch", 3);
                     damage.max().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Master Upgrade Branch", 3);
-                    ability.setHitbox(hitbox + 3);
+                    ability.getSplashRadius().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Terrestrial Meteor", 3f);
                 }
         );
         masterUpgrade2 = new Upgrade(

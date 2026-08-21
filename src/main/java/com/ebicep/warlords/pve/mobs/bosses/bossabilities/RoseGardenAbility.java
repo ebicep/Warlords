@@ -22,12 +22,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Supplier;
 
-/**
- *
- *  • Telegraphs briefly (ring of pink petals + visible flower ItemDisplay).
- *  • Becomes active: emits periodic thorn aura (AoE damage + optional slow).
- *  • On expiry (optionally) "blooms" with a burst AoE.
- */
 public class RoseGardenAbility {
 
     // ---- Required context ----

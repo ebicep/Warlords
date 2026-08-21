@@ -27,13 +27,13 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class VoidJailer extends AbstractMob implements ChampionMob {
 
-    private static final int PRISON_TARGET_RANGE = 20;
+    private static final int PRISON_TARGET_RANGE = 15;
     private static final int INITIAL_PRISON_DELAY_TICKS = 5 * 20;
     private static final int PRISON_COOLDOWN_TICKS = 20 * 20;
-    private static final int PRISON_CAST_TICKS = 2 * 20;
+    private static final int PRISON_CAST_TICKS = 3 * 20;
     private static final int PRISON_DURATION_TICKS = 10 * 20;
-    private static final double PRISON_RADIUS = 5;
-    private static final int PRISON_BREAK_DAMAGE = 6000;
+    private static final double PRISON_RADIUS = 7;
+    private static final int PRISON_BREAK_DAMAGE = 5000;
     private static final int ESCAPE_PUNISH_DAMAGE = 1000;
     private static final int ESCAPE_PUNISH_COOLDOWN_TICKS = 20;
     private static final float IMPRISONED_PLAYER_DAMAGE_MULTIPLIER = .2f;
@@ -148,7 +148,7 @@ public class VoidJailer extends AbstractMob implements ChampionMob {
     }
 
     private void tickPrisonCast() {
-        if (!isValidTarget(castTarget, PRISON_TARGET_RANGE + 8)) {
+        if (!isValidTarget(castTarget, PRISON_TARGET_RANGE + 4)) {
             clearPrisonCast(20);
             return;
         }
@@ -195,7 +195,7 @@ public class VoidJailer extends AbstractMob implements ChampionMob {
     }
 
     private void tickVoidPrison() {
-        if (!isValidTarget(prisonTarget, PRISON_TARGET_RANGE + 12)) {
+        if (!isValidTarget(prisonTarget, PRISON_TARGET_RANGE + 6)) {
             endVoidPrison(false);
             return;
         }
@@ -279,10 +279,10 @@ public class VoidJailer extends AbstractMob implements ChampionMob {
         if (prisonTarget != null) {
             if (broken) {
                 prisonTarget.sendMessage(Component.text("The Void Prison shatters.", NamedTextColor.GREEN));
-                prisonTarget.playSound(prisonTarget.getLocation(), Sound.BLOCK_GLASS_BREAK, 1, 0.7f);
+                prisonTarget.playSound(prisonTarget.getLocation(), Sound.BLOCK_GLASS_BREAK, 2, 0.6f);
             } else {
-                prisonTarget.sendMessage(Component.text("The Void Prison fades.", NamedTextColor.GRAY));
-                prisonTarget.playSound(prisonTarget.getLocation(), Sound.BLOCK_RESPAWN_ANCHOR_DEPLETE, 1, 0.6f);
+                prisonTarget.sendMessage(Component.text("The Void Prison fades.", NamedTextColor.DARK_PURPLE));
+                prisonTarget.playSound(prisonTarget.getLocation(), Sound.BLOCK_RESPAWN_ANCHOR_DEPLETE, 2, 0.5f);
             }
         }
 

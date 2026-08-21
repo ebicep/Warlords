@@ -1164,7 +1164,7 @@ public enum GameEvents {
                     }
             );
             menu.setItem(6, 1,
-                    new ItemBuilder(Material.CHAIN)
+                    new ItemBuilder(Material.IRON_CHAIN)
                             .name(Component.text("Tartarus", NamedTextColor.GREEN))
                             .lore(WordWrap.wrap(
                                     Component.text("All gathered in the depths of an infernal hell, they seek to sever the ties between Warlords and life.", NamedTextColor.YELLOW),

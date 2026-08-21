@@ -14,10 +14,8 @@ import com.ebicep.warlords.party.PartyManager;
 import com.ebicep.warlords.party.PartyPlayer;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.java.StringUtils;
-import com.onarandombox.MultiverseCore.api.MVWorldManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
@@ -138,25 +136,6 @@ public class GameStartCommand {
         if (currentGameEvent == null || !currentGameEvent.isActive()) {
             player.sendMessage(Component.text("The event is over!", NamedTextColor.RED));
             return;
-        }
-        GameManager.QueueEntryBuilder entryBuilder = Warlords.getGameManager().newEntry(Collections.emptyList());
-        entryEditor.accept(entryBuilder);
-        GameMap map = entryBuilder.getMap();
-        if (map == null) {
-            player.sendMessage(Component.text("Unable to find a valid map. Report this.", NamedTextColor.RED));
-            ChatUtils.MessageType.GAME.sendErrorMessage("Unable to find a valid map. (PVE EVENT) " + currentGameEvent);
-            return;
-        }
-        int numberOfMaps = map.getNumberOfMaps();
-        String fileName = map.getFileName();
-        MVWorldManager mvWorldManager = Warlords.multiverseCore.getMVWorldManager();
-        for (int i = 0; i < numberOfMaps; i++) {
-            String mapName = fileName + "-" + i;
-            if (mvWorldManager.hasUnloadedWorld(mapName, false)) {
-                ChatUtils.MessageType.GAME.sendErrorMessage("Map " + mapName + " is unloaded. Loading it now.");
-                mvWorldManager.loadWorld(mapName);
-                Warlords.getGameManager().addGameHolder(mapName, map);
-            }
         }
 
         startGame(player, false, entryEditor.andThen(queueEntryBuilder -> {

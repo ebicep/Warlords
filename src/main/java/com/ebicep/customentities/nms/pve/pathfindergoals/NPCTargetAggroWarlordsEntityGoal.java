@@ -4,7 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.java.RandomCollection;
 import net.citizensnpcs.api.ai.EntityTarget;
-import net.citizensnpcs.api.ai.tree.BehaviorGoalAdapter;
+import net.citizensnpcs.api.ai.tree.Behavior;
 import net.citizensnpcs.api.ai.tree.BehaviorStatus;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.GameMode;
@@ -33,7 +33,8 @@ import java.util.function.Predicate;
  * ex. (w=100,d=20), (w=50,d=25), (w=0,d>=30)
  * Random target is chosen from weighted list
  */
-public class NPCTargetAggroWarlordsEntityGoal extends BehaviorGoalAdapter {
+public class NPCTargetAggroWarlordsEntityGoal implements Behavior
+{
 
     private final double range;
     private final NPC npc;

@@ -447,7 +447,7 @@
       },
       "LILIUM": {
         "name": "Lilium",
-        "max_health": 280000,
+        "max_health": 240000,
         "walk_speed": 0.38,
         "damage_resistance": 30.0,
         "min_melee_damage": 450.0,

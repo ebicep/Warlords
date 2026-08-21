@@ -77,8 +77,6 @@ public class RotatingRadialLasersAbility {
         this.fireDust = new Particle.DustOptions(fireColor, 4.5f);
     }
 
-    /* ================= Public API ================= */
-
     public void start(Game game) {
         if (running) return;
         running = true;
@@ -191,7 +189,6 @@ public class RotatingRadialLasersAbility {
                         .cause("Radial Laser")
                         .value((float) dps)
                         .source(source)
-                        .flag(InstanceFlags.TRUE_DAMAGE, true)
                 );
             }
         }
