@@ -113,7 +113,7 @@ public class Spelunker extends BaseSet {
             rewards.put(currency, amount);
 
             DatabasePlayer databasePlayer = warlordsPlayer.getDatabasePlayer();
-            databasePlayer.getPveStats().getCompensationRewards().add(new CompensationReward(rewards, "Spelunker Chest"));
+            databasePlayer.getPveStats().getCompensationRewards().add(new CompensationReward.SpelunkerChest(rewards));
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
             RewardInventory.sendRewardMessage(
