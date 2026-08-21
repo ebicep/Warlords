@@ -831,26 +831,31 @@ public class DatabasePlayer implements MultiStatsGeneral, TracksMultiAbilityStat
                     return false;
                 }
 
+                LinkedHashMap<Spendable, Long> rewards = new LinkedHashMap<>();
                 if (zenithStars > 0) {
-                    pveStats.addMobDrops(MobDrop.ZENITH_STAR, zenithStars);
+                    rewards.put(MobDrop.ZENITH_STAR, zenithStars);
                 }
                 if (syntheticShards > 0) {
-                    pveStats.addCurrency(Currencies.SYNTHETIC_SHARD, syntheticShards);
+                    rewards.put(Currencies.SYNTHETIC_SHARD, syntheticShards);
                 }
                 if (legendFragments > 0) {
-                    pveStats.addCurrency(Currencies.LEGEND_FRAGMENTS, legendFragments);
+                    rewards.put(Currencies.LEGEND_FRAGMENTS, legendFragments);
                 }
                 if (scrapMetal > 0) {
-                    pveStats.addCurrency(Currencies.SCRAP_METAL, scrapMetal);
+                    rewards.put(Currencies.SCRAP_METAL, scrapMetal);
                 }
-                generatedItems.forEach(pveStats.getNewItemsManager()::addItem);
+
+                boolean hasRewards = !rewards.isEmpty() || !generatedItems.isEmpty();
+                if (hasRewards) {
+                    pveStats.getCompensationRewards().add(new CompensationReward.LegacyItemPatch(rewards, generatedItems));
+                }
 
                 List<Component> summary = new ArrayList<>();
+                summary.add(Component.text("------------------------------------------------", NamedTextColor.DARK_AQUA));
                 summary.add(Component.text("Legacy Item Compensation", NamedTextColor.GOLD));
-                summary.add(Component.text("This is your compensation for the removal of the old item system. You will only receive these rewards once.", NamedTextColor.GRAY));
+                summary.add(Component.text("This is your compensation for the removal of the old item system.", NamedTextColor.GRAY));
+                summary.add(Component.text("You will only receive these rewards once.", NamedTextColor.GRAY));
 
-                boolean hasRewards = zenithStars > 0 || syntheticShards > 0 || legendFragments > 0 || scrapMetal > 0 ||
-                        legendaryItems > 0 || sovereignItems > 0 || epicItems > 0;
                 if (!hasRewards) {
                     summary.add(Component.text("No compensation rewards were generated from your legacy item totals.", NamedTextColor.YELLOW));
                 } else {
@@ -872,25 +877,26 @@ public class DatabasePlayer implements MultiStatsGeneral, TracksMultiAbilityStat
                     }
                     if (legendaryItems > 0) {
                         summary.add(Component.text(
-                                " • " + legendaryItems + " random Legendary item" + (legendaryItems == 1 ? "" : "s"),
+                                " • " + legendaryItems + " Random Legendary Item" + (legendaryItems == 1 ? "" : "s"),
                                 NewItemTier.LEGENDARY.getTextColor()
                         ));
                     }
                     if (sovereignItems > 0) {
                         summary.add(Component.text(
-                                " • " + sovereignItems + " random Sovereign item" + (sovereignItems == 1 ? "" : "s"),
+                                " • " + sovereignItems + " Random Sovereign Item" + (sovereignItems == 1 ? "" : "s"),
                                 NewItemTier.SOVEREIGN.getTextColor()
                         ));
                     }
                     if (epicItems > 0) {
                         summary.add(Component.text(
-                                " • " + epicItems + " random Epic item" + (epicItems == 1 ? "" : "s"),
+                                " • " + epicItems + " Random Epic Item" + (epicItems == 1 ? "" : "s"),
                                 NewItemTier.EPIC.getTextColor()
                         ));
                     }
+                    summary.add(Component.text("Claim them in your Rewards Inventory", NamedTextColor.GREEN));
                 }
-                summary.add(Component.text("This one-time compensation has now been applied to your account.", NamedTextColor.DARK_GRAY));
-                databasePlayer.addFutureMessage(FutureMessage.create(summary, false));
+                summary.add(Component.text("------------------------------------------------", NamedTextColor.DARK_AQUA));
+                databasePlayer.addFutureMessage(FutureMessage.create(summary, true));
 
                 ChatUtils.MessageType.WARLORDS.sendMessage(
                         "Legacy item compensation for " + uuid + ": alpha=" + alpha +
