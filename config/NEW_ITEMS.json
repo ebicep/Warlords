@@ -961,7 +961,7 @@
           },
           "description": "Increase rare loot chance by {{blue;%}}. Enemies have a {{blue;%}} chance to drop a spelunker chest.",
           "rareLootChanceIncreasePercent": 25,
-          "spelunkerChestDropChancePercent": 2
+          "spelunkerChestDropChancePercent": 1
         },
         "synapticOverload": {
           "tier": "LEGENDARY",
