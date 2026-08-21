@@ -253,7 +253,7 @@ public class NewItemSearchMenu extends Menu {
         DATE("Date", Comparator.comparing(NewItem::getCreationTime)),
         TIER("Tier", Comparator.comparing(NewItem::getTier)),
         SLOT("Slot", Comparator.comparing(NewItem::getSlot)),
-//        ITEM_SCORE("Item Score", Comparator.comparing(NewItem::getItemScore)),
+        ITEM_SCORE("Item Score", Comparator.comparing(NewItem::getItemScore)),
 
         ;
 

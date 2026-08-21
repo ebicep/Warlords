@@ -4,7 +4,6 @@ import com.ebicep.warlords.abilities.CrusadersStrike;
 import com.ebicep.warlords.abilities.HolyRadianceCrusader;
 import com.ebicep.warlords.events.game.WarlordsFlagUpdatedEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
-import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.flags.PlayerFlagLocation;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -99,15 +98,8 @@ public class SovereignSolitude implements SpecBoostManager.SpecBoost<SovereignSo
                     warlordsEntity,
                     CooldownTypes.SPEC_BOOST,
                     cooldownManager -> {},
-                    true
+                    false
             ));
-        }
-
-        @EventHandler(ignoreCancelled = true)
-        public void onDeath(WarlordsDeathEvent event) {
-            if (event.getWarlordsEntity().equals(warlordsEntity) || event.getWarlordsEntity().equals(lastMarked)) {
-                breakLink();
-            }
         }
 
         @EventHandler

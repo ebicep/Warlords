@@ -42,7 +42,16 @@ public enum GameMode implements Mode {
     }
 
     public static boolean isPvE(GameMode mode) {
-        return mode == WAVE_DEFENSE || mode == EVENT_WAVE_DEFENSE || mode == ONSLAUGHT || mode == TREASURE_HUNT || mode == TOWER_DEFENSE || mode == WHACK_A_MOLE || mode == PVE_DEBUG || mode == EFFIGY_TRIALS || mode == RAID;
+        return mode == WAVE_DEFENSE
+                || mode == EVENT_WAVE_DEFENSE
+                || mode == ONSLAUGHT
+                || mode == TREASURE_HUNT
+                || mode == ANOMALY
+                || mode == TOWER_DEFENSE
+                || mode == WHACK_A_MOLE
+                || mode == PVE_DEBUG
+                || mode == EFFIGY_TRIALS
+                || mode == RAID;
     }
 
     private final Mode mode;
@@ -114,5 +123,4 @@ public enum GameMode implements Mode {
     public float getDropModifier() {
         return mode.getDropModifier();
     }
-
 }

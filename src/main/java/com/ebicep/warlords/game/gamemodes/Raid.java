@@ -8,6 +8,7 @@ import com.ebicep.warlords.game.option.*;
 import com.ebicep.warlords.game.option.respawn.DieOnLogoutOption;
 import com.ebicep.warlords.game.option.respawn.NoRespawnIfOfflineOption;
 import com.ebicep.warlords.game.option.win.WinByAllDeathOption;
+import com.ebicep.warlords.guilds.bounty.GuildBountyOption;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.menu.generalmenu.WarlordsNewHotbarMenu;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
@@ -46,6 +47,7 @@ public class Raid implements Mode {
         options.add(new NoRespawnIfOfflineOption());
         options.add(new WinByAllDeathOption(Team.BLUE));
         options.add(new DieOnLogoutOption());
+        options.add(new GuildBountyOption());
         options.add(new PlayerCooldownDisplayOption());
 
         return options;
@@ -83,4 +85,3 @@ public class Raid implements Mode {
 
 
 }
-

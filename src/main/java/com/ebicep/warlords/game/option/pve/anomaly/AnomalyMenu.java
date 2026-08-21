@@ -2,10 +2,9 @@ package com.ebicep.warlords.game.option.pve.anomaly;
 
 import com.ebicep.warlords.commands.debugcommands.game.GameStartCommand;
 import com.ebicep.warlords.game.GameAddon;
-import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.menu.Menu;
-import com.ebicep.warlords.pve.Spendable;
+import com.ebicep.warlords.pve.newitems.setbonus.NewItemsSetBonus;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.java.DateUtil;
 import net.kyori.adventure.text.Component;
@@ -13,80 +12,97 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class AnomalyMenu {
 
+    private static final int[] REWARD_POOL_POSITIONS = {2, 4, 6};
+
     public static void openAnomalyMenu(Player player) {
         Menu menu = new Menu("Anomaly", 9 * 6);
-        Anomalies currentAnomaly = AnomalyOption.getDailyAnomaly();
-        List<Component> rewards = new ArrayList<>();
-
-        for (Spendable spendable : currentAnomaly.getRewards().keySet()) {
-            rewards.add(spendable.getCostColoredName(currentAnomaly.getRewards().get(spendable)));
-        }
-
-        String timeTill = DateUtil.getTimeTill(DateUtil.getNextResetDate(),
-                true,
-                true,
-                true,
-                false
-        );
+        Anomalies currentAnomaly = AnomalyRotation.getCurrentAnomaly();
+        NewItemsSetBonus featuredSet = AnomalyRotation.getGuaranteedLegendarySet();
+        String timeTill = DateUtil.getTimeTill(AnomalyRotation.getNextRotation(), false, true, true, true);
 
         menu.setItem(
-                4, 1,
-                new ItemBuilder(Material.BARRIER)
-                        .name(Component.text("Next Anomaly appears in: ", NamedTextColor.RED).append(Component.text(timeTill, NamedTextColor.YELLOW)))
+                4,
+                0,
+                new ItemBuilder(Material.CLOCK)
+                        .name(Component.text("Rotation changes in ", NamedTextColor.GRAY)
+                                .append(Component.text(timeTill, NamedTextColor.YELLOW)))
+                        .lore(
+                                Component.text("The active map, reward pools and", NamedTextColor.GRAY),
+                                Component.text("featured Legendary set rotate hourly.", NamedTextColor.GRAY)
+                        )
                         .get(),
-                (m, e) -> {}
+                Menu.ACTION_DO_NOTHING
         );
+
         menu.setItem(
-                4, 3,
+                4,
+                2,
                 new ItemBuilder(Material.AMETHYST_BLOCK)
                         .name(Component.text(currentAnomaly.getName(), NamedTextColor.GOLD, TextDecoration.BOLD))
                         .lore(currentAnomaly.getDescription())
-                        .addLore(List.of(
+                        .addLore(
                                 Component.empty(),
-                                Component.text("Possible rewards:")
-                        ))
-                        .addLore(rewards)
-                        .get(),
-                (m, e) -> {
-                    GameStartCommand.startGamePvE(player, GameMode.ANOMALY,queueEntryBuilder -> {
-                        GameMap map;
-                        map = switch (currentAnomaly) {
-                            case ENDLESS_PARADOX -> GameMap.ENDLESS_PARADOX;
-                            case OPEX_ANOMALY -> GameMap.ENDLESS_PARADOX;
-                            case WHAT_ONCE_WAS -> GameMap.ENDLESS_PARADOX;
-                            case PLAINS_OF_DUNESTAR -> GameMap.ENDLESS_PARADOX;
-                        };
-                        queueEntryBuilder.setMap(map);
-                        queueEntryBuilder.setRequestedGameAddons(GameAddon.PRIVATE_GAME);
-                    });
-                }
-        );
-        // TODO: Use DB
-        menu.setItem(
-                2, 4,
-                new ItemBuilder(Material.IRON_BLOCK)
-                        .name(Component.text("Weekly limit - ", NamedTextColor.GRAY).append(Component.text("0/3", NamedTextColor.GREEN)))
-                        .get(),
-                (m, e) -> {}
-        );
-        // TODO: Use DB
-        menu.setItem(
-                6, 4,
-                new ItemBuilder(Material.DRAGON_BREATH)
-                        .name(Component.text("Booster Vials:", NamedTextColor.GRAY)
-                                .append(Component.empty())
-                                .append(Component.text("No active vials!", NamedTextColor.RED))
+                                Component.text("Map: ", NamedTextColor.GRAY)
+                                        .append(Component.text(currentAnomaly.getMap().getMapName(), NamedTextColor.AQUA)),
+                                Component.empty(),
+                                Component.text("Max players: ", NamedTextColor.GRAY)
+                                        .append(Component.text("2-6", NamedTextColor.AQUA)),
+                                Component.empty(),
+                                Component.text("Click to begin", NamedTextColor.GREEN)
                         )
                         .get(),
-                (m, e) -> {}
+                (m, e) -> GameStartCommand.startGamePvE(player, GameMode.ANOMALY, queueEntryBuilder -> {
+                    queueEntryBuilder.setMap(currentAnomaly.getMap());
+                    queueEntryBuilder.setRequestedGameAddons(GameAddon.PRIVATE_GAME);
+                })
         );
+
+        for (int i = 0; i < currentAnomaly.getRewardPools().size(); i++) {
+            AnomalyRewardPool rewardPool = currentAnomaly.getRewardPools().get(i);
+            List<Component> lore = new ArrayList<>();
+            lore.add(Component.text(currentAnomaly.getCacheObjective(i), NamedTextColor.GRAY));
+            lore.add(Component.text("to earn this cache in your Reward Inventory.", NamedTextColor.GRAY));
+            lore.add(Component.empty());
+            lore.addAll(rewardPool.getLore());
+            menu.setItem(
+                    REWARD_POOL_POSITIONS[i],
+                    4,
+                    new ItemBuilder(Material.CHEST)
+                            .name(Component.text(rewardPool.getName(), NamedTextColor.AQUA))
+                            .lore(lore)
+                            .get(),
+                    Menu.ACTION_DO_NOTHING
+            );
+        }
+
+        List<Component> featuredSetLore = new ArrayList<>();
+        featuredSetLore.add(Component.empty());
+        featuredSetLore.add(Component.text(featuredSet.getName(), featuredSet.getTier().getTextColor()));
+        featuredSetLore.add(Component.empty());
+        featuredSetLore.addAll(featuredSet.getDescriptionLore());
+        featuredSetLore.add(Component.empty());
+        featuredSetLore.add(Component.text("If a cache's item roll lands on", NamedTextColor.GRAY));
+        featuredSetLore.add(Component.text("the 2.5% Legendary outcome, its item", NamedTextColor.GRAY));
+        featuredSetLore.add(Component.text("will come from this featured set.", NamedTextColor.GRAY));
+
+        menu.setItem(
+                4,
+                5,
+                new ItemBuilder(Material.GOLDEN_CHESTPLATE)
+                        .name(Component.text("Featured Legendary Set", NamedTextColor.GOLD))
+                        .lore(featuredSetLore)
+                        .glow()
+                        .get(),
+                Menu.ACTION_DO_NOTHING
+        );
+
+        menu.addBorder(Menu.GRAY_EMPTY_PANE, true);
         menu.openForPlayer(player);
     }
 }

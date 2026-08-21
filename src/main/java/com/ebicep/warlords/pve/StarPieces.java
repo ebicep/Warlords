@@ -68,7 +68,7 @@ public enum StarPieces {
             EPIC,
             LEGENDARY,
             ASCENDANT,
-//            VOID
+            VOID
     };
 
     public static void openStarPieceSynthesizerMenu(Player player) {

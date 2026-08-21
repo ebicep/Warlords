@@ -221,6 +221,11 @@ public enum Currencies implements Spendable {
             TextColor.color(71, 81, 158),
             new ItemStack(Material.OMINOUS_TRIAL_KEY)
     ),
+    VEILKEEPER_INSIGNIA(
+            "Veilkeeper's Insignia",
+            TextColor.color(105, 25, 25),
+            new ItemStack(Material.RESPAWN_ANCHOR)
+    ),
 
 
     ;

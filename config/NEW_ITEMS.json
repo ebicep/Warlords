@@ -13,19 +13,19 @@
           "bonusAttributeRanges": {
             "CC": {
               "min": 1,
-              "max": 1
+              "max": 3
             },
             "CM": {
               "min": 1,
-              "max": 1
+              "max": 3
             },
             "DAMAGE": {
               "min": 1,
-              "max": 1
+              "max": 3
             },
             "BOSS_DAMAGE": {
               "min": 1,
-              "max": 1
+              "max": 3
             },
             "EPH": {
               "min": 1,
@@ -33,19 +33,19 @@
             },
             "HEALING": {
               "min": 1,
-              "max": 1
+              "max": 3
             },
             "MAX_ENERGY": {
               "min": 2,
-              "max": 4
+              "max": 6
             },
             "SPEED": {
               "min": 1,
-              "max": 1
+              "max": 3
             },
             "THORNS": {
               "min": 1,
-              "max": 2
+              "max": 5
             }
           },
           "rerollCost": {
@@ -62,86 +62,83 @@
           "lockScrollRerollCost": {
             "1": {
               "ITEM_LOCK_SCROLL": 1,
-              "LEGEND_FRAGMENTS": 1250
+              "LEGEND_FRAGMENTS": 500
             },
             "2": {
               "ITEM_LOCK_SCROLL": 1,
-              "LEGEND_FRAGMENTS": 1750
+              "LEGEND_FRAGMENTS": 1000
             },
             "3": {
               "ITEM_LOCK_SCROLL": 1,
-              "LEGEND_FRAGMENTS": 2250
+              "LEGEND_FRAGMENTS": 1500
             }
           }
         },
         "rare": {
           "name": "Rare",
           "weight": 25,
-          "bonusAttributes": 1,
+          "bonusAttributes": 2,
           "bonusAttributeRanges": {
             "CC": {
               "min": 1,
-              "max": 2
+              "max": 3
             },
             "CM": {
               "min": 1,
-              "max": 2
+              "max": 3
             },
             "DAMAGE": {
               "min": 1,
-              "max": 2
+              "max": 3
             },
             "BOSS_DAMAGE": {
-              "min": 2,
+              "min": 1,
               "max": 3
             },
             "EPH": {
               "min": 1,
-              "max": 1
+              "max": 2
             },
             "HEALING": {
               "min": 1,
-              "max": 2
+              "max": 3
             },
             "MAX_ENERGY": {
               "min": 2,
-              "max": 6
+              "max": 8
             },
             "SPEED": {
               "min": 1,
-              "max": 2
+              "max": 3
             },
             "THORNS": {
-              "min": 2,
-              "max": 3
+              "min": 1,
+              "max": 5
             }
           },
           "rerollCost": {
             "1": {
-              "ETHEREUM_CRYSTAL": 2,
-              "ASCENDANT_SHARD": 1
+              "ETHEREUM_CRYSTAL": 2
             },
             "2": {
-              "ETHEREUM_CRYSTAL": 2,
-              "ASCENDANT_SHARD": 2
+              "ETHEREUM_CRYSTAL": 2
             },
             "3": {
-              "ETHEREUM_CRYSTAL": 4,
-              "ASCENDANT_SHARD": 3
+              "ETHEREUM_CRYSTAL": 4
             }
           },
           "lockScrollRerollCost": {
             "1": {
               "ITEM_LOCK_SCROLL": 1,
-              "LEGEND_FRAGMENTS": 2500
+              "LEGEND_FRAGMENTS": 500
             },
             "2": {
               "ITEM_LOCK_SCROLL": 1,
-              "LEGEND_FRAGMENTS": 3000
+              "LEGEND_FRAGMENTS": 1000
             },
             "3": {
               "ITEM_LOCK_SCROLL": 1,
-              "LEGEND_FRAGMENTS": 3500
+              "LEGEND_FRAGMENTS": 1500
             }
           }
         },
@@ -207,15 +204,15 @@
           "lockScrollRerollCost": {
             "1": {
               "ITEM_LOCK_SCROLL": 1,
-              "LEGEND_FRAGMENTS": 5000
+              "LEGEND_FRAGMENTS": 2000
             },
             "2": {
               "ITEM_LOCK_SCROLL": 1,
-              "LEGEND_FRAGMENTS": 5500
+              "LEGEND_FRAGMENTS": 3000
             },
             "3": {
               "ITEM_LOCK_SCROLL": 1,
-              "LEGEND_FRAGMENTS": 6500
+              "LEGEND_FRAGMENTS": 4000
             }
           }
         },
@@ -225,15 +222,15 @@
           "bonusAttributes": 2,
           "bonusAttributeRanges": {
             "CC": {
-              "min": 2,
+              "min": 1,
               "max": 5
             },
             "CM": {
-              "min": 2,
+              "min": 1,
               "max": 5
             },
             "DAMAGE": {
-              "min": 2,
+              "min": 1,
               "max": 5
             },
             "BOSS_DAMAGE": {
@@ -245,7 +242,7 @@
               "max": 4
             },
             "HEALING": {
-              "min": 2,
+              "min": 1,
               "max": 5
             },
             "MAX_ENERGY": {
@@ -268,42 +265,46 @@
               "ZENITH_STAR": 1
             },
             "2": {
-              "ETHEREUM_CRYSTAL": 5,
-              "ASCENDANT_SHARD": 3,
-              "ZENITH_STAR": 2
+              "ETHEREUM_CRYSTAL": 6,
+              "ASCENDANT_SHARD": 2,
+              "ZENITH_STAR": 1
             },
             "3": {
-              "ETHEREUM_CRYSTAL": 6,
-              "ASCENDANT_SHARD": 4,
-              "ZENITH_STAR": 3
+              "ETHEREUM_CRYSTAL": 8,
+              "ASCENDANT_SHARD": 2,
+              "ZENITH_STAR": 1
             }
           },
           "lockScrollRerollCost": {
             "1": {
               "ITEM_LOCK_SCROLL": 1,
-              "LEGEND_FRAGMENTS": 7500
+              "LEGEND_FRAGMENTS": 3000
             },
             "2": {
               "ITEM_LOCK_SCROLL": 1,
-              "LEGEND_FRAGMENTS": 8500
+              "LEGEND_FRAGMENTS": 4000
             },
             "3": {
               "ITEM_LOCK_SCROLL": 1,
-              "LEGEND_FRAGMENTS": 9500
+              "LEGEND_FRAGMENTS": 5000
             }
           },
           "craftCost": {
-            "COIN": 1000
+            "COIN": 1000000,
+            "ZENITH_STAR": 3,
+            "ASCENDANT_SHARD": 3,
+            "LEGEND_FRAGMENTS": 20000,
+            "SCRAP_METAL": 1000
           }
         },
         "legendary": {
           "name": "Legendary",
-          "weight": 3,
+          "weight": 0,
           "bonusAttributes": 3,
           "bonusAttributeRanges": {
             "CC": {
               "min": 1,
-              "max": 4
+              "max": 2
             },
             "CM": {
               "min": 2,
@@ -311,7 +312,7 @@
             },
             "DAMAGE": {
               "min": 1,
-              "max": 4
+              "max": 5
             },
             "BOSS_DAMAGE": {
               "min": 2,
@@ -323,19 +324,19 @@
             },
             "HEALING": {
               "min": 1,
-              "max": 4
+              "max": 5
             },
             "MAX_ENERGY": {
-              "min": 8,
-              "max": 15
+              "min": 4,
+              "max": 20
             },
             "SPEED": {
               "min": 1,
-              "max": 6
+              "max": 8
             },
             "THORNS": {
-              "min": 5,
-              "max": 10
+              "min": 2,
+              "max": 15
             }
           },
           "rerollCost": {
@@ -346,33 +347,35 @@
             },
             "2": {
               "ETHEREUM_CRYSTAL": 6,
-              "ASCENDANT_SHARD": 4,
-              "ZENITH_STAR": 3
+              "ASCENDANT_SHARD": 2,
+              "ZENITH_STAR": 2
             },
             "3": {
               "ETHEREUM_CRYSTAL": 8,
-              "ASCENDANT_SHARD": 6,
-              "ZENITH_STAR": 4
+              "ASCENDANT_SHARD": 2,
+              "ZENITH_STAR": 2
             }
           },
           "lockScrollRerollCost": {
             "1": {
               "ITEM_LOCK_SCROLL": 1,
-              "LEGEND_FRAGMENTS": 6000
+              "LEGEND_FRAGMENTS": 4000
             },
             "2": {
               "ITEM_LOCK_SCROLL": 1,
-              "LEGEND_FRAGMENTS": 7500
+              "LEGEND_FRAGMENTS": 5000
             },
             "3": {
               "ITEM_LOCK_SCROLL": 1,
-              "LEGEND_FRAGMENTS": 9000
+              "LEGEND_FRAGMENTS": 6000
             }
           },
           "craftCost": {
             "COIN": 1500000,
-            "ZENITH_STAR": 10,
-            "SCRAP_METAL": 500
+            "ZENITH_STAR": 5,
+            "ASCENDANT_SHARD": 5,
+            "ETHEREUM_CRYSTAL": 50,
+            "SCRAP_METAL": 1000
           }
         },
         "ascendant": {
@@ -447,11 +450,6 @@
               "ITEM_LOCK_SCROLL": 1,
               "LEGEND_FRAGMENTS": 12000
             }
-          },
-          "craftCost": {
-            "COIN": 5000000,
-            "ASCENDANT_SHARD": 50,
-            "SCRAP_METAL": 1000
           }
         }
       },
@@ -467,12 +465,11 @@
             "GLOVES",
             "BOOTS",
             "RING",
+            "BRACELET",
             "TOME"
           ],
-          "attributes": {
-          },
-          "bonusAttributeRanges": {
-          }
+          "attributes": {},
+          "bonusAttributeRanges": {}
         },
         "randomRare": {
           "noBonus": true,
@@ -485,12 +482,11 @@
             "GLOVES",
             "BOOTS",
             "RING",
+            "BRACELET",
             "TOME"
           ],
-          "attributes": {
-          },
-          "bonusAttributeRanges": {
-          }
+          "attributes": {},
+          "bonusAttributeRanges": {}
         },
         "randomEpic": {
           "noBonus": true,
@@ -503,28 +499,26 @@
             "GLOVES",
             "BOOTS",
             "RING",
+            "BRACELET",
             "TOME"
           ],
-          "attributes": {
-          },
-          "bonusAttributeRanges": {
-          }
+          "attributes": {},
+          "bonusAttributeRanges": {}
         },
         "oathkeeper": {
           "tier": "LEGENDARY",
           "name": "Oathkeeper",
           "slots": [
             "RING",
-            "RING",
+            "BRACELET",
             "GLOVES"
           ],
           "attributes": {
             "HEALTH": 50,
-            "KB_RES": 6,
+            "KB_RES": 3,
             "ECR": 2
           },
-          "bonusAttributeRanges": {
-          },
+          "bonusAttributeRanges": {},
           "description": "Increase melee damage by {{damage;%}}. Additionally, melee attacks have a {{damage;%}} chance to hit twice.",
           "meleeDamageIncreasePercent": 50,
           "meleeAttackTwiceChancePercent": 20
@@ -534,11 +528,11 @@
           "name": "Charm",
           "slots": [
             "RING",
-            "RING"
+            "BRACELET"
           ],
           "attributes": {
             "HEALTH": 50,
-            "KB_RES": 6,
+            "KB_RES": 3,
             "REGEN": 15
           },
           "description": "Targets within {{blocks}} of you take {{damage;%}} more damage and are slowed by {{speed;%}}.",
@@ -550,25 +544,24 @@
           "tier": "LEGENDARY",
           "name": "Olympic",
           "slots": [
-            "BOOTS",
-            "TOME"
+            "BOOTS"
           ],
           "attributes": {
-            "HEALTH": 60,
+            "HEALTH": 100,
             "KB_RES": 5,
             "REGEN": 8,
             "CDR": 2
           },
           "description": "Increase jump height by {{blocks}}. Take {{damage;%}} less damage while in the air.",
           "jumpHeight": 1,
-          "airResist": 20
+          "airResist": 25
         },
         "soothsayer": {
           "tier": "LEGENDARY",
           "name": "Soothsayer",
           "slots": [
             "RING",
-            "RING",
+            "BRACELET",
             "TOME"
           ],
           "attributes": {
@@ -591,11 +584,10 @@
           ],
           "attributes": {
             "HEALTH": 80,
-            "KB_RES": 4,
+            "KB_RES": 2,
             "REGEN": 4
           },
-          "bonusAttributeRanges": {
-          },
+          "bonusAttributeRanges": {},
           "description": "Repeated attacks from the same target deal {{damage;%}} less damage, up to {{damage;%}}.",
           "repeatedAttackDamageReduction": 5,
           "repeatedAttackMaxDamageReduction": 80
@@ -620,7 +612,7 @@
           "name": "Moonveil",
           "slots": [
             "RING",
-            "RING",
+            "BRACELET",
             "TOME"
           ],
           "attributes": {
@@ -629,7 +621,7 @@
             "REGEN": 8
           },
           "description": "Increase your crit chance by {{damage;%}} while under damage-preventing effects.",
-          "critChanceBoost": 40
+          "critChanceBoost": 25
         },
         "voidcarver": {
           "tier": "LEGENDARY",
@@ -642,17 +634,16 @@
             "HEALTH": 15,
             "CDR": 2
           },
-          "description": "Allies in within {{blocks}} have their cooldowns reduced by {{blue;%}}.",
-          "radius": 10,
-          "cdrBoost": 5
+          "description": "Allies within {{blocks}} have their cooldowns tick down {{blue;%}} faster.",
+          "radius": 8,
+          "cdrBoost": 50
         },
         "gravemind": {
           "tier": "LEGENDARY",
           "name": "Gravemind",
           "slots": [
             "RING",
-            "RING",
-            "TOME"
+            "BRACELET"
           ],
           "attributes": {
             "HEALTH": 60,
@@ -669,14 +660,13 @@
             "HELMET",
             "CHESTPLATE",
             "LEGGINGS",
-            "GLOVES",
             "BOOTS"
           ],
           "attributes": {
             "HEALTH": 40,
             "REGEN": 20
           },
-          "description": "Summoned mobs deal {{damage;%}} more damage and have {{speed;%}} more speed. Summons are guaranteed to be Aspects.",
+          "description": "Your summoned mobs deal {{damage;%}} more damage and have {{speed;%}} more speed. Summons are guaranteed to be Aspects.",
           "minionDamage": 50,
           "minionSpeed": 50
         },
@@ -690,7 +680,7 @@
           ],
           "attributes": {
             "HEALTH": 50,
-            "KB_RES": 5
+            "KB_RES": 3
           },
           "description": "Double the thorn damage cap and increase all thorn damage by {{damage;%}}.",
           "thornDamageBoost": 50
@@ -700,7 +690,7 @@
           "name": "Obelisk",
           "slots": [
             "RING",
-            "RING",
+            "BRACELET",
             "GLOVES"
           ],
           "attributes": {
@@ -729,18 +719,17 @@
           },
           "description": "For every player that is above {{heal;%}} health, deal {{damage;%}} more damage.",
           "healthyPlayerThresholdPercent": 75,
-          "damagePerHealthyPlayerPercent": 5
+          "damaePerHealthyPlayerPercent": 5
         },
         "phoenix": {
           "tier": "LEGENDARY",
           "name": "Phoenix",
           "slots": [
             "RING",
-            "RING",
+            "BRACELET",
             "TOME"
           ],
           "attributes": {
-            "HEALTH": 40,
             "REGEN": 20
           },
           "description": "For every mob on the field, increase your damage by {{damage;%}}.",
@@ -777,7 +766,7 @@
           },
           "description": "Allies within {{blocks}} take {{damageReduction;%}} reduced damage. Doubled below {{heal;%}} health.",
           "radius": 6,
-          "damageReduction": 20,
+          "damageReduction": 15,
           "healthThreshold": 30
         },
         "omen": {
@@ -792,7 +781,7 @@
           ],
           "attributes": {
             "HEALTH": 100,
-            "KB_RES": 4,
+            "KB_RES": 2,
             "REGEN": 25,
             "CDR": 1
           },
@@ -808,7 +797,7 @@
           ],
           "attributes": {
             "HEALTH": 90,
-            "KB_RES": 5
+            "KB_RES": 4
           },
           "description": "{{blue;%}} chance to freeze enemies for {{gold}} seconds. Deal {{damage;%}} more damage to frozen enemies.",
           "freezeChance": 15,
@@ -820,7 +809,7 @@
           "name": "Centurion",
           "slots": [
             "RING",
-            "RING",
+            "BRACELET",
             "TOME"
           ],
           "attributes": {
@@ -855,17 +844,21 @@
           ],
           "attributes": {
             "HEALTH": 25,
-            "REGEN": 15
+            "REGEN": 15,
+            "KB_RES": 3
           },
-          "description": "{{blue;%}} chance to dodge attacks. Dodges grant stacking damage and healing bonuses.",
-          "dodgeChance": 15
+          "description": "{{blue;%}} of attacks are dodged. Each dodge grants {{damage;%}} damage and healing for {{ticks}}, up to {{blue}} stacks.",
+          "dodgeChance": 15,
+          "bonusPerStackPercent": 0.25,
+          "stackDurationSeconds": 8,
+          "maxStacks": 20
         },
         "sharpshooter": {
           "tier": "LEGENDARY",
           "name": "Sharpshooter",
           "slots": [
             "RING",
-            "RING"
+            "BRACELET"
           ],
           "attributes": {
             "HEALTH": 25,
@@ -893,7 +886,7 @@
           "name": "Energize",
           "slots": [
             "RING",
-            "RING",
+            "BRACELET",
             "TOME"
           ],
           "attributes": {
@@ -927,7 +920,7 @@
           "name": "Transference",
           "slots": [
             "RING",
-            "RING",
+            "BRACELET",
             "TOME"
           ],
           "attributes": {
@@ -942,7 +935,7 @@
           "name": "Pulse of Aeons",
           "slots": [
             "RING",
-            "RING"
+            "BRACELET"
           ],
           "attributes": {
             "HEALTH": 55,
@@ -950,7 +943,7 @@
           },
           "description": "Every {{heal}} heal instances, you emit a global pulse that heals all for {{heal}} health.",
           "healsPerPulse": 10,
-          "pulseHealAmount": 200
+          "pulseHealAmount": 80
         },
         "spelunker": {
           "tier": "LEGENDARY",
@@ -1008,15 +1001,12 @@
           "name": "Bellicose",
           "slots": [
             "RING",
-            "RING",
+            "BRACELET",
             "TOME"
           ],
           "attributes": {
-            "HEALTH": 100,
-            "KB_RES": 6,
-            "ECR": 2
-          },
-          "bonusAttributeRanges": {
+            "HEALTH": 50,
+            "REGEN": 10
           },
           "description": "For every {{damage}} max health, increase your melee damage by {{damage;%}}.",
           "maxHealthRequirement": 800,
@@ -1029,11 +1019,7 @@
             "TOME"
           ],
           "attributes": {
-            "HEALTH": 200,
-            "KB_RES": 5,
-            "ECR": 2
-          },
-          "bonusAttributeRanges": {
+            "HEALTH": 20
           },
           "description": "Gain {{blue}} extra charge on your blue rune ability.",
           "extraCharges": 1
@@ -1048,14 +1034,11 @@
             "BOOTS"
           ],
           "attributes": {
-            "HEALTH": 50,
-            "KB_RES": 5
+            "CDR": 1
           },
-          "bonusAttributeRanges": {
-          },
-          "description": "When you fall below {{damage;%}} health, charge up for 2 seconds to explode for {{damage;%}} of your max health as damage. Has a cooldown of {{ticks}}",
+          "description": "When you fall below {{damage;%}} health, charge for 2 seconds and explode for {{damage;%}} of your max health as damage. Has a cooldown of {{ticks}}.",
           "healthThreshold": 20,
-          "maxHealthDamageMultiplier": 2,
+          "maxHealthDamageMultiplier": 200,
           "cooldownSeconds": 30
         },
         "golddigger": {
@@ -1067,8 +1050,7 @@
           "attributes": {
             "HEALTH": 10
           },
-          "bonusAttributeRanges": {
-          },
+          "bonusAttributeRanges": {},
           "description": "Gain {{gold;%}} more Insignia from all sources.",
           "bonusCurrencyPercent": 10
         },
@@ -1082,8 +1064,7 @@
             "HEALTH": 10,
             "REGEN": 5
           },
-          "bonusAttributeRanges": {
-          },
+          "bonusAttributeRanges": {},
           "description": "{{gold;%}} chance to deal {{damage;%}} more damage when hitting any target.",
           "bonusDamageChancePercent": 10,
           "bonusDamagePercent": 30
@@ -1099,8 +1080,7 @@
             "HEALTH": 25,
             "CDR": 1
           },
-          "bonusAttributeRanges": {
-          },
+          "bonusAttributeRanges": {},
           "description": "For every player below {{damage;%}} health, you heal {{heal;%}} more health.",
           "healthThresholdPercent": 75,
           "healPercent": 8
@@ -1114,11 +1094,9 @@
           ],
           "attributes": {
             "HEALTH": 30,
-            "ECR": 1
+            "REGEN": 10
           },
-          "bonusAttributeRanges": {
-          },
-          "description": "{{gold;%}} chance to inflict a random de-buff on enemies for {{ticks}} when taking damage.",
+          "description": "{{gold;%}} chance to inflict a random debuff on enemies for {{ticks}} when taking or dealing damage.",
           "activationChance": 35,
           "duration": 3
         },
@@ -1130,14 +1108,29 @@
             "BOOTS"
           ],
           "attributes": {
-            "HEALTH": 20,
-            "ECR": 1
+            "HEALTH": 20
           },
-          "bonusAttributeRanges": {
-          },
-          "description": "For every {{energy}} max energy, you gain {{damage;%}} crit multiplier.",
+          "description": "For every {{energy}} max energy, gain {{damage;%}} crit multiplier.",
           "maxEnergyRequirement": 100,
           "critMultiplierIncreasePercent": 10
+        },
+        "crossfire": {
+          "tier": "LEGENDARY",
+          "name": "Crossfire",
+          "slots": [
+            "LEGGINGS",
+            "BOOTS"
+          ],
+          "attributes": {
+            "HEALTH": 15,
+            "REGEN": 10,
+            "ECR": 1
+          },
+          "bonusAttributeRanges": {},
+          "description": "Regenerate {{energy;%}} more energy and deal {{damage;%}} more damage when no allies are within {{blocks}}.",
+          "allyRadius": 8,
+          "energyRegenIncreasePercent": 20,
+          "damageIncreasePercent": 20
         },
         "immutableWill": {
           "tier": "LEGENDARY",
@@ -1162,10 +1155,9 @@
             "GLOVES"
           ],
           "attributes": {
-            "HEALTH": 10,
-            "CDR": 1
+            "HEALTH": 10
           },
-          "description": "For every {{energy;%}} movement speed, you gain {{damage;%}} crit chance on your primary attack",
+          "description": "For every {{energy;%}} movement speed, gain {{damage;%}} crit chance on your primary attack.",
           "movementSpeedPercent": 5,
           "critChanceIncreasePercent": 1
         },
@@ -1188,10 +1180,9 @@
           "slots": [
             "TOME"
           ],
-          "attributes": {
-          },
-          "description": "Increase your damage by {{damage;%}} but you are no longer able to hit critical hits.",
-          "damageIncreasePercent": 50,
+          "attributes": {},
+          "description": "Increase your damage by {{damage;%}} but you can no longer land critical hits.",
+          "damageIncreasePercent": 40,
           "disableCriticalHits": true
         },
         "ironChains": {
@@ -1201,7 +1192,7 @@
             "TOME"
           ],
           "attributes": {
-            "HEALTH": 150
+            "HEALTH": 200
           },
           "description": "Increase your damage reduction by {{damageReduction;%}} but reduce your movement speed by {{speed;%}}.",
           "damageReductionIncreasePercent": 30,
@@ -1213,8 +1204,7 @@
           "slots": [
             "TOME"
           ],
-          "attributes": {
-          },
+          "attributes": {},
           "description": "Heals allies around you when you deal damage, but you constantly lose health over time.",
           "healAlliesOnDamage": true,
           "selfHealthDegeneration": true
@@ -1239,11 +1229,10 @@
           "slots": [
             "TOME"
           ],
-          "attributes": {
-          },
+          "attributes": {},
           "description": "Above {{heal;%}} health, gain {{energy}} EPS. Below {{heal;%}} health, energy regeneration is disabled.",
           "healthThreshold": 75,
-          "energyPerSecondBonus": 20,
+          "energyPerSecondBonusPercent": 20,
           "energyRegenDisabledBelowHealthPercent": 75
         },
         "brittleCrown": {
@@ -1252,8 +1241,7 @@
           "slots": [
             "TOME"
           ],
-          "attributes": {
-          },
+          "attributes": {},
           "description": "Gain {{gold;%}} more insignia from kills but lose {{gold;%}} of total insignia when hit.",
           "insigniaGainBonusPercent": 100,
           "insigniaLossOnHitPercent": 5
@@ -1278,20 +1266,18 @@
           "slots": [
             "TOME"
           ],
-          "attributes": {
-          },
+          "attributes": {},
           "description": "Shield effectiveness increased by {{damageReduction;%}} but reduce max health by {{heal;%}}.",
-          "shieldEffectivenessIncreasePercent": 300,
+          "shieldEffectivenessIncreasePercent": 250,
           "maxHealthReductionPercent": 99
         },
         "bloodlettingBlade": {
           "tier": "SOVEREIGN",
-          "name": "Bloodletting Blade",
+          "name": "Blodletting Blade",
           "slots": [
             "TOME"
           ],
-          "attributes": {
-          },
+          "attributes": {},
           "description": "Increase crit multiplier by {{damage;%}} but take {{damage;%}} max health damage per critical hit.",
           "critMultiplierIncreasePercent": 100,
           "selfDamageOnCritPercentMaxHealth": 5
@@ -1339,7 +1325,7 @@
             "HEALTH": 25
           },
           "description": "Each kill permanently increases your damage and damage taken by {{damage;%}}. All stacks are lost on death.",
-          "damagePerKillPercent": 0.5,
+          "damagePerKillPercent": 0.4,
           "loseStacksOnDeath": true
         },
         "hourglass": {
@@ -1365,7 +1351,7 @@
           "attributes": {
             "HEALTH": 25
           },
-          "description": "Upon taking lethal damage, revive at {{heal;%}} health but reduce an ally to {{heal;%}} health ({{ticks}} cooldown).",
+          "description": "Upon taking lethal damage, revive at {{heal;%}} health but reduce an allies' health by {{heal;%}} ({{ticks}} cooldown).",
           "selfReviveHealthPercent": 20,
           "allyHealthReductionPercent": 95,
           "reviveCooldownSeconds": 30
@@ -1450,9 +1436,9 @@
             "CHESTPLATE"
           ],
           "attributes": {
-            "HEALTH": 10
+            "HEALTH": 5
           },
-          "description": "+{{ticks}} to your blue rune skill’s ability duration.",
+          "description": "+{{ticks}} to your blue rune skill's ability duration.",
           "blueRuneDurationIncreaseSeconds": 2
         },
         "cell": {
@@ -1462,7 +1448,7 @@
             "HELMET"
           ],
           "attributes": {
-            "HEALTH": 15
+            "HEALTH": 5
           },
           "description": "-{{energy}} ability energy cost on your primary skill.",
           "energyCostReduction": 5
@@ -1473,29 +1459,70 @@
           "slots": [
             "TOME"
           ],
-          "attributes": {
-            "HEALTH": 5
-          },
-          "description": "+{{blocks;%}} ability range on your orange rune skill (if applicable).",
-          "blueRuneAbilityRangeIncreasePercent": 30
+          "attributes": {},
+          "description": "+{{blocks;%}} ability range on your orange rune skill.",
+          "orangeRuneAbilityRangeIncreasePercent": 30
         },
-        "exergis": {
-          "tier": "ASCENDANT",
-          "name": "Exergis",
+        "infernal": {
+          "tier": "LEGENDARY",
+          "name": "Infernal",
           "slots": [
-            "RING",
-            "RING",
+            "LEGGINGS",
             "BOOTS"
           ],
           "attributes": {
-            "HEALTH": 200,
-            "KB_RES": 10,
-            "ECR": 15
+            "HEALTH": 10
           },
-          "bonusAttributeRanges": {
+          "description": "T.B.D."
+        },
+        "silentExecution": {
+          "tier": "LEGENDARY",
+          "name": "Silent Execution",
+          "slots": [
+            "RING",
+            "BRACELET"
+          ],
+          "attributes": {
+            "HEALTH": 10
           },
-          "description": "PLACEHOLDER Increase damage by {{damage;%}}.",
-          "placeholder": 300
+          "description": "Attacking an enemy from behind causes your hits to deal {{damage;%}} more damage.",
+          "damageIncreasePercent": 40
+        },
+        "regenerate": {
+          "tier": "SOVEREIGN",
+          "name": "Regenerate",
+          "slots": [
+            "TOME"
+          ],
+          "attributes": {
+            "HEALTH": 20
+          },
+          "description": "Passive health regeneration is always active, but its interval is twice as long."
+        },
+        "horizonThreat": {
+          "tier": "SOVEREIGN",
+          "name": "Horizon Threat",
+          "slots": [
+            "TOME"
+          ],
+          "attributes": {
+            "HEALTH": 10
+          },
+          "description": "Enemies farther than {{blocks}} take {{damage;%}} increased damage from you, but enemies closer than {{blocks}} deal {{damage;%}} more damage to you.",
+          "farDistance": 10,
+          "farDamageIncreasePercent": 50,
+          "nearDistance": 5,
+          "nearDamageTakenIncreasePercent": 50
+        },
+        "axe": {
+          "tier": "EPIC",
+          "name": "Axe",
+          "slots": [
+            "RING"
+          ],
+          "attributes": {},
+          "description": "+{{blue;%}} ability cooldown reduction on your purple rune skill.",
+          "purpleRuneCooldownReductionPercent": 10
         }
       }
     }

@@ -1,6 +1,12 @@
 package com.ebicep.warlords.events;
 
+import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.events.player.SpecPrestigeEvent;
 import com.ebicep.warlords.permissions.Permissions;
+import com.ebicep.warlords.pve.Currencies;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.GameMode;
 import org.bukkit.GameRule;
 import org.bukkit.GameRules;
@@ -31,6 +37,22 @@ public class GeneralEvents implements Listener {
 
     public static void addEntityUUID(Entity entity) {
         FALLING_BLOCK_ENTITIES.add(entity);
+    }
+
+    @EventHandler
+    public void onSpecPrestige(SpecPrestigeEvent event) {
+        Player player = org.bukkit.Bukkit.getPlayer(event.getUUID());
+        if (player == null) {
+            return;
+        }
+
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(event.getUUID());
+        Currencies.PRESTIGE_ORB.addToPlayer(databasePlayer, 2L);
+        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+
+        player.sendMessage(Component.text("Prestige reward: ", NamedTextColor.GREEN)
+                .append(Currencies.PRESTIGE_ORB.getCostColoredName(2L))
+                .append(Component.text(" for reaching Prestige " + event.getPrestige() + " in " + event.getSpec().name + "!", NamedTextColor.GREEN)));
     }
 
     @EventHandler
@@ -111,8 +133,8 @@ public class GeneralEvents implements Listener {
     }
 
     @EventHandler
-    public void onBlockSpread(BlockSpreadEvent event) {
-        event.setCancelled(true);
+    public void onBlockSpread(BlockSpreadEvent e) {
+        e.setCancelled(true);
     }
 
     @EventHandler
@@ -148,7 +170,7 @@ public class GeneralEvents implements Listener {
     @EventHandler
     public void onPlayerInteractEntity(PlayerInteractEntityEvent e) {
         // prevent wolf eating item
-        if (e.getRightClicked() instanceof Wolf) {
+        if (e.getRightClicked() instanceof Wolf || e.getRightClicked() instanceof Horse) {
             e.setCancelled(true);
         }
     }

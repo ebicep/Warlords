@@ -5,6 +5,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.equine.Horse;
 import net.minecraft.world.entity.player.Player;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftWorld;
 
@@ -14,7 +15,15 @@ public class CustomHorse extends Horse {
 
     public CustomHorse(Location location) {
         super(EntityType.HORSE, ((CraftWorld) location.getWorld()).getHandle());
+
+        float yaw = location.getYaw();
+
         setPos(location.getX(), location.getY(), location.getZ());
+        setRot(yaw, location.getPitch());
+        setYBodyRot(yaw);
+        setYHeadRot(yaw);
+        yBodyRotO = yaw;
+        yHeadRotO = yaw;
     }
 
     @Override

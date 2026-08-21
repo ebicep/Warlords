@@ -4,8 +4,6 @@ import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.HitBox;
 import com.ebicep.warlords.abilities.internal.Splash;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
-import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
-import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.newitems.setbonus.BaseSet;
 import com.ebicep.warlords.pve.newitems.setbonus.SetBonus;
@@ -15,17 +13,17 @@ import java.util.List;
 
 public class Lean extends BaseSet {
 
-    private int blueRuneAbilityRangeIncreasePercent;
+    private int orangeRuneAbilityRangeIncreasePercent;
 
     @Override
     public void init() {
         super.init();
-        this.blueRuneAbilityRangeIncreasePercent = getValue("blueRuneAbilityRangeIncreasePercent", int.class);
+        this.orangeRuneAbilityRangeIncreasePercent = getValue("orangeRuneAbilityRangeIncreasePercent", int.class);
     }
 
     @Override
     public String getConfigFieldName() {
-        return "cell";
+        return "lean";
     }
 
     @Override
@@ -35,7 +33,7 @@ public class Lean extends BaseSet {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(blueRuneAbilityRangeIncreasePercent);
+        return List.of(orangeRuneAbilityRangeIncreasePercent);
     }
 
     public class Bonus implements SetBonus.Bonus {
@@ -43,23 +41,26 @@ public class Lean extends BaseSet {
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             for (AbstractAbility ability : warlordsPlayer.getAbilities()) {
-                if (ability instanceof OrangeAbilityIcon) {
-                    if (ability instanceof HitBox hitBox) {
-                        hitBox.getHitBoxRadius().addModifier(
-                                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
-                                getName(),
-                                1 + blueRuneAbilityRangeIncreasePercent / 100f
-                        );
-                    }
-                    if (ability instanceof Splash splash) {
-                        splash.getSplashRadius().addModifier(
-                                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
-                                getName(),
-                                1 + blueRuneAbilityRangeIncreasePercent / 100f
-                        );
-                    }
+                if (!(ability instanceof OrangeAbilityIcon)) {
+                    continue;
+                }
+                if (ability instanceof HitBox hitBox) {
+                    hitBox.getHitBoxRadius().addModifier(
+                            FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                            getName(),
+                            1 + orangeRuneAbilityRangeIncreasePercent / 100f
+                    );
+                }
+                if (ability instanceof Splash splash) {
+                    splash.getSplashRadius().addModifier(
+                            FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                            getName(),
+                            1 + orangeRuneAbilityRangeIncreasePercent / 100f
+                    );
                 }
             }
         }
+
     }
+
 }

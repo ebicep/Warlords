@@ -3,8 +3,6 @@ package com.ebicep.warlords.pve.newitems.setbonus.sets;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
-import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
-import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.newitems.setbonus.BaseSet;
 import com.ebicep.warlords.pve.newitems.setbonus.SetBonus;
@@ -43,6 +41,7 @@ public class Stonelash extends BaseSet {
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
+            float multiplier = 1 - energyGainPenaltyPercent / 100f;
             warlordsPlayer.getKnockback().addBaseModifier(knockbackImmune ? 100 : 0);
             warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
                     getName(),
@@ -51,11 +50,23 @@ public class Stonelash extends BaseSet {
                     null,
                     warlordsPlayer,
                     CooldownTypes.ITEM,
-                    cooldownManager -> {},
+                    cooldownManager -> {
+                    },
                     false
             ).addModifier(
                     Modifier.ENERGY_GAIN_PER_TICK,
-                    (energy) -> energy.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getName(), 1 - (energyGainPenaltyPercent / 100f))
+                    energyGainPerTick -> energyGainPerTick.addModifier(
+                            FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                            getName(),
+                            multiplier
+                    )
+            ).addModifier(
+                    Modifier.ENERGY_GAIN_PER_HIT,
+                    energyPerHit -> energyPerHit.addModifier(
+                            FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                            getName(),
+                            multiplier
+                    )
             ));
         }
 

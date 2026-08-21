@@ -5,6 +5,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
+import com.ebicep.warlords.player.ingame.motionsystem.speed.BaseToWalkingSpeedValueModifier;
 import com.ebicep.warlords.pve.newitems.setbonus.BaseSet;
 import com.ebicep.warlords.pve.newitems.setbonus.SetBonus;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
@@ -52,22 +53,21 @@ public class Swift extends BaseSet {
                     cooldownManager -> {
                     },
                     false
-            ).addModifier(
-                    Modifier.MODIFY_OUTGOING_CRIT_CHANCE,
-                    (event, currentCritChance) -> {
-                        // Only apply to weapon attacks (not abilities)
-                        if (!(event.getAbility() instanceof WeaponAbilityIcon)) {
-                            return;
-                        }
-
-                        float currentSpeed = (long) warlordsPlayer.getSpeed().getModifiers().size();
-                        float bonusCritChance = (currentSpeed / movementSpeedPercent) * critChanceIncreasePercent;
-
-                        if (bonusCritChance > 0) {
-                            currentCritChance.addModifier(FloatModifiable.ModifierType.ADDITIVE ,getName(), bonusCritChance * 100f);
-                        }
-                    }
-            ));
+            ).addModifier(Modifier.MODIFY_OUTGOING_CRIT_CHANCE, (event, currentCritChance) -> {
+                if (!(event.getAbility() instanceof WeaponAbilityIcon)) {
+                    return;
+                }
+                float speedPercent = Math.max(
+                        0,
+                        (warlordsPlayer.getSpeed().getLastValue() / BaseToWalkingSpeedValueModifier.BASE_PLAYER_WALK_SPEED - 1) * 100
+                );
+                float bonus = (float) Math.floor(speedPercent / movementSpeedPercent) * critChanceIncreasePercent;
+                if (bonus > 0) {
+                    currentCritChance.addModifier(FloatModifiable.ModifierType.ADDITIVE, getName(), bonus);
+                }
+            }));
         }
+
     }
+
 }

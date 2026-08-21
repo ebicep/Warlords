@@ -81,9 +81,9 @@ public class RaidMenu {
                                 Component.text("Recommended party size: ", NamedTextColor.GRAY)
                                         .append(Component.text("4-8 Players", NamedTextColor.YELLOW)),
                                 Component.empty(),
-                                Component.text("All players must have a ", NamedTextColor.GRAY)
-                                        .append(Component.text("Legendary ", NamedTextColor.GOLD)),
-                                Component.text("Weapon", NamedTextColor.GOLD)
+                                Component.text("All players must have an ", NamedTextColor.GRAY)
+                                        .append(Component.text("Ascendant ", NamedTextColor.RED)),
+                                Component.text("Weapon", NamedTextColor.RED)
                                         .append(Component.text(" or higher equipped.", NamedTextColor.GRAY))
                         ))
                         .addLore(List.of(

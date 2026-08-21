@@ -11,7 +11,6 @@ import com.ebicep.warlords.pve.newitems.setbonus.SetBonus;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class Obelisk extends BaseSet {
 
@@ -54,21 +53,23 @@ public class Obelisk extends BaseSet {
                     cooldownManager -> {
                     },
                     false
-            ).addModifier(
-                    Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE,
-                    (event, currentHealValue) -> {
-                        if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof BossLike) {
-                            currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getName(), 1 + (bossDamageIncreasePercent / 100f));
-                        }
-                    }
-            ).addModifier(
-                    Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE,
-                    (event, currentHealValue) -> {
-                        if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof BossLike) {
-                            currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getName(), 1 - (bossDamageTakenReductionPercent / 100f));
-                        }
-                    }
-            ));
+            ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                if (event.getWarlordsEntity() instanceof WarlordsNPC npc && npc.getMob() instanceof BossLike) {
+                    currentDamageValue.addModifier(
+                            FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                            getName(),
+                            1 + bossDamageIncreasePercent / 100f
+                    );
+                }
+            }).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
+                if (event.getSource() instanceof WarlordsNPC npc && npc.getMob() instanceof BossLike) {
+                    currentDamageValue.addModifier(
+                            FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                            getName(),
+                            1 - bossDamageTakenReductionPercent / 100f
+                    );
+                }
+            }));
         }
 
     }

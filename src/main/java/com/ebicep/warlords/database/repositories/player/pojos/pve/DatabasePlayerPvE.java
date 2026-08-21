@@ -9,6 +9,8 @@ import com.ebicep.warlords.database.repositories.events.pojos.GameEvents;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePlayerPvEBase;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePvEBase;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.anomaly.DatabaseGamePlayerPvEAnomaly;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.anomaly.DatabaseGamePvEAnomaly;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePlayerPvEEvent;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePvEEvent;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.onslaught.DatabaseGamePlayerPvEOnslaught;
@@ -20,6 +22,8 @@ import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.TracksAbilityStats;
 import com.ebicep.warlords.database.repositories.player.pojos.TracksMultiAbilityStats;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.anomaly.AnomalyStatsWarlordsClasses;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.anomaly.DatabasePlayerAnomalyStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.*;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.onslaught.DatabasePlayerOnslaughtStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.onslaught.OnslaughtStatsWarlordsClasses;
@@ -39,6 +43,7 @@ import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
 import com.ebicep.warlords.pve.bountysystem.Bounty;
 import com.ebicep.warlords.pve.bountysystem.BountyUtils;
+import com.ebicep.warlords.pve.consumables.ConsumableManager;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairEntry;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
 import com.ebicep.warlords.pve.events.supplydrop.SupplyDropEntry;
@@ -87,6 +92,8 @@ public class DatabasePlayerPvE implements MultiPvEStats<
     private DatabasePlayerWaveDefenseStats waveDefenseStats = new DatabasePlayerWaveDefenseStats();
     @Field("onslaught_stats")
     private DatabasePlayerOnslaughtStats onslaughtStats = new DatabasePlayerOnslaughtStats();
+    @Field("anomaly_stats")
+    private DatabasePlayerAnomalyStats anomalyStats = new DatabasePlayerAnomalyStats();
     //EVENTS
     @Field("event_stats")
     private DatabasePlayerPvEEventStats eventStats = new DatabasePlayerPvEEventStats();
@@ -115,11 +122,15 @@ public class DatabasePlayerPvE implements MultiPvEStats<
     //WEAPONS
     @Field("weapon_inventory")
     private List<AbstractWeapon> weaponInventory = new ArrayList<>();
+    @Field("favorite_weapon_titles")
+    private List<String> favoriteWeaponTitles = new ArrayList<>();
     //ITEMS
     @Field("item_manager")
     private ItemsManager itemsManager = new ItemsManager();
     @Field("new_item_manager")
     private NewItemsManager newItemsManager = new NewItemsManager();
+    @Field("consumable_manager")
+    private ConsumableManager consumableManager = new ConsumableManager();
 
     //CURRENCIES
     private Map<Currencies, Long> currencies = new LinkedHashMap<>() {{
@@ -230,7 +241,7 @@ public class DatabasePlayerPvE implements MultiPvEStats<
                 //need to search by uuid incase weapon got upgraded or changed
                 for (AbstractWeapon weapon : weaponsFound) {
                     boolean removed = weaponInventory.removeIf(abstractWeapon -> abstractWeapon.getUUID().equals(weapon.getUUID()));
-                    if (!removed && weapon instanceof Salvageable) {
+                    if (!removed && weapon instanceof Salvageable salvageable) {
                         MasterworksFair fair = MasterworksFairManager.currentFair;
                         if (!fair.getCommonPlayerEntries().removeIf(entry -> entry.getWeapon().getUUID().equals(weapon.getUUID())) &&
                                 !fair.getRarePlayerEntries().removeIf(entry -> entry.getWeapon().getUUID().equals(weapon.getUUID())) &&
@@ -238,7 +249,7 @@ public class DatabasePlayerPvE implements MultiPvEStats<
                         ) {
                             ChatChannels.sendDebugMessage((CommandIssuer) null, gamePlayer.getName() + " - Subtracted currency");
                             subtractCurrency(Currencies.SYNTHETIC_SHARD,
-                                    (((Salvageable) weapon).getMaxSalvageAmount() + ((Salvageable) weapon).getMinSalvageAmount()) / 2
+                                    (salvageable.getMaxSalvageAmount() + salvageable.getMinSalvageAmount()) / 2
                             );
                         } else {
                             ChatChannels.sendDebugMessage((CommandIssuer) null, gamePlayer.getName() + " - Removed weapon from fair");
@@ -268,6 +279,8 @@ public class DatabasePlayerPvE implements MultiPvEStats<
                 waveDefenseStats.updateStats(databasePlayer, gamePvEWaveDefense, gamePlayerPvEWaveDefense, multiplier, playersCollection);
             } else if (gameMode == GameMode.ONSLAUGHT && databaseGame instanceof DatabaseGamePvEOnslaught gamePvEOnslaught && gamePlayer instanceof DatabaseGamePlayerPvEOnslaught gamePlayerPvEOnslaught) {
                 onslaughtStats.updateStats(databasePlayer, gamePvEOnslaught, gamePlayerPvEOnslaught, multiplier, playersCollection);
+            } else if (gameMode == GameMode.ANOMALY && databaseGame instanceof DatabaseGamePvEAnomaly gamePvEAnomaly && gamePlayer instanceof DatabaseGamePlayerPvEAnomaly gamePlayerPvEAnomaly) {
+                getAnomalyStats().updateStats(databasePlayer, gamePvEAnomaly, gamePlayerPvEAnomaly, multiplier, playersCollection);
             } else {
                 ChatUtils.MessageType.GAME.sendErrorMessage("Unable to update stats for " + databaseGame.getClass().getSimpleName() + " and " + gamePlayer.getClass()
                                                                                                                                                           .getSimpleName());
@@ -337,6 +350,13 @@ public class DatabasePlayerPvE implements MultiPvEStats<
         return newItemsManager;
     }
 
+    public ConsumableManager getConsumableManager() {
+        if (consumableManager == null) {
+            consumableManager = new ConsumableManager();
+        }
+        return consumableManager;
+    }
+
     public void addMobDrops(MobDrop mobDrop, long amount) {
         if (AdminCommand.BYPASSED_PLAYER_CURRENCIES.contains(this)) {
             return;
@@ -389,6 +409,13 @@ public class DatabasePlayerPvE implements MultiPvEStats<
 
     public List<AbstractWeapon> getWeaponInventory() {
         return weaponInventory;
+    }
+
+    public List<String> getFavoriteWeaponTitles() {
+        if (favoriteWeaponTitles == null) {
+            favoriteWeaponTitles = new ArrayList<>();
+        }
+        return favoriteWeaponTitles;
     }
 
     public List<MasterworksFairEntry> getMasterworksFairEntries() {
@@ -518,6 +545,13 @@ public class DatabasePlayerPvE implements MultiPvEStats<
         return onslaughtStats;
     }
 
+    public DatabasePlayerAnomalyStats getAnomalyStats() {
+        if (anomalyStats == null) {
+            anomalyStats = new DatabasePlayerAnomalyStats();
+        }
+        return anomalyStats;
+    }
+
     public Map<Specializations, Map<Integer, Instant>> getAlternativeMasteriesUnlocked() {
         return alternativeMasteriesUnlocked;
     }
@@ -538,6 +572,10 @@ public class DatabasePlayerPvE implements MultiPvEStats<
             stats.add((PvEStatsWarlordsClasses<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase, PvEStats<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase>, PvEStatsWarlordsSpecs<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase, PvEStats<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase>>>)
                     (Object) stat);
         }
+        for (AnomalyStatsWarlordsClasses stat : getAnomalyStats().getStats()) {
+            stats.add((PvEStatsWarlordsClasses<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase, PvEStats<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase>, PvEStatsWarlordsSpecs<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase, PvEStats<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase>>>)
+                    (Object) stat);
+        }
         for (PvEEventStatsWarlordsClasses<DatabaseGamePvEEvent<DatabaseGamePlayerPvEEvent>, DatabaseGamePlayerPvEEvent, PvEEventStats<DatabaseGamePvEEvent<DatabaseGamePlayerPvEEvent>, DatabaseGamePlayerPvEEvent>, PvEEventStatsWarlordsSpecs<DatabaseGamePvEEvent<DatabaseGamePlayerPvEEvent>, DatabaseGamePlayerPvEEvent, PvEEventStats<DatabaseGamePvEEvent<DatabaseGamePlayerPvEEvent>, DatabaseGamePlayerPvEEvent>>> stat : eventStats.getStats()) {
             stats.add((PvEStatsWarlordsClasses<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase, PvEStats<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase>, PvEStatsWarlordsSpecs<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase, PvEStats<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase>>>)
                     (Object) stat);
@@ -547,7 +585,7 @@ public class DatabasePlayerPvE implements MultiPvEStats<
 
     @Override
     public Collection<TracksAbilityStats> getAllAbilityStats() {
-        return List.of(waveDefenseStats, onslaughtStats, eventStats);
+        return List.of(waveDefenseStats, onslaughtStats, getAnomalyStats(), eventStats);
     }
 
     public Map<String, Long> getSeasonalVendorRewardsPurchased() {

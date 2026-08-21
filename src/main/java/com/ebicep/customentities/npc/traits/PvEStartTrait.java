@@ -1,17 +1,21 @@
 package com.ebicep.customentities.npc.traits;
 
+import com.ebicep.customentities.npc.HasNPCLabelHologram;
+import com.ebicep.customentities.npc.NPCLabelHologram;
 import com.ebicep.customentities.npc.WarlordsTrait;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.GameMode;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
-import net.citizensnpcs.trait.HologramTrait;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 
 import static com.ebicep.warlords.pve.DifficultyMenu.openDifficultyMenu;
 
-public class PvEStartTrait extends WarlordsTrait {
+public class PvEStartTrait extends WarlordsTrait implements HasNPCLabelHologram {
 
+    private final NPCLabelHologram labelHologram = new NPCLabelHologram("lobby-pve-start");
     private int ticks = 0;
     private long lastPlayerCount = 0;
     private long lastPlayerCountInLobby = 0;
@@ -21,7 +25,12 @@ public class PvEStartTrait extends WarlordsTrait {
     }
 
     @Override
-    public void onAttach() {
+    public NPCLabelHologram getLabelHologram() {
+        return labelHologram;
+    }
+
+    @Override
+    public void onSpawn() {
         updateHologram(true);
     }
 
@@ -36,17 +45,18 @@ public class PvEStartTrait extends WarlordsTrait {
     private void updateHologram(boolean init) {
         long playerCount = Warlords.getGameManager().getPlayerCount(GameMode.WAVE_DEFENSE);
         long playerCountInLobby = Warlords.getGameManager().getPlayerCountInLobby(GameMode.WAVE_DEFENSE);
-        if (init || playerCount != lastPlayerCount || playerCountInLobby != lastPlayerCountInLobby) {
-            lastPlayerCount = playerCount;
-            lastPlayerCountInLobby = playerCountInLobby;
-            HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
-            hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + playerCount + " Players");
-            hologramTrait.setLine(1, ChatColor.GRAY.toString() + playerCountInLobby + " in Lobby");
-            if (init) {
-                hologramTrait.setLine(2, ChatColor.GOLD + ChatColor.BOLD.toString() + "Wave Defense");
-//                hologramTrait.setLine(3, ChatColor.YELLOW + ChatColor.BOLD.toString() + "CLICK TO PLAY");
-            }
+        if (!init && playerCount == lastPlayerCount && playerCountInLobby == lastPlayerCountInLobby) {
+            return;
         }
+        lastPlayerCount = playerCount;
+        lastPlayerCountInLobby = playerCountInLobby;
+        labelHologram.update(
+                npc,
+                ComponentBuilder.create("Wave Defense", NamedTextColor.GOLD, TextDecoration.BOLD)
+                        .newLine(playerCountInLobby + " in Lobby", NamedTextColor.GRAY)
+                        .newLine(playerCount + " Players", NamedTextColor.YELLOW, TextDecoration.BOLD)
+                        .build()
+        );
     }
 
     @Override

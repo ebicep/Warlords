@@ -1,12 +1,16 @@
 package com.ebicep.warlords.pve.rewards.types;
 
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.general.FutureMessage;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.mobs.MobDrop;
 import com.ebicep.warlords.pve.rewards.AbstractReward;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 
 public class CompensationReward extends AbstractReward {
@@ -34,6 +38,12 @@ public class CompensationReward extends AbstractReward {
         }
     }
 
+    public static class PrestigeOrbLoginPatch extends CompensationReward {
+        public PrestigeOrbLoginPatch() {
+            super(new LinkedHashMap<>(), "Prestige Orb Login Patch");
+        }
+    }
+
     public static class CelestialBronzePatch extends CompensationReward {
         public CelestialBronzePatch() {
         }
@@ -53,6 +63,27 @@ public class CompensationReward extends AbstractReward {
 
         public BlessingPatch(LinkedHashMap<Spendable, Long> rewards) {
             super(rewards, "Blessings Compensation");
+        }
+    }
+
+    public static class LevelUpPatch extends CompensationReward {
+        public LevelUpPatch() {
+        }
+
+        public LevelUpPatch(LinkedHashMap<Spendable, Long> rewards) {
+            super(rewards, "Level Up");
+        }
+
+        public static void giveLevelUpPatchFutureMessage(DatabasePlayer databasePlayer) {
+            databasePlayer.addFutureMessage(FutureMessage.create(
+                    Arrays.asList(
+                            Component.text("------------------------------------------------", NamedTextColor.DARK_AQUA),
+                            Component.text("Your Level Up rewards were auto claimed!", NamedTextColor.GREEN),
+                            Component.text("Claim them in your Rewards Inventory", NamedTextColor.GREEN),
+                            Component.text("------------------------------------------------", NamedTextColor.DARK_AQUA)
+                    ),
+                    true
+            ));
         }
     }
 

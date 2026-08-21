@@ -12,6 +12,7 @@ public enum NewItemsSlot implements NamedEnum {
     GLOVES("Gloves", Material.HONEYCOMB),
     BOOTS("Boots", Material.DIAMOND_BOOTS),
     RING("Ring", Material.ENDER_PEARL),
+    BRACELET("Bracelet", Material.SADDLE),
     TOME("Tome", Material.BOOK),
 
     ;

@@ -119,6 +119,7 @@ public abstract class WarlordsEntity {
     protected FloatModifiable energyPerSec;
     protected FloatModifiable energyPerHit;
     protected FloatModifiable regenPerSecond = new FloatModifiable(0);
+    private final FloatModifiable energyGainPerTickMod = new FloatModifiable(0);
     protected FloatModifiableFilter maxBaseHealthFilter = new HealthFilter();
     private final List<Float> recordDamage = new ArrayList<>();
     private final PlayerStatisticsMinute minuteStats = new PlayerStatisticsMinute();
@@ -1312,16 +1313,13 @@ public abstract class WarlordsEntity {
         // Energy
         if (getCurrentEnergy() < getMaxEnergy()) {
             // Standard energy value per second.
-            final FloatModifiable energyGainPerTick = new FloatModifiable(getEnergyPerSec().getCalculatedValue() / 20);
+            energyGainPerTickMod.clearModifiers();
+            energyGainPerTickMod.setBaseValue(getEnergyPerSec().getCalculatedValue() / 20);
             for (AbstractCooldown<?> abstractCooldown : getCooldownManager().getCooldownsDistinct()) {
-                abstractCooldown.applyModifiers(Modifier.ENERGY_GAIN_PER_TICK, m -> m.apply(energyGainPerTick));
+                abstractCooldown.applyModifiers(Modifier.ENERGY_GAIN_PER_TICK, m -> m.apply(energyGainPerTickMod));
             }
-            energyGainPerTick.refresh();
             // Setting energy gain to the value after all ability instance multipliers have been applied.
-            float newEnergy = getCurrentEnergy() + energyGainPerTick.getCalculatedValue();
-            if (newEnergy > getMaxEnergy()) {
-                newEnergy = getMaxEnergy();
-            }
+            float newEnergy = Math.min(getMaxEnergy(), getCurrentEnergy() + energyGainPerTickMod.getCalculatedValue());
             if (flag(WarlordsEntityFlag.GAIN_ENERGY)) {
                 setCurrentEnergy(newEnergy);
             }

@@ -5,8 +5,10 @@ import com.ebicep.warlords.guilds.GuildSpendable;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.ExpSpendable;
 import com.ebicep.warlords.pve.Spendable;
+import com.ebicep.warlords.pve.consumables.vials.Vial;
 import com.ebicep.warlords.pve.items.types.SpendableRandomItem;
 import com.ebicep.warlords.pve.mobs.MobDrop;
+import com.ebicep.warlords.pve.newitems.SpendableRandomNewItem;
 import com.ebicep.warlords.util.chat.ChatChannels;
 
 import javax.annotation.Nonnull;
@@ -30,6 +32,16 @@ public class SpendableParser {
             }
         }
         for (ExpSpendable value : ExpSpendable.VALUES) {
+            if (value.name().equalsIgnoreCase(s)) {
+                return value;
+            }
+        }
+        for (Vial value : Vial.VALUES) {
+            if (value.name().equalsIgnoreCase(s)) {
+                return value;
+            }
+        }
+        for (SpendableRandomNewItem value : SpendableRandomNewItem.VALUES) {
             if (value.name().equalsIgnoreCase(s)) {
                 return value;
             }

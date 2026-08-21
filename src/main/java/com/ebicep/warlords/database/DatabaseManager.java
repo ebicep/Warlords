@@ -24,12 +24,15 @@ import com.ebicep.warlords.database.repositories.timings.TimingsService;
 import com.ebicep.warlords.database.repositories.timings.pojos.DatabaseTiming;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.rewards.types.CompensationReward;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.StarterWeapon;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -187,6 +190,9 @@ public class DatabaseManager {
                 DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
             }
         }
+
+        applyPrestigeOrbLoginPatch(uuid, databasePlayer);
+
         // PATCHES
         List<DatabasePlayer.Patches> patchesApplied = databasePlayer.getPatchesApplied();
         for (DatabasePlayer.Patches patch : DatabasePlayer.Patches.VALUES) {
@@ -204,6 +210,38 @@ public class DatabaseManager {
         }
 
         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+    }
+
+    private static void applyPrestigeOrbLoginPatch(UUID uuid, DatabasePlayer databasePlayer) {
+        DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+        boolean alreadyApplied = pveStats.getCompensationRewards()
+                .stream()
+                .anyMatch(CompensationReward.PrestigeOrbLoginPatch.class::isInstance);
+        if (alreadyApplied) {
+            return;
+        }
+
+        int totalPrestige = 0;
+        for (Specializations specialization : Specializations.VALUES) {
+            totalPrestige += databasePlayer.getSpec(specialization).getPrestige();
+        }
+        long prestigeOrbs = totalPrestige * 2L;
+        if (prestigeOrbs > 0) {
+            pveStats.addCurrency(Currencies.PRESTIGE_ORB, prestigeOrbs);
+            Player player = Bukkit.getPlayer(uuid);
+            if (player != null) {
+                player.sendMessage(Component.text("You received ", NamedTextColor.GREEN)
+                        .append(Currencies.PRESTIGE_ORB.getCostColoredName(prestigeOrbs))
+                        .append(Component.text(" for your " + totalPrestige + " total Prestige ranks.", NamedTextColor.GREEN)));
+            }
+        }
+
+        CompensationReward.PrestigeOrbLoginPatch marker = new CompensationReward.PrestigeOrbLoginPatch();
+        marker.setTimeClaimed();
+        pveStats.getCompensationRewards().add(marker);
+        ChatUtils.MessageType.WARLORDS.sendMessage(
+                "Applied Prestige Orb login patch to " + uuid + ": " + totalPrestige + " prestige, " + prestigeOrbs + " orbs"
+        );
     }
 
     public static void queueUpdatePlayerAsync(DatabasePlayer databasePlayer) {
@@ -292,5 +330,4 @@ public class DatabaseManager {
                 .async(() -> weeklyBlessingsService.update(weeklyBlessings))
                 .execute();
     }
-
 }

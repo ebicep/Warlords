@@ -1,28 +1,40 @@
 package com.ebicep.customentities.npc.traits;
 
+import com.ebicep.customentities.npc.HasNPCLabelHologram;
+import com.ebicep.customentities.npc.NPCLabelHologram;
 import com.ebicep.customentities.npc.WarlordsTrait;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.GameMode;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.game.option.pve.anomaly.AnomalyMenu;
-import com.ebicep.warlords.game.option.pve.anomaly.AnomalyOption;
-import com.ebicep.warlords.pve.OnslaughtMenu;
+import com.ebicep.warlords.game.option.pve.anomaly.AnomalyRotation;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.trait.HologramTrait;
 import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 
-public class AnomalyStartTrait extends WarlordsTrait {
+public class AnomalyStartTrait extends WarlordsTrait implements HasNPCLabelHologram {
 
-    private int ticks = 0;
-    private long lastPlayerCount = 0;
-    private long lastPlayerCountInLobby = 0;
+    private final NPCLabelHologram labelHologram = new NPCLabelHologram("lobby-anomaly");
+    private int ticks;
+    private long lastPlayerCount;
+    private long lastPlayerCountInLobby;
+    private long lastRotationHour = Long.MIN_VALUE;
 
     public AnomalyStartTrait() {
         super("AnomalyStartTrait");
     }
 
     @Override
-    public void onAttach() {
+    public NPCLabelHologram getLabelHologram() {
+        return labelHologram;
+    }
+
+    @Override
+    public void onSpawn() {
         updateHologram(true);
     }
 
@@ -31,24 +43,27 @@ public class AnomalyStartTrait extends WarlordsTrait {
         if (ticks++ % 20 != 0) {
             return;
         }
-
         updateHologram(false);
     }
 
     private void updateHologram(boolean init) {
-        long playerCount = Warlords.getGameManager().getPlayerCount(GameMode.ONSLAUGHT);
-        long playerCountInLobby = Warlords.getGameManager().getPlayerCountInLobby(GameMode.ONSLAUGHT);
-        if (init || playerCount != lastPlayerCount || playerCountInLobby != lastPlayerCountInLobby) {
-            lastPlayerCount = playerCount;
-            lastPlayerCountInLobby = playerCountInLobby;
-            HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
-            hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + playerCount + " Players");
-            hologramTrait.setLine(1, ChatColor.GRAY.toString() + playerCountInLobby + " in Lobby");
-            if (init) {
-                hologramTrait.setLine(2, ChatColor.GREEN + ChatColor.BOLD.toString() + "Anomaly");
-                hologramTrait.setLine(3, ChatColor.GRAY + "CURRENT ANOMALY: " + ChatColor.GOLD + AnomalyOption.getDailyAnomaly().getName());
-            }
+        long playerCount = Warlords.getGameManager().getPlayerCount(GameMode.ANOMALY);
+        long playerCountInLobby = Warlords.getGameManager().getPlayerCountInLobby(GameMode.ANOMALY);
+        long rotationHour = AnomalyRotation.getRotationStart().getEpochSecond();
+        if (!init && playerCount == lastPlayerCount && playerCountInLobby == lastPlayerCountInLobby) {
+            return;
         }
+        lastPlayerCount = playerCount;
+        lastPlayerCountInLobby = playerCountInLobby;
+        lastRotationHour = rotationHour;
+        labelHologram.update(
+                npc,
+                ComponentBuilder.create("CURRENT ANOMALY: ", NamedTextColor.GRAY).append(Component.text(AnomalyRotation.getCurrentAnomaly().getName(), NamedTextColor.GOLD))
+                        .newLine("Anomaly", NamedTextColor.GREEN, TextDecoration.BOLD)
+                        .newLine(playerCountInLobby + " in Lobby", NamedTextColor.GRAY)
+                        .newLine(playerCount + " Players", NamedTextColor.YELLOW, TextDecoration.BOLD)
+                        .build()
+        );
     }
 
     @Override

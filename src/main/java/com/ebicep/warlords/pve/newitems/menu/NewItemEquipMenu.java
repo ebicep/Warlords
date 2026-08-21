@@ -44,7 +44,7 @@ public class NewItemEquipMenu {
             new ItemSlotPosition(NewItemsSlot.BOOTS, new Pair<>(1, 4), new Pair<>(2, 4)),
             new ItemSlotPosition(NewItemsSlot.GLOVES, new Pair<>(6, 1), new Pair<>(7, 1)),
             new ItemSlotPosition(NewItemsSlot.RING, new Pair<>(6, 2), new Pair<>(7, 2)),
-            new ItemSlotPosition(NewItemsSlot.RING, new Pair<>(6, 3), new Pair<>(7, 3)),
+            new ItemSlotPosition(NewItemsSlot.BRACELET, new Pair<>(6, 3), new Pair<>(7, 3)),
             new ItemSlotPosition(NewItemsSlot.TOME, new Pair<>(6, 4), new Pair<>(7, 4))
     };
 

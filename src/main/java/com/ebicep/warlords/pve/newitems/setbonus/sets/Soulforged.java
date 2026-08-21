@@ -13,14 +13,14 @@ import java.util.List;
 public class Soulforged extends BaseSet {
 
     private int healthThreshold;
-    private int energyPerSecondBonus;
+    private int energyPerSecondBonusPercent;
     private int energyRegenDisabledBelowHealthPercent;
 
     @Override
     public void init() {
         super.init();
         this.healthThreshold = getValue("healthThreshold", int.class);
-        this.energyPerSecondBonus = getValue("energyPerSecondBonus", int.class);
+        this.energyPerSecondBonusPercent = getValue("energyPerSecondBonusPercent", int.class);
         this.energyRegenDisabledBelowHealthPercent = getValue("energyRegenDisabledBelowHealthPercent", int.class);
     }
 
@@ -36,7 +36,7 @@ public class Soulforged extends BaseSet {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(healthThreshold, energyPerSecondBonus, energyRegenDisabledBelowHealthPercent);
+        return List.of(healthThreshold, energyPerSecondBonusPercent, energyRegenDisabledBelowHealthPercent);
     }
 
     public class Bonus implements SetBonus.Bonus {
@@ -53,39 +53,25 @@ public class Soulforged extends BaseSet {
                     cooldownManager -> {
                     },
                     false
-            ).addModifier(
-                    Modifier.ENERGY_GAIN_PER_TICK,
-                    energyGainPerTick -> {
-                        if (warlordsPlayer.isDead()) {
-                            return;
-                        }
-
-                        float maxHealth = warlordsPlayer.getMaxHealth();
-                        if (maxHealth <= 0) {
-                            return;
-                        }
-
-                        float healthPercent = warlordsPlayer.getCurrentHealth() / maxHealth * 100f;
-
-                        if (healthPercent < energyRegenDisabledBelowHealthPercent) {
-                            energyGainPerTick.addModifier(
-                                    FloatModifiable.ModifierType.OVERRIDING,
-                                    getName(),
-                                    0
-                            );
-                            return;
-                        }
-
-                        if (healthPercent >= healthThreshold) {
-                            energyGainPerTick.addModifier(
-                                    FloatModifiable.ModifierType.ADDITIVE,
-                                    getName(),
-                                    energyPerSecondBonus / 20f
-                            );
-                        }
-                    }
-            ));
-
+            ).addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> {
+                if (warlordsPlayer.isDead() || warlordsPlayer.getMaxHealth() <= 0) {
+                    return;
+                }
+                float healthPercent = warlordsPlayer.getCurrentHealth() / warlordsPlayer.getMaxHealth() * 100f;
+                if (healthPercent < energyRegenDisabledBelowHealthPercent) {
+                    energyGainPerTick.addModifier(
+                            FloatModifiable.ModifierType.OVERRIDING,
+                            getName(),
+                            0
+                    );
+                } else if (healthPercent >= healthThreshold) {
+                    energyGainPerTick.addModifier(
+                            FloatModifiable.ModifierType.ADDITIVE,
+                            getName(),
+                            energyPerSecondBonusPercent / 20f
+                    );
+                }
+            }));
         }
 
     }

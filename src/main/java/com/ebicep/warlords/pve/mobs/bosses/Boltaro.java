@@ -86,6 +86,11 @@ public class Boltaro extends AbstractMob implements BossMob {
     }
 
     @Override
+    public double getMobScale() {
+        return 1.1;
+    }
+
+    @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
         if (ticksElapsed % 100 == 0) {
             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 1.5f);

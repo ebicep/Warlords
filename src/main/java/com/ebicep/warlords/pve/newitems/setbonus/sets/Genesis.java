@@ -1,7 +1,5 @@
 package com.ebicep.warlords.pve.newitems.setbonus.sets;
 
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -14,7 +12,6 @@ import com.ebicep.warlords.pve.newitems.setbonus.SetBonus;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Sound;
@@ -52,6 +49,8 @@ public class Genesis extends BaseSet {
 
     public class Bonus implements SetBonus.Bonus {
 
+        private int cooldownTicks;
+
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
@@ -64,50 +63,55 @@ public class Genesis extends BaseSet {
                     cooldownManager -> {
                     },
                     false,
-                    (cooldown, ticksElapsed) -> {
-                        cooldownSeconds--;
-                    }
-            ).addModifier(
-                    Modifier.ON_INCOMING_DAMAGE,
-                    (event, currentDamageValue, isCrit) -> {
-                        if (cooldownSeconds > 0) {
-                            return;
+                    (cooldown, ticks) -> {
+                        if (cooldownTicks > 0) {
+                            cooldownTicks--;
                         }
+                    }
+            ).addModifier(Modifier.ON_INCOMING_DAMAGE, (event, currentDamageValue, isCrit) -> {
+                if (cooldownTicks > 0 || warlordsPlayer.isDead()) {
+                    return;
+                }
+                float threshold = warlordsPlayer.getMaxHealth() * healthThreshold / 100f;
+                float predictedHealth = warlordsPlayer.getCurrentHealth() - currentDamageValue;
+                if (warlordsPlayer.getCurrentHealth() <= threshold || predictedHealth >= threshold) {
+                    return;
+                }
+                cooldownTicks = cooldownSeconds * 20;
+                Utils.playGlobalSound(warlordsPlayer.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 5, .7f);
+                new GameRunnable(warlordsPlayer.getGame()) {
+
+                    @Override
+                    public void run() {
                         if (warlordsPlayer.isDead()) {
                             return;
                         }
-                        float lowHealthThreshold = warlordsPlayer.getMaxHealth() * (healthThreshold / 100f);
-                        if (warlordsPlayer.getCurrentHealth() < lowHealthThreshold) {
-                            Utils.playGlobalSound(warlordsPlayer.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 5, 0.7f);
-                            new GameRunnable(warlordsPlayer.getGame()) {
-                                @Override
-                                public void run() {
-                                    EffectUtils.playFirework(warlordsPlayer.getLocation(), FireworkEffect.builder()
-                                            .with(FireworkEffect.Type.BALL_LARGE)
-                                            .withColor(Color.WHITE)
-                                            .withTrail()
-                                            .build()
-                                    );
-                                    EffectUtils.strikeLightningInCylinder(warlordsPlayer.getLocation(), 10, false);
-                                    PlayerFilter.entitiesAround(warlordsPlayer, 10, 10, 10)
-                                            .aliveEnemiesOf(warlordsPlayer)
-                                            .forEach(enemy -> {
-                                                        enemy.addInstance(InstanceBuilder
-                                                                .damage()
-                                                                .cause(getName())
-                                                                .source(warlordsPlayer)
-                                                                .value(warlordsPlayer.getMaxHealth() * maxHealthDamageMultiplier)
-                                                                .flags(InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST)
-                                                        );
-                                                    }
-                                            );
-                                }
-                            }.runTaskLater(40);
-
-                            cooldownSeconds = 30 * 20;
-                        }
+                        EffectUtils.playFirework(
+                                warlordsPlayer.getLocation(),
+                                FireworkEffect
+                                        .builder()
+                                        .with(FireworkEffect.Type.BALL_LARGE)
+                                        .withColor(Color.WHITE)
+                                        .withTrail()
+                                        .build()
+                        );
+                        EffectUtils.strikeLightningInCylinder(warlordsPlayer.getLocation(), 10, false);
+                        PlayerFilter
+                                .entitiesAround(warlordsPlayer, 10, 10, 10)
+                                .aliveEnemiesOf(warlordsPlayer)
+                                .forEach(enemy -> enemy.addInstance(InstanceBuilder
+                                        .damage()
+                                        .cause(getName())
+                                        .source(warlordsPlayer)
+                                        .value(warlordsPlayer.getMaxHealth() * maxHealthDamageMultiplier / 100f)
+                                        .flags(InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST)
+                                ));
                     }
-            ));
+
+                }.runTaskLater(40);
+            }));
         }
+
     }
+
 }

@@ -19,19 +19,19 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Gravemind extends BaseSet {
 
-    private int summonChance;
-    private float duration;
-
     public static final ItemStack CHESTPLATE = Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 200, 0);
     public static final ItemStack LEGGINGS = Utils.applyColorTo(Material.LEATHER_LEGGINGS, 255, 200, 0);
     public static final ItemStack BOOTS = Utils.applyColorTo(Material.LEATHER_BOOTS, 255, 200, 0);
+
+    private int summonChance;
+    private float duration;
 
     @Override
     public void init() {
@@ -59,60 +59,38 @@ public class Gravemind extends BaseSet {
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
-            Listener listener = new Listener() {
+            warlordsPlayer.getGame().registerEvents(new Listener() {
 
                 @EventHandler
-                private void onEnemyDeath(WarlordsDeathEvent event) {
-                    if (event.getWarlordsEntity().equals(warlordsPlayer)) {
-                        return;
-                    }
-                    if (event.getWarlordsEntity().getTeam().equals(warlordsPlayer.getTeam())) {
-                        return;
-                    }
-                    if (ThreadLocalRandom.current().nextDouble() > summonChance / 100.0) {
+                public void onDeath(WarlordsDeathEvent event) {
+                    if (!Objects.equals(event.getKiller(), warlordsPlayer) ||
+                            event.getWarlordsEntity().getTeam().equals(warlordsPlayer.getTeam()) ||
+                            ThreadLocalRandom.current().nextDouble() > summonChance / 100.0
+                    ) {
                         return;
                     }
                     spawnMob(warlordsPlayer, event.getWarlordsEntity().getLocation());
                 }
-            };
-            warlordsPlayer.getGame().registerEvents(listener);
+
+            });
         }
 
     }
 
-    private void spawnMob(WarlordsPlayer warlordsPlayer, Location summonLocation) {
-        Optional<PveOption> pveOption = warlordsPlayer.getGame().getOption(PveOption.class)
-                .stream()
-                .findFirst();
-        warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.ENTITY_ZOMBIE_VILLAGER_CURE, 0.5f, 0.5f);
-        warlordsPlayer.sendMessage(Component.text("Your gravemind has summoned a mob for 30 seconds!", NamedTextColor.GREEN));
-
-        HashSet<AbstractMob> spawnedMobs = new HashSet<>();
-        AbstractMob mob = Mob.ZOMBIE_SWORDSMAN.createMob(summonLocation);
-        updateMobEquipment(mob, warlordsPlayer);
-        spawnedMobs.add(mob);
-        if (warlordsPlayer.getTeam() == null) {
+    private void spawnMob(WarlordsPlayer warlordsPlayer, Location location) {
+        Optional<PveOption> optionalPveOption = warlordsPlayer.getGame().getOption(PveOption.class).stream().findFirst();
+        if (optionalPveOption.isEmpty() || warlordsPlayer.getTeam() == null) {
             return;
         }
-        pveOption.get().spawnNewMob(mob, warlordsPlayer.getTeam());
-
-        new GameRunnable(warlordsPlayer.getGame()) {
-            @Override
-            public void run() {
-                spawnedMobs.forEach(mob -> {
-                    if (pveOption.get().getMobs().contains(mob)) {
-                        mob.getWarlordsNPC().die(mob.getWarlordsNPC(), WarlordsDeathEvent.DeathInfoBuilder.create().setForced(true));
-                        pveOption.get().despawnMob(mob);
-                    }
-                });
-                spawnedMobs.clear();
-            }
-        }.runTaskLater((long) (20 * duration));
-    }
-
-    private static void updateMobEquipment(AbstractMob mob, WarlordsPlayer player) {
+        PveOption pveOption = optionalPveOption.get();
+        warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.ENTITY_ZOMBIE_VILLAGER_CURE, .5f, .5f);
+        warlordsPlayer.sendMessage(Component.text(
+                "Your Gravemind summoned a mob for " + (int) duration + " seconds!",
+                NamedTextColor.GREEN
+        ));
+        AbstractMob mob = Mob.ZOMBIE_SWORDSMAN.createMob(location);
         mob.setEquipment(new Utils.SimpleEntityEquipment(
-                HeadUtils.getHead(player.getUuid()),
+                HeadUtils.getHead(warlordsPlayer.getUuid()),
                 CHESTPLATE,
                 LEGGINGS,
                 BOOTS,
@@ -120,5 +98,22 @@ public class Gravemind extends BaseSet {
                 mob.getEquipment().getItemInOffHand()
         ));
         mob.updateEquipment();
+        pveOption.spawnNewMob(mob, warlordsPlayer.getTeam());
+        Summoner.applyToSummon(mob, warlordsPlayer);
+        new GameRunnable(warlordsPlayer.getGame()) {
+
+            @Override
+            public void run() {
+                if (pveOption.getMobs().contains(mob)) {
+                    mob.getWarlordsNPC().die(
+                            mob.getWarlordsNPC(),
+                            WarlordsDeathEvent.DeathInfoBuilder.create().setForced(true)
+                    );
+                    pveOption.despawnMob(mob);
+                }
+            }
+
+        }.runTaskLater((long) (20 * duration));
     }
+
 }

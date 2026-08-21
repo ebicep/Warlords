@@ -38,6 +38,7 @@ public class Multiply extends BaseSet {
     }
 
     public class Bonus implements SetBonus.Bonus {
+
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
@@ -50,22 +51,16 @@ public class Multiply extends BaseSet {
                     cooldownManager -> {
                     },
                     false
-            ).addModifier(
-                    Modifier.MODIFY_OUTGOING_CRIT_MULTIPLIER,
-                    (event, currentCritMultiplier) -> {
-                        int stacks = (int) (warlordsPlayer.getMaxEnergy() / maxEnergyRequirement);
-                        if (stacks <= 0) {
-                            return;
-                        }
-
-                        currentCritMultiplier.addModifier(
-                                FloatModifiable.ModifierType.ADDITIVE,
-                                getName(),
-                                critMultiplierIncreasePercent
-                        );
-                    }
-            ));
-
+            ).addModifier(Modifier.MODIFY_OUTGOING_CRIT_MULTIPLIER, (event, currentCritMultiplier) -> {
+                int stacks = (int) (warlordsPlayer.getMaxEnergy() / maxEnergyRequirement);
+                if (stacks > 0) {
+                    currentCritMultiplier.addModifier(
+                            FloatModifiable.ModifierType.ADDITIVE,
+                            getName(),
+                            critMultiplierIncreasePercent * stacks
+                    );
+                }
+            }));
         }
 
     }

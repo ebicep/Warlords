@@ -220,15 +220,21 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
         @Nullable
         HitResult hit = null;
         double hitDistance = Double.MAX_VALUE;
-        for (Entity entity : currentLocation.getWorld().getEntities()) {
-            WarlordsEntity wp = getFromEntity(entity);
+        double inflate = hitboxInflation.getCalculatedValue();
+        Iterator<WarlordsEntity> entities = shooter.getGame().warlordsEntities().iterator();
+        while (entities.hasNext()) {
+            WarlordsEntity wp = entities.next();
             if (nonCollisionCheck(projectile, currentLocation, actualSpeed, shooter, wp)) {
+                continue;
+            }
+            Entity entity = wp.getEntity();
+            if (entity == null || !entity.isValid()) {
                 continue;
             }
             // This logic does not properly deal with an EnderDragon entity, as it has a complex hitbox
             assert entity instanceof CraftEntity;
             net.minecraft.world.entity.Entity nmsEntity = ((CraftEntity) entity).getHandle();
-            AABB aabb = nmsEntity.getBoundingBox().inflate(hitboxInflation.getCalculatedValue());
+            AABB aabb = nmsEntity.getBoundingBox().inflate(inflate);
             Optional<Vec3> vec3 = aabb.clip(currentPosition, nextPosition);
             if (vec3.isEmpty()) {
                 continue;

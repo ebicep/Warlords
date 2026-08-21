@@ -245,7 +245,7 @@
         "description": "Gain {{heal}} max health and {{energy}} max energy. Increase the cooldown of {{aqua:Berserk}} by {{ticks}}; it heals you for {{heal}} true healing upon activation.",
         "healthIncrease": 800,
         "maxEnergyIncrease": 100,
-        "berserkCooldownIncreaseTicks": 360,
+        "berserkCooldownIncreaseTicks": 240,
         "berserkActivationHeal": 1800
       },
       "vitalityBoost": {
@@ -253,7 +253,7 @@
         "name": "Vitality Boost",
         "description": "Gain {{heal}} max health. Passively heal for {{heal}} health per second.",
         "healthIncrease": 600,
-        "passiveRegen": 60
+        "passiveRegen": 50
       },
       "striker": {
         "difficulty": 1,
@@ -396,7 +396,7 @@
       "sovereignSolitude": {
         "difficulty": 4,
         "name": "Solo Support",
-        "description": "A Marked ally gains {{speed;%}} movement speed during the Mark. The marked ally always receives {{aqua:Crusader's Strike}} energy at any range until a new ally is Marked or either player dies; the energy link persists after the Mark expires. Gain {{heal}} max health while carrying the flag. Reduce the cooldown of {{aqua:Holy Radiance}} by {{ticks}}.",
+        "description": "A Marked ally gains {{speed;%}} movement speed during the Mark. The marked ally always receives {{aqua:Crusader's Strike}} energy at any range until a new ally is Marked; the energy link persists after the Mark expires. Gain {{heal}} max health while carrying the flag. Reduce the cooldown of {{aqua:Holy Radiance}} by {{ticks}}.",
         "markedAllySpeedPercent": 40,
         "radianceCooldownReductionTicks": 80,
         "flagHealthIncrease": 1000
@@ -404,11 +404,12 @@
       "rallyingPresence": {
         "difficulty": 2,
         "name": "Rallying Presence",
-        "description": "Increase the energy per second granted by {{aqua:Inspiring Presence}} by {{energy}} and the speed granted by {{speed;%}}. Inspiring Presence grants all allies {{damage;%}} damage for every ally hit by presence. Each {{aqua:Crusader's Strike}} will increase the duration of your own Inspiring Presence effect by {{ticks}}.",
+        "description": "Increase the energy per second granted by {{aqua:Inspiring Presence}} by {{energy}} and the speed granted by {{speed;%}}. Inspiring Presence grants all allies {{damage;%}} damage for every ally hit by presence, up to {{damage;%}}. Each {{aqua:Crusader's Strike}} will increase the duration of your own Inspiring Presence effect by {{ticks}}.",
         "energyPerSecondIncrease": 3,
         "speedIncreasePercent": 15,
-        "damagePerAllyHitPercent": 1,
-        "inspiringPresenceDurationIncreasePerStrikeTicks": 10
+        "damagePerAllyHitPercent": 2,
+        "inspiringPresenceDurationIncreasePerStrikeTicks": 10,
+        "damageCapPercent": 12.5
       },
       "bigGuy": {
         "difficulty": 1,
@@ -767,14 +768,14 @@
       "airStrike": {
         "difficulty": 5,
         "name": "Air Strike",
-        "description": "{{aqua:Astral Plague}} will prevent you from moving and ascend you {{blocks}} into the air over {{ticks}}. Once at maximum height, you can only use {{aqua:Soulfire Beam}}, it has no cooldown, deals {{damage;%}} less damage, has range reduced by {{blocks}}, and hitbox increased by {{blocks}}. This will last for {{ticks}} or until you cast {{aqua:Soulfire Beam}} {{blue}} times, {{blue}} if it was on cooldown when {{aqua:Astral Plague}} was used.",
+        "description": "{{aqua:Astral Plague}} will prevent you from moving and ascend you {{blocks}} into the air over {{ticks}}. Once at maximum height, you can only use {{aqua:Soulfire Beam}}, it has no cooldown, deals {{damage;%}} less damage, has range reduced by {{blocks}}, and hitbox increased by {{blocks}}. This will last for {{ticks}} or until you cast {{aqua:Soulfire Beam}} {{blue}} times.",
         "ascendHeight": 4,
-        "ascendDurationTicks": 20,
-        "airStrikeDurationTicks": 80,
-        "soulfireBeamDamageReductionPercent": 40,
+        "ascendDurationTicks": 10,
+        "airStrikeDurationTicks": 60,
+        "soulfireBeamDamageReductionPercent": 20,
         "soulfireBeamRangeDecrease": 15,
         "soulfireBeamHitboxIncrease": 0.4,
-        "maxBeamCastsNormal": 3,
+        "maxBeamCastsNormal": 2,
         "maxBeamCastsOnCooldown": 2,
         "permitted": [
           "01c4a20e0a60466fbd98ea71c346e5e4",
@@ -818,8 +819,9 @@
       "divineShields": {
         "difficulty": 1,
         "name": "Divine Shields",
-        "description": "Increase the shield health granted by {{aqua:Guardian Beam}} by {{damageReduction;%}}.",
-        "guardianBeamShieldIncreasePercent": 30
+        "description": "Increase the shield health granted by {{aqua:Guardian Beam}} by {{damageReduction;%}} and its duration by {{ticks}}.",
+        "guardianBeamShieldIncreasePercent": 30,
+        "guardianBeamShieldDurationIncreaseTicks": 30
       },
       "pactOfProtection": {
         "difficulty": 4,
@@ -833,7 +835,7 @@
         "difficulty": 2,
         "name": "Sanctuary of Retribution",
         "description": "Increase the damage reduction per {{yellow:FHEX}} granted by {{aqua:Sanctuary}} by {{damageReduction;%}}. During {{aqua:Sanctuary}}, allies with max stacks of {{yellow:FHEX}} now reflect damage reduced by {{yellow:FHEX}} back to the dealer.",
-        "sanctuaryDamageReductionPerHexStack": 6
+        "sanctuaryDamageReductionPerHexStack": 5
       },
       "loneSentinel": {
         "difficulty": 1,

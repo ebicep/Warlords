@@ -2,18 +2,29 @@ package com.ebicep.warlords.game.gamemodes;
 
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.database.repositories.games.GamesCollections;
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.anomaly.DatabaseGamePvEAnomaly;
+import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
+import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.Team;
-import com.ebicep.warlords.game.option.*;
+import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.game.option.PlayerCooldownDisplayOption;
+import com.ebicep.warlords.game.option.PreGameItemOption;
+import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
+import com.ebicep.warlords.game.option.TextOption;
+import com.ebicep.warlords.game.option.WeaponOption;
 import com.ebicep.warlords.game.option.freeze.GameFreezeOption;
 import com.ebicep.warlords.game.option.pve.BountyOption;
 import com.ebicep.warlords.game.option.respawn.DieOnLogoutOption;
 import com.ebicep.warlords.game.option.respawn.NoRespawnIfOfflineOption;
 import com.ebicep.warlords.game.option.win.WinByAllDeathOption;
+import com.ebicep.warlords.guilds.bounty.GuildBountyOption;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.menu.generalmenu.WarlordsNewHotbarMenu;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
+import com.ebicep.warlords.util.java.TriFunction;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -31,16 +42,15 @@ public class Anomaly implements Mode {
         List<Option> options = new ArrayList<>();
         Component base = Component.text("", NamedTextColor.YELLOW, TextDecoration.BOLD);
         options.add(TextOption.Type.CHAT_CENTERED.create(
-                Component.text("Warlords", NamedTextColor.WHITE, TextDecoration.BOLD),
+                Component.text("Anomaly", NamedTextColor.AQUA, TextDecoration.BOLD),
                 Component.empty(),
-                base.append(Component.text("Survive against waves of")),
-                base.append(Component.text("monsters!")),
+                base.append(Component.text("Investigate the anomaly and complete the objective.")),
                 Component.empty()
         ));
         options.add(TextOption.Type.TITLE.create(
                 10,
-                Component.text("GO!", NamedTextColor.GREEN),
-                Component.text("Let the wave defense commence.", NamedTextColor.YELLOW)
+                Component.text("DEFEND!", NamedTextColor.GREEN),
+                Component.text("Complete the anomaly.", NamedTextColor.YELLOW)
         ));
         options.add(new PreGameItemOption(4, PlayerHotBarItemListener.SELECTION_MENU, (g, p) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(p)));
         options.add(new RecordTimeElapsedOption());
@@ -50,6 +60,7 @@ public class Anomaly implements Mode {
         options.add(new DieOnLogoutOption());
         options.add(new GameFreezeOption());
         options.add(new BountyOption());
+        options.add(new GuildBountyOption());
         options.add(new PlayerCooldownDisplayOption());
         return options;
     }
@@ -66,17 +77,22 @@ public class Anomaly implements Mode {
 
     @Override
     public String getAbbreviation() {
-        return "PVE";
+        return "ANOMALY";
     }
 
     @Override
     public ItemStack getItemStack() {
-        return new ItemStack(Material.ZOMBIE_HEAD);
+        return new ItemStack(Material.RESPAWN_ANCHOR);
     }
 
     @Override
     public boolean isHiddenInMenu() {
         return true;
+    }
+
+    @Override
+    public TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGameBase> getCreateDatabaseGame() {
+        return DatabaseGamePvEAnomaly::createValidated;
     }
 
     @Override
@@ -86,8 +102,6 @@ public class Anomaly implements Mode {
 
     @Override
     public int getMinPlayersToAddToDatabase() {
-        return 4;
+        return 1;
     }
-
 }
-

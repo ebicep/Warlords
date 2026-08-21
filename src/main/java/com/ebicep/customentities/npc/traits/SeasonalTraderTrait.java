@@ -1,5 +1,7 @@
 package com.ebicep.customentities.npc.traits;
 
+import com.ebicep.customentities.npc.HasNPCLabelHologram;
+import com.ebicep.customentities.npc.NPCLabelHologram;
 import com.ebicep.customentities.npc.WarlordsTrait;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
@@ -10,13 +12,13 @@ import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.SpendableBuyShopDistinct;
 import com.ebicep.warlords.pve.mobs.MobDrop;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.java.DateUtil;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
-import net.citizensnpcs.trait.HologramTrait;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -25,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class SeasonalTraderTrait extends WarlordsTrait {
+public class SeasonalTraderTrait extends WarlordsTrait implements HasNPCLabelHologram {
 
     private static final List<SpendableBuyShopDistinct> SHOP = List.of(
             new SpendableBuyShopDistinct(1, MobDrop.ZENITH_STAR, 5, 4_000_000, Currencies.COIN),
@@ -124,16 +126,21 @@ public class SeasonalTraderTrait extends WarlordsTrait {
         menu.openForPlayer(player);
     }
 
-    int ticksElapsed = 0;
+    private final NPCLabelHologram labelHologram = new NPCLabelHologram("lobby-seasonal-trader");
+    private int ticksElapsed = 0;
 
     public SeasonalTraderTrait() {
         super("SeasonalTraderTrait");
     }
 
     @Override
-    public void onAttach() {
-        HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
-        hologramTrait.setLine(0, ChatColor.GOLD + "Spring Cleaner");
+    public NPCLabelHologram getLabelHologram() {
+        return labelHologram;
+    }
+
+    @Override
+    public void onSpawn() {
+        updateHologram(null);
     }
 
     @Override
@@ -141,7 +148,6 @@ public class SeasonalTraderTrait extends WarlordsTrait {
         if (ticksElapsed++ % 300 != 0) {
             return;
         }
-        HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
         String timeTill = DateUtil.getTimeTill(DateUtil.getNextMonthFirstDay(),
                 true,
                 true,
@@ -149,8 +155,19 @@ public class SeasonalTraderTrait extends WarlordsTrait {
                 false
         );
         if (!timeTill.equals("0 seconds")) {
-            hologramTrait.setLine(1, ChatColor.RED.toString() + ChatColor.BOLD + "Trader leaving in " + timeTill);
+            updateHologram(timeTill);
         }
+    }
+
+    private void updateHologram(String timeTill) {
+        ComponentBuilder componentBuilder;
+        if (timeTill != null) {
+            componentBuilder = ComponentBuilder.create("Trader leaving in " + timeTill, NamedTextColor.RED, TextDecoration.BOLD)
+                    .newLine("Spring Cleaner", NamedTextColor.GOLD);
+        } else {
+            componentBuilder = ComponentBuilder.create("Spring Cleaner", NamedTextColor.GOLD);
+        }
+        labelHologram.update(npc, componentBuilder.build());
     }
 
     @Override

@@ -106,7 +106,7 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
                         cooldownData.cooldowns.update(warlordsEntity, entityDataByID, forcePacketUpdate);
                     }
                     if (ticksElapsed % 2 == 0) {
-                        cooldownData.cooldowns.teleport(warlordsEntity);
+                        cooldownData.cooldowns.teleport(warlordsEntity, ticksElapsed % 20 == 0);
                     }
                 });
                 if (ticksElapsed % 10 == 0 && forcePacketUpdate) {
@@ -353,7 +353,7 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
             return new CooldownEntities(ability, itemDisplay, textDisplay);
         }
 
-        private void teleport(WarlordsEntity warlordsEntity) {
+        private void teleport(WarlordsEntity warlordsEntity, boolean force) {
             if (cooldownEntities.isEmpty()) {
                 return;
             }
@@ -370,7 +370,7 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
             double dx = cachedLocation.getX() - lastX;
             double dy = y - lastY;
             double dz = cachedLocation.getZ() - lastZ;
-            if (dx * dx + dy * dy + dz * dz < TELEPORT_THRESHOLD_SQ) {
+            if (!force && dx * dx + dy * dy + dz * dz < TELEPORT_THRESHOLD_SQ) {
                 return;
             }
             lastX = cachedLocation.getX();

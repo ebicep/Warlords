@@ -17,7 +17,6 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.DatabaseUpdater;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
-import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.GeneralEvents;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.game.*;
@@ -32,6 +31,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksOutsideGame;
+import com.ebicep.warlords.pve.consumables.ConsumableListener;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
 import com.ebicep.warlords.pve.mobs.tiers.PlayerMob;
 import com.ebicep.warlords.pve.rewards.types.PatreonReward;
@@ -365,6 +365,7 @@ public class Warlords extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new WarlordsPlayer(), this);
         getServer().getPluginManager().registerEvents(new PlayerHotBarItemListener(), this);
         getServer().getPluginManager().registerEvents(new GuildListener(), this);
+        getServer().getPluginManager().registerEvents(new ConsumableListener(), this);
         getServer().getPluginManager().registerEvents(new PatreonReward(), this);
         getServer().getPluginManager().registerEvents(new MemoryManager(), this);
         getServer().getPluginManager().registerEvents(new Shield(), this);
@@ -517,8 +518,7 @@ public class Warlords extends JavaPlugin {
                                     .filter(Objects::nonNull)
                                     .forEach(p -> {
                                         if (Objects.equals(p.getSpectatorTarget(), player)) {
-                                            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
-                                            p.sendActionBar(we.getActionBar(databasePlayer));
+                                            p.sendActionBar(we.getActionBar(we.getDatabasePlayer()));
                                         } else {
                                             p.sendActionBar(Component.empty());
                                         }

@@ -12,7 +12,6 @@ import com.ebicep.warlords.game.option.pve.ReadyUpOption;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
-import com.ebicep.warlords.util.warlords.Utils;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.npc.MemoryNPCDataStore;
@@ -29,7 +28,6 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
-import org.bukkit.Sound;
 import org.bukkit.entity.Display;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
@@ -59,17 +57,18 @@ public class NPCManager {
                 createLegendaryWeaponNPC();
                 createSupplyDropFairNPC();
                 createBountyMenuNPC();
+                createSupporterShopNPC();
                 createStarPieceSynthesizerNPC();
-                createItemEnyaNPC();
+                createItemCrafterNPC();
                 createIllusionVendorNPC();
                 createSeasonalVendorNPC();
                 createAnomalyNPC();
                 createRaidOneNPC();
                 createPrestigeVendorNPC();
-                createAscendantVendorNPC();
+                //createAscendantVendorNPC();
                 createWeeklyItemTraderNPC();
                 createTreasureHuntVendorNPC();
-                createAscendantWeaponNPC();
+                //createAscendantWeaponNPC();
                 createTutorialGuideNPC();
                 createMainLobbySetupNPC();
                 registerTrait(ReadyUpOption.ReadyUpTrait.class, "ReadyUpTrait");
@@ -130,7 +129,7 @@ public class NPCManager {
 //        npc.getOrAddTrait(SkinTrait.class).setSkinName("Alexred2522");
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
-        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 20.5, 82, 158.5, 135, 0));
+        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 67.5, 93, 212.5, -180, 0));
     }
 
     private static void createAnomalyNPC() {
@@ -141,7 +140,7 @@ public class NPCManager {
 //        npc.getOrAddTrait(SkinTrait.class).setSkinName("Alexred2522");
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
-        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 22.5, 82, 155.5, 122, 0));
+        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 20.5, 82, 158.5, 135, 0));
     }
 
     public static void createMasterworksFairNPC() {
@@ -274,6 +273,33 @@ public class NPCManager {
         );
     }
 
+    public static void createSupporterShopNPC() {
+        registerTrait(SupporterShopTrait.class, "SupporterShopTrait");
+
+        NPC npc = NPC_REGISTRY.createNPC(EntityType.VILLAGER, "supporter-shop");
+        npc.addTrait(SupporterShopTrait.class);
+        npc.getOrAddTrait(VillagerProfession.class).setProfession(Villager.Profession.CLERIC);
+
+        LookClose lookClose = npc.getOrAddTrait(LookClose.class);
+        lookClose.setPerPlayer(true);
+        lookClose.toggle();
+
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
+        Location location = new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 29.5, 81, 163.5, 90, 0);
+        npc.spawn(location);
+
+        HologramDataText hologramDataText = new HologramDataText.Builder<>(ComponentBuilder.create(
+                "Supporter Shop",
+                NamedTextColor.GOLD
+        ).build()).setBillboard(Display.Billboard.CENTER).build();
+        HologramManager.addHologram(new Hologram.Builder(
+                        "supporterShop",
+                        location.clone().add(0, 2.1, 0),
+                        player -> hologramDataText
+                ).setVisibility(VisibilityType.ALL).build()
+        );
+    }
+
     public static void createStarPieceSynthesizerNPC() {
         registerTrait(StarPieceSynthesizerTrait.class, "StarPieceSynthesizerTrait");
 
@@ -284,18 +310,18 @@ public class NPCManager {
         npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 40.5, 74, 169, 0, 0));
     }
 
-    public static void createItemEnyaNPC() {
-        registerTrait(ItemEnyaTrait.class, "ItemEnyaTrait");
+    public static void createItemCrafterNPC() {
+        registerTrait(ItemCrafterTrait.class, "ItemCrafterTrait");
 
-        NPC npc = NPC_REGISTRY.createNPC(EntityType.BREEZE, "item-enya");
-        npc.addTrait(ItemEnyaTrait.class);
+        NPC npc = NPC_REGISTRY.createNPC(EntityType.BREEZE, "item-crafter");
+        npc.addTrait(ItemCrafterTrait.class);
         LookClose lookClose = npc.getOrAddTrait(LookClose.class);
         lookClose.setPerPlayer(true);
         lookClose.toggle();
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
 
-        Location location = new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 28.5, 93, 208.5, 90, 0);
+        Location location = new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 24.5, 93, 208.5, 90, 0);
         npc.spawn(location);
     }
 
@@ -394,7 +420,7 @@ public class NPCManager {
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
 
-        Location loc = new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), -15.5, 81, 144.5, 0, 0);
+        Location loc = new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 71.5, 93, 198.5, 90, 0);
         npc.spawn(loc);
     }
 
@@ -472,7 +498,7 @@ public class NPCManager {
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
 
-        Location location = new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 11.5, 82, 155.5, 180, 0);
+        Location location = new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 11.5, 81, 155.5, 180, 0);
         npc.spawn(location);
     }
 
@@ -483,6 +509,6 @@ public class NPCManager {
         npc.addTrait(MainLobbySetupTrait.class);
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
-        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), -58.5, 61, 83, 113, 0));
+        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), -58.5, 60, 83, 113, 0));
     }
 }

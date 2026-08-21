@@ -4,7 +4,6 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
-import com.ebicep.warlords.pve.items.types.specialitems.buckler.delta.AerialAegis;
 import com.ebicep.warlords.pve.newitems.setbonus.BaseSet;
 import com.ebicep.warlords.pve.newitems.setbonus.SetBonus;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -46,10 +45,12 @@ public class Olympic extends BaseSet {
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             new GameRunnable(warlordsPlayer.getGame()) {
+
                 @Override
                 public void run() {
                     warlordsPlayer.addPotionEffect(new PotionEffect(PotionEffectType.JUMP_BOOST, 120, jumpHeight, true, false));
                 }
+
             }.runTaskTimer(0, 100);
             warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
                     getName(),
@@ -59,17 +60,17 @@ public class Olympic extends BaseSet {
                     warlordsPlayer,
                     CooldownTypes.ITEM,
                     cooldownManager -> {
-
                     },
                     false
-            ).addModifier(
-                    Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE,
-                    (event, currentDamageValue) -> {
-                        if (!warlordsPlayer.getEntity().isOnGround()) {
-                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getName(), airResist / 100f);
-                        }
-                    }
-            ));
+            ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
+                if (!warlordsPlayer.getEntity().isOnGround()) {
+                    currentDamageValue.addModifier(
+                            FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                            getName(),
+                            1 - airResist / 100f
+                    );
+                }
+            }));
         }
 
     }

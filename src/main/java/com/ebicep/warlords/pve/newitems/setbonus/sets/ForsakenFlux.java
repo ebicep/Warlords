@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.newitems.setbonus.sets;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
+import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
@@ -11,7 +12,6 @@ import com.ebicep.warlords.pve.newitems.setbonus.SetBonus;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class ForsakenFlux extends BaseSet {
 
@@ -47,14 +47,13 @@ public class ForsakenFlux extends BaseSet {
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             for (AbstractAbility ability : warlordsPlayer.getAbilities()) {
-                if (ability instanceof OrangeAbilityIcon) {
-                    continue;
+                if (!(ability instanceof OrangeAbilityIcon)) {
+                    ability.getCooldown().addModifier(
+                            FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                            getName(),
+                            1 - nonUltimateCooldownReductionPercent / 100f
+                    );
                 }
-                ability.getCooldown().addModifier(
-                        FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
-                        getName(),
-                        1 - (nonUltimateCooldownReductionPercent / 100f)
-                );
             }
             warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
                     getName(),
@@ -66,25 +65,25 @@ public class ForsakenFlux extends BaseSet {
                     cooldownManager -> {
                     },
                     false
-            ).addModifier(
-                    Modifier.MODIFY_OUTGOING_HEALING,
-                    (event, currentHealValue) -> {
-                        currentHealValue.addModifier(
-                                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
-                                getName(),
-                                1 - (primaryHealingPenaltyPercent / 100f)
-                        );
-                    }
-            ).addModifier(
-                    Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE,
-                    (event, currentDamageValue) -> {
-                        currentDamageValue.addModifier(
-                                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
-                                getName(),
-                                1 - (primaryDamagePenaltyPercent / 100f)
-                        );
-                    }
-            ));
+            ).addModifier(Modifier.MODIFY_OUTGOING_HEALING, (event, currentHealValue) -> {
+                if (event.getAbility() instanceof WeaponAbilityIcon) {
+                    currentHealValue.addModifier(
+                            FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                            getName(),
+                            1 - primaryHealingPenaltyPercent / 100f
+                    );
+                }
+            }).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
+                if (event.getAbility() instanceof WeaponAbilityIcon) {
+                    currentDamageValue.addModifier(
+                            FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                            getName(),
+                            1 - primaryDamagePenaltyPercent / 100f
+                    );
+                }
+            }));
         }
+
     }
+
 }

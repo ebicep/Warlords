@@ -1,8 +1,12 @@
 package com.ebicep.warlords.pve.newitems.setbonus.sets;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.pve.newitems.setbonus.BaseSet;
 import com.ebicep.warlords.pve.newitems.setbonus.SetBonus;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 
 import java.util.List;
 
@@ -37,8 +41,28 @@ public class Voidcarver extends BaseSet {
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
-            // Implementation for the aura effect: 
-            // Reducing cooldowns of allies within the specified radius.
+            warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                    getName(),
+                    null,
+                    Voidcarver.class,
+                    null,
+                    warlordsPlayer,
+                    CooldownTypes.ITEM,
+                    cooldownManager -> {
+                    },
+                    false,
+                    (cooldown, ticks) -> PlayerFilter
+                            .entitiesAround(warlordsPlayer, radius, radius, radius)
+                            .aliveTeammatesOfExcludingSelf(warlordsPlayer)
+                            .forEach(ally -> {
+                                for (AbstractAbility ability : ally.getSpec().getAbilities()) {
+                                    float extraCooldownReduction = ability
+                                            .getCooldownReductionPerTick()
+                                            .getCalculatedValue() * cdrBoost / 100f;
+                                    ability.subtractCurrentCooldownForce(extraCooldownReduction);
+                                }
+                            })
+            ));
         }
 
     }

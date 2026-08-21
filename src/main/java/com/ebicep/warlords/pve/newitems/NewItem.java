@@ -7,6 +7,7 @@ import com.ebicep.warlords.pve.newitems.setbonus.NewItemsSetBonus;
 import com.ebicep.warlords.pve.newitems.tiers.NewItemTier;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.java.JavaUtils;
+import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Pair;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -36,8 +37,15 @@ public class NewItem {
     }
 
     public NewItem(@NotNull NewItemsSetBonus setBonus) {
+        this(setBonus, JavaUtils.randomFromList(setBonus.getSlots()));
+    }
+
+    public NewItem(@NotNull NewItemsSetBonus setBonus, @NotNull NewItemsSlot slot) {
+        if (!setBonus.getSlots().contains(slot)) {
+            throw new IllegalArgumentException(slot + " is not part of set " + setBonus);
+        }
         this.setBonus = setBonus;
-        this.slot = JavaUtils.randomFromList(setBonus.getSlots());
+        this.slot = slot;
         NewItemTier tier = setBonus.getTier();
         NewItemAttribute[] bonusAttributes = JavaUtils.pickRandom(NewItemAttribute.BONUS_ATTRIBUTES, tier.bonusAttributes());
         this.bonusAttributeDistribution = new EnumMap<>(NewItemAttribute.class);
@@ -97,6 +105,10 @@ public class NewItem {
                 .addSetBonus(itemsManager, loadout)
                 .build();
         lore.add(Component.empty());
+        lore.add(Component.text("Score: ", NamedTextColor.GRAY)
+                          .append(Component.text(NumberFormat.formatOptionalHundredths(getItemScore()), NamedTextColor.YELLOW))
+                          .append(Component.text("/100", NamedTextColor.GRAY)));
+        lore.add(Component.empty());
         lore.add(Component.text(getTier().getName() + " " + slot.getName(), getTier().getTextColor()));
         lore.add(Component.text("REROLL [" + rerollCostsHistory.size() + "/" + NewItemRerollCost.MAX_REROLLS + "]", NamedTextColor.DARK_GRAY)); // TODO ?
         if (isFavorite) {
@@ -121,6 +133,18 @@ public class NewItem {
             }
         });
         return attributeValues;
+    }
+
+    public float getItemScore() {
+        if (bonusAttributeDistribution == null || bonusAttributeDistribution.isEmpty()) {
+            return 0;
+        }
+        double average = bonusAttributeDistribution.values()
+                                                   .stream()
+                                                   .mapToInt(Byte::intValue)
+                                                   .average()
+                                                   .orElse(0);
+        return Math.round(average * 100) / 100f;
     }
 
     public NewItemTier getTier() {

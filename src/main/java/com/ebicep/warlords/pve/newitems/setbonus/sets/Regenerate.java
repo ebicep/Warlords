@@ -1,21 +1,14 @@
 package com.ebicep.warlords.pve.newitems.setbonus.sets;
 
-import com.ebicep.warlords.events.player.ingame.pve.WarlordsAddCurrencyEvent;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.newitems.setbonus.BaseSet;
 import com.ebicep.warlords.pve.newitems.setbonus.SetBonus;
 import com.ebicep.warlords.util.warlords.GameRunnable;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 
 import java.util.List;
 
 public class Regenerate extends BaseSet {
-
-    @Override
-    public void init() {
-        super.init();
-    }
 
     @Override
     public String getConfigFieldName() {
@@ -37,13 +30,31 @@ public class Regenerate extends BaseSet {
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             new GameRunnable(warlordsPlayer.getGame()) {
+
+                private int ticks;
+
                 @Override
                 public void run() {
-                    if (warlordsPlayer.getRegenTickTimer() > 0) {
-                        warlordsPlayer.setRegenTickTimer(1);
+                    if (warlordsPlayer.isDead()) {
+                        return;
                     }
+                    warlordsPlayer.setRegenTickTimer(1);
+                    ticks++;
+                    if (ticks % 40 != 0 || warlordsPlayer.getCurrentHealth() >= warlordsPlayer.getMaxHealth()) {
+                        return;
+                    }
+                    int regen = ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "regenHealth", int.class);
+                    warlordsPlayer.getRegenPerSecond().setBaseValue(regen);
+                    warlordsPlayer.getRegenPerSecond().refresh();
+                    warlordsPlayer.setCurrentHealth(Math.min(
+                            warlordsPlayer.getMaxHealth(),
+                            warlordsPlayer.getCurrentHealth() + warlordsPlayer.getRegenPerSecond().getCalculatedValue()
+                    ));
                 }
-            }.runTaskTimer(0, 0);
-         }
+
+            }.runTaskTimer(0, 1);
+        }
+
     }
+
 }

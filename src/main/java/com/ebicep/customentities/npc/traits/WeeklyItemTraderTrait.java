@@ -31,20 +31,20 @@ import java.util.Map;
 
 public class WeeklyItemTraderTrait extends WarlordsTrait {
 
-    private static final int WEEKLY_TIER_PURCHASE_LIMIT = 2;
+    private static final int WEEKLY_TIER_PURCHASE_LIMIT = 1;
     private static final String PURCHASE_KEY_PREFIX = "ECHELON_TRADER_";
     private static final int[] ITEM_POSITIONS = {2, 4, 6};
     private static final Map<Currencies, Long> SOVEREIGN_COST = createCost(
-            2_000_000,
-            20,
+            1_000_000,
+            5,
             3,
-            5_000
+            3_000
     );
     private static final Map<Currencies, Long> LEGENDARY_COST = createCost(
-            4_000_000,
-            20,
+            2_000_000,
             10,
-            10_000
+            10,
+            6_000
     );
 
     private int ticksElapsed;
@@ -74,7 +74,9 @@ public class WeeklyItemTraderTrait extends WarlordsTrait {
                 new ItemBuilder(Material.CLOCK)
                         .name(Component.text("Weekly Echelon Stock", NamedTextColor.AQUA))
                         .lore(
+                                Component.empty(),
                                 Component.text("Refreshes every Friday at 6 PM Eastern.", NamedTextColor.GRAY),
+                                Component.empty(),
                                 Component.text("Sovereign purchases: ", NamedTextColor.GRAY)
                                         .append(Component.text(sovereignPurchases + "/" + WEEKLY_TIER_PURCHASE_LIMIT, NamedTextColor.YELLOW)),
                                 Component.text("Legendary purchases: ", NamedTextColor.GRAY)

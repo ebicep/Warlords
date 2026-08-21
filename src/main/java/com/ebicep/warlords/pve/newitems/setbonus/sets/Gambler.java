@@ -1,5 +1,8 @@
 package com.ebicep.warlords.pve.newitems.setbonus.sets;
 
+import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
@@ -17,9 +20,13 @@ import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
 
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -286,13 +293,35 @@ public class Gambler extends BaseSet {
                             .setViewSelfDisguise(true)
                             .setKeepDisguiseOnPlayerDeath(false);
 
+            Listener frogActionLock = new Listener() {
+                @EventHandler
+                public void onAbilityActivate(WarlordsAbilityActivateEvent.Pre event) {
+                    if (event.getWarlordsEntity().equals(warlordsPlayer)) {
+                        event.setCancelled(true);
+                    }
+                }
+
+                @EventHandler
+                public void onDamage(WarlordsDamageHealingEvent event) {
+                    if (!event.isDamageInstance() || !event.getSource().equals(warlordsPlayer)) {
+                        return;
+                    }
+                    if (event.getAbility() == null && event.getCause().isEmpty()) {
+                        event.setCancelled(true);
+                    }
+                }
+            };
+
+            Bukkit.getPluginManager().registerEvents(frogActionLock, Warlords.getInstance());
+
             RegularCooldown<GamblerEffect> cooldown =
                     createEffectCooldown(
                             warlordsPlayer,
                             effect,
-                            () -> frogDisguise.removeDisguise(
-                                    null
-                            )
+                            () -> {
+                                HandlerList.unregisterAll(frogActionLock);
+                                frogDisguise.removeDisguise(null);
+                            }
                     );
 
             DisguiseAPI.disguiseToAll(player, frogDisguise);

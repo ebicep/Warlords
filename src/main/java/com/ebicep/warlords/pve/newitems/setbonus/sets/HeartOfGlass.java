@@ -41,26 +41,29 @@ public class HeartOfGlass extends BaseSet {
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getHealth().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getName(), 1 - defenseStatsPenalty / 100f);
+            float remainingDefenseMultiplier = 1 - defenseStatsPenalty / 100f;
+            warlordsPlayer.getHealth().addModifier(
+                    FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                    getName(),
+                    remainingDefenseMultiplier
+            );
+            warlordsPlayer.setDamageResistance(warlordsPlayer.getSpec().getDamageResistance() * remainingDefenseMultiplier);
             warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
-                    "Heart of Glass",
+                    getName(),
                     null,
                     HeartOfGlass.class,
                     null,
                     warlordsPlayer,
                     CooldownTypes.ITEM,
-                    cooldownManager -> {},
+                    cooldownManager -> {
+                    },
                     false
-            ).addModifier(
-                    Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE,
-                    (event, currentDamageValue) -> {
-                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getName(), 1 + (damageIncreasePercent / 100f));
-                    }
-            ).addModifier(
-                    Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE,
-                    (event, currentDamageValue) -> {
-                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getName(), 1 + (defenseStatsPenalty / 100f));
-                    }
+            ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) ->
+                    currentDamageValue.addModifier(
+                            FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                            getName(),
+                            1 + damageIncreasePercent / 100f
+                    )
             ));
         }
 
