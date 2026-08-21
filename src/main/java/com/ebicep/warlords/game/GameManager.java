@@ -5,11 +5,7 @@ import com.ebicep.warlords.game.state.PreLobbyState;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
-import org.bukkit.WorldCreator;
+import org.bukkit.*;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -26,8 +22,8 @@ public class GameManager implements AutoCloseable {
     public static boolean gameStartingDisabled = false;
     /** Chunk radius around MainLobby spawn kept loaded via plugin tickets. */
     private static final int MAIN_LOBBY_WARM_CHUNK_RADIUS = 15;
-    private static final long IDLE_WORLD_UNLOAD_DELAY_TICKS = 30 * 20L;
-    private static final long IDLE_WORLD_UNLOAD_CHECK_PERIOD_TICKS = 20L;
+    private static final long IDLE_WORLD_UNLOAD_DELAY_TICKS = 60 * 60 * 20L;
+    private static final long IDLE_WORLD_UNLOAD_CHECK_PERIOD_TICKS = 60 * 20L;
     private final List<GameHolder> games = new ArrayList<>();
     private final LinkedList<QueueEntry> queue = new LinkedList<>();
     private final Map<String, BukkitTask> pendingWorldUnloads = new HashMap<>();
