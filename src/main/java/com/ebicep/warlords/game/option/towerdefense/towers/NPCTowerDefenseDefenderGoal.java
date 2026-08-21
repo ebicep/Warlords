@@ -8,7 +8,7 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import net.citizensnpcs.api.ai.EntityTarget;
-import net.citizensnpcs.api.ai.tree.BehaviorGoalAdapter;
+import net.citizensnpcs.api.ai.tree.Behavior;
 import net.citizensnpcs.api.ai.tree.BehaviorStatus;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.GameMode;
@@ -22,7 +22,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class NPCTowerDefenseDefenderGoal extends BehaviorGoalAdapter {
+public class NPCTowerDefenseDefenderGoal implements Behavior
+{
 
     private final TowerDefenseTowerMob towerMob;
     private final NPC npc;

@@ -102,7 +102,11 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
         wp.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(healingValues.breathHealing));
         Location playerEyeLoc = new LocationBuilder(wp.getLocation()).pitch(0).backward(1);
         Vector viewDirection = playerLoc.getDirection();
-        for (WarlordsEntity breathTarget : PlayerFilter.entitiesAroundRectangle(playerLoc, hitbox - 2.5, hitbox, hitbox - 2.5).excluding(wp).isAlive()) {
+        for (WarlordsEntity breathTarget : PlayerFilter
+                .entitiesAroundRectangle(playerLoc, hitbox - 2.5, hitbox, hitbox - 2.5)
+                .excluding(wp)
+                .isAlive()
+        ) {
             Vector direction = breathTarget.getLocation().subtract(playerEyeLoc).toVector().normalize();
             if (!(viewDirection.dot(direction) > .68)) {
                 continue;
@@ -189,7 +193,7 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
                     if (event.getFlags().contains(InstanceFlags.DOT)) {
                         return;
                     }
-                    if (ThreadLocalRandom.current().nextDouble() < .35) {
+                    if (ThreadLocalRandom.current().nextDouble() < .5) {
                         WarlordsEntity enemy = event.getWarlordsEntity();
                         enemy.addInstance(InstanceBuilder
                                 .damage()

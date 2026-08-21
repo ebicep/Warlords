@@ -4,14 +4,15 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.NarmerAcolyte;
-import net.citizensnpcs.api.ai.tree.BehaviorGoalAdapter;
+import net.citizensnpcs.api.ai.tree.Behavior;
 import net.citizensnpcs.api.ai.tree.BehaviorStatus;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.entity.Entity;
 
 import java.util.List;
 
-public class NPCTargetNarmerAcolyteGoal extends BehaviorGoalAdapter {
+public class NPCTargetNarmerAcolyteGoal implements Behavior
+{
 
     private final double range;
     private NPC npc;

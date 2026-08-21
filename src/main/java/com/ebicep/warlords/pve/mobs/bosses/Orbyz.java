@@ -357,6 +357,11 @@ public class Orbyz extends AbstractMob implements BossMob {
     }
 
     @Override
+    public double getMobScale() {
+        return 1.2;
+    }
+
+    @Override
     public Component getDescription() {
         return Component.text("Once Frozen in Time", NamedTextColor.WHITE);
     }

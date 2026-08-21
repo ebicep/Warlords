@@ -310,7 +310,9 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
         //negative regen tick timer means the player is regenning, cant check per second because not fine enough
         if (regenTickTimer <= 0 && -regenTickTimer % 20 == 0) {
             int regenHealth = ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "regenHealth", int.class);
-            setCurrentHealth(Math.max(getCurrentHealth(), Math.min(getCurrentHealth() + regenHealth, getMaxHealth())));
+            regenPerSecond.setBaseValue(regenHealth);
+            regenPerSecond.refresh();
+            setCurrentHealth(Math.max(getCurrentHealth(), Math.min(getCurrentHealth() + regenPerSecond.getCalculatedValue(), getMaxHealth())));
         }
     }
 

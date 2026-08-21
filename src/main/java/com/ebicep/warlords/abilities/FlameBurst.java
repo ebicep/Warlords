@@ -152,9 +152,11 @@ public class FlameBurst extends AbstractPiercingProjectile<FlameBurst, FlameBurs
         Location currentLocation = projectile.getCurrentLocation();
         int playersHit = 0;
         float splashRadius = splash.getCalculatedValue();
-        for (WarlordsEntity nearEntity : PlayerFilter.entitiesAround(currentLocation, splashRadius, splashRadius, splashRadius)
-                                                     .aliveEnemiesOf(shooter)
-                                                     .excluding(projectile.getHit())) {
+        for (WarlordsEntity nearEntity : PlayerFilter
+                .entitiesAround(currentLocation, splashRadius, splashRadius, splashRadius)
+                .aliveEnemiesOf(shooter)
+                .excluding(projectile.getHit())
+        ) {
             playersHit++;
             hitEntity(projectile, nearEntity);
         }

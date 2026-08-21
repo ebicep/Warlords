@@ -15,12 +15,6 @@ import org.bukkit.util.Vector;
 import java.util.*;
 import java.util.function.Supplier;
 
-/**
- * Veilkeeper - Binding Chains
- * Binds N enemy players together. While bound, if the maximum pairwise distance between them
- * exceeds maxLinkDistance, the group takes heavy damage at a fixed tick interval.
- * Draws chain-like particle beams between each pair and a marker above each bound player.
- */
 public class BindingChainsAbility {
 
     private final WarlordsEntity source;

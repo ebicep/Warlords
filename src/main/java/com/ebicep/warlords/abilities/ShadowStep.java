@@ -254,6 +254,21 @@ public class ShadowStep extends AbstractAbility implements
     private void pveMasterOnLand(WarlordsEntity we) {
         we.addSpeedModifier(we, name, 80, 5 * 20);
         we.addKnockbackModifier(we, name, -80, 5 * 20);
+        new GameRunnable(we.getGame()) {
+            @Override
+            public void run() {
+                PlayerFilter.entitiesAround(we, 5, 5, 5)
+                        .aliveEnemiesOf(we)
+                        .forEach(enemy -> {
+                            enemy.addInstance(InstanceBuilder
+                                    .damage()
+                                    .ability(ShadowStep.this)
+                                    .source(we)
+                                    .value(damageValues.shadowStepDamage)
+                            );
+                        });
+            }
+        }.runTaskLater(10);
     }
 
     @Override

@@ -46,6 +46,7 @@ public class AdminCommand extends BaseCommand {
     }
 
     @Subcommand("disablegames")
+    @CommandPermission("group.administrator")
     @Description("Prevents games from being started")
     public void disableGames(CommandIssuer issuer) {
         GameManager.gameStartingDisabled = !GameManager.gameStartingDisabled;
@@ -53,6 +54,7 @@ public class AdminCommand extends BaseCommand {
     }
 
     @Subcommand("disablerestartcheck")
+    @CommandPermission("group.administrator")
     @Description("Removes restart check that prevents games from being started")
     public void disableRestartCheck(CommandIssuer issuer) {
         DISABLE_RESTART_CHECK = !DISABLE_RESTART_CHECK;
@@ -60,6 +62,7 @@ public class AdminCommand extends BaseCommand {
     }
 
     @Subcommand("removenearbyentities")
+    @CommandPermission("group.administrator")
     @Description("Removes all nearby entities in range")
     public void removeEntitiesNearBy(Player player, @Conditions("limits:min=1,max=20") Integer range) {
         player.getWorld()
@@ -70,6 +73,7 @@ public class AdminCommand extends BaseCommand {
     }
 
     @Subcommand("banspec")
+    @CommandPermission("group.administrator")
     @Description("Bans a specialization from being used")
     public void banSpec(Player player, Specializations spec) {
         spec.setBanned(true);
@@ -77,6 +81,7 @@ public class AdminCommand extends BaseCommand {
     }
 
     @Subcommand("unbanspec")
+    @CommandPermission("group.administrator")
     @Description("Unbans a specialization from being used")
     public void unbanSpec(Player player, Specializations spec) {
         spec.setBanned(false);
@@ -84,6 +89,7 @@ public class AdminCommand extends BaseCommand {
     }
 
     @Subcommand("disablespectatormessages")
+    @CommandPermission("group.administrator")
     @Description("Disables spectator messages")
     public void disableSpectatorMessages(CommandIssuer issuer) {
         DISABLE_SPECTATOR_MESSAGES = !DISABLE_SPECTATOR_MESSAGES;
@@ -91,6 +97,7 @@ public class AdminCommand extends BaseCommand {
     }
 
     @Subcommand("togglemessages")
+    @CommandPermission("group.administrator")
     @Description("Toggles MessageType messages")
     public void togglePlayerServiceMessages(CommandIssuer issuer, ChatUtils.MessageType messageType) {
         messageType.setEnabled(!messageType.isEnabled());
@@ -102,6 +109,7 @@ public class AdminCommand extends BaseCommand {
     }
 
     @Subcommand("removehorse")
+    @CommandPermission("group.administrator")
     public void removeHorse(Player player, @Flags("other") Player target) {
         ChatChannels.sendDebugMessage(player,
                 Component.text(target.getName(), NamedTextColor.AQUA).append(Component.text(" - Mount = " + target.getVehicle(), NamedTextColor.GREEN))
@@ -115,6 +123,7 @@ public class AdminCommand extends BaseCommand {
     }
 
     @Subcommand("toggleswimming")
+    @CommandPermission("group.administrator")
     @Description("Toggles swimming")
     public void toggleSwimming(CommandIssuer issuer) {
         NEW_SWIMMING = !NEW_SWIMMING;
@@ -122,6 +131,7 @@ public class AdminCommand extends BaseCommand {
     }
 
     @Subcommand("bypassinteract")
+    @CommandPermission("group.administrator")
     @Description("Bypasses interact cancel")
     public void bypassInteract(CommandIssuer issuer, @Flags("other") Player target) {
         if (BYPASS_INTERACT_CANCEL.contains(target.getUniqueId())) {

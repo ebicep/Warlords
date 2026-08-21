@@ -63,6 +63,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.potion.PotionEffectType;
@@ -402,6 +403,47 @@ public class WarlordsEvents implements Listener {
             wpAttacker.getMinuteStats().addMeleeHits();
         }
         wpVictim.updateHealth();
+    }
+
+    @EventHandler
+    public void onPlayerItemConsume(PlayerItemConsumeEvent e) {
+        if (e.getHand().equals(EquipmentSlot.HAND) || e.getPlayer().getInventory().getHeldItemSlot() == 0) {
+            e.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerInteractAtEntity(PlayerInteractAtEntityEvent e) {
+        if (e.getHand() != EquipmentSlot.HAND) {
+            return;
+        }
+
+        Player player = e.getPlayer();
+        WarlordsEntity wp = Warlords.getPlayer(player);
+
+        if (wp == null || !wp.isAlive() || wp.getGame().isFrozen()) {
+            return;
+        }
+
+        int heldItemSlot = player.getInventory().getHeldItemSlot();
+        ItemStack itemHeld = player.getEquipment().getItemInMainHand();
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(wp.getUuid());
+
+        if (heldItemSlot == 0 || databasePlayer.getHotkeyMode() == HotkeyMode.CLASSIC_MODE) {
+            if (heldItemSlot == 8 && wp instanceof WarlordsPlayer warlordsPlayer) {
+                AbstractWeapon weapon = warlordsPlayer.getWeapon();
+                if (weapon instanceof AbstractLegendaryWeapon) {
+                    ((AbstractLegendaryWeapon) weapon).activateAbility(warlordsPlayer, player, false);
+                }
+            } else {
+                wp.getSpec().onRightClick(wp, player, heldItemSlot, false);
+            }
+        }
+
+        // when egg
+        if (heldItemSlot == 0 && itemHeld.getType().name().endsWith("_SPAWN_EGG")) {
+            e.setCancelled(true);
+        }
     }
 
     @EventHandler

@@ -72,7 +72,7 @@ public class VoidZombie extends AbstractMob implements EliteMob {
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-        if (ticksElapsed % 8 == 0) {
+        if (ticksElapsed % 10 == 0) {
             new CircleEffect(
                     warlordsNPC.getGame(),
                     warlordsNPC.getTeam(),

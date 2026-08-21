@@ -19,15 +19,14 @@ public class GiantLaserAbility {
     private final WarlordsNPC source;           // damage source for InstanceBuilder
     private final Supplier<Location> originSupplier; // usually () -> boss.getEyeLocation()
 
-    // Config
-    private final int chargeTicks;              // how long to telegraph before firing
-    private final int fireTicks;                // how long the beam deals damage
-    private final double range;                 // max distance of the beam
-    private final double width;                 // hit radius around the beam line
-    private final double step;                  // sampling step (visuals & hit)
-    private final double damagePerTick;         // damage each tick while a target is inside the beam
-    private final boolean clampToBlocks;        // stop at first block hit
-    private final double verticalHalf;          // vertical half-height for nearby filter
+    private final int chargeTicks;
+    private final int fireTicks;
+    private final double range;
+    private final double width;
+    private final double step;
+    private final double damagePerTick;
+    private final boolean clampToBlocks;
+    private final double verticalHalf;
 
     // Visuals
     private final Particle.DustOptions telegraphDust = new Particle.DustOptions(Color.fromRGB(120, 200, 255), 3.5f);

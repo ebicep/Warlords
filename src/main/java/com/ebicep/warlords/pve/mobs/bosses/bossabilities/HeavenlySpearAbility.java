@@ -83,8 +83,6 @@ public class HeavenlySpearAbility {
         this.itemRemoveSfx = itemRemoveSfx;
     }
 
-    /* ================= Public API ================= */
-
     public void start(Game game) {
         if (running) return;
         running = true;
@@ -115,7 +113,7 @@ public class HeavenlySpearAbility {
                 // Telegraph phase
                 if (t <= telegraphTicks) {
                     for (Location loc : landings) {
-                        w.spawnParticle(Particle.DUST, loc.clone().add(0, 0.1, 0), 6, 0.4, 0, 0.4, 0,
+                        w.spawnParticle(Particle.DUST, loc.clone().add(0, 0.1, 0), 3, 0.4, 0, 0.4, 0,
                                 new Particle.DustOptions(Color.fromRGB(200, 200, 255), 1.5f));
                         if (telegraphSfx != null) {
                             new CircleEffect(
@@ -123,7 +121,7 @@ public class HeavenlySpearAbility {
                                     source.getTeam(),
                                     loc.clone().add(0, 0.1, 0),
                                     impactRadius,
-                                    new CircumferenceEffect(telegraphSfx, telegraphSfx).particlesPerCircumference(0.75)
+                                    new CircumferenceEffect(telegraphSfx, telegraphSfx).particlesPerCircumference(0.25)
                             ).playEffects();
                         }
                         if (t == 1) {

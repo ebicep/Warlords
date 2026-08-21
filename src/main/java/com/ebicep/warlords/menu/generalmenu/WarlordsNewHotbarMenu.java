@@ -24,8 +24,9 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.commands.AbilityTreeCommand;
-import com.ebicep.warlords.pve.items.menu.ItemEquipMenu;
+import com.ebicep.warlords.pve.consumables.menu.ConsumableMenu;
 import com.ebicep.warlords.pve.mobs.MobDrop;
+import com.ebicep.warlords.pve.newitems.menu.NewItemEquipMenu;
 import com.ebicep.warlords.pve.rewards.RewardInventory;
 import com.ebicep.warlords.pve.rewards.types.LevelUpReward;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
@@ -598,7 +599,7 @@ public class WarlordsNewHotbarMenu {
                 Weapons weapon = values.get(i);
                 ItemBuilder builder;
 
-                if (weapon.isUnlocked && (!weapon.patreonExclusive || Permissions.PATREON.contains(player))) {
+                if (weapon.isUnlocked && (!weapon.patreonExclusive || Permissions.SUPPORTER.contains(player))) {
                     builder = new ItemBuilder(weapon.getItem())
                             .name(Component.text(weapon.getName(), NamedTextColor.GREEN));
                     List<Component> lore = new ArrayList<>();
@@ -620,7 +621,7 @@ public class WarlordsNewHotbarMenu {
                         (i - (pageNumber - 1) * 21) / 7 + 1,
                         builder.get(),
                         (m, e) -> {
-                            if (weapon.isUnlocked && (!weapon.patreonExclusive || Permissions.PATREON.contains(player))) {
+                            if (weapon.isUnlocked && (!weapon.patreonExclusive || Permissions.SUPPORTER.contains(player))) {
                                 player.sendMessage(Component.text("You have changed your ", NamedTextColor.GREEN)
                                                             .append(Component.text(selectedSpec.name, NamedTextColor.AQUA))
                                                             .append(Component.text("'s weapon skin to: §b" + weapon.getName() + "!")));
@@ -905,6 +906,14 @@ public class WarlordsNewHotbarMenu {
                         ComponentUtils.CLICK_TO_VIEW
                 )
                 .get();
+        public static final ItemStack VIAL_INVENTORY_MENU = new ItemBuilder(Material.POTION)
+                .name(Component.text("Vial Inventory", NamedTextColor.GREEN))
+                .lore(
+                        Component.text("View, purchase and consume your PvE Vials.", NamedTextColor.GRAY),
+                        Component.empty(),
+                        ComponentUtils.CLICK_TO_VIEW
+                )
+                .get();
 
         public static void openPvEMenu(Player player) {
             DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
@@ -942,9 +951,10 @@ public class WarlordsNewHotbarMenu {
                             .get(),
                     (m, e) -> {}
             );
-            menu.setItem(4, 1, ITEMS_MENU, (m, e) -> ItemEquipMenu.openItemEquipMenuExternal(player, databasePlayer));
+            menu.setItem(4, 1, ITEMS_MENU, (m, e) -> NewItemEquipMenu.openItemEquipMenuExternal(player, databasePlayer));
             menu.setItem(5, 1, REWARD_INVENTORY_MENU, (m, e) -> RewardInventory.openRewardInventory(player, 1));
             menu.setItem(6, 1, ABILITY_TREE_MENU, (m, e) -> AbilityTreeCommand.open(player));
+            menu.setItem(7, 1, VIAL_INVENTORY_MENU, (m, e) -> ConsumableMenu.openVialInventory(player));
 
             menu.setItem(3, 3, MENU_BACK, (m, e) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(player));
             menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);

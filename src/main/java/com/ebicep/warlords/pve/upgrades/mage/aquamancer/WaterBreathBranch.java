@@ -60,7 +60,7 @@ public class WaterBreathBranch extends AbstractUpgradeBranch<WaterBreath> {
                 """
                         +15% Cooldown reduction
                         
-                        Healing allies grants them knockback immunity for 4 seconds. Additionally, allies hit by Water Breath are given Bubble Blessing, causing all their attacks (excluding DoT) to have a 35% chance to hit enemies for an additional 372-441 damage.
+                        Healing allies grants them knockback immunity for 4 seconds. Additionally, allies hit by Water Breath are given Bubble Blessing, causing all their attacks (excluding DoT) to have a 50% chance to hit enemies for an additional 372-441 damage.
                         """,
                 50000,
                 () -> {

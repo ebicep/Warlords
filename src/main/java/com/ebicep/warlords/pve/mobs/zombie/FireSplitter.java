@@ -61,13 +61,6 @@ public class FireSplitter extends AbstractMob implements EliteMob {
     }
 
     @Override
-    public void whileAlive(int ticksElapsed, PveOption option) {
-        if (ticksElapsed % 40 == 0) {
-            Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.BLOCK_FIRE_AMBIENT, 2, 0.5f);
-        }
-    }
-
-    @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         super.onDeath(killer, deathLocation, option);
         EffectUtils.playFirework(

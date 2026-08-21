@@ -38,6 +38,12 @@ public class CompensationReward extends AbstractReward {
         }
     }
 
+    public static class PrestigeOrbLoginPatch extends CompensationReward {
+        public PrestigeOrbLoginPatch() {
+            super(new LinkedHashMap<>(), "Prestige Orb Login Patch");
+        }
+    }
+
     public static class CelestialBronzePatch extends CompensationReward {
         public CelestialBronzePatch() {
         }

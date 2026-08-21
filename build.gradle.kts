@@ -2,17 +2,17 @@ import xyz.jpenilla.resourcefactory.bukkit.BukkitPluginYaml
 import xyz.jpenilla.resourcefactory.paper.PaperPluginYaml
 
 plugins {
-    id("com.gradleup.shadow") version "8.3.5" // Creates a fat jar
+    id("com.gradleup.shadow") version "9.3.1" // Creates a fat jar
     java
     `maven-publish`
     `java-library`
-    id("io.papermc.paperweight.userdev") version "2.0.0-beta.14"
-    id("xyz.jpenilla.run-paper") version "2.3.1" // Adds runServer and runMojangMappedServer tasks for testing
+    id("io.papermc.paperweight.userdev") version "2.0.0-beta.19"
+    id("xyz.jpenilla.run-paper") version "3.0.2" // Adds runServer and runMojangMappedServer tasks for testing
     id("xyz.jpenilla.resource-factory-paper-convention") version "1.3.1" // Generates plugin.yml based on the Gradle config
 }
 
 group = "com.ebicep"
-version = "Prelude to Chaos"
+version = "Drowned Realms"
 description = "Warlords"
 
 val archiveVersionSuffix: String
@@ -45,8 +45,8 @@ repositories {
 }
 
 dependencies {
-    pluginRemapper("net.fabricmc:tiny-remapper:0.10.4:fat")
-    paperweight.paperDevBundle("1.21.4-R0.1-SNAPSHOT")
+    pluginRemapper("net.fabricmc:tiny-remapper:0.12.1:fat")
+    paperweight.paperDevBundle("1.21.11-R0.1-SNAPSHOT")
 
     implementation("co.aikar:taskchain-bukkit:3.7.2")
 
@@ -56,30 +56,30 @@ dependencies {
 
     implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT")
 
-    implementation("de.rapha149.signgui:signgui:2.5.0")
+    implementation("de.rapha149.signgui:signgui:2.5.4")
 
-    compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
 
-    compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.3.0")
+    compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.3.18")
     implementation("com.google.guava:guava:32.1.3-jre")
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("it.unimi.dsi:fastutil:8.5.12")
 
-    compileOnly("net.citizensnpcs:citizens-main:2.0.37-SNAPSHOT") {
+    compileOnly("net.citizensnpcs:citizens-main:2.0.41-SNAPSHOT") {
         exclude(group = "*", module = "*")
     }
 
-    compileOnly("com.comphenix.protocol:ProtocolLib:5.3.0")
+    compileOnly("com.comphenix.protocol:ProtocolLib:5.4.0-SNAPSHOT")
 
     compileOnly("net.luckperms:api:5.4")
 
-    compileOnlyApi("LibsDisguises:LibsDisguises:10.0.44") {
+    compileOnlyApi("me.libraryaddict.disguises:libsdisguises:11.0.8") {
         exclude("org.spigotmc", "spigot")
     }
 
-    compileOnly("com.onarandombox.multiversecore:multiverse-core:4.3.16")
+    compileOnly("org.mvplugins.multiverse.core:multiverse-core:5.0.0-SNAPSHOT")
 
-    implementation("fr.skytasul:guardianbeam:2.4.0")
+    implementation("fr.skytasul:guardianbeam:2.4.6")
 }
 
 publishing {
@@ -110,6 +110,10 @@ tasks {
         archiveVersion.set(archiveVersionSuffix)
         relocate("co.aikar.commands", "com.ebicep.warlords.acf.acf")
         relocate("co.aikar.locales", "com.ebicep.warlords.acf.locales")
+
+        dependencies {
+            exclude(dependency("club.minnced:opus-java"))
+        }
     }
 
     reobfJar {
@@ -141,7 +145,7 @@ tasks.withType<AbstractArchiveTask>().configureEach {
 paperPluginYaml {
     main = "com.ebicep.warlords.Warlords"
     bootstrapper = "com.ebicep.warlords.WarlordsBootstrap"
-    apiVersion = "1.21.4"
+    apiVersion = "1.21.11"
     load = BukkitPluginYaml.PluginLoadOrder.POSTWORLD
     version = project.version.toString()
     authors = listOf("ebicep", "Plikie")
@@ -162,6 +166,11 @@ paperPluginYaml {
                 load = PaperPluginYaml.Load.BEFORE
             }
             register("Multiverse-Core") {
+                joinClasspath = true
+                required = true
+                load = PaperPluginYaml.Load.BEFORE
+            }
+            register("LibsDisguises") {
                 joinClasspath = true
                 required = true
                 load = PaperPluginYaml.Load.BEFORE

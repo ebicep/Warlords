@@ -67,7 +67,9 @@ public class RiftWalker extends AbstractMob implements EliteMob {
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-        warlordsNPC.getSpeed().removeNegativeModifiers();
+        if (ticksElapsed % 10 == 0) {
+            warlordsNPC.getSpeed().removeNegativeModifiers();
+        }
     }
 
     @Override

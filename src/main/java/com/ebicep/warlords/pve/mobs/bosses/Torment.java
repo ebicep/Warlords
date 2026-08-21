@@ -96,6 +96,11 @@ public class Torment extends AbstractMob implements BossMob {
     }
 
     @Override
+    public double getMobScale() {
+        return 1.2;
+    }
+
+    @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
         ChatUtils.sendTitleToGamePlayers(

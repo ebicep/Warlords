@@ -34,7 +34,7 @@ public class LastStandBranch extends AbstractUpgradeBranch<LastStand> {
                     public void run(float value) {
                         ability.setSelfDamageReductionPercent((int) (selfDamageReduction + value));
                     }
-                }, 5f)
+                }, 2.5f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder
@@ -47,14 +47,14 @@ public class LastStandBranch extends AbstractUpgradeBranch<LastStand> {
                 "Last Stand - Master Upgrade",
                 """
                         +25% Cooldown Reduction
-                        +25% Self Damage Reduction
+                        +10% Self Damage Reduction
                         
                         Double the radius of Last Stand and take 50% less knockback while active.
                         """,
                 50000,
                 () -> {
                     ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Final Stand", 0.75f);
-                    ability.setSelfDamageReductionPercent(ability.getSelfDamageReduction() + 25);
+                    ability.setSelfDamageReductionPercent(ability.getSelfDamageReduction() + 10);
                     ability.setRadius(ability.getRadius() * 2);
                 }
         );

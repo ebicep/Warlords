@@ -8,6 +8,8 @@ import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.option.pve.PveOption;
+import com.ebicep.warlords.game.option.pve.anomaly.Anomalies;
+import com.ebicep.warlords.game.option.pve.anomaly.AnomalyRotation;
 import com.ebicep.warlords.game.option.win.WinAfterTimeoutOption;
 import com.ebicep.warlords.game.state.PreLobbyState;
 import com.ebicep.warlords.player.general.Specializations;
@@ -20,6 +22,10 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.Arrays;
+import java.util.Locale;
+import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.util.chat.ChatChannels.sendDebugMessage;
 
@@ -115,20 +121,6 @@ public class GameDebugCommand extends BaseCommand {
         );
     }
 
-    @CommandAlias("gamedebug3|gd3")
-    @Description("Auto starts payload game")
-    public void gameDebug3(@Conditions("outsideGame") Player player) {
-        GameStartCommand.startGame(player, false, queueEntryBuilder -> {
-                    queueEntryBuilder.setRequestedGameAddons(GameAddon.PRIVATE_GAME);
-                    queueEntryBuilder.setGameMode(GameMode.PAYLOAD);
-                    queueEntryBuilder.setMap(GameMap.PAYLOAD);
-                    queueEntryBuilder.setOnResult((queueResult, game) -> {
-                        game.getState(PreLobbyState.class).ifPresent(PreLobbyState::skipTimer);
-                    });
-                }
-        );
-    }
-
     @CommandAlias("gamedebugsiege|gds")
     @Description("Auto starts siege game")
     public void gameDebugSiege(@Conditions("outsideGame") Player player) {
@@ -172,7 +164,6 @@ public class GameDebugCommand extends BaseCommand {
                     queueEntryBuilder.setOnResult((queueResult, game) -> {
                         game.getState(PreLobbyState.class).ifPresent(PreLobbyState::skipTimer);
                         new BukkitRunnable() {
-
                             @Override
                             public void run() {
                                 game.warlordsPlayers().forEach(warlordsPlayer -> {
@@ -214,6 +205,55 @@ public class GameDebugCommand extends BaseCommand {
                     });
                 }
         );
+    }
+
+    @CommandAlias("anomalytest|anomalyoverride")
+    @CommandPermission("group.administrator")
+    @CommandCompletion("OPEX_ANOMALY|BRIDGE_OF_DUNESTAR|WHAT_ONCE_WAS|clear")
+    @Description("Temporarily overrides the active Anomaly for testing")
+    public void anomalyTest(Player player, @Optional String anomalyInput) {
+        if (anomalyInput == null || anomalyInput.isBlank()) {
+            Anomalies active = AnomalyRotation.getCurrentAnomaly();
+            sendDebugMessage(player, Component.text("Active Anomaly: ", NamedTextColor.GRAY)
+                    .append(Component.text(active.getName(), NamedTextColor.GOLD)));
+            sendDebugMessage(player, Component.text(
+                    AnomalyRotation.hasTestAnomalyOverride()
+                            ? "A test override is active. Use /anomalytest clear to restore hourly rotation."
+                            : "Hourly rotation is active.",
+                    NamedTextColor.YELLOW
+            ));
+            return;
+        }
+
+        if (anomalyInput.equalsIgnoreCase("clear") || anomalyInput.equalsIgnoreCase("reset")) {
+            AnomalyRotation.clearTestAnomalyOverride();
+            sendDebugMessage(player, Component.text("Cleared the Anomaly test override. Active Anomaly: ", NamedTextColor.GREEN)
+                    .append(Component.text(AnomalyRotation.getCurrentAnomaly().getName(), NamedTextColor.GOLD)));
+            return;
+        }
+
+        String normalizedInput = normalizeAnomalyName(anomalyInput);
+        Anomalies anomaly = Arrays.stream(Anomalies.VALUES)
+                .filter(value -> normalizeAnomalyName(value.name()).equals(normalizedInput)
+                        || normalizeAnomalyName(value.getName()).equals(normalizedInput))
+                .findFirst()
+                .orElse(null);
+        if (anomaly == null) {
+            String available = Arrays.stream(Anomalies.VALUES)
+                    .map(Enum::name)
+                    .collect(Collectors.joining(", "));
+            sendDebugMessage(player, Component.text("Unknown Anomaly '" + anomalyInput + "'. Available: " + available, NamedTextColor.RED));
+            return;
+        }
+
+        AnomalyRotation.setTestAnomalyOverride(anomaly);
+        sendDebugMessage(player, Component.text("Anomaly test override set to ", NamedTextColor.GREEN)
+                .append(Component.text(anomaly.getName(), NamedTextColor.GOLD))
+                .append(Component.text(". New Anomaly games will use " + anomaly.getMap().getMapName() + ".", NamedTextColor.GREEN)));
+    }
+
+    private static String normalizeAnomalyName(String value) {
+        return value.toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9]", "");
     }
 
     @CommandAlias("endtimer")

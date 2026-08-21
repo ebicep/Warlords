@@ -132,7 +132,7 @@ public class TowerDefenseSpawner implements Option, Listener {
             List<TowerDefenseDirectAcyclicGraph.TowerDefenseEdge> outgoingEdges = path.getEdges(node);
             assignNextTargetNode(attackingMobData, lastNodeIdentifier, outgoingEdges);
 
-            npc.getDefaultGoalController().addGoal(new NPCTowerDefensePathfindGoal(npc, this, mob, attackingMobData), 3);
+            npc.getDefaultBehaviorController().addBehavior(new NPCTowerDefensePathfindGoal(npc, this, mob, attackingMobData));
             if (towerDefenseOption.isDebug()) {
                 mob.getWarlordsNPC()
                    .getMobHologram()

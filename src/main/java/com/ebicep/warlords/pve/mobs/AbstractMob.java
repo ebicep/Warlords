@@ -4,6 +4,8 @@ import com.ebicep.customentities.nms.pve.pathfindergoals.NPCTargetAggroWarlordsE
 import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.warlords.abilities.internal.AbilityStats;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
@@ -18,9 +20,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.DifficultyIndex;
-import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
-import com.ebicep.warlords.pve.items.types.ItemType;
 import com.ebicep.warlords.pve.mobs.flags.DynamicFlags;
 import com.ebicep.warlords.pve.mobs.flags.NoTarget;
 import com.ebicep.warlords.pve.mobs.flags.Unstunnable;
@@ -28,8 +28,12 @@ import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.mobs.tiers.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.PlayerMob;
+import com.ebicep.warlords.pve.newitems.NewItem;
+import com.ebicep.warlords.pve.newitems.NewItemsUtils;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import com.ebicep.warlords.util.java.NumberFormat;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.google.common.util.concurrent.AtomicDouble;
@@ -66,6 +70,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public abstract class AbstractMob implements Mob {
+
+    private static final double NEW_ITEM_DROP_CHANCE = 0.001;
 
     protected final String name;
     protected final int maxHealth;
@@ -158,7 +164,7 @@ public abstract class AbstractMob implements Mob {
         NavigatorParameters defaultParameters = this.npc.getNavigator().getDefaultParameters();
         defaultParameters.attackStrategy(CustomAttackStrategy.ATTACK_STRATEGY);
         defaultParameters.attackRange(getDefaultAttackRange())
-                         .stuckAction(null) // disable tping to player if too far away
+                         .stuckAction(null)
                          .updatePathRate(6)
                          .distanceMargin(.5)
                          .speedModifier(.9f)
@@ -287,10 +293,7 @@ public abstract class AbstractMob implements Mob {
     }
 
     public void giveGoals() {
-        //TODO wander? - waypoints trait
-//        npc.getNavigator().getLocalParameters()
-//           .avoidWater(true);
-        npc.getDefaultGoalController().addGoal(new NPCTargetAggroWarlordsEntityGoal(npc, 70), 2);
+        npc.getDefaultBehaviorController().addBehavior(new NPCTargetAggroWarlordsEntityGoal(npc, 70));
     }
 
     public void onNPCCreate() {
@@ -337,7 +340,6 @@ public abstract class AbstractMob implements Mob {
     }
 
     protected void handleAspects(PveOption option) {
-        // null checks to handle manual spawns with aspects
         if (this.aspect == null &&
                 ThreadLocalRandom.current().nextDouble() < option.getDifficulty().getAspectChance().apply(option) &&
                 !(this instanceof BossMob || this instanceof PlayerMob || this instanceof BossMinionMob)
@@ -414,9 +416,6 @@ public abstract class AbstractMob implements Mob {
         dropItem(killer);
     }
 
-    /**
-     * Method is guaranteed to be called after the mob has been killed/removed from game
-     */
     public void cleanup(PveOption pveOption) {
     }
 
@@ -502,34 +501,26 @@ public abstract class AbstractMob implements Mob {
                            .teammatesOf((WarlordsPlayer) killer)
                            .filter(wp -> wp.getEntity() instanceof Player)
                            .forEach(warlordsPlayer -> {
-                               ItemTier[] validValues = ItemTier.VALID_VALUES;
-                               for (int i = validValues.length - 1; i >= 0; i--) {
-                                   ItemTier itemTier = validValues[i];
-                                   if (itemTier.dropChance == 0) {
-                                       continue;
-                                   }
-                                   double rng = ThreadLocalRandom.current().nextDouble();
-                                   AtomicDouble dropRate = new AtomicDouble(itemTier.dropChance * game.getGameMode().getDropModifier());
-                                   AbstractWarlordsDropRewardEvent dropRewardEvent = new WarlordsDropItemEvent(warlordsPlayer, this, dropRate, itemTier);
-                                   Bukkit.getPluginManager().callEvent(dropRewardEvent);
-                                   if (!(rng < dropRate.get() * dropRewardEvent.getModifier())) {
-                                       continue;
-                                   }
-                                   AbstractItem item = ItemType.getRandom().create(itemTier);
-                                   Bukkit.getPluginManager().callEvent(new WarlordsGiveItemEvent(warlordsPlayer, item));
-                                   game.forEachOnlinePlayer((player, team) -> {
-                                       AbstractItem.sendItemMessage(player,
-                                               Component.text().color(NamedTextColor.GRAY)
-                                                        .append(Permissions.getPrefixWithColor((Player) warlordsPlayer.getEntity(), true))
-                                                        .append(Component.text(" got lucky and found "))
-                                                        .append(item.getHoverComponent())
-                                                        .append(Component.text("!"))
-                                                        .build()
-                                       );
-                                   });
-                                   warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
-                                   break;
+                               AtomicDouble dropRate = new AtomicDouble(NEW_ITEM_DROP_CHANCE * game.getGameMode().getDropModifier());
+                               AbstractWarlordsDropRewardEvent dropRewardEvent = new WarlordsDropNewItemEvent(warlordsPlayer, this, dropRate);
+                               Bukkit.getPluginManager().callEvent(dropRewardEvent);
+                               if (ThreadLocalRandom.current().nextDouble() >= dropRate.get() * dropRewardEvent.getModifier()) {
+                                   return;
                                }
+                               NewItem item = NewItemsUtils.generateRandomItem();
+                               DatabasePlayer databasePlayer = warlordsPlayer.getDatabasePlayer();
+                               databasePlayer.getPveStats().getNewItemsManager().addItem(item);
+                               DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                               game.forEachOnlinePlayer((player, team) -> NewItemsUtils.sendItemMessage(
+                                       player,
+                                       Component.text().color(NamedTextColor.GRAY)
+                                                .append(Permissions.getPrefixWithColor((Player) warlordsPlayer.getEntity(), true))
+                                                .append(Component.text(" got lucky and found "))
+                                                .append(item.getHoverComponent())
+                                                .append(Component.text("!"))
+                                                .build()
+                               ));
+                               warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
                            });
     }
 

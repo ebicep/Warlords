@@ -23,6 +23,7 @@ public enum InstanceFlags {
     DIRECT_HIT,
     DUPLICATE_AVENGER_STRIKE,
     NO_HEALING_ORBS,
+    NO_HEALING_LEECH,
     FIRST_HIT,
 
     IGNORE_SELF_RES,

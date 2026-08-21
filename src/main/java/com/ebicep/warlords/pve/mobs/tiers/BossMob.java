@@ -38,5 +38,4 @@ public interface BossMob extends Mob, Unexecutable, BossLike {
     default Component getNamePrefix() {
         return Component.text("❂ BOSS ❂", NamedTextColor.DARK_RED, TextDecoration.BOLD);
     }
-
 }

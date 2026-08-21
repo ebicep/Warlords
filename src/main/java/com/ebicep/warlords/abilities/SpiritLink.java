@@ -176,21 +176,25 @@ public class SpiritLink extends AbstractChain<SpiritLink, SpiritLink.SpiritLinkS
         if (bounceCount >= additionalBounces || bounceDamageReduction == 0) {
             return;
         }
-        for (WarlordsEntity bounceTarget : PlayerFilter.entitiesAround(chainTarget, bounceRange, bounceRange, bounceRange)
-                                                       .aliveEnemiesOf(wp)
-                                                       .excluding(toExclude)
-                                                       .soulBindedFirst(wp)) {
+        for (WarlordsEntity bounceTarget : PlayerFilter
+                .entitiesAround(chainTarget, bounceRange, bounceRange, bounceRange)
+                .aliveEnemiesOf(wp)
+                .excluding(toExclude)
+                .soulBindedFirst(wp)
+        ) {
             stats.addPlayersHit();
             if (bounceTarget.onHorse()) {
                 stats.numberOfDismounts++;
             }
             chain(chainTarget.getLocation(), bounceTarget.getLocation());
-            bounceTarget.addInstance(InstanceBuilder.damage()
-                                                    .ability(this)
-                                                    .source(wp)
-                                                    .min(damageValues.linkDamage.getMinValue() * bounceDamageReduction)
-                                                    .max(damageValues.linkDamage.getMaxValue() * bounceDamageReduction)
-                                                    .crit(damageValues.linkDamage));
+            bounceTarget.addInstance(InstanceBuilder
+                    .damage()
+                    .ability(this)
+                    .source(wp)
+                    .min(damageValues.linkDamage.getMinValue() * bounceDamageReduction)
+                    .max(damageValues.linkDamage.getMaxValue() * bounceDamageReduction)
+                    .crit(damageValues.linkDamage)
+            );
             hitCounter.add(bounceTarget);
 
             if (pveMasterUpgrade) {
@@ -217,10 +221,11 @@ public class SpiritLink extends AbstractChain<SpiritLink, SpiritLink.SpiritLinkS
         int limit = soulbinding.getMaxAlliesHit();
         Soulbinding.HealingValues healValues = soulbinding.getHealValues();
         warlordsPlayer.addInstance(InstanceBuilder.healing().ability(soulbinding).source(warlordsPlayer).value(healValues.getSelfHealing()));
-        for (WarlordsEntity nearPlayer : PlayerFilter.entitiesAround(warlordsPlayer, radius, radius, radius)
-                                                     .aliveTeammatesOfExcludingSelf(warlordsPlayer)
-                                                     .closestWarlordPlayersFirst(warlordsPlayer.getLocation())
-                                                     .limit(limit)) {
+        for (WarlordsEntity nearPlayer : PlayerFilter
+                .entitiesAround(warlordsPlayer, radius, radius, radius)
+                .aliveTeammatesOfExcludingSelf(warlordsPlayer)
+                .closestWarlordPlayersFirst(warlordsPlayer.getLocation())
+                .limit(limit)) {
             soulbinding.addLinkTeammatesHealed();
             nearPlayer.addInstance(InstanceBuilder.healing().ability(soulbinding).source(warlordsPlayer).value(healValues.getAllyHealing()));
         }

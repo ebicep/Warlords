@@ -8,7 +8,7 @@ import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.citizensnpcs.api.ai.GoalController;
+import net.citizensnpcs.api.ai.BehaviorController;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 
@@ -49,9 +49,9 @@ public class EventTerasSiren extends AbstractMob implements BossMinionMob, Teras
     public void giveGoals() {
         super.giveGoals();
         if (cronus != null) {
-            GoalController goalController = npc.getDefaultGoalController();
+            BehaviorController goalController = npc.getDefaultBehaviorController();
             goalController.clear();
-            goalController.addBehavior(new NPCGuardWarlordsEntityGoal(npc, cronus.getWarlordsNPC(), 10), 2);
+            goalController.addBehavior(new NPCGuardWarlordsEntityGoal(npc, cronus.getWarlordsNPC(), 10));
         }
     }
 

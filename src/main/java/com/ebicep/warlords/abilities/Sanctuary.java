@@ -73,143 +73,142 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
         } else {
             modifiers = Collections.emptyList();
         }
-        PlayerFilter.playingGame(wp.getGame()).teammatesOf(wp).forEach(teammate -> {
-            new CooldownFilter<>(teammate, RegularCooldown.class).filterCooldownClass(FortifyingHex.class).filterCooldownFrom(wp).forEach(cd -> {
-                cd.setTicksLeft(cd.getTicksLeft() + hexTickDurationIncrease);
-                stats.hexesProlonged++;
-            });
-            boolean isSelf = wp == teammate;
-            int maxStacks = FortifyingHex.getFromHex(wp).getMaxStacks();
-            teammate.getCooldownManager().addCooldown(new RegularCooldown<>(
-                    name,
-                    isSelf ? "SANCTUARY" : null,
-                    Sanctuary.class,
-                    null,
-                    wp,
-                    CooldownTypes.ABILITY,
-                    cooldownManager -> {
-                    },
-                    cooldownManager -> {
-                        if (isSelf) {
-                            modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
-                        }
-                    },
-                    false,
-                    tickDuration,
-                    Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                        if (wp.isDead()) {
-                            cooldown.setTicksLeft(0);
-                        }
-                    })
-            ) {
-
-                @Override
-                protected Listener getListener() {
-                    if (!isSelf) {
-                        return null;
-                    }
-                    return new Listener() {
-
-                        private final Set<WarlordsEntity> resurrected = new HashSet<>();
-
-                        @EventHandler(priority = EventPriority.LOWEST)
-                        private void onAddCooldown(WarlordsAddCooldownEvent event) {
-                            AbstractCooldown<?> cooldown = event.getAbstractCooldown();
-                            if (!Objects.equals(cooldown.getFrom(), wp) || !(cooldown instanceof RegularCooldown<?> regularCooldown)) {
-                                return;
+        PlayerFilter.playingGame(wp.getGame())
+                .teammatesOf(wp)
+                .forEach(teammate -> {
+                    new CooldownFilter<>(teammate, RegularCooldown.class).filterCooldownClass(FortifyingHex.class).filterCooldownFrom(wp).forEach(cd -> {
+                        cd.setTicksLeft(cd.getTicksLeft() + hexTickDurationIncrease);
+                        stats.hexesProlonged++;
+                    });
+                    boolean isSelf = wp == teammate;
+                    int maxStacks = FortifyingHex.getFromHex(wp).getMaxStacks();
+                    teammate.getCooldownManager().addCooldown(new RegularCooldown<>(
+                            name,
+                            isSelf ? "SANCTUARY" : null,
+                            Sanctuary.class,
+                            null,
+                            wp,
+                            CooldownTypes.ABILITY,
+                            cooldownManager -> {
+                            },
+                            cooldownManager -> {
+                                if (isSelf) {
+                                    modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
+                                }
+                            },
+                            false,
+                            tickDuration,
+                            Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                                if (wp.isDead()) {
+                                    cooldown.setTicksLeft(0);
+                                }
+                            })
+                    ) {
+                        @Override
+                        protected Listener getListener() {
+                            if (!isSelf) {
+                                return null;
                             }
-                            Object cdObject = cooldown.getCooldownObject();
-                            if (cdObject instanceof FortifyingHex.FortifyingHexData) {
-                                regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + hexTickDurationIncrease);
-                                stats.hexesProlonged++;
-                            }
-                            if (pveMasterUpgrade2 && event.getWarlordsEntity().equals(teammate) && cdObject instanceof GuardianBeam.GuardianBeamShield guardianBeamShield) {
-                                float newShieldHealth = guardianBeamShield.getShieldValue() + 600;
-                                guardianBeamShield.setMaxShieldHealth(newShieldHealth);
-                                guardianBeamShield.setShieldHealth(newShieldHealth);
-                            }
-                        }
+                            return new Listener() {
 
-                        @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-                        public void onDeath(WarlordsDeathEvent event) {
-                            WarlordsEntity warlordsEntity = event.getWarlordsEntity();
-                            if (!warlordsEntity.isTeammateAlive(wp) || resurrected.contains(warlordsEntity)) {
-                                return;
-                            }
-                            int hexStacks = (int) new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
+                                private final Set<WarlordsEntity> resurrected = new HashSet<>();
+
+                                @EventHandler(priority = EventPriority.LOWEST)
+                                private void onAddCooldown(WarlordsAddCooldownEvent event) {
+                                    AbstractCooldown<?> cooldown = event.getAbstractCooldown();
+                                    if (!Objects.equals(cooldown.getFrom(), wp) || !(cooldown instanceof RegularCooldown<?> regularCooldown)) {
+                                        return;
+                                    }
+                                    Object cdObject = cooldown.getCooldownObject();
+                                    if (cdObject instanceof FortifyingHex.FortifyingHexData) {
+                                        regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + hexTickDurationIncrease);
+                                        stats.hexesProlonged++;
+                                    }
+                                    if (pveMasterUpgrade2 && event.getWarlordsEntity().equals(teammate) && cdObject instanceof GuardianBeam.GuardianBeamShield guardianBeamShield) {
+                                        float newShieldHealth = guardianBeamShield.getShieldValue() + 600;
+                                        guardianBeamShield.setMaxShieldHealth(newShieldHealth);
+                                        guardianBeamShield.setShieldHealth(newShieldHealth);
+                                    }
+                                }
+
+                                @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+                                public void onDeath(WarlordsDeathEvent event) {
+                                    WarlordsEntity warlordsEntity = event.getWarlordsEntity();
+                                    if (!warlordsEntity.isTeammateAlive(wp) || resurrected.contains(warlordsEntity)) {
+                                        return;
+                                    }
+                                    int hexStacks = (int) new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
+                                            .filterCooldownFrom(wp)
+                                            .filterCooldownClass(FortifyingHex.FortifyingHexData.class)
+                                            .stream()
+                                            .count();
+                                    if (hexStacks < maxStacks) {
+                                        return;
+                                    }
+                                    resurrected.add(warlordsEntity);
+                                    event.setCancelled(true);
+                                    warlordsEntity.setCurrentHealth(warlordsEntity.getMaxBaseHealth() * convertToPercent(lethalDamageHealing));
+                                    Utils.playGlobalSound(warlordsEntity.getLocation(), Sound.ITEM_TOTEM_USE, 2, 0.75f);
+                                    if (pveMasterUpgrade) {
+                                        for (WarlordsEntity resTarget : PlayerFilter
+                                                .entitiesAround(warlordsEntity, 15, 15, 15)
+                                                .aliveEnemiesOf(warlordsEntity)
+                                        ) {
+                                            EffectUtils.strikeLightning(resTarget.getLocation(), true);
+                                            EffectUtils.playCrownAnimation(resTarget.getLocation(), Particle.CHERRY_LEAVES);
+                                            float damage = warlordsEntity.getEntity() instanceof Player ? warlordsEntity.getMaxHealth() * 2 : warlordsEntity.getMaxHealth() * 0.1f;
+                                            resTarget.addInstance(InstanceBuilder.damage()
+                                                                                 .ability(Sanctuary.this)
+                                                                                 .source(warlordsEntity)
+                                                                                 .value(damage)
+                                                                                 .flag(InstanceFlags.TRUE_DAMAGE, true));
+                                        }
+                                    }
+                                    if (warlordsEntity.equals(wp)) {
+                                        wp.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
+                                                .append(Component.text(" Your ", NamedTextColor.GRAY))
+                                                .append(Component.text(name, NamedTextColor.YELLOW))
+                                                .append(Component.text(" resurrected you!", NamedTextColor.GRAY))
+                                        );
+                                    } else {
+                                        warlordsEntity.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
+                                                .append(Component.text(" You were resurrected by " + wp.getName() + "'s ", NamedTextColor.GRAY))
+                                                .append(Component.text(name, NamedTextColor.YELLOW))
+                                                .append(Component.text("!", NamedTextColor.GRAY))
+                                        );
+                                        wp.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
+                                                .append(Component.text(" Your ", NamedTextColor.GRAY))
+                                                .append(Component.text(name, NamedTextColor.YELLOW))
+                                                .append(Component.text(" resurrected " + warlordsEntity.getName() + "!", NamedTextColor.GRAY))
+                                        );
+                                    }
+                                    stats.playersResurrected++;
+                                }
+                            };
+                }}.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
+                    int hexStacks = (int) new CooldownFilter<>(event.getWarlordsEntity(), RegularCooldown.class)
                                     .filterCooldownFrom(wp)
                                     .filterCooldownClass(FortifyingHex.FortifyingHexData.class)
                                     .stream()
                                     .count();
-                            if (hexStacks < maxStacks) {
+                    if (hexStacks < maxStacks) {
                                 return;
-                            }
-                            resurrected.add(warlordsEntity);
-                            event.setCancelled(true);
-                            warlordsEntity.setCurrentHealth(warlordsEntity.getMaxBaseHealth() * convertToPercent(lethalDamageHealing));
-                            Utils.playGlobalSound(warlordsEntity.getLocation(), Sound.ITEM_TOTEM_USE, 2, 0.75f);
-                            if (pveMasterUpgrade) {
-                                for (WarlordsEntity resTarget : PlayerFilter
-                                        .entitiesAround(warlordsEntity, 15, 15, 15)
-                                        .aliveEnemiesOf(warlordsEntity)
-                                ) {
-                                    EffectUtils.strikeLightning(resTarget.getLocation(), true);
-                                    EffectUtils.playCrownAnimation(resTarget.getLocation(), Particle.CHERRY_LEAVES);
-                                    float damage = warlordsEntity.getEntity() instanceof Player ? warlordsEntity.getMaxHealth() * 2 : warlordsEntity.getMaxHealth() * 0.1f;
-                                    resTarget.addInstance(InstanceBuilder.damage()
-                                                                         .ability(Sanctuary.this)
-                                                                         .source(warlordsEntity)
-                                                                         .value(damage)
-                                                                         .flag(InstanceFlags.TRUE_DAMAGE, true));
-                                }
-                            }
-                            if (warlordsEntity.equals(wp)) {
-                                wp.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
-                                        .append(Component.text(" Your ", NamedTextColor.GRAY))
-                                        .append(Component.text(name, NamedTextColor.YELLOW))
-                                        .append(Component.text(" resurrected you!", NamedTextColor.GRAY))
-                                );
-                            } else {
-                                warlordsEntity.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
-                                        .append(Component.text(" You were resurrected by " + wp.getName() + "'s ", NamedTextColor.GRAY))
-                                        .append(Component.text(name, NamedTextColor.YELLOW))
-                                        .append(Component.text("!", NamedTextColor.GRAY))
-                                );
-                                wp.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
-                                        .append(Component.text(" Your ", NamedTextColor.GRAY))
-                                        .append(Component.text(name, NamedTextColor.YELLOW))
-                                        .append(Component.text(" resurrected " + warlordsEntity.getName() + "!", NamedTextColor.GRAY))
-                                );
-                            }
-                            stats.playersResurrected++;
-                        }
-                    };
-                }
-
-            }.addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
-                        int hexStacks = (int) new CooldownFilter<>(event.getWarlordsEntity(), RegularCooldown.class)
-                                .filterCooldownFrom(wp)
-                                .filterCooldownClass(FortifyingHex.FortifyingHexData.class)
-                                .stream()
-                                .count();
-                if (hexStacks < maxStacks) {
-                            return;
-                        }
-                currentDamageValue.addModifier(
-                        FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, name,
-                        -additionalDamageReduction * maxStacks / 100f,
-                        contribution -> stats.damageReduced += Math.abs(contribution)
-                );
-                if (pveMasterUpgrade) {
+                    }
                     currentDamageValue.addModifier(
-                            FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name,
-                            .85f,
+                            FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, name,
+                            -additionalDamageReduction * maxStacks / 100f,
                             contribution -> stats.damageReduced += Math.abs(contribution)
                     );
-                }
+                    if (pveMasterUpgrade) {
+                        currentDamageValue.addModifier(
+                                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name,
+                                .85f,
+                                contribution -> stats.damageReduced += Math.abs(contribution)
+                        );
                     }
-            ));
+                }));
         });
+
         return true;
     }
 

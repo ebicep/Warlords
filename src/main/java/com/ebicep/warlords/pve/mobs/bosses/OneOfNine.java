@@ -35,8 +35,11 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.*;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Display;
 import org.bukkit.entity.ItemDisplay;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
@@ -135,6 +138,12 @@ public class OneOfNine extends AbstractMob implements BossMob {
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
 
+        LivingEntity entity = (LivingEntity) warlordsNPC.getEntity();
+        AttributeInstance scale = entity.getAttribute(Attribute.SCALE);
+        if (scale != null) {
+            scale.setBaseValue(1.5);
+        }
+
         mapCenter = new Location(warlordsNPC.getWorld(), 112.5, 13, 62.5);
         mapLeft = new Location(warlordsNPC.getWorld(), 87.5, 24, 87.5);
         mapRight = new Location(warlordsNPC.getWorld(), 137.5, 24, 37.5);
@@ -148,8 +157,8 @@ public class OneOfNine extends AbstractMob implements BossMob {
         EffectUtils.strikeLightningInCylinder(warlordsNPC.getLocation(), 10, false);
         Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ITEM_GOAT_HORN_SOUND_6, 10, 0.5f);
 
-        swordManager = new OrbitingItemManager(() -> warlordsNPC.getLocation(), 6, 2, 3, 4, option, warlordsNPC, Material.NETHERITE_SWORD);
-        centerSwordManager = new OrbitingItemManager(() -> mapCenter, 25, 30, 1, 30, option, warlordsNPC, Material.NETHERITE_SWORD);
+        swordManager = new OrbitingItemManager(() -> warlordsNPC.getLocation(), 6, 2.5, 3, 5, warlordsNPC, Material.NETHERITE_SWORD);
+        centerSwordManager = new OrbitingItemManager(() -> mapCenter, 25, 30, 1, 30, warlordsNPC, Material.NETHERITE_SWORD);
 
         damageController = new DamagePhaseController(warlordsNPC);
 
@@ -231,10 +240,10 @@ public class OneOfNine extends AbstractMob implements BossMob {
                 mapCenter
         );
 
-        swordManager.spawnSwords(9);
+        swordManager.spawnItems(9);
         swordManager.start();
 
-        centerSwordManager.spawnSwords(9);
+        centerSwordManager.spawnItems(9);
         centerSwordManager.start();
 
         warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
@@ -650,7 +659,7 @@ public class OneOfNine extends AbstractMob implements BossMob {
                     warlordsNPC.getTeam(),
                     warlordsNPC.getLocation().clone().add(0, 1.5, 0),
                     3,
-                    new CircumferenceEffect(Particle.PORTAL, Particle.PORTAL).particlesPerCircumference(1.5)
+                    new CircumferenceEffect(Particle.PORTAL, Particle.PORTAL).particlesPerCircumference(0.5)
             ).playEffects();
         }
 
@@ -717,111 +726,4 @@ public class OneOfNine extends AbstractMob implements BossMob {
             }
         }.runTaskLater(10);
     }
-
-    private void rainSwordDrop() {
-        record Slot(double theta, int startTick, ItemDisplay display) {
-        }
-
-        List<Slot> ring = new ArrayList<>();
-        World world = warlordsNPC.getWorld();
-
-        double radius = 12;
-        int count = 9;
-        int delayBetween = 5;     // ticks between swords appearing
-        int fallDuration = 6;    // ticks to complete the 90° fall (your old value)
-
-        Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.AMBIENT_BASALT_DELTAS_LOOP, 500, 0.7f);
-        Utils.playGlobalSound(warlordsNPC.getLocation(), "arcanist.beaconshadow.activation", 500, 0.7f);
-
-        // Prepare slots with theta and staggered start ticks
-        for (int i = 0; i < count; i++) {
-            double theta = 2 * Math.PI * i / count;
-            int start = i * delayBetween; // sword i starts later
-            ring.add(new Slot(theta, start, null));
-        }
-
-        new GameRunnable(warlordsNPC.getGame()) {
-            int t = 0;
-
-            @Override
-            public void run() {
-                t++;
-
-                boolean allDone = true;
-
-                for (int i = 0; i < ring.size(); i++) {
-                    Slot s = ring.get(i);
-
-                    // Spawn at this sword's start tick
-                    if (s.display == null && t >= s.startTick()) {
-                        double x = mapCenter.getX() + radius * cos(s.theta());
-                        double z = mapCenter.getZ() + radius * Math.sin(s.theta());
-
-                        ItemDisplay d = world.spawn(new Location(world, x, mapCenter.getY() + 2, z), ItemDisplay.class, disp -> {
-                                    disp.setItemStack(new ItemStack(Material.NETHERITE_SWORD));
-                                    disp.setBillboard(Display.Billboard.FIXED);
-
-                                    // Base orientation: face inward + blade upright (adjust +/−90 if your model needs)
-                                    Quaternionf faceCenter = new Quaternionf().rotateY((float) (s.theta() + Math.PI));
-                                    Quaternionf upright = new Quaternionf().rotateX((float) Math.toRadians(+90));
-                                    Quaternionf baseRight = new Quaternionf(faceCenter).mul(upright);
-
-                                    disp.setTransformation(new Transformation(
-                                            new Vector3f(0, 0, 0),         // leftRotation (animated later)
-                                            baseRight,             // start with identity
-                                            new Vector3f(50f, 50f, 50f),
-                                            new Quaternionf()                      // rightRotation = base orientation
-                                    ));
-                                }
-                        );
-
-                        // store back
-                        ring.set(i, new Slot(s.theta(), s.startTick(), d));
-                    }
-
-                    // If not yet spawned, we're not done
-                    if (ring.get(i).display == null) {
-                        allDone = false;
-                        continue;
-                    }
-
-                    // Animate only after startTick
-                    int localTicks = t - s.startTick();
-                    float p = Math.min(1f, localTicks / (float) fallDuration);
-                    // ease-out
-                    //p = (float) Math.sin(p * Math.PI * 0.5f);
-                    float tilt = (float) Math.toRadians(90) * p;
-
-                    // tangent axis = outward × UP (so the sword falls outward)
-                    Vector3f axis = new Vector3f((float) Math.sin(s.theta()), 0f, (float) -cos(s.theta()));
-                    Quaternionf left = new Quaternionf().rotateAxis(p, axis); // flip sign if it still goes inward
-
-                    ItemDisplay d = ring.get(i).display;
-                    Transformation cur = d.getTransformation();
-                    d.setTransformation(new Transformation(
-                            new Vector3f(cur.getTranslation()),
-                            left,
-                            new Vector3f(cur.getScale()),
-                            new Quaternionf(cur.getRightRotation())
-                    ));
-
-                    if (p < 1f) {
-                        allDone = false;
-                    }
-                }
-
-                if (allDone) {
-                    // (optional) remove all or leave them
-                    for (Slot s : ring) {
-                        if (s.display != null) {
-                            s.display.remove();
-                        }
-                    }
-                    Utils.playGlobalSound(warlordsNPC.getLocation(), "arcanist.beaconshadow.activation", 500, 0.5f);
-                    cancel();
-                }
-            }
-        }.runTaskTimer(0, 1);
-    }
-
 }

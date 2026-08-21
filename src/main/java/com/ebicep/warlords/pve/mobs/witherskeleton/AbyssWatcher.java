@@ -160,7 +160,7 @@ public class AbyssWatcher extends AbstractMob implements ChampionMob, Listener {
         }
 
         if (watchedTicksLeft <= 0) {
-            watchedTarget.sendMessage(Component.text("The Abyss Watcher's gaze fades.", NamedTextColor.GRAY));
+            watchedTarget.sendMessage(Component.text("The Abyss Watcher's gaze fades.", NamedTextColor.DARK_PURPLE));
             clearWatched();
         }
     }

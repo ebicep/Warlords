@@ -238,7 +238,7 @@ public class PlayingState implements State, TimerDebugAble {
         if (winEvent != null) {
             boolean isCompGame = game.getAddons().contains(GameAddon.PRIVATE_GAME) &&
                     !com.ebicep.warlords.game.GameMode.isPvE(game.getGameMode()) &&
-                    players.size() >= game.getGameMode().minPlayersToAddToDatabase &&
+                    players.size() >= game.getGameMode().getMinPlayersToAddToDatabase() &&
                     timer >= 6000;
             //comps
             if (isCompGame) {

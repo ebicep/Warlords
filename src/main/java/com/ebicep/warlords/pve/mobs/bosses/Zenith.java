@@ -23,6 +23,7 @@ import com.ebicep.warlords.pve.mobs.bosses.bossabilities.BossAbilityPhase;
 import com.ebicep.warlords.pve.mobs.bosses.bossabilities.LightningChainAbility;
 import com.ebicep.warlords.pve.mobs.bosses.bossabilities.ShatteringChainsAbility;
 import com.ebicep.warlords.pve.mobs.bosses.bossabilities.ThunderLineBarrageAbility;
+import com.ebicep.warlords.pve.mobs.bosses.raidbosses.RaidBossUtils;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -33,6 +34,9 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.*;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.entity.LivingEntity;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
@@ -47,6 +51,7 @@ public class Zenith extends AbstractMob implements BossMob {
     private BossAbilityPhase phaseTwo;
     private BossAbilityPhase phaseThree;
     private boolean enraged = false;
+    private RaidBossUtils.RaidBossHealthBar healthBar;
 
     public Zenith(Location spawnLocation) {
         this(spawnLocation,
@@ -115,6 +120,11 @@ public class Zenith extends AbstractMob implements BossMob {
     }
 
     @Override
+    public double getMobScale() {
+        return 1.3;
+    }
+
+    @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
 
@@ -122,6 +132,15 @@ public class Zenith extends AbstractMob implements BossMob {
             float newHealth = 52000;
             warlordsNPC.setMaxHealthAndHeal(newHealth);
         }
+
+        healthBar = RaidBossUtils.createHealthBar(
+                warlordsNPC,
+                0.9f,
+                getMobScale(),
+                getName(),
+                getDescription(),
+                NamedTextColor.RED
+        );
 
         EffectUtils.strikeLightning(warlordsNPC.getLocation(), false, 6);
         DifficultyIndex difficulty = option.getDifficulty();
@@ -234,6 +253,8 @@ public class Zenith extends AbstractMob implements BossMob {
             lightningChainAbility.start(warlordsNPC.getGame());
         }
 
+        healthBar.update();
+
         if (option.getDifficulty() == DifficultyIndex.ENDLESS) {
             float health = warlordsNPC.getCurrentHealth();
             phaseOne.initialize(health);
@@ -298,6 +319,11 @@ public class Zenith extends AbstractMob implements BossMob {
         }
 
         EffectUtils.strikeLightning(deathLocation, false, 5);
+    }
+
+    @Override
+    public void cleanup(PveOption pveOption) {
+        healthBar.remove();
     }
 
     private static class Armageddon extends AbstractPveAbility implements Damages<Armageddon.DamageValues> {

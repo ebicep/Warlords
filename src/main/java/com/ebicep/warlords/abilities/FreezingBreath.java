@@ -36,13 +36,13 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class FreezingBreath extends AbstractProjectile<FreezingBreath, FreezingBreath.FreezingBreathStats> implements RedAbilityIcon, Damages<FreezingBreath.DamageValues> {
+public class FreezingBreath extends AbstractProjectile<FreezingBreath, FreezingBreath.FreezingBreathStats> implements RedAbilityIcon, HitBox, Damages<FreezingBreath.DamageValues> {
 
     private final FreezingBreathStats stats = new FreezingBreathStats();
     private final DamageValues damageValues = new DamageValues();
     private int slowDuration = 4;
     private int slowness = 40;
-    private float hitbox = 10;
+    private FloatModifiable hitbox = new FloatModifiable(10);
     private int maxAnimationTime = 12;
 
     public FreezingBreath() {
@@ -58,7 +58,7 @@ public class FreezingBreath extends AbstractProjectile<FreezingBreath, FreezingB
         super.init(builder);
         this.slowDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("slowDuration"), int.class);
         this.slowness = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("slowness"), int.class);
-        this.hitbox = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hitbox"), float.class);
+        this.hitbox = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hitbox"), float.class));
         this.maxAnimationTime = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxAnimationTime"), int.class);
     }
 
@@ -91,7 +91,11 @@ public class FreezingBreath extends AbstractProjectile<FreezingBreath, FreezingB
         Vector viewDirection = playerLoc.getDirection();
         int counter = 0;
         UUID uuid = UUID.randomUUID();
-        for (WarlordsEntity breathTarget : PlayerFilter.entitiesAroundRectangle(wp, hitbox - 2.5, hitbox, hitbox - 2.5).aliveEnemiesOf(wp)) {
+        float radius = hitbox.getCalculatedValue();
+        for (WarlordsEntity breathTarget : PlayerFilter
+                .entitiesAroundRectangle(wp, radius - 2.5, radius, radius - 2.5)
+                .aliveEnemiesOf(wp)
+        ) {
             Vector direction = breathTarget.getLocation().subtract(playerEyeLoc).toVector().normalize();
             if (!(viewDirection.dot(direction) > .68)) {
                 continue;
@@ -107,10 +111,7 @@ public class FreezingBreath extends AbstractProjectile<FreezingBreath, FreezingB
             breathTarget.addSpeedModifier(wp, "Freezing Breath", -slowness, slowDuration * 20);
         }
         if (pveMasterUpgrade) {
-            if (counter > 6) {
-                counter = 6;
-            }
-            damageReductionOnHit(wp, counter);
+            damageReductionOnHit(wp, Math.min(counter, 6));
         }
         return true;
     }
@@ -189,7 +190,6 @@ public class FreezingBreath extends AbstractProjectile<FreezingBreath, FreezingB
             return 0;
         }
         WarlordsEntity shooter = projectile.getShooter();
-        Location startingLocation = projectile.getStartingLocation();
         Location currentLocation = projectile.getCurrentLocation();
         Utils.playGlobalSound(currentLocation, "shaman.boulder.impact", 2, .5f);
         int playersHit = 0;
@@ -230,12 +230,18 @@ public class FreezingBreath extends AbstractProjectile<FreezingBreath, FreezingB
 
     private void damageReductionOnHit(WarlordsEntity we, int counter) {
         we.getCooldownManager().removeCooldown(FreezingBreath.class, false);
-        we.getCooldownManager().addCooldown(new RegularCooldown<>(name, "FRZ RES", FreezingBreath.class, new FreezingBreath(), we, CooldownTypes.BUFF, cooldownManager -> {
-        }, 4 * 20
+        we.getCooldownManager().addCooldown(new RegularCooldown<>(
+                name,
+                "FRZ RES",
+                FreezingBreath.class,
+                new FreezingBreath(),
+                we,
+                CooldownTypes.BUFF,
+                cooldownManager -> {},
+                4 * 20
         ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
             currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, (1 - (0.05f * counter)));
-                }
-        ));
+        }));
     }
 
     @Override
@@ -265,12 +271,9 @@ public class FreezingBreath extends AbstractProjectile<FreezingBreath, FreezingB
         return stats;
     }
 
-    public float getHitbox() {
+    @Override
+    public FloatModifiable getHitBoxRadius() {
         return hitbox;
-    }
-
-    public void setHitbox(float hitbox) {
-        this.hitbox = hitbox;
     }
 
     public int getMaxAnimationTime() {

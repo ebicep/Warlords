@@ -137,18 +137,18 @@ public class BotManager {
             }
             if (game.getState() instanceof PreLobbyState state) {
                 if (!state.hasEnoughPlayers()) {
-                    eb.appendDescription("**Game**: " + game.getGameMode().abbreviation + " - " + game.getMap()
-                                                                                                      .getMapName() + " Lobby - Waiting for players\n");
+                    eb.appendDescription("**Game**: " + game.getGameMode().getAbbreviation() + " - " + game.getMap()
+                                                                                                           .getMapName() + " Lobby - Waiting for players\n");
                 } else {
-                    eb.appendDescription("**Game**: " + game.getGameMode().abbreviation + " - " + game.getMap()
-                                                                                                      .getMapName() + " Lobby - " + state.getTimeLeftString() + " Left" + "\n");
+                    eb.appendDescription("**Game**: " + game.getGameMode().getAbbreviation() + " - " + game.getMap()
+                                                                                                           .getMapName() + " Lobby - " + state.getTimeLeftString() + " Left" + "\n");
                 }
             } else if (game.getState() instanceof PlayingState) {
                 OptionalInt timeLeft = WinAfterTimeoutOption.getTimeRemaining(game);
                 String time = StringUtils.formatTimeLeft(timeLeft.isPresent() ? timeLeft.getAsInt() : (System.currentTimeMillis() - game.createdAt()) / 1000);
                 String word = timeLeft.isPresent() ? " Left" : " Elapsed";
                 game.getOption(PveOption.class).stream().findFirst().ifPresentOrElse(pveOption -> {
-                    eb.appendDescription("**Game**: " + game.getGameMode().name + " - " +
+                    eb.appendDescription("**Game**: " + game.getGameMode().getName() + " - " +
                             game.getMap().getMapName() + " - " +
                             time + word);
                     if (pveOption instanceof WaveDefenseOption waveDefenseOption) {
@@ -158,7 +158,7 @@ public class BotManager {
                         eb.appendDescription("\n");
                     }
                 }, () -> {
-                    eb.appendDescription("**Game**: " + game.getGameMode().abbreviation + " - " +
+                    eb.appendDescription("**Game**: " + game.getGameMode().getAbbreviation() + " - " +
                             game.getMap().getMapName() + " - " +
                             time + word + " - " +
                             game.getPoints(Team.BLUE) + ":" + game.getPoints(Team.RED) + "\n");

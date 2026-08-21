@@ -33,7 +33,7 @@ public class DrainingMiasmaBranch extends AbstractUpgradeBranch<DrainingMiasma> 
                 () -> {
                     ability.setTickDuration(ability.getTickDuration() * 4);
                     ability.setLeechTickDuration(ability.getLeechTickDuration() * 4);
-                    ability.setRadius(ability.getRadius() * 4);
+                    ability.getRadius().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Master Upgrade Branch", 4f);
 
                     ability.setMaxHealthDamage((int) (ability.getMaxHealthDamage() * 0.25f));
                     Value.SetValue damage = ability.getDamageValues().getMiasmaDamage();
@@ -51,7 +51,7 @@ public class DrainingMiasmaBranch extends AbstractUpgradeBranch<DrainingMiasma> 
                 () -> {
                     ability.setTickDuration(ability.getTickDuration() * 4);
                     ability.setLeechTickDuration(ability.getLeechTickDuration() * 4);
-                    ability.setRadius(ability.getRadius() * 4);
+                    ability.getRadius().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Master Upgrade Branch", 4f);
 
                     ability.setMaxHealthDamage((int) (ability.getMaxHealthDamage() * 0.5f));
                     Value.SetValue damage = ability.getDamageValues().getMiasmaDamage();

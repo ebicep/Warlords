@@ -14,6 +14,7 @@ import com.ebicep.warlords.pve.upgrades.shaman.earthwarden.BoulderBranch;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -27,13 +28,13 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Boulder extends AbstractAbility implements RedAbilityIcon, Damages<Boulder.DamageValues>, AbilityStats<Boulder, Boulder.BoulderStats> {
+public class Boulder extends AbstractAbility implements RedAbilityIcon, Splash,  Damages<Boulder.DamageValues>, AbilityStats<Boulder, Boulder.BoulderStats> {
 
     private final double boulderGravity = -0.0059;
     private final BoulderStats stats = new BoulderStats();
     private final DamageValues damageValues = new DamageValues();
     private double boulderSpeed = 0.290;
-    private double hitbox = 5.5;
+    private FloatModifiable splash = new FloatModifiable(5.5f);
     private double velocity = 1.15;
 
     public Boulder() {
@@ -48,7 +49,7 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon, Damages<
     public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.boulderSpeed = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("boulderSpeed"), float.class);
-        this.hitbox = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hitbox"), float.class);
+        this.splash = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hitbox"), float.class));
         this.velocity = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("velocity"), float.class);
     }
 
@@ -73,7 +74,10 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon, Damages<
                 (newLoc, directHit) -> {
                     Utils.playGlobalSound(newLoc, "shaman.boulder.impact", 2, 1);
                     // this was previously delayed by a tick idk why, if something breaks, you know why
-                    for (WarlordsEntity p : PlayerFilter.entitiesAround(newLoc, hitbox, hitbox, hitbox).aliveEnemiesOf(wp)) {
+                    float hitbox = splash.getCalculatedValue();
+                    for (WarlordsEntity p : PlayerFilter.entitiesAround(newLoc, hitbox, hitbox, hitbox)
+                            .aliveEnemiesOf(wp)
+                    ) {
                         stats.targetsHit++;
                         if (p.hasFlag()) {
                             stats.carrierHit++;
@@ -174,12 +178,9 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon, Damages<
         this.boulderSpeed = boulderSpeed;
     }
 
-    public double getHitbox() {
-        return hitbox;
-    }
-
-    public void setHitbox(double hitbox) {
-        this.hitbox = hitbox;
+    @Override
+    public FloatModifiable getSplashRadius() {
+        return splash;
     }
 
     public static class DamageValues implements Value.ValueHolder {

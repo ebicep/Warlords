@@ -76,6 +76,9 @@ public class Leech {
                             if (!finalEvent.isDamageInstance()) {
                                 return;
                             }
+                            if (finalEvent.getInstanceFlags().contains(InstanceFlags.NO_HEALING_LEECH)) {
+                                return;
+                            }
 //                            if (inPve && data.totalHealingDone >= 1000) {
 //                                setTicksLeft(0);
 //                                return;

@@ -60,9 +60,9 @@ public class ZombieEnd extends AbstractMob implements EliteMob {
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
-        orbitingItemManager = new OrbitingItemManager(() -> warlordsNPC.getLocation(), 3, 2, 1, 1.5f, option, warlordsNPC, Material.END_CRYSTAL);
+        orbitingItemManager = new OrbitingItemManager(() -> warlordsNPC.getLocation(), 3, 2, 1, 1.5f, warlordsNPC, Material.END_CRYSTAL);
 
-        orbitingItemManager.spawnSwords(3);
+        orbitingItemManager.spawnItems(3);
         orbitingItemManager.start();
 
         EffectUtils.playFirework(
@@ -82,7 +82,7 @@ public class ZombieEnd extends AbstractMob implements EliteMob {
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-        if (ticksElapsed % 20 == 0) {
+        if (ticksElapsed % 40 == 0) {
             for (WarlordsEntity we : PlayerFilterGeneric
                     .entitiesAround(warlordsNPC, 3.5, 4, 3.5)
                     .aliveEnemiesOf(warlordsNPC)

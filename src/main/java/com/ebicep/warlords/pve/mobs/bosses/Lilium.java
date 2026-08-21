@@ -172,10 +172,10 @@ public class Lilium extends AbstractMob implements BossMob {
         mapCenter = new Location(warlordsNPC.getWorld(), 112.5, 11, 62.5);
         arenaShift = new ArenaShiftAbility(warlordsNPC.getWorld());
 
-        oribitingItemManager = new OrbitingItemManager(() -> warlordsNPC.getLocation(), 0.5, 0.5, 6, 0.5f, option, warlordsNPC, Material.STICK);
-        oribitingItemManager.spawnSwords(6);
+        oribitingItemManager = new OrbitingItemManager(() -> warlordsNPC.getLocation(), 0.5, 0.5, 6, 0.5f, warlordsNPC, Material.STICK);
+        oribitingItemManager.spawnItems(6);
         oribitingItemManager.start();
-        oribitingItemManagerFloating = new OrbitingItemManager(() -> warlordsNPC.getLocation().clone().add(0, 8, 0), 34, 3, 1, 15, option, warlordsNPC, Material.STICK);
+        oribitingItemManagerFloating = new OrbitingItemManager(() -> warlordsNPC.getLocation().clone().add(0, 8, 0), 34, 3, 1, 15, warlordsNPC, Material.STICK);
 
         heavenlySpearAbility = new HeavenlySpearAbility(
                 warlordsNPC,
@@ -385,7 +385,7 @@ public class Lilium extends AbstractMob implements BossMob {
                     conduitsOne.setFollowLerp(1);
                     conduitsOne.start(warlordsNPC.getGame());
 
-                    oribitingItemManagerFloating.spawnSwords(9);
+                    oribitingItemManagerFloating.spawnItems(9);
                     oribitingItemManagerFloating.start();
 
                     platformsController.start(warlordsNPC.getGame());

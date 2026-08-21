@@ -106,7 +106,7 @@ public class Soulbinder extends AbstractMob implements ChampionMob {
             exposedTicksLeft = 0;
             rebindCastTicksLeft = 0;
 
-            if (ticksElapsed % 10 == 0) {
+            if (ticksElapsed % 20 == 0) {
                 playSoulLinks(option);
             }
 
@@ -121,7 +121,7 @@ public class Soulbinder extends AbstractMob implements ChampionMob {
         if (exposedTicksLeft > 0) {
             exposedTicksLeft--;
 
-            if (exposedTicksLeft % 10 == 0) {
+            if (exposedTicksLeft % 20 == 0) {
                 playExposedEffects();
             }
 
@@ -135,7 +135,7 @@ public class Soulbinder extends AbstractMob implements ChampionMob {
 
         rebindCastTicksLeft--;
 
-        if (rebindCastTicksLeft % 10 == 0) {
+        if (rebindCastTicksLeft % 20 == 0) {
             playRebindEffects();
         }
 

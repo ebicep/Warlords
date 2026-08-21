@@ -26,11 +26,18 @@ import com.ebicep.warlords.player.general.settings.*;
 import com.ebicep.warlords.player.general.settings.actionbar.ActionBarSettings;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.Spendable;
+import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.ItemsManager;
 import com.ebicep.warlords.pve.items.menu.ItemMichaelMenu;
+import com.ebicep.warlords.pve.mobs.MobDrop;
+import com.ebicep.warlords.pve.newitems.NewItem;
+import com.ebicep.warlords.pve.newitems.NewItemsUtils;
+import com.ebicep.warlords.pve.newitems.tiers.NewItemTier;
 import com.ebicep.warlords.pve.rewards.types.CompensationReward;
 import com.ebicep.warlords.pve.rewards.types.LevelUpReward;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.springframework.data.annotation.Id;
@@ -176,12 +183,10 @@ public class DatabasePlayer implements MultiStatsGeneral, TracksMultiAbilityStat
         DatabaseSpecialization spec = getSpec(gamePlayer.getSpec());
         spec.setExperience(spec.getExperience() + gamePlayer.getExperienceEarnedSpec() * multiplier);
         this.experience += gamePlayer.getExperienceEarnedUniversal() * multiplier;
-        //PvE outside all base stats besides universal experience
         if (GameMode.isPvE(gameMode) && databaseGame instanceof DatabaseGamePvEBase gamePvEBase && gamePlayer instanceof DatabaseGamePlayerPvEBase gamePlayerPvEBase) {
             this.pveStats.updateStats(this, gamePvEBase, gameMode, gamePlayerPvEBase, result, multiplier, playersCollection);
             return;
         }
-        //UPDATE COMP/PUB GENERAL, GAMEMODE, GAMEMODE CLASS, GAMEMODE SPEC
         List<GameAddon> gameAddons = databaseGame.getGameAddons();
         if (gameAddons.contains(GameAddon.TOURNAMENT_MODE)) {
             this.tournamentStats.updateStats(this, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
@@ -623,7 +628,6 @@ public class DatabasePlayer implements MultiStatsGeneral, TracksMultiAbilityStat
         EOD_ASCENDANT_SHARD_2 {
             @Override
             public boolean run(UUID uuid, DatabasePlayer databasePlayer) {
-                // fixes incorrect amount from EOD_ASCENDANT_SHARD that gave 1 per pres instead of 3.
                 if (!databasePlayer.getPatchesApplied().contains(EOD_ASCENDANT_SHARD)) {
                     return true;
                 }
@@ -696,7 +700,6 @@ public class DatabasePlayer implements MultiStatsGeneral, TracksMultiAbilityStat
                     ItemsManager itemsManager = pveStats.getItemsManager();
                     rewards.merge(Currencies.LEGEND_FRAGMENTS, itemsManager.getBlessingsFound() * 15L, Long::sum);
 
-                    //sort rewards by highest first into new map
                     LinkedHashMap<Spendable, Long> sortedRewards = new LinkedHashMap<>();
                     rewards.entrySet().stream()
                            .sorted(Map.Entry.<Spendable, Long>comparingByValue().reversed())
@@ -783,6 +786,119 @@ public class DatabasePlayer implements MultiStatsGeneral, TracksMultiAbilityStat
                     databasePlayer.getPveStats().getCompensationRewards().add(new CompensationReward.LevelUpPatch(rewards));
                     CompensationReward.LevelUpPatch.giveLevelUpPatchFutureMessage(databasePlayer);
                 }
+                return true;
+            }
+        },
+        LEGACY_ITEM_COMPENSATION_2026 {
+            @Override
+            public boolean run(UUID uuid, DatabasePlayer databasePlayer) {
+                DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+                EnumMap<ItemTier, Integer> tierCounts = new EnumMap<>(ItemTier.class);
+                pveStats.getItemsManager().getItemInventory().forEach(item -> {
+                    if (item != null && item.getTier() != null) {
+                        tierCounts.merge(item.getTier(), 1, Integer::sum);
+                    }
+                });
+
+                long alpha = tierCounts.getOrDefault(ItemTier.ALPHA, 0);
+                long beta = tierCounts.getOrDefault(ItemTier.BETA, 0);
+                long gamma = tierCounts.getOrDefault(ItemTier.GAMMA, 0);
+                long delta = tierCounts.getOrDefault(ItemTier.DELTA, 0);
+                long omega = tierCounts.getOrDefault(ItemTier.OMEGA, 0);
+
+                long zenithStars = omega * 2L;
+                long syntheticShards = omega * 5_000L + delta * 1_000L;
+                long legendFragments = delta * 500L;
+                long scrapMetal = (alpha + beta) * 25L;
+                long legendaryItems = omega / 3L;
+                long sovereignItems = delta / 7L;
+                long epicItems = gamma / 10L;
+
+                List<NewItem> generatedItems = new ArrayList<>();
+                try {
+                    for (long i = 0; i < legendaryItems; i++) {
+                        generatedItems.add(NewItemsUtils.generateRandomItem(NewItemTier.LEGENDARY));
+                    }
+                    for (long i = 0; i < sovereignItems; i++) {
+                        generatedItems.add(NewItemsUtils.generateRandomItem(NewItemTier.SOVEREIGN));
+                    }
+                    for (long i = 0; i < epicItems; i++) {
+                        generatedItems.add(NewItemsUtils.generateRandomItem(NewItemTier.EPIC));
+                    }
+                } catch (RuntimeException exception) {
+                    ChatUtils.MessageType.WARLORDS.sendErrorMessage("Failed to generate legacy item compensation for " + uuid);
+                    ChatUtils.MessageType.WARLORDS.sendErrorMessage(exception);
+                    return false;
+                }
+
+                if (zenithStars > 0) {
+                    pveStats.addMobDrops(MobDrop.ZENITH_STAR, zenithStars);
+                }
+                if (syntheticShards > 0) {
+                    pveStats.addCurrency(Currencies.SYNTHETIC_SHARD, syntheticShards);
+                }
+                if (legendFragments > 0) {
+                    pveStats.addCurrency(Currencies.LEGEND_FRAGMENTS, legendFragments);
+                }
+                if (scrapMetal > 0) {
+                    pveStats.addCurrency(Currencies.SCRAP_METAL, scrapMetal);
+                }
+                generatedItems.forEach(pveStats.getNewItemsManager()::addItem);
+
+                List<Component> summary = new ArrayList<>();
+                summary.add(Component.text("Legacy Item Compensation", NamedTextColor.GOLD));
+                summary.add(Component.text("This is your compensation for the removal of the old item system. You will only receive these rewards once.", NamedTextColor.GRAY));
+
+                boolean hasRewards = zenithStars > 0 || syntheticShards > 0 || legendFragments > 0 || scrapMetal > 0 ||
+                        legendaryItems > 0 || sovereignItems > 0 || epicItems > 0;
+                if (!hasRewards) {
+                    summary.add(Component.text("No compensation rewards were generated from your legacy item totals.", NamedTextColor.YELLOW));
+                } else {
+                    if (zenithStars > 0) {
+                        summary.add(Component.text(" • ", NamedTextColor.DARK_GRAY)
+                                .append(MobDrop.ZENITH_STAR.getCostColoredName(zenithStars)));
+                    }
+                    if (syntheticShards > 0) {
+                        summary.add(Component.text(" • ", NamedTextColor.DARK_GRAY)
+                                .append(Currencies.SYNTHETIC_SHARD.getCostColoredName(syntheticShards)));
+                    }
+                    if (legendFragments > 0) {
+                        summary.add(Component.text(" • ", NamedTextColor.DARK_GRAY)
+                                .append(Currencies.LEGEND_FRAGMENTS.getCostColoredName(legendFragments)));
+                    }
+                    if (scrapMetal > 0) {
+                        summary.add(Component.text(" • ", NamedTextColor.DARK_GRAY)
+                                .append(Currencies.SCRAP_METAL.getCostColoredName(scrapMetal)));
+                    }
+                    if (legendaryItems > 0) {
+                        summary.add(Component.text(
+                                " • " + legendaryItems + " random Legendary item" + (legendaryItems == 1 ? "" : "s"),
+                                NewItemTier.LEGENDARY.getTextColor()
+                        ));
+                    }
+                    if (sovereignItems > 0) {
+                        summary.add(Component.text(
+                                " • " + sovereignItems + " random Sovereign item" + (sovereignItems == 1 ? "" : "s"),
+                                NewItemTier.SOVEREIGN.getTextColor()
+                        ));
+                    }
+                    if (epicItems > 0) {
+                        summary.add(Component.text(
+                                " • " + epicItems + " random Epic item" + (epicItems == 1 ? "" : "s"),
+                                NewItemTier.EPIC.getTextColor()
+                        ));
+                    }
+                }
+                summary.add(Component.text("This one-time compensation has now been applied to your account.", NamedTextColor.DARK_GRAY));
+                databasePlayer.addFutureMessage(FutureMessage.create(summary, false));
+
+                ChatUtils.MessageType.WARLORDS.sendMessage(
+                        "Legacy item compensation for " + uuid + ": alpha=" + alpha +
+                                ", beta=" + beta +
+                                ", gamma=" + gamma +
+                                ", delta=" + delta +
+                                ", omega=" + omega
+                );
                 return true;
             }
         },

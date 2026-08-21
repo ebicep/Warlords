@@ -43,8 +43,8 @@ public interface StarPieceBonus {
 
     default LinkedHashMap<Currencies, Long> getStarPieceBonusCost(StarPieces starPieceCurrency) {
         return new LinkedHashMap<>() {{
-            put(Currencies.COIN, 10000L);
-            put(Currencies.SYNTHETIC_SHARD, 50L);
+            put(Currencies.COIN, 50000L);
+            put(Currencies.SYNTHETIC_SHARD, 500L);
             put(starPieceCurrency.currency, 1L);
         }};
     }

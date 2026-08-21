@@ -5,6 +5,7 @@ import com.ebicep.customentities.npc.NPCLabelHologram;
 import com.ebicep.customentities.npc.WarlordsTrait;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.GameMode;
+import com.ebicep.warlords.game.option.pve.treasurehunt.TreasureHuntMenu;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
@@ -61,11 +62,13 @@ public class TreasureHuntStartTrait extends WarlordsTrait implements HasNPCLabel
 
     @Override
     public void rightClick(NPCRightClickEvent event) {
+        //TreasureHuntMenu.openDifficultyMenu(event.getClicker());
         event.getClicker().sendMessage(Component.text("Cryptic Conquest is currently in development, check back later!", NamedTextColor.RED));
     }
 
     @Override
     public void leftClick(NPCLeftClickEvent event) {
+        //TreasureHuntMenu.openDifficultyMenu(event.getClicker());
         event.getClicker().sendMessage(Component.text("Cryptic Conquest is currently in development, check back later!", NamedTextColor.RED));
     }
 }

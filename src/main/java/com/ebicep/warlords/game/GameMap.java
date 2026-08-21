@@ -59,13 +59,18 @@ public abstract class GameMap {
     public static final GameMap SUN_AND_MOON = new SunAndMoon();
     public static final GameMap SUN_AND_MOON_2 = new SunAndMoon2();
     public static final GameMap TARTARUS = new Tartarus();
-    public static final GameMap THE_OBSIDIAN_TRAIL_RAID = new TheObsidianTrailRaid();
+    public static final GameMap RAID_ONE = new RaidOne();
     public static final GameMap DUAL_DESCENT = new DualDescent();
     public static final GameMap TUTORIAL_MAP = new Tutorial();
     public static final GameMap VALLEY = new Valley();
     public static final GameMap PVE_DEBUG = new PvePractice();
     public static final GameMap WARSONG = new Warsong();
     public static final GameMap TD_TEST = new TowerDefenseTest();
+    public static final GameMap OPEX_ANOMALY = new OpexAnomaly();
+    public static final GameMap PLAINS_OF_DUNESTAR = new PlainsOfDunestar();
+    public static final GameMap WHAT_ONCE_WAS = new WhatOnceWas();
+    public static final GameMap ENDLESS_PARADOX = new EndlessParadox();
+
 
     public static final GameMap[] VALUES = {
             ACROPOLIS,
@@ -111,13 +116,17 @@ public abstract class GameMap {
             SUN_AND_MOON,
             SUN_AND_MOON_2,
             TARTARUS,
-            THE_OBSIDIAN_TRAIL_RAID,
+            RAID_ONE,
             DUAL_DESCENT,
             TUTORIAL_MAP,
             VALLEY,
             PVE_DEBUG,
             WARSONG,
-            TD_TEST
+            TD_TEST,
+            ENDLESS_PARADOX,
+            WHAT_ONCE_WAS,
+            PLAINS_OF_DUNESTAR,
+            OPEX_ANOMALY
     };
 
     public static GameMap getGameMap(String mapName) {

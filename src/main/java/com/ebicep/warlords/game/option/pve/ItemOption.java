@@ -46,7 +46,7 @@ public class ItemOption implements Option {
         PveOption pveOption = game
                 .getOptions()
                 .stream()
-                .filter(option -> option instanceof PveOption)
+                .filter(PveOption.class::isInstance)
                 .map(PveOption.class::cast)
                 .findFirst().orElse(null);
         if (pveOption == null) {

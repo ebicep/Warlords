@@ -148,11 +148,11 @@ public class WeaponManagerMenu {
                                 ), 160
                         ))
                         .addLore(Component.empty())
-                        .addLore(Component.text("This feature is for Patreons only!", NamedTextColor.LIGHT_PURPLE))
+                        .addLore(Component.text("This feature is for Supporters only!", NamedTextColor.LIGHT_PURPLE))
                         .get(),
                 (m, e) -> {
                     if (!(player.hasPermission("group.patreon") || player.hasPermission("group.contentcreator")) && !Permissions.isAdmin(player)) {
-                        player.sendMessage(Component.text("You must be a Patreon to use this feature!", NamedTextColor.RED));
+                        player.sendMessage(Component.text("You must be a Supporter to use this feature!", NamedTextColor.RED));
                         return;
                     }
                     if (e.isShiftClick()) {

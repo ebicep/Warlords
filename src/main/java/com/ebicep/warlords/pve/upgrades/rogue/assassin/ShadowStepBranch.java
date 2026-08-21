@@ -26,7 +26,7 @@ public class ShadowStepBranch extends AbstractUpgradeBranch<ShadowStep> {
         masterUpgrade = new Upgrade(
                 "Shadow Stagger",
                 "Shadow Step - Master Upgrade",
-                "Gain 80% speed and knockback resistance upon landing for 5 seconds. Shadow Step can now hit the same enemy on leap and land.",
+                "Gain 80% speed and knockback resistance upon landing for 5 seconds. Shadow Step can now hit the same enemy on leap and land and will do an additional hit after a small delay.",
                 50000,
                 () -> {
 
