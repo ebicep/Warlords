@@ -68,7 +68,7 @@ public class NPCManager {
                 //createAscendantVendorNPC();
                 createWeeklyItemTraderNPC();
                 createTreasureHuntVendorNPC();
-                createAscendantWeaponNPC();
+                //createAscendantWeaponNPC();
                 createTutorialGuideNPC();
                 createMainLobbySetupNPC();
                 registerTrait(ReadyUpOption.ReadyUpTrait.class, "ReadyUpTrait");
@@ -129,7 +129,7 @@ public class NPCManager {
 //        npc.getOrAddTrait(SkinTrait.class).setSkinName("Alexred2522");
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
-        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 20.5, 82, 158.5, 135, 0));
+        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 67.5, 93, 212.5, -180, 0));
     }
 
     private static void createAnomalyNPC() {
@@ -140,7 +140,7 @@ public class NPCManager {
 //        npc.getOrAddTrait(SkinTrait.class).setSkinName("Alexred2522");
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
-        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 22.5, 82, 155.5, 122, 0));
+        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 20.5, 82, 158.5, 135, 0));
     }
 
     public static void createMasterworksFairNPC() {
@@ -321,7 +321,7 @@ public class NPCManager {
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
 
-        Location location = new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 28.5, 93, 208.5, 90, 0);
+        Location location = new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 24.5, 93, 208.5, 90, 0);
         npc.spawn(location);
     }
 

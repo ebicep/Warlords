@@ -15,7 +15,7 @@ import java.time.Duration;
 public enum Vial implements Consumable, Spendable {
 
     INSIGNIA_BOOST_I("Insignia Boost I", "Increases Insignia gained in PvE.", VialEffect.INSIGNIA_GAIN, 1.25, 50_000, 200_000, Duration.ofHours(24), Material.HONEY_BOTTLE),
-    INSIGNIA_BOOST_II("Insignia Boost II", "Increases Insignia gained in PvE.", VialEffect.INSIGNIA_GAIN, 1.5, 200_000, 1_00_000, Duration.ofHours(24), Material.HONEY_BOTTLE),
+    INSIGNIA_BOOST_II("Insignia Boost II", "Increases Insignia gained in PvE.", VialEffect.INSIGNIA_GAIN, 1.5, 200_000, 1_000_000, Duration.ofHours(24), Material.HONEY_BOTTLE),
     WEAPON_DROP_RATE_I("Weapon Drop Rate I", "Increases weapon drop chance from PvE mobs.", VialEffect.WEAPON_DROP_RATE, 1.5, 100_000, 200_000, Duration.ofHours(24), Material.EXPERIENCE_BOTTLE),
     WEAPON_DROP_RATE_II("Weapon Drop Rate II", "Increases weapon drop chance from PvE mobs.", VialEffect.WEAPON_DROP_RATE, 2, 400_000, 800_000, Duration.ofHours(24), Material.EXPERIENCE_BOTTLE),
     ITEM_DROP_RATE_I("Item Drop Rate I", "Increases item drop chance from PvE mobs.", VialEffect.ITEM_DROP_RATE, 1.5, 200_000, 800_000, Duration.ofHours(24), Material.DRAGON_BREATH),

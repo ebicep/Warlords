@@ -290,7 +290,11 @@
             }
           },
           "craftCost": {
-            "COIN": 10000000
+            "COIN": 1000000,
+            "ZENITH_STAR": 3,
+            "ASCENDANT_SHARD": 3,
+            "LEGEND_FRAGMENTS": 20000,
+            "SCRAP_METAL": 1000
           }
         },
         "legendary": {
@@ -368,7 +372,9 @@
           },
           "craftCost": {
             "COIN": 1500000,
-            "ZENITH_STAR": 10,
+            "ZENITH_STAR": 5,
+            "ASCENDANT_SHARD": 5,
+            "ETHEREUM_CRYSTAL": 50,
             "SCRAP_METAL": 1000
           }
         },
@@ -444,11 +450,6 @@
               "ITEM_LOCK_SCROLL": 1,
               "LEGEND_FRAGMENTS": 12000
             }
-          },
-          "craftCost": {
-            "COIN": 1000000,
-            "ASCENDANT_SHARD": 50,
-            "SCRAP_METAL": 1000
           }
         }
       },

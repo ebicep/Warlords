@@ -1,6 +1,7 @@
 package com.ebicep.customentities.npc.traits;
 
 import com.ebicep.customentities.npc.WarlordsTrait;
+import com.ebicep.warlords.pve.newitems.menu.NewItemCraftMenu;
 import com.ebicep.warlords.pve.newitems.menu.NewItemRerollMenu;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.trait.HologramTrait;
@@ -16,7 +17,7 @@ public class ItemCrafterTrait extends WarlordsTrait {
     @Override
     public void rightClick(NPCRightClickEvent event) {
         Player player = event.getClicker();
-        NewItemRerollMenu.open(player);
+        NewItemCraftMenu.open(player);
     }
 
     @Override

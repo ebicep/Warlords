@@ -2,7 +2,9 @@ package com.ebicep.warlords.pve.newitems.menu;
 
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.menu.Menu;
+import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.pve.PvEUtils;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.newitems.NewItem;
@@ -12,8 +14,11 @@ import com.ebicep.warlords.pve.newitems.NewItemsUtils;
 import com.ebicep.warlords.pve.newitems.setbonus.NewItemsSetBonus;
 import com.ebicep.warlords.pve.newitems.tiers.NewItemTier;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
+import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -32,7 +37,7 @@ public class NewItemCraftMenu {
         DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
         Menu menu = new Menu("Craft New Item", 9 * 4);
 
-        int x = 2;
+        int x = 3;
         for (NewItemTier tier : NewItemTier.VALUES) {
             Map<Spendable, Long> craftCost = tier.getCraftCost();
             if (craftCost == null || craftCost.isEmpty()) {
@@ -136,7 +141,7 @@ public class NewItemCraftMenu {
             );
         }
 
-        menu.setItem(4, 5, Menu.GO_BACK, (m, e) -> open(player));
+        menu.setItem(4, 5, Menu.MENU_BACK, (m, e) -> open(player));
         menu.openForPlayer(player);
     }
 
@@ -164,7 +169,7 @@ public class NewItemCraftMenu {
             );
         }
 
-        menu.setItem(4, 2, Menu.GO_BACK, (m, e) -> openSetSelection(player, databasePlayer, tier, craftCost, setPage));
+        menu.setItem(4, 2, Menu.MENU_BACK, (m, e) -> openSetSelection(player, databasePlayer, tier, craftCost, setPage));
         menu.openForPlayer(player);
     }
 
@@ -200,7 +205,16 @@ public class NewItemCraftMenu {
                     itemsManager.addItem(item);
                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                     NewItemsUtils.sendItemMessage(player, Component.text("You crafted ", NamedTextColor.GRAY).append(item.getHoverComponent()));
-                    player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2, 1);
+                    Utils.playGlobalSound(player.getLocation(), "misc.itemcraft", 500, 0.5f);
+                    for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                        onlinePlayer.sendMessage(Permissions.getPrefixWithColor(player, false)
+                                .append(Component.text(player.getName()))
+                                .append(Component.text(" crafted ", NamedTextColor.GRAY))
+                                .append(item.getHoverComponent())
+                                .append(Component.text("!"))
+                        );
+                    }
+                    EffectUtils.strikeLightning(player.getLocation(), false);
                     player.closeInventory();
                 },
                 (m2, e2) -> {

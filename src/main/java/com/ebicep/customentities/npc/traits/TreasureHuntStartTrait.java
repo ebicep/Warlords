@@ -62,13 +62,13 @@ public class TreasureHuntStartTrait extends WarlordsTrait implements HasNPCLabel
 
     @Override
     public void rightClick(NPCRightClickEvent event) {
-        TreasureHuntMenu.openDifficultyMenu(event.getClicker());
-        //event.getClicker().sendMessage(Component.text("Cryptic Conquest is currently in development, check back later!", NamedTextColor.RED));
+        //TreasureHuntMenu.openDifficultyMenu(event.getClicker());
+        event.getClicker().sendMessage(Component.text("Cryptic Conquest is currently in development, check back later!", NamedTextColor.RED));
     }
 
     @Override
     public void leftClick(NPCLeftClickEvent event) {
-        TreasureHuntMenu.openDifficultyMenu(event.getClicker());
-        //event.getClicker().sendMessage(Component.text("Cryptic Conquest is currently in development, check back later!", NamedTextColor.RED));
+        //TreasureHuntMenu.openDifficultyMenu(event.getClicker());
+        event.getClicker().sendMessage(Component.text("Cryptic Conquest is currently in development, check back later!", NamedTextColor.RED));
     }
 }

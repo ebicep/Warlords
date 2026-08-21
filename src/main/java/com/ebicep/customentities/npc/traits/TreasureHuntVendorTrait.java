@@ -125,27 +125,28 @@ public class TreasureHuntVendorTrait extends WarlordsTrait {
 
     @Override
     public void run() {
-        if (ticksElapsed++ % 600 != 0) {
-            return;
-        }
-        HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
-        String timeTill = DateUtil.getTimeTill(DateUtil.getResetDateLatestMonday(),
-                true,
-                true,
-                true,
-                false
-        );
-        if (!timeTill.equals("0 seconds")) {
-            hologramTrait.setLine(1, ChatColor.RED.toString() + ChatColor.BOLD + "Next Shipment in " + timeTill);
-        }
+//        if (ticksElapsed++ % 600 != 0) {
+//            return;
+//        }
+//        HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
+//        String timeTill = DateUtil.getTimeTill(DateUtil.getResetDateLatestMonday(),
+//                true,
+//                true,
+//                true,
+//                false
+//        );
+//        if (!timeTill.equals("0 seconds")) {
+//            hologramTrait.setLine(1, ChatColor.RED.toString() + ChatColor.BOLD + "Next Shipment in " + timeTill);
+//        }
     }
 
     @Override
     public void rightClick(NPCRightClickEvent event) {
-        Player player = event.getClicker();
-        UUID uuid = player.getUniqueId();
-        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid);
-        DatabasePlayer databasePlayerWeekly = DatabaseManager.getPlayer(uuid, PlayersCollections.WEEKLY);
-        openTreasureHuntVendor(player, databasePlayer, databasePlayerWeekly);
+        event.getClicker().sendMessage(Component.text("This shop is currently in development, check back later!", NamedTextColor.RED));
+//        Player player = event.getClicker();
+//        UUID uuid = player.getUniqueId();
+//        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid);
+//        DatabasePlayer databasePlayerWeekly = DatabaseManager.getPlayer(uuid, PlayersCollections.WEEKLY);
+//        openTreasureHuntVendor(player, databasePlayer, databasePlayerWeekly);
     }
 }
