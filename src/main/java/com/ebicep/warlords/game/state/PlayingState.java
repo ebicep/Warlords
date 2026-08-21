@@ -274,7 +274,7 @@ public class PlayingState implements State, TimerDebugAble {
                     getGame().getMarkers(LobbyLocationMarker.class).stream()
             ).map(LocationMarker::getLocation).collect(Utils.randomElement());
             player.teleport(spawn);
-            // Spectator - delay because multiverse is dumb
+            // Spectator - delay one tick so gamemode applies after teleport
             new BukkitRunnable() {
 
                 @Override

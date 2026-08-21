@@ -142,7 +142,7 @@ public abstract class GameMap {
      * lazily via {@link GameManager#ensureGameHoldersLoaded(GameMap)}.
      * <p>Each map instance presents a game server, every map can hold up to 3 games at once.</p>
      * <p>Adding a new map must start with -0 at the end and increment from there on out.</p>
-     * <p>Adding additional game servers will require a config update in @see MultiWorld Plugin</p>
+     * <p>Map world folders must exist under the server world container (e.g. {@code valley-0}).</p>
      *
      * @param gameManager The game manager to add gameholders to.
      */
@@ -153,7 +153,7 @@ public abstract class GameMap {
     }
 
     /**
-     * Multiverse world names for this map's game holders.
+     * World names for this map's game holders.
      * Lobbies use the bare file name; all other maps use {@code fileName-0} .. {@code fileName-(n-1)}.
      */
     @Nonnull

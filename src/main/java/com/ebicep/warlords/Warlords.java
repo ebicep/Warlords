@@ -62,7 +62,6 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.mvplugins.multiverse.core.MultiverseCore;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -89,7 +88,6 @@ public class Warlords extends JavaPlugin {
     public static String serverIP;
     public static boolean hologramsEnabled = true;
     public static boolean citizensEnabled;
-    public static MultiverseCore multiverseCore;
     private static Warlords instance;
     private static TaskChainFactory taskChainFactory;
 
@@ -414,7 +412,6 @@ public class Warlords extends JavaPlugin {
         ConfigUtil.loadConfigs(this);
 
         TimeZone.setDefault(TimeZone.getTimeZone("America/New_York"));
-        multiverseCore = (MultiverseCore) Bukkit.getServer().getPluginManager().getPlugin("Multiverse-Core");
         citizensEnabled = Bukkit.getPluginManager().isPluginEnabled("Citizens");
         ChatUtils.MessageType.WARLORDS.sendMessage("citizensEnabled: " + citizensEnabled);
         new BukkitRunnable() {

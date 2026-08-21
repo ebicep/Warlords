@@ -15,12 +15,11 @@ You may use our work for your own purposes as long as we are credited.
 
 # Requirements
 
-- A world named `MainLobby`. `autoLoad` should be set to true inside its MultiVerse config.
+- A world folder named `MainLobby` under the server world container (Warlords loads it via Bukkit at startup). Map instances use folders named `fileName-0`, `fileName-1`, etc., and are loaded on demand.
 
 # Dependencies
 
 - Paper 1.21.4 ([Latest 1.21.4](https://papermc.io/downloads/all))
-- Multiverse Core ([Latest](https://github.com/Multiverse/Multiverse-Core/releases))
 - Holographic Displays ([Latest](https://www.curseforge.com/minecraft/bukkit-plugins/holographic-displays/files/all?page=1&pageSize=20))
 - Citizens ([Latest](https://ci.citizensnpcs.co/job/Citizens2/))
 - ProtocolLib ([Latest](https://www.spigotmc.org/resources/protocollib.1997/updates))

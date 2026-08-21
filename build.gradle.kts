@@ -77,8 +77,6 @@ dependencies {
         exclude("org.spigotmc", "spigot")
     }
 
-    compileOnly("org.mvplugins.multiverse.core:multiverse-core:5.0.0-SNAPSHOT")
-
     implementation("fr.skytasul:guardianbeam:2.4.6")
 }
 
@@ -161,11 +159,6 @@ paperPluginYaml {
                 load = PaperPluginYaml.Load.BEFORE
             }
             register("Citizens") {
-                joinClasspath = true
-                required = true
-                load = PaperPluginYaml.Load.BEFORE
-            }
-            register("Multiverse-Core") {
                 joinClasspath = true
                 required = true
                 load = PaperPluginYaml.Load.BEFORE

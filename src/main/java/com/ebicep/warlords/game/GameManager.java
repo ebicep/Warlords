@@ -6,12 +6,14 @@ import com.ebicep.warlords.util.bukkit.LocationFactory;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
-import org.mvplugins.multiverse.core.world.WorldManager;
+import org.bukkit.WorldCreator;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.File;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -20,6 +22,8 @@ import java.util.function.BiConsumer;
 public class GameManager implements AutoCloseable {
 
     public static boolean gameStartingDisabled = false;
+    /** Chunk radius around MainLobby spawn kept loaded via plugin tickets. */
+    private static final int MAIN_LOBBY_WARM_CHUNK_RADIUS = 15;
     private final List<GameHolder> games = new ArrayList<>();
     private final LinkedList<QueueEntry> queue = new LinkedList<>();
 
@@ -322,10 +326,13 @@ public class GameManager implements AutoCloseable {
     }
 
     public void addGameHolder(String name, GameMap map) {
-        World world = Bukkit.getWorld(name);
+        World world = loadWorldIfPresent(name);
         if (world == null) {
             ChatUtils.MessageType.WARLORDS.sendErrorMessage("Could not find game world " + name);
             return;
+        }
+        if ("MainLobby".equals(name)) {
+            keepMainLobbyChunksWarm(world);
         }
         this.addGameHolder(name, map, world);
     }
@@ -339,8 +346,22 @@ public class GameManager implements AutoCloseable {
     }
 
     /**
-     * Ensures at least one idle game holder exists for the map, loading a single Multiverse
-     * world instance if needed. Does not preload every {@code fileName-i} copy.
+     * Holds MainLobby spawn chunks loaded with plugin tickets (spawn chunks no longer exist).
+     */
+    private static void keepMainLobbyChunksWarm(@Nonnull World world) {
+        Location spawn = world.getSpawnLocation();
+        int centerX = spawn.getBlockX() >> 4;
+        int centerZ = spawn.getBlockZ() >> 4;
+        for (int x = centerX - MAIN_LOBBY_WARM_CHUNK_RADIUS; x <= centerX + MAIN_LOBBY_WARM_CHUNK_RADIUS; x++) {
+            for (int z = centerZ - MAIN_LOBBY_WARM_CHUNK_RADIUS; z <= centerZ + MAIN_LOBBY_WARM_CHUNK_RADIUS; z++) {
+                world.addPluginChunkTicket(x, z, Warlords.getInstance());
+            }
+        }
+    }
+
+    /**
+     * Ensures at least one idle game holder exists for the map, loading a single world
+     * instance from disk if needed. Does not preload every {@code fileName-i} copy.
      *
      * @return true if an idle holder exists for the map after this call
      */
@@ -408,7 +429,7 @@ public class GameManager implements AutoCloseable {
     }
 
     /**
-     * Loads a single Multiverse world if unloaded and registers a game holder if missing.
+     * Loads a single world from disk if unloaded and registers a game holder if missing.
      *
      * @return true if a holder exists for the world and map after this call
      */
@@ -416,21 +437,35 @@ public class GameManager implements AutoCloseable {
         if (hasGameHolder(mapName, map)) {
             return true;
         }
-        WorldManager mvWorldManager = Warlords.multiverseCore.getApi().getWorldManager();
-        if (mvWorldManager.isUnloadedWorld(mapName)) {
-            ChatUtils.MessageType.GAME.sendMessage("Map " + mapName + " is unloaded. Loading it now.");
-            mvWorldManager.loadWorld(mapName);
+        World world = loadWorldIfPresent(mapName);
+        if (world == null) {
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage("Could not find game world " + mapName);
+            return false;
         }
         if (hasGameHolder(mapName, map)) {
             return true;
         }
-        World world = Bukkit.getWorld(mapName);
-        if (world == null) {
-            ChatUtils.MessageType.WARLORDS.sendMessage("Could not find game world " + mapName);
-            return false;
-        }
         addGameHolder(mapName, map, world);
         return true;
+    }
+
+    /**
+     * Returns the world if already loaded, otherwise loads it via {@link WorldCreator}
+     * when {@code level.dat} exists under the server world container. Does not generate
+     * a new empty world when the folder is missing.
+     */
+    @Nullable
+    private static World loadWorldIfPresent(@Nonnull String name) {
+        World world = Bukkit.getWorld(name);
+        if (world != null) {
+            return world;
+        }
+        File levelDat = new File(Bukkit.getWorldContainer(), name + File.separator + "level.dat");
+        if (!levelDat.isFile()) {
+            return null;
+        }
+        ChatUtils.MessageType.GAME.sendMessage("Map " + name + " is unloaded. Loading it now.");
+        return Bukkit.createWorld(new WorldCreator(name));
     }
 
     private boolean hasGameHolder(@Nonnull String name, @Nonnull GameMap map) {
