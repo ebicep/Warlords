@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.state.PreLobbyState;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -7,6 +8,7 @@ import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
+import org.mvplugins.multiverse.core.world.WorldManager;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -192,6 +194,17 @@ public class GameManager implements AutoCloseable {
         if (queue.contains(entry)) {
             throw new IllegalArgumentException("Queue entry already exists");
         }
+        if (entry.getMap() != null) {
+            if (!ensureGameHoldersLoaded(entry.getMap())
+                    && !hasJoinableGame(entry.getMap(), entry.getCategory())) {
+                entry.onResult(QueueResult.ERROR_NO_WORLD_CAPACITY, null);
+                return false;
+            }
+        } else if (!ensureEligibleGameHoldersLoaded(entry.getCategory())
+                && !hasJoinableGame(null, entry.getCategory())) {
+            entry.onResult(QueueResult.ERROR_NO_WORLD_CAPACITY, null);
+            return false;
+        }
         boolean valid = false;
         boolean invalidOversize = false;
         boolean invalidMapCategory = false;
@@ -258,7 +271,14 @@ public class GameManager implements AutoCloseable {
                 game.set(g);
             });
             if (!queue(entry)) {
-                return new Pair<>(QueueResult.INVALID_GENERIC, null);
+                QueueResult val = res.get();
+                if (val == null) {
+                    val = QueueResult.INVALID_GENERIC;
+                }
+                if (onResult != null) {
+                    onResult.accept(val, null);
+                }
+                return new Pair<>(val, null);
             }// BiConsumer<QueueResult, Game>
             runQueue();
             QueueResult val = res.get();
@@ -318,11 +338,111 @@ public class GameManager implements AutoCloseable {
         this.games.add(new GameHolder(map, locations, name));
     }
 
+    /**
+     * Ensures at least one idle game holder exists for the map, loading a single Multiverse
+     * world instance if needed. Does not preload every {@code fileName-i} copy.
+     *
+     * @return true if an idle holder exists for the map after this call
+     */
+    public boolean ensureGameHoldersLoaded(@Nonnull GameMap map) {
+        boolean hasIdleHolder = games.stream()
+                .anyMatch(holder -> holder.getMap() == map && holder.getGame() == null);
+        if (hasIdleHolder) {
+            return true;
+        }
+        for (String mapName : map.getWorldInstanceNames()) {
+            if (hasGameHolder(mapName, map)) {
+                continue;
+            }
+            if (ensureGameHolderLoaded(mapName, map)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Ensures at least one idle holder exists among maps eligible for the given category.
+     * Loads at most one new world per attempted map, stopping when any map has capacity.
+     *
+     * @return true if an idle holder exists for an eligible map after this call
+     */
+    public boolean ensureEligibleGameHoldersLoaded(@Nullable GameMode category) {
+        for (GameHolder holder : games) {
+            if (holder.getGame() != null) {
+                continue;
+            }
+            if (category != null && !holder.getMap().getGameModes().contains(category)) {
+                continue;
+            }
+            return true;
+        }
+        for (GameMap map : GameMap.VALUES) {
+            if (map == GameMap.MAIN_LOBBY || map == GameMap.MAIN_LOBBY_WHACK_A_MOLE) {
+                continue;
+            }
+            if (category != null && !map.getGameModes().contains(category)) {
+                continue;
+            }
+            if (ensureGameHoldersLoaded(map)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean hasJoinableGame(@Nullable GameMap map, @Nullable GameMode category) {
+        for (GameHolder holder : games) {
+            if (map != null && holder.getMap() != map) {
+                continue;
+            }
+            if (category != null && !holder.getMap().getGameModes().contains(category)) {
+                continue;
+            }
+            Game game = holder.getGame();
+            if (game != null && game.acceptsPeople()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Loads a single Multiverse world if unloaded and registers a game holder if missing.
+     *
+     * @return true if a holder exists for the world and map after this call
+     */
+    public boolean ensureGameHolderLoaded(@Nonnull String mapName, @Nonnull GameMap map) {
+        if (hasGameHolder(mapName, map)) {
+            return true;
+        }
+        WorldManager mvWorldManager = Warlords.multiverseCore.getApi().getWorldManager();
+        if (mvWorldManager.isUnloadedWorld(mapName)) {
+            ChatUtils.MessageType.GAME.sendMessage("Map " + mapName + " is unloaded. Loading it now.");
+            mvWorldManager.loadWorld(mapName);
+        }
+        if (hasGameHolder(mapName, map)) {
+            return true;
+        }
+        World world = Bukkit.getWorld(mapName);
+        if (world == null) {
+            ChatUtils.MessageType.WARLORDS.sendMessage("Could not find game world " + mapName);
+            return false;
+        }
+        addGameHolder(mapName, map, world);
+        return true;
+    }
+
+    private boolean hasGameHolder(@Nonnull String name, @Nonnull GameMap map) {
+        return games.stream().anyMatch(holder -> holder.getName().equals(name) && holder.getMap() == map);
+    }
+
     public enum QueueResult {
         READY_JOIN("You have joined an existing game."),
         READY_NEW("A new game has been made for you."),
         ERROR_FIND_GAME("We were unable to create a new game for you because of an internal error. Please report this."),
         ERROR_NEW_GAME("We were unable to find a new for you because of an internal error. Please report this."),
+        ERROR_NO_WORLD_CAPACITY("All world instances for this map are currently in use."),
         EXPIRED("No game found in time"),
         CANCELLED("Cancelled queueing"),
         REPLACED("Replaced with another queue entry"),

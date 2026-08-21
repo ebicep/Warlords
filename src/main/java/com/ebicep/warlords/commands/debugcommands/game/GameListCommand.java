@@ -16,7 +16,6 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.entity.Player;
-import org.mvplugins.multiverse.core.world.WorldManager;
 
 import java.util.EnumSet;
 import java.util.OptionalInt;
@@ -82,15 +81,18 @@ public class GameListCommand extends BaseCommand {
     @Subcommand("addgameholder")
     @Description("Adds a game holder")
     public void addGameHolder(CommandIssuer issuer, String mapName, GameMap gameMap) {
-        WorldManager mvWorldManager = Warlords.multiverseCore.getApi().getWorldManager();
-        if (!mvWorldManager.isUnloadedWorld(mapName)) {
+        if (Warlords.getGameManager().getGames().stream().anyMatch(holder -> holder.getName().equals(mapName) && holder.getMap() == gameMap)) {
             ChatChannels.sendDebugMessage(issuer, Component.text("There is already a game holder for: ", NamedTextColor.GREEN)
                                                            .append(Component.text(mapName, NamedTextColor.YELLOW))
             );
             return;
         }
-        mvWorldManager.loadWorld(mapName);
-        Warlords.getGameManager().addGameHolder(mapName, gameMap);
+        if (!Warlords.getGameManager().ensureGameHolderLoaded(mapName, gameMap)) {
+            ChatChannels.sendDebugMessage(issuer, Component.text("Failed to create game holder for: ", NamedTextColor.RED)
+                                                           .append(Component.text(mapName, NamedTextColor.YELLOW))
+            );
+            return;
+        }
         ChatChannels.sendDebugMessage(issuer, Component.text("Created game holder for: ", NamedTextColor.GREEN)
                                                        .append(Component.text(mapName, NamedTextColor.YELLOW))
         );
