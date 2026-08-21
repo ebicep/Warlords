@@ -1,12 +1,18 @@
 package com.ebicep.warlords.pve.consumables.vials;
 
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.consumables.Consumable;
+import com.ebicep.warlords.pve.consumables.ConsumableManager;
 import com.ebicep.warlords.util.java.NumberFormat;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 import java.time.Duration;
 
-public enum Vial implements Consumable {
+public enum Vial implements Consumable, Spendable {
 
     INSIGNIA_BOOST_I("Insignia Boost I", "Increases Insignia gained in PvE.", VialEffect.INSIGNIA_GAIN, 1.25, 50_000, 200_000, Duration.ofHours(24), Material.HONEY_BOTTLE),
     INSIGNIA_BOOST_II("Insignia Boost II", "Increases Insignia gained in PvE.", VialEffect.INSIGNIA_GAIN, 1.5, 200_000, 1_00_000, Duration.ofHours(24), Material.HONEY_BOTTLE),
@@ -84,6 +90,31 @@ public enum Vial implements Consumable {
     @Override
     public String getActiveGroup() {
         return effect.getActiveGroup();
+    }
+
+    @Override
+    public TextColor getTextColor() {
+        return NamedTextColor.GREEN;
+    }
+
+    @Override
+    public ItemStack getItem() {
+        return new ItemStack(material);
+    }
+
+    @Override
+    public void addToPlayer(DatabasePlayer databasePlayer, long amount) {
+        ConsumableManager manager = databasePlayer.getPveStats().getConsumableManager();
+        if (amount > 0) {
+            manager.add(this, Math.toIntExact(amount));
+        } else if (amount < 0) {
+            manager.remove(this, Math.toIntExact(-amount));
+        }
+    }
+
+    @Override
+    public Long getFromPlayer(DatabasePlayer databasePlayer) {
+        return (long) databasePlayer.getPveStats().getConsumableManager().getAmount(this);
     }
 
     public VialEffect getEffect() {

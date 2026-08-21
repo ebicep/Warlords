@@ -47,6 +47,9 @@ public final class ConsumableMenu {
         int index = 0;
         for (Vial vial : Vial.VALUES) {
             int amount = manager.getAmount(vial);
+            if (amount <= 0) {
+                continue;
+            }
             ActiveConsumable active = manager.getActiveConsumable(vial.getActiveGroup());
             boolean thisActive = active != null && vial.getId().equals(active.getConsumableId());
             List<Component> lore = new ArrayList<>();
@@ -54,7 +57,7 @@ public final class ConsumableMenu {
             lore.add(Component.empty());
             lore.add(Component.text("Effect: ", NamedTextColor.GRAY).append(Component.text(vial.getEffectDescription(), NamedTextColor.GREEN)));
             lore.add(Component.text("Duration: ", NamedTextColor.GRAY).append(Component.text(formatDuration(vial), NamedTextColor.YELLOW)));
-            lore.add(Component.text("Owned: ", NamedTextColor.GRAY).append(Component.text(amount, amount > 0 ? NamedTextColor.GREEN : NamedTextColor.RED)));
+            lore.add(Component.text("Owned: ", NamedTextColor.GRAY).append(Component.text(amount, NamedTextColor.GREEN)));
             if (thisActive) {
                 lore.add(Component.empty());
                 lore.add(Component.text("ACTIVE", NamedTextColor.GREEN));
@@ -68,14 +71,12 @@ public final class ConsumableMenu {
                                       .append(Component.text(activeDefinition.getName(), NamedTextColor.YELLOW)));
                 }
             }
-            if (amount > 0) {
-                lore.add(Component.empty());
-                lore.add(Component.text("Click to Consume", NamedTextColor.YELLOW));
-            }
+            lore.add(Component.empty());
+            lore.add(Component.text("Click to Consume", NamedTextColor.YELLOW));
 
             menu.setItem(index % 7 + 1, index / 7 + 1,
                     new ItemBuilder(vial.getMaterial())
-                            .name(Component.text(vial.getName(), amount > 0 || thisActive ? NamedTextColor.GREEN : NamedTextColor.GRAY))
+                            .name(Component.text(vial.getName(), NamedTextColor.GREEN))
                             .lore(lore)
                             .get(),
                     (m, e) -> {
