@@ -31,6 +31,20 @@ public class CompensationReward extends AbstractReward {
         return NamedTextColor.DARK_AQUA;
     }
 
+    public static class SpelunkerChest extends CompensationReward {
+        public SpelunkerChest() {
+        }
+
+        public SpelunkerChest(LinkedHashMap<Spendable, Long> rewards) {
+            super(rewards, "Spelunker Chest");
+        }
+
+        @Override
+        public TextColor getNameColor() {
+            return NamedTextColor.GOLD;
+        }
+    }
+
     public static class AscendantShardPrestigePatch extends CompensationReward {
         public AscendantShardPrestigePatch() {
         }
