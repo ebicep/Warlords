@@ -800,6 +800,7 @@ public final class Game implements Runnable, AutoCloseable {
                         Component.text("Closed Game: " + gameHolder.getGame().getMap().getMapName() + " - " + gameHolder.getName(), NamedTextColor.LIGHT_PURPLE)
                 );
                 gameHolder.setGame(null);
+                Warlords.getGameManager().scheduleIdleWorldUnload(gameHolder);
                 break;
             }
         }

@@ -10,6 +10,8 @@ import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -24,8 +26,11 @@ public class GameManager implements AutoCloseable {
     public static boolean gameStartingDisabled = false;
     /** Chunk radius around MainLobby spawn kept loaded via plugin tickets. */
     private static final int MAIN_LOBBY_WARM_CHUNK_RADIUS = 15;
+    private static final long IDLE_WORLD_UNLOAD_DELAY_TICKS = 30 * 20L;
+    private static final long IDLE_WORLD_UNLOAD_CHECK_PERIOD_TICKS = 20L;
     private final List<GameHolder> games = new ArrayList<>();
     private final LinkedList<QueueEntry> queue = new LinkedList<>();
+    private final Map<String, BukkitTask> pendingWorldUnloads = new HashMap<>();
 
     /**
      * Gets the list of game holders
@@ -322,13 +327,86 @@ public class GameManager implements AutoCloseable {
         for (GameHolder next : games) {
             next.forceEndGame();
         }
+        for (BukkitTask task : pendingWorldUnloads.values()) {
+            task.cancel();
+        }
+        pendingWorldUnloads.clear();
         games.clear();
+    }
+
+    /**
+     * After a game ends, waits until the world has no players, then unloads it after
+     * {@link #IDLE_WORLD_UNLOAD_DELAY_TICKS} of continuous emptiness and removes the holder.
+     * No-op for MainLobby. Cancelled if a new game starts on the same holder.
+     */
+    public void scheduleIdleWorldUnload(@Nonnull GameHolder holder) {
+        if (holder.getName().equals("MainLobby") || !Warlords.getInstance().isEnabled()) {
+            return;
+        }
+        cancelIdleWorldUnload(holder.getName());
+        BukkitTask task = new BukkitRunnable() {
+            private long emptyTicks = -1;
+
+            @Override
+            public void run() {
+                if (!games.contains(holder) || holder.getGame() != null) {
+                    cancelIdleWorldUnload(holder.getName());
+                    return;
+                }
+                World world = Bukkit.getWorld(holder.getName());
+                if (world == null) {
+                    games.remove(holder);
+                    cancelIdleWorldUnload(holder.getName());
+                    return;
+                }
+                if (!world.getPlayers().isEmpty()) {
+                    emptyTicks = -1;
+                    return;
+                }
+                if (emptyTicks < 0) {
+                    emptyTicks = 0;
+                } else {
+                    emptyTicks += IDLE_WORLD_UNLOAD_CHECK_PERIOD_TICKS;
+                }
+                if (emptyTicks >= IDLE_WORLD_UNLOAD_DELAY_TICKS) {
+                    unloadIdleWorld(holder);
+                    cancelIdleWorldUnload(holder.getName());
+                }
+            }
+        }.runTaskTimer(Warlords.getInstance(), IDLE_WORLD_UNLOAD_CHECK_PERIOD_TICKS, IDLE_WORLD_UNLOAD_CHECK_PERIOD_TICKS);
+        pendingWorldUnloads.put(holder.getName(), task);
+    }
+
+    public void cancelIdleWorldUnload(@Nonnull String holderName) {
+        BukkitTask task = pendingWorldUnloads.remove(holderName);
+        if (task != null) {
+            task.cancel();
+        }
+    }
+
+    private void unloadIdleWorld(@Nonnull GameHolder holder) {
+        if (holder.getGame() != null || !games.contains(holder)) {
+            return;
+        }
+        World world = Bukkit.getWorld(holder.getName());
+        if (world != null) {
+            if (!world.getPlayers().isEmpty()) {
+                return;
+            }
+            ChatUtils.MessageType.GAME.sendMessage("Unloading idle map " + holder.getName() + ".");
+            if (!Bukkit.unloadWorld(world, false)) {
+                ChatUtils.MessageType.GAME.sendErrorMessage("Failed to unload world " + holder.getName());
+                return;
+            }
+        }
+        games.remove(holder);
+        ChatUtils.MessageType.GAME.sendMessage("Unloaded map " + holder.getName() + " and removed game holder.");
     }
 
     public void addGameHolder(String name, GameMap map) {
         World world = loadWorldIfPresent(name);
         if (world == null) {
-            ChatUtils.MessageType.WARLORDS.sendErrorMessage("Could not find game world " + name);
+            ChatUtils.MessageType.GAME.sendErrorMessage("Could not find game world " + name);
             return;
         }
         if ("MainLobby".equals(name)) {
@@ -439,7 +517,7 @@ public class GameManager implements AutoCloseable {
         }
         World world = loadWorldIfPresent(mapName);
         if (world == null) {
-            ChatUtils.MessageType.WARLORDS.sendErrorMessage("Could not find game world " + mapName);
+            ChatUtils.MessageType.GAME.sendErrorMessage("Could not find game world " + mapName);
             return false;
         }
         if (hasGameHolder(mapName, map)) {
@@ -538,6 +616,7 @@ public class GameManager implements AutoCloseable {
 
         @Nonnull
         private Game optionallyStartNewGame(@Nonnull EnumSet<GameAddon> requestedGameAddons, @Nullable GameMode category) {
+            Warlords.getGameManager().cancelIdleWorldUnload(name);
             if (game == null) {
                 GameMode newCategory = category != null ? category
                                                         : map.getGameModes().get((int) (Math.random() * map.getGameModes().size()));
