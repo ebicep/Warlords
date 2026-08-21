@@ -36,6 +36,8 @@ public record WeaponSkinCost(Spendable currency, long amount) {
         set(Weapons.WARLORDS_II_TRUE_EXCALIBUR, Currencies.VEILKEEPER_INSIGNIA, 1);
         set(Weapons.WARLORDS_II_AWAKENED_LICHBLADE, Currencies.VEILKEEPER_INSIGNIA, 1);
         set(Weapons.WARLORDS_II_CREATION_SPLITTER, Currencies.VEILKEEPER_INSIGNIA, 1);
+        set(Weapons.WARLORDS_II_DEMONIC_BLADE, Currencies.VEILKEEPER_INSIGNIA, 1);
+        set(Weapons.WARLORDS_II_THUNDER_BRINGER, Currencies.VEILKEEPER_INSIGNIA, 1);
     }
 
     public static void set(Weapons weaponSkin, Spendable currency, long amount) {
