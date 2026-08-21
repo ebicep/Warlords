@@ -31,11 +31,13 @@ public class RaidOneStartTrait extends WarlordsTrait {
 
     @Override
     public void rightClick(NPCRightClickEvent event) {
-        RaidMenu.openRaidMenu(event.getClicker(), raid);
+        event.getClicker().sendMessage(Component.text("This raid is currently in development, check back later!", NamedTextColor.RED));
+        //RaidMenu.openRaidMenu(event.getClicker(), raid);
     }
 
     @Override
     public void leftClick(NPCLeftClickEvent event) {
-        RaidMenu.openRaidMenu(event.getClicker(), raid);
+        event.getClicker().sendMessage(Component.text("This raid is currently in development, check back later!", NamedTextColor.RED));
+        //RaidMenu.openRaidMenu(event.getClicker(), raid);
     }
 }

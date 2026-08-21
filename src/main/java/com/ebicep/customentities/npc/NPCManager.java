@@ -57,11 +57,11 @@ public class NPCManager {
                 createLegendaryWeaponNPC();
                 createSupplyDropFairNPC();
                 createBountyMenuNPC();
-                createSupporterShopNPC();
+                //createSupporterShopNPC();
                 createStarPieceSynthesizerNPC();
                 createItemCrafterNPC();
                 createIllusionVendorNPC();
-                createSeasonalVendorNPC();
+                //createSeasonalVendorNPC();
                 createAnomalyNPC();
                 createRaidOneNPC();
                 createPrestigeVendorNPC();
