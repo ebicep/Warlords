@@ -10,6 +10,7 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
@@ -34,23 +35,54 @@ public class EffectUtils {
 
     public static final double PARTICLE_RANGE = 100.0;
     public static final double PARTICLE_RANGE_SQ = PARTICLE_RANGE * PARTICLE_RANGE;
+    private static final Color DEFAULT_COLOR = Color.fromRGB(255, 0, 0);
     private static final Particle.Spell DEFAULT_SPELL = new Particle.Spell(Color.fromRGB(140, 25, 240), 1);
-    private static final Particle.DustOptions DEFAULT_DUST = new Particle.DustOptions(Color.fromRGB(255, 0, 0), 1);
+    private static final Particle.DustOptions DEFAULT_DUST = new Particle.DustOptions(DEFAULT_COLOR, 1);
+    private static final Particle.DustTransition DEFAULT_DUST_TRANSITION = new Particle.DustTransition(DEFAULT_COLOR, Color.WHITE, 1);
+    private static final Float DEFAULT_FLOAT = 1f;
+    private static final Integer DEFAULT_INTEGER = 0;
+    private static final BlockData DEFAULT_BLOCK_DATA = Material.STONE.createBlockData();
+    private static final ItemStack DEFAULT_ITEM = new ItemStack(Material.STONE);
 
     /**
-     * Provides required particle data when callers omit it (Paper 1.21+ requires Spell for EFFECT/INSTANT_EFFECT).
+     * Provides required particle data when callers omit it (Paper 1.21+).
+     * Covers Spell, DustOptions, DustTransition, Color, Float, Integer, BlockData, and ItemStack.
+     * Vibration and Trail require a Location and must be supplied by the caller.
      */
     @Nullable
     public static Object resolveParticleData(Particle particle, @Nullable Object data) {
         if (data != null) {
             return data;
         }
-        if (particle == Particle.EFFECT || particle == Particle.INSTANT_EFFECT) {
+        Class<?> dataType = particle.getDataType();
+        if (dataType == Void.class) {
+            return null;
+        }
+        if (dataType == Particle.Spell.class) {
             return DEFAULT_SPELL;
         }
-        if (particle == Particle.DUST) {
+        if (dataType == Particle.DustOptions.class) {
             return DEFAULT_DUST;
         }
+        if (dataType == Particle.DustTransition.class) {
+            return DEFAULT_DUST_TRANSITION;
+        }
+        if (dataType == Color.class) {
+            return DEFAULT_COLOR;
+        }
+        if (dataType == Float.class) {
+            return DEFAULT_FLOAT;
+        }
+        if (dataType == Integer.class) {
+            return DEFAULT_INTEGER;
+        }
+        if (dataType == BlockData.class) {
+            return DEFAULT_BLOCK_DATA;
+        }
+        if (dataType == ItemStack.class) {
+            return DEFAULT_ITEM;
+        }
+        // Vibration / Trail need a Location — caller must pass data
         return null;
     }
 
