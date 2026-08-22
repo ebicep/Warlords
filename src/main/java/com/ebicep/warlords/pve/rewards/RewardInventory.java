@@ -14,6 +14,7 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -44,6 +45,10 @@ public class RewardInventory {
                 )
                 .flatMap(List::stream)
                 .filter(reward -> reward.getTimeClaimed() == null)
+                .sorted(Comparator.comparing(
+                        AbstractReward::getTimeGiven,
+                        Comparator.nullsLast(Comparator.naturalOrder())
+                ))
                 .collect(Collectors.toList());
         if (rewards.isEmpty()) {
             player.sendMessage(Component.text("You have no rewards to claim!", NamedTextColor.RED));
