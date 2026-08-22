@@ -195,7 +195,13 @@ public class DatabaseManager {
         }
         long start = System.nanoTime();
         Optional<DatabasePlayer> optional = DatabaseManager.playerService.findByUUID(uuid, collections, true);
-        DatabasePlayer databasePlayer = optional.orElseGet(() -> new DatabasePlayer(uuid, Bukkit.getOfflinePlayer(uuid).getName()));
+        DatabasePlayer databasePlayer;
+        if (optional.isPresent()) {
+            databasePlayer = optional.get();
+        } else {
+            DatabasePlayer stub = stubPlayer(uuid);
+            databasePlayer = cachePlayer(collections, stub);
+        }
         databasePlayer.loadInCollection(collections);
         if (collections == PlayersCollections.LIFETIME) {
             Warlords.newChain()
@@ -203,9 +209,6 @@ public class DatabaseManager {
                         loadPlayerInfo(uuid, databasePlayer);
                         callback.accept(databasePlayer);
                     }).execute();
-        }
-        if (optional.isEmpty()) {
-            CACHED_PLAYERS.get(collections).put(uuid, databasePlayer);
         }
         long end = System.nanoTime();
         ChatUtils.MessageType.PLAYER_SERVICE.sendMessage("Loaded Player " + uuid + " in " + collections + " in " + (end - start) / 1000000 + "ms");
@@ -295,9 +298,8 @@ public class DatabaseManager {
     @Nonnull
     public static DatabasePlayer getPlayer(UUID uuid, PlayersCollections playersCollections, boolean isAPlayer) {
         if (!isAPlayer || !enabled) {
-            ConcurrentHashMap<UUID, DatabasePlayer> concurrentHashMap = DatabaseManager.CACHED_PLAYERS.get(playersCollections);
             if (isAPlayer) {
-                return concurrentHashMap.computeIfAbsent(uuid, k -> new DatabasePlayer(uuid, Bukkit.getOfflinePlayer(uuid).getName()));
+                return cachePlayer(playersCollections, stubPlayer(uuid));
             } else {
                 return CACHED_MOB_DATABASEPLAYER;
             }
@@ -312,17 +314,53 @@ public class DatabaseManager {
         return CACHED_PLAYERS.get(collection).containsKey(uuid);
     }
 
+    /**
+     * Inserts or upgrades a cache entry. Never replaces a persisted player (id != null)
+     * with a stub (id == null). Prefer an existing real entry over a newly loaded one.
+     *
+     * @return the instance that remains in the cache (may differ from {@code candidate})
+     */
+    public static DatabasePlayer cachePlayer(PlayersCollections collection, DatabasePlayer candidate) {
+        ConcurrentHashMap<UUID, DatabasePlayer> cache = CACHED_PLAYERS.get(collection);
+        UUID uuid = candidate.getUuid();
+        return cache.compute(uuid, (k, existing) -> {
+            if (existing == null) {
+                return candidate;
+            }
+            if (existing.getId() == null && candidate.getId() != null) {
+                return candidate;
+            }
+            return existing;
+        });
+    }
+
+    private static DatabasePlayer stubPlayer(UUID uuid) {
+        return new DatabasePlayer(uuid, Bukkit.getOfflinePlayer(uuid).getName());
+    }
+
     public static DatabasePlayer getPlayer(UUID uuid, PlayersCollections playersCollections) {
-        ConcurrentHashMap<UUID, DatabasePlayer> concurrentHashMap = DatabaseManager.CACHED_PLAYERS.get(playersCollections);
         if (!enabled) {
-            return concurrentHashMap.computeIfAbsent(uuid, k -> new DatabasePlayer(uuid, Bukkit.getOfflinePlayer(uuid).getName()));
+            return cachePlayer(playersCollections, stubPlayer(uuid));
         }
-        DatabasePlayer cached = concurrentHashMap.get(uuid);
-        if (cached != null) {
-            return cached;
+        boolean onMainThread = Bukkit.isPrimaryThread();
+        Optional<DatabasePlayer> found = playerService.findByUUID(uuid, playersCollections, !onMainThread);
+        if (found.isPresent()) {
+            DatabasePlayer player = found.get();
+            if (onMainThread && player.getId() == null && DatabaseHealth.isOperational()) {
+                Warlords.newChain()
+                        .async(() -> playerService.findByUUID(uuid, playersCollections, true))
+                        .execute();
+            }
+            return player;
         }
         ChatUtils.MessageType.WARLORDS.sendErrorMessage(new Throwable("Tried to get uncached player"));
-        return concurrentHashMap.computeIfAbsent(uuid, k -> new DatabasePlayer(uuid, Bukkit.getOfflinePlayer(uuid).getName()));
+        DatabasePlayer stub = cachePlayer(playersCollections, stubPlayer(uuid));
+        if (DatabaseHealth.isOperational()) {
+            Warlords.newChain()
+                    .async(() -> playerService.findByUUID(uuid, playersCollections, true))
+                    .execute();
+        }
+        return stub;
     }
 
     @Nonnull

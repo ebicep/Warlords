@@ -83,20 +83,16 @@ public class StatsLeaderboardManager {
                     .asyncFirst(() -> DatabaseManager.playerService.find(value.getQuery(), value))
                     .syncLast((databasePlayers) -> {
                         ChatUtils.MessageType.LEADERBOARDS.sendMessage("Fetched " + databasePlayers.size() + " " + value.name + " players");
-                        ConcurrentHashMap<UUID, DatabasePlayer> concurrentHashMap = DatabaseManager.CACHED_PLAYERS.computeIfAbsent(value,
-                                v -> new ConcurrentHashMap<>()
-                        );
                         for (DatabasePlayer databasePlayer : databasePlayers) {
                             if (databasePlayer.getUuid() == null) {
                                 ChatUtils.MessageType.LEADERBOARDS.sendErrorMessage(databasePlayer.getId() + " - " + databasePlayer.getName() + " has a null UUID");
                                 continue;
                             }
+                            String resolvedName = null;
                             if (databasePlayer.getName() == null) {
                                 OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(databasePlayer.getUuid());
                                 if (offlinePlayer.getName() != null) {
-                                    databasePlayer.setName(offlinePlayer.getName());
-                                    ChatUtils.MessageType.LEADERBOARDS.sendMessage("Updated Name: " + databasePlayer.getName() + " - " + value);
-                                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer, value);
+                                    resolvedName = offlinePlayer.getName();
                                 }
                             }
                             DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
@@ -111,9 +107,11 @@ public class StatsLeaderboardManager {
                             if (value == PlayersCollections.SEASON_12 && lessThan20Plays) {
                                 continue;
                             }
-                            DatabasePlayer cachedPlayer = concurrentHashMap.get(databasePlayer.getUuid());
-                            if (cachedPlayer == null || !cachedPlayer.getId().equals(databasePlayer.getId())) {
-                                concurrentHashMap.put(databasePlayer.getUuid(), databasePlayer);
+                            DatabasePlayer cached = DatabaseManager.cachePlayer(value, databasePlayer);
+                            if (resolvedName != null && !resolvedName.equals(cached.getName())) {
+                                cached.setName(resolvedName);
+                                ChatUtils.MessageType.LEADERBOARDS.sendMessage("Updated Name: " + cached.getName() + " - " + value);
+                                DatabaseManager.queueUpdatePlayerAsync(cached, value);
                             }
                         }
                         resetLeaderboards(value, null);

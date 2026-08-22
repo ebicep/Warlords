@@ -12,6 +12,7 @@ import com.ebicep.warlords.util.chat.ChatUtils;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -72,9 +73,20 @@ public class DatabaseUpdater {
         toUpdate.forEach((playersCollections, databasePlayers) -> {
             for (DatabasePlayer databasePlayer : databasePlayers) {
                 updateFutures.add(VIRTUAL_THREAD_EXECUTOR.submit(() -> {
+                    DatabasePlayer toSave = Optional
+                            .ofNullable(DatabaseManager.CACHED_PLAYERS.get(playersCollections).get(databasePlayer.getUuid()))
+                            .orElse(databasePlayer);
                     try {
-                        playerService.update(databasePlayer, playersCollections);
+                        playerService.update(toSave, playersCollections);
                     } catch (Exception e) {
+                        if (DatabaseHealth.isDuplicateKeyFailure(e) && toSave.getId() == null) {
+                            playerService.reloadFromDatabase(toSave.getUuid(), playersCollections)
+                                    .ifPresent(reloaded -> {
+                                        DatabasePlayer canonical = DatabaseManager.cachePlayer(playersCollections, reloaded);
+                                        markPlayerForUpdate(canonical, playersCollections);
+                                    });
+                            return;
+                        }
                         markPlayerForUpdate(databasePlayer, playersCollections);
                         ChatUtils.MessageType.WARLORDS.sendErrorMessage("Error updating player " + databasePlayer.getName() + " in collection " + playersCollections);
                         ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
