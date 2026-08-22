@@ -9,7 +9,6 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
-import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
@@ -203,11 +202,9 @@ public class DunestarMovingWallOption implements Option, Listener {
                 return;
             }
             player.addInstance(InstanceBuilder
-                    .damage()
-                    .cause("Dunestar Storm Wall")
+                    .melee()
                     .source(player)
                     .value(WALL_DAMAGE)
-                    .flags(InstanceFlags.TRUE_DAMAGE, InstanceFlags.IGNORE_CRIT_MODIFIERS)
             );
         });
     }
