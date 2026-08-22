@@ -94,7 +94,11 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
         game.registerEvents(new Listener() {
             @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
             public void onDamage(WarlordsDamageHealingEvent event) {
-                if (carrier != null && event.isDamageInstance() && event.getSource() == carrier) {
+                if (carrier != null
+                        && event.isDamageInstance()
+                        && event.getSource() == carrier
+                        && event.getWarlordsEntity() != carrier
+                ) {
                     event.setCancelled(true);
                 }
             }
