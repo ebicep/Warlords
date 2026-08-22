@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.newitems.setbonus.sets;
 
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.events.player.ingame.pve.drops.AbstractWarlordsDropRewardEvent;
 import com.ebicep.warlords.events.player.ingame.pve.drops.WarlordsDropMobDropEvent;
 import com.ebicep.warlords.events.player.ingame.pve.drops.WarlordsDropNewItemEvent;
@@ -56,14 +57,21 @@ public class Spelunker extends BaseSet {
         public void apply(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getGame().registerEvents(new Listener() {
                 @EventHandler
+                public void onKill(WarlordsDeathEvent event) {
+                    if (event.getKiller() != null && !event.getKiller().equals(warlordsPlayer)) {
+                        return;
+                    }
+                    if (ThreadLocalRandom.current().nextDouble(100) < spelunkerChestDropChancePercent) {
+                        giveSpelunkerChest(warlordsPlayer);
+                    }
+                }
+
+                @EventHandler
                 public void onWeaponDrop(WarlordsDropWeaponEvent event) {
                     if (!event.getWarlordsEntity().equals(warlordsPlayer)) {
                         return;
                     }
                     increaseRareLootChance(event);
-                    if (ThreadLocalRandom.current().nextDouble(100) < spelunkerChestDropChancePercent) {
-                        giveSpelunkerChest(warlordsPlayer);
-                    }
                 }
 
                 @EventHandler
@@ -101,7 +109,7 @@ public class Spelunker extends BaseSet {
             } else if (roll < 90) {
                 currency = Currencies.SUPPLY_DROP_TOKEN;
                 amount = 2;
-            } else if (roll < 99) {
+            } else if (roll < 99.5) {
                 currency = Currencies.ETHEREUM_CRYSTAL;
                 amount = 1;
             } else {

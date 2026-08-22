@@ -77,7 +77,7 @@ public final class GuildShopMenu {
 
     private static boolean canPurchase(Guild guild, Player player) {
         Optional<GuildPlayer> guildPlayer = guild.getPlayerMatchingUUID(player.getUniqueId());
-        return guildPlayer.isPresent() && guild.getRoleLevel(guildPlayer.get()) <= 1;
+        return guildPlayer.isPresent();
     }
 
     private static void openPurchaseConfirmation(Guild guild, Player player, int slot, long cost) {

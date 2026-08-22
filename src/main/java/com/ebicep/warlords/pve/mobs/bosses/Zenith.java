@@ -45,7 +45,6 @@ import java.util.List;
 public class Zenith extends AbstractMob implements BossMob {
 
     private ThunderLineBarrageAbility thunderLineBarrageAbility;
-    private LightningChainAbility lightningChainAbility;
     private ShatteringChainsAbility shatteringChainsAbility;
     private BossAbilityPhase phaseOne;
     private BossAbilityPhase phaseTwo;
@@ -180,14 +179,6 @@ public class Zenith extends AbstractMob implements BossMob {
                 2,
                 4000 * multiplier, 6, 2
         );
-        lightningChainAbility = new LightningChainAbility(
-                warlordsNPC,
-                () -> warlordsNPC.getLocation(),
-                12,
-                5000,
-                200,
-                2
-        );
         shatteringChainsAbility = new ShatteringChainsAbility(
                 warlordsNPC,
                 () -> mapCenter.clone().add(0, 1.1, 0),
@@ -247,10 +238,6 @@ public class Zenith extends AbstractMob implements BossMob {
     public void whileAlive(int ticksElapsed, PveOption option) {
         if (ticksElapsed % (enraged ? 75 : 200) == 0) {
             thunderLineBarrageAbility.start(warlordsNPC.getGame());
-        }
-
-        if (ticksElapsed % 360 == 0 && ticksElapsed > 0) {
-            lightningChainAbility.start(warlordsNPC.getGame());
         }
 
         healthBar.update();
