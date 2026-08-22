@@ -102,13 +102,13 @@ public class Spelunker extends BaseSet {
             long amount;
             if (roll < 50) {
                 currency = Currencies.SYNTHETIC_SHARD;
-                amount = 20;
+                amount = 15;
             } else if (roll < 75) {
                 currency = Currencies.LEGEND_FRAGMENTS;
-                amount = 15;
+                amount = 8;
             } else if (roll < 90) {
                 currency = Currencies.SUPPLY_DROP_TOKEN;
-                amount = 2;
+                amount = 1;
             } else if (roll < 99.5) {
                 currency = Currencies.ETHEREUM_CRYSTAL;
                 amount = 1;
