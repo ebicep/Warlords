@@ -34,6 +34,25 @@ public class EffectUtils {
 
     public static final double PARTICLE_RANGE = 100.0;
     public static final double PARTICLE_RANGE_SQ = PARTICLE_RANGE * PARTICLE_RANGE;
+    private static final Particle.Spell DEFAULT_SPELL = new Particle.Spell(Color.fromRGB(140, 25, 240), 1);
+    private static final Particle.DustOptions DEFAULT_DUST = new Particle.DustOptions(Color.fromRGB(255, 0, 0), 1);
+
+    /**
+     * Provides required particle data when callers omit it (Paper 1.21+ requires Spell for EFFECT/INSTANT_EFFECT).
+     */
+    @Nullable
+    public static Object resolveParticleData(Particle particle, @Nullable Object data) {
+        if (data != null) {
+            return data;
+        }
+        if (particle == Particle.EFFECT || particle == Particle.INSTANT_EFFECT) {
+            return DEFAULT_SPELL;
+        }
+        if (particle == Particle.DUST) {
+            return DEFAULT_DUST;
+        }
+        return null;
+    }
 
     /**
      * @param center       what location should the sphere be around.
@@ -93,11 +112,12 @@ public class EffectUtils {
         if (loc.getBlock().getType().isOccluding()) {
             return;
         }
+        Object resolved = resolveParticleData(particle, data);
         for (Player player : loc.getWorld().getPlayers()) {
             if (!isWithinParticleRange(player, loc)) {
                 continue;
             }
-            player.spawnParticle(particle, loc, count, 0, 0, 0, 0, data, true);
+            player.spawnParticle(particle, loc, count, 0, 0, 0, 0, resolved, true);
         }
     }
 
@@ -143,15 +163,12 @@ public class EffectUtils {
         if (loc.getBlock().getType().isOccluding()) {
             return;
         }
+        Object data = resolveParticleData(particle, null);
         for (Player player : loc.getWorld().getPlayers()) {
             if (!isWithinParticleRange(player, loc)) {
                 continue;
             }
-            if (particle == Particle.EFFECT) {
-                player.spawnParticle(particle, loc, count, 0, 0, 0, 0, new Particle.Spell(Color.fromRGB(140, 25, 240), 1));
-            } else {
-                player.spawnParticle(particle, loc, count, 0, 0, 0, 0, null, true);
-            }
+            player.spawnParticle(particle, loc, count, 0, 0, 0, 0, data, true);
         }
     }
 
@@ -399,19 +416,7 @@ public class EffectUtils {
             double offsetZ,
             double speed
     ) {
-        if (loc.getBlock().getType().isOccluding()) {
-            return;
-        }
-        if (player == null) {
-            for (Player receiver : loc.getWorld().getPlayers()) {
-                if (!isWithinParticleRange(receiver, loc)) {
-                    continue;
-                }
-                receiver.spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed, null, true);
-            }
-        } else if (isWithinParticleRange(player, loc)) {
-            player.spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed, null, true);
-        }
+        displayParticle(player, particle, loc, count, offsetX, offsetY, offsetZ, speed, resolveParticleData(particle, null));
     }
 
     public static void displayParticle(
@@ -428,15 +433,16 @@ public class EffectUtils {
         if (loc.getBlock().getType().isOccluding()) {
             return;
         }
+        Object resolved = resolveParticleData(particle, data);
         if (player == null) {
             for (Player receiver : loc.getWorld().getPlayers()) {
                 if (!isWithinParticleRange(receiver, loc)) {
                     continue;
                 }
-                receiver.spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed, data, true);
+                receiver.spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed, resolved, true);
             }
         } else if (isWithinParticleRange(player, loc)) {
-            player.spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed, data, true);
+            player.spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed, resolved, true);
         }
     }
 
@@ -922,12 +928,7 @@ public class EffectUtils {
             double offsetZ,
             double speed
     ) {
-        if (particle == Particle.EFFECT) {
-            var data = new Particle.Spell(Color.fromRGB(140, 25, 240), 1);
-            displayParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed, data);
-        } else {
-            displayParticle(null, particle, loc, count, offsetX, offsetY, offsetZ, speed);
-        }
+        displayParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed, resolveParticleData(particle, null));
     }
 
     /**
@@ -953,11 +954,12 @@ public class EffectUtils {
         if (loc.getBlock().getType().isOccluding()) {
             return;
         }
+        Object resolved = resolveParticleData(particle, data);
         for (Player player : loc.getWorld().getPlayers()) {
             if (!isWithinParticleRange(player, loc)) {
                 continue;
             }
-            player.spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed, data, true);
+            player.spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed, resolved, true);
         }
     }
 
