@@ -45,10 +45,10 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
 
     private static final int VAULT_COUNT = 6;
     private static final int VAULT_DURATION_TICKS = 30 * GameRunnable.SECOND;
-    private static final int CODE_REVEAL_TICKS = 8 * GameRunnable.SECOND;
-    private static final int MOB_SPAWN_INTERVAL = 3 * GameRunnable.SECOND;
-    private static final int INSIGNIA_PER_VAULT = 50_000;
-    private static final int ELITE_GUARDIANS_PER_PLAYER = 2;
+    private static final int CODE_REVEAL_TICKS = 5 * GameRunnable.SECOND;
+    private static final int MOB_SPAWN_INTERVAL = GameRunnable.SECOND;
+    private static final int INSIGNIA_PER_VAULT = 25_000;
+    private static final int ELITE_GUARDIANS_PER_PLAYER = 4;
     private static final int CHAMPION_GUARDIANS_PER_PLAYER = 2;
     private static final double RUNE_DISPLAY_Y_OFFSET = 1.5;
     private static final float RUNE_DISPLAY_SCALE = 1.4f;
