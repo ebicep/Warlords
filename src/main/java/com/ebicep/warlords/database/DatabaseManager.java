@@ -9,7 +9,6 @@ import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.database.repositories.events.GameEventsService;
 import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.database.repositories.games.GameService;
-import com.ebicep.warlords.database.repositories.games.GamesCollections;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.guild.GuildService;
 import com.ebicep.warlords.database.repositories.illusionvendor.IllusionVendorService;
@@ -30,7 +29,9 @@ import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.StarterWeapon;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
+import org.bson.Document;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -79,6 +80,13 @@ public class DatabaseManager {
             return;
         }
 
+        if (!pingDatabase()) {
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage("Database unreachable at startup, falling back to file config");
+            enabled = false;
+            ConfigManager.loadConfigsFromFolder();
+            return;
+        }
+
         Bukkit.getOnlinePlayers().forEach(player -> player.kick(Component.text("Server is restarting, please rejoin in a few minutes!")));
 
         AbstractApplicationContext context = new AnnotationConfigApplicationContext(ApplicationConfiguration.class);
@@ -96,8 +104,12 @@ public class DatabaseManager {
         } catch (Exception e) {
             ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
             enabled = false;
+            ConfigManager.loadConfigsFromFolder();
             return;
         }
+
+        DatabaseHealth.markHealthy();
+        startHealthProbe();
 
         WeeklyBlessings.loadAllWeeklyBlessings();
 
@@ -130,7 +142,7 @@ public class DatabaseManager {
 
             @Override
             public void run() {
-                if (enabled) {
+                if (DatabaseHealth.isOperational()) {
                     DatabaseUpdater.updatePlayers(playerService);
                 }
             }
@@ -157,12 +169,32 @@ public class DatabaseManager {
                 .execute();
     }
 
+    private static boolean pingDatabase() {
+        try (MongoClient probe = MongoClients.create(ApplicationConfiguration.buildClientSettings())) {
+            probe.getDatabase("Warlords").runCommand(new Document("ping", 1));
+            return true;
+        } catch (Exception e) {
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage("Database ping failed: " + e.getMessage());
+            return false;
+        }
+    }
+
+    private static void startHealthProbe() {
+        new BukkitRunnable() {
+
+            @Override
+            public void run() {
+                Warlords.newChain().async(DatabaseHealth::probe).execute();
+            }
+        }.runTaskTimer(Warlords.getInstance(), 20L * 30, 20L * 30);
+    }
+
     public static void loadPlayer(UUID uuid, PlayersCollections collections, Consumer<DatabasePlayer> callback) {
-        if (!enabled) {
+        if (!DatabaseHealth.isOperational()) {
             return;
         }
         long start = System.nanoTime();
-        Optional<DatabasePlayer> optional = DatabaseManager.playerService.findByUUID(uuid, collections);
+        Optional<DatabasePlayer> optional = DatabaseManager.playerService.findByUUID(uuid, collections, true);
         DatabasePlayer databasePlayer = optional.orElseGet(() -> new DatabasePlayer(uuid, Bukkit.getOfflinePlayer(uuid).getName()));
         databasePlayer.loadInCollection(collections);
         if (collections == PlayersCollections.LIFETIME) {
@@ -289,13 +321,8 @@ public class DatabaseManager {
         if (cached != null) {
             return cached;
         }
-        Optional<DatabasePlayer> databasePlayer = DatabaseManager.playerService.findByUUID(uuid, playersCollections);
-        if (databasePlayer.isPresent()) {
-            return databasePlayer.get();
-        } else {
-            ChatUtils.MessageType.WARLORDS.sendErrorMessage(new Throwable("Tried to get uncached player"));
-            return concurrentHashMap.computeIfAbsent(uuid, k -> new DatabasePlayer(uuid, Bukkit.getOfflinePlayer(uuid).getName()));
-        }
+        ChatUtils.MessageType.WARLORDS.sendErrorMessage(new Throwable("Tried to get uncached player"));
+        return concurrentHashMap.computeIfAbsent(uuid, k -> new DatabasePlayer(uuid, Bukkit.getOfflinePlayer(uuid).getName()));
     }
 
     @Nonnull
@@ -314,11 +341,7 @@ public class DatabaseManager {
     }
 
     public static void updateGameAsync(DatabaseGameBase databaseGame) {
-        if (!enabled) {
-            return;
-        }
-        Warlords.newChain().async(() -> gameService.save(databaseGame, GamesCollections.ALL)).execute();
-        Warlords.newChain().async(() -> gameService.save(databaseGame, databaseGame.getGameMode().getGamesCollections())).execute();
+        DatabaseUpdater.updateGameAsync(databaseGame);
     }
 
     public static ConcurrentHashMap<UUID, DatabasePlayer> getLoadedPlayers(PlayersCollections playersCollections) {

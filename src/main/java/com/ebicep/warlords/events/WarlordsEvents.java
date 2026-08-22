@@ -8,6 +8,7 @@ import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.AbstractTimeWarp;
 import com.ebicep.warlords.commands.debugcommands.misc.AdminCommand;
 import com.ebicep.warlords.commands.debugcommands.misc.MuteCommand;
+import com.ebicep.warlords.database.DatabaseHealth;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.events.EventsLeaderboardManager;
 import com.ebicep.warlords.database.leaderboards.guilds.GuildLeaderboardManager;
@@ -88,15 +89,24 @@ public class WarlordsEvents implements Listener {
         if (!DatabaseManager.enabled) {
             return;
         }
+        if (!DatabaseHealth.isOperational()) {
+            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, Component.text("Database unavailable, please try again later."));
+            return;
+        }
         UUID uuid = event.getUniqueId();
-        for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
-            DatabaseManager.loadPlayer(uuid, activeCollection, (databasePlayer) -> {
-                        if (databasePlayer.getName() == null || !Objects.equals(databasePlayer.getName(), event.getName())) {
-                            databasePlayer.setName(event.getName());
-                            DatabaseManager.queueUpdatePlayerAsync(databasePlayer, activeCollection);
+        try {
+            for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
+                DatabaseManager.loadPlayer(uuid, activeCollection, (databasePlayer) -> {
+                            if (databasePlayer.getName() == null || !Objects.equals(databasePlayer.getName(), event.getName())) {
+                                databasePlayer.setName(event.getName());
+                                DatabaseManager.queueUpdatePlayerAsync(databasePlayer, activeCollection);
+                            }
                         }
-                    }
-            );
+                );
+            }
+        } catch (Exception e) {
+            DatabaseHealth.markUnhealthy(e);
+            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, Component.text("Database unavailable, please try again later."));
         }
     }
 
@@ -106,6 +116,10 @@ public class WarlordsEvents implements Listener {
             return;
         }
         if (!DatabaseManager.enabled || DatabaseManager.playerService == null) {
+            return;
+        }
+        if (!DatabaseHealth.isOperational()) {
+            event.disallow(PlayerLoginEvent.Result.KICK_OTHER, Component.text("Database unavailable, please try again later."));
             return;
         }
         if (!DatabaseManager.inCache(event.getPlayer().getUniqueId(), PlayersCollections.LIFETIME)) {

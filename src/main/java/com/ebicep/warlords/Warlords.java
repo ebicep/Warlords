@@ -259,8 +259,16 @@ public class Warlords extends JavaPlugin {
             //updates all queues, locks main thread to ensure update is complete before disabling
             try {
                 DatabaseUpdater.updatePlayersBlocking(DatabaseManager.playerService);
+                DatabaseUpdater.flushPendingGameSavesBlocking();
             } catch (Exception e) {
                 ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
+            }
+            int pendingPlayers = DatabaseUpdater.getPendingUpdateCount();
+            int pendingGames = DatabaseUpdater.getPendingGameSaveCount();
+            if (pendingPlayers > 0 || pendingGames > 0) {
+                ChatUtils.MessageType.WARLORDS.sendErrorMessage(
+                        "Shutdown with unsaved data: " + pendingPlayers + " player updates, " + pendingGames + " game saves"
+                );
             }
             try {
                 if (MasterworksFairManager.currentFair != null) {
