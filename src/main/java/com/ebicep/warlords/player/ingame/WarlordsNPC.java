@@ -39,7 +39,7 @@ import java.util.function.Consumer;
 
 public class WarlordsNPC extends WarlordsEntity {
 
-    private static final int HOLOGRAM_UPDATE_INTERVAL = 4;
+    private static final int HOLOGRAM_UPDATE_INTERVAL = 1;
 
     protected float meleeCritChance;
     protected float meleeCritMultiplier;
