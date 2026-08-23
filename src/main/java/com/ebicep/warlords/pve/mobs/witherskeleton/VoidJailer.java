@@ -52,7 +52,7 @@ public class VoidJailer extends AbstractMob implements ChampionMob {
         super(
                 spawnLocation,
                 "Void Jailer",
-                9000,
+                8000,
                 0.14f,
                 20,
                 700,

@@ -204,7 +204,7 @@ public enum Anomalies {
     }
 
     public AnomalyMobSet getMobSet(int index) {
-        return mobSets.get(Math.min(Math.max(index, 0), mobSets.size() - 1));
+        return mobSets.get(Math.clamp(index, 0, mobSets.size() - 1));
     }
 
     public String getName() {

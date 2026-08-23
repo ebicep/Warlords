@@ -14,6 +14,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
@@ -50,6 +51,9 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
     private static final int LASER_INTERVAL_TICKS = 15 * GameRunnable.SECOND;
     private static final int LASER_TELEGRAPH_TICKS = 2 * GameRunnable.SECOND;
     private static final double CHECKPOINT_RADIUS_SQUARED = 25;
+    private static final double MOB_DESPAWN_DISTANCE_SQUARED = 30 * 30;
+    private static final double FRONT_SPAWN_CHANCE = .8;
+    private static final double FRONT_SPAWN_HALF_ANGLE = Math.PI / 2;
     private static final double LASER_RANGE = 40;
     private static final double LASER_WIDTH = 2;
     private static final double LASER_VERTICAL_HALF = 3;
@@ -245,8 +249,11 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
                     laserTicksRemaining = LASER_INTERVAL_TICKS;
                 }
 
-                if (escortTicks % MOB_SPAWN_INTERVAL == 0 && mobCount() < getMaximumMobCount()) {
-                    spawnAroundCarrier();
+                if (escortTicks % MOB_SPAWN_INTERVAL == 0) {
+                    despawnDistantMobs();
+                    if (mobCount() < getMaximumMobCount()) {
+                        spawnAroundCarrier();
+                    }
                 }
             }
         }.runTaskTimer(0, 1);
@@ -355,10 +362,29 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
         finishEscort("Escort completed.");
     }
 
+    private void despawnDistantMobs() {
+        Location carrierLocation = carrier.getLocation();
+        for (AbstractMob mob : List.copyOf(getMobs())) {
+            Location mobLocation = mob.getWarlordsNPC().getLocation();
+            if (!carrierLocation.getWorld().equals(mobLocation.getWorld())
+                    || carrierLocation.distanceSquared(mobLocation) > MOB_DESPAWN_DISTANCE_SQUARED) {
+                removeHostileMob(mob);
+            }
+        }
+    }
+
     private void spawnAroundCarrier() {
         Location center = carrier.getLocation();
         World world = center.getWorld();
-        double angle = ThreadLocalRandom.current().nextDouble(Math.PI * 2);
+        double angle;
+        Vector facing = center.getDirection().setY(0);
+        if (facing.lengthSquared() > 0 && ThreadLocalRandom.current().nextDouble() < FRONT_SPAWN_CHANCE) {
+            facing.normalize();
+            double facingAngle = Math.atan2(facing.getZ(), facing.getX());
+            angle = facingAngle + ThreadLocalRandom.current().nextDouble(-FRONT_SPAWN_HALF_ANGLE, FRONT_SPAWN_HALF_ANGLE);
+        } else {
+            angle = ThreadLocalRandom.current().nextDouble(Math.PI * 2);
+        }
         double distance = ThreadLocalRandom.current().nextDouble(10, 16);
         double x = center.getX() + Math.cos(angle) * distance;
         double z = center.getZ() + Math.sin(angle) * distance;

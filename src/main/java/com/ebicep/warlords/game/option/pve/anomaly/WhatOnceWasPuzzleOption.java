@@ -97,7 +97,9 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
                     return;
                 }
                 WarlordsEntity warlordsEntity = Warlords.getPlayer(event.getPlayer());
-                if (warlordsEntity == null || warlordsEntity.getGame() != game) {
+                if (warlordsEntity == null
+                        || warlordsEntity.getGame() != game
+                        || game.getPlayerTeam(event.getPlayer().getUniqueId()) == null) {
                     return;
                 }
                 AncientRune rune = runeInteractions.get(interaction.getUniqueId());
