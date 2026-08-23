@@ -146,6 +146,8 @@ public class EndState implements State, TimerDebugAble {
             case WAVE_DEFENSE:
             case EVENT_WAVE_DEFENSE:
             case ONSLAUGHT:
+            case ANOMALY:
+            case RAID:
                 for (Option option : options) {
                     if (option instanceof PveOption) {
                         showWaveDefenseStats((PveOption) option, players);
