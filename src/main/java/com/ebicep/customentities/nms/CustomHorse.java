@@ -5,7 +5,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.equine.Horse;
 import net.minecraft.world.entity.player.Player;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftWorld;
 
@@ -42,4 +41,15 @@ public class CustomHorse extends Horse {
         return false;
     }
 
+    @Override
+    public void jumpFromGround() {
+    }
+
+    @Override
+    public void standIfPossible() {
+    }
+
+    @Override
+    public void handleStartJump(int jumpPower) {
+    }
 }
