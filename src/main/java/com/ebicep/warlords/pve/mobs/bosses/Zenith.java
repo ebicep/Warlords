@@ -50,7 +50,6 @@ public class Zenith extends AbstractMob implements BossMob {
     private BossAbilityPhase phaseTwo;
     private BossAbilityPhase phaseThree;
     private boolean enraged = false;
-    private RaidBossUtils.RaidBossHealthBar healthBar;
 
     public Zenith(Location spawnLocation) {
         this(spawnLocation,
@@ -131,15 +130,6 @@ public class Zenith extends AbstractMob implements BossMob {
             float newHealth = 52000;
             warlordsNPC.setMaxHealthAndHeal(newHealth);
         }
-
-        healthBar = RaidBossUtils.createHealthBar(
-                warlordsNPC,
-                0.9f,
-                getMobScale(),
-                getName(),
-                getDescription(),
-                NamedTextColor.RED
-        );
 
         EffectUtils.strikeLightning(warlordsNPC.getLocation(), false, 6);
         DifficultyIndex difficulty = option.getDifficulty();
@@ -240,8 +230,6 @@ public class Zenith extends AbstractMob implements BossMob {
             thunderLineBarrageAbility.start(warlordsNPC.getGame());
         }
 
-        healthBar.update();
-
         if (option.getDifficulty() == DifficultyIndex.ENDLESS) {
             float health = warlordsNPC.getCurrentHealth();
             phaseOne.initialize(health);
@@ -306,11 +294,6 @@ public class Zenith extends AbstractMob implements BossMob {
         }
 
         EffectUtils.strikeLightning(deathLocation, false, 5);
-    }
-
-    @Override
-    public void cleanup(PveOption pveOption) {
-        healthBar.remove();
     }
 
     private static class Armageddon extends AbstractPveAbility implements Damages<Armageddon.DamageValues> {
