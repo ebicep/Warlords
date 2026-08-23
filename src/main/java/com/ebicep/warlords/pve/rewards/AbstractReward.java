@@ -20,6 +20,8 @@ public abstract class AbstractReward {
 
     protected Map<Spendable, Long> rewards = new LinkedHashMap<>();
     protected String from;
+    @Field("time_given")
+    protected Instant timeGiven;
     @Field("time_claimed")
     protected Instant timeClaimed;
 
@@ -29,6 +31,7 @@ public abstract class AbstractReward {
     public AbstractReward(LinkedHashMap<Spendable, Long> rewards, String from) {
         this.rewards = rewards;
         this.from = from;
+        this.timeGiven = Instant.now();
     }
 
     public void giveToPlayer(DatabasePlayer databasePlayer) {
@@ -75,6 +78,10 @@ public abstract class AbstractReward {
 
     public String getFrom() {
         return from;
+    }
+
+    public Instant getTimeGiven() {
+        return timeGiven;
     }
 
     public Instant getTimeClaimed() {

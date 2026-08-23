@@ -166,7 +166,7 @@ public final class HonorificManager {
             case EXPLORER -> progress(profile.getHighestAncientRenegadesFloor(), 30);
             case TREASURER -> progress(profile.getHighestAncientRenegadesFloor(), 100);
             case SLAUGHTERER -> formatTicks(getLongestOnslaughtTicks(pveStats)) + " / 180:00";
-            case STAR_GUIDE -> progress(profile.getStarPiecesUsed(), 5000);
+            case STAR_GUIDE -> progress(profile.getStarPiecesUsed(), 500);
             case SUPPLIER -> progress(profile.getSupplyDropsRolled(), 50_000);
             case PRESTIGIOUS -> progress(getHighestPrestige(databasePlayer), 30);
             case SKELETRON -> progress(getSkeletonKills(pveStats), 50_000);

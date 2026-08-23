@@ -1,10 +1,12 @@
 package com.ebicep.warlords.database.repositories.player;
 
 
+import com.ebicep.warlords.database.DatabaseHealth;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import org.bson.Document;
+import org.bukkit.Bukkit;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Query;
@@ -83,11 +85,44 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     public Optional<DatabasePlayer> findByUUID(UUID uuid, PlayersCollections collection) {
+        return findByUUID(uuid, collection, !Bukkit.isPrimaryThread());
+    }
+
+    @Override
+    public Optional<DatabasePlayer> findByUUID(UUID uuid, PlayersCollections collection, boolean allowDbLoad) {
         ConcurrentHashMap<UUID, DatabasePlayer> cache = DatabaseManager.CACHED_PLAYERS.get(collection);
-        DatabasePlayer player = cache.computeIfAbsent(uuid,
-                key -> playerRepository.findByUUID(key, collection).orElse(null)
-        );
-        return Optional.ofNullable(player);
+        DatabasePlayer cached = cache.get(uuid);
+        if (cached != null && cached.getId() != null) {
+            return Optional.of(cached);
+        }
+        if (cached != null && !allowDbLoad) {
+            return Optional.of(cached);
+        }
+        if (!allowDbLoad || !DatabaseHealth.isOperational()) {
+            return cached != null ? Optional.of(cached) : Optional.empty();
+        }
+        return loadFromDatabase(uuid, collection, cached);
+    }
+
+    @Override
+    public Optional<DatabasePlayer> reloadFromDatabase(UUID uuid, PlayersCollections collection) {
+        return playerRepository.findByUUID(uuid, collection);
+    }
+
+    private Optional<DatabasePlayer> loadFromDatabase(UUID uuid, PlayersCollections collection, DatabasePlayer cachedStub) {
+        try {
+            DatabasePlayer player = playerRepository.findByUUID(uuid, collection).orElse(null);
+            if (player != null) {
+                return Optional.of(DatabaseManager.cachePlayer(collection, player));
+            }
+            return cachedStub != null ? Optional.of(cachedStub) : Optional.empty();
+        } catch (RuntimeException e) {
+            if (DatabaseHealth.isMongoFailure(e)) {
+                DatabaseHealth.markUnhealthy(e);
+                return cachedStub != null ? Optional.of(cachedStub) : Optional.empty();
+            }
+            throw e;
+        }
     }
 
     @Override

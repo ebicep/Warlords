@@ -1,6 +1,5 @@
 package com.ebicep.warlords.effects;
 
-import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
@@ -35,9 +34,9 @@ public class TeamBasedEffect {
 
     public TeamBasedEffect(@Nonnull Particle ownTeam, @Nullable Object ownTeamData, @Nonnull Particle enemyTeam, @Nullable Object enemyTeamData) {
         this.ownTeam = ownTeam;
-        this.ownTeamData = ownTeam == Particle.DUST && ownTeamData == null ? new Particle.DustOptions(Color.fromRGB(255, 0, 0), 1) : ownTeamData;
+        this.ownTeamData = EffectUtils.resolveParticleData(ownTeam, ownTeamData);
         this.enemyTeam = enemyTeam;
-        this.enemyTeamData = enemyTeam == Particle.DUST && enemyTeamData == null ? new Particle.DustOptions(Color.fromRGB(255, 0, 0), 1) : enemyTeamData;
+        this.enemyTeamData = EffectUtils.resolveParticleData(enemyTeam, enemyTeamData);
     }
 
     public void display(List<Player> allies, List<Player> enemies, float offsetX, float offsetY, float offsetZ, float speed, int amount, Location center) {

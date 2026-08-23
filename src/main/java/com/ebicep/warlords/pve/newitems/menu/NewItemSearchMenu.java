@@ -125,7 +125,10 @@ public class NewItemSearchMenu extends Menu {
                         .name(Component.text("Your Drops", NamedTextColor.GREEN))
                         .lore(
                                 MobDrop.ZENITH_STAR.getCostColoredName(MobDrop.ZENITH_STAR.getFromPlayer(databasePlayer)),
-                                Currencies.SCRAP_METAL.getCostColoredName(Currencies.SCRAP_METAL.getFromPlayer(databasePlayer))
+                                Currencies.SCRAP_METAL.getCostColoredName(Currencies.SCRAP_METAL.getFromPlayer(databasePlayer)),
+                                Currencies.ETHEREUM_CRYSTAL.getCostColoredName(Currencies.ETHEREUM_CRYSTAL.getFromPlayer(databasePlayer)),
+                                Currencies.ASCENDANT_SHARD.getCostColoredName(Currencies.ASCENDANT_SHARD.getFromPlayer(databasePlayer)),
+                                Currencies.LEGEND_FRAGMENTS.getCostColoredName(Currencies.LEGEND_FRAGMENTS.getFromPlayer(databasePlayer))
                         )
                         .get(),
                 (m, e) -> {}

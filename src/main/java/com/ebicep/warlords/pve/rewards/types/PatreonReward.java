@@ -14,8 +14,6 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.springframework.data.mongodb.core.mapping.Field;
-
 import java.time.*;
 import java.time.format.TextStyle;
 import java.util.Arrays;
@@ -53,13 +51,6 @@ public class PatreonReward extends AbstractReward implements Listener {
         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
         return true;
     }
-
-    public Instant getTimeGiven() {
-        return timeGiven;
-    }
-
-    @Field("time_given")
-    private Instant timeGiven;
 
     public PatreonReward() {
     }

@@ -37,6 +37,10 @@ public interface PlayerService {
 
     Optional<DatabasePlayer> findByUUID(UUID uuid, PlayersCollections collection);
 
+    Optional<DatabasePlayer> findByUUID(UUID uuid, PlayersCollections collection, boolean allowDbLoad);
+
+    Optional<DatabasePlayer> reloadFromDatabase(UUID uuid, PlayersCollections collection);
+
     DatabasePlayer findByNameIgnoreCase(String name);
 
     List<DatabasePlayer> findAll();

@@ -43,13 +43,7 @@ public class ApplicationConfiguration extends AbstractMongoClientConfiguration {
     @Override
     public MongoClient mongoClient() {
         ChatUtils.MessageType.WARLORDS.sendMessage("Getting mongoClient");
-        MongoClientSettings mongoClientSettings = MongoClientSettings
-                .builder()
-                .applyConnectionString(new ConnectionString(key))
-                .uuidRepresentation(UuidRepresentation.STANDARD)
-                .applyToSocketSettings(builder -> builder.connectTimeout(300, TimeUnit.SECONDS)
-                                                         .readTimeout(3020, TimeUnit.SECONDS))
-                .build();
+        MongoClientSettings mongoClientSettings = buildClientSettings();
         MongoClient mongoClient = MongoClients.create(mongoClientSettings);
         DatabaseManager.mongoClient = mongoClient;
         DatabaseManager.warlordsDatabase = mongoClient.getDatabase("Warlords");
@@ -81,5 +75,18 @@ public class ApplicationConfiguration extends AbstractMongoClientConfiguration {
     @Override
     public boolean autoIndexCreation() {
         return true;
+    }
+
+    public static MongoClientSettings buildClientSettings() {
+        return MongoClientSettings
+                .builder()
+                .applyConnectionString(new ConnectionString(key))
+                .uuidRepresentation(UuidRepresentation.STANDARD)
+                .applyToClusterSettings(builder -> builder.serverSelectionTimeout(5, TimeUnit.SECONDS))
+                .applyToSocketSettings(builder -> builder.connectTimeout(5, TimeUnit.SECONDS)
+                                                         .readTimeout(30, TimeUnit.SECONDS))
+                .applyToConnectionPoolSettings(builder -> builder.maxWaitTime(5, TimeUnit.SECONDS)
+                                                                   .maxSize(50))
+                .build();
     }
 }

@@ -217,6 +217,9 @@ public class ChatUtils {
             if (Warlords.getInstance().isDisabling()) {
                 return;
             }
+            if (isDiscordErrorSuppressed(error)) {
+                return;
+            }
             BotManager.DiscordServer admin = BotManager.getServer("admin");
             if (admin == null) {
                 return;
@@ -232,6 +235,11 @@ public class ChatUtils {
                 textChannel.sendMessage("```" + error + "```").queue();
                 BotManager.numberOfMessagesSentLast30Sec++;
             });
+        }
+
+        private static boolean isDiscordErrorSuppressed(String error) {
+            return error.contains("MinecraftClientException")
+                    && error.contains("Failed to read from");
         }
 
         public void sendErrorMessage(Throwable throwable) {

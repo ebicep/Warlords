@@ -300,7 +300,7 @@ public abstract class AbstractAnomalyOption implements PveOption {
     protected void modifyStats(WarlordsNPC warlordsNPC) {
         warlordsNPC.getMob().onSpawn(AbstractAnomalyOption.this);
 
-        int playerCount = 6;//playerCount();
+        int playerCount = playerCount();
         boolean isNotSolo = playerCount > 1;
         /*
          * Base scale of 600

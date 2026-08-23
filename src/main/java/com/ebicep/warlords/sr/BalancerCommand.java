@@ -38,6 +38,7 @@ public class BalancerCommand extends BaseCommand {
             UUID uuid = UUID.randomUUID();
             DatabasePlayer databasePlayer = new DatabasePlayer(uuid, "PLAYER " + i);
             databasePlayer.setLastSpec(specs.remove(0));
+            // Debug cache seed; intentional direct .put()
             DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.LIFETIME).put(uuid, databasePlayer);
             ChatUtils.MessageType.WARLORDS.sendMessage(uuid + " - " + databasePlayer.getLastSpec());
             players.add(uuid);

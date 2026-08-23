@@ -4,10 +4,12 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
-import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -44,6 +46,7 @@ public class DunestarMovingWallOption implements Option, Listener {
     private static final double WALL_HEIGHT = 14;
     private static final double WALL_THICKNESS = 0.7;
     private static final double WALL_DAMAGE_MARGIN = 1.5;
+    private static final double MOB_DESPAWN_BEHIND_WALL = 5;
     private static final float WALL_DAMAGE = 1_000;
     private static final double RELIC_PICKUP_RADIUS_SQUARED = 36;
 
@@ -86,6 +89,7 @@ public class DunestarMovingWallOption implements Option, Listener {
                 }
                 if (ticks % DAMAGE_INTERVAL == 0) {
                     damagePlayersBehindWall();
+                    despawnMobsBehindWall();
                 }
             }
         }.runTaskTimer(0, 1);
@@ -193,25 +197,42 @@ public class DunestarMovingWallOption implements Option, Listener {
     }
 
     private void damagePlayersBehindWall() {
-        double maxLateralDistance = WALL_WIDTH / 2.0 + 2;
-        double maxLateralDistanceSquared = maxLateralDistance * maxLateralDistance;
         game.warlordsPlayers().forEach(player -> {
-            if (player.isDead() || !player.isOnline()) {
-                return;
-            }
-            RouteProjection projection = projectOntoRoute(player.getLocation());
-            if (projection.lateralDistanceSquared() > maxLateralDistanceSquared
-                    || projection.distanceAlongRoute() > wallDistance + WALL_DAMAGE_MARGIN) {
+            if (player.isDead() || !player.isOnline() || !isInStormWallZone(player.getLocation())) {
                 return;
             }
             player.addInstance(InstanceBuilder
-                    .damage()
-                    .cause("Dunestar Storm Wall")
+                    .melee()
                     .source(player)
                     .value(WALL_DAMAGE)
-                    .flags(InstanceFlags.TRUE_DAMAGE, InstanceFlags.IGNORE_CRIT_MODIFIERS)
             );
         });
+    }
+
+    private void despawnMobsBehindWall() {
+        PveOption pveOption = game.getOption(PveOption.class).stream().findFirst().orElse(null);
+        if (pveOption == null) {
+            return;
+        }
+        for (AbstractMob mob : new ArrayList<>(pveOption.getMobs())) {
+            WarlordsNPC npc = mob.getWarlordsNPC();
+            if (npc == null || npc.isDead() || !isBehindStormWall(npc.getLocation(), MOB_DESPAWN_BEHIND_WALL)) {
+                continue;
+            }
+            pveOption.despawnMob(mob);
+        }
+    }
+
+    private boolean isBehindStormWall(Location location, double behindOffset) {
+        double maxLateralDistance = WALL_WIDTH / 2.0 + 2;
+        double maxLateralDistanceSquared = maxLateralDistance * maxLateralDistance;
+        RouteProjection projection = projectOntoRoute(location);
+        return projection.lateralDistanceSquared() <= maxLateralDistanceSquared
+                && projection.distanceAlongRoute() <= wallDistance - behindOffset;
+    }
+
+    private boolean isInStormWallZone(Location location) {
+        return isBehindStormWall(location, -WALL_DAMAGE_MARGIN);
     }
 
     private double calculateRouteLength() {

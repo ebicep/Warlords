@@ -205,6 +205,7 @@ public class DatabaseTiming {
             DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.MONTHLY).clear();
             DatabaseUpdater.clearQueue(PlayersCollections.MONTHLY);
             for (Player player : Bukkit.getOnlinePlayers()) {
+                // Intentional direct .put() after clear(): force-replace stale persisted rows; do not use cachePlayer()
                 DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.MONTHLY).put(player.getUniqueId(), new DatabasePlayer(player.getUniqueId(), player.getName()));
             }
             Warlords.newChain()
@@ -243,6 +244,7 @@ public class DatabaseTiming {
             DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.WEEKLY).clear();
             DatabaseUpdater.clearQueue(PlayersCollections.WEEKLY);
             for (Player player : Bukkit.getOnlinePlayers()) {
+                // Intentional direct .put() after clear(): force-replace stale persisted rows; do not use cachePlayer()
                 DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.WEEKLY).put(player.getUniqueId(), new DatabasePlayer(player.getUniqueId(), player.getName()));
             }
             Warlords.newChain()
@@ -272,6 +274,7 @@ public class DatabaseTiming {
             DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.DAILY).clear();
             DatabaseUpdater.clearQueue(PlayersCollections.DAILY);
             for (Player player : Bukkit.getOnlinePlayers()) {
+                // Intentional direct .put() after clear(): force-replace stale persisted rows; do not use cachePlayer()
                 DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.DAILY).put(player.getUniqueId(), new DatabasePlayer(player.getUniqueId(), player.getName()));
             }
             Warlords.newChain()
