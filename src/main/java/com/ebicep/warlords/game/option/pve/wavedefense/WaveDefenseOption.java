@@ -67,7 +67,6 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -670,16 +669,6 @@ public class WaveDefenseOption implements PveOption {
                                 );
                             });
                         }
-                    } else if (ThreadLocalRandom.current().nextDouble() < .1 && waveCounter == 25) { // temp until update aug 21st
-                        game.warlordsPlayers().forEach(wp -> {
-                            wp.playSound(wp.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 0.1f);
-                            addRewardToPlayerPouch(
-                                    wp.getUuid(),
-                                    WaveDefenseRewards.ASCENDANT_POUCH_LOOT_POOL,
-                                    playerAscendantPouch,
-                                    Component.text("Ascendant Pouch", NamedTextColor.RED)
-                            );
-                        });
                     }
                 }
 
