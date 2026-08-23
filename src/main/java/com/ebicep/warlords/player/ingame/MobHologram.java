@@ -230,7 +230,7 @@ public abstract class MobHologram {
             textDisplay.setBillboard(Display.Billboard.CENTER);
             textDisplay.setCustomNameVisible(false);
             textDisplay.setSeeThrough(false);
-            textDisplay.setTeleportDuration(4);
+            textDisplay.setTeleportDuration(1);
             textDisplay.setViewRange(viewRange);
             applyDisplaySize(textDisplay, displaySize);
             customHologramLine.setDisplaySize(displaySize);
