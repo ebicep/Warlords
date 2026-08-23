@@ -48,9 +48,9 @@ import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairEntry;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
 import com.ebicep.warlords.pve.events.supplydrop.SupplyDropEntry;
 import com.ebicep.warlords.pve.items.ItemsManager;
-import com.ebicep.warlords.pve.items.types.AbstractItem;
-import com.ebicep.warlords.pve.mobs.MobDrop;
+import com.ebicep.warlords.pve.newitems.NewItem;
 import com.ebicep.warlords.pve.newitems.NewItemsManager;
+import com.ebicep.warlords.pve.mobs.MobDrop;
 import com.ebicep.warlords.pve.quests.Quests;
 import com.ebicep.warlords.pve.rewards.types.BountyReward;
 import com.ebicep.warlords.pve.rewards.types.CompensationReward;
@@ -213,7 +213,7 @@ public class DatabasePlayerPvE implements MultiPvEStats<
         }
         //WEAPONS / ITEMS
         List<AbstractWeapon> weaponsFound = gamePlayer.getWeaponsFound();
-        List<AbstractItem> itemsFound = gamePlayer.getItemsFound();
+        List<NewItem> newItemsFound = gamePlayer.getNewItemsFound();
         if (playersCollection == PlayersCollections.LIFETIME) {
             if (multiplier > 0) {
                 int maxWeaponInventorySize = databasePlayer.isPatreon() ? WeaponManagerMenu.MAX_WEAPONS_PATREON : WeaponManagerMenu.MAX_WEAPONS;
@@ -236,7 +236,6 @@ public class DatabasePlayerPvE implements MultiPvEStats<
                 } else {
                     weaponInventory.addAll(weaponsFound);
                 }
-                itemsManager.getItemInventory().addAll(itemsFound);
             } else {
                 //need to search by uuid incase weapon got upgraded or changed
                 for (AbstractWeapon weapon : weaponsFound) {
@@ -258,8 +257,8 @@ public class DatabasePlayerPvE implements MultiPvEStats<
                         ChatChannels.sendDebugMessage((CommandIssuer) null, gamePlayer.getName() + " - Removed weapon from inventory");
                     }
                 }
-                for (AbstractItem item : itemsFound) {
-                    itemsManager.getItemInventory().removeIf(abstractItem -> abstractItem.getUUID().equals(item.getUUID()));
+                for (NewItem item : newItemsFound) {
+                    newItemsManager.getItemInventory().removeIf(newItem -> newItem.getUUID().equals(item.getUUID()));
                 }
             }
         }

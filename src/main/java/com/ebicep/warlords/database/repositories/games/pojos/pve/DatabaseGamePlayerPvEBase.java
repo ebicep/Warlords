@@ -18,6 +18,7 @@ import com.ebicep.warlords.pve.bountysystem.trackers.TracksDuringGame;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksPostGame;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.mobs.MobDrop;
+import com.ebicep.warlords.pve.newitems.NewItem;
 import com.ebicep.warlords.pve.quests.Quests;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
@@ -55,8 +56,11 @@ public abstract class DatabaseGamePlayerPvEBase extends DatabaseGamePlayerBase {
     private int blessingsFound;
     @Field("mob_drops_gained")
     private Map<MobDrop, Long> mobDropsGained = new HashMap<>();
+    @Deprecated
     @Field("items_found")
     private List<AbstractItem> itemsFound = new ArrayList<>();
+    @Field("new_items_found")
+    private List<NewItem> newItemsFound = new ArrayList<>();
     @Deprecated
     @Field("quests_completed")
     private List<Quests> questsCompleted = null;
@@ -88,7 +92,7 @@ public abstract class DatabaseGamePlayerPvEBase extends DatabaseGamePlayerBase {
                                                   .mapToLong(aLong -> aLong)
                                                   .sum();
         this.weaponsFound.addAll(playerPveRewards.getWeaponsFound());
-        this.itemsFound.addAll(playerPveRewards.getItemsFound());
+        this.newItemsFound.addAll(playerPveRewards.getNewItemsFound());
         this.legendFragmentsGained = playerPveRewards.getLegendFragmentGain();
         this.illusionShardGained = playerPveRewards.getIllusionShardGain();
         this.blessingsFound = playerPveRewards.getBlessingsFound();
@@ -179,8 +183,8 @@ public abstract class DatabaseGamePlayerPvEBase extends DatabaseGamePlayerBase {
         return mobDropsGained;
     }
 
-    public List<AbstractItem> getItemsFound() {
-        return itemsFound;
+    public List<NewItem> getNewItemsFound() {
+        return newItemsFound;
     }
 
 }

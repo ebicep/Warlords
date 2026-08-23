@@ -508,6 +508,7 @@ public abstract class AbstractMob implements Mob {
                                    return;
                                }
                                NewItem item = NewItemsUtils.generateRandomItem();
+                               Bukkit.getPluginManager().callEvent(new WarlordsGiveNewItemEvent(warlordsPlayer, item));
                                DatabasePlayer databasePlayer = warlordsPlayer.getDatabasePlayer();
                                databasePlayer.getPveStats().getNewItemsManager().addItem(item);
                                DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
