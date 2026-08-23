@@ -1,4 +1,12 @@
 {
+  "_id": {
+    "$oid": "6a8b0a56593c4814614fbec4"
+  },
   "type": "FEATURE_FLAGS",
-  "data": {}
+  "data": {
+    "features": {
+      "honorifics": false,
+      "honorificsDisplay": false
+    }
+  }
 }
