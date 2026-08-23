@@ -6,12 +6,14 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameManager;
 import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.party.Party;
 import com.ebicep.warlords.party.PartyManager;
 import com.ebicep.warlords.party.PartyPlayer;
+import com.ebicep.warlords.featureflags.FeatureFlags;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.java.Pair;
@@ -101,6 +103,18 @@ public class GameStartCommand {
                                 }
                             });
                 }
+            }
+        }
+
+        GameMode gameMode = entryBuilder.getGameMode();
+        if (gameMode != null && !FeatureFlags.isGamemodeEnabled(gameMode, player)) {
+            FeatureFlags.sendDisabledMessage(player);
+            return;
+        }
+        for (GameAddon addon : entryBuilder.getRequestedGameAddons()) {
+            if (!FeatureFlags.isAddonEnabled(addon, player)) {
+                player.sendMessage(Component.text("The game addon " + addon.name() + " is currently unavailable.", NamedTextColor.RED));
+                return;
             }
         }
 

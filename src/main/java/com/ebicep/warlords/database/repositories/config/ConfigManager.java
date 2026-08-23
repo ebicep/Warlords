@@ -27,7 +27,8 @@ public class ConfigManager {
     public static final GameConfig GAME_CONFIG = new GameConfig();
     public static final MobsConfig MOBS_CONFIG = new MobsConfig();
     public static final NewItemsConfig NEW_ITEMS_CONFIG = new NewItemsConfig();
-    public static final Config[] CONFIGS = {ABILITIES_CONFIG, SPEC_BOOST_CONFIG, SPECIALIZATIONS_CONFIG, GAME_CONFIG, MOBS_CONFIG, NEW_ITEMS_CONFIG};
+    public static final FeatureFlagsConfig FEATURE_FLAGS_CONFIG = new FeatureFlagsConfig();
+    public static final Config[] CONFIGS = {ABILITIES_CONFIG, SPEC_BOOST_CONFIG, SPECIALIZATIONS_CONFIG, GAME_CONFIG, MOBS_CONFIG, NEW_ITEMS_CONFIG, FEATURE_FLAGS_CONFIG};
     public static final String COLLECTION_NAME = "Config";
 
     public static void loadConfigs(MongoDatabase warlordsDatabase) {

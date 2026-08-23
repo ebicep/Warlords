@@ -2,6 +2,7 @@ package com.ebicep.warlords.game;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
+import com.ebicep.warlords.featureflags.FeatureFlags;
 import com.ebicep.warlords.game.option.PreGameItemOption;
 import com.ebicep.warlords.game.option.freeze.AFKDetectionOption;
 import com.ebicep.warlords.game.option.freeze.GameFreezeWhenOfflineOption;
@@ -86,6 +87,9 @@ public enum GameAddon {
 
         @Override
         public boolean canCreateGame(@Nonnull GameManager.GameHolder holder) {
+            if (!FeatureFlags.isAddonEnabled(this, null)) {
+                return false;
+            }
             // At the moment, only 1 game can be an imposter game at the same time
             return Warlords.getGameManager().getGames().stream().noneMatch(e -> e.getGame() != null && e.getGame().getAddons().contains(this));
         }
@@ -239,7 +243,7 @@ public enum GameAddon {
     }
 
     public boolean canCreateGame(@Nonnull GameManager.GameHolder holder) {
-        return true;
+        return FeatureFlags.isAddonEnabled(this, null);
     }
 
 }

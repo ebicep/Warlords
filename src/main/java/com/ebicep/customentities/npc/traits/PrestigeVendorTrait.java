@@ -5,6 +5,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
+import com.ebicep.warlords.featureflags.FeatureFlags;
 import com.ebicep.warlords.honorifics.HonorificManager;
 import com.ebicep.warlords.honorifics.HonorificMenu;
 import com.ebicep.warlords.menu.Menu;
@@ -60,12 +61,14 @@ public class PrestigeVendorTrait extends WarlordsTrait {
                     .get(), (m, e) -> openPurchaseConfirmation(player, databasePlayer, databasePlayerWeekly, reward));
         }
 
-        menu.setItem(7, 1, new ItemBuilder(Material.NAME_TAG)
-                .name(Component.text("Honorifics", NamedTextColor.GOLD))
-                .lore(Component.text("View, purchase, and equip name titles.", NamedTextColor.GRAY),
-                        Component.text("Customize unlocked colors and fonts.", NamedTextColor.GRAY),
-                        Component.empty(), Component.text("Click to open", NamedTextColor.YELLOW))
-                .get(), (m, e) -> HonorificMenu.open(player));
+        if (FeatureFlags.isFeatureEnabled(FeatureFlags.HONORIFICS, player)) {
+            menu.setItem(7, 1, new ItemBuilder(Material.NAME_TAG)
+                    .name(Component.text("Honorifics", NamedTextColor.GOLD))
+                    .lore(Component.text("View, purchase, and equip name titles.", NamedTextColor.GRAY),
+                            Component.text("Customize unlocked colors and fonts.", NamedTextColor.GRAY),
+                            Component.empty(), Component.text("Click to open", NamedTextColor.YELLOW))
+                    .get(), (m, e) -> HonorificMenu.open(player));
+        }
         menu.setItem(4, 3, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU);
         menu.addBorder(Menu.GRAY_EMPTY_PANE, true);
         menu.openForPlayer(player);
