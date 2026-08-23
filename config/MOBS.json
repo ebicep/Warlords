@@ -382,7 +382,7 @@
         "max_melee_damage": 2000.0
       },
       "MITHRA": {
-        "name": "Mithra",
+        "name": "Echo of Mithra",
         "max_health": 20000,
         "walk_speed": 0.28,
         "damage_resistance": 20.0,
