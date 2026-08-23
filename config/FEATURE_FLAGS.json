@@ -7,6 +7,9 @@
     "features": {
       "honorifics": false,
       "honorificsDisplay": false
+    },
+    "npcs": {
+      "supply-drop": false
     }
   }
 }
