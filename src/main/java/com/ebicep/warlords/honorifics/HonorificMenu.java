@@ -24,7 +24,7 @@ public final class HonorificMenu {
     }
 
     public static void open(Player player) {
-        if (!FeatureFlags.isFeatureEnabled(FeatureFlags.HONORIFICS, player)) {
+        if (!HonorificManager.honorificsEnabled(player)) {
             FeatureFlags.sendDisabledMessage(player);
             return;
         }
