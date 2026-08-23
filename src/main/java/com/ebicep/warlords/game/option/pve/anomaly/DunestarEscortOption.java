@@ -47,11 +47,11 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
 
     private static final int SEGMENT_DURATION_TICKS = 120 * GameRunnable.SECOND;
     private static final int CHECKPOINT_CHARGE_TICKS = 30 * GameRunnable.SECOND;
-    private static final int MOB_SPAWN_INTERVAL = GameRunnable.SECOND;
+    private static final int MOB_SPAWN_INTERVAL = 10; // ticks
     private static final int LASER_INTERVAL_TICKS = 15 * GameRunnable.SECOND;
     private static final int LASER_TELEGRAPH_TICKS = 2 * GameRunnable.SECOND;
     private static final double CHECKPOINT_RADIUS_SQUARED = 25;
-    private static final double MOB_DESPAWN_DISTANCE_SQUARED = 50 * 50;
+    private static final double MOB_DESPAWN_DISTANCE_SQUARED = 30 * 30;
     private static final double FRONT_SPAWN_CHANCE = .8;
     private static final double FRONT_SPAWN_HALF_ANGLE = Math.PI / 2;
     private static final double LASER_RANGE = 40;
