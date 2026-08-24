@@ -4,11 +4,13 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.rewards.RewardInventory;
@@ -54,6 +56,9 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
     private static final int ELITE_GUARDIANS_PER_PLAYER = 4;
     private static final int CHAMPION_GUARDIANS_PER_PLAYER = 2;
     private static final int GUARDIAN_SPAWN_INTERVAL_TICKS = 5;
+    private static final int VAULT_CHARGE_KILLS_REQUIRED = 40;
+    private static final double VAULT_CHARGE_PER_KILL = 2.5;
+    private static final float MOB_DIFFICULTY_INCREASE_PER_CACHE = .25f;
     private static final double RUNE_DISPLAY_Y_OFFSET = 1.5;
     private static final float RUNE_DISPLAY_SCALE = 1.4f;
     private static final float RUNE_INTERACTION_WIDTH = 1.75f;
@@ -67,11 +72,14 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
     private int preparationTicks = START_DELAY_TICKS;
     private int activeVault = -1;
     private int vaultTicks;
+    private int chargeTicks;
+    private int vaultChargeKills;
     private int revealTicks;
     private int codeProgress;
     private int guardianSpawnTicks;
     private int eliteGuardiansRemainingToSpawn;
     private int championGuardiansRemainingToSpawn;
+    private boolean chargingVault;
     private boolean vaultRunning;
     private boolean guardianWaveRunning;
     private boolean failed;
@@ -132,7 +140,7 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
         new GameRunnable(game) {
             @Override
             public void run() {
-                beginVault(0);
+                beginChargePhase(0);
             }
         }.runTaskLater(START_DELAY_TICKS);
 
@@ -161,6 +169,14 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
                     }
                     return;
                 }
+                if (chargingVault) {
+                    chargeTicks++;
+                    mobTick();
+                    if (chargeTicks % MOB_SPAWN_INTERVAL == 0 && mobCount() < getMaximumMobCount()) {
+                        spawnPuzzleMob();
+                    }
+                    return;
+                }
                 if (!vaultRunning) {
                     return;
                 }
@@ -170,9 +186,6 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
                     revealTicks--;
                 }
                 mobTick();
-                if (vaultTicks % MOB_SPAWN_INTERVAL == 0 && mobCount() < getMaximumMobCount()) {
-                    spawnPuzzleMob();
-                }
                 if (vaultTicks % 10 == 0) {
                     showPuzzleParticles();
                 }
@@ -181,6 +194,30 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
                 }
             }
         }.runTaskTimer(0, 1);
+    }
+
+    private void beginChargePhase(int vaultIndex) {
+        if (completed) {
+            return;
+        }
+        activeVault = vaultIndex;
+        chargeTicks = 0;
+        vaultChargeKills = 0;
+        chargingVault = true;
+        vaultRunning = false;
+        guardianWaveRunning = false;
+        removeRuneEntities();
+        clearHostileMobs();
+
+        game.forEachOnlinePlayer((player, team) -> {
+            player.showTitle(Title.title(
+                    Component.text("CHARGE VAULT " + (vaultIndex + 1), NamedTextColor.GOLD),
+                    Component.text("Defeat enemies to restore its energy", NamedTextColor.AQUA),
+                    Title.Times.times(Ticks.duration(5), Ticks.duration(60), Ticks.duration(10))
+            ));
+            player.playSound(player.getLocation(), Sound.BLOCK_RESPAWN_ANCHOR_CHARGE, 1.5f, 1);
+        });
+        announce(Component.text("Defeat enemies to charge Vault " + (vaultIndex + 1) + ". Each kill restores 2.5% energy.", NamedTextColor.AQUA));
     }
 
     private void beginVault(int vaultIndex) {
@@ -197,6 +234,7 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
         vaultTicks = 0;
         revealTicks = CODE_REVEAL_TICKS;
         codeProgress = 0;
+        chargingVault = false;
         vaultRunning = true;
         guardianWaveRunning = false;
         clearHostileMobs();
@@ -212,7 +250,48 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
             ));
             player.playSound(player.getLocation(), Sound.BLOCK_ENCHANTMENT_TABLE_USE, 2, 0.8f);
         });
-        announce(Component.text("Memorize the ancient code, then right-click the floating runes in order.", NamedTextColor.AQUA));
+        announce(Component.text("Vault fully charged. Memorize the ancient code, then right-click the floating runes in order.", NamedTextColor.AQUA));
+    }
+
+    @Override
+    protected boolean handleSpecialDeath(WarlordsDeathEvent event) {
+        if (!chargingVault || !(event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC)) {
+            return false;
+        }
+        if (warlordsNPC.getGame() != game
+                || warlordsNPC.getMob() == null
+                || !getMobs().contains(warlordsNPC.getMob())) {
+            return false;
+        }
+
+        vaultChargeKills = Math.min(VAULT_CHARGE_KILLS_REQUIRED, vaultChargeKills + 1);
+        if (vaultChargeKills < VAULT_CHARGE_KILLS_REQUIRED) {
+            return false;
+        }
+
+        chargingVault = false;
+        announce(Component.text("Vault " + (activeVault + 1) + " is fully charged. The ancient code is revealing itself!", NamedTextColor.GREEN));
+        game.forEachOnlinePlayer((player, team) -> player.playSound(player.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 2, 1.3f));
+        new GameRunnable(game) {
+            @Override
+            public void run() {
+                beginVault(activeVault);
+            }
+        }.runTaskLater(1);
+        return false;
+    }
+
+    @Override
+    protected void modifyStats(WarlordsNPC warlordsNPC) {
+        super.modifyStats(warlordsNPC);
+        int cachesUnlocked = getCachesUnlocked();
+        if (cachesUnlocked == 0) {
+            return;
+        }
+        float multiplier = 1 + cachesUnlocked * MOB_DIFFICULTY_INCREASE_PER_CACHE;
+        warlordsNPC.setMaxHealthAndHeal(warlordsNPC.getMaxBaseHealth() * multiplier);
+        warlordsNPC.setMinMeleeDamage(Math.round(warlordsNPC.getMinMeleeDamage() * multiplier));
+        warlordsNPC.setMaxMeleeDamage(Math.round(warlordsNPC.getMaxMeleeDamage() * multiplier));
     }
 
     private void spawnRuneEntities(int vaultIndex) {
@@ -308,7 +387,7 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
         }
         clearHostileMobs();
         grantVaultInsignia();
-        announce(Component.text("Vault " + completedVault + " opened." + (cacheUnlocked ? " Reward cache unlocked!" : ""), NamedTextColor.GREEN));
+        announce(Component.text("Vault " + completedVault + " opened." + (cacheUnlocked ? " Reward cache unlocked! Enemies have grown stronger." : ""), NamedTextColor.GREEN));
         game.forEachOnlinePlayer((player, team) -> player.playSound(player.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 2, 1.2f));
 
         if (completedVault >= VAULT_COUNT) {
@@ -375,9 +454,9 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
         }
         guardianWaveRunning = false;
         int nextVault = activeVault + 1;
-        announce(Component.text("The vault guardians have fallen. Vault " + (nextVault + 1) + " is opening!", NamedTextColor.GREEN));
+        announce(Component.text("The vault guardians have fallen. Charge Vault " + (nextVault + 1) + " to reveal its code!", NamedTextColor.GREEN));
         game.forEachOnlinePlayer((player, team) -> player.playSound(player.getLocation(), Sound.BLOCK_END_PORTAL_SPAWN, 1.5f, 1.2f));
-        beginVault(nextVault);
+        beginChargePhase(nextVault);
     }
 
     private void grantVaultInsignia() {
@@ -508,6 +587,17 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
                     .append(Component.text(getCachesUnlocked() + "/3", NamedTextColor.GREEN)));
             return lines;
         }
+        if (chargingVault) {
+            lines.add(Component.text("Charging Vault ", NamedTextColor.GOLD)
+                    .append(Component.text((activeVault + 1) + "/" + VAULT_COUNT, NamedTextColor.AQUA)));
+            lines.add(Component.text("Vault Energy: ", NamedTextColor.WHITE)
+                    .append(Component.text(NumberFormat.formatOptionalTenths(getVaultChargePercent()) + "%", NamedTextColor.YELLOW)));
+            lines.add(Component.text("Enemies: ", NamedTextColor.WHITE)
+                    .append(Component.text(mobCount() + " active", NamedTextColor.RED)));
+            lines.add(Component.text("Caches: ", NamedTextColor.WHITE)
+                    .append(Component.text(getCachesUnlocked() + "/3", NamedTextColor.GREEN)));
+            return lines;
+        }
         if (!vaultRunning) {
             lines.add(Component.text("Preparing Vault " + Math.min(activeVault + 2, VAULT_COUNT) + "...", NamedTextColor.YELLOW));
             return lines;
@@ -542,6 +632,10 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
 
     private int getSecondsRemaining() {
         return Math.max(0, (VAULT_DURATION_TICKS - vaultTicks) / GameRunnable.SECOND);
+    }
+
+    private double getVaultChargePercent() {
+        return Math.min(100, vaultChargeKills * VAULT_CHARGE_PER_KILL);
     }
 
     private int getCachesUnlocked() {
