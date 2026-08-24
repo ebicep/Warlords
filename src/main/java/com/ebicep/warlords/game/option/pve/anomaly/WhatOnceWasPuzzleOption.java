@@ -1,6 +1,8 @@
 package com.ebicep.warlords.game.option.pve.anomaly;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
@@ -9,6 +11,7 @@ import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.mobs.Mob;
+import com.ebicep.warlords.pve.rewards.RewardInventory;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
@@ -355,6 +358,35 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
         });
     }
 
+    private void grantUnlockedCaches() {
+        int eligibleObjectiveCount = Math.min(cacheEligibility.length, currentAnomaly.getRewardPools().size());
+        game.warlordsPlayers().forEach(warlordsPlayer -> {
+            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(warlordsPlayer.getUuid());
+            int cachesGranted = 0;
+            for (int i = 0; i < eligibleObjectiveCount; i++) {
+                if (!cacheEligibility[i]) {
+                    continue;
+                }
+                AnomalyRewardCache cache = currentAnomaly.getRewardPools().get(i)
+                        .createCache(featuredLegendarySet, rotationStart);
+                databasePlayer.getPveStats().getGameEventRewards().add(cache);
+                cachesGranted++;
+            }
+            if (cachesGranted == 0) {
+                return;
+            }
+            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+            warlordsPlayer.sendMessage(Component.text(
+                    "You kept " + cachesGranted + "/3 reward caches unlocked before the anomaly failed.",
+                    NamedTextColor.YELLOW
+            ));
+            RewardInventory.sendRewardMessage(
+                    warlordsPlayer.getUuid(),
+                    Component.text(cachesGranted + " Anomaly Reward " + (cachesGranted == 1 ? "Cache is" : "Caches are") + " ready to claim.", NamedTextColor.AQUA)
+            );
+        });
+    }
+
     private void failVault() {
         if (!vaultRunning) {
             return;
@@ -365,6 +397,7 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
         completed = true;
         removeRuneEntities();
         clearHostileMobs();
+        grantUnlockedCaches();
         announce(Component.text("Vault " + (activeVault + 1) + " sealed itself. The anomaly has failed.", NamedTextColor.RED));
         game.forEachOnlinePlayer((player, team) -> {
             player.showTitle(Title.title(
