@@ -49,6 +49,7 @@ public class AnomalyOption extends AbstractAnomalyOption {
     };
 
     private final boolean[] objectiveSuccess = new boolean[OBJECTIVE_COUNT];
+    private final List<Mob> availableRelicBosses = new ArrayList<>();
 
     private AnomalyRelic activeRelic;
     private AbstractMob activeBoss;
@@ -154,6 +155,12 @@ public class AnomalyOption extends AbstractAnomalyOption {
         objectiveTicks = 0;
         bossPhasesStarted = 0;
         activeBoss = null;
+        availableRelicBosses.clear();
+        for (Mob relicBoss : RELIC_BOSSES) {
+            if (!availableRelicBosses.contains(relicBoss)) {
+                availableRelicBosses.add(relicBoss);
+            }
+        }
         clearHostileMobs();
         AnomalyObjectiveMarker marker = getObjectiveMarker(objectiveIndex);
         playerRespawnLocation = marker.getLocation().clone().add(0, 1, 0);
@@ -199,9 +206,14 @@ public class AnomalyOption extends AbstractAnomalyOption {
     }
 
     private void startBossPhase() {
+        if (availableRelicBosses.isEmpty()) {
+            bossPhasesStarted = BOSS_TRIGGER_TICKS.length;
+            return;
+        }
+
         clearHostileMobs();
 
-        Mob bossType = RELIC_BOSSES[(activeObjective + bossPhasesStarted) % RELIC_BOSSES.length];
+        Mob bossType = availableRelicBosses.remove(ThreadLocalRandom.current().nextInt(availableRelicBosses.size()));
         Location spawnLocation = getBossSpawnLocation();
         activeBoss = bossType.createMob(spawnLocation);
         bossPhasesStarted++;
@@ -375,6 +387,7 @@ public class AnomalyOption extends AbstractAnomalyOption {
     @Override
     public void onGameCleanup(@Nonnull Game game) {
         activeBoss = null;
+        availableRelicBosses.clear();
         playerRespawnLocation = null;
         removeActiveRelic();
         super.onGameCleanup(game);
