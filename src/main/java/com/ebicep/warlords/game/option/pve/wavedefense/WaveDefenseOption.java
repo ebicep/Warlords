@@ -659,7 +659,7 @@ public class WaveDefenseOption implements PveOption {
                                 wp.getAbilityTree().setMaxMasterUpgrades(wp.getAbilityTree().getMaxMasterUpgrades() + 1);
                                 wp.sendMessage(Component.text("+1 Master Upgrade", NamedTextColor.RED, TextDecoration.BOLD));
                             });
-                            case 101, 111, 121 -> game.warlordsPlayers().forEach(wp -> {
+                            case 101 -> game.warlordsPlayers().forEach(wp -> {
                                 wp.playSound(wp.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 0.1f);
                                 addRewardToPlayerPouch(
                                         wp.getUuid(),

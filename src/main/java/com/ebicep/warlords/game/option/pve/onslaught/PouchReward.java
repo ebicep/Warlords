@@ -19,9 +19,7 @@ import java.util.List;
 public class PouchReward extends AbstractReward {
 
     private static final RandomCollection<NewItemTier> ASCENDANT_ITEM_TIER_POOL = new RandomCollection<NewItemTier>()
-            .add(30, NewItemTier.COMMON)
-            .add(25, NewItemTier.RARE)
-            .add(25, NewItemTier.EPIC)
+            .add(80, NewItemTier.EPIC)
             .add(10, NewItemTier.SOVEREIGN)
             .add(10, NewItemTier.LEGENDARY);
 
@@ -65,6 +63,7 @@ public class PouchReward extends AbstractReward {
     public List<Component> getLore() {
         List<Component> lore = new ArrayList<>(super.getLore());
         if (newItem != null) {
+            lore.add(Component.empty());
             lore.add(Component.text("Item: ", NamedTextColor.GRAY).append(newItem.getHoverComponent()));
         }
         return lore;

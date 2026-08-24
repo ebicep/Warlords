@@ -78,8 +78,8 @@ public class Chessking extends AbstractMob implements BossMob {
 
     @Override
     public void onNPCCreate() {
-        npc.getOrAddTrait(SlimeSize.class).setSize(15);
-        npc.data().set(NPC.Metadata.JUMP_POWER_SUPPLIER, (Function<NPC, Float>) npc -> .1f);
+        npc.getOrAddTrait(SlimeSize.class).setSize(10);
+        npc.data().set(NPC.Metadata.JUMP_POWER_SUPPLIER, (Function<NPC, Float>) npc -> .01f);
     }
 
     @Override
@@ -100,7 +100,7 @@ public class Chessking extends AbstractMob implements BossMob {
                     .healing()
                     .cause("Blob Heal")
                     .source(warlordsNPC)
-                    .value(500)
+                    .value(50)
             );
         } else {
             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_SLIME_ATTACK, 2, 0.2f);
