@@ -1,5 +1,7 @@
 package com.ebicep.customentities.npc.traits;
 
+import com.ebicep.customentities.npc.HasNPCLabelHologram;
+import com.ebicep.customentities.npc.NPCLabelHologram;
 import com.ebicep.customentities.npc.WarlordsTrait;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
@@ -11,12 +13,11 @@ import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.SpendableBuyShop;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
-import net.citizensnpcs.trait.HologramTrait;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -25,7 +26,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class PrestigeVendorTrait extends WarlordsTrait {
+public class PrestigeVendorTrait extends WarlordsTrait implements HasNPCLabelHologram {
+
+    private final NPCLabelHologram labelHologram = new NPCLabelHologram("lobby-prestige-vendor");
 
     private static final List<SpendableBuyShop> SHOP = List.of(
             new SpendableBuyShop(8, Currencies.ETHEREUM_CRYSTAL, -1, 1),
@@ -170,9 +173,16 @@ public class PrestigeVendorTrait extends WarlordsTrait {
     }
 
     @Override
-    public void onAttach() {
-        HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
-        hologramTrait.setLine(0, ChatColor.RED + "The Artificer");
+    public NPCLabelHologram getLabelHologram() {
+        return labelHologram;
+    }
+
+    @Override
+    public void onSpawn() {
+        labelHologram.update(
+                npc,
+                ComponentBuilder.create("The Artificer", NamedTextColor.RED).build()
+        );
     }
 
     @Override

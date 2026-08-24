@@ -10,8 +10,6 @@ import com.ebicep.warlords.game.option.pve.anomaly.AnomalyMenu;
 import com.ebicep.warlords.game.option.pve.anomaly.AnomalyRotation;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
-import net.citizensnpcs.trait.HologramTrait;
-import org.bukkit.ChatColor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;

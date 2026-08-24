@@ -1,17 +1,19 @@
 package com.ebicep.customentities.npc.traits;
 
+import com.ebicep.customentities.npc.HasNPCLabelHologram;
+import com.ebicep.customentities.npc.NPCLabelHologram;
 import com.ebicep.customentities.npc.WarlordsTrait;
 import com.ebicep.warlords.game.option.pve.raid.Raid;
-import com.ebicep.warlords.game.option.pve.raid.RaidMenu;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
-import net.citizensnpcs.trait.HologramTrait;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.format.TextDecoration;
 
-public class RaidOneStartTrait extends WarlordsTrait {
+public class RaidOneStartTrait extends WarlordsTrait implements HasNPCLabelHologram {
 
+    private final NPCLabelHologram labelHologram = new NPCLabelHologram("lobby-raid-one-start");
     private final Raid raid;
 
     public RaidOneStartTrait() {
@@ -20,13 +22,23 @@ public class RaidOneStartTrait extends WarlordsTrait {
     }
 
     @Override
-    public void onAttach() {
-        HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
-        hologramTrait.setLine(0, ChatColor.GRAY + ChatColor.ITALIC.toString() + "Two crowns claim the same throne. Every step is a lie, and every mistake is final.");
-        hologramTrait.setLine(1, ChatColor.DARK_GRAY + ChatColor.BOLD.toString() + "-ˋˏ ༻❁༺ ˎˊ-");
-        hologramTrait.setLine(2, ChatColor.GOLD + ChatColor.BOLD.toString() + "REGNUM OF TWO CROWNS");
-        hologramTrait.setMargin(1, "bottom", 0.6);
-        hologramTrait.setMargin(2, "bottom", 0.2);
+    public NPCLabelHologram getLabelHologram() {
+        return labelHologram;
+    }
+
+    @Override
+    public void onSpawn() {
+        labelHologram.update(
+                npc,
+                ComponentBuilder.create(
+                                "Two crowns claim the same throne. Every step is a lie, and every mistake is final.",
+                                NamedTextColor.GRAY,
+                                TextDecoration.ITALIC
+                        )
+                        .newLine("-ˋˏ ༻❁༺ ˎˊ-", NamedTextColor.DARK_GRAY, TextDecoration.BOLD)
+                        .newLine("REGNUM OF TWO CROWNS", NamedTextColor.GOLD, TextDecoration.BOLD)
+                        .build()
+        );
     }
 
     @Override

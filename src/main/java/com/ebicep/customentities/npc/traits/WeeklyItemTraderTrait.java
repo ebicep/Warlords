@@ -1,5 +1,7 @@
 package com.ebicep.customentities.npc.traits;
 
+import com.ebicep.customentities.npc.HasNPCLabelHologram;
+import com.ebicep.customentities.npc.NPCLabelHologram;
 import com.ebicep.customentities.npc.WarlordsTrait;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
@@ -11,13 +13,13 @@ import com.ebicep.warlords.pve.newitems.EchelonTraderShop;
 import com.ebicep.warlords.pve.newitems.NewItem;
 import com.ebicep.warlords.pve.newitems.NewItemsUtils;
 import com.ebicep.warlords.pve.newitems.tiers.NewItemTier;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.java.DateUtil;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
-import net.citizensnpcs.trait.HologramTrait;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -29,7 +31,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class WeeklyItemTraderTrait extends WarlordsTrait {
+public class WeeklyItemTraderTrait extends WarlordsTrait implements HasNPCLabelHologram {
+
+    private final NPCLabelHologram labelHologram = new NPCLabelHologram("lobby-echelon-trader");
 
     private static final int WEEKLY_TIER_PURCHASE_LIMIT = 1;
     private static final String PURCHASE_KEY_PREFIX = "ECHELON_TRADER_";
@@ -239,9 +243,13 @@ public class WeeklyItemTraderTrait extends WarlordsTrait {
     }
 
     @Override
-    public void onAttach() {
-        HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
-        hologramTrait.setLine(0, ChatColor.AQUA + "Echelon Trader");
+    public NPCLabelHologram getLabelHologram() {
+        return labelHologram;
+    }
+
+    @Override
+    public void onSpawn() {
+        updateHologram(null);
     }
 
     @Override
@@ -251,8 +259,20 @@ public class WeeklyItemTraderTrait extends WarlordsTrait {
         }
         EchelonTraderShop shop = EchelonTraderShop.getCurrentShop();
         String timeTill = DateUtil.getTimeTill(shop.getNextRotation(), true, true, true, false);
-        HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
-        hologramTrait.setLine(1, ChatColor.RED.toString() + ChatColor.BOLD + "New stock in " + timeTill);
+        if (!timeTill.equals("0 seconds")) {
+            updateHologram(timeTill);
+        }
+    }
+
+    private void updateHologram(String timeTill) {
+        ComponentBuilder componentBuilder;
+        if (timeTill != null) {
+            componentBuilder = ComponentBuilder.create("New stock in " + timeTill, NamedTextColor.RED, TextDecoration.BOLD)
+                    .newLine("Echelon Trader", NamedTextColor.AQUA);
+        } else {
+            componentBuilder = ComponentBuilder.create("Echelon Trader", NamedTextColor.AQUA);
+        }
+        labelHologram.update(npc, componentBuilder.build());
     }
 
     @Override
