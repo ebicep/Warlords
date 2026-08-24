@@ -6,6 +6,7 @@ import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -15,6 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import javax.annotation.Nonnull;
+import java.util.Comparator;
 
 public class DunestarRelicSlowOption implements Option {
 
@@ -30,11 +32,15 @@ public class DunestarRelicSlowOption implements Option {
                 if (event.getWarlordsEntity().getGame() != game) {
                     return;
                 }
-                game.warlordsPlayers()
-                    .filter(warlordsPlayer -> !warlordsPlayer.isDead())
-                    .filter(warlordsPlayer -> warlordsPlayer.getEntity() instanceof Player player && isHoldingRelic(player.getInventory().getItem(8)))
-                    .findFirst()
-                    .ifPresent(carrier -> event.setRespawnLocation(carrier.getLocation().clone()));
+                Location deathLocation = event.getWarlordsEntity().getDeathLocation();
+                if (deathLocation == null) {
+                    return;
+                }
+                game.getMarkers(DunestarRouteMarker.class)
+                    .stream()
+                    .filter(marker -> marker.getLocation().getWorld().equals(deathLocation.getWorld()))
+                    .min(Comparator.comparingDouble(marker -> marker.getLocation().distanceSquared(deathLocation)))
+                    .ifPresent(marker -> event.setRespawnLocation(marker.getLocation().clone()));
             }
         });
     }

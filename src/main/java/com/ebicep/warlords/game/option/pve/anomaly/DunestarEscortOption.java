@@ -2,6 +2,7 @@ package com.ebicep.warlords.game.option.pve.anomaly;
 
 import com.destroystokyo.paper.event.player.PlayerJumpEvent;
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -37,6 +38,7 @@ import org.bukkit.util.Vector;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -50,6 +52,7 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
     private static final int MOB_SPAWN_INTERVAL = 10; // ticks
     private static final int LASER_INTERVAL_TICKS = 15 * GameRunnable.SECOND;
     private static final int LASER_TELEGRAPH_TICKS = 2 * GameRunnable.SECOND;
+    private static final float ABILITY_COOLDOWN_MULTIPLIER = 3;
     private static final double CHECKPOINT_RADIUS_SQUARED = 25;
     private static final double MOB_DESPAWN_DISTANCE_SQUARED = 30 * 30;
     private static final double FRONT_SPAWN_CHANCE = .8;
@@ -63,13 +66,15 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
             .name(Component.text("Dunestar Relic", NamedTextColor.AQUA))
             .lore(
                     Component.text("Carry this relic to the sanctuary.", NamedTextColor.GRAY),
-                    Component.text("You cannot activate abilities or deal damage.", NamedTextColor.RED)
+                    Component.text("Primary skill disabled. Other abilities have triple cooldowns.", NamedTextColor.RED),
+                    Component.text("You cannot deal damage.", NamedTextColor.RED)
             )
             .glow()
             .get();
 
     private final boolean[] cacheEligibility = new boolean[3];
     private final Set<GameRunnable> laserTasks = ConcurrentHashMap.newKeySet();
+    private final Set<AbstractAbility> carrierAbilitiesStartingCooldown = new HashSet<>();
 
     private List<DunestarRouteMarker> routeMarkers = List.of();
     private WarlordsPlayer carrier;
@@ -109,11 +114,31 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
 
             @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
             public void onAbility(WarlordsAbilityActivateEvent.Pre event) {
-                if (carrier == null || event.getWarlordsEntity() != carrier) {
+                if (carrier == null || event.getWarlordsEntity() != carrier || event.getSlot() != 0) {
                     return;
                 }
                 event.setCancelled(true);
-                event.getPlayer().sendActionBar(Component.text("The relic prevents you from using abilities.", NamedTextColor.RED));
+                event.getPlayer().sendActionBar(Component.text("The relic prevents you from using your primary skill.", NamedTextColor.RED));
+            }
+
+            @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+            public void onAbility(WarlordsAbilityActivateEvent.Post event) {
+                if (carrier == null || event.getWarlordsEntity() != carrier || event.getSlot() == 0) {
+                    return;
+                }
+                if (event.getAbility().getCurrentCooldown() == 0) {
+                    carrierAbilitiesStartingCooldown.add(event.getAbility());
+                }
+            }
+
+            @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+            public void onAbility(WarlordsAbilityActivateEvent.PostApply event) {
+                if (carrier == null || event.getWarlordsEntity() != carrier || event.getSlot() == 0) {
+                    return;
+                }
+                if (carrierAbilitiesStartingCooldown.remove(event.getAbility())) {
+                    event.getAbility().setCurrentCooldown(event.getAbility().getCurrentCooldown() * ABILITY_COOLDOWN_MULTIPLIER);
+                }
             }
 
             @EventHandler(ignoreCancelled = true)
@@ -630,6 +655,7 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
     }
 
     private void clearCarrierState() {
+        carrierAbilitiesStartingCooldown.clear();
         if (carrier == null || !(carrier.getEntity() instanceof Player player)) {
             carrier = null;
             return;
