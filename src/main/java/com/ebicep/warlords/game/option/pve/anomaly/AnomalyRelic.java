@@ -1,8 +1,12 @@
 package com.ebicep.warlords.game.option.pve.anomaly;
 
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.pve.mobs.bosses.bossminions.EggSac;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
+import com.ebicep.warlords.pve.mobs.Mob;
+import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import net.citizensnpcs.api.ai.BehaviorController;
+import net.citizensnpcs.trait.ArmorStandTrait;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -15,7 +19,7 @@ import org.bukkit.util.Transformation;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AnomalyRelic extends EggSac {
+public class AnomalyRelic extends AbstractMob implements BossMinionMob {
 
     private static final int ORBITING_FRAGMENT_COUNT = 4;
 
@@ -38,13 +42,22 @@ public class AnomalyRelic extends EggSac {
     }
 
     @Override
+    public Mob getMobRegistry() {
+        return Mob.MITHRA_EGG_SAC;
+    }
+
+    @Override
     public void updateEquipment() {
-        // The relic uses display entities instead of the inherited dragon egg helmet.
     }
 
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
+        BehaviorController goalController = npc.getDefaultBehaviorController();
+        goalController.clear();
+        ArmorStandTrait armorStandTrait = warlordsNPC.getNpc().getOrAddTrait(ArmorStandTrait.class);
+        armorStandTrait.setVisible(false);
+        armorStandTrait.setGravity(false);
         spawnRelicVisuals();
         new GameRunnable(option.getGame()) {
             private int animationTicks;

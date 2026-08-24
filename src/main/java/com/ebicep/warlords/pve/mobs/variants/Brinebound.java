@@ -8,7 +8,7 @@ import org.bukkit.Location;
 public class Brinebound extends AbstractMob implements BasicMob {
 
     public Brinebound(Location spawnLocation) {
-        this(spawnLocation, "Brinebound", 2600, .30f, 0, 170, 250);
+        this(spawnLocation, "Brinebound", 2600, .30f, 0, 230, 320);
     }
 
     public Brinebound(Location spawnLocation, String name, int maxHealth, float walkSpeed, float damageResistance, float minMeleeDamage, float maxMeleeDamage) {
