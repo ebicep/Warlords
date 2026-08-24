@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.featureflags.FeatureFlags;
 import com.ebicep.warlords.honorifics.HonorificManager;
 import com.ebicep.warlords.honorifics.HonorificProfile;
 import com.ebicep.warlords.player.general.CustomScoreboard;
@@ -73,8 +74,10 @@ public enum Permissions {
     }
 
     private static Component createPlayerPrefix(Permissions permission, UUID uuid, String name, boolean includeName) {
-        Component component = Component.empty().color(permission.prefixColor)
-                .append(HonorificManager.getHonorificComponent(uuid));
+        Component component = Component.empty().color(permission.prefixColor);
+        if (FeatureFlags.isFeatureEnabled(FeatureFlags.HONORIFICS_DISPLAY, null)) {
+            component = component.append(HonorificManager.getHonorificComponent(uuid));
+        }
         if (permission != DEFAULT && !permission.prefix.isEmpty()) {
             component = component.append(Component.text("[" + permission.prefix + "] ", permission.prefixColor));
         }

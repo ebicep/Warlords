@@ -40,8 +40,8 @@ public class DunestarMovingWallOption implements Option, Listener {
     private static final int PANEL_COUNT = 7;
     private static final int DISPLAY_UPDATE_INTERVAL = 2;
     private static final int DAMAGE_INTERVAL = GameRunnable.SECOND / 2;
-    private static final double START_DISTANCE = -18;
-    private static final double SPEED_PER_TICK = 0.0675;
+    private static final double START_DISTANCE = -8;
+    private static final double SPEED_PER_TICK = 0.08;
     private static final double WALL_WIDTH = 35;
     private static final double WALL_HEIGHT = 14;
     private static final double WALL_THICKNESS = 0.7;

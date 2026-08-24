@@ -17,6 +17,7 @@ import com.ebicep.warlords.pve.rewards.RewardInventory;
 import com.ebicep.warlords.pve.rewards.types.CompensationReward;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -59,6 +60,10 @@ public class Spelunker extends BaseSet {
                 @EventHandler
                 public void onKill(WarlordsDeathEvent event) {
                     if (event.getKiller() != null && !event.getKiller().equals(warlordsPlayer)) {
+                        return;
+                    }
+                    World world = event.getWarlordsEntity().getWorld();
+                    if (world.getName().contains("WLDebug") || world.getName().contains("VoidCrossfire")) { // scuffed fix until i find better
                         return;
                     }
                     if (ThreadLocalRandom.current().nextDouble(100) < spelunkerChestDropChancePercent) {

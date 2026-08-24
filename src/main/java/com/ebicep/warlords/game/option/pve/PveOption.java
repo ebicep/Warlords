@@ -307,9 +307,9 @@ public interface PveOption extends Option {
             }
 
             @EventHandler
-            public void onItemDrop(WarlordsGiveItemEvent event) {
+            public void onNewItemDrop(WarlordsGiveNewItemEvent event) {
                 getRewards().getPlayerRewards(event.getWarlordsEntity().getUuid())
-                            .getItemsFound()
+                            .getNewItemsFound()
                             .add(event.getItem());
             }
 

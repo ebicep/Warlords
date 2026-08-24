@@ -54,7 +54,6 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
     private static final int LASER_TELEGRAPH_TICKS = 2 * GameRunnable.SECOND;
     private static final float ABILITY_COOLDOWN_MULTIPLIER = 3;
     private static final double CHECKPOINT_RADIUS_SQUARED = 25;
-    private static final double MOB_DESPAWN_DISTANCE_SQUARED = 30 * 30;
     private static final double FRONT_SPAWN_CHANCE = .8;
     private static final double FRONT_SPAWN_HALF_ANGLE = Math.PI / 2;
     private static final double LASER_RANGE = 40;
@@ -275,7 +274,6 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
                 }
 
                 if (escortTicks % MOB_SPAWN_INTERVAL == 0) {
-                    despawnDistantMobs();
                     if (mobCount() < getMaximumMobCount()) {
                         spawnAroundCarrier();
                     }
@@ -385,17 +383,6 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
 
         announce(Component.text("The Dunestar Relic is fully charged at the sanctuary!", NamedTextColor.GREEN));
         finishEscort("Escort completed.");
-    }
-
-    private void despawnDistantMobs() {
-        Location carrierLocation = carrier.getLocation();
-        for (AbstractMob mob : List.copyOf(getMobs())) {
-            Location mobLocation = mob.getWarlordsNPC().getLocation();
-            if (!carrierLocation.getWorld().equals(mobLocation.getWorld())
-                    || carrierLocation.distanceSquared(mobLocation) > MOB_DESPAWN_DISTANCE_SQUARED) {
-                removeHostileMob(mob);
-            }
-        }
     }
 
     private void spawnAroundCarrier() {

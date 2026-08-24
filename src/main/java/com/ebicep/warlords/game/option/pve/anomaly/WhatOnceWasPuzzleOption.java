@@ -20,10 +20,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.util.Ticks;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.entity.Display;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Interaction;
@@ -116,6 +113,9 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
                 if (warlordsEntity == null
                         || warlordsEntity.getGame() != game
                         || game.getPlayerTeam(event.getPlayer().getUniqueId()) == null) {
+                    return;
+                }
+                if (event.getPlayer().getGameMode() == GameMode.SPECTATOR) {
                     return;
                 }
                 AncientRune rune = runeInteractions.get(interaction.getUniqueId());
@@ -534,6 +534,7 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
         if (markers.isEmpty()) {
             return;
         }
+
         int amount = Math.min(2 + activeVault, PENALTY_MOB_CAP - mobCount());
         for (int i = 0; i < amount; i++) {
             Location location = markers.get(ThreadLocalRandom.current().nextInt(markers.size())).getLocation().clone();

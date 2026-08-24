@@ -9,7 +9,6 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.option.pve.ReadyUpOption;
-import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import net.citizensnpcs.api.CitizensAPI;
@@ -144,9 +143,6 @@ public class NPCManager {
     }
 
     public static void createMasterworksFairNPC() {
-        if (!MasterworksFairManager.enabled) {
-            return;
-        }
         registerTrait(MasterworksFairTrait.class, "MasterworksFairTrait");
 
         NPC npc = NPC_REGISTRY.createNPC(EntityType.ZOMBIFIED_PIGLIN, "masterworks-fair");

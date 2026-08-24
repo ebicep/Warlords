@@ -2,6 +2,7 @@ package com.ebicep.warlords.honorifics;
 
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.featureflags.FeatureFlags;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
@@ -23,6 +24,10 @@ public final class HonorificMenu {
     }
 
     public static void open(Player player) {
+        if (!HonorificManager.honorificsEnabled(player)) {
+            FeatureFlags.sendDisabledMessage(player);
+            return;
+        }
         DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
         HonorificManager.forceChallengeRefresh(databasePlayer, player);
         HonorificProfile profile = HonorificManager.getProfile(player);

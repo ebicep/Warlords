@@ -2,6 +2,7 @@ package com.ebicep.warlords.honorifics;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.featureflags.FeatureFlags;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
@@ -18,6 +19,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -60,6 +62,9 @@ public final class HonorificManager {
         new BukkitRunnable() {
             @Override
             public void run() {
+                if (!honorificsEnabled()) {
+                    return;
+                }
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     UUID uuid = player.getUniqueId();
                     if (!DatabaseManager.inCache(uuid, PlayersCollections.LIFETIME)) {
@@ -126,6 +131,9 @@ public final class HonorificManager {
     }
 
     public static boolean refreshChallengeUnlocks(DatabasePlayer databasePlayer, @Nullable Player player) {
+        if (!honorificsEnabled()) {
+            return false;
+        }
         HonorificProfile profile = PROFILES.computeIfAbsent(databasePlayer.getUuid(), HonorificManager::loadProfile);
         DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
         profile.setMinimumItemRerolls(pveStats.getNewItemsManager().getItemInventory().stream()
@@ -247,7 +255,7 @@ public final class HonorificManager {
     }
 
     private static void refreshChallengesIfDue(UUID uuid) {
-        if (!DatabaseManager.inCache(uuid, PlayersCollections.LIFETIME)) {
+        if (!honorificsEnabled() || !DatabaseManager.inCache(uuid, PlayersCollections.LIFETIME)) {
             return;
         }
         long now = System.currentTimeMillis();
@@ -431,5 +439,13 @@ public final class HonorificManager {
         } else {
             Bukkit.getScheduler().runTask(Warlords.getInstance(), runnable);
         }
+    }
+
+    public static boolean honorificsEnabled() {
+        return honorificsEnabled(null);
+    }
+
+    public static boolean honorificsEnabled(@Nullable CommandSender sender) {
+        return FeatureFlags.isFeatureEnabled(FeatureFlags.HONORIFICS, sender);
     }
 }

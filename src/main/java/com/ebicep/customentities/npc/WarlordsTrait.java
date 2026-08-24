@@ -1,6 +1,7 @@
 package com.ebicep.customentities.npc;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.featureflags.FeatureFlags;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.trait.Trait;
@@ -35,6 +36,10 @@ public abstract class WarlordsTrait extends Trait {
                 this.getNPC().destroy();
                 return;
             }
+            if (!FeatureFlags.isNpcEnabled(event.getNPC().getName(), event.getClicker())) {
+                FeatureFlags.sendDisabledMessage(event.getClicker());
+                return;
+            }
             rightClick(event);
         }
     }
@@ -46,6 +51,10 @@ public abstract class WarlordsTrait extends Trait {
             if (!Warlords.getInstance().isEnabled()) {
                 // Fix old NPC standing around on Windows + plugin reload after new deployment
                 this.getNPC().destroy();
+                return;
+            }
+            if (!FeatureFlags.isNpcEnabled(event.getNPC().getName(), event.getClicker())) {
+                FeatureFlags.sendDisabledMessage(event.getClicker());
                 return;
             }
             leftClick(event);

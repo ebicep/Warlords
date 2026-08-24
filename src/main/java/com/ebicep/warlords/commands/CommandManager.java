@@ -650,6 +650,7 @@ public class CommandManager {
         manager.registerCommand(new BuilderCommand());
         manager.registerCommand(new BotConfigCommand());
         manager.registerCommand(new DatabaseCommand());
+        manager.registerCommand(new FeatureFlagsCommand());
         manager.registerCommand(new DebugValueCommand());
         manager.registerCommand(new EditStatsCommand());
         manager.registerCommand(new ExperienceCommand());

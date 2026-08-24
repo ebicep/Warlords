@@ -27,7 +27,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.Spendable;
-import com.ebicep.warlords.pve.items.types.AbstractItem;
+import com.ebicep.warlords.pve.newitems.NewItem;
 import com.ebicep.warlords.pve.mobs.MobDrop;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
@@ -146,6 +146,8 @@ public class EndState implements State, TimerDebugAble {
             case WAVE_DEFENSE:
             case EVENT_WAVE_DEFENSE:
             case ONSLAUGHT:
+            case ANOMALY:
+            case RAID:
                 for (Option option : options) {
                     if (option instanceof PveOption) {
                         showWaveDefenseStats((PveOption) option, players);
@@ -681,13 +683,13 @@ public class EndState implements State, TimerDebugAble {
                     ChatUtils.sendCenteredMessage(player, mobDrop.getCostColoredName(amountFound));
                 }
             }
-            List<AbstractItem> itemsFound = playerPveRewards.getItemsFound();
-            if (!itemsFound.isEmpty()) {
+            List<NewItem> newItemsFound = playerPveRewards.getNewItemsFound();
+            if (!newItemsFound.isEmpty()) {
                 if (gotAnyDrops) {
                     ChatUtils.sendCenteredMessage(player, Component.empty());
                 }
                 gotAnyDrops = true;
-                for (AbstractItem item : itemsFound) {
+                for (NewItem item : newItemsFound) {
                     ChatUtils.sendCenteredMessage(player, item.getHoverComponent());
                 }
             }

@@ -20,26 +20,41 @@ public class HonorificListener implements Listener {
 
     @EventHandler
     public void onPreLogin(AsyncPlayerPreLoginEvent event) {
+        if (!HonorificManager.honorificsEnabled()) {
+            return;
+        }
         HonorificManager.preload(event.getUniqueId());
     }
 
     @EventHandler
     public void onFirstLoad(DatabasePlayerFirstLoadEvent event) {
+        if (!HonorificManager.honorificsEnabled()) {
+            return;
+        }
         HonorificManager.forceChallengeRefresh(event.getDatabasePlayer(), event.getPlayer());
     }
 
     @EventHandler
     public void onStarPieceSynthesized(StarPieceSynthesizedEvent event) {
+        if (!HonorificManager.honorificsEnabled()) {
+            return;
+        }
         HonorificManager.recordStarPieceSynthesis(event.getUUID(), 1);
     }
 
     @EventHandler
     public void onSupplyDropCall(SupplyDropCallEvent event) {
+        if (!HonorificManager.honorificsEnabled()) {
+            return;
+        }
         HonorificManager.recordSupplyDrops(event.getUUID(), event.getAmount());
     }
 
     @EventHandler
     public void onCurrencyChanged(AddCurrencyEvent event) {
+        if (!HonorificManager.honorificsEnabled()) {
+            return;
+        }
         if (event.getAmount() >= 0 || !Currencies.STAR_PIECES.contains(event.getCurrency())) {
             return;
         }
@@ -52,6 +67,9 @@ public class HonorificListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onGameWin(WarlordsGameTriggerWinEvent event) {
+        if (!HonorificManager.honorificsEnabled()) {
+            return;
+        }
         if (event.getGame().getAddons().contains(GameAddon.CUSTOM_GAME)) {
             return;
         }
@@ -65,6 +83,9 @@ public class HonorificListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onQuit(PlayerQuitEvent event) {
+        if (!HonorificManager.honorificsEnabled()) {
+            return;
+        }
         HonorificManager.unload(event.getPlayer().getUniqueId());
     }
 }

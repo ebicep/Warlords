@@ -1,5 +1,7 @@
 package com.ebicep.customentities.npc.traits;
 
+import com.ebicep.customentities.npc.HasNPCLabelHologram;
+import com.ebicep.customentities.npc.NPCLabelHologram;
 import com.ebicep.customentities.npc.WarlordsTrait;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
@@ -9,13 +11,11 @@ import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.SpendableBuyShop;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
-import net.citizensnpcs.trait.HologramTrait;
-import net.citizensnpcs.trait.versioned.WardenTrait;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -24,7 +24,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class AscendantVendorTrait extends WarlordsTrait {
+public class AscendantVendorTrait extends WarlordsTrait implements HasNPCLabelHologram {
+
+    private final NPCLabelHologram labelHologram = new NPCLabelHologram("lobby-ascendant-vendor");
 
     private static final List<SpendableBuyShop> SHOP = List.of(
             new SpendableBuyShop(1, Currencies.ASCENDANT_SCROLL, 1, 25),
@@ -112,9 +114,16 @@ public class AscendantVendorTrait extends WarlordsTrait {
     }
 
     @Override
-    public void onAttach() {
-        HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
-        hologramTrait.setLine(0, ChatColor.RED + "Ascendo");
+    public NPCLabelHologram getLabelHologram() {
+        return labelHologram;
+    }
+
+    @Override
+    public void onSpawn() {
+        labelHologram.update(
+                npc,
+                ComponentBuilder.create("Ascendo", NamedTextColor.RED).build()
+        );
     }
 
     @Override
