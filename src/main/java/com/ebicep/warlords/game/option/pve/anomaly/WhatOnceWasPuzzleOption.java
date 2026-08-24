@@ -53,6 +53,7 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
     private static final int INSIGNIA_PER_VAULT = 25_000;
     private static final int ELITE_GUARDIANS_PER_PLAYER = 4;
     private static final int CHAMPION_GUARDIANS_PER_PLAYER = 2;
+    private static final int GUARDIAN_SPAWN_INTERVAL_TICKS = 5;
     private static final double RUNE_DISPLAY_Y_OFFSET = 1.5;
     private static final float RUNE_DISPLAY_SCALE = 1.4f;
     private static final float RUNE_INTERACTION_WIDTH = 1.75f;
@@ -68,6 +69,9 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
     private int vaultTicks;
     private int revealTicks;
     private int codeProgress;
+    private int guardianSpawnTicks;
+    private int eliteGuardiansRemainingToSpawn;
+    private int championGuardiansRemainingToSpawn;
     private boolean vaultRunning;
     private boolean guardianWaveRunning;
     private boolean failed;
@@ -145,7 +149,14 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
                 }
                 if (guardianWaveRunning) {
                     mobTick();
-                    if (mobCount() == 0) {
+                    if (getGuardiansRemainingToSpawn() > 0) {
+                        guardianSpawnTicks++;
+                        if (guardianSpawnTicks >= GUARDIAN_SPAWN_INTERVAL_TICKS) {
+                            guardianSpawnTicks = 0;
+                            spawnNextGuardian();
+                        }
+                    }
+                    if (getGuardiansRemainingToSpawn() == 0 && mobCount() == 0) {
                         completeGuardianWave();
                     }
                     return;
@@ -309,9 +320,10 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
 
     private void startGuardianWave() {
         guardianWaveRunning = true;
+        guardianSpawnTicks = 0;
         int players = Math.max(1, playerCount());
-        int eliteGuardians = players * ELITE_GUARDIANS_PER_PLAYER;
-        int championGuardians = players * CHAMPION_GUARDIANS_PER_PLAYER;
+        eliteGuardiansRemainingToSpawn = players * ELITE_GUARDIANS_PER_PLAYER;
+        championGuardiansRemainingToSpawn = players * CHAMPION_GUARDIANS_PER_PLAYER;
 
         announce(Component.text("Ancient guardians bar the way to Vault " + (activeVault + 2) + ". Defeat them to continue!", NamedTextColor.RED));
         game.forEachOnlinePlayer((player, team) -> {
@@ -322,21 +334,39 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
             ));
             player.playSound(player.getLocation(), Sound.ENTITY_WITHER_SPAWN, 1.5f, 1);
         });
-
-        spawnGuardianMobs(Mob.ELITE, eliteGuardians);
-        spawnGuardianMobs(Mob.CHAMPION, championGuardians);
     }
 
-    private void spawnGuardianMobs(Mob[] mobPool, int amount) {
+    private void spawnNextGuardian() {
         List<AnomalySpawnMarker> markers = getActiveSpawnMarkers();
         if (markers.isEmpty()) {
+            eliteGuardiansRemainingToSpawn = 0;
+            championGuardiansRemainingToSpawn = 0;
             return;
         }
-        for (int i = 0; i < amount; i++) {
-            Mob mob = mobPool[ThreadLocalRandom.current().nextInt(mobPool.length)];
-            Location location = markers.get(ThreadLocalRandom.current().nextInt(markers.size())).getLocation().clone();
-            spawnNewMob(mob.createMob(location), Team.RED);
+
+        int guardiansRemaining = getGuardiansRemainingToSpawn();
+        if (guardiansRemaining <= 0) {
+            return;
         }
+
+        Mob[] mobPool;
+        if (eliteGuardiansRemainingToSpawn > 0
+                && (championGuardiansRemainingToSpawn == 0
+                || ThreadLocalRandom.current().nextInt(guardiansRemaining) < eliteGuardiansRemainingToSpawn)) {
+            mobPool = Mob.ELITE;
+            eliteGuardiansRemainingToSpawn--;
+        } else {
+            mobPool = Mob.CHAMPION;
+            championGuardiansRemainingToSpawn--;
+        }
+
+        Mob mob = mobPool[ThreadLocalRandom.current().nextInt(mobPool.length)];
+        Location location = markers.get(ThreadLocalRandom.current().nextInt(markers.size())).getLocation().clone();
+        spawnNewMob(mob.createMob(location), Team.RED);
+    }
+
+    private int getGuardiansRemainingToSpawn() {
+        return eliteGuardiansRemainingToSpawn + championGuardiansRemainingToSpawn;
     }
 
     private void completeGuardianWave() {
@@ -471,7 +501,7 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
         if (guardianWaveRunning) {
             lines.add(Component.text("Guardian Wave", NamedTextColor.RED));
             lines.add(Component.text("Guardians: ", NamedTextColor.WHITE)
-                    .append(Component.text(mobCount() + " remaining", NamedTextColor.GOLD)));
+                    .append(Component.text((mobCount() + getGuardiansRemainingToSpawn()) + " remaining", NamedTextColor.GOLD)));
             lines.add(Component.text("Next Vault: ", NamedTextColor.WHITE)
                     .append(Component.text((activeVault + 2) + "/" + VAULT_COUNT, NamedTextColor.AQUA)));
             lines.add(Component.text("Caches: ", NamedTextColor.WHITE)
