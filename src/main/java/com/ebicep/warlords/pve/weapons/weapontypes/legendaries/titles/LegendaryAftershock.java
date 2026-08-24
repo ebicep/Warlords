@@ -8,6 +8,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
@@ -133,6 +134,7 @@ public class LegendaryAftershock extends AbstractLegendaryWeapon {
                                     .source(owner)
                                     .min(damagePerTick)
                                     .max(damagePerTick)
+                                    .flags(InstanceFlags.NO_HEALING_ORBS, InstanceFlags.NO_HEALING_LEECH, InstanceFlags.NO_LUST_HEALING)
                             );
                             enemy.addSpeedModifier(owner, "Aftershock", -SLOW_PERCENT, DURATION_SECONDS);
                         });
