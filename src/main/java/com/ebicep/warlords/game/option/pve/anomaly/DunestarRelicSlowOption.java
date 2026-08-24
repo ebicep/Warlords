@@ -21,7 +21,7 @@ import java.util.Comparator;
 public class DunestarRelicSlowOption implements Option {
 
     private static final String MODIFIER_NAME = "Dunestar Relic Carrier";
-    private static final float SPEED_REDUCTION = -60;
+    private static final float SPEED_REDUCTION = -70;
     private static final String RELIC_NAME = "Dunestar Relic";
 
     @Override

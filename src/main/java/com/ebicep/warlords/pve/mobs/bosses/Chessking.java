@@ -108,17 +108,17 @@ public class Chessking extends AbstractMob implements BossMob {
         SlimeSize slimeSize = npc.getOrAddTrait(SlimeSize.class);
         float healthPercent = warlordsNPC.getCurrentHealth() / warlordsNPC.getMaxHealth();
         int size = slimeSize.getSize();
-        int newSize = (int) (21 * healthPercent);
-        if (size != newSize && 0 < newSize && newSize < 21) {
+        int newSize = (int) (10 * healthPercent);
+        if (size != newSize && 0 < newSize && newSize < 10) {
             slimeSize.setSize(newSize);
             warlordsNPC.addSpeedModifier(warlordsNPC, "Size Change", (21 - newSize) * 7, Integer.MAX_VALUE);
-            float newJumpPower = 1 + ((20 - newSize) * .02f);
+            float newJumpPower = 1 + ((10 - newSize) * .02f);
             npc.data().set(NPC.Metadata.JUMP_POWER_SUPPLIER, (Function<NPC, Float>) npc -> newJumpPower);
             warlordsNPC.getAbilitiesMatching(Belch.class)
-                       .forEach(belch -> belch.setRange(9 - ((20 - newSize) * .2f)));
+                       .forEach(belch -> belch.setRange(9 - ((10 - newSize) * .2f)));
             warlordsNPC.getAbilitiesMatching(SpawnMobAbility.class)
                        .forEach(spawnMobAbility -> spawnMobAbility.getCooldown()
-                                                                  .addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Chessking", -((20 - newSize) * .01f)));
+                                                                  .addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Chessking", -((10 - newSize) * .01f)));
         }
     }
 
