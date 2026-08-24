@@ -43,7 +43,9 @@ public class AnomalyOption extends AbstractAnomalyOption {
     private static final Mob[] RELIC_BOSSES = {
             Mob.GHOULCALLER,
             Mob.MITHRA,
-            Mob.BOLTARO
+            Mob.BOLTARO,
+            Mob.NARMER,
+            Mob.CHESSKING
     };
 
     private final boolean[] objectiveSuccess = new boolean[OBJECTIVE_COUNT];
@@ -248,7 +250,7 @@ public class AnomalyOption extends AbstractAnomalyOption {
         game.forEachOnlinePlayer((player, team) -> {
             player.teleport(destination);
             player.playSound(destination, Sound.ENTITY_ENDERMAN_TELEPORT, 1.5f, 1.1f);
-            player.playSound(destination, "raid.church.ding", 1, 0.5f);
+            player.playSound(destination, "raid.church.ding", 1.5f, 0.5f);
         });
         announce(Component.text("The party has been transported to Relic " + (nextObjective + 1) + ".", NamedTextColor.YELLOW));
     }

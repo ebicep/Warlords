@@ -32,7 +32,7 @@ public class Chessking extends AbstractMob implements BossMob {
     private static final int MAX_SLIMY_CHESS = 30;
 
     public Chessking(Location spawnLocation) {
-        this(spawnLocation, "Chessking", 50000, 0.3f, 30, 0, 0);
+        this(spawnLocation, "Chessking", 16000, 0.3f, 20, 0, 0);
     }
 
     public Chessking(
@@ -78,7 +78,7 @@ public class Chessking extends AbstractMob implements BossMob {
 
     @Override
     public void onNPCCreate() {
-        npc.getOrAddTrait(SlimeSize.class).setSize(20);
+        npc.getOrAddTrait(SlimeSize.class).setSize(15);
         npc.data().set(NPC.Metadata.JUMP_POWER_SUPPLIER, (Function<NPC, Float>) npc -> .1f);
     }
 
