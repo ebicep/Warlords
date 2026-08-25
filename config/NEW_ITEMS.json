@@ -556,6 +556,19 @@
           "jumpHeight": 1,
           "airResist": 25
         },
+        "truePurpose": {
+          "tier": "LEGENDARY",
+          "name": "True Purpose",
+          "slots": [
+            "GLOVES",
+            "RING"
+          ],
+          "attributes": {
+            "HEALTH": 40,
+            "KB_RES": 2
+          },
+          "description": "All your attacks deal true damage (excluding bosses)."
+        },
         "soothsayer": {
           "tier": "LEGENDARY",
           "name": "Soothsayer",
@@ -1471,9 +1484,9 @@
             "BOOTS"
           ],
           "attributes": {
-            "HEALTH": 10
+            "HEALTH": 20
           },
-          "description": "T.B.D."
+          "description": "Leave a trail of fire behind you for 3 seconds. Dealing damage equal to the mob’s current health every second for 3 seconds."
         },
         "silentExecution": {
           "tier": "LEGENDARY",
