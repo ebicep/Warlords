@@ -105,7 +105,10 @@ public class Spelunker extends BaseSet {
             double roll = ThreadLocalRandom.current().nextDouble(100);
             Currencies currency;
             long amount;
-            if (roll < 50) {
+            if (roll < 25) {
+                currency = Currencies.COIN;
+                amount = 50;
+            } else if (roll < 50) {
                 currency = Currencies.SYNTHETIC_SHARD;
                 amount = 12;
             } else if (roll < 75) {
