@@ -92,7 +92,7 @@ public class VoidJailer extends AbstractMob implements ChampionMob {
 
     @Override
     public double getMobScale() {
-        return 1.3;
+        return 1.2;
     }
 
     @Override

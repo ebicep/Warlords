@@ -263,7 +263,7 @@ public class WarlordsNPC extends WarlordsEntity {
         }
 
         int rounded = Math.round(getCurrentHealth());
-        boolean shouldUpdateName = rounded != lastDisplayedHealth;
+        boolean shouldUpdateName = rounded != lastDisplayedHealth && getGame().getLoopTickCounter() % 2 == 0;
 
         if (entity instanceof Player player) {
             double healthDisplayY = player.getEyeHeight() + 0.15;
