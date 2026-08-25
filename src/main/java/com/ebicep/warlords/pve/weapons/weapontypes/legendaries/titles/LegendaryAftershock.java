@@ -1,12 +1,10 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
-import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
@@ -23,15 +21,19 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.springframework.data.annotation.Transient;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 
-public class LegendaryAftershock extends AbstractLegendaryWeapon {
+public class LegendaryAftershock extends AbstractLegendaryWeapon implements PassiveCounter {
 
     public static final int RADIUS_BLOCKS = 5;
     public static final int DURATION_SECONDS = 3;
     public static final int TICK_INTERVAL_TICKS = 5;
+    public static final int COOLDOWN_SECONDS = 5;
     public static final float SLOW_PERCENT = 25f;
 
     public static final float THRESHOLD_PERCENT_BASE = 15f;
@@ -39,6 +41,9 @@ public class LegendaryAftershock extends AbstractLegendaryWeapon {
 
     public static final float ZONE_DAMAGE_PERCENT_BASE = 30f;
     public static final float ZONE_DAMAGE_INC_PER_LEVEL = 1.5f;
+
+    @Transient
+    private final AtomicReference<Instant> nextReadyAt = new AtomicReference<>(Instant.EPOCH);
 
     public LegendaryAftershock() {
 
@@ -58,7 +63,7 @@ public class LegendaryAftershock extends AbstractLegendaryWeapon {
                 .append(formatTitleUpgrade(getThresholdPercent(), "%"))
                 .append(Component.text(" of the target’s max health creates an Aftershock zone (5 blocks) at the target for 3 seconds. The zone deals ", NamedTextColor.GRAY))
                 .append(formatTitleUpgrade(getZoneDamagePercent(), "%"))
-                .append(Component.text(" of the triggering hit over its duration and slows enemies by 25%.", NamedTextColor.GRAY));
+                .append(Component.text(" of the triggering hit over its duration and slows enemies by 25%. Only the first hit can trigger Aftershock. Has a " + COOLDOWN_SECONDS + " second cooldown.", NamedTextColor.GRAY));
     }
 
     @Override
@@ -91,6 +96,15 @@ public class LegendaryAftershock extends AbstractLegendaryWeapon {
         ).addModifier(
                 Modifier.ON_OUTGOING_DAMAGE,
                 (event, currentDamageValue, isCrit) -> {
+                    if (!event.getFlags().contains(InstanceFlags.FIRST_HIT)) {
+                        return;
+                    }
+
+                    Instant now = Instant.now();
+                    if (now.isBefore(nextReadyAt.get())) {
+                        return;
+                    }
+
                     float targetMax = event.getWarlordsEntity().getMaxHealth();
                     if (targetMax <= 0) {
                         return;
@@ -107,6 +121,7 @@ public class LegendaryAftershock extends AbstractLegendaryWeapon {
 
                     float totalZoneDamage = currentDamageValue * (getZoneDamagePercent() / 100f);
                     spawnAftershockZone(player, center.clone(), totalZoneDamage);
+                    nextReadyAt.set(now.plus(COOLDOWN_SECONDS, ChronoUnit.SECONDS));
                 })
         );
     }
@@ -197,5 +212,11 @@ public class LegendaryAftershock extends AbstractLegendaryWeapon {
     @Override
     protected float getSpeedBonusValue() {
         return 7;
+    }
+
+    @Override
+    public int getCounter() {
+        Instant now = Instant.now();
+        return now.isBefore(nextReadyAt.get()) ? (int) Math.ceil(ChronoUnit.MILLIS.between(now, nextReadyAt.get()) / 1000d) : 0;
     }
 }
