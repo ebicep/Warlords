@@ -53,9 +53,9 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
     private static final int ELITE_GUARDIANS_PER_PLAYER = 4;
     private static final int CHAMPION_GUARDIANS_PER_PLAYER = 2;
     private static final int GUARDIAN_SPAWN_INTERVAL_TICKS = 4;
-    private static final int VAULT_CHARGE_KILLS_REQUIRED = 40;
+    private static final int VAULT_CHARGE_KILLS_REQUIRED = 20;
     private static final int PENALTY_MOB_CAP = 10;
-    private static final double VAULT_CHARGE_PER_KILL = 2.5;
+    private static final double VAULT_CHARGE_PER_KILL = 5;
     private static final float MOB_DIFFICULTY_INCREASE_PER_CACHE = .3f;
     private static final double RUNE_DISPLAY_Y_OFFSET = 1.5;
     private static final float RUNE_DISPLAY_SCALE = 1.4f;
