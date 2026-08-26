@@ -92,7 +92,8 @@ public class LegendaryAftershock extends AbstractLegendaryWeapon implements Pass
                         null,
                         player,
                         CooldownTypes.WEAPON,
-                        cm -> {},
+                        cm -> {
+                        },
                         false
                 ).addModifier(
                         Modifier.ON_OUTGOING_DAMAGE,
@@ -221,3 +222,4 @@ public class LegendaryAftershock extends AbstractLegendaryWeapon implements Pass
         Instant now = Instant.now();
         return now.isBefore(nextReadyAt.get()) ? (int) Math.ceil(ChronoUnit.MILLIS.between(now, nextReadyAt.get()) / 1000d) : 0;
     }
+}
