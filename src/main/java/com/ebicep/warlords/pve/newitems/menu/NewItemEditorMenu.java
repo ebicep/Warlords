@@ -7,6 +7,7 @@ import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.PvEUtils;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.StarPieces;
+import com.ebicep.warlords.pve.mobs.MobDrop;
 import com.ebicep.warlords.pve.newitems.*;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
@@ -29,6 +30,52 @@ public class NewItemEditorMenu {
         map.put(Currencies.SYNTHETIC_SHARD, 500L);
         map.put(starPieceCurrency.currency, 1L);
         return map;
+    }
+
+    private static LinkedHashMap<Spendable, Long> getSalvageRewards(NewItem item) {
+        LinkedHashMap<Spendable, Long> rewards = new LinkedHashMap<>();
+        switch (item.getTier()) {
+            case COMMON, RARE -> rewards.put(Currencies.SCRAP_METAL, 25L);
+            case EPIC -> rewards.put(Currencies.SCRAP_METAL, 50L);
+            case SOVEREIGN -> {
+                rewards.put(Currencies.SCRAP_METAL, 100L);
+                rewards.put(Currencies.LEGEND_FRAGMENTS, 1000L);
+            }
+            case LEGENDARY -> {
+                rewards.put(Currencies.SCRAP_METAL, 100L);
+                rewards.put(MobDrop.ZENITH_STAR, 1L);
+            }
+            case ASCENDANT -> rewards.put(Currencies.SCRAP_METAL, 25L);
+        }
+        return rewards;
+    }
+
+    private static List<Component> getSalvageLore(Map<Spendable, Long> salvageRewards) {
+        List<Component> lore = new ArrayList<>();
+        lore.add(Component.text("Salvage this item and claim its materials.", NamedTextColor.GRAY));
+        lore.add(Component.empty());
+        lore.add(Component.text("Rewards:", NamedTextColor.GREEN));
+        salvageRewards.forEach((spendable, amount) -> lore.add(
+                Component.text(" - ", NamedTextColor.GRAY).append(spendable.getCostColoredName(amount))
+        ));
+        lore.add(Component.empty());
+        lore.add(Component.textOfChildren(
+                Component.text("WARNING: ", NamedTextColor.RED),
+                Component.text("This action cannot be undone.", NamedTextColor.GRAY)
+        ));
+        return lore;
+    }
+
+    private static Component getSalvageMessage(NewItem item, Map<Spendable, Long> salvageRewards) {
+        Component message = Component.text("You received ", NamedTextColor.GRAY);
+        int rewardIndex = 0;
+        for (Map.Entry<Spendable, Long> entry : salvageRewards.entrySet()) {
+            if (rewardIndex++ > 0) {
+                message = message.append(Component.text(", ", NamedTextColor.GRAY));
+            }
+            message = message.append(entry.getKey().getCostColoredName(entry.getValue()));
+        }
+        return message.append(Component.text(" from salvaging ", NamedTextColor.GRAY)).append(item.getHoverComponent());
     }
 
     public static void open(Player player, NewItem item) {
@@ -136,44 +183,25 @@ public class NewItemEditorMenu {
                 }
         );
 
+        LinkedHashMap<Spendable, Long> salvageRewards = getSalvageRewards(item);
+        List<Component> salvageLore = getSalvageLore(salvageRewards);
         menu.setItem(7, 2,
                 new ItemBuilder(Material.FURNACE)
                         .name(Component.text("Salvage Item", NamedTextColor.GREEN))
-                        .lore(Arrays.asList(
-                                Component.text("Salvage this item and claim its materials.", NamedTextColor.GRAY),
-                                Component.empty(),
-                                Component.textOfChildren(
-                                        Component.text("Rewards: ", NamedTextColor.GREEN),
-                                        Currencies.SCRAP_METAL.getCostColoredName(25)
-                                ),
-                                Component.empty(),
-                                Component.textOfChildren(
-                                        Component.text("WARNING: ", NamedTextColor.RED),
-                                        Component.text("This action cannot be undone.", NamedTextColor.GRAY)
-                                )
-                        ))
+                        .lore(salvageLore)
                         .get(),
                 (m, e) -> {
                     Menu.openConfirmationMenu(player,
                             "Confirm Salvage",
                             3,
-                            Arrays.asList(
-                                    Component.text("Salvage this item and claim its materials.", NamedTextColor.GRAY),
-                                    Component.empty(),
-                                    Component.textOfChildren(
-                                            Component.text("WARNING: ", NamedTextColor.RED),
-                                            Component.text("This action cannot be undone.", NamedTextColor.GRAY)
-                                    )
-                            ),
+                            salvageLore,
                             Menu.GO_BACK,
                             (m2, e2) -> {
                                 NewItemsManager itemsManager = databasePlayer.getPveStats().getNewItemsManager();
                                 itemsManager.removeItem(item);
-                                databasePlayer.getPveStats().addCurrency(Currencies.SCRAP_METAL, 25);
+                                salvageRewards.forEach((spendable, amount) -> spendable.addToPlayer(databasePlayer, amount));
                                 DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                                NewItemsUtils.sendItemMessage(player, Component.text("You received 25 Scrap Metal from salvaging ", NamedTextColor.GRAY)
-                                                                               .append(item.getHoverComponent())
-                                );
+                                NewItemsUtils.sendItemMessage(player, getSalvageMessage(item, salvageRewards));
                                 player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_BREAK, 2, 0.5f);
                                 NewItemEquipMenu.openItemEquipMenuExternal(player, databasePlayer);
                             },

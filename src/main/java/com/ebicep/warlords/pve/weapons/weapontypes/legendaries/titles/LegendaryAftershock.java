@@ -34,6 +34,7 @@ public class LegendaryAftershock extends AbstractLegendaryWeapon implements Pass
     public static final int DURATION_SECONDS = 3;
     public static final int TICK_INTERVAL_TICKS = 5;
     public static final int COOLDOWN_SECONDS = 3;
+
     public static final float SLOW_PERCENT = 25f;
 
     public static final float THRESHOLD_PERCENT_BASE = 15f;
@@ -220,4 +221,3 @@ public class LegendaryAftershock extends AbstractLegendaryWeapon implements Pass
         Instant now = Instant.now();
         return now.isBefore(nextReadyAt.get()) ? (int) Math.ceil(ChronoUnit.MILLIS.between(now, nextReadyAt.get()) / 1000d) : 0;
     }
-}
