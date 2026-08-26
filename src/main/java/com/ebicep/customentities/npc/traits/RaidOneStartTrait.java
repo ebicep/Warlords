@@ -31,12 +31,13 @@ public class RaidOneStartTrait extends WarlordsTrait implements HasNPCLabelHolog
         labelHologram.update(
                 npc,
                 ComponentBuilder.create(
-                                "Two crowns claim the same throne. Every step is a lie, and every mistake is final.",
-                                NamedTextColor.GRAY,
-                                TextDecoration.ITALIC
+                                "REGNUM OF TWO CROWNS",
+                                NamedTextColor.GOLD,
+                                TextDecoration.BOLD
                         )
                         .newLine("-ˋˏ ༻❁༺ ˎˊ-", NamedTextColor.DARK_GRAY, TextDecoration.BOLD)
-                        .newLine("REGNUM OF TWO CROWNS", NamedTextColor.GOLD, TextDecoration.BOLD)
+                        .newLine("Two crowns claim the same throne.", NamedTextColor.GRAY, TextDecoration.ITALIC)
+                        .newLine("Every step is a lie, and every mistake is final.", NamedTextColor.GRAY, TextDecoration.ITALIC)
                         .build()
         );
     }
