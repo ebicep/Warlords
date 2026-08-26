@@ -89,11 +89,11 @@ public class Infernal extends BaseSet {
 
                 @EventHandler
                 public void onCombust(EntityCombustEvent event) {
-                    if (!event.getEntity().getUniqueId().equals(warlordsPlayer.getUuid())) {
+                    if (!isActiveFire(event.getEntity().getLocation().getBlock())) {
                         return;
                     }
-                    if (isActiveFire(event.getEntity().getLocation().getBlock())) {
-                        event.setCancelled(true);
+                    event.setCancelled(true);
+                    if (event.getEntity().getUniqueId().equals(warlordsPlayer.getUuid())) {
                         event.getEntity().setFireTicks(0);
                     }
                 }
