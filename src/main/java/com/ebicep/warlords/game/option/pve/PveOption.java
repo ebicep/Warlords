@@ -177,8 +177,13 @@ public interface PveOption extends Option {
     }
 
     default void mobTick() {
+        int ticksElapsed = getTicksElapsed();
         for (AbstractMob mob : new ArrayList<>(getMobs())) {
-            mob.whileAlive(getTicksElapsed() - getMobsMap().get(mob).getSpawnTick(), this);
+            MobData data = getMobsMap().get(mob);
+            if (data == null) {
+                continue;
+            }
+            mob.whileAlive(ticksElapsed - data.getSpawnTick(), this);
             mob.activateAbilities();
         }
     }
