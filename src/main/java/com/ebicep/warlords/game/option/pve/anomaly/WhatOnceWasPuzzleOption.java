@@ -26,6 +26,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Interaction;
 import org.bukkit.entity.ItemDisplay;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -81,6 +82,7 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
     private boolean vaultRunning;
     private boolean guardianWaveRunning;
     private boolean failed;
+    private boolean unlockedCachesGranted;
     private List<AncientRune> activeCode = List.of();
 
     @Override
@@ -124,6 +126,13 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
                 }
                 event.setCancelled(true);
                 enterRune(event.getPlayer(), rune);
+            }
+
+            @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+            public void onWin(WarlordsGameTriggerWinEvent event) {
+                if (event.getDeclaredWinner() == Team.RED) {
+                    grantUnlockedCaches();
+                }
             }
         });
 
@@ -469,6 +478,10 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
     }
 
     private void grantUnlockedCaches() {
+        if (unlockedCachesGranted) {
+            return;
+        }
+        unlockedCachesGranted = true;
         int eligibleObjectiveCount = Math.min(cacheEligibility.length, currentAnomaly.getRewardPools().size());
         game.warlordsPlayers().forEach(warlordsPlayer -> {
             DatabasePlayer databasePlayer = DatabaseManager.getPlayer(warlordsPlayer.getUuid());
