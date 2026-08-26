@@ -18,6 +18,7 @@ import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
@@ -37,8 +38,8 @@ import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -73,7 +74,7 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
 
     private final boolean[] cacheEligibility = new boolean[3];
     private final Set<GameRunnable> laserTasks = ConcurrentHashMap.newKeySet();
-    private final Set<AbstractAbility> carrierAbilitiesStartingCooldown = new HashSet<>();
+    private final List<FloatModifiable.FloatModifier> carrierCooldownModifiers = new ArrayList<>();
 
     private List<DunestarRouteMarker> routeMarkers = List.of();
     private WarlordsPlayer carrier;
@@ -118,26 +119,6 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
                 }
                 event.setCancelled(true);
                 event.getPlayer().sendActionBar(Component.text("The relic prevents you from using your primary skill.", NamedTextColor.RED));
-            }
-
-            @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-            public void onAbility(WarlordsAbilityActivateEvent.Post event) {
-                if (carrier == null || event.getWarlordsEntity() != carrier || event.getSlot() == 0) {
-                    return;
-                }
-                if (event.getAbility().getCurrentCooldown() == 0) {
-                    carrierAbilitiesStartingCooldown.add(event.getAbility());
-                }
-            }
-
-            @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-            public void onAbility(WarlordsAbilityActivateEvent.PostApply event) {
-                if (carrier == null || event.getWarlordsEntity() != carrier || event.getSlot() == 0) {
-                    return;
-                }
-                if (carrierAbilitiesStartingCooldown.remove(event.getAbility())) {
-                    event.getAbility().setCurrentCooldown(event.getAbility().getCurrentCooldown() * ABILITY_COOLDOWN_MULTIPLIER);
-                }
             }
 
             @EventHandler(ignoreCancelled = true)
@@ -314,6 +295,15 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
         previousSlotEight = player.getInventory().getItem(8) == null ? null : player.getInventory().getItem(8).clone();
         player.getInventory().setItem(8, RELIC_ITEM.clone());
         player.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, Integer.MAX_VALUE, 0, false, false, true));
+
+        List<AbstractAbility> abilities = warlordsPlayer.getAbilities();
+        for (int i = 1; i < abilities.size(); i++) {
+            carrierCooldownModifiers.add(abilities.get(i).getCooldown().addModifier(
+                    FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                    "Dunestar Relic",
+                    ABILITY_COOLDOWN_MULTIPLIER
+            ));
+        }
 
         announce(Component.text(carrier.getName() + " picked up the Dunestar Relic!", NamedTextColor.GOLD));
         announce(Component.text("Reach each destination within 2 minutes, then charge the relic energy for 30 seconds.", NamedTextColor.AQUA));
@@ -642,7 +632,8 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
     }
 
     private void clearCarrierState() {
-        carrierAbilitiesStartingCooldown.clear();
+        carrierCooldownModifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
+        carrierCooldownModifiers.clear();
         if (carrier == null || !(carrier.getEntity() instanceof Player player)) {
             carrier = null;
             return;

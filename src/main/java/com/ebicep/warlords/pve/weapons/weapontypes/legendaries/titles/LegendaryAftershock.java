@@ -33,7 +33,8 @@ public class LegendaryAftershock extends AbstractLegendaryWeapon implements Pass
     public static final int RADIUS_BLOCKS = 5;
     public static final int DURATION_SECONDS = 3;
     public static final int TICK_INTERVAL_TICKS = 5;
-    public static final int COOLDOWN_SECONDS = 5;
+    public static final int COOLDOWN_SECONDS = 3;
+
     public static final float SLOW_PERCENT = 25f;
 
     public static final float THRESHOLD_PERCENT_BASE = 15f;
@@ -85,44 +86,40 @@ public class LegendaryAftershock extends AbstractLegendaryWeapon implements Pass
         super.applyToWarlordsPlayer(player, pveOption);
 
         player.getCooldownManager().addCooldown(new PermanentCooldown<>(
-                "Aftershock",
-                null,
-                LegendaryAftershock.class,
-                null,
-                player,
-                CooldownTypes.WEAPON,
-                cm -> {},
-                false
-        ).addModifier(
-                Modifier.ON_OUTGOING_DAMAGE,
-                (event, currentDamageValue, isCrit) -> {
-                    if (!event.getFlags().contains(InstanceFlags.FIRST_HIT)) {
-                        return;
-                    }
+                        "Aftershock",
+                        null,
+                        LegendaryAftershock.class,
+                        null,
+                        player,
+                        CooldownTypes.WEAPON,
+                        cm -> {},
+                        false
+                ).addModifier(
+                        Modifier.ON_OUTGOING_DAMAGE,
+                        (event, currentDamageValue, isCrit) -> {
+                            Instant now = Instant.now();
+                            if (now.isBefore(nextReadyAt.get())) {
+                                return;
+                            }
 
-                    Instant now = Instant.now();
-                    if (now.isBefore(nextReadyAt.get())) {
-                        return;
-                    }
+                            float targetMax = event.getWarlordsEntity().getMaxHealth();
+                            if (targetMax <= 0) {
+                                return;
+                            }
+                            float threshold = targetMax * (getThresholdPercent() / 100f);
+                            if (currentDamageValue < threshold) {
+                                return;
+                            }
 
-                    float targetMax = event.getWarlordsEntity().getMaxHealth();
-                    if (targetMax <= 0) {
-                        return;
-                    }
-                    float threshold = targetMax * (getThresholdPercent() / 100f);
-                    if (currentDamageValue < threshold) {
-                        return;
-                    }
+                            Location center = event.getWarlordsEntity().getLocation();
+                            if (center.getWorld() == null) {
+                                return;
+                            }
 
-                    Location center = event.getWarlordsEntity().getLocation();
-                    if (center.getWorld() == null) {
-                        return;
-                    }
-
-                    float totalZoneDamage = currentDamageValue * (getZoneDamagePercent() / 100f);
-                    spawnAftershockZone(player, center.clone(), totalZoneDamage);
-                    nextReadyAt.set(now.plus(COOLDOWN_SECONDS, ChronoUnit.SECONDS));
-                })
+                            float totalZoneDamage = currentDamageValue * (getZoneDamagePercent() / 100f);
+                            spawnAftershockZone(player, center.clone(), totalZoneDamage);
+                            nextReadyAt.set(now.plus(COOLDOWN_SECONDS, ChronoUnit.SECONDS));
+                        })
         );
     }
 
@@ -149,7 +146,12 @@ public class LegendaryAftershock extends AbstractLegendaryWeapon implements Pass
                                     .source(owner)
                                     .min(damagePerTick)
                                     .max(damagePerTick)
-                                    .flags(InstanceFlags.NO_HEALING_ORBS, InstanceFlags.NO_HEALING_LEECH, InstanceFlags.NO_LUST_HEALING)
+                                    .flags(
+                                            InstanceFlags.NO_HEALING_ORBS,
+                                            InstanceFlags.NO_HEALING_LEECH,
+                                            InstanceFlags.NO_LUST_HEALING,
+                                            InstanceFlags.DOT
+                                    )
                             );
                             enemy.addSpeedModifier(owner, "Aftershock", -SLOW_PERCENT, DURATION_SECONDS);
                         });
@@ -206,12 +208,12 @@ public class LegendaryAftershock extends AbstractLegendaryWeapon implements Pass
 
     @Override
     protected float getHealthBonusValue() {
-        return 1000;
+        return 500;
     }
 
     @Override
     protected float getSpeedBonusValue() {
-        return 7;
+        return 8;
     }
 
     @Override
@@ -219,4 +221,3 @@ public class LegendaryAftershock extends AbstractLegendaryWeapon implements Pass
         Instant now = Instant.now();
         return now.isBefore(nextReadyAt.get()) ? (int) Math.ceil(ChronoUnit.MILLIS.between(now, nextReadyAt.get()) / 1000d) : 0;
     }
-}

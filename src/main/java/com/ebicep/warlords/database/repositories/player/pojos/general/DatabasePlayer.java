@@ -908,6 +908,23 @@ public class DatabasePlayer implements MultiStatsGeneral, TracksMultiAbilityStat
                 return true;
             }
         },
+        REMOVE_RESET_PLAYER_STAT_REWARD {
+            @Override
+            public boolean run(UUID uuid, DatabasePlayer databasePlayer) {
+                List<CompensationReward> compensationRewards = databasePlayer.getPveStats().getCompensationRewards();
+                compensationRewards.removeIf(reward -> {
+                    String from = reward.getFrom();
+                    if (!from.equals("Reset Player stat") && !from.equals("Reset Player stat Reward")) {
+                        return false;
+                    }
+                    if (reward.claimed()) {
+                        reward.unGiveToPlayer(databasePlayer);
+                    }
+                    return true;
+                });
+                return true;
+            }
+        },
 
         ;
 

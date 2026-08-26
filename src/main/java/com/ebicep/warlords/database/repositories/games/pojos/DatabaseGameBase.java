@@ -71,22 +71,18 @@ public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
     public static boolean addGame(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent gameWinEvent, boolean updatePlayerStats) {
         try {
             if (!GameMode.isPvE(game.getGameMode())) {
-                float highestDamage = game.warlordsPlayers()
-                                          .max(Comparator.comparing((WarlordsPlayer wp) -> wp.getMinuteStats().total().getDamage()))
-                                          .get()
-                                          .getMinuteStats()
-                                          .total()
-                                          .getDamage();
-                float highestHealing = game.warlordsPlayers()
-                                           .max(Comparator.comparing((WarlordsPlayer wp) -> wp.getMinuteStats().total().getHealing()))
-                                           .get()
-                                           .getMinuteStats()
-                                           .total()
-                                           .getHealing();
-                //checking for inflated stats
-                if (highestDamage > 750000 || highestHealing > 750000) {
-                    updatePlayerStats = false;
-                    ChatUtils.MessageType.WARLORDS.sendMessage("NOT UPDATING PLAYER STATS - Game exceeds 750k damage / healing");
+                Optional<WarlordsPlayer> highestDamagePlayer = game.warlordsPlayers()
+                        .max(Comparator.comparing((WarlordsPlayer wp) -> wp.getMinuteStats().total().getDamage()));
+                Optional<WarlordsPlayer> highestHealingPlayer = game.warlordsPlayers()
+                        .max(Comparator.comparing((WarlordsPlayer wp) -> wp.getMinuteStats().total().getHealing()));
+                if (highestDamagePlayer.isPresent() && highestHealingPlayer.isPresent()) {
+                    float highestDamage = highestDamagePlayer.get().getMinuteStats().total().getDamage();
+                    float highestHealing = highestHealingPlayer.get().getMinuteStats().total().getHealing();
+                    //checking for inflated stats
+                    if (highestDamage > 750000 || highestHealing > 750000) {
+                        updatePlayerStats = false;
+                        ChatUtils.MessageType.WARLORDS.sendMessage("NOT UPDATING PLAYER STATS - Game exceeds 750k damage / healing");
+                    }
                 }
             } else {
                 for (Option option : game.getOptions()) {
@@ -149,12 +145,7 @@ public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
                 return false;
             }
 
-            if (databaseGame instanceof DatabaseGameCTF databaseGameCTF
-                    && game.getAddons().contains(GameAddon.PRIVATE_GAME)) {
-                Warlords.newChain()
-                        .async(() -> DatabaseGameCTF.sendGamesBacklogJson(databaseGameCTF))
-                        .execute();
-            }
+            scheduleGamesBacklogJson(game, databaseGame);
 
             if (previousGames.size() >= MAX_GAMES) {
                 previousGames.get(0).deleteHolograms();
@@ -196,11 +187,31 @@ public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
                 return false;
             }
             DatabaseGameBase databaseGame = createDatabaseGame.apply(game, gameWinEvent, updatePlayerStats);
+            if (databaseGame == null) {
+                ChatUtils.MessageType.GAME_SERVICE.sendMessage("Cannot add game to database - null database game after error");
+                return false;
+            }
+            scheduleGamesBacklogJson(game, databaseGame);
             Warlords.newChain()
                     .async(() -> DatabaseManager.gameService.createBackup(databaseGame))
                     .execute();
+            addGameToDatabase(databaseGame, null);
         }
         return updatePlayerStats;
+    }
+
+    private static void scheduleGamesBacklogJson(@Nonnull Game game, DatabaseGameBase databaseGame) {
+        if (!(databaseGame instanceof DatabaseGameCTF databaseGameCTF) || !game.getAddons().contains(GameAddon.PRIVATE_GAME)) {
+            return;
+        }
+        ChatUtils.MessageType.GAME_SERVICE.sendMessage(
+                "Scheduling games-backlog JSON send - id=" + databaseGameCTF.getId()
+                        + ", addons=" + game.getAddons()
+                        + ", players=" + game.playersCount()
+        );
+        Warlords.newChain()
+                .async(() -> DatabaseGameCTF.sendGamesBacklogJson(databaseGameCTF))
+                .execute();
     }
 
     public void deleteHolograms() {

@@ -116,8 +116,8 @@ public class CripplingStrike extends AbstractStrike<CripplingStrike, CripplingSt
                 .value(damageValues.strikeDamage)
         ).ifPresent(finalEvent -> onFinalEvent(wp, nearPlayer, finalEvent)
         );
-        if (pveMasterUpgrade) {
-            additionalHit(4, wp, nearPlayer, warlordsEntity -> {
+        if (pveMasterUpgrade || pveMasterUpgrade2) {
+            additionalHit(pveMasterUpgrade ? 4 : 3, wp, nearPlayer, warlordsEntity -> {
                         warlordsEntity.addInstance(InstanceBuilder
                                 .damage()
                                 .ability(this)
