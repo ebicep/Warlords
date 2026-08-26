@@ -96,10 +96,6 @@ public class LegendaryAftershock extends AbstractLegendaryWeapon implements Pass
                 ).addModifier(
                         Modifier.ON_OUTGOING_DAMAGE,
                         (event, currentDamageValue, isCrit) -> {
-                            if (!event.getFlags().contains(InstanceFlags.FIRST_HIT)) {
-                                return;
-                            }
-
                             Instant now = Instant.now();
                             if (now.isBefore(nextReadyAt.get())) {
                                 return;
