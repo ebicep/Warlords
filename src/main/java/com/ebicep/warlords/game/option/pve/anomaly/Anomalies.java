@@ -146,9 +146,9 @@ public enum Anomalies {
                     Component.text("Wrong inputs summon additional defenders.")
             ),
             List.of(
-                    new AnomalyRewardPool("Remnant Cache I", 500, 50, 1, 0.1),
-                    new AnomalyRewardPool("Remnant Cache II", 750, 75, 1, 0.1),
-                    new AnomalyRewardPool("Remnant Cache III", 1000, 100, 2, 0.15)
+                    new AnomalyRewardPool("Remnant Cache I", 500, 50, 1, 0.10),
+                    new AnomalyRewardPool("Remnant Cache II", 750, 75, 1, 0.15),
+                    new AnomalyRewardPool("Remnant Cache III", 1000, 100, 2, 0.20)
             ),
             new AnomalyMobSet()
                     //basic

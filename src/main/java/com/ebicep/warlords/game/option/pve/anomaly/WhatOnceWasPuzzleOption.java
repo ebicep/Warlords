@@ -502,13 +502,6 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
                 return;
             }
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-            Player player = Bukkit.getPlayer(uuid);
-            if (player != null) {
-                player.sendMessage(Component.text(
-                        "You kept " + cachesGranted + "/3 reward caches unlocked before the anomaly failed.",
-                        NamedTextColor.YELLOW
-                ));
-            }
             RewardInventory.sendRewardMessage(
                     uuid,
                     Component.text(cachesGranted + " Anomaly Reward " + (cachesGranted == 1 ? "Cache is" : "Caches are") + " ready to claim.", NamedTextColor.AQUA)
