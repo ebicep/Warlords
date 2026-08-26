@@ -107,7 +107,7 @@ public class Spelunker extends BaseSet {
             long amount;
             if (roll < 25) {
                 currency = Currencies.COIN;
-                amount = 50;
+                amount = 100;
             } else if (roll < 50) {
                 currency = Currencies.SYNTHETIC_SHARD;
                 amount = 12;

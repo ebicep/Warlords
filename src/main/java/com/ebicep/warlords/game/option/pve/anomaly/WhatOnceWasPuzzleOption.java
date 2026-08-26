@@ -25,7 +25,9 @@ import org.bukkit.entity.Display;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Interaction;
 import org.bukkit.entity.ItemDisplay;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -65,6 +67,7 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
     private final boolean[] cacheEligibility = new boolean[VAULT_COUNT / 2];
     private final List<Entity> runeEntities = new ArrayList<>();
     private final Map<UUID, AncientRune> runeInteractions = new HashMap<>();
+    private final List<UUID> rewardEligiblePlayers = new ArrayList<>();
 
     private List<AncientVaultMarker> vaultMarkers = List.of();
     private int preparationTicks = START_DELAY_TICKS;
@@ -125,6 +128,13 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
                 event.setCancelled(true);
                 enterRune(event.getPlayer(), rune);
             }
+
+            @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+            public void onWin(WarlordsGameTriggerWinEvent event) {
+                if (event.getDeclaredWinner() == Team.RED) {
+                    grantUnlockedCaches();
+                }
+            }
         });
 
         game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(5, "what_once_was_puzzle") {
@@ -138,6 +148,12 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
 
     @Override
     public void start(@Nonnull Game game) {
+        rewardEligiblePlayers.clear();
+        game.warlordsPlayersWithoutSpectators()
+                .filter(entry -> entry.getValue() == Team.BLUE)
+                .map(Map.Entry::getKey)
+                .forEach(rewardEligiblePlayers::add);
+
         new GameRunnable(game) {
             @Override
             public void run() {
@@ -356,7 +372,7 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
         return List.copyOf(code);
     }
 
-    private void enterRune(org.bukkit.entity.Player player, AncientRune rune) {
+    private void enterRune(Player player, AncientRune rune) {
         AncientRune expected = activeCode.get(codeProgress);
         if (rune != expected) {
             codeProgress = 0;
@@ -470,8 +486,8 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
 
     private void grantUnlockedCaches() {
         int eligibleObjectiveCount = Math.min(cacheEligibility.length, currentAnomaly.getRewardPools().size());
-        game.warlordsPlayers().forEach(warlordsPlayer -> {
-            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(warlordsPlayer.getUuid());
+        rewardEligiblePlayers.forEach(uuid -> {
+            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid);
             int cachesGranted = 0;
             for (int i = 0; i < eligibleObjectiveCount; i++) {
                 if (!cacheEligibility[i]) {
@@ -486,12 +502,8 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
                 return;
             }
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-            warlordsPlayer.sendMessage(Component.text(
-                    "You kept " + cachesGranted + "/3 reward caches unlocked before the anomaly failed.",
-                    NamedTextColor.YELLOW
-            ));
             RewardInventory.sendRewardMessage(
-                    warlordsPlayer.getUuid(),
+                    uuid,
                     Component.text(cachesGranted + " Anomaly Reward " + (cachesGranted == 1 ? "Cache is" : "Caches are") + " ready to claim.", NamedTextColor.AQUA)
             );
         });
@@ -507,7 +519,6 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
         completed = true;
         removeRuneEntities();
         clearHostileMobs();
-        grantUnlockedCaches();
         announce(Component.text("Vault " + (activeVault + 1) + " sealed itself. The anomaly has failed.", NamedTextColor.RED));
         game.forEachOnlinePlayer((player, team) -> {
             player.showTitle(Title.title(

@@ -203,6 +203,7 @@ public class NewItemEditorMenu {
                                 DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                                 NewItemsUtils.sendItemMessage(player, getSalvageMessage(item, salvageRewards));
                                 player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_BREAK, 2, 0.5f);
+                                player.playSound(player.getLocation(), "misc.weaponupgrade", 2, 0.6f);
                                 NewItemEquipMenu.openItemEquipMenuExternal(player, databasePlayer);
                             },
                             (m2, e2) -> NewItemEditorMenu.open(player, item),
