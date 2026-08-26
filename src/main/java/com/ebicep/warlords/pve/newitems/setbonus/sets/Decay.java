@@ -82,9 +82,15 @@ public class Decay extends BaseSet {
                 if (event.getWarlordsEntity().equals(warlordsPlayer)) {
                     tryApply(warlordsPlayer, event.getSource(), event);
                 }
-            }).addModifier(Modifier.ON_OUTGOING_DAMAGE, (event, currentDamageValue, isCrit) ->
-                    tryApply(warlordsPlayer, event.getWarlordsEntity(), event)
-            ));
+            }).addModifier(Modifier.ON_OUTGOING_DAMAGE, (event, currentDamageValue, isCrit) -> {
+                if (!event.getWarlordsEntity().equals(warlordsPlayer)) {
+                    return;
+                }
+                if (event.getFlags().contains(InstanceFlags.DOT)) {
+                    return;
+                }
+                tryApply(warlordsPlayer, event.getWarlordsEntity(), event);
+            }));
         }
 
     }
