@@ -156,14 +156,13 @@ public enum Anomalies {
                     .add(0.1, Mob.SKELETAL_WARLOCK)
                     .add(0.2, Mob.PIG_SHAMAN)
                     .add(0.15, Mob.GOLEM_APPRENTICE)
-                    .add(0.06, Mob.WITCH_DEACON)
+                    .add(0.03, Mob.WITCH_DEACON)
                     .add(0.02, Mob.ADVANCED_WARRIOR_BERSERKER)
                     //envoy
                     .add(0.05, Mob.ZOMBIE_VANGUARD)
                     .add(0.05, Mob.SKELETAL_ENTROPY)
                     .add(0.01, Mob.PIG_ALLEVIATOR)
-                    .add(0.05, Mob.VOID_ZOMBIE)
-                    .add(0.001, Mob.VOID_JAILER)
+                    .add(0.02, Mob.VOID_ZOMBIE)
     );
 
     public static final Anomalies[] VALUES = values();
