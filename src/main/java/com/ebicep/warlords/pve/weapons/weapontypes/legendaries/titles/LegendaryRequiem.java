@@ -69,66 +69,6 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
         DifficultyIndex difficulty = pveOption.getDifficulty();
 
         Game game = player.getGame();
-//        game.registerEvents(new Listener() {
-//
-//            @EventHandler
-//            public void onAddCooldown(WarlordsAddCooldownEvent event) {
-//                AbstractCooldown<?> cooldown = event.getAbstractCooldown();
-//                if (!(cooldown.getCooldownObject() instanceof UndyingArmy.UndyingArmyData)) {
-//                    return;
-//                }
-//                if (!Objects.equals(event.getWarlordsEntity(), player)) {
-//                    return;
-//                }
-//                int alliedNPCs = (int) game.warlordsNPCs()
-//                                           .filter(warlordsNPC -> warlordsNPC.isTeammate(player))
-//                                           .count();
-//                int spawnAmount = MathUtils.generateRandomValueBetweenInclusive(2, 4);
-//                if (alliedNPCs + spawnAmount > SPAWN_LIMIT) {
-//                    spawnAmount = SPAWN_LIMIT - alliedNPCs;
-//                }
-//                if (spawnAmount <= 0) {
-//                    return;
-//                }
-//                List<WarlordsNPC> toConvert = PlayerFilterGeneric.playingGameWarlordsNPCs(game)
-//                                                                 .aliveEnemiesOf(player)
-//                                                                 .filter(warlordsNPC -> !(warlordsNPC.getMob() instanceof BossMob) && !(warlordsNPC.getMob() instanceof BossMinionMob))
-//                                                                 .filter(warlordsNPC -> warlordsNPC.getMob().getEquipment() != null)
-//                                                                 .limit(spawnAmount)
-//                                                                 .toList();
-//                toConvert.forEach(convertedEnemy -> {
-//                    EffectUtils.playCylinderAnimation(convertedEnemy.getLocation(), 1.05, Particle.HAPPY_VILLAGER, 1);
-//                    convertedEnemy.setTeam(warlordsPlayer.getTeam());
-//                    AbstractMob mob = DIFFICULTY_SPAWNS.getOrDefault(difficulty, Mob.ZOMBIE_LANCER).createMob(player.getLocation());
-//                    mob.setAspect(Aspect.getRandomAspect(List.of(Aspect.INFERNAL)));
-//                    updateMobEquipment(mob, player);
-//                    //removing teammate mobs that are aggroed on converted target
-//                    PlayerFilterGeneric.playingGameWarlordsNPCs(game)
-//                                       .aliveTeammatesOf(player)
-//                                       .filter(teammate -> {
-//                                           Entity target = teammate.getMob().getTarget();
-//                                           return target != null && Objects.equals(target, convertedEnemy.getEntity());
-//                                       })
-//                                       .forEach(teammate -> teammate.getMob().removeTarget());
-//                    mob.removeTarget();
-//                });
-//                Bukkit.getPluginManager().callEvent(new WarlordsMobConvertEvent(player, toConvert));
-//                new GameRunnable(game) {
-//
-//                    @Override
-//                    public void run() {
-//                        toConvert.forEach(convertedEnemy -> {
-//                            AbstractMob mob = convertedEnemy.getMob();
-//                            if (pveOption.getMobs().contains(mob)) {
-//                                mob.getWarlordsNPC().die(mob.getWarlordsNPC(), WarlordsDeathEvent.DeathInfoBuilder.create().setForced(true));
-//                            }
-//                        });
-//                        toConvert.clear();
-//                    }
-//                }.runTaskLater(20 * 180);
-//            }
-//
-//        });
         int cooldown = (COOLDOWN + COOLDOWN_INCREASE_PER_UPGRADE * getTitleLevel()) * 20;
 
         new GameRunnable(game) {
@@ -181,10 +121,10 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
                     updateMobEquipment(mob, player);
                     allSpawnedMobs.add(mob);
                     spawnedMobs.add(mob);
-                    if (warlordsPlayer.getTeam() == null) {
+                    if (player.getTeam() == null) {
                         return;
                     }
-                    pveOption.spawnNewMob(mob, warlordsPlayer.getTeam());
+                    pveOption.spawnNewMob(mob, player.getTeam());
                 }
                 new GameRunnable(game) {
                     @Override
