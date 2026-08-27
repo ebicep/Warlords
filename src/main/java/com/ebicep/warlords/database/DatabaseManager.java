@@ -18,6 +18,7 @@ import com.ebicep.warlords.database.repositories.masterworksfair.MasterworksFair
 import com.ebicep.warlords.database.repositories.player.PlayerService;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayerPatches;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.database.repositories.timings.TimingsService;
 import com.ebicep.warlords.database.repositories.timings.pojos.DatabaseTiming;
@@ -229,18 +230,23 @@ public class DatabaseManager {
         applyPrestigeOrbLoginPatch(uuid, databasePlayer);
 
         // PATCHES
-        List<DatabasePlayer.Patches> patchesApplied = databasePlayer.getPatchesApplied();
-        for (DatabasePlayer.Patches patch : DatabasePlayer.Patches.VALUES) {
+        List<DatabasePlayerPatches> patchesApplied = databasePlayer.getPatchesApplied();
+        for (DatabasePlayerPatches patch : DatabasePlayerPatches.VALUES) {
             if (patchesApplied.contains(patch)) {
                 continue;
             }
             ChatUtils.MessageType.WARLORDS.sendMessage("Applying " + patch + " patch to " + uuid);
-            boolean applied = patch.run(uuid, databasePlayer);
-            if (applied) {
-                ChatUtils.MessageType.WARLORDS.sendMessage("Applied " + patch + " patch to " + uuid);
-                patchesApplied.add(patch);
-            } else {
+            try {
+                boolean applied = patch.run(uuid, databasePlayer);
+                if (applied) {
+                    ChatUtils.MessageType.WARLORDS.sendMessage("Applied " + patch + " patch to " + uuid);
+                    patchesApplied.add(patch);
+                } else {
+                    ChatUtils.MessageType.WARLORDS.sendErrorMessage("Failed to apply " + patch + " patch to " + uuid);
+                }
+            } catch (Exception e) {
                 ChatUtils.MessageType.WARLORDS.sendErrorMessage("Failed to apply " + patch + " patch to " + uuid);
+                ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
             }
         }
 
