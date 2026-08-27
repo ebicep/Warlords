@@ -38,14 +38,13 @@ import com.ebicep.warlords.pve.rewards.types.PatreonReward;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.packets.PacketUtils;
 import com.ebicep.warlords.util.chat.ChatUtils;
-import com.ebicep.warlords.util.java.DateUtil;
 import com.ebicep.warlords.util.java.MemoryManager;
 import com.ebicep.warlords.util.java.Priority;
 import com.ebicep.warlords.util.warlords.ConfigUtil;
+import com.ebicep.warlords.util.warlords.ServerRestartReminders;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.event.EventBus;
@@ -66,21 +65,15 @@ import org.bukkit.scheduler.BukkitRunnable;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.login.LoginException;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.ebicep.warlords.util.java.JavaUtils.iterable;
 
 public class Warlords extends JavaPlugin {
 
     public static final HashMap<UUID, Location> SPAWN_POINTS = new HashMap<>();
-    public static final AtomicBoolean SENT_HOUR_REMINDER = new AtomicBoolean(false);
-    public static final AtomicBoolean SENT_HALF_HOUR_REMINDER = new AtomicBoolean(false);
-    public static final AtomicBoolean SENT_FIFTEEN_MINUTE_REMINDER = new AtomicBoolean(false);
     private static final ConcurrentHashMap<UUID, WarlordsEntity> PLAYERS = new ConcurrentHashMap<>();
     public static String VERSION = "";
     //public static TextColor VERSION_COLOR = TextColor.color(105, 0, 0);
@@ -464,7 +457,7 @@ public class Warlords extends JavaPlugin {
         HologramManager.init(this);
 
         startWarlordsEntitiesLoop();
-        startRestartReminderLoop();
+        ServerRestartReminders.start(this);
 
         //Sending data to mod
         Bukkit.getServer().getMessenger().registerOutgoingPluginChannel(this, "warlords:warlords");
@@ -562,38 +555,6 @@ public class Warlords extends JavaPlugin {
                 ticksElapsed++;
             }
         }.runTaskTimer(this, 0, 0);
-    }
-
-    private void startRestartReminderLoop() {
-        new BukkitRunnable() {
-
-            final Instant nextReset = Instant.now().isAfter(DateUtil.getNextResetDate()) ?
-                                      DateUtil.getNextResetDate().plus(24, ChronoUnit.HOURS) :
-                                      DateUtil.getNextResetDate();
-
-            @Override
-            public void run() {
-                Instant now = Instant.now();
-                if (!SENT_HOUR_REMINDER.get()) {
-                    if (now.plus(1, ChronoUnit.HOURS).isAfter(nextReset)) {
-                        Bukkit.broadcast(Component.text("The server will restart in 1 hour.", NamedTextColor.RED));
-                        SENT_HOUR_REMINDER.set(true);
-                    }
-                } else if (!SENT_HALF_HOUR_REMINDER.get()) {
-                    if (now.plus(30, ChronoUnit.MINUTES).isAfter(nextReset)) {
-                        Bukkit.broadcast(Component.text("The server will restart in 30 minutes.", NamedTextColor.RED));
-                        SENT_HALF_HOUR_REMINDER.set(true);
-                    }
-                } else if (!SENT_FIFTEEN_MINUTE_REMINDER.get()) {
-                    if (now.plus(15, ChronoUnit.MINUTES).isAfter(nextReset)) {
-                        Bukkit.broadcast(Component.text("The server will restart in 15 minutes.", NamedTextColor.RED));
-                        SENT_FIFTEEN_MINUTE_REMINDER.set(true);
-                        cancel(); // Can cancel since there are no more checks
-                    }
-                }
-
-            }
-        }.runTaskTimer(this, 20, 1000);
     }
 
     public boolean isDisabling() {

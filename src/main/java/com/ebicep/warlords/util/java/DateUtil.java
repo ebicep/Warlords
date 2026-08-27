@@ -26,14 +26,20 @@ public class DateUtil {
         }
     }
 
+    /**
+     * @return The next future 10 AM UTC (today if still ahead, otherwise tomorrow)
+     */
     public static Instant getNextResetDate() {
-        return OffsetDateTime
+        OffsetDateTime next = OffsetDateTime
                 .now(ZoneOffset.UTC)
                 .withHour(10)
                 .withMinute(0)
                 .withSecond(0)
-                .withNano(0)
-                .toInstant();
+                .withNano(0);
+        if (!next.toInstant().isAfter(Instant.now())) {
+            next = next.plusDays(1);
+        }
+        return next.toInstant();
     }
 
     public static Instant getResetDateLatestMonday() {

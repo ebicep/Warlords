@@ -1,7 +1,6 @@
 package com.ebicep.warlords.commands.debugcommands.game;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.commands.debugcommands.misc.AdminCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
@@ -33,10 +32,6 @@ import static com.ebicep.warlords.util.chat.ChatChannels.sendDebugMessage;
 public class GameStartCommand {
 
     public static void startGamePvE(Player player, GameMode gameMode, Consumer<GameManager.QueueEntryBuilder> entryEditor) {
-        if (Warlords.SENT_HALF_HOUR_REMINDER.get() && !AdminCommand.DISABLE_RESTART_CHECK) {
-            player.sendMessage(Component.text("You cannot start a new game 30 minutes before the server restarts.", NamedTextColor.RED));
-            return;
-        }
         startGame(player, false, entryEditor.andThen(queueEntryBuilder -> {
                     queueEntryBuilder
                             .setGameMode(gameMode)
@@ -123,10 +118,6 @@ public class GameStartCommand {
     }
 
     public static void startGamePvERaid(Player player, Consumer<GameManager.QueueEntryBuilder> entryEditor) {
-        if (Warlords.SENT_HALF_HOUR_REMINDER.get() && !AdminCommand.DISABLE_RESTART_CHECK) {
-            player.sendMessage(Component.text("You cannot start a new game 30 minutes before the server restarts.", NamedTextColor.RED));
-            return;
-        }
         startGame(player, false, entryEditor.andThen(queueEntryBuilder -> {
                     queueEntryBuilder
                             .setGameMode(GameMode.RAID)
@@ -142,10 +133,6 @@ public class GameStartCommand {
     }
 
     public static void startGamePvEEvent(Player player, Consumer<GameManager.QueueEntryBuilder> entryEditor) {
-        if (Warlords.SENT_HALF_HOUR_REMINDER.get() && !AdminCommand.DISABLE_RESTART_CHECK) {
-            player.sendMessage(Component.text("You cannot start a new game 30 minutes before the server restarts.", NamedTextColor.RED));
-            return;
-        }
         DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
         if (currentGameEvent == null || !currentGameEvent.isActive()) {
             player.sendMessage(Component.text("The event is over!", NamedTextColor.RED));
