@@ -303,11 +303,11 @@ public abstract class AbstractAnomalyOption implements PveOption {
         int playerCount = playerCount();
         boolean isNotSolo = playerCount > 1;
         /*
-         * Base scale of 600
+         * Base scale of 700
          *
          * The higher the scale is the longer it takes to increase per interval.
          */
-        double scale = 800;
+        double scale = 700;
         // Flag check whether mob is a boss.
         boolean bossFlagCheck = isNotSolo && warlordsNPC.getMob() instanceof BossLike;
         // Reduce base scale by 75 for each player after 2 or more players in game instance.

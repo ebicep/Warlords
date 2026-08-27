@@ -99,9 +99,10 @@ public enum Anomalies {
                     .add(0.06, Mob.WITCH_DEACON)
                     .add(0.02, Mob.ADVANCED_WARRIOR_BERSERKER)
                     //envoy
-                    .add(0.05, Mob.ZOMBIE_VANGUARD)
-                    .add(0.05, Mob.SKELETAL_ENTROPY)
-                    .add(0.01, Mob.PIG_ALLEVIATOR)
+                    .add(0.1, Mob.ZOMBIE_KNIGHT)
+                    .add(0.1, Mob.SCRUPULOUS_ZOMBIE)
+                    .add(0.1, Mob.SKELETAL_SORCERER)
+                    .add(0.05, Mob.RIFT_WALKER)
                     //elite
                     .add(0.04, Mob.VOID_ZOMBIE)
                     .add(0.04, Mob.SKELETAL_MESMER)
@@ -112,31 +113,26 @@ public enum Anomalies {
                     .add(0.01, Mob.BARNACLE_BRUTE)
                     .add(0.01, Mob.ABYSS_WATCHER),
             new AnomalyMobSet()
-                    //basic
-                    .add(0.4, Mob.ZOMBIE_LANCER)
-                    .add(0.2, Mob.SLIMY_ANOMALY)
-                    .add(0.2, Mob.ARACHNO_VENARI)
-                    //elite
-                    .add(0.5, Mob.ZOMBIE_SWORDSMAN)
-                    .add(0.1, Mob.SKELETAL_WARLOCK)
-                    .add(0.2, Mob.PIG_SHAMAN)
-                    .add(0.02, Mob.ILLUMINATION)
-                    .add(0.15, Mob.GOLEM_APPRENTICE)
-                    .add(0.06, Mob.WITCH_DEACON)
-                    .add(0.02, Mob.ADVANCED_WARRIOR_BERSERKER)
+                    .add(0.1, Mob.ILLUMINATION)
+                    .add(0.2, Mob.GOLEM_APPRENTICE)
+                    .add(0.05, Mob.WITCH_DEACON)
                     //envoy
-                    .add(0.05, Mob.ZOMBIE_VANGUARD)
-                    .add(0.05, Mob.SKELETAL_ENTROPY)
-                    .add(0.01, Mob.PIG_ALLEVIATOR)
-                    //elite
-                    .add(0.04, Mob.VOID_ZOMBIE)
-                    .add(0.04, Mob.SKELETAL_MESMER)
-                    .add(0.04, Mob.FIRE_SPLITTER)
-                    .add(0.02, Mob.RIFT_WALKER)
+                    .add(0.5, Mob.SLIME_GUARD)
+                    //void
+                    .add(0.1, Mob.VOID_ZOMBIE)
+                    .add(0.3, Mob.SKELETAL_MESMER)
+                    .add(0.06, Mob.PIG_PARTICLE)
+                    .add(0.02, Mob.SLIMY_CHESS)
+                    // exiled
+                    .add(0.1, Mob.ZOMBIE_KNIGHT)
+                    .add(0.2, Mob.SCRUPULOUS_ZOMBIE)
+                    .add(0.3, Mob.SKELETAL_SORCERER)
+                    // forgotten
+                    .add(0.01, Mob.NIGHTMARE_ZOMBIE)
+                    .add(0.5, Mob.OVERGROWN_ZOMBIE)
+                    .add(0.01, Mob.CELESTIAL_OPUS)
                     // champion
-                    .add(0.01, Mob.LANTERN_DREDGER)
-                    .add(0.01, Mob.BARNACLE_BRUTE)
-                    .add(0.01, Mob.ABYSS_WATCHER)
+                    .add(0.001, Mob.VOID_JAILER)
     ),
     WHAT_ONCE_WAS(
             "What Once Was",

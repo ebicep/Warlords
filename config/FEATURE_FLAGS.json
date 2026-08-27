@@ -9,7 +9,7 @@
       "honorificsDisplay": false
     },
     "npcs": {
-      "supply-drop": false
+      "supply-drop": true
     }
   }
 }
