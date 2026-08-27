@@ -26,6 +26,10 @@ public class BountyReward extends AbstractReward {
         this.bounty = bounty;
     }
 
+    public BountyReward(LinkedHashMap<Spendable, Long> rewards, String bountyName) {
+        super(rewards, bountyName + " Guild Bounty");
+    }
+
     private void normalizeLegacyItemRewards() {
         if (rewards == null || rewards.keySet().stream().noneMatch(SpendableRandomItem.class::isInstance)) {
             return;
