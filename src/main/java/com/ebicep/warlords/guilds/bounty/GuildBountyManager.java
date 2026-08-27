@@ -6,6 +6,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildPlayer;
 import com.ebicep.warlords.pve.Spendable;
+import com.ebicep.warlords.pve.rewards.types.BountyReward;
 import com.ebicep.warlords.util.java.NumberFormat;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -136,7 +137,7 @@ public final class GuildBountyManager {
         LinkedHashMap<Spendable, Long> playerRewards = bounty.getPlayerRewards();
         for (GuildPlayer guildPlayer : guild.getPlayers()) {
             DatabasePlayer databasePlayer = DatabaseManager.getPlayer(guildPlayer.getUUID());
-            playerRewards.forEach((spendable, amount) -> spendable.addToPlayer(databasePlayer, amount));
+            databasePlayer.getPveStats().getBountyRewards().add(new BountyReward(new LinkedHashMap<>(playerRewards), bounty.getName()));
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
         }
 
