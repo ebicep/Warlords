@@ -3,7 +3,10 @@ package com.ebicep.warlords.game.option.pve.anomaly;
 import com.destroystokyo.paper.event.player.PlayerJumpEvent;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
@@ -16,6 +19,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
+import com.ebicep.warlords.pve.rewards.RewardInventory;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
@@ -41,6 +45,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -75,6 +80,7 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
     private final boolean[] cacheEligibility = new boolean[3];
     private final Set<GameRunnable> laserTasks = ConcurrentHashMap.newKeySet();
     private final List<FloatModifiable.FloatModifier> carrierCooldownModifiers = new ArrayList<>();
+    private final List<UUID> rewardEligiblePlayers = new ArrayList<>();
 
     private List<DunestarRouteMarker> routeMarkers = List.of();
     private WarlordsPlayer carrier;
@@ -88,6 +94,7 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
     private int checkpointChargeTicks;
     private boolean relicSpawned;
     private boolean chargingCheckpoint;
+    private boolean failed;
 
     @Override
     public void register(@Nonnull Game game) {
@@ -142,6 +149,7 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
                         || warlordsPlayer.getGame() != game
                         || warlordsPlayer.isDead()
                         || completed
+                        || failed
                         || carrier != null) {
                     return;
                 }
@@ -187,12 +195,18 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
         if (carrier == null || event.getWarlordsEntity() != carrier) {
             return false;
         }
-        finishEscort("The relic carrier fell.");
+        failEscort("The relic carrier fell.");
         return true;
     }
 
     @Override
     public void start(@Nonnull Game game) {
+        rewardEligiblePlayers.clear();
+        game.warlordsPlayersWithoutSpectators()
+                .filter(entry -> entry.getValue() == Team.BLUE)
+                .map(Map.Entry::getKey)
+                .forEach(rewardEligiblePlayers::add);
+
         new GameRunnable(game) {
             @Override
             public void run() {
@@ -203,7 +217,7 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
         new GameRunnable(game) {
             @Override
             public void run() {
-                if (completed) {
+                if (completed || failed) {
                     cancel();
                     return;
                 }
@@ -221,7 +235,7 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
                     return;
                 }
                 if (carrier.isDead() || !(carrier.getEntity() instanceof Player)) {
-                    finishEscort("The relic carrier was lost.");
+                    failEscort("The relic carrier was lost.");
                     return;
                 }
 
@@ -233,14 +247,14 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
                 }
 
                 handleCheckpointCharge();
-                if (completed || carrier == null) {
+                if (completed || failed || carrier == null) {
                     return;
                 }
 
                 if (!chargingCheckpoint) {
                     segmentTicksRemaining--;
                     if (segmentTicksRemaining <= 0) {
-                        finishEscort("The relic did not reach " + getNextDestinationName() + " in time.");
+                        failEscort("The relic did not reach " + getNextDestinationName() + " in time.");
                         return;
                     }
                     if (segmentTicksRemaining % (30 * GameRunnable.SECOND) == 0) {
@@ -264,7 +278,7 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
     }
 
     private void spawnRelic() {
-        if (completed || carrier != null || relicDrop != null && relicDrop.isValid()) {
+        if (completed || failed || carrier != null || relicDrop != null && relicDrop.isValid()) {
             return;
         }
         relicSpawned = true;
@@ -282,7 +296,7 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
     }
 
     private void assignCarrier(WarlordsPlayer warlordsPlayer, Player player) {
-        if (completed || carrier != null) {
+        if (completed || failed || carrier != null) {
             return;
         }
         removeRelicDrop();
@@ -396,7 +410,7 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
     }
 
     private void startLaserHazard() {
-        if (carrier == null || completed) {
+        if (carrier == null || completed || failed) {
             return;
         }
         Location center = carrier.getLocation().clone().add(0, 1, 0);
@@ -408,7 +422,7 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
 
             @Override
             public void run() {
-                if (completed || carrier == null) {
+                if (completed || failed || carrier == null) {
                     laserTasks.remove(this);
                     cancel();
                     return;
@@ -557,6 +571,9 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
     }
 
     private List<Component> getEscortScoreboard() {
+        if (failed) {
+            return List.of(Component.text("Escort Failed", NamedTextColor.RED));
+        }
         if (completed) {
             return List.of(Component.text("Escort Complete", NamedTextColor.GREEN));
         }
@@ -613,6 +630,46 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
         finishAnomaly(cacheEligibility, summary);
     }
 
+    private void failEscort(String summary) {
+        if (completed || failed) {
+            return;
+        }
+        failed = true;
+        cancelLaserTasks();
+        removeRelicDrop();
+        clearCarrierState();
+        clearHostileMobs();
+        grantUnlockedCaches();
+        announce(Component.text(summary + " The anomaly has failed.", NamedTextColor.RED));
+        game.forEachOnlinePlayer((player, team) -> player.playSound(player.getLocation(), Sound.ENTITY_WITHER_DEATH, 2, .7f));
+        Bukkit.getPluginManager().callEvent(new WarlordsGameTriggerWinEvent(game, this, Team.RED));
+    }
+
+    private void grantUnlockedCaches() {
+        int eligibleObjectiveCount = Math.min(cacheEligibility.length, currentAnomaly.getRewardPools().size());
+        rewardEligiblePlayers.forEach(uuid -> {
+            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid);
+            int cachesGranted = 0;
+            for (int i = 0; i < eligibleObjectiveCount; i++) {
+                if (!cacheEligibility[i]) {
+                    continue;
+                }
+                AnomalyRewardCache cache = currentAnomaly.getRewardPools().get(i)
+                        .createCache(featuredLegendarySet, rotationStart);
+                databasePlayer.getPveStats().getGameEventRewards().add(cache);
+                cachesGranted++;
+            }
+            if (cachesGranted == 0) {
+                return;
+            }
+            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+            RewardInventory.sendRewardMessage(
+                    uuid,
+                    Component.text(cachesGranted + " Anomaly Reward " + (cachesGranted == 1 ? "Cache is" : "Caches are") + " ready to claim.", NamedTextColor.AQUA)
+            );
+        });
+    }
+
     private void cancelLaserTasks() {
         for (GameRunnable task : List.copyOf(laserTasks)) {
             task.cancel();
@@ -658,8 +715,8 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
 
     @Override
     public void onPlayerQuit(Player player) {
-        if (isCarrier(player) && !completed) {
-            finishEscort("The relic carrier left the anomaly.");
+        if (isCarrier(player) && !completed && !failed) {
+            failEscort("The relic carrier left the anomaly.");
         }
     }
 

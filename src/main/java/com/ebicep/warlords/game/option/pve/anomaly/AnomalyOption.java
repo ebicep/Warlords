@@ -303,7 +303,7 @@ public class AnomalyOption extends AbstractAnomalyOption {
         if (progress < 0.34) {
             pool = Mob.BASIC;
         } else if (progress < 0.67) {
-            pool = ThreadLocalRandom.current().nextBoolean() ? Mob.BASIC : Mob.INTERMEDIATE;
+            pool = Mob.INTERMEDIATE;
         } else {
             int roll = ThreadLocalRandom.current().nextInt(3);
             pool = roll == 0 ? Mob.BASIC : roll == 1 ? Mob.ADVANCED : Mob.ELITE;
