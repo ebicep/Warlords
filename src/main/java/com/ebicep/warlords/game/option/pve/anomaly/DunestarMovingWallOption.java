@@ -46,7 +46,7 @@ public class DunestarMovingWallOption implements Option, Listener {
     private static final double WALL_HEIGHT = 14;
     private static final double WALL_THICKNESS = 0.7;
     private static final double WALL_DAMAGE_MARGIN = 1.5;
-    private static final double MOB_DESPAWN_BEHIND_WALL = 5;
+    private static final double MOB_DESPAWN_BEHIND_WALL = 2;
     private static final float WALL_DAMAGE = 1_000;
     private static final double RELIC_PICKUP_RADIUS_SQUARED = 36;
 

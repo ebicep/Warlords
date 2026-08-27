@@ -58,7 +58,7 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
     private static final double FRONT_SPAWN_CHANCE = .8;
     private static final double FRONT_SPAWN_HALF_ANGLE = Math.PI / 2;
     private static final double LASER_RANGE = 40;
-    private static final double LASER_WIDTH = 2;
+    private static final double LASER_WIDTH = 2.5;
     private static final double LASER_VERTICAL_HALF = 3;
     private static final double LASER_MAX_OFFSET = 4;
     private static final Particle.DustOptions LASER_TELEGRAPH_DUST = new Particle.DustOptions(Color.fromRGB(255, 70, 70), 3f);
@@ -387,7 +387,7 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
         } else {
             angle = ThreadLocalRandom.current().nextDouble(Math.PI * 2);
         }
-        double distance = ThreadLocalRandom.current().nextDouble(10, 16);
+        double distance = ThreadLocalRandom.current().nextDouble(10, 15);
         double x = center.getX() + Math.cos(angle) * distance;
         double z = center.getZ() + Math.sin(angle) * distance;
         int y = world.getHighestBlockYAt((int) Math.floor(x), (int) Math.floor(z)) + 1;
@@ -401,7 +401,6 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
         }
         Location center = carrier.getLocation().clone().add(0, 1, 0);
         List<LaserLine> lines = List.of(createLaserLine(center), createLaserLine(center));
-        announce(Component.text("Dunestar lasers are locking around the relic carrier!", NamedTextColor.RED));
         game.forEachOnlinePlayer((player, team) -> player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 2, 1.2f));
 
         GameRunnable task = new GameRunnable(game) {
@@ -529,7 +528,6 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
             return;
         }
         Location target = routeMarkers.get(nextRouteIndex).getLocation().clone().add(0, 1, 0);
-        World world = target.getWorld();
         double progress = checkpointChargeTicks / (double) CHECKPOINT_CHARGE_TICKS;
         double radius = 2.5 + progress * .8;
         for (int i = 0; i < 12; i++) {
@@ -595,7 +593,6 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
                     Component.text("Carrier: ", NamedTextColor.WHITE).append(Component.text(carrier.getName(), NamedTextColor.GOLD)),
                     Component.text("Charging: ", NamedTextColor.WHITE).append(Component.text(targetName, NamedTextColor.AQUA)),
                     Component.text("Charge: ", NamedTextColor.WHITE).append(Component.text(chargePercent + "%", NamedTextColor.GREEN)),
-                    Component.text("Hold for: ", NamedTextColor.WHITE).append(Component.text(getCheckpointChargeSecondsRemaining() + "s", NamedTextColor.YELLOW)),
                     Component.text("Caches: ", NamedTextColor.WHITE).append(Component.text(caches + "/3", NamedTextColor.GREEN))
             );
         }
