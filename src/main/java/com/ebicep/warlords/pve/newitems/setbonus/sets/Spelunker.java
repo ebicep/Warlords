@@ -103,7 +103,7 @@ public class Spelunker extends BaseSet {
 
         private void giveSpelunkerChest(WarlordsPlayer warlordsPlayer) {
             double roll = ThreadLocalRandom.current().nextDouble(100);
-            Currencies currency;
+            Spendable currency;
             long amount;
             if (roll < 25) {
                 currency = Currencies.COIN;
@@ -121,7 +121,7 @@ public class Spelunker extends BaseSet {
                 currency = Currencies.ETHEREUM_CRYSTAL;
                 amount = 1;
             } else {
-                currency = Currencies.ASCENDANT_SHARD;
+                currency = MobDrop.ZENITH_STAR;
                 amount = 1;
             }
 
