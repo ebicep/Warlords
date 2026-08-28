@@ -8,11 +8,11 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-import java.util.stream.IntStream;
 
 public final class EchelonTraderShop {
 
@@ -58,9 +58,15 @@ public final class EchelonTraderShop {
         List<NewItemsSetBonus> orderedSetBonuses = setBonuses.stream()
                 .sorted(Comparator.comparingInt(NewItemsSetBonus::ordinal))
                 .toList();
-        return IntStream.range(0, 3)
-                .mapToObj(i -> new NewItem(orderedSetBonuses.get(random.nextInt(orderedSetBonuses.size())), random))
-                .toList();
+        List<NewItem> items = new ArrayList<>(3);
+        while (items.size() < 3) {
+            NewItem item = new NewItem(orderedSetBonuses.get(random.nextInt(orderedSetBonuses.size())), random);
+            if (items.stream().noneMatch(existing ->
+                    existing.getSetBonus() == item.getSetBonus() && existing.getSlot() == item.getSlot())) {
+                items.add(item);
+            }
+        }
+        return List.copyOf(items);
     }
 
     private static Instant getCurrentRotationStart() {
