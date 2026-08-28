@@ -1,8 +1,6 @@
 package com.ebicep.warlords.game.option.pve.anomaly;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
@@ -13,7 +11,6 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.mobs.Mob;
-import com.ebicep.warlords.pve.rewards.RewardInventory;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
@@ -27,7 +24,6 @@ import org.bukkit.entity.Interaction;
 import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -67,7 +63,6 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
     private final boolean[] cacheEligibility = new boolean[VAULT_COUNT / 2];
     private final List<Entity> runeEntities = new ArrayList<>();
     private final Map<UUID, AncientRune> runeInteractions = new HashMap<>();
-    private final List<UUID> rewardEligiblePlayers = new ArrayList<>();
 
     private List<AncientVaultMarker> vaultMarkers = List.of();
     private int preparationTicks = START_DELAY_TICKS;
@@ -128,13 +123,6 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
                 event.setCancelled(true);
                 enterRune(event.getPlayer(), rune);
             }
-
-            @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
-            public void onWin(WarlordsGameTriggerWinEvent event) {
-                if (event.getDeclaredWinner() == Team.RED) {
-                    grantUnlockedCaches();
-                }
-            }
         });
 
         game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(5, "what_once_was_puzzle") {
@@ -147,13 +135,12 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
     }
 
     @Override
-    public void start(@Nonnull Game game) {
-        rewardEligiblePlayers.clear();
-        game.warlordsPlayersWithoutSpectators()
-                .filter(entry -> entry.getValue() == Team.BLUE)
-                .map(Map.Entry::getKey)
-                .forEach(rewardEligiblePlayers::add);
+    protected boolean[] getCacheEligibility() {
+        return cacheEligibility;
+    }
 
+    @Override
+    public void start(@Nonnull Game game) {
         new GameRunnable(game) {
             @Override
             public void run() {
@@ -481,31 +468,6 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
             warlordsPlayer.addCurrency(INSIGNIA_PER_VAULT);
             warlordsPlayer.sendMessage(Component.text("Vault reward: ", NamedTextColor.GREEN)
                     .append(Component.text("❂ " + NumberFormat.addCommas(INSIGNIA_PER_VAULT), NamedTextColor.GOLD)));
-        });
-    }
-
-    private void grantUnlockedCaches() {
-        int eligibleObjectiveCount = Math.min(cacheEligibility.length, currentAnomaly.getRewardPools().size());
-        rewardEligiblePlayers.forEach(uuid -> {
-            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid);
-            int cachesGranted = 0;
-            for (int i = 0; i < eligibleObjectiveCount; i++) {
-                if (!cacheEligibility[i]) {
-                    continue;
-                }
-                AnomalyRewardCache cache = currentAnomaly.getRewardPools().get(i)
-                        .createCache(featuredLegendarySet, rotationStart);
-                databasePlayer.getPveStats().getGameEventRewards().add(cache);
-                cachesGranted++;
-            }
-            if (cachesGranted == 0) {
-                return;
-            }
-            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-            RewardInventory.sendRewardMessage(
-                    uuid,
-                    Component.text(cachesGranted + " Anomaly Reward " + (cachesGranted == 1 ? "Cache is" : "Caches are") + " ready to claim.", NamedTextColor.AQUA)
-            );
         });
     }
 

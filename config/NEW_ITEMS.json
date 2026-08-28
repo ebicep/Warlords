@@ -954,7 +954,7 @@
             "HEALTH": 55,
             "KB_RES": 5
           },
-          "description": "Every {{heal}} heal instances, you emit a global pulse that heals all for {{heal}} health.",
+          "description": "Every {{heal}} heal instances, you emit a global pulse that heals all allies for {{heal}} health.",
           "healsPerPulse": 10,
           "pulseHealAmount": 80
         },

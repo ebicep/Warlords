@@ -33,7 +33,7 @@ public class AnomalyOption extends AbstractAnomalyOption {
 
     public static final int OBJECTIVE_COUNT = 3;
     public static final int OBJECTIVE_DURATION_TICKS = 120 * GameRunnable.SECOND;
-    private static final int MOB_SPAWN_INTERVAL = 10; // ticks
+    private static final int MOB_SPAWN_INTERVAL = 10;
     private static final int BASE_RELIC_HEALTH = 25_000;
     private static final int[] BOSS_TRIGGER_TICKS = {
             30 * GameRunnable.SECOND,
@@ -87,6 +87,11 @@ public class AnomalyOption extends AbstractAnomalyOption {
                 return getObjectiveScoreboard();
             }
         });
+    }
+
+    @Override
+    protected boolean[] getCacheEligibility() {
+        return objectiveSuccess;
     }
 
     @Override

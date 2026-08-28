@@ -38,7 +38,9 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
@@ -63,6 +65,7 @@ public abstract class AbstractAnomalyOption implements PveOption {
 
     private final ConcurrentHashMap<AbstractMob, MobData> mobs = new ConcurrentHashMap<>();
     private final AtomicInteger ticksElapsed = new AtomicInteger();
+    private final List<UUID> rewardEligiblePlayers = new ArrayList<>();
 
     protected Game game;
     protected AnomalyRewards rewards;
@@ -71,6 +74,10 @@ public abstract class AbstractAnomalyOption implements PveOption {
     protected long rotationStart;
     protected boolean completed;
     private int objectivesCompleted;
+    private boolean cacheRewardsFinalized;
+    private boolean successfulCompletion;
+    private boolean[] finalCacheEligibility;
+    private String completionSummary;
 
     @Override
     public void register(@Nonnull Game game) {
@@ -137,11 +144,19 @@ public abstract class AbstractAnomalyOption implements PveOption {
                 if (experienceGainOption.getPlayerExpPer() != 0 && objectivesCompleted > 0) {
                     event.getExperienceSummary().put("Objectives Completed", experienceGainOption.getPlayerExpPer() * objectivesCompleted);
                 }
-                if (experienceGainOption.getPlayerExpGameWinBonus() != 0 && completed) {
+                if (experienceGainOption.getPlayerExpGameWinBonus() != 0 && successfulCompletion) {
                     event.getExperienceSummary().put(
                             "Anomaly Completion Bonus",
                             (long) (experienceGainOption.getPlayerExpGameWinBonus() * getDifficulty().getRewardsMultiplier())
                     );
+                }
+            }
+
+            @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+            public void onWin(WarlordsGameTriggerWinEvent event) {
+                Team winner = event.getDeclaredWinner();
+                if (winner == Team.BLUE || winner == Team.RED) {
+                    finalizeCacheRewards(winner == Team.BLUE);
                 }
             }
         });
@@ -157,6 +172,14 @@ public abstract class AbstractAnomalyOption implements PveOption {
 
     @Override
     public void afterAllWarlordsEntitiesCreated(List<WarlordsEntity> players) {
+        rewardEligiblePlayers.clear();
+        players.stream()
+                .filter(WarlordsPlayer.class::isInstance)
+                .map(WarlordsPlayer.class::cast)
+                .filter(player -> player.getTeam() == Team.BLUE)
+                .map(WarlordsPlayer::getUuid)
+                .forEach(rewardEligiblePlayers::add);
+
         if (DatabaseManager.guildService == null) {
             return;
         }
@@ -181,6 +204,10 @@ public abstract class AbstractAnomalyOption implements PveOption {
         return false;
     }
 
+    protected boolean[] getCacheEligibility() {
+        return new boolean[0];
+    }
+
     protected void incrementTicks() {
         ticksElapsed.incrementAndGet();
     }
@@ -199,17 +226,26 @@ public abstract class AbstractAnomalyOption implements PveOption {
             return;
         }
         completed = true;
-        objectivesCompleted = 0;
-        int eligibleObjectiveCount = Math.min(cacheEligibility.length, currentAnomaly.getRewardPools().size());
-        for (int i = 0; i < eligibleObjectiveCount; i++) {
-            if (cacheEligibility[i]) {
-                objectivesCompleted++;
-            }
-        }
+        successfulCompletion = true;
+        finalCacheEligibility = cacheEligibility;
+        completionSummary = summary;
+        updateObjectivesCompleted(cacheEligibility);
         clearHostileMobs();
+        Bukkit.getPluginManager().callEvent(new WarlordsGameTriggerWinEvent(game, this, Team.BLUE));
+    }
 
-        game.warlordsPlayers().forEach(warlordsPlayer -> {
-            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(warlordsPlayer.getUuid());
+    private void finalizeCacheRewards(boolean success) {
+        if (cacheRewardsFinalized) {
+            return;
+        }
+        cacheRewardsFinalized = true;
+
+        boolean[] cacheEligibility = finalCacheEligibility == null ? getCacheEligibility() : finalCacheEligibility;
+        updateObjectivesCompleted(cacheEligibility);
+        int eligibleObjectiveCount = Math.min(cacheEligibility.length, currentAnomaly.getRewardPools().size());
+
+        for (UUID uuid : rewardEligiblePlayers) {
+            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid);
             int cachesGranted = 0;
             for (int i = 0; i < eligibleObjectiveCount; i++) {
                 if (!cacheEligibility[i]) {
@@ -220,18 +256,36 @@ public abstract class AbstractAnomalyOption implements PveOption {
                 databasePlayer.getPveStats().getGameEventRewards().add(cache);
                 cachesGranted++;
             }
-            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-            warlordsPlayer.sendMessage(Component.text(summary + " " + cachesGranted + "/3 reward caches were added to your Reward Inventory.", NamedTextColor.GREEN));
             if (cachesGranted > 0) {
+                DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                 RewardInventory.sendRewardMessage(
-                        warlordsPlayer.getUuid(),
+                        uuid,
                         Component.text(cachesGranted + " Anomaly Reward " + (cachesGranted == 1 ? "Cache is" : "Caches are") + " ready to claim.", NamedTextColor.AQUA)
                 );
             }
-            warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 2, 1);
-        });
 
-        Bukkit.getPluginManager().callEvent(new WarlordsGameTriggerWinEvent(game, this, Team.BLUE));
+            Player player = Bukkit.getPlayer(uuid);
+            if (player == null) {
+                continue;
+            }
+            if (success) {
+                String summary = completionSummary == null ? "Anomaly completed." : completionSummary;
+                player.sendMessage(Component.text(summary + " " + cachesGranted + "/3 reward caches were added to your Reward Inventory.", NamedTextColor.GREEN));
+                player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 2, 1);
+            } else if (cachesGranted > 0) {
+                player.sendMessage(Component.text("The anomaly failed, but you retained " + cachesGranted + "/3 earned reward caches.", NamedTextColor.YELLOW));
+            }
+        }
+    }
+
+    private void updateObjectivesCompleted(boolean[] cacheEligibility) {
+        objectivesCompleted = 0;
+        int eligibleObjectiveCount = Math.min(cacheEligibility.length, currentAnomaly.getRewardPools().size());
+        for (int i = 0; i < eligibleObjectiveCount; i++) {
+            if (cacheEligibility[i]) {
+                objectivesCompleted++;
+            }
+        }
     }
 
     protected void announce(Component component) {
@@ -266,7 +320,7 @@ public abstract class AbstractAnomalyOption implements PveOption {
     }
 
     public boolean isCompleted() {
-        return completed;
+        return successfulCompletion;
     }
 
     @Override
