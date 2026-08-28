@@ -22,9 +22,12 @@ import org.springframework.data.annotation.Transient;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class LegendaryEgoism extends AbstractLegendaryWeapon implements PassiveCounter, EventTitle {
+
+    private static final class EgoismSession {
+        Instant lastActivated = Instant.now().minus(35, ChronoUnit.SECONDS);
+    }
 
     public static final int DEBUFF_IMMUNITY_DURATION = 5;
     public static final int DEBUFF_IMMUNITY_DURATION_INCREASE_PER_UPGRADE = 1;
@@ -32,7 +35,7 @@ public class LegendaryEgoism extends AbstractLegendaryWeapon implements PassiveC
     public static final int HEALTH_RESTORE_INCREASE_PER_UPGRADE = 3;
 
     @Transient
-    private final AtomicReference<Instant> lastActivated = new AtomicReference<>(Instant.now().minus(35, ChronoUnit.SECONDS));
+    private EgoismSession session;
 
     public LegendaryEgoism() {
     }
@@ -57,6 +60,8 @@ public class LegendaryEgoism extends AbstractLegendaryWeapon implements PassiveC
         super.applyToWarlordsPlayer(player, pveOption);
 
         int debuffImmunityTickDuration = (DEBUFF_IMMUNITY_DURATION + DEBUFF_IMMUNITY_DURATION_INCREASE_PER_UPGRADE * getTitleLevel()) * 20;
+        this.session = new EgoismSession();
+        final EgoismSession session = this.session;
         pveOption.getGame().registerEvents(new Listener() {
             @EventHandler
             public void onCooldownAdd(WarlordsAddCooldownEvent event) {
@@ -66,10 +71,10 @@ public class LegendaryEgoism extends AbstractLegendaryWeapon implements PassiveC
                 if (event.getAbstractCooldown().getCooldownType() != CooldownTypes.LOW_LEVEL_DEBUFF) {
                     return;
                 }
-                if (Instant.now().isBefore(lastActivated.get())) {
+                if (Instant.now().isBefore(session.lastActivated)) {
                     return;
                 }
-                lastActivated.set(Instant.now().plus(8, ChronoUnit.SECONDS));
+                session.lastActivated = Instant.now().plus(8, ChronoUnit.SECONDS);
                 event.setCancelled(true);
                 player.getCooldownManager().addCooldown(new RegularCooldown<>(
                         getTitleName(),
@@ -170,9 +175,18 @@ public class LegendaryEgoism extends AbstractLegendaryWeapon implements PassiveC
     }
 
     @Override
+    public void cleanup() {
+        this.session = null;
+        super.cleanup();
+    }
+
+    @Override
     public int getCounter() {
-        if (Instant.now().isBefore(lastActivated.get())) {
-            return (int) ChronoUnit.SECONDS.between(Instant.now(), lastActivated.get());
+        if (session == null) {
+            return 0;
+        }
+        if (Instant.now().isBefore(session.lastActivated)) {
+            return (int) ChronoUnit.SECONDS.between(Instant.now(), session.lastActivated);
         }
         return 0;
     }

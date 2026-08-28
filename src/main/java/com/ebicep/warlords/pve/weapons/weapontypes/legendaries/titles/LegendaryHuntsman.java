@@ -24,10 +24,14 @@ import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class LegendaryHuntsman extends AbstractLegendaryWeapon implements PassiveCounter {
+
+    private static final class HuntsmanSession {
+        boolean guardActive = false;
+        Instant guardExpireAt = Instant.EPOCH;
+        Instant guardNextReadyAt = Instant.EPOCH;
+    }
 
     public static final int RANGED_MIN_DISTANCE_BLOCKS = 12;
 
@@ -41,11 +45,7 @@ public class LegendaryHuntsman extends AbstractLegendaryWeapon implements Passiv
     public static final int MELEE_GUARD_ICD_SECONDS = 8;
 
     @Transient
-    private final AtomicBoolean guardActive = new AtomicBoolean(false);
-    @Transient
-    private final AtomicReference<Instant> guardExpireAt = new AtomicReference<>(Instant.EPOCH);
-    @Transient
-    private final AtomicReference<Instant> guardNextReadyAt = new AtomicReference<>(Instant.EPOCH);
+    private HuntsmanSession session;
 
     public LegendaryHuntsman() {
 
@@ -113,6 +113,9 @@ public class LegendaryHuntsman extends AbstractLegendaryWeapon implements Passiv
     public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
         super.applyToWarlordsPlayer(player, pveOption);
 
+        this.session = new HuntsmanSession();
+        final HuntsmanSession session = this.session;
+
         player.getCooldownManager().addCooldown(new PermanentCooldown<>(
                 "Huntsman",
                 null,
@@ -129,10 +132,10 @@ public class LegendaryHuntsman extends AbstractLegendaryWeapon implements Passiv
 
                     if (isMeleeHit(event)) {
                         Instant now = Instant.now();
-                        if (!now.isBefore(guardNextReadyAt.get())) {
-                            guardActive.set(true);
-                            guardExpireAt.set(now.plus(MELEE_GUARD_DURATION_SECONDS, ChronoUnit.SECONDS));
-                            guardNextReadyAt.set(now.plus(MELEE_GUARD_ICD_SECONDS, ChronoUnit.SECONDS));
+                        if (!now.isBefore(session.guardNextReadyAt)) {
+                            session.guardActive = true;
+                            session.guardExpireAt = now.plus(MELEE_GUARD_DURATION_SECONDS, ChronoUnit.SECONDS);
+                            session.guardNextReadyAt = now.plus(MELEE_GUARD_ICD_SECONDS, ChronoUnit.SECONDS);
 
                             player.getCooldownManager().addCooldown(new RegularCooldown<>(
                                     "Huntsman Guard",
@@ -141,14 +144,14 @@ public class LegendaryHuntsman extends AbstractLegendaryWeapon implements Passiv
                                     null,
                                     player,
                                     CooldownTypes.WEAPON,
-                                    cm -> guardActive.set(false),
+                                    cm -> session.guardActive = false,
                                     MELEE_GUARD_DURATION_SECONDS * 20
                             ));
 
                             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1.8f);
                         } else {
-                            if (guardActive.get()) {
-                                guardExpireAt.set(now.plus(MELEE_GUARD_DURATION_SECONDS, ChronoUnit.SECONDS));
+                            if (session.guardActive) {
+                                session.guardExpireAt = now.plus(MELEE_GUARD_DURATION_SECONDS, ChronoUnit.SECONDS);
                                 player.getCooldownManager().addCooldown(new RegularCooldown<>(
                                         "Huntsman Guard",
                                         "HUNT",
@@ -156,7 +159,7 @@ public class LegendaryHuntsman extends AbstractLegendaryWeapon implements Passiv
                                         null,
                                         player,
                                         CooldownTypes.WEAPON,
-                                        cm -> guardActive.set(false),
+                                        cm -> session.guardActive = false,
                                         MELEE_GUARD_DURATION_SECONDS * 20
                                 ));
                             }
@@ -164,12 +167,12 @@ public class LegendaryHuntsman extends AbstractLegendaryWeapon implements Passiv
                     }
                 }
         ).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
-                    if (!guardActive.get()) {
+                    if (!session.guardActive) {
                         return;
                     }
 
-                    if (Instant.now().isAfter(guardExpireAt.get())) {
-                        guardActive.set(false);
+                    if (Instant.now().isAfter(session.guardExpireAt)) {
+                        session.guardActive = false;
                         return;
                     }
 
@@ -235,11 +238,20 @@ public class LegendaryHuntsman extends AbstractLegendaryWeapon implements Passiv
     }
 
     @Override
+    public void cleanup() {
+        this.session = null;
+        super.cleanup();
+    }
+
+    @Override
     public int getCounter() {
+        if (session == null) {
+            return 0;
+        }
         Instant now = Instant.now();
-        int icd = now.isBefore(guardNextReadyAt.get()) ? (int) ChronoUnit.SECONDS.between(now, guardNextReadyAt.get()) : 0;
-        int activeLeft = guardActive.get() && now.isBefore(guardExpireAt.get())
-                         ? (int) ChronoUnit.SECONDS.between(now, guardExpireAt.get()) : 0;
+        int icd = now.isBefore(session.guardNextReadyAt) ? (int) ChronoUnit.SECONDS.between(now, session.guardNextReadyAt) : 0;
+        int activeLeft = session.guardActive && now.isBefore(session.guardExpireAt)
+                         ? (int) ChronoUnit.SECONDS.between(now, session.guardExpireAt) : 0;
         return Math.max(icd, activeLeft);
     }
 
