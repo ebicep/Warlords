@@ -143,26 +143,25 @@ public enum Anomalies {
             ),
             List.of(
                     new AnomalyRewardPool("Remnant Cache I", 500, 50, 1, 0.10),
-                    new AnomalyRewardPool("Remnant Cache II", 750, 75, 1, 0.15),
-                    new AnomalyRewardPool("Remnant Cache III", 1000, 100, 2, 0.20)
+                    new AnomalyRewardPool("Remnant Cache II", 750, 75, 1, 0.20),
+                    new AnomalyRewardPool("Remnant Cache III", 1000, 100, 2, 0.30)
             ),
             new AnomalyMobSet()
                     //basic
-                    .add(0.3, Mob.ZOMBIE_LAMENT)
-                    .add(0.2, Mob.SLIMY_ANOMALY)
-                    .add(0.2, Mob.ARACHNO_VENARI)
+                    .add(0.5, Mob.ZOMBIE_LAMENT)
+                    .add(0.1, Mob.SLIMY_ANOMALY)
+                    .add(0.1, Mob.ARACHNO_VENARI)
                     //elite
-                    .add(0.5, Mob.ZOMBIE_SWORDSMAN)
+                    .add(0.3, Mob.ZOMBIE_SWORDSMAN)
                     .add(0.1, Mob.SKELETAL_WARLOCK)
-                    .add(0.2, Mob.PIG_SHAMAN)
-                    .add(0.15, Mob.GOLEM_APPRENTICE)
+                    .add(0.1, Mob.PIG_SHAMAN)
+                    .add(0.1, Mob.GOLEM_APPRENTICE)
                     .add(0.03, Mob.WITCH_DEACON)
-                    .add(0.02, Mob.ADVANCED_WARRIOR_BERSERKER)
                     //envoy
-                    .add(0.05, Mob.ZOMBIE_VANGUARD)
-                    .add(0.05, Mob.SKELETAL_ENTROPY)
+                    .add(0.01, Mob.ZOMBIE_VANGUARD)
+                    .add(0.01, Mob.SKELETAL_ENTROPY)
                     .add(0.01, Mob.PIG_ALLEVIATOR)
-                    .add(0.02, Mob.VOID_ZOMBIE)
+                    .add(0.01, Mob.VOID_ZOMBIE)
     );
 
     public static final Anomalies[] VALUES = values();
