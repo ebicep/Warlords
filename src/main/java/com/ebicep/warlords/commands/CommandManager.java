@@ -648,6 +648,7 @@ public class CommandManager {
 
         manager.registerCommand(new AdminCommand());
         manager.registerCommand(new BuilderCommand());
+        manager.registerCommand(new BuildInfoCommand());
         manager.registerCommand(new BotConfigCommand());
         manager.registerCommand(new DatabaseCommand());
         manager.registerCommand(new FeatureFlagsCommand());

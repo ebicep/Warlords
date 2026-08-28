@@ -1,5 +1,6 @@
 import xyz.jpenilla.resourcefactory.bukkit.BukkitPluginYaml
 import xyz.jpenilla.resourcefactory.paper.PaperPluginYaml
+import java.time.Instant
 
 plugins {
     id("com.gradleup.shadow") version "9.3.1" // Creates a fat jar
@@ -17,6 +18,25 @@ description = "Warlords"
 
 val archiveVersionSuffix: String
     get() = version.toString().replace(" ", "-")
+
+fun gitOutput(vararg args: String): String = runCatching {
+    providers.exec {
+        commandLine(listOf("git") + args)
+        isIgnoreExitValue = true
+    }.standardOutput.asText.get().trim().ifEmpty { "unknown" }
+}.getOrElse { "unknown" }
+
+val gitCommit: String = gitOutput("rev-parse", "HEAD")
+val gitCommitShort: String = gitOutput("rev-parse", "--short", "HEAD")
+val gitBranch: String = gitOutput("rev-parse", "--abbrev-ref", "HEAD")
+val gitCommitTime: String = gitOutput("log", "-1", "--format=%cI")
+val gitDirty: String = runCatching {
+    providers.exec {
+        commandLine("git", "status", "--porcelain")
+        isIgnoreExitValue = true
+    }.standardOutput.asText.get().isNotBlank().toString()
+}.getOrElse { "false" }
+val buildTime: String = Instant.now().toString()
 
 java {
     // Configure the java toolchain. This allows gradle to auto-provision JDK 21 on systems that only have JDK 8 installed for example.
@@ -98,6 +118,17 @@ tasks {
 
     processResources {
         filteringCharset = Charsets.UTF_8.name() // We want UTF-8 for everything
+        expand(
+            mapOf(
+                "projectVersion" to project.version.toString(),
+                "gitCommit" to gitCommit,
+                "gitCommitShort" to gitCommitShort,
+                "gitBranch" to gitBranch,
+                "gitCommitTime" to gitCommitTime,
+                "gitDirty" to gitDirty,
+                "buildTime" to buildTime,
+            )
+        )
     }
 
     jar {
