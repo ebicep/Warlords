@@ -3,8 +3,6 @@ package com.ebicep.warlords.game.option.pve.anomaly;
 import com.destroystokyo.paper.event.player.PlayerJumpEvent;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
@@ -19,7 +17,6 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
-import com.ebicep.warlords.pve.rewards.RewardInventory;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
@@ -45,7 +42,6 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -55,7 +51,7 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
 
     private static final int SEGMENT_DURATION_TICKS = 120 * GameRunnable.SECOND;
     private static final int CHECKPOINT_CHARGE_TICKS = 30 * GameRunnable.SECOND;
-    private static final int MOB_SPAWN_INTERVAL = 10; // ticks
+    private static final int MOB_SPAWN_INTERVAL = 10;
     private static final int LASER_INTERVAL_TICKS = 15 * GameRunnable.SECOND;
     private static final int LASER_TELEGRAPH_TICKS = 2 * GameRunnable.SECOND;
     private static final float ABILITY_COOLDOWN_MULTIPLIER = 3;
@@ -80,7 +76,6 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
     private final boolean[] cacheEligibility = new boolean[3];
     private final Set<GameRunnable> laserTasks = ConcurrentHashMap.newKeySet();
     private final List<FloatModifiable.FloatModifier> carrierCooldownModifiers = new ArrayList<>();
-    private final List<UUID> rewardEligiblePlayers = new ArrayList<>();
 
     private List<DunestarRouteMarker> routeMarkers = List.of();
     private WarlordsPlayer carrier;
@@ -191,6 +186,11 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
     }
 
     @Override
+    protected boolean[] getCacheEligibility() {
+        return cacheEligibility;
+    }
+
+    @Override
     protected boolean handleSpecialDeath(WarlordsDeathEvent event) {
         if (carrier == null || event.getWarlordsEntity() != carrier) {
             return false;
@@ -201,12 +201,6 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
 
     @Override
     public void start(@Nonnull Game game) {
-        rewardEligiblePlayers.clear();
-        game.warlordsPlayersWithoutSpectators()
-                .filter(entry -> entry.getValue() == Team.BLUE)
-                .map(Map.Entry::getKey)
-                .forEach(rewardEligiblePlayers::add);
-
         new GameRunnable(game) {
             @Override
             public void run() {
@@ -639,35 +633,9 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
         removeRelicDrop();
         clearCarrierState();
         clearHostileMobs();
-        grantUnlockedCaches();
         announce(Component.text(summary + " The anomaly has failed.", NamedTextColor.RED));
         game.forEachOnlinePlayer((player, team) -> player.playSound(player.getLocation(), Sound.ENTITY_WITHER_DEATH, 2, .7f));
         Bukkit.getPluginManager().callEvent(new WarlordsGameTriggerWinEvent(game, this, Team.RED));
-    }
-
-    private void grantUnlockedCaches() {
-        int eligibleObjectiveCount = Math.min(cacheEligibility.length, currentAnomaly.getRewardPools().size());
-        rewardEligiblePlayers.forEach(uuid -> {
-            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid);
-            int cachesGranted = 0;
-            for (int i = 0; i < eligibleObjectiveCount; i++) {
-                if (!cacheEligibility[i]) {
-                    continue;
-                }
-                AnomalyRewardCache cache = currentAnomaly.getRewardPools().get(i)
-                        .createCache(featuredLegendarySet, rotationStart);
-                databasePlayer.getPveStats().getGameEventRewards().add(cache);
-                cachesGranted++;
-            }
-            if (cachesGranted == 0) {
-                return;
-            }
-            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-            RewardInventory.sendRewardMessage(
-                    uuid,
-                    Component.text(cachesGranted + " Anomaly Reward " + (cachesGranted == 1 ? "Cache is" : "Caches are") + " ready to claim.", NamedTextColor.AQUA)
-            );
-        });
     }
 
     private void cancelLaserTasks() {
