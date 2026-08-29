@@ -63,11 +63,16 @@ public class NewItemLoreCreator {
             Pair<Float, Float> defaultRange = setBonus.getTier().getBonusAttributeRanges().getOrDefault(bonusAttribute, ZERO_RANGE);
             Pair<Float, Float> range = setBonus.getBonusAttributeRanges().getOrDefault(bonusAttribute, defaultRange);
             float high = range.getA() != 0 ? range.getB() : defaultRange.getB();
+            boolean hasStarPieceBonus = starPieceBonus != null && starPieceBonus.attribute() == bonusAttribute;
+            int maxValue = (int) Math.ceil(high);
+            if (hasStarPieceBonus) {
+                maxValue = (int) Math.ceil(maxValue * (1 + starPieceBonus.starPiece().starPieceBonusValue / 100f));
+            }
             Component component = bonusAttribute.formatValue(value, "+");
-            if ((int) Math.ceil(high) == value) {
+            if (maxValue == value) {
                 component = component.append(Component.text(" [MAX]", NamedTextColor.LIGHT_PURPLE));
             }
-            if (starPieceBonus != null && starPieceBonus.attribute() == bonusAttribute) {
+            if (hasStarPieceBonus) {
                 component = component.append(Component.text(" (+" + starPieceBonus.starPiece().starPieceBonusValue + "% ✦)", NamedTextColor.WHITE));
             }
             lore.add(component);
