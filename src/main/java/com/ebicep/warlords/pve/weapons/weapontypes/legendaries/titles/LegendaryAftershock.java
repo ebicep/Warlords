@@ -26,9 +26,12 @@ import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class LegendaryAftershock extends AbstractLegendaryWeapon implements PassiveCounter {
+
+    private static final class AftershockSession {
+        Instant nextReadyAt = Instant.EPOCH;
+    }
 
     public static final int RADIUS_BLOCKS = 5;
     public static final int DURATION_SECONDS = 3;
@@ -44,7 +47,7 @@ public class LegendaryAftershock extends AbstractLegendaryWeapon implements Pass
     public static final float ZONE_DAMAGE_INC_PER_LEVEL = 1.5f;
 
     @Transient
-    private final AtomicReference<Instant> nextReadyAt = new AtomicReference<>(Instant.EPOCH);
+    private AftershockSession session;
 
     public LegendaryAftershock() {
 
@@ -85,6 +88,9 @@ public class LegendaryAftershock extends AbstractLegendaryWeapon implements Pass
     public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
         super.applyToWarlordsPlayer(player, pveOption);
 
+        this.session = new AftershockSession();
+        final AftershockSession session = this.session;
+
         player.getCooldownManager().addCooldown(new PermanentCooldown<>(
                         "Aftershock",
                         null,
@@ -99,7 +105,7 @@ public class LegendaryAftershock extends AbstractLegendaryWeapon implements Pass
                         Modifier.ON_OUTGOING_DAMAGE,
                         (event, currentDamageValue, isCrit) -> {
                             Instant now = Instant.now();
-                            if (now.isBefore(nextReadyAt.get())) {
+                            if (now.isBefore(session.nextReadyAt)) {
                                 return;
                             }
 
@@ -119,7 +125,7 @@ public class LegendaryAftershock extends AbstractLegendaryWeapon implements Pass
 
                             float totalZoneDamage = currentDamageValue * (getZoneDamagePercent() / 100f);
                             spawnAftershockZone(player, center.clone(), totalZoneDamage);
-                            nextReadyAt.set(now.plus(COOLDOWN_SECONDS, ChronoUnit.SECONDS));
+                            session.nextReadyAt = now.plus(COOLDOWN_SECONDS, ChronoUnit.SECONDS);
                         })
         );
     }
@@ -218,8 +224,17 @@ public class LegendaryAftershock extends AbstractLegendaryWeapon implements Pass
     }
 
     @Override
+    public void cleanup() {
+        this.session = null;
+        super.cleanup();
+    }
+
+    @Override
     public int getCounter() {
+        if (session == null) {
+            return 0;
+        }
         Instant now = Instant.now();
-        return now.isBefore(nextReadyAt.get()) ? (int) Math.ceil(ChronoUnit.MILLIS.between(now, nextReadyAt.get()) / 1000d) : 0;
+        return now.isBefore(session.nextReadyAt) ? (int) Math.ceil(ChronoUnit.MILLIS.between(now, session.nextReadyAt) / 1000d) : 0;
     }
 }

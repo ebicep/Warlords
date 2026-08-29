@@ -16,7 +16,6 @@ import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
-import com.google.common.util.concurrent.AtomicDouble;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -31,6 +30,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class LegendaryVibrant extends AbstractLegendaryWeapon implements GardenOfHesperidesTitle, PassiveCounter {
+
+    private static final class VibrantTabulation {
+        double damageTaken;
+    }
 
     public static final int COOLDOWN = 6;
     public static final int NUMBER_OF_ORBS = 3;
@@ -70,7 +73,8 @@ public class LegendaryVibrant extends AbstractLegendaryWeapon implements GardenO
         super.applyToWarlordsPlayer(player, pveOption);
         this.secondCounter = 10;
 
-        AtomicDouble damageTaken = new AtomicDouble(0);
+        final VibrantTabulation tabulation = new VibrantTabulation();
+
         player.getCooldownManager().addCooldown(new PermanentCooldown<>(
                 getTitleName(),
                 null,
@@ -88,11 +92,13 @@ public class LegendaryVibrant extends AbstractLegendaryWeapon implements GardenO
                     secondCounter--;
                     if (secondCounter == 0) {
                         secondCounter = COOLDOWN;
-                        generateOrbs(player, (float) damageTaken.getAndSet(0));
+                        float accumulatedDamage = (float) tabulation.damageTaken;
+                        tabulation.damageTaken = 0;
+                        generateOrbs(player, accumulatedDamage);
                     }
                 }
         ).addModifier(Modifier.ON_INCOMING_DAMAGE, (event, currentDamageValue, isCrit) -> {
-                    damageTaken.addAndGet(currentDamageValue);
+                    tabulation.damageTaken += currentDamageValue;
                 }
         ));
     }

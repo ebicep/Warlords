@@ -25,9 +25,12 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class LegendaryBrilliance extends AbstractLegendaryWeapon implements PassiveCounter, EventTitle {
+
+    private static final class BrillianceSession {
+        Instant lastActivated = Instant.now().minus(COOLDOWN, ChronoUnit.SECONDS);
+    }
 
     public static final int HEALTH_THRESHOLD = 55;
     public static final float HEALTH_THRESHOLD_PER_UPGRADE = 5;
@@ -37,7 +40,7 @@ public class LegendaryBrilliance extends AbstractLegendaryWeapon implements Pass
 //    public static final float COOLDOWN_INCREASE_PER_UPGRADE = -1.5f;
 
     @Transient
-    private final AtomicReference<Instant> lastActivated = new AtomicReference<>(Instant.now().minus(COOLDOWN, ChronoUnit.SECONDS));
+    private BrillianceSession session;
 
     public LegendaryBrilliance() {
     }
@@ -96,6 +99,9 @@ public class LegendaryBrilliance extends AbstractLegendaryWeapon implements Pass
     public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
         super.applyToWarlordsPlayer(player, pveOption);
 
+        this.session = new BrillianceSession();
+        final BrillianceSession session = this.session;
+
         float healBoost = 1 + (HEALING_BOOST + HEALING_BOOST_PER_UPGRADE * getTitleLevel()) / 100f;
         float healthThreshold = (HEALTH_THRESHOLD + HEALTH_THRESHOLD_PER_UPGRADE * getTitleLevel()) / 100f;
         // using runnable not on dmg event bc player can have <30% hp without taking dmg after cooldown is refreshed
@@ -103,7 +109,7 @@ public class LegendaryBrilliance extends AbstractLegendaryWeapon implements Pass
 
             @Override
             public void run() {
-                if (Instant.now().isBefore(lastActivated.get())) {
+                if (Instant.now().isBefore(session.lastActivated)) {
                     return;
                 }
                 if (player.getCurrentHealth() < player.getMaxHealth() * healthThreshold) {
@@ -112,7 +118,7 @@ public class LegendaryBrilliance extends AbstractLegendaryWeapon implements Pass
             }
 
             private void giveHealingBoostCooldown() {
-                lastActivated.set(Instant.now().plus(COOLDOWN, ChronoUnit.SECONDS));
+                session.lastActivated = Instant.now().plus(COOLDOWN, ChronoUnit.SECONDS);
                 player.getCooldownManager().addCooldown(new RegularCooldown<>(
                         getTitleName(),
                         "BRILL",
@@ -172,9 +178,18 @@ public class LegendaryBrilliance extends AbstractLegendaryWeapon implements Pass
     }
 
     @Override
+    public void cleanup() {
+        this.session = null;
+        super.cleanup();
+    }
+
+    @Override
     public int getCounter() {
-        if (Instant.now().isBefore(lastActivated.get())) {
-            return (int) ChronoUnit.SECONDS.between(Instant.now(), lastActivated.get());
+        if (session == null) {
+            return 0;
+        }
+        if (Instant.now().isBefore(session.lastActivated)) {
+            return (int) ChronoUnit.SECONDS.between(Instant.now(), session.lastActivated);
         }
         return 0;
     }

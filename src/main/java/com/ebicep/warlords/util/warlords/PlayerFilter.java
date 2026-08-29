@@ -28,6 +28,7 @@ import static com.ebicep.warlords.util.bukkit.LocationUtils.sortClosestBy;
 public class PlayerFilter implements Iterable<WarlordsEntity> {
     private static final Location LOCATION_CACHE_ENTITIES_AROUND = new Location(null, 0, 0, 0);
     private static final Location LOCATION_CACHE_CLOSEST = new Location(null, 0, 0, 0);
+    private static final double LOOKING_AT_DOT_BUCKET = 0.0125;
 
     private final Stream<WarlordsEntity> stream;
 
@@ -154,19 +155,13 @@ public class PlayerFilter implements Iterable<WarlordsEntity> {
 
     @Nonnull
     public PlayerFilter lookingAtFirst(WarlordsEntity user) {
-        return sorted((wp1, wp2) -> {
-            int output;
-            double wp1Dot = -LocationUtils.getDotToPlayer(user, wp1, 0);
-            double wp2Dot = -LocationUtils.getDotToPlayer(user, wp2, 0);
-            output = Double.compare(wp1Dot, wp2Dot);
-            if (Math.abs(wp1Dot - wp2Dot) < .0125) {
-                Location userLocation = user.getLocation();
-                Location w1Location = wp1.getLocation();
-                Location w2Location = wp2.getLocation();
-                output = Double.compare(userLocation.distanceSquared(w1Location), userLocation.distanceSquared(w2Location));
-            }
-            return output;
-        });
+        user.getLocation(LOCATION_CACHE_CLOSEST);
+        return sorted(
+                Comparator.<WarlordsEntity, Long>comparing(wp ->
+                        (long) Math.floor(LocationUtils.getDotToPlayer(user, wp, 0) / LOOKING_AT_DOT_BUCKET)
+                ).reversed()
+                .thenComparing(sortClosestBy(WarlordsEntity::getLocation, LOCATION_CACHE_CLOSEST))
+        );
     }
 
     @Nonnull

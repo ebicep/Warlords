@@ -160,7 +160,7 @@ public enum GameAddon {
     ABILITY_CHANGE_RANDOM(
             "Ability Change (Random)",
             null,
-            "Randomly changes all players' abilities at random intervals."
+            "Randomly changes all players' abilities at random intervals. Players are also forced to change every 4 minutes."
     ) {
         @Override
         public void modifyGame(@Nonnull Game game) {
@@ -170,7 +170,7 @@ public enum GameAddon {
     ABILITY_CHANGE_ON_DEATH(
             "Ability Change (On Death)",
             null,
-            "Randomly changes a player's abilities when they respawn."
+            "Randomly changes a player's abilities when they respawn. Players are also forced to change every 4 minutes."
     ) {
         @Override
         public void modifyGame(@Nonnull Game game) {

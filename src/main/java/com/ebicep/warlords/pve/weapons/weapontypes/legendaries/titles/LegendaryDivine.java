@@ -25,10 +25,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveCounter {
+
+    private static final class DivineSession {
+        int targetsHit;
+        int damageBoost;
+        RegularCooldown<LegendaryDivine> stackCooldown;
+    }
 
     public static final int DAMAGE_BOOST = 5;
     public static final int TARGETS_TO_HIT = 60;
@@ -109,9 +113,8 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
     public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
         super.applyToWarlordsPlayer(player, pveOption);
         this.passiveCooldown = 0;
-        final AtomicInteger targetsHit = new AtomicInteger(0);
-        final AtomicInteger damageBoost = new AtomicInteger(0);
-        final AtomicReference<RegularCooldown<LegendaryDivine>> cooldown = new AtomicReference<>(null);
+
+        final DivineSession session = new DivineSession();
 
         float energyCostReduction = -(ABILITY_ENERGY_COST_REDUCTION + ABILITY_ENERGY_COST_REDUCTION_PER_UPGRADE * getTitleLevel()) / 100f;
 
@@ -128,10 +131,10 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
                 if (player.getCooldownManager().hasCooldownFromName("Divine Ability")) {
                     return;
                 }
-                if (targetsHit.incrementAndGet() >= TARGETS_TO_HIT) {
-                    targetsHit.set(0);
-                    damageBoost.set(Math.min(MAX_STACKS, damageBoost.get() + 1));
-                    if (cooldown.get() == null || !player.getCooldownManager().hasCooldown(cooldown.get())) {
+                if (++session.targetsHit >= TARGETS_TO_HIT) {
+                    session.targetsHit = 0;
+                    session.damageBoost = Math.min(MAX_STACKS, session.damageBoost + 1);
+                    if (session.stackCooldown == null || !player.getCooldownManager().hasCooldown(session.stackCooldown)) {
                         RegularCooldown<LegendaryDivine> regularCooldown = new RegularCooldown<>(
                                 "Divine",
                                 "DIV 1",
@@ -142,21 +145,21 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
                                 cooldownManager -> {
                                 },
                                 cooldownManager -> {
-                                    cooldown.set(null);
-                                    damageBoost.set(0);
+                                    session.stackCooldown = null;
+                                    session.damageBoost = 0;
                                 },
                                 DURATION * 20
                         );
                         regularCooldown.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
-                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getTitleName(), 1 + damageBoost.get() * DAMAGE_BOOST / 100f);
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getTitleName(), 1 + session.damageBoost * DAMAGE_BOOST / 100f);
                                 }
                         );
-                        cooldown.set(regularCooldown);
+                        session.stackCooldown = regularCooldown;
                         player.getCooldownManager().addCooldown(regularCooldown);
                     } else {
-                        cooldown.get().setTicksLeft(DURATION * 20);
-                        cooldown.get().setName("Divine " + damageBoost.get());
-                        cooldown.get().setNameAbbreviation("DIV " + damageBoost.get());
+                        session.stackCooldown.setTicksLeft(DURATION * 20);
+                        session.stackCooldown.setName("Divine " + session.damageBoost);
+                        session.stackCooldown.setNameAbbreviation("DIV " + session.damageBoost);
                     }
                 }
             }
@@ -176,7 +179,7 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
                     }
                     return;
                 }
-                if (cooldown.get() == null || !player.getCooldownManager().hasCooldown(cooldown.get()) || !cooldown.get().getName().equals("Divine 3")) {
+                if (session.stackCooldown == null || !player.getCooldownManager().hasCooldown(session.stackCooldown) || !session.stackCooldown.getName().equals("Divine 3")) {
                     return;
                 }
                 if (player.isSneaking()) {
@@ -184,7 +187,7 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
                     shiftTickTime++;
                     if (shiftTickTime == 20) {
                         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
-                        player.getCooldownManager().removeCooldown(cooldown.get());
+                        player.getCooldownManager().removeCooldown(session.stackCooldown);
                         List<FloatModifiable.FloatModifier> modifiers = new ArrayList<>();
                         for (AbstractAbility ability : player.getSpec().getAbilities()) {
                             if (ability.getEnergyCostValue() > 0) {

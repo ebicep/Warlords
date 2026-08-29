@@ -11,13 +11,18 @@ import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.luckperms.api.LuckPerms;
+import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.event.user.UserDataRecalculateEvent;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.node.Node;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -40,26 +45,85 @@ public enum Permissions {
     public static final String TEBEX_SUPPORTER_PERMISSION_PREFIX = "warlords.supporter.";
     public static final Permissions[] VALUES = values();
 
+    private static final int INITIAL_DELAY_TICKS = 60;
+    private static final int RETRY_DELAY_TICKS = 20;
+    private static final int MAX_ATTEMPTS = 10;
+
     public static void listenToNewPatreons(UserDataRecalculateEvent event) {
+        schedulePermissionSync(event.getUser().getUniqueId(), INITIAL_DELAY_TICKS, 0);
+    }
+
+    public static void syncPermissionsToDatabase(Player player) {
+        List<String> permissions = player.getEffectivePermissions().stream()
+                .map(PermissionAttachmentInfo::getPermission)
+                .collect(Collectors.toList());
+        syncPermissionsToDatabase(player.getUniqueId(), permissions);
+    }
+
+    public static void syncPermissionsToDatabase(UUID uuid, List<String> permissions) {
+        List<String> normalized = normalizePermissions(permissions);
+        for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
+            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid, activeCollection);
+            databasePlayer.setPermissions(normalized);
+            DatabaseManager.queueUpdatePlayerAsync(databasePlayer, activeCollection);
+        }
+    }
+
+    private static void schedulePermissionSync(UUID uuid, long delayTicks, int attempt) {
         new BukkitRunnable() {
             @Override
             public void run() {
-                User user = event.getUser();
-                List<String> permissions = user.getNodes().stream().map(Node::getKey).collect(Collectors.toList());
-                permissions.remove("group.default");
-                boolean supporter = isSupporterPermissionList(permissions);
-                if (supporter && !permissions.contains(LEGACY_PATREON_PERMISSION)) {
-                    permissions.add(LEGACY_PATREON_PERMISSION);
+                if (Bukkit.getPlayer(uuid) == null && !DatabaseManager.inCache(uuid, PlayersCollections.LIFETIME)) {
+                    return;
                 }
-                for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
-                    DatabasePlayer databasePlayer = DatabaseManager.getPlayer(user.getUniqueId(), activeCollection);
-                    databasePlayer.setPermissions(permissions);
-                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer, activeCollection);
+                if (!allCollectionsCached(uuid)) {
+                    if (attempt < MAX_ATTEMPTS) {
+                        schedulePermissionSync(uuid, RETRY_DELAY_TICKS, attempt + 1);
+                    }
+                    return;
                 }
-                validateHonorificSupporterAccess(user.getUniqueId(), supporter);
+                User user = getLuckPermsUser(uuid);
+                if (user == null) {
+                    return;
+                }
+                List<String> permissions = permissionsFromUser(user);
+                syncPermissionsToDatabase(uuid, permissions);
+                validateHonorificSupporterAccess(uuid, isSupporterPermissionList(permissions));
                 CustomScoreboard.updateLobbyPlayerNames();
             }
-        }.runTaskLater(Warlords.getInstance(), 60);
+        }.runTaskLater(Warlords.getInstance(), delayTicks);
+    }
+
+    private static boolean allCollectionsCached(UUID uuid) {
+        for (PlayersCollections collection : PlayersCollections.ACTIVE_COLLECTIONS) {
+            if (!DatabaseManager.inCache(uuid, collection)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Nullable
+    private static User getLuckPermsUser(UUID uuid) {
+        try {
+            LuckPerms api = LuckPermsProvider.get();
+            return api.getUserManager().getUser(uuid);
+        } catch (IllegalStateException e) {
+            return null;
+        }
+    }
+
+    private static List<String> permissionsFromUser(User user) {
+        return user.getNodes().stream().map(Node::getKey).collect(Collectors.toList());
+    }
+
+    private static List<String> normalizePermissions(List<String> permissions) {
+        List<String> normalized = new ArrayList<>(permissions);
+        normalized.remove("group.default");
+        if (isSupporterPermissionList(normalized) && !normalized.contains(LEGACY_PATREON_PERMISSION)) {
+            normalized.add(LEGACY_PATREON_PERMISSION);
+        }
+        return normalized;
     }
 
     public static Component getPrefixWithColor(Player player, boolean includeName) {

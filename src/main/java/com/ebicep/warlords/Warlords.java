@@ -35,6 +35,7 @@ import com.ebicep.warlords.pve.consumables.ConsumableListener;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
 import com.ebicep.warlords.pve.mobs.tiers.PlayerMob;
 import com.ebicep.warlords.pve.rewards.types.PatreonReward;
+import com.ebicep.warlords.util.BuildInfo;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.packets.PacketUtils;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -337,6 +338,7 @@ public class Warlords extends JavaPlugin {
     public void onEnable() {
         instance = this;
         VERSION = this.getDescription().getVersion();
+        BuildInfo.load(getClass());
         serverIP = this.getServer().getIp();
         taskChainFactory = BukkitTaskChainFactory.create(this);
 

@@ -25,9 +25,14 @@ import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class LegendaryAegis extends AbstractLegendaryWeapon implements PassiveCounter {
+
+    private static final class AegisSession {
+        float barrierPool = 0f;
+        Instant barrierExpireAt = Instant.EPOCH;
+        Instant pulseReadyAt = Instant.EPOCH;
+    }
 
     public static final float OVERHEAL_CONVERT_PERCENT = 50;
     public static final float OVERHEAL_CONVERT_INC_PER_LEVEL = 5;
@@ -45,11 +50,7 @@ public class LegendaryAegis extends AbstractLegendaryWeapon implements PassiveCo
     public static final int BARRIER_TIMEOUT_SECONDS = 10;
     public static final int PULSE_INTERNAL_COOLDOWN_SECONDS = 8;
     @Transient
-    private final AtomicReference<Instant> barrierExpireAt = new AtomicReference<>(Instant.EPOCH);
-    @Transient
-    private final AtomicReference<Instant> pulseReadyAt = new AtomicReference<>(Instant.EPOCH);
-    @Transient
-    private float barrierPool = 0f;
+    private AegisSession session;
 
     public LegendaryAegis() {
 
@@ -108,6 +109,9 @@ public class LegendaryAegis extends AbstractLegendaryWeapon implements PassiveCo
     public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
         super.applyToWarlordsPlayer(player, pveOption);
 
+        this.session = new AegisSession();
+        final AegisSession session = this.session;
+
         player.getCooldownManager().addCooldown(new PermanentCooldown<>(
                 "Aegis",
                 null,
@@ -126,24 +130,24 @@ public class LegendaryAegis extends AbstractLegendaryWeapon implements PassiveCo
                         float overheal = potential - max;
                         float gained = overheal * (getOverhealConvertPercent() / 100f);
                         float cap = max * (getBarrierCapPercent() / 100f);
-                        barrierPool = Math.min(cap, barrierPool + gained);
-                        barrierExpireAt.set(Instant.now().plus(BARRIER_TIMEOUT_SECONDS, ChronoUnit.SECONDS));
+                        session.barrierPool = Math.min(cap, session.barrierPool + gained);
+                        session.barrierExpireAt = Instant.now().plus(BARRIER_TIMEOUT_SECONDS, ChronoUnit.SECONDS);
                         player.playSound(player.getLocation(), Sound.ITEM_SHIELD_BLOCK, 1, 1.4f);
                     }
                 }
         ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-            if (barrierActive()) {
+            if (barrierActive(session)) {
                 currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getTitleName(), 1f + DMG_BONUS_WHILE_BARRIER_PERCENT / 100f);
             }
         }).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
-            if (!barrierActive()) {
+            if (!barrierActive(session)) {
                 return;
             }
             // replace with actual Shield class
-            float absorb = Math.min(barrierPool, currentDamageValue.getCalculatedValue());
-            barrierPool -= absorb;
-            if (barrierPool <= 0f) {
-                tryTriggerPulse(player);
+            float absorb = Math.min(session.barrierPool, currentDamageValue.getCalculatedValue());
+            session.barrierPool -= absorb;
+            if (session.barrierPool <= 0f) {
+                tryTriggerPulse(player, session);
             }
             currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE, getTitleName(), -absorb);
         }));
@@ -151,27 +155,27 @@ public class LegendaryAegis extends AbstractLegendaryWeapon implements PassiveCo
             @Override
             public void run() {
                 if (!player.isOnline() || player.isDead()) {
-                    barrierPool = 0f;
+                    session.barrierPool = 0f;
                     return;
                 }
-                if (barrierPool > 0f && Instant.now().isAfter(barrierExpireAt.get())) {
-                    barrierPool = 0f;
-                    tryTriggerPulse(player);
+                if (session.barrierPool > 0f && Instant.now().isAfter(session.barrierExpireAt)) {
+                    session.barrierPool = 0f;
+                    tryTriggerPulse(player, session);
                 }
             }
         }.runTaskTimer(0, 10);
     }
 
-    private boolean barrierActive() {
-        return barrierPool > 0f && Instant.now().isBefore(barrierExpireAt.get());
+    private boolean barrierActive(AegisSession session) {
+        return session.barrierPool > 0f && Instant.now().isBefore(session.barrierExpireAt);
     }
 
-    private void tryTriggerPulse(WarlordsPlayer player) {
+    private void tryTriggerPulse(WarlordsPlayer player, AegisSession session) {
         Instant now = Instant.now();
-        if (now.isBefore(pulseReadyAt.get())) {
+        if (now.isBefore(session.pulseReadyAt)) {
             return;
         }
-        pulseReadyAt.set(now.plus(PULSE_INTERNAL_COOLDOWN_SECONDS, ChronoUnit.SECONDS));
+        session.pulseReadyAt = now.plus(PULSE_INTERNAL_COOLDOWN_SECONDS, ChronoUnit.SECONDS);
 
         float selfMax = player.getMaxHealth();
         float healValue = selfMax * (PULSE_HEAL_ALLIES_PERCENT / 100f);
@@ -228,16 +232,22 @@ public class LegendaryAegis extends AbstractLegendaryWeapon implements PassiveCo
     }
 
     @Override
+    public void cleanup() {
+        this.session = null;
+        super.cleanup();
+    }
+
+    @Override
     public int getCounter() {
-        if (warlordsPlayer == null) {
+        if (warlordsPlayer == null || session == null) {
             return 0;
         }
-        if (barrierActive()) {
+        if (barrierActive(session)) {
             float cap = getBarrierCapPercent() / 100f * warlordsPlayer.getMaxHealth();
-            return cap <= 0 ? 0 : (int) Math.ceil((barrierPool / cap) * 100f);
+            return cap <= 0 ? 0 : (int) Math.ceil((session.barrierPool / cap) * 100f);
         }
         Instant now = Instant.now();
-        return now.isBefore(pulseReadyAt.get()) ? (int) ChronoUnit.SECONDS.between(now, pulseReadyAt.get()) : 0;
+        return now.isBefore(session.pulseReadyAt) ? (int) ChronoUnit.SECONDS.between(now, session.pulseReadyAt) : 0;
     }
 
 }

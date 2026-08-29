@@ -6,6 +6,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePvE
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.pve.anomaly.AbstractAnomalyOption;
+import com.ebicep.warlords.game.option.pve.anomaly.Anomalies;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -91,18 +92,26 @@ public class DatabaseGamePvEAnomaly extends DatabaseGamePvEBase<DatabaseGamePlay
     @Override
     public void appendLastGameStats(ComponentBuilder componentBuilder) {
         super.appendLastGameStats(componentBuilder);
-        componentBuilder.newLine(ChatColor.AQUA + anomalyName + ChatColor.GRAY + " - "
-                + ChatColor.YELLOW + objectivesCompleted + ChatColor.GRAY + "/3 objectives");
+        componentBuilder.newLine(ChatColor.YELLOW + String.valueOf(objectivesCompleted)
+                + ChatColor.GRAY + "/3 objectives");
     }
 
     @Override
     public List<Component> getExtraLore() {
         List<Component> lore = new ArrayList<>(super.getExtraLore());
         lore.add(Component.text("Anomaly: ", NamedTextColor.GRAY)
-                .append(Component.text(anomalyName, NamedTextColor.AQUA)));
+                .append(Component.text(getDisplayAnomalyName(), NamedTextColor.AQUA)));
         lore.add(Component.text("Objectives completed: ", NamedTextColor.GRAY)
                 .append(Component.text(objectivesCompleted + "/3", NamedTextColor.YELLOW)));
         return lore;
+    }
+
+    private String getDisplayAnomalyName() {
+        try {
+            return Anomalies.valueOf(anomalyName).getName();
+        } catch (IllegalArgumentException ignored) {
+            return anomalyName;
+        }
     }
 
     public String getAnomalyName() {

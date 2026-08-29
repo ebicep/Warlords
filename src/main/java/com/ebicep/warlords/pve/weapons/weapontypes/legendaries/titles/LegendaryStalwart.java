@@ -22,9 +22,12 @@ import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class LegendaryStalwart extends AbstractLegendaryWeapon implements PassiveCounter {
+
+    private static final class StalwartSession {
+        Instant lastActivated = Instant.now().minus(COOLDOWN, ChronoUnit.SECONDS);
+    }
 
     public static final int UNDER_HP_CHECK = 80;
     public static final int UNDER_HP_CHECK_INCREASE_PER_UPGRADE = 5;
@@ -35,7 +38,7 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon implements Passiv
     public static final int COOLDOWN = 20;
 
     @Transient
-    private final AtomicReference<Instant> lastActivated = new AtomicReference<>(Instant.now().minus(COOLDOWN, ChronoUnit.SECONDS));
+    private StalwartSession session;
 
     public LegendaryStalwart() {
     }
@@ -86,6 +89,9 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon implements Passiv
     public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
         super.applyToWarlordsPlayer(player, pveOption);
 
+        this.session = new StalwartSession();
+        final StalwartSession session = this.session;
+
         // 80 - 10 = skip +70% hp = .7
         // 85 - 9.5 = skip +75.5% hp = .75.5
         float upperBoundHP = (getUnderHpCheck() - getEveryHpPercent()) / 100;
@@ -109,10 +115,10 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon implements Passiv
                             if (player.getCurrentHealth() - currentDamageValue.getCalculatedValue() > 0) {
                                 return;
                             }
-                            if (Instant.now().isBefore(lastActivated.get())) {
+                            if (Instant.now().isBefore(session.lastActivated)) {
                                 return;
                             }
-                            lastActivated.set(Instant.now().plus(COOLDOWN, ChronoUnit.SECONDS));
+                            session.lastActivated = Instant.now().plus(COOLDOWN, ChronoUnit.SECONDS);
                             player.setCurrentHealth(player.getMaxBaseHealth() * .05f);
                             player.getCooldownManager().addCooldown(new RegularCooldown<>(
                                     "Stalwart",
@@ -184,9 +190,18 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon implements Passiv
     }
 
     @Override
+    public void cleanup() {
+        this.session = null;
+        super.cleanup();
+    }
+
+    @Override
     public int getCounter() {
-        if (Instant.now().isBefore(lastActivated.get())) {
-            return (int) ChronoUnit.SECONDS.between(Instant.now(), lastActivated.get());
+        if (session == null) {
+            return 0;
+        }
+        if (Instant.now().isBefore(session.lastActivated)) {
+            return (int) ChronoUnit.SECONDS.between(Instant.now(), session.lastActivated);
         }
         return 0;
     }
