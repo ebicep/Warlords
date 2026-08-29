@@ -11,6 +11,9 @@ import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePla
 import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePvEBase;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.*;
+import com.ebicep.warlords.database.repositories.player.pojos.cache.CachedMultiStatsGeneral;
+import com.ebicep.warlords.database.repositories.player.pojos.cache.PushedStatTotals;
+import com.ebicep.warlords.database.repositories.player.pojos.cache.StatPushUp;
 import com.ebicep.warlords.database.repositories.player.pojos.general.classes.*;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.PvEStats;
@@ -36,7 +39,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Document(collection = "Players_Information")
-public class DatabasePlayer implements MultiStatsGeneral, TracksMultiAbilityStats {
+public class DatabasePlayer implements CachedMultiStatsGeneral, TracksMultiAbilityStats {
 
     @Id
     private String id;
@@ -117,6 +120,8 @@ public class DatabasePlayer implements MultiStatsGeneral, TracksMultiAbilityStat
 
     @Transient
     private Team wantedTeam = Team.BLUE;
+    @Transient
+    private final PushedStatTotals pushedStats = new PushedStatTotals();
 
     public DatabasePlayer() {
     }
@@ -167,18 +172,20 @@ public class DatabasePlayer implements MultiStatsGeneral, TracksMultiAbilityStat
         spec.setExperience(spec.getExperience() + gamePlayer.getExperienceEarnedSpec() * multiplier);
         this.experience += gamePlayer.getExperienceEarnedUniversal() * multiplier;
         if (GameMode.isPvE(gameMode) && databaseGame instanceof DatabaseGamePvEBase gamePvEBase && gamePlayer instanceof DatabaseGamePlayerPvEBase gamePlayerPvEBase) {
+            // Root push-up applied by pveStats only when a mode path actually updated
             this.pveStats.updateStats(this, gamePvEBase, gameMode, gamePlayerPvEBase, result, multiplier, playersCollection);
             return;
         }
         List<GameAddon> gameAddons = databaseGame.getGameAddons();
         if (gameAddons.contains(GameAddon.TOURNAMENT_MODE)) {
+            // Root push-up applied by tournamentStats only on successful mode update
             this.tournamentStats.updateStats(this, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
-        } else {
-            if (gameAddons.isEmpty()) {
-                this.pubStats.updateStats(this, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
-            } else if (gameAddons.contains(GameAddon.PRIVATE_GAME) && !gameAddons.contains(GameAddon.CUSTOM_GAME)) {
-                this.compStats.updateStats(this, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
-            }
+        } else if (gameAddons.isEmpty()) {
+            // Root push-up applied by pubStats only on successful mode update
+            this.pubStats.updateStats(this, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+        } else if (gameAddons.contains(GameAddon.PRIVATE_GAME) && !gameAddons.contains(GameAddon.CUSTOM_GAME)) {
+            // Root push-up applied by compStats only on successful mode update
+            this.compStats.updateStats(this, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
         }
     }
 
@@ -210,8 +217,10 @@ public class DatabasePlayer implements MultiStatsGeneral, TracksMultiAbilityStat
         List<StatsWarlordsClasses<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>, StatsWarlordsSpecs<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>>>> stats = new ArrayList<>();
         stats.addAll(pubStats.getStats());
         stats.addAll(compStats.getStats());
-        for (PvEStatsWarlordsClasses<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase, PvEStats<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase>, PvEStatsWarlordsSpecs<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase, PvEStats<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase>>> stat : pveStats.getStats()) {
-            stats.add((StatsWarlordsClasses<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>, StatsWarlordsSpecs<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>>>) (Object) stat);
+        if (pveStats != null) {
+            for (PvEStatsWarlordsClasses<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase, PvEStats<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase>, PvEStatsWarlordsSpecs<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase, PvEStats<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase>>> stat : pveStats.getStats()) {
+                stats.add((StatsWarlordsClasses<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>, StatsWarlordsSpecs<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>>>) (Object) stat);
+            }
         }
         stats.addAll(tournamentStats.getStats());
         return stats;
@@ -228,7 +237,8 @@ public class DatabasePlayer implements MultiStatsGeneral, TracksMultiAbilityStat
 
     @Override
     public Collection<TracksAbilityStats> getAllAbilityStats() {
-        return Stream.of(pubStats, compStats, tournamentStats, pveStats)
+        return Stream.<TracksMultiAbilityStats>of(pubStats, compStats, tournamentStats, pveStats)
+                     .filter(Objects::nonNull)
                      .flatMap(s -> s.getAllAbilityStats().stream())
                      .collect(Collectors.toList());
     }
@@ -236,6 +246,16 @@ public class DatabasePlayer implements MultiStatsGeneral, TracksMultiAbilityStat
     public void loadInCollection(PlayersCollections collection) {
         pveStats.loadInCollection(collection);
         pveStats.setDatabasePlayer(this);
+        StatPushUp.warmAll(this);
+    }
+
+    @Override
+    public PushedStatTotals pushedStats() {
+        return pushedStats;
+    }
+
+    public int treeWalkKills() {
+        return CachedMultiStatsGeneral.super.treeWalkKills();
     }
 
     public String getName() {

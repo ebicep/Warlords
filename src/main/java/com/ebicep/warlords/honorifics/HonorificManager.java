@@ -296,9 +296,7 @@ public final class HonorificManager {
     }
 
     private static long getMobKills(DatabasePlayerPvE pveStats, String target) {
-        return pveStats.getMobKills().entrySet().stream()
-                .filter(entry -> compact(entry.getKey()).contains(target))
-                .mapToLong(entry -> entry.getValue() == null ? 0 : entry.getValue()).sum();
+        return pveStats.getMobKillCount(target);
     }
 
     private static long getSkeletonKills(DatabasePlayerPvE pveStats) {
@@ -329,7 +327,7 @@ public final class HonorificManager {
     }
 
     private static long getTotalMobKills(DatabasePlayerPvE pveStats) {
-        return pveStats.getMobKills().values().stream().mapToLong(value -> value == null ? 0 : value).sum();
+        return pveStats.getTotalMobKills();
     }
 
     private static String compact(String value) {

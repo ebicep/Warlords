@@ -7,16 +7,22 @@ import com.ebicep.warlords.database.repositories.games.pojos.ctf.DatabaseGameCTF
 import com.ebicep.warlords.database.repositories.games.pojos.ctf.DatabaseGamePlayerCTF;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.TracksAbilityStats;
+import com.ebicep.warlords.database.repositories.player.pojos.cache.PushedStatTotals;
+import com.ebicep.warlords.database.repositories.player.pojos.cache.PushedStatsWarlordsClasses;
 import com.ebicep.warlords.database.repositories.player.pojos.ctf.classses.*;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class DatabasePlayerCTF implements CTFStatsWarlordsClasses, TracksAbilityStats {
+public class DatabasePlayerCTF implements PushedStatsWarlordsClasses.CTF, TracksAbilityStats {
+
+    @Transient
+    private final PushedStatTotals pushedStats = new PushedStatTotals();
 
     private DatabaseMageCTF mage = new DatabaseMageCTF();
     private DatabaseWarriorCTF warrior = new DatabaseWarriorCTF();
@@ -44,6 +50,12 @@ public class DatabasePlayerCTF implements CTFStatsWarlordsClasses, TracksAbility
     ) {
         updateSpecStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
         updateAbilityStats(gamePlayer, multiplier);
+        pushedStats.applyGeneral(gamePlayer, result, multiplier);
+    }
+
+    @Override
+    public PushedStatTotals pushedStats() {
+        return pushedStats;
     }
 
     @Override
