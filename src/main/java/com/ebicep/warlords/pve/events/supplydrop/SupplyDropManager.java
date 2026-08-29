@@ -21,18 +21,83 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class SupplyDropManager {
 
+    private enum RollSpeed {
+        NORMAL,
+        INSTANT,
+        SUPER_INSTANT
+    }
+
     private static final ConcurrentHashMap<UUID, Boolean> PLAYER_ROLL_COOLDOWN = new ConcurrentHashMap<>();
+
+    private static RollSpeed getRollSpeed(InventoryClickEvent event) {
+        if (event.isShiftClick()) {
+            return RollSpeed.SUPER_INSTANT;
+        }
+        if (event.isRightClick()) {
+            return RollSpeed.INSTANT;
+        }
+        if (event.isLeftClick()) {
+            return RollSpeed.NORMAL;
+        }
+        return null;
+    }
+
+    private static List<Component> getRollSpeedLore() {
+        return List.of(
+                Component.empty(),
+                Component.textOfChildren(
+                        Component.text("LEFT-CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                        Component.text(" to call at normal speed", NamedTextColor.GRAY)
+                ),
+                Component.textOfChildren(
+                        Component.text("RIGHT-CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                        Component.text(" to call at fast speed", NamedTextColor.GRAY)
+                ),
+                Component.textOfChildren(
+                        Component.text("SHIFT-CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                        Component.text(" to call instantly", NamedTextColor.GRAY)
+                )
+        );
+    }
+
+    private static void handleSupplyDropRollClick(Player player, long tokens, long amount, InventoryClickEvent event, boolean playSound) {
+        if (PLAYER_ROLL_COOLDOWN.getOrDefault(player.getUniqueId(), false)) {
+            player.sendMessage(Component.text("You must wait for your current roll to end to roll again!", NamedTextColor.RED));
+            return;
+        }
+        RollSpeed rollSpeed = getRollSpeed(event);
+        if (rollSpeed == null) {
+            return;
+        }
+        if (tokens <= 0) {
+            player.sendMessage(Component.text("You do not have any supply drop tokens to call a supply drop.", NamedTextColor.RED));
+            player.closeInventory();
+            return;
+        }
+        if (playSound) {
+            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
+        }
+        supplyDropRoll(player, amount, rollSpeed);
+        player.closeInventory();
+    }
 
     public static void sendSupplyDropMessage(UUID uuid, Component message) {
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
@@ -82,87 +147,47 @@ public class SupplyDropManager {
                 3,
                 new ItemBuilder(Material.GOLDEN_HORSE_ARMOR)
                         .name(Component.text("Click to call a supply drop", NamedTextColor.GREEN))
-                        .lore(
-                                Component.text("Cost: ", NamedTextColor.GRAY).append(Currencies.SUPPLY_DROP_TOKEN.getCostColoredName(1)),
-                                Component.text("Balance: ", NamedTextColor.GRAY).append(Currencies.SUPPLY_DROP_TOKEN.getCostColoredName(tokens)),
-                                Component.empty(),
-                                Component.textOfChildren(
-                                        Component.text("SHIFT-CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
-                                        Component.text(" to INSTANTLY call a supply drop", NamedTextColor.GRAY)
-                                )
-                        )
+                        .lore(Stream.concat(
+                                Stream.of(
+                                        Component.text("Cost: ", NamedTextColor.GRAY).append(Currencies.SUPPLY_DROP_TOKEN.getCostColoredName(1)),
+                                        Component.text("Balance: ", NamedTextColor.GRAY).append(Currencies.SUPPLY_DROP_TOKEN.getCostColoredName(tokens))
+                                ),
+                                getRollSpeedLore().stream()
+                        ).collect(Collectors.toList()))
                         .get(),
-                (m, e) -> {
-                    if (PLAYER_ROLL_COOLDOWN.getOrDefault(player.getUniqueId(), false)) {
-                        player.sendMessage(Component.text("You must wait for your current roll to end to roll again!", NamedTextColor.RED));
-                        return;
-                    }
-                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
-                    if (tokens > 0) {
-                        supplyDropRoll(player, 1, e.isShiftClick());
-                    } else {
-                        player.sendMessage(Component.text("You do not have any supply drop tokens to call a supply drop.", NamedTextColor.RED));
-                    }
-                    player.closeInventory();
-                }
+                (m, e) -> handleSupplyDropRollClick(player, tokens, 1, e, true)
         );
         menu.setItem(
                 4,
                 3,
                 new ItemBuilder(Material.IRON_HORSE_ARMOR)
                         .name(Component.text("Click to call 25 supply drops", NamedTextColor.GREEN))
-                        .lore(
-                                Component.text("Cost: ", NamedTextColor.GRAY).append(Currencies.SUPPLY_DROP_TOKEN.getCostColoredName(tokens > 25 ? 25 : tokens)),
-                                Component.text("Balance: ", NamedTextColor.GRAY).append(Currencies.SUPPLY_DROP_TOKEN.getCostColoredName(tokens)),
-                                Component.empty(),
-                                Component.textOfChildren(
-                                        Component.text("SHIFT-CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
-                                        Component.text(" to INSTANTLY call 25 supply drops", NamedTextColor.GRAY)
-                                )
-                        )
+                        .lore(Stream.concat(
+                                Stream.of(
+                                        Component.text("Cost: ", NamedTextColor.GRAY).append(Currencies.SUPPLY_DROP_TOKEN.getCostColoredName(tokens > 25 ? 25 : tokens)),
+                                        Component.text("Balance: ", NamedTextColor.GRAY).append(Currencies.SUPPLY_DROP_TOKEN.getCostColoredName(tokens))
+                                ),
+                                getRollSpeedLore().stream()
+                        ).collect(Collectors.toList()))
                         .get(),
-                (m, e) -> {
-                    if (PLAYER_ROLL_COOLDOWN.getOrDefault(player.getUniqueId(), false)) {
-                        player.sendMessage(Component.text("You must wait for your current roll to end to roll again!", NamedTextColor.RED));
-                        return;
-                    }
-                    if (tokens > 0) {
-                        supplyDropRoll(player, Math.min(tokens, 25), e.isShiftClick());
-                    } else {
-                        player.sendMessage(Component.text("You do not have any supply drop tokens to call a supply drop.", NamedTextColor.RED));
-                    }
-                    player.closeInventory();
-                }
+                (m, e) -> handleSupplyDropRollClick(player, tokens, Math.min(tokens, 25), e, false)
         );
         menu.setItem(
                 6,
                 3,
                 new ItemBuilder(Material.DIAMOND_HORSE_ARMOR)
                         .name(Component.text("Click to call all available supply drops (Max 100)", NamedTextColor.GREEN))
-                        .lore(
-                                Component.text("Cost: ", NamedTextColor.GRAY).append(Currencies.SUPPLY_DROP_TOKEN.getCostColoredName(tokens > 100 ? 100 : tokens)),
-                                Component.text("Balance: ", NamedTextColor.GRAY).append(Currencies.SUPPLY_DROP_TOKEN.getCostColoredName(tokens)),
-                                Component.empty(),
-                                Component.text("NOTE: Max 100 at a time", NamedTextColor.GRAY),
-                                Component.empty(),
-                                Component.textOfChildren(
-                                        Component.text("SHIFT-CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
-                                        Component.text(" to INSTANTLY call all available supply drops", NamedTextColor.GRAY)
-                                )
-                        )
+                        .lore(Stream.concat(
+                                Stream.of(
+                                        Component.text("Cost: ", NamedTextColor.GRAY).append(Currencies.SUPPLY_DROP_TOKEN.getCostColoredName(tokens > 100 ? 100 : tokens)),
+                                        Component.text("Balance: ", NamedTextColor.GRAY).append(Currencies.SUPPLY_DROP_TOKEN.getCostColoredName(tokens)),
+                                        Component.empty(),
+                                        Component.text("NOTE: Max 100 at a time", NamedTextColor.GRAY)
+                                ),
+                                getRollSpeedLore().stream()
+                        ).collect(Collectors.toList()))
                         .get(),
-                (m, e) -> {
-                    if (PLAYER_ROLL_COOLDOWN.getOrDefault(player.getUniqueId(), false)) {
-                        player.sendMessage(Component.text("You must wait for your current roll to end to roll again!", NamedTextColor.RED));
-                        return;
-                    }
-                    if (tokens > 0) {
-                        supplyDropRoll(player, Math.min(tokens, 100), e.isShiftClick());
-                    } else {
-                        player.sendMessage(Component.text("You do not have any supply drop tokens to call a supply drop.", NamedTextColor.RED));
-                    }
-                    player.closeInventory();
-                }
+                (m, e) -> handleSupplyDropRollClick(player, tokens, Math.min(tokens, 100), e, false)
         );
 
         //last 20 supply drops
@@ -193,7 +218,12 @@ public class SupplyDropManager {
         menu.openForPlayer(player);
     }
 
-    public static void supplyDropRoll(Player player, long amount, boolean instant) {
+    public static void supplyDropRoll(Player player, long amount, RollSpeed speed) {
+        if (speed == RollSpeed.SUPER_INSTANT) {
+            supplyDropRollCompiled(player, amount);
+            return;
+        }
+        boolean instant = speed == RollSpeed.INSTANT;
         UUID uuid = player.getUniqueId();
         DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid);
         PLAYER_ROLL_COOLDOWN.put(uuid, true);
@@ -259,7 +289,7 @@ public class SupplyDropManager {
                             }
                         }
                         databasePlayerPvE.addSupplyDropEntry(new SupplyDropEntry(reward));
-                        reward.giveReward.accept(databasePlayerPvE);
+                        reward.giveReward(databasePlayerPvE);
                         if (rewardsGained == amount) {
                             PLAYER_ROLL_COOLDOWN.put(uuid, false);
                             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
@@ -269,6 +299,75 @@ public class SupplyDropManager {
                 }
             }
         }.runTaskTimer(Warlords.getInstance(), 0, 0);
+    }
+
+    private static void supplyDropRollCompiled(Player player, long amount) {
+        UUID uuid = player.getUniqueId();
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid);
+        DatabasePlayerPvE databasePlayerPvE = databasePlayer.getPveStats();
+
+        PLAYER_ROLL_COOLDOWN.put(uuid, true);
+        sendSupplyDropMessage(uuid,
+                Component.text("Called ", NamedTextColor.GREEN)
+                         .append(Component.text(amount, NamedTextColor.YELLOW))
+                         .append(Component.text(" supply drop" + (amount > 1 ? "s" : "") + "!", NamedTextColor.GREEN))
+        );
+        databasePlayerPvE.subtractCurrency(Currencies.SUPPLY_DROP_TOKEN, amount);
+        Bukkit.getPluginManager().callEvent(new SupplyDropCallEvent(uuid, amount, true));
+
+        Map<Currencies, Long> rewardTotals = new HashMap<>();
+        List<SupplyDropRewards> individualRolls = new ArrayList<>();
+        for (long i = 0; i < amount; i++) {
+            SupplyDropRewards reward = SupplyDropRewards.getRandomReward();
+            rewardTotals.merge(reward.currency, reward.currencyAmount, Long::sum);
+            individualRolls.add(reward);
+        }
+
+        LinkedHashMap<Currencies, Long> compiled = new LinkedHashMap<>();
+        for (Currencies currency : Currencies.values()) {
+            Long total = rewardTotals.get(currency);
+            if (total != null && total > 0) {
+                compiled.put(currency, total);
+            }
+        }
+
+        for (SupplyDropRewards reward : individualRolls) {
+            if (reward.rarity == WeaponsPvE.EPIC) {
+                for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                    sendSupplyDropMessage(onlinePlayer.getUniqueId(),
+                            Component.text().color(NamedTextColor.GRAY)
+                                     .append(Component.text(player.getName(), NamedTextColor.AQUA))
+                                     .append(Component.text(" got lucky and received "))
+                                     .append(Component.text(reward.name, reward.getTextColor()))
+                                     .append(Component.text(" from the supply drop!"))
+                                     .build()
+                    );
+                }
+            }
+            databasePlayerPvE.addSupplyDropEntry(new SupplyDropEntry(reward));
+        }
+
+        compiled.forEach(databasePlayerPvE::addCurrency);
+
+        Component summary = getSummary(amount, compiled);
+        sendSupplyDropMessage(uuid, summary);
+        player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1.2f);
+
+        PLAYER_ROLL_COOLDOWN.put(uuid, false);
+        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+    }
+
+    @Nonnull
+    private static Component getSummary(long amount, LinkedHashMap<Currencies, Long> compiled) {
+        Component summary = Component.text("You received from ", NamedTextColor.GRAY)
+                                     .append(Component.text(amount, NamedTextColor.YELLOW))
+                                     .append(Component.text(" supply drops:", NamedTextColor.GRAY));
+        for (Map.Entry<Currencies, Long> entry : compiled.entrySet()) {
+            summary = summary.appendNewline()
+                             .append(Component.text("- ", NamedTextColor.GRAY))
+                             .append(entry.getKey().getCostColoredName(entry.getValue()));
+        }
+        return summary;
     }
 
 }

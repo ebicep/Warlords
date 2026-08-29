@@ -11,110 +11,40 @@ import net.kyori.adventure.util.Ticks;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
-import java.util.function.Consumer;
-
 public enum SupplyDropRewards {
 
-    SYNTHETIC_SHARDS_3("3 Synthetic Shards",
-            databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.SYNTHETIC_SHARD, 3),
-            1500,
-            WeaponsPvE.COMMON
-    ),
-    SYNTHETIC_SHARDS_5("5 Synthetic Shards",
-            databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.SYNTHETIC_SHARD, 5),
-            2000,
-            WeaponsPvE.COMMON
-    ),
-    SYNTHETIC_SHARDS_10("10 Synthetic Shards",
-            databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.SYNTHETIC_SHARD, 10),
-            1000,
-            WeaponsPvE.COMMON
-    ),
-    SYNTHETIC_SHARDS_20("20 Synthetic Shards",
-            databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.SYNTHETIC_SHARD, 20),
-            500,
-            WeaponsPvE.RARE
-    ),
-    SYNTHETIC_SHARDS_50("50 Synthetic Shards",
-            databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.SYNTHETIC_SHARD, 50),
-            200,
-            WeaponsPvE.EPIC
-    ),
-    COMMON_STAR_PIECE("Common Star Piece",
-            databasePlayerPvE -> databasePlayerPvE.addOneCurrency(Currencies.COMMON_STAR_PIECE),
-            100,
-            WeaponsPvE.COMMON
-    ) {
+    SYNTHETIC_SHARDS_3("3 Synthetic Shards", 1500, WeaponsPvE.COMMON, Currencies.SYNTHETIC_SHARD, 3),
+    SYNTHETIC_SHARDS_5("5 Synthetic Shards", 2000, WeaponsPvE.COMMON, Currencies.SYNTHETIC_SHARD, 5),
+    SYNTHETIC_SHARDS_10("10 Synthetic Shards", 1000, WeaponsPvE.COMMON, Currencies.SYNTHETIC_SHARD, 10),
+    SYNTHETIC_SHARDS_20("20 Synthetic Shards", 500, WeaponsPvE.RARE, Currencies.SYNTHETIC_SHARD, 20),
+    SYNTHETIC_SHARDS_50("50 Synthetic Shards", 200, WeaponsPvE.EPIC, Currencies.SYNTHETIC_SHARD, 50),
+    COMMON_STAR_PIECE("Common Star Piece", 100, WeaponsPvE.COMMON, Currencies.COMMON_STAR_PIECE, 1) {
         @Override
         public Component getDropMessage() {
             return getStarPieceDropMessage();
         }
     },
-    RARE_STAR_PIECE("Rare Star Piece",
-            databasePlayerPvE -> databasePlayerPvE.addOneCurrency(Currencies.RARE_STAR_PIECE),
-            10,
-            WeaponsPvE.RARE
-    ) {
+    RARE_STAR_PIECE("Rare Star Piece", 10, WeaponsPvE.RARE, Currencies.RARE_STAR_PIECE, 1) {
         @Override
         public Component getDropMessage() {
             return getStarPieceDropMessage();
         }
     },
-    EPIC_STAR_PIECE("Epic Star Piece",
-            databasePlayerPvE -> databasePlayerPvE.addOneCurrency(Currencies.EPIC_STAR_PIECE),
-            1,
-            WeaponsPvE.EPIC
-    ) {
+    EPIC_STAR_PIECE("Epic Star Piece", 1, WeaponsPvE.EPIC, Currencies.EPIC_STAR_PIECE, 1) {
         @Override
         public Component getDropMessage() {
             return getStarPieceDropMessage();
         }
     },
-    SKILL_BOOST_MODIFIER("Skill Boost Modifier",
-            databasePlayerPvE -> databasePlayerPvE.addOneCurrency(Currencies.SKILL_BOOST_MODIFIER),
-            10,
-            WeaponsPvE.EPIC
-    ),
-    COINS_1000("1,000 Coins",
-            databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.COIN, 1000),
-            1000,
-            WeaponsPvE.COMMON
-    ),
-    COINS_2000("2,000 Coins",
-            databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.COIN, 2000),
-            1500,
-            WeaponsPvE.COMMON
-    ),
-    COINS_5000("5,000 Coins",
-            databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.COIN, 5000),
-            1000,
-            WeaponsPvE.COMMON
-    ),
-    COINS_10000("10,000 Coins",
-            databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.COIN, 10000),
-            500,
-            WeaponsPvE.COMMON
-    ),
-    COINS_50000("50,000 Coins",
-            databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.COIN, 50000),
-            200,
-            WeaponsPvE.RARE
-    ),
-    COINS_100000("100,000 Coins",
-            databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.COIN, 100000),
-            100,
-            WeaponsPvE.EPIC
-    ),
-    FAIRY_ESSENCE_20("20 Fairy Essence",
-            databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.FAIRY_ESSENCE, 20),
-            500,
-            WeaponsPvE.RARE
-    ),
-    FAIRY_ESSENCE_40("40 Fairy Essence",
-            databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.FAIRY_ESSENCE, 40),
-            200,
-            WeaponsPvE.RARE
-    ),
+    SKILL_BOOST_MODIFIER("Skill Boost Modifier", 10, WeaponsPvE.EPIC, Currencies.SKILL_BOOST_MODIFIER, 1),
+    COINS_1000("1,000 Coins", 1000, WeaponsPvE.COMMON, Currencies.COIN, 1000),
+    COINS_2000("2,000 Coins", 1500, WeaponsPvE.COMMON, Currencies.COIN, 2000),
+    COINS_5000("5,000 Coins", 1000, WeaponsPvE.COMMON, Currencies.COIN, 5000),
+    COINS_10000("10,000 Coins", 500, WeaponsPvE.COMMON, Currencies.COIN, 10000),
+    COINS_50000("50,000 Coins", 200, WeaponsPvE.RARE, Currencies.COIN, 50000),
+    COINS_100000("100,000 Coins", 100, WeaponsPvE.EPIC, Currencies.COIN, 100000),
+    FAIRY_ESSENCE_20("20 Fairy Essence", 500, WeaponsPvE.RARE, Currencies.FAIRY_ESSENCE, 20),
+    FAIRY_ESSENCE_40("40 Fairy Essence", 200, WeaponsPvE.RARE, Currencies.FAIRY_ESSENCE, 40),
 
     ;
 
@@ -127,19 +57,25 @@ public enum SupplyDropRewards {
     }
 
     public final String name;
-    public final Consumer<DatabasePlayerPvE> giveReward;
     public final int dropChance;
     public final WeaponsPvE rarity; //using for convenience
+    public final Currencies currency;
+    public final long currencyAmount;
 
-    SupplyDropRewards(String name, Consumer<DatabasePlayerPvE> giveReward, int dropChance, WeaponsPvE rarity) {
+    SupplyDropRewards(String name, int dropChance, WeaponsPvE rarity, Currencies currency, long currencyAmount) {
         this.name = name;
-        this.giveReward = giveReward;
         this.dropChance = dropChance;
         this.rarity = rarity;
+        this.currency = currency;
+        this.currencyAmount = currencyAmount;
     }
 
     public static SupplyDropRewards getRandomReward() {
         return RANDOM_COLLECTION.next();
+    }
+
+    public void giveReward(DatabasePlayerPvE databasePlayerPvE) {
+        databasePlayerPvE.addCurrency(currency, currencyAmount);
     }
 
     public Component getDropMessage() {
