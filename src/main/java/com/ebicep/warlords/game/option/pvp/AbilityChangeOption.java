@@ -71,7 +71,7 @@ public class AbilityChangeOption implements Option {
         for (Specializations spec : Specializations.VALUES) {
             for (AbstractAbility abstractAbility : spec.create(ConfigManager.DEFAULT_NAMESPACES).getAbilities()) {
                 Ability<?> ability = Ability.getAbility(abstractAbility.getClass());
-                if (ability != null && seen.add(ability)) {
+                if (ability != null && seen.add(ability) && !AbilityCombinationBans.isBanned(ability)) {
                     Class<? extends AbilityIcon> iconType = getIconType(ability.clazz);
                     if (iconType != null) {
                         pools.get(iconType).add(ability);

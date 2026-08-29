@@ -24,6 +24,7 @@ import net.minecraft.network.protocol.game.ClientboundSoundPacket;
 import net.minecraft.world.entity.Entity;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -111,12 +112,13 @@ public class PacketUtils {
                             return;
                         }
                         Player player = event.getPlayer();
-                        if (!MountCommand.PLAYER_MOUNT_TYPE.containsKey(player.getUniqueId())) {
+                        if (!(player.getVehicle() instanceof AbstractHorse)) {
                             return;
                         }
+                        boolean isDebugMount = MountCommand.PLAYER_MOUNT_TYPE.containsKey(player.getUniqueId());
                         WrapperPlayClientSteerVehicle steerVehiclePacket = new WrapperPlayClientSteerVehicle(event.getPacket());
                         steerVehiclePacket.setIsJumping(false);
-                        if (steerVehiclePacket.getIsShiftKeyDown()) {
+                        if (isDebugMount && steerVehiclePacket.getIsShiftKeyDown()) {
                             org.bukkit.entity.Entity vehicle = player.getVehicle();
                             if (vehicle != null) {
                                 event.setCancelled(true);
