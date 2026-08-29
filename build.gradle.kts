@@ -38,6 +38,25 @@ val gitDirty: String = runCatching {
 }.getOrElse { "false" }
 val buildTime: String = Instant.now().toString()
 
+val citizensMainJar = run {
+    val projectJar = layout.projectDirectory.file("libs/citizens-main-2.0.41-SNAPSHOT.jar").asFile
+    when {
+        projectJar.exists() -> projectJar
+        else -> {
+            val cacheRoot = file(
+                "${System.getProperty("user.home")}/.gradle/caches/modules-2/files-2.1/net.citizensnpcs/citizens-main/2.0.41-SNAPSHOT",
+            )
+            cacheRoot.takeIf { it.isDirectory }
+                ?.walkTopDown()
+                ?.firstOrNull { it.isFile && it.name == "citizens-main-2.0.41-SNAPSHOT.jar" }
+                ?: error(
+                    "Citizens compile dependency unavailable: maven.citizensnpcs.co returns 403 and no local jar was found. " +
+                        "Place citizens-main-2.0.41-SNAPSHOT.jar in libs/ (download from https://ci.citizensnpcs.co/job/Citizens2/).",
+                )
+        }
+    }
+}
+
 java {
     // Configure the java toolchain. This allows gradle to auto-provision JDK 21 on systems that only have JDK 8 installed for example.
     toolchain.languageVersion.set(JavaLanguageVersion.of(21))
@@ -85,9 +104,7 @@ dependencies {
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("it.unimi.dsi:fastutil:8.5.12")
 
-    compileOnly("net.citizensnpcs:citizens-main:2.0.41-SNAPSHOT") {
-        exclude(group = "*", module = "*")
-    }
+    compileOnly(files(citizensMainJar))
 
     compileOnly("com.comphenix.protocol:ProtocolLib:5.4.0-SNAPSHOT")
 
@@ -98,6 +115,17 @@ dependencies {
     }
 
     implementation("fr.skytasul:guardianbeam:2.4.6")
+
+    testImplementation("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.11.4")
+    testImplementation("org.junit.platform:junit-platform-launcher")
+    testImplementation("org.mockbukkit.mockbukkit:mockbukkit-v1.21:4.110.0")
+    testImplementation("org.objenesis:objenesis:3.4")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+
+paperweight {
+    addServerDependencyTo = configurations.named("compileOnly").map { setOf(it) }
 }
 
 publishing {
@@ -156,6 +184,10 @@ tasks {
 
     runServer {
         version.set("1.21.4")
+    }
+
+    test {
+        useJUnitPlatform()
     }
 }
 

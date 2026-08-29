@@ -23,7 +23,8 @@ public interface MultiPvEStats<
     @Nonnull
     private HashMap<String, Long> getStat(Function<PvEStats<DatabaseGameT, DatabaseGamePlayerT>, Map<String, Long>> statFunction) {
         return Arrays.stream(Specializations.VALUES)
-                     .flatMap(s -> getStats().stream().map(statFunction))
+                     .flatMap(spec -> getStats().stream().map(s -> s.getSpec(spec)))
+                     .map(statFunction)
                      .collect(
                              HashMap::new,
                              (m, v) -> v.forEach((k, w) -> m.merge(k, w, Long::sum)),

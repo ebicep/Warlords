@@ -8,6 +8,9 @@ import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.Dat
 import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePvEWaveDefense;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.TracksAbilityStats;
+import com.ebicep.warlords.database.repositories.player.pojos.cache.CachedMultiPvEWaveDefenseStats;
+import com.ebicep.warlords.database.repositories.player.pojos.cache.PushedStatTotals;
+import com.ebicep.warlords.database.repositories.player.pojos.cache.StatPushUp;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.option.pve.onslaught.PouchReward;
@@ -16,6 +19,7 @@ import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.Collection;
@@ -24,7 +28,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
-public class DatabasePlayerWaveDefenseStats implements MultiPvEWaveDefenseStats, TracksAbilityStats {
+public class DatabasePlayerWaveDefenseStats implements CachedMultiPvEWaveDefenseStats, TracksAbilityStats {
+
+    @Transient
+    private final PushedStatTotals pushedStats = new PushedStatTotals();
 
     @Field("easy_stats")
     private DatabasePlayerPvEWaveDefenseDifficultyStats easyStats = new DatabasePlayerPvEWaveDefenseDifficultyStats();
@@ -57,6 +64,21 @@ public class DatabasePlayerWaveDefenseStats implements MultiPvEWaveDefenseStats,
             int multiplier,
             PlayersCollections playersCollection
     ) {
+        updateModeStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+    }
+
+    /**
+     * @return true if a difficulty leaf was updated and local push-up was applied
+     */
+    public boolean updateModeStats(
+            DatabasePlayer databasePlayer,
+            DatabaseGamePvEWaveDefense databaseGame,
+            GameMode gameMode,
+            DatabaseGamePlayerPvEWaveDefense gamePlayer,
+            DatabaseGamePlayerResult result,
+            int multiplier,
+            PlayersCollections playersCollection
+    ) {
         Map<Spendable, Long> ascendantPouch = gamePlayer.getAscendantPouch();
         if (multiplier > 0) {
             LinkedHashMap<Spendable, Long> sortedAscendantPouch = new LinkedHashMap<>();
@@ -72,12 +94,16 @@ public class DatabasePlayerWaveDefenseStats implements MultiPvEWaveDefenseStats,
         }
 
         DatabasePlayerPvEWaveDefenseDifficultyStats difficultyStats = getDifficultyStats(databaseGame.getDifficulty());
-        if (difficultyStats != null) {
-            difficultyStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
-        } else {
+        if (difficultyStats == null) {
             ChatChannels.sendDebugMessage((CommandIssuer) null, Component.text("Error: Difficulty stats is null", NamedTextColor.GREEN));
+            return false;
         }
+        boolean updated = difficultyStats.updateModeStats(databasePlayer, databaseGame, gamePlayer, result, multiplier, playersCollection);
         updateAbilityStats(gamePlayer, multiplier);
+        if (updated) {
+            StatPushUp.applyPvE(pushedStats, gamePlayer, result, databaseGame, multiplier);
+        }
+        return updated;
     }
 
     public DatabasePlayerPvEWaveDefenseDifficultyStats getDifficultyStats(DifficultyIndex difficultyIndex) {
@@ -118,4 +144,20 @@ public class DatabasePlayerWaveDefenseStats implements MultiPvEWaveDefenseStats,
                      .flatMap(stats -> stats.getStats().stream())
                      .toList();
     }
+
+    @Override
+    public PushedStatTotals pushedStats() {
+        return pushedStats;
+    }
+
+    @Override
+    public int treeWalkKills() {
+        return CachedMultiPvEWaveDefenseStats.super.treeWalkKills();
+    }
+
+    @Override
+    public Map<String, Long> treeWalkMobKills() {
+        return CachedMultiPvEWaveDefenseStats.super.treeWalkMobKills();
+    }
+
 }

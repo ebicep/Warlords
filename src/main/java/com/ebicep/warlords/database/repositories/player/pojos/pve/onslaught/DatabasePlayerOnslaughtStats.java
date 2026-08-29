@@ -7,11 +7,15 @@ import com.ebicep.warlords.database.repositories.games.pojos.pve.onslaught.Datab
 import com.ebicep.warlords.database.repositories.games.pojos.pve.onslaught.DatabaseGamePvEOnslaught;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.TracksAbilityStats;
+import com.ebicep.warlords.database.repositories.player.pojos.cache.PushedMultiPvEStats;
+import com.ebicep.warlords.database.repositories.player.pojos.cache.PushedStatTotals;
+import com.ebicep.warlords.database.repositories.player.pojos.cache.StatPushUp;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.option.pve.onslaught.PouchReward;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.Collection;
@@ -19,7 +23,10 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class DatabasePlayerOnslaughtStats implements MultiPvEOnslaughtStats, TracksAbilityStats {
+public class DatabasePlayerOnslaughtStats implements PushedMultiPvEStats.Onslaught, TracksAbilityStats {
+
+    @Transient
+    private final PushedStatTotals pushedStats = new PushedStatTotals();
 
     @Field("player_count_stats")
     private Map<Integer, DatabasePlayerPvEOnslaughtPlayerCountStats> playerCountStats = new LinkedHashMap<>() {{
@@ -41,6 +48,21 @@ public class DatabasePlayerOnslaughtStats implements MultiPvEOnslaughtStats, Tra
 
     @Override
     public void updateStats(
+            DatabasePlayer databasePlayer,
+            DatabaseGamePvEOnslaught databaseGame,
+            GameMode gameMode,
+            DatabaseGamePlayerPvEOnslaught gamePlayer,
+            DatabaseGamePlayerResult result,
+            int multiplier,
+            PlayersCollections playersCollection
+    ) {
+        updateModeStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+    }
+
+    /**
+     * @return true if a player-count leaf was updated and local push-up was applied
+     */
+    public boolean updateModeStats(
             DatabasePlayer databasePlayer,
             DatabaseGamePvEOnslaught databaseGame,
             GameMode gameMode,
@@ -80,6 +102,11 @@ public class DatabasePlayerOnslaughtStats implements MultiPvEOnslaughtStats, Tra
             ChatUtils.MessageType.GAME_SERVICE.sendErrorMessage("Invalid player count = " + playerCount);
         }
         updateAbilityStats(gamePlayer, multiplier);
+        if (countStats != null) {
+            StatPushUp.applyPvE(pushedStats, gamePlayer, result, databaseGame, multiplier);
+            return true;
+        }
+        return false;
     }
 
     public DatabasePlayerPvEOnslaughtPlayerCountStats getPlayerCountStats(int playerCount) {
@@ -97,4 +124,10 @@ public class DatabasePlayerOnslaughtStats implements MultiPvEOnslaughtStats, Tra
                                .map(OnslaughtStatsWarlordsClasses.class::cast)
                                .toList();
     }
+
+    @Override
+    public PushedStatTotals pushedStats() {
+        return pushedStats;
+    }
+
 }

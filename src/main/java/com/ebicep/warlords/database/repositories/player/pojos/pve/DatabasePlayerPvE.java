@@ -21,6 +21,9 @@ import com.ebicep.warlords.database.repositories.masterworksfair.pojos.Masterwor
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.TracksAbilityStats;
 import com.ebicep.warlords.database.repositories.player.pojos.TracksMultiAbilityStats;
+import com.ebicep.warlords.database.repositories.player.pojos.cache.PushedMultiPvEStats;
+import com.ebicep.warlords.database.repositories.player.pojos.cache.PushedStatTotals;
+import com.ebicep.warlords.database.repositories.player.pojos.cache.StatPushUp;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.anomaly.AnomalyStatsWarlordsClasses;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.anomaly.DatabasePlayerAnomalyStats;
@@ -82,11 +85,14 @@ public class DatabasePlayerPvE implements MultiPvEStats<
         DatabaseGamePlayerPvEBase,
         PvEStats<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase>,
         PvEStatsWarlordsSpecs<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase, PvEStats<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase>>>,
-        TracksMultiAbilityStats {
+        TracksMultiAbilityStats,
+        PushedMultiPvEStats {
 
 
     @Transient
     private DatabasePlayer databasePlayer;
+    @Transient
+    private final PushedStatTotals pushedStats = new PushedStatTotals();
 
     @Field("wave_defense_stats")
     private DatabasePlayerWaveDefenseStats waveDefenseStats = new DatabasePlayerWaveDefenseStats();
@@ -201,15 +207,17 @@ public class DatabasePlayerPvE implements MultiPvEStats<
         //COINS
         addCurrency(Currencies.COIN, gamePlayer.getCoinsGained() * multiplier);
         //GUILDS
-        Pair<Guild, GuildPlayer> guildGuildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(gamePlayer.getUuid());
-        if (playersCollection == PlayersCollections.LIFETIME && guildGuildPlayerPair != null) {
-            Guild guild = guildGuildPlayerPair.getA();
-            GuildPlayer guildPlayer = guildGuildPlayerPair.getB();
-            guild.addCurrentCoins(gamePlayer.getGuildCoinsGained() * multiplier);
-            guild.addExperience(gamePlayer.getGuildExpGained() * multiplier);
-            guildPlayer.addCoins(gamePlayer.getGuildCoinsGained() * multiplier);
-            guildPlayer.addExperience(gamePlayer.getGuildExpGained() * multiplier);
-            guild.queueUpdate();
+        if (playersCollection == PlayersCollections.LIFETIME) {
+            Pair<Guild, GuildPlayer> guildGuildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(gamePlayer.getUuid());
+            if (guildGuildPlayerPair != null) {
+                Guild guild = guildGuildPlayerPair.getA();
+                GuildPlayer guildPlayer = guildGuildPlayerPair.getB();
+                guild.addCurrentCoins(gamePlayer.getGuildCoinsGained() * multiplier);
+                guild.addExperience(gamePlayer.getGuildExpGained() * multiplier);
+                guildPlayer.addCoins(gamePlayer.getGuildCoinsGained() * multiplier);
+                guildPlayer.addExperience(gamePlayer.getGuildExpGained() * multiplier);
+                guild.queueUpdate();
+            }
         }
         //WEAPONS / ITEMS
         List<AbstractWeapon> weaponsFound = gamePlayer.getWeaponsFound();
@@ -270,21 +278,148 @@ public class DatabasePlayerPvE implements MultiPvEStats<
         gamePlayer.getMobDropsGained().forEach((mob, integer) -> addMobDrops(mob, integer * multiplier));
 
         //UPDATE GAME MODE STATS
+        boolean modeStatsUpdated = false;
         if (databaseGame instanceof DatabaseGamePvEEvent gamePvEEvent && gamePlayer instanceof DatabaseGamePlayerPvEEvent gamePlayerPvEEvent) {
-            eventStats.updateStats(databasePlayer, gamePvEEvent, gameMode, gamePlayerPvEEvent, result, multiplier, playersCollection);
+            modeStatsUpdated = eventStats.updateModeStats(databasePlayer, gamePvEEvent, gameMode, gamePlayerPvEEvent, result, multiplier, playersCollection);
             addCurrency(gamePvEEvent.getEvent().currency, Math.min(((DatabaseGamePlayerPvEEvent) gamePlayer).getPoints(), gamePvEEvent.getPointLimit()) * multiplier);
         } else {
             if (GameMode.isWaveDefense(gameMode) && databaseGame instanceof DatabaseGamePvEWaveDefense gamePvEWaveDefense && gamePlayer instanceof DatabaseGamePlayerPvEWaveDefense gamePlayerPvEWaveDefense) {
-                waveDefenseStats.updateStats(databasePlayer, gamePvEWaveDefense, gamePlayerPvEWaveDefense, multiplier, playersCollection);
+                modeStatsUpdated = waveDefenseStats.updateModeStats(databasePlayer, gamePvEWaveDefense, gameMode, gamePlayerPvEWaveDefense, result, multiplier, playersCollection);
             } else if (gameMode == GameMode.ONSLAUGHT && databaseGame instanceof DatabaseGamePvEOnslaught gamePvEOnslaught && gamePlayer instanceof DatabaseGamePlayerPvEOnslaught gamePlayerPvEOnslaught) {
-                onslaughtStats.updateStats(databasePlayer, gamePvEOnslaught, gamePlayerPvEOnslaught, multiplier, playersCollection);
+                modeStatsUpdated = onslaughtStats.updateModeStats(databasePlayer, gamePvEOnslaught, gameMode, gamePlayerPvEOnslaught, result, multiplier, playersCollection);
             } else if (gameMode == GameMode.ANOMALY && databaseGame instanceof DatabaseGamePvEAnomaly gamePvEAnomaly && gamePlayer instanceof DatabaseGamePlayerPvEAnomaly gamePlayerPvEAnomaly) {
-                getAnomalyStats().updateStats(databasePlayer, gamePvEAnomaly, gamePlayerPvEAnomaly, multiplier, playersCollection);
+                modeStatsUpdated = getAnomalyStats().updateModeStats(databasePlayer, gamePvEAnomaly, gameMode, gamePlayerPvEAnomaly, result, multiplier, playersCollection);
             } else {
                 ChatUtils.MessageType.GAME.sendErrorMessage("Unable to update stats for " + databaseGame.getClass().getSimpleName() + " and " + gamePlayer.getClass()
                                                                                                                                                           .getSimpleName());
             }
         }
+        if (modeStatsUpdated) {
+            StatPushUp.applyPvE(pushedStats, gamePlayer, result, databaseGame, multiplier);
+            databasePlayer.pushedStats().applyGeneral(gamePlayer, result, multiplier);
+        }
+    }
+
+    @Override
+    public PushedStatTotals pushedStats() {
+        return pushedStats;
+    }
+
+    @Override
+    public void warmPushedStats() {
+        pushedStats.warm(() -> {
+            pushedStats.fillGeneral(
+                    MultiPvEStats.super.getKills(),
+                    MultiPvEStats.super.getAssists(),
+                    MultiPvEStats.super.getDeaths(),
+                    MultiPvEStats.super.getWins(),
+                    MultiPvEStats.super.getLosses(),
+                    MultiPvEStats.super.getPlays(),
+                    MultiPvEStats.super.getDamage(),
+                    MultiPvEStats.super.getHealing(),
+                    MultiPvEStats.super.getAbsorbed(),
+                    MultiPvEStats.super.getExperience()
+            );
+            pushedStats.fillPvE(
+                    MultiPvEStats.super.getTotalTimePlayed(),
+                    MultiPvEStats.super.getMobKills(),
+                    MultiPvEStats.super.getMobAssists(),
+                    MultiPvEStats.super.getMobDeaths()
+            );
+        });
+    }
+
+    @Override
+    public int getKills() {
+        return PushedMultiPvEStats.super.getKills();
+    }
+
+    @Override
+    public int getAssists() {
+        return PushedMultiPvEStats.super.getAssists();
+    }
+
+    @Override
+    public int getDeaths() {
+        return PushedMultiPvEStats.super.getDeaths();
+    }
+
+    @Override
+    public int getWins() {
+        return PushedMultiPvEStats.super.getWins();
+    }
+
+    @Override
+    public int getLosses() {
+        return PushedMultiPvEStats.super.getLosses();
+    }
+
+    @Override
+    public int getPlays() {
+        return PushedMultiPvEStats.super.getPlays();
+    }
+
+    @Override
+    public long getDamage() {
+        return PushedMultiPvEStats.super.getDamage();
+    }
+
+    @Override
+    public long getHealing() {
+        return PushedMultiPvEStats.super.getHealing();
+    }
+
+    @Override
+    public long getAbsorbed() {
+        return PushedMultiPvEStats.super.getAbsorbed();
+    }
+
+    @Override
+    public long getExperience() {
+        return PushedMultiPvEStats.super.getExperience();
+    }
+
+    @Override
+    public long getTotalTimePlayed() {
+        return PushedMultiPvEStats.super.getTotalTimePlayed();
+    }
+
+    @Override
+    public Map<String, Long> getMobKills() {
+        return PushedMultiPvEStats.super.getMobKills();
+    }
+
+    @Override
+    public Map<String, Long> getMobAssists() {
+        return PushedMultiPvEStats.super.getMobAssists();
+    }
+
+    @Override
+    public Map<String, Long> getMobDeaths() {
+        return PushedMultiPvEStats.super.getMobDeaths();
+    }
+
+    public int treeWalkKills() {
+        return MultiPvEStats.super.getKills();
+    }
+
+    public Map<String, Long> treeWalkMobKills() {
+        return MultiPvEStats.super.getMobKills();
+    }
+
+    public long getTotalMobKills() {
+        return getMobKills().values().stream().mapToLong(value -> value == null ? 0 : value).sum();
+    }
+
+    public long getMobKillCount(String keyFragment) {
+        if (keyFragment == null || keyFragment.isEmpty()) {
+            return 0;
+        }
+        String compactTarget = keyFragment.toLowerCase(java.util.Locale.ROOT).replaceAll("[^a-z0-9]", "");
+        return getMobKills().entrySet().stream()
+                .filter(entry -> entry.getKey() != null && entry.getKey().toLowerCase(java.util.Locale.ROOT).replaceAll("[^a-z0-9]", "").contains(compactTarget))
+                .mapToLong(entry -> entry.getValue() == null ? 0 : entry.getValue())
+                .sum();
     }
 
 

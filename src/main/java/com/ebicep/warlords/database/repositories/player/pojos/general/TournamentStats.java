@@ -13,12 +13,15 @@ import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGamePla
 import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGameTDM;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.*;
+import com.ebicep.warlords.database.repositories.player.pojos.cache.CachedMultiStatsGeneral;
+import com.ebicep.warlords.database.repositories.player.pojos.cache.PushedStatTotals;
 import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayerCTF;
 import com.ebicep.warlords.database.repositories.player.pojos.duel.DatabasePlayerDuel;
 import com.ebicep.warlords.database.repositories.player.pojos.interception.DatabasePlayerInterception;
 import com.ebicep.warlords.database.repositories.player.pojos.tdm.DatabasePlayerTDM;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.ArrayList;
@@ -27,8 +30,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class TournamentStats implements MultiStatsGeneral, TracksMultiAbilityStats {
+public class TournamentStats implements CachedMultiStatsGeneral, TracksMultiAbilityStats {
 
+    @Transient
+    private final PushedStatTotals pushedStats = new PushedStatTotals();
     @Field("tournament_1_stats") // june 2022
     private DatabasePlayerTournamentStats tournament1Stats = new DatabasePlayerTournamentStats();
     @Field("tournament_2_stats") // june 2023
@@ -41,6 +46,10 @@ public class TournamentStats implements MultiStatsGeneral, TracksMultiAbilitySta
 
     public DatabasePlayerTournamentStats getCurrentTournamentStats() {
         return this.tournament3Stats;
+    }
+
+    public Collection<DatabasePlayerTournamentStats> getAllTournamentStats() {
+        return List.of(tournament1Stats, tournament2Stats, tournament3Stats);
     }
 
     @Override
@@ -60,7 +69,10 @@ public class TournamentStats implements MultiStatsGeneral, TracksMultiAbilitySta
             int multiplier,
             PlayersCollections playersCollection
     ) {
-        getCurrentTournamentStats().updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+        if (getCurrentTournamentStats().updateModeStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection)) {
+            pushedStats.applyGeneral(gamePlayer, result, multiplier);
+            databasePlayer.pushedStats().applyGeneral(gamePlayer, result, multiplier);
+        }
     }
 
     @Override
@@ -70,7 +82,14 @@ public class TournamentStats implements MultiStatsGeneral, TracksMultiAbilitySta
                      .collect(Collectors.toList());
     }
 
-    public static class DatabasePlayerTournamentStats implements MultiStatsGeneral, TracksMultiAbilityStats {
+    @Override
+    public PushedStatTotals pushedStats() {
+        return pushedStats;
+    }
+
+    public static class DatabasePlayerTournamentStats implements CachedMultiStatsGeneral, TracksMultiAbilityStats {
+        @Transient
+        private final PushedStatTotals pushedStats = new PushedStatTotals();
         @Field("ctf_stats")
         private DatabasePlayerCTF ctfStats = new DatabasePlayerCTF();
         @Field("tdm_stats")
@@ -90,10 +109,27 @@ public class TournamentStats implements MultiStatsGeneral, TracksMultiAbilitySta
                 int multiplier,
                 PlayersCollections playersCollection
         ) {
+            updateModeStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+        }
+
+        /**
+         * @return true if a mode leaf was updated and local push-up was applied
+         */
+        boolean updateModeStats(
+                DatabasePlayer databasePlayer,
+                DatabaseGameBase databaseGame,
+                GameMode gameMode,
+                DatabaseGamePlayerBase gamePlayer,
+                DatabaseGamePlayerResult result,
+                int multiplier,
+                PlayersCollections playersCollection
+        ) {
+            boolean updated = false;
             switch (gameMode) {
                 case CAPTURE_THE_FLAG -> {
                     if (databaseGame instanceof DatabaseGameCTF ctfGame && gamePlayer instanceof DatabaseGamePlayerCTF ctfPlayer) {
                         this.ctfStats.updateStats(databasePlayer, ctfGame, ctfPlayer, multiplier, playersCollection);
+                        updated = true;
                     } else {
                         ChatUtils.MessageType.GAME.sendErrorMessage("CTF game or player is not an instance of the correct class!");
                     }
@@ -101,6 +137,7 @@ public class TournamentStats implements MultiStatsGeneral, TracksMultiAbilitySta
                 case TEAM_DEATHMATCH -> {
                     if (databaseGame instanceof DatabaseGameTDM tdmGame && gamePlayer instanceof DatabaseGamePlayerTDM tdmPlayer) {
                         this.tdmStats.updateStats(databasePlayer, tdmGame, tdmPlayer, multiplier, playersCollection);
+                        updated = true;
                     } else {
                         ChatUtils.MessageType.GAME.sendErrorMessage("TDM game or player is not an instance of the correct class!");
                     }
@@ -108,6 +145,7 @@ public class TournamentStats implements MultiStatsGeneral, TracksMultiAbilitySta
                 case INTERCEPTION -> {
                     if (databaseGame instanceof DatabaseGameInterception interceptionGame && gamePlayer instanceof DatabaseGamePlayerInterception interceptionPlayer) {
                         this.interceptionStats.updateStats(databasePlayer, interceptionGame, interceptionPlayer, multiplier, playersCollection);
+                        updated = true;
                     } else {
                         ChatUtils.MessageType.GAME.sendErrorMessage("Interception game or player is not an instance of the correct class!");
                     }
@@ -115,11 +153,32 @@ public class TournamentStats implements MultiStatsGeneral, TracksMultiAbilitySta
                 case DUEL -> {
                     if (databaseGame instanceof DatabaseGameDuel duelGame && gamePlayer instanceof DatabaseGamePlayerDuel duelPlayer) {
                         this.duelStats.updateStats(databasePlayer, duelGame, duelPlayer, multiplier, playersCollection);
+                        updated = true;
                     } else {
                         ChatUtils.MessageType.GAME.sendErrorMessage("Duel game or player is not an instance of the correct class!");
                     }
                 }
             }
+            if (updated) {
+                pushedStats.applyGeneral(gamePlayer, result, multiplier);
+            }
+            return updated;
+        }
+
+        public DatabasePlayerCTF getCtfStats() {
+            return ctfStats;
+        }
+
+        public DatabasePlayerTDM getTdmStats() {
+            return tdmStats;
+        }
+
+        public DatabasePlayerInterception getInterceptionStats() {
+            return interceptionStats;
+        }
+
+        public DatabasePlayerDuel getDuelStats() {
+            return duelStats;
         }
 
         @Override
@@ -131,12 +190,19 @@ public class TournamentStats implements MultiStatsGeneral, TracksMultiAbilitySta
                     (Object) tdmStats);
             stats.add((StatsWarlordsClasses<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>, StatsWarlordsSpecs<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>>>)
                     (Object) interceptionStats);
+            stats.add((StatsWarlordsClasses<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>, StatsWarlordsSpecs<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>>>)
+                    (Object) duelStats);
             return stats;
         }
 
         @Override
         public Collection<TracksAbilityStats> getAllAbilityStats() {
             return List.of(ctfStats, tdmStats, interceptionStats);
+        }
+
+        @Override
+        public PushedStatTotals pushedStats() {
+            return pushedStats;
         }
     }
 }

@@ -17,6 +17,7 @@ import com.ebicep.warlords.database.repositories.items.pojos.WeeklyBlessings;
 import com.ebicep.warlords.database.repositories.masterworksfair.MasterworksFairService;
 import com.ebicep.warlords.database.repositories.player.PlayerService;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.cache.StatPushUp;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayerPatches;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
@@ -330,13 +331,16 @@ public class DatabaseManager {
         ConcurrentHashMap<UUID, DatabasePlayer> cache = CACHED_PLAYERS.get(collection);
         UUID uuid = candidate.getUuid();
         return cache.compute(uuid, (k, existing) -> {
+            DatabasePlayer selected;
             if (existing == null) {
-                return candidate;
+                selected = candidate;
+            } else if (existing.getId() == null && candidate.getId() != null) {
+                selected = candidate;
+            } else {
+                selected = existing;
             }
-            if (existing.getId() == null && candidate.getId() != null) {
-                return candidate;
-            }
-            return existing;
+            StatPushUp.warmAll(selected);
+            return selected;
         });
     }
 
