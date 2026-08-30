@@ -255,18 +255,15 @@ public class CooldownManager {
             return distinctCache;
         }
         List<AbstractCooldown<?>> cooldowns = new ArrayList<>();
-        List<Pair<Class<?>, String>> previousCooldowns = new ArrayList<>();
+        Set<Pair<Class<?>, String>> seenDistinct = new HashSet<>();
         for (AbstractCooldown<?> abstractCooldown : abstractCooldowns) {
-            if (abstractCooldown.distinct() && previousCooldowns.stream()
-                                                                .anyMatch(classStringPair -> classStringPair.getA().equals(abstractCooldown.getCooldownClass())
-                                                                        && classStringPair.getB().equals(abstractCooldown.getName()))
-            ) {
-                continue;
+            if (abstractCooldown.distinct()) {
+                Pair<Class<?>, String> key = new Pair<>(abstractCooldown.getCooldownClass(), abstractCooldown.getName());
+                if (!seenDistinct.add(key)) {
+                    continue;
+                }
             }
             cooldowns.add(abstractCooldown);
-            if (abstractCooldown.distinct()) {
-                previousCooldowns.add(new Pair<>(abstractCooldown.getCooldownClass(), abstractCooldown.getName()));
-            }
         }
         distinctCache = List.copyOf(cooldowns);
         distinctDirty = false;
