@@ -357,6 +357,11 @@ public class DatabasePlayerPvEEventStats implements MultiPvEEventStats<
         return PushedMultiPvEStats.super.getMobDeaths();
     }
 
+    @Override
+    public long getTotalMobKills() {
+        return PushedMultiPvEStats.super.getTotalMobKills();
+    }
+
     public int treeWalkKills() {
         return MultiPvEEventStats.super.getKills();
     }

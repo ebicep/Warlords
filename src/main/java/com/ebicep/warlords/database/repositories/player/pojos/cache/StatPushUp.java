@@ -4,6 +4,8 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerB
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePlayerPvEBase;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePvEBase;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.onslaught.DatabaseGamePvEOnslaught;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePlayerPvEWaveDefense;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePvEWaveDefense;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayerCompStats;
@@ -42,6 +44,20 @@ public final class StatPushUp {
         }
         if (databaseGame instanceof DatabaseGamePvEWaveDefense waveDefenseGame) {
             totals.applyTotalWavesCleared(waveDefenseGame.getWavesCleared(), multiplier);
+            int maxWaves = waveDefenseGame.getDifficulty() != null ? waveDefenseGame.getDifficulty().getMaxWaves() : 0;
+            long mostDamageInWave = gamePlayer instanceof DatabaseGamePlayerPvEWaveDefense waveDefensePlayer
+                    ? waveDefensePlayer.getMostDamageInWave()
+                    : 0;
+            totals.applyWaveDefense(
+                    waveDefenseGame.getWavesCleared(),
+                    maxWaves,
+                    databaseGame.getTimeElapsed(),
+                    mostDamageInWave,
+                    multiplier
+            );
+        }
+        if (databaseGame instanceof DatabaseGamePvEOnslaught) {
+            totals.applyLongestTicksLived(databaseGame.getTimeElapsed(), multiplier);
         }
     }
 

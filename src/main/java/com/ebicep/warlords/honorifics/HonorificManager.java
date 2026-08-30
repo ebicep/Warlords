@@ -6,8 +6,6 @@ import com.ebicep.warlords.featureflags.FeatureFlags;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.onslaught.OnslaughtStats;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.WaveDefenseStats;
 import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.mobs.Mob;
@@ -27,7 +25,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -42,6 +40,15 @@ public final class HonorificManager {
     private static final String PLAYER_COLLECTION_NAME = "Players_Information";
     private static final String LEGACY_COLLECTION_NAME = "Player_Honorifics";
     private static final String HONORIFICS_FIELD = "honorifics";
+    private static final Set<String> SKELETON_MOB_NAMES = mobDisplayNames(Arrays.stream(Mob.VALUES)
+            .filter(mob -> mob.entityType == EntityType.SKELETON
+                    || mob.entityType == EntityType.WITHER_SKELETON
+                    || mob.entityType == EntityType.STRAY)
+            .toArray(Mob[]::new));
+    private static final Set<String> CHAMPION_MOB_NAMES = mobDisplayNames(Mob.CHAMPION);
+    private static final Set<String> IRON_GOLEM_MOB_NAMES = mobDisplayNames(Arrays.stream(Mob.VALUES)
+            .filter(mob -> mob.entityType == EntityType.IRON_GOLEM)
+            .toArray(Mob[]::new));
     private static final long REFRESH_INTERVAL_MILLIS = 15_000;
     private static final ConcurrentHashMap<UUID, HonorificProfile> PROFILES = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<UUID, Long> LAST_CHALLENGE_REFRESH = new ConcurrentHashMap<>();
@@ -166,10 +173,10 @@ public final class HonorificManager {
                 long fastest = getFastestExtremeTicks(pveStats);
                 yield fastest == 0 ? "No completed Extreme run" : formatTicks(fastest) + " / 08:00";
             }
-            case ONE_FOR_ALL -> progress(getMobKills(pveStats, "oneofnine"), 1);
-            case THE_HEART_THIEF -> progress(getMobKills(pveStats, "lilium"), 1);
+            case ONE_FOR_ALL -> progress(getMobKills(pveStats, Mob.ONE_OF_NINE), 1);
+            case THE_HEART_THIEF -> progress(getMobKills(pveStats, Mob.LILIUM), 1);
             case BOUNDLESS -> progress(getHighestEndlessWave(pveStats), 200);
-            case GOLEM -> progress(getMobKills(pveStats, "irongolem"), 50_000);
+            case GOLEM -> progress(getIronGolemKills(pveStats), 50_000);
             case GOD_OF_WAR -> progress(getTotalMobKills(pveStats), 2_000_000);
             case EXPLORER -> progress(profile.getHighestAncientRenegadesFloor(), 30);
             case TREASURER -> progress(profile.getHighestAncientRenegadesFloor(), 100);
@@ -275,10 +282,10 @@ public final class HonorificManager {
             case THE_MIGHTY_ROLLER -> profile.getItemRerolls() >= 90;
             case SYNTHESIZER -> profile.getStarPiecesSynthesized() >= 100;
             case EXTREMA -> getFastestExtremeTicks(pveStats) > 0 && getFastestExtremeTicks(pveStats) <= 8L * 60 * 20;
-            case ONE_FOR_ALL -> getMobKills(pveStats, "oneofnine") >= 1;
-            case THE_HEART_THIEF -> getMobKills(pveStats, "lilium") >= 1;
+            case ONE_FOR_ALL -> getMobKills(pveStats, Mob.ONE_OF_NINE) >= 1;
+            case THE_HEART_THIEF -> getMobKills(pveStats, Mob.LILIUM) >= 1;
             case BOUNDLESS -> getHighestEndlessWave(pveStats) >= 200;
-            case GOLEM -> getMobKills(pveStats, "irongolem") >= 50_000;
+            case GOLEM -> getIronGolemKills(pveStats) >= 50_000;
             case GOD_OF_WAR -> getTotalMobKills(pveStats) >= 2_000_000;
             case EXPLORER -> profile.getHighestAncientRenegadesFloor() >= 30;
             case TREASURER -> profile.getHighestAncientRenegadesFloor() >= 100;
@@ -295,58 +302,61 @@ public final class HonorificManager {
         };
     }
 
-    private static long getMobKills(DatabasePlayerPvE pveStats, String target) {
-        return pveStats.getMobKillCount(target);
+    private static long getMobKills(DatabasePlayerPvE pveStats, Mob mob) {
+        if (mob.name == null || mob.name.isEmpty()) {
+            return 0;
+        }
+        return pveStats.getMobKillCount(mob.name);
     }
 
     private static long getSkeletonKills(DatabasePlayerPvE pveStats) {
-        Mob[] skeletonMobs = Arrays.stream(Mob.VALUES)
-                .filter(mob -> mob.entityType == EntityType.SKELETON
-                        || mob.entityType == EntityType.WITHER_SKELETON
-                        || mob.entityType == EntityType.STRAY)
-                .toArray(Mob[]::new);
-        return getMobGroupKills(pveStats, skeletonMobs);
+        return getMobGroupKills(pveStats, SKELETON_MOB_NAMES);
     }
 
     private static long getChampionKills(DatabasePlayerPvE pveStats) {
-        return getMobGroupKills(pveStats, Mob.CHAMPION);
+        return getMobGroupKills(pveStats, CHAMPION_MOB_NAMES);
     }
 
-    private static long getMobGroupKills(DatabasePlayerPvE pveStats, Mob[] mobs) {
-        Set<String> aliases = new HashSet<>();
-        for (Mob mob : mobs) {
-            aliases.add(compact(mob.name()));
-            if (mob.name != null) {
-                aliases.add(compact(mob.name));
+    private static long getIronGolemKills(DatabasePlayerPvE pveStats) {
+        return getMobGroupKills(pveStats, IRON_GOLEM_MOB_NAMES);
+    }
+
+    private static long getMobGroupKills(DatabasePlayerPvE pveStats, Set<String> mobNames) {
+        Map<String, Long> mobKills = pveStats.getMobKills();
+        long sum = 0;
+        for (String mobName : mobNames) {
+            Long value = mobKills.get(mobName);
+            if (value != null) {
+                sum += value;
             }
         }
-        return pveStats.getMobKills().entrySet().stream()
-                .filter(entry -> aliases.contains(compact(entry.getKey())))
-                .mapToLong(entry -> entry.getValue() == null ? 0 : entry.getValue())
-                .sum();
+        return sum;
+    }
+
+    private static Set<String> mobDisplayNames(Mob[] mobs) {
+        Set<String> names = new HashSet<>();
+        for (Mob mob : mobs) {
+            if (mob.name != null && !mob.name.isEmpty()) {
+                names.add(mob.name);
+            }
+        }
+        return Set.copyOf(names);
     }
 
     private static long getTotalMobKills(DatabasePlayerPvE pveStats) {
         return pveStats.getTotalMobKills();
     }
 
-    private static String compact(String value) {
-        return value.toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9]", "");
-    }
-
     private static long getFastestExtremeTicks(DatabasePlayerPvE pveStats) {
-        return pveStats.getWaveDefenseStats().getExtremeStats().getStats().stream()
-                .mapToLong(WaveDefenseStats::getFastestGameFinished).filter(value -> value > 0).min().orElse(0);
+        return pveStats.getWaveDefenseStats().getExtremeStats().getFastestGameFinished();
     }
 
     private static int getHighestEndlessWave(DatabasePlayerPvE pveStats) {
-        return pveStats.getWaveDefenseStats().getEndlessStats().getStats().stream()
-                .mapToInt(WaveDefenseStats::getHighestWaveCleared).max().orElse(0);
+        return pveStats.getWaveDefenseStats().getEndlessStats().getHighestWaveCleared();
     }
 
     private static long getLongestOnslaughtTicks(DatabasePlayerPvE pveStats) {
-        return pveStats.getOnslaughtStats().getStats().stream()
-                .mapToLong(OnslaughtStats::getLongestTicksLived).max().orElse(0);
+        return pveStats.getOnslaughtStats().getLongestTicksLived();
     }
 
     private static int getHighestPrestige(DatabasePlayer databasePlayer) {

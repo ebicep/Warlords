@@ -91,4 +91,34 @@ public interface PushedStatsOwner {
         warmPushedStats();
         return pushedStats().getMobDeathsView();
     }
+
+    default long pushedTotalMobKills() {
+        warmPushedStats();
+        return pushedStats().getTotalMobKills();
+    }
+
+    default long pushedMobKillCount(String mobName) {
+        warmPushedStats();
+        return pushedStats().getMobKillCount(mobName);
+    }
+
+    default int pushedHighestWaveCleared() {
+        warmPushedStats();
+        return pushedStats().getHighestWaveCleared();
+    }
+
+    default long pushedFastestGameFinished() {
+        warmPushedStats();
+        return pushedStats().getFastestGameFinished();
+    }
+
+    default long pushedMostDamageInWave() {
+        warmPushedStats();
+        return pushedStats().getMostDamageInWave();
+    }
+
+    default long pushedLongestTicksLived() {
+        warmPushedStats();
+        return pushedStats().getLongestTicksLived();
+    }
 }

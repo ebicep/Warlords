@@ -22,4 +22,8 @@ public interface CachedPvEStats extends CachedGeneralStats {
     default Map<String, Long> getMobDeaths() {
         return pushedMobDeaths();
     }
+
+    default long getTotalMobKills() {
+        return pushedTotalMobKills();
+    }
 }

@@ -27,6 +27,11 @@ public final class PushedStatTotals {
     private long experience;
     private long totalTimePlayed;
     private int totalWavesCleared;
+    private long totalMobKills;
+    private int highestWaveCleared;
+    private long fastestGameFinished;
+    private long mostDamageInWave;
+    private long longestTicksLived;
 
     private final Map<String, Long> mobKills = new HashMap<>();
     private final Map<String, Long> mobAssists = new HashMap<>();
@@ -54,6 +59,11 @@ public final class PushedStatTotals {
         this.experience = 0;
         this.totalTimePlayed = 0;
         this.totalWavesCleared = 0;
+        this.totalMobKills = 0;
+        this.highestWaveCleared = 0;
+        this.fastestGameFinished = 0;
+        this.mostDamageInWave = 0;
+        this.longestTicksLived = 0;
         this.mobKills.clear();
         this.mobAssists.clear();
         this.mobDeaths.clear();
@@ -88,10 +98,21 @@ public final class PushedStatTotals {
         replaceMap(this.mobKills, mobKills);
         replaceMap(this.mobAssists, mobAssists);
         replaceMap(this.mobDeaths, mobDeaths);
+        this.totalMobKills = sumValues(this.mobKills);
     }
 
     public void fillTotalWavesCleared(int totalWavesCleared) {
         this.totalWavesCleared = totalWavesCleared;
+    }
+
+    public void fillWaveDefense(int highestWaveCleared, long fastestGameFinished, long mostDamageInWave) {
+        this.highestWaveCleared = highestWaveCleared;
+        this.fastestGameFinished = fastestGameFinished;
+        this.mostDamageInWave = mostDamageInWave;
+    }
+
+    public void fillLongestTicksLived(long longestTicksLived) {
+        this.longestTicksLived = longestTicksLived;
     }
 
     /**
@@ -135,7 +156,7 @@ public final class PushedStatTotals {
             return;
         }
         this.totalTimePlayed += (long) timeElapsed * multiplier;
-        mergeMobMap(this.mobKills, gamePlayer.getMobKills(), multiplier);
+        mergeMobKills(gamePlayer.getMobKills(), multiplier);
         mergeMobMap(this.mobAssists, gamePlayer.getMobAssists(), multiplier);
         mergeMobMap(this.mobDeaths, gamePlayer.getMobDeaths(), multiplier);
     }
@@ -145,6 +166,42 @@ public final class PushedStatTotals {
             return;
         }
         this.totalWavesCleared += wavesCleared * multiplier;
+    }
+
+    public void applyWaveDefense(int wavesCleared, int maxWaves, int timeElapsed, long mostDamageInWave, int multiplier) {
+        if (!warmed) {
+            return;
+        }
+        if (multiplier > 0) {
+            this.highestWaveCleared = Math.max(wavesCleared, this.highestWaveCleared);
+        } else if (this.highestWaveCleared == wavesCleared) {
+            this.highestWaveCleared = 0;
+        }
+        if (maxWaves > 0 && wavesCleared == maxWaves) {
+            if (multiplier > 0) {
+                if (this.fastestGameFinished == 0 || timeElapsed < this.fastestGameFinished) {
+                    this.fastestGameFinished = timeElapsed;
+                }
+            } else if (this.fastestGameFinished == timeElapsed) {
+                this.fastestGameFinished = 0;
+            }
+        }
+        if (multiplier > 0) {
+            this.mostDamageInWave = Math.max(this.mostDamageInWave, mostDamageInWave);
+        } else if (this.mostDamageInWave == mostDamageInWave) {
+            this.mostDamageInWave = 0;
+        }
+    }
+
+    public void applyLongestTicksLived(int timeElapsed, int multiplier) {
+        if (!warmed) {
+            return;
+        }
+        if (multiplier > 0) {
+            this.longestTicksLived = Math.max((long) timeElapsed * multiplier, this.longestTicksLived);
+        } else if (this.longestTicksLived == timeElapsed) {
+            this.longestTicksLived = 0;
+        }
     }
 
     public int getKills() {
@@ -195,6 +252,26 @@ public final class PushedStatTotals {
         return totalWavesCleared;
     }
 
+    public long getTotalMobKills() {
+        return totalMobKills;
+    }
+
+    public int getHighestWaveCleared() {
+        return highestWaveCleared;
+    }
+
+    public long getFastestGameFinished() {
+        return fastestGameFinished;
+    }
+
+    public long getMostDamageInWave() {
+        return mostDamageInWave;
+    }
+
+    public long getLongestTicksLived() {
+        return longestTicksLived;
+    }
+
     public Map<String, Long> getMobKillsView() {
         return Collections.unmodifiableMap(mobKills);
     }
@@ -205,6 +282,31 @@ public final class PushedStatTotals {
 
     public Map<String, Long> getMobDeathsView() {
         return Collections.unmodifiableMap(mobDeaths);
+    }
+
+    public long getMobKillCount(String mobName) {
+        if (mobName == null || mobName.isEmpty()) {
+            return 0;
+        }
+        Long value = mobKills.get(mobName);
+        return value == null ? 0 : value;
+    }
+
+    private void mergeMobKills(Map<String, Long> delta, int multiplier) {
+        if (delta == null || delta.isEmpty()) {
+            return;
+        }
+        delta.forEach((key, count) -> {
+            if (count == null || count == 0) {
+                return;
+            }
+            long add = count * (long) multiplier;
+            this.totalMobKills += add;
+            long next = this.mobKills.merge(key, add, Long::sum);
+            if (next == 0) {
+                this.mobKills.remove(key);
+            }
+        });
     }
 
     private static void replaceMap(Map<String, Long> target, Map<String, Long> source) {
@@ -231,5 +333,15 @@ public final class PushedStatTotals {
                 cache.remove(key);
             }
         });
+    }
+
+    private static long sumValues(Map<String, Long> map) {
+        long sum = 0;
+        for (Long value : map.values()) {
+            if (value != null) {
+                sum += value;
+            }
+        }
+        return sum;
     }
 }

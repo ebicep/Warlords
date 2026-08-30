@@ -52,7 +52,9 @@ class PushCachePvEIntegrationTest {
         assertEquals(6, databasePlayer.getPveStats().getKills());
         assertEquals(6, databasePlayer.getPveStats().getOnslaughtStats().getKills());
         assertEquals(6L, databasePlayer.getPveStats().getMobKills().get("zombie"));
+        assertEquals(6, databasePlayer.getPveStats().getTotalMobKills());
         assertEquals(2400, databasePlayer.getPveStats().getTotalTimePlayed());
+        assertEquals(2400, databasePlayer.getPveStats().getOnslaughtStats().getLongestTicksLived());
         assertEquals(6, databasePlayer.getKills());
     }
 
@@ -97,7 +99,10 @@ class PushCachePvEIntegrationTest {
         assertEquals(4, databasePlayer.getPveStats().getWaveDefenseStats().getKills());
         assertEquals(4, databasePlayer.getPveStats().getWaveDefenseStats().getDifficultyStats(difficulty).getKills());
         assertEquals(3, databasePlayer.getPveStats().getWaveDefenseStats().getTotalWavesCleared());
+        assertEquals(3, databasePlayer.getPveStats().getWaveDefenseStats().getHighestWaveCleared());
+        assertEquals(3, databasePlayer.getPveStats().getWaveDefenseStats().getDifficultyStats(difficulty).getHighestWaveCleared());
         assertTrue(databasePlayer.getPveStats().getWaveDefenseStats().getMobKills().containsKey("zombie"));
+        assertEquals(4, databasePlayer.getPveStats().getTotalMobKills());
     }
 
     static Stream<EventCase> eventCases() {

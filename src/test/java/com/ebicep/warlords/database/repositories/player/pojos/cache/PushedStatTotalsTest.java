@@ -95,6 +95,7 @@ class PushedStatTotalsTest {
         assertEquals(2200, totals.getTotalTimePlayed());
         assertEquals(8L, totals.getMobKillsView().get("zombie"));
         assertEquals(2L, totals.getMobKillsView().get("skeleton"));
+        assertEquals(10, totals.getTotalMobKills());
     }
 
     @Test
@@ -118,9 +119,68 @@ class PushedStatTotalsTest {
         );
 
         assertEquals(0, totals.getTotalTimePlayed());
+        assertEquals(0, totals.getTotalMobKills());
         assertTrue(totals.getMobKillsView().isEmpty());
         assertTrue(totals.getMobAssistsView().isEmpty());
         assertTrue(totals.getMobDeathsView().isEmpty());
+    }
+
+    @Test
+    void fillPvEStoresTotalMobKills() {
+        PushedStatTotals totals = new PushedStatTotals();
+        totals.warm(() -> totals.fillPvE(0, Map.of("Iron Golem", 3L, "Zombie", 2L), Map.of(), Map.of()));
+
+        assertEquals(5, totals.getTotalMobKills());
+        assertEquals(3L, totals.getMobKillCount("Iron Golem"));
+        assertEquals(0L, totals.getMobKillCount("irongolem"));
+    }
+
+    @Test
+    void applyPvEUpdatesTotalMobKills() {
+        PushedStatTotals totals = new PushedStatTotals();
+        totals.warm(() -> totals.fillPvE(0, Map.of("zombie", 2L), Map.of(), Map.of()));
+
+        totals.applyPvE(pvePlayer(Map.of("zombie", 3L, "skeleton", 1L)), 0, 2);
+
+        assertEquals(10, totals.getTotalMobKills());
+        assertEquals(8L, totals.getMobKillsView().get("zombie"));
+        assertEquals(2L, totals.getMobKillsView().get("skeleton"));
+    }
+
+    @Test
+    void applyWaveDefenseTracksHighestFastestAndMostDamage() {
+        PushedStatTotals totals = new PushedStatTotals();
+        totals.warm(() -> totals.fillWaveDefense(2, 0, 10));
+
+        totals.applyWaveDefense(5, 5, 1200, 50, 1);
+
+        assertEquals(5, totals.getHighestWaveCleared());
+        assertEquals(1200, totals.getFastestGameFinished());
+        assertEquals(50, totals.getMostDamageInWave());
+    }
+
+    @Test
+    void applyWaveDefenseUncountResetsMatchingExtrema() {
+        PushedStatTotals totals = new PushedStatTotals();
+        totals.warm(() -> totals.fillWaveDefense(5, 1200, 50));
+
+        totals.applyWaveDefense(5, 5, 1200, 50, -1);
+
+        assertEquals(0, totals.getHighestWaveCleared());
+        assertEquals(0, totals.getFastestGameFinished());
+        assertEquals(0, totals.getMostDamageInWave());
+    }
+
+    @Test
+    void applyLongestTicksLivedTracksMax() {
+        PushedStatTotals totals = new PushedStatTotals();
+        totals.warm(() -> totals.fillLongestTicksLived(100));
+
+        totals.applyLongestTicksLived(400, 1);
+        assertEquals(400, totals.getLongestTicksLived());
+
+        totals.applyLongestTicksLived(400, -1);
+        assertEquals(0, totals.getLongestTicksLived());
     }
 
     @Test

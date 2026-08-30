@@ -83,6 +83,11 @@ public interface PushedMultiPvEStats extends CachedPvEStats {
         return CachedPvEStats.super.getMobDeaths();
     }
 
+    @Override
+    default long getTotalMobKills() {
+        return CachedPvEStats.super.getTotalMobKills();
+    }
+
     interface Onslaught extends MultiPvEOnslaughtStats, PushedMultiPvEStats {
         @Override
         default int getKills() {
@@ -155,6 +160,16 @@ public interface PushedMultiPvEStats extends CachedPvEStats {
         }
 
         @Override
+        default long getTotalMobKills() {
+            return PushedMultiPvEStats.super.getTotalMobKills();
+        }
+
+        @Override
+        default long getLongestTicksLived() {
+            return pushedLongestTicksLived();
+        }
+
+        @Override
         default void warmPushedStats() {
             pushedStats().warm(() -> {
                 pushedStats().fillGeneral(
@@ -175,6 +190,7 @@ public interface PushedMultiPvEStats extends CachedPvEStats {
                         MultiPvEOnslaughtStats.super.getMobAssists(),
                         MultiPvEOnslaughtStats.super.getMobDeaths()
                 );
+                pushedStats().fillLongestTicksLived(MultiPvEOnslaughtStats.super.getLongestTicksLived());
             });
         }
     }
@@ -248,6 +264,11 @@ public interface PushedMultiPvEStats extends CachedPvEStats {
         @Override
         default Map<String, Long> getMobDeaths() {
             return PushedMultiPvEStats.super.getMobDeaths();
+        }
+
+        @Override
+        default long getTotalMobKills() {
+            return PushedMultiPvEStats.super.getTotalMobKills();
         }
 
         @Override

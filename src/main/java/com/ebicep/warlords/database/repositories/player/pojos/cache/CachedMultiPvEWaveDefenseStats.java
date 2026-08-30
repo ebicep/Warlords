@@ -80,8 +80,28 @@ public interface CachedMultiPvEWaveDefenseStats extends MultiPvEWaveDefenseStats
     }
 
     @Override
+    default long getTotalMobKills() {
+        return PushedMultiPvEStats.super.getTotalMobKills();
+    }
+
+    @Override
     default int getTotalWavesCleared() {
         return CachedWaveDefenseStats.super.getTotalWavesCleared();
+    }
+
+    @Override
+    default int getHighestWaveCleared() {
+        return CachedWaveDefenseStats.super.getHighestWaveCleared();
+    }
+
+    @Override
+    default long getFastestGameFinished() {
+        return CachedWaveDefenseStats.super.getFastestGameFinished();
+    }
+
+    @Override
+    default long getMostDamageInWave() {
+        return CachedWaveDefenseStats.super.getMostDamageInWave();
     }
 
     @Override
@@ -106,6 +126,11 @@ public interface CachedMultiPvEWaveDefenseStats extends MultiPvEWaveDefenseStats
                     MultiPvEWaveDefenseStats.super.getMobDeaths()
             );
             pushedStats().fillTotalWavesCleared(MultiPvEWaveDefenseStats.super.getTotalWavesCleared());
+            pushedStats().fillWaveDefense(
+                    MultiPvEWaveDefenseStats.super.getHighestWaveCleared(),
+                    MultiPvEWaveDefenseStats.super.getFastestGameFinished(),
+                    MultiPvEWaveDefenseStats.super.getMostDamageInWave()
+            );
         });
     }
 

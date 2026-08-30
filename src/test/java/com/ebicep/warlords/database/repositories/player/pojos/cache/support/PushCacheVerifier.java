@@ -2,6 +2,7 @@ package com.ebicep.warlords.database.repositories.player.pojos.cache.support;
 
 import com.ebicep.warlords.database.repositories.player.pojos.cache.CachedPvEStats;
 import com.ebicep.warlords.database.repositories.player.pojos.cache.CachedWaveDefenseStats;
+import com.ebicep.warlords.database.repositories.player.pojos.cache.PushedMultiPvEStats;
 import com.ebicep.warlords.database.repositories.player.pojos.cache.PushedStatTotals;
 import com.ebicep.warlords.database.repositories.player.pojos.cache.PushedStatsOwner;
 import com.ebicep.warlords.database.repositories.player.pojos.cache.StatPushUp;
@@ -46,13 +47,20 @@ public final class PushCacheVerifier {
             long experience,
             Long totalTimePlayed,
             Integer totalWavesCleared,
+            Long totalMobKills,
             Map<String, Long> mobKills,
             Map<String, Long> mobAssists,
-            Map<String, Long> mobDeaths
+            Map<String, Long> mobDeaths,
+            Integer highestWaveCleared,
+            Long fastestGameFinished,
+            Long mostDamageInWave,
+            long longestTicksLived
     ) {
         static StatsSnapshot capture(PushedStatsOwner owner) {
             PushedStatTotals totals = owner.pushedStats();
             boolean pve = owner instanceof CachedPvEStats;
+            boolean waveDefense = owner instanceof CachedWaveDefenseStats;
+            boolean onslaught = owner instanceof PushedMultiPvEStats.Onslaught;
             return new StatsSnapshot(
                     totals.isWarmed(),
                     totals.getKills(),
@@ -66,10 +74,15 @@ public final class PushCacheVerifier {
                     totals.getAbsorbed(),
                     totals.getExperience(),
                     pve ? totals.getTotalTimePlayed() : null,
-                    owner instanceof CachedWaveDefenseStats ? totals.getTotalWavesCleared() : null,
+                    waveDefense ? totals.getTotalWavesCleared() : null,
+                    pve ? totals.getTotalMobKills() : null,
                     pve ? Map.copyOf(totals.getMobKillsView()) : null,
                     pve ? Map.copyOf(totals.getMobAssistsView()) : null,
-                    pve ? Map.copyOf(totals.getMobDeathsView()) : null
+                    pve ? Map.copyOf(totals.getMobDeathsView()) : null,
+                    waveDefense ? totals.getHighestWaveCleared() : null,
+                    waveDefense ? totals.getFastestGameFinished() : null,
+                    waveDefense ? totals.getMostDamageInWave() : null,
+                    onslaught ? totals.getLongestTicksLived() : 0
             );
         }
     }

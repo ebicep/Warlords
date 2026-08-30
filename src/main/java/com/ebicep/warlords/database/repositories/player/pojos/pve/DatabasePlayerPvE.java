@@ -407,19 +407,13 @@ public class DatabasePlayerPvE implements MultiPvEStats<
         return MultiPvEStats.super.getMobKills();
     }
 
+    @Override
     public long getTotalMobKills() {
-        return getMobKills().values().stream().mapToLong(value -> value == null ? 0 : value).sum();
+        return PushedMultiPvEStats.super.getTotalMobKills();
     }
 
-    public long getMobKillCount(String keyFragment) {
-        if (keyFragment == null || keyFragment.isEmpty()) {
-            return 0;
-        }
-        String compactTarget = keyFragment.toLowerCase(java.util.Locale.ROOT).replaceAll("[^a-z0-9]", "");
-        return getMobKills().entrySet().stream()
-                .filter(entry -> entry.getKey() != null && entry.getKey().toLowerCase(java.util.Locale.ROOT).replaceAll("[^a-z0-9]", "").contains(compactTarget))
-                .mapToLong(entry -> entry.getValue() == null ? 0 : entry.getValue())
-                .sum();
+    public long getMobKillCount(String mobName) {
+        return pushedMobKillCount(mobName);
     }
 
 
