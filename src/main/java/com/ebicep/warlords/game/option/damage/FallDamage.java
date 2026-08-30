@@ -15,6 +15,9 @@ public class FallDamage extends ExternalDamage {
 
     @Override
     public void onDamage(@Nonnull WarlordsEntity warlordsEntity, EntityDamageEvent e) {
+        if (warlordsEntity.onHorse()) {
+            return;
+        }
         //HEIGHT - DAMAGE
         //PLAYER
         //9 - 160 - 6
