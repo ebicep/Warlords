@@ -5,8 +5,8 @@
   "type": "FEATURE_FLAGS",
   "data": {
     "features": {
-      "honorifics": false,
-      "honorificsDisplay": false
+      "honorifics": true,
+      "honorificsDisplay": true
     },
     "npcs": {
       "supply-drop": true
