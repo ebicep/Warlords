@@ -254,6 +254,7 @@ public class DatabasePlayer implements CachedMultiStatsGeneral, TracksMultiAbili
         return pushedStats;
     }
 
+    @Override
     public int treeWalkKills() {
         return CachedMultiStatsGeneral.super.treeWalkKills();
     }
