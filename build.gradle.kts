@@ -38,25 +38,6 @@ val gitDirty: String = runCatching {
 }.getOrElse { "false" }
 val buildTime: String = Instant.now().toString()
 
-val citizensMainJar = run {
-    val projectJar = layout.projectDirectory.file("libs/citizens-main-2.0.41-SNAPSHOT.jar").asFile
-    when {
-        projectJar.exists() -> projectJar
-        else -> {
-            val cacheRoot = file(
-                "${System.getProperty("user.home")}/.gradle/caches/modules-2/files-2.1/net.citizensnpcs/citizens-main/2.0.41-SNAPSHOT",
-            )
-            cacheRoot.takeIf { it.isDirectory }
-                ?.walkTopDown()
-                ?.firstOrNull { it.isFile && it.name == "citizens-main-2.0.41-SNAPSHOT.jar" }
-                ?: error(
-                    "Citizens compile dependency unavailable: maven.citizensnpcs.co returns 403 and no local jar was found. " +
-                        "Place citizens-main-2.0.41-SNAPSHOT.jar in libs/ (download from https://ci.citizensnpcs.co/job/Citizens2/).",
-                )
-        }
-    }
-}
-
 java {
     // Configure the java toolchain. This allows gradle to auto-provision JDK 21 on systems that only have JDK 8 installed for example.
     toolchain.languageVersion.set(JavaLanguageVersion.of(21))
@@ -104,7 +85,9 @@ dependencies {
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("it.unimi.dsi:fastutil:8.5.12")
 
-    compileOnly(files(citizensMainJar))
+    compileOnly("net.citizensnpcs:citizens-main:2.0.41-SNAPSHOT") {
+        exclude(group = "*", module = "*")
+    }
 
     compileOnly("com.comphenix.protocol:ProtocolLib:5.4.0-SNAPSHOT")
 
