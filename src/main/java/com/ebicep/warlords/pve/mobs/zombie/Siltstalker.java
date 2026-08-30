@@ -344,9 +344,11 @@ public class Siltstalker extends AbstractMob implements ChampionMob {
     }
 
     private void applySubmergeVisualState() {
-        if (npc != null) {
-            npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
+        if (warlordsNPC != null) {
+            warlordsNPC.setHealthLineVisible(false);
+        }
 
+        if (npc != null) {
             Equipment equipmentTrait = npc.getOrAddTrait(Equipment.class);
             equipmentTrait.set(Equipment.EquipmentSlot.HAND, AIR);
             equipmentTrait.set(Equipment.EquipmentSlot.OFF_HAND, AIR);
@@ -373,8 +375,11 @@ public class Siltstalker extends AbstractMob implements ChampionMob {
     }
 
     private void removeSubmergeVisualState() {
+        if (warlordsNPC != null) {
+            warlordsNPC.setHealthLineVisible(true);
+        }
+
         if (npc != null) {
-            npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, true);
             updateEquipment();
         }
 

@@ -1,6 +1,5 @@
 package com.ebicep.warlords.player.ingame;
 
-import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.entity.Display;
@@ -20,6 +19,9 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 public abstract class MobHologram {
+
+    public static final int POSITION_UPDATE_INTERVAL = 2;
+    public static final int TELEPORT_DURATION = 3;
 
     protected final List<CustomHologramLine> customHologramLines = new ArrayList<>();
     protected boolean hidden = false;
@@ -50,6 +52,19 @@ public abstract class MobHologram {
 
     public void markTextDirty() {
         customHologramLines.forEach(CustomHologramLine::markTextDirty);
+    }
+
+    public void setLineVisible(LineTier tier, boolean visible) {
+        boolean changed = false;
+        for (CustomHologramLine line : customHologramLines) {
+            if (line.getTier() == tier && line.isVisible() != visible) {
+                line.setVisible(visible);
+                changed = true;
+            }
+        }
+        if (changed) {
+            update();
+        }
     }
 
     private void update(boolean refreshText) {
@@ -99,43 +114,21 @@ public abstract class MobHologram {
         new ArrayList<>(customHologramLines).forEach(this::removeLine);
     }
 
-    protected void update(@Nonnull Entity entity) {
-    }
-
     protected void update(@Nonnull Entity entity, boolean refreshText) {
-        update(entity);
     }
 
     public List<CustomHologramLine> getCustomHologramLines() {
         return customHologramLines;
     }
 
-    @Deprecated
-    public static abstract class ArmorStandHologram extends MobHologram {
-
-        @Override
-        protected void update(@Nonnull Entity entity) {
-            Location location = entity.getLocation();
-            double y = entity.getHeight();
-            for (int i = 0; i < customHologramLines.size(); i++) {
-                CustomHologramLine customHologramLine = customHologramLines.get(i);
-                if (customHologramLine.getEntity() == null) {
-                    customHologramLine.setEntity(Utils.spawnArmorStand(location.add(0, y + (i + 1) * 0.275, 0), armorStand -> {
-                        armorStand.setMarker(true);
-                        armorStand.customName(customHologramLine.getText());
-                        armorStand.setCustomNameVisible(true);
-                    }));
-                } else {
-                    customHologramLine.getEntity().customName(customHologramLine.getText());
-                    customHologramLine.getEntity().teleport(entity.getLocation().add(0, y + (i + 1) * 0.275, 0));
-                }
-            }
-        }
-
+    public enum LineTier {
+        HEALTH,
+        STANDARD
     }
 
     public static abstract class TextDisplayHologram extends MobHologram {
 
+        private static final double HEALTH_LINE_CLEARANCE = .25;
         private static final double BASE_HEALTH_NAME_CLEARANCE = .525;
         private static final double BASE_LINE_SPACING = .31;
         private static final double POSITION_EPSILON_SQUARED = .000001;
@@ -154,33 +147,41 @@ public abstract class MobHologram {
         }
 
         @Override
-        protected void update(@Nonnull Entity entity) {
-            update(entity, true);
-        }
-
-        @Override
         protected void update(@Nonnull Entity entity, boolean refreshText) {
             float displaySize = getDisplaySize(entity);
-            double verticalClearance = BASE_HEALTH_NAME_CLEARANCE * displaySize;
+            double healthClearance = HEALTH_LINE_CLEARANCE * displaySize;
+            double standardBase = BASE_HEALTH_NAME_CLEARANCE * displaySize;
             double lineSpacing = BASE_LINE_SPACING * Math.max(.5, displaySize);
             BoundingBox boundingBox = entity.getBoundingBox();
             double x = (boundingBox.getMinX() + boundingBox.getMaxX()) / 2;
-            double y = boundingBox.getMaxY() + verticalClearance;
+            double baseY = boundingBox.getMaxY();
             double z = (boundingBox.getMinZ() + boundingBox.getMaxZ()) / 2;
-            boolean moved = hasMoved(entity, x, y, z);
+            boolean moved = hasMoved(entity, x, baseY, z);
+            boolean shouldTeleport = !refreshText || moved;
 
             lineLocation.setWorld(entity.getWorld());
             lineLocation.setX(x);
-            lineLocation.setY(y);
             lineLocation.setZ(z);
             lineLocation.setYaw(0);
             lineLocation.setPitch(0);
 
-            for (int i = 0; i < customHologramLines.size(); i++) {
-                CustomHologramLine customHologramLine = customHologramLines.get(i);
-                lineLocation.setY(y + i * lineSpacing);
-                Entity lineEntity = customHologramLine.getEntity();
+            int standardIndex = 0;
+            for (CustomHologramLine customHologramLine : customHologramLines) {
+                if (!customHologramLine.isVisible()) {
+                    removeLineEntity(customHologramLine);
+                    continue;
+                }
 
+                double lineY;
+                if (customHologramLine.getTier() == LineTier.HEALTH) {
+                    lineY = baseY + healthClearance;
+                } else {
+                    lineY = baseY + standardBase + standardIndex * lineSpacing;
+                    standardIndex++;
+                }
+                lineLocation.setY(lineY);
+
+                Entity lineEntity = customHologramLine.getEntity();
                 if (lineEntity == null || !lineEntity.isValid()) {
                     TextDisplay textDisplay = lineLocation.getWorld().spawn(lineLocation, TextDisplay.class, display -> configureTextDisplay(
                             display,
@@ -196,7 +197,7 @@ public abstract class MobHologram {
                     if (refreshText || customHologramLine.isTextDirty()) {
                         updateText(textDisplay, customHologramLine);
                     }
-                    if (moved) {
+                    if (shouldTeleport) {
                         textDisplay.teleport(lineLocation);
                     }
                 }
@@ -204,9 +205,17 @@ public abstract class MobHologram {
 
             lastWorld = entity.getWorld();
             lastX = x;
-            lastY = y;
+            lastY = baseY;
             lastZ = z;
             hasLastPosition = true;
+        }
+
+        private void removeLineEntity(CustomHologramLine customHologramLine) {
+            Entity lineEntity = customHologramLine.getEntity();
+            if (lineEntity != null) {
+                lineEntity.remove();
+                customHologramLine.setEntity(null);
+            }
         }
 
         private boolean hasMoved(Entity entity, double x, double y, double z) {
@@ -230,7 +239,7 @@ public abstract class MobHologram {
             textDisplay.setBillboard(Display.Billboard.CENTER);
             textDisplay.setCustomNameVisible(false);
             textDisplay.setSeeThrough(false);
-            textDisplay.setTeleportDuration(4);
+            textDisplay.setTeleportDuration(TELEPORT_DURATION);
             textDisplay.setViewRange(viewRange);
             applyDisplaySize(textDisplay, displaySize);
             customHologramLine.setDisplaySize(displaySize);
@@ -260,6 +269,9 @@ public abstract class MobHologram {
 
         private Component text;
         private Supplier<Component> textSupplier = null;
+        private LineTier tier = LineTier.STANDARD;
+        private boolean persistent;
+        private boolean visible = true;
         private boolean delete;
         private boolean textDirty = true;
         private Entity entity;
@@ -277,7 +289,7 @@ public abstract class MobHologram {
         public String toString() {
             return "CustomHologramLine{" +
                     "text=" + text +
-                    ", textSupplier=" + textSupplier.get().toString() +
+                    ", textSupplier=" + (textSupplier != null ? textSupplier.get() : null) +
                     ", delete=" + delete +
                     ", entity=" + entity +
                     '}';
@@ -318,6 +330,30 @@ public abstract class MobHologram {
 
         public void setDelete(boolean delete) {
             this.delete = delete;
+        }
+
+        public LineTier getTier() {
+            return tier;
+        }
+
+        public void setTier(LineTier tier) {
+            this.tier = tier;
+        }
+
+        public boolean isPersistent() {
+            return persistent;
+        }
+
+        public void setPersistent(boolean persistent) {
+            this.persistent = persistent;
+        }
+
+        public boolean isVisible() {
+            return visible;
+        }
+
+        public void setVisible(boolean visible) {
+            this.visible = visible;
         }
 
         public Entity getEntity() {
