@@ -234,11 +234,12 @@ public enum Permissions {
     }
 
     private static void validateHonorificSupporterAccess(UUID uuid, boolean hasSupporter) {
-        HonorificProfile profile = HonorificManager.getProfile(uuid);
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid);
+        HonorificProfile profile = databasePlayer.getHonorifics();
         if (!profile.validatePatreonAccess(hasSupporter)) {
             return;
         }
-        HonorificManager.saveAsync(uuid);
+        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
         HonorificManager.refreshDisplays(Bukkit.getPlayer(uuid));
     }
 

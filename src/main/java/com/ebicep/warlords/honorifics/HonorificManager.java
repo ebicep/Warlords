@@ -9,12 +9,9 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayer
 import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.mobs.Mob;
-import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
-import com.mongodb.client.MongoCollection;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
@@ -31,15 +28,8 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Projections.include;
-import static com.mongodb.client.model.Updates.set;
-
 public final class HonorificManager {
 
-    private static final String PLAYER_COLLECTION_NAME = "Players_Information";
-    private static final String LEGACY_COLLECTION_NAME = "Player_Honorifics";
-    private static final String HONORIFICS_FIELD = "honorifics";
     private static final Set<String> SKELETON_MOB_NAMES = mobDisplayNames(Arrays.stream(Mob.VALUES)
             .filter(mob -> mob.entityType == EntityType.SKELETON
                     || mob.entityType == EntityType.WITHER_SKELETON
@@ -50,7 +40,6 @@ public final class HonorificManager {
             .filter(mob -> mob.entityType == EntityType.IRON_GOLEM)
             .toArray(Mob[]::new));
     private static final long REFRESH_INTERVAL_MILLIS = 15_000;
-    private static final ConcurrentHashMap<UUID, HonorificProfile> PROFILES = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<UUID, Long> LAST_CHALLENGE_REFRESH = new ConcurrentHashMap<>();
     private static final AtomicBoolean INITIALIZED = new AtomicBoolean();
 
@@ -80,7 +69,7 @@ public final class HonorificManager {
                     LAST_CHALLENGE_REFRESH.put(uuid, System.currentTimeMillis());
                     DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid);
                     if (refreshChallengeUnlocks(databasePlayer, player)) {
-                        saveAsync(uuid);
+                        queueSave(uuid);
                     }
                 }
             }
@@ -89,9 +78,8 @@ public final class HonorificManager {
 
     public static HonorificProfile getProfile(UUID uuid) {
         init();
-        HonorificProfile profile = PROFILES.computeIfAbsent(uuid, HonorificManager::loadProfile);
         refreshChallengesIfDue(uuid);
-        return profile;
+        return DatabaseManager.getPlayer(uuid).getHonorifics();
     }
 
     public static HonorificProfile getProfile(Player player) {
@@ -99,20 +87,7 @@ public final class HonorificManager {
     }
 
     public static HonorificProfile getProfile(DatabasePlayer databasePlayer) {
-        return getProfile(databasePlayer.getUuid());
-    }
-
-    public static void preload(UUID uuid) {
-        init();
-        PROFILES.computeIfAbsent(uuid, HonorificManager::loadProfile);
-    }
-
-    public static void unload(UUID uuid) {
-        HonorificProfile profile = PROFILES.remove(uuid);
-        LAST_CHALLENGE_REFRESH.remove(uuid);
-        if (profile != null) {
-            saveSnapshotAsync(uuid, profile.toEmbeddedDocument());
-        }
+        return databasePlayer.getHonorifics();
     }
 
     public static Component getHonorificComponent(UUID uuid) {
@@ -133,7 +108,7 @@ public final class HonorificManager {
     public static void forceChallengeRefresh(DatabasePlayer databasePlayer, @Nullable Player player) {
         LAST_CHALLENGE_REFRESH.put(databasePlayer.getUuid(), System.currentTimeMillis());
         if (refreshChallengeUnlocks(databasePlayer, player)) {
-            saveAsync(databasePlayer.getUuid());
+            queueSave(databasePlayer.getUuid());
         }
     }
 
@@ -141,7 +116,7 @@ public final class HonorificManager {
         if (!honorificsEnabled()) {
             return false;
         }
-        HonorificProfile profile = PROFILES.computeIfAbsent(databasePlayer.getUuid(), HonorificManager::loadProfile);
+        HonorificProfile profile = databasePlayer.getHonorifics();
         DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
         profile.setMinimumItemRerolls(pveStats.getNewItemsManager().getItemInventory().stream()
                 .mapToLong(item -> item.getRerollCostsHistory().size()).sum());
@@ -231,13 +206,6 @@ public final class HonorificManager {
         refreshAndSave(uuid);
     }
 
-    public static void saveAsync(UUID uuid) {
-        HonorificProfile profile = PROFILES.get(uuid);
-        if (profile != null) {
-            saveSnapshotAsync(uuid, profile.toEmbeddedDocument());
-        }
-    }
-
     public static void refreshDisplays(@Nullable Player player) {
         runSync(() -> {
             CustomScoreboard.updateLobbyPlayerNames();
@@ -258,7 +226,13 @@ public final class HonorificManager {
         if (DatabaseManager.inCache(uuid, PlayersCollections.LIFETIME)) {
             refreshChallengeUnlocks(DatabaseManager.getPlayer(uuid), Bukkit.getPlayer(uuid));
         }
-        saveAsync(uuid);
+        queueSave(uuid);
+    }
+
+    private static void queueSave(UUID uuid) {
+        if (DatabaseManager.inCache(uuid, PlayersCollections.LIFETIME)) {
+            DatabaseManager.queueUpdatePlayerAsync(DatabaseManager.getPlayer(uuid));
+        }
     }
 
     private static void refreshChallengesIfDue(UUID uuid) {
@@ -272,7 +246,7 @@ public final class HonorificManager {
         LAST_CHALLENGE_REFRESH.put(uuid, now);
         DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid);
         if (refreshChallengeUnlocks(databasePlayer, Bukkit.getPlayer(uuid))) {
-            saveAsync(uuid);
+            queueSave(uuid);
         }
     }
 
@@ -371,63 +345,6 @@ public final class HonorificManager {
     private static String formatTicks(long ticks) {
         long totalSeconds = Math.max(0, ticks / 20);
         return String.format("%02d:%02d", totalSeconds / 60, totalSeconds % 60);
-    }
-
-    private static HonorificProfile loadProfile(UUID uuid) {
-        if (!DatabaseManager.enabled || DatabaseManager.warlordsDatabase == null) {
-            return new HonorificProfile();
-        }
-        try {
-            Document playerDocument = getPlayerCollection().find(eq("uuid", uuid))
-                    .projection(include(HONORIFICS_FIELD))
-                    .first();
-            if (playerDocument != null) {
-                Object embedded = playerDocument.get(HONORIFICS_FIELD);
-                if (embedded instanceof Document honorificDocument) {
-                    return HonorificProfile.fromDocument(honorificDocument);
-                }
-            }
-
-            Document legacyDocument = getLegacyCollection().find(eq("_id", uuid.toString())).first();
-            HonorificProfile migrated = HonorificProfile.fromDocument(legacyDocument);
-            if (legacyDocument != null && !migrated.isEmptyExceptDefaults()) {
-                saveSnapshotAsync(uuid, migrated.toEmbeddedDocument());
-            }
-            return migrated;
-        } catch (Exception exception) {
-            ChatUtils.MessageType.WARLORDS.sendErrorMessage(exception);
-            return new HonorificProfile();
-        }
-    }
-
-    private static void saveSnapshotAsync(UUID uuid, Document snapshot) {
-        if (!DatabaseManager.enabled || DatabaseManager.warlordsDatabase == null) {
-            return;
-        }
-        Warlords.newChain().async(() -> {
-            try {
-                DatabasePlayer databasePlayer = DatabaseManager.inCache(uuid, PlayersCollections.LIFETIME)
-                        ? DatabaseManager.getPlayer(uuid)
-                        : null;
-                if (databasePlayer == null) {
-                    getPlayerCollection().updateOne(eq("uuid", uuid), set(HONORIFICS_FIELD, snapshot));
-                } else {
-                    synchronized (databasePlayer) {
-                        getPlayerCollection().updateOne(eq("uuid", uuid), set(HONORIFICS_FIELD, snapshot));
-                    }
-                }
-            } catch (Exception exception) {
-                ChatUtils.MessageType.WARLORDS.sendErrorMessage(exception);
-            }
-        }).execute();
-    }
-
-    private static MongoCollection<Document> getPlayerCollection() {
-        return DatabaseManager.warlordsDatabase.getCollection(PLAYER_COLLECTION_NAME);
-    }
-
-    private static MongoCollection<Document> getLegacyCollection() {
-        return DatabaseManager.warlordsDatabase.getCollection(LEGACY_COLLECTION_NAME);
     }
 
     private static void notifyUnlock(@Nullable Player player, Honorific honorific) {

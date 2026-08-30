@@ -19,6 +19,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayer
 import com.ebicep.warlords.database.repositories.player.pojos.pve.PvEStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.PvEStatsWarlordsClasses;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.PvEStatsWarlordsSpecs;
+import com.ebicep.warlords.honorifics.HonorificProfile;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.Team;
@@ -117,6 +118,9 @@ public class DatabasePlayer implements CachedMultiStatsGeneral, TracksMultiAbili
 
     @Field("game_logs")
     private List<StreamChaptersCommand.GameTime> gameLogs = new ArrayList<>();
+
+    @Field("honorifics")
+    private HonorificProfile honorifics = new HonorificProfile();
 
     @Transient
     private Team wantedTeam = Team.BLUE;
@@ -601,6 +605,13 @@ public class DatabasePlayer implements CachedMultiStatsGeneral, TracksMultiAbili
 
     public List<StreamChaptersCommand.GameTime> getGameLogs() {
         return gameLogs;
+    }
+
+    public HonorificProfile getHonorifics() {
+        if (honorifics == null) {
+            honorifics = new HonorificProfile();
+        }
+        return honorifics;
     }
 
     public AdvancedHoverMessages getAdvancedHoverMessages() {

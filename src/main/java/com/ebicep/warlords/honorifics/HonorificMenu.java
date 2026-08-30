@@ -302,7 +302,6 @@ public final class HonorificMenu {
             }
             cost.take(databasePlayer);
             grant.run();
-            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
             saveAndRefresh(player);
             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1.2f);
             returnTo.run();
@@ -322,7 +321,7 @@ public final class HonorificMenu {
     }
 
     private static void saveAndRefresh(Player player) {
-        HonorificManager.saveAsync(player.getUniqueId());
+        DatabaseManager.queueUpdatePlayerAsync(DatabaseManager.getPlayer(player));
         HonorificManager.refreshDisplays(player);
     }
 }

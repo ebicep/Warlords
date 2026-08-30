@@ -3,7 +3,6 @@ package com.ebicep.warlords.database.repositories.player;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.mongodb.MongoNamespace;
-import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.RenameCollectionOptions;
 import org.bson.Document;
 import org.springframework.data.mongodb.core.BulkOperations;
@@ -17,10 +16,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
-import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Projections.include;
-import static com.mongodb.client.model.Updates.set;
 
 @Repository
 public class CustomPlayerRepositoryImpl implements CustomPlayerRepository {
@@ -38,20 +33,7 @@ public class CustomPlayerRepositoryImpl implements CustomPlayerRepository {
 
     @Override
     public DatabasePlayer save(DatabasePlayer player, PlayersCollections collection) {
-        if (collection != PlayersCollections.LIFETIME) {
-            return mongoTemplate.save(player, collection.collectionName);
-        }
-        synchronized (player) {
-            MongoCollection<Document> mongoCollection = mongoTemplate.getCollection(collection.collectionName);
-            Document existing = mongoCollection.find(eq("uuid", player.getUuid()))
-                    .projection(include("honorifics"))
-                    .first();
-            DatabasePlayer saved = mongoTemplate.save(player, collection.collectionName);
-            if (existing != null && existing.containsKey("honorifics")) {
-                mongoCollection.updateOne(eq("uuid", player.getUuid()), set("honorifics", existing.get("honorifics")));
-            }
-            return saved;
-        }
+        return mongoTemplate.save(player, collection.collectionName);
     }
 
     @Override

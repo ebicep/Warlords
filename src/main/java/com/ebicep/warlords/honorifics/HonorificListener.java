@@ -13,18 +13,8 @@ import com.ebicep.warlords.pve.weapons.events.StarPieceSynthesizedEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 
 public class HonorificListener implements Listener {
-
-    @EventHandler
-    public void onPreLogin(AsyncPlayerPreLoginEvent event) {
-        if (!HonorificManager.honorificsEnabled()) {
-            return;
-        }
-        HonorificManager.preload(event.getUniqueId());
-    }
 
     @EventHandler
     public void onFirstLoad(DatabasePlayerFirstLoadEvent event) {
@@ -79,13 +69,5 @@ public class HonorificListener implements Listener {
                         warlordsPlayer.getMinuteStats().total().getDamage()
                 )
         );
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onQuit(PlayerQuitEvent event) {
-        if (!HonorificManager.honorificsEnabled()) {
-            return;
-        }
-        HonorificManager.unload(event.getPlayer().getUniqueId());
     }
 }
