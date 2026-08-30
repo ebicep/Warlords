@@ -387,7 +387,7 @@ public abstract class AbstractAbility implements AbilityIcon {
         int index = Math.min(Math.max(amount, 1), 99);
         ItemStack cached = GRAY_DYE_BY_AMOUNT[index];
         if (cached == null) {
-            cached = new ItemBuilder(Material.GRAY_DYE, index).get();
+            cached = new ItemBuilder(Material.GRAY_DYE, index).name(Component.empty()).get();
             GRAY_DYE_BY_AMOUNT[index] = cached;
         }
         return cached;

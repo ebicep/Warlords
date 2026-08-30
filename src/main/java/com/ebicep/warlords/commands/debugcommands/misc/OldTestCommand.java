@@ -1,16 +1,14 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
-import com.ebicep.jda.BalanceThreadContext;
-import com.ebicep.jda.BotManager;
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.repositories.games.pojos.ctf.DatabaseGameCTF;
 import com.ebicep.warlords.database.repositories.games.pojos.ctf.DatabaseGamePlayerCTF;
 import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import io.papermc.paper.command.brigadier.BasicCommand;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -28,24 +26,25 @@ public class OldTestCommand implements BasicCommand {
         Player playerSender = commandSender instanceof Player player ? player : null;
 
         if (commandSender instanceof Player player) {
-            long balanceThreadId = BalanceThreadContext.getLatestBalanceThreadId();
-            DatabaseGameCTF mockGame = createMockBacklogTestGame();
-            if (balanceThreadId == 0 || BotManager.jda == null) {
-                player.sendMessage(Component.text(
-                        BotManager.jda == null
-                                ? "Discord bot not connected; cannot post test JSON to balance thread"
-                                : "No balance thread tracked yet (post a balance embed in a bot-teams thread first)",
-                        NamedTextColor.RED
-                ));
-            } else {
-                Warlords.newChain()
-                        .async(() -> DatabaseGameCTF.sendGamesBacklogJsonToLatestBalanceThread(mockGame))
-                        .execute();
-                player.sendMessage(Component.text(
-                        "Sent mock games-backlog JSON (" + mockGame.getId() + ".json) to balance thread " + balanceThreadId,
-                        NamedTextColor.GREEN
-                ));
-            }
+            player.give(new ItemBuilder(Material.GRAY_DYE, 5).name(Component.text("")).get());
+//            long balanceThreadId = BalanceThreadContext.getLatestBalanceThreadId();
+//            DatabaseGameCTF mockGame = createMockBacklogTestGame();
+//            if (balanceThreadId == 0 || BotManager.jda == null) {
+//                player.sendMessage(Component.text(
+//                        BotManager.jda == null
+//                                ? "Discord bot not connected; cannot post test JSON to balance thread"
+//                                : "No balance thread tracked yet (post a balance embed in a bot-teams thread first)",
+//                        NamedTextColor.RED
+//                ));
+//            } else {
+//                Warlords.newChain()
+//                        .async(() -> DatabaseGameCTF.sendGamesBacklogJsonToLatestBalanceThread(mockGame))
+//                        .execute();
+//                player.sendMessage(Component.text(
+//                        "Sent mock games-backlog JSON (" + mockGame.getId() + ".json) to balance thread " + balanceThreadId,
+//                        NamedTextColor.GREEN
+//                ));
+//            }
         }
         ChatChannels.sendDebugMessage(commandSender instanceof Player player ? player : null, "Executed OldTestCommand");
     }
