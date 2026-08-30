@@ -23,6 +23,8 @@ import java.util.concurrent.ThreadLocalRandom;
 @TypeAlias("new_item")
 public class NewItem {
 
+    private static final double SCORE_ROLL_EXPONENT = 1.1;
+
     private Instant creationTime = Instant.now();
     private UUID uuid = UUID.randomUUID();
     private Map<NewItemAttribute, Byte> bonusAttributeDistribution;
@@ -50,7 +52,7 @@ public class NewItem {
         NewItemAttribute[] bonusAttributes = JavaUtils.pickRandom(NewItemAttribute.BONUS_ATTRIBUTES, tier.bonusAttributes());
         this.bonusAttributeDistribution = new EnumMap<>(NewItemAttribute.class);
         for (NewItemAttribute bonusAttribute : bonusAttributes) {
-            this.bonusAttributeDistribution.put(bonusAttribute, (byte) ThreadLocalRandom.current().nextInt(0, 101));
+            this.bonusAttributeDistribution.put(bonusAttribute, rollAttributeDistribution(ThreadLocalRandom.current()));
         }
     }
 
@@ -62,8 +64,12 @@ public class NewItem {
         Collections.shuffle(bonusAttributes, random);
         this.bonusAttributeDistribution = new EnumMap<>(NewItemAttribute.class);
         for (int i = 0; i < tier.bonusAttributes(); i++) {
-            this.bonusAttributeDistribution.put(bonusAttributes.get(i), (byte) random.nextInt(0, 101));
+            this.bonusAttributeDistribution.put(bonusAttributes.get(i), rollAttributeDistribution(random));
         }
+    }
+
+    private static byte rollAttributeDistribution(Random random) {
+        return (byte) Math.min(100, (int) (Math.pow(random.nextDouble(), SCORE_ROLL_EXPONENT) * 101));
     }
 
     public NewItem(@NotNull NewItem source) {
@@ -80,7 +86,7 @@ public class NewItem {
     public void reroll(EnumSet<NewItemAttribute> lockedAttributes) {
         for (NewItemAttribute newItemAttribute : this.bonusAttributeDistribution.keySet()) {
             if (!lockedAttributes.contains(newItemAttribute)) {
-                this.bonusAttributeDistribution.put(newItemAttribute, (byte) ThreadLocalRandom.current().nextInt(0, 101));
+                this.bonusAttributeDistribution.put(newItemAttribute, rollAttributeDistribution(ThreadLocalRandom.current()));
             }
         }
     }
