@@ -41,6 +41,7 @@ import java.util.function.Predicate;
 public abstract class AbstractAbility implements AbilityIcon {
 
     protected static final int DESCRIPTION_WIDTH = 165;
+    private static final ItemStack[] GRAY_DYE_BY_AMOUNT = new ItemStack[100];
 
     protected static void playCooldownReductionEffect(WarlordsEntity warlordsEntity) {
         new GameRunnable(warlordsEntity.getGame()) {
@@ -295,11 +296,11 @@ public abstract class AbstractAbility implements AbilityIcon {
                 return;
             }
             if (!anyCharges()) {
-                ItemBuilder cooldown = new ItemBuilder(Material.GRAY_DYE, getCurrentCooldownItem());
+                ItemStack dye = grayDyeForAmount(getCurrentCooldownItem());
                 if (hasActiveSecondaryAbilities()) {
-                    cooldown.enchant(Enchantment.RESPIRATION, 1);
+                    dye = new ItemBuilder(dye).enchant(Enchantment.RESPIRATION, 1).get();
                 }
-                player.getInventory().setItem(inventoryIndex, cooldown.get());
+                player.getInventory().setItem(inventoryIndex, dye);
             } else {
                 ItemBuilder item = new ItemBuilder(getItem(this instanceof WeaponAbilityIcon ? warlordsEntity.getWeaponItem() : getAbilityIcon()));
                 if (getCurrentCooldown() > 0) {
@@ -380,6 +381,16 @@ public abstract class AbstractAbility implements AbilityIcon {
 
     public int getCurrentCooldownItem() {
         return (int) Math.round(currentCooldown + .5);
+    }
+
+    private static ItemStack grayDyeForAmount(int amount) {
+        int index = Math.min(Math.max(amount, 1), 99);
+        ItemStack cached = GRAY_DYE_BY_AMOUNT[index];
+        if (cached == null) {
+            cached = new ItemBuilder(Material.GRAY_DYE, index).get();
+            GRAY_DYE_BY_AMOUNT[index] = cached;
+        }
+        return cached;
     }
 
     public boolean hasActiveSecondaryAbilities() {
