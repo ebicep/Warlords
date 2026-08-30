@@ -1,13 +1,11 @@
 package com.ebicep.warlords.player.ingame.instances;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
@@ -19,8 +17,6 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.entity.Player;
-
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
@@ -62,12 +58,13 @@ public class HealingInstanceProcessor {
     // Calculated values
     private float healValueBeforeReduction;
     private float healValueAfterModify;
+    private float cachedMaxHealth;
     private float calculatedCritChance;
     private float calculatedCritMultiplier;
     private boolean isCrit;
 
     public HealingInstanceProcessor(InstanceDebugHoverable debugMessage, WarlordsDamageHealingEvent event) {
-        applyPreEventModifiers();
+        applyPreEventModifiers(event);
         this.debugMessage = debugMessage;
         this.event = event;
         this.target = event.getWarlordsEntity();
@@ -93,15 +90,17 @@ public class HealingInstanceProcessor {
         );
     }
 
-    private void applyPreEventModifiers() {
-        if (target != null) {
-            for (AbstractCooldown<?> abstractCooldown : target.getCooldownManager().getCooldownsDistinct()) {
+    private void applyPreEventModifiers(WarlordsDamageHealingEvent event) {
+        WarlordsEntity eventTarget = event.getWarlordsEntity();
+        if (eventTarget != null) {
+            for (AbstractCooldown<?> abstractCooldown : eventTarget.getCooldownManager().getCooldownsDistinct()) {
                 abstractCooldown.applyModifiers(Modifier.HEALING_BEFORE_VARIABLE_SET_SELF, m -> m.apply(event));
             }
         }
 
-        if (source != null) {
-            for (AbstractCooldown<?> abstractCooldown : source.getCooldownManager().getCooldownsDistinct()) {
+        WarlordsEntity eventSource = event.getSource();
+        if (eventSource != null) {
+            for (AbstractCooldown<?> abstractCooldown : eventSource.getCooldownManager().getCooldownsDistinct()) {
                 abstractCooldown.applyModifiers(Modifier.HEALING_BEFORE_VARIABLE_SET_ATTACKER, m -> m.apply(event));
             }
         }
@@ -146,8 +145,7 @@ public class HealingInstanceProcessor {
             }
         }
 
-        float maxHealth = calculateMaxHealth();
-        float actualHealing = Math.min(cappedHealValue, maxHealth - target.getCurrentHealth());
+        float actualHealing = Math.min(cappedHealValue, cachedMaxHealth - target.getCurrentHealth());
         source.addHealing(actualHealing, FlagHolder.isPlayerHolderFlag(target));
         target.setCurrentHealth(target.getCurrentHealth() + cappedHealValue);
         target.updateHealth();
@@ -169,10 +167,9 @@ public class HealingInstanceProcessor {
     }
 
     private boolean isOverHealing(float healAmount) {
-        float maxHealth = calculateMaxHealth();
         float newHealth = healAmount + target.getCurrentHealth();
 
-        return maxHealth > target.getMaxHealth() &&
+        return cachedMaxHealth > target.getMaxHealth() &&
                 newHealth > target.getMaxBaseHealth();
     }
 
@@ -308,10 +305,7 @@ public class HealingInstanceProcessor {
      * @param actionBar whether to send as action bar message
      */
     private void sendMessageBasedOnMode(WarlordsEntity entity, Component message, boolean actionBar) {
-        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(
-                entity.getUuid(),
-                entity instanceof WarlordsPlayer && entity.getEntity() instanceof Player
-        );
+        DatabasePlayer databasePlayer = entity.getDatabasePlayer();
 
         Component finalMessage = message.hoverEvent(HoverEvent.showText(debugMessage.getDebugMessage()));
 
@@ -388,6 +382,7 @@ public class HealingInstanceProcessor {
                 .value(healValue));
 
         healValueAfterModify = healValue.getCalculatedValue();
+        cachedMaxHealth = computeMaxHealth();
     }
 
     private void toggleNegativeBoosts(InstanceFlags f, boolean addListener) {
@@ -497,17 +492,16 @@ public class HealingInstanceProcessor {
     }
 
     private float calculateCappedHealValue() {
-        float maxHealth = calculateMaxHealth();
         float potentialNewHealth = target.getCurrentHealth() + healValueAfterModify;
 
-        if (potentialNewHealth > maxHealth) {
-            return maxHealth - target.getCurrentHealth();
+        if (potentialNewHealth > cachedMaxHealth) {
+            return cachedMaxHealth - target.getCurrentHealth();
         }
 
         return healValueAfterModify;
     }
 
-    private float calculateMaxHealth() {
+    private float computeMaxHealth() {
         float maxHealth = target.getHealth().getCalculatedValue();
 
         if (canOverheal()) {
