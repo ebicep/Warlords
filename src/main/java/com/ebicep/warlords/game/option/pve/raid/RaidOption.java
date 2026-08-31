@@ -160,6 +160,7 @@ public class RaidOption implements PveOption {
      */
     private void grantCompletionCaches() {
         Raid raid = raidDefinition.getRaid();
+        // both RaidMenu buttons currently start the same game, so there is no way to tell Oblivion runs apart yet
         LinkedHashMap<Spendable, Long> rewards = raid.getNormalRewards();
 
         game.warlordsPlayers().forEach(warlordsPlayer -> {

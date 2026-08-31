@@ -18,6 +18,7 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -83,7 +84,7 @@ public class NewItemGemMenu {
         menu.openForPlayer(player);
     }
 
-    private static org.bukkit.inventory.ItemStack lockedSlotItem(int slot) {
+    private static ItemStack lockedSlotItem(int slot) {
         List<Component> lore = new ArrayList<>(WordWrap.wrap(
                 Component.text("Unlock this socket so it can hold a gem.", NamedTextColor.GRAY), 160
         ));
@@ -99,14 +100,14 @@ public class NewItemGemMenu {
                 .get();
     }
 
-    private static org.bukkit.inventory.ItemStack emptySlotItem(int slot) {
+    private static ItemStack emptySlotItem(int slot) {
         return new ItemBuilder(Material.GLASS)
                 .name(Component.text("Empty Socket " + (slot + 1), NamedTextColor.GREEN))
                 .lore(WordWrap.wrap(Component.text("Click to socket one of your gems.", NamedTextColor.GRAY), 160))
                 .get();
     }
 
-    private static org.bukkit.inventory.ItemStack socketedSlotItem(int slot, Gem gem) {
+    private static ItemStack socketedSlotItem(int slot, Gem gem) {
         List<Component> lore = new ArrayList<>();
         lore.add(gem.getAttributeComponent());
         lore.add(Component.empty());

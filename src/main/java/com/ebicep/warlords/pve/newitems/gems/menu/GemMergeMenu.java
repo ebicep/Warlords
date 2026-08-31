@@ -15,6 +15,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -59,7 +60,7 @@ public class GemMergeMenu {
         menu.openForPlayer(player);
     }
 
-    private static org.bukkit.inventory.ItemStack gemItem(DatabasePlayer databasePlayer, Gem gem) {
+    private static ItemStack gemItem(DatabasePlayer databasePlayer, Gem gem) {
         Gem result = gem.getMergeResult();
         long owned = databasePlayer.getPveStats().getGems(gem);
 
