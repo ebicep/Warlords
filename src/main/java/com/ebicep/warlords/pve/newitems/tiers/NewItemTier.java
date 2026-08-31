@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.newitems.tiers;
 
+import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.newitems.attributes.NewItemAttribute;
 import com.ebicep.warlords.util.java.NamedEnum;
@@ -8,24 +9,39 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Material;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public enum NewItemTier implements ItemTier, NamedEnum {
 
-    COMMON(new Common()),
-    RARE(new Rare()),
-    EPIC(new Epic()),
-    SOVEREIGN(new Sovereign()),
-    LEGENDARY(new Legendary()),
-    ASCENDANT(new Ascendant()),
+    COMMON(new Common(), 0),
+    RARE(new Rare(), 0),
+    EPIC(new Epic(), 1),
+    SOVEREIGN(new Sovereign(), 2),
+    LEGENDARY(new Legendary(), 2),
+    ASCENDANT(new Ascendant(), 3),
 
     ;
 
     public static final NewItemTier[] VALUES = values();
-    private final ItemTier itemTier;
+    /**
+     * Paid once per socket, regardless of the item's tier or how many sockets are already unlocked.
+     */
+    public static final LinkedHashMap<Spendable, Long> GEM_SLOT_UNLOCK_COST = new LinkedHashMap<>() {{
+        put(Currencies.LEGENDARY_STAR_PIECE, 3L);
+        put(Currencies.LEGEND_FRAGMENTS, 5_000L);
+    }};
 
-    NewItemTier(ItemTier itemTier) {
+    private final ItemTier itemTier;
+    private final int maxGemSlots;
+
+    NewItemTier(ItemTier itemTier, int maxGemSlots) {
         this.itemTier = itemTier;
+        this.maxGemSlots = maxGemSlots;
+    }
+
+    public int getMaxGemSlots() {
+        return maxGemSlots;
     }
 
     @Override
