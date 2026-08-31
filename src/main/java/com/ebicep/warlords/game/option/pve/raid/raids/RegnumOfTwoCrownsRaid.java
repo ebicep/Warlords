@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.pve.raid.raids;
 
+import com.ebicep.warlords.game.option.pve.raid.Raid;
 import com.ebicep.warlords.game.option.pve.raid.RaidDefinition;
 import com.ebicep.warlords.game.option.pve.raid.RaidOption;
 import com.ebicep.warlords.game.option.pve.raid.rooms.CombatRaidRoom;
@@ -14,6 +15,11 @@ public class RegnumOfTwoCrownsRaid implements RaidDefinition {
     @Override
     public String getName() {
         return "Regnum of Two Crowns";
+    }
+
+    @Override
+    public Raid getRaid() {
+        return Raid.REGNUM_OF_TWO_CROWNS;
     }
 
     @Override

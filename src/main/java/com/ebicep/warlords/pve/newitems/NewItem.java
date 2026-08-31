@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.newitems;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.StarPieces;
 import com.ebicep.warlords.pve.newitems.attributes.NewItemAttribute;
+import com.ebicep.warlords.pve.newitems.gems.Gem;
 import com.ebicep.warlords.pve.newitems.setbonus.NewItemsSetBonus;
 import com.ebicep.warlords.pve.newitems.tiers.NewItemTier;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
@@ -33,6 +34,12 @@ public class NewItem {
     private boolean isFavorite = false;
     private List<Map<Spendable, Long>> rerollCostsHistory = new ArrayList<>();
     private List<StarPieceBonus> starPieceBonuses = new ArrayList<>();
+    private int unlockedGemSlots = 0;
+    /**
+     * Dense, so any socket past the end of this list is an unlocked but empty one. Which socket a gem sits in has no
+     * gameplay effect, so keeping the list gap free avoids persisting nulls.
+     */
+    private List<Gem> socketedGems = new ArrayList<>();
 
     public NewItem() {
         // for deserialization
@@ -81,6 +88,8 @@ public class NewItem {
             this.rerollCostsHistory.add(new HashMap<>(rerollCost));
         }
         this.starPieceBonuses = new ArrayList<>(source.starPieceBonuses);
+        this.unlockedGemSlots = source.unlockedGemSlots;
+        this.socketedGems = new ArrayList<>(source.socketedGems);
     }
 
     public void reroll(EnumSet<NewItemAttribute> lockedAttributes) {
@@ -108,6 +117,7 @@ public class NewItem {
                 .addStarComponent()
                 .addBasicAttributes()
                 .addBonusAttributes(getBonusAttributeValues(), getStarPieceBonus())
+                .addGems(this)
                 .addSetBonus(itemsManager, loadout)
                 .build();
         lore.add(Component.empty());
@@ -196,6 +206,9 @@ public class NewItem {
     public Set<NewItemAttribute> getAllAttributes() {
         Set<NewItemAttribute> attributes = new HashSet<>(setBonus.getAttributes().keySet());
         attributes.addAll(getBonusAttributeValues().keySet());
+        for (Gem gem : socketedGems) {
+            attributes.add(gem.getAttribute());
+        }
         return attributes;
     }
 
@@ -207,7 +220,61 @@ public class NewItem {
         getBonusAttributeValues().forEach((attribute, value) ->
                 attributeValues.put(attribute, attributeValues.getOrDefault(attribute, 0f) + value)
         );
+        for (Gem gem : socketedGems) {
+            attributeValues.merge(gem.getAttribute(), gem.getValue(), Float::sum);
+        }
         return attributeValues;
+    }
+
+    public int getMaxGemSlots() {
+        return getTier().getMaxGemSlots();
+    }
+
+    public int getUnlockedGemSlots() {
+        return unlockedGemSlots;
+    }
+
+    public boolean canUnlockGemSlot() {
+        return unlockedGemSlots < getMaxGemSlots();
+    }
+
+    public void unlockGemSlot() {
+        if (!canUnlockGemSlot()) {
+            throw new IllegalStateException(getStringName() + " has no gem slots left to unlock");
+        }
+        unlockedGemSlots++;
+    }
+
+    public List<Gem> getSocketedGems() {
+        return socketedGems;
+    }
+
+    @Nullable
+    public Gem getSocketedGem(int slot) {
+        return slot < 0 || slot >= socketedGems.size() ? null : socketedGems.get(slot);
+    }
+
+    /**
+     * @return the gem that previously occupied the socket, or null if it was empty
+     */
+    @Nullable
+    public Gem socketGem(int slot, @NotNull Gem gem) {
+        if (slot < 0 || slot >= unlockedGemSlots) {
+            throw new IllegalArgumentException("Gem slot " + slot + " is not unlocked on " + getStringName());
+        }
+        if (slot < socketedGems.size()) {
+            return socketedGems.set(slot, gem);
+        }
+        socketedGems.add(gem);
+        return null;
+    }
+
+    /**
+     * @return the gem that was removed, or null if the socket was empty
+     */
+    @Nullable
+    public Gem unsocketGem(int slot) {
+        return slot < 0 || slot >= socketedGems.size() ? null : socketedGems.remove(slot);
     }
 
     public UUID getUUID() {

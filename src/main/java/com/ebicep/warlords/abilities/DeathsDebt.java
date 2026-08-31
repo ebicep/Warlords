@@ -43,6 +43,7 @@ public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<
 
     public static final ItemStack BLUE_TOTEM = new ItemStack(Material.COPPER_BLOCK);
     public static final ItemStack PURPLE_TOTEM = new ItemStack(Material.CHISELED_COPPER);
+    private static final String RITE_ATTACK_SPEED_MODIFIER = "Rite of the Unpaid";
     private final DeathsDebtStats stats = new DeathsDebtStats();
     private int tickDuration = 120;
     private int respiteRadius = 10;
@@ -410,6 +411,7 @@ public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<
             return;
         }
 
+        ally.getPveHitCooldown().addModifier(FloatModifiable.ModifierType.OVERRIDING, RITE_ATTACK_SPEED_MODIFIER, 6);
         ally.getCooldownManager().addCooldown(new RegularCooldown<>(
                 "Rite of the Unpaid",
                 "RITE",
@@ -417,16 +419,9 @@ public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<
                 new RiteAttackSpeedData(),
                 wp,
                 CooldownTypes.BUFF,
-                cooldownManager -> {
-                    ally.setPveHitCooldown(13);
-                    ally.setHitCooldown(13);
-                },
-                5 * 20,
-                List.of((cooldown, ticksLeft, ticksElapsed) -> {
-                    if (ally.getPveHitCooldown() > 0) {
-                        ally.setPveHitCooldown(6);
-                    }
-                })
+                cooldownManager -> ally.getPveHitCooldown().removeModifier(RITE_ATTACK_SPEED_MODIFIER),
+                cooldownManager -> ally.getPveHitCooldown().removeModifier(RITE_ATTACK_SPEED_MODIFIER),
+                5 * 20
         ));
     }
 

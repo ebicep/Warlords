@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.newitems;
 
 import com.ebicep.warlords.pve.newitems.attributes.NewItemAttribute;
+import com.ebicep.warlords.pve.newitems.gems.Gem;
 import com.ebicep.warlords.pve.newitems.setbonus.NewItemsSetBonus;
 import com.ebicep.warlords.pve.newitems.tiers.NewItemTier;
 import com.ebicep.warlords.util.java.NumberFormat;
@@ -17,6 +18,7 @@ public class NewItemLoreCreator {
     private static final Component BONUS_ATTRIBUTES = Component.text("Bonus Attributes:", NamedTextColor.GRAY);
     private static final Component BASIC_ATTRIBUTES = Component.text("Basic Attributes:", NamedTextColor.GRAY);
     private static final Component SET_BONUS = Component.text("Set Bonus:", NamedTextColor.GRAY);
+    private static final Component GEM_SLOTS = Component.text("Gem Slots:", NamedTextColor.GRAY);
 
     private static void addBasicAttributes(boolean label, NewItemsSetBonus setBonus, List<Component> lore) {
         Map<NewItemAttribute, Float> basicAttributes = setBonus.getAttributes();
@@ -102,6 +104,30 @@ public class NewItemLoreCreator {
         lore.add(Component.empty());
     }
 
+    private static void addGems(List<Component> lore, int unlockedSlots, int maxSlots, List<Gem> socketedGems) {
+        if (maxSlots <= 0) {
+            return;
+        }
+        lore.add(GEM_SLOTS);
+        for (int slot = 0; slot < maxSlots; slot++) {
+            if (slot >= unlockedSlots) {
+                lore.add(Component.text(" - Locked Socket", NamedTextColor.DARK_GRAY));
+                continue;
+            }
+            Gem gem = slot < socketedGems.size() ? socketedGems.get(slot) : null;
+            if (gem == null) {
+                lore.add(Component.text(" - Empty Socket", NamedTextColor.GRAY));
+            } else {
+                lore.add(Component.text(" - ", NamedTextColor.GRAY)
+                                  .append(gem.getColoredName())
+                                  .append(Component.text(" ", NamedTextColor.GRAY))
+                                  .append(gem.getAttributeComponent())
+                );
+            }
+        }
+        lore.add(Component.empty());
+    }
+
     private static void addBonusAttributes(boolean label, List<Component> lore, NewItemsSetBonus setBonus, Set<NewItemAttribute> attributes) {
         Map<NewItemAttribute, Pair<Float, Float>> attributeRanges = setBonus.getBonusAttributeRanges();
         if (label) {
@@ -166,6 +192,11 @@ public class NewItemLoreCreator {
 
         public Builder addBonusAttributes(boolean label, Set<NewItemAttribute> attributes) {
             NewItemLoreCreator.addBonusAttributes(label, components, setBonus, attributes);
+            return this;
+        }
+
+        public Builder addGems(NewItem newItem) {
+            NewItemLoreCreator.addGems(components, newItem.getUnlockedGemSlots(), newItem.getMaxGemSlots(), newItem.getSocketedGems());
             return this;
         }
 
