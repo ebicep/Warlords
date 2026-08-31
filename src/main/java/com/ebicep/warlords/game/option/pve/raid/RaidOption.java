@@ -1,5 +1,7 @@
 package com.ebicep.warlords.game.option.pve.raid;
 
+import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
@@ -9,17 +11,22 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.option.pve.raid.rooms.RaidRoom;
 import com.ebicep.warlords.game.option.pve.rewards.PveRewards;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
+import com.ebicep.warlords.pve.rewards.RewardInventory;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class RaidOption implements PveOption {
@@ -27,6 +34,7 @@ public class RaidOption implements PveOption {
     private final RaidDefinition raidDefinition;
     private final ConcurrentHashMap<AbstractMob, MobData> mobs = new ConcurrentHashMap<>();
     private final List<RaidRoom> rooms = new ArrayList<>();
+    private RaidRewards rewards;
 
     private Game game;
 
@@ -43,6 +51,8 @@ public class RaidOption implements PveOption {
     @Override
     public void register(@Nonnull Game game) {
         this.game = game;
+        // PveRewards reads the game's options, so it cannot be built before the game is known
+        this.rewards = new RaidRewards(this);
 
         rooms.clear();
         rooms.addAll(raidDefinition.createRooms(this));
@@ -137,10 +147,34 @@ public class RaidOption implements PveOption {
         state = RaidState.COMPLETED;
 
         getCurrentRoom().ifPresent(RaidRoom::cleanup);
+        grantCompletionCaches();
 
         Bukkit.getPluginManager().callEvent(
                 new WarlordsGameTriggerWinEvent(game, this, Team.BLUE)
         );
+    }
+
+    /**
+     * Puts a reward cache into every participant's Reward Inventory rather than paying out immediately, matching how
+     * anomaly caches work.
+     */
+    private void grantCompletionCaches() {
+        Raid raid = raidDefinition.getRaid();
+        LinkedHashMap<Spendable, Long> rewards = raid.getNormalRewards();
+
+        game.warlordsPlayers().forEach(warlordsPlayer -> {
+            UUID uuid = warlordsPlayer.getUuid();
+            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid);
+            if (databasePlayer == null) {
+                return;
+            }
+            databasePlayer.getPveStats().getGameEventRewards().add(new RaidRewardCache(new LinkedHashMap<>(rewards), raid));
+            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+            RewardInventory.sendRewardMessage(
+                    uuid,
+                    Component.text("Your " + raid.getName() + " reward cache is ready to claim.", NamedTextColor.LIGHT_PURPLE)
+            );
+        });
     }
 
     protected void failRaid() {
@@ -192,7 +226,7 @@ public class RaidOption implements PveOption {
 
     @Override
     public PveRewards<?> getRewards() {
-        return null;
+        return rewards;
     }
 
     public RaidDefinition getRaidDefinition() {
