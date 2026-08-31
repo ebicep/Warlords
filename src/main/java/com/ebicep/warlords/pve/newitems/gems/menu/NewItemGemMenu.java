@@ -44,7 +44,9 @@ public class NewItemGemMenu {
             }
             Gem socketed = item.getSocketedGem(slotIndex);
             if (socketed == null) {
-                menu.setItem(column, 2, emptySlotItem(slotIndex), (m, e) -> GemSelectMenu.open(player, databasePlayer, item, slotIndex));
+                // sockets are stored densely, so a new gem always lands in the first empty one
+                int firstEmpty = item.getSocketedGems().size();
+                menu.setItem(column, 2, emptySlotItem(slotIndex), (m, e) -> GemSelectMenu.open(player, databasePlayer, item, firstEmpty));
             } else {
                 menu.setItem(column, 2, socketedSlotItem(slotIndex, socketed), (m, e) -> {
                     if (e.getClick().isRightClick()) {
@@ -166,7 +168,9 @@ public class NewItemGemMenu {
     }
 
     private static void unsocket(Player player, DatabasePlayer databasePlayer, NewItem item, int slot, Gem gem) {
-        item.setSocketedGem(slot, null);
+        if (item.unsocketGem(slot) == null) {
+            return;
+        }
         gem.addToPlayer(databasePlayer, 1);
         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
@@ -184,12 +188,11 @@ public class NewItemGemMenu {
             player.sendMessage(Component.text("You do not own that gem!", NamedTextColor.RED));
             return;
         }
-        Gem previous = item.getSocketedGem(slot);
+        gem.subtractFromPlayer(databasePlayer, 1);
+        Gem previous = item.socketGem(slot, gem);
         if (previous != null) {
             previous.addToPlayer(databasePlayer, 1);
         }
-        gem.subtractFromPlayer(databasePlayer, 1);
-        item.setSocketedGem(slot, gem);
         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
         NewItemsUtils.sendItemMessage(player, Component.text("You socketed ", NamedTextColor.GRAY)

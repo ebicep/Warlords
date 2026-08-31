@@ -36,7 +36,8 @@ public class NewItem {
     private List<StarPieceBonus> starPieceBonuses = new ArrayList<>();
     private int unlockedGemSlots = 0;
     /**
-     * Indexed by slot, so a null entry is an unlocked but empty socket.
+     * Dense, so any socket past the end of this list is an unlocked but empty one. Which socket a gem sits in has no
+     * gameplay effect, so keeping the list gap free avoids persisting nulls.
      */
     private List<Gem> socketedGems = new ArrayList<>();
 
@@ -206,9 +207,7 @@ public class NewItem {
         Set<NewItemAttribute> attributes = new HashSet<>(setBonus.getAttributes().keySet());
         attributes.addAll(getBonusAttributeValues().keySet());
         for (Gem gem : socketedGems) {
-            if (gem != null) {
-                attributes.add(gem.getAttribute());
-            }
+            attributes.add(gem.getAttribute());
         }
         return attributes;
     }
@@ -222,9 +221,7 @@ public class NewItem {
                 attributeValues.put(attribute, attributeValues.getOrDefault(attribute, 0f) + value)
         );
         for (Gem gem : socketedGems) {
-            if (gem != null) {
-                attributeValues.merge(gem.getAttribute(), gem.getValue(), Float::sum);
-            }
+            attributeValues.merge(gem.getAttribute(), gem.getValue(), Float::sum);
         }
         return attributeValues;
     }
@@ -257,14 +254,27 @@ public class NewItem {
         return slot < 0 || slot >= socketedGems.size() ? null : socketedGems.get(slot);
     }
 
-    public void setSocketedGem(int slot, @Nullable Gem gem) {
+    /**
+     * @return the gem that previously occupied the socket, or null if it was empty
+     */
+    @Nullable
+    public Gem socketGem(int slot, @NotNull Gem gem) {
         if (slot < 0 || slot >= unlockedGemSlots) {
             throw new IllegalArgumentException("Gem slot " + slot + " is not unlocked on " + getStringName());
         }
-        while (socketedGems.size() <= slot) {
-            socketedGems.add(null);
+        if (slot < socketedGems.size()) {
+            return socketedGems.set(slot, gem);
         }
-        socketedGems.set(slot, gem);
+        socketedGems.add(gem);
+        return null;
+    }
+
+    /**
+     * @return the gem that was removed, or null if the socket was empty
+     */
+    @Nullable
+    public Gem unsocketGem(int slot) {
+        return slot < 0 || slot >= socketedGems.size() ? null : socketedGems.remove(slot);
     }
 
     public UUID getUUID() {
