@@ -35,10 +35,6 @@ public class NewItem {
     private List<Map<Spendable, Long>> rerollCostsHistory = new ArrayList<>();
     private List<StarPieceBonus> starPieceBonuses = new ArrayList<>();
     private int unlockedGemSlots = 0;
-    /**
-     * Dense, so any socket past the end of this list is an unlocked but empty one. Which socket a gem sits in has no
-     * gameplay effect, so keeping the list gap free avoids persisting nulls.
-     */
     private List<Gem> socketedGems = new ArrayList<>();
 
     public NewItem() {

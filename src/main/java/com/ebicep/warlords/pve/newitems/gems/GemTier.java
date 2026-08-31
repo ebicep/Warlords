@@ -7,10 +7,10 @@ import org.jetbrains.annotations.Nullable;
 
 public enum GemTier implements NamedEnum {
 
-    I("I", 1, NamedTextColor.GREEN),
-    II("II", 2, NamedTextColor.BLUE),
-    III("III", 3, NamedTextColor.DARK_PURPLE),
-    IV("IV", 4, NamedTextColor.GOLD),
+    ONE("I", 1, NamedTextColor.GREEN),
+    TWO("II", 2, NamedTextColor.BLUE),
+    THREE("III", 3, NamedTextColor.DARK_PURPLE),
+    FOUR("IV", 4, NamedTextColor.GOLD),
 
     ;
 

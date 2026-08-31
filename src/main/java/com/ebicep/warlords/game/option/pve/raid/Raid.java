@@ -15,7 +15,7 @@ public enum Raid {
             "Regnum of Two Crowns",
             "Conquer the Heir of Two Crowns.",
             70,
-            GemTier.I
+            GemTier.ONE
     ) {
         @Override
         protected LinkedHashMap<Spendable, Long> createNormalRewards() {
@@ -47,7 +47,7 @@ public enum Raid {
             "Oath of the First Heir",
             "PLACEHOLDER",
             75,
-            GemTier.I
+            GemTier.ONE
     ) {
         @Override
         protected LinkedHashMap<Spendable, Long> createNormalRewards() {
@@ -77,7 +77,7 @@ public enum Raid {
             "The Evergreen Mansion",
             "PLACEHOLDER",
             80,
-            GemTier.II
+            GemTier.TWO
     ) {
         @Override
         protected LinkedHashMap<Spendable, Long> createNormalRewards() {
@@ -107,7 +107,7 @@ public enum Raid {
             "Shadows of the Underground",
             "PLACEHOLDER",
             85,
-            GemTier.II
+            GemTier.TWO
     ) {
         @Override
         protected LinkedHashMap<Spendable, Long> createNormalRewards() {
@@ -137,7 +137,7 @@ public enum Raid {
             "The Stairway of Illusion",
             "PLACEHOLDER",
             90,
-            GemTier.III
+            GemTier.THREE
     ) {
         @Override
         protected LinkedHashMap<Spendable, Long> createNormalRewards() {
@@ -167,7 +167,7 @@ public enum Raid {
             "The Halls of Ascension",
             "PLACEHOLDER",
             95,
-            GemTier.III
+            GemTier.THREE
     ) {
         @Override
         protected LinkedHashMap<Spendable, Long> createNormalRewards() {
@@ -197,7 +197,7 @@ public enum Raid {
             "The Final Veil",
             "PLACEHOLDER",
             100,
-            GemTier.IV
+            GemTier.FOUR
     ) {
         @Override
         protected LinkedHashMap<Spendable, Long> createNormalRewards() {

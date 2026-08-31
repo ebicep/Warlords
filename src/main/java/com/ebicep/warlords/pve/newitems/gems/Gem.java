@@ -24,30 +24,30 @@ import java.util.Map;
  */
 public enum Gem implements Spendable, NamedEnum {
 
-    IMPAIRMENT_I(GemType.IMPAIRMENT, GemTier.I),
-    IMPAIRMENT_II(GemType.IMPAIRMENT, GemTier.II),
-    IMPAIRMENT_III(GemType.IMPAIRMENT, GemTier.III),
-    IMPAIRMENT_IV(GemType.IMPAIRMENT, GemTier.IV),
+    IMPAIRMENT_I(GemType.IMPAIRMENT, GemTier.ONE),
+    IMPAIRMENT_II(GemType.IMPAIRMENT, GemTier.TWO),
+    IMPAIRMENT_III(GemType.IMPAIRMENT, GemTier.THREE),
+    IMPAIRMENT_IV(GemType.IMPAIRMENT, GemTier.FOUR),
 
-    ALLEVIATION_I(GemType.ALLEVIATION, GemTier.I),
-    ALLEVIATION_II(GemType.ALLEVIATION, GemTier.II),
-    ALLEVIATION_III(GemType.ALLEVIATION, GemTier.III),
-    ALLEVIATION_IV(GemType.ALLEVIATION, GemTier.IV),
+    ALLEVIATION_I(GemType.ALLEVIATION, GemTier.ONE),
+    ALLEVIATION_II(GemType.ALLEVIATION, GemTier.TWO),
+    ALLEVIATION_III(GemType.ALLEVIATION, GemTier.THREE),
+    ALLEVIATION_IV(GemType.ALLEVIATION, GemTier.FOUR),
 
-    SURGES_I(GemType.SURGES, GemTier.I),
-    SURGES_II(GemType.SURGES, GemTier.II),
-    SURGES_III(GemType.SURGES, GemTier.III),
-    SURGES_IV(GemType.SURGES, GemTier.IV),
+    SURGES_I(GemType.SURGES, GemTier.ONE),
+    SURGES_II(GemType.SURGES, GemTier.TWO),
+    SURGES_III(GemType.SURGES, GemTier.THREE),
+    SURGES_IV(GemType.SURGES, GemTier.FOUR),
 
-    NOURISHMENT_I(GemType.NOURISHMENT, GemTier.I),
-    NOURISHMENT_II(GemType.NOURISHMENT, GemTier.II),
-    NOURISHMENT_III(GemType.NOURISHMENT, GemTier.III),
-    NOURISHMENT_IV(GemType.NOURISHMENT, GemTier.IV),
+    NOURISHMENT_I(GemType.NOURISHMENT, GemTier.ONE),
+    NOURISHMENT_II(GemType.NOURISHMENT, GemTier.TWO),
+    NOURISHMENT_III(GemType.NOURISHMENT, GemTier.THREE),
+    NOURISHMENT_IV(GemType.NOURISHMENT, GemTier.FOUR),
 
-    SPEED_I(GemType.SPEED, GemTier.I),
-    SPEED_II(GemType.SPEED, GemTier.II),
-    SPEED_III(GemType.SPEED, GemTier.III),
-    SPEED_IV(GemType.SPEED, GemTier.IV),
+    SPEED_I(GemType.SPEED, GemTier.ONE),
+    SPEED_II(GemType.SPEED, GemTier.TWO),
+    SPEED_III(GemType.SPEED, GemTier.THREE),
+    SPEED_IV(GemType.SPEED, GemTier.FOUR),
 
     ;
 
