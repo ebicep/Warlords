@@ -1,6 +1,6 @@
 package com.ebicep.warlords.util.warlords;
 
-import com.ebicep.customentities.nms.SelfRemovingFallingBlock;
+import com.ebicep.warlords.effects.FallingBlockDebrisEffect;
 import com.ebicep.warlords.events.GeneralEvents;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -397,18 +397,14 @@ public class Utils {
     }
 
     public static void addFallingBlock(Location location, Vector vector) {
-        Material type = location.getWorld().getBlockAt(LocationUtils.getGroundLocation(location).add(0, -1, 0)).getType();
+        Location ground = LocationUtils.getGroundLocation(location);
+        Material type = ground.getWorld().getBlockAt(ground.getBlockX(), ground.getBlockY() - 1, ground.getBlockZ()).getType();
         if (type == Material.GRASS_BLOCK) {
             if ((int) (Math.random() * 3) == 2) {
                 type = Material.DIRT;
             }
         }
-        new SelfRemovingFallingBlock(
-                location.add(0, .4, 0),
-                type.createBlockData(),
-                2,
-                block -> block.setVelocity(vector)
-        );
+        FallingBlockDebrisEffect.spawn(location.clone().add(0, .4, 0), type, vector.getY(), 2);
     }
 
     public static void spawnThrowableProjectile(

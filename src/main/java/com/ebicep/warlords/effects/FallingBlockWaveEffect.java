@@ -27,10 +27,8 @@ public class FallingBlockWaveEffect {
             new Vector3f(1.5f, 1.2f, 1.5f), // scale of block to give illusion of more blocks
             new AxisAngle4f()
     );
-    private static final Map<Material, BlockData> CACHED_BLOCK_DATA = new HashMap<>();
-
     public static void create(Location center, double range, int duration, Material material) {
-        BlockData blockData = CACHED_BLOCK_DATA.computeIfAbsent(material, Material::createBlockData);
+        BlockData blockData = FallingBlockDebrisEffect.getBlockData(material);
         int entityCount = 0;
         List<List<Location>> fallingBlockLocations = new LinkedList<>();
         for (int i = 0; i < range; i++) {
