@@ -341,19 +341,19 @@
           },
           "rerollCost": {
             "1": {
-              "ETHEREUM_CRYSTAL": 4,
-              "ASCENDANT_SHARD": 2,
-              "ZENITH_STAR": 2
+              "ETHEREUM_CRYSTAL": 10,
+              "SYNTHETIC_SHARD": 1000,
+              "ZENITH_STAR": 1
             },
             "2": {
-              "ETHEREUM_CRYSTAL": 6,
-              "ASCENDANT_SHARD": 2,
-              "ZENITH_STAR": 2
+              "ETHEREUM_CRYSTAL": 15,
+              "SYNTHETIC_SHARD": 2000,
+              "ZENITH_STAR": 1
             },
             "3": {
-              "ETHEREUM_CRYSTAL": 8,
-              "ASCENDANT_SHARD": 2,
-              "ZENITH_STAR": 2
+              "ETHEREUM_CRYSTAL": 20,
+              "SYNTHETIC_SHARD": 3000,
+              "ZENITH_STAR": 1
             }
           },
           "lockScrollRerollCost": {
