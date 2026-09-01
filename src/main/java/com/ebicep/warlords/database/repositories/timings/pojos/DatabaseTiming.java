@@ -20,8 +20,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.Instant;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -59,11 +57,10 @@ public class DatabaseTiming {
                         ChatUtils.MessageType.TIMINGS.sendMessage("Could not find Monthly Stats timing in database. Creating new timing.");
                         DatabaseManager.timingsService.create(new DatabaseTiming("Monthly Stats", DateUtil.getResetDateCurrentMonth(), Timing.MONTHLY));
                     } else {
-                        ZonedDateTime resetTime = timing.getLastReset().atZone(ZoneOffset.UTC);
-                        ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);
-                        if (now.getYear() > resetTime.getYear() || now.getMonthValue() > resetTime.getMonthValue()) {
+                        Instant currentMonthStart = DateUtil.getResetDateCurrentMonth();
+                        if (currentMonthStart.isAfter(timing.getLastReset())) {
                             //updating date to current
-                            timing.setLastReset(DateUtil.getResetDateCurrentMonth());
+                            timing.setLastReset(currentMonthStart);
                             DatabaseManager.timingsService.update(timing);
                             ChatUtils.MessageType.TIMINGS.sendMessage("Monthly information reset");
                             return true;
@@ -94,14 +91,14 @@ public class DatabaseTiming {
                 .async(timing -> {
                     if (timing == null) {
                         ChatUtils.MessageType.TIMINGS.sendMessage("Could not find Weekly Stats timing in database. Creating new timing.");
-                        DatabaseManager.timingsService.create(new DatabaseTiming("Weekly Stats", DateUtil.getResetDateLatestMonday(), Timing.WEEKLY));
+                        DatabaseManager.timingsService.create(new DatabaseTiming("Weekly Stats", DateUtil.getResetDateCurrentWeek(), Timing.WEEKLY));
                     } else {
                         long minutesBetween = ChronoUnit.MINUTES.between(timing.getLastReset(), currentDate);
                         ChatUtils.MessageType.TIMINGS.sendMessage("Weekly Reset Time Minute: " + minutesBetween + " > " + (timing.getTiming().minuteDuration - 30));
-                        //10 min buffer
+                        //30 min buffer so reset fires on the 10 UTC restart
                         if (minutesBetween > 0 && minutesBetween > timing.getTiming().minuteDuration - 30) {
                             //updating date to current
-                            timing.setLastReset(DateUtil.getResetDateLatestMonday());
+                            timing.setLastReset(DateUtil.getResetDateCurrentWeek());
                             DatabaseManager.timingsService.update(timing);
                             ChatUtils.MessageType.TIMINGS.sendMessage("Weekly information reset");
                             return true;
@@ -137,8 +134,8 @@ public class DatabaseTiming {
                         DatabaseManager.timingsService.create(new DatabaseTiming("Daily Stats", DateUtil.getResetDateToday(), Timing.DAILY));
                     } else {
                         long minutesBetween = ChronoUnit.MINUTES.between(timing.getLastReset(), currentDate);
-                        ChatUtils.MessageType.TIMINGS.sendMessage("Daily Reset Time Minute: " + minutesBetween + " > " + (timing.getTiming().minuteDuration - 30));
-                        //10 min buffer
+                        ChatUtils.MessageType.TIMINGS.sendMessage("Daily Reset Time Minute: " + minutesBetween + " > " + (timing.getTiming().minuteDuration - 10));
+                        //10 min buffer so reset fires on the 10 UTC restart
                         if (minutesBetween > 0 && minutesBetween > timing.getTiming().minuteDuration - 10) {
                             //updating date to current
                             timing.setLastReset(DateUtil.getResetDateToday());

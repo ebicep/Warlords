@@ -6,7 +6,6 @@ import org.springframework.data.mongodb.core.query.Query;
 
 import java.time.*;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalAdjusters;
 import java.util.Arrays;
 import java.util.List;
 
@@ -26,9 +25,8 @@ public enum PlayersCollections {
     MONTHLY("Monthly", "Players_Information_Monthly") {
         @Override
         public boolean shouldUpdate(Instant dateOfGame) {
-            ZonedDateTime gameTime = dateOfGame.atZone(ZoneOffset.UTC);
-            ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);
-            return gameTime.getMonth() == now.getMonth() && gameTime.getYear() == now.getYear();
+            return DateUtil.getResetDateCurrentMonth()
+                           .isBefore(dateOfGame);
         }
 
         @Override
@@ -137,15 +135,8 @@ public enum PlayersCollections {
     WEEKLY("Weekly", "Players_Information_Weekly") {
         @Override
         public boolean shouldUpdate(Instant dateOfGame) {
-            return OffsetDateTime
-                    .now(ZoneOffset.UTC)
-                    .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
-                    .withHour(0)
-                    .withMinute(0)
-                    .withSecond(0)
-                    .withNano(0)
-                    .toInstant()
-                    .isBefore(dateOfGame);
+            return DateUtil.getResetDateCurrentWeek()
+                           .isBefore(dateOfGame);
         }
     },
     DAILY("Daily", "Players_Information_Daily") {

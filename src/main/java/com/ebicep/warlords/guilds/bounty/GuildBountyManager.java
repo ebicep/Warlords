@@ -7,14 +7,11 @@ import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildPlayer;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.rewards.types.BountyReward;
+import com.ebicep.warlords.util.java.DateUtil;
 import com.ebicep.warlords.util.java.NumberFormat;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.ZoneOffset;
-import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -47,7 +44,7 @@ public final class GuildBountyManager {
     }
 
     public static void validateWeek(Guild guild, GuildBountyData data) {
-        long currentWeek = getCurrentWeekStartEpochDay();
+        long currentWeek = DateUtil.getCurrentWeekStartEpochDay();
         boolean changed = false;
         if (data.getWeekStartEpochDay() != currentWeek) {
             data.setWeekStartEpochDay(currentWeek);
@@ -169,9 +166,5 @@ public final class GuildBountyManager {
         }
         Collections.shuffle(available);
         return available.isEmpty() ? null : available.get(0);
-    }
-
-    private static long getCurrentWeekStartEpochDay() {
-        return LocalDate.now(ZoneOffset.UTC).with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)).toEpochDay();
     }
 }

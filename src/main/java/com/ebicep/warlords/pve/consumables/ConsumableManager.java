@@ -1,12 +1,9 @@
 package com.ebicep.warlords.pve.consumables;
 
+import com.ebicep.warlords.util.java.DateUtil;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.time.DayOfWeek;
 import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneOffset;
-import java.time.temporal.TemporalAdjusters;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -76,11 +73,11 @@ public class ConsumableManager {
     }
 
     public boolean hasPurchasedThisWeek(Consumable consumable) {
-        return getWeeklyPurchases().getOrDefault(consumable.getId(), Long.MIN_VALUE) == getCurrentWeekStartEpochDay();
+        return getWeeklyPurchases().getOrDefault(consumable.getId(), Long.MIN_VALUE) == DateUtil.getCurrentWeekStartEpochDay();
     }
 
     public void markPurchasedThisWeek(Consumable consumable) {
-        getWeeklyPurchases().put(consumable.getId(), getCurrentWeekStartEpochDay());
+        getWeeklyPurchases().put(consumable.getId(), DateUtil.getCurrentWeekStartEpochDay());
     }
 
     public Map<String, Integer> getInventory() {
@@ -102,11 +99,5 @@ public class ConsumableManager {
             weeklyPurchases = new HashMap<>();
         }
         return weeklyPurchases;
-    }
-
-    private static long getCurrentWeekStartEpochDay() {
-        return LocalDate.now(ZoneOffset.UTC)
-                        .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
-                        .toEpochDay();
     }
 }
