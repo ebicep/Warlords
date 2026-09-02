@@ -112,9 +112,10 @@ public class MirrorBlossom extends AbstractAbility implements BlueAbilityIcon, H
                                         if (event.getCause().contains("Mirror Blossom")) {
                                             stacks.getAndIncrement();
                                         }
-                                    }).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
+                                    }).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                                         if (event.getCause().contains("Judgement Strike") && pveMasterUpgrade) {
-                                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, 1 + (stacks.get() * .05f));
+                                            float multiplier = Math.clamp(1 + (stacks.get() * .05f), 1, 2);
+                                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, multiplier);
                                         }
                                     }));
                                 });
