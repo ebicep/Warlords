@@ -12,6 +12,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.events.player.ingame.pve.*;
 import com.ebicep.warlords.events.player.ingame.pve.drops.*;
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.permissions.Permissions;
@@ -497,6 +498,9 @@ public abstract class AbstractMob implements Mob {
 
     public void dropItem(WarlordsEntity killer) {
         Game game = killer.getGame();
+        if (game.getGameMode().equals(GameMode.PVE_DEBUG)) {
+            return;
+        }
         PlayerFilterGeneric.playingGameWarlordsPlayers(game)
                            .teammatesOf((WarlordsPlayer) killer)
                            .filter(wp -> wp.getEntity() instanceof Player)

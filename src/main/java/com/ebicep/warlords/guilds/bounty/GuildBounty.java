@@ -12,7 +12,7 @@ import java.util.LinkedHashMap;
 public enum GuildBounty {
 
     KILL_MOBS("Extermination", "Kill 200,000 mobs. Every guild member contributes to this counter.", 200_000, Material.IRON_SWORD, WeeklyRewardSpendable1.REWARD, 15_000, 30_000),
-    COMPLETE_EXTREME("United Front", "Complete Extreme Mode with at least 4 guild members in the game.", 1, Material.NETHER_STAR, WeeklyRewardSpendable4.REWARD, 10_000, 30_000),
+    COMPLETE_EXTREME("United Front", "Complete Extreme Mode with 4 guild members.", 1, Material.NETHER_STAR, WeeklyRewardSpendable4.REWARD, 10_000, 30_000),
     PLAY_GAMES("War Games", "Play 200 games. Every guild member contributes to this counter.", 200, Material.DIAMOND_SWORD, WeeklyRewardSpendable2.REWARD, 10_000, 30_000),
     COMPLETE_ANOMALIES("Investigative Unit", "Successfully complete 30 Anomaly investigations with at least 1 other guild member in the party.", 30, Material.SPYGLASS, WeeklyRewardSpendable3.REWARD, 10_000, 30_000),
     //COMPLETE_REGNUM("Two Crowns, One Guild", "Complete the Regnum of Two Crowns raid with at least 4 guild members in the party.", 1, Material.GOLDEN_HELMET, WeeklyRewardSpendable4.REWARD, 25_000, 100_000),
