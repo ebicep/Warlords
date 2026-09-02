@@ -102,6 +102,9 @@ public class NewItemCraftMenu {
             }
             NewItemsSetBonus setBonus = setBonuses.get(setIndex);
             List<Component> lore = new ArrayList<>();
+            lore.add(Component.empty());
+            lore.addAll(setBonus.getDescriptionLore());
+            lore.add(Component.empty());
             lore.add(Component.text("Available Pieces:", NamedTextColor.GRAY));
             for (NewItemsSlot slot : setBonus.getSlots()) {
                 lore.add(Component.text(" - " + slot.getName(), NamedTextColor.GRAY));
