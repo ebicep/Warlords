@@ -268,7 +268,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
 
         for (AbstractUpgradeBranch<?> upgradeBranch : player.getAbilityTree().getUpgradeBranches()) {
             if (upgradeBranch.getAbility().getClass().equals(selectedSkillBoost.ability)) {
-                upgradeBranch.setFreeUpgrades(getUpgradeLevel() == 5 ? 2 : 1);
+                upgradeBranch.setFreeUpgrades(upgradeBranch.getFreeUpgrades() + getUpgradeLevel() == 5 ? 2 : 1);
                 break;
             }
         }
@@ -434,7 +434,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
                 Component.empty(),
                 Component.text("Skill Boost (" + selectedSkillBoost.name + "):", NamedTextColor.GREEN)
         ));
-        lore.addAll(WordWrap.wrap(Component.text((isAscendant() ? 2 : 1) + " Free Ability Upgrade" + (isAscendant() ? "s" : ""), NamedTextColor.GRAY), 175));
+        lore.addAll(WordWrap.wrap(Component.text((getUpgradeLevel() == 5 ? 2 : 1) + " Free Ability Upgrade" + (getUpgradeLevel() == 5 ? "s" : ""), NamedTextColor.GRAY), 175));
         if (getSkillCritChanceBonus() != 0) {
             lore.add(Component.text("Skill Crit Chance: ", NamedTextColor.GRAY)
                               .append(Component.text(format(getSkillCritChanceBonus()) + "%", NamedTextColor.GREEN))
