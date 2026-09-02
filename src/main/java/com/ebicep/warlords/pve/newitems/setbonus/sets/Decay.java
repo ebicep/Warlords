@@ -83,7 +83,7 @@ public class Decay extends BaseSet {
                     tryApply(warlordsPlayer, event.getSource(), event);
                 }
             }).addModifier(Modifier.ON_OUTGOING_DAMAGE, (event, currentDamageValue, isCrit) -> {
-                if (!event.getWarlordsEntity().equals(warlordsPlayer)) {
+                if (!event.getSource().equals(warlordsPlayer)) {
                     return;
                 }
                 if (event.getFlags().contains(InstanceFlags.DOT)) {
@@ -96,8 +96,7 @@ public class Decay extends BaseSet {
     }
 
     private void tryApply(WarlordsPlayer source, WarlordsEntity target, WarlordsDamageHealingEvent event) {
-        if (target == null ||
-                target.isTeammate(source) ||
+        if (target == null || target.isTeammate(source) ||
                 event.isHealingInstance() ||
                 event.getFlags().contains(InstanceFlags.DOT) ||
                 ThreadLocalRandom.current().nextDouble() > activationChance / 100.0) {
@@ -116,6 +115,12 @@ public class Decay extends BaseSet {
             case "Silence" -> applySilence(source, target, ticks);
             case "Stun" -> target.setStunTicks(ticks);
         }
+        source.sendMessage(Component.text("Your Decay applied the ", NamedTextColor.GREEN)
+                .append(Component.text(debuff, NamedTextColor.RED))
+                .append(Component.text(" debuff to "))
+                .append(target.getColoredName())
+                .append(Component.text("."))
+        );
     }
 
     private void applyBurn(WarlordsPlayer source, WarlordsEntity target, int ticks) {
