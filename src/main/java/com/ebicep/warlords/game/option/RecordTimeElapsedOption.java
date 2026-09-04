@@ -69,7 +69,7 @@ public class RecordTimeElapsedOption implements Option {
                     this.cancel();
                 }
                 ticksElapsed++;
-                if (ticksElapsed % 20 == 0) {
+                if (ticksElapsed % 20 == 0 && scoreboardHandler != null) {
                     scoreboardHandler.markChanged();
                 }
             }
