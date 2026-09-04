@@ -12,6 +12,7 @@ import org.bukkit.scheduler.BukkitTask;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
+import java.nio.channels.OverlappingFileLockException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -351,6 +352,9 @@ public class GameManager implements AutoCloseable {
                 }
                 World world = Bukkit.getWorld(holder.getName());
                 if (world == null) {
+                    ChatUtils.MessageType.GAME.sendErrorMessage(
+                            "World " + holder.getName() + " is already unloaded (possibly externally); removing game holder."
+                    );
                     games.remove(holder);
                     cancelIdleWorldUnload(holder.getName());
                     return;
@@ -385,15 +389,34 @@ public class GameManager implements AutoCloseable {
             return;
         }
         World world = Bukkit.getWorld(holder.getName());
-        if (world != null) {
-            if (!world.getPlayers().isEmpty()) {
-                return;
-            }
-            ChatUtils.MessageType.GAME.sendMessage("Unloading idle map " + holder.getName() + ".");
-            if (!Bukkit.unloadWorld(world, false)) {
-                ChatUtils.MessageType.GAME.sendErrorMessage("Failed to unload world " + holder.getName());
-                return;
-            }
+        if (world == null) {
+            ChatUtils.MessageType.GAME.sendErrorMessage(
+                    "World " + holder.getName() + " is already unloaded (possibly externally); removing game holder."
+            );
+            games.remove(holder);
+            ChatUtils.MessageType.GAME.sendMessage("Unloaded map " + holder.getName() + " and removed game holder.");
+            return;
+        }
+        if (!world.getPlayers().isEmpty()) {
+            return;
+        }
+        if (Bukkit.isTickingWorlds()) {
+            ChatUtils.MessageType.GAME.sendMessage(
+                    "Deferring unload of " + holder.getName() + " until worlds are not ticking."
+            );
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    unloadIdleWorld(holder);
+                }
+            }.runTaskLater(Warlords.getInstance(), 1L);
+            return;
+        }
+        world.removePluginChunkTickets(Warlords.getInstance());
+        ChatUtils.MessageType.GAME.sendMessage("Unloading idle map " + holder.getName() + ".");
+        if (!Bukkit.unloadWorld(world, false)) {
+            ChatUtils.MessageType.GAME.sendErrorMessage("Failed to unload world " + holder.getName());
+            return;
         }
         games.remove(holder);
         ChatUtils.MessageType.GAME.sendMessage("Unloaded map " + holder.getName() + " and removed game holder.");
@@ -527,6 +550,9 @@ public class GameManager implements AutoCloseable {
      * Returns the world if already loaded, otherwise loads it via {@link WorldCreator}
      * when {@code level.dat} exists under the server world container. Does not generate
      * a new empty world when the folder is missing.
+     * <p>
+     * Returns {@code null} if worlds are currently being ticked, or if the session lock is
+     * still held by this JVM (typically after a failed unload). Does not delete {@code session.lock}.
      */
     @Nullable
     private static World loadWorldIfPresent(@Nonnull String name) {
@@ -538,8 +564,42 @@ public class GameManager implements AutoCloseable {
         if (!levelDat.isFile()) {
             return null;
         }
+        if (Bukkit.isTickingWorlds()) {
+            ChatUtils.MessageType.GAME.sendErrorMessage(
+                    "Cannot load world " + name + " while worlds are being ticked."
+            );
+            return null;
+        }
         ChatUtils.MessageType.GAME.sendMessage("Map " + name + " is unloaded. Loading it now.");
-        return Bukkit.createWorld(new WorldCreator(name));
+        try {
+            return Bukkit.createWorld(new WorldCreator(name));
+        } catch (RuntimeException e) {
+            if (isWorldSessionLockFailure(e)) {
+                ChatUtils.MessageType.GAME.sendErrorMessage(
+                        "World " + name + " appears still locked by this server (failed unload or lock leak). "
+                                + "Skipping load; a full server restart may be required."
+                );
+                ChatUtils.MessageType.GAME.sendErrorMessage(e);
+                return null;
+            }
+            throw e;
+        }
+    }
+
+    /**
+     * True when {@code createWorld} failed because this JVM still holds the world's session lock.
+     */
+    private static boolean isWorldSessionLockFailure(@Nonnull Throwable throwable) {
+        for (Throwable cause = throwable; cause != null; cause = cause.getCause()) {
+            if (cause instanceof OverlappingFileLockException) {
+                return true;
+            }
+            String message = cause.getMessage();
+            if (message != null && (message.contains("already locked") || message.contains("session.lock"))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean hasGameHolder(@Nonnull String name, @Nonnull GameMap map) {
