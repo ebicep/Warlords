@@ -37,6 +37,8 @@ public class PlayingStateScoreboardUpdater {
     private final Set<UUID> dirtyTargets = new HashSet<>();
     private final Set<UUID> dirtyTabNames = new HashSet<>();
     private final Set<UUID> sidebarDirty = new HashSet<>();
+    private final Set<UUID> dirtyHealthTargets = new HashSet<>();
+    private final Set<UUID> pendingHealthViewers = new HashSet<>();
     private int updateTick;
     private int nameTick;
 
@@ -61,6 +63,15 @@ public class PlayingStateScoreboardUpdater {
         sidebarDirty.addAll(gamePlayers.keySet());
     }
 
+    private static boolean inBucket(UUID uuid, int bucket, int interval) {
+        return Math.floorMod(uuid.hashCode(), interval) == bucket;
+    }
+
+    private void markHealthDirty(UUID target) {
+        dirtyHealthTargets.add(target);
+        pendingHealthViewers.addAll(gamePlayers.keySet());
+    }
+
     private void markPlayerJoined(UUID uuid) {
         dirtyViewers.addAll(gamePlayers.keySet());
         dirtyTargets.addAll(gamePlayers.keySet());
@@ -75,6 +86,8 @@ public class PlayingStateScoreboardUpdater {
         dirtyTargets.remove(uuid);
         dirtyTabNames.remove(uuid);
         sidebarDirty.remove(uuid);
+        dirtyHealthTargets.remove(uuid);
+        pendingHealthViewers.remove(uuid);
     }
 
     /**
@@ -83,16 +96,18 @@ public class PlayingStateScoreboardUpdater {
      */
     public void update() {
         validGamePlayersCache();
-        UUID[] players = gamePlayers.keySet().toArray(UUID[]::new);
         int bucket = updateTick++ % UPDATE_INTERVAL;
-        for (int i = bucket; i < players.length; i += UPDATE_INTERVAL) {
-            UUID uuid = players[i];
+        for (UUID uuid : gamePlayers.keySet()) {
+            if (!inBucket(uuid, bucket, UPDATE_INTERVAL)) {
+                continue;
+            }
             flushTabName(uuid);
             flushHealthForViewer(uuid);
             flushSidebar(uuid);
         }
-        if (bucket == UPDATE_INTERVAL - 1) {
-            gamePlayers.values().forEach(gp -> gp.setUpdateHealth(false));
+        // Only clear after all pending viewers flushed; mid-cycle dirty re-adds them.
+        if (pendingHealthViewers.isEmpty()) {
+            dirtyHealthTargets.clear();
         }
         updateAboveHeadNames();
     }
@@ -104,11 +119,12 @@ public class PlayingStateScoreboardUpdater {
         if (dirtyViewers.isEmpty() && dirtyTargets.isEmpty()) {
             return;
         }
-        UUID[] players = gamePlayers.keySet().toArray(UUID[]::new);
         int bucket = nameTick++ % NAME_INTERVAL;
         Set<UUID> targets = dirtyTargets.isEmpty() ? Set.copyOf(gamePlayers.keySet()) : Set.copyOf(dirtyTargets);
-        for (int i = bucket; i < players.length; i += NAME_INTERVAL) {
-            UUID viewerUuid = players[i];
+        for (UUID viewerUuid : gamePlayers.keySet()) {
+            if (!inBucket(viewerUuid, bucket, NAME_INTERVAL)) {
+                continue;
+            }
             if (!dirtyViewers.remove(viewerUuid)) {
                 continue;
             }
@@ -179,11 +195,12 @@ public class PlayingStateScoreboardUpdater {
                 gp.setWarlordsPlayer((WarlordsPlayer) p);
                 if (gp.getHealth() != newHealth) {
                     gp.setHealth(newHealth);
-                    gp.setUpdateHealth(true);
+                    markHealthDirty(uuid);
                 }
             } else {
                 gamePlayers.put(uuid, new GamePlayer(scoreboard, (WarlordsPlayer) p, newHealth));
                 markPlayerJoined(uuid);
+                markHealthDirty(uuid);
             }
         });
     }
@@ -197,19 +214,24 @@ public class PlayingStateScoreboardUpdater {
         return ExperienceManager.getLevelStringBracket(ExperienceManager.getLevelForSpec(uuid, otherWarlordsPlayer.getSpecClass()));
     }
 
-    public void updateBasedOnGameState(CustomScoreboard customScoreboard, WarlordsPlayer warlordsPlayer) {
+    public void updateBasedOnGameState(WarlordsPlayer warlordsPlayer) {
         markNamesDirty(warlordsPlayer);
         sidebarDirty.add(warlordsPlayer.getUuid());
         GamePlayer gp = gamePlayers.get(warlordsPlayer.getUuid());
         if (gp != null) {
             gp.setHealthObjectiveInitialized(false);
-            gp.setUpdateHealth(true);
+            markHealthDirty(warlordsPlayer.getUuid());
         }
     }
 
     private void flushHealthForViewer(UUID viewerUuid) {
         GamePlayer viewer = gamePlayers.get(viewerUuid);
         if (viewer == null) {
+            return;
+        }
+        boolean newHealth = !viewer.isHealthObjectiveInitialized();
+        boolean pending = pendingHealthViewers.remove(viewerUuid);
+        if (!newHealth && !pending) {
             return;
         }
         CustomScoreboard customScoreboard = viewer.getCustomScoreboard();
@@ -220,20 +242,23 @@ public class PlayingStateScoreboardUpdater {
             health.setDisplaySlot(DisplaySlot.BELOW_NAME);
             customScoreboard.setHealth(health);
         }
-        boolean newHealth = !viewer.isHealthObjectiveInitialized();
         if (newHealth) {
             viewer.setHealthObjectiveInitialized(true);
-        }
-        Objective finalHealth = health;
-        for (GamePlayer target : gamePlayers.values()) {
-            if (target.getWarlordsPlayer() == null) {
-                continue;
+            for (GamePlayer target : gamePlayers.values()) {
+                applyHealthScore(health, target);
             }
-            if (!newHealth && !target.isUpdateHealth()) {
-                continue;
-            }
-            finalHealth.getScore(target.getWarlordsPlayer().getName()).setScore(target.getHealth());
+            return;
         }
+        for (UUID targetUuid : dirtyHealthTargets) {
+            applyHealthScore(health, gamePlayers.get(targetUuid));
+        }
+    }
+
+    private static void applyHealthScore(Objective health, @Nullable GamePlayer target) {
+        if (target == null || target.getWarlordsPlayer() == null) {
+            return;
+        }
+        health.getScore(target.getWarlordsPlayer().getName()).setScore(target.getHealth());
     }
 
     private void updateNamesForViewer(@Nonnull GamePlayer viewerGamePlayer, @Nonnull Set<UUID> targetUuids) {
@@ -358,7 +383,6 @@ public class PlayingStateScoreboardUpdater {
         @Nullable
         private WarlordsPlayer warlordsPlayer;
         private int health;
-        private boolean updateHealth = true;
         private boolean healthObjectiveInitialized;
 
         GamePlayer(CustomScoreboard customScoreboard, @Nullable WarlordsPlayer warlordsPlayer, int health) {
@@ -390,14 +414,6 @@ public class PlayingStateScoreboardUpdater {
 
         public void setHealth(int health) {
             this.health = health;
-        }
-
-        public boolean isUpdateHealth() {
-            return updateHealth;
-        }
-
-        public void setUpdateHealth(boolean updateHealth) {
-            this.updateHealth = updateHealth;
         }
 
         public boolean isHealthObjectiveInitialized() {

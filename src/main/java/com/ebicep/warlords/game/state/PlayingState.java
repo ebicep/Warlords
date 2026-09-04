@@ -283,7 +283,7 @@ public class PlayingState implements State, TimerDebugAble {
             }.runTaskLater(1);
         }
         if (wp instanceof WarlordsPlayer warlordsPlayer) {
-            updater.updateBasedOnGameState(CustomScoreboard.getPlayerScoreboard(player), warlordsPlayer);
+            updater.updateBasedOnGameState(warlordsPlayer);
         }
         game.forEachEnabledOption(option -> option.onPlayerReJoinGame(player));
     }
