@@ -23,7 +23,7 @@ public class SovereignGuardian extends AbstractMob implements EliteMob {
                 spawnLocation,
                 "Sovereign Guardian",
                 11000,
-                0.7f,
+                0.75f,
                 20,
                 1200,
                 1600
@@ -122,7 +122,7 @@ public class SovereignGuardian extends AbstractMob implements EliteMob {
 
                     double dot = lookDirection.dot(targetDirection);
 
-                    return dot > 1.0 - 0.025 / distance;
+                    return dot > 0.4;
                 });
     }
 
