@@ -213,7 +213,7 @@ public class CustomScoreboard {
         if (!team.suffix().equals(display.suffix())) {
             team.suffix(display.suffix());
         }
-        if (team.color() != display.color()) {
+        if (!team.hasColor() || team.color() != display.color()) {
             team.color(display.color());
         }
     }
