@@ -48,6 +48,7 @@ public class CurrencyOnEventOption implements Option, Listener {
             Component.text("Insignia: ").append(Component.text("❂ " + NumberFormat.addCommas(warlordsEntity.getCurrency()), NamedTextColor.GOLD));
     private CurrencyRate currencyRate;
     private int ticksElapsed = 0;
+    private SimpleScoreboardHandler currencyScoreboardHandler;
 
     public static class CurrencyRate {
         private int period = -1;
@@ -126,7 +127,7 @@ public class CurrencyOnEventOption implements Option, Listener {
     public void register(@Nonnull Game game) {
         game.registerEvents(this);
 
-        game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "currency") {
+        game.registerGameMarker(ScoreboardHandler.class, currencyScoreboardHandler = new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "currency") {
             @Nonnull
             @Override
             public List<Component> computeLines(@Nullable WarlordsPlayer player) {
@@ -169,6 +170,9 @@ public class CurrencyOnEventOption implements Option, Listener {
                     }
                 }
                 ticksElapsed++;
+                if (currencyScoreboardHandler != null && ticksElapsed % 20 == 0) {
+                    currencyScoreboardHandler.markChanged();
+                }
             }
         }.runTaskTimer(0, 0L);
     }
@@ -204,6 +208,9 @@ public class CurrencyOnEventOption implements Option, Listener {
                 currency = Math.max(100, currencyOnKill - (20 * playerCount));
             }
             player.addCurrency(currency);
+        }
+        if (currencyScoreboardHandler != null) {
+            currencyScoreboardHandler.markChanged();
         }
     }
 

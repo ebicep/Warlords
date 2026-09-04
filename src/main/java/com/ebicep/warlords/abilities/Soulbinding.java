@@ -120,6 +120,7 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
                 cooldownManager -> {
                 },
                 cooldownManager -> {
+                    data.markAllBoundNamesDirty();
                     if (new CooldownFilter<>(cooldownManager, PersistentCooldown.class).filterCooldownClass(SoulbindingData.class).stream().count() == 1) {
                         if (wp.getEntity() instanceof Player) {
                             ItemStack item = ((Player) wp.getEntity()).getInventory().getItem(0);
@@ -363,12 +364,14 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
 
                 if (boundPlayer.isDead()) {
                     iterator.remove();
+                    markBoundNameDirty(boundPlayer);
                     custodyTransfers.add(soulBoundPlayer);
                     continue;
                 }
 
                 if (soulBoundPlayer.getTimeLeft() == 0 || soulBoundPlayer.isHitWithSoul() && soulBoundPlayer.isHitWithLink()) {
                     iterator.remove();
+                    markBoundNameDirty(boundPlayer);
                 }
             }
 
@@ -399,6 +402,7 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
                     .append(Component.text(" has bound " + wpVictim.getName() + "!", NamedTextColor.GRAY)));
 
             getSoulBindedPlayers().add(new SoulBoundPlayer(wpVictim, soulbinding.bindDuration, custodyJumps));
+            markBoundNameDirty(wpVictim);
             Utils.playGlobalSound(wpVictim.getLocation(), "shaman.earthlivingweapon.activation", 2, 1);
         }
 
@@ -418,7 +422,18 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
                                                                       .append(Component.text("Soulbinding Weapon", NamedTextColor.LIGHT_PURPLE))
                                                                       .append(Component.text(" has bound " + wpVictim.getName() + "!", NamedTextColor.GRAY)));
                 getSoulBindedPlayers().add(new SoulBoundPlayer(wpVictim, soulbinding.bindDuration));
+                markBoundNameDirty(wpVictim);
                 Utils.playGlobalSound(wpVictim.getLocation(), "shaman.earthlivingweapon.activation", 2, 1);
+            }
+        }
+
+        private void markBoundNameDirty(WarlordsEntity victim) {
+            victim.getCooldownManager().markNameDisplayDirty();
+        }
+
+        private void markAllBoundNamesDirty() {
+            for (SoulBoundPlayer soulBoundPlayer : List.copyOf(soulBindedPlayers)) {
+                markBoundNameDirty(soulBoundPlayer.getBoundPlayer());
             }
         }
 

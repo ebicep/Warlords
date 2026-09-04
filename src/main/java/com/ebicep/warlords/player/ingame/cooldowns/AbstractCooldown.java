@@ -110,14 +110,14 @@ public abstract class AbstractCooldown<T> implements PlayerNameInstance, SpecDam
                 HandlerList.unregisterAll(activeListener);
                 onRemoveForce.accept(cooldownManager);
                 if (changesPlayerName()) {
-                    cooldownManager.queueUpdatePlayerNames();
+                    cooldownManager.markNameDisplayDirty();
                 }
             };
         } else {
             this.onRemoveForce = cooldownManager -> {
                 onRemoveForce.accept(cooldownManager);
                 if (changesPlayerName()) {
-                    cooldownManager.queueUpdatePlayerNames();
+                    cooldownManager.markNameDisplayDirty();
                 }
             };
         }

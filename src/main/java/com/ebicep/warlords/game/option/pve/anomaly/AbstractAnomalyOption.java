@@ -78,6 +78,7 @@ public abstract class AbstractAnomalyOption implements PveOption {
     private boolean successfulCompletion;
     private boolean[] finalCacheEligibility;
     private String completionSummary;
+    private SimpleScoreboardHandler healthScoreboardHandler;
 
     @Override
     public void register(@Nonnull Game game) {
@@ -161,7 +162,7 @@ public abstract class AbstractAnomalyOption implements PveOption {
             }
         });
 
-        game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(6, "anomaly_players") {
+        game.registerGameMarker(ScoreboardHandler.class, healthScoreboardHandler = new SimpleScoreboardHandler(6, "anomaly_players") {
             @Nonnull
             @Override
             public java.util.List<Component> computeLines(@Nullable WarlordsPlayer player) {
@@ -209,7 +210,10 @@ public abstract class AbstractAnomalyOption implements PveOption {
     }
 
     protected void incrementTicks() {
-        ticksElapsed.incrementAndGet();
+        int elapsed = ticksElapsed.incrementAndGet();
+        if (healthScoreboardHandler != null && elapsed % 10 == 0) {
+            healthScoreboardHandler.markChanged();
+        }
     }
 
     protected Mob getRandomAnomalyMob() {

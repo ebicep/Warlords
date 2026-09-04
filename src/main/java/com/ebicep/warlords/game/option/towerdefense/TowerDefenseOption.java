@@ -73,6 +73,7 @@ public class TowerDefenseOption implements PveOption, Listener {
     private TowerDefenseSpawner towerDefenseSpawner;
     private boolean debug = false;
     private boolean movement = true; // if attacking mobs should move (debug)
+    private SimpleScoreboardHandler castleScoreboardHandler;
 
     public boolean isDebug() {
         return debug;
@@ -158,7 +159,7 @@ public class TowerDefenseOption implements PveOption, Listener {
         }
         game.registerEvents(getBaseListener());
         game.registerEvents(this);
-        game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(4, "castle") {
+        game.registerGameMarker(ScoreboardHandler.class, castleScoreboardHandler = new SimpleScoreboardHandler(4, "castle") {
             @Nonnull
             @Override
             public List<Component> computeLines(@Nullable WarlordsPlayer player) {
@@ -200,6 +201,9 @@ public class TowerDefenseOption implements PveOption, Listener {
                 ticksElapsed.incrementAndGet();
 
                 mobTick();
+                if (castleScoreboardHandler != null && ticksElapsed.get() % 10 == 0) {
+                    castleScoreboardHandler.markChanged();
+                }
                 if (debug && ticksElapsed.get() % 5 == 0) {
                     towerDefenseSpawner.renderEdges();
                 }

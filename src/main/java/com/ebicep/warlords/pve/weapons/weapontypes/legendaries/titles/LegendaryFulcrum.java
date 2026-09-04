@@ -132,16 +132,9 @@ public class LegendaryFulcrum extends AbstractLegendaryWeapon implements GardenO
                     ) {
                         @Override
                         public PlayerNameData addPrefixFromOther() {
-                            return new PlayerNameData(
-                                    Component.text((int) (shield.getShieldHealth()), NamedTextColor.YELLOW),
-                                    we -> we.isTeammate(player)
-                            );
+                            return PlayerNameData.shieldHealth(shield, we -> we.isTeammate(player), NamedTextColor.YELLOW);
                         }
                     };
-            fulcrumCooldown.addModifier(Modifier.ON_OUTGOING_SHIELD_DAMAGE, (e, currentDamageValue2, isCrit2) -> {
-                        e.getWarlordsEntity().getCooldownManager().queueUpdatePlayerNames();
-                    }
-            );
             fulcrumCooldown.addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> energyGainPerTick.addModifier(FloatModifiable.ModifierType.ADDITIVE,
                             getTitleName(), EPS_BOOST / 20f
                     )

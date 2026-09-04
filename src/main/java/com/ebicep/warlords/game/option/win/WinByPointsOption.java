@@ -37,7 +37,7 @@ public class WinByPointsOption implements Option, Listener {
 
     private int pointLimit;
     private boolean hasActivated = false;
-    private ScoreboardHandler scoreboard;
+    private SimpleScoreboardHandler scoreboard;
 
     public WinByPointsOption() {
         this(ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "ctf.pointsToWin", int.class, DEFAULT_POINT_LIMIT));
@@ -83,6 +83,7 @@ public class WinByPointsOption implements Option, Listener {
 
     @EventHandler
     public void onEvent(WarlordsPointsChangedEvent event) {
+        scoreboard.markChanged();
         if (!hasActivated && event.getNewPoints() >= pointLimit) {
             WarlordsGameTriggerWinEvent e = new WarlordsGameTriggerWinEvent(event.getGame(), this, event.getTeam());
             Bukkit.getPluginManager().callEvent(e);

@@ -57,6 +57,7 @@ public class PlayingState implements State, TimerDebugAble {
 
     public PlayingState(@Nonnull Game game) {
         this.game = game;
+        this.updater = new PlayingStateScoreboardUpdater(game);
     }
 
     @Override
@@ -145,7 +146,13 @@ public class PlayingState implements State, TimerDebugAble {
                 winEvent = event;
             }
         });
-        this.updater = new PlayingStateScoreboardUpdater(game);
+        new GameRunnable(game) {
+
+            @Override
+            public void run() {
+                updater.updateAboveHeadNames();
+            }
+        }.runTaskTimer(0, 2);
         new GameRunnable(game) {
 
             @Override

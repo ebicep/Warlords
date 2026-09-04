@@ -108,12 +108,9 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
 
                         @Override
                         public PlayerNameData addPrefixFromOther() {
-                            return new PlayerNameData(Component.text((int) (shield.getShieldHealth()), NamedTextColor.YELLOW), we -> we.isTeammate(wp));
+                            return PlayerNameData.shieldHealth(shield, we -> we.isTeammate(wp), NamedTextColor.YELLOW);
                         }
-                    }.addModifier(Modifier.ON_OUTGOING_SHIELD_DAMAGE, (event, currentDamageValue, isCrit) -> {
-                                event.getWarlordsEntity().getCooldownManager().queueUpdatePlayerNames();
-                            }
-                    ));
+                    });
                     wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" Your ", NamedTextColor.GRAY))
                                                                   .append(Component.text(name, NamedTextColor.YELLOW))
                                                                   .append(Component.text(" is now shielding you!", NamedTextColor.GRAY)));

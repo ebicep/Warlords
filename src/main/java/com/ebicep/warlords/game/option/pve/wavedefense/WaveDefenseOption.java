@@ -95,6 +95,9 @@ public class WaveDefenseOption implements PveOption {
     private boolean pauseMobSpawn = false;
     private int currentDelay = 0;
     private HashMap<UUID, HashMap<Spendable, Long>> playerAscendantPouch = new HashMap<>();
+    private SimpleScoreboardHandler waveScoreboardHandler;
+    private SimpleScoreboardHandler monstersLeftScoreboardHandler;
+    private SimpleScoreboardHandler healthScoreboardHandler;
 
     public WaveDefenseOption(Team team, WaveList waves, DifficultyIndex difficulty) {
         this(team, waves, difficulty, difficulty.getMaxWaves());
@@ -153,6 +156,7 @@ public class WaveDefenseOption implements PveOption {
                                 mobs.remove(mobToRemove);
                                 game.getPlayers().remove(we.getUuid());
                                 Warlords.removePlayer(we.getUuid());
+                                markScoreboardsChanged();
                                 //game.removePlayer(we.getUuid());
                             }
                         }.runTaskLater(1);
@@ -221,7 +225,7 @@ public class WaveDefenseOption implements PveOption {
             }
 
         });
-        game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(SCOREBOARD_PRIORITY - 1, "wave") {
+        game.registerGameMarker(ScoreboardHandler.class, waveScoreboardHandler = new SimpleScoreboardHandler(SCOREBOARD_PRIORITY - 1, "wave") {
                     @Nonnull
                     @Override
                     public List<Component> computeLines(@Nullable WarlordsPlayer player) {
@@ -229,7 +233,7 @@ public class WaveDefenseOption implements PveOption {
                     }
                 }
         );
-        game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "wave") {
+        game.registerGameMarker(ScoreboardHandler.class, monstersLeftScoreboardHandler = new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "wave") {
                     @Nonnull
                     @Override
                     public List<Component> computeLines(@Nullable WarlordsPlayer player) {
@@ -240,7 +244,7 @@ public class WaveDefenseOption implements PveOption {
                     }
                 }
         );
-        game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(6, "kills") {
+        game.registerGameMarker(ScoreboardHandler.class, healthScoreboardHandler = new SimpleScoreboardHandler(6, "kills") {
                     @Nonnull
                     @Override
                     public List<Component> computeLines(@Nullable WarlordsPlayer player) {
@@ -262,6 +266,18 @@ public class WaveDefenseOption implements PveOption {
             }
 
         }.register(game);
+    }
+
+    private void markScoreboardsChanged() {
+        if (waveScoreboardHandler != null) {
+            waveScoreboardHandler.markChanged();
+        }
+        if (monstersLeftScoreboardHandler != null) {
+            monstersLeftScoreboardHandler.markChanged();
+        }
+        if (healthScoreboardHandler != null) {
+            healthScoreboardHandler.markChanged();
+        }
     }
 
     public List<Component> getWaveScoreboard(WarlordsPlayer player) {
@@ -300,6 +316,7 @@ public class WaveDefenseOption implements PveOption {
         }
         currentWave = waves.getWave(waveCounter, new Random());
         spawnCount = currentWave.getMonsterCount();
+        markScoreboardsChanged();
         int spawns = spawnCount;
         spawns *= getSpawnCountMultiplier(playerCount());
 
@@ -415,6 +432,7 @@ public class WaveDefenseOption implements PveOption {
                 if (lastSpawn != null) {
                     lastSpawn.getLocation(lastLocation);
                     spawnCount--;
+                    markScoreboardsChanged();
                 }
             }
 
@@ -688,6 +706,9 @@ public class WaveDefenseOption implements PveOption {
                 }
 
                 ticksElapsed.getAndIncrement();
+                if (ticksElapsed.get() % 10 == 0) {
+                    markScoreboardsChanged();
+                }
             }
         }.runTaskTimer(20, 0);
     }

@@ -59,6 +59,7 @@ public class AnomalyOption extends AbstractAnomalyOption {
     private int bossPhasesStarted;
     private int preparationTicks = START_DELAY_TICKS;
     private boolean defeated;
+    private SimpleScoreboardHandler objectiveScoreboardHandler;
 
     @Override
     public void register(@Nonnull Game game) {
@@ -80,7 +81,7 @@ public class AnomalyOption extends AbstractAnomalyOption {
                 respawnLocation.setPitch(playerRespawnLocation.getPitch());
             }
         });
-        game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(5, "anomaly_objective") {
+        game.registerGameMarker(ScoreboardHandler.class, objectiveScoreboardHandler = new SimpleScoreboardHandler(5, "anomaly_objective") {
             @Nonnull
             @Override
             public List<Component> computeLines(@Nullable WarlordsPlayer player) {
@@ -121,6 +122,9 @@ public class AnomalyOption extends AbstractAnomalyOption {
                     return;
                 }
                 incrementTicks();
+                if (objectiveScoreboardHandler != null && getTicksElapsed() % 20 == 0) {
+                    objectiveScoreboardHandler.markChanged();
+                }
                 if (preparationTicks > 0) {
                     preparationTicks--;
                 }
@@ -175,6 +179,13 @@ public class AnomalyOption extends AbstractAnomalyOption {
         game.addNPC(relicNpc);
         announce(Component.text("Defend Relic " + (objectiveIndex + 1) + " for 2 minutes!", NamedTextColor.YELLOW));
         game.forEachOnlinePlayer((player, team) -> player.playSound(player.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 2, 1));
+        markObjectiveScoreboardChanged();
+    }
+
+    private void markObjectiveScoreboardChanged() {
+        if (objectiveScoreboardHandler != null) {
+            objectiveScoreboardHandler.markChanged();
+        }
     }
 
     private void completeCurrentObjective() {
@@ -189,6 +200,7 @@ public class AnomalyOption extends AbstractAnomalyOption {
         clearHostileMobs();
         teleportToNextObjective();
         scheduleNextObjective();
+        markObjectiveScoreboardChanged();
     }
 
     private void failAnomaly() {
@@ -204,6 +216,7 @@ public class AnomalyOption extends AbstractAnomalyOption {
         removeActiveRelic();
         clearHostileMobs();
         Bukkit.getPluginManager().callEvent(new WarlordsGameTriggerWinEvent(game, this, Team.RED));
+        markObjectiveScoreboardChanged();
     }
 
     private boolean shouldStartBossPhase() {

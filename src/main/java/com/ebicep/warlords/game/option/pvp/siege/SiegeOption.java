@@ -36,6 +36,7 @@ public class SiegeOption implements Option {
     private int stateTicksElapsed = 0;
     private Game game;
     private SiegeState state;
+    private SimpleScoreboardHandler sidebarScoreboardHandler;
 
     public SiegeOption(Location location) {
         this.location = location;
@@ -45,7 +46,7 @@ public class SiegeOption implements Option {
     public void register(@Nonnull Game game) {
         this.game = game;
         state = new SiegeWaitState(this);
-        game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(10, "state-time") {
+        game.registerGameMarker(ScoreboardHandler.class, sidebarScoreboardHandler = new SimpleScoreboardHandler(10, "state-time") {
                     @Nonnull
                     @Override
                     public List<Component> computeLines(@Nullable WarlordsPlayer player) {
@@ -90,6 +91,9 @@ public class SiegeOption implements Option {
                 boolean advanceStateFromTick = state.tick(stateTicksElapsed);
                 totalTicksElapsed++;
                 stateTicksElapsed++;
+                if (sidebarScoreboardHandler != null) {
+                    sidebarScoreboardHandler.markChanged();
+                }
                 if (!advanceStateFromTick) {
                     return;
                 }
@@ -111,6 +115,9 @@ public class SiegeOption implements Option {
         state = state.getNextState();
         state.start(game);
         stateTicksElapsed = 0;
+        if (sidebarScoreboardHandler != null) {
+            sidebarScoreboardHandler.markChanged();
+        }
     }
 
     @Override

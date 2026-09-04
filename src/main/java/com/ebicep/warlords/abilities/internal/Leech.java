@@ -10,6 +10,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.player.ingame.instances.type.CustomInstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.PlayerNameInstance;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.event.EventHandler;
@@ -44,7 +45,7 @@ public class Leech {
         } else {
             // remove leech from other players
             oldLeechCooldown.ifPresent(abstractCooldown -> target.getCooldownManager().removeCooldown(abstractCooldown));
-            LeechData data = new LeechData(leechAmount, leechInstance.initialStacks, leechTickDuration);
+            LeechData data = new LeechData(target, leechAmount, leechInstance.initialStacks, leechTickDuration);
             target.getCooldownManager().addCooldown(new RegularCooldown<>(
                     "Leech Debuff",
                     "LCH",
@@ -56,12 +57,13 @@ public class Leech {
                     },
                     leechTickDuration,
                     Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                        List<Integer> stacks = data.stacks;
-                        for (int i = 0; i < stacks.size(); i++) {
-                            Integer integer = stacks.get(i);
+                        for (int i = 0; i < data.stacks.size(); i++) {
+                            Integer integer = data.stacks.get(i);
                             data.stacks.set(i, integer - 1);
                         }
+                        int before = data.getStacksCount();
                         data.stacks.removeIf(integer -> integer <= 0);
+                        target.getCooldownManager().markNameDisplayDirtyIfChanged(before, data.getStacksCount());
                     })
             ) {
 
@@ -120,7 +122,8 @@ public class Leech {
 
                 @Override
                 public PlayerNameData addSuffixFromOther() {
-                    return new PlayerNameData(Component.text("LCH(" + data.getStacksCount() + ")", CooldownTypes.HIGH_LEVEL_DEBUFF_COLOR),
+                    return PlayerNameData.dynamic(
+                            () -> Component.text("LCH(" + data.getStacksCount() + ")", CooldownTypes.HIGH_LEVEL_DEBUFF_COLOR),
                             we -> we.isEnemy(target) || (we.isTeammate(target) && we.getSpecClass().specType == SpecType.HEALER)
                     );
                 }
@@ -187,12 +190,14 @@ public class Leech {
 
     public static class LeechData {
 
+        private final WarlordsEntity owner;
         private final float leechAmount;
         private final List<Integer> stacks = new ArrayList<>();
         private float healingDoneFromEnemyCarrier = 0;
         private float totalHealingDone = 0;
 
-        public LeechData(float leechAmount, int stacks, int tickDurationPerStack) {
+        public LeechData(WarlordsEntity owner, float leechAmount, int stacks, int tickDurationPerStack) {
+            this.owner = owner;
             this.leechAmount = leechAmount;
             for (int i = 0; i < stacks; i++) {
                 this.stacks.add(tickDurationPerStack);
@@ -200,10 +205,12 @@ public class Leech {
         }
 
         public void add(int stack) {
+            int before = getStacksCount();
             if (stacks.size() >= 4) {
                 stacks.removeFirst();
             }
             stacks.add(stack);
+            owner.getCooldownManager().markNameDisplayDirtyIfChanged(before, getStacksCount());
         }
 
         public float getLeechAmount() {

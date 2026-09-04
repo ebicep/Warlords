@@ -1,13 +1,12 @@
 package com.ebicep.warlords.player.ingame.cooldowns;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.Soulbinding;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Shield;
 import com.ebicep.warlords.abilities.internal.WoundingCooldown;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.state.PlayingState;
-import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -29,7 +28,7 @@ public class CooldownManager {
     private List<AbstractCooldown<?>> distinctCache = List.of();
     private boolean distinctDirty = true;
     private int totalCooldowns = 0;
-    private boolean updatePlayerNames = false;
+    private boolean nameDisplayDirty = false;
 
     public CooldownManager(WarlordsEntity warlordsEntity) {
         this.warlordsEntity = warlordsEntity;
@@ -76,16 +75,27 @@ public class CooldownManager {
             }
             cooldownsToRemove.removeAll(snapshot);
         }
+        if (nameDisplayDirty) {
+            nameDisplayDirty = false;
+            warlordsEntity.getGame().getState(PlayingState.class)
+                    .ifPresent(playingState -> playingState.getUpdater().markNamesDirty(warlordsEntity));
+        }
     }
 
     public void updatePlayerNames(AbstractCooldown<?> abstractCooldown) {
         if (abstractCooldown.changesPlayerName()) {
-            queueUpdatePlayerNames();
+            markNameDisplayDirty();
         }
     }
 
-    public void queueUpdatePlayerNames() {
-        updatePlayerNames = true;
+    public void markNameDisplayDirty() {
+        nameDisplayDirty = true;
+    }
+
+    public void markNameDisplayDirtyIfChanged(int beforeDisplayed, int afterDisplayed) {
+        if (beforeDisplayed != afterDisplayed) {
+            markNameDisplayDirty();
+        }
     }
 
     public int removeDebuffCooldownsVind() {
@@ -144,10 +154,6 @@ public class CooldownManager {
 
     public void tick() {
         reduceCooldowns();
-        if (updatePlayerNames) {
-            updatePlayerNames = false;
-            updatePlayerNames();
-        }
     }
 
     public boolean markedForRemoval(AbstractCooldown<?> abstractCooldown) {
@@ -167,20 +173,6 @@ public class CooldownManager {
                                           .filter(RegularCooldown.class::isInstance)
                                           .map(RegularCooldown.class::cast)
                                           .forEachOrdered(regularCooldown -> regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() - ticks));
-    }
-
-    private void updatePlayerNames() {
-        Game game = warlordsEntity.getGame();
-        game.getState(PlayingState.class)
-            .ifPresent(playingState -> {
-                game.forEachOnlinePlayer((player, team) -> {
-                    WarlordsEntity wp = Warlords.getPlayer(player);
-                    if (wp == null) {
-                        return;
-                    }
-                    playingState.getUpdater().updateNames(CustomScoreboard.getPlayerScoreboard(player), wp);
-                });
-            });
     }
 
     public int getTotalCooldowns() {
@@ -400,6 +392,10 @@ public class CooldownManager {
             markDistinctDirty();
         }
         updatePlayerNames(abstractCooldown);
+        if (abstractCooldown.getCooldownObject() instanceof Shield shield
+                && abstractCooldown.changesPlayerName()) {
+            shield.setOnHealthChanged(this::markNameDisplayDirty);
+        }
     }
 
     public boolean hasCooldownFromName(String name) {

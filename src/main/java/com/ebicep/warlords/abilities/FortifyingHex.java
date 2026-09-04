@@ -12,6 +12,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.type.CustomInstanceFlags;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
+import com.ebicep.warlords.player.ingame.instances.type.PlayerNameInstance;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.sentinel.FortifyingHexBranch;
@@ -80,8 +81,11 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
         ) {
             @Override
             public PlayerNameData addPrefixFromOther() {
-                boolean flag = new CooldownFilter<>(to, RegularCooldown.class).filterCooldownClass(PoisonousHex.class).stream().count() == fromHex.maxStacks;
-                return new PlayerNameData(Component.text("FHEX", NamedTextColor.YELLOW).decoration(TextDecoration.BOLD, flag),
+                return PlayerNameData.dynamic(
+                        () -> {
+                            boolean flag = new CooldownFilter<>(to, RegularCooldown.class).filterCooldownClass(PoisonousHex.class).stream().count() == fromHex.maxStacks;
+                            return Component.text("FHEX", NamedTextColor.YELLOW).decoration(TextDecoration.BOLD, flag);
+                        },
                         we -> we.isTeammate(from) && we.getSpecClass() == Specializations.SENTINEL
                 );
             }

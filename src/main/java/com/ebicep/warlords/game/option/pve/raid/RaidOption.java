@@ -35,6 +35,7 @@ public class RaidOption implements PveOption {
     private int currentRoomIndex = -1;
     private int transitionTicksLeft;
     private int ticksElapsed;
+    private SimpleScoreboardHandler healthScoreboardHandler;
 
     public RaidOption(RaidDefinition raidDefinition) {
         this.raidDefinition = raidDefinition;
@@ -53,7 +54,7 @@ public class RaidOption implements PveOption {
 
         game.registerEvents(getBaseListener());
 
-        game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(6, "kills") {
+        game.registerGameMarker(ScoreboardHandler.class, healthScoreboardHandler = new SimpleScoreboardHandler(6, "kills") {
                     @Nonnull
                     @Override
                     public List<Component> computeLines(@Nullable WarlordsPlayer player) {
@@ -77,6 +78,9 @@ public class RaidOption implements PveOption {
 
     private void tickRaid() {
         ticksElapsed++;
+        if (healthScoreboardHandler != null && ticksElapsed % 10 == 0) {
+            healthScoreboardHandler.markChanged();
+        }
 
         switch (state) {
             case ACTIVE_ROOM -> tickActiveRoom();

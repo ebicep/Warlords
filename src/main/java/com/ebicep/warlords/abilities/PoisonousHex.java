@@ -11,6 +11,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.PlayerNameInstance;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.conjurer.PoisonousHexBranch;
@@ -144,8 +145,11 @@ public class PoisonousHex extends AbstractPiercingProjectile<PoisonousHex, Poiso
 
             @Override
             public PlayerNameData addSuffixFromOther() {
-                boolean flag = new CooldownFilter<>(to, RegularCooldown.class).filterCooldownClass(PoisonousHex.class).stream().count() == fromHex.maxStacks;
-                return new PlayerNameData(Component.text("PHEX", CooldownTypes.HIGH_LEVEL_DEBUFF_COLOR).decoration(TextDecoration.BOLD, flag),
+                return PlayerNameData.dynamic(
+                        () -> {
+                            boolean flag = new CooldownFilter<>(to, RegularCooldown.class).filterCooldownClass(PoisonousHex.class).stream().count() == fromHex.maxStacks;
+                            return Component.text("PHEX", CooldownTypes.HIGH_LEVEL_DEBUFF_COLOR).decoration(TextDecoration.BOLD, flag);
+                        },
                         we -> we.isTeammate(from) && we.getSpecClass() == Specializations.CONJURER
                 );
             }

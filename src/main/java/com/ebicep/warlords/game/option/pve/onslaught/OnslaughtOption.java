@@ -75,6 +75,9 @@ public class OnslaughtOption implements PveOption {
     private float integrityDecayIncrease = 0;
     private AtomicInteger rewardMultiplier = new AtomicInteger(1);
     private AtomicInteger bonusMobs = new AtomicInteger(0);
+    private SimpleScoreboardHandler difficultyScoreboardHandler;
+    private SimpleScoreboardHandler integrityScoreboardHandler;
+    private SimpleScoreboardHandler healthScoreboardHandler;
 
     public OnslaughtOption(Team team, WaveList waves) {
         this.team = team;
@@ -164,27 +167,39 @@ public class OnslaughtOption implements PveOption {
 
         });
 
-        game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(5, "percentage") {
+        game.registerGameMarker(ScoreboardHandler.class, difficultyScoreboardHandler = new SimpleScoreboardHandler(5, "percentage") {
             @Nonnull
             @Override
             public List<Component> computeLines(@Nullable WarlordsPlayer player) {
                 return Collections.singletonList(Component.text("Difficulty: ").append(currentMobSet.getMessage()));
             }
         });
-        game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(5, "percentage") {
+        game.registerGameMarker(ScoreboardHandler.class, integrityScoreboardHandler = new SimpleScoreboardHandler(5, "percentage") {
             @Nonnull
             @Override
             public List<Component> computeLines(@Nullable WarlordsPlayer player) {
                 return Collections.singletonList(integrityScoreboard());
             }
         });
-        game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(6, "kills") {
+        game.registerGameMarker(ScoreboardHandler.class, healthScoreboardHandler = new SimpleScoreboardHandler(6, "kills") {
             @Nonnull
             @Override
             public List<Component> computeLines(@Nullable WarlordsPlayer player) {
                 return healthScoreboard(game);
             }
         });
+    }
+
+    private void markScoreboardsChanged() {
+        if (difficultyScoreboardHandler != null) {
+            difficultyScoreboardHandler.markChanged();
+        }
+        if (integrityScoreboardHandler != null) {
+            integrityScoreboardHandler.markChanged();
+        }
+        if (healthScoreboardHandler != null) {
+            healthScoreboardHandler.markChanged();
+        }
     }
 
     @Override
@@ -216,6 +231,7 @@ public class OnslaughtOption implements PveOption {
                 counter++;
                 if (counter % 20 == 0) {
                     integrityCounter -= (getIntegrityDecay((int) game.warlordsPlayers().count()) + integrityDecayIncrease);
+                    markScoreboardsChanged();
                 }
 
                 if (integrityCounter <= 0) {
@@ -224,6 +240,10 @@ public class OnslaughtOption implements PveOption {
                 }
 
                 mobTick();
+
+                if (ticksElapsed.get() % 10 == 0) {
+                    markScoreboardsChanged();
+                }
 
                 if (ticksElapsed.get() % 18000 == 0) {
                     game.warlordsPlayers().forEach(wp -> {
