@@ -1,5 +1,6 @@
 package com.ebicep.warlords.guilds.bounty;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.guilds.GuildLeaderboardManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
@@ -19,6 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 public final class GuildBountyManager {
 
@@ -133,9 +135,19 @@ public final class GuildBountyManager {
     private static void completeBounty(Guild guild, GuildBounty bounty) {
         LinkedHashMap<Spendable, Long> playerRewards = bounty.getPlayerRewards();
         for (GuildPlayer guildPlayer : guild.getPlayers()) {
-            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(guildPlayer.getUUID());
-            databasePlayer.getPveStats().getBountyRewards().add(new BountyReward(new LinkedHashMap<>(playerRewards), bounty.getName()));
-            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+            UUID uuid = guildPlayer.getUUID();
+            LinkedHashMap<Spendable, Long> rewardsCopy = new LinkedHashMap<>(playerRewards);
+            Warlords.newChain()
+                    .asyncFirst(() -> DatabaseManager.playerService.findByUUID(uuid))
+                    .syncLast(optional -> {
+                        if (optional.isEmpty()) {
+                            return;
+                        }
+                        DatabasePlayer databasePlayer = optional.get();
+                        databasePlayer.getPveStats().getBountyRewards().add(new BountyReward(rewardsCopy, bounty.getName()));
+                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                    })
+                    .execute();
         }
 
         guild.addCurrentCoins(bounty.getGuildCoins());
