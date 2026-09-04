@@ -143,7 +143,11 @@ public class Decay extends BaseSet {
                                 .cause(getName() + " - Burn")
                                 .source(source)
                                 .value(damage)
-                                .flags(InstanceFlags.DOT, InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST)
+                                .flags(
+                                        InstanceFlags.DOT,
+                                        InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST,
+                                        InstanceFlags.NO_HEALING_ORBS
+                                )
                         );
                     }
                 })
@@ -176,7 +180,11 @@ public class Decay extends BaseSet {
                                 .cause(getName() + " - Bleed")
                                 .source(source)
                                 .value(damage)
-                                .flags(InstanceFlags.DOT, InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST)
+                                .flags(
+                                        InstanceFlags.DOT,
+                                        InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST,
+                                        InstanceFlags.NO_HEALING_ORBS
+                                )
                         );
                     }
                 })
