@@ -913,7 +913,7 @@ public class EffectUtils {
         double yOffset = 0.05;
         double rotation = ticksLived * 0.05;
 
-        for (double theta = 0; theta <= Math.PI * 2; theta += 0.03) {
+        for (double theta = 0; theta <= Math.PI * 2; theta += 0.1) {
             double r = Math.sin(petals * theta) * radius;
 
             double angle = theta + rotation;
