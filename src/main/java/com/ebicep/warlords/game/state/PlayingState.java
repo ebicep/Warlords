@@ -149,16 +149,9 @@ public class PlayingState implements State, TimerDebugAble {
 
             @Override
             public void run() {
-                updater.updateAboveHeadNames();
-            }
-        }.runTaskTimer(0, 2);
-        new GameRunnable(game) {
-
-            @Override
-            public void run() {
                 updater.update();
             }
-        }.runTaskTimer(0, 10);
+        }.runTaskTimer(0, 1);
 
         ChatUtils.MessageType.GAME_DEBUG.sendMessage("Started recording timed stats");
 

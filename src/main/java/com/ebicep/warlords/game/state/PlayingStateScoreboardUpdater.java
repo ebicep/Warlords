@@ -27,6 +27,8 @@ public class PlayingStateScoreboardUpdater {
 
     private static final TextComponent WHITE_FLAG = Component.text("⚑", NamedTextColor.WHITE);
     private static final TextComponent WHITE_FLAG_SPACE = Component.text(" ⚑", NamedTextColor.WHITE);
+    private static final int UPDATE_INTERVAL = 10;
+    private static final int NAME_INTERVAL = 2;
 
     private final Game game;
     private final Map<UUID, GamePlayer> gamePlayers = new HashMap<>();
@@ -35,6 +37,8 @@ public class PlayingStateScoreboardUpdater {
     private final Set<UUID> dirtyTargets = new HashSet<>();
     private final Set<UUID> dirtyTabNames = new HashSet<>();
     private final Set<UUID> sidebarDirty = new HashSet<>();
+    private int updateTick;
+    private int nameTick;
 
     public PlayingStateScoreboardUpdater(Game game) {
         this.game = game;
@@ -74,86 +78,92 @@ public class PlayingStateScoreboardUpdater {
     }
 
     /**
-     * Health, tab list names, and sidebar. Intended every 10 ticks.
-     * Also flushes above-head names if still dirty (e.g. after tab base updates).
+     * Health, tab list names, and sidebar — distributed across {@link #UPDATE_INTERVAL} ticks.
+     * Also flushes above-head names if still dirty (distributed across {@link #NAME_INTERVAL} ticks).
      */
     public void update() {
         validGamePlayersCache();
-        flushTabNames();
-        flushHealthUpdates();
-        flushSidebar();
+        UUID[] players = gamePlayers.keySet().toArray(UUID[]::new);
+        int bucket = updateTick++ % UPDATE_INTERVAL;
+        for (int i = bucket; i < players.length; i += UPDATE_INTERVAL) {
+            UUID uuid = players[i];
+            flushTabName(uuid);
+            flushHealthForViewer(uuid);
+            flushSidebar(uuid);
+        }
+        if (bucket == UPDATE_INTERVAL - 1) {
+            gamePlayers.values().forEach(gp -> gp.setUpdateHealth(false));
+        }
         updateAboveHeadNames();
     }
 
     /**
-     * Above-head team prefix/suffix overlays. Intended every 2 ticks.
+     * Above-head team prefix/suffix overlays — distributed across {@link #NAME_INTERVAL} ticks.
      */
     public void updateAboveHeadNames() {
         if (dirtyViewers.isEmpty() && dirtyTargets.isEmpty()) {
             return;
         }
-        Set<UUID> viewers = Set.copyOf(dirtyViewers);
+        UUID[] players = gamePlayers.keySet().toArray(UUID[]::new);
+        int bucket = nameTick++ % NAME_INTERVAL;
         Set<UUID> targets = dirtyTargets.isEmpty() ? Set.copyOf(gamePlayers.keySet()) : Set.copyOf(dirtyTargets);
-        dirtyViewers.clear();
-        dirtyTargets.clear();
-        for (UUID viewerUuid : viewers) {
+        for (int i = bucket; i < players.length; i += NAME_INTERVAL) {
+            UUID viewerUuid = players[i];
+            if (!dirtyViewers.remove(viewerUuid)) {
+                continue;
+            }
             GamePlayer gamePlayer = gamePlayers.get(viewerUuid);
             if (gamePlayer == null) {
                 continue;
             }
             updateNamesForViewer(gamePlayer, targets);
         }
-    }
-
-    private void flushTabNames() {
-        if (dirtyTabNames.isEmpty()) {
-            return;
-        }
-        Set<UUID> tabTargets = Set.copyOf(dirtyTabNames);
-        dirtyTabNames.clear();
-        for (UUID uuid : tabTargets) {
-            GamePlayer gamePlayer = gamePlayers.get(uuid);
-            if (gamePlayer == null) {
-                continue;
-            }
-            WarlordsPlayer warlordsPlayer = gamePlayer.getWarlordsPlayer();
-            if (warlordsPlayer == null || !(warlordsPlayer.getEntity() instanceof Player player)) {
-                dirtyTabNames.add(uuid);
-                continue;
-            }
-            Component classComponent = getClassComponent(warlordsPlayer);
-            Component levelComponent = getLevelComponent(uuid, warlordsPlayer);
-
-            TextComponent.Builder baseSuffix = Component.text().append(levelComponent);
-            TextComponent.Builder playerTabName = Component
-                    .text()
-                    .append(classComponent)
-                    .append(Component.text(warlordsPlayer.getName(), warlordsPlayer.getTeam().getTeamColor()))
-                    .append(levelComponent);
-            if (warlordsPlayer.getCarriedFlag() != null) {
-                baseSuffix.append(WHITE_FLAG_SPACE);
-                playerTabName.append(WHITE_FLAG);
-            }
-            WarlordsPlayerName name = cachedNames.computeIfAbsent(warlordsPlayer, k -> new WarlordsPlayerName());
-            name.setBasePrefix(classComponent);
-            name.setBaseSuffix(baseSuffix.build());
-            player.playerListName(playerTabName.build());
-            // Base parts feed above-head overlays; re-dirty in case names already flushed this period.
-            markNamesDirty(warlordsPlayer);
+        if (dirtyViewers.isEmpty()) {
+            dirtyTargets.clear();
         }
     }
 
-    private void flushSidebar() {
-        if (sidebarDirty.isEmpty()) {
+    private void flushTabName(UUID uuid) {
+        if (!dirtyTabNames.remove(uuid)) {
             return;
         }
-        Set<UUID> viewers = Set.copyOf(sidebarDirty);
-        sidebarDirty.clear();
-        for (UUID viewerUuid : viewers) {
-            GamePlayer gamePlayer = gamePlayers.get(viewerUuid);
-            if (gamePlayer != null) {
-                updateBasedOnGameScoreboards(gamePlayer.getCustomScoreboard(), gamePlayer.getWarlordsPlayer());
-            }
+        GamePlayer gamePlayer = gamePlayers.get(uuid);
+        if (gamePlayer == null) {
+            return;
+        }
+        WarlordsPlayer warlordsPlayer = gamePlayer.getWarlordsPlayer();
+        if (warlordsPlayer == null || !(warlordsPlayer.getEntity() instanceof Player player)) {
+            dirtyTabNames.add(uuid);
+            return;
+        }
+        Component classComponent = getClassComponent(warlordsPlayer);
+        Component levelComponent = getLevelComponent(uuid, warlordsPlayer);
+
+        TextComponent.Builder baseSuffix = Component.text().append(levelComponent);
+        TextComponent.Builder playerTabName = Component
+                .text()
+                .append(classComponent)
+                .append(Component.text(warlordsPlayer.getName(), warlordsPlayer.getTeam().getTeamColor()))
+                .append(levelComponent);
+        if (warlordsPlayer.getCarriedFlag() != null) {
+            baseSuffix.append(WHITE_FLAG_SPACE);
+            playerTabName.append(WHITE_FLAG);
+        }
+        WarlordsPlayerName name = cachedNames.computeIfAbsent(warlordsPlayer, k -> new WarlordsPlayerName());
+        name.setBasePrefix(classComponent);
+        name.setBaseSuffix(baseSuffix.build());
+        player.playerListName(playerTabName.build());
+        // Base parts feed above-head overlays; re-dirty in case names already flushed this period.
+        markNamesDirty(warlordsPlayer);
+    }
+
+    private void flushSidebar(UUID uuid) {
+        if (!sidebarDirty.remove(uuid)) {
+            return;
+        }
+        GamePlayer gamePlayer = gamePlayers.get(uuid);
+        if (gamePlayer != null) {
+            updateBasedOnGameScoreboards(gamePlayer.getCustomScoreboard(), gamePlayer.getWarlordsPlayer());
         }
     }
 
@@ -170,8 +180,6 @@ public class PlayingStateScoreboardUpdater {
                 if (gp.getHealth() != newHealth) {
                     gp.setHealth(newHealth);
                     gp.setUpdateHealth(true);
-                } else {
-                    gp.setUpdateHealth(false);
                 }
             } else {
                 gamePlayers.put(uuid, new GamePlayer(scoreboard, (WarlordsPlayer) p, newHealth));
@@ -199,32 +207,33 @@ public class PlayingStateScoreboardUpdater {
         }
     }
 
-    private void flushHealthUpdates() {
-        for (GamePlayer viewer : gamePlayers.values()) {
-            CustomScoreboard customScoreboard = viewer.getCustomScoreboard();
-            Scoreboard scoreboard = customScoreboard.getScoreboard();
-            Objective health = customScoreboard.getHealth();
-            if (health == null || scoreboard.getObjective("health") == null) {
-                health = scoreboard.registerNewObjective("health", Criteria.DUMMY, Component.text("❤", NamedTextColor.RED));
-                health.setDisplaySlot(DisplaySlot.BELOW_NAME);
-                customScoreboard.setHealth(health);
-            }
-            boolean newHealth = !viewer.isHealthObjectiveInitialized();
-            if (newHealth) {
-                viewer.setHealthObjectiveInitialized(true);
-            }
-            Objective finalHealth = health;
-            for (GamePlayer target : gamePlayers.values()) {
-                if (target.getWarlordsPlayer() == null) {
-                    continue;
-                }
-                if (!newHealth && !target.isUpdateHealth()) {
-                    continue;
-                }
-                finalHealth.getScore(target.getWarlordsPlayer().getName()).setScore(target.getHealth());
-            }
+    private void flushHealthForViewer(UUID viewerUuid) {
+        GamePlayer viewer = gamePlayers.get(viewerUuid);
+        if (viewer == null) {
+            return;
         }
-        gamePlayers.values().forEach(gp -> gp.setUpdateHealth(false));
+        CustomScoreboard customScoreboard = viewer.getCustomScoreboard();
+        Scoreboard scoreboard = customScoreboard.getScoreboard();
+        Objective health = customScoreboard.getHealth();
+        if (health == null || scoreboard.getObjective("health") == null) {
+            health = scoreboard.registerNewObjective("health", Criteria.DUMMY, Component.text("❤", NamedTextColor.RED));
+            health.setDisplaySlot(DisplaySlot.BELOW_NAME);
+            customScoreboard.setHealth(health);
+        }
+        boolean newHealth = !viewer.isHealthObjectiveInitialized();
+        if (newHealth) {
+            viewer.setHealthObjectiveInitialized(true);
+        }
+        Objective finalHealth = health;
+        for (GamePlayer target : gamePlayers.values()) {
+            if (target.getWarlordsPlayer() == null) {
+                continue;
+            }
+            if (!newHealth && !target.isUpdateHealth()) {
+                continue;
+            }
+            finalHealth.getScore(target.getWarlordsPlayer().getName()).setScore(target.getHealth());
+        }
     }
 
     private void updateNamesForViewer(@Nonnull GamePlayer viewerGamePlayer, @Nonnull Set<UUID> targetUuids) {
