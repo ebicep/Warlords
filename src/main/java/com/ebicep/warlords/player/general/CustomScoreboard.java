@@ -28,6 +28,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.*;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -164,43 +166,94 @@ public class CustomScoreboard {
         }
     }
 
-    public static void updateLobbyPlayerNames() {
-        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-            if (Warlords.getGameManager().getPlayerGame(onlinePlayer.getUniqueId()).isPresent()) {
+    private record LobbyNameDisplay(String name, Component prefix, Component suffix, NamedTextColor color) {}
+
+    private static boolean isInLobby(Player player) {
+        return Warlords.getGameManager().getPlayerGame(player.getUniqueId()).isEmpty();
+    }
+
+    private static LobbyNameDisplay buildLobbyNameDisplay(Player player) {
+        Component suffix = Component.empty();
+        Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(player.getUniqueId());
+        if (guildPlayerPair != null && guildPlayerPair.getA().getTag() != null) {
+            GuildTag tag = guildPlayerPair.getA().getTag();
+            suffix = Component.space().append(tag.getTag(false)).compact();
+        }
+        return new LobbyNameDisplay(
+                player.getName(),
+                Permissions.getPrefixWithColor(player, false).compact(),
+                suffix,
+                Permissions.getColor(player)
+        );
+    }
+
+    private static List<LobbyNameDisplay> buildLobbyNameDisplays() {
+        Collection<? extends Player> onlinePlayers = Bukkit.getOnlinePlayers();
+        List<LobbyNameDisplay> displays = new ArrayList<>(onlinePlayers.size());
+        for (Player onlinePlayer : onlinePlayers) {
+            if (!isInLobby(onlinePlayer)) {
                 continue;
             }
-            CustomScoreboard.getPlayerScoreboard(onlinePlayer).updateLobbyPlayerNamesInternal();
+            displays.add(buildLobbyNameDisplay(onlinePlayer));
+        }
+        return displays;
+    }
+
+    private void applyLobbyNameDisplay(LobbyNameDisplay display) {
+        Team team = scoreboard.getTeam(display.name());
+        if (team == null) {
+            team = scoreboard.registerNewTeam(display.name());
+        }
+        if (!team.hasEntry(display.name())) {
+            team.addEntry(display.name());
+        }
+        if (!team.prefix().equals(display.prefix())) {
+            team.prefix(display.prefix());
+        }
+        if (!team.suffix().equals(display.suffix())) {
+            team.suffix(display.suffix());
+        }
+        if (team.color() != display.color()) {
+            team.color(display.color());
+        }
+    }
+
+    private void applyLobbyNameDisplays(List<LobbyNameDisplay> displays) {
+        for (LobbyNameDisplay display : displays) {
+            applyLobbyNameDisplay(display);
+        }
+    }
+
+    public static void updateLobbyPlayerNames() {
+        List<LobbyNameDisplay> displays = buildLobbyNameDisplays();
+        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+            if (!isInLobby(onlinePlayer)) {
+                continue;
+            }
+            CustomScoreboard.getPlayerScoreboard(onlinePlayer).applyLobbyNameDisplays(displays);
+        }
+    }
+
+    public static void applyLobbyPlayerNameToOthers(Player joined) {
+        if (!isInLobby(joined)) {
+            return;
+        }
+        LobbyNameDisplay display = buildLobbyNameDisplay(joined);
+        UUID joinedUuid = joined.getUniqueId();
+        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+            if (onlinePlayer.getUniqueId().equals(joinedUuid) || !isInLobby(onlinePlayer)) {
+                continue;
+            }
+            CustomScoreboard.getPlayerScoreboard(onlinePlayer).applyLobbyNameDisplay(display);
         }
     }
 
     public void updateLobbyPlayerNamesInternal() {
         Player player = Bukkit.getPlayer(uuid);
-        if (player == null) {
+        if (player == null || !isInLobby(player)) {
             return;
         }
-        if (Warlords.getGameManager().getPlayerGame(uuid).isPresent()) {
-            return;
-        }
-        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-            if (Warlords.getGameManager().getPlayerGame(onlinePlayer.getUniqueId()).isPresent()) {
-                continue;
-            }
-            String name = onlinePlayer.getName();
-            Team team = scoreboard.getTeam(name);
-            if (team == null) {
-                team = scoreboard.registerNewTeam(name);
-            }
-            Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(onlinePlayer.getUniqueId());
-            if (guildPlayerPair != null && guildPlayerPair.getA().getTag() != null) {
-                GuildTag tag = guildPlayerPair.getA().getTag();
-                team.suffix(Component.space().append(tag.getTag(false)));
-            } else {
-                team.suffix(Component.empty());
-            }
-            team.prefix(Permissions.getPrefixWithColor(onlinePlayer, false));
-            team.addEntry(name);
-            team.color(Permissions.getColor(onlinePlayer));
-        }
+        applyLobbyNameDisplays(buildLobbyNameDisplays());
     }
 
     public static CustomScoreboard getPlayerScoreboard(Player player) {

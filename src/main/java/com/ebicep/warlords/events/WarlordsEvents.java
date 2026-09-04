@@ -257,7 +257,7 @@ public class WarlordsEvents implements Listener {
                 DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                 Bukkit.getPluginManager().callEvent(new DatabasePlayerFirstLoadEvent(player, databasePlayer));
             }
-            CustomScoreboard.updateLobbyPlayerNames();
+            CustomScoreboard.applyLobbyPlayerNameToOthers(player);
             ExperienceManager.giveExperienceBar(player);
             if (StatsLeaderboardManager.loaded) {
                 new BukkitRunnable() {
