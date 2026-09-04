@@ -527,56 +527,74 @@ public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
         if (DatabaseManager.gameService == null) {
             return;
         }
-        try {
-            GamesCollections collection = databaseGame.getGameMode().getGamesCollections();
-            databaseGame.gameAddons.remove(GameAddon.CUSTOM_GAME);
-            //game in the database
-            if (DatabaseManager.gameService.exists(databaseGame, collection)) {
-                if (player != null) {
-                    sendDebugMessage(player, Component.text("Game Found", NamedTextColor.GREEN));
-                }
-                //if not counted then update player stats then set counted to true, else do nothing
-                if (!databaseGame.isCounted()) {
-                    if (player != null) {
-                        sendDebugMessage(player, Component.text("Updating Player Stats", NamedTextColor.GREEN));
+        GamesCollections collection = databaseGame.getGameMode().getGamesCollections();
+        databaseGame.gameAddons.remove(GameAddon.CUSTOM_GAME);
+        Warlords.newChain()
+                .asyncFirst(() -> {
+                    try {
+                        return DatabaseManager.gameService.exists(databaseGame, collection);
+                    } catch (Exception e) {
+                        Warlords.newChain()
+                                .async(() -> DatabaseManager.gameService.createBackup(databaseGame))
+                                .execute();
+                        ChatUtils.MessageType.GAME_SERVICE.sendErrorMessage(e);
+                        return null;
                     }
-                    databaseGame.updatePlayerStatsFromGame(databaseGame, 1);
-                    databaseGame.setCounted(true);
-                    DatabaseManager.updateGameAsync(databaseGame);
-                }
-            } else {
-                if (player != null) {
-                    sendDebugMessage(player, Component.text("Game Not Found", NamedTextColor.GREEN));
-                }
-                //game not in database then add game and update player stats if counted
-                if (databaseGame.isCounted()) {
-                    if (player != null) {
-                        sendDebugMessage(player, Component.text("Updating Player Stats", NamedTextColor.GREEN));
+                })
+                .syncLast(exists -> {
+                    if (exists == null) {
+                        return;
                     }
-                    databaseGame.updatePlayerStatsFromGame(databaseGame, 1);
-                }
-                if (player != null) {
-                    sendDebugMessage(player, Component.text("Creating Game", NamedTextColor.GREEN));
-                }
-                //only add game if comps
-                //if (databaseGame.isPrivate) {
-                TaskChain<?> taskChain = Warlords.newChain()
-                                                 .delay(4, TimeUnit.SECONDS)
-                                                 .async(() -> DatabaseManager.gameService.create(databaseGame, collection));
-                for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_LEADERBOARD_COLLECTIONS) {
-                    taskChain.delay(10, TimeUnit.SECONDS)
-                             .sync(() -> StatsLeaderboardManager.resetLeaderboards(activeCollection, databaseGame.getGameMode()));
-                }
-                taskChain.sync(StatsLeaderboardManager::setLeaderboardHologramVisibilityToAll)
-                         .execute();
-                //}
-            }
-        } catch (Exception e) {
-            Warlords.newChain()
-                    .async(() -> DatabaseManager.gameService.createBackup(databaseGame))
-                    .execute();
-            ChatUtils.MessageType.GAME_SERVICE.sendErrorMessage(e);
-        }
+                    try {
+                        //game in the database
+                        if (exists) {
+                            if (player != null) {
+                                sendDebugMessage(player, Component.text("Game Found", NamedTextColor.GREEN));
+                            }
+                            //if not counted then update player stats then set counted to true, else do nothing
+                            if (!databaseGame.isCounted()) {
+                                if (player != null) {
+                                    sendDebugMessage(player, Component.text("Updating Player Stats", NamedTextColor.GREEN));
+                                }
+                                databaseGame.updatePlayerStatsFromGame(databaseGame, 1);
+                                databaseGame.setCounted(true);
+                                DatabaseManager.updateGameAsync(databaseGame);
+                            }
+                        } else {
+                            if (player != null) {
+                                sendDebugMessage(player, Component.text("Game Not Found", NamedTextColor.GREEN));
+                            }
+                            //game not in database then add game and update player stats if counted
+                            if (databaseGame.isCounted()) {
+                                if (player != null) {
+                                    sendDebugMessage(player, Component.text("Updating Player Stats", NamedTextColor.GREEN));
+                                }
+                                databaseGame.updatePlayerStatsFromGame(databaseGame, 1);
+                            }
+                            if (player != null) {
+                                sendDebugMessage(player, Component.text("Creating Game", NamedTextColor.GREEN));
+                            }
+                            //only add game if comps
+                            //if (databaseGame.isPrivate) {
+                            TaskChain<?> taskChain = Warlords.newChain()
+                                                             .delay(4, TimeUnit.SECONDS)
+                                                             .async(() -> DatabaseManager.gameService.create(databaseGame, collection));
+                            for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_LEADERBOARD_COLLECTIONS) {
+                                taskChain.delay(10, TimeUnit.SECONDS)
+                                         .sync(() -> StatsLeaderboardManager.resetLeaderboards(activeCollection, databaseGame.getGameMode()));
+                            }
+                            taskChain.sync(StatsLeaderboardManager::setLeaderboardHologramVisibilityToAll)
+                                     .execute();
+                            //}
+                        }
+                    } catch (Exception e) {
+                        Warlords.newChain()
+                                .async(() -> DatabaseManager.gameService.createBackup(databaseGame))
+                                .execute();
+                        ChatUtils.MessageType.GAME_SERVICE.sendErrorMessage(e);
+                    }
+                })
+                .execute();
     }
 
     public static void setGameHologramVisibility(Player player) {
@@ -769,22 +787,27 @@ public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
             return;
         }
         GamesCollections collection = databaseGame.getGameMode().getGamesCollections();
-        //game in the database
-        if (DatabaseManager.gameService.exists(databaseGame, collection)) {
-            //if counted then remove player stats then set counted to false, else do nothing
-            if (databaseGame.isCounted()) {
-                if (player != null) {
-                    sendDebugMessage(player, Component.text("Updating Player Stats", NamedTextColor.GREEN));
-                }
-                databaseGame.updatePlayerStatsFromGame(databaseGame, -1);
-                databaseGame.setCounted(false);
-                DatabaseManager.updateGameAsync(databaseGame);
-            }
-        } else { //else game not in database then do nothing
-            if (player != null) {
-                sendDebugMessage(player, Component.text("Game Not Found", NamedTextColor.GREEN));
-            }
-        }
+        Warlords.newChain()
+                .asyncFirst(() -> DatabaseManager.gameService.exists(databaseGame, collection))
+                .syncLast(exists -> {
+                    //game in the database
+                    if (exists) {
+                        //if counted then remove player stats then set counted to false, else do nothing
+                        if (databaseGame.isCounted()) {
+                            if (player != null) {
+                                sendDebugMessage(player, Component.text("Updating Player Stats", NamedTextColor.GREEN));
+                            }
+                            databaseGame.updatePlayerStatsFromGame(databaseGame, -1);
+                            databaseGame.setCounted(false);
+                            DatabaseManager.updateGameAsync(databaseGame);
+                        }
+                    } else { //else game not in database then do nothing
+                        if (player != null) {
+                            sendDebugMessage(player, Component.text("Game Not Found", NamedTextColor.GREEN));
+                        }
+                    }
+                })
+                .execute();
     }
 
     public static void updatePlayerStatsFromTeam(DatabaseGameBase databaseGame, DatabaseGamePlayerBase gamePlayer, int multiplier) {
