@@ -39,6 +39,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class HologramManager implements Listener {
 
     private static final int INTERACT_COOLDOWN_MS = 250;
+    private static final int TICK_INTERVAL = 10;
     private static final Map<UUID, Long> INTERACT_COOLDOWNS = new ConcurrentHashMap<>();
     private static final Map<String, Hologram> HOLOGRAMS = new ConcurrentHashMap<>();
     static int entityId = Integer.MAX_VALUE / 8;
@@ -48,9 +49,14 @@ public class HologramManager implements Listener {
     public static void init(Warlords instance) {
         TASK = new BukkitRunnable() {
 
+            private int tick = 0;
+
             @Override
             public void run() {
-                for (Hologram hologram : HOLOGRAMS.values()) {
+                Hologram[] holograms = HOLOGRAMS.values().toArray(Hologram[]::new);
+                int bucket = tick++ % TICK_INTERVAL;
+                for (int i = bucket; i < holograms.length; i += TICK_INTERVAL) {
+                    Hologram hologram = holograms[i];
                     Location location = hologram.getLocation();
                     World world = location.getWorld();
                     VisibilityManager visibilityManager = hologram.getVisibilityManager();
@@ -80,7 +86,7 @@ public class HologramManager implements Listener {
                 }
             }
 
-        }.runTaskTimerAsynchronously(instance, 0, 10);
+        }.runTaskTimerAsynchronously(instance, 0, 1);
         packetListener = new PacketAdapter(instance, ListenerPriority.NORMAL, PacketType.Play.Client.USE_ENTITY) {
             @Override
             public void onPacketReceiving(PacketEvent event) {
