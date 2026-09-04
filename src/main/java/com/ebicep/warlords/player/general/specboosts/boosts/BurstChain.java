@@ -113,12 +113,24 @@ public class BurstChain implements SpecBoostManager.SpecBoost<BurstChain> {
             if (!event.getCause().equals("Flame Burst")) {
                 return;
             }
-            Integer hitCount = flameBurstHit.get(event.getUUID());
+            UUID projectileId = event.getUUID();
+            Integer hitCount = flameBurstHit.get(projectileId);
             if (hitCount != null && hitCount >= guaranteedCrit) {
                 return;
             }
-            flameBurstHit.put(event.getUUID(), (hitCount == null ? 0 : hitCount) + 1);
-            event.getCritChance().addModifier(FloatModifiable.ModifierType.OVERRIDING, getStringName(), 100);
+            int newCount = (hitCount == null ? 0 : hitCount) + 1;
+            flameBurstHit.put(projectileId, newCount);
+            if (newCount <= guaranteedCrit) {
+                event.getCritChance().addModifier(FloatModifiable.ModifierType.OVERRIDING, getStringName(), 100);
+            }
+            if (flameBurstHit.size() > 64) {
+                flameBurstHit.entrySet().removeIf(e -> e.getValue() >= guaranteedCrit);
+            }
+        }
+
+        @Override
+        public void unapply(WarlordsPlayer warlordsPlayer) {
+            flameBurstHit.clear();
         }
 
     }

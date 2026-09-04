@@ -67,6 +67,10 @@ public class CustomScoreboard {
         return PLAYER_SCOREBOARDS.computeIfAbsent(uuid, CustomScoreboard::new);
     }
 
+    public static void removePlayerScoreboard(UUID uuid) {
+        PLAYER_SCOREBOARDS.remove(uuid);
+    }
+
     private void givePvESidebar(DatabasePlayerPvE pveStats, boolean forceClear) {
         long starPieces = pveStats.getCurrencyValue(Currencies.COMMON_STAR_PIECE) +
                 pveStats.getCurrencyValue(Currencies.RARE_STAR_PIECE) +

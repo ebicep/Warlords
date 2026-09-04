@@ -1,6 +1,5 @@
 package com.ebicep.warlords.game.option.towerdefense.towers;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.effects.ChasingBlockEffect;
 import com.ebicep.warlords.game.Game;
@@ -18,6 +17,7 @@ import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
@@ -25,7 +25,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Display;
 import org.bukkit.entity.ItemDisplay;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Transformation;
 import org.joml.AxisAngle4f;
 import org.joml.Vector3f;
@@ -144,12 +143,12 @@ public class EarthwardenTower extends AbstractTower implements Upgradeable.Path2
                                     d.setItemStack(new ItemStack(Material.BROWN_MUSHROOM));
                                 }
                         );
-                        new BukkitRunnable() {
+                        new GameRunnable(warlordsTower.getGame()) {
                             @Override
                             public void run() {
                                 display.remove();
                             }
-                        }.runTaskLater(Warlords.getInstance(), 8);
+                        }.runTaskLater(8);
                         target.addInstance(InstanceBuilder
                                 .damage()
                                 .ability(this)

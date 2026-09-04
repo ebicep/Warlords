@@ -17,6 +17,7 @@ import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.sr.Balancer;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.DateUtil;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -25,7 +26,6 @@ import org.bukkit.GameMode;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -265,12 +265,12 @@ public class PreLobbyState implements State, TimerDebugAble {
                 }
             }
         }
-        new BukkitRunnable() {
+        new GameRunnable(game) {
             @Override
             public void run() {
                 player.setGameMode(team == null ? GameMode.SPECTATOR : GameMode.ADVENTURE);
             }
-        }.runTaskLater(Warlords.getInstance(), 1);
+        }.runTaskLater(1);
 
         LobbyLocationMarker location = LobbyLocationMarker.getRandomLobbyLocation(game, team);
         if (location != null) {

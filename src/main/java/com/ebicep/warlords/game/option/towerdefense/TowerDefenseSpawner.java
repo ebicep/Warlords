@@ -36,7 +36,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import javax.annotation.Nonnull;
@@ -306,7 +305,7 @@ public class TowerDefenseSpawner implements Option, Listener {
             display.text(Component.text("TARGET NODE", NamedTextColor.DARK_RED));
             display.setBillboard(Display.Billboard.CENTER);
         });
-        new BukkitRunnable() {
+        new GameRunnable(game) {
             @Override
             public void run() {
                 d.remove();
@@ -314,7 +313,7 @@ public class TowerDefenseSpawner implements Option, Listener {
                 d3.remove();
                 d4.remove();
             }
-        }.runTaskLater(Warlords.getInstance(), 60);
+        }.runTaskLater(60);
     }
 
     @EventHandler

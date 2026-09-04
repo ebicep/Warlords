@@ -200,6 +200,10 @@ public class HologramManager implements Listener {
         hologram.getVisibilityManager().removeCurrentViewer(player.getUniqueId());
     }
 
+    public static void removeInteractCooldown(UUID uuid) {
+        INTERACT_COOLDOWNS.remove(uuid);
+    }
+
     public static void updateHologram(Hologram hologram) {
         for (Player player : hologram.getLocation().getWorld().getPlayers()) {
             if (hologram.withinRange(player)) {

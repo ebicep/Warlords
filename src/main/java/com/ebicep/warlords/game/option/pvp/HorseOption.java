@@ -106,6 +106,12 @@ public class HorseOption implements Option, Listener {
     }
 
     @Override
+    public void onGameCleanup(@Nonnull Game game) {
+        playerHorses.values().forEach(WarlordsHorse::kill);
+        playerHorses.clear();
+    }
+
+    @Override
     public void updateInventory(@Nonnull WarlordsPlayer warlordsPlayer, Player player) {
         WarlordsHorse horse = getHorseForPlayer(warlordsPlayer);
         PlayerInventory inventory = player.getInventory();

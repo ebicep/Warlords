@@ -10,6 +10,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -18,6 +19,7 @@ import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  *
@@ -93,6 +95,11 @@ public class RespawnProtectionOption implements Option, Listener {
                 }
             }
         }.runTaskTimer(0, 5);
+    }
+
+    @Override
+    public void onGameCleanup(@Nonnull Game game) {
+        spawnProtection.clear();
     }
     
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)

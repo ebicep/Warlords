@@ -47,6 +47,10 @@ public class SupplyDropManager {
 
     private static final ConcurrentHashMap<UUID, Boolean> PLAYER_ROLL_COOLDOWN = new ConcurrentHashMap<>();
 
+    public static void removePlayerCooldown(UUID uuid) {
+        PLAYER_ROLL_COOLDOWN.remove(uuid);
+    }
+
     private static RollSpeed getRollSpeed(InventoryClickEvent event) {
         if (event.isShiftClick()) {
             return RollSpeed.SUPER_INSTANT;

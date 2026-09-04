@@ -46,6 +46,10 @@ public final class HonorificManager {
     private HonorificManager() {
     }
 
+    public static void removeCachedPlayer(UUID uuid) {
+        LAST_CHALLENGE_REFRESH.remove(uuid);
+    }
+
     public static void init() {
         if (!Bukkit.isPrimaryThread()) {
             Bukkit.getScheduler().runTask(Warlords.getInstance(), HonorificManager::init);

@@ -1,17 +1,16 @@
 package com.ebicep.warlords.game.option.marker;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.flags.*;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Location;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -110,7 +109,7 @@ public interface FlagHolder extends CompassTargetMarker, GameMarker {
                                     ((PlayerFlagLocation) i.getFlag()).getPlayer().equals(player) ? new GroundFlagLocation((PlayerFlagLocation) i.getFlag(), manual) : null
                     );
                 } else {
-                    new BukkitRunnable() {
+                    new GameRunnable(game) {
                         @Override
                         public void run() {
                             holder.update(i ->
@@ -118,7 +117,7 @@ public interface FlagHolder extends CompassTargetMarker, GameMarker {
                                             ((PlayerFlagLocation) i.getFlag()).getPlayer().equals(player) ? new GroundFlagLocation((PlayerFlagLocation) i.getFlag(), manual) : null
                             );
                         }
-                    }.runTaskLater(Warlords.getInstance(), 1);
+                    }.runTaskLater(1);
                 }
                 return true;
             }

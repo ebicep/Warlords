@@ -30,6 +30,8 @@ import org.bukkit.potion.PotionEffectType;
 import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class SafeZoneOption implements Option {
 
@@ -37,7 +39,7 @@ public class SafeZoneOption implements Option {
     private final int yLevel = 20;//0;
     private final int safeDuration = 15;
     private final int maxEnterableTimes;
-    private final HashMap<WarlordsPlayer, Integer> timesEntered = new HashMap<>();
+    private final Map<WarlordsPlayer, Integer> timesEntered = new HashMap<>();
 
     public SafeZoneOption() {
         this.maxEnterableTimes = 3;
@@ -130,6 +132,17 @@ public class SafeZoneOption implements Option {
             }
 
         });
+    }
+
+    @Override
+    public void onPlayerQuit(Player player) {
+        UUID uuid = player.getUniqueId();
+        timesEntered.keySet().removeIf(wp -> wp.getUuid().equals(uuid));
+    }
+
+    @Override
+    public void onGameCleanup(@Nonnull Game game) {
+        timesEntered.clear();
     }
 
     public boolean isSafeZone(Location location) {

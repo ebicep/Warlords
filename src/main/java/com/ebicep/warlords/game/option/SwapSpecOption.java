@@ -13,6 +13,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
@@ -21,7 +22,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
@@ -62,14 +62,14 @@ public class SwapSpecOption implements Option {
                     return;
                 }
                 event.setCancelled(true);
-                new BukkitRunnable() {
+                new GameRunnable(game) {
                     @Override
                     public void run() {
                         if (event.getSlot() == 22) {
                             openSpecMenu(warlordsEntity);
                         }
                     }
-                }.runTaskLater(Warlords.getInstance(), 1);
+                }.runTaskLater(1);
             }
 
             @EventHandler
