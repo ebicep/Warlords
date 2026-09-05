@@ -151,7 +151,7 @@ public enum Permissions {
         return component;
     }
 
-    private static Permissions getPermission(Player player) {
+    public static Permissions getPermission(Player player) {
         for (Permissions value : VALUES) {
             if (value == SUPPORTER ? isSupporter(player) : player.hasPermission(value.permission)) {
                 return value;

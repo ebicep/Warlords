@@ -278,11 +278,9 @@ public class PlayingStateScoreboardUpdater {
             WarlordsPlayerName name = cachedNames.computeIfAbsent(target, k -> new WarlordsPlayerName(target));
 
             Entity entity = target.getEntity();
-            Team playerTeam = scoreboard.getEntityTeam(entity);
-            if (playerTeam == null) {
-                playerTeam = scoreboard.registerNewTeam(((CraftEntity) entity).getHandle().getScoreboardName());
-                playerTeam.addEntity(entity);
-            }
+            String scoreboardName = ((CraftEntity) entity).getHandle().getScoreboardName();
+            String expectedTeamName = tabListTeamName(target.getTeam(), scoreboardName);
+            Team playerTeam = resolveTabTeam(scoreboard, entity, expectedTeamName);
             NamedTextColor teamColor = target.getTeam().getTeamColor();
             if (!playerTeam.hasColor() || playerTeam.color() != teamColor) {
                 playerTeam.color(teamColor);
@@ -296,6 +294,33 @@ public class PlayingStateScoreboardUpdater {
                 playerTeam.suffix(overlay.suffix());
             }
         }
+    }
+
+    /**
+     * Sortable Bukkit team id so the client groups tab list by Warlords faction first.
+     */
+    private static String tabListTeamName(@Nonnull com.ebicep.warlords.game.Team faction, @Nonnull String scoreboardName) {
+        return faction.ordinal() + "_" + scoreboardName;
+    }
+
+    @Nonnull
+    private static Team resolveTabTeam(@Nonnull Scoreboard scoreboard, @Nonnull Entity entity, @Nonnull String expectedName) {
+        Team current = scoreboard.getEntityTeam(entity);
+        if (current != null && current.getName().equals(expectedName)) {
+            return current;
+        }
+        if (current != null) {
+            current.removeEntity(entity);
+            if (current.getEntries().isEmpty() && !current.getName().startsWith("!team")) {
+                current.unregister();
+            }
+        }
+        Team team = scoreboard.getTeam(expectedName);
+        if (team == null) {
+            team = scoreboard.registerNewTeam(expectedName);
+        }
+        team.addEntity(entity);
+        return team;
     }
 
     private static OverlayResult buildOverlay(
