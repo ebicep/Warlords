@@ -119,6 +119,7 @@ public abstract class WarlordsEntity {
     protected FloatModifiable energyPerSec;
     protected FloatModifiable energyPerHit;
     protected FloatModifiable regenPerSecond = new FloatModifiable(0);
+    protected FloatModifiable pveHitCooldown = new FloatModifiable(13);
     private final FloatModifiable energyGainPerTickMod = new FloatModifiable(0);
     protected FloatModifiableFilter maxBaseHealthFilter = new HealthFilter();
     private final List<Float> recordDamage = new ArrayList<>();
@@ -142,7 +143,6 @@ public abstract class WarlordsEntity {
     private int flagDropCooldown = 0;
     private int flagPickCooldown = 0;
     private int hitCooldown = 20;
-    private int pveHitCooldown = 13;
     private int pveHitRange = 3;
     private int currency;
     private int blocksTravelledCM = 0;
@@ -1292,6 +1292,7 @@ public abstract class WarlordsEntity {
             this.energy.tick();
             this.energyPerSec.tick();
             this.energyPerHit.tick();
+            this.pveHitCooldown.tick();
             getSpeed().tick();
             getKnockback().tick();
         }
@@ -1795,12 +1796,12 @@ public abstract class WarlordsEntity {
     @Nullable
     public abstract ItemStack getWeaponItem();
 
-    public int getPveHitCooldown() {
+    public FloatModifiable getPveHitCooldown() {
         return pveHitCooldown;
     }
 
-    public void setPveHitCooldown(int pveHitCooldown) {
-        this.pveHitCooldown = pveHitCooldown;
+    public int getPveHitCooldownValue() {
+        return Math.max(1, Math.round(pveHitCooldown.getCalculatedValue()));
     }
 
     public int getPveHitRange() {

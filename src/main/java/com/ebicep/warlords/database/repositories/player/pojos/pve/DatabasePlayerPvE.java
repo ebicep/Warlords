@@ -53,6 +53,7 @@ import com.ebicep.warlords.pve.events.supplydrop.SupplyDropEntry;
 import com.ebicep.warlords.pve.items.ItemsManager;
 import com.ebicep.warlords.pve.newitems.NewItem;
 import com.ebicep.warlords.pve.newitems.NewItemsManager;
+import com.ebicep.warlords.pve.newitems.gems.Gem;
 import com.ebicep.warlords.pve.mobs.MobDrop;
 import com.ebicep.warlords.pve.quests.Quests;
 import com.ebicep.warlords.pve.rewards.types.BountyReward;
@@ -147,6 +148,9 @@ public class DatabasePlayerPvE implements MultiPvEStats<
     //MOB DROPS
     @Field("mob_drops")
     private Map<MobDrop, Long> mobDrops = new LinkedHashMap<>();
+    //GEMS
+    @Field("gems")
+    private Map<Gem, Long> gems = new LinkedHashMap<>();
     @Field("completed_tutorial")
     private boolean completedTutorial = false;
     //OLD
@@ -494,6 +498,24 @@ public class DatabasePlayerPvE implements MultiPvEStats<
         } else {
             this.mobDrops.put(mobDrop, this.mobDrops.get(mobDrop) + amount);
         }
+    }
+
+    public void addGems(Gem gem, long amount) {
+        if (AdminCommand.BYPASSED_PLAYER_CURRENCIES.contains(this)) {
+            return;
+        }
+        this.gems.merge(gem, amount, Long::sum);
+    }
+
+    public long getGems(Gem gem) {
+        if (AdminCommand.BYPASSED_PLAYER_CURRENCIES.contains(this)) {
+            return Long.MAX_VALUE;
+        }
+        return this.gems.getOrDefault(gem, 0L);
+    }
+
+    public Map<Gem, Long> getGems() {
+        return gems;
     }
 
     public void subtractCurrency(Currencies currency, Long amount) {

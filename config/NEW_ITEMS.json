@@ -1537,6 +1537,18 @@
           "description": "+{{blue;%}} ability cooldown reduction on your purple rune skill.",
           "purpleRuneCooldownReductionPercent": 10
         },
+        "wield": {
+          "tier": "EPIC",
+          "name": "Wield",
+          "slots": [
+            "BRACELET"
+          ],
+          "attributes": {
+            "HEALTH": 5
+          },
+          "description": "+{{damage;%}} ability damage on your primary skill.",
+          "primaryAbilityDamageIncreasePercent": 5
+        },
         "contain": {
           "tier": "EPIC",
           "name": "Contain",
@@ -1544,22 +1556,10 @@
             "BOOTS"
           ],
           "attributes": {
-            "HEALTH": 10
+            "HEALTH": 5
           },
-          "description": "+{{blue;%}} ability cooldown reduction on your purple rune skill.",
-          "purpleRuneCooldownReductionPercent": 10
-        },
-        "wield": {
-          "tier": "EPIC",
-          "name": "Wield",
-          "slots": [
-            "BOOTS"
-          ],
-          "attributes": {
-            "HEALTH": 10
-          },
-          "description": "+{{blue;%}} ability cooldown reduction on your purple rune skill.",
-          "purpleRuneCooldownReductionPercent": 10
+          "description": "+{{blocks;%}} ability range on your primary skill (if applicable).",
+          "primaryAbilityRangeIncreasePercent": 15
         }
       }
     }

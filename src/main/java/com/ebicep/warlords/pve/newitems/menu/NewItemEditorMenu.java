@@ -9,6 +9,7 @@ import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.StarPieces;
 import com.ebicep.warlords.pve.mobs.MobDrop;
 import com.ebicep.warlords.pve.newitems.*;
+import com.ebicep.warlords.pve.newitems.gems.menu.NewItemGemMenu;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import net.kyori.adventure.text.Component;
@@ -181,6 +182,26 @@ public class NewItemEditorMenu {
                         open(player, item, selectedStar.next());
                     }
                 }
+        );
+
+        int maxGemSlots = item.getMaxGemSlots();
+        List<Component> gemLore = new ArrayList<>(WordWrap.wrap(Component.text(
+                "Socket gems into your item for extra attributes. Sockets must be unlocked before they can hold a gem.",
+                NamedTextColor.GRAY
+        ), 140));
+        gemLore.add(Component.empty());
+        if (maxGemSlots == 0) {
+            gemLore.add(Component.text(item.getTier().getName() + " items have no gem slots.", NamedTextColor.RED));
+        } else {
+            gemLore.add(Component.text("Sockets: ", NamedTextColor.GRAY)
+                                 .append(Component.text(item.getUnlockedGemSlots() + "/" + maxGemSlots, NamedTextColor.YELLOW)));
+        }
+        menu.setItem(6, 2,
+                new ItemBuilder(Material.AMETHYST_CLUSTER)
+                        .name(Component.text("Gem Slots", NamedTextColor.GREEN))
+                        .lore(gemLore)
+                        .get(),
+                (m, e) -> NewItemGemMenu.open(player, item)
         );
 
         LinkedHashMap<Spendable, Long> salvageRewards = getSalvageRewards(item);

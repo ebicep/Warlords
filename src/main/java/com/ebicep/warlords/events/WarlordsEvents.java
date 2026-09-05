@@ -355,7 +355,7 @@ public class WarlordsEvents implements Listener {
             return;
         }
 
-        wpAttacker.setHitCooldown(wpAttacker.isInPve() ? wpAttacker.getPveHitCooldown() : wpAttacker.getBaseHitCooldownValue());
+        wpAttacker.setHitCooldown(wpAttacker.isInPve() ? wpAttacker.getPveHitCooldownValue() : wpAttacker.getBaseHitCooldownValue());
         Optional<WarlordsDamageHealingFinalEvent> finalEvent = Optional.empty();
 
         if (wpAttacker instanceof WarlordsNPC warlordsNPC) {
