@@ -107,6 +107,7 @@ public class LegendaryMomentum extends AbstractLegendaryWeapon implements Passiv
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
         super.applyToWarlordsPlayer(player, pveOption);
+        lastLoc = null;
 
         player.getCooldownManager().addCooldown(new PermanentCooldown<>(
                 "Momentum",

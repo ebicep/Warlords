@@ -92,6 +92,7 @@ public class LegendaryAnchor extends AbstractLegendaryWeapon implements PassiveC
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
         super.applyToWarlordsPlayer(player, pveOption);
+        lastLoc = null;
 
         player.getCooldownManager().addCooldown(new PermanentCooldown<>(
                 "Anchor",
