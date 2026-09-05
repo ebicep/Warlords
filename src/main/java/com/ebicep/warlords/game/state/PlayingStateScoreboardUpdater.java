@@ -283,7 +283,10 @@ public class PlayingStateScoreboardUpdater {
                 playerTeam = scoreboard.registerNewTeam(((CraftEntity) entity).getHandle().getScoreboardName());
                 playerTeam.addEntity(entity);
             }
-            playerTeam.color(target.getTeam().getTeamColor());
+            NamedTextColor teamColor = target.getTeam().getTeamColor();
+            if (!playerTeam.hasColor() || playerTeam.color() != teamColor) {
+                playerTeam.color(teamColor);
+            }
 
             OverlayResult overlay = buildOverlay(name, viewer, target);
             if (!playerTeam.prefix().equals(overlay.prefix())) {
