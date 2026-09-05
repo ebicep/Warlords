@@ -22,6 +22,7 @@ public enum NewItemsSetBonus implements SetBonus {
     BULWARK(new Bulwark()),
     CENTURION(new Centurion()),
     CHARM(new Charm()),
+    CONTAIN(new Contain()),
     CROSSFIRE(new Crossfire()),
     CROWN_OF_THORNS(new CrownOfThorns()),
     CELL(new Cell()),
@@ -87,6 +88,7 @@ public enum NewItemsSetBonus implements SetBonus {
     VIAL(new Vial()),
     VOIDCARVER(new Voidcarver()),
     WELLSPRING(new Wellspring()),
+    WIELD(new Wield()),
 
     ;
 
