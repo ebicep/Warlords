@@ -196,13 +196,13 @@ public class NewItemEditorMenu {
             gemLore.add(Component.text("Sockets: ", NamedTextColor.GRAY)
                                  .append(Component.text(item.getUnlockedGemSlots() + "/" + maxGemSlots, NamedTextColor.YELLOW)));
         }
-        menu.setItem(6, 2,
-                new ItemBuilder(Material.AMETHYST_CLUSTER)
-                        .name(Component.text("Gem Slots", NamedTextColor.GREEN))
-                        .lore(gemLore)
-                        .get(),
-                (m, e) -> NewItemGemMenu.open(player, item)
-        );
+//        menu.setItem(6, 2,
+//                new ItemBuilder(Material.AMETHYST_CLUSTER)
+//                        .name(Component.text("Gem Slots", NamedTextColor.GREEN))
+//                        .lore(gemLore)
+//                        .get(),
+//                (m, e) -> NewItemGemMenu.open(player, item)
+//        );
 
         LinkedHashMap<Spendable, Long> salvageRewards = getSalvageRewards(item);
         List<Component> salvageLore = getSalvageLore(salvageRewards);
