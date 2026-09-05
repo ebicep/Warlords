@@ -1536,6 +1536,30 @@
           "attributes": {},
           "description": "+{{blue;%}} ability cooldown reduction on your purple rune skill.",
           "purpleRuneCooldownReductionPercent": 10
+        },
+        "contain": {
+          "tier": "EPIC",
+          "name": "Contain",
+          "slots": [
+            "BOOTS"
+          ],
+          "attributes": {
+            "HEALTH": 10
+          },
+          "description": "+{{blue;%}} ability cooldown reduction on your purple rune skill.",
+          "purpleRuneCooldownReductionPercent": 10
+        },
+        "wield": {
+          "tier": "EPIC",
+          "name": "Wield",
+          "slots": [
+            "BOOTS"
+          ],
+          "attributes": {
+            "HEALTH": 10
+          },
+          "description": "+{{blue;%}} ability cooldown reduction on your purple rune skill.",
+          "purpleRuneCooldownReductionPercent": 10
         }
       }
     }
