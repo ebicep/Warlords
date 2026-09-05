@@ -295,7 +295,7 @@ public class WarlordsEvents implements Listener {
                             Component.text("Warlords 2.0", NamedTextColor.YELLOW, TextDecoration.BOLD)
                     ),
                     Component.textOfChildren(
-                            Component.text("COMPWL.APEXMC.CO", NamedTextColor.RED, TextDecoration.BOLD),
+                            Component.text("46.202.179.172", NamedTextColor.RED, TextDecoration.BOLD),
                             Component.newline(),
                             Component.text("Players Online: ", NamedTextColor.GREEN),
                             Component.text(Bukkit.getOnlinePlayers().size() - (left ? 1 : 0), NamedTextColor.GRAY)
