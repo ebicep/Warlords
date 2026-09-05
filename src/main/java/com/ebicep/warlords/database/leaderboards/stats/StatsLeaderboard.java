@@ -68,12 +68,10 @@ public class StatsLeaderboard {
         this.location = location;
         this.valueFunction = valueFunction;
         this.stringFunction = stringFunction;
-        this.comparator = (o1, o2) -> {
-            //if (o1.getUuid().equals(o2.getUuid())) return 0;
-            BigDecimal value1 = new BigDecimal(valueFunction.apply(o1).toString());
-            BigDecimal value2 = new BigDecimal(valueFunction.apply(o2).toString());
-            return value2.compareTo(value1);
-        };
+        this.comparator = (o1, o2) -> Double.compare(
+                valueFunction.apply(o2).doubleValue(),
+                valueFunction.apply(o1).doubleValue()
+        );
         for (PlayersCollections value : PlayersCollections.VALUES) {
             sortedTimedPlayers.put(value, new ArrayList<>());
         }
@@ -115,6 +113,9 @@ public class StatsLeaderboard {
     }
 
     public void resetHolograms(PlayersCollections collection, Predicate<DatabasePlayer> externalFilter, String categoryName, String subTitle) {
+        if (hidden || !StatsLeaderboardManager.enabled) {
+            return;
+        }
         Warlords.newChain()
                 .async(() -> resetSortedPlayers(collection, externalFilter))
                 .sync(() -> createLeaderboard(collection, categoryName, subTitle))
@@ -134,6 +135,9 @@ public class StatsLeaderboard {
     }
 
     private void createLeaderboard(PlayersCollections collection, String categoryName, String subTitle) {
+        if (!StatsLeaderboardManager.enabled) {
+            return;
+        }
         if (location.getWorld() == null) {
             ChatUtils.MessageType.LEADERBOARDS.sendErrorMessage("Leaderboard " + title + " has invalid location - " + location);
             return;
@@ -148,8 +152,12 @@ public class StatsLeaderboard {
         for (int i = 0; i < StatsLeaderboard.MAX_PAGES; i++) {
             pageHologramData.add(getPageHologramData(collection, i, subTitle + " - " + (categoryName.isEmpty() ? "" : categoryName + " - ") + collection.name));
         }
+        // IDs must include collection + category + title so overlapping boards coexist
+        String hologramId = "stats_" + collection.name + "_" + sanitizeId(subTitle) + "_" + sanitizeId(categoryName) + "_" + sanitizeId(title);
+        getSortedHolograms(collection).stream().flatMap(Collection::stream).forEach(Hologram::deleteHologram);
+        getSortedHolograms(collection).clear();
         Hologram board = new Hologram.Builder(
-                subTitle,
+                hologramId,
                 location,
                 p -> {
                     PlayerLeaderboardInfo playerInfo = StatsLeaderboardManager.getPlayerInfo(p);
@@ -159,7 +167,7 @@ public class StatsLeaderboard {
         ).build();
         List<DatabasePlayer> databasePlayers = getSortedPlayers(collection);
         Hologram playerPosition = new Hologram.Builder(
-                "playerPosition" + title + subTitle.replaceAll(" ", ""),
+                "playerPosition_" + hologramId,
                 location.clone().add(0, -0.5, 0),
                 p -> {
                     for (int i = 0; i < databasePlayers.size(); i++) {
@@ -184,25 +192,28 @@ public class StatsLeaderboard {
                                 .text(stringFunction.apply(databasePlayer))
                                 .build()
                         )
-                                .setBillboard(Display.Billboard.FIXED)
+                                .setBillboard(Display.Billboard.VERTICAL)
                                 .build();
                     }
                     return LOADING;
                 }
         ).build();
+        holograms.add(board);
+        holograms.add(playerPosition);
+        getSortedHolograms(collection).add(holograms);
         HologramManager.addHologram(board);
         HologramManager.addHologram(playerPosition);
-        getSortedHolograms(collection).stream().flatMap(Collection::stream).forEach(Hologram::deleteHologram);
-        getSortedHolograms(collection).clear();
-        getSortedHolograms(collection).add(holograms);
+    }
+
+    private static String sanitizeId(String value) {
+        return value == null || value.isEmpty() ? "_" : value.replaceAll("\\s+", "");
     }
 
     public HologramDataText getPageHologramData(PlayersCollections collection, int page, String subTitle) {
         List<DatabasePlayer> databasePlayers = getSortedPlayers(collection);
 
         ComponentBuilder componentBuilder = ComponentBuilder
-                .create(title + "_" + collection.name + "_" + page)
-                .newLine(collection.name + " " + title, NamedTextColor.AQUA, TextDecoration.BOLD)
+                .create(collection.name + " " + title, NamedTextColor.AQUA, TextDecoration.BOLD)
                 .newLine(subTitle, NamedTextColor.GRAY);
 
         for (int i = page * PLAYERS_PER_PAGE; i < (page + 1) * PLAYERS_PER_PAGE && i < databasePlayers.size(); i++) {

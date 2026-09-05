@@ -87,6 +87,9 @@ public class EventLeaderboard {
     }
 
     public void resetHolograms(Predicate<DatabasePlayer> externalFilter, String categoryName, String subTitle) {
+        if (!StatsLeaderboardManager.enabled) {
+            return;
+        }
         resetSortedPlayers(externalFilter);
         createLeaderboard(categoryName, subTitle);
     }
@@ -104,8 +107,7 @@ public class EventLeaderboard {
     }
 
     private void createLeaderboard(String eventType, String subTitle) {
-        //skip hologram creation for hidden leaderboards
-        if (hidden) {
+        if (!StatsLeaderboardManager.enabled || hidden) {
             return;
         }
         //creating leaderboard

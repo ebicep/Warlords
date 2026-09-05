@@ -251,6 +251,38 @@ public class HologramManager implements Listener {
         }
     }
 
+    /**
+     * Immediately sync whether {@code player} should see {@code hologram} based on its visibility settings.
+     */
+    public static void refreshVisibility(Player player, Hologram hologram) {
+        VisibilityManager visibilityManager = hologram.getVisibilityManager();
+        boolean currentlyVisible = visibilityManager.isCurrentlyVisibleTo(player);
+        if (!Objects.equals(hologram.getLocation().getWorld(), player.getWorld())) {
+            if (currentlyVisible) {
+                hideHologram(player, hologram);
+            }
+            return;
+        }
+        boolean shouldShow = switch (visibilityManager.getVisibilityType()) {
+            case ALL -> true;
+            case MANUAL -> visibilityManager.isViewer(player);
+        };
+        if (!shouldShow) {
+            if (currentlyVisible) {
+                hideHologram(player, hologram);
+            }
+            return;
+        }
+        boolean withinRange = hologram.withinRange(player);
+        if (withinRange && !currentlyVisible) {
+            showHologram(player, hologram);
+        } else if (!withinRange && currentlyVisible) {
+            hideHologram(player, hologram);
+        } else if (currentlyVisible) {
+            updateHologram(player, hologram);
+        }
+    }
+
     public static void cleanup() {
         TASK.cancel();
         HOLOGRAMS.clear();
@@ -308,6 +340,11 @@ public class HologramManager implements Listener {
             if (!hologram.withinRange(event.getPlayer())) {
                 return;
             }
+            VisibilityManager visibilityManager = hologram.getVisibilityManager();
+            if (visibilityManager.getVisibilityType() == VisibilityType.MANUAL
+                    && !visibilityManager.isViewer(event.getPlayer())) {
+                return;
+            }
             showHologram(event.getPlayer(), hologram);
         });
     }
@@ -334,6 +371,11 @@ public class HologramManager implements Listener {
                 hologram.getVisibilityManager().getCurrentViewers().remove(player.getUniqueId());
             }
             if (Objects.equals(hologram.getLocation().getWorld(), to) && hologram.withinRange(event.getPlayer())) {
+                VisibilityManager visibilityManager = hologram.getVisibilityManager();
+                if (visibilityManager.getVisibilityType() == VisibilityType.MANUAL
+                        && !visibilityManager.isViewer(event.getPlayer())) {
+                    return;
+                }
                 showHologram(event.getPlayer(), hologram);
             }
         });

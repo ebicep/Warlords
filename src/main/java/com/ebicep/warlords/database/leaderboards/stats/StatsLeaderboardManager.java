@@ -55,7 +55,34 @@ public class StatsLeaderboardManager {
 
     public static boolean enabled = true;
     public static boolean loaded = false;
+    private static final List<Hologram> SWITCHER_HOLOGRAMS = new ArrayList<>();
     private static PlayerLeaderboardInfo leaderboardInfo;
+
+    /**
+     * Performance kill switch: stop leaderboard updates and delete all lobby leaderboard holograms
+     * (stats boards, switchers, event boards, guild event boards).
+     */
+    public static void hardDisableLeaderboards() {
+        enabled = false;
+        loaded = false;
+
+        getAllLeaderboardCategories().forEach(category -> {
+            category.getAllHolograms().forEach(Hologram::deleteHologram);
+            category.getStatsLeaderboards().forEach(statsLeaderboard ->
+                    statsLeaderboard.getSortedTimedHolograms().values().forEach(List::clear)
+            );
+        });
+
+        SWITCHER_HOLOGRAMS.forEach(Hologram::deleteHologram);
+        SWITCHER_HOLOGRAMS.clear();
+
+        PLAYER_LEADERBOARD_INFOS.values().forEach(PlayerLeaderboardInfo::clearHolograms);
+
+//        EventsLeaderboardManager.clearHolograms();
+//        GuildLeaderboardManager.clearEventBoards();
+
+        ChatUtils.MessageType.LEADERBOARDS.sendMessage("Hard disabled leaderboards and deleted all leaderboard holograms");
+    }
 
     public static void addHologramLeaderboards(boolean init) {
         if (!Warlords.hologramsEnabled) {
@@ -173,7 +200,7 @@ public class StatsLeaderboardManager {
         }
         // boards can only be reset every 5 minutes
         if (System.currentTimeMillis() - LAST_BOARD_RESETS.getOrDefault(playersCollections, 0L) < 1000 * 60 * 5) {
-//            return;
+            return;
         }
         LAST_BOARD_RESETS.put(playersCollections, System.currentTimeMillis());
         if (Warlords.getGameManager().getGames().stream().anyMatch(gameHolder -> gameHolder.getGame() != null && gameHolder.getMap() != GameMap.MAIN_LOBBY)) {
@@ -199,38 +226,46 @@ public class StatsLeaderboardManager {
     }
 
     public static void setLeaderboardHologramVisibility(Player player) {
-        if (!Warlords.hologramsEnabled) {
+        if (!Warlords.hologramsEnabled || !enabled) {
             return;
         }
         validatePlayerHolograms(player);
 
         PlayerLeaderboardInfo playerLeaderboardInfo = PLAYER_LEADERBOARD_INFOS.get(player.getUniqueId());
         PlayersCollections selectedTime = playerLeaderboardInfo.getStatsTime();
-        int page = playerLeaderboardInfo.getPage();
         StatsLeaderboardCategory<?, ?, ?> statsLeaderboardCategory = getLeaderboardCategoryFromUUID(player.getUniqueId());
 
+        List<Hologram> toRefresh = new ArrayList<>();
         getAllLeaderboardCategories().forEach(category -> {
-            category.getAllHolograms()
-                    .forEach(hologram -> hologram.getVisibilityManager().removeViewer(player.getUniqueId()));
+            category.getAllHolograms().forEach(hologram -> {
+                if (hologram.getVisibilityManager().isCurrentlyVisibleTo(player)) {
+                    toRefresh.add(hologram);
+                }
+                hologram.getVisibilityManager().removeViewer(player.getUniqueId());
+            });
         });
         if (statsLeaderboardCategory != null) {
             statsLeaderboardCategory.getCollectionHologramPaged(selectedTime)
-                                    .forEach(holograms -> {
-                                        Hologram hologram = holograms.get(page);
+                                    .forEach(holograms -> holograms.forEach(hologram -> {
                                         hologram.getVisibilityManager().addViewer(player.getUniqueId());
-                                    });
+                                        toRefresh.add(hologram);
+                                    }));
         }
+        toRefresh.forEach(hologram -> HologramManager.refreshVisibility(player, hologram));
 
         CustomScoreboard.getPlayerScoreboard(player).giveMainLobbyScoreboard();
     }
 
     private static void createLeaderboardSwitcherHologram() {
-        if (!Warlords.hologramsEnabled) {
+        if (!Warlords.hologramsEnabled || !enabled) {
             return;
         }
 
+        SWITCHER_HOLOGRAMS.forEach(Hologram::deleteHologram);
+        SWITCHER_HOLOGRAMS.clear();
+
         //PAGE
-        List<Hologram> pageSwitcher = createLeaderboardSwitcherHologram(
+        SWITCHER_HOLOGRAMS.addAll(createLeaderboardSwitcherHologram(
                 StatsLeaderboardLocations.STATS_PAGE_SWITCH_LOCATION,
                 "Page",
                 Math.min(3, StatsLeaderboard.MAX_PAGES),
@@ -240,14 +275,15 @@ public class StatsLeaderboardManager {
                 PlayerLeaderboardInfo::getPageRange,
                 (player, playerLeaderboardInfo, integer) -> {
                     playerLeaderboardInfo.setPage(integer);
+                    setLeaderboardHologramVisibility(player);
                     EventsLeaderboardManager.resetVisibility(player);
                     GuildLeaderboardManager.resetVisibility(player);
                 }
-        );
+        ));
 
         List<Hologram> categorySwitcher = new ArrayList<>();
         //GAME TYPE
-        createLeaderboardSwitcherHologram(
+        SWITCHER_HOLOGRAMS.addAll(createLeaderboardSwitcherHologram(
                 StatsLeaderboardLocations.STATS_GAME_TYPE_SWITCH_LOCATION,
                 "GameType",
                 Math.min(3, GameType.ACTIVE_LEADERBOARDS.size()),
@@ -259,9 +295,9 @@ public class StatsLeaderboardManager {
                     playerLeaderboardInfo.setStatsGameType(gameType);
                     playerLeaderboardInfo.setStatsCategory(0);
                     categorySwitcher.forEach(hologram -> HologramManager.updateHologram(p, hologram));
-                    CustomScoreboard.getPlayerScoreboard(p).giveMainLobbyScoreboard();
+                    setLeaderboardHologramVisibility(p);
                 }
-        );
+        ));
         //CATEGORY
         categorySwitcher.addAll(createLeaderboardSwitcherHologram(
                 StatsLeaderboardLocations.STATS_CATEGORY_SWITCH_LOCATION,
@@ -313,11 +349,12 @@ public class StatsLeaderboardManager {
                     AbstractStatsLeaderboardGameType<?, ?, ?, ?> leaderboardGameType = STATS_LEADERBOARDS.get(selectedType);
                     List<? extends StatsLeaderboardCategory<?, ?, ?>> categories = leaderboardGameType.getCategories();
                     info.setStatsCategory(categories.indexOf(category));
-                    CustomScoreboard.getPlayerScoreboard(p).giveMainLobbyScoreboard();
+                    setLeaderboardHologramVisibility(p);
                 }
         ));
+        SWITCHER_HOLOGRAMS.addAll(categorySwitcher);
         //TIME
-        List<Hologram> timeSwitcher = createLeaderboardSwitcherHologram(
+        SWITCHER_HOLOGRAMS.addAll(createLeaderboardSwitcherHologram(
                 StatsLeaderboardLocations.STATS_TIME_SWITCH_LOCATION,
                 "Time",
                 Math.min(3, PlayersCollections.ACTIVE_LEADERBOARD_COLLECTIONS.size()),
@@ -327,9 +364,9 @@ public class StatsLeaderboardManager {
                 (playerLeaderboardInfo, playersCollections) -> playersCollections.name,
                 (p, playerLeaderboardInfo, playersCollections) -> {
                     playerLeaderboardInfo.setStatsTime(playersCollections);
-                    CustomScoreboard.getPlayerScoreboard(p).giveMainLobbyScoreboard();
+                    setLeaderboardHologramVisibility(p);
                 }
-        );
+        ));
     }
 
     public static void validatePlayerHolograms(Player player) {
