@@ -12,8 +12,11 @@ import com.ebicep.warlords.database.repositories.player.pojos.cache.support.Push
 import com.ebicep.warlords.database.repositories.player.pojos.cache.support.PushCacheTestFixtures;
 import com.ebicep.warlords.database.repositories.player.pojos.cache.support.PushCacheTestFixtures.EventCase;
 import com.ebicep.warlords.database.repositories.player.pojos.cache.support.PushCacheTestFixtures.PvEStats;
+import com.ebicep.warlords.database.repositories.player.pojos.cache.support.PushCacheVerifier;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.game.GameMode;
+import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -131,5 +134,33 @@ class PushCachePvEIntegrationTest {
         assertEquals(7, databasePlayer.getPveStats().getEventStats().getKills());
         assertEquals(7, databasePlayer.getPveStats().getKills());
         assertEquals(7L, databasePlayer.getPveStats().getEventStats().getMobKills().get("zombie"));
+    }
+
+    @Test
+    void classExperienceMatchesTreeWalkAfterOnslaughtUpdate() {
+        DatabasePlayer databasePlayer = PushCacheTestFixtures.newWarmedPvePlayer();
+        PvEStats stats = PvEStats.simple(6, 2);
+        DatabaseGamePlayerPvEOnslaught player = PushCacheTestFixtures.onslaughtPlayer(stats);
+        DatabaseGamePvEOnslaught game = PushCacheTestFixtures.pveOnslaughtGame(player, 2400);
+
+        PushCacheIntegrationSupport.applyUpdate(
+                databasePlayer,
+                game,
+                GameMode.ONSLAUGHT,
+                player,
+                DatabaseGamePlayerResult.LOST,
+                1
+        );
+
+        DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+        // PYROMANCER -> MAGE; experienceSpec = kills * 10 = 60
+        assertEquals(60, pveStats.getClassExperience(Classes.MAGE));
+        assertEquals(60, pveStats.getExperience());
+        assertEquals(0, pveStats.getClassExperience(Classes.WARRIOR));
+        assertEquals(
+                pveStats.getStat(Classes.MAGE, com.ebicep.warlords.database.repositories.player.pojos.Stats::getExperience, Long::sum, 0L),
+                pveStats.getClassExperience(Classes.MAGE)
+        );
+        PushCacheVerifier.assertConsistent(databasePlayer);
     }
 }

@@ -6,6 +6,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerR
 import com.ebicep.warlords.database.repositories.player.pojos.cache.support.PushCacheIntegrationSupport;
 import com.ebicep.warlords.database.repositories.player.pojos.cache.support.PushCacheTestFixtures;
 import com.ebicep.warlords.database.repositories.player.pojos.cache.support.PushCacheTestFixtures.GameStats;
+import com.ebicep.warlords.database.repositories.player.pojos.cache.support.PushCacheVerifier;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.GameMode;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -105,5 +106,29 @@ class PushCachePubIntegrationTest {
 
         assertEquals(10, databasePlayer.getKills());
         assertEquals(2, databasePlayer.getWins());
+    }
+
+    @org.junit.jupiter.api.Test
+    void ctfFlagsMatchTreeWalkAfterUpdate() {
+        DatabasePlayer databasePlayer = PushCacheTestFixtures.newWarmedPlayer();
+        var player = PushCacheTestFixtures.ctfPlayer(GameStats.simple(5, 1));
+        player.setFlagCaptures(3);
+        player.setFlagReturns(2);
+
+        PushCacheIntegrationSupport.applyUpdate(
+                databasePlayer,
+                PushCacheTestFixtures.pubCtfGame(),
+                GameMode.CAPTURE_THE_FLAG,
+                player,
+                DatabaseGamePlayerResult.WON,
+                1
+        );
+
+        var ctfStats = databasePlayer.getPubStats().getCtfStats();
+        assertEquals(3, ctfStats.getFlagsCaptured());
+        assertEquals(2, ctfStats.getFlagsReturned());
+        assertEquals(3, ((PushedStatsWarlordsClasses.CTF) ctfStats).treeWalkFlagsCaptured());
+        assertEquals(2, ((PushedStatsWarlordsClasses.CTF) ctfStats).treeWalkFlagsReturned());
+        PushCacheVerifier.assertConsistent(databasePlayer);
     }
 }

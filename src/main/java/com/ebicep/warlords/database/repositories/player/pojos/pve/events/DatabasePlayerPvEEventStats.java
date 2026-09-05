@@ -36,6 +36,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.pve.events.narmer.D
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.narmer.narmerstomb.DatabaseGamePlayerPvEEventNarmersTomb;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.narmer.narmerstomb.DatabaseGamePvEEventNarmersTomb;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.Stats;
 import com.ebicep.warlords.database.repositories.player.pojos.TracksAbilityStats;
 import com.ebicep.warlords.database.repositories.player.pojos.TracksMultiAbilityStats;
 import com.ebicep.warlords.database.repositories.player.pojos.cache.PushedMultiPvEStats;
@@ -58,6 +59,7 @@ import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.guilds.GuildPlayer;
+import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
 import org.springframework.data.annotation.Transient;
@@ -284,6 +286,11 @@ public class DatabasePlayerPvEEventStats implements MultiPvEEventStats<
                     MultiPvEEventStats.super.getMobAssists(),
                     MultiPvEEventStats.super.getMobDeaths()
             );
+            long[] classXp = new long[Classes.VALUES.length];
+            for (Classes classes : Classes.VALUES) {
+                classXp[classes.ordinal()] = MultiPvEEventStats.super.getStat(classes, Stats::getExperience, Long::sum, 0L);
+            }
+            pushedStats.fillClassExperience(classXp);
         });
     }
 

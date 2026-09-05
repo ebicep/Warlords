@@ -5,8 +5,10 @@ import com.ebicep.warlords.database.repositories.player.pojos.cache.CachedWaveDe
 import com.ebicep.warlords.database.repositories.player.pojos.cache.PushedMultiPvEStats;
 import com.ebicep.warlords.database.repositories.player.pojos.cache.PushedStatTotals;
 import com.ebicep.warlords.database.repositories.player.pojos.cache.PushedStatsOwner;
+import com.ebicep.warlords.database.repositories.player.pojos.cache.PushedStatsWarlordsClasses;
 import com.ebicep.warlords.database.repositories.player.pojos.cache.StatPushUp;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.player.general.Classes;
 
 import java.util.Map;
 
@@ -54,13 +56,27 @@ public final class PushCacheVerifier {
             Integer highestWaveCleared,
             Long fastestGameFinished,
             Long mostDamageInWave,
-            long longestTicksLived
+            long longestTicksLived,
+            Integer flagsCaptured,
+            Integer flagsReturned,
+            Map<Classes, Long> classExperience
     ) {
         static StatsSnapshot capture(PushedStatsOwner owner) {
             PushedStatTotals totals = owner.pushedStats();
             boolean pve = owner instanceof CachedPvEStats;
             boolean waveDefense = owner instanceof CachedWaveDefenseStats;
             boolean onslaught = owner instanceof PushedMultiPvEStats.Onslaught;
+            boolean ctf = owner instanceof PushedStatsWarlordsClasses.CTF;
+            Map<Classes, Long> classExperience = null;
+            if (pve || waveDefense || onslaught) {
+                classExperience = new java.util.EnumMap<>(Classes.class);
+                for (Classes classes : Classes.VALUES) {
+                    long value = totals.getClassExperience(classes);
+                    if (value != 0) {
+                        classExperience.put(classes, value);
+                    }
+                }
+            }
             return new StatsSnapshot(
                     totals.isWarmed(),
                     totals.getKills(),
@@ -82,7 +98,10 @@ public final class PushCacheVerifier {
                     waveDefense ? totals.getHighestWaveCleared() : null,
                     waveDefense ? totals.getFastestGameFinished() : null,
                     waveDefense ? totals.getMostDamageInWave() : null,
-                    onslaught ? totals.getLongestTicksLived() : 0
+                    onslaught ? totals.getLongestTicksLived() : 0,
+                    ctf ? totals.getFlagsCaptured() : null,
+                    ctf ? totals.getFlagsReturned() : null,
+                    classExperience
             );
         }
     }
