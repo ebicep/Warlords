@@ -12,7 +12,7 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.ItemDisplay;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -53,7 +53,7 @@ public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight, BeaconOf
     }
 
     @Override
-    public BeaconOfLightData getDataObject(WarlordsEntity wp, ArmorStand beacon, Location groundLocation, CircleEffect effect, float radius) {
+    public BeaconOfLightData getDataObject(WarlordsEntity wp, ItemDisplay beacon, Location groundLocation, CircleEffect effect, float radius) {
         return new BeaconOfLightData(beacon, groundLocation, effect, radius);
     }
 
@@ -113,7 +113,7 @@ public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight, BeaconOf
 
     public static class BeaconOfLightData extends BeaconData {
 
-        public BeaconOfLightData(ArmorStand beacon, Location groundLocation, CircleEffect effect, float radius) {
+        public BeaconOfLightData(ItemDisplay beacon, Location groundLocation, CircleEffect effect, float radius) {
             super(beacon, groundLocation, effect, radius);
         }
 

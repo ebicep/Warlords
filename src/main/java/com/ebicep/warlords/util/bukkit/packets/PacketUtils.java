@@ -8,25 +8,19 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.reflect.StructureModifier;
-import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.abilities.SanctifiedBeacon;
 import com.ebicep.warlords.commands.debugcommands.misc.MountCommand;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
-import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.packets.wrappers.WrapperPlayClientSteerVehicle;
-import com.ebicep.warlords.util.bukkit.packets.wrappers.WrapperPlayServerEntityEquipment;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import net.minecraft.network.protocol.game.ClientboundAnimatePacket;
 import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
 import net.minecraft.world.entity.Entity;
-import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.List;
@@ -54,33 +48,6 @@ public class PacketUtils {
                         if (sound != null && blockedSounds.contains(sound)) {
                             event.setCancelled(true);
                         }
-                    }
-                }
-        );
-        PROTOCOL_MANAGER.addPacketListener(
-                new PacketAdapter(instance, PacketType.Play.Server.ENTITY_EQUIPMENT) {
-                    @Override
-                    public void onPacketSending(PacketEvent event) {
-                        PacketContainer packet = event.getPacket().deepClone();
-                        int entityID = packet.getIntegers().read(0);
-                        Team team = SanctifiedBeacon.BEACON_IDS.get(entityID);
-                        if (team == null) {
-                            return;
-                        }
-                        Player playerReceiving = event.getPlayer();
-                        WarlordsEntity warlordsPlayer = Warlords.getPlayer(playerReceiving);
-                        if (warlordsPlayer == null) {
-                            return;
-                        }
-                        if (warlordsPlayer.getTeam() == team) {
-                            return;
-                        }
-                        WrapperPlayServerEntityEquipment equipmentPacket = new WrapperPlayServerEntityEquipment();
-                        equipmentPacket.setEntity(entityID);
-                        equipmentPacket.setSlots(List.of(
-                                new com.comphenix.protocol.wrappers.Pair<>(EnumWrappers.ItemSlot.HEAD, new ItemStack(Material.BROWN_STAINED_GLASS_PANE))
-                        ));
-                        event.setPacket(equipmentPacket.getHandle());
                     }
                 }
         );
