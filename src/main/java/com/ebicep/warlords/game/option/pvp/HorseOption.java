@@ -322,9 +322,11 @@ public class HorseOption implements Option, Listener {
         public void kill() {
             if (horse != null) {
                 horse.remove();
+                horse = null;
             }
             if (npc != null) {
-                npc.despawn();
+                npc.destroy();
+                npc = null;
             }
         }
 
@@ -333,8 +335,10 @@ public class HorseOption implements Option, Listener {
             if (currentHealth <= 0) {
                 if (horse != null) {
                     horse.remove();
+                    horse = null;
                 } else if (npc != null) {
-                    npc.despawn();
+                    npc.destroy();
+                    npc = null;
                 }
             }
             updateHealthDisplay();
