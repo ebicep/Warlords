@@ -166,10 +166,17 @@ public class CustomScoreboard {
         }
     }
 
-    private record LobbyNameDisplay(String name, Component prefix, Component suffix, NamedTextColor color) {}
+    private record LobbyNameDisplay(String name, Permissions rank, Component prefix, Component suffix, NamedTextColor color) {}
 
     private static boolean isInLobby(Player player) {
         return Warlords.getGameManager().getPlayerGame(player.getUniqueId()).isEmpty();
+    }
+
+    /**
+     * Sortable Bukkit team id so the client groups lobby tab list by {@link Permissions} rank first.
+     */
+    private static String lobbyTabTeamName(Permissions rank, String playerName) {
+        return rank.ordinal() + "_" + playerName;
     }
 
     private static LobbyNameDisplay buildLobbyNameDisplay(Player player) {
@@ -179,11 +186,13 @@ public class CustomScoreboard {
             GuildTag tag = guildPlayerPair.getA().getTag();
             suffix = Component.space().append(tag.getTag(false)).compact();
         }
+        Permissions rank = Permissions.getPermission(player);
         return new LobbyNameDisplay(
                 player.getName(),
+                rank,
                 Permissions.getPrefixWithColor(player, false).compact(),
                 suffix,
-                Permissions.getColor(player)
+                rank.prefixColor
         );
     }
 
@@ -200,12 +209,25 @@ public class CustomScoreboard {
     }
 
     private void applyLobbyNameDisplay(LobbyNameDisplay display) {
-        Team team = scoreboard.getTeam(display.name());
-        if (team == null) {
-            team = scoreboard.registerNewTeam(display.name());
-        }
-        if (!team.hasEntry(display.name())) {
-            team.addEntry(display.name());
+        String expectedName = lobbyTabTeamName(display.rank(), display.name());
+        Team current = scoreboard.getEntryTeam(display.name());
+        Team team;
+        if (current != null && current.getName().equals(expectedName)) {
+            team = current;
+        } else {
+            if (current != null) {
+                current.removeEntry(display.name());
+                if (current.getEntries().isEmpty() && !current.getName().startsWith("!team")) {
+                    current.unregister();
+                }
+            }
+            team = scoreboard.getTeam(expectedName);
+            if (team == null) {
+                team = scoreboard.registerNewTeam(expectedName);
+            }
+            if (!team.hasEntry(display.name())) {
+                team.addEntry(display.name());
+            }
         }
         if (!team.prefix().equals(display.prefix())) {
             team.prefix(display.prefix());
