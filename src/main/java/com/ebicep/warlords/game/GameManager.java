@@ -20,7 +20,14 @@ import java.util.function.BiConsumer;
 
 public class GameManager implements AutoCloseable {
 
+    /** Admin toggle via /admin disablegames. */
     public static boolean gameStartingDisabled = false;
+    /** Set by DatabaseHealth during DB outages; independent of the admin toggle. */
+    public static boolean databaseGameStartingDisabled = false;
+
+    public static boolean isGameStartingDisabled() {
+        return gameStartingDisabled || databaseGameStartingDisabled;
+    }
     /** Chunk radius around MainLobby spawn kept loaded via plugin tickets. */
     private static final int MAIN_LOBBY_WARM_CHUNK_RADIUS = 15;
     private static final long IDLE_WORLD_UNLOAD_DELAY_TICKS = 60 * 60 * 20L;
