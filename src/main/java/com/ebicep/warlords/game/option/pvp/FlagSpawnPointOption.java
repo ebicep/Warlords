@@ -203,6 +203,9 @@ public class FlagSpawnPointOption implements Option {
                             }
                             // Steal flag
                             info.setFlag(new PlayerFlagLocation(wp, 0, spawnFlagLocation.getFlagMultiplier()));
+                            if (wp.getEntity().getVehicle() != null) {
+                                wp.getEntity().getVehicle().remove();
+                            }
                             Integer flagRes = ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "ctf.flagPickResistance", int.class, 0);
                             if (flagRes != null && flagRes != 0) {
                                 wp.getCooldownManager().addCooldown(new RegularCooldown<>(
