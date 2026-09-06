@@ -39,7 +39,7 @@ import static java.lang.Math.sin;
 
 public class EffectUtils {
 
-    public static final double PARTICLE_RANGE = 100.0;
+    public static final double PARTICLE_RANGE = 75;
     public static final double PARTICLE_RANGE_SQ = PARTICLE_RANGE * PARTICLE_RANGE;
     private static final ConcurrentHashMap<UUID, AtomicInteger> PARTICLE_QUALITY_COUNTERS = new ConcurrentHashMap<>();
     private static final Color DEFAULT_COLOR = Color.fromRGB(255, 0, 0);
