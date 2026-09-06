@@ -31,6 +31,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -166,30 +167,40 @@ public class CustomScoreboard {
         }
     }
 
-    private record LobbyNameDisplay(String name, Permissions rank, Component prefix, Component suffix, NamedTextColor color) {}
+    private record LobbyNameDisplay(String name, Permissions rank, String guildName, Component prefix, Component suffix, NamedTextColor color) {}
 
     private static boolean isInLobby(Player player) {
         return Warlords.getGameManager().getPlayerGame(player.getUniqueId()).isEmpty();
     }
 
     /**
-     * Sortable Bukkit team id so the client groups lobby tab list by {@link Permissions} rank first.
+     * Sortable Bukkit team id so the client orders lobby tab by {@link Permissions} rank, then guild name, then player name.
+     * Unguilded players use {@code ~} so they sort after guilded players within the same rank.
      */
-    private static String lobbyTabTeamName(Permissions rank, String playerName) {
-        return rank.ordinal() + "_" + playerName;
+    private static String lobbyTabTeamName(Permissions rank, String guildName, String playerName) {
+        String guildKey = guildName == null || guildName.isEmpty()
+                ? "~"
+                : guildName.toLowerCase(Locale.ROOT);
+        return rank.ordinal() + "_" + guildKey + "_" + playerName;
     }
 
     private static LobbyNameDisplay buildLobbyNameDisplay(Player player) {
         Component suffix = Component.empty();
+        String guildName = "";
         Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(player.getUniqueId());
-        if (guildPlayerPair != null && guildPlayerPair.getA().getTag() != null) {
-            GuildTag tag = guildPlayerPair.getA().getTag();
-            suffix = Component.space().append(tag.getTag(false)).compact();
+        if (guildPlayerPair != null) {
+            Guild guild = guildPlayerPair.getA();
+            guildName = guild.getName();
+            if (guild.getTag() != null) {
+                GuildTag tag = guild.getTag();
+                suffix = Component.space().append(tag.getTag(false)).compact();
+            }
         }
         Permissions rank = Permissions.getPermission(player);
         return new LobbyNameDisplay(
                 player.getName(),
                 rank,
+                guildName,
                 Permissions.getPrefixWithColor(player, false).compact(),
                 suffix,
                 rank.prefixColor
@@ -209,7 +220,7 @@ public class CustomScoreboard {
     }
 
     private void applyLobbyNameDisplay(LobbyNameDisplay display) {
-        String expectedName = lobbyTabTeamName(display.rank(), display.name());
+        String expectedName = lobbyTabTeamName(display.rank(), display.guildName(), display.name());
         Team current = scoreboard.getEntryTeam(display.name());
         Team team;
         if (current != null && current.getName().equals(expectedName)) {
