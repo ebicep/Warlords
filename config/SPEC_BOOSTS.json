@@ -292,7 +292,7 @@
       "undyingSteed": {
         "difficulty": 1,
         "name": "Undying Steed",
-        "description": "Increase the damage of {{aqua:Crippling Strike}} by {{damage;%}}. Your horse will always be available when you respawn. You can take up to {{damage}} damage on your horse without dismounting.",
+        "description": "Increase the damage of {{aqua:Crippling Strike}} by {{damage;%}}. {{aqua:Crippling Strike}} does not dismount. Your horse will always be available when you respawn. You can take up to {{damage}} damage on your horse without dismounting.",
         "cripplingStrikeDamageIncreasePercent": 20,
         "horseHealth": 1500
       },
