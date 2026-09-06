@@ -11,14 +11,12 @@ import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
-import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Transformation;
 import org.bukkit.util.Vector;
 import org.joml.AxisAngle4f;
@@ -502,6 +500,8 @@ public class EffectUtils {
         return v.setX(x).setZ(z);
     }
 
+    private static final double CHAIN_Y_OFFSET = 1.25;
+
     public static void playChainAnimation(Player player1, Player player2, ItemStack item, int ticksLived) {
         playChainAnimation(player1.getLocation(), player2.getLocation(), item, ticksLived);
     }
@@ -513,48 +513,46 @@ public class EffectUtils {
      * @param ticksLived how long should the chain last
      */
     public static void playChainAnimation(Location location1, Location location2, ItemStack item, int ticksLived) {
-        Location from = location1.clone().add(0, -0.6, 0);
-        Location to = location2.clone().add(0, -0.6, 0);
-        from.setDirection(from.toVector().subtract(to.toVector()).multiply(-1));
-        List<ArmorStand> chains = new ArrayList<>();
-        int maxDistance = (int) Math.round(to.distance(from));
-        for (int i = 0; i < maxDistance; i++) {
-            ArmorStand chain = Utils.spawnArmorStand(from, armorStand -> {
-                        armorStand.setHeadPose(new EulerAngle(from.getDirection().getY() * -1, 0, 0));
-                        armorStand.setMarker(true);
-                        armorStand.getEquipment().setHelmet(item);
-                    }
-            );
-            from.add(from.getDirection().multiply(1.25));
-            chains.add(chain);
-            if (to.distanceSquared(from) < .3) {
-                break;
-            }
+        Location from = location1.clone().add(0, CHAIN_Y_OFFSET, 0);
+        Location to = location2.clone().add(0, CHAIN_Y_OFFSET, 0);
+        float distance = (float) from.distance(to);
+        if (distance <= 0) {
+            return;
         }
-
+        List<Entity> chains = spawnChainDisplays(from, to, item, distance * 0.5f, distance);
         new BukkitRunnable() {
 
             @Override
             public void run() {
-                if (chains.isEmpty()) {
-                    this.cancel();
-                }
-
-                for (int i = 0; i < chains.size(); i++) {
-                    ArmorStand armorStand = chains.get(i);
-                    if (armorStand.getTicksLived() > ticksLived) {
-                        armorStand.remove();
-                        chains.remove(i);
-                        i--;
-                    }
-                }
-
+                chains.forEach(Entity::remove);
             }
 
-        }.runTaskTimer(Warlords.getInstance(), 0, 0);
+        }.runTaskLater(Warlords.getInstance(), ticksLived);
     }
 
     public static void playChainAnimation(Game game, Location location1, Location location2, ItemStack item, float initialDisplacement, float increment, int ticksLived) {
+        List<Entity> chains = spawnChainDisplays(location1, location2, item, initialDisplacement, increment);
+        new GameRunnable(game) {
+
+            @Override
+            public void run() {
+                chains.forEach(Entity::remove);
+            }
+
+        }.runTaskLater(ticksLived);
+    }
+
+    public static void playChainAnimation(WarlordsEntity player1, WarlordsEntity player2, ItemStack item, int ticksLived) {
+        Location from = player1.getLocation().clone().add(0, CHAIN_Y_OFFSET, 0);
+        Location to = player2.getLocation().clone().add(0, CHAIN_Y_OFFSET, 0);
+        float distance = (float) from.distance(to);
+        if (distance <= 0) {
+            return;
+        }
+        playChainAnimation(player1.getGame(), from, to, item, distance * 0.5f, distance, ticksLived);
+    }
+
+    private static List<Entity> spawnChainDisplays(Location location1, Location location2, ItemStack item, float initialDisplacement, float increment) {
         Vector direction = location2.toVector().subtract(location1.toVector()).normalize().multiply(increment);
         double pitch = new LocationBuilder(location1).faceTowards(location2).getPitch();
         LocationBuilder start = new LocationBuilder(location1).faceTowards(location2).forward(initialDisplacement).lookRight().pitch(0);
@@ -578,19 +576,7 @@ public class EffectUtils {
             ));
             start.add(direction);
         }
-
-        new GameRunnable(game) {
-
-            @Override
-            public void run() {
-                chains.forEach(Entity::remove);
-            }
-
-        }.runTaskLater(ticksLived);
-    }
-
-    public static void playChainAnimation(WarlordsEntity player1, WarlordsEntity player2, ItemStack item, int ticksLived) {
-        playChainAnimation(player1.getLocation(), player2.getLocation(), item, ticksLived);
+        return chains;
     }
 
     public static void playParticleLinkAnimation(Location to, Location from, Particle effect) {

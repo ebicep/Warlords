@@ -5,9 +5,12 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityTargetEvent;
 import com.ebicep.warlords.player.general.AbstractPlayerClass;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.util.bukkit.LocationBuilder;
+import com.ebicep.warlords.util.bukkit.LocationUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Vector;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
@@ -59,7 +62,8 @@ public abstract class AbstractChain<T extends AbstractChain<T, R>, R extends Abs
     protected abstract void onHit(WarlordsEntity warlordsPlayer, int hitCounter);
 
     protected void chain(Location from, Location to) {
-        EffectUtils.playChainAnimation(from, to, getChainItem(), 9);
+        Vector left = LocationUtils.getLeftDirection(new LocationBuilder(from).faceTowards(to)).multiply(0.15);
+        EffectUtils.playChainAnimation(from.clone().add(left), to.clone().add(left), getChainItem(), 9);
     }
 
     protected abstract ItemStack getChainItem();
