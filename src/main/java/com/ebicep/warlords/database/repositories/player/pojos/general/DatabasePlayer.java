@@ -48,6 +48,7 @@ public class DatabasePlayer implements CachedMultiStatsGeneral, TracksMultiAbili
     @Indexed(unique = true)
     private UUID uuid;
     private String name;
+    @Indexed
     @Field("last_login")
     private Instant lastLogin;
     @Field("skin_base_64")

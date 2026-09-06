@@ -42,4 +42,6 @@ public interface CustomPlayerRepository {
 
     void renameCollection(String collectionName, String newCollectionName, boolean dropTarget);
 
+    void ensureLastLoginIndexes();
+
 }
