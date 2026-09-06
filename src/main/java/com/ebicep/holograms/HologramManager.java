@@ -91,9 +91,9 @@ public class HologramManager implements Listener {
             @Override
             public void onPacketReceiving(PacketEvent event) {
                 Player player = event.getPlayer();
-                PacketContainer packet = event.getPacket().deepClone();
+                PacketContainer packet = event.getPacket();
                 int entityID = packet.getIntegers().read(0);
-                List<WrappedEnumEntityUseAction> values = event.getPacket().getEnumEntityUseActions().getValues();
+                List<WrappedEnumEntityUseAction> values = packet.getEnumEntityUseActions().getValues();
                 WrappedEnumEntityUseAction wrappedEnumEntityUseAction = values.getFirst();
                 if (wrappedEnumEntityUseAction.getAction() == EnumWrappers.EntityUseAction.INTERACT) {
                     return;
