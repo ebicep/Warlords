@@ -123,7 +123,7 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
                     float hitWidth = ringIndex == totalRings - 1 ? 0.6f : 0.7f;
                     ringIndex++;
                     for (Location location : fallingBlockLocation) {
-                        if (random.nextDouble() < 0.6) {
+                        if (random.nextDouble() < 0.4) {
                             Utils.addFallingBlock(location);
                         }
                         // Damage
