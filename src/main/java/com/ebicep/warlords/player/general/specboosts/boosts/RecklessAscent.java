@@ -18,6 +18,7 @@ import java.util.List;
 
 public class RecklessAscent implements SpecBoostManager.SpecBoost<RecklessAscent> {
 
+    private float recklessChargeDamageIncreasePercent;
     private float radiusIncrease;
     private float travelDistanceIncrease;
     private float damageReductionPercent;
@@ -27,6 +28,7 @@ public class RecklessAscent implements SpecBoostManager.SpecBoost<RecklessAscent
 
     @Override
     public void init() {
+        this.recklessChargeDamageIncreasePercent = getValue("recklessChargeDamageIncreasePercent", float.class);
         this.radiusIncrease = getValue("radiusIncrease", float.class);
         this.travelDistanceIncrease = getValue("travelDistanceIncrease", float.class);
         this.damageReductionPercent = getValue("damageReductionPercent", float.class);
@@ -42,7 +44,7 @@ public class RecklessAscent implements SpecBoostManager.SpecBoost<RecklessAscent
 
     @Override
     public List<Object> getVariables() {
-        return List.of(radiusIncrease, travelDistanceIncrease, damageReductionPercent, damageReductionDurationTicks, verticalAscentDamage);
+        return List.of(recklessChargeDamageIncreasePercent, radiusIncrease, travelDistanceIncrease, damageReductionPercent, damageReductionDurationTicks, verticalAscentDamage);
     }
 
     @Override
@@ -63,6 +65,9 @@ public class RecklessAscent implements SpecBoostManager.SpecBoost<RecklessAscent
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(RecklessCharge.class).forEach(recklessCharge -> {
+                recklessCharge.getDamageValues().getChargeDamage().forEachValue(floatModifiable ->
+                        floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", recklessChargeDamageIncreasePercent / 100)
+                );
                 recklessCharge.setAdditionalBlocks(recklessCharge.getAdditionalBlocks() + travelDistanceIncrease);
                 recklessCharge.getHitBoxRadius().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", radiusIncrease);
                 recklessCharge.setVerticalMovement(true);

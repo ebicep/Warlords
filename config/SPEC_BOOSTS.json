@@ -299,7 +299,8 @@
       "recklessAscent": {
         "difficulty": 3,
         "name": "Reckless Ascent",
-        "description": "Increase the radius of {{aqua:Reckless Charge}} by {{blocks}} and the range by {{blocks}}. Gain {{damageReduction;%}} damage reduction for {{ticks}} after casting {{aqua:Reckless Charge}}. {{aqua:Reckless Charge}} can ascend vertically, but you take {{damage}} when doing so.",
+        "description": "Increase the damage of {{aqua:Reckless Charge}} by {{damage;%}}, the radius by {{blocks}} and the range by {{blocks}}. Gain {{damageReduction;%}} damage reduction for {{ticks}} after casting {{aqua:Reckless Charge}}. {{aqua:Reckless Charge}} can ascend vertically, but you take {{damage}} when doing so.",
+        "recklessChargeDamageIncreasePercent": 15,
         "radiusIncrease": 1,
         "travelDistanceIncrease": 2,
         "damageReductionPercent": 15,
