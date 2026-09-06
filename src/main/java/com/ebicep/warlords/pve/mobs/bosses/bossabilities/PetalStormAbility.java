@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.bosses.bossabilities;
 
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
@@ -180,7 +181,7 @@ public class PetalStormAbility {
                             double prog = (double) f / total; // 0..1
                             double y = from.getY() + (target.getY() - from.getY()) * prog;
                             Location mid = new Location(target.getWorld(), target.getX(), y, target.getZ());
-                            target.getWorld().spawnParticle(fallTrail, mid, 4, 0.15, 0.15, 0.15, 0.0);
+                            EffectUtils.displayParticle(fallTrail, mid, 4, 0.15, 0.15, 0.15, 0.0);
                             f++;
                         }
                     }.runTaskTimer(0, 1);
@@ -279,8 +280,8 @@ public class PetalStormAbility {
     // Apply damage + debuffs to enemies in radius, show pop VFX/SFX
     private void doImpact(Location at) {
         at.getWorld().playSound(at, impactSfx, 2, 1.0f);
-        at.getWorld().spawnParticle(popA, at, 20, 0.4, 0.2, 0.4, 0.0);
-        at.getWorld().spawnParticle(popB, at, 36, 0.6, 0.3, 0.6, 0.05, popBlock);
+        EffectUtils.displayParticle(popA, at, 20, 0.4, 0.2, 0.4, 0.0);
+        EffectUtils.displayParticle(popB, at, 36, 0.6, 0.3, 0.6, 0.05, popBlock);
 
         PlayerFilter.entitiesAround(at, impactRadius, 3, impactRadius)
                 .aliveEnemiesOf(source)
@@ -330,7 +331,7 @@ public class PetalStormAbility {
             double x = center.getX() + Math.cos(angle) * radius;
             double z = center.getZ() + Math.sin(angle) * radius;
             Location p = new Location(center.getWorld(), x, center.getY(), z);
-            center.getWorld().spawnParticle(Particle.DUST, p, 1, dust);
+            EffectUtils.displayParticle(Particle.DUST, p, 1, dust);
         }
     }
 }

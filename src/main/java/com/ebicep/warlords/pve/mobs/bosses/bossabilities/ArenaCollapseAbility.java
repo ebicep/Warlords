@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.bosses.bossabilities;
 
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
@@ -135,7 +136,7 @@ public class ArenaCollapseAbility {
                         }
 
                         // Minor hit feedback on boundary (optional)
-                        w.spawnParticle(Particle.CRIT, clampToRing(center, p, currentRadius), 1, 0.02, 0.02, 0.02, 0.0);
+                        EffectUtils.displayParticle(Particle.CRIT, clampToRing(center, p, currentRadius), 1, 0.02, 0.02, 0.02, 0.0);
                     }
                 }
             }
@@ -191,7 +192,7 @@ public class ArenaCollapseAbility {
             double x = center.getX() + Math.cos(a) * radius;
             double z = center.getZ() + Math.sin(a) * radius;
             Location p = new Location(w, x, center.getY(), z);
-            w.spawnParticle(Particle.DUST, p, 0, dust);
+            EffectUtils.displayParticle(Particle.DUST, p, 0, dust);
         }
     }
 

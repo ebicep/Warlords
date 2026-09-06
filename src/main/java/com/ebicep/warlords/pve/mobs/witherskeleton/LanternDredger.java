@@ -190,7 +190,7 @@ public class LanternDredger extends AbstractMob implements ChampionMob {
 
     private void playBlackoutChargeEffects() {
         Location location = warlordsNPC.getLocation().clone().add(0, 1.2, 0);
-        warlordsNPC.getWorld().spawnParticle(Particle.SQUID_INK, location, 18, .45, .45, .45, .03);
+        EffectUtils.displayParticle(Particle.SQUID_INK, location, 18, .45, .45, .45, .03);
         EffectUtils.drawRing(warlordsNPC.getLocation(), LANTERN_RADIUS, 2, Particle.SCULK_SOUL);
     }
 

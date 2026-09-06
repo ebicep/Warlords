@@ -226,7 +226,7 @@ public class Siltstalker extends AbstractMob implements ChampionMob {
         backstabTicksLeft--;
 
         if (backstabTicksLeft % 10 == 0) {
-            backstabTarget.getWorld().spawnParticle(
+            EffectUtils.displayParticle(
                     Particle.SQUID_INK,
                     backstabTarget.getLocation().clone().add(0, 1.1, 0),
                     8,

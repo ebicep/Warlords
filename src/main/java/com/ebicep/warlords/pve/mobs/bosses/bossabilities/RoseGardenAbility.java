@@ -178,7 +178,7 @@ public class RoseGardenAbility {
                 if (!active) {
                     // Telegraph ring & light petals
                     drawRingDust(nodeLoc, nodeRadius, 20, telegraphDust);
-                    nodeLoc.getWorld().spawnParticle(auraParticle, nodeLoc, 6, 0.35, 0.15, 0.35, 0.0);
+                    EffectUtils.displayParticle(auraParticle, nodeLoc, 6, 0.35, 0.15, 0.35, 0.0);
 
                     spinDisplayIfNeeded(display, tick);
 
@@ -194,7 +194,7 @@ public class RoseGardenAbility {
 
                 // Active phase
                 drawRingDust(nodeLoc, nodeRadius, 24, telegraphDust);
-                nodeLoc.getWorld().spawnParticle(auraParticle, nodeLoc, 8, 0.45, 0.2, 0.45, 0.0);
+                EffectUtils.displayParticle(auraParticle, nodeLoc, 8, 0.45, 0.2, 0.45, 0.0);
 
                 spinDisplayIfNeeded(display, tick);
 
@@ -217,7 +217,7 @@ public class RoseGardenAbility {
                                     wp.addSpeedModifier(source, "Rose Thorns", -25, slowTicks);
                                 }
 
-                                nodeLoc.getWorld().spawnParticle(thornParticle, wp.getLocation(), 2, 0.1, 0.1, 0.1, 0.0);
+                                EffectUtils.displayParticle(thornParticle, wp.getLocation(), 2, 0.1, 0.1, 0.1, 0.0);
                             });
                 }
 
@@ -240,8 +240,8 @@ public class RoseGardenAbility {
 
     private void bloomBurst(Location at) {
         at.getWorld().playSound(at, bloomSfx, 2, 0.5f);
-        at.getWorld().spawnParticle(bloomParticleA, at, 24, 0.5, 0.2, 0.5, 0.0);
-        at.getWorld().spawnParticle(bloomParticleB, at, 40, 0.7, 0.35, 0.7, 0.05, bloomBlock);
+        EffectUtils.displayParticle(bloomParticleA, at, 24, 0.5, 0.2, 0.5, 0.0);
+        EffectUtils.displayParticle(bloomParticleB, at, 40, 0.7, 0.35, 0.7, 0.05, bloomBlock);
         EffectUtils.playFirework(at, FireworkEffect.builder().withColor(Color.RED).with(FireworkEffect.Type.BALL_LARGE).build());
 
         PlayerFilter.entitiesAround(at, bloomRadius, bloomRadius, bloomRadius)
@@ -273,7 +273,7 @@ public class RoseGardenAbility {
             double x = center.getX() + Math.cos(angle) * radius;
             double z = center.getZ() + Math.sin(angle) * radius;
             Location p = new Location(center.getWorld(), x, center.getY(), z);
-            center.getWorld().spawnParticle(Particle.DUST, p, 1, dust);
+            EffectUtils.displayParticle(Particle.DUST, p, 1, dust);
         }
     }
 

@@ -1038,8 +1038,8 @@ public class Lilium extends AbstractMob implements BossMob {
             public void run() {
                 if (life-- <= 0 || r > maxR) {
                     // small finish pop
-                    at.getWorld().spawnParticle(Particle.CHERRY_LEAVES, at, 10, 0.3, 0.15, 0.3, 0.0);
-                    at.getWorld().spawnParticle(Particle.HEART, at, 18, 0.5, 0.25, 0.5, 0.05);
+                    EffectUtils.displayParticle(Particle.CHERRY_LEAVES, at, 10, 0.3, 0.15, 0.3, 0.0);
+                    EffectUtils.displayParticle(Particle.HEART, at, 18, 0.5, 0.25, 0.5, 0.05);
                     this.cancel();
                     return;
                 }
@@ -1175,7 +1175,7 @@ public class Lilium extends AbstractMob implements BossMob {
             double x = center.getX() + Math.cos(angle) * radius;
             double z = center.getZ() + Math.sin(angle) * radius;
             Location p = new Location(center.getWorld(), x, center.getY(), z);
-            center.getWorld().spawnParticle(Particle.DUST, p, 1, dust);
+            EffectUtils.displayParticle(Particle.DUST, p, 1, dust);
         }
     }
 

@@ -1,6 +1,7 @@
 package com.ebicep.warlords.game.option.pve.anomaly;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
@@ -525,14 +526,14 @@ public class WhatOnceWasPuzzleOption extends AbstractAnomalyOption {
     private void showPuzzleParticles() {
         AncientVaultMarker vault = vaultMarkers.get(activeVault);
         Location vaultLocation = vault.getLocation().clone().add(0, 1, 0);
-        vaultLocation.getWorld().spawnParticle(Particle.END_ROD, vaultLocation, 8, .8, 1, .8, .02);
+        EffectUtils.displayParticle(Particle.END_ROD, vaultLocation, 8, .8, 1, .8, .02);
 
         for (AncientRuneMarker marker : game.getMarkers(AncientRuneMarker.class)) {
             if (marker.getVaultIndex() != activeVault) {
                 continue;
             }
             Location runeLocation = marker.getLocation().clone().add(0, RUNE_DISPLAY_Y_OFFSET, 0);
-            runeLocation.getWorld().spawnParticle(Particle.ENCHANT, runeLocation, 4, .3, .5, .3, .02);
+            EffectUtils.displayParticle(Particle.ENCHANT, runeLocation, 4, .3, .5, .3, .02);
         }
     }
 

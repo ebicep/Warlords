@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.witherskeleton;
 
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -167,11 +168,11 @@ public class AbyssWatcher extends AbstractMob implements ChampionMob, Listener {
 
     private void playWatchedEffects() {
         Location targetLocation = watchedTarget.getLocation().clone().add(0, 1.3, 0);
-        watchedTarget.getWorld().spawnParticle(Particle.PORTAL, targetLocation, 18, .3, .45, .3, .025);
+        EffectUtils.displayParticle(Particle.PORTAL, targetLocation, 18, .3, .45, .3, .025);
 
         if (warlordsNPC != null && warlordsNPC.isAlive()) {
             Location watcherLocation = warlordsNPC.getLocation().clone().add(0, 1.4, 0);
-            warlordsNPC.getWorld().spawnParticle(Particle.SQUID_INK, watcherLocation, 6, .2, .2, .2, .01);
+            EffectUtils.displayParticle(Particle.SQUID_INK, watcherLocation, 6, .2, .2, .2, .01);
         }
     }
 

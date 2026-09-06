@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.bosses.bossabilities;
 
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
@@ -136,7 +137,7 @@ public class BouquetWaltzAbility {
                 }
 
                 // visuals
-                pos.getWorld().spawnParticle(dashTrail, pos, 3, 0.1, 0.1, 0.1, 0.0);
+                EffectUtils.displayParticle(dashTrail, pos, 3, 0.1, 0.1, 0.1, 0.0);
 
                 // Drop a bouquet node at interval
                 if (t % dropEveryTicks == 0) {
@@ -162,8 +163,8 @@ public class BouquetWaltzAbility {
             public void run() {
                 if (life-- <= 0 || r > maxR) {
                     // small finish pop
-                    at.getWorld().spawnParticle(bloomParticle, at, 10, 0.3, 0.15, 0.3, 0.0);
-                    at.getWorld().spawnParticle(popParticle, at, 18, 0.5, 0.25, 0.5, 0.05, popBlock);
+                    EffectUtils.displayParticle(bloomParticle, at, 10, 0.3, 0.15, 0.3, 0.0);
+                    EffectUtils.displayParticle(popParticle, at, 18, 0.5, 0.25, 0.5, 0.05, popBlock);
                     this.cancel();
                     return;
                 }
@@ -237,7 +238,7 @@ public class BouquetWaltzAbility {
             double x = center.getX() + Math.cos(angle) * radius;
             double z = center.getZ() + Math.sin(angle) * radius;
             Location p = new Location(center.getWorld(), x, center.getY(), z);
-            center.getWorld().spawnParticle(Particle.DUST, p, 1, dust);
+            EffectUtils.displayParticle(Particle.DUST, p, 1, dust);
         }
     }
 }

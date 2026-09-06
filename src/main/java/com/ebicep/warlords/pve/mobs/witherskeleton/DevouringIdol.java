@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.witherskeleton;
 
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.MobHologram;
@@ -157,7 +158,7 @@ public class DevouringIdol extends AbstractMob implements ChampionMob, Listener 
         caster.playSound(caster.getLocation(), Sound.BLOCK_RESPAWN_ANCHOR_CHARGE, 1, .7f);
 
         Location location = warlordsNPC.getLocation().clone().add(0, 1.2, 0);
-        warlordsNPC.getWorld().spawnParticle(
+        EffectUtils.displayParticle(
                 Particle.REVERSE_PORTAL,
                 location,
                 16,
@@ -232,7 +233,7 @@ public class DevouringIdol extends AbstractMob implements ChampionMob, Listener 
             );
         }));
 
-        target.getWorld().spawnParticle(
+        EffectUtils.displayParticle(
                 Particle.SOUL_FIRE_FLAME,
                 target.getLocation().clone().add(0, 1, 0),
                 18,
@@ -251,7 +252,7 @@ public class DevouringIdol extends AbstractMob implements ChampionMob, Listener 
             double x = Math.cos(angle) * DEVOUR_RADIUS;
             double z = Math.sin(angle) * DEVOUR_RADIUS;
 
-            center.getWorld().spawnParticle(
+            EffectUtils.displayParticle(
                     Particle.PORTAL,
                     center.clone().add(x, .15, z),
                     1,
@@ -266,7 +267,7 @@ public class DevouringIdol extends AbstractMob implements ChampionMob, Listener 
             return;
         }
 
-        warlordsNPC.getWorld().spawnParticle(
+        EffectUtils.displayParticle(
                 Particle.REVERSE_PORTAL,
                 center.clone().add(0, 1.2, 0),
                 Math.max(4, energy / 5),
@@ -286,7 +287,7 @@ public class DevouringIdol extends AbstractMob implements ChampionMob, Listener 
                 double x = Math.cos(angle) * radius;
                 double z = Math.sin(angle) * radius;
 
-                center.getWorld().spawnParticle(
+                EffectUtils.displayParticle(
                         Particle.SQUID_INK,
                         center.clone().add(x, .25, z),
                         1,
@@ -298,7 +299,7 @@ public class DevouringIdol extends AbstractMob implements ChampionMob, Listener 
             }
         }
 
-        warlordsNPC.getWorld().spawnParticle(
+        EffectUtils.displayParticle(
                 Particle.SOUL_FIRE_FLAME,
                 center.clone().add(0, 1.2, 0),
                 48,

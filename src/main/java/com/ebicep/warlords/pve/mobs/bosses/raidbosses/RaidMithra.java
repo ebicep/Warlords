@@ -150,7 +150,7 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
         }
 
         if (ticksElapsed % 8 == 0) {
-            current.getWorld().spawnParticle(
+            EffectUtils.displayParticle(
                     Particle.END_ROD,
                     current.clone().add(0, 3.5, 0),
                     4,
@@ -301,7 +301,7 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
         ));
 
         if (ticksElapsed % 4 == 0) {
-            entity.getWorld().spawnParticle(
+            EffectUtils.displayParticle(
                     Particle.END_ROD,
                     new Location(entity.getWorld(), centerX, baseY, centerZ),
                     attacking ? 5 : 2,
@@ -479,9 +479,9 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
             double angle = Math.PI * 2 * i / 32;
             double radius = 2.15;
             Location point = center.clone().add(Math.cos(angle) * radius, 0, Math.sin(angle) * radius);
-            world.spawnParticle(Particle.DUST, point, 1, 0, 0, 0, 0, i % 2 == 0 ? WHITE_DUST : ABYSS_DUST);
+            EffectUtils.displayParticle(Particle.DUST, point, 1, 0, 0, 0, 0, i % 2 == 0 ? WHITE_DUST : ABYSS_DUST);
             if (i % 4 == 0) {
-                world.spawnParticle(Particle.END_ROD, point, 1, 0, 0, 0, 0);
+                EffectUtils.displayParticle(Particle.END_ROD, point, 1, 0, 0, 0, 0);
             }
         }
 
@@ -490,13 +490,12 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
             Vector direction = new Vector(Math.cos(angle), 0, Math.sin(angle));
             for (double distance = 0.5; distance <= 2.4; distance += 0.45) {
                 Location point = center.clone().add(direction.clone().multiply(distance));
-                world.spawnParticle(Particle.DUST, point, 1, 0, 0, 0, 0, i % 2 == 0 ? WHITE_DUST : ABYSS_DUST);
+                EffectUtils.displayParticle(Particle.DUST, point, 1, 0, 0, 0, 0, i % 2 == 0 ? WHITE_DUST : ABYSS_DUST);
             }
         }
     }
 
     private void playRoyalCleave(Location center, Vector forward, double angleOffset) {
-        World world = center.getWorld();
         Vector slashForward = rotateHorizontal(forward, angleOffset);
         Vector right = new Vector(-slashForward.getZ(), 0, slashForward.getX());
 
@@ -508,27 +507,25 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
             Location firstSlash = center.clone().add(side).add(bow).add(0, progress * 1.7, 0);
             Location secondSlash = center.clone().add(side).subtract(bow).add(0, -progress * 1.7, 0);
 
-            world.spawnParticle(Particle.DUST, firstSlash, 1, 0, 0, 0, 0, WHITE_DUST);
-            world.spawnParticle(Particle.DUST, secondSlash, 1, 0, 0, 0, 0, ABYSS_DUST);
+            EffectUtils.displayParticle(Particle.DUST, firstSlash, 1, 0, 0, 0, 0, WHITE_DUST);
+            EffectUtils.displayParticle(Particle.DUST, secondSlash, 1, 0, 0, 0, 0, ABYSS_DUST);
             if (i % 4 == 0) {
-                world.spawnParticle(Particle.END_ROD, firstSlash, 1, 0, 0, 0, 0);
-                world.spawnParticle(Particle.END_ROD, secondSlash, 1, 0, 0, 0, 0);
+                EffectUtils.displayParticle(Particle.END_ROD, firstSlash, 1, 0, 0, 0, 0);
+                EffectUtils.displayParticle(Particle.END_ROD, secondSlash, 1, 0, 0, 0, 0);
             }
         }
 
-        world.spawnParticle(Particle.SWEEP_ATTACK, center, 4, 0.9, 0.9, 0.9, 0);
-        world.spawnParticle(Particle.CRIT, center, 16, 1.1, 1.1, 1.1, 0.15);
+        EffectUtils.displayParticle(Particle.SWEEP_ATTACK, center, 4, 0.9, 0.9, 0.9, 0);
+        EffectUtils.displayParticle(Particle.CRIT, center, 16, 1.1, 1.1, 1.1, 0.15);
     }
 
     private void playRoyalImpact(Location center, Vector forward) {
-        World world = center.getWorld();
-
         for (int ring = 0; ring < 2; ring++) {
             double radius = ring == 0 ? 1.8 : 3.2;
             for (int i = 0; i < 40; i++) {
                 double angle = Math.PI * 2 * i / 40;
                 Location point = center.clone().add(Math.cos(angle) * radius, -0.85 + ring * 0.12, Math.sin(angle) * radius);
-                world.spawnParticle(Particle.DUST, point, 1, 0, 0, 0, 0, (i + ring) % 2 == 0 ? WHITE_DUST : ABYSS_DUST);
+                EffectUtils.displayParticle(Particle.DUST, point, 1, 0, 0, 0, 0, (i + ring) % 2 == 0 ? WHITE_DUST : ABYSS_DUST);
             }
         }
 
@@ -536,13 +533,13 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
             Vector direction = rotateHorizontal(forward, Math.PI * 2 * i / 8);
             for (double distance = 0.5; distance <= 3.8; distance += 0.45) {
                 Location point = center.clone().add(direction.clone().multiply(distance)).add(0, -0.85, 0);
-                world.spawnParticle(Particle.DUST, point, 1, 0, 0, 0, 0, i % 2 == 0 ? WHITE_DUST : ABYSS_DUST);
+                EffectUtils.displayParticle(Particle.DUST, point, 1, 0, 0, 0, 0, i % 2 == 0 ? WHITE_DUST : ABYSS_DUST);
             }
         }
 
-        world.spawnParticle(Particle.SWEEP_ATTACK, center, 7, 1.3, 1.1, 1.3, 0);
-        world.spawnParticle(Particle.END_ROD, center, 28, 1.4, 1.3, 1.4, 0.035);
-        world.spawnParticle(Particle.CRIT, center, 32, 1.5, 1.4, 1.5, 0.18);
+        EffectUtils.displayParticle(Particle.SWEEP_ATTACK, center, 7, 1.3, 1.1, 1.3, 0);
+        EffectUtils.displayParticle(Particle.END_ROD, center, 28, 1.4, 1.3, 1.4, 0.035);
+        EffectUtils.displayParticle(Particle.CRIT, center, 32, 1.5, 1.4, 1.5, 0.18);
     }
 
     private Vector rotateHorizontal(Vector vector, double angle) {
@@ -566,7 +563,6 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
     }
 
     private void playQueenMoveSet(Location center) {
-        World world = center.getWorld();
         Location origin = center.clone().add(0, 0.12, 0);
         Vector[] directions = {
                 new Vector(1, 0, 0),
@@ -585,25 +581,24 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
 
             for (double distance = 0.75; distance <= 7.5; distance += 0.55) {
                 Location point = origin.clone().add(direction.clone().multiply(distance));
-                world.spawnParticle(Particle.DUST, point, 1, 0, 0, 0, 0, dust);
+                EffectUtils.displayParticle(Particle.DUST, point, 1, 0, 0, 0, 0, dust);
             }
 
             Location endpoint = origin.clone().add(direction.clone().multiply(7.5));
-            world.spawnParticle(Particle.END_ROD, endpoint.clone().add(0, 0.2, 0), 1, 0, 0, 0, 0);
+            EffectUtils.displayParticle(Particle.END_ROD, endpoint.clone().add(0, 0.2, 0), 1, 0, 0, 0, 0);
         }
     }
 
     private void playChessStep(Location center) {
-        World world = center.getWorld();
         Particle.DustOptions dust = chessStep++ % 2 == 0 ? WHITE_DUST : ABYSS_DUST;
         Location origin = center.clone().add(0, 0.08, 0);
         double half = 0.75;
 
         for (double offset = -half; offset <= half; offset += 0.3) {
-            world.spawnParticle(Particle.DUST, origin.clone().add(offset, 0, half), 1, 0, 0, 0, 0, dust);
-            world.spawnParticle(Particle.DUST, origin.clone().add(offset, 0, -half), 1, 0, 0, 0, 0, dust);
-            world.spawnParticle(Particle.DUST, origin.clone().add(half, 0, offset), 1, 0, 0, 0, 0, dust);
-            world.spawnParticle(Particle.DUST, origin.clone().add(-half, 0, offset), 1, 0, 0, 0, 0, dust);
+            EffectUtils.displayParticle(Particle.DUST, origin.clone().add(offset, 0, half), 1, 0, 0, 0, 0, dust);
+            EffectUtils.displayParticle(Particle.DUST, origin.clone().add(offset, 0, -half), 1, 0, 0, 0, 0, dust);
+            EffectUtils.displayParticle(Particle.DUST, origin.clone().add(half, 0, offset), 1, 0, 0, 0, 0, dust);
+            EffectUtils.displayParticle(Particle.DUST, origin.clone().add(-half, 0, offset), 1, 0, 0, 0, 0, dust);
         }
     }
 }

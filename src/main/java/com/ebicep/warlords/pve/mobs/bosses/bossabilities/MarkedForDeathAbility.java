@@ -1,4 +1,5 @@
 package com.ebicep.warlords.pve.mobs.bosses.bossabilities;
+import com.ebicep.warlords.effects.EffectUtils;
 
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -97,9 +98,9 @@ public class MarkedForDeathAbility {
                     for (Mark m : marks) {
                         if (m.target == null) continue;
                         Location head = headPos(m.target, markerYOffset);
-                        head.getWorld().spawnParticle(Particle.DUST, head, 2, 0.02, 0.02, 0.02, 0.0, markerDust);
+                        EffectUtils.displayParticle(Particle.DUST, head, 2, 0.02, 0.02, 0.02, 0.0, markerDust);
                         // trailing spark
-                        head.getWorld().spawnParticle(Particle.END_ROD, head, 1, 0, 0, 0, 0.0);
+                        EffectUtils.displayParticle(Particle.END_ROD, head, 1, 0, 0, 0, 0.0);
                         // keep last-known ground pos fresh
                         if (t == 1 && m.target.getEntity() instanceof Player) {
                             m.target.getEntity().showTitle(Title.title(Component.empty(), Component.text("You have been marked for death!", NamedTextColor.RED)));
@@ -170,11 +171,11 @@ public class MarkedForDeathAbility {
         if (w == null) return;
 
         // VFX
-        w.spawnParticle(Particle.EXPLOSION, at, 1, 0, 0, 0, 0.0);
+        EffectUtils.displayParticle(Particle.EXPLOSION, at, 1, 0, 0, 0, 0.0);
         // “column” sparkle
         for (double y = 0; y <= 2.5; y += 0.35) {
-            w.spawnParticle(Particle.DUST, at.getX(), at.getY() + y, at.getZ(), 1, 0, 0, 0, 0.0, strikeDust);
-            w.spawnParticle(Particle.SNOWFLAKE, at.getX(), at.getY() + y, at.getZ(), 1, 0, 0, 0, 0.0);
+            EffectUtils.displayParticle(Particle.DUST, new Location(w, at.getX(), at.getY() + y, at.getZ()), 1, 0, 0, 0, 0.0, strikeDust);
+            EffectUtils.displayParticle(Particle.SNOWFLAKE, new Location(w, at.getX(), at.getY() + y, at.getZ()), 1, 0, 0, 0, 0.0);
         }
 
         // Damage enemies in radius
@@ -202,7 +203,7 @@ public class MarkedForDeathAbility {
         for (double a = 0; a < twoPi; a += angStep) {
             double x = center.getX() + Math.cos(a) * radius;
             double z = center.getZ() + Math.sin(a) * radius;
-            w.spawnParticle(Particle.DUST, x, y, z, 1, 0, 0, 0, 0.0, dust);
+            EffectUtils.displayParticle(Particle.DUST, new Location(w, x, y, z), 1, 0, 0, 0, 0.0, dust);
         }
     }
 

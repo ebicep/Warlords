@@ -113,7 +113,7 @@ public class HeavenlySpearAbility {
                 // Telegraph phase
                 if (t <= telegraphTicks) {
                     for (Location loc : landings) {
-                        w.spawnParticle(Particle.DUST, loc.clone().add(0, 0.1, 0), 3, 0.4, 0, 0.4, 0,
+                        EffectUtils.displayParticle(Particle.DUST, loc.clone().add(0, 0.1, 0), 3, 0.4, 0, 0.4, 0,
                                 new Particle.DustOptions(Color.fromRGB(200, 200, 255), 1.5f));
                         if (telegraphSfx != null) {
                             new CircleEffect(
@@ -143,7 +143,7 @@ public class HeavenlySpearAbility {
                 if (t > telegraphTicks + 1 && t <= telegraphTicks + persistTicks) {
                     for (BlockDisplay spear : spears) {
                         if (!spear.isValid()) continue;
-                        spear.getWorld().spawnParticle(persistentSfx, spear.getLocation(), 2, 0.1, 1, 0.1, 0);
+                        EffectUtils.displayParticle(persistentSfx, spear.getLocation(), 2, 0.1, 1, 0.1, 0);
                     }
                 }
 
@@ -152,7 +152,7 @@ public class HeavenlySpearAbility {
                     for (BlockDisplay spear : spears) {
                         if (spear.isValid()) {
                             spear.remove();
-                            spear.getWorld().spawnParticle(Particle.BLOCK_CRUMBLE,
+                            EffectUtils.displayParticle(Particle.BLOCK_CRUMBLE,
                                     spear.getLocation(), 10, 0.5, 0.5, 0.5, 0,
                                     Material.ICE.createBlockData());
                             Utils.playGlobalSound(spear.getLocation(), itemRemoveSfx, 10, 0.9f);
@@ -187,7 +187,7 @@ public class HeavenlySpearAbility {
         if (w == null) return;
 
         // Explosion effect
-        w.spawnParticle(Particle.EXPLOSION, loc, 1, 0, 0, 0, 0);
+        EffectUtils.displayParticle(Particle.EXPLOSION, loc, 1, 0, 0, 0, 0);
         Utils.playGlobalSound(loc, Sound.ENTITY_GENERIC_EXPLODE, 2, 0.5f);
         // Damage nearby
         for (WarlordsEntity enemy : PlayerFilter

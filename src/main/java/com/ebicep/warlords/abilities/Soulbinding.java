@@ -300,7 +300,7 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
     private void releaseCustodyWave(WarlordsEntity owner, Location origin) {
         Utils.playGlobalSound(origin, Sound.BLOCK_RESPAWN_ANCHOR_CHARGE, 2, .7f);
 
-        origin.getWorld().spawnParticle(
+        EffectUtils.displayParticle(
                 Particle.WITCH,
                 origin.clone().add(0, 1.1, 0),
                 32,
@@ -310,7 +310,7 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
                 .05
         );
 
-        origin.getWorld().spawnParticle(
+        EffectUtils.displayParticle(
                 Particle.SOUL_FIRE_FLAME,
                 origin.clone().add(0, .8, 0),
                 28,

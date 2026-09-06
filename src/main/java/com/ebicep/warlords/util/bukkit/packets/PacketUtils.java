@@ -37,26 +37,6 @@ public class PacketUtils {
 
     public static void init(Warlords instance) {
         PROTOCOL_MANAGER.removePacketListeners(instance);
-        PROTOCOL_MANAGER.addPacketListener(
-                new PacketAdapter(instance, ListenerPriority.HIGHEST, PacketType.Play.Server.WORLD_PARTICLES) {
-                    int counter = 0;
-
-                    @Override
-                    public void onPacketSending(PacketEvent event) {
-                        // Item packets (id: 0x29)
-                        if (event.getPacketType() == PacketType.Play.Server.WORLD_PARTICLES) {
-                            Player player = event.getPlayer();
-                            WarlordsEntity warlordsEntity = Warlords.getPlayer(player);
-                            if (warlordsEntity == null) {
-                                return;
-                            }
-                            int particleReduction = warlordsEntity.getDatabasePlayer().getParticleQuality().particleReduction;
-                            if (counter++ % particleReduction == 0) {
-                                event.setCancelled(true);
-                            }
-                        }
-                    }
-                });
         List<Sound> blockedSounds = List.of(
                 Sound.ENTITY_PLAYER_ATTACK_NODAMAGE,
                 Sound.ENTITY_PLAYER_ATTACK_KNOCKBACK

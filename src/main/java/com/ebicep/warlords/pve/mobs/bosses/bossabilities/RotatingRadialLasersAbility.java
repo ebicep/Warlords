@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.bosses.bossabilities;
 
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
@@ -157,9 +158,9 @@ public class RotatingRadialLasersAbility {
 
             // Use the "full" overload to ensure visibility
             if (isCharge) {
-                w.spawnParticle(Particle.DUST, x, y, z, 1, 0, 0, 0, 0.0, dust);
+                EffectUtils.displayParticle(Particle.DUST, new Location(w, x, y, z), 1, 0, 0, 0, 0.0, dust);
             } else {
-                w.spawnParticle(Particle.SONIC_BOOM, x, y, z, 1, 0, 0, 0, 0.0);
+                EffectUtils.displayParticle(Particle.SONIC_BOOM, new Location(w, x, y, z), 1, 0, 0, 0, 0.0);
             }
         }
     }

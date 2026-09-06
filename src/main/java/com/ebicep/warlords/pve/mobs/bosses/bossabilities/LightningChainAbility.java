@@ -136,8 +136,8 @@ public class LightningChainAbility {
                     1.2 + Math.sin(d * 3) * 0.1, // small sine jitter
                     0
             );
-            w.spawnParticle(Particle.DUST, p, 1, 0, 0, 0, 0.0, chainDust);
-            w.spawnParticle(Particle.ELECTRIC_SPARK, p, 1, 0, 0, 0, 0.0);
+            EffectUtils.displayParticle(Particle.DUST, p, 1, 0, 0, 0, 0.0, chainDust);
+            EffectUtils.displayParticle(Particle.ELECTRIC_SPARK, p, 1, 0, 0, 0, 0.0);
         }
     }
 

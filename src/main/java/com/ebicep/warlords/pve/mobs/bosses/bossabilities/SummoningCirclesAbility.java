@@ -101,7 +101,7 @@ public class SummoningCirclesAbility {
                     if (disrupted) {
                         circle.done = true;
                         circle.loc.getWorld().playSound(circle.loc, Sound.BLOCK_ENCHANTMENT_TABLE_USE, 2, 0.5f);
-                        circle.loc.getWorld().spawnParticle(Particle.ITEM_SNOWBALL, circle.loc, 6, 0.6, 0.1, 0.6, 0.05);
+                        EffectUtils.displayParticle(Particle.ITEM_SNOWBALL, circle.loc, 6, 0.6, 0.1, 0.6, 0.05);
                         EffectUtils.playFirework(circle.loc, FireworkEffect.builder()
                                 .withColor(Color.BLUE)
                                 .with(FireworkEffect.Type.BALL_LARGE)
@@ -147,7 +147,7 @@ public class SummoningCirclesAbility {
         for (double a = 0; a < twoPi; a += step) {
             double x = center.getX() + Math.cos(a) * radius;
             double z = center.getZ() + Math.sin(a) * radius;
-            w.spawnParticle(type, x, center.getY() + 0.05, z, 1, 0, 0, 0, 0.0, dust);
+            EffectUtils.displayParticle(type, new Location(w, x, center.getY() + 0.05, z), 1, 0, 0, 0, 0.0, dust);
         }
     }
 
@@ -155,7 +155,7 @@ public class SummoningCirclesAbility {
         World w = loc.getWorld();
         if (w == null) return;
         Utils.playGlobalSound(loc, Sound.ENTITY_WITHER_SPAWN, 2, 0.7f);
-        w.spawnParticle(Particle.SMOKE, loc, 40, 1, 0.3, 1, 0.05);
+        EffectUtils.displayParticle(Particle.SMOKE, loc, 40, 1, 0.3, 1, 0.05);
 
         for (int i = 0; i < option.playerCount(); i++) {
             option.spawnNewMob(new FrostVeil(loc.clone().add(0, 1, 0)));
