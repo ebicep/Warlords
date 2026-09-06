@@ -41,7 +41,7 @@ public class EffectUtils {
     public static final double PARTICLE_RANGE_SQ = PARTICLE_RANGE * PARTICLE_RANGE;
     private static final ConcurrentHashMap<UUID, AtomicInteger> PARTICLE_QUALITY_COUNTERS = new ConcurrentHashMap<>();
     private static final Color DEFAULT_COLOR = Color.fromRGB(255, 0, 0);
-    private static final Particle.Spell DEFAULT_SPELL = new Particle.Spell(Color.fromRGB(140, 25, 240), 1);
+    private static final Particle.Spell DEFAULT_SPELL = new Particle.Spell(Color.fromRGB(255, 255, 255), 1);
     private static final Particle.DustOptions DEFAULT_DUST = new Particle.DustOptions(DEFAULT_COLOR, 1);
     private static final Particle.DustTransition DEFAULT_DUST_TRANSITION = new Particle.DustTransition(DEFAULT_COLOR, Color.WHITE, 1);
     private static final Float DEFAULT_FLOAT = 1f;
