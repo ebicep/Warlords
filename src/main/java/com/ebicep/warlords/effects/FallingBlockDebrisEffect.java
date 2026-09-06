@@ -38,7 +38,10 @@ public class FallingBlockDebrisEffect {
     }
 
     public static void spawn(Location spawnLocation, Material material, double initialVelocityY, double removeBelowY) {
-        BlockData blockData = getBlockData(material);
+        spawn(spawnLocation, getBlockData(material), initialVelocityY, removeBelowY);
+    }
+
+    public static void spawn(Location spawnLocation, BlockData blockData, double initialVelocityY, double removeBelowY) {
         double startY = spawnLocation.getY();
         double removeY = startY - removeBelowY;
 
