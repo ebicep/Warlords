@@ -21,11 +21,11 @@ public enum ParticleQuality {
             Component.text("Reduces the amount of particles seen.", NamedTextColor.GRAY),
             10
     ),
-    HIGH(new ItemBuilder(Material.LIME_STAINED_GLASS_PANE).name(Component.text("High Quality", NamedTextColor.GREEN)).get(),
+    HIGH(new ItemBuilder(Material.GREEN_STAINED_GLASS_PANE).name(Component.text("High Quality", NamedTextColor.GREEN)).get(),
             Component.text("Lightly reduces the amount of particles you will see.", NamedTextColor.GRAY),
             50
     ),
-    VERY_HIGH(new ItemBuilder(Material.GREEN_STAINED_GLASS_PANE).name(Component.text("Very High Quality", NamedTextColor.DARK_GREEN)).get(),
+    VERY_HIGH(new ItemBuilder(Material.BLUE_STAINED_GLASS_PANE).name(Component.text("Very High Quality", NamedTextColor.DARK_GREEN)).get(),
             Component.text("Shows nearly all particles for the best experience.", NamedTextColor.GRAY),
             500
     ),
