@@ -25,6 +25,7 @@
         "flagReturnSpawnFlagMultiplierDecrease": 0.5,
         "flagMultiplierCap": 100,
         "flagKillRepickTickCooldown": 10,
+        "flagHitboxPadding": 0.5,
         "horseCooldown": 15,
         "pointsToWin": 1500,
         "pointsFlagCap": 250,
