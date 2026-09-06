@@ -5,6 +5,7 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.player.general.ExperienceManager;
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.WarlordsPlayerDisguised;
@@ -279,7 +280,7 @@ public class PlayingStateScoreboardUpdater {
 
             Entity entity = target.getEntity();
             String scoreboardName = ((CraftEntity) entity).getHandle().getScoreboardName();
-            String expectedTeamName = tabListTeamName(target.getTeam(), scoreboardName);
+            String expectedTeamName = tabListTeamName(target.getTeam(), target.getSpecClass(), scoreboardName);
             Team playerTeam = resolveTabTeam(scoreboard, entity, expectedTeamName);
             NamedTextColor teamColor = target.getTeam().getTeamColor();
             if (!playerTeam.hasColor() || playerTeam.color() != teamColor) {
@@ -297,10 +298,14 @@ public class PlayingStateScoreboardUpdater {
     }
 
     /**
-     * Sortable Bukkit team id so the client groups tab list by Warlords faction first.
+     * Sortable Bukkit team id so the client groups tab list by Warlords faction, then specialization, then name.
      */
-    private static String tabListTeamName(@Nonnull com.ebicep.warlords.game.Team faction, @Nonnull String scoreboardName) {
-        return faction.ordinal() + "_" + scoreboardName;
+    private static String tabListTeamName(
+            @Nonnull com.ebicep.warlords.game.Team faction,
+            @Nonnull Specializations spec,
+            @Nonnull String scoreboardName
+    ) {
+        return faction.ordinal() + "_" + String.format("%02d", spec.ordinal()) + "_" + scoreboardName;
     }
 
     @Nonnull
