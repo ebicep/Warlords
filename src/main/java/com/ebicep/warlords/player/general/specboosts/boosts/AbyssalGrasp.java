@@ -1,7 +1,6 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
 import com.ebicep.warlords.abilities.SoulShackle;
-import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -107,7 +106,6 @@ public class AbyssalGrasp implements SpecBoostManager.SpecBoost<AbyssalGrasp> {
                             targetLoc.getYaw(),
                             targetLoc.getPitch()
                     );
-                    EffectUtils.playChainAnimation(warlordsEntity, target, SoulShackle.ITEM_STACK, ticksElapsed);
                     target.teleportLocationOnly(newLocation);
                 }
             }.runTaskTimer(0, 1);
