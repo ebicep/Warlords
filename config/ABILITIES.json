@@ -1314,7 +1314,12 @@
         "radius": 7,
         "tickDuration": 120,
         "damageReductionPercent": 40,
-        "allyHealMultiplierPercent": 100
+        "allyHealMultiplierPercent": 100,
+        "healingValues": {
+          "castHealing": {
+            "value": 2000
+          }
+        }
       },
       "seismicWaveBerserker": {
         "name": "Seismic Wave",
